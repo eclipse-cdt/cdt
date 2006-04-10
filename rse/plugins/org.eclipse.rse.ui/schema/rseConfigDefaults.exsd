@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.rse.ui">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.rse.ui" id="rseConfigDefaults" name="Configure Remote System Explorer Defaults"/>
+      </appInfo>
+      <documentation>
+         This extension point is for products that include RSE, which want to affect some of the out of box defaults for RSE. Some of these can be overridden by users (for example, through preferences).
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="defaults">
+      <complexType>
+         <attribute name="productId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The product ID of the product that is setting the RSE default configuration. RSE will query the product ID of the platform and check for a match with the given ID.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="showNewConnectionPrompt" type="boolean">
+            <annotation>
+               <documentation>
+                  Specify true to show the New Connection prompt in the Remote Systems view by default, false to not show it. Users can still override this via preferences. The default is true.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="showLocalConnection" type="boolean">
+            <annotation>
+               <documentation>
+                  Specify true to pre-create a Local connection for new users, false not to do this. The default is true.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="enableSystemTypes" type="string">
+            <annotation>
+               <documentation>
+                  Specify comma-separated list of system types to enable. Specify the system type names, not translated. These are not case sensitive. All other system types will be disabled, but user can enable them via preferences. Disabled system types do not appear in the New Connection wizard.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="showProfilePage" type="boolean">
+            <annotation>
+               <documentation>
+                  Specify true to show the profile name wizard page in the New Connection wizard, or false to not show it. The default is true. If this is set to false, then RSE will create a profile with the name same as the machine name of the workstation, and create the first connection in that profile.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         6.2.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;h3&gt;Example One&lt;/h3&gt;
+The following is an example of how to turn off the showing of the new connection prompt:
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.rse.ui.rseConfigDefaults&quot;&gt;
+ &lt;defaults id=&quot;xyz&quot; productId=&quot;com.mycompany.myproduct&quot; showNewConnectionPrompt=&quot;false&quot; showLocalConnection=&quot;true&quot;
+    enableSystemTypes=&quot;Local;Power Linux;Unix;iSeries&quot;&gt;
+ &lt;/defaults&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Not applicable
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         Not applicable
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2002, 2006 IBM Corporation. All Rights Reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+IBM Corporation - initial API and implementation
+      </documentation>
+   </annotation>
+
+</schema>

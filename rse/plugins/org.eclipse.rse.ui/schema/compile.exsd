@@ -1,0 +1,245 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.rse.ui">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.rse.ui" id="compile" name="Remote Compile"/>
+      </appInfo>
+      <documentation>
+         This extension point is for defining compile commands that will appear in the compile  menus for remote sources in the Remote Systems view of the Remote System Explorer perspective, and in the Work With Compile Commands dialog.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="compileCommand" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="compileCommand">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id for the compile command. Must be unique over all plug-ins. It is suggested that the user qualify this with the plug-in id.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The label for the compile command. This is what users will see in the compile menus.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="commandstring" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The actual command string that is to be executed on the remote server. This can include substitution variables, which allow runtime substitutions depending on the selected resource.
+&lt;p&gt;
+The following substitution variables are defined for the subsystems:
+&lt;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;h4&gt;ibm.files400&lt;/h4&gt; (only for WebSphere Development Studio Client)
+ &lt;ul&gt;
+ &lt;li&gt;&lt;i&gt;&amp;L&lt;/i&gt;: name of the library to which the selected member belogs.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;&amp;F&lt;/i&gt;: name of the file to which the selected member belongs.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;&amp;N&lt;/i&gt;: name of the selected member.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;&amp;O&lt;/i&gt;: name of object library.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;&amp;R&lt;/i&gt;: Replace object when compiling.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;&amp;X&lt;/i&gt;: member text, in single quotes.&lt;/li&gt;
+ &lt;/ul&gt;
+&lt;/li&gt;
+&lt;p&gt;
+&lt;li&gt;&lt;h4&gt;ibm.filesXXX&lt;/h4&gt;
+ &lt;ul&gt;
+ &lt;li&gt;&lt;i&gt;{system_filesep}&lt;/i&gt;: file separator. &quot;\\&quot; on Windows, &quot;/&quot; on Unix and Linux.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;{system_homedir}&lt;/i&gt;: home directory on the target system, for the user ID used for the connection.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;{system_pathsep}&lt;/i&gt;: path separator. &quot;;&quot; on Windows, &quot;:&quot; on Unix and Linux.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;{system_tempdir}&lt;/i&gt;: temporary directory on the target system.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;{resource_name}&lt;/i&gt;: unqualified name of selected resource.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;{resource_name_root}&lt;/i&gt;: name of selected resource without the extension&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;{resource_path}&lt;/i&gt;: path of selected resource including name.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;{resource_path_root}&lt;/i&gt;: root of selected file&apos;s path. &quot;c:\\&quot; on Windows, or &quot;/&quot; on others.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;{resource_path_drive}&lt;/i&gt;: drive letter on Windows, empty string on others.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;{container_name}&lt;/i&gt;: unqualified name of folder containing selected resource.&lt;/li&gt;
+ &lt;li&gt;&lt;i&gt;{container_path}&lt;/i&gt;: path of folder containing selected resource including name.&lt;/li&gt;
+ &lt;/ul&gt;
+&lt;/li&gt;
+&lt;p&gt;
+&lt;/ul&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="subsystemfactoryid" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for which the compile commands are to appear. Specify as many of these filters as needed to explicitly scope all the compile commands.
+&lt;p&gt;
+This filter specifies a subsystem factory id, such that these compile commands will only appear for remote resources returned from subsystems of the given subsystem factory. Note that the subsystem factory must support compile commands.
+This ID can be scalar, or it can be generic to match on multiple subsystem factory IDs. The IDs of the IBM-supplied subsystem factories that support compile commands in the Remote Systems view are:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;ibm.filesLocal&lt;/b&gt;. For local file system resources, under the &quot;Files&quot; subsystem.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;ibm.filesWindows&lt;/b&gt;. For remote Windows file system resources, under the &quot;Files&quot; subsystem.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;ibm.files&lt;/b&gt;. For remote Unix and Linux file system resources, under the &quot;Files&quot; subsystem.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;ibm.filesIFS&lt;/b&gt;. For remote iSeries unix file system resources, under the &quot;IFS Files&quot; subsystem.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;ibm.files400&lt;/b&gt;. For remote iSeries native QSYS file system resources, under the &quot;iSeries Objects&quot; subsystem. (only for WebSphere Development Studio Client)&lt;/li&gt;
+&lt;p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="namefilter" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the compile commands are to appear.
+Specify as many of these filters as needed to explicitly scope
+all the compile commands.
+&lt;p&gt;
+This filter specifies a simple or generic resource name. 
+Only resources whose name matches this filter will show the actions
+defined within this object contribution element.
+&lt;h4&gt;NOTE: The current implementation only accepts generic resource name, and names such as &lt;i&gt;*.extension&lt;/i&gt;, e.g. *.java. Also, this filter must not be specified if subsystem factory is &lt;b&gt;ibm.files400&lt;/b&gt;.
+&lt;/h4&gt;
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="typefilter" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the compile commands are to appear.
+Specify as many of these filters as needed to explicitly scope
+all the compile commands.
+
+&lt;p&gt;
+This filter specifies a resource type, either simple or generic.
+The resource types depend on the subsystem. The types
+for IBM-supplied subsystems which support them are:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;filesXXX&lt;/b&gt;. Only &lt;i&gt;file&lt;/i&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;files400&lt;/b&gt;. Member type. For example, &lt;i&gt;RPGLE&lt;/i&gt;. (only for WebSphere Development Studio Client)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="labeleditable" type="boolean">
+            <annotation>
+               <documentation>
+                  Indicates whether the label is editable by users in the Work With Compile Commands dialog. By default, it is &lt;i&gt;true&lt;/i&gt;.
+&lt;p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         5.1.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;h3&gt;Example One&lt;/h3&gt;
+The following is an example of adding a compile command for java files on remote Unix/Linux systems.
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.rse.ui.compile&quot;&gt;
+ &lt;compilecommand 
+            id=&quot;com.mycomp.compileCommand1&quot;
+            label=&quot;My Label 1&quot;
+            commandstring=&quot;mycommand ${resource_name}&quot;
+            subsystemfactoryid=&quot;ibm.files&quot;
+            namefilter=&quot;*.java&quot;&gt;
+ &lt;/compilecommand&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;h3&gt;Example Two&lt;/h3&gt;
+The following is an example of adding a compile command for RPGLE member types on iSeries servers.
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.rse.ui.compile&quot;&gt;
+ &lt;compilecommand 
+            id=&quot;com.mycomp.compileCommand2&quot;
+            label=&quot;My Label 2&quot;
+            commandstring=&quot;CRTRPGMOD MODULE(&amp;O/&amp;N) SRCFILE(&amp;L/&amp;F) SRCMBR(&amp;N) REPLACE(&amp;R) OPTION(*EVENTF) DBGVIEW(*SOURCE) REPLACE(&amp;R)&quot;
+            subsystemfactoryid=&quot;ibm.files400&quot;
+            typefilter=&quot;RPGLE&quot;&gt;
+ &lt;/compilecommand&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2002, 2006 IBM Corporation. All Rights Reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+IBM Corporation - initial API and implementation
+      </documentation>
+   </annotation>
+
+</schema>

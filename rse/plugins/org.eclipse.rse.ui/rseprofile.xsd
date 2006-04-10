@@ -1,0 +1,186 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:	xs="http://www.w3.org/2001/XMLSchema"
+				 	targetNamespace="org.eclipse.rse.core"
+				 	xmlns="org.eclipse.rse.core"
+					elementFormDefault="qualified">
+
+<!-- Common attributes -->
+ <xs:attribute name="name" type="xs:string"/>
+ <xs:attribute name="type" type="xs:string"/>
+
+<!-- Filter string attributes -->
+ <xs:attribute name="string" type="xs:string"/>
+
+<!-- Filter attributes -->
+ <xs:attribute name="supportsNestedFilters" type="xs:boolean"/>
+ <xs:attribute name="relativeOrder" type="xs:integer"/>
+ <xs:attribute name="default" type="xs:boolean"/>
+ <xs:attribute name="stringsCaseSensitive" type="xs:boolean"/>
+ <xs:attribute name="promptable" type="xs:boolean"/>
+ <xs:attribute name="supportsDuplicateFilterStrings" type="xs:boolean"/>
+ <xs:attribute name="nonDeletable" type="xs:boolean"/>
+ <xs:attribute name="nonRenamable" type="xs:boolean"/>
+ <xs:attribute name="nonChangable" type="xs:boolean"/>
+ <xs:attribute name="stringsNonChangable" type="xs:boolean"/>
+ <xs:attribute name="release" type="xs:integer"/>
+ <xs:attribute name="singleFilterStringOnly" type="xs:boolean"/>
+
+<!-- FilterPool attributes -->
+ <xs:attribute name="deletable" type="xs:boolean"/>
+ <xs:attribute name="owningParentName" type="xs:string"/>
+ <xs:attribute name="id" type="xs:ID"/>
+
+<!-- FilterPoolReference attributes -->
+ <xs:attribute name="refID" type="xs:IDREF"/>
+
+<!-- Host attributes -->
+ <xs:attribute name="offline" type="xs:boolean"/>
+ <xs:attribute name="hostName" type="xs:string"/>
+ <xs:attribute name="description" type="xs:string"/>
+ <xs:attribute name="defaultUserId" type="xs:string"/>
+
+<!-- Profile attributes -->
+ <xs:attribute name="defaultPrivate" type="xs:boolean"/>
+ <xs:attribute name="isActive" type="xs:boolean"/>
+
+<!-- SubSystem attributes -->
+ <xs:attribute name="hidden" type="xs:boolean"/>
+
+<!-- RemoteFileSubSystem attributes -->
+ <xs:attribute name="homeFolder" type="xs:string"/>
+
+<!-- ConnectorService attributes -->
+ <xs:attribute name="group" type="xs:string"/>
+ <xs:attribute name="useSSL" type="xs:boolean"/>
+
+<!-- Property attributes -->
+ <xs:attribute name="key" type="xs:string"/>
+ <xs:attribute name="value" type="xs:string"/>
+
+
+
+<!-- Property definition -->
+ <xs:complexType name="Property">
+   <xs:attribute ref="key" use="required"/>
+   <xs:attribute ref="value" use="required"/>   
+ </xs:complexType>
+
+<!-- PropertySet definition -->
+ <xs:complexType name="PropertySet">
+  <xs:attribute ref="name" use="required"/>
+  <xs:element name="Property" type="Property" maxOccurs="unbounded" minOccurs="0"/>  	
+ </xs:complexType>
+
+<!-- EnvironmentVariable definition -->
+ <xs:complexType name="EnvironmentVariable">
+   <xs:attribute ref="name" use="required"/>
+   <xs:attribute ref="value" use="required"/>
+   <xs:element name="PropertySet" type="PropertySet" maxOccurs="unbounded" minOccurs="1"/> 
+ </xs:complexType>
+
+<!-- FilterString definition -->
+ <xs:complexType name="FilterString">
+  <xs:attribute ref="string" use="required"/>
+  <xs:attribute ref="type" use="required"/>
+  <xs:attribute ref="default" use="required"/>
+  <xs:element name="PropertySet" type="PropertySet" maxOccurs="unbounded" minOccurs="0"/>
+ </xs:complexType>
+
+<!-- Filter definition -->
+ <xs:complexType name="Filter">
+  <xs:attribute ref="name" use="required"/>
+  <xs:attribute ref="type" use="required"/>
+  <xs:attribute ref="supportsNestedFilters" use="required"/>
+  <xs:attribute ref="relativeOrder" use="required"/>
+  <xs:attribute ref="default" use="required"/>
+  <xs:attribute ref="stringsCaseSensitive" use="optional"/>
+  <xs:attribute ref="promptable" use="required"/>
+  <xs:attribute ref="supportsDuplicateFilterStrings" use="required"/>
+  <xs:attribute ref="nonDeletable" use="required"/>
+  <xs:attribute ref="nonRenamable" use="required"/>
+  <xs:attribute ref="nonChangable" use="required"/>
+  <xs:attribute ref="stringsNonChangable" use="required"/>
+  <xs:attribute ref="release" use="required"/>
+  <xs:attribute ref="singleFilterStringOnly" use="optional"/>
+  <xs:element name="Filter" type="Filter" maxOccurs="unbounded" minOccurs="0"/>
+  <xs:element name="FilterString" type="FilterString" maxOccurs="unbounded" minOccurs="0"/>
+  <xs:element name="PropertySet" type="PropertySet" maxOccurs="unbounded" minOccurs="0"/>
+ </xs:complexType>
+
+<!-- FilterPool definition -->
+ <xs:complexType name="FilterPool">
+  <xs:attribute ref="name" use="required"/>
+  <xs:attribute ref="type" use="required"/>
+  <xs:attribute ref="id" use="required"/>  
+  <xs:attribute ref="supportsNestedFilters" use="required"/>
+  <xs:attribute ref="deletable" use="required"/>
+  <xs:attribute ref="default" use="required"/>
+  <xs:attribute ref="stringsCaseSensitive" use="optional"/>
+  <xs:attribute ref="supportsDuplicateFilterStrings" use="required"/>
+  <xs:attribute ref="release" use="required"/>
+  <xs:attribute ref="singleFilterStringOnly" use="optional"/>
+  <xs:attribute ref="owningParentName" use="required"/>
+  <xs:attribute ref="nonRenamable" use="required"/>
+  <xs:element name="Filter" type="Filter" maxOccurs="unbounded" minOccurs="0"/>
+  <xs:element name="PropertySet" type="PropertySet" maxOccurs="unbounded" minOccurs="0"/>
+ </xs:complexType>
+
+<!-- FilterPoolReference definition -->
+ <xs:complexType name="FilterPoolReference">
+  <xs:attribute ref="refID" use="required"/>  
+ </xs:complexType>
+
+<!-- ServerLauncher definition -->
+ <xs:complexType name="ServerLauncher">
+  <xs:element name="PropertySet" type="PropertySet" maxOccurs="unbounded" minOccurs="0"/>
+ </xs:complexType>
+
+
+
+<!-- SubSystem type definition -->
+ <xs:complexType name="SubSystem">
+  <xs:attribute ref="hidden" use="required"/>
+  <xs:attribute ref="type" use="required"/>
+  <xs:element name="FilterPoolReference" type="FilterPoolReference" maxOccurs="unbounded" minOccurs="0"/> 
+  <xs:element name="PropertySet" type="PropertySet" maxOccurs="unbounded" minOccurs="0"/>
+ </xs:complexType>
+
+
+<!-- ConnectorService definition -->
+ <xs:complexType name="ConnectorService">
+  <xs:attribute ref="name" use="required"/>
+  <xs:attribute ref="type" use="required"/>
+  <xs:attribute ref="group" use="required"/>
+  <xs:attribute ref="useSSL" use="required"/>
+  <xs:element name="RemoteServerLauncher" type="ServerLauncher" maxOccurs="1" minOccurs="1"/>
+  <xs:element name="SubSystem" type="SubSystem" maxOccurs="unbounded" minOccurs="0"/>
+  <xs:element name="PropertySet" type="PropertySet" maxOccurs="unbounded" minOccurs="0"/>
+ </xs:complexType>
+
+<!-- Host definition -->
+ <xs:complexType name="Host">
+  <xs:attribute ref="name" use="required"/>
+  <xs:attribute ref="type" use="required"/>
+  <xs:attribute ref="offline" use="required"/>
+  <xs:attribute ref="promptable" use="required"/>
+  <xs:attribute ref="hostName" use="required"/>
+  <xs:attribute ref="description" use="required"/>
+  <xs:attribute ref="defaultUserId" use="required"/>
+  <xs:element name="ConnectorService" type="ConnectorService" maxOccurs="unbounded" minOccurs="0"/> 
+  <xs:element name="PropertySet" type="PropertySet" maxOccurs="unbounded" minOccurs="0"/>
+ </xs:complexType>
+
+<!-- Profile definition -->
+ <xs:complexType name="Profile">
+  <xs:attribute ref="name" use="required"/>
+  <xs:attribute ref="defaultPrivate" use="required"/>
+  <xs:attribute ref="isActive" use="required"/>
+  <xs:element name="FilterPool" type="FilterPool" maxOccurs="unbounded" minOccurs="0"/>   
+  <xs:element name="Host" type="Host" maxOccurs="unbounded" minOccurs="0"/>   
+  <xs:element name="PropertySet" type="PropertySet" maxOccurs="unbounded" minOccurs="0"/>
+ </xs:complexType>
+
+<!-- Define base schema -->
+<xs:element name="Profile" type="Profile" maxOccurs="1" minOccurs="1"/>
+
+</xs:schema> 

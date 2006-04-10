@@ -1,0 +1,253 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.rse.ui">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.rse.ui" id="subsystemConfiguration" name="Subsystem Configuration"/>
+      </appInfo>
+      <documentation>
+         This extension point allows tool-writers to extend the capability
+of the Remote System Explorer,
+by identifying a subsystem configuration that produces a subsystem
+whenever a new connection is created.
+This subsystem appears under the connection when it is expanded
+in the Remote Systems view of
+the Remote System Explorer perspective. The subsystem configuration
+is called by the Remote System
+framework when the user creates a new connection, when the connection&apos;s
+system type is one of the
+types identified as supported by this subsystem configuration extension.
+
+&lt;p&gt;
+There is one subsystem
+object per connection, and the role of a subsystem is to allow
+users to work with remote resources
+for the remote system identified by the containing connection.
+Defining a subsystem configuration involves more than the single subsystem
+configuration class. There must
+also be a subsystem class defined, and a system class defined.
+There may also be other classes
+defined, such as classes for the content area of wizards for
+defining filters, user actions 
+and compile commands, if the subsystem configuration wishes to support
+these. See the developer documentation for the Remote System Explorer
+for documentation details on defining
+subsystems.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="configuration" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="configuration">
+      <annotation>
+         <documentation>
+            This element defines a subsystem configuration to the Remote System Explorer framework.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique ID for this subsystem configuration. This will be used as a folder name for
+information contained by the subsystem configuration, or by any of its subsystems.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="vendor" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name of the vendor supplying this subsystem configuration.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The icon to dipslay for subsystems of this configuration, when not connected. 
+Specify the path of the .gif file, relative to your plugin directory.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="iconlive" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The icon to display for subsystems of this configuration, when there is a live connection. This
+is usually derived from the normal icon, but adorned with a bright green arrow. Specify
+a path to the icon&apos;s .gif file, relative to your plugin directory.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A class that implements &lt;samp&gt;com.ibm.etools.systems.subsystems.SubSystemFactory&lt;/samp&gt;,
+or better yet extends &lt;samp&gt;com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemFactoryImpl&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="com.ibm.etools.systems.subsystems.impl.DefaultSubSystemFactoryImpl"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Translatable name for subsystems created by this configuration. These appear immediately
+under a connection when the connection is expanded in the Remote Systems view of the
+Remote System Explorer perspective.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Translatable description for subsystems created by this configuration. These appear in configuration
+                  and properties pages for subsystems.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="systemtypes" type="string">
+            <annotation>
+               <documentation>
+                  A semi-colon separated list of system types that subsystems from this configuration support.
+For example, &quot;Windows;Unix;Linux&quot;. If not specified, defaults to all system types.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="category" type="string">
+            <annotation>
+               <documentation>
+                  This optional attribute allows subsystem providers to classify
+the type of remote resources
+that are listed by this subsystem configuration. It is possible for
+multiple subsystem factories to
+support the same remote resource category. This category is used
+in the popupMenus and
+propertyPages extension points, to scope actions and property
+pages to only remote resources
+of a particular category, via their &lt;samp&gt;subsystemconfigurationCategory&lt;/samp&gt; attribute. 
+For example, if listing database resources
+you might specify a 
+category of &quot;database&quot;.
+IBM-supplied categories include &quot;files&quot;, &quot;cmds&quot; and &quot;jobs&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="systemClass" type="string">
+            <annotation>
+               <documentation>
+                  Optional. Only used when naming an IBM-supplied subsystem configuration in the &lt;samp&gt;class&lt;/samp&gt; attribute, when you want to subclass or replace the IBM-supplied ISystem object used to manage the live connection with the remote system. Name a class that implements &lt;samp&gt;com.ibm.etools.systems.subsystems.ISystem&lt;/samp&gt;,
+or extends the appropriate IBM-supplied class such as &lt;samp&gt;com.ibm.etools.systems.universal.UniversalSystem&lt;/samp&gt; for unix, windows and system types.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="com.ibm.etools.systems.subsystems.ISystem"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         Example of using this extension point:
+
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension 
+      point=&quot;org.eclipse.rse.ui.subsystemconfiguration&quot;&gt;
+      &lt;configuration
+         systemtypes=&quot;Unix;Linux;Local&quot; 
+         name=&quot;Databases&quot;
+         icon=&quot;icons/dbsubsys.gif&quot; 
+         iconlive=&quot;icons/dbsubsyslive.gif&quot;
+         id=&quot;com.acme.etools.mypkg.myconfiguration&quot;
+         class=&quot;com.acme.etools.db.DBSubSystemFactory&quot;
+         category=&quot;databases&quot;
+         vendor=&quot;ACME&quot;
+      &gt;
+     &lt;/configuration&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Defining the xml for the extension point is easy. There is a fair amount to know about
+creating the classes needed for a subsystem configuration, however. For this information, consult
+the Remote System Explorer developer documention, including the JavaDoc for the supplied 
+classes and interfaces for this task.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The provider of subsystem factories must implement the interface
+&lt;samp&gt;com.ibm.etools.systems.subsystems.SubSystemFactory&lt;/samp&gt;,
+although it is not recommended to create a new class from scratch.
+Rather, it is highly recommended
+to use the supplied base class &lt;samp&gt;org.eclipse.rse.core.subsystems.SubSystemConfiguration&lt;/samp&gt;.
+This base class pre-supplies much functionality, including support for
+persisting properties and metadata, and support for filters.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         All supplied subsystems are implemented via use of this extension point.
+See the &lt;samp&gt;plugin.xml&lt;/samp&gt; files for plugins
+&lt;samp&gt;org.eclipse.rse.subsystems.files.dstore&lt;/samp&gt; and
+&lt;samp&gt;org.eclipse.rse.subsystems.processes.dstore&lt;/samp&gt;
+for examples.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2002, 2006 IBM Corporation. All Rights Reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+IBM Corporation - initial API and implementation
+      </documentation>
+   </annotation>
+
+</schema>

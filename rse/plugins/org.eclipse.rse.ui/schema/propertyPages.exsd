@@ -1,0 +1,464 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.rse.ui">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.rse.ui" id="propertyPages" name="Property Pages"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+This extension point is modelled after the eclipse workbench
+extension point &lt;samp&gt;org.eclipse.ui.propertyPages&lt;/samp&gt;.
+However, because we know we are targeting remote resources, it
+is simplified a bit. Specifically,
+there is no need to specify the object class, as we assume these
+actions apply to remote resources, which often share a common
+object class. 
+On the other hand, we need additional filtering capabilities
+to scope which remote resources these pages are to apply to.
+&lt;/p&gt;
+
+&lt;p&gt;
+To this end, there is a rich set of filtering attributes to enable
+fine-grained scoping by a number
+of criteria. These scoping attributes are the same as those for
+our &lt;samp&gt;org.eclipse.rse.ui.popupMenus&lt;/samp&gt;
+extension point.
+
+&lt;p&gt;
+While not fully documented here, this extension point supports
+the
+&lt;samp&gt;&amp;lt;filter&amp;gt;&lt;/samp&gt;
+element from the &lt;samp&gt;org.eclipse.ui.popupMenus&lt;/samp&gt;
+extension point. See its
+documentation in the help for information on this element.
+For example:
+&lt;samp&gt;&lt;pre&gt;
+   &lt;filter name=&quot;subsystemFactoryCategory&quot; value=&quot;files&quot;/&gt;   
+&lt;/pre&gt;&lt;/samp&gt;
+This element is for conditionally deciding whether to show
+the property page, very much like the attributes of the &amp;lt;page&amp;gt; element
+do; in fact there is some overlap. &lt;br&gt;
+The &lt;samp&gt;name&lt;/samp&gt;s
+supported for the &lt;samp&gt;&amp;lt;filter&amp;gt;&lt;/samp&gt;
+element are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;name&quot;&lt;/samp&gt;&lt;/b&gt;. Will test the &lt;i&gt;value&lt;/i&gt; for
+an exact match on an object&apos;s name,
+or beginning-of-name match if ends with an asterisk.
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;type&quot;&lt;/samp&gt;&lt;/b&gt;. Will test the &lt;i&gt;value&lt;/i&gt; for
+an exact match on an object&apos;s type.
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;offline&quot;&lt;/samp&gt;&lt;/b&gt;.Will test the &lt;i&gt;value&lt;/i&gt;
+against &quot;true&quot; if the user is working
+in &quot;offline&quot; mode or &quot;false&quot; if not. Currently only supported
+for iSeries connections.
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;connected&quot;&lt;/samp&gt;&lt;/b&gt;. Will test the &lt;i&gt;value&lt;/i&gt;
+against &quot;true&quot; if the connection
+containing the selected object is active or &quot;false&quot; if not.
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;hasChildren&quot;&lt;/samp&gt;&lt;/b&gt;. Will test the &lt;i&gt;value&lt;/i&gt;
+against &quot;true&quot; if this object&apos;s
+adapter reports that it has children or &quot;false&quot; if it doesn&apos;t
+have children.
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;systemType&quot;&lt;/samp&gt;&lt;/b&gt;. Will test the &lt;i&gt;value&lt;/i&gt;
+for an exact match on the system type of
+this object&apos;s parent SystemConnection object. 
+You can specify multiple values if you comma-separate them. 
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;subsystemFactoryId&quot;&lt;/samp&gt;&lt;/b&gt;. Will test the &lt;i&gt;value&lt;/i&gt;
+for an exact match on the 
+&lt;samp&gt;ID&lt;/samp&gt; of the subsystem factory that created this object&apos;s
+subsystem. Returns false for SystemConnection objects.
+You can specify multiple values if you comma-separate them. 
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;subsystemFactoryCategory&quot;&lt;/samp&gt;&lt;/b&gt;. Will test
+the &lt;i&gt;value&lt;/i&gt; for an exact match
+on the &lt;samp&gt;category&lt;/samp&gt; of the subsystem factory that created
+this object&apos;s subsystem.
+You can specify multiple values if you comma-separate them. 
+&lt;/ul&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="page" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="page">
+      <annotation>
+         <documentation>
+            Identifies an individual property page contribution.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique ID that will be used to identify this page.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name that will be used in the UI for this page.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the class that implements &lt;code&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/code&gt;.
+Or better yet, extends one of the IBM-supplied base classes, described in the API Information section.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkbenchPropertyPage"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  A relative path to an icon that will be used in the UI in addition to the page name. Optional.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="subsystemfactoryid" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the property page is to appear.
+Specify as many of these optional filters like this as needed to explicitly scope this property page element.
+&lt;p&gt;
+This filter specifies a subsystem factory id, such that this
+property page will only appear for remote resources returned from subsystems of the given subsystem factory.
+This ID can be scalar, or it can be generic to match on multiple subsystem factory IDs. The
+IDs of the IBM-supplied subsystem factories that display remote resources in the Remote
+Systems view are:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;ibm.filesLocal&lt;/b&gt;. For local file system resources, under
+the &quot;Files&quot; subsystem.
+&lt;li&gt;&lt;b&gt;ibm.filesWindows&lt;/b&gt;. For remote Windows file system resources,
+under the &quot;Files&quot; subsystem.
+&lt;li&gt;&lt;b&gt;ibm.files&lt;/b&gt;. For remote Unix and Linux file system resources,
+under the &quot;Files&quot; subsystem.
+&lt;li&gt;&lt;b&gt;ibm.filesIFS&lt;/b&gt;. For remote iSeries unix file system resources,
+under the &quot;IFS Files&quot; subsystem.
+&lt;li&gt;&lt;b&gt;ibm.files400&lt;/b&gt;. For remote iSeries native QSYS file system
+resources, under the &quot;iSeries Objects&quot; subsystem.
+&lt;li&gt;&lt;b&gt;ibm.jobs400&lt;/b&gt;. For remote iSeries jobs, under the &quot;iSeries Jobs&quot; subsystem.
+&lt;li&gt;&lt;b&gt;ibm.cmds400&lt;/b&gt;. For remote iSeries jobs, under the &quot;iSeries Jobs&quot; subsystem.
+&lt;/ul&gt;
+&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="subsystemfactoryCategory" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the property page is to appear.
+Specify as many of these optional filters like this as needed to explicitly scope
+this property page element.
+
+&lt;p&gt;
+This filter specifies a subsystem factory category, such that
+this
+property page will only appear for remote resources returned from subsystems
+owned by factories
+declared defined with the specified category. 
+
+&lt;p&gt;
+This category can be scalar, or it can be generic to match on
+multiple subsystem factory categories. The
+categories of the IBM-supplied subsystem factories that display
+remote resources in the Remote
+Systems view are:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;files&lt;/b&gt;. For subsystems that list hierarchical file
+system resources, such as folders and files.
+&lt;li&gt;&lt;b&gt;nativefiles&lt;/b&gt;. For subsystems that list non-hierarchical file
+system resources, such as in the iSeries QSYS file system.
+&lt;li&gt;&lt;b&gt;commands&lt;/b&gt;. For subsystems that list remote commands.
+&lt;li&gt;&lt;b&gt;jobs&lt;/b&gt;. For subsystems that list remote jobs.
+&lt;/ul&gt;
+&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="systemtypes" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the popup menu actions are to appear.
+Specify as many of these optional filters like this as needed to explicitly scope
+all the actions defined in this objectContribution element.
+&lt;br&gt;
+This filter specifies a single system type, or semicolon-separated list of system types,
+or asterisk for all system types (the default).
+Will scope these actions to only remote objects from systems of this type or types.                  
+&lt;br&gt;&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="namefilter" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the property page is to appear.
+Specify as many of these optional filters like this as needed to explicitly scope this property page element.
+&lt;p&gt;
+This filter specifies a simple or generic resource name. 
+Only resources whose name matches this filter will show the property page
+defined within this page element.
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="typecategoryfilter" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the property page is to appear.
+Specify as many of these optional filters like this as needed to explicitly scope this property page element.
+&lt;p&gt;
+This filter specifies a type category. Normally the subsystemfactoryid
+is sufficient, but some subsystems display multiple types of
+resources, and these are categorized by a type name that can
+be used to scope property pages. Here are the type categories supported by IBM-
+supplied subsystems:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;files&lt;/b&gt;. For hierarchical file systems resources.
+&lt;li&gt;&lt;b&gt;commands&lt;/b&gt;. For remote commands.
+&lt;li&gt;&lt;b&gt;jobs&lt;/b&gt;. For remote jobs.
+&lt;/ul&gt;
+&lt;br&gt;
+The IBM-supplied subsystem for iSeries native file system objects also supports 
+these type categories:
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;LIBRARIES&lt;/b&gt;. Set for libraries.
+&lt;li&gt;&lt;b&gt;OBJECTS&lt;/b&gt;. Set for objects, excluding files.
+&lt;li&gt;&lt;b&gt;OBJECTFILES&lt;/b&gt;. Set for file objects. Use &lt;samp&gt;OBJECTS*&lt;/samp&gt;
+to match on all objects.
+&lt;li&gt;&lt;b&gt;MEMBERS&lt;/b&gt;. Set for data and source file members.
+&lt;li&gt;&lt;b&gt;RECORDS&lt;/b&gt;. Set for record formats within files.
+&lt;li&gt;&lt;b&gt;FIELDS&lt;/b&gt;. Set for fields within record formats.
+&lt;li&gt;&lt;b&gt;MESSAGE_DESCRIPTIONS&lt;/b&gt;. Set for messages within message
+files.
+&lt;/ul&gt;
+&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="typefilter" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the property page is to appear.
+Specify as many of these optional filters like this as needed to explicitly scope
+this property page element.
+
+&lt;p&gt;
+This filter specifies a resource type, either simple or generic.
+The resource types depends on the subsystem. The types
+for IBM-supplied subsystems which support them are:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;filesXXX&lt;/b&gt;. Either &lt;i&gt;folder&lt;/i&gt; or &lt;i&gt;file&lt;/i&gt;.
+&lt;li&gt;&lt;b&gt;files400&lt;/b&gt;. This is the object&apos;s type (for objects),
+such as &lt;i&gt;*PGM&lt;/i&gt;, or member&apos;s type (for members),
+such as &lt;i&gt;RPGLE&lt;/i&gt;. Since * is a valid character in an iSeries
+object type, use %ast. instead of * to prevent wildcard matching.
+For example, to prevent matching on both *PGM and *SRVPGM, use %ast.PGM
+for the type. 
+&lt;/ul&gt;
+&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="subtypefilter" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the property page is to appear.
+Specify as many of these optional filters like this as needed to explicitly scope
+this property page element.
+
+&lt;p&gt;
+This filter specifies a simple or generic resource subtype to
+match. Not all subsystems support subtypes for their resources.
+The IBM-supplied subsystems that do support this are:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;FilesXXX. This can be either &lt;i&gt;subfolder&lt;/i&gt; for nested
+folders only, or
+&lt;i&gt;root&lt;/i&gt; for the root folder or Windows&apos; drives.
+&lt;li&gt;Files400. For iSeries objects within a library, this is the
+object&apos;s attribute. For members, this is either &lt;i&gt;DTA&lt;/i&gt; or &lt;i&gt;SRC&lt;/i&gt;. 
+For fields, this is the field&apos;s datatype (a single character).
+&lt;/ul&gt;
+&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="subsubtypefilter" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the property page is to appear.
+Specify as many of these optional filters like this as needed to explicitly scope
+this property page element.
+
+&lt;p&gt;
+This filter specifies a simple or generic resource sub-subtype
+to match. No IBM-supplied subsystems support sub-subtypes for
+their resources today.
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is a simple example of a property page for
+files or folders in any remote system type:
+&lt;h3&gt;Example One&lt;/h3&gt;
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.rse.ui.propertyPages&quot;&gt;
+      &lt;page 
+            class=&quot;com.acme.myPropertyPage1&quot;
+            id=&quot;com.acme.mypropertypage1&quot;
+            name=&quot;Remote Folder and File Info&quot;
+            typecategoryfilter=&quot;files&quot;&gt;
+      &lt;/page&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+The following refines the first example  so it only applies
+to files, versus folders, and only for local files:
+&lt;h3&gt;Example Two&lt;/h3&gt;
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.rse.ui.propertyPages&quot;&gt;
+      &lt;page 
+            class=&quot;com.acme.myPropertyPage2&quot;
+            id=&quot;com.acme.mypropertypage2&quot;
+            name=&quot;Remote File Info&quot;
+            typecategoryfilter=&quot;files&quot;
+            typefilter=&quot;file&quot;
+            subsystemfactoryid=&quot;ibm.filesLocal&quot;&gt;
+      &lt;/page&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+The following refines the second example  so it only applies
+to local Java files:
+&lt;h3&gt;Example Three&lt;/h3&gt;
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.rse.ui.propertyPages&quot;&gt;
+      &lt;page 
+            class=&quot;com.acme.myPropertyPage3&quot;
+            id=&quot;com.acme.mypropertypage3&quot;
+            name=&quot;Remote Java File Info&quot;
+            typecategoryfilter=&quot;files&quot;
+            typefilter=&quot;file&quot;
+            subsystemfactoryid=&quot;ibm.filesLocal&quot;
+            namefilter=&quot;*.java&quot;&gt;
+      &lt;/page&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+
+&lt;p&gt;
+Remember, you can repeat the &lt;samp&gt;page&lt;/samp&gt; elements as needed, to define
+multiple property pages within the same extension configuration.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Your actions must all implement the interface &lt;samp&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/samp&gt;.
+Typically, you will subclass one of the supplied base classes
+for this extension point:
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;org.eclipse.rse.ui.ui.propertypages.SystemAbstractPropertyPageExtensionAction&lt;/b&gt;,
+in plugin org.eclipse.rse.ui.
+Base class offering generic support for any remote resource property page, for any system type.
+&lt;li&gt;&lt;b&gt;org.eclipse.rse.ui.ui.propertypages.SystemAbstractRemoteFilePropertyPageExtensionAction&lt;/b&gt;,
+in plugin org.eclipse.rse.ui. 
+Specialized base class offering specific support for any remote file or folder property page, for any system type.
+&lt;li&gt;&lt;b&gt;com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractIFSPropertyPageExtensionAction&lt;/b&gt;,
+in plugin com.ibm.etools.iseries.core. 
+Specialized base class offering specific support for iSeries IFS file or folder property pages.
+&lt;li&gt;&lt;b&gt;com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractQSYSPropertyPageExtensionAction&lt;/b&gt;,
+in plugin com.ibm.etools.iseries.core. 
+Specialized base class offering specific support for property pages for iSeries objects in the QSYS file system.
+&lt;/ul&gt;
+&lt;br&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         There is no supplied implementation for this extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2002, 2006 IBM Corporation. All Rights Reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+IBM Corporation - initial API and implementation
+      </documentation>
+   </annotation>
+
+</schema>

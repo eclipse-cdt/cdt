@@ -1,0 +1,1035 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2006 IBM Corporation. All rights reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Initial Contributors:
+The following IBM employees contributed to the Remote System Explorer
+component that contains this file: David McKnight, Kushal Munir, 
+Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+
+Contributors:
+{Name} (company) - description of contribution.
+-->
+<?eclipse version="3.1"?>
+<plugin>
+
+<!-- ============================================================ -->
+<!-- EXTENSION POINT: org.eclipse.rse.ui.systemType      -->
+<!-- ============================================================ -->
+<!-- Extension point for defining system types.                   -->
+<!--                                                              -->
+<!-- There is no class to write for this extension                -->
+<!-- ... all that is required is a name and an icon to use when   -->
+<!-- .... not connected plus an icon to use when we are connected.-->
+<!-- Note we predefine the following, although they won't show up -->
+<!--  until a subsystem configuration is registered for them:           -->
+<!--     Local, Windows, Unix, Linux, AIX, Power Linux, iSeries   -->
+<!--       and z/OS...                                            -->
+<!-- See also the setPreferenceDefaults extension point           -->
+<!--                                                              -->
+<!-- Example of extension configuration:                          -->
+<!--   <extension point="org.eclipse.rse.ui.systemtype"> -->
+<!--      <type id="com.acme.systemtype.Solaris"                  -->
+<!--            name="Solaris"                                    -->
+<!--            iconlive="icons/solarisLive.gif"                  -->
+<!--            icon="icons/solaris.gif"                          -->
+<!--            description="SUN Solaris OS" (optional)           -->
+<!--            enableoffline="false" (default is false)          -->
+<!--      >                                                       -->                      
+<!--      </type>                                                 -->
+<!--   </extension>                                               -->
+<!--                                                              -->
+<!-- ============================================================ -->
+
+   <extension-point id="systemtype" name="%extPoint.systemtype" schema="schema/systemtype.exsd"/>
+
+<!-- ================================================================================== -->
+<!-- EXTENSION POINT: org.eclipse.rse.ui.subsystemconfiguration                      -->
+<!-- ================================================================================== -->
+<!-- Extension point for defining subsystem factories. A configuration is responsible for     -->
+<!--  creating subsystem instances.                                                     -->
+<!--                                                                                    -->
+<!-- Example of extension configuration:                                                -->
+<!--   <extension                                                                       -->
+<!--      point="org.eclipse.rse.ui.subsystemConfiguration">                         -->
+<!--      <configuration                                                                      -->
+<!--         systemtypes="iSeries;Windows"                                              -->
+<!--         name="Files"                                                               -->
+<!--         description="This subsystem allows you to work with files on local or remote systems."-->
+<!--         icon="icons/filesubsys.gif"                                                -->
+<!--         iconlive="icons/filesubsyslive.gif"                                        -->
+<!--         id="com.acme.etools.mypkg.myconfiguration"                                       -->
+<!--         class="com.acme.etools.mypkg.MyClass"                                      -->
+<!--         category="files"                                                           -->
+<!--         vendor="ACME"                                                              -->
+<!--      >                                                                             -->
+<!--      </configuration>                                                                    -->
+<!--   </extension>                                                                     -->
+<!-- Each extension can contain multiple configuration tags that identify a subsystem configuration -->
+<!--                                                                                    -->
+<!-- <configuration> tag attributes:                                                          -->
+<!-- ================================================================================== -->
+<!--  systemtypes => semicolon-separated list of system types or * for all              -->
+<!--  class       => class implementing org.eclipse.rse.subsystems.SubSystemFactory -->
+<!--  category    => optionally identifies category to allow efficient subsetting of    -->
+<!--                  connection lists. Pre-defined categories are "files", "cmds" and  -->
+<!--                  "jobs". Can also specify your own category like "database"        -->
+<!--  icon        => icon to display for subsystems of this configuration when not connected  -->
+<!--  iconlive    => icon to display for subsystems of this configuration when connected      -->
+<!--  name        => translatable display name for subsystems of this configuration           -->
+<!--  description => translatable descriptin for subsystems of this configuration             -->
+<!--  id          => unique id for this extension point. Will be used for a folder name -->
+<!--  vendor      => name of company supplying this configuration                             -->
+<!--  systemClass => Optional. Only used when naming an IBM-supplied subsystem configuration  -->
+<!--      in the <samp>class</samp> attribute, when you want to subclass or replace the -->
+<!--      IBM-supplied ISystem object used to manage the live connection with the remote-->
+<!--      system. Name a class that implements                                          -->
+<!--        org.eclipse.rse.subsystems.ISystem or extends the appropriate        -->
+<!--      IBM-supplied class such as org.eclipse.rse.universal.UniversalSystem   -->
+<!--      for unix, windows and system types.                                           -->
+<!-- ================================================================================== -->
+<!--                                                                                    -->
+<!-- For systemtypes, if you specify * for all, you still have a chance at runtime to   -->
+<!--  not create a subsystem for a given system type. Simply return false from your     -->
+<!--  appliesToSystemType method.                                                       -->
+<!--                                                                                    -->
+<!--                                                                                    -->
+<!-- ================================================================================== -->
+
+   <extension-point id="subsystemConfiguration" name="%extPoint.subsystemConfiguration" schema="schema/subsystemConfiguration.exsd"/>
+
+<!-- ================================================================================== -->
+<!-- EXTENSION POINT: org.eclipse.rse.ui.propertyPages                         -->
+<!-- ================================================================================== -->
+<!-- Extension point for defining property pages for remote objects.                    -->
+<!-- This extension point is modeled after the workbench extension point                -->
+<!--  org.eclipse.ui.propertyPages. However it hardcodes the objectClass to             -->
+<!--  com.etools.systems.core.ui.view.ISystemRemoteElement, and it allows filtering by the -->
+<!--  remote object's subsystem configuration, and the object's name, type, subtype and even  -->
+<!--  sub-subtype. All filter values can be scalar or simple generic: begins or ends    -->
+<!--  with an asterisk. Not specifying a filter is the same as specifying '*'           -->
+<!--                                                                                    -->
+<!-- For all the filtering values, if you want to start or end it with an asterisk      -->
+<!--  but you do not want that asterisk to be interpreted as a wildcard, use            -->
+<!--  the special symbol "%%ast." without the quotes. For example, for iSeries          -->
+<!--  object types like "*PGM" you can specify "%%ast.PGM" for an exact match.          -->
+<!--                                                                                    -->
+<!-- Like the workbench extension point, the class that you implement must              -->
+<!--  implement IWorkbenchPropertyPage.                                                 -->
+<!--                                                                                    -->
+<!-- Attributes:                                                                        -->
+<!-- ================================================================================== -->
+<!--  id    => unique id for this extension point extender                              -->
+<!--  name  => translatable display name for the page                                   -->
+<!--  icon  => an optional image icon for the property page. This is a .gif file, given -->
+<!--           with a path relative to your plugin directory.                           -->
+<!--  class => your class that implements IWorkbenchPropertyPage                        -->
+<!--  subsystemconfigurationid => the subsystem configuration id to whose objects you wish to show  -->
+<!--                        a property page for. Can be a simple name or simple generic -->
+<!--                        name to match on.                                           -->
+<!--                        This id matches the id attribute of a subsystemconfiguration      -->
+<!--                        extension point. IBM-supplied subsystem factories are       -->
+<!--                        ibm.files400, ibm.cmds400, ibm.jobs400, ibm.filesIFS,       -->
+<!--                        ibm.cmdsIFS,  ibm.filesLocal, ibm.filesWindows,             -->
+<!--                        ibm.cmdsWindows, ibm.files and ibm.cmds                     -->
+<!--  subsystemconfigurationCategory => a subsystem configuration "category" to match on. Can be a  -->
+<!--                          simple name or simple generic like "*files". Matches on   -->
+<!--                          the "category" attribute of the subsystem configuration. IBM    -->
+<!--                          values are "file", "nativefiles", "commands" or "jobs".   -->
+<!--  systemtypes => semicolon-separated list of system types or * for all              -->
+<!--  namefilter => scalar or simple generic name to match on.                          -->
+<!--  typecategoryfilter => scalar or simple generic type category to match on.         -->
+<!--                        This is subsystem configuration defined and usually not needed if -->
+<!--                        the subsystemconfiguration id is given. However, for ibm.files400 -->
+<!--                        there are multiple categories: "LIBRARIES", "OBJECTS",      -->
+<!--                        "OBJECTFILES" and "MEMBERS". Specify "OBJECT*" to match on  -->
+<!--                        all objects including files.                                -->
+<!--  typefilter => scalar or simple generic type to match on. This too is subsystem    -->
+<!--                configuration defined. For ibm.files400, it is the remote object type     -->
+<!--                such as "*PGM" or member type such as "RPGLE". For all other        -->
+<!--                ibm.files subsystem factories (unix/linux/windows/local) it is      -->
+<!--                either "file" or "folder".                                          -->
+<!--  subtypefilter => scalar or simple generic subtype to match on. For ibm.files400,  -->
+<!--                this is the OS/400 attribute of the object, such as "RPGLE". For    -->
+<!--                ibm.files subsystem factories (unix/linux/windows/local) it is      -->
+<!--                either "subfolder" or "root" to allow distinguishing of root folders-->
+<!--  subsubtypefilter => scalar or simple generic sub-subtype to match on. No IBM      -->
+<!--                subsystem factories currently set this                              -->
+<!-- ================================================================================== -->
+<!--                                                                                    -->
+<!-- __________________________________________________________________________________ -->
+<!-- Example of extension configuration:                                                -->
+<!--   <extension point="org.eclipse.rse.ui.propertyPages">                    -->
+<!--      <page class="com.acme.myPropertyPage"                                         -->
+<!--            id="com.acme.mypropertypage"                                            -->
+<!--            name="Remote File Info"                                                 -->
+<!--            icon="icons/myProperties.gif"                                           -->
+<!--            subsystemconfigurationid="ibm.filesLocal"                                     -->
+<!--            subsystemconfigurationCategory="files"                                        -->
+<!--            typefilter="file"                                                       -->
+<!--            subtypefilter="java"                                                    -->
+<!--            namefilter="*.java"                                                     -->
+<!--      </page>                                                                       -->
+<!--   </extension>                                                                     -->
+<!--                                                                                    -->
+<!-- ================================================================================== -->
+
+   <extension-point id="propertyPages" name="%extPoint.propertyPages" schema="schema/propertyPages.exsd"/>
+
+<!-- ================================================================================== -->
+<!-- EXTENSION POINT: org.eclipse.rse.ui.popupMenus                            -->
+<!-- ================================================================================== -->
+<!-- Extension point for defining actions for remote objects.                           -->
+<!-- This extension point is modeled after the workbench extension point                -->
+<!--    org.eclipse.ui.popupMenus.                                                      -->
+<!-- However, because we know what we are targeting, it is simplified a bit.            -->
+<!-- Specifically, there is no need to specify the object class, as we assume it        -->
+<!--    applies to remote objects.                                                      -->
+<!-- On the other hand, we need a special mechanism to enable you to specify exactly    -->
+<!--    what type of remote object the action is to apply to. We supply a rich set of   -->
+<!--    attributes to enable fine-grained scoping by a number of criteria. These        -->
+<!--    scoping attributes are identical to those in our own propertyPages extension    -->
+<!--    point for remote objects.                                                       -->
+<!--                                                                                    -->
+<!-- For all the filtering values, if you want to start or end it with an asterisk      -->
+<!--  but you do not want that asterisk to be interpreted as a wildcard, use            -->
+<!--  the special symbol "%%ast." without the quotes. For example, for iSeries          -->
+<!--  object types like "*PGM" you can specify "%%ast.PGM" for an exact match.          -->
+<!--                                                                                    -->
+<!-- Like the workbench extension point, unless you specify o/w, the action will show   -->
+<!--    up in the main popup menu in the "additions" group. To create cascading         -->
+<!--    submenus, first define a submenu and named separator group within it, using the -->
+<!--    menu tag and its separator sub-tag. Then refer to that menu's id in your action -->
+<!--  tag's menubarPath attribute: menuid/separator-group-name.                         -->
+<!--                                                                                    -->
+<!-- Like the workbench extension point, the action class that you implement must       -->
+<!-- implement org.eclipse.ui.IObjectActionDelegate                                     -->
+<!--                                                                                    -->
+<!-- ================================================================================== -->
+<!-- <objectContribution> main tag:                                                     -->
+<!--   Within each of these tags, specify scoping criteria and then all the menus and   -->
+<!--   actions that apply to that scoping criteria. Other than id, each of the other    -->
+<!--   attributes are optional ... specify as many as needed to uniquely identify which -->
+<!--   remote objects your actions should apply to. That is, show up in the popup menu. -->
+<!-- ================================================================================== -->
+<!--  id    => unique id for this extension point extender                              -->
+<!--  subsystemconfigurationid => the subsystem configuration id for whose objects you wish to show -->
+<!--                        a popup action for. Can be a simple name or simple generic  -->
+<!--                        name to match on.                                           -->
+<!--                        This id matches the id attribute of a subsystemconfiguration      -->
+<!--                        extension point. IBM-supplied subsystem factories are       -->
+<!--                        ibm.files400, ibm.cmds400, ibm.jobs400, ibm.filesIFS,       -->
+<!--                        ibm.cmdsIFS,  ibm.filesLocal, ibm.filesWindows,             -->
+<!--                        ibm.cmdsWindows, ibm.files and ibm.cmds                     -->
+<!--  subsystemconfigurationCategory => a subsystem configuration "category" to match on. Can be a  -->
+<!--                          simple name or simple generic like "*files". Matches on   -->
+<!--                          the "category" attribute of the subsystem configuration. IBM    -->
+<!--                          values are "file", "nativefiles", "commands" or "jobs".   -->
+<!--  systemtypes => semicolon-separated list of system types or * for all              -->
+<!--  namefilter => scalar or simple generic name to match on                           -->
+<!--  typecategoryfilter => scalar or simple generic type category to match on.         -->
+<!--                        This is subsystem configuration defined and usually not needed if -->
+<!--                        the subsystemconfiguration id is given. However, for ibm.files400 -->
+<!--                        there are multiple categories: "LIBRARIES", "OBJECTS",      -->
+<!--                        "OBJECTFILES" and "MEMBERS". Specify "OBJECT*" to match on  -->
+<!--                        all objects including files.                                -->
+<!--  typefilter => scalar or simple generic type to match on. This too is subsystem    -->
+<!--                configuration defined. For ibm.files400, it is the remote object type     -->
+<!--                such as "*PGM" or member type such as "RPGLE". For all other        -->
+<!--                ibm.files subsystem factories (unix/linux/windows/local) it is      -->
+<!--                either "file" or "folder".                                          -->
+<!--  subtypefilter => scalar or simple generic subtype to match on. For ibm.files400,  -->
+<!--                this is the OS/400 attribute of the object, such as "RPGLE". For    -->
+<!--                ibm.files subsystem factories (unix/linux/windows/local) it is      -->
+<!--                either "subfolder" or "root" to allow distinguishing of root folders-->
+<!--  subsubtypefilter => scalar or simple generic sub-subtype to match on. No IBM      -->
+<!--                subsystem factories currently set this                              -->
+<!--                                                                                    -->
+<!-- ================================================================================== -->
+<!-- <menu> sub tag (of <objectContribution> tag) attributes:                           -->
+<!--   Use one of these tags for each cascading submenu you wish to define in order to  -->
+<!--   subsequently direction your actions into that submenu. To have nested cascading  -->
+<!--   submenus, define two menu tags, and name the first in the path attribute         -->
+<!--   of the second.                                                                   -->
+<!--   What is a "group"? It is a named partition of a popup menu, allowing you to      -->
+<!--   direct where in the menu to place an action. There are many predefined already.  -->
+<!--   The typical and default group for your actions is "additions".                   -->
+<!-- ================================================================================== -->
+<!--  id    => unique id for this submenu, used later in first part of the menubarPath  -->
+<!--            attribute of the action or path attribute of a nested submenu.          -->
+<!--            This is used to identify the target submenu of the action or subsubmenu -->
+<!--  label => readable text to show up in the popup menu, for this cascading menu.     -->
+<!--            Do NOT specify '&' for mnemonics as these are assigned for you.         -->
+<!--            However, accerator information is valid as defined by the Eclipse rules.-->
+<!--  path  => the group or previously defined menu where to place this menu in the     -->
+<!--            popup. If omitted, it is placed in the "additions" group with is near   -->
+<!--            the bottom of the popup. Other predefined groups are "new", "goto",     -->
+<!--            "openwith", "open", "show", "change" and "reorganize" in order from top -->
+<!--            to bottom of the popup                                                  -->
+<!--                                                                                    -->
+<!-- ================================================================================== -->
+<!-- <separator> sub tag (of <menu> tag) attributes:                                    -->
+<!--   Use the separator tag to define your own groups within your own submenus. Since  -->
+<!--   it is your menu there are no groups predefined, and you must specify a group as  -->
+<!--   the last part of the menubarPath attribute of the action tag. Therefore, menu    -->
+<!--   tags must have at least one separator tag. If more than one is specified, then   -->
+<!--   a separator is placed between the two groups at runtime.                         -->
+<!-- ================================================================================== -->
+<!--  name  => the arbitrary name to assign this group. Specify it later in menubarPath -->
+<!--          attributes for actions to direct an action to an area of the menu.        -->
+<!--                                                                                    -->
+<!-- ================================================================================== -->
+<!-- <action> sub tag (of <objectContribution> tag) attributes:                         -->
+<!--   Use one of these tags for each action to place in the popup menu for remote      -->
+<!--   objects. It will only show up if the object matches the criteria given in the    -->
+<!--   parent <objectContribution> tag.                                                 -->
+<!-- ================================================================================== -->
+<!--  id    => unique id for this action. Not really used but must be specified.        -->
+<!--  label => readable text to display in the popup menu for this action.              -->
+<!--            Do NOT specify '&' for mnemonics as these are assigned for you.         -->
+<!--            However, accerator information is valid as defined by the Eclipse rules.-->
+<!--  icon  => an optional image icon for the popup menu. This is a .gif file, given    -->
+<!--           with a path relative to your plugin directory. OPTIONAL ATTRIBUTE.       -->
+<!--  class => your action class that implements org.eclipse.ui.IObjectActionDelegate   -->
+<!--  tooltip => optional tooltip text for this action                                  -->
+<!--  menubarPath => a slash-delimited path ('/') that is used to specify the location  -->
+<!--           of the action in the pop-up menu. Each token in the path except the last -->
+<!--           one represents an existing submenu in the hierarchy, as defined via the  -->
+<!--           id attribute of a <menu> tag previously. The last token represents the   -->
+<!--           named separator group into which the action will be added. If no path is -->
+<!--           given, this must be an IBM-supplied group as defined in the comments     -->
+<!--           above for the path attribute of the <menu> tag. If a path is given then  -->
+<!--           this must match the name attribute of some <separator> subtag within one -->
+<!--           of your <menu> tags.                                                     -->
+<!--           If the path is omitted, the action will be added to the standard group   -->
+<!--           named "additions". Indeed, same if the whole menubarPath attr is omitted.-->
+<!-- enablesFor => a value indicating the selection count which must be met to enable   -->
+<!--           the action.  If this attribute is specified and the condition is met the -->
+<!--           action is enabled.  If the condition is not met the action is disabled.  -->
+<!--           If no attribute is specified the action is enabled for any number of     -->
+<!--           items selected.  The following attribute formats are supported:          -->
+<!--                ! -> 0 items selected                                               -->
+<!--                ? -> 0 or 1 items selected                                          -->
+<!--                + -> 1 or more items selected                                       -->
+<!--                multiple, 2+ -> 2 or more items selected                            -->
+<!--                n - a precise number of items selected.  Example: 4.                -->
+<!--                * - any number of items selected                                    -->
+<!-- state =>  an optional attribute indicating that the action should be of a toggle   -->
+<!--           type. When added to a pop-up menu, it will manifest itself as a check    -->
+<!--           box item.. If defined, attribute value will be used as the initial state -->
+<!--           (either true or false)                                                   -->
+<!-- helpContextId => a optional, unique identifier indicating the help context id for  -->
+<!--           this action. When the action appears as a menu item, pressing F1 while   -->
+<!--           the menu item is highlighted will display help for the given context id. -->
+<!--                                                                                    -->
+<!-- __________________________________________________________________________________ -->
+<!-- Example of extension configuration:                                                -->
+<!--   <extension point="org.eclipse.rse.ui.popupMenus">                       -->
+<!--      <objectContribution                                                           -->
+<!--            id="com.acme.displayfile.actions"                                       -->
+<!--            subsystemconfigurationid="ibm.files400"                                       -->
+<!--            typecategoryfilter="OBJECT*"                                            -->
+<!--            typefilter="*FILE"                                                      -->
+<!--            subtypefilter="DSPF"                                                    -->
+<!--            namefilter="*">                                                         -->
+<!--            <menu id="com.acme.displayfile.menu"                                    -->
+<!--                  label="My Display File Actions">                                  -->
+<!--                  <separator name="group1"/>                                        -->
+<!--            </menu>                                                                 -->
+<!--            <action id="com.acme.action1"                                           -->
+<!--                    label="My first action"                                         -->
+<!--                    class="com.acme.actions.Action1"                                -->
+<!--                    menubarPath="com.acme.displayfile.menu/group1"                  -->
+<!--                    enablesFor="1">                                                 -->
+<!--            </action>                                                               -->
+<!--            <action id="com.acme.action2"                                           -->
+<!--                    label="My second action"                                        -->
+<!--                    class="com.acme.actions.Action2"                                -->
+<!--                    menubarPath="com.acme.displayfile.menu/group1"                  -->
+<!--                    enablesFor="+">                                                 -->
+<!--            </action>                                                               -->
+<!--      </objectContribution>                                                         -->
+<!--   </extension>                                                                     -->
+<!-- Remember, you can repeat the <objectContribution> tags as needed, as well as the   -->
+<!--  <menu> and <action> tags within them.                                             -->
+<!-- ================================================================================== -->
+
+   <extension-point id="popupMenus" name="%extPoint.popupMenus" schema="schema/popupMenus.exsd"/>
+
+<!-- ================================================================================== -->
+<!-- EXTENSION POINT: org.eclipse.rse.ui.passwordPersistence		            -->
+<!-- ================================================================================== -->
+<!-- Extension point for adding a system type to the Remote Systems password registry   -->
+<!--                                                                                    -->
+<!-- Example of extension configuration:                                                -->
+<!--   <extension point="org.eclipse.rse.ui.passwordPersistence">              -->
+<!--      <provider                                                                     -->
+<!--            id="com.acme.iseries.passwordpersistence"                               -->
+<!--            systemType="iSeries"                                                    -->
+<!--            caseSensitive="false">                                                  -->
+<!--      </provider>                                                                   -->
+<!--   </extension>                                                                     -->
+<!--                                                                                    -->
+<!-- <provider> tag attributes:                                                         -->
+<!-- ================================================================================== -->
+<!--  id          => unique id for this extension point. 								-->
+<!--  systemType  => System type that saved passwords are used for.  This will be       -->
+<!--                 displayed in the Add Password Information dialog's system type     -->
+<!--                 drop down.                                                         -->
+<!--  caseSensitive => [optional] If the user ID is case sensitive [ true | false ]     -->
+<!-- ================================================================================== -->
+
+   <extension-point id="passwordPersistence" name="%extPoint.password" schema="schema/passwordPersistence.exsd"/>
+
+<!-- ================================================================================== -->
+<!-- EXTENSION POINT: org.eclipse.rse.ui.compile                        		-->
+<!-- ================================================================================== -->
+<!-- Extension point for defining compile commands.                                     -->
+<!-- Example of extension configuration:												-->
+<!-- 	<extension point="org.eclipse.rse.ui.compile">							-->
+<!-- 		<compilecommand																-->
+<!--			id="com.mycomp.compileCommand1"											-->
+<!--			label="My Label 1"														-->
+<!--			commandstring="mycommand ${resource_name}"								-->
+<!--			subsystemconfigurationid="ibm.files"											-->
+<!--			namefilter="*.java">													-->
+<!--		</compilecommand>															-->
+<!--	</extension>																	-->
+<!--																					-->
+<!-- <compileCommand> tag attributes:													-->
+<!-- ================================================================================== -->
+<!-- id					=>	unique id for this compile command.							-->
+<!-- label				=>	label for compile command. This will be displayed in the	-->
+<!--						compile menus.												-->
+<!-- commandstring		=>	the compile string to be executed. Can contain substitution	-->
+<!--						variables.													-->
+<!-- subsystemconfigurationid	=>	the subsystem configuration id of resources to which this compile -->
+<!--						compile command will apply.									-->
+<!-- namefilter			=> 	the names to match. Must be either generic or of the form	-->
+<!--						*.extension, e.g. *.java.									-->
+<!-- typefilter			=>	the type of the remote resource. Only allowed "file" for 	-->
+<!--						subsystems ibm.filesXXX, and member type for ibm.files400	-->
+<!--						e.g. RPGLE.													-->
+<!-- labeleditable		=>	specify whether label is editable in the Work With Compile	-->
+<!--						Commands dialog.											-->
+<!--																					-->
+<!-- See the extension point reference for more details.								-->
+	
+	<extension-point id="compile" name="%extPoint.compile" schema="schema/compile.exsd"/>
+
+<!-- ================================================================================== -->
+<!-- EXTENSION POINT: org.eclipse.rse.ui.remoteSystemsViewPreferencesActions   -->
+<!-- ================================================================================== -->
+<!-- Extension point for defining actions that appear in the cascading Preferences menu -->
+<!--  in the local pulldown menu for the Remote Systems view. These actions should      -->
+<!--  take the directly to a preference page root, as a shortcut to navigating the      -->
+<!--  Windows->Preferences preferences dialog. The action's class should extend the     -->
+<!--  class org.eclipse.rse.ui.actions.SystemBasePreferencesPageAction.     -->
+<!--                                                                                    -->
+<!-- Example of extension configuration:												-->
+<!-- 	<extension point="org.eclipse.rse.ui.remoteSystemsViewPreferencesActions"> -->
+<!-- 		<action																		-->
+<!--			id="com.acme.showMyPreferencePage"         								-->
+<!--			label="My Preferences"													-->
+<!--			preferencePageId="com.acme.myPreferencePage">	  				        -->
+<!--		</action>                                                                   -->
+<!--	</extension>																	-->
+<!--																					-->
+<!-- <action> tag attributes:															-->
+<!-- ================================================================================== -->
+<!-- id					=>	unique id for this action.									-->
+<!-- label				=>	label for the action. This will be displayed in the			-->
+<!--						preferences cascading menu.									-->
+<!-- preferencePageId   =>  the "id" value of your org.eclipse.ui.preferencePages       -->
+<!--                           extension, for the preference page to root the           -->
+<!--                           preferences dialog to when the action is selected        -->
+<!-- preferencePageCategory => if this is not a root page, then specify the id of the   -->
+<!--                         root page this is part of. This should be the absolute     -->
+<!--                         root, not the immediate parent. It tells us what root tree -->
+<!--                         to search in to find the child.                            -->
+<!-- icon               =>  optional. Icon to display for this action.                  -->
+<!-- tooltip            =>  optional. Tooltip text to show in hover help.               -->
+<!-- helpContextId      =>  optional. ID of contextual help to show when F1 is pressed  -->
+<!--																					-->
+<!-- See the extension point reference for more details.								-->
+	
+	<extension-point id="remoteSystemsViewPreferencesActions" name="%extPoint.remoteSystemsViewPreferencesAction" schema="schema/remoteSystemsViewPreferencesAction.exsd"/>
+	
+<!-- ================================================================================== -->
+<!-- EXTENSION POINT: org.eclipse.rse.ui.showNewConnectionPrompt               -->
+<!-- ================================================================================== -->
+<!-- This extension point is for products that include RSE, which want to affect some   -->
+<!--  of the out of box defaults for preferences. The preferences currently supported   -->
+<!--  are:                                                                              -->
+<!--     showNewConnectionPrompt -> specify false to not see the New Connection prompt  -->
+<!--                                  in the Remote Systems view.                       -->
+<!--     showLocalConnection -> specify false to not pre-create a Local connection      -->
+<!--     enableSystemTypes -> specify the system types to enable, comma-separated. All  -->
+<!--                       others are disabled, but can be re-enabled via preferences.  -->
+<!--     disableSystemTypes -> specify the system types to disable, comma-separated. All-->
+<!--                       others are enabled, but can be disabled via preferences.     -->
+<!-- Usually, these settings can still be overridden by users via preferences.          -->
+<!--                                                                                    -->
+<!-- Example usage:                                                                     -->
+<!--   <extension point="org.eclipse.rse.ui.rseConfigDefaults">                -->
+<!--        <defaults id="xyz"                                                          -->
+<!--			  productId="com.mycompany.myproduct"                                   -->
+<!--              showNewConnectionPrompt="false" showLocalConnection="false"           -->
+<!--              enableSystemTypes="Local;Linux;Unix">                                 -->
+<!--        </defaults>                                                                 -->
+<!--   </extension>                                                                     -->
+<!-- See the extension point reference for more details.                                -->
+
+	<extension-point id="rseConfigDefaults" name="%extPoint.rseConfigDefaults" schema="schema/rseConfigDefaults.exsd"/>     	
+	
+<!-- ============================================ -->
+<!-- Define a RemoteSystems project nature        -->
+<!-- ============================================ -->
+   <extension
+         id="remotesystemsnature"
+         name="%Nature.RemoteSystemsNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.rse.core.RemoteSystemsProject">
+         </run>
+      </runtime>
+   </extension>
+
+<!-- ============================================ -->
+<!-- Define a RemoteSystemsTempFiles project      -->
+<!-- nature to enable debugging                   -->
+<!-- ============================================ -->
+   <extension
+         id="remoteSystemsTempNature"
+         name="%Nature.RemoteSystemsTempNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+         	class="org.eclipse.rse.core.RemoteSystemsTempProjectNature">
+         </run>
+      </runtime>
+   </extension>
+
+<!-- ============================================ -->
+<!-- Define a RemoteSystems preference page        -->
+<!-- ============================================ -->
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%PreferencePage.RemoteSystems"
+            class="org.eclipse.rse.ui.propertypages.RemoteSystemsPreferencePage"
+            id="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage">
+      </page>
+      <page
+            name="%PreferencePage.Logging"
+            category="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
+            class="org.eclipse.rse.ui.propertypages.SystemLoggingPreferencePage"
+            id="org.eclipse.rse.ui.LoggingPreferences">
+      </page>
+      <page
+            name="%PreferencePage.Signon"
+            category="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
+            class="org.eclipse.rse.ui.propertypages.SignonPreferencePage"
+            id="org.eclipse.rse.ui.preferences.SignonPreferencePage">
+      </page>
+      <page
+            name="%PreferencePage.Communications"
+            category="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
+            class="org.eclipse.rse.ui.propertypages.SystemCommunicationsPreferencePage"
+            id="org.eclipse.rse.ui.preferences.SystemCommunicationsPreferencePage">
+      </page>
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.rse.ui.propertypages.SystemPreferenceInitializer"/>   
+   </extension>
+   
+<!-- predefine known system types -->
+   <extension
+         point="org.eclipse.rse.ui.systemtype">
+      <type id="org.eclipse.rse.ui.systemtype.iseries"
+            name="iSeries"
+            iconlive="icons/full/obj16/system400live_obj.gif"
+            icon="icons/full/obj16/system400_obj.gif"
+			description="%systemType.iseries">
+      </type>
+       <type id="org.eclipse.rse.ui.systemtype.iseries.PASE"
+            name="PASE"
+            iconlive="icons/full/obj16/system400live_obj.gif"
+            icon="icons/full/obj16/system400_obj.gif"
+			description="%systemType.iseries.PASE">
+      </type>
+      <type id="org.eclipse.rse.ui.systemtype.windows"
+            name="Windows"
+            iconlive="icons/full/obj16/systemwinlive_obj.gif"
+            icon="icons/full/obj16/systemwin_obj.gif"
+			description="%systemType.windows">
+	  </type>
+      <!--
+	  <type id="org.eclipse.rse.ui.systemtype.zseries"
+         	name="z/OS"
+         	iconlive="icons/full/obj16/system390live_obj.gif"
+         	icon="icons/full/obj16/system390_obj.gif"
+			description="%systemType.zseries">
+   	  </type>
+   	  -->
+      <type id="org.eclipse.rse.ui.systemtype.linux"
+            name="Linux"
+            iconlive="icons/full/obj16/systemlinuxlive_obj.gif"
+            icon="icons/full/obj16/systemlinux_obj.gif"
+			description="%systemType.linux">
+      </type>
+      <type id="org.eclipse.rse.ui.systemtype.linux.power"
+            name="Power Linux"
+            iconlive="icons/full/obj16/systemlinuxlive_obj.gif"
+            icon="icons/full/obj16/systemlinux_obj.gif"
+			description="%systemType.powerlinux">
+      </type>
+      <type id="org.eclipse.rse.ui.systemtype.linux.zSeries"
+            name="zSeries Linux"
+            iconlive="icons/full/obj16/systemlinuxlive_obj.gif"
+            icon="icons/full/obj16/systemlinux_obj.gif"
+			description="%systemType.zlinux">
+      </type>      
+      <type id="org.eclipse.rse.ui.systemtype.unix"
+            name="Unix"
+            iconlive="icons/full/obj16/systemunixlive_obj.gif"
+            icon="icons/full/obj16/systemunix_obj.gif"
+			description="%systemType.unix">
+      </type>
+      <type id="org.eclipse.rse.ui.systemtype.aix"
+            name="AIX"
+            iconlive="icons/full/obj16/systemaixlive_obj.gif"
+            icon="icons/full/obj16/systemaix_obj.gif"
+			description="%systemType.aix">
+      </type>
+      <type id="org.eclipse.rse.ui.systemtype.local"
+            name="Local"
+            iconlive="icons/full/obj16/systemlocallive_obj.gif"
+            icon="icons/full/obj16/systemlocal_obj.gif"
+			description="%systemType.local">
+      </type>
+   </extension>
+
+
+<!-- ============================================ -->
+<!-- Define Workbench Properties Pages            -->
+<!-- ============================================ -->
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.rse.core.subsystems.ISubSystem"
+            name="%PropertyPage.SubSystem"
+            class="org.eclipse.rse.ui.propertypages.SystemSubSystemPropertyPageCore"
+            id="org.eclipse.rse.SubSystemsPropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.rse.model.IHost"
+            name="%PropertyPage.Connection"
+            class="org.eclipse.rse.ui.propertypages.SystemConnectionPropertyPage"
+            id="org.eclipse.rse.SystemPropertyPage">
+      </page>
+      <!-- with move to services this should disappear
+      <page
+            objectClass="org.eclipse.rse.model.IHost"
+            name="%PropertyPage.Connection.SubSystems"
+            class="org.eclipse.rse.ui.propertypages.SystemConnectionSubSystemsPropertyPage"
+            id="org.eclipse.rse.SystemConnectionSubSystemsPropertyPage">
+      </page>
+      -->
+      <page
+            objectClass="org.eclipse.rse.model.IHost"
+            name="%PropertyPage.Connection.ConnectorServices"
+            class="org.eclipse.rse.ui.propertypages.SystemConnectorServicesPropertyPage"
+            id="org.eclipse.rse.ui.propertypages.SystemConnectorServicesPropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.rse.filters.ISystemFilterPool"
+            name="%PropertyPage.FilterPool"
+            class="org.eclipse.rse.ui.propertypages.SystemFilterPoolPropertyPage"
+            id="org.eclipse.rse.SystemFilterPoolPropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.rse.filters.ISystemFilterPoolReference"
+            name="%PropertyPage.Reference"
+            class="org.eclipse.rse.ui.propertypages.SystemFilterPoolReferencePropertyPage"
+            id="org.eclipse.rse.SystemFilterPoolReferencePropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.rse.filters.ISystemFilterPoolReference"
+            name="%PropertyPage.ReferencedFilterPool"
+            class="org.eclipse.rse.ui.propertypages.SystemFilterPoolPropertyPage"
+            id="org.eclipse.rse.SystemFilterPoolReferencePropertyPage2">
+      </page>
+      <page
+            objectClass="org.eclipse.rse.filters.ISystemFilter"
+            name="%PropertyPage.Filter"
+            class="org.eclipse.rse.ui.propertypages.SystemFilterPropertyPage"
+            id="org.eclipse.rse.SystemFilterPropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.rse.filters.ISystemFilterReference"
+            name="%PropertyPage.Filter"
+            class="org.eclipse.rse.ui.propertypages.SystemFilterPropertyPage"
+            id="org.eclipse.rse.SystemFilterReferencePropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.rse.filters.ISystemFilter"
+            name="%PropertyPage.ChangeFilter"
+            class="org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage"
+            id="org.eclipse.rse.SystemChangeFilterPropertyPage">
+            <filter name="showChangeFilterStringPropertyPage" value="true"/>
+      </page>
+      <page
+            objectClass="org.eclipse.rse.filters.ISystemFilterReference"
+            name="%PropertyPage.ChangeFilter"
+            class="org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage"
+            id="org.eclipse.rse.SystemChangeFilterReferencePropertyPage">
+            <filter name="showChangeFilterStringPropertyPage" value="true"/>
+      </page>
+      <page
+            objectClass="org.eclipse.rse.filters.ISystemFilterString"
+            name="%PropertyPage.FilterString"
+            class="org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage"
+            id="org.eclipse.rse.SystemFilterStringPropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.rse.ui.view.team.SystemTeamViewCategoryNode"
+            name="%PropertyPage.TeamViewCategoryNode"
+            class="org.eclipse.rse.ui.propertypages.SystemTeamViewCategoryPropertyPage"
+            id="org.eclipse.rse.SystemTeamViewCategoryPropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.rse.model.ISystemProfile"
+            name="%PropertyPage.Profile"
+            class="org.eclipse.rse.ui.propertypages.SystemTeamViewProfilePropertyPage"
+            id="org.eclipse.rse.SystemProfilePropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.rse.ui.view.team.SystemTeamViewSubSystemFactoryNode"
+            name="%PropertyPage.TeamViewSubSystemFactoryNode"
+            class="org.eclipse.rse.ui.propertypages.SystemTeamViewSubSystemFactoryPropertyPage"
+            id="org.eclipse.rse.SystemTeamViewSubSystemFactoryPropertyPage">
+      </page>
+      
+   </extension>
+<!-- ============================================ -->
+<!-- Define Help Context                          -->
+<!-- ============================================ -->
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="HelpContexts.xml">
+      </contexts>
+   </extension>
+<!-- ============================================ -->
+<!-- Define Remote Systems Explorer View          -->
+<!-- ============================================ -->
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%View.Category.RemoteSystems"
+            id="org.eclipse.rse.ui.view">
+      </category>
+      <view
+            name="%View.RemoteSystems"
+            icon="./icons/full/cview16/system_view.gif"
+            category="org.eclipse.rse.ui.view"
+            class="org.eclipse.rse.ui.view.SystemViewPart"
+            id="org.eclipse.rse.ui.view.systemView">
+      </view>
+      <view
+            name="%View.Team"
+            icon="./icons/full/cview16/team_view.gif"
+            category="org.eclipse.rse.ui.view"
+            class="org.eclipse.rse.ui.view.team.SystemTeamViewPart"
+            id="org.eclipse.rse.ui.view.teamView">
+      </view>
+      <view
+            name="%View.RemoteSystemsDetails"
+            icon="./icons/full/cview16/system_view.gif"
+            category="org.eclipse.rse.ui.view"
+            class="org.eclipse.rse.ui.view.SystemTableViewPart"
+            id="org.eclipse.rse.ui.view.systemTableView">
+      </view>
+
+      
+<!-- Remote Error List being commented out      
+      <view
+            name="%View.RemoteErrorList"
+            icon="./icons/full/cview16/errorlist_view.gif"
+            category="org.eclipse.rse.ui.view"
+            class="org.eclipse.rse.ui.view.commands.SystemBuildErrorViewPart"
+            id="org.eclipse.rse.ui.view.buildErrorView">
+      </view>
+-->
+
+   </extension>
+<!-- ================================================================================= -->
+<!-- Define Remote Systems Explorer view pulldown menu submenu for preferences actions -->
+<!-- ================================================================================= -->
+	<extension point="org.eclipse.rse.ui.remoteSystemsViewPreferencesActions">
+ 		<action	
+			id="org.eclipse.rse.ui.preferences.actions.rse"
+			label="%PreferencePageAction.rse.label"
+			preferencePageId="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
+            tooltip="%PreferencePageAction.rse.tooltip"
+            helpContextId="org.eclipse.rse.ui.aprefrse"
+		/>
+	</extension>
+
+<!-- ============================================ -->
+<!-- Define Remote Systems Perspective            -->
+<!-- ============================================ -->
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="%Perspective.Explorer"
+            icon="./icons/full/cview16/system_persp.gif"
+            class="org.eclipse.rse.ui.view.SystemPerspectiveLayout"
+            id="org.eclipse.rse.ui.view.SystemPerspective">
+      </perspective>
+   </extension>
+<!-- ================================================================== -->
+<!--                                                                    -->
+<!--  for the Open In New Perspective RSE perspectives                  -->
+<!-- Element Factory for Restoring Input Objects from mementos,         -->
+<!--                                                                    -->
+<!-- ================================================================== -->
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.rse.ui.view.SystemViewPart"
+            id="org.eclipse.rse.systemview.elementfactory">
+      </factory>
+   </extension>
+
+<!-- ================================================================= -->
+<!-- 		Define Archive Handlers extension point					   -->
+<!-- ================================================================= -->
+   <extension-point id="archivehandlers" name="%extPoint.archivehandlers" schema="schema/archivehandlers.exsd"/>
+
+
+<!-- ================================================================= -->
+<!-- 		Define Mount Path Mappers extension point				   -->
+<!-- ================================================================= -->
+   <extension-point id="mountPathMappers" name="%extPoint.mountPathMappers" schema="schema/mountPathMappers.exsd"/>
+
+<!-- ================================================================= -->
+<!-- 		Define Dynamic Popup Menu Extension extension point -->
+<!-- ================================================================= -->
+   <extension-point id="dynamicPopupMenuExtensions" name="%extPoint.dynamicPopupMenuExtensions" schema="schema/dynamicPopupMenuExtensions.exsd"/>
+
+<!-- ================================================================= -->
+<!-- 		Define Keystore Provider extension point -->
+<!-- ================================================================= -->
+   <extension-point id="keystoreProviders" name="%extPoint.keystoreProviders" schema="schema/keystoreProviders.exsd"/>
+
+
+<!-- ================================================================= -->
+<!-- 		Define Persistance Provider extension point -->
+<!-- ================================================================= -->
+   <extension-point id="persistenceProviders" name="%extPoint.persistenceProviders" schema="schema/persistenceProviders.exsd"/>
+
+
+
+<!-- ================================================================= -->
+<!-- Define the Remote Search View                                     -->
+<!-- ================================================================= -->
+	<extension point="org.eclipse.ui.views">
+		<view
+			name="%View.Search"
+			icon="icons/full/obj16/system_search.gif"
+			category="org.eclipse.rse.ui.view"
+			class="org.eclipse.rse.ui.view.search.SystemSearchViewPart"
+			id="org.eclipse.rse.ui.view.SystemSearchView">
+		</view>
+	</extension>
+	
+	
+	
+<!-- ================================================================= -->
+<!-- Define the Remote Scratchpad View                                 -->
+<!-- ================================================================= -->
+	<extension point="org.eclipse.ui.views">
+		<view
+			name="%View.Scratchpad"
+			icon="icons/full/view16/scratchpad_view.gif"
+			category="org.eclipse.rse.ui.view"
+			class="org.eclipse.rse.ui.view.scratchpad.SystemScratchpadViewPart"
+			id="org.eclipse.rse.ui.view.scratchpad.SystemScratchpadViewPart">
+		</view>
+	</extension>
+	
+<!-- ================================================================= -->
+<!-- Define the Remote Monitor View                                 -->
+<!-- ================================================================= -->
+	<extension point="org.eclipse.ui.views">
+		<view
+			name="%View.Monitor"
+			icon="icons/full/view16/system_view.gif"
+			category="org.eclipse.rse.ui.view"
+			class="org.eclipse.rse.ui.view.monitor.SystemMonitorViewPart"
+			id="org.eclipse.rse.ui.view.monitorView">
+		</view>
+	</extension>
+
+<!-- ================================================================= -->
+<!-- Define the Drop Actions                                           -->
+<!-- ================================================================= -->
+	<extension point="org.eclipse.ui.dropActions">
+		<action
+	      id="org.eclipse.rse.ui.view.DropActions"
+		  class="org.eclipse.rse.ui.view.SystemDropActionDelegate">
+        </action>	
+	</extension>
+
+
+<!-- ========================================================================= -->
+<!-- Themes                                                                    -->
+<!-- ========================================================================= -->
+ <extension
+       point="org.eclipse.ui.themes">
+       <themeElementCategory
+			label="%RSEPresentation.label"
+			id="org.eclipse.rse.ui.presentation">
+		  <description>%RSEPresentation.description</description>
+	   </themeElementCategory>	
+       <themeElementCategory
+			label="%MessagesPresentation.label"
+			parentId="org.eclipse.rse.ui.presentation"
+			id="org.eclipse.rse.ui.messages.presentation">
+		  <description>%MessagesPresentation.description</description>
+	   </themeElementCategory>
+      <colorDefinition
+            label="%ErrorMessage.label"
+            categoryId="org.eclipse.rse.ui.messages.presentation"
+            value="COLOR_RED"
+            id="MESSAGE_ERROR_COLOR">
+         <description>
+            %ErrorMessage.description
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%WarningMessage.label"
+            categoryId="org.eclipse.rse.ui.messages.presentation"
+            value="255,80,0"
+            id="MESSAGE_WARNING_COLOR">
+         <description>
+            %WarningMessage.description
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%InfoMessage.label"
+            categoryId="org.eclipse.rse.ui.messages.presentation"
+            value="COLOR_BLUE"
+            id="MESSAGE_INFORMATION_COLOR">
+         <description>
+            %InfoMessage.description
+         </description>
+      </colorDefinition>
+       <themeElementCategory
+			label="%RemoteCommandsViewPresentation.label"
+			parentId="org.eclipse.rse.ui.presentation"
+			id="org.eclipse.rse.ui.remotecommandsview.presentation">
+		  <description>%RemoteCommandsViewPresentation.description</description>
+	   </themeElementCategory>
+         <fontDefinition
+            label="%RemoteCommandsViewFontDefinition.label"
+            defaultsTo="org.eclipse.jface.textfont"
+            categoryId="org.eclipse.rse.ui.remotecommandsview.presentation"
+            id="REMOTE_COMMANDS_VIEW_FONT">
+         <description>
+            %RemoteCommandsViewFontDefinition.description
+         </description>
+      </fontDefinition>
+      <colorDefinition
+            label="%RemoteCommandsForeground.label"
+            categoryId="org.eclipse.rse.ui.remotecommandsview.presentation"
+            value="COLOR_WHITE"
+            id="REMOTE_COMMANDS_VIEW_FG_COLOR">
+         <description>
+            %RemoteCommandsForeground.description
+         </description>
+      </colorDefinition>
+       <colorDefinition
+            label="%RemoteCommandsBackground.label"
+            categoryId="org.eclipse.rse.ui.remotecommandsview.presentation"
+            value="COLOR_BLACK"
+            id="REMOTE_COMMANDS_VIEW_BG_COLOR">
+         <description>
+            %RemoteCommandsBackground.description
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%RemoteCommandsPrompt.label"
+            categoryId="org.eclipse.rse.ui.remotecommandsview.presentation"
+            value="COLOR_GREEN"
+            id="REMOTE_COMMANDS_VIEW_PROMPT_COLOR">
+         <description>
+            %RemoteCommandsPrompt.description
+         </description>
+      </colorDefinition>
+   </extension>
+   
+ 
+<!-- ========================================================================= -->
+<!-- Default RSE DOM persistance provider                                      -->
+<!-- ========================================================================= -->  
+ <extension
+       point="org.eclipse.rse.ui.persistenceProviders">
+    <persistenceProvider
+          class="org.eclipse.rse.persistence.DefaultRSEPersistenceProvider"
+          id="org.eclipse.rse.ui.persistenceProvider1"
+          name="org.eclipse.rse.ui.persistenceProvider1"/>
+ </extension>
+ 
+ 	<extension point="org.eclipse.ui.decorators"> 
+         <decorator
+            id="org.eclipse.rse.subsystems.error.decorator" 
+            label="%SubSystemErrorDecorator.label" 
+            state="true" 
+            lightweight="true" 
+            icon="icons/full/ovr16/error_ovr.gif" 
+            location="BOTTOM_RIGHT"> 
+            <enablement>
+            	<and>
+                	<objectClass name="org.eclipse.rse.core.subsystems.ISubSystem"/>
+                	<objectState name="isConnectionError" value="true"/>
+                </and> 
+            </enablement>
+        </decorator>
+     </extension>
+
+
+<!-- ================================================================= -->
+<!-- Add Linux and Unix system types to the Remote Systems password    -->
+<!-- registry 														   -->
+<!-- ================================================================= -->
+   <extension point="org.eclipse.rse.ui.passwordPersistence">
+      <provider systemType="Linux"
+            id="org.eclipse.rse.universal.passwordPersistence.Linux">
+      </provider>
+   </extension>
+   <extension point="org.eclipse.rse.ui.passwordPersistence">
+      <provider systemType="Power Linux"
+            id="org.eclipse.rse.universal.passwordPersistence.PowerLinux">
+      </provider>
+   </extension>
+   <extension point="org.eclipse.rse.ui.passwordPersistence">
+      <provider systemType="Unix"
+            id="org.eclipse.rse.universal.passwordPersistence.Unix">
+      </provider>
+   </extension>
+   <extension point="org.eclipse.rse.ui.passwordPersistence">
+      <provider systemType="AIX"
+            id="org.eclipse.rse.universal.passwordPersistence.AIX">
+      </provider>
+   </extension> 
+</plugin>

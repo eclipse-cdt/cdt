@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.rse.ui">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.rse.ui" id="remoteSystemsViewPreferencesAction" name="Remote Systems View Preferences Page Action"/>
+      </appInfo>
+      <documentation>
+         This extension point is for contributing an action to the Remote Systems view pulldown menu, to the Preferences cascading menu. This action will launch the Preferences dialog, scoped to the particular page you specify. This will automatically show any child pages as well. This point is easy to extend, no coding required. Just name the preference page by its id from the   preferencePages extension that defined the page. Also, if it is not a root page, then you must also name the root page (such as when using Windows-&amp;gt;Preference) by its id from its preferencePages extension. 
+
+This would be used by anyone who extends the Remote System Explorer, and offers preference pages for their users, and wants a shortcut to those preference pages for convenience.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="action" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="action">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for this extension.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The display name for the action, shown in the menu. Include any mnenomnic if desired.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="preferencePageId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  This matches the &quot;id&quot; attribute on the preferencePages extension, for the preference page you wish to show in the Preference Dialog for this action. If the preference page is a root (no &quot;category&quot; attribute in its preferencePages extension), this is all you need. Else, you also need to specify the preferencePageCategory attribute.
+
+Note this page will be shown as the root in the Preferences dialog, but it can be expanded to see its child nodes.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="preferencePageCategory" type="string">
+            <annotation>
+               <documentation>
+                  This is required if the preference page you wish to show is not a root page, which means if it has a &quot;category&quot; attribute in its preferencePage extension definition. If so, here you give the &quot;id&quot; value of the preference page&apos;s root page... not its immediate parent! Be careful. We need to know the id of the root page so we know which root to recursively search the children of to find the page you specified in the preferencePageId attribute.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  A relative path to an icon that will be displayed in the menu, with the label. Optional
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="tooltip" type="string">
+            <annotation>
+               <documentation>
+                  A description of the action, for display on the status line, although it doesn&apos;t seem to work just yet. Optional
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="helpContextId" type="string">
+            <annotation>
+               <documentation>
+                  The id of help to be shown when F1 is pressed while this action is selected. Optional
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         WSWB 3.0, or WSSD/WSAD/WDSC 5.1.2
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;extension point=&quot;org.eclipse.rse.ui.remoteSystemsViewPreferencesActions&quot;&gt;
+    &lt;action 
+      id=&quot;org.eclipse.rse.ui.preferences.actions.rse&quot;
+      label=&quot;%PreferencePageAction.rse.label&quot;
+      preferencePageId=&quot;org.eclipse.rse.ui.ui.preferences.RemoteSystemsPreferencePage&quot;
+      tooltip=&quot;%PreferencePageAction.rse.tooltip&quot;
+      helpContextId=&quot;org.eclipse.rse.ui.aprefrse&quot;
+    /&gt;
+&lt;/extension&gt;
+
+&lt;extension point=&quot;org.eclipse.rse.ui.remoteSystemsViewPreferencesActions&quot;&gt;
+    &lt;action 
+      id=&quot;com.ibm.etools.iseries.core.preferences.rse&quot;
+      label=&quot;%PreferencePageAction.rse.label&quot;
+      preferencePageId=&quot;com.ibm.etools.iseries.core.ui.preferences.ISeriesPreferencePage&quot;
+      preferencePageCategory=&quot;org.eclipse.rse.ui.ui.preferences.RemoteSystemsPreferencePage&quot;
+      tooltip=&quot;%PreferencePageAction.rse.tooltip&quot;
+      helpContextId=&quot;com.ibm.etools.iseries.core.aprefrse&quot;
+    /&gt;
+    &lt;action 
+      id=&quot;com.ibm.etools.iseres.core.preferences.lpex&quot;
+      label=&quot;%PreferencePageAction.lpex.label&quot;
+      preferencePageId=&quot;com.ibm.etools.iseries.editor.preferences.ISeriesEditorGeneralPreferencePage&quot;
+      preferencePageCategory=&quot;org.eclipse.rse.ui.ui.preferences.RemoteSystemsPreferencePage&quot;
+      tooltip=&quot;%PreferencePageAction.lpex.tooltip&quot;
+      helpContextId=&quot;com.ibm.etools.iseries.core.apreflpx&quot;
+    /&gt;
+    &lt;action 
+      id=&quot;com.ibm.etools.iseres.core.preferences.cache&quot;
+      label=&quot;%PreferencePageAction.cache.label&quot;
+      preferencePageId=&quot;com.ibm.etools.iseries.core.ui.preferences.ISeriesCachePreferencePage&quot;
+      preferencePageCategory=&quot;org.eclipse.rse.ui.ui.preferences.RemoteSystemsPreferencePage&quot;
+      tooltip=&quot;%PreferencePageAction.cache.tooltip&quot;
+      helpContextId=&quot;com.ibm.etools.iseries.core.aprefcch&quot;
+    /&gt;
+&lt;/extension&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Since no coding is required, there is no API information.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         This extension point is used by the &lt;code&gt;org.eclipse.rse.ui.ui.actions.SystemCascadingPreferencesAction&lt;/code&gt; class, which in turn creates a &lt;code&gt;org.eclipse.rse.ui.ui.actions.SystemShowPreferencesPageAction&lt;/code&gt; object for each extension of this point. These are used to populate the Preferences cascading menu of the Remote Systems view pulldown, but could be used elsewhere too, if desired.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2002, 2006 IBM Corporation. All Rights Reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+IBM Corporation - initial API and implementation
+      </documentation>
+   </annotation>
+
+</schema>

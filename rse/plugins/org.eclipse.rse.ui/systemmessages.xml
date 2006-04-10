@@ -1,0 +1,1358 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<!--
+Copyright (c) 2006 IBM Corporation. All rights reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Initial Contributors:
+The following IBM employees contributed to the Remote System Explorer
+component that contains this file: David McKnight, Kushal Munir, 
+Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+
+Contributors:
+{Name} (company) - description of contribution.
+-->
+<!DOCTYPE MessageFile SYSTEM "messageFile.dtd">
+
+<MessageFile Version="1.0">
+     <Component Name="Remote_System_Explorer" Abbr="RSE">
+          <Subcomponent Name="General" Abbr="G">
+                <MessageList>
+                    <Message ID="1001" Indicator="U">
+                          <LevelOne>Under construction</LevelOne>
+                          <LevelTwo>This function is not yet available.</LevelTwo>
+                    </Message>
+                    <Message ID="1002" Indicator="Q">
+                          <LevelOne>This will reload the Remote System Explorer. Are you sure?</LevelOne>
+                          <LevelTwo>This action should only be used after receiving files from a team repository. It reloads the RSE from the workspace, incorporating the new files.</LevelTwo>
+                    </Message>
+                    <Message ID="1003" Indicator="U">
+                          <LevelOne>An unexpected exception has occurred</LevelOne>
+                          <LevelTwo>%1</LevelTwo>
+                    </Message>
+                    <Message ID="1006" Indicator="E">
+                          <LevelOne>Enter name</LevelOne>
+                          <LevelTwo>You must enter a name in the field where the cursor is positioned.</LevelTwo>
+                    </Message>
+                    <Message ID="1007" Indicator="E">
+                          <LevelOne>Name in use</LevelOne>
+                          <LevelTwo>This name is already used by another resource. Enter a unique name.</LevelTwo>
+                    </Message>
+                    <Message ID="1008" Indicator="E">
+                          <LevelOne>Name not valid</LevelOne>
+                          <LevelTwo>The name entered does not have valid syntax</LevelTwo>
+                    </Message>
+                    <Message ID="1009" Indicator="E">
+                          <LevelOne>You must rename %1</LevelOne>
+                          <LevelTwo>You have left the new name the same as the old name. Enter a new name that is different from the old name.</LevelTwo>
+                    </Message>
+                    <Message ID="1010" Indicator="E">
+                          <LevelOne>Name %1 is specified more than once</LevelOne>
+                          <LevelTwo>Two or more resources have been renamed to the same new name. Each resource must have a unique name.</LevelTwo>
+                    </Message>
+                    <Message ID="1011" Indicator="E">
+                          <LevelOne>Name %1 not valid</LevelOne>
+                          <LevelTwo>The name %1 does not have valid syntax</LevelTwo>
+                    </Message>
+                    <Message ID="1012" Indicator="E">
+                          <LevelOne>Enter new name</LevelOne>
+                          <LevelTwo>You have the new name entry field empty. You must enter a unique new name.</LevelTwo>
+                    </Message>
+                    <Message ID="1013" Indicator="E">
+                          <LevelOne>Expand failed or canceled. Try again.</LevelOne>
+                          <LevelTwo>When expanding a node in the tree, and retrieving the resources, either an error occurred or you cancelled the operation. The expand is cancelled.</LevelTwo>
+                    </Message>
+                    <Message ID="1014" Indicator="E">
+                          <LevelOne>Enter profile name</LevelOne>
+                          <LevelTwo>You must enter a name for the profile. Profiles contain all connections, filters and user defined actions. They are shared by the team, but each team member sees only those profiles which are active. Each profile can be private to you, or used by the whole team if all team members make the profile active. The name should reflect this. That is, if the profile is to be private to you, pick a name that is least likely to collide with a name chosen by other team members.</LevelTwo>
+                    </Message>
+                    <Message ID="1015" Indicator="E">
+                          <LevelOne>Profile of that name already exists</LevelOne>
+                          <LevelTwo>There is already a profile of that name. Choose a unique name for the profile.</LevelTwo>
+                    </Message>
+                    <Message ID="1016" Indicator="E">
+                          <LevelOne>Not a valid profile name</LevelOne>
+                          <LevelTwo>Profiles are stored as folders in the file system, so profile names must be valid folder names for the workbench. Furthermore, they must not contain pound signs (#) or exceed 100 characters in length. Profile names are not case sensitive, but are case tolerant.</LevelTwo>
+                    </Message>
+                    <Message ID="1017" Indicator="E">
+                          <LevelOne>Enter number</LevelOne>
+                          <LevelTwo>The value %1 you entered is not numeric. Enter only numeric input.</LevelTwo>
+                    </Message>
+                    <Message ID="1018" Indicator="E">
+                          <LevelOne>Name not valid as folder name</LevelOne>
+                          <LevelTwo>The name must be a valid folder name within the workbench and the underlying file system.</LevelTwo>
+                    </Message>
+                    <Message ID="1019" Indicator="E">
+                          <LevelOne>Name not valid as file name</LevelOne>
+                          <LevelTwo>The name must be a valid file name within the workbench and the underlying file system.</LevelTwo>
+                    </Message>
+                    <Message ID="1020" Indicator="E">
+                          <LevelOne>Enter system type</LevelOne>
+                          <LevelTwo>You must select a system type. The system type is the type of the operating system of the remote sytem.</LevelTwo>
+                    </Message>
+                    <Message ID="1021" Indicator="E">
+                          <LevelOne>Enter connection name</LevelOne>
+                          <LevelTwo>You must enter a connection name. This name is arbitrary, but must be unique to the selected profile.</LevelTwo>
+                    </Message>
+                    <Message ID="1022" Indicator="E">
+                          <LevelOne>Connection name is not unique for its profile</LevelOne>
+                          <LevelTwo>Connection names must be unique to the profile that contains the connection. Specify a name not already in use.</LevelTwo>
+                    </Message>
+                    <Message ID="1023" Indicator="E">
+                          <LevelOne>Not a valid connection name</LevelOne>
+                          <LevelTwo>The connection name is not syntactically valid. The name must be a valid folder name within the workbench and the underlying file system.</LevelTwo>
+                    </Message>
+                    <Message ID="1024" Indicator="E">
+                          <LevelOne>Enter host name or ip address</LevelOne>
+                          <LevelTwo>You must specify a host name or TCP/IP address for the remote system.</LevelTwo>
+                    </Message>
+                    <Message ID="1025" Indicator="E">
+                          <LevelOne>Enter user ID</LevelOne>
+                          <LevelTwo>You must specify a user ID to be used to connect to the system.</LevelTwo>
+                    </Message>
+                    <Message ID="1026" Indicator="E">
+                          <LevelOne>Not a valid user ID</LevelOne>
+                          <LevelTwo>The user ID entered is not syntactically valid. The only restriction for a user ID is that it not use the characters '=' or ';'.</LevelTwo>
+                    </Message>
+                    <Message ID="1027" Indicator="E">
+                          <LevelOne>Enter port number</LevelOne>
+                          <LevelTwo>You must specify a port number that is used to connect with the server-side communication layer.</LevelTwo>
+                    </Message>
+                    <Message ID="1028" Indicator="E">
+                          <LevelOne>Not a valid port number</LevelOne>
+                          <LevelTwo>The value you entered is not a valid port number. It must be a positive integer between 1 and 65536.</LevelTwo>
+                    </Message>
+                    <Message ID="1029" Indicator="E">
+                          <LevelOne>Enter value</LevelOne>
+                          <LevelTwo>You must enter a value in the field where the cursor is.</LevelTwo>
+                    </Message>
+                    <Message ID="1030" Indicator="E">
+                          <LevelOne>Entry is not unique</LevelOne>
+                          <LevelTwo>The value you entered is already in use. Specify a value that is not already in use.</LevelTwo>
+                    </Message>
+                    <Message ID="1031" Indicator="E">
+                          <LevelOne>Syntax is not valid</LevelOne>
+                          <LevelTwo>The syntax of the value at the cursor position is not valid.</LevelTwo>
+                    </Message>
+                    <Message ID="1032" Indicator="E">
+                          <LevelOne>Enter path</LevelOne>
+                          <LevelTwo>You must specify a file system path.</LevelTwo>
+                    </Message>
+                    <Message ID="1033" Indicator="E">
+                          <LevelOne>Path is not unique</LevelOne>
+                          <LevelTwo>The path you specified is already in use.</LevelTwo>
+                    </Message>
+                    <Message ID="1034" Indicator="E">
+                          <LevelOne>Path syntax is not valid</LevelOne>
+                          <LevelTwo>The syntax of the path you specified is not valid. Enter a file system path that is valid for the remote operating system. </LevelTwo>
+                    </Message>
+                    <Message ID="1035" Indicator="E">
+                          <LevelOne>Enter password</LevelOne>
+                          <LevelTwo>You must specify your password.</LevelTwo>
+                    </Message>
+                    <Message ID="1036" Indicator="E">
+                          <LevelOne>Password has expired</LevelOne>
+                          <LevelTwo>Your password has expired, and must be reset before continuing.</LevelTwo>
+                    </Message>
+                    <Message ID="1037" Indicator="E">
+                          <LevelOne>Enter filter pool name</LevelOne>
+                          <LevelTwo>You must specify a name for your filter pool. Filter pool names are arbitrary, but typically reflect the contents of the filters, such as "Release 1" or "Accounts Payable".</LevelTwo>
+                    </Message>
+                    <Message ID="1038" Indicator="E">
+                          <LevelOne>Filter pool name already exists in this profile</LevelOne>
+                          <LevelTwo>A filter pool with this name already exists in the profile.</LevelTwo>
+                    </Message>
+                    <Message ID="1039" Indicator="E">
+                          <LevelOne>Filter pool name not valid</LevelOne>
+                          <LevelTwo>The filter pool name you specified is not a valid name. The name must be a valid folder name in the workbench, and must not contain the pound sign '#'. It must also not exceed 50 characters in length.</LevelTwo>
+                    </Message>
+                    <Message ID="1040" Indicator="E">
+                          <LevelOne>Profile name %1 is reserved</LevelOne>
+                          <LevelTwo>The given profile name is reserved by IBM. Specify another name for the profile.</LevelTwo>
+                    </Message>
+                    <Message ID="1041" Indicator="Q">
+                          <LevelOne>Connection of name %1 already exists in profile %2. Continue?</LevelOne>
+                          <LevelTwo>A connection of this name exists in another profile. While this allowed, it is discouraged as it may lead to confusion. Press Yes to create the connection, or No to cancel the creation.</LevelTwo>
+                    </Message>
+                    <Message ID="1042" Indicator="E">
+                          <LevelOne>Enter filter name</LevelOne>		
+                          <LevelTwo>You must specify a name for your filter. You can specify any name you like. Choose a name that tells others the contents of this filter. For example, "Source Files for Release 1".</LevelTwo>
+                    </Message>
+                    <Message ID="1043" Indicator="E">
+                          <LevelOne>Filter name already exists in this filter pool</LevelOne>		
+                          <LevelTwo>The filter name you specified is in use. You must specify a name unique for the parent filter pool.</LevelTwo>
+                    </Message>
+                    <Message ID="1044" Indicator="E">
+                          <LevelOne>Filter name not valid</LevelOne>		
+                          <LevelTwo>The filter name you specified is not a valid name. The name must be a valid file name in the workbench, and must not contain the pound sign '#'. It must also not exceed 100 characters in length.</LevelTwo>
+                    </Message>
+                    <Message ID="1045" Indicator="E">
+                          <LevelOne>Enter filtering information</LevelOne>		
+                          <LevelTwo>You must specify filtering information</LevelTwo>
+                    </Message>
+                    <Message ID="1046" Indicator="E">
+                          <LevelOne>Filter string already exists</LevelOne>		
+                          <LevelTwo>You specified a filter string which already exists in this filter. Having duplicate filter strings will result in duplicate resources in the expanded filter. Specify unique filter strings, preferably which result in unique resources. For example, don't specify both ABC* and A*. </LevelTwo>
+                    </Message>
+                    <Message ID="1047" Indicator="E">
+                          <LevelOne>Filter string not valid</LevelOne>		
+                          <LevelTwo>The filter string you specified is not syntactically correct.</LevelTwo>
+                    </Message>
+                    <Message ID="1048" Indicator="E">
+                          <LevelOne>Duplicate filter string '%1'.</LevelOne>		
+                          <LevelTwo>You have defined the same filter string twice or more. This will result in multiple copies of the same resource, when this filter is expanded. Delete the redundant filter strings.</LevelTwo>
+                    </Message>
+                    <Message ID="1049" Indicator="E">
+                          <LevelOne>Filter string '%1' already exists in filter %2</LevelOne>		
+                          <LevelTwo>This filter string cannot be copied or moved to the target filter. The same filter string already exists there</LevelTwo>
+                    </Message>
+                    <Message ID="1050" Indicator="U">
+                          <LevelOne>Save to disk failed with an unexpected exception</LevelOne>		
+                          <LevelTwo>%1</LevelTwo>
+                    </Message>
+                    <Message ID="1051" Indicator="U">
+                          <LevelOne>Restore of data failed with unexpected exception</LevelOne>		
+                          <LevelTwo>%1</LevelTwo>
+                    </Message>
+                    <Message ID="1052" Indicator="Q">
+                          <LevelOne>Delete selected resources?</LevelOne>		
+                          <LevelTwo>This is a permanent deletion of the selected resources and cannot be undone</LevelTwo>
+                    </Message>
+                    <Message ID="1053" Indicator="Q">
+                          <LevelOne>Delete profile '%1'?</LevelOne>		
+                          <LevelTwo>Do you want to delete this profile, including all of its connections, filters and user actions? Select Yes to delete, or No to cancel the delete request</LevelTwo>
+                    </Message>
+                    <Message ID="1054" Indicator="I">
+                          <LevelOne>Connecting to %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1055" Indicator="I">
+                          <LevelOne>Connecting to %1 at port %2</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1056" Indicator="U">
+                          <LevelOne>Connect to %1 failed with an unexpected exception</LevelOne>		
+                          <LevelTwo>%2</LevelTwo>
+                    </Message>
+                    <Message ID="1057" Indicator="E">
+                          <LevelOne>Connect failed. Host %1 not found or not responding</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1058" Indicator="I">
+                          <LevelOne>Connect to %1 was cancelled</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1059" Indicator="I">
+                          <LevelOne>Disconnecting from %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1060" Indicator="I">
+                          <LevelOne>Disconnecting from %1 at port %2</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1061" Indicator="U">
+                          <LevelOne>Disconnect from %1 failed with exception</LevelOne>		
+                          <LevelTwo>%2</LevelTwo>
+                    </Message>
+                    <Message ID="1062" Indicator="E">
+                          <LevelOne>Disconnect from %1 was cancelled</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1063" Indicator="U">
+                          <LevelOne>Unexpected error deleting %1</LevelOne>		
+                          <LevelTwo>%2</LevelTwo>
+                    </Message>
+                    <Message ID="1064" Indicator="U">
+                          <LevelOne>Unexpected error renaming %1</LevelOne>		
+                          <LevelTwo>%2</LevelTwo>
+                    </Message>
+                    <Message ID="1065" Indicator="E">
+                          <LevelOne>Unexpected error moving %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1066" Indicator="U">
+                          <LevelOne>Operation failed with exception '%1'</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1067" Indicator="E">
+                          <LevelOne>Operation cancelled.</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1068" Indicator="W">
+                          <LevelOne>Warning. Profile '%1' should be made active. Active connection '%2' contains a reference to it.</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1069" Indicator="W">
+                          <LevelOne>Warning. Profile '%1' should be active. Active connection '%2' contains a reference to it.</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1070" Indicator="I">
+                          <LevelOne>Resolving %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1071" Indicator="I">
+                          <LevelOne>Running %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1072" Indicator="I">
+                          <LevelOne>Copying '%1' to '%2'</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1073" Indicator="I">
+                          <LevelOne>Copying connection %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1074" Indicator="I">
+                          <LevelOne>Copying connections</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1075" Indicator="I">
+                          <LevelOne>Copying filter pools</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1076" Indicator="I">
+                          <LevelOne>Copying filter pool %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1077" Indicator="I">
+                          <LevelOne>Copying filters</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1078" Indicator="I">
+                          <LevelOne>Copying filter %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1079" Indicator="I">
+                          <LevelOne>Copying filter strings</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1080" Indicator="I">
+                          <LevelOne>Copying filter string %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1081" Indicator="I">
+                          <LevelOne>Copying subsystems</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1082" Indicator="I">
+                          <LevelOne>Filter pool(s) successfully copied to '%1'. You must create a new filter pool reference to see it (them).</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1083" Indicator="I">
+                          <LevelOne>Moving '%1' to '%2'</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1084" Indicator="I">
+                          <LevelOne>Moving connection %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1085" Indicator="I">
+                          <LevelOne>Moving connections</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1086" Indicator="I">
+                          <LevelOne>Moving filter pools</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1087" Indicator="I">
+                          <LevelOne>Moving filter pool %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1088" Indicator="I">
+                          <LevelOne>Moving filters</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1089" Indicator="I">
+                          <LevelOne>Moving filter %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1090" Indicator="I">
+                          <LevelOne>Moving filter strings</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1091" Indicator="E">
+                          <LevelOne>Moving filter string %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1092" Indicator="I">
+                          <LevelOne>Filter pool(s) successfully moved to '%1'. You must create a new filter pool reference to see it (them).</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1093" Indicator="I">
+                          <LevelOne>Setting %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1094" Indicator="I">
+                          <LevelOne>Setting properties</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1095" Indicator="I">
+                          <LevelOne>Querying %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1096" Indicator="I">
+                          <LevelOne>Querying properties</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1097" Indicator="I">
+                          <LevelOne>Running %1</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1098" Indicator="E">
+                          <LevelOne>Expand failed. Try again</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1099" Indicator="I">
+                          <LevelOne>Expand cancelled. Try again</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1100" Indicator="I">
+                          <LevelOne>Empty list</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1101" Indicator="I">
+                          <LevelOne>List cancelled</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1102" Indicator="I">
+                          <LevelOne>Filter created successfully. Expand this again to create another</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1103" Indicator="E">
+                          <LevelOne>Connection %1 not found</LevelOne>		
+                          <LevelTwo>No connection named %1 currently exists</LevelTwo>
+                    </Message>
+                    <Message ID="1104" Indicator="E">
+                          <LevelOne>Profile %1 not found</LevelOne>		
+                          <LevelTwo>No profile named %1 currently exists</LevelTwo>
+                    </Message>
+                    <Message ID="1105" Indicator="E">
+                          <LevelOne>Folder %1 not found on host %2</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1106" Indicator="E">
+                          <LevelOne>File %1 not found on host %2</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1107" Indicator="E">
+                          <LevelOne>File or folder %1 not found on host %2</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1108" Indicator="I">
+                          <LevelOne>Connection created successfully. Expand this again to create another</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1109" Indicator="W">
+                          <LevelOne>Connection busy</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1110" Indicator="E">
+                          <LevelOne>Command interrupted</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1111" Indicator="E">
+                          <LevelOne>Unable to run command</LevelOne>		
+                          <LevelTwo>Possible causes: connection has been deleted, connection has been renamed, or connection has been disconnected</LevelTwo>
+                    </Message>
+                    <Message ID="1112" Indicator="W">
+                          <LevelOne>Command cancelled</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1115" Indicator="I">
+                          <LevelOne>Copying...</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1116" Indicator="I">
+                          <LevelOne>Moving...</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1117" Indicator="I">
+                          <LevelOne>Copying %1...</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1118" Indicator="I">
+                          <LevelOne>Moving %1...</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1119" Indicator="I">
+                          <LevelOne>Saving %1...</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1120" Indicator="E">
+                          <LevelOne>%1 is not a valid archive name.</LevelOne>		
+                          <LevelTwo>You must give a filename with an extension that is recognized as a valid archive type extension.</LevelTwo>
+                    </Message>
+                    <Message ID="1121" Indicator="E">
+                          <LevelOne>Combining to a virtual destination is not supported at this time. Please choose a non-virtual destination.</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1122" Indicator="E">
+                          <LevelOne>The archive is corrupted or unreadable.</LevelOne>		
+                          <LevelTwo>The archive cannot be opened because its format is unrecognized, or its contents are damaged in some way.</LevelTwo>
+                    </Message>
+                    <Message ID="1123" Indicator="E">
+                          <LevelOne>Cannot create archive.</LevelOne>		
+                          <LevelTwo>There was an error creating the empty archive. The archive was not created.</LevelTwo>
+                    </Message>
+                    <Message ID="1124" Indicator="E">
+                          <LevelOne>Creation of the virtual file or folder %1 failed.</LevelOne>		
+                          <LevelTwo>There was an error creating the virtual file or folder. The virtual file or folder was not created.</LevelTwo>
+                    </Message>
+                    <Message ID="1125" Indicator="E">
+                          <LevelOne>Deletion of the virtual file or folder %1 failed.</LevelOne>		
+                          <LevelTwo>There was an error deleting the virtual file or folder. The virtual file or folder was not deleted.</LevelTwo>
+                    </Message>
+                    <Message ID="1126" Indicator="E">
+                          <LevelOne>Could not move the virtual file or folder %1.</LevelOne>		
+                          <LevelTwo>There was an error moving the virtual file or folder. The virtual file or folder was not moved.</LevelTwo>
+                    </Message>
+                    <Message ID="1127" Indicator="E">
+                          <LevelOne>Converting to a virtual destination is not supported at this time. Please choose a non-virtual destination.</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1128" Indicator="E">
+                          <LevelOne>Adding to a virtual destination is not supported. Please choose a non-virtual destination.</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1129" Indicator="E">
+                          <LevelOne>Destination archive cannot be the same as, or contained in, any of the source files or folders.</LevelOne>		
+                          <LevelTwo>You have selected a destination for the archive that is either one of the sources, or contained in one of the sources. This is not permitted.</LevelTwo>
+                    </Message>
+                    <Message ID="1130" Indicator="Q">
+                          <LevelOne>Permanently delete selected remote resource(s)?</LevelOne>		
+                          <LevelTwo>This is a permanent deletion of the selected remote resources from disk. This action cannot be undone</LevelTwo>
+                    </Message>
+                    <Message ID="1140" Indicator="U">
+                          <LevelOne>Error occurred while loading the user-defined action information from file: %1</LevelOne>		
+                          <LevelTwo>%2</LevelTwo>
+                    </Message>
+                    <Message ID="1141" Indicator="U">
+                          <LevelOne>The xml file '%1' appears to be corrupted. It has been replaced</LevelOne>
+                          <LevelTwo>Expected root tag to be named '%2'. The corrupted file has been renamed to '%3' and a new file created for you</LevelTwo>
+                    </Message>
+                    <Message ID="1150" Indicator="E">
+                          <LevelOne>Unable to perform action as the underlying file system folder is in use</LevelOne>		
+                          <LevelTwo>The file system folder %1 is in use by another task and cannot be removed or modified</LevelTwo>
+                    </Message>
+                    <Message ID="1151" Indicator="E">
+                          <LevelOne>Unable to perform action as the underlying file system file is in use</LevelOne>		
+                          <LevelTwo>The file system file %1 is in use by another task and cannot be removed or modified</LevelTwo>
+                    </Message>
+                    <Message ID="1160" Indicator="Q">
+                          <LevelOne>Filter pool %1 created. Create a reference to it in the selected subsystem?</LevelOne>		
+                          <LevelTwo>New filter pools are not accessible until a reference is added to them in a subsystem. Select Yes to add a reference to the new filter pool in selected subsystem %2</LevelTwo>
+                    </Message>
+                    <Message ID="1161" Indicator="E">
+                          <LevelOne>Filter update failed: %1</LevelOne>		
+                          <LevelTwo>%2</LevelTwo>
+                    </Message>
+                    <Message ID="1162" Indicator="E">
+                          <LevelOne>Filter rename failed: %1</LevelOne>		
+                          <LevelTwo>%2</LevelTwo>
+                    </Message>
+                    <Message ID="1170" Indicator="E">
+                          <LevelOne>Enter numeric value</LevelOne>
+                          <LevelTwo>You must enter a numeric value</LevelTwo>
+                    </Message>
+                    <Message ID="1171" Indicator="E">
+                          <LevelOne>Value %1 not numeric</LevelOne>
+                          <LevelTwo>The value specified is not a valid number</LevelTwo>
+                    </Message>
+                    <Message ID="1172" Indicator="E">
+                          <LevelOne>Value %1 not in range</LevelOne>
+                          <LevelTwo>The value specified is not within the valid range of %2 to %3</LevelTwo>
+                    </Message>
+                    <Message ID="1180" Indicator="E">
+                          <LevelOne>Enter action name</LevelOne>
+                          <LevelTwo>You must enter a name for this action</LevelTwo>
+                    </Message>
+                    <Message ID="1181" Indicator="E">
+                          <LevelOne>Action name is not unique</LevelOne>
+                          <LevelTwo>There is already an action with the given name in the selected profile. Specify a name that is not already in use</LevelTwo>
+                    </Message>
+                    <Message ID="1182" Indicator="E">
+                          <LevelOne>Action name is not valid</LevelOne>
+                          <LevelTwo>The given name is not a valid action name</LevelTwo>
+                    </Message>
+                    <Message ID="1183" Indicator="E">
+                          <LevelOne>Enter comment</LevelOne>
+                          <LevelTwo>You must enter a comment for this action</LevelTwo>
+                    </Message>
+                    <Message ID="1184" Indicator="E">
+                          <LevelOne>Action comment is not valid</LevelOne>
+                          <LevelTwo>The given comment has syntactical errors</LevelTwo>
+                    </Message>
+                    <Message ID="1185" Indicator="E">
+                          <LevelOne>Enter command</LevelOne>
+                          <LevelTwo>You must enter a command for this action</LevelTwo>
+                    </Message>
+                    <Message ID="1186" Indicator="E">
+                          <LevelOne>Action command is not valid</LevelOne>
+                          <LevelTwo>The given command has syntactical errors</LevelTwo>
+                    </Message>
+                    <Message ID="1187" Indicator="E">
+                          <LevelOne>Enter type name</LevelOne>
+                          <LevelTwo>You must enter a name for this collection of resource types</LevelTwo>
+                    </Message>
+                    <Message ID="1188" Indicator="E">
+                          <LevelOne>Type name %1 in use</LevelOne>
+                          <LevelTwo>There is already a named type with the given name. Specify a name that is not already in use</LevelTwo>
+                    </Message>
+                    <Message ID="1189" Indicator="E">
+                          <LevelOne>Type name %1 is not valid</LevelOne>
+                          <LevelTwo>The given name is not valid for a named type. It must not contain blanks</LevelTwo>
+                    </Message>
+                    <Message ID="1190" Indicator="E">
+                          <LevelOne>Specify one or more resource types</LevelOne>
+                          <LevelTwo>You must specify one or more simple or generic resource types to constitute this named type</LevelTwo>
+                    </Message>
+                    <Message ID="1191" Indicator="E">
+                          <LevelOne>Types not valid</LevelOne>
+                          <LevelTwo>Syntactical errors were found in the list of resource types</LevelTwo>
+                    </Message>
+                    <Message ID="1192" Indicator="E">
+                          <LevelOne>Enter source type</LevelOne>
+                          <LevelTwo>You must enter a source type</LevelTwo>
+                    </Message>
+                    <Message ID="1193" Indicator="E">
+                          <LevelOne>Source type "%1" not valid</LevelOne>
+                          <LevelTwo>The source type you entered is not valid.</LevelTwo>
+                    </Message>
+                    <Message ID="1194" Indicator="E">
+                          <LevelOne>Source type "%1" already exists</LevelOne>
+                          <LevelTwo>The source type you entered has already been specified. Specify a unique source type.</LevelTwo>
+                    </Message>
+                    <Message ID="1195" Indicator="E">
+                          <LevelOne>Enter a label for this compile command</LevelOne>
+                          <LevelTwo>You must enter a label for this compile command, that will be shown in menus and lists</LevelTwo>
+                    </Message>
+                    <Message ID="1196" Indicator="E">
+                          <LevelOne>Compile command label "%1" is in use</LevelOne>
+                          <LevelTwo>There is already a compile command with the given label. Specify a label that is not already in use</LevelTwo>
+                    </Message>
+                    <Message ID="1197" Indicator="E">
+                          <LevelOne>Compile command label "%1" is not valid</LevelOne>
+                          <LevelTwo>The given label is not a valid compile label</LevelTwo>
+                    </Message>
+                    <Message ID="1198" Indicator="E">
+                          <LevelOne>Enter command string for this compile command</LevelOne>
+                          <LevelTwo>You must enter a command string for this compile command. This is what is run when this compile command is selected.</LevelTwo>
+                    </Message>
+                    <Message ID="1199" Indicator="E">
+                          <LevelOne>Compile command string "%1" is not valid</LevelOne>
+                          <LevelTwo>The given string is not a valid command.</LevelTwo>
+                    </Message>
+                    <Message ID="1201" Indicator="Q">
+                          <LevelOne>Changes pending. Save changes?</LevelOne>
+                          <LevelTwo>You have changes pending. Select Yes to save those changes. Select No to discard those changes</LevelTwo>
+                    </Message>
+                    <Message ID="1202" Indicator="Q">
+                          <LevelOne>Changes pending. Continue?</LevelOne>
+                          <LevelTwo>You have changes pending. Select Yes to discard those changes. Select No to cancel the operation so you can first save your changes</LevelTwo>
+                    </Message>
+                    <Message ID="1220" Indicator="E">
+                          <LevelOne>Host name '%1' not found or valid</LevelOne>
+                          <LevelTwo>A remote system of host name '%1' was found. If you are working disconnected, de-select the checkbox to verify the host name</LevelTwo>
+                    </Message>
+                    <Message ID="1221" Indicator="I">
+                          <LevelOne>Verifying host name...</LevelOne>
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1230" Indicator="Q">
+                          <LevelOne>Delete selected user actions?</LevelOne>		
+                          <LevelTwo>This is a permanent deletion of the selected actions and cannot be undone.Select Yes to delete and No to cancel the delete action</LevelTwo>
+                    </Message>
+                    <Message ID="1231" Indicator="Q">
+                          <LevelOne>Delete selected types?</LevelOne>		
+                          <LevelTwo>This is a permanent deletion of the selected types and cannot be undone.Select Yes to delete and No to cancel the delete action</LevelTwo>
+                    </Message>
+                    <Message ID="1240" Indicator="E">
+                          <LevelOne>There is an error on another page</LevelOne>	
+                          <LevelTwo>Another page of the wizard has an error that must be corrected before the wizard can be finished</LevelTwo>
+                    </Message>
+                     <Message ID="1242" Indicator="U">
+                          <LevelOne>Daemon failed to launch server on %1 using port %2</LevelOne>		
+                          <LevelTwo>%3</LevelTwo>
+                    </Message>
+                    <Message ID="1243" Indicator="U">
+                          <LevelOne>Failed to connect to the daemon on %1 using port %2 with an unexpected exception</LevelOne>		
+                          <LevelTwo>%3</LevelTwo>
+					</Message>
+
+    				<!-- universal find files pattern verification -->
+                    <Message ID="1250" Indicator="E">
+                    	<LevelOne>The pattern may not be blank</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                     <Message ID="1251" Indicator="E">
+                    	<LevelOne>Invalid regular expression</LevelOne>
+                    	<LevelTwo>The value %1 you entered is not a valid regular expression</LevelTwo>
+                    </Message>
+
+                    <!-- operation status -->
+                    <Message ID="1255" Indicator="I">
+                    	<LevelOne>%1 - Running</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1256" Indicator="I">
+                    	<LevelOne>%1 - Finished</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+					<Message ID="1257" Indicator="I">
+                    	<LevelOne>%1 - Cancelled</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+					<Message ID="1258" Indicator="I">
+                    	<LevelOne>%1 - Disconnected</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+
+
+                      <!-- universal command invocation verification -->
+                    <Message ID="1260" Indicator="E">
+                    	<LevelOne>The invocation may not be blank</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+
+                    <!-- drag and drop -->
+                    <Message ID="1270" Indicator="E">
+                    	<LevelOne>Invalid transfer operation</LevelOne>
+                    	<LevelTwo>The source %1 cannot be transferred into the target %2</LevelTwo>
+                    </Message>
+                    <Message ID="1280" Indicator="I">
+                    	<LevelOne>Downloading %1</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1281" Indicator="I">
+                    	<LevelOne>Uploading %1</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1282" Indicator="I">
+                    	<LevelOne>Synchronizing Resources...</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                     <Message ID="1285" Indicator="I">
+                    	<LevelOne>Extracting %1</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1290" Indicator="I">
+                    	<LevelOne>%1 of %2 complete (%3)</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                       <Message ID="1295" Indicator="I">
+                    	<LevelOne>Downloading resources...</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                       <Message ID="1296" Indicator="I">
+                    	<LevelOne>Uploading resources...</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+
+                       <!-- remote install issues -->
+                    <Message ID="1300" Indicator="E">
+                    	<LevelOne>The FTP service is unavailable on the remote system.</LevelOne>
+                    	<LevelTwo>The RSE server needs to be installed manually.</LevelTwo>
+                    </Message>
+                    <Message ID="1301" Indicator="E">
+                    	<LevelOne>The Telnet service is unavailable on the remote system.</LevelOne>
+                    	<LevelTwo>The RSE server needs to be started manually or a system administrator needs to install the RSE daemon.</LevelTwo>
+                    </Message>
+                    <Message ID="1302" Indicator="E">
+                    	<LevelOne>Unable to start the RSE server.</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1303" Indicator="E">
+                    	<LevelOne>Unable to install the RSE server.</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1304" Indicator="E">
+                    	<LevelOne>Archive Management is not supported by the current File subsystem's configuration.</LevelOne>
+                    	<LevelTwo>In the properties for the File subsystem, choose a configuration that supports Archive Management.</LevelTwo>
+                    </Message>
+
+                       <!-- classic tools -->
+                    <Message ID="1400" Indicator="Q">
+                    	<LevelOne>This action will take a few minutes. Proceed?</LevelOne>
+                    	<LevelTwo>This action uncompresses a large number of HTML files from a zip file. It will take awhile, and require sufficient disk space. Press Yes to continue, No to cancel.</LevelTwo>
+                    </Message>
+                    <Message ID="1401" Indicator="E">
+                    	<LevelOne>Classic help already enabled.</LevelOne>
+                    	<LevelTwo>The HTML files for the CODE and VisualAge RPG help have already been uncompressed.</LevelTwo>
+                    </Message>
+
+                    <!-- Dynamic Error List - dynamic message title -->
+                    <Message ID="1500" Indicator="E">
+                    	<LevelOne>Remote Error List: %1</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+
+    				<!-- universal remote search dialog -->
+    				<Message ID="1600" Indicator="E">
+    					<LevelOne>Folder path must not be empty.</LevelOne>
+    					<LevelTwo>Select a folder from the dropdown list or click the Browse... button and select a folder from the dialog.</LevelTwo>
+    				</Message>
+                    <Message ID="1601" Indicator="E">
+                    	<LevelOne>Regular expression is not valid.</LevelOne>
+                    	<LevelTwo>The value %1 you entered is not a valid regular expression.</LevelTwo>
+                    </Message>
+
+                </MessageList>
+          </Subcomponent>
+          <Subcomponent Name="Other" Abbr="O">
+                <MessageList>
+                    <!-- These are generic message which could be used when you would like to display a server message -->
+                    <Message ID="1000" Indicator="I">
+                    	   <LevelOne>%1</LevelOne>
+                    	   <LevelTwo>%2</LevelTwo>
+                    </Message>
+                    <Message ID="1001" Indicator="W">
+                           <LevelOne>%1</LevelOne>
+                           <LevelTwo>%2</LevelTwo>
+                    </Message>
+                    <Message ID="1002" Indicator="E">
+                           <LevelOne>%1</LevelOne>
+                           <LevelTwo>%2</LevelTwo>
+                    </Message>
+                    <Message ID="1003" Indicator="U">
+                           <LevelOne>%1</LevelOne>
+                           <LevelTwo>%2</LevelTwo>
+                    </Message>
+                    <Message ID="1004" Indicator="Q">
+                           <LevelOne>%1</LevelOne>
+                           <LevelTwo>%2</LevelTwo>
+                    </Message>
+                    <Message ID="1005" Indicator="I">
+                           <LevelOne>%1: %2</LevelOne>
+                           <LevelTwo>%3</LevelTwo>
+                    </Message>
+                    <Message ID="1006" Indicator="W">
+                           <LevelOne>%1: %2</LevelOne>
+                           <LevelTwo>%3</LevelTwo>
+                    </Message>
+                    <Message ID="1007" Indicator="E">
+                           <LevelOne>%1: %2</LevelOne>
+                           <LevelTwo>%3</LevelTwo>
+                    </Message>
+                    <Message ID="1008" Indicator="U">
+                           <LevelOne>%1: %2</LevelOne>
+                           <LevelTwo>%3</LevelTwo>
+                    </Message>
+                    <Message ID="1009" Indicator="Q">
+                           <LevelOne>%1: %2</LevelOne>
+                           <LevelTwo>%3</LevelTwo>
+                    </Message>
+                    <Message ID="1010" Indicator="I">
+                           <LevelOne>%1</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1011" Indicator="W">
+                           <LevelOne>%1</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1012" Indicator="E">
+                           <LevelOne>%1</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1013" Indicator="U">
+                           <LevelOne>%1</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1014" Indicator="Q">
+                           <LevelOne>%1</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                </MessageList>
+          </Subcomponent>
+          <Subcomponent Name="Files" Abbr="F">
+                <MessageList>
+                	<!-- REMOTE FILE SYSTEM EXCEPTION ERROR MESSAGES -->
+                    <Message ID="1001" Indicator="E">
+                           <LevelOne>Operation failed. Security violation</LevelOne>
+                           <LevelTwo>Message reported from file system: %1</LevelTwo>
+                    </Message>
+                    <Message ID="1002" Indicator="E">
+                           <LevelOne>Operation failed. File system input or output error</LevelOne>
+                           <LevelTwo>Message reported from file system: %1</LevelTwo>
+                    </Message>
+                    <Message ID="1003" Indicator="E">
+                           <LevelOne>Folder is not empty. Cannot delete</LevelOne>
+                           <LevelTwo>The operation failed. One possible reason is that the folder is not empty</LevelTwo>
+                    </Message>
+                    <Message ID="1004" Indicator="E">
+                           <LevelOne>Folder '%1' not found</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1005" Indicator="Q">
+                           <LevelOne>Folder '%1' not found. Would you like to create it?</LevelOne>
+                           <LevelTwo>The folder you specified does not exist. Select Yes to create it, No to cancel the operation</LevelTwo>
+                    </Message>
+                    <Message ID="1006" Indicator="E">
+                           <LevelOne>File '%1' not found</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <!-- REMOTE FILE SYSTEM ERROR MESSAGES -->
+                    <Message ID="1011" Indicator="E">
+                           <LevelOne>Enter file name pattern</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1007" Indicator="E">
+                           <LevelOne>Filter string '%1' already exists in this filter</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1008" Indicator="E">
+                           <LevelOne>Filter string name pattern not valid</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1009" Indicator="I">
+                           <LevelOne>You must include files or folders or both</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1010" Indicator="E">
+                          <LevelOne>No file types specified</LevelOne>		
+                          <LevelTwo>Either specify one or more file types, or select to subset by file name</LevelTwo>
+                    </Message>
+
+                    <Message ID="1200" Indicator="I">
+                           <LevelOne>Create a new File</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1201" Indicator="I">
+                           <LevelOne>Create a new Folder</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1202" Indicator="I">
+                           <LevelOne>Enter folder name</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1203" Indicator="E">
+                           <LevelOne>Names cannot begin or end with whitespace.</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1204" Indicator="E">
+                           <LevelOne>%1 is an invalid character in a name.</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1205" Indicator="I">
+                           <LevelOne>Enter file name</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1300" Indicator="E">
+                        <LevelOne>Deletion of the object %1 failed</LevelOne>
+                        <LevelTwo>Either the object does not exist or you do not have enough authority to delete the object. If this is a folder, the folder may not be empty</LevelTwo>
+                    </Message>
+                    <Message ID="1301" Indicator="E">
+                        <LevelOne>Renaming of the object %1 failed</LevelOne>
+                        <LevelTwo>Rename operation failed because, the object to rename does not exist, or the object with new object name already exists, or the user does not have enough authority to rename  the object</LevelTwo>
+                    </Message>
+                    <Message ID="1302" Indicator="E">
+                        <LevelOne>No authority or file name not valid</LevelOne>
+                        <LevelTwo>The file could not be created because of one of the following reasons:
+                        - the user does not have enough authority to create the file
+                        - the file name is not valid </LevelTwo>
+                    </Message>
+                    <Message ID="1303" Indicator="E">
+                        <LevelOne>File already exists</LevelOne>
+                        <LevelTwo>The new file %1 already exists</LevelTwo>
+                    </Message>
+                    <Message ID="1304" Indicator="E">
+                        <LevelOne>Creation of the folder failed</LevelOne>
+                        <LevelTwo>The folder %1 could not be created because of one of the following reasons:
+                        - the user does not have enough authority to create the folder
+                        - the folder name is not valid </LevelTwo>
+                    </Message>
+                    <Message ID="1305" Indicator="E">
+                        <LevelOne>The operation did not complete successfully. See additional messages in the Commands view</LevelOne>
+                        <LevelTwo>The operation requested failed. Look in the Commands view to see additional messages indicating the cause of the failure</LevelTwo>
+                    </Message>
+                    <Message ID="1306" Indicator="E">
+                        <LevelOne>Copy of the file or folder %1 failed</LevelOne>
+                        <LevelTwo>The file system reported the copy operation failed. You may not have authority to the target folder, or it may be in use</LevelTwo>
+                    </Message>
+                    <Message ID="1307" Indicator="E">
+                        <LevelOne>Move of the file or folder %1 failed</LevelOne>
+                        <LevelTwo>The file system reported the move operation failed. You may not have authority to the source folder or file, or you may not have authority to the target folder, or it may be in use</LevelTwo>
+                    </Message>
+                    <Message ID="1308" Indicator="E">
+                        <LevelOne>Target folder cannot equal source folder</LevelOne>
+                        <LevelTwo>Attempting to move a file or folder to the same folder as it exists in is equivalent to a rename operation. Use the rename action for this</LevelTwo>
+                    </Message>
+                    <Message ID="1309" Indicator="E">
+                        <LevelOne>Folder already exists</LevelOne>
+                        <LevelTwo>The new folder %1 already exists</LevelTwo>
+                    </Message>
+                    <Message ID="1310" Indicator="Q">
+                        <LevelOne>New resource will not be visible due to subsetting. Create it anyway?</LevelOne>
+                        <LevelTwo>The name of the resource you are creating does not match the current filter criteria. If you select Yes to create the resource, it will not be visible within the current filter.</LevelTwo>
+                    </Message>
+                    <Message ID="1311" Indicator="Q">
+                        <LevelOne>Resource will not be visible due to subsetting. Rename it anyway?</LevelOne>
+                        <LevelTwo>The new name of the resource does not match the current filter criteria. If you select Yes to rename the resource, it will not be visible within the current filter.</LevelTwo>
+                    </Message>
+					<Message ID="1312" Indicator="E">
+                        <LevelOne>Target folder cannot descend from source folder</LevelOne>
+                        <LevelTwo>It is impossible to move a folder to one of its subfolders.</LevelTwo>
+                    </Message>
+					<Message ID="1313" Indicator="E">
+                        <LevelOne>Target folder cannot be written to. Please select another destination folder.</LevelOne>
+                        <LevelTwo>The target folder is an unsuitable destination because it is read-only or you do not have write permission on it.</LevelTwo>
+                    </Message>
+		            <Message ID="1315" Indicator="I">
+                        <LevelOne>Deleting %1...</LevelOne>
+                        <LevelTwo></LevelTwo>
+                    </Message>
+      				<!-- Universal Remote Editing -->
+                    <Message ID="5001" Indicator="E">
+                    	<LevelOne>File %1 on %2 can not be opened. You do not have read access to the file.</LevelOne>
+                    	<LevelTwo>Change file permissions to ensure you have read access to the file.</LevelTwo>
+                    </Message>
+                    <Message ID="5002" Indicator="Q">
+                    	<LevelOne>You do not have write access to file %1 on %2. Do you want to open the file in browse mode?</LevelOne>
+                    	<LevelTwo>You do not have write permission to the file %1 on %2. You can open the file in browse (read-only) mode. If you want to edit the file, change file permissions to allow write access to the file.</LevelTwo>
+                    </Message>
+                    <Message ID="5003" Indicator="E">
+                    	<LevelOne>File %1 can not be saved on %2. You do not have read access to the file.</LevelOne>
+                    	<LevelTwo>Change file permissions to ensure you have read access to the file.</LevelTwo>
+                    </Message>
+                    <Message ID="5004" Indicator="E">
+                    	<LevelOne>File %1 can not be saved on %2. You do not have write access to the file.</LevelOne>
+                    	<LevelTwo>Change file permissions to ensure you have write access to the file.</LevelTwo>
+                    </Message>
+                    <Message ID="5005" Indicator="Q">
+                    	<LevelOne>File %1 on %2 was modified since you opened this file or saved the file on the server. Do you want to replace the current contents of the file on the server?</LevelOne>
+                    	<LevelTwo>The file %1 was changed on the server after it was retrieved from %2 or since the last time the file was saved on the server. Choose Yes to replace the contents of the file. Choose No to leave the file on the server with its current contents.</LevelTwo>
+                    </Message>
+                    <Message ID="5006" Indicator="E">
+                    	<LevelOne>File %1 was not completely saved on %2. The file was saved in the local file system.</LevelOne>
+                    	<LevelTwo>An error occurred while saving the file on the server. A possible cause is the connection to the server was terminated. The file may only have been saved partially on the server. However, it was saved locally to help you recover. You will be asked to save the local copy to the server the next time you connect.</LevelTwo>
+                    </Message>
+                    <Message ID="5007" Indicator="Q">
+                    	<LevelOne>File %1 on %2 may not have been saved completely during an earlier edit session. The file was saved on the local file system. Do you want to replace the file with the local copy now?</LevelOne>
+                    	<LevelTwo>An error occurred during an earlier attempt to save the file. But a local copy of the file was saved for recovery. Choose Yes to save the local copy on the server. Choose No if recovery is not required.</LevelTwo>
+                    </Message>
+                    <Message ID="5008" Indicator="Q">
+                    	<LevelOne>File %1 does not exist on %2. Do you want to create the file?</LevelOne>
+                    	<LevelTwo>Choose Yes to create the file on the server and save the contents to the file. Choose No if you do not want the file to be created.</LevelTwo>
+                    </Message>
+                    <Message ID="5009" Indicator="Q">
+                    	<LevelOne>You are currently editing file %1 on %2. Do you want to open the file in browse mode?</LevelOne>
+                    	<LevelTwo>You are allowed to edit a file in one editor only. You can, however, open the file in another editor for browsing. Browsing lets you view the file but does not allow you to edit its contents.</LevelTwo>
+                    </Message>
+                    <Message ID="5010" Indicator="E">
+                    	<LevelOne>Profile named %1 does not exist.</LevelOne>
+                    	<LevelTwo>Profile may have been renamed or deleted.</LevelTwo>
+                    </Message>
+                    <Message ID="5011" Indicator="E">
+                    	<LevelOne>Connection named %1 does not exist.</LevelOne>
+                    	<LevelTwo>Connection may have been renamed or deleted.</LevelTwo>
+                    </Message>
+
+
+                    <!-- Enter or select dialog messages -->
+                    <Message ID="5012" Indicator="Q">
+                    	<LevelOne>File %1 already exists. Do you want to replace it?</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="5013" Indicator="Q">
+                    	<LevelOne>Parent folder %1 does not exist. Do you want to create it?</LevelOne>
+                    	<LevelTwo>The parent folder must be created for the file to be created.</LevelTwo>
+                    </Message>
+                    <Message ID="5014" Indicator="E">
+                    	<LevelOne>Parent folder %1 does not exist. Verify that the correct path was entered.</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+
+                    <!-- Import/Export messages -->
+                    <Message ID="5101" Indicator="E">
+                          <LevelOne>Unable to use connection.</LevelOne>	
+                          <LevelTwo>Please correct, or select alternate connection.</LevelTwo>
+                    </Message>
+                    <Message ID="5102" Indicator="E">
+                          <LevelOne>Unexpected exception received: %1.</LevelOne>	
+                          <LevelTwo>Please see error log for details.</LevelTwo>
+                    </Message>
+                    <Message ID="5103" Indicator="Q">
+                          <LevelOne>The file '%1' already exists on %2. Do you want to overwrite it?</LevelOne>	
+                          <LevelTwo>Click Yes to overwrite the existing file, or click No to cancel the export.</LevelTwo>
+                    </Message>
+
+                    <!-- Universal File Preference Page -->
+                    <Message ID="6001" Indicator="E">
+                    	<LevelOne>File type extension can not be empty.</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="6002" Indicator="E">
+                    	<LevelOne>File type extension must not contain '*' or '.'</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="6003" Indicator="E">
+                    	<LevelOne>The encoding is not supported.</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+
+
+                    <!-- Cache Preference Page -->
+                    <Message ID="6101" Indicator="W">
+	                    <LevelOne>One or more cached files have changes that have not been saved on the host.</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="6102" Indicator="W">
+	                    <LevelOne>Unable to synchronize cache changes to host. Operation cancelled.</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    
+                    <!-- Communications Preference Page -->
+                    <Message ID="6201" Indicator="E">
+	                    <LevelOne>The IP address or host name can not be empty.</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="6202" Indicator="E">
+	                    <LevelOne>The IP address is not valid.</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="6203" Indicator="E">
+	                    <LevelOne>The host name is not valid.</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+
+
+                    <!-- CCSID entry messages (in preference page) -->
+                    <Message ID="7001" Indicator="E">
+                    	<LevelOne>Enter CCSID</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="7002" Indicator="E">
+                    	<LevelOne>CCSID must be a number between 0 and 65535</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+
+                    <!-- Unexpected and miscellaneous error messages -->
+                    <Message ID="8001" Indicator="U">
+                    	<LevelOne>An unknown error occurred.</LevelOne>
+                    	<LevelTwo>%1</LevelTwo>
+                    </Message>
+                    <Message ID="8002" Indicator="U">
+                    	<LevelOne>An unexpected error occurred.</LevelOne>
+                    	<LevelTwo>%1</LevelTwo>
+                    </Message>
+                    <Message ID="8003" Indicator="E">
+                    	<LevelOne>Value is not valid</LevelOne>
+                    	<LevelTwo>%1</LevelTwo>
+                    </Message>
+                    <Message ID="8004" Indicator="E">
+                    	<LevelOne>Input %1 is not valid</LevelOne>
+                    	<LevelTwo>%1</LevelTwo>
+                    </Message>
+
+                    <!-- REMOTE FILE IMPORT/EXPORT MESSAGES -->
+                    <Message ID="8050" Indicator="E">
+                    	<LevelOne>Can not copy root file system</LevelOne>
+                    	<LevelTwo>The root is not something that can be copied</LevelTwo>
+                    </Message>
+                    <Message ID="8051" Indicator="E">
+                    	<LevelOne>Could not close import stream for %1</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="8052" Indicator="E">
+                    	<LevelOne>Unable to import %1: %2</LevelOne>
+                    	<LevelTwo>%3</LevelTwo>
+                    </Message>
+                    <Message ID="8053" Indicator="I">
+                    	<LevelOne>Creating folder %1</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="8054" Indicator="E">
+                    	<LevelOne>Problems were encountered during import</LevelOne>
+                    	<LevelTwo>%1</LevelTwo>
+                    </Message>
+                    <Message ID="8055" Indicator="E">
+                    	<LevelOne>Error opening input stream for %1</LevelOne>
+                    	<LevelTwo>%2</LevelTwo>
+                    </Message>
+                    <Message ID="8056" Indicator="E">
+                    	<LevelOne>Unable to import %1</LevelOne>
+                    	<LevelTwo>The file cannot be copied onto itself</LevelTwo>
+                    </Message>
+                    <Message ID="8057" Indicator="E">
+                    	<LevelOne>Error occurred while exporting %1: %2</LevelOne>
+                    	<LevelTwo>%3</LevelTwo>
+                    </Message>
+                    <Message ID="8058" Indicator="E">
+                    	<LevelOne>Problems were encountered during export</LevelOne>
+                    	<LevelTwo>%1</LevelTwo>
+                    </Message>
+                    <Message ID="8059" Indicator="E">
+                    	<LevelOne>Cannot overwrite file %1</LevelOne>
+                    	<LevelTwo>The file does not have its write attribute set, so it cannot be written to</LevelTwo>
+                    </Message>
+                    <Message ID="8060" Indicator="Q">
+                    	<LevelOne>Target folder does not exist. Would you like to create it?</LevelOne>
+                    	<LevelTwo>Press Yes to create the folder %1, No to cancel</LevelTwo>
+                    </Message>
+                    <Message ID="8061" Indicator="E">
+                    	<LevelOne>Target folder already exists, as a file</LevelOne>
+                    	<LevelTwo>The remote resource %1 already exists, but as a file, not a folder</LevelTwo>
+                    </Message>
+                    <Message ID="8062" Indicator="E">
+                    	<LevelOne>Destination folder conflicts with location of %1</LevelOne>
+                    	<LevelTwo>You are attempting to export to the local file system, to a location that overlaps the resources being exported.</LevelTwo>
+                    </Message>
+                    <Message ID="8063" Indicator="E">
+                    	<LevelOne>Source is a file, not a folder</LevelOne>
+                    	<LevelTwo>The remote resource %1 is a file, but a folder is required</LevelTwo>
+                    </Message>
+                    <Message ID="8064" Indicator="E">
+                    	<LevelOne>There are no resources currently selected for import</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="8065" Indicator="E">
+                    	<LevelOne>Select the source directory</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="8066" Indicator="I">
+                    	<LevelOne>Enter or select a source folder</LevelOne>
+                    	<LevelTwo>You have left the source folder empty, but it must be set to continue.</LevelTwo>
+                    </Message>
+                    <Message ID="8067" Indicator="E">
+                    	<LevelOne>Export problems</LevelOne>
+                    	<LevelTwo>%1</LevelTwo>
+                    </Message>
+                    <Message ID="8068" Indicator="E">
+                    	<LevelOne>There are no resources currently selected for export</LevelOne>
+                    	<LevelTwo>Select resources to be exported and try again</LevelTwo>
+                    </Message>
+                    <Message ID="8069" Indicator="I">
+                    	<LevelOne>Please enter a destination folder</LevelOne>
+                    	<LevelTwo>The destination folder is empty. You must select a destination folder.</LevelTwo>
+                    </Message>
+                    <Message ID="8070" Indicator="E">
+                    	<LevelOne>Import problems</LevelOne>
+                    	<LevelTwo>%1</LevelTwo>
+                    </Message>
+                    <Message ID="8071" Indicator="E">
+                    	<LevelOne>There are no resources currently selected for import</LevelOne>
+                    	<LevelTwo>Select resources to be imported and try again</LevelTwo>
+                    </Message>
+                    <Message ID="8072" Indicator="I">
+                    	<LevelOne>Filtering selection...</LevelOne>
+                    	<LevelTwo></LevelTwo>
+                    </Message>
+                </MessageList>
+          </Subcomponent>
+          <Subcomponent Name="Communications" Abbr="C">
+                <MessageList>
+                    <Message ID="1001" Indicator="E">
+                          <LevelOne>Connection to %1 could not be established.</LevelOne>
+                          <LevelTwo>A socket connection to %1 could not be established.  If you are connecting via the communications daemon make sure the daemon is running on the remote system.  If you are connecting directly to the communications server make sure the server is started on the remote system.  If you are connecting using REXEC, make sure that the server is installed on the remote system and that the REXEC service is running on that system.</LevelTwo>
+                    </Message>
+                    <Message ID="1002" Indicator="E">
+                          <LevelOne>Invalid password or user ID</LevelOne>
+                          <LevelTwo>Authentication with %1 failed because the password or user ID is not correct.</LevelTwo>
+                    </Message>
+                    <Message ID="1003" Indicator="E">
+                          <LevelOne>The user ID %1 is not valid</LevelOne>
+                          <LevelTwo>The user ID %1 on host %2 is not valid.  Change the user ID and try again.</LevelTwo>
+                    </Message>
+                    <Message ID="1004" Indicator="E">
+                          <LevelOne>The saved password is not correct.</LevelOne>
+                          <LevelTwo>The saved password for user ID %1 on host %2 is not correct.  Please enter the password and try again.</LevelTwo>
+                    </Message>
+
+                    <Message ID="2001" Indicator="E">
+                          <LevelOne>Environment variable %1 is already defined</LevelOne>
+                          <LevelTwo>An environment variable %1 has already been defined.  Change the new environment variable's name and press the Add button.</LevelTwo>
+                    </Message>
+                    <Message ID="2002" Indicator="W">
+                          <LevelOne>Environment variable must have a name.</LevelOne>
+                          <LevelTwo>An attempt was made to define an environment variable with a blank name.  Type a value for the environment variable name.</LevelTwo>
+                    </Message>
+                    <Message ID="2003" Indicator="W">
+                          <LevelOne>Environment variable must have a name.</LevelOne>
+                          <LevelTwo>An attempt was made to clear the name of an environment variable.  To remove an environment variable, select the variable in the list add press the Remove button.</LevelTwo>
+                    </Message>
+                    <Message ID="2004" Indicator="E">
+                          <LevelOne>Environment variable name contains an invalid character.</LevelOne>
+                          <LevelTwo>The environment variable name cannot contain a space or the '=' character.</LevelTwo>
+                    </Message>
+                    <Message ID="2101" Indicator="E">
+                          <LevelOne>Saved password for %1 on %2 already exists.</LevelOne>
+                          <LevelTwo>The password for user ID %1 on host %2 is already saved.  Enter a different user ID or host name or change the existing saved password.</LevelTwo>
+                    </Message>
+                    <Message ID="2102" Indicator="E">
+                          <LevelOne>New and verify passwords do not match.</LevelOne>
+                          <LevelTwo>The new and verify passwords must match (case sensitive) in order to save the new password.  Retype the new and verify passwords and try again.</LevelTwo>
+                    </Message>
+                    <Message ID="2103" Indicator="E">
+                          <LevelOne>Entry field cannot be blank.</LevelOne>
+                          <LevelTwo>The hostname, user ID, system type and password entry fields cannot be blank.  Type a value and press the Enter key to save the changes.</LevelTwo>
+                    </Message>
+                    <Message ID="2104" Indicator="E">
+                          <LevelOne>There are no tools installed which support saving password information.</LevelOne>
+                          <LevelTwo>The password information preference page is a centralized place for Workbench tools to save password information.  Each tool registers and provides its own encryption algorithm.  There are no tools installed that have registered with the password information preference page.</LevelTwo>
+                    </Message>
+                    <Message ID="2201" Indicator="E">
+                          <LevelOne>The RSE communications daemon could not be started.</LevelOne>
+                          <LevelTwo>The RSE communications daemon could not be started on port %1.  Check that the port is free and restart the daemon or change the port used by the daemon using the Remote Systems -> Communications Workbench preference page.</LevelTwo>
+                    </Message>
+                    
+                    <Message ID="2301" Indicator="E">
+                          <LevelOne>Unable to launch server on host %1.</LevelOne>
+                          <LevelTwo>Message from host: %2</LevelTwo>
+                    </Message>
+                    <Message ID="2302" Indicator="E">
+                          <LevelOne>Invalid password or user ID for %1.</LevelOne>
+                          <LevelTwo>Message from host: %2</LevelTwo>
+                    </Message>
+                    <Message ID="2303" Indicator="E">
+                          <LevelOne>Incompatible host server running on remote system %1.</LevelOne>
+                          <LevelTwo>The host server is not a Remote System Explorer server.</LevelTwo>
+                    </Message>
+                    <Message ID="2304" Indicator="E">
+                          <LevelOne>Incompatible Remote System Explorer host server running on remote system %1.</LevelOne>
+                          <LevelTwo>The host server needs to be updated to work with the current client.</LevelTwo>
+                    </Message>
+                    <Message ID="2305" Indicator="E">
+                          <LevelOne>Unable to connect to REXEC host service on port %1 of host %2</LevelOne>
+                          <LevelTwo>Message from host: %3</LevelTwo>
+                    </Message>
+                    <Message ID="2306" Indicator="W">
+                          <LevelOne>Port %1 is normally used for the %2 service.</LevelOne>
+                          <LevelTwo></LevelTwo>
+                    </Message>                    
+					 <Message ID="2307" Indicator="E">
+                          <LevelOne>Unable to establish a secure connection with the Remote System Explorer host server.</LevelOne>
+                          <LevelTwo>Make sure both the client and server are configured to use SSL.  The SSL handshake between client and server failed with the following exception: %1</LevelTwo>
+                    </Message>
+                    <Message ID="2308" Indicator="W">
+                          <LevelOne>The host server running on remote system %1 is an older version than the RSE client.</LevelOne>
+                          <LevelTwo>It is recommended that the client and server versions match.</LevelTwo>
+                    </Message>
+                    <Message ID="2309" Indicator="W">
+                          <LevelOne>The host server running on remote system %1 is a newer version than the RSE client.</LevelOne>
+                          <LevelTwo>It is recommended that the client and server versions match.</LevelTwo>
+                    </Message>
+                     <Message ID="2310" Indicator="I">
+                          <LevelOne>Starting Remote Systems Explorer host server using REXEC</LevelOne>
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                     <Message ID="2311" Indicator="I">
+                          <LevelOne>Starting Remote Systems Explorer host server using daemon</LevelOne>
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                      <Message ID="2312" Indicator="I">
+                          <LevelOne>Connecting to Remote Systems Explorer host server on port %1</LevelOne>
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="2313" Indicator="I">
+                          <LevelOne>Initializing Remote Systems Explorer host server</LevelOne>
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="3001" Indicator="E">
+                          <LevelOne>The connection %1 is currently offline and cannot be connected.</LevelOne>
+                          <LevelTwo>You have performed an action which requires a live connection to the remote system.  Switch the connection to online and perform the action again.  To switch the connection online, right click on the connection %1 and select the Work Offline action.</LevelTwo>
+                    </Message>
+                </MessageList>
+          </Subcomponent>
+	</Component>
+</MessageFile>

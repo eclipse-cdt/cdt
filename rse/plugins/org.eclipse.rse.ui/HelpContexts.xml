@@ -1,0 +1,946 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2006 IBM Corporation. All rights reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Initial Contributors:
+The following IBM employees contributed to the Remote System Explorer
+component that contains this file: David McKnight, Kushal Munir, 
+Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+
+Contributors:
+{Name} (company) - description of contribution.
+-->
+<?NLS TYPE="org.eclipse.help.contexts"?>
+<contexts>
+
+<!-- System types table in RS preferences -->
+<context id="systype_preferences">
+	<description>Click in the columns to change the enablement state or default user ID for a given system type. Disabled system types do not appear in the New Connection wizard. Default user IDs are used when connecting to a remote system of that type.</description>
+</context>
+
+<!-- Import wizard help -->
+<context id="import_context">
+	<description>Import files from a remote server to a project on your local workstation.</description>
+	<topic href="../org.eclipse.rse.doc.user/tasks/tremoimp.htm" label="Importing resources from a remote file system"/>
+</context>
+	
+<!-- Export wizard help -->
+<context id="export_context">
+	<description>Export files from your local workstation to a folder on a remote server.</description>
+	<topic href="../org.eclipse.rse.doc.user/tasks/tremoexp.htm" label="Exporting resources to a remote file system"/>
+</context>
+	
+<!-- PULLDOWN ACTION: New Connection action...   -->
+<context id="actn0000">
+<description>Open a wizard to create a new connection to a remote system.</description>
+</context>
+<!-- CONNECTION ACTION: MoveUp Connection action...-->
+<context id="actn0001">
+<description>Move the selected connections up within its profile. This is disabled if the first connection is selected. Connection order is a local preference not shared by the team.</description>
+</context>	
+<!-- CONNECTION ACTION: MoveDown Connection action...-->
+<context id="actn0002">
+<description>Move a connection down within its profile. This is disabled if the last connection is selected.  Connection order is a local preference not shared by the team.</description>
+</context>
+
+<!-- TEAM VIEW -->
+<context id="teamview">
+<description>Use this view to work with the team-sharable artifacts from the Remote System Explorer: connection, filters, user actions and compile commands. These are contained in profiles. Use this view to see the sharable artifacts by profile, and share those artifacts using the popup menu of the root node. </description>
+<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+</context>
+<!-- TEAM VIEW ACTION: New Profile action...   -->
+<context id="actn0003">
+<description>Open a wizard to create a new profile for partitioning your connections, filters, user actions and compile commands.</description>
+<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+</context>	
+<!-- TEAM VIEW ACTION: Active profile action...   -->
+<context id="actnactp">
+<description>Toggle this profile between active and not active. The Remote Systems view only shows connections, filters, user actions and compile commands from active profiles.
+</description>
+<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+</context>
+<!-- TEAM VIEW ACTION: Make Active profile action...   -->
+<context id="ActionMakeActive">
+<description>Make all the selected profiles active, such that their connections, filters, user actions and compile commands are visible in the Remote Systems view.
+</description>
+<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+</context>
+<!-- TEAM VIEW ACTION: Make Inactive profile action...   -->
+<context id="ActionMakeInactive">
+<description>Make all the selected profiles inactive, such that their  connections, filters, user actions and compile commands are not visible in the Remote Systems view.
+</description>
+<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+</context>
+
+<!-- TEAM VIEW ACTION: Rename profile action...   -->
+<context id="actnrnpr">
+<description>Rename selected profile.
+<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+</description>
+</context>
+<!-- TEAM VIEW ACTION: Delete profiles action...   -->
+<context id="actndlpr">
+<description>Delete selected profiles, including all of their connections, filters, user actions and compile commands.</description>
+<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+</context>
+<!-- TEAM VIEW ACTION: Duplicate profile action...   -->
+<context id="actndupr">
+<description>Copy selected profile, including all its connections, filters, user actions and compile commands.
+</description>
+<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+</context>
+
+<!-- PULLDOWN ACTION: Work with profiles action...-->
+<context id="actnwwpr">
+<description>Switch to the Team view, where you can create, delete, copy, rename and activate profiles</description>
+<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+</context>
+<!-- PULLDOWN ACTION: Qualify connections action...-->
+<context id="actn0008">
+<description>Show connections and filter pools in the Remote Systems view prefixed by profile name. This is recommended if two profiles have connections or filter pools with the same names.</description>
+</context>
+<!-- PULLDOWN ACTION: Reload-RSE action...   -->
+<context id="actn0009">
+<description>Use this action after receiving Remote System Explorer files from the team repository, such as after a synchronize action. It reloads the contents of the Remote System Explore from the workspace, processing the new files.</description>
+</context>
+<!-- PULLDOWN ACTION: Default userID action...   -->
+<context id="actn0010">
+<description>Set as the default user ID for a given system type when creating a new connection, or change it for existing connections that inherit the user ID.</description>
+</context>
+<!-- PULLDOWN ACTION: Preferences cascading action...   -->
+<context id="actnpref">
+<description>Go directly to a preference page. Saves drilling down via Windows->Preferences.</description>
+</context>
+<!-- PULLDOWN ACTION: Preferences->RSE cascaded action...   -->
+<context id="aprefrse">
+<description>Go directly to the main preference page for the Remote System Explorer. From there, you can also access the subpages. 
+</description>
+</context>
+<!-- PULLDOWN ACTION: Preferences->LPEX cascaded action...   -->
+<context id="apreflpx">
+<description>Go directly to the main preference page for the LPEX editor. From there, you can also access the subpages. </description>
+</context>
+<!-- PULLDOWN ACTION: Show filter pools action...   -->
+<context id="actn0011">
+<description>Specify whether to show filter pools when subsystems are expanded in the Remote Systems view. Filter pools allow you to partition filters into named groups for easier management.</description>
+</context>
+<!-- PULLDOWN ACTION: Restore State action...   -->
+<context id="aprefres">
+<description>Select this to restore the Remote Systems tree view to its previous expanded state the next time you start the workbench.  Previous selections and active connections are also restored.  This preference increases the amount of time needed to start the Remote System Explorer, but improves productivity overall since you do not need to reconfigure the view.
+</description>
+</context>
+<!-- PULLDOWN ACTION: Team Synch action...   -->
+<context id="actn0013">
+<description>All your connections, filters, and user-defined actions can be shared by your team. Use this to synchronize your latest changes with those of the team. Only valid if a team repository has been identified within the team properties.
+</description>
+</context>
+<!-- PULLDOWN ACTION: Team Properties action...   -->
+<context id="actn0014">
+<description>All your connections, filters, and user-defined actions can be shared by your team. Use this to identify the remote repository that will centrally host the Remote Systems Connections project containing all the Remote Systems information.
+</description>
+</context>
+<!-- CONNECTION ACTION: Create Another Connection action...   -->
+<context id="actn0015">
+<description>Open a wizard to create a new connection to a remote system. By default, the values are used from the selected connection.
+</description>
+</context>
+<!-- CONNECTION ACTION: Open in New Perspective action...   -->
+<context id="actn0016">
+<description>Open a new instance of the Remote Systems view, within its own perspective page. Its contents will start with those of the child of the selected resource.
+</description>
+</context>
+<!-- CONNECTION ACTION: Refresh action...   -->
+<context id="actn0017">
+<description>Refresh the contents of the current selection. If the node is expanded, all children are re-retrieved successively.
+</description>
+</context>
+<!-- CONNECTION ACTION: Rename action...   -->
+<context id="actn0018">
+<description>Open a dialog for renaming the currently selected resources.
+</description>
+</context>
+<!-- CONNECTION ACTION: Copy action...   -->
+<context id="actn0019">
+<description>Copy this connection and resources to the same profile, or a different profile.
+</description>
+</context>
+<!-- CONNECTION ACTION: Move action...   -->
+<context id="actn0020">
+<description>Move this connection to a different profile.
+</description>
+</context>
+<!-- CONNECTION ACTION: Delete action...   -->
+<context id="actn0021">
+<description>Permanently delete the selected resources.
+</description>
+</context>
+<!-- CONNECTION ACTION: Disconnect All action...   -->
+<context id="actn0022"><description>Ask each subsystem to disconnect from the remote system. Disabled unless at least one subsystem is currently connected.
+</description>
+</context>
+<!-- SUBSYSTEM ACTION:  New Filter Pool action...   -->
+<context id="actn0040"><description>Open a wizard to create a new filter pool in any profile, and a reference to the new pool in this subsystem.
+</description>
+</context>
+<!-- SUBSYSTEM ACTION:  New Filter Pool Reference action...   -->
+<context id="actn0041"><description>Add a reference to an existing filter pool to this subsystem. Multiple subsystems can reference the same pool, and subsystems can contain multiple filter pool references.
+</description>
+</context>
+<!-- SUBSYSTEM ACTION:  New Filter action...   -->
+<context id="actn0042"><description>Open a wizard to create a new filter in the selected or default filter pool.
+</description>
+</context>
+
+<!-- ACTION:  Remote Servers cascading action...   -->
+<context id="actnsrsv"><description>For remotely starting or stopping servers (or daemons) on this remote system.
+</description>
+</context>
+<!-- ACTION:  Start action cascaded from an action underneath the Remote Servers cascading action...   -->
+<context id="actnstsv"><description>Start this remote server or daemon.</description></context>
+<!-- ACTION:  Stop action cascaded from an action underneath the Remote Servers cascading action...   -->
+<context id="actnspsv"><description>Stop this remote server or daemon.</description></context>
+
+<!-- SUBSYSTEM ACTION:  Select Filter Pools action...   -->
+<context id="actn0043"><description>Select the filter pools referenced by this subsystem.
+</description>
+</context>
+<!-- SUBSYSTEM ACTION:  WorkWith Filter Pools action...   -->
+<context id="actn0044"><description>Work with all filter pools in all active profiles for this subsystem type.
+</description>
+</context>
+<!-- SUBSYSTEM ACTION:  WorkWith User Actions action...   -->
+<context id="actn0045"><description>Work with user-defined actions that appear in the pop-up menu of remote system objects for subsystems of this subsystem type.
+</description>
+</context>
+<!-- SUBSYSTEM ACTION:  Work With Named Types action...   -->
+<context id="actn0046"><description>Work with named types that group one or more resource types into named collections.
+</description>
+</context>
+<!-- SUBSYSTEM ACTION:  Connect action...   -->
+<context id="actn0047"><description>Connect this subsystem's service to the remote system identified by the parent connection. This is disabled if already connected.
+</description>
+</context>
+<!-- SUBSYSTEM ACTION:  Disconnect action...   -->
+<context id="actn0048"><description>Disconnect this subsystem's service from the remote system identified by the parent connection. This is disabled if not connected.
+</description>
+</context>
+<!-- SUBSYSTEM ACTION:  Clear Password Cache action...   -->
+<context id="actn0049"><description>Clear the password retained in memory after this subsystem is disconnected. This is disabled if not connected, or there is no password cached in memory.
+</description>
+</context>
+<!-- FILTERPOOL ACTION: Copy action...   -->
+<context id="actn0060"><description>Copy this filter pool, and all of its filters, to another profile, or copy and rename to the same profile.
+</description>
+</context>
+<!-- FILTERPOOL ACTION: Move action...   -->
+<context id="actn0061"><description>Move this filter pool to another profile.
+</description>
+</context>
+<!-- FILTERPOOL ACTION: Remove Reference action...   -->
+<context id="actn0062"><description>Remove this subsystem's reference to this filter pool. This action does not delete the filter pool.
+</description>
+</context>
+<!-- FILTERPOOL ACTION: Move Up action...   -->
+<context id="actn0063"><description>Move the selected filter pool references up within this subsystem. This is disabled if first filter pool reference is selected.
+</description>
+</context>
+<!-- FILTERPOOL ACTION: Move Down action...   -->
+<context id="actn0064"><description>Move the selected filter pool references down within this subsystem. This is disabled if the last filter pool reference is selected.
+</description>
+</context>
+<!-- FILTER ACTION: New Filter String action...   -->
+<context id="actn0080"><description>Open a wizard to create a new filter string within the selected filter.
+</description>
+</context>
+<!-- FILTER ACTION: Change Filter action...   -->
+<context id="acfr0000"><description>Change this filter by adding, editing, removing or re-ordering filter strings within it</description>
+</context>
+<!-- FILTER ACTION:     New Filter String action...   -->
+<context id="actn0082"><description>Copy the selected filters to a different filter pool, or copy and rename in the same pool.
+</description>
+</context>
+<!-- FILTER ACTION:     New Filter String action...   -->
+<context id="actn0083"><description>Move the selected filters to a different filter pool.
+</description>
+</context>
+<!-- FILTER ACTION:     New Filter String action...   -->
+<context id="actn0084"><description>Move the selected filters up within their filter. This is disabled if the first filter is selected.
+</description>
+</context>
+<!-- FILTER ACTION:     New Filter String action...   -->
+<context id="actn0085"><description>Move the selected filters down within their filter pool. This is disabled if the last filter is selected.
+</description>
+</context>
+<!-- FILTERSTRING ACTION: Change action...   -->
+<context id="actn0090"><description>Edit this filter string.
+</description>
+</context>
+<!-- FILTERSTRING ACTION: Copy action...   -->
+<context id="actn0091"><description>Copy the selected filter strings to a different filter.
+</description>
+</context>
+<!-- FILTERSTRING ACTION: Move action...   -->
+<context id="actn0092"><description>Move the selected filter strings to a different filter.
+</description>
+</context>
+<!-- FILTERSTRING ACTION: Move Up action...   -->
+<context id="actn0093"><description>Move the selected filter strings up within their filter. This is disabled if the first filter string is selected.
+</description>
+</context>
+<!-- FILTERSTRING ACTION: Move Down action...   -->
+<context id="actn0094"><description>Move the selected filter strings down within their filter. This is disabled if the last filter string is selected.
+</description>
+</context>
+<!-- PROMPTABLE OBJECT ACTION: Run action...   -->
+<context id="actn0100"><description>Run the selected prompt to open a wizard to create a new object. </description>
+</context>
+<!-- REMOTE FILE ACTION: Copy action...   -->
+<context id="actn0110"><description>Copy the selected folders or files. You will be prompted for the target folder, and for a new name if a folder or file name is already in use in that target folder.
+</description>
+</context>
+<!-- REMOTE FILE ACTION: Move action...   -->
+<context id="actn0111"><description>Move the selected folders or files. You will be prompted for the target folder, and for a new name if a folder or file name is already in use in that target folder.
+</description>
+</context>
+<!-- REMOTE FILE ACTION:  New Filter From Folder action...   -->
+<context id="actn0112"><description>Open a wizard to create a new filter from the selected folder.
+</description>
+</context>
+<!-- SUBSYSTEM ACTION:  Launch Shell action...   -->
+<context id="actn0113"><description>Launch a command shell on the remote host.  The Remote Shell view will allow you to interact with the remote shell.
+</description>
+</context>
+<!-- REMOTE FILE ACTION:  Run Command action...   -->
+<context id="actn0114"><description>Run a command on the remote host.  You will be prompted for the command to run on the host.
+</description>
+</context>
+<!-- REMOTE FILE ACTION:  Search action...   -->
+<context id="actn0115"><description>Search files and file contents within the selected folder.  You will be prompted with the Remote Search dialog.
+</description>
+</context>
+<!-- REMOTE RESOURCE ACTION:  Copy to clipboard action...   -->
+<context id="actn0116"><description>Copy the selected resource to the system clipboard.
+</description>
+</context>
+<!-- REMOTE RESOURCE ACTION:  Paste from clipboard action...   -->
+<context id="actn0117"><description>Paste the contents of the system clipboard into the selected resource.
+</description>
+</context>
+<!-- REMOTE RESOURCE ACTION:  Extract Archive action...   -->
+<context id="actn0118"><description>Extract the selected archive's contents to the same folder in which the archive is located. A new folder will be created with the same name as the archive for the archive's contents.
+</description>
+</context>
+<!-- REMOTE RESOURCE ACTION:  Extract Archive To action...   -->
+<context id="actn0119"><description>Extract the selected archive's contents to another folder. You will be prompted to select the destination folder.
+</description>
+</context>
+<!-- REMOTE RESOURCE ACTION:  Combine action...   -->
+<context id="actn0120"><description>Combine the selected archives into a single archive. You will be prompted to create the destination archive.
+</description>
+</context>
+<!-- REMOTE RESOURCE ACTION:  Convert action...   -->
+<context id="actn0121"><description>Convert the selected archives into another type of archive. You will be prompted to create the destination archive.
+</description>
+</context>
+<!-- REMOTE RESOURCE ACTION:  Add to archive action...   -->
+<context id="actn0122"><description>Add the selected files to a new or existing archive. You will be prompted to select or create the destination archive.
+</description>
+</context>
+<!-- CASCADING COMPILE PROMPT ACTION: Compile -->
+<context id="ccpa0000"><description>Select a command to compile this resource with. The command will first be prompted, then run.
+</description></context>
+<!-- CASCADING COMPILE NOPROMPT ACTION: Compile -->
+<context id="ccna0000"><description>Select a command to compile this resource with. The command will be run without prompting.
+</description></context>
+<!-- SINGLE COMPILE ACTION: PROMPT...   -->
+<context id="scpa0000"><description>Compile the selected resource with this compile command. The command is prompted first, then run.
+</description></context>
+<!-- SINGLE COMPILE ACTION: NO PROMPT...   -->
+<context id="scna0000"><description>Compile the selected resource with this compile command. The command is not prompted.
+</description></context>
+<!-- WORK WITH COMPILE COMMANDS ACTION...   -->
+<context id="actnwwcc"><description>Work with commands for compiling selected resources.
+</description></context>
+
+<!-- Duplicate Profile dialog...   -->
+<context id="drnp0000">
+<description>Specify a new, unique name for the profile. Profiles can be unique to a person and specific to a task, such as <b>Release 1</b>.
+</description>
+</context>	
+<context id="drnp0002"><description>Specify the name for the copied profile.
+</description>
+</context>	
+<context id="drnp0003"><description>Specify if the new copied profile is to be made active. If active, its connections are visible.
+</description>
+</context>
+<!-- New Profile wizard...   -->
+<context id="wnpr0000">
+<description>This wizard will guide you through the creation of a new profile to hold connections and filters. Profiles are folders that hold connections and filter pools. They enable team support by allowing you to decide which connections will be private and which will be shared. Team members only see connections within the profiles they make active.
+</description>
+</context>	
+<context id="wnpr0001"><description>Specify a name for the profile. This might be a personal name that is unique within the team, or a name such as <b>Release 1</b>.
+</description>
+</context>	
+<context id="wnpr0002"><description>If you do not make this profile active, its connections will not be visible. If you want to share the profile, inform other team members to make it active after team synchronization.
+</description>
+</context>
+<!-- New Connection wizard page 1 (name profile)...   -->
+<context id="wncp0000">
+<description>This is your first connection. Connections are grouped into profiles to facilitate team sharing. Specify the name for your personal profile to contain connections unique to you. The default is your local machine hostname.
+</description>
+</context>
+<!-- New Connection wizard page 2 (connection properties)...   -->
+<context id="wncc0000">
+<description>Specify the information needed to create a connection to a remote system.
+</description>
+</context>	
+<context id="ccon0001"><description>Select a profile to contain this connection.
+</description>
+</context>	
+<context id="ccon0002"><description>Arbitrary name for this connection.  It must be unique to this profile.
+</description>
+</context>	
+<context id="ccon0003"><description>Operating system type of the remote host.
+</description>
+</context>	
+<context id="ccon0004"><description>Hostname or IP address of the remote host.
+</description>
+</context>	
+<context id="ccon0005"><description>Default user ID that is used by subsystems that do not have a specific user ID. If the arrow is to the left, the user ID comes from the preferences settings for this system type, and can only be changed. Changing it affects all connections that inherit this user ID. If you toggle the arrow to the right, the user ID will be set locally for this connection and not inherited from the preferences setting.
+</description>
+</context>	
+<context id="ccon0006"><description>A brief description of the connection.
+</description>
+</context>
+<!-- Default User Id dialog...   -->
+<context id="ddid0000">
+<description>Set the default user ID for all connections to systems of the selected type. This can be overridden within a particular connection or connection subsystem.
+</description>
+</context>
+<!-- Single Resource Rename dialog...   -->
+<context id="drns0000">
+<description>Specify the new name for the selected resource.
+</description>
+</context>
+<context id="drns0001">
+<description>Indicate whether to overwrite the existing resource or specify a unique name.
+</description>
+</context>
+
+<!-- Single Profile Rename dialog...   -->
+<context id="drnsprfl">
+<description>Specify the new name for the selected profile.
+</description>
+</context>
+<!-- Multiple Resource Rename dialog...   -->
+<context id="drnm0000">
+<description>Specify the new name for each of the selected resources. Use the <b>Tab</b> key to move to the next resource name.
+</description>
+</context>
+<!-- Multiple Profile Rename dialog...   -->
+<context id="drnmprfl">
+<description>Specify the new name for each of the selected profiles. Use the <b>Tab</b> key to move to the next profile name.
+</description>
+</context>
+
+<!-- Work With History dialog...   -->
+<context id="dwwh0000">
+<description>Delete or re-order the items in the drop-down list. The items all represent previously-typed or selected values for this drop-down list.
+</description>
+</context>
+<!-- Copy/Move Collision dialog...   -->
+<context id="dccc0000">
+<description>Select the target profile. The connection's profile is preselected. If you select the existing parent profile, you will be asked to rename the connection.
+</description>
+</context>
+<!-- Delete Confirmation dialog...   -->
+<context id="ddlt0000">
+<description>Confirm that you want to delete the selected resources that are listed. Select <b>Delete</b> to confirm the deletion. Select <b>Cancel</b> if you decide not to delete the resources.
+</description>
+</context>
+<!-- Delete Profile Confirmation dialog...   -->
+<context id="ddltprfl">
+<description>Confirm that you want to delete the selected profiles that are listed, including their connections, filters and user actions. Select <b>Delete</b> to confirm the deletion. Select <b>Cancel</b> if you decide not to delete the profiles.
+</description>
+</context>
+<!-- Copy Connection dialog...   -->
+<context id="dccn0000">
+<description>Select the target profile. The connection's profile is preselected. If you select the existing parent profile, you will be asked to rename the connection.
+</description>
+</context>
+<!-- Move Connection dialog...   -->
+<context id="dmcn0000">
+<description>Select the target profile. The connection's profile is excluded.
+</description>
+</context>
+<!-- Select Filter Pools dialog...   -->	
+<context id="dsfp0000">
+<description>Select the filter pools to reference in this subsystem. All filters from the referenced pools will be available when the subsystem is expanded.
+</description>
+</context>
+<!-- Work With Filter Pools dialog...   -->
+<context id="dwfp0000">
+<description>Create, delete, rename, copy, and move filter pools. The filter pools for each active profile are listed under that profile. Select a profile or filter pool to enable the toolbar actions. The actions are also available in the pop-up menu.
+</description>
+</context>
+<!-- Copy Filter Pool dialog...   -->
+<context id="dcfp0000">
+<description>Select the target profile. The filter pool's profile is preselected. If you select the existing parent profile, you will be asked to rename the filter pool.
+</description>
+</context>
+<!-- Move Filter Pool dialog...   -->
+<context id="dmfp0000">
+<description>Select the target profile. The filter pool's profile is excluded.
+</description>
+</context>
+<!-- Copy Filter dialog...   -->
+<context id="dcfr0000">
+<description>Select the target filter pool within a profile. If you select the existing parent filter pool, you will be asked to rename the filter.
+</description>
+</context>
+<!-- Move Filter dialog...   -->
+<context id="dmfr0000">
+<description>Select the target filter pool within a profile.
+</description>
+</context>
+<!-- CHANGE FILTER DIALOG...   -->
+<context id="dufr0000">
+<description>Use this dialog to change your filter. Filters can contain one or more filter strings. In the Remote Systems view, when a filter is expanded, the results of resolving all the strings are concatenated together. Use this dialog to add additional strings, and to order, delete or change the strings. Use the context menu on a string for additional actions.</description>
+</context>
+<!-- CHANGE FILTER DIALOG ACTION:  Delete...   -->
+<context id="dufr1000"><description>Delete the selected filter string. You will be asked to confirm your action.</description></context>
+<!-- CHANGE FILTER  DIALOG ACTION:  Copy   -->
+<context id="dufr2000"><description>Copy the selected filter string to the clipboard. The copy can be pasted to create a new filter string.</description></context>
+<!-- CHANGE FILTER  DIALOG ACTION:  Paste   -->
+<context id="dufr3000"><description>Paste a copy of a filter string from the clipboard.</description></context>
+<!-- CHANGE FILTER  DIALOG ACTION:  Move Up   -->
+<context id="dufr4000"><description>Move the selected filter string up in the list.</description></context>
+<!-- CHANGE FILTER  DIALOG ACTION:  Move Down  -->
+<context id="dufr5000"><description>Move the selected filter string down in the list.</description></context>
+
+<!-- Copy Filter String dialog...   -->
+<context id="dcfs0000">
+<description>Select the target filter within a profile and filter pool.
+</description>
+</context>
+<!-- Move Filter String dialog...   -->
+<context id="dmfs0000">
+<description>Select the target filter within a profile and filter pool.
+</description>
+</context>
+<!-- Commands View...   -->
+<context id="cmdv0000">
+<description>This view shows the commands that have been run on remote systems, along with the resulting messages.
+</description>
+</context>
+<!-- Connection Properties Page...   -->
+<context id="pcon0000">
+<description>Browse or update information about the selected connection.
+</description>
+</context>
+<!-- SubSystem Properties Page...   -->
+<context id="psub0000">
+<description>Browse or update information about the selected subsystem.
+</description>
+</context>
+<!-- FilterPool Properties Page 1...   -->
+<context id="pfp10000">
+<description>Browse information about the selected filter pool reference. Subsystems contain references to filter pools that physically exist within profiles. Multiple subsystems can reference the same filter pool.
+</description>
+</context>
+<!-- FilterPool Properties Page 2...   -->
+<context id="pfp20000">
+<description>Browse information about the filter pool being referenced. Subsystems contain references to filter pools that physically exist within profiles. Multiple subsystems can reference the same filter pool.
+</description>
+</context>
+<!-- Filter Properties Page ...   -->
+<context id="pflr0000">
+<description>Browse information about the selected filter.
+</description>
+</context>
+<!-- FilterString Properties Page 1...   -->
+<context id="pfls0000">
+<description>Browse information about the selected filter string.</description>
+</context>
+<!-- New Filter Pool Wizard...   -->
+<context id="wnfp0000">
+<description>Specify the name and parent profile for the new filter pool. Profiles own filter pools, while subsystems reference them.
+</description>
+</context>
+<!-- New Filter Wizard...   -->
+<context id="wnfr0000">
+<description>Specify a unique name for the filter, and click <b>Add</b> to create one or more filter strings. When this filter is expanded, the filter strings will be resolved and the results listed in the tree.
+</description>
+</context>
+<context id="nfp20000">
+<description>On this page, specify a unique name for the filter, and whether it is unique for this connection or will appear in all applicable connections. For the latter, you also specify what filter pool to contain the filter.
+</description>
+</context>
+<!-- Copy Remote Files Dialog...   -->
+<context id="dcrf0000">
+<description>Select the folder where you want to copy the selected folders or files. The folder they exist in is pre-selected. If you leave this as the default, you will be prompted for new names for the copied folders and files.
+</description>
+</context>
+<!-- Move Remote Files Dialog...   -->
+<context id="dmrf0000">
+<description>Select the folder where you want to move the selected folders or files. The folder they exist in is pre-selected. If you leave this as the default, you will be prompted for new names for the moved folders and files.
+</description>
+</context>	
+<context id="pwdp0000">
+<description>Specify the user ID and password used to log onto the remote system.
+</description>
+</context>	
+<context id="rsep0000">
+<description>Specify the settings used by the Remote System Explorer.
+</description>
+</context>	
+<context id="sysv0000">
+<description>This view lets you create connections to remote systems and work with them.
+</description>
+</context>	
+<context id="ufwf0000">
+<description>This wizard will guide you through the creation of a new file.
+</description>
+</context>
+<context id="ufwr0000">
+<description>This wizard will guide you through the creation of a new folder.
+</description>
+</context>
+<context id="ufaf0000">
+<description>This command creates a new file.
+</description>
+</context>
+<context id="ufar0000">
+<description>This command creates a new folder resource.
+</description>
+</context>
+<context id="ufac0000">
+<description>This command copies an object to another location.
+</description>
+</context>
+<context id="ufam0000">
+<description>This command moves an object to another location.
+</description>
+</context>
+<context id="ufpf0000">
+<description>Specify options for the Files System.
+</description>
+</context>
+<!-- ============================================ -->	
+<!-- File filter string wizard, dialog, form...   -->
+<!-- ============================================ -->	
+<!-- New File Filter String Wizard... -->
+<context id="ffsw0000">
+<description>This wizard will guide you through the creation of a filter string for listing files.
+</description>
+</context>
+<!-- Update File Filter String Dialog... -->
+<context id="ffsd0000">
+<description>This dialog updates your filter string that are used for listing files.
+</description>
+</context>
+<!-- New/Update File Filter String controls... -->
+<context id="ffsd0001">
+<description> Type or select the fully-qualified folder of the files that you want to list.
+</description>
+</context>
+<context id="ffsd0002">
+<description>Select this to list all files, or all files whose name meets a generic pattern.
+</description>
+</context>
+<context id="ffsd0003">
+<description>Specify a simple file name or a generic name pattern, containing up to 2 wildcard characters <b>*</b>. For example, <b>abc*def*</b>. Specify <b>*</b> to list all files.
+</description>
+</context>
+<context id="ffsd0004">
+<description>Select this to list all files that match one or more file types.
+</description>
+</context>
+<context id="ffsd0005">
+<description>Click <b>Select</b> to choose one or more file types to restrict. Only files of the selected types will be shown for this filter string.
+</description>
+</context>
+<context id="ffsd0006">
+<description>Select this to list only matching files within the given folder. Deselect this to list all folders within the given folder.
+</description>
+</context>
+<context id="ffsd0007">
+<description>Select this to test the filter string and see the list of files that match its criteria.
+</description>
+</context>
+<!-- PULLDOWN ACTION: Collapse-all action...   -->
+<context id="actn0023">
+<description>Collapses all currently expanded resources in the Remote Systems view.
+</description>
+</context>
+<!-- PULLDOWN ACTION: Collapse action...   -->
+<context id="actn0024">
+<description>Collapses all selected resources in the view.
+</description>
+</context>
+<!-- PULLDOWN ACTION: Expand action...   -->
+<context id="actn0025"><description>Expands all selected resources in the view.</description></context>
+
+<!-- WORK WITH USER DEFINED ACTIONS DIALOG...   -->
+<context id="wwua0000"><description>Use this dialog to create or edit user actions that appear in the User Actions pop-up menu for remote objects. Each active profile can contain unique actions, and all applicable actions from all active profiles are shown in the User Actions menu.
+The list on the left shows the existing user actions: 
+- To <b>create</b> a new action, select the "New" node at the top of the list, enter information in the edit pane on the right, and press the <b>Create</b> button.
+- To <b>edit</b> an existing action, select the action in the list, update the information in the edit pane on the right, and press the <b>Apply</b> button.
+- To copy, paste, delete or re-order existing actions, use the pop-up menu.
+</description>
+<topic label="Working with user actions" href="../org.eclipse.rse.doc.user/tasks/tworkuseract.htm" />
+</context>
+
+
+<!-- WORK WITH NAMED TYPES DIALOG...   -->
+<context id="wwnt0000"><description>Use this dialog to create or edit named types, which are named collections of resource types. These named types make it easier to identify resources which match one or more resource types.
+The list on the left shows the existing named types:
+- To <b>create</b> a new type, select the "New" node at the top of the list, enter information in the edit pane on the right, and press the <b>Create</b> button.
+- To <b>edit</b> an existing type, select the type in the list, update the information in the edit pane on the right, and press the <b>Apply</b> button.
+- To copy, paste, delete or re-order existing types, use the pop-up menu.
+IBM-supplied types cannot be edited, but you can create a new type based on them by using copy and paste.
+</description></context>
+<context id="wwnt0002"><description>Enter a comma-separated list of file extensions or file names. For file names that have no extension, such as "makefile", specify ".null" for the extension, as in "makefile.null".</description></context>
+
+<!-- USER DEFINED ACTIONS DIALOG ACTION:  Delete...   -->
+<context id="udad0000"><description>Delete the selected action or type. You will be asked to confirm your action.</description></context>
+<!-- USER DEFINED ACTIONS DIALOG ACTION:  Copy   -->
+<context id="udac0000"><description>Copy the selected action or type to the clipboard.</description></context>
+<!-- USER DEFINED ACTIONS DIALOG ACTION:  Paste   -->
+<context id="udap0000"><description>Paste an action or type from the clipboard. You will be asked for a new name.</description></context>
+<!-- USER DEFINED ACTIONS DIALOG ACTION:  Move Up   -->
+<context id="udmu0000"><description>Move the selected action or type up in the list.</description></context>
+<!-- USER DEFINED ACTIONS DIALOG ACTION:  Move Down  -->
+<context id="udmd0000"><description>Move the selected action or type down in the list.</description></context>
+<!-- USER DEFINED ACTIONS DIALOG ACTION:  Restore Defaults  -->
+<context id="udrd0000"><description>Restore the action or type to its values as originally supplied by IBM.</description></context>
+
+<!-- WORK WITH COMPILE COMMANDS DIALOG...   -->
+<context id="wwcc0000"><description>Use this dialog to create or edit compile commands that appear in the Compile pop-up menu for remote resources. Each active profile can contain unique compile commands, and all applicable commands from all active profiles are shown in the Compile menu.
+The list on the left shows the existing compile commands: 
+- To <b>create</b> a new compile command, select the "New" node at the top of the list, enter information in the edit pane on the right, and press the <b>Create</b> button.
+- To <b>edit</b> an existing compile command, select the command in the list, update the information in the edit pane on the right, and press the <b>Apply</b> button.
+- To copy, paste, delete or re-order existing compile commands, use the pop-up menu.
+</description>
+</context>
+<!-- WORK WITH COMPILE COMMANDS DIALOG ACTION:  Delete...   -->
+<context id="wwcc1000"><description>Delete the selected compile command. You will be asked to confirm your action.</description></context>
+<!-- WORK WITH COMPILE COMMANDS DIALOG ACTION:  Copy   -->
+<context id="wwcc2000"><description>Copy the selected compile command to the clipboard. The copy can be pasted to create a new compile command.</description></context>
+<!-- WORK WITH COMPILE COMMANDS DIALOG ACTION:  Paste   -->
+<context id="wwcc3000"><description>Paste a copy of a compile command from the clipboard.</description></context>
+<!-- WORK WITH COMPILE COMMANDS DIALOG ACTION:  Move Up   -->
+<context id="wwcc4000"><description>Move the selected compile command up in the list.</description></context>
+<!-- WORK WITH COMPILE COMMANDS DIALOG ACTION:  Move Down  -->
+<context id="wwcc5000"><description>Move the selected compile command down in the list.</description></context>
+<!-- WORK WITH COMPILE COMMANDS DIALOG ACTION:  Restore Defaults  -->
+<context id="wwcc6000"><description>Restore the compile command to its values as originally supplied by IBM.</description></context>
+
+<!-- Save password dialogs -->
+<context id="pwdi0000">
+<description>Use the password information preference page to add, change, and remove stored passwords for remote systems.  The stored passwords are used whenever a password is required to connect to the remote system.</description>
+<topic label="Changing your saved password for a remote host connection" href="../org.eclipse.rse.doc.user/tasks/tbeginpass.htm" /> 
+</context>
+<context id="pwdi0001">
+<description>Type the password information for the remote system and click <b>OK</b> to save the information or <b>Cancel</b> to exit without saving.</description>
+<topic label="Changing your saved password for a remote host connection" href="../org.eclipse.rse.doc.user/tasks/tbeginpass.htm" /> 
+</context>
+<context id="pwdi0002">
+<description>Modify the saved password information for the remote system and click <b>OK</b> to update the saved information or <b>Cancel</b>  to exit without updating.</description>
+<topic label="Changing your saved password for a remote host connection" href="../org.eclipse.rse.doc.user/tasks/tbeginpass.htm" /> 
+</context>
+
+<!-- SubSystem property page -->
+<context id="psubs0000">
+<description>Use the subsystem property page to see and edit common information about the subsystem:
+<b>Vendor:</b> - the company who created this subsystem
+<b>Name:</b> - the name of this subsystem, as shown in the Remote Systems view
+<b>Parent connection:</b> - the connection that owns this subsystem
+<b>Parent profile:</b> - the system profile that owns the connection
+<b>Port:</b> - the port used for the communication between this client, and the remote server for this subsystem
+<b>User ID:</b> - the user ID to use to signon to the remote server
+</description>
+</context>
+
+<!-- Environment variables property page -->
+<context id="envv0000">
+<description>Use the environment variables property page to specify environment variables for the remote system.  These environment variables will be set when the remote system is connected.  Any changes made to the environment variables while connected, will not be set on the remote system until it is disconnected and reconnected.</description>
+</context>
+<context id="envv0001">
+<description>Type the name and value for the new environment variable.  Click <b>OK</b> to add the new environment variable or <b>Cancel</b> to exit without adding it.</description>
+</context>
+<context id="envv0002">
+<description>Modify the name or value for the environment variable.  Click <b>OK</b> to update the existing environment variable or <b>Cancel</b> to exit without modifying.</description>
+</context>
+
+<!-- Server launcher property page -->
+<context id="srln0000">
+<description>Use the server launcher settings property page to specify how to connect to a remote server on the remote system.  To connect to a remote Linux, Unix or Windows host you must first install the Remote System Explorer server on the remote host.</description>
+<topic label="Connecting to a remote Linux or UNIX host" href="../org.eclipse.rse.doc.user/tasks/tbeginlinux.htm" />
+<topic label="Connecting to a remote Windows host" href="../org.eclipse.rse.doc.user/tasks/tbeginwindows.htm" />
+</context>
+<context id="srln0001">
+<description>Indicate that a connection should be established with a server on the remote system using the remote daemon to start the server.  To use this option, the remote daemon must be running on the remote system.</description>
+</context>
+<context id="srln0002">
+<description>Indicate that a connection should be established with a server on the remote system using the REXEC service to start the server.  To use this option, the REXEC service must be running on the remote system.</description>
+</context>
+<context id="srln0003">
+<description>Indicate that a connection should be established with a server that is already running on some known port.  To use this option, the server needs to be started up before attempting to connect in the Remote System Explorer.</description>
+</context>
+<context id="srln0004">
+<description>Specify the location of the server installed on the host.  REXEC uses this location to determine where to run the startup script from.</description>
+</context>
+<context id="srln0005">
+<description>Specify the name of the command or script that REXEC needs to run to invoke the server installed on the host.</description>
+</context>
+
+
+
+<!-- Installing remote server -->
+<context id="rsrv0000">
+<description>To connect to a remote Linux, Unix or Windows host you must first install the Remote System Explorer server on the remote host.</description>
+<topic label="Connecting to a remote Linux or UNIX host" href="../org.eclipse.rse.doc.user/tasks/tbeginlinux.htm" />
+<topic label="Connecting to a remote Windows host" href="../org.eclipse.rse.doc.user/tasks/tbeginwindows.htm" />
+</context>
+
+
+<!-- Universal Command Dialog -->
+<context id="cmdi0000">
+<description>Specify a command to run on the remote system.</description>
+</context>
+
+<!-- Remote Search Dialog -->
+<context id="rsdi0000">
+<description>Specify a search string and optionally limit the search to a subset of files by specifying file name patterns. Leave the search string empty to search for files only.</description>
+<topic label="Search for text and files on remote servers" href="../org.eclipse.rse.doc.user/tasks/tmanagesearch.htm"/>
+</context>
+<context id="rsac0000">
+<description>Opens Remote Search dialog page for text and file searching on remote systems.</description>
+</context>
+
+<!-- Extract To Dialog -->
+<context id="exdi0000">
+<description>Specify the name and location of a new folder which will be created to hold the extracted contents of the archive.</description>
+</context>
+
+<!-- Combine Dialog -->
+<context id="cmbd0000">
+<description>Specify the name, type and location of a new file which will be created to hold the combined archives.</description>
+</context>
+
+<!-- Convert Dialog -->
+<context id="cnvd0000">
+<description>Specify the name, type and location of the file to which the archive will be converted.</description>
+</context>
+
+<!-- Add to Archive Dialog -->
+<context id="atad0000">
+<description>Specify the name, type and location of the archive file to which the selected files will be added.</description>
+</context>
+
+<!-- Generic Position To Dialog -->
+<context id="gnpt0000">
+<description>Specify a name filter to use in locating objects in the view.</description>
+</context>
+
+<!-- Generic Subset Dialog -->
+<context id="gnss0000">
+<description>Specify a set of property filters to use as criteria in populating the table.</description>
+</context>
+
+<!-- Generic Table Customization Dialog -->
+<context id="gntc0000">
+<description>Specify the list of columns and the order in which to display them in the table.</description>
+</context>
+
+<!-- Remote System Details View -->
+<context id="sysd0000">
+<description>This view lets you view the contents and properties of remote objects.</description>
+</context>	
+
+<!-- Remote Search View -->
+<context id="srch0000">
+<description>This view shows you the results of a remote file search.</description>
+</context>	
+
+<!-- Remote Shell View -->
+<context id="ucmd0000">
+<description>This view allows you to run and view shell commands.</description>
+</context>	
+
+<!-- Remote Scratchpad View -->
+<context id="scrp0000">
+<description>Drag and drop objects here from other Remote Systems Explorer views to work with them in isolation.</description>
+</context>	
+
+<!-- Remote Error List View -->
+<context id="uerr0000">
+<description>This view shows you errors, warnings and informational messages resulting from a compile command.</description>
+</context>	
+
+<!-- Save Conflict Dialog -->
+<context id="scdl0000">
+<description>You are about to save your changes to a file on the remote system that has been modified since you started editing.  Choose whether you want to overwrite the remote file, replace your changes with those of the file on the remote system, save your changes to another remote file or cancel the save.</description>
+</context>
+
+<!-- Local Changes Pending Dialog -->
+<context id="lcdl0000">
+<description>You have made changes to this file during a previous editing session that have not been saved on the remote system.  If you open the remote file, you will lose all pending changes.  Choose whether you want to replace your changes with the remote file, keep your changes or cancel the operation.  You will be able to save your file to a different location without overwriting the remote file if you choose to keep your pending changes.</description>
+</context>
+
+<context id="ecth0000">
+<description>Select this option to enable the help to work in the CODE tools, and VisualAge RPG tools. It uncompresses the html help files for these tools.
+</description>
+</context>
+
+<!-- General RSE communications preference page -->
+<context id="cmmp0000">
+<description>This is the RSE communications preferences page.  These preferences are not specific to any single RSE connection.  The <b>RSE communications daemon</b> can be used by local Workbench functions to listen for incoming socket requests from remote systems.  The daemon can be started and stopped from the pull down menu in the RSE's Remote Systems view.
+
+Use the start RSE communications daemon checkbox to automatically start the daemon when the Workbench is started.
+
+Use the port preference to change which local TCP/IP port the daemon uses to listen for incoming requests.  A valid TCP/IP port number must be entered.  If the port is changed and the daemon is currently running then the daemon will be stopped and restarted on the new port when the preference page is closed.</description>
+</context>
+
+<!-- file cache preference page -->
+<context id="fchp0000">
+<description>This is the RSE file cache preference page.  
+
+Use this page to limit the amount of disk space used to store locally replicated remote files.
+
+Use the clear button to remove all cached files.
+</description>
+</context>
+
+<!-- RSE Communications daemon action -->
+<context id="dmna0000">
+<description>This action starts and stops the local Remote System Explorer (RSE) communications daemon.  This daemon is not directly used by individual RSE connections.  Instead it allows local Workbench functions to accept incoming socket requests from remote systems.  You can set the daemon to automatically start and configure the port used by the daemon in the Workbench preferences under Remote Systems->Communications.</description>
+<topic href="..com.ibm.etools.iseries.rse.doc/reference/rports.htm" label="Port information for Development Studio Client" />
+<topic href="..com.ibm.etools.iseries.rse.doc/reference/rprefcom.htm" label="Preferences: communications" />
+</context>
+
+<!-- Work offline support -->
+<context id="wofa0000">
+<description>The Work Offline action toggles the connection between offline and online modes.  In offline mode information is retrieved from the cache if available and supported by the connection type.  If the action currently has a check mark beside it then the connection is offline and selecting this action will put the connection in online mode so it can be connected to the remote system.</description>
+</context>
+<context id="wofp0000">
+<description>Select the Work Offline property to set the connection offline.  In offline mode the connection cannot be connected to the remote system.  Information is retrieved from the cache if available and supported by the connection type.</description>
+</context>
+
+<!-- SSL support -->
+<context id="ssls0000">
+<description>This is the RSE SSL preference page.
+From here you can manage the certificates that the RSE client uses when connecting to a server that is configured to use SSL.
+</description>
+</context>
+<context id="ssls0001">
+<description>Use the server connection security property page to indicate whether the server you are connecting to is running in SSL mode.
+</description>
+</context>
+
+</contexts>

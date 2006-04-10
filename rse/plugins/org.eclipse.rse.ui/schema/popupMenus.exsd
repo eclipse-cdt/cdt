@@ -1,0 +1,818 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.rse.ui">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.rse.ui" id="popupMenus" name="Popup Menus"/>
+      </appInfo>
+      <documentation>
+         This extension point is for defining actions that appear in the
+popup menu of remote resources of the
+Remote Systems view, in the Remote System Explorer perspective.
+
+&lt;p&gt;
+It is modelled after the Eclipse workbench extension point &lt;samp&gt;org.eclipse.ui.popupMenus&lt;/samp&gt;.
+However, because we know we are targeting remote resources, it
+is simplified a bit. Specifically, there is no need to specify
+the object class, as we assume these
+actions apply to remote resources, which often share a common
+object class. On the other hand, we
+need additional filtering capabilities to scope which remote
+resources these actions are to apply to.
+&lt;/p&gt;
+
+&lt;p&gt;
+To this end, there is a rich set of
+filtering attributes to enable fine-grained scoping by a number
+of criteria. These scoping attributes
+are the same as those for our &lt;samp&gt;org.eclipse.rse.ui.propertyPages&lt;/samp&gt;
+extension point.
+&lt;/p&gt;
+
+&lt;p&gt;
+Like the workbench extension point, unless you specify otherwise
+, the action will show 
+up in the main popup menu in the &quot;additions&quot; group. To create
+cascading sub-menus, first 
+define a submenu and named separator group within it, using the
+&lt;samp&gt;menu&lt;/samp&gt; element and its &lt;samp&gt;separator &lt;/samp&gt;
+sub-element. Then refer to that menu&apos;s &lt;samp&gt;id&lt;/samp&gt; in your
+action element&apos;s &lt;samp&gt;menubarPath&lt;/samp&gt;
+attribute:
+&lt;samp&gt;menuid/separator-group-name&lt;/samp&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+While not fully documented here, this extension point supports the
+&lt;samp&gt;&amp;lt;filter&amp;gt;&lt;/samp&gt;
+&lt;samp&gt;&amp;lt;visibility&amp;gt;&lt;/samp&gt; and
+&lt;samp&gt;&amp;lt;enablement&amp;gt;&lt;/samp&gt; elements from the &lt;samp&gt;org.eclipse.ui.popupMenus&lt;/samp&gt;
+extension point. See its
+documentation in the help for information on these elements.
+For example:
+&lt;samp&gt;&lt;pre&gt;
+   &lt;filter name=&quot;subsystemConfigurationCategory&quot; value=&quot;files&quot;/&gt;
+   
+   &lt;enablement&gt;
+       &lt;objectState name=&quot;hasChildren&quot; value=&quot;true&quot;/&gt;
+   &lt;/enablement&gt;
+&lt;/pre&gt;&lt;/samp&gt;
+These elements are for conditionally deciding whether to show,
+or enable,
+the action(s). The &lt;samp&gt;name&lt;/samp&gt;s supported for the &lt;samp&gt;&amp;lt;filter&amp;gt;&lt;/samp&gt;
+element,
+and the &lt;samp&gt;objectState&lt;/samp&gt;s supported for the &lt;samp&gt;&amp;lt;visibility&amp;gt;&lt;/samp&gt;
+and
+&lt;samp&gt;&amp;lt;enablement&amp;gt;&lt;/samp&gt; elements are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;name&quot;&lt;/samp&gt;&lt;/b&gt;. Will test the &lt;i&gt;value&lt;/i&gt; for
+an exact match on an object&apos;s name,
+or beginning-of-name match if ends with an asterisk.
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;type&quot;&lt;/samp&gt;&lt;/b&gt;. Will test the &lt;i&gt;value&lt;/i&gt; for
+an exact match on an object&apos;s type.
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;offline&quot;&lt;/samp&gt;&lt;/b&gt;.Will test the &lt;i&gt;value&lt;/i&gt;
+against &quot;true&quot; if the user is working
+in &quot;offline&quot; mode or &quot;false&quot; if not. Currently only supported
+for iSeries connections.
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;connected&quot;&lt;/samp&gt;&lt;/b&gt;. Will test the &lt;i&gt;value&lt;/i&gt;
+against &quot;true&quot; if the connection
+containing the selected object is active or &quot;false&quot; if not.
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;hasChildren&quot;&lt;/samp&gt;&lt;/b&gt;. Will test the &lt;i&gt;value&lt;/i&gt;
+against &quot;true&quot; if this object&apos;s
+adapter reports that it has children or &quot;false&quot; if it doesn&apos;t
+have children.
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;systemType&quot;&lt;/samp&gt;&lt;/b&gt;. Will test the &lt;i&gt;value&lt;/i&gt;
+for an exact match on the system type of
+this object&apos;s parent SystemConnection object. 
+You can specify multiple values if you comma-separate them. 
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;subsystemConfigurationId&quot;&lt;/samp&gt;&lt;/b&gt;. Will test the &lt;i&gt;value&lt;/i&gt;
+for an exact match on the 
+&lt;samp&gt;ID&lt;/samp&gt; of the subsystem configuration that created this object&apos;s
+subsystem. Returns false for SystemConnection objects.
+You can specify multiple values if you comma-separate them. 
+&lt;li&gt;&lt;b&gt;&lt;samp&gt;&quot;subsystemConfigurationCategory&quot;&lt;/samp&gt;&lt;/b&gt;. Will test
+the &lt;i&gt;value&lt;/i&gt; for an exact match
+on the &lt;samp&gt;category&lt;/samp&gt; of the subsystem configuration that created
+this object&apos;s subsystem.
+You can specify multiple values if you comma-separate them. 
+&lt;/ul&gt;
+
+&lt;p&gt;
+These &lt;samp&gt;objectstate&lt;/samp&gt;s are also supported via the 
+Eclipse &lt;samp&gt;org.eclipse.ui.popupMenus&lt;/samp&gt; extension point,
+for the 
+non-remote objects in the RSE: connections, subsystems, filter
+pools
+and filters.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="schema://org.eclipse.ui/schema/commonAction.exsd"/>
+
+   <include schemaLocation="schema://org.eclipse.ui/schema/commonExpression.exsd"/>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="objectContribution" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="objectContribution">
+      <complexType>
+         <sequence>
+            <element ref="visibility" minOccurs="0" maxOccurs="1"/>
+            <element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id for this set of remote resource popup menu contributions.  Must
+be unique over all plug-ins.
+It is suggested that the user qualify this with the plug-in id.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="subsystemconfigurationid" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the popup menu actions are to appear.
+Specify as many of these optional filters like this as needed to explicitly scope
+all the actions defined in this objectContribution element.
+&lt;p&gt;
+This filter specifies a subsystem configuration id, such that these
+actions will only appear for remote resources returned from subsystems of the given subsystem configuration.
+This ID can be scalar, or it can be generic to match on multiple subsystem configuration IDs. The
+IDs of the IBM-supplied subsystem factories that display remote resources in the Remote
+Systems view are:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;ibm.filesLocal&lt;/b&gt;. For local file system resources, under
+the &quot;Files&quot; subsystem.
+&lt;li&gt;&lt;b&gt;ibm.filesWindows&lt;/b&gt;. For remote Windows file system resources,
+under the &quot;Files&quot; subsystem.
+&lt;li&gt;&lt;b&gt;ibm.files&lt;/b&gt;. For remote Unix and Linux file system resources,
+under the &quot;Files&quot; subsystem.
+&lt;li&gt;&lt;b&gt;ibm.filesIFS&lt;/b&gt;. For remote iSeries unix file system resources,
+under the &quot;IFS Files&quot; subsystem.
+&lt;li&gt;&lt;b&gt;ibm.files400&lt;/b&gt;. For remote iSeries native QSYS file system
+resources, under the &quot;iSeries Objects&quot; subsystem.
+&lt;li&gt;&lt;b&gt;ibm.cmds400&lt;/b&gt;. For remote iSeries commands, under the &quot;iSeries Commands&quot; subsystem
+&lt;li&gt;&lt;b&gt;ibm.jobs400&lt;/b&gt;. For remote iSeries jobs, under the &quot;iSeries Jobs&quot; subsystem.&lt;/ul&gt;
+&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="subsystemconfigurationCategory" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the popup menu actions are to appear.
+Specify as many of these optional filters like this as needed to explicitly scope
+all the actions defined in this &lt;samp&gt;objectContribution&lt;/samp&gt; element.
+
+&lt;p&gt;
+This filter specifies a subsystem configuration category, such that
+these
+actions will only appear for remote resources returned from subsystems
+owned by factories
+declared defined with the specified category. 
+
+&lt;p&gt;
+This category can be scalar, or it can be generic to match on
+multiple subsystem configuration categories. The
+categories of the IBM-supplied subsystem factories that display
+remote resources in the Remote
+Systems view are:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;files&lt;/b&gt;. For subsystems that list hierarchical file
+system resources, such as folders and files.
+&lt;li&gt;&lt;b&gt;nativefiles&lt;/b&gt;. For subsystems that list non-hierarchical file
+system resources, such as in the iSeries QSYS file system.
+&lt;li&gt;&lt;b&gt;commands&lt;/b&gt;. For subsystems that list remote commands.
+&lt;li&gt;&lt;b&gt;jobs&lt;/b&gt;. For subsystems that list remote jobs.
+&lt;/ul&gt;
+&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="systemtypes" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the popup menu actions are to appear.
+Specify as many of these optional filters like this as needed to explicitly scope
+all the actions defined in this objectContribution element.
+&lt;br&gt;
+This filter specifies a single system type, or semicolon-separated list of system types,
+or asterisk for all system types (the default).
+Will scope these actions to only remote objects from systems of this type or types.                  
+&lt;br&gt;&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="namefilter" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the popup menu actions are to appear.
+Specify as many of these optional filters like this as needed to explicitly scope
+all the actions defined in this objectContribution element.
+&lt;p&gt;
+This filter specifies a simple or generic resource name. 
+Only resources whose name matches this filter will show the actions
+defined within this object contribution element.
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="typecategoryfilter" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the property page is to appear.
+Specify as many of these optional filters like this as needed to explicitly scope this property page element.
+&lt;p&gt;
+This filter specifies a type category. Normally the subsystemconfigurationid
+is sufficient, but some subsystems display multiple types of
+resources, and these are categorized by a type name that can
+be used to scope property pages. Here are the type categories supported by IBM-
+supplied subsystems:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;files&lt;/b&gt;. For hierarchical file systems resources.
+&lt;li&gt;&lt;b&gt;commands&lt;/b&gt;. For remote commands.
+&lt;li&gt;&lt;b&gt;jobs&lt;/b&gt;. For remote jobs.
+&lt;/ul&gt;
+&lt;br&gt;
+The IBM-supplied subsystem for iSeries native file system objects also supports 
+these type categories:
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;LIBRARIES&lt;/b&gt;. Set for libraries.
+&lt;li&gt;&lt;b&gt;OBJECTS&lt;/b&gt;. Set for objects, excluding files.
+&lt;li&gt;&lt;b&gt;OBJECTFILES&lt;/b&gt;. Set for file objects. Use &lt;samp&gt;OBJECTS*&lt;/samp&gt;
+to match on all objects.
+&lt;li&gt;&lt;b&gt;MEMBERS&lt;/b&gt;. Set for data and source file members.
+&lt;li&gt;&lt;b&gt;RECORDS&lt;/b&gt;. Set for record formats within files.
+&lt;li&gt;&lt;b&gt;FIELDS&lt;/b&gt;. Set for fields within record formats.
+&lt;li&gt;&lt;b&gt;MESSAGE_DESCRIPTIONS&lt;/b&gt;. Set for messages within message
+files.
+&lt;/ul&gt;
+&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="typefilter" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the popup menu actions are to appear.
+Specify as many of these optional filters like this as needed to explicitly scope
+all the actions defined in this objectContribution element.
+
+&lt;p&gt;
+This filter specifies a resource type, either simple or generic.
+The resource types depends on the subsystem. The types
+for IBM-supplied subsystems which support them are:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;filesXXX&lt;/b&gt;. Either &lt;i&gt;folder&lt;/i&gt; or &lt;i&gt;file&lt;/i&gt;.
+&lt;li&gt;&lt;b&gt;files400&lt;/b&gt;. This is the object&apos;s type (for objects),
+such as &lt;i&gt;*PGM&lt;/i&gt;, or member&apos;s type (for members),
+such as &lt;i&gt;RPGLE&lt;/i&gt;. Since * is a valid character in an iSeries
+object type, use %ast. instead of * to prevent wildcard matching.
+For example, to prevent matching on both *PGM and *SRVPGM, use %ast.PGM
+for the type.
+&lt;/ul&gt;
+&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="subtypefilter" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the popup menu actions are to appear.
+Specify as many of these optional filters like this as needed to explicitly scope
+all the actions defined in this objectContribution element.
+
+&lt;p&gt;
+This filter specifies a simple or generic resource subtype to
+match. Not all subsystems support subtypes for their resources.
+The IBM-supplied subsystems that do support this are:
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;FilesXXX. This can be either &lt;i&gt;subfolder&lt;/i&gt; for nested
+folders only, or
+&lt;i&gt;root&lt;/i&gt; for the root folder or Windows&apos; drives.
+&lt;li&gt;Files400. For iSeries objects within a library, this is the
+object&apos;s attribute. For members, it is either &lt;i&gt;DTA&lt;/i&gt; or &lt;i&gt;SRC&lt;/i&gt;. 
+For fields, it is the field&apos;s datatype (a single character).
+&lt;/ul&gt;
+&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="subsubtypefilter" type="string">
+            <annotation>
+               <documentation>
+                  One of the optional filters to scope the remote resources for
+which the popup menu actions are to appear.
+Specify as many of these optional filters like this as needed to explicitly scope
+all the actions defined in this objectContribution element.
+&lt;p&gt;
+This filter specifies a simple or generic resource sub-subtype
+to match. No IBM-supplied subsystems support sub-subtypes for
+their resources today.
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="adaptable" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="menu">
+      <annotation>
+         <documentation>
+            Use this element when you wish to have your action appear in
+your own cascading menu, versus in the primary popup menu.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="separator" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  unique ID for this submenu, used later in the first part of the menubarPath attribute of
+the action element or path attribute of a nested menu element. This is used to identify
+the target sub-menu of the action or sub-submenu.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  readable text to show up in the popup menu, for this cascading menu. Do NOT specify ampersand
+for mnemonics, as these are assigned for you. However, accelerator information is valid as defined
+by the Eclipse rules.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="path" type="string">
+            <annotation>
+               <documentation>
+                  For multi-cascading menus, use this attribute to identify a previously
+specified menu that
+this menu is to be nested within. The syntax is a bit tricky.
+It is &quot;id/group&quot;, where
+&lt;samp&gt;id&lt;/samp&gt; matches the &lt;samp&gt;id&lt;/samp&gt; attribute from a
+previous &lt;samp&gt;menu&lt;/samp&gt; element,
+and &lt;samp&gt;group&lt;/samp&gt; matches the &lt;samp&gt;name&lt;/samp&gt; attribute
+of a &lt;samp&gt;separator&lt;/samp&gt; 
+sub-element within that previous &lt;samp&gt;menu&lt;/samp&gt; element. 
+
+&lt;p&gt;
+For the root cascading menu, you can also use this to specify
+a group within the remote resource&apos;s
+popup menu, where to place this cascading menu. In this case, 
+you would not specify an id. The default group is the &lt;samp&gt;additions&lt;/samp&gt; group, 
+which is near the bottom of the popup menu. 
+&lt;/p&gt;
+The IBM pre-defined groups are:
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;&quot;group.new&quot;&lt;/b&gt;. This is where the cascading &quot;New-&gt;&quot; menu
+is.
+&lt;li&gt;&lt;b&gt;&quot;group.goto&quot;&lt;/b&gt;. This is where the cascading &quot;Goto-&gt;&quot;
+menu is.
+&lt;li&gt;&lt;b&gt;&quot;group.expandto&quot;&lt;/b&gt;. This is where the cascading &quot;Expand
+To-&gt;&quot; menu is.
+&lt;li&gt;&lt;b&gt;&quot;group.openwith&quot;&lt;/b&gt;. This is where the cascading &quot;Open
+With-&gt;&quot; menu is.
+&lt;li&gt;&lt;b&gt;&quot;group.browsewith&quot;&lt;/b&gt;. This is where the cascading &quot;Browse
+With-&gt;&quot; menu is.
+&lt;li&gt;&lt;b&gt;&quot;group.workwith&quot;&lt;/b&gt;. This is where the cascading &quot;Work
+With-&gt;&quot; menu is.
+&lt;li&gt;&lt;b&gt;&quot;group.build&quot;&lt;/b&gt;. Area of the menu reserved for build or refresh
+related actions.
+&lt;li&gt;&lt;b&gt;&quot;group.change&quot;&lt;/b&gt;. Area of the menu reserved for change-related actions.
+&lt;li&gt;&lt;b&gt;&quot;group.reorganize&quot;&lt;/b&gt;. Area of the menu reserved for reorganize-related actions,
+such as rename, move, copy, delete.
+&lt;li&gt;&lt;b&gt;&quot;group.reorder&quot;&lt;/b&gt;. Area of the menu reserved for reorder-related actions,
+such as move up or move down.
+&lt;li&gt;&lt;b&gt;&quot;group.generate&quot;&lt;/b&gt;. Area of the menu reserved for code generation-related actions.
+&lt;li&gt;&lt;b&gt;&quot;group.search&quot;&lt;/b&gt;. Area of the menu reserved for search-related actions.
+&lt;li&gt;&lt;b&gt;&quot;group.connection&quot;&lt;/b&gt;. Area of the menu reserved for connection-related actions.
+&lt;li&gt;&lt;b&gt;&quot;group.remoteservers&quot;&lt;/b&gt;. Area of the menu reserved for the &quot;Remote Servers-&gt;&quot; action.
+&lt;li&gt;&lt;b&gt;&quot;group.importexport&quot;&lt;/b&gt;. Area of the menu reserved for import or export-related actions.
+&lt;li&gt;&lt;b&gt;&quot;group.adapter&quot;&lt;/b&gt;. Area of the menu reserved for actions queried from the remote resource adapters.
+&lt;li&gt;&lt;b&gt;&quot;additions&quot;&lt;/b&gt;. Area of the menu reserved for actions that don&apos;t specify a group.
+&lt;li&gt;&lt;b&gt;&quot;group.team&quot;&lt;/b&gt;. Area of the menu reserved for team-related actions.
+&lt;li&gt;&lt;b&gt;&quot;group.properties&quot;&lt;/b&gt;. Area of the menu reserved for properties-related actions.
+&lt;/ul&gt;
+
+&lt;p&gt;
+You may also desire to place your action in an IBM-supplied cascading menu.
+To do this, for the ID-part, specify one of the following IBM-supplied menu IDs:
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;&quot;menu.new&quot;&lt;/b&gt;. This is the cascading &quot;New-&gt;&quot; menu.
+&lt;li&gt;&lt;b&gt;&quot;menu.goto&quot;&lt;/b&gt;. This is the cascading &quot;Goto-&gt;&quot; menu.
+&lt;li&gt;&lt;b&gt;&quot;menu.expandto&quot;&lt;/b&gt;. This is the cascading &quot;Expand To-&gt;&quot; menu.
+&lt;li&gt;&lt;b&gt;&quot;menu.openwith&quot;&lt;/b&gt;. This is the cascading &quot;Open With-&gt;&quot; menu.
+&lt;li&gt;&lt;b&gt;&quot;menu.browsewith&quot;&lt;/b&gt;. This is the cascading &quot;Browse With-&gt;&quot; menu.
+&lt;li&gt;&lt;b&gt;&quot;menu.workwith&quot;&lt;/b&gt;. This is the cascading &quot;Work With-&gt;&quot; menu.
+&lt;li&gt;&lt;b&gt;&quot;menu.remoteservers&quot;&lt;/b&gt;. This is the cascading &quot;Remote Servers-&gt;&quot; menu.
+&lt;/ul&gt;
+&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="action">
+      <annotation>
+         <documentation>
+            Use this element to define an action, and where it will appear in the popup menu. The action
+defined here will only appear in a remote resource popup menu if the resource matches all the
+given filtering criteria in the parent objectContribution element.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unique ID for this action.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Readable text to display in the popup menu for this action. Do NOT specify ampersand for mnemonics,
+as these are assigned for you. However, accelerator information is valid, as defined by the Eclipse rules.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  An optional image icon for the popup menu. This is a .gif file, given with a path relative to your plugin
+directory.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="tooltip" type="string">
+            <annotation>
+               <documentation>
+                  Optional tooltip text for this action. This appears in the status bar when the action is selected.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="menubarPath" type="string">
+            <annotation>
+               <documentation>
+                  A slash-delimited path that is used to specify the location of the the action in the popup menu. Each token
+in the path, except the last one, represents an existing submenu in the hierarchy, as defined via the &lt;samp&gt;id&lt;/samp&gt;
+attribute of a &lt;samp&gt;menu&lt;/samp&gt; element previously defined. Alternatively, the ID of an IBM-supplied cascading 
+menu can be specified. The last token represents the named separator group into which the action will be added.
+If no path is given, this must be an IBM-supplied group. 
+&lt;p&gt;
+See the comments for the path attribute of the menu element for a list of the IBM-supplied cascading menus, 
+and IBM-supplied separator groups. 
+&lt;/p&gt;
+&lt;p&gt;
+If a path is given, then this must match the name attribute of a &lt;samp&gt;separator&lt;/samp&gt; sub-element 
+within one of your &lt;samp&gt;menu&lt;/samp&gt; elements. 
+&lt;/p&gt;
+&lt;p&gt;
+If the path is omitted, or this menubarPath attribute, the action will be added to the standard &quot;additions&quot; group. 
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="enablesFor" type="string">
+            <annotation>
+               <documentation>
+                  A value indicating the selection count which must be met to enable the action. If this attribute is specified and
+the condition is met, the action is enabled. If the condition is not met, the action is disabled. If no attribute
+is specified, the action is enabled for any number of resources selected. The following formats are supported:
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;!&lt;/b&gt;. 0 items selected.
+&lt;li&gt;&lt;b&gt;?&lt;/b&gt;. 0 or 1 items selected.
+&lt;li&gt;&lt;b&gt;+&lt;/b&gt;. 1 or more items selected.
+&lt;li&gt;&lt;b&gt;n+&lt;/b&gt;. n or more items selected. Example: 2+.
+&lt;li&gt;&lt;b&gt;n&lt;/b&gt;. A precise number of items selected. Example: 4
+&lt;li&gt;&lt;b&gt;*&lt;/b&gt;. Any number of items selected.
+&lt;/ul&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="state" type="boolean">
+            <annotation>
+               <documentation>
+                  Optional attribute indicating the action is a toggle type. That
+is, is shown as a check box menu item. The attribute value will 
+be used as the initial state.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="helpContextId" type="string">
+            <annotation>
+               <documentation>
+                  Optional unique identifier indicating the help context ID for this action. When the action appears as a menu item, pressing
+F1 while the menu item is highlighted will display help for the given context ID.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Your action class that implements &lt;samp&gt;org.eclipse.ui.IObjectActionDelegate&lt;/samp&gt;.
+Typically you will extend one of the IBM-supplied classes, described in the API Information section.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IObjectActionDelegate"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="separator">
+      <annotation>
+         <documentation>
+            Use this element to partition your cascading menu into areas, or groups. This groups are defined in the
+order in which the separator elements appear. The name attribute identifies the group such that it can
+be used as the target of an action or sub-menu.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The arbitrary, but unique with this menu, name to assign this group. You can specify this name
+later in the menubarPath attribute of an action, or the group part of the path attribute of a
+menu.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a defining a simple popup menu
+action for any files and folders in any system type, which only
+shows when a single file or folder is selected:
+&lt;h3&gt;Example One&lt;/h3&gt;
+
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.rse.ui.popupMenus&quot;&gt;
+      &lt;objectContribution 
+            id=&quot;com.acme.actions.action1&quot;
+            typecategoryfilter=&quot;files&quot;&gt;
+            &lt;action id=&quot;com.acme.action1&quot;
+                    label=&quot;Test Action for Files and Folders&quot;
+                    class=&quot;com.acme.actions.Action1&quot;
+                    enablesFor=&quot;1&quot;&gt;
+            &lt;/action&gt;
+     &lt;/objectContribution&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+The following example refines the first example so the action
+only appears
+for Java source files, not folders, and only for files in a local
+connection.
+Further, we show how to define multiple actions within one objectContribution:
+&lt;h3&gt;Example Two&lt;/h3&gt;
+
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.rse.ui.popupMenus&quot;&gt;
+      &lt;objectContribution 
+            id=&quot;com.acme.actions.action2&quot;
+            typecategoryfilter=&quot;files&quot;
+            typefilter=&quot;file&quot;
+            namefilter=&quot;*.java&quot;
+            subsystemconfigurationid=&quot;ibm.filesLocal&quot;&gt;
+            &lt;action id=&quot;com.acme.action2a&quot;
+                    label=&quot;Test Action One for Local Java Files&quot;
+                    class=&quot;com.acme.actions.Action2a&quot;
+                    enablesFor=&quot;1&quot;&gt;
+            &lt;/action&gt;
+            &lt;action id=&quot;com.acme.action2b&quot;
+                    label=&quot;Test Action Two for Local Java Files&quot;
+                    class=&quot;com.acme.actions.Action2b&quot;
+                    enablesFor=&quot;1&quot;&gt;
+            &lt;/action&gt;
+     &lt;/objectContribution&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+The following example refines the second example, by moving the
+actions to our own single-cascading menu:
+&lt;h3&gt;Example Three&lt;/h3&gt;
+
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.rse.ui.popupMenus&quot;&gt;
+      &lt;objectContribution 
+            id=&quot;com.acme.actions.action3&quot;
+            typecategoryfilter=&quot;files&quot;
+            typefilter=&quot;file&quot;
+            namefilter=&quot;*.java&quot;
+            subsystemconfigurationid=&quot;ibm.filesLocal&quot;&gt;
+            &lt;menu id=&quot;com.acme.menu&quot;
+                  label=&quot;Test Actions&quot;&gt;
+                  &lt;separator name=&quot;taGroup&quot;/&gt;
+            &lt;/menu&gt;
+            &lt;action id=&quot;com.acme.action3a&quot;
+                    label=&quot;Test Action One for Local Java Files&quot;
+                    class=&quot;com.acme.actions.Action3a&quot;
+                    enablesFor=&quot;1&quot;
+                    menubarPath=&quot;com.acme.menu/taGroup&quot;&gt;
+            &lt;/action&gt;
+            &lt;action id=&quot;com.acme.action3b&quot;
+                    label=&quot;Test Action Two for Local Java Files&quot;
+                    class=&quot;com.acme.actions.Action3b&quot;
+                    enablesFor=&quot;1&quot;
+                    menubarPath=&quot;com.acme.menu/taGroup&quot;&gt;
+            &lt;/action&gt;
+     &lt;/objectContribution&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+The following example refines the third example, by moving the
+actions to our own &lt;i&gt;multiple&lt;/i&gt;-cascading menu. Notice how
+we
+can define the same separator group in different menus since
+they
+are unrelated to each other:
+&lt;h3&gt;Example Four&lt;/h3&gt;
+
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.rse.ui.popupMenus&quot;&gt;
+      &lt;objectContribution 
+            id=&quot;com.acme.actions.action4&quot;
+            typecategoryfilter=&quot;files&quot;
+            typefilter=&quot;file&quot;
+            namefilter=&quot;*.java&quot;
+            subsystemconfigurationid=&quot;ibm.filesLocal&quot;&gt;
+            &lt;menu id=&quot;com.acme.menu&quot;
+                  label=&quot;Test Actions&quot;&gt;
+                  &lt;separator name=&quot;taGroup&quot;/&gt;
+            &lt;/menu&gt;
+            &lt;menu id=&quot;com.acme.menu2&quot;
+                  label=&quot;A Sub Menu&quot;
+                  path=&quot;com.acme.menu/taGroup&quot;&gt;
+                  &lt;separator name=&quot;taGroup&quot;/&gt;
+            &lt;/menu&gt;
+            
+            &lt;action id=&quot;com.acme.action4a&quot;
+                    label=&quot;Test Action One for Local Java Files&quot;
+                    class=&quot;com.acme.actions.Action4a&quot;
+                    enablesFor=&quot;1&quot;
+                    menubarPath=&quot;com.acme.menu/com.acme.menu2/taGroup&quot;&gt;
+            &lt;/action&gt;
+            &lt;action id=&quot;com.acme.action4a&quot;
+                    label=&quot;Test Action Two for Local Java Files&quot;
+                    class=&quot;com.acme.actions.Action4b&quot;
+                    enablesFor=&quot;1&quot;
+                    menubarPath=&quot;com.acme.menu/com.acme.menu2/taGroup&quot;&gt;
+            &lt;/action&gt;
+     &lt;/objectContribution&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+The following example shows how to place actions within an
+IBM-supplied cascading menu:
+&lt;h3&gt;Example Five&lt;/h3&gt;
+
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.rse.ui.popupMenus&quot;&gt;
+      &lt;objectContribution 
+            id=&quot;com.acme.actions.action5&quot;
+            typecategoryfilter=&quot;files&quot;
+            typefilter=&quot;file&quot;
+            namefilter=&quot;*.java&quot;
+            subsystemconfigurationid=&quot;ibm.filesLocal&quot;&gt;
+            &lt;action id=&quot;com.acme.action5a&quot;
+                    label=&quot;Test Action One for Local Java Files&quot;
+                    class=&quot;com.acme.actions.Action5a&quot;
+                    enablesFor=&quot;1&quot;
+                    menubarPath=&quot;menu.openwith/additions&quot;&gt;
+            &lt;/action&gt;
+            &lt;action id=&quot;com.acme.action5b&quot;
+                    label=&quot;Test Action Two for Local Java Files&quot;
+                    class=&quot;com.acme.actions.Action5b&quot;
+                    enablesFor=&quot;1&quot;
+                    menubarPath=&quot;menu.browsewith/additions&quot;&gt;
+            &lt;/action&gt;
+     &lt;/objectContribution&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+Remember, you can repeat the &lt;samp&gt;objectContribution&lt;/samp&gt; elements as
+needed, as well as the &lt;samp&gt;menu&lt;/samp&gt; and &lt;samp&gt;action&lt;/samp&gt; elements within them.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Your actions must all implement the interface &lt;samp&gt;org.eclipse.ui.IObjectActionDelegate&lt;/samp&gt;.
+Typically, you will subclass one of the supplied base classes
+for this extension point:
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;org.eclipse.rse.ui.ui.actions.SystemAbstractPopupMenuExtensionAction&lt;/b&gt;,
+in plugin org.eclipse.rse.ui.
+Base class offering generic support for any remote resource popup
+menu action, for any system type.
+&lt;li&gt;&lt;b&gt;org.eclipse.rse.ui.ui.actions.SystemAbstractRemoteFilePopupMenuExtensionAction&lt;/b&gt;,
+in plugin org.eclipse.rse.ui. 
+Specialized base class offering specific support for any remote
+file or folder popup menu action, for any system type.
+&lt;li&gt;&lt;b&gt;com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractIFSPopupMenuExtensionAction&lt;/b&gt;,
+in plugin com.ibm.etools.iseries.core. 
+Specialized base class offering specific support for iSeries
+IFS file or folder popup menu actions.
+&lt;li&gt;&lt;b&gt;com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractQSYSPopupMenuExtensionAction&lt;/b&gt;,
+in plugin com.ibm.etools.iseries.core. 
+Specialized base class offering specific support for popup menu
+actions for iSeries objects in the QSYS file system.
+&lt;/ul&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         There is no supplied implementation for this extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2002, 2006 IBM Corporation. All Rights Reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+IBM Corporation - initial API and implementation
+      </documentation>
+   </annotation>
+
+</schema>

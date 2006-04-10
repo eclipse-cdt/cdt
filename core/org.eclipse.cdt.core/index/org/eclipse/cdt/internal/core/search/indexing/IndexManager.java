@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IndexRequest;
 import org.eclipse.cdt.internal.core.index.cindexstorage.CIndexStorage;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
+import org.eclipse.cdt.internal.core.index.nullindexer.NullIndexer;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IFile;
@@ -46,7 +47,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
@@ -378,7 +378,7 @@ public class IndexManager extends JobManager{
 	}
 	
 	public ICDTIndexer getIndexerForProject(IProject project){
-		return null;
+		return new NullIndexer();
 //		ICDTIndexer indexer = null;
 //		try {
 //			//Make sure we're not updating list
@@ -484,48 +484,50 @@ public class IndexManager extends JobManager{
 		//Get rid of any jobs scheduled by the old indexer
         this.discardJobs(project.getName());
         
-		//Get rid of the old index file
-	    ICDTIndexer currentIndexer = getIndexerForProject(project);
-		if (currentIndexer == null)
-			return;
-		currentIndexer.indexerRemoved(project);
-		
-	    IIndexStorage storage = currentIndexer.getIndexStorage();
-	    if (storage instanceof CIndexStorage)
-	    	((CIndexStorage) storage).removeIndex(project.getFullPath());
-	    
-	    monitor.enterWrite();
-	    try{ 
-	        //Purge the old indexer from the indexer map
-	        indexerMap.remove(project);   
-	    } finally { 
-	        monitor.exitWrite();
-	        final ICDTIndexer indexer = this.getIndexerForProject(project);
-	        final IProject finalProject = project;
-	        
-	    	//Notify new indexer in a job of change
-			Job job = new Job("Index Change Notification"){ //$NON-NLS-1$
-				protected IStatus run(IProgressMonitor monitor)	{	
-					Platform.run(new ISafeRunnable() {
-						public void handleException(Throwable exception) {
-							CCorePlugin.log(exception);
-						}
-						public void run() throws Exception {
-						    indexer.notifyIndexerChange(finalProject);
-						}
-					});
-					
-					return Status.OK_STATUS;
-				}
-			};
-
-			job.schedule();
-            
-            if( listeners != null )
-                for( int i = 0; i < listeners.length; ++i )
-                    if( listeners[i] != null )
-                        listeners[i].indexerSelectionChanged(project);
-	    }
+        return;
+        
+//		//Get rid of the old index file
+//	    ICDTIndexer currentIndexer = getIndexerForProject(project);
+//		if (currentIndexer == null)
+//			return;
+//		currentIndexer.indexerRemoved(project);
+//		
+//	    IIndexStorage storage = currentIndexer.getIndexStorage();
+//	    if (storage instanceof CIndexStorage)
+//	    	((CIndexStorage) storage).removeIndex(project.getFullPath());
+//	    
+//	    monitor.enterWrite();
+//	    try{ 
+//	        //Purge the old indexer from the indexer map
+//	        indexerMap.remove(project);   
+//	    } finally { 
+//	        monitor.exitWrite();
+//	        final ICDTIndexer indexer = this.getIndexerForProject(project);
+//	        final IProject finalProject = project;
+//	        
+//	    	//Notify new indexer in a job of change
+//			Job job = new Job("Index Change Notification"){ //$NON-NLS-1$
+//				protected IStatus run(IProgressMonitor monitor)	{	
+//					Platform.run(new ISafeRunnable() {
+//						public void handleException(Throwable exception) {
+//							CCorePlugin.log(exception);
+//						}
+//						public void run() throws Exception {
+//						    indexer.notifyIndexerChange(finalProject);
+//						}
+//					});
+//					
+//					return Status.OK_STATUS;
+//				}
+//			};
+//
+//			job.schedule();
+//            
+//            if( listeners != null )
+//                for( int i = 0; i < listeners.length; ++i )
+//                    if( listeners[i] != null )
+//                        listeners[i].indexerSelectionChanged(project);
+//	    }
 	}
     
     static private class RemoveIndexMarkersJob extends Job{

@@ -1,3 +1,13 @@
+2006-04-10 Mikhail Khodjaiants
+	Bug 119740: allow to specify only a subset of shared objects that we want symbols to be loaded for.
+	* MANIFEST.MF
+	* GDBDebuggerPage.java
+	* MIUIMessages.properties
+	* SolibSearchPathBlock.java
+	* StandardGDBDebuggerPage.java
+	- IPathProvider.java
+	* MIUIUtils.java
+
 2006-03-31 Mikhail Khodjaiants
 	Replaced internal org.eclipse.cdt.debug.internal.ui.SWTUtil class.
 	+ SWTUtil.java

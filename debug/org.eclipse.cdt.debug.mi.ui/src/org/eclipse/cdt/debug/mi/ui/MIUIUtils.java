@@ -12,19 +12,22 @@ package org.eclipse.cdt.debug.mi.ui;
 
 import org.eclipse.cdt.debug.mi.internal.ui.GDBSolibBlock;
 import org.eclipse.cdt.debug.mi.internal.ui.SolibSearchPathBlock;
+import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.IListAdapter;
 
 /**
  * This class provides utilities for clients of the MI UI.
  */
 public class MIUIUtils {
 
-	public static IMILaunchConfigurationComponent createGDBSolibBlock( IMILaunchConfigurationComponent solibSearchBlock, 
-																	   boolean autoSolib, 
-																	   boolean stopOnSolibEvents ) {
+	public static IMILaunchConfigurationComponent createGDBSolibBlock( IMILaunchConfigurationComponent solibSearchBlock, boolean autoSolib, boolean stopOnSolibEvents ) {
 		return new GDBSolibBlock( solibSearchBlock, autoSolib, stopOnSolibEvents );
 	}
 
-	public static IMILaunchConfigurationComponent createSolibSearchPathBlock( IPathProvider pp ) {
-		return new SolibSearchPathBlock( pp );
+	public static IMILaunchConfigurationComponent createGDBSolibBlock( boolean autoSolib, boolean stopOnSolibEvents ) {
+		return new GDBSolibBlock( new SolibSearchPathBlock(), autoSolib, stopOnSolibEvents );
+	}
+
+	public static IMILaunchConfigurationComponent createSolibSearchPathBlock( String[] customButtonLabels, IListAdapter listAdapter ) {
+		return new SolibSearchPathBlock( customButtonLabels, listAdapter );
 	}
 }

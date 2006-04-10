@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.mi.core;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -217,6 +218,12 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 					System.arraycopy( oldPaths, 0, paths, p.size(), oldPaths.length );
 					sharedMgr.setSharedLibraryPaths( target, paths );
 				}
+				// use file names instead of full paths
+				File[] autoSolibs = MICoreUtils.getAutoSolibs( config );
+				ArrayList libs = new ArrayList( autoSolibs.length );
+				for ( int j = 0; j < autoSolibs.length; ++j )
+					libs.add( new File( autoSolibs[j].getName() ) );
+				sharedMgr.autoLoadSymbols( (File[])libs.toArray( new File[libs.size()] ) );
 			}
 		}
 		catch( CDIException e ) {

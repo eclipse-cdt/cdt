@@ -11,12 +11,15 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Set;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
@@ -32,25 +35,27 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.LocationBreakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.SharedLibrary;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Watchpoint;
+import org.eclipse.cdt.debug.mi.core.command.CLIInfoSharedLibrary;
+import org.eclipse.cdt.debug.mi.core.command.CLISharedLibrary;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetAutoSolib;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetSolibSearchPath;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetStopOnSolibEvents;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShow;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowSolibSearchPath;
-import org.eclipse.cdt.debug.mi.core.command.CLIInfoSharedLibrary;
-import org.eclipse.cdt.debug.mi.core.command.CLISharedLibrary;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibUnloadedEvent;
+import org.eclipse.cdt.debug.mi.core.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowSolibSearchPathInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIShared;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Manager of the CDI shared libraries.
@@ -59,11 +64,13 @@ public class SharedLibraryManager extends Manager {
 
 	ICDISharedLibrary[] EMPTY_SHAREDLIB = {};
 	Map sharedMap;
+	Set autoLoadSet; 
 	boolean isDeferred = true;
 
 	public SharedLibraryManager (Session session) {
 		super(session, true);
 		sharedMap = new Hashtable();
+		autoLoadSet = new HashSet();
 		setAutoUpdate( MIPlugin.getDefault().getPluginPreferences().getBoolean( IMIConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH ) );
 	}
 
@@ -152,6 +159,7 @@ public class SharedLibraryManager extends Manager {
 		}
 
 		MIShared[] miLibs = getMIShareds(miSession);
+		ArrayList newLibList = new ArrayList();
 		ArrayList eventList = new ArrayList(miLibs.length);
 		for (int i = 0; i < miLibs.length; i++) {
 			SharedLibrary sharedlib = getSharedLibrary(target, miLibs[i].getName());
@@ -164,7 +172,9 @@ public class SharedLibraryManager extends Manager {
 			} else {
 				// add the new breakpoint and fire CreatedEvent
 				List sharedList = getSharedList(target);
-				sharedList.add(new SharedLibrary(target, miLibs[i]));
+				SharedLibrary lib = new SharedLibrary(target, miLibs[i]);
+				sharedList.add(lib);
+				newLibList.add(lib);
 				eventList.add(new MISharedLibCreatedEvent(miSession, miLibs[i].getName())); 
 			}
 		}
@@ -186,6 +196,7 @@ public class SharedLibraryManager extends Manager {
 				}
 			}
 		}
+		eventList.addAll(autoLoadSymbols(target, (SharedLibrary[])newLibList.toArray(new SharedLibrary[newLibList.size()])));
 		return eventList;
 	}
 
@@ -364,17 +375,41 @@ public class SharedLibraryManager extends Manager {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#supportsAutoLoadSymbols()
-	 */
 	public boolean supportsAutoLoadSymbols() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#supportsStopOnSolibEvents()
-	 */
 	public boolean supportsStopOnSolibEvents() {
 		return true;
+	}
+
+	public void autoLoadSymbols( File[] libs ) {
+		autoLoadSet.addAll( Arrays.asList( libs ) );
+	}
+
+	private List autoLoadSymbols(Target target, SharedLibrary[] libs) throws CDIException {
+		ArrayList eventList = new ArrayList(libs.length);
+		MISession miSession = target.getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		for (int i = 0; i < libs.length; i++) {
+			IPath path = new Path( libs[i].getFileName() );
+			File file = new File( path.lastSegment() );
+			if (libs[i].areSymbolsLoaded() || !autoLoadSet.contains(file)) {
+				continue;
+			}
+			CLISharedLibrary sharedlibrary = factory.createCLISharedLibrary(libs[i].getFileName());
+			try {
+				miSession.postCommand(sharedlibrary);
+				MIInfo info = sharedlibrary.getMIInfo();
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+				}
+			} catch (MIException e) {
+				throw new MI2CDIException(e);
+			}
+			libs[i].getMIShared().setSymbolsRead( true );
+			eventList.add(new MISharedLibChangedEvent(miSession, libs[i].getFileName())); 
+		}
+		return eventList;
 	}
 }

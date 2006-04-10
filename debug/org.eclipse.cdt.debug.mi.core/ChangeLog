@@ -1,4 +1,11 @@
 2006-04-10 Mikhail Khodjaiants
+	Bug 119740: allow to specify only a subset of shared objects that we want symbols to be loaded for.
+	* SharedLibraryManager.java
+	* GDBCDIDebugger2.java
+	* IMILaunchConfigurationConstants.java
+	* MICoreUtils.java
+
+2006-04-10 Mikhail Khodjaiants
 	"set solib-search-path" and "show solib-search-path" are not supported on Windows.
 	* StandardWinCommandFactory.java
 

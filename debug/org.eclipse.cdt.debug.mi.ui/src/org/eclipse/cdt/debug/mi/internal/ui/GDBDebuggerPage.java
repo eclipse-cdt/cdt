@@ -172,7 +172,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	}
 
 	public IMILaunchConfigurationComponent createSolibBlock( Composite parent ) {
-		IMILaunchConfigurationComponent block = MIUIUtils.createGDBSolibBlock( MIUIUtils.createSolibSearchPathBlock( null ), true, true ); 
+		IMILaunchConfigurationComponent block = MIUIUtils.createGDBSolibBlock( true, true ); 
 		block.createControl( parent );
 		return block;
 	}

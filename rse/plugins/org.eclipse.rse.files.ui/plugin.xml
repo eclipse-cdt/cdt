@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2006 IBM Corporation. All rights reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Initial Contributors:
+The following IBM employees contributed to the Remote System Explorer
+component that contains this file: David McKnight, Kushal Munir, 
+Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+
+Contributors:
+{Name} (company) - description of contribution.
+-->
+<?eclipse version="3.0"?>
+<plugin>
+ 
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%PreferencePage.UniversalFiles"
+            category="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
+            class="org.eclipse.rse.files.ui.propertypages.UniversalPreferencePage"
+            id="org.eclipse.rse.files.ui.UniversalFilesPreferences">
+      </page>
+
+      <page
+            name="%PreferencePage.Cache"
+            category="org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage"
+            class="org.eclipse.rse.files.ui.propertypages.SystemCachePreferencePage"
+            id="org.eclipse.rse.core.ui.preferences.SystemCachePreferencePage">
+      </page>
+   </extension>
+   
+   
+   
+<!-- ============================================ -->
+<!-- Define Remote Object Properties Pages        -->
+<!-- ============================================ -->
+   <extension 
+         point="org.eclipse.rse.ui.propertyPages">
+      <page 
+            name="%RemotePropertyPage.File.Info"
+            typecategoryfilter="files"
+            class="org.eclipse.rse.files.ui.propertypages.SystemFilePropertyPage"
+            id="org.eclipse.rse.files.PropertyPage">
+      </page>
+   </extension>
+   
+   
+   
+<!-- ============================================ -->
+<!-- Define Workbench Properties Pages            -->
+<!-- ============================================ -->
+   <extension
+         point="org.eclipse.ui.propertyPages">
+<!--
+      <page
+            objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem"
+            name="%PropertyPage.EnvVariables"
+            class="org.eclipse.rse.core.ui.propertypages.EnvironmentVariablesPropertyPage"
+            id="org.eclipse.rse.EnvironmentVariablesPropertyPage">
+            <filter name="envVarPP" value="true"/>
+      </page> 
+-->
+      <page
+            objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem"
+            name="%PropertyPage.ServerLauncherSettings" 
+            class="org.eclipse.rse.ui.propertypages.ServerLauncherPropertyPage"
+            id="com.ibm.etools.universal.core.serverlauncher.PropertyPage">
+            <filter name="serverLaunchPP" value="true"/>
+      </page>
+
+      
+       <page
+            objectClass="org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem"
+            name="%PropertyPage.Service"
+            class="org.eclipse.rse.files.ui.propertypages.FileServicesPropertyPage"
+            id="org.eclipse.rse.files.ui.propertypages.FileServicesPropertyPage">
+      </page>
+      
+   </extension>
+   
+   
+
+<!-- ================================================================= -->
+<!-- Flag file types used by the RemoteSystemsConnection project for   -->
+<!-- more intelligent team sync support			                       -->
+<!-- ================================================================= -->
+	<extension point="org.eclipse.team.core.fileTypes">
+  		<fileTypes extension="xmi" type="text"/>
+  	</extension>
+
+<!-- ================================================================= -->
+<!--     Hide RemoteSystemsConnections and RemoteSystemsTempFiles      -->
+<!-- 	 in the Navigator view					                       -->
+<!-- ================================================================= -->
+	<extension
+         point="org.eclipse.ui.ide.resourceFilters">
+      <filter
+            selected="true"
+            pattern="RemoteSystemsConnections">
+      </filter>
+      <filter
+            selected="true"
+            pattern="RemoteSystemsTempFiles">
+      </filter>
+	</extension>
+	
+
+    
+<!-- ================================================================= -->
+<!--     Hide RemoteSystemsConnections and RemoteSystemsTempFiles      -->
+<!-- 	 in the JDT view					                       -->
+<!-- ================================================================= -->	
+	<extension
+		 point="org.eclipse.jdt.ui.javaElementFilters">
+        <filter
+      		targetId="org.eclipse.jdt.ui.PackageExplorer"
+            name="%ViewFilter.RSEConnections"
+            enabled="true"
+            description=""
+            pattern="RemoteSystemsConnections">
+        </filter>
+      <filter
+   		targetId="org.eclipse.jdt.ui.PackageExplorer"
+            name="%ViewFilter.RSETempFiles"
+            enabled="true"
+            description=""
+            pattern="RemoteSystemsTempFiles">
+      </filter>    
+    </extension>
+    
+	
+<!-- ================================================================= -->
+<!-- Add a search page for universal, i.e. Linux, Windows and Local == -->
+<!-- ================================================================= -->	
+   <extension
+         point="org.eclipse.search.searchPages">
+      <page
+            tabPosition="0"
+            label="%Search.Page"
+            enabled="true"
+            icon="icons/full/obj16/system_search.gif"
+            class="org.eclipse.rse.files.ui.search.SystemSearchPage"
+            sizeHint="250,160"
+            id="org.eclipse.rse.core.search.searchPage">
+      </page>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="%Remote.Search"
+            visible="true"
+            id="org.eclipse.rse.core.search.searchActionSet">
+         <menu
+               label="%searchMenu.label"
+               path="navigate"
+               id="org.eclipse.search.menu">
+            <groupMarker
+                  name="internalDialogGroup">
+            </groupMarker>
+            <groupMarker
+                  name="dialogGroup">
+            </groupMarker>
+            <separator
+                  name="contextMenuActionsGroup">
+            </separator>
+         </menu>
+         <action
+               label="%Remote.Search"
+               tooltip="%Remote.Search.tooltip"
+               helpContextId="org.eclipse.rse.core.rsac0000"
+               icon="icons/full/obj16/system_search.gif"
+               class="org.eclipse.rse.files.ui.search.SystemOpenSearchPageAction"
+               menubarPath="org.eclipse.search.menu/dialogGroup"
+               id="org.eclipse.rse.core.search.searchAction">
+         </action>
+      </actionSet>
+   </extension>
+
+<!-- ================================================================= -->
+<!-- Add handlers for ZIP, TAR, and JAR archive files               == -->
+<!-- ================================================================= -->	
+   <extension
+         point="org.eclipse.rse.ui.archivehandlers">
+      <archivehandler
+            fileNameExtension="zip"
+            name="SystemZipHandler"
+            class="org.eclipse.rse.services.clientserver.archiveutils.SystemZipHandler"
+            id="org.eclipse.rse.services.clientserver.archiveutils.systemziphandler">
+      </archivehandler>
+      <archivehandler
+            fileNameExtension="jar"
+            name="SystemJarHandler"
+            class="org.eclipse.rse.services.clientserver.archiveutils.SystemJarHandler"
+            id="org.eclipse.rse.services.clientserver.archiveutils.systemjarhandler">
+      </archivehandler>
+      <archivehandler
+            fileNameExtension="tar"
+            name="SystemTarHandler"
+            class="org.eclipse.rse.services.clientserver.archiveutils.SystemTarHandler"
+            id="org.eclipse.rse.services.clientserver.archiveutils.systemtarhandler">
+      </archivehandler>
+   </extension>
+
+<!-- ================================================================= -->
+<!-- Add default mount path mapper              					== -->
+<!-- ================================================================= -->	
+   <extension
+         point="org.eclipse.rse.ui.mountPathMappers">
+      <mountPathMapper
+            name="DefaultMountPathMapper"
+            class="org.eclipse.rse.files.ui.resources.DefaultMountPathMapper"
+            id="org.eclipse.rse.core.resources.defaultmountpathmapper">
+      </mountPathMapper>
+   </extension>
+   
+   
+   
+<!-- ================================================================= -->
+<!-- Add decorator for virtual, executable and link files              -->
+<!-- ================================================================= -->	
+	<extension point="org.eclipse.ui.decorators"> 
+        <decorator
+            id="org.eclipse.rse.core.virtualobject.decorator" 
+            label="%VirtualObjectDecorator.label" 
+            state="true" 
+            lightweight="true" 
+            icon="icons/full/ovr16/virtual_tsk.gif" 
+            location="BOTTOM_RIGHT"> 
+            <enablement>
+            	<and>
+                	<objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
+                	<objectState name="isVirtual" value="true"/>
+                </and> 
+            </enablement>
+        </decorator>
+        <decorator
+            id="org.eclipse.rse.core.binary.executable.decorator" 
+            label="%BinaryExecutableDecorator.label" 
+            state="true" 
+            lightweight="true" 
+            icon="icons/full/ovr16/exec_binary_ovr.gif" 
+            location="BOTTOM_LEFT"> 
+            <enablement>
+            	<and>
+                	<objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
+                	<objectState name="classification" value="*executable(binary)*"/>
+                </and> 
+            </enablement>
+        </decorator>
+        <decorator
+            id="org.eclipse.rse.core.script.executable.decorator" 
+            label="%ScriptExecutableDecorator.label" 
+            state="true" 
+            lightweight="true" 
+            icon="icons/full/ovr16/exscript_ovr.gif" 
+            location="BOTTOM_LEFT"> 
+            <enablement>
+            	<and>
+                	<objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
+                	<or>
+	                	<objectState name="classification" value="*executable(script)*"/>
+	                	<objectState name="classification" value="script"/>
+	                	<objectState name="classification" value="symbolic link(script)*"/>
+	                </or>
+                </and> 
+            </enablement>
+        </decorator>
+        <decorator
+            id="org.eclipse.rse.core.java.executable.decorator" 
+            label="%JavaExecutableDecorator.label" 
+            state="true" 
+            lightweight="true" 
+            icon="icons/full/ovr16/exec_ovr.gif" 
+            location="BOTTOM_LEFT"> 
+            <enablement>
+            	<and>
+                	<objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
+                	<objectState name="classification" value="*executable(java:*)*"/>
+                </and> 
+            </enablement>
+        </decorator>
+        <decorator
+            id="org.eclipse.rse.core.library.decorator" 
+            label="%LibraryDecorator.label" 
+            state="true" 
+            lightweight="true" 
+            icon="icons/full/ovr16/sharedlib_ovr.gif" 
+            location="BOTTOM_LEFT"> 
+            <enablement>
+            	<and> 
+                	<objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
+                	<objectState name="classification" value="*module*"/>
+                </and> 
+            </enablement>
+        </decorator>
+        <decorator
+            id="org.eclipse.rse.core.link.decorator" 
+            label="%LinkDecorator.label" 
+            state="true" 
+            lightweight="true" 
+            icon="icons/full/ovr16/symblclnk_ovr.gif" 
+            location="TOP_LEFT"> 
+            <enablement>
+            	<and>
+                	<objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
+                	<objectState name="classification" value="symbolic link*"/>
+                </and> 
+            </enablement>
+        </decorator>
+
+    </extension>
+   
+</plugin>
+ 

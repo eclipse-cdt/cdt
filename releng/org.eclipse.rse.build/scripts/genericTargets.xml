@@ -1,0 +1,149 @@
+<project name="Generic Build Targets" default="noDefault">
+
+<!-- Properties that must be passed to this script:
+	buildDirectory
+	id
+	type
+	ignoreTagInfo
+	recursiveGeneration
+	workingDirectory
+	configInfo
+-->
+
+<!-- ===================================================================== -->
+<!-- Setup default values -->
+<!--   configs : by default build a platform-independent configuration -->
+<!--   fetchTag : by default use the CVS tags as spec'd in directory.txt -->
+<!-- ===================================================================== -->
+<property name="configs" value="*,*,*"/>
+<property name="fetchTag" value=""/>
+<property name="buildingOSGi" value="true"/>
+<!-- ===================================================================== -->
+<!-- Fetch a single element (feature, plugin, fragment) -->
+<!-- ===================================================================== -->
+<target name="fetchElement" description="Checking out source from repository..." depends="init">
+	<mkdir dir="${buildDirectory}/features"/>
+	<mkdir dir="${buildDirectory}/plugins"/>
+	<eclipse.fetch
+		elements="${type}@${id}"
+		buildDirectory="${buildDirectory}"
+		directory="${buildDirectory}/directory.txt"
+		fetchTag="${fetchTag}"
+		configInfo="${configs}"
+	/>
+	
+	<!-- Run generated fetch script -->
+
+       <echo message="featuresRecursively is :${featuresRecursively}"/>
+
+	<ant antfile="${buildDirectory}/fetch_${id}.xml">
+		<!-- ************  should not have to spec these  *************** -->
+		<property name="featureOnly" value="true"/>
+		<property name="featureAndPlugins" value="true"/>
+	</ant>
+</target>
+
+<!-- ===================================================================== -->
+<!-- Clean previously built elements -->
+<!-- ===================================================================== -->
+<target name="cleanElement" description="Scrubbing features and plugins of old jars..." depends="init">
+<echo message="${elementPath}"/>
+	<ant antfile="build.xml" dir="${elementPath}" target="clean"/>
+</target>
+
+<!-- ===================================================================== -->
+<!-- Generate a build.xml file for an element -->
+<!-- ===================================================================== -->
+<target name="generateScript" description="Generating build scripts..." depends="init">
+	<echo message="eclipse.buildScript ${type}@${id} buildDirectory=${buildDirectory} buildingOSGi=${buildingOSGi} baseLocation=${baseLocation} " />
+	<eclipse.buildScript
+		elements="${type}@${id}"
+		buildDirectory="${buildDirectory}"
+		configInfo="${configs}"
+		baseLocation="${baseLocation}"
+		buildingOSGi="${buildingOSGi}"
+               archivesFormat="${archivesFormat}"
+	/>
+</target>
+
+<!-- ===================================================================== -->
+<!-- Run build.xml for a single element-->
+<!-- ===================================================================== -->
+<target name="processElement" description="Processing build scripts..." depends="init">
+	<ant antfile="build.xml" dir="${elementPath}" target="build.jars">
+		<property name="target" value="build.jars"/>
+	</ant>
+</target>
+
+<!-- **********************
+1) the gather targets do more than just gather.  These are packaging targets.
+We need to continue ot separate the two concepts (gather and package) as
+the packaging is different if we wanted to create an update site packaging
+(for example).  The gathers are commented out for now as the new generated
+scripts do not seem to have them.
+
+2) do we really need the ws and os properties?  In all cases?  Do they have to be
+set here?
+-->
+
+<!-- ===================================================================== -->
+<!-- Gather items listed in bin.includes -->
+<!-- ===================================================================== -->
+<target name="gatherBinaries" description="Gathering binary distribution..." depends="init">
+	<!-- ant antfile="build.xml" dir="${elementPath}" target="gather.bin.parts"/ -->
+	<ant antfile="build.xml" dir="${elementPath}" target="zip.distribution">
+		<property name="os" value="${os}" />
+		<property name="ws" value="${ws}" />	
+	</ant>
+</target>
+
+<!-- ===================================================================== -->
+<!-- Gather source for a build element -->
+<!-- ===================================================================== -->
+<target name="gatherSources" description="Gathering source distribution..." depends="init">
+	<!--suspect:  this call is required to create the *.src.zip inside each plugin-->
+	<ant antfile="build.xml" dir="${elementPath}" target="build.sources">
+		<property name="os" value="${os}" />
+		<property name="ws" value="${ws}" />	
+	</ant>
+	<ant antfile="build.xml" dir="${elementPath}" target="zip.sources">
+		<property name="os" value="${os}" />
+		<property name="ws" value="${ws}" />	
+	</ant>
+</target>
+
+<!-- ===================================================================== -->
+<!-- Gather log files for an element -->
+<!-- Suspect: We just unzip these right away -->
+<!-- ===================================================================== -->
+<target name="gatherLogs" description="Gathering build logs..." depends="init">
+	<ant antfile="build.xml" dir="${elementPath}" target="zip.logs" >
+		<property name="buildDirectory" value="${buildDirectory}" />
+	</ant>
+</target>
+
+<!-- ===================================================================== -->
+<!-- Default target                                                        -->
+<!-- ===================================================================== -->
+<target name="noDefault">
+	<echo message="This file must be called with explicit targets" />
+</target>
+
+<!-- ===================================================================== -->
+<!-- Assemble one build element -->
+<!-- ===================================================================== -->
+<target name="assembleElement" description="Assembling the build..." depends="init">
+	<ant antfile="assemble.${id}.all.xml" dir="${buildDirectory}"/>
+</target>
+
+<!-- ===================================================================== -->
+<!-- Miscellaneous helper targets -->
+<!-- ===================================================================== -->
+<target name="init">
+	<condition property="elementPath" value="${buildDirectory}/plugins/${id}">
+		<equals arg1="${type}" arg2="fragment" />
+	</condition>
+	<property name="elementPath" value="${buildDirectory}/${type}s/${id}" />
+</target>
+
+</project>

@@ -1,0 +1,362 @@
+<project name="Build specific targets and properties" default="noDefault" >
+
+<!-- ===================================================================== -->
+<!-- Run a given ${target} on all elements being built -->
+<!-- Add on <ant> task for each top level element being built. -->
+<!-- ===================================================================== -->
+<target name="allElements">
+	<ant antfile="${genericTargets}" target="${target}" >
+		<property name="type" value="feature" />
+		<property name="id" value="org.eclipse.rse.core" />
+	</ant>	
+	<ant antfile="${genericTargets}" target="${target}" >
+		<property name="type" value="feature" />
+		<property name="id" value="org.eclipse.rse.local" />
+	</ant>	
+	<ant antfile="${genericTargets}" target="${target}" >
+		<property name="type" value="feature" />
+		<property name="id" value="org.eclipse.rse.ftp" />
+	</ant>	
+	<ant antfile="${genericTargets}" target="${target}" >
+		<property name="type" value="feature" />
+		<property name="id" value="org.eclipse.rse.telnet" />
+	</ant>	
+	<ant antfile="${genericTargets}" target="${target}" >
+		<property name="type" value="feature" />
+		<property name="id" value="org.eclipse.rse.dstore" />
+	</ant>	
+	<ant antfile="${genericTargets}" target="${target}" >
+		<property name="type" value="feature" />
+		<property name="id" value="org.eclipse.rse.dstore.services" />
+	</ant>	
+
+	<ant antfile="${genericTargets}" target="${target}" >
+		<property name="type" value="feature" />
+		<property name="id" value="org.eclipse.rse.doc.isv" />
+	</ant>	
+	<ant antfile="${genericTargets}" target="${target}" >
+		<property name="type" value="feature" />
+		<property name="id" value="org.eclipse.rse.sdk" />
+	</ant>
+</target>
+
+<!-- ===================================================================== -->
+<!-- Targets to assemble the built elements for particular configurations  -->
+<!-- These generally call the generated assemble scripts (named in -->
+<!-- ${assembleScriptName}) but may also add pre and post processing -->
+<!-- Add one target for each root element and each configuration -->
+<!-- ===================================================================== -->
+
+<target name="assemble.org.eclipse.rse.core">
+	<antcall target="buildFeature">
+		<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.core" />
+	</antcall>
+   </target>
+	<target name="assemble.org.eclipse.rse.local">
+		<antcall target="buildFeature">
+			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.local" />
+		</antcall>	
+	</target>
+	<target name="assemble.org.eclipse.rse.ftp">
+		<antcall target="buildFeature">
+			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.ftp" />
+		</antcall>
+	</target>
+	<target name="assemble.org.eclipse.rse.telnet">
+		<antcall target="buildFeature">
+			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.telnet" />
+		</antcall>
+	</target>
+	<target name="assemble.org.eclipse.rse.dstore">
+		<antcall target="buildFeature">
+			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.dstore" />
+		</antcall>
+	</target>
+	<target name="assemble.org.eclipse.rse.dstore.services">
+		<antcall target="serverruntime"/>
+		<antcall target="buildFeature">
+			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.dstore.services" />
+		</antcall>	
+	</target>
+
+	<target name="assemble.org.eclipse.rse.doc.isv">
+		<antcall target="buildFeature">
+			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.doc.isv" />
+		</antcall>
+	</target>
+	<target name="assemble.org.eclipse.rse.sdk">
+		<antcall target="buildFeature">
+			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.sdk" />
+		</antcall>
+	</target>
+
+
+	
+	<target name="dstore_extra_server.jar">
+		<mkdir dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime"/>
+		<delete dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild"/>
+		<mkdir dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild"/>
+	    <javac debug="${dbg}" srcdir="${buildDirectory}/plugins/org.eclipse.dstore.extra/server" destdir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild" includeAntRuntime="false"/>
+	    <jar jarfile="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime/dstore_extra_server.jar" basedir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild"/>
+		<delete dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild"/>
+	</target>	
+	
+<target name="serverruntime">
+		<antcall target="dstore_extra_server.jar"/>
+	    <property name="universalserverfilelist"
+	                  value="${buildDirectory}/plugins/org.eclipse.dstore.core/dstore_core.jar,
+	    	${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts/auth.pl,
+			${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts/ssl.properties,
+	    	${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime/dstore_extra_server.jar,
+	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/patterns.dat,
+	    	${buildDirectory}/plugins/org.eclipse.rse.services/clientserver.jar,
+	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/dstore_miners.jar,
+	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/minerFile.dat,
+	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/rsecomm.properties,
+	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/server.linux,
+	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/server.unix,
+	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/patterns.dat,
+	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/daemon.linux,
+	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/win.env.bat,
+	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/daemon.win.bat,
+	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/run.win.bat"/>
+
+	    <delete dir="${packageDirectory}\rseserver"/>
+	    <mkdir dir="${packageDirectory}\rseserver"/>
+
+	    <copy todir="${packageDirectory}\rseserver">
+	    				<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core" includes="dstore_core.jar"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts" includes="auth.pl"/>
+	    				<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts" includes="ssl.properties"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime" includes ="dstore_extra_server.jar"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="dstore_miners.jar"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="patterns.dat"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services" includes="clientserver.jar"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="minerFile.dat"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="rsecomm.properties"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="server.linux"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="server.unix"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="patterns.dat"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="daemon.linux"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="win.env.bat"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="daemon.win.bat"/>
+	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="run.win.bat"/>
+	    </copy>
+
+	    <fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="server.linux"/>
+   		<fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="daemon.linux"/>
+	    <fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="daemon.unix"/>
+		<fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="server.unix"/>
+	
+		
+	    <jar jarfile="${packageDirectory}\rseserver.jar" filesonly="true">
+	      <fileset dir="${packageDirectory}\rseserver"
+	               includes="*"
+	               excludes="">
+	      </fileset>
+	    </jar>
+	
+		<delete dir="${packageDirectory}\rseserver"/>
+		<delete> 
+			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime"
+				includes="*">
+			</fileset>
+		</delete>
+
+		<copy todir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime">
+	  		<fileset dir="${packageDirectory}"
+				includes="rseserver.jar">
+	  		</fileset>
+		</copy>
+			
+	</target>
+	
+<!-- ===================================================================== -->
+<!-- Check out map files from correct repository -->
+<!-- Replace values for cvsRoot, package and mapVersionTag as desired. -->
+<!-- ===================================================================== -->
+<target name="getMapFiles">
+	<!-- Notify recipients that build has started.-->
+	<!--
+	<property name="cvsRoot" value=":pserver:build@dbgaix2:/usr/vatpfcvs" />
+	<property name="mapVersionTag" value="HEAD" />
+	<cvs    cvsRoot="${cvsRoot}"
+		package="MenuEditorBuilder"
+		dest="${buildDirectory}/maps"
+		tag="${mapVersionTag}"
+	/>
+	-->
+	<copy todir="${buildDirectory}/maps">
+		      <fileset dir="." includes="*.map"/>
+   </copy>
+
+
+</target>
+
+<!-- ===================================================================== -->
+<!-- Steps to do before setup -->
+<!-- ===================================================================== -->
+<target name="preSetup">
+</target>
+
+<!-- ===================================================================== -->
+<!-- Steps to do after setup but before starting the build proper -->
+<!-- ===================================================================== -->
+<target name="postSetup">
+</target>
+
+<!-- ===================================================================== -->
+<!-- Steps to do before fetching the build elements -->
+<!-- ===================================================================== -->
+<target name="preFetch">
+      	<!-- clean up the old driver -->
+	<!--	<delete includeEmptyDirs="true">-->
+			<fileset dir="${buildDirectory}\plugins" casesensitive="yes" defaultexcludes="no" >
+				<include name="org.eclipse.*/**" />
+
+			</fileset>
+			<fileset dir="${buildDirectory}\features" casesensitive="yes" defaultexcludes="no" >
+				<include name="org.eclipse.*/**" />
+			</fileset>
+			<fileset dir="${builddest}" casesensitive="yes" defaultexcludes="yes" >
+				<include name="full/eclipse/**" />
+				<include name="full/Config/**" />
+				<include name="lite/**" />
+			</fileset>
+			<fileset dir="${head}\eclipse\plugins" casesensitive="yes" defaultexcludes="yes" >
+				<include name="org.eclipse.*/**" />
+			</fileset>
+			<fileset dir="${head}\eclipse\features" casesensitive="yes" defaultexcludes="no" >
+				<include name="org.eclipse.*/**" />
+			</fileset>
+	<!--	</delete>-->
+
+
+</target>
+
+<!-- ===================================================================== -->
+<!-- Steps to do after fetching the build elements -->
+<!-- ===================================================================== -->
+<target name="postFetch">
+
+</target>
+
+<!-- ===================================================================== -->
+<!-- Steps to do before generating the build scripts. -->
+<!-- ===================================================================== -->
+<target name="preGenerate">
+</target>
+
+<!-- ===================================================================== -->
+<!-- Steps to do after generating the build scripts. -->
+<!-- ===================================================================== -->
+<target name="postGenerate">
+</target>
+
+
+<!-- ===================================================================== -->
+<!-- Steps to do before running the build.xmls for the elements being built. -->
+<!-- ===================================================================== -->
+<target name="preProcess">
+</target>
+
+<!-- ===================================================================== -->
+<!-- Steps to do after running the build.xmls for the elements being built. -->
+<!-- ===================================================================== -->
+<target name="postProcess">
+</target>
+
+
+<!-- ===================================================================== -->
+<!-- Steps to do before running assemble. -->
+<!-- ===================================================================== -->
+<target name="preAssemble">
+</target>
+
+<!-- ===================================================================== -->
+<!-- Steps to do after  running assemble. -->
+<!-- ===================================================================== -->
+<target name="postAssemble">
+</target>
+
+<!-- ===================================================================== -->
+<!-- Steps to do after the build is done. -->
+<!-- ===================================================================== -->
+<target name="postBuild">
+	<mkdir dir="${packageDirectory}"/>
+    <copy todir="${packageDirectory}">   	
+		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.core" includes="org.eclipse.rse.core_8.0.0.bin.dist.zip"/>	
+		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.dstore" includes="org.eclipse.rse.dstore_8.0.0.bin.dist.zip"/>
+		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.dstore.services" includes="org.eclipse.rse.dstore.services_8.0.0.bin.dist.zip"/>	
+		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.ftp" includes="org.eclipse.rse.ftp_8.0.0.bin.dist.zip"/>	
+		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.local" includes="org.eclipse.rse.local_8.0.0.bin.dist.zip"/>	
+       	  <fileset dir="${buildDirectory}\features\org.eclipse.rse.telnet" includes="org.eclipse.rse.telnet_8.0.0.bin.dist.zip"/>	
+	      <fileset dir="${buildDirectory}\features\org.eclipse.rse.sdk" includes="org.eclipse.rse.sdk_8.0.0.bin.dist.zip"/>  
+   </copy>
+	
+	<move tofile="${packageDirectory}\rse-core-runtime_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.core_8.0.0.bin.dist.zip"/>
+	<move tofile="${packageDirectory}\rse-dstore-runtime_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.dstore_8.0.0.bin.dist.zip"/>
+	<move tofile="${packageDirectory}\rse-dstore-services-runtime_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.dstore.services_8.0.0.bin.dist.zip"/>	
+	<move tofile="${packageDirectory}\rse-ftp-runtime_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.ftp_8.0.0.bin.dist.zip"/>	
+	<move tofile="${packageDirectory}\rse-local-runtime_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.local_8.0.0.bin.dist.zip"/>
+	<move tofile="${packageDirectory}\rse-telnet-runtime_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.telnet_8.0.0.bin.dist.zip"/>
+	<move tofile="${packageDirectory}\rse-sdk_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.sdk_8.0.0.bin.dist.zip"/>
+	
+	<!--
+	<antcall target="serverruntime"/>
+	
+	<antcall target="publish"/>
+	-->
+</target>
+
+<!-- ===================================================================== -->
+<!-- Steps to do to test the build results -->
+<!-- ===================================================================== -->
+<target name="test">
+</target>
+
+<!-- ===================================================================== -->
+<!-- Steps to do to publish the build results -->
+<!-- ===================================================================== -->
+<target name="publish" if="doPublish">
+ 	<mkdir dir="${publishDirectory}"/>
+	 <copy todir="${publishDirectory}">  
+		  <fileset dir="${packageDirectory}" includes="*.zip"/>		 	
+	 </copy>
+</target>
+
+<!-- ===================================================================== -->
+<!-- Default target                                                        -->
+<!-- ===================================================================== -->
+<target name="noDefault">
+	<echo message="You must specify a target when invoking this file" />
+</target>
+<!-- ===================================================================== -->
+<!-- Build the feature in own way                                          -->
+<!-- Somehow the default builder doesn't work                              -->
+<!-- ===================================================================== -->
+<target name="buildFeature">
+	<echo message="Building feature ${featureFolder}" />
+<!--
+	<ant antfile="${featureFolder}\build.xml" dir="${featureFolder}" target="build.jars" />
+-->
+	<ant antfile="${featureFolder}\build.xml" dir="${featureFolder}" target="zip.distribution" />
+</target>
+
+<!-- ===================================================================== -->
+<!-- Zip the docs                                                          -->
+<!-- ===================================================================== -->
+       <target name="zipDoc">
+		<zip destfile="${buildDirectory}\plugins\${docPluginID}\doc.zip" filesonly="false" defaultexcludes="true">
+			<fileset dir="${buildDirectory}\plugins\${docPluginID}" defaultexcludes="true">
+				<include name= "**/*.gif" />
+				<include name="**/*.html" />
+				<include name="**/*.htm" />
+				<include name= "**/*.GIF" />
+				<include name="**/*.HTML" />
+				<include name="**/*.HTM" />
+				<include name="**/*.css" />
+			</fileset>
+		</zip>
+       </target>
+</project>

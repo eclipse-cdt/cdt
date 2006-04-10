@@ -1,3 +1,7 @@
+2006-04-10 Mikhail Khodjaiants
+	"set solib-search-path" and "show solib-search-path" are not supported on Windows.
+	* StandardWinCommandFactory.java
+
 2006-04-03 Mikhail Khodjaiants
 	Bug 134617: The "stop on shared library event" option doesn't work.
 	* GDBCDIDebugger2.java

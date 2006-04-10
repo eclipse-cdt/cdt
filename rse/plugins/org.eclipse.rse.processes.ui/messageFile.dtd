@@ -1,0 +1,22 @@
+<!ELEMENT Component (Subcomponent+)>
+<!ATTLIST Component
+ Abbr ID #REQUIRED
+ Name CDATA #REQUIRED
+>
+<!ELEMENT LevelOne (#PCDATA)>
+<!ELEMENT LevelTwo (#PCDATA)>
+<!ELEMENT Message (LevelOne, LevelTwo)>
+<!ATTLIST Message
+ ID CDATA #REQUIRED
+ Indicator (I | E | W | U | Q | C) #REQUIRED
+>
+<!ELEMENT MessageFile (Component)>
+<!ATTLIST MessageFile
+ Version CDATA #FIXED "1.0"
+>
+<!ELEMENT MessageList (Message+)>
+<!ELEMENT Subcomponent (MessageList)>
+<!ATTLIST Subcomponent
+ Abbr ID #REQUIRED
+ Name CDATA #REQUIRED
+>

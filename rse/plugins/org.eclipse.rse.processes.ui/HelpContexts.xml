@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2006 IBM Corporation. All rights reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Initial Contributors:
+The following IBM employees contributed to the Remote System Explorer
+component that contains this file: David McKnight, Kushal Munir, 
+Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+
+Contributors:
+{Name} (company) - description of contribution.
+-->
+<?NLS TYPE="org.eclipse.help.contexts"?>
+<contexts>
+<!-- New/Update Process Filter String controls... -->
+<context id="pfsd0001">
+<description>Specify a simple executable name or a generic name pattern, containing up to 2 wildcard characters <b>*</b>. For example, <b>abc*def*</b>. Specify <b>*</b> to list all executables.
+</description>
+</context>
+<context id="pfsd0002">
+<description>Specify a simple username or a generic name pattern, containing up to 2 wildcard characters <b>*</b>. For example, <b>abc*def*</b>. Specify <b>*</b> to list all users.
+</description>
+</context>
+<context id="pfsd0003">
+<description>Specify an integer group id to list all processes whose owners belong to that group.
+</description>
+</context>
+<context id="pfsd0004">
+<description>Choose one or more status types to restrict. Only processes with the selected states will be shown for this filter string.
+</description>
+</context>
+<context id="pfsd0005">
+<description>Set this to any positive long integer to show only processes with virtual memory usage greater than this value.
+</description>
+</context>
+<context id="pfsd0006">
+<description>Set this to any positive long integer to show only processes with virtual memory usage less than this value.
+</description>
+</context>
+<context id="pfsd0007">
+<description>Check this box to show only processes with virtual memory usage greater than the value specified in the Minimum VM entry field, but with no maximum VM size.
+</description>
+</context>
+<!-- REMOTE PROCESS ACTIONS: Kill action...   -->
+<context id="actn0001"><description>Kill the selected process or processes. You will be prompted for the type of kill signal to be sent to the process or processes.
+</description>
+</context>
+<!-- Kill Remote Processes Dialog...   -->
+<context id="dkrp0000">
+<description>Select the process or processes to which you wish to send a kill signal. Select the type of signal to be sent from the combo box. Then press OK to send the signal to the process or processes.
+</description>
+</context>
+</contexts>

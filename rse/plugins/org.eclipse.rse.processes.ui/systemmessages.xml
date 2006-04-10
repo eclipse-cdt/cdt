@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<!--
+Copyright (c) 2006 IBM Corporation. All rights reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Initial Contributors:
+The following IBM employees contributed to the Remote System Explorer
+component that contains this file: David McKnight, Kushal Munir, 
+Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+
+Contributors:
+{Name} (company) - description of contribution.
+-->
+<!DOCTYPE MessageFile SYSTEM "messageFile.dtd">
+
+<MessageFile Version="1.0">
+     <Component Name="Remote_System_Explorer_Processes" Abbr="RSEP">
+          <Subcomponent Name="General" Abbr="G">
+                <MessageList>
+                    <Message ID="1001" Indicator="E">
+                          <LevelOne>Maximum VM size must be greater than minimum VM size.</LevelOne>
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1002" Indicator="E">
+                          <LevelOne>You do not have permission to kill the process.</LevelOne>
+                          <LevelTwo>You must own the process or be root in order to kill this process.</LevelTwo>
+                    </Message>
+                    <Message ID="1003" Indicator="I">
+                          <LevelOne>Sending a kill signal...</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1004" Indicator="I">
+                          <LevelOne>Sending the signal %1 to the process %2...</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="1300" Indicator="E">
+                        <LevelOne>Kill of the process %1 failed</LevelOne>
+                        <LevelTwo>The remote system reported the following: %2</LevelTwo>
+                    </Message>
+                    <Message ID="1301" Indicator="E">
+                        <LevelOne>Problem occurred during remote process query</LevelOne>
+                        <LevelTwo>Could not access the /proc filesystem. You might not have permission to access it.</LevelTwo>
+                    </Message>
+                </MessageList>
+          </Subcomponent>
+     </Component>
+</MessageFile>

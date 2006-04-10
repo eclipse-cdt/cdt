@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2006 IBM Corporation. All rights reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Initial Contributors:
+The following IBM employees contributed to the Remote System Explorer
+component that contains this file: David McKnight, Kushal Munir, 
+Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+
+Contributors:
+{Name} (company) - description of contribution.
+-->
+<?eclipse version="3.1"?>
+<plugin>
+
+<!-- ============================================== -->
+<!-- Define subsystem factories for processes...     -->
+<!-- ============================================== -->
+<!-- let's wait until this is supported on windows
+      <extension
+         point="org.eclipse.rse.ui.subsystemconfiguration">
+      <factory
+            systemtypes="Local"
+            name="%Factory.LocalProcesses"
+            iconlive="icons/full/obj16/activeprocess.gif"
+            icon="icons/full/obj16/activeprocess.gif"
+            category="processes"
+            class="org.eclipse.rse.subsystems.processes.local.LocalProcessSubSystemConfiguration"
+            vendor="IBM Corporation"
+            id="ibm.localprocesses">
+      </factory>
+      </extension>
+-->
+   <extension
+         point="org.eclipse.ui.propertyPages">   
+      <page
+            objectClass="org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem"
+            name="%PropertyPage.ServerLauncherSettings" 
+            class="org.eclipse.rse.ui.propertypages.ServerLauncherPropertyPage"
+            id="org.eclipse.rse.ui.propertypages.serverLauncherPropertyPage">
+            <filter name="serverLaunchPP" value="true"/>
+      </page>
+      <page
+            objectClass="org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem"
+            name="%PropertyPage.Service"
+            class="org.eclipse.rse.processes.ui.propertypages.ProcessServicesPropertyPage"
+            id="org.eclipse.rse.processes.ui.propertypages.ProcessServicesPropertyPage">
+      </page>
+   </extension>
+   
+ 
+</plugin>

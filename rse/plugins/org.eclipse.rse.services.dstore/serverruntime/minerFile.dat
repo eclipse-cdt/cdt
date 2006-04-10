@@ -1,0 +1,4 @@
+org.eclipse.rse.dstore.universal.miners.command.CommandMiner
+org.eclipse.rse.dstore.universal.miners.filesystem.UniversalFileSystemMiner
+org.eclipse.rse.dstore.universal.miners.environment.EnvironmentMiner
+org.eclipse.rse.dstore.universal.miners.processes.UniversalProcessMiner

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2006 IBM Corporation. All rights reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Initial Contributors:
+The following IBM employees contributed to the Remote System Explorer
+component that contains this file: David McKnight, Kushal Munir, 
+Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+
+Contributors:
+{Name} (company) - description of contribution.
+-->
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="%View.RemoteCommands"
+            icon="./icons/full/cview16/commands_view.gif"
+            category="org.eclipse.rse.shells.ui.view"
+            class="org.eclipse.rse.shells.ui.view.SystemCommandsViewPart"
+            id="org.eclipse.rse.shells.ui.view.commandsView">
+      </view>
+    </extension>
+    
+    
+<!-- ============================================ -->
+<!-- Define Workbench Properties Pages            -->
+<!-- ============================================ -->
+   <extension
+         point="org.eclipse.ui.propertyPages">
+
+      <page
+            objectClass="org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem"
+            name="%PropertyPage.EnvVariables"
+            class="org.eclipse.rse.shells.ui.propertypages.EnvironmentVariablesPropertyPage"
+            id="org.eclipse.rse.shells.ui.propertypages.EnvironmentVariablesPropertyPage">
+            
+            <!--
+            <filter name="envVarPP" value="true"/>
+            -->
+            
+      </page> 
+   
+      
+      <page
+            objectClass="org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem"
+            name="%PropertyPage.ShellSettings"
+            class="org.eclipse.rse.shells.ui.propertypages.SystemShellPropertyPage"
+            id="org.eclipse.rse.shells.ui.propertypages.SystemShellPropertyPage">
+      </page>
+
+        <page
+            objectClass="org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem"
+            name="%PropertyPage.Service"
+            class="org.eclipse.rse.shells.ui.propertypages.ShellServicesPropertyPage"
+            id="org.eclipse.rse.shells.ui.propertypages.ShellServicesPropertyPage">
+      </page>
+      
+   </extension>
+   
+   
+  <extension
+         point="org.eclipse.rse.ui.popupMenus">
+      <objectContribution  
+      		adaptable="false" 
+      		typecategoryfilter="files"
+   			id="org.eclipse.rse.shells.ui.launch">
+            <visibility> 
+            	<and>
+		            <objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
+                	<objectState name="isdirectory" value="true"/>   
+                </and> 
+            </visibility>
+         <action
+               label="%Launch_Shell"
+               icon="./icons/full/obj16/systemshell.gif"
+               tooltip="%Launch_Shell_Tooltip"
+               class="org.eclipse.rse.shells.ui.actions.LaunchShellActionDelegate"
+               enablesFor="1"
+               id="org.eclipse.rse.shells.ui.actions.LaunchShellActionDelegate">
+         </action>
+       </objectContribution>    
+   </extension>
+   
+</plugin>

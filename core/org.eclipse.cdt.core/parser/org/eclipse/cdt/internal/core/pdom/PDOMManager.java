@@ -87,7 +87,9 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 			// Find the appropriate indexer and pass the delta on
 			ICProject project = (ICProject)delta.getElement();
 			IPDOM pdom = getPDOM(project);
-			pdom.getIndexer().handleDelta(delta);
+			if (pdom != null)
+				// TODO project delete, should do something fancier here.
+				pdom.getIndexer().handleDelta(delta);
 		}
 	}
 	

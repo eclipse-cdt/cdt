@@ -489,8 +489,9 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 								throw new InterruptedException();
 							}
 							monitor.subTask( all[j].getPath() );
-							if ( isSharedLibrary( all[j] ) ) {
-								libs.add( all[j] );
+							String libName = getSharedLibraryName( all[j] );
+							if ( libName != null ) {
+								libs.add( new File( libName ) );
 							}
 						}
 					}
@@ -507,6 +508,40 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			result = false;
 		}
 		return result;
+	}
+
+	protected String getSharedLibraryName( File file ) {
+		if ( !file.isFile() )
+			return null;
+		IProject project = getProject();
+		if ( project != null ) {
+			IPath fullPath = new Path( file.getPath() );
+			try {
+				ICExtensionReference[] binaryParsersExt = CCorePlugin.getDefault().getBinaryParserExtensions( project );
+				for( int i = 0; i < binaryParsersExt.length; i++ ) {
+					IBinaryParser parser = (IBinaryParser)binaryParsersExt[i].createExtension();
+					try {
+						IBinaryFile bin = parser.getBinary( fullPath );
+						if ( bin instanceof IBinaryShared ) {
+							String soname = ((IBinaryShared)bin).getSoName();
+							return ( soname.length() != 0 ) ? soname : file.getName();
+						}
+					}
+					catch( IOException e ) {
+					}
+				}
+			}
+			catch( CoreException e ) {
+			}
+			return null;
+		}
+		// no project: for now
+		IPath path = new Path( file.getPath() );
+		String name = path.lastSegment();
+		String extension = path.getFileExtension();
+		if ( extension != null && (extension.compareTo( "so" ) == 0 || extension.compareToIgnoreCase( "dll" ) == 0) ) //$NON-NLS-1$ //$NON-NLS-2$
+			return name;
+		return ( name.indexOf( ".so." ) >= 0 ) ? name : null; //$NON-NLS-1$
 	}
 
 	protected boolean isSharedLibrary( File file ) {

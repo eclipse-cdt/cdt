@@ -53,6 +53,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -465,6 +466,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			dialog.setTitle( MIUIMessages.getString( "SolibSearchPathBlock.7" ) ); //$NON-NLS-1$
 			dialog.setMessage( MIUIMessages.getString( "SolibSearchPathBlock.8" ) ); //$NON-NLS-1$
 			dialog.setEmptyListMessage( MIUIMessages.getString( "SolibSearchPathBlock.9" ) ); //$NON-NLS-1$
+			dialog.setSorter( new ViewerSorter() );
 			dialog.setInput( libs );
 			dialog.setInitialElementSelections( Arrays.asList( fAutoSolibs ) );
 			if ( dialog.open() == Window.OK ) {

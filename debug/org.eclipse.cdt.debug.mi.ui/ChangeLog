@@ -1,5 +1,10 @@
 2006-04-11 Mikhail Khodjaiants
 	Bug 119740: allow to specify only a subset of shared objects that we want symbols to be loaded for.
+	Sort the shared library list.
+	* SolibSearchPathBlock.java
+
+2006-04-11 Mikhail Khodjaiants
+	Bug 119740: allow to specify only a subset of shared objects that we want symbols to be loaded for.
 	Use set instead of list when collecting the shared library names: different libraries can have same soname.
 	* SolibSearchPathBlock.java
 

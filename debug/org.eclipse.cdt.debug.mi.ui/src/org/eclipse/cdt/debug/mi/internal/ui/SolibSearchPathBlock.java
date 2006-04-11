@@ -16,9 +16,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
+import java.util.Set;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICExtensionReference;
@@ -419,7 +421,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	protected boolean selectFromList() {
 		boolean changed = false;
 		List dirList = fDirList.getSelectedElements();
-		final ArrayList libs = new ArrayList( 10 );
+		final HashSet libs = new HashSet( 10 );
 		if ( generateLibraryList( (IPath[])dirList.toArray( new IPath[dirList.size()] ), libs ) ) {
 			ITreeContentProvider cp = new ITreeContentProvider() {
 	
@@ -438,8 +440,8 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 				}
 	
 				public Object[] getElements( Object inputElement ) {
-					if ( inputElement instanceof List ) {
-						return ((List)inputElement).toArray();
+					if ( inputElement instanceof Set ) {
+						return ((Set)inputElement).toArray();
 					}
 					return new Object[0];
 				}
@@ -474,7 +476,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		return changed;
 	}
 
-	private boolean generateLibraryList( final IPath[] paths, final List libs ) {
+	private boolean generateLibraryList( final IPath[] paths, final Set libs ) {
 		boolean result = true;
 
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {

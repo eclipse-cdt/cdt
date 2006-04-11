@@ -278,7 +278,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			return false;
 		}
 
-		int threadId = threadId = stopped.getThreadId();
+		int threadId = stopped.getThreadId();
 		currentTarget.updateState(threadId);
 		try {
 			Thread cthread = (Thread)currentTarget.getCurrentThread();

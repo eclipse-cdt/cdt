@@ -15,7 +15,6 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
@@ -27,6 +26,7 @@ import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemPageCompleteListener;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.filters.ISystemChangeFilterPaneEditPaneSupplier;
@@ -64,10 +64,10 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 	public SystemChangeFilterPropertyPage()
 	{
 		super();
-		SystemPlugin sp = SystemPlugin.getDefault();
+		RSEUIPlugin sp = RSEUIPlugin.getDefault();
 		changeFilterPane = new SystemChangeFilterPane(null, this, this);
 		changeFilterPane.addPageCompleteListener(this);
-		setHelp(SystemPlugin.HELPPREFIX+"dufr0000");	
+		setHelp(RSEUIPlugin.HELPPREFIX+"dufr0000");	
 	}
 
 	// INPUT/CONFIGURATION

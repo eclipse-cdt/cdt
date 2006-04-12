@@ -23,10 +23,10 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -78,13 +78,13 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 	    if (dragObject instanceof ISubSystem)
 	    {
 	        subSystem = (ISubSystem)dragObject;
-	        String subSystemId = SystemPlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);
+	        String subSystemId = RSEUIPlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);
 			dataStream.append(subSystemId);
 	    }
 	    else if (dragObject instanceof IHost)
 	    {
 	        IHost connection = (IHost)dragObject;
-	        String connectionId = SystemPlugin.getTheSystemRegistry().getAbsoluteNameForConnection(connection);
+	        String connectionId = RSEUIPlugin.getTheSystemRegistry().getAbsoluteNameForConnection(connection);
 	        dataStream.append(connectionId);
 	    }
 	    else
@@ -93,7 +93,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 	    
 			if (subSystem != null)
 			{
-			    String subSystemId = SystemPlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);
+			    String subSystemId = RSEUIPlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);
 				dataStream.append(subSystemId);
 				
 			}
@@ -107,7 +107,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 	public void dragStart(DragSourceEvent event)
 	{
 		ISelection selection = _selectionProvider.getSelection();
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		if (selection instanceof IStructuredSelection)
 		{
 			IStructuredSelection ss = (IStructuredSelection) selection;
@@ -170,7 +170,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 	public void dragSetData(DragSourceEvent event)
 	{
 		ISelection selection = _selectionProvider.getSelection();
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		if (selection instanceof IStructuredSelection)
 		{
 			IStructuredSelection ss = (IStructuredSelection) selection;
@@ -271,7 +271,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 				Iterator iterator = ss.iterator();
 				int i = 0;
 				
-				IEditorRegistry editRegistry = SystemPlugin.getDefault().getWorkbench().getEditorRegistry();
+				IEditorRegistry editRegistry = RSEUIPlugin.getDefault().getWorkbench().getEditorRegistry();
 											
 				while (iterator.hasNext())
 				{
@@ -330,7 +330,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 	
 	protected IEditorRegistry getEditorRegistry()
 	{
-		return SystemPlugin.getDefault().getWorkbench().getEditorRegistry();
+		return RSEUIPlugin.getDefault().getWorkbench().getEditorRegistry();
 	}
 
 	protected IEditorDescriptor getDefaultTextEditor()

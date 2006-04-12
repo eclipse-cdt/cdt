@@ -18,7 +18,6 @@ package org.eclipse.rse.internal.persistence.dom;
 
 import java.util.Vector;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.internal.subsystems.SubSystemFilterNamingPolicy;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystem;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
@@ -47,6 +46,7 @@ import org.eclipse.rse.persistence.dom.IRSEDOMImporter;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 import org.eclipse.rse.persistence.dom.RSEDOMNode;
 import org.eclipse.rse.persistence.dom.RSEDOMNodeAttribute;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 public class RSEDOMImporter implements IRSEDOMImporter
@@ -254,7 +254,7 @@ public class RSEDOMImporter implements IRSEDOMImporter
 			if (factory instanceof IServiceSubSystemConfiguration)
 			{
 				IServiceSubSystemConfiguration serviceFactory = (IServiceSubSystemConfiguration)factory;
-				ISubSystem[] existingSubSystems = SystemPlugin.getTheSystemRegistry().getServiceSubSystems(serviceFactory.getServiceType(), host);
+				ISubSystem[] existingSubSystems = RSEUIPlugin.getTheSystemRegistry().getServiceSubSystems(serviceFactory.getServiceType(), host);
 				if (existingSubSystems != null && existingSubSystems.length > 0)
 				{
 					subSystem = existingSubSystems[0];
@@ -264,7 +264,7 @@ public class RSEDOMImporter implements IRSEDOMImporter
 			}
 			else
 			{
-				ISubSystem[] existingSubSystems = SystemPlugin.getTheSystemRegistry().getSubSystems(type, host);
+				ISubSystem[] existingSubSystems = RSEUIPlugin.getTheSystemRegistry().getSubSystems(type, host);
 		
 				if (existingSubSystems != null && existingSubSystems.length > 0)
 				{
@@ -532,6 +532,6 @@ public class RSEDOMImporter implements IRSEDOMImporter
 	
 	private ISubSystemConfiguration getFactoryFor(String id)
 	{
-		return SystemPlugin.getTheSystemRegistry().getSubSystemConfiguration(id);
+		return RSEUIPlugin.getTheSystemRegistry().getSubSystemConfiguration(id);
 	}
 }

@@ -29,7 +29,6 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
@@ -37,6 +36,7 @@ import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemThemeConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
@@ -79,7 +79,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 public class MonitorViewPage implements SelectionListener, ISystemThemeConstants, IPropertyChangeListener, ISelectionChangedListener, Listener,
 FocusListener
 {
-	private static SystemMessage _queryMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_QUERY_PROGRESS);
+	private static SystemMessage _queryMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_QUERY_PROGRESS);
 	
 	class PollingThread extends Thread
 	{
@@ -166,7 +166,7 @@ FocusListener
 						{
 							public void run() 
 							{
-								ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+								ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 								registry.fireEvent(new SystemResourceChangeEvent(_inputObject, ISystemResourceChangeEvents.EVENT_REFRESH, _inputObject));
 								//getViewer().refresh();
 							}
@@ -236,7 +236,7 @@ FocusListener
 
 		
 		
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			
 		// global actions
 		Clipboard clipboard = registry.getSystemClipboard();
@@ -414,7 +414,7 @@ FocusListener
 		});
 
 		
-		SystemWidgetHelpers.setHelp(_viewer.getControl(), SystemPlugin.HELPPREFIX + "ucmd0000");
+		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "ucmd0000");
 
 		//TableLayout layout = new TableLayout();
 		//tree.setLayout(layout);

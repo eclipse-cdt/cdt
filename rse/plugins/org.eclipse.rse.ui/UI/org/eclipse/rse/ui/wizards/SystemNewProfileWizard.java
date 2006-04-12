@@ -17,9 +17,9 @@
 package org.eclipse.rse.ui.wizards;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 
@@ -39,7 +39,7 @@ public class      SystemNewProfileWizard
 	public SystemNewProfileWizard()
 	{
 		super(SystemResources.RESID_NEWPROFILE_TITLE,
-	  	      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWPROFILEWIZARD_ID));		      
+	  	      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWPROFILEWIZARD_ID));		      
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class      SystemNewProfileWizard
 		if (mainPage.performFinish())
 		{
             //SystemMessage.showInformationMessage(getShell(),"Finish pressed.");				  	
-            ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+            ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
             String name = mainPage.getProfileName();
             boolean makeActive = mainPage.getMakeActive();
             try 

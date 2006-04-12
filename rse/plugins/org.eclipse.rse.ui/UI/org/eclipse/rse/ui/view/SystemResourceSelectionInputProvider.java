@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 public abstract class SystemResourceSelectionInputProvider extends SystemAbstractAPIProvider
@@ -78,7 +78,7 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 	{
 		if (_connection == null)
 		{
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			_connection = registry.getHosts()[0];
 			
 		}

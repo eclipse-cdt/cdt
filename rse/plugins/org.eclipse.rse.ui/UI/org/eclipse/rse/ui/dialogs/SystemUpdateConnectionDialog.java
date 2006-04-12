@@ -15,11 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.ISystemConnectionFormCaller;
 import org.eclipse.rse.ui.SystemConnectionForm;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
@@ -44,7 +44,7 @@ public class SystemUpdateConnectionDialog extends SystemPromptDialog implements 
 	public SystemUpdateConnectionDialog(Shell shell) 
 	{
 		super(shell, SystemResources.RESID_CHGCONN_TITLE);				
-        parentHelpId = SystemPlugin.HELPPREFIX + "dcon0000";
+        parentHelpId = RSEUIPlugin.HELPPREFIX + "dcon0000";
 		getForm();		
 		//pack();
 	}
@@ -120,7 +120,7 @@ public class SystemUpdateConnectionDialog extends SystemPromptDialog implements 
 		if (closeDialog)
 		{
 		  IHost conn = (IHost)getInputObject();
-		  ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+		  ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		  sr.updateHost( getShell(),conn,conn.getSystemType(),form.getConnectionName(),
 		                       form.getHostName(), form.getConnectionDescription(),
 		                       form.getDefaultUserId(), form.getUserIdLocation() );

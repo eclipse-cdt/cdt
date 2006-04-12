@@ -72,7 +72,7 @@ public interface ISystemHostPool extends IRSEPersistableContainer
      * <p>
      * @param conn SystemConnection to be updated
      * @param systemType system type matching one of the system type names defined via the
-     *                    systemtype extension point.
+     *                    systemType extension point.
      * @param aliasName unique connection name.
      * @param hostName ip name of host.
      * @param description optional description of the connection. Can be null.

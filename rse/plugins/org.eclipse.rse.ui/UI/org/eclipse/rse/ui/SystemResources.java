@@ -407,7 +407,13 @@ public class SystemResources extends NLS
 
 	public static String RESID_PASSWORD_SAVE_LABEL;
 	public static String RESID_PASSWORD_SAVE_TOOLTIP;
-
+	
+	// CHANGE PASSWORD DIALOG
+	public static String RESID_CHANGE_PASSWORD_TITLE;
+	public static String RESID_CHANGE_PASSWORD_NEW_LABEL;
+	public static String RESID_CHANGE_PASSWORD_NEW_TOOLTIP;
+	public static String RESID_CHANGE_PASSWORD_CONFIRM_LABEL;
+	public static String RESID_CHANGE_PASSWORD_CONFIRM_TOOLTIP;
 
 	// TABLE VIEW DIALOGS
 	public static String RESID_TABLE_POSITIONTO_LABEL;
@@ -514,6 +520,12 @@ public class SystemResources extends NLS
 
 	public static String RESID_SUBSYSTEM_SSL_LABEL;
 	public static String RESID_SUBSYSTEM_SSL_TIP;
+	
+	public static String RESID_SUBSYSTEM_SSL_ALERT_LABEL;
+	public static String RESID_SUBSYSTEM_SSL_ALERT_TIP;
+	
+	public static String RESID_SUBSYSTEM_NONSSL_ALERT_LABEL;
+	public static String RESID_SUBSYSTEM_NONSSL_ALERT_TIP;
 
 	public static String RESID_SUBSYSTEM_ENVVAR_TITLE;
 	public static String RESID_SUBSYSTEM_ENVVAR_DESCRIPTION;
@@ -1219,6 +1231,10 @@ public class SystemResources extends NLS
 	public static String RESID_SERVICESFORM_SERVICES_TOOLTIP;
 	public static String RESID_SERVICESFORM_CONNECTORSERVICES_TOOLTIP;
 	public static String RESID_SERVICESFORM_PROPERTIES_TOOLTIP;
+	
+	// Do not show again message
+	public static String RESID_DO_NOT_SHOW_MESSAGE_AGAIN_LABEL;
+	public static String RESID_DO_NOT_SHOW_MESSAGE_AGAIN_TOOLTIP;
 	
 	static {
 		// load message values from bundle file

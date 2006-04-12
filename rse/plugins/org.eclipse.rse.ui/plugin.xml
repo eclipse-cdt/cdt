@@ -32,8 +32,8 @@ Contributors:
 <!-- See also the setPreferenceDefaults extension point           -->
 <!--                                                              -->
 <!-- Example of extension configuration:                          -->
-<!--   <extension point="org.eclipse.rse.ui.systemtype"> -->
-<!--      <type id="com.acme.systemtype.Solaris"                  -->
+<!--   <extension point="org.eclipse.rse.ui.systemType"> -->
+<!--      <type id="com.acme.systemtype.solaris"                  -->
 <!--            name="Solaris"                                    -->
 <!--            iconlive="icons/solarisLive.gif"                  -->
 <!--            icon="icons/solaris.gif"                          -->
@@ -45,19 +45,19 @@ Contributors:
 <!--                                                              -->
 <!-- ============================================================ -->
 
-   <extension-point id="systemtype" name="%extPoint.systemtype" schema="schema/systemtype.exsd"/>
+<!-- <extension-point id="systemtype" name="%extPoint.systemtype" schema="schema/systemtype.exsd" -->
 
 <!-- ================================================================================== -->
-<!-- EXTENSION POINT: org.eclipse.rse.ui.subsystemconfiguration                      -->
+<!-- EXTENSION POINT: org.eclipse.rse.ui.subsystemConfiguration                      -->
 <!-- ================================================================================== -->
 <!-- Extension point for defining subsystem factories. A configuration is responsible for     -->
 <!--  creating subsystem instances.                                                     -->
 <!--                                                                                    -->
 <!-- Example of extension configuration:                                                -->
 <!--   <extension                                                                       -->
-<!--      point="org.eclipse.rse.ui.subsystemConfiguration">                         -->
-<!--      <configuration                                                                      -->
-<!--         systemtypes="iSeries;Windows"                                              -->
+<!--      point="org.eclipse.rse.ui.subsystemConfiguration">                            -->
+<!--      <configuration                                                                -->
+<!--         systemTypes="Local;Unix;Linux"                                             -->
 <!--         name="Files"                                                               -->
 <!--         description="This subsystem allows you to work with files on local or remote systems."-->
 <!--         icon="icons/filesubsys.gif"                                                -->
@@ -73,7 +73,7 @@ Contributors:
 <!--                                                                                    -->
 <!-- <configuration> tag attributes:                                                          -->
 <!-- ================================================================================== -->
-<!--  systemtypes => semicolon-separated list of system types or * for all              -->
+<!--  systemTypes => semicolon-separated list of system types or * for all              -->
 <!--  class       => class implementing org.eclipse.rse.subsystems.SubSystemFactory -->
 <!--  category    => optionally identifies category to allow efficient subsetting of    -->
 <!--                  connection lists. Pre-defined categories are "files", "cmds" and  -->
@@ -93,7 +93,7 @@ Contributors:
 <!--      for unix, windows and system types.                                           -->
 <!-- ================================================================================== -->
 <!--                                                                                    -->
-<!-- For systemtypes, if you specify * for all, you still have a chance at runtime to   -->
+<!-- For systemTypes, if you specify * for all, you still have a chance at runtime to   -->
 <!--  not create a subsystem for a given system type. Simply return false from your     -->
 <!--  appliesToSystemType method.                                                       -->
 <!--                                                                                    -->
@@ -140,7 +140,7 @@ Contributors:
 <!--                          simple name or simple generic like "*files". Matches on   -->
 <!--                          the "category" attribute of the subsystem configuration. IBM    -->
 <!--                          values are "file", "nativefiles", "commands" or "jobs".   -->
-<!--  systemtypes => semicolon-separated list of system types or * for all              -->
+<!--  systemTypes => semicolon-separated list of system types or * for all              -->
 <!--  namefilter => scalar or simple generic name to match on.                          -->
 <!--  typecategoryfilter => scalar or simple generic type category to match on.         -->
 <!--                        This is subsystem configuration defined and usually not needed if -->
@@ -229,7 +229,7 @@ Contributors:
 <!--                          simple name or simple generic like "*files". Matches on   -->
 <!--                          the "category" attribute of the subsystem configuration. IBM    -->
 <!--                          values are "file", "nativefiles", "commands" or "jobs".   -->
-<!--  systemtypes => semicolon-separated list of system types or * for all              -->
+<!--  systemTypes => semicolon-separated list of system types or * for all              -->
 <!--  namefilter => scalar or simple generic name to match on                           -->
 <!--  typecategoryfilter => scalar or simple generic type category to match on.         -->
 <!--                        This is subsystem configuration defined and usually not needed if -->
@@ -468,10 +468,8 @@ Contributors:
 <!--     showNewConnectionPrompt -> specify false to not see the New Connection prompt  -->
 <!--                                  in the Remote Systems view.                       -->
 <!--     showLocalConnection -> specify false to not pre-create a Local connection      -->
-<!--     enableSystemTypes -> specify the system types to enable, comma-separated. All  -->
+<!--     enableSystemTypes -> specify the system types to enable, semicolon-separated. All  -->
 <!--                       others are disabled, but can be re-enabled via preferences.  -->
-<!--     disableSystemTypes -> specify the system types to disable, comma-separated. All-->
-<!--                       others are enabled, but can be disabled via preferences.     -->
 <!-- Usually, these settings can still be overridden by users via preferences.          -->
 <!--                                                                                    -->
 <!-- Example usage:                                                                     -->
@@ -552,69 +550,73 @@ Contributors:
    
 <!-- predefine known system types -->
    <extension
-         point="org.eclipse.rse.ui.systemtype">
-      <type id="org.eclipse.rse.ui.systemtype.iseries"
+         point="org.eclipse.rse.core.systemTypes">
+      <!--   
+      <systemType id="org.eclipse.rse.systemtype.iseries"
             name="iSeries"
-            iconlive="icons/full/obj16/system400live_obj.gif"
-            icon="icons/full/obj16/system400_obj.gif"
 			description="%systemType.iseries">
-      </type>
-       <type id="org.eclipse.rse.ui.systemtype.iseries.PASE"
+            <property name="icon" value="icons/full/obj16/system400_obj.gif"/>
+			<property name="iconLive" value="icons/full/obj16/system400live_obj.gif"/>
+      </systemType>
+      <systemType id="org.eclipse.rse.systemtype.iseries.PASE"
             name="PASE"
-            iconlive="icons/full/obj16/system400live_obj.gif"
-            icon="icons/full/obj16/system400_obj.gif"
 			description="%systemType.iseries.PASE">
-      </type>
-      <type id="org.eclipse.rse.ui.systemtype.windows"
+			<property name="icon" value="icons/full/obj16/system400_obj.gif"/>
+			<property name="iconLive" value="icons/full/obj16/system400live_obj.gif"/>
+      </systemType>
+      <systemType id="org.eclipse.rse.systemtype.windows"
             name="Windows"
-            iconlive="icons/full/obj16/systemwinlive_obj.gif"
-            icon="icons/full/obj16/systemwin_obj.gif"
 			description="%systemType.windows">
-	  </type>
-      <!--
-	  <type id="org.eclipse.rse.ui.systemtype.zseries"
+			<property name="icon" value="icons/full/obj16/systemwin_obj.gif"/>
+			<property name="iconLive" value="icons/full/obj16/systemwinlive_obj.gif"/>
+	  </systemType>
+      <systemType id="org.eclipse.rse.systemtype.zseries"
          	name="z/OS"
-         	iconlive="icons/full/obj16/system390live_obj.gif"
-         	icon="icons/full/obj16/system390_obj.gif"
 			description="%systemType.zseries">
-   	  </type>
+			<property name="icon" value="icons/full/obj16/system390_obj.gif"/>
+			<property name="iconLive" value="icons/full/obj16/system390live_obj.gif"/>
+   	  </systemType>
    	  -->
-      <type id="org.eclipse.rse.ui.systemtype.linux"
+      <systemType id="org.eclipse.rse.systemtype.linux"
             name="Linux"
-            iconlive="icons/full/obj16/systemlinuxlive_obj.gif"
-            icon="icons/full/obj16/systemlinux_obj.gif"
 			description="%systemType.linux">
-      </type>
-      <type id="org.eclipse.rse.ui.systemtype.linux.power"
+            <property name="icon" value="icons/full/obj16/systemlinux_obj.gif"/>
+            <property name="iconLive" value="icons/full/obj16/systemlinuxlive_obj.gif"/>
+      </systemType>
+      <!--
+      <systemType id="org.eclipse.rse.systemtype.linux.power"
             name="Power Linux"
-            iconlive="icons/full/obj16/systemlinuxlive_obj.gif"
-            icon="icons/full/obj16/systemlinux_obj.gif"
 			description="%systemType.powerlinux">
-      </type>
-      <type id="org.eclipse.rse.ui.systemtype.linux.zSeries"
+			<property name="icon" value="icons/full/obj16/systemlinux_obj.gif"/>
+			<property name="iconLive" value="icons/full/obj16/systemlinuxlive_obj.gif"/>
+      </systemType>
+      <systemType id="org.eclipse.rse.systemtype.linux.zSeries"
             name="zSeries Linux"
-            iconlive="icons/full/obj16/systemlinuxlive_obj.gif"
-            icon="icons/full/obj16/systemlinux_obj.gif"
 			description="%systemType.zlinux">
-      </type>      
-      <type id="org.eclipse.rse.ui.systemtype.unix"
+			<property name="icon" value="icons/full/obj16/systemlinux_obj.gif"/>
+			<property name="iconLive" value="icons/full/obj16/systemlinuxlive_obj.gif"/>    
+      </systemType>
+      -->      
+      <systemType id="org.eclipse.rse.systemtype.unix"
             name="Unix"
-            iconlive="icons/full/obj16/systemunixlive_obj.gif"
-            icon="icons/full/obj16/systemunix_obj.gif"
 			description="%systemType.unix">
-      </type>
-      <type id="org.eclipse.rse.ui.systemtype.aix"
+			<property name="icon" value="icons/full/obj16/systemunix_obj.gif"/>
+			<property name="iconLive" value="icons/full/obj16/systemunixlive_obj.gif"/>
+      </systemType>
+      <!--
+      <systemType id="org.eclipse.rse.systemtype.aix"
             name="AIX"
-            iconlive="icons/full/obj16/systemaixlive_obj.gif"
-            icon="icons/full/obj16/systemaix_obj.gif"
 			description="%systemType.aix">
-      </type>
-      <type id="org.eclipse.rse.ui.systemtype.local"
+			<property name="icon" value="icons/full/obj16/systemaix_obj.gif"/>
+			<property name="iconLive" value="icons/full/obj16/systemaixlive_obj.gif"/>
+      </systemType>
+      -->      
+      <systemType id="org.eclipse.rse.systemtype.local"
             name="Local"
-            iconlive="icons/full/obj16/systemlocallive_obj.gif"
-            icon="icons/full/obj16/systemlocal_obj.gif"
 			description="%systemType.local">
-      </type>
+			<property name="icon" value="icons/full/obj16/systemlocal_obj.gif"/>
+			<property name="iconLive" value="icons/full/obj16/systemlocallive_obj.gif"/>
+      </systemType>
    </extension>
 
 
@@ -833,7 +835,7 @@ Contributors:
 
 
 <!-- ================================================================= -->
-<!-- 		Define Persistance Provider extension point -->
+<!-- 		Define Persistence Provider extension point -->
 <!-- ================================================================= -->
    <extension-point id="persistenceProviders" name="%extPoint.persistenceProviders" schema="schema/persistenceProviders.exsd"/>
 
@@ -980,16 +982,20 @@ Contributors:
    
  
 <!-- ========================================================================= -->
-<!-- Default RSE DOM persistance provider                                      -->
+<!-- Persistence Providers                                                     -->
 <!-- ========================================================================= -->  
  <extension
        point="org.eclipse.rse.ui.persistenceProviders">
     <persistenceProvider
-          class="org.eclipse.rse.persistence.DefaultRSEPersistenceProvider"
-          id="org.eclipse.rse.ui.persistenceProvider1"
-          name="org.eclipse.rse.ui.persistenceProvider1"/>
+          class="org.eclipse.rse.persistence.SerializingProvider"
+          id="org.eclipse.rse.persistence.SerializingProvider"
+          name="Serializing Persistence Provider"/>
+    <persistenceProvider
+          class="org.eclipse.rse.persistence.PropertyFileProvider"
+          id="org.eclipse.rse.persistence.PropertyFileProvider"
+          name="Property File Persistence Provider"/>
  </extension>
- 
+
  	<extension point="org.eclipse.ui.decorators"> 
          <decorator
             id="org.eclipse.rse.subsystems.error.decorator" 

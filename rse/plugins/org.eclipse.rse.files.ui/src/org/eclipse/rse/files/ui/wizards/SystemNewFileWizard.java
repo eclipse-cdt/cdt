@@ -21,7 +21,6 @@ import java.util.Vector;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.filters.ISystemFilter;
@@ -43,6 +42,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileIOException;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSecurityException;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizard;
@@ -65,10 +65,10 @@ public class SystemNewFileWizard
 	public SystemNewFileWizard()
 	{
 	   	super(FileResources.RESID_NEWFILE_TITLE,
-//		      SystemPlugin.getDefault().getImageDescriptorFromIDE("wizban/newfile_wiz.gif")
-		    //  SystemPlugin.getDefault().getImageDescriptor("wizban/newfile_wiz.gif")
+//		      RSEUIPlugin.getDefault().getImageDescriptorFromIDE("wizban/newfile_wiz.gif")
+		    //  RSEUIPlugin.getDefault().getImageDescriptor("wizban/newfile_wiz.gif")
 
-			  SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILEWIZARD_ID));		      
+			  RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILEWIZARD_ID));		      
 	}
 	
 	/**
@@ -129,7 +129,7 @@ public class SystemNewFileWizard
             if (!parentFolder.exists())
             {
             	/* Be nice to do this someday...
-			    msg = SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE);
+			    msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE);
 			    msg.makeSubstitution(parentFolder.getAbsolutePath());            	
 			    SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), msg);
 			    if (msgDlg.openQuestionNoException())
@@ -139,15 +139,15 @@ public class SystemNewFileWizard
 			  	   } 
 			  	   catch (RemoteFileIOException exc)
 			  	   {
-                     SystemPlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileIOException " );  	
-                     msg = (SystemPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED_EXIST)).makeSubstitution(parentFolder.getAbsolutePath());
+                     RSEUIPlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileIOException " );  	
+                     msg = (RSEUIPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED_EXIST)).makeSubstitution(parentFolder.getAbsolutePath());
 	                 mainPage.setMessage(msg);	
 	                 return false;		  	   	 
 			  	   }
 			  	   catch (RemoteFileSecurityException exc)
 			  	   {
-                     SystemPlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileSecurityException " );  	
-                     msg = (SystemPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED)).makeSubstitution(parentFolder.getAbsolutePath());
+                     RSEUIPlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileSecurityException " );  	
+                     msg = (RSEUIPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED)).makeSubstitution(parentFolder.getAbsolutePath());
 	                 mainPage.setMessage(msg);	
 	                 return false;		  	   	 
 			  	   }
@@ -155,7 +155,7 @@ public class SystemNewFileWizard
 			    else
 			    */
 			    {
-			  	   msg = SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND);
+			  	   msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND);
 			       msg.makeSubstitution(parentFolder.getAbsolutePath());            	
 			       mainPage.setMessage(msg);
 			       return false;
@@ -175,12 +175,12 @@ public class SystemNewFileWizard
                 newFile = rfss.createFile(newFilePath);
             } catch (RemoteFileIOException exc ) {
                SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileIOException " );  	
-               msg = (SystemPlugin.getPluginMessage(FILEMSG_CREATE_FILE_FAILED_EXIST)).makeSubstitution(absName);
+               msg = (RSEUIPlugin.getPluginMessage(FILEMSG_CREATE_FILE_FAILED_EXIST)).makeSubstitution(absName);
 	           mainPage.setMessage(msg);
 	           ok = false;
 //DY        } catch (Exception RemoteFileSecurityException)  {
             } catch (RemoteFileSecurityException e)  {
-               msg = (SystemPlugin.getPluginMessage(FILEMSG_CREATE_FILE_FAILED)).makeSubstitution(absName);
+               msg = (RSEUIPlugin.getPluginMessage(FILEMSG_CREATE_FILE_FAILED)).makeSubstitution(absName);
 	           SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileSecurityException ");  	
                //SystemMessage.displayErrorMessage(SystemMessage.getDefaultShell(), msg); 
 	           mainPage.setMessage(msg);	                                                
@@ -243,7 +243,7 @@ public class SystemNewFileWizard
 		meets = parentSubSystem.doesFilterMatch(selectedFilterRef.getReferencedFilter(),newAbsName);
 		if (!meets)
 		{
-			SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_RESOURCE_NOTVISIBLE);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_RESOURCE_NOTVISIBLE);
 			SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), msg);
 			if (msgDlg.openQuestionNoException()) // ask user if they want to proceed
 			  meets = true; // they do, so pretend it meets the criteria
@@ -262,7 +262,7 @@ public class SystemNewFileWizard
 	protected static void updateGUI(IRemoteFile parentFolder, IRemoteFile newFileOrFolder, Viewer viewer,  
 	                                  boolean isInputAFilter, ISystemFilterReference selectedFilterRef)
 	{
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		if (selectedFilterRef != null)
 		{
 			selectedFilterRef.markStale(true);
@@ -366,7 +366,7 @@ public class SystemNewFileWizard
 			          v.add(folder);
 			        //else
 			        //{
-			        //	SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND);
+			        //	SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND);
 			        //	msg.makeSubstitution(pathName);
 			        //	lastExc = new SystemMessageException(msg);
 			        //}

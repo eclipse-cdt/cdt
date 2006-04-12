@@ -17,10 +17,10 @@
 package org.eclipse.rse.ui.view.team;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
@@ -40,14 +40,14 @@ public class SystemTeamViewRefreshAllAction extends SystemBaseAction
 	public SystemTeamViewRefreshAllAction(Shell parent, SystemTeamViewPart teamView) 
 	{
 		super(SystemResources.ACTION_REFRESH_ALL_LABEL,SystemResources.ACTION_REFRESH_ALL_TOOLTIP,
-		      SystemPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_REFRESH_ID),
+		      RSEUIPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_REFRESH_ID),
 		      parent);
 		this.teamView = teamView;
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_BUILD);        
         setSelectionSensitive(false);
         
-		setHelp(SystemPlugin.HELPPREFIX+"actn0009");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0009");
 	}
 
 	/**

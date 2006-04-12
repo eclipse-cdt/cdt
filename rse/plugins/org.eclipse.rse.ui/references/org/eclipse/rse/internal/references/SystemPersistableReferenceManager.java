@@ -343,7 +343,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
         {
           try 
           {
-          	 //SystemPlugin.logWarning("Calling refreshLocal on project after saving MOF file: " + saveFileName);
+          	 //RSEUIPlugin.logWarning("Calling refreshLocal on project after saving MOF file: " + saveFileName);
              folder.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);               
           } catch(Exception exc) 
           {
@@ -354,7 +354,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
         {
           try 
           {
-          	 //SystemPlugin.logWarning("Calling refreshLocal on project after saving MOF file: " + saveFileName);
+          	 //RSEUIPlugin.logWarning("Calling refreshLocal on project after saving MOF file: " + saveFileName);
              folder.refreshLocal(IResource.DEPTH_ONE, null);               
           } catch(Exception exc) 
           {

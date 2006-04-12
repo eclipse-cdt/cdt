@@ -40,7 +40,7 @@ public interface IRSEDOMExporter
 	RSEDOM createRSEDOM(ISystemProfile profile, boolean clean);
 	
 	/**
-	 * Creates an RSE DOM for use in persistance
+	 * Creates an RSE DOM for use in persistence
 	 * @param dom
 	 * @param profile
 	 * @return

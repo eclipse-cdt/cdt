@@ -17,7 +17,6 @@
 package org.eclipse.rse.subsystems.files.core.model;
 
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemRegistry;
@@ -25,6 +24,7 @@ import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -215,7 +215,7 @@ public class RemotePath implements IRemotePath {
 			return null;
 		}
 		
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		ISystemProfile profile = registry.getSystemProfile(profileName);
 		
 		if (profile == null) {

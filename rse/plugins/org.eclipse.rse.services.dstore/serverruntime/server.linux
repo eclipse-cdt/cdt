@@ -3,6 +3,7 @@
 $port = $ARGV[0];
 $timeout = $ARGV[1];
 $packaged_as = $ARGV[2];
+$clientUserID = $ARGV[3];
 
 
 $dir= $ENV{PWD};
@@ -35,7 +36,14 @@ if (!defined($timeout))
 }
 else
 {
-	system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH com.ibm.etools.systems.dstore.core.server.Server $port $timeout");
+	if (!defined($clientUserID))
+	{
+		system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH com.ibm.etools.systems.dstore.core.server.Server $port $timeout");
+	}
+	else
+	{
+		system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH -Dclient.username=$clientUserID com.ibm.etools.systems.dstore.core.server.Server $port $timeout");
+	}
 }
 
 $ENV{CLASSPATH}=$oldClasspath;

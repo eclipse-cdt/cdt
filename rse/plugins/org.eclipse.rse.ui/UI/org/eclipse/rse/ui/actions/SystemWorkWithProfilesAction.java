@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.actions;
 import org.eclipse.rse.core.SystemPerspectiveHelpers;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.view.team.SystemTeamViewPart;
 import org.eclipse.swt.widgets.Shell;
@@ -40,8 +40,8 @@ public class SystemWorkWithProfilesAction extends SystemBaseAction
 		super(SystemResources.ACTION_WORKWITH_PROFILES_LABEL, SystemResources.ACTION_WORKWITH_PROFILES_TOOLTIP, parent);
         setSelectionSensitive(false);
         allowOnMultipleSelection(true);
-        sr = SystemPlugin.getTheSystemRegistry();	        
-		setHelp(SystemPlugin.HELPPREFIX+"actnwwpr");
+        sr = RSEUIPlugin.getTheSystemRegistry();	        
+		setHelp(RSEUIPlugin.HELPPREFIX+"actnwwpr");
 	}
 
 	/**

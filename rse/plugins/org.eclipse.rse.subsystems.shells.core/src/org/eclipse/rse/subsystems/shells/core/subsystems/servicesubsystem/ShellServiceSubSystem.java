@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.rse.core.ISystemTypes;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -60,11 +60,11 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 	{
 		if (_userHome == null)
 		{
-			if (getSystemType() == ISystemTypes.SYSTEMTYPE_WINDOWS)
+			if (getSystemType() == IRSESystemType.SYSTEMTYPE_WINDOWS)
 			{
 				_userHome = "c:\\";
 			}
-			else if (getSystemType() == ISystemTypes.SYSTEMTYPE_LOCAL)
+			else if (getSystemType() == IRSESystemType.SYSTEMTYPE_LOCAL)
 			{
 				_userHome = System.getProperty("user.home");
 			}

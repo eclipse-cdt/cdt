@@ -18,11 +18,11 @@ package org.eclipse.rse.files.ui.actions;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.wizards.SystemNewFolderWizard;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseWizardAction;
 import org.eclipse.swt.widgets.Shell;
 
@@ -41,7 +41,7 @@ public class SystemNewFolderAction extends SystemBaseWizardAction
 	{
 		this(FileResources.ACTION_NEWFOLDER_LABEL, 
 				FileResources.ACTION_NEWFOLDER_TOOLTIP,
-		     SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFOLDER_ID), 
+		     RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFOLDER_ID), 
 		     parent);
 	}
 	

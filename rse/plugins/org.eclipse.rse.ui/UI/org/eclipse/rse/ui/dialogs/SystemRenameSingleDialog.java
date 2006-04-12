@@ -22,11 +22,11 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -118,7 +118,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 
 		//pack();
 		setBlockOnOpen(true);
-		setHelp(SystemPlugin.HELPPREFIX+"drns0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"drns0000");
 	}
 
 	/**
@@ -157,17 +157,17 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		{
 			if (this.inputObject != null && this.inputObject instanceof IHost)
 			{
-	  	      	setHelp(SystemPlugin.HELPPREFIX+"dccc0000");
+	  	      	setHelp(RSEUIPlugin.HELPPREFIX+"dccc0000");
 			}
 			else
 			{
-				setHelp(SystemPlugin.HELPPREFIX+"drns0001");
+				setHelp(RSEUIPlugin.HELPPREFIX+"drns0001");
 			}
   	      	setTitle(SystemResources.RESID_COLLISION_RENAME_TITLE);
 		}
 		else if (this.copyCollisionMode) // from true to false
 		{
-  	      	setHelp(SystemPlugin.HELPPREFIX+"drns0000");
+  	      	setHelp(RSEUIPlugin.HELPPREFIX+"drns0000");
 			String singleTitle = SystemResources.RESID_RENAME_SINGLE_TITLE;
 			if (!singleTitle.startsWith("Missing")) // TODO: remove test after next mri rev         	
 				setTitle(singleTitle);							
@@ -334,7 +334,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		  else if (inputElement instanceof String)
 		    inputName = (String)inputElement;	  
 		  newName.setText(inputName);						
-		  newName.selectAll();
+
 		  if (copyCollisionMode)
 		  {
             verbageLabel.setText(SystemMessage.sub(SystemResources.RESID_COLLISION_RENAME_VERBAGE, "&1", inputName));
@@ -416,16 +416,16 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
     		  super.setBusyCursor(true);
 		  	  try {		  	   	 
 		  	  		 Shell shell = getShell();
-		  	  		IRunnableContext irc = SystemPlugin.getTheSystemRegistry().getRunnableContext();  	   	 
-					SystemPlugin.getTheSystemRegistry().clearRunnableContext();
+		  	  		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();  	   	 
+					RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();
 		  	        names = ra.getRemoteParentNamesInUse(shell, inputElement);
-					SystemPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);		  	        
+					RSEUIPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);		  	        
 		  	  } catch (Exception exc) {SystemBasePlugin.logError("Exception getting parent's child names in rename dialog",exc);}		  			
 		  	  if ((names != null) && (names.length>0))
 		  	  {
 		  		    uniqueNameValidator = new ValidatorUniqueString(names,caseSensitive);
-		            uniqueNameValidator.setErrorMessages(SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
-		                                                 SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));
+		            uniqueNameValidator.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
+		                                                 RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));
 		            if (debug)
 		            {
 		  		      System.out.println("Name validator set. Names = ");
@@ -595,18 +595,18 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 	    
 	    if (theNewName == null)
 	    {
-	    	errorMessage = SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY);
+	    	errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY);
 	    }
 	    else
 	    {
 		if (nameValidator != null)
 	      errorMessage= nameValidator.validate(theNewName);	    
 		else if (theNewName.length() == 0)
-		  errorMessage = SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY);
+		  errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY);
 		if (errorMessage == null)
 		{
           if (adapter != null && adapter.namesAreEqual(inputElement, theNewName))
-		    errorMessage = SystemPlugin.getPluginMessage(MSG_VALIDATE_RENAME_OLDEQUALSNEW).makeSubstitution(inputName);
+		    errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_RENAME_OLDEQUALSNEW).makeSubstitution(inputName);
 		}
 	    }
 	    
@@ -709,7 +709,4 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 	
 		}
 	}
-	
-
-	
 }

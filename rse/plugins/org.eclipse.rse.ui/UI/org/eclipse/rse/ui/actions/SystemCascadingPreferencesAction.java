@@ -18,8 +18,8 @@ package org.eclipse.rse.ui.actions;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
@@ -44,7 +44,7 @@ public class SystemCascadingPreferencesAction
         setPopulateMenuEachTime(false);
         setSelectionSensitive(false);
                 
-		setHelp(SystemPlugin.HELPPREFIX+"actnpref");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actnpref");
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class SystemCascadingPreferencesAction
 		//System.out.println("In menuAboutToShow!");
 		setBusyCursor(true);
 		ourSubMenu.add(new Separator(ISystemContextMenuConstants.GROUP_ADDITIONS)); // user or BP/ISV additions
-		SystemShowPreferencesPageAction[] prefPageActions = SystemPlugin.getDefault().getShowPreferencePageActions();
+		SystemShowPreferencesPageAction[] prefPageActions = RSEUIPlugin.getDefault().getShowPreferencePageActions();
 		if (prefPageActions!=null)
 		{
 			for (int idx=0; idx<prefPageActions.length; idx++)

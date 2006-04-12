@@ -16,12 +16,14 @@
 
 package org.eclipse.rse.ui.propertypages;
 
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystem;
+import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.widgets.ServerConnectionSecurityForm;
 import org.eclipse.swt.widgets.Composite;
@@ -50,7 +52,7 @@ public class ServerConnectionSecurityPropertyPage extends SystemBasePropertyPage
 		_form.createContents(parent);
 
 		initialize();
-		SystemWidgetHelpers.setCompositeHelp(parent, SystemPlugin.HELPPREFIX + "ssls0001");
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "ssls0001");
 		
 		return parent;
 	}
@@ -65,23 +67,14 @@ public class ServerConnectionSecurityPropertyPage extends SystemBasePropertyPage
 
 	private void initialize()
 	{
-		Object subsystem = getElement();
-		if (subsystem instanceof ISubSystem)
-		{
-			ISubSystem ss = (ISubSystem) subsystem;
-			if (ss instanceof SubSystem)
-			{
-				_connectorService = ss.getConnectorService();
-			}
-		
+		IPreferenceStore prefStore = RSEUIPlugin.getDefault().getPreferenceStore();
 
-			// is ssl to be used for server communications
-			boolean useSSL = _connectorService.isUsingSSL();
+		boolean alertSSL = prefStore.getBoolean(ISystemPreferencesConstants.ALERT_SSL);
+		boolean alertNonSSL = prefStore.getBoolean(ISystemPreferencesConstants.ALERT_NONSSL);
 
-			// enable/disable as appropriate
-			_form.setUseSSL(useSSL);
-		}
-		
+		// enable/disable as appropriate
+		_form.setAlertSSL(alertSSL);
+		_form.setAlertNonSSL(alertNonSSL);	
 		
 		// if there is no keystore provider then this needs to be disabled
 		boolean hasProvider = SystemKeystoreProviderManager.getInstance().hasProvider();
@@ -115,21 +108,11 @@ public class ServerConnectionSecurityPropertyPage extends SystemBasePropertyPage
 
 	public boolean applyValues(IConnectorService connectorService)
 	{
-
-			boolean useSSL = _form.getUseSSL();
-			if (useSSL != connectorService.isUsingSSL())
-			{
-				connectorService.setIsUsingSSL(useSSL);
-	
-				try
-				{
-					connectorService.commit();
-				}
-				catch (Exception e)
-				{
-				}
-			}
-	
+		boolean alertSSL = _form.getAlertSSL();
+		boolean alertNonSSL = _form.getAlertNonSSL();
+		IPreferenceStore prefStore = RSEUIPlugin.getDefault().getPreferenceStore();
+		prefStore.setValue(ISystemPreferencesConstants.ALERT_SSL, alertSSL);
+		prefStore.setValue(ISystemPreferencesConstants.ALERT_NONSSL, alertNonSSL);
 		return true;
 	}
 	

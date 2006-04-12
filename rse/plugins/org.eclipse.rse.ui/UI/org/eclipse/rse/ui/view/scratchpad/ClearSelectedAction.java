@@ -19,10 +19,10 @@ package org.eclipse.rse.ui.view.scratchpad;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
 
@@ -33,7 +33,7 @@ public class ClearSelectedAction extends BrowseAction
 	public ClearSelectedAction(SystemScratchpadView view)
 	{
 		super(view, SystemResources.ACTION_CLEAR_SELECTED_LABEL,
-		        SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_SELECTED_ID));
+		        RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_SELECTED_ID));
 	
 		// TODO DKM - get help for this!
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CLEAR_CONSOLE_ACTION);
@@ -79,7 +79,7 @@ public class ClearSelectedAction extends BrowseAction
 	        {
 	            _scratchPad.removeChild(iterator.next());
 	        }
-	        SystemPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(_scratchPad, ISystemResourceChangeEvents.EVENT_REFRESH, _scratchPad));
+	        RSEUIPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(_scratchPad, ISystemResourceChangeEvents.EVENT_REFRESH, _scratchPad));
 	        //_view.updateActionStates();
 	    }
 	}

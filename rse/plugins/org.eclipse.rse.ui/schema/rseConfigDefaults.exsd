@@ -64,7 +64,7 @@
          <attribute name="enableSystemTypes" type="string">
             <annotation>
                <documentation>
-                  Specify comma-separated list of system types to enable. Specify the system type names, not translated. These are not case sensitive. All other system types will be disabled, but user can enable them via preferences. Disabled system types do not appear in the New Connection wizard.
+                  Specify semicolon-separated list of system type names to enable. Specify the system type names, not translated. These are not case sensitive. All other system types will be disabled, but user can enable them via preferences. Disabled system types do not appear in the New Connection wizard.
                </documentation>
             </annotation>
          </attribute>
@@ -98,7 +98,7 @@ The following is an example of how to turn off the showing of the new connection
 &lt;pre&gt;
 &lt;extension point=&quot;org.eclipse.rse.ui.rseConfigDefaults&quot;&gt;
  &lt;defaults id=&quot;xyz&quot; productId=&quot;com.mycompany.myproduct&quot; showNewConnectionPrompt=&quot;false&quot; showLocalConnection=&quot;true&quot;
-    enableSystemTypes=&quot;Local;Power Linux;Unix;iSeries&quot;&gt;
+    enableSystemTypes=&quot;Local;Linux;Unix&quot;&gt;
  &lt;/defaults&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;

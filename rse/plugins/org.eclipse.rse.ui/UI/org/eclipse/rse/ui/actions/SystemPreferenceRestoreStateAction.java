@@ -15,11 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeEvent;
 import org.eclipse.rse.model.ISystemPreferenceChangeEvents;
 import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
@@ -41,10 +41,10 @@ public class SystemPreferenceRestoreStateAction extends SystemBaseAction
 		super(SystemResources.ACTION_RESTORE_STATE_PREFERENCE_LABEL,SystemResources.ACTION_RESTORE_STATE_PREFERENCE_TOOLTIP, parent);
         setSelectionSensitive(false);
         allowOnMultipleSelection(true);
-        sr = SystemPlugin.getTheSystemRegistry();	        
+        sr = RSEUIPlugin.getTheSystemRegistry();	        
         setChecked(SystemPreferencesManager.getPreferencesManager().getRememberState());
 
-		setHelp(SystemPlugin.HELPPREFIX+"aprefres");
+		setHelp(RSEUIPlugin.HELPPREFIX+"aprefres");
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class SystemPreferenceRestoreStateAction extends SystemBaseAction
      */
     private void firePreferenceChangeEvent(int type, boolean oldValue, boolean newValue)
     {
-    	SystemPlugin.getDefault().getSystemRegistry().fireEvent(
+    	RSEUIPlugin.getDefault().getSystemRegistry().fireEvent(
     	  new SystemPreferenceChangeEvent(type,
     	                                  oldValue ? Boolean.TRUE : Boolean.FALSE,
     	                                  newValue ? Boolean.TRUE : Boolean.FALSE));

@@ -15,14 +15,14 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
-import org.eclipse.rse.core.ISystemTypes;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.ISystemConnectionFormCaller;
 import org.eclipse.rse.ui.SystemConnectionForm;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
@@ -47,9 +47,9 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 	public SystemConnectionPropertyPage()
 	{
 		super();
-		SystemPlugin sp = SystemPlugin.getDefault();
+		RSEUIPlugin sp = RSEUIPlugin.getDefault();
 
-		parentHelpId = SystemPlugin.HELPPREFIX + "pcon0000";
+		parentHelpId = RSEUIPlugin.HELPPREFIX + "pcon0000";
 		form = new SystemConnectionForm(this, this);
 	}
 	/**
@@ -89,7 +89,7 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 		if (okToClose)
 		{
 		  IHost conn = (IHost)getElement();
-		  ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+		  ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		  sr.updateHost( getShell(),conn,conn.getSystemType(),form.getConnectionName(),
 		                       form.getHostName(), form.getConnectionDescription(),
 		                       form.getDefaultUserId(), form.getUserIdLocation() );
@@ -130,7 +130,7 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 				  }
 				
 				  // check that everything was disconnedted okay and this is not the local connection
-				  if(sr.isAnySubSystemConnected(conn) && !ISystemTypes.SYSTEMTYPE_LOCAL.equals(conn.getSystemType()))
+				  if(sr.isAnySubSystemConnected(conn) && !IRSESystemType.SYSTEMTYPE_LOCAL.equals(conn.getSystemType()))
 				  {
 					  // backout changes, likely because user cancelled the disconnect
 					  sr.setHostOffline(conn, false);

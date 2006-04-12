@@ -25,13 +25,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dstore.core.client.ClientConnection;
 import org.eclipse.dstore.core.client.ConnectionStatus;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.IIBMServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.model.SystemSignonInformation;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
  * Launch Datastore server on selected host using the rexec
@@ -452,7 +452,7 @@ public class RexecDstoreServer implements IServerLauncher
 			// this should be stored in some resource bundle later 
 			//cmd = new String ("echo USSTEST;cd ~/dstore;start_anyport");
 			//cmd = new String("echo " + ASCII_TEST_STRING + ";cd ~/rseserver;start_anyport");
-			cmd = new String("echo " + ASCII_TEST_STRING + ";cd " + this.cwd + ";" + this.invocation);
+			cmd = new String("echo " + ASCII_TEST_STRING + ";cd " + this.cwd + ";" + this.invocation + " " + System.getProperty("user.name"));
 			logMessage("The command is " + cmd);
 			SystemBasePlugin.logInfo("RexecDstoreServer :");
 
@@ -476,7 +476,7 @@ public class RexecDstoreServer implements IServerLauncher
 			}
 			
 			if (timeout == 0) {
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_INVALID_LOGIN);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_INVALID_LOGIN);
 				msg.makeSubstitution(signonInfo.getHostname(), "");
 				_errorMessage = msg;
 				return port;
@@ -557,11 +557,11 @@ public class RexecDstoreServer implements IServerLauncher
 		if (index > -1)  // remove the embedded ASCII_TEST_STRING
 			hostMessage = hostMessage.substring(0,index) + hostMessage.substring(index+1+ASCII_TEST_STRING.length());
 		if (hostMessage.indexOf(EZYRD11E) >0 ){
-			SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_INVALID_LOGIN);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_INVALID_LOGIN);
 			msg.makeSubstitution(signonInfo.getHostname(), hostMessage);
 			_errorMessage = msg;
 		} else {
-			SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_REXEC_NOTSTARTED);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_REXEC_NOTSTARTED);
 			msg.makeSubstitution(""+rexecPort, signonInfo.getHostname(), hostMessage);
 			_errorMessage = msg;
 			
@@ -654,7 +654,7 @@ public class RexecDstoreServer implements IServerLauncher
 							cChar = (char) rxIn.readByte();
 							buf.append(cChar);
 						}
-						SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_INVALID_LOGIN);
+						SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_INVALID_LOGIN);
 						msg.makeSubstitution(signonInfo.getHostname(), buf.toString());
 						_errorMessage = msg;
 					}
@@ -668,7 +668,7 @@ public class RexecDstoreServer implements IServerLauncher
 		catch (Exception e)
 		{
 			System.out.println(e);
-			SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_REXEC_NOTSTARTED);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_REXEC_NOTSTARTED);
 			msg.makeSubstitution(""+rexecPort, signonInfo.getHostname(), e.getMessage());
 			_errorMessage = msg;
 		}
@@ -782,7 +782,7 @@ public class RexecDstoreServer implements IServerLauncher
 							cChar = (char) rxIn.readByte();
 							buf.append(cChar);
 						}
-						SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_INVALID_LOGIN);
+						SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_INVALID_LOGIN);
 						msg.makeSubstitution(signonInfo.getHostname(), buf.toString());
 						_errorMessage = msg;
 					}
@@ -797,7 +797,7 @@ public class RexecDstoreServer implements IServerLauncher
 		catch (Exception e)
 		{
 			System.out.println(e);
-			SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_REXEC_NOTSTARTED);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_REXEC_NOTSTARTED);
 			msg.makeSubstitution(""+rexecPort, signonInfo.getHostname(), e.getMessage());
 			_errorMessage = msg;
 		}
@@ -831,7 +831,7 @@ public class RexecDstoreServer implements IServerLauncher
 				
 		if (monitor != null)
 		{
-			SystemMessage cmsg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_CONNECTING_TO_SERVER);
+			SystemMessage cmsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECTING_TO_SERVER);
 			cmsg.makeSubstitution(clientConnection.getPort());
 			monitor.subTask(cmsg.getLevelOneText());
 		}
@@ -1033,7 +1033,7 @@ public class RexecDstoreServer implements IServerLauncher
 			{
 			}
 
-			SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_SERVER_NOTSTARTED);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_SERVER_NOTSTARTED);
 			diagnosticString.insert(0, "\n\n");
 			msg.makeSubstitution(signonInfo.getHostname(), diagnosticString.toString());
 

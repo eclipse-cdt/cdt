@@ -18,12 +18,12 @@ package org.eclipse.rse.files.ui.resources;
 
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -117,7 +117,7 @@ public class SaveAsForm extends SystemSelectRemoteFileOrFolderForm {
 		    //System.out.println("...saveasMbr null? "+ (saveasMbr==null));
 			if (saveasFile != null && saveasFile.exists())
 			{
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_UPLOAD_FILE_EXISTS);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_UPLOAD_FILE_EXISTS);
 				msg.makeSubstitution(fileName);
 				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 				ok = dlg.openQuestionNoException();

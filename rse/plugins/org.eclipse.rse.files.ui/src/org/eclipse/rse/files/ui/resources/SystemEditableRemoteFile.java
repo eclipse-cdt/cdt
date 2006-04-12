@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.actions.SystemDownloadConflictAction;
 import org.eclipse.rse.model.IHost;
@@ -50,6 +49,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileIOException;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.program.Program;
@@ -214,7 +214,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	
 	protected IEditorRegistry getEditorRegistry()
 	{
-		return SystemPlugin.getDefault().getWorkbench().getEditorRegistry();
+		return RSEUIPlugin.getDefault().getWorkbench().getEditorRegistry();
 	}
 	
 	protected IEditorDescriptor getDefaultTextEditor()
@@ -247,7 +247,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		// to handle migration of this smoothly, we can use another method to determine the subsystem                         
 		if (subsystemId != null)
 		{
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			fs = registry.getSubSystem(subsystemId);
 		}
 
@@ -544,7 +544,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	private boolean doDownload(SystemIFileProperties properties, IProgressMonitor monitor) throws Exception
 	{
 		// file hasn't been downloaded before, so do the download now
-		/*		SystemMessage copyMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COPYTHINGGENERIC_PROGRESS);
+		/*		SystemMessage copyMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYTHINGGENERIC_PROGRESS);
 				copyMessage.makeSubstitution(remoteFile.getName());
 				monitor.beginTask(copyMessage.getLevelOneText(), (int)remoteFile.getLength());
 		*/
@@ -642,7 +642,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		try
 		{
 			String path = file.getCanonicalPath();
-			return SystemPlugin.getWorkspaceRoot().getFileForLocation(new Path(path));
+			return RSEUIPlugin.getWorkspaceRoot().getFileForLocation(new Path(path));
 		}
 		catch (IOException e)
 		{
@@ -924,7 +924,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			}
 		}
 
-		IWorkbenchWindow[] windows = SystemPlugin.getDefault().getWorkbench().getWorkbenchWindows();
+		IWorkbenchWindow[] windows = RSEUIPlugin.getDefault().getWorkbench().getWorkbenchWindows();
 
 		for (int i = 0; i < windows.length; i++)
 		{
@@ -997,7 +997,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			
 			if (!remoteFile.exists())
 			{
-				SystemMessage message = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
+				SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
 				message.makeSubstitution(remotePath, subsystem.getHost().getHostName());
 				SystemMessageDialog dialog = new SystemMessageDialog(shell, message);
 				dialog.open();
@@ -1033,7 +1033,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 						download(shell);
 					}
 
-					SystemMessage message = SystemPlugin.getPluginMessage(ISystemMessages.MSG_DOWNLOAD_NO_WRITE);
+					SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DOWNLOAD_NO_WRITE);
 					message.makeSubstitution(remotePath, subsystem.getHost().getHostName());
 					SystemMessageDialog dialog = new SystemMessageDialog(shell, message);
 
@@ -1057,7 +1057,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			}
 			else if (result == OPEN_IN_DIFFERENT_PERSPECTIVE)
 			{
-				SystemMessage message = SystemPlugin.getPluginMessage(ISystemMessages.MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR);
+				SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR);
 				message.makeSubstitution(remotePath, subsystem.getHost().getHostName());
 				SystemMessageDialog dialog = new SystemMessageDialog(shell, message);
 
@@ -1194,7 +1194,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		properties.setRemoteFileObject(this);
 
 		// set remote properties
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		String subSystemId = registry.getAbsoluteNameForSubSystem(subsystem);
 		properties.setRemoteFileSubSystem(subSystemId);
 		properties.setRemoteFilePath(remoteFile.getAbsolutePath());
@@ -1218,7 +1218,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				encoding = util.getXMLFileEncoding(tempPath);
 			}
 			catch (IOException e) {
-				IStatus s = new Status(IStatus.ERROR, SystemPlugin.PLUGIN_ID, IStatus.ERROR, e.getLocalizedMessage(), e);
+				IStatus s = new Status(IStatus.ERROR, RSEUIPlugin.PLUGIN_ID, IStatus.ERROR, e.getLocalizedMessage(), e);
 				throw new CoreException(s);
 			}
 		}
@@ -1416,9 +1416,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				delta.accept(this);
 			}
 			catch (CoreException e) {
-				SystemPlugin.logError("Error accepting delta", e);
+				RSEUIPlugin.logError("Error accepting delta", e);
 				RemoteFileIOException exc = new RemoteFileIOException(e);
-				SystemMessageDialog dialog = new SystemMessageDialog(SystemPlugin.getActiveWorkbenchShell(), exc.getSystemMessage());
+				SystemMessageDialog dialog = new SystemMessageDialog(RSEUIPlugin.getActiveWorkbenchShell(), exc.getSystemMessage());
 				dialog.open();
 			}
 		}
@@ -1537,7 +1537,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			catch (InvocationTargetException e)
 			{
 				SystemBasePlugin.logError("Error in performSaveAs", e);
-				SystemMessage message = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
+				SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
 				SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), message);
 				dialog.open();
 				return true;
@@ -1564,7 +1564,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 					catch (Exception e)
 					{
 						SystemBasePlugin.logError("Error in performSaveAs", e);
-						SystemMessage message = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
+						SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
 						SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), message);
 						dialog.open();
 						return true;

@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -38,7 +38,7 @@ public class ExtractToDialog extends SystemSelectRemoteFileOrFolderDialog {
 	public ExtractToDialog(Shell shell)
 	{
 		super(shell, false);
-		setHelp(SystemPlugin.HELPPREFIX + "exdi0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "exdi0000");
 	}	
 	/**
 	 * Constructor when you want to supply your own title.
@@ -50,7 +50,7 @@ public class ExtractToDialog extends SystemSelectRemoteFileOrFolderDialog {
 	public ExtractToDialog(Shell shell, String title)
 	{
 		super(shell, title, false);
-		setHelp(SystemPlugin.HELPPREFIX + "exdi0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "exdi0000");
 	}
 		
 	protected SystemSelectRemoteFileOrFolderForm getForm(boolean fileMode)

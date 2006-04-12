@@ -19,10 +19,10 @@ package org.eclipse.rse.ui.dialogs;
 import java.util.List;
 
 import org.eclipse.rse.core.PasswordPersistenceManager;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.SystemSignonInformation;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.events.ModifyEvent;
@@ -35,10 +35,10 @@ import org.eclipse.swt.widgets.Text;
 
 
 /**
- * SystemPasswordPersistancePrompt is used with the save password preference page
+ * SystemPasswordPersistencePrompt is used with the save password preference page
  * to prompt the user to add or change password information.
  */
-public final class SystemPasswordPersistancePrompt extends SystemPromptDialog implements ModifyListener
+public final class SystemPasswordPersistencePrompt extends SystemPromptDialog implements ModifyListener
 {
 
 
@@ -52,11 +52,11 @@ public final class SystemPasswordPersistancePrompt extends SystemPromptDialog im
 	private List existingEntries;
 	
 	/**
-	 * Constructor for SystemPasswordPersistancePrompt.
+	 * Constructor for SystemPasswordPersistencePrompt.
 	 * @param shell
 	 * @param title
 	 */
-	public SystemPasswordPersistancePrompt(Shell shell, String title, List existingEntries, boolean change) {
+	public SystemPasswordPersistencePrompt(Shell shell, String title, List existingEntries, boolean change) {
 		super(shell, title);
 		this.change = change;
 		this.existingEntries = existingEntries;
@@ -127,7 +127,7 @@ public final class SystemPasswordPersistancePrompt extends SystemPromptDialog im
 		String sHostName = hostname.getText();
 		if (sHostName == null || sHostName.trim().equals(""))
 		{
-			setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
+			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			okButton.setEnabled(false);
 			hostname.setFocus();
 			return false;
@@ -136,7 +136,7 @@ public final class SystemPasswordPersistancePrompt extends SystemPromptDialog im
 		String sSystemType = systemType.getText();
 		if (sSystemType == null || sSystemType.trim().equals(""))
 		{
-			setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
+			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			okButton.setEnabled(false);
 			systemType.setFocus();
 			return false;
@@ -145,7 +145,7 @@ public final class SystemPasswordPersistancePrompt extends SystemPromptDialog im
 		String sUserID = userid.getText();
 		if (sUserID == null || sUserID.trim().equals(""))
 		{
-			setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
+			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			okButton.setEnabled(false);
 			userid.setFocus();
 			return false;
@@ -154,7 +154,7 @@ public final class SystemPasswordPersistancePrompt extends SystemPromptDialog im
 		String sPwd1 = password.getText();
 		if (sPwd1 == null || sPwd1.trim().equals(""))
 		{
-			setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
+			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			okButton.setEnabled(false);
 			password.setFocus();
 			return false;
@@ -163,7 +163,7 @@ public final class SystemPasswordPersistancePrompt extends SystemPromptDialog im
 		String sPwd2 = passwordVerify.getText();
 		if (sPwd2 == null || sPwd2.trim().equals(""))
 		{
-			setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
+			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			okButton.setEnabled(false);
 			passwordVerify.setFocus();
 			return false;
@@ -172,7 +172,7 @@ public final class SystemPasswordPersistancePrompt extends SystemPromptDialog im
 		// Check if new and verify passwords match
 		if (!sPwd1.equals(sPwd2))
 		{
-			setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_MISMATCH));
+			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_MISMATCH));
 			okButton.setEnabled(false);
 			password.setFocus();
 			password.setSelection(0, sPwd1.length());
@@ -187,11 +187,11 @@ public final class SystemPasswordPersistancePrompt extends SystemPromptDialog im
 			{
 				if (!signonInfo.getSystemType().equals(originalSystemType) ||
 					!signonInfo.getHostname().equalsIgnoreCase(originalHostname) ||
-				    //!signonInfo.getHostname().equalsIgnoreCase(SystemPlugin.getQualifiedHostName(originalHostname)) ||
+				    //!signonInfo.getHostname().equalsIgnoreCase(RSEUIPlugin.getQualifiedHostName(originalHostname)) ||
 				    !signonInfo.getUserid().equals(originalUserid))
 				{
 					// User changed hostname, systemtype or userid and the change conflicts with an existing entry
-					SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_EXISTS); 
+					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_EXISTS); 
 					msg.makeSubstitution(sUserID, sHostName);
 					setErrorMessage(msg);
 					okButton.setEnabled(false);
@@ -205,7 +205,7 @@ public final class SystemPasswordPersistancePrompt extends SystemPromptDialog im
 			// Adding a new entry, make sure it doesn't already exist
 			if (exists(signonInfo.getHostname(), signonInfo.getUserid(), signonInfo.getSystemType()))
 			{
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_EXISTS); 
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_EXISTS); 
 				msg.makeSubstitution(sUserID, sHostName);
 				setErrorMessage(msg);
 				okButton.setEnabled(false);
@@ -253,12 +253,12 @@ public final class SystemPasswordPersistancePrompt extends SystemPromptDialog im
 		super.createControl(parent);
 		if (change)
 		{
-			SystemWidgetHelpers.setCompositeHelp(parent, SystemPlugin.HELPPREFIX + "pwdi0002");
+			SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "pwdi0002");
 			password.setFocus();
 		}
 		else
 		{
-			SystemWidgetHelpers.setCompositeHelp(parent, SystemPlugin.HELPPREFIX + "pwdi0001");
+			SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "pwdi0001");
 			hostname.setFocus();
 		}
 	}
@@ -278,31 +278,31 @@ public final class SystemPasswordPersistancePrompt extends SystemPromptDialog im
 	public void modifyText(ModifyEvent e) {
 		if (e.getSource() == hostname && hostname.getText().trim().equals(""))
 		{
-			setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
+			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			hostname.setFocus();
 			okButton.setEnabled(false);
 		}
 		else if (e.getSource() == userid && userid.getText().trim().equals(""))
 		{
-			setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
+			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			userid.setFocus();
 			okButton.setEnabled(false);
 		}
 		else if (e.getSource() == systemType && systemType.getText().trim().equals(""))
 		{
-			setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
+			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			systemType.setFocus();
 			okButton.setEnabled(false);
 		}
 		else if (e.getSource() == password && password.getText().trim().equals(""))
 		{
-			setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
+			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			password.setFocus();
 			okButton.setEnabled(false);
 		}
 		else if (e.getSource() == passwordVerify && passwordVerify.getText().trim().equals(""))
 		{
-			setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
+			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			passwordVerify.setFocus();
 			okButton.setEnabled(false);
 		}

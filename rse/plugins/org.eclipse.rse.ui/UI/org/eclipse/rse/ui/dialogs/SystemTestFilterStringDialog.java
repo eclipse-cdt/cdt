@@ -17,10 +17,10 @@
 package org.eclipse.rse.ui.dialogs;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.view.SystemTestFilterStringAPIProviderImpl;
@@ -86,7 +86,7 @@ public class SystemTestFilterStringDialog
 		this.subsystem = subsystem;
 		this.filterString = filterString;
 		this.subsystemFactoryId = subsystem.getSubSystemConfiguration().getId();
-		sr = SystemPlugin.getTheSystemRegistry();
+		sr = RSEUIPlugin.getTheSystemRegistry();
 		setNeedsProgressMonitor(true);
 		//pack();
 	}	

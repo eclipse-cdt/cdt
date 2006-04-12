@@ -32,11 +32,13 @@ public class UniversalKeystoreProvider implements ISystemKeystoreProvider
 		private List _certificates;
 		private ISystemKeystoreProvider _provider;
 		private boolean _wasCancelled = false;
+		private String _systemName;
 		
-		public ImportCertificateRunnable(ISystemKeystoreProvider provider, List certs)
+		public ImportCertificateRunnable(ISystemKeystoreProvider provider, List certs, String systemName)
 		{			
 			_certificates = certs;
 			_provider = provider;
+			_systemName = systemName;
 		}
 				
 		public boolean wasCancelled()
@@ -47,7 +49,7 @@ public class UniversalKeystoreProvider implements ISystemKeystoreProvider
 		public void run()
 		{
 			Shell shell = Display.getDefault().getActiveShell();
-			SystemImportCertAction importAction = new SystemImportCertAction(_provider, _certificates);
+			SystemImportCertAction importAction = new SystemImportCertAction(_provider, _certificates, _systemName);
 			importAction.run();
 			_wasCancelled = importAction.wasCancelled();
 		}	
@@ -63,10 +65,10 @@ public class UniversalKeystoreProvider implements ISystemKeystoreProvider
 		return UniversalSecurityPlugin.getKeyStoreLocation();
 	}
 
-	public boolean importCertificates(List certs)
+	public boolean importCertificates(List certs, String systemName)
 	{
 		Display display = Display.getDefault(); 
-		ImportCertificateRunnable impRun = new ImportCertificateRunnable(this, certs);
+		ImportCertificateRunnable impRun = new ImportCertificateRunnable(this, certs, systemName);
 		display.syncExec(impRun);
 		
 		return !impRun.wasCancelled();

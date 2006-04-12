@@ -19,9 +19,9 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -65,13 +65,13 @@ public class ValidatorCompileCommandLabel extends ValidatorUniqueString
 	
 	private void init()
 	{
-		super.setErrorMessages(SystemPlugin.getPluginMessage(MSG_VALIDATE_COMPILELABEL_EMPTY),
-		                       SystemPlugin.getPluginMessage(MSG_VALIDATE_COMPILELABEL_NOTUNIQUE));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_COMPILELABEL_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_COMPILELABEL_NOTUNIQUE));  
 		fUnique = true;
-		msg_Invalid = SystemPlugin.getPluginMessage(MSG_VALIDATE_COMPILELABEL_NOTVALID);				
+		msg_Invalid = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_COMPILELABEL_NOTVALID);				
 	}
 	/**
-	 * Supply your own error message text. By default, messages from SystemPlugin resource bundle are used.
+	 * Supply your own error message text. By default, messages from RSEUIPlugin resource bundle are used.
 	 * @param error message when entry field is empty
 	 * @param error message when value entered is not unique
 	 * @param error message when syntax is not valid

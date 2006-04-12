@@ -8,4 +8,7 @@ export serverpath=.;
  
 export CLASSPATH=.:dstore_extra_server.jar:dstore_core.jar:dstore_miners.jar:universalminers.jar:clientserver.jar:$CLASSPATH;
 
-java -DA_PLUGIN_PATH=$serverpath com.ibm.etools.systems.dstore.core.server.Server 0 60000 &
+if [ $1 ]                     
+   then java -DA_PLUGIN_PATH=$serverpath -Dclient.username=$1 org.eclipse.dstore.core.server.Server 0 60000 &
+   else java -DA_PLUGIN_PATH=$serverpath org.eclipse.dstore.core.server.Server 0 60000 &
+fi 

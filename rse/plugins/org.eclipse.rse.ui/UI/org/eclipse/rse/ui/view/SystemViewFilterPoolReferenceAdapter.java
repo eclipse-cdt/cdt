@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
@@ -31,6 +30,7 @@ import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorFilterPoolName;
 import org.eclipse.swt.widgets.Shell;
@@ -124,7 +124,7 @@ public class SystemViewFilterPoolReferenceAdapter
           poolImage = adapter.getSystemFilterPoolImage(pool); 
     	}
     	if (poolImage == null)
-    	  poolImage = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID);
+    	  poolImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID);
     	return poolImage;  	
 	}
 	
@@ -144,7 +144,7 @@ public class SystemViewFilterPoolReferenceAdapter
 	 */
 	public String getText(Object element)
 	{
-		boolean qualifyNames = SystemPlugin.getTheSystemRegistry().getQualifiedHostNames();		
+		boolean qualifyNames = RSEUIPlugin.getTheSystemRegistry().getQualifiedHostNames();		
 		if (!qualifyNames)
 		  return getFilterPool(element).getName();
 		else

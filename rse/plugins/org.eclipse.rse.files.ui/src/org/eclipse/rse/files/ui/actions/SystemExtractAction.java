@@ -26,7 +26,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
@@ -38,6 +37,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemDragDropAdapter;
@@ -64,8 +64,8 @@ public class SystemExtractAction extends SystemBaseAction
 		_selected = new ArrayList();
 		_parent = parent;
 		allowOnMultipleSelection(true);
-		setHelp(SystemPlugin.HELPPREFIX + "actn0118");
-		setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXTRACT_ID));
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0118");
+		setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXTRACT_ID));
 	}
 
 	public SystemExtractAction(Shell parent, String label, String tooltip)
@@ -76,8 +76,8 @@ public class SystemExtractAction extends SystemBaseAction
 		_selected = new ArrayList();
 		_parent = parent;
 		allowOnMultipleSelection(true);
-		setHelp(SystemPlugin.HELPPREFIX + "actn0118");
-		setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXTRACT_ID));
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0118");
+		setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXTRACT_ID));
 
 	}
 
@@ -118,7 +118,7 @@ public class SystemExtractAction extends SystemBaseAction
 			{
 			}
 			//	always refresh
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, destination, destinationParent, ss, null, null);
 			registry.fireEvent(new SystemResourceChangeEvent(destination, ISystemResourceChangeEvents.EVENT_REFRESH, destinationParent));
 		}
@@ -161,7 +161,7 @@ public class SystemExtractAction extends SystemBaseAction
 				}
 				catch (Exception e)
 				{
-					SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
+					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
 					SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 					dlg.open();
 					System.out.println(e.getMessage());
@@ -247,7 +247,7 @@ public class SystemExtractAction extends SystemBaseAction
 	
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = SystemPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;

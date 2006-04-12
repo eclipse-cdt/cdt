@@ -18,14 +18,14 @@ package org.eclipse.rse.internal.model;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.rse.core.ISystemTypes;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemHostPool;
 import org.eclipse.rse.model.ISystemProfile;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 
@@ -178,7 +178,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
      */
     public IConnectorService[] getConnectorServices()
     {
-    	return SystemPlugin.getTheSystemRegistry().getConnectorServices(this);
+    	return RSEUIPlugin.getTheSystemRegistry().getConnectorServices(this);
     }
     
     /**
@@ -187,7 +187,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
      */
     public ISubSystem[] getSubSystems()
     {
-    	return SystemPlugin.getTheSystemRegistry().getSubSystems(this);
+    	return RSEUIPlugin.getTheSystemRegistry().getSubSystems(this);
     }
 
 	
@@ -292,10 +292,10 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
     	// defect 43219
     	if (systemType != null)
     	{
-    	  boolean forceUC = systemType.equals(ISystemTypes.SYSTEMTYPE_ISERIES);
-    	  boolean caseSensitiveUID = systemType.equals(ISystemTypes.SYSTEMTYPE_UNIX)
-    	                    || systemType.equals(ISystemTypes.SYSTEMTYPE_LINUX)
-    	                    || (systemType.equals(ISystemTypes.SYSTEMTYPE_LOCAL) &&
+    	  boolean forceUC = systemType.equals(IRSESystemType.SYSTEMTYPE_ISERIES);
+    	  boolean caseSensitiveUID = systemType.equals(IRSESystemType.SYSTEMTYPE_UNIX)
+    	                    || systemType.equals(IRSESystemType.SYSTEMTYPE_LINUX)
+    	                    || (systemType.equals(IRSESystemType.SYSTEMTYPE_LOCAL) &&
     	                        !System.getProperty("os.name").toLowerCase().startsWith("windows"));
     	  setForceUserIdToUpperCase(forceUC);
     	  setUserIdCaseSensitive(caseSensitiveUID);
@@ -654,7 +654,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
 	
 	public boolean commit() 
 	{
-		return SystemPlugin.getThePersistenceManager().commit(this.getSystemProfile());
+		return RSEUIPlugin.getThePersistenceManager().commit(this.getSystemProfile());
 	}
 
 }

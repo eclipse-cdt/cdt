@@ -18,9 +18,9 @@ package org.eclipse.rse.processes.ui.dialogs;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.dialogs.SystemDeleteTableRow;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -58,7 +58,7 @@ public class SystemKillTableRow extends SystemDeleteTableRow
     		this.pid = "" + ((IRemoteProcess)element).getPid();
     	if (adapter != null)
     	  this.imageDescriptor = adapter.getImageDescriptor(element);
-    	else this.imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROCESS_ID);
+    	else this.imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROCESS_ID);
     }
     
     /**

@@ -18,12 +18,12 @@ package org.eclipse.rse.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -49,7 +49,7 @@ public class SystemCollapseAction extends SystemBaseAction
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_EXPAND);
 		setAccelerator('-');
-		setHelp(SystemPlugin.HELPPREFIX+"actn0024");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0024");
 		setAvailableOffline(true);		
 	}
 
@@ -88,7 +88,7 @@ public class SystemCollapseAction extends SystemBaseAction
 	public void run() 
 	{
 		//System.out.println("Inside run of SystemRefreshAction");
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		if ((viewer != null) && (viewer instanceof ISystemResourceChangeListener))
 		{			
 		  sr.fireEvent((ISystemResourceChangeListener)viewer,

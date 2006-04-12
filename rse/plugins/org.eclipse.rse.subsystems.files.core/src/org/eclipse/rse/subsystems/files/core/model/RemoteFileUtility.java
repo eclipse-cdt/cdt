@@ -19,13 +19,13 @@ package org.eclipse.rse.subsystems.files.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 
@@ -34,7 +34,7 @@ public class RemoteFileUtility
 
 	public static IRemoteFileSubSystem getFileSubSystem(IHost connection)
 	{
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		ISubSystem[] sses = sr.getSubSystems(connection);
 		for (int i = 0; i < sses.length; i++)
 		{
@@ -50,7 +50,7 @@ public class RemoteFileUtility
 	public static IRemoteFileSubSystem[] getFileSubSystems(IHost connection)
 	{
 		List results = new ArrayList();
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		ISubSystem[] sses = sr.getSubSystems(connection);
 		for (int i = 0; i < sses.length; i++)
 		{
@@ -65,7 +65,7 @@ public class RemoteFileUtility
 	
 	 public static IRemoteFileSubSystemConfiguration getFileSubSystemFactory(String systemType)
 	 {
-			ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 			ISubSystemConfiguration[] sses = sr.getSubSystemConfigurationsBySystemType(systemType);
 			for (int i = 0; i < sses.length; i++)
 			{

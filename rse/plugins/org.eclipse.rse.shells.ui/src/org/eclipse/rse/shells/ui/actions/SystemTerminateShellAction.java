@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.shells.ui.ShellResources;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -35,7 +35,7 @@ public class SystemTerminateShellAction extends SystemBaseShellAction
 	{
 		this(ShellResources.ACTION_CANCEL_SHELL_LABEL,			
 				ShellResources.ACTION_CANCEL_SHELL_TOOLTIP,
-			SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CANCEL_ID),
+			RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CANCEL_ID),
 			parent);
 	}
     
@@ -53,7 +53,7 @@ public class SystemTerminateShellAction extends SystemBaseShellAction
     public void run()
     {
         // DKM - need to deselect in tree 
-        //SystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+        //SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
         //registry.fireEvent(new SystemResourceChangeEvent())
         List selected = new ArrayList();
          selected.addAll(_selected);
@@ -86,7 +86,7 @@ public class SystemTerminateShellAction extends SystemBaseShellAction
 		}
 		catch (Exception e)
 		{
-			//	SystemPlugin.getDefault().logInfo("Exception invoking command " + cmd + " on " + sysConn.getAliasName());
+			//	RSEUIPlugin.getDefault().logInfo("Exception invoking command " + cmd + " on " + sysConn.getAliasName());
 		}
 	}
 

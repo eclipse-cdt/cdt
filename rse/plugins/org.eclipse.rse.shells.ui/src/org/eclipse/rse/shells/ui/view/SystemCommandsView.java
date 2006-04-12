@@ -31,7 +31,6 @@ import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -39,30 +38,24 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.IThemeManager;
 
-
 public class SystemCommandsView extends SystemTableView implements ISystemThemeConstants, IPropertyChangeListener
 {
-
-
-   public class CommandsViewFilter extends ViewerFilter
-   {
-   	public boolean select(Viewer viewer, Object parent, Object element)
+	public class CommandsViewFilter extends ViewerFilter
 	{
-		if (element instanceof IRemoteOutput)
+		public boolean select(Viewer viewer, Object parent, Object element)
 		{
-		    
-			IRemoteOutput remoteOutput = (IRemoteOutput)element;
-			if (remoteOutput.getText().indexOf("BEGIN-END-TAG:") > -1)
+			if (element instanceof IRemoteOutput)
 			{
-				return false;
+				IRemoteOutput remoteOutput = (IRemoteOutput) element;
+				if (remoteOutput.getText().indexOf("BEGIN-END-TAG:") > -1)
+				{
+					return false;
+				}
 			}
-			
+			return true;
 		}
-
-		return true;
 	}
-   }
-   
+
 	private static int MAX_BUFFER = 20000;
 	private Color _errColor;
 	private Color _outColor;
@@ -70,19 +63,17 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 	private Color _warColor;
 	private Color _prmColor;
 	private int _maxCharWidth = 256;
-	
+
 	public SystemCommandsView(Table table, ISystemMessageLine msgLine)
 	{
 		super(table, msgLine);
-				
 		addFilter(new CommandsViewFilter());
 		updateTheme();
-		int[] colWidths  = new int[1];
+		int[] colWidths = new int[1];
 		colWidths[0] = 1000;
 		setLastColumnWidths(colWidths);
-				
 	}
-	
+
 	// overridden to produce custom provider
 	protected SystemTableViewProvider getProvider()
 	{
@@ -92,48 +83,40 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 		}
 		return _provider;
 	}
-	
+
 	public void propertyChange(PropertyChangeEvent e)
 	{
-	   // for now always update
-	    updateTheme();
+		// for now always update
+		updateTheme();
 	}
 
 	public void updateTheme()
 	{
-	    Table table = getTable();
-	    if (table != null)
-	    {
-	        Display display = getControl().getDisplay();
-
-
+		Table table = getTable();
+		if (table != null)
+		{
 			IThemeManager mgr = PlatformUI.getWorkbench().getThemeManager();
 			Color bg = mgr.getCurrentTheme().getColorRegistry().get(REMOTE_COMMANDS_VIEW_BG_COLOR);
 			Color fg = mgr.getCurrentTheme().getColorRegistry().get(REMOTE_COMMANDS_VIEW_FG_COLOR);
 			Font fFont = mgr.getCurrentTheme().getFontRegistry().get(REMOTE_COMMANDS_VIEW_FONT);
-			
-			
 			table.setBackground(bg);
 			table.setForeground(fg);
 			table.setFont(fFont);
-			
 			if (_errColor == null)
 			{
-			    mgr.addPropertyChangeListener(this);
+				mgr.addPropertyChangeListener(this);
 			}
 			_errColor = mgr.getCurrentTheme().getColorRegistry().get(MESSAGE_ERROR_COLOR);
 			_outColor = mgr.getCurrentTheme().getColorRegistry().get(REMOTE_COMMANDS_VIEW_FG_COLOR);
 			_infColor = mgr.getCurrentTheme().getColorRegistry().get(MESSAGE_INFORMATION_COLOR);
 			_warColor = mgr.getCurrentTheme().getColorRegistry().get(MESSAGE_WARNING_COLOR);
 			_prmColor = mgr.getCurrentTheme().getColorRegistry().get(REMOTE_COMMANDS_VIEW_PROMPT_COLOR);
-			
-	    }
+		}
 	}
-	
+
 	public void refresh()
 	{
 		super.refresh();
-
 		Table table = getTable();
 		if (table != null && table.getItemCount() > 0)
 		{
@@ -144,32 +127,29 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 
 	public synchronized void updateChildren()
 	{
-	   // updateTheme();
-	    
+		// updateTheme();
 		Object input = getInput();
 		if (input instanceof IRemoteCommandShell)
 		{
 			SystemTableViewProvider provider = (SystemTableViewProvider) getContentProvider();
 			Table table = getTable();
-
 			Object[] children = provider.getChildren(input);
 			if (children != null && children.length > 0)
 			{
 				boolean needsLayout = false;
 				TableItem[] tableItems = table.getItems();
-			 	if (tableItems == null || tableItems.length == 0)
+				if (tableItems == null || tableItems.length == 0)
 				{
 					needsLayout = true;
+				} else
+				{
+					int widest = provider.getMaxCharsInColumnZero();
+					if (widest > _maxCharWidth)
+					{
+						needsLayout = true;
+						_maxCharWidth = widest;
+					}
 				}
-			 	else
-			 	{
-			 		int widest = provider.getMaxCharsInColumnZero();
-			 		if (widest > _maxCharWidth)
-			 		{
-			 			needsLayout = true;
-			 			_maxCharWidth = widest;
-			 		}
-			 	}
 				synchronized (children)
 				{
 					int index = table.getItemCount();
@@ -180,42 +160,36 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 						table.setRedraw(true);
 						provider.flushCache();
 						internalRefresh(input);
-					}
-					else
+					} else
 					{
-
 						// update previous item
-					    /*
-						if (index > 0 && (children.length > index - 1))
-						{
-							Object lastObject = children[index - 1];
+						/*
+						 if (index > 0 && (children.length > index - 1))
+						 {
+						 Object lastObject = children[index - 1];
 
-							TableItem lastItem = table.getItem(index - 1);
-							if (lastObject != null && lastItem != null)
-							{
-								colorItem(lastItem, lastObject);
-								updateItem(lastItem, lastObject);
-							}
-						}*/
-
+						 TableItem lastItem = table.getItem(index - 1);
+						 if (lastObject != null && lastItem != null)
+						 {
+						 colorItem(lastItem, lastObject);
+						 updateItem(lastItem, lastObject);
+						 }
+						 }*/
 						for (int i = index; i < children.length; i++)
 						{
 							Object child = children[i];
 							if (child != null)
 							{
 								boolean isVisible = true;
-															
 								if (isVisible)
 								{
 									TableItem newItem = (TableItem) newItem(table, SWT.NONE, index);
-
 									colorItem(newItem, child);
 									updateItem(newItem, child);
 									index++;
 								}
 							}
 						}
-
 						if (index > 0)
 						{
 							table.setTopIndex(index - 1);
@@ -239,26 +213,19 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 			if (type.equals("stderr") || type.equals("error"))
 			{
 				newItem.setForeground(_errColor);
+			} else if (type.equals("warning"))
+			{
+				newItem.setForeground(_warColor);
+			} else if (type.equals("informational"))
+			{
+				newItem.setForeground(_infColor);
+			} else if (type.equals("prompt"))
+			{
+				newItem.setForeground(_prmColor);
+			} else
+			{
+				newItem.setForeground(_outColor);
 			}
-			else
-				if (type.equals("warning"))
-				{
-					newItem.setForeground(_warColor);
-				}
-				else
-					if (type.equals("informational"))
-					{
-						newItem.setForeground(_infColor);
-					}
-					else
-						if (type.equals("prompt"))
-						{
-							newItem.setForeground(_prmColor);
-						}
-						else
-						{
-							newItem.setForeground(_outColor);
-						}
 		}
 	}
 
@@ -267,37 +234,35 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 		Object input = getInput();
 		SystemTableViewProvider provider = (SystemTableViewProvider) getContentProvider();
 		Object[] children = provider.getChildren(input);
-		clearFirstItems(children, children.length );
+		clearFirstItems(children, children.length);
 	}
 
 	public void dispose()
 	{
-	    IThemeManager mgr = PlatformUI.getWorkbench().getThemeManager();
-	    mgr.removePropertyChangeListener(this);
+		IThemeManager mgr = PlatformUI.getWorkbench().getThemeManager();
+		mgr.removePropertyChangeListener(this);
 	}
-	
+
 	private void clearFirstItems(Object[] children, int items)
 	{
 		Table table = getTable();
-
 		table.setRedraw(false);
 		synchronized (table)
 		{
 			if (items > 0)
 			{
-			int count = table.getItemCount();
-			if (count >= items)
-			{
-				table.remove(0, items - 1);
-	
-				IRemoteCommandShell input = (IRemoteCommandShell) getInput();
-				// remove items from command
-				for (int i = 0; i < items && i < children.length; i++)
+				int count = table.getItemCount();
+				if (count >= items)
 				{
-					Object item = children[i];
-					input.removeOutput(item);
+					table.remove(0, items - 1);
+					IRemoteCommandShell input = (IRemoteCommandShell) getInput();
+					// remove items from command
+					for (int i = 0; i < items && i < children.length; i++)
+					{
+						Object item = children[i];
+						input.removeOutput(item);
+					}
 				}
-			}
 			}
 		}
 		table.setRedraw(true);
@@ -309,14 +274,12 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 		{
 			return new TableItem((Table) parent, flags);
 		}
-
 		return null;
 	}
 
 	public void systemResourceChanged(ISystemResourceChangeEvent event)
 	{
 		Object child = event.getSource();
-
 		if (event.getType() == ISystemResourceChangeEvents.EVENT_REFRESH)
 		{
 			if (child == getInput())
@@ -325,35 +288,28 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 				if (provider != null)
 				{
 					provider.flushCache();
-
 					updateChildren();
 					return;
 				}
 			}
-		}
-		else if (event.getType() == ISystemResourceChangeEvents.EVENT_ICON_CHANGE)
+		} else if (event.getType() == ISystemResourceChangeEvents.EVENT_ICON_CHANGE)
 		{
 			try
 			{
 				Widget w = findItem(child);
 				if (w != null)
-				{					    
+				{
 					updateItem(w, child);
 				}
-			}
-			catch (Exception e)
+			} catch (Exception e)
 			{
-				
 			}
 		}
-
-		
 		//super.systemResourceChanged(event);
 	}
-	
+
 	protected Object getParentForContent(Object element)
 	{
-		return getAdapter(element).getParent(element);		
+		return getAdapter(element).getParent(element);
 	}
-
 }

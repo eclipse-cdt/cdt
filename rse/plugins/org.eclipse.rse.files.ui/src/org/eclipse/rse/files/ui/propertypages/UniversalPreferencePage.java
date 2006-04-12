@@ -29,7 +29,6 @@ import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.window.Window;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -39,6 +38,7 @@ import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistr
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.Mnemonics;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.SWT;
@@ -113,7 +113,7 @@ public class UniversalPreferencePage
 	 */
 	public UniversalPreferencePage() {
 		super(GRID);
-		setPreferenceStore(SystemPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(RSEUIPlugin.getDefault().getPreferenceStore());
 		setDescription(FileResources.RESID_PREF_UNIVERSAL_FILES_TITLE);
 	}
 
@@ -130,7 +130,7 @@ public class UniversalPreferencePage
 	protected void createFieldEditors() {
 		
 		modeRegistry = (SystemFileTransferModeRegistry)(SystemFileTransferModeRegistry.getDefault());
-		editorRegistry = (IEditorRegistry)(SystemPlugin.getDefault().getWorkbench().getEditorRegistry());
+		editorRegistry = (IEditorRegistry)(RSEUIPlugin.getDefault().getWorkbench().getEditorRegistry());
 		
 		modeMappings = new ArrayList();
 		editorMappings = new ArrayList();
@@ -270,7 +270,7 @@ public class UniversalPreferencePage
 			
 		addField(showHiddenEditor);
 		
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		
 		// download and upload buffer size
 	
@@ -381,7 +381,7 @@ public class UniversalPreferencePage
 		updateEnabledState();
 		
         (new Mnemonics()).setOnPreferencePage(true).setMnemonics(parent);	
-		SystemWidgetHelpers.setCompositeHelp(parent, SystemPlugin.HELPPREFIX+"ufpf0000");
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX+"ufpf0000");
 		
 	}
 
@@ -627,7 +627,7 @@ public class UniversalPreferencePage
 		// no extension is provided
 		if (newExtension == null || newExtension.length() < 1) {
 // Note by DWD - this path is never taken because the dialog that gathers resource types checks for this condition
-			SystemMessageFile mf = SystemPlugin.getPluginMessageFile();
+			SystemMessageFile mf = RSEUIPlugin.getPluginMessageFile();
 			Shell shell = getControl().getShell();
 			SystemMessage message = mf.getMessage(ISystemMessages.MSG_ERROR_EXTENSION_EMPTY);
 			SystemMessageDialog.displayErrorMessage(shell, message);
@@ -649,7 +649,7 @@ public class UniversalPreferencePage
 				// if the name is more than one character, and it has a '*' in it
 				if (!(index == 0 && newName.length() == 1)) {
 // Note by DWD - this path is never taken because the dialog that gathers resource types checks for this condition.
-					SystemMessageFile mf = SystemPlugin.getPluginMessageFile();
+					SystemMessageFile mf = RSEUIPlugin.getPluginMessageFile();
 					Shell shell = getControl().getShell();
 					SystemMessage message = mf.getMessage(ISystemMessages.MSG_ERROR_FILENAME_INVALID);
 					SystemMessageDialog.displayErrorMessage(shell, message);
@@ -824,7 +824,7 @@ public class UniversalPreferencePage
 	 */
 	public static int getFileTransferModeDefaultPreference() 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		return store.getInt(ISystemPreferencesConstants.FILETRANSFERMODEDEFAULT);
 	}
 	/**
@@ -832,7 +832,7 @@ public class UniversalPreferencePage
 	 */
 	public static void setFileTransferModeDefaultPreference(int defaultMode) 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(ISystemPreferencesConstants.FILETRANSFERMODEDEFAULT,defaultMode);
 		savePreferenceStore();
 	}	
@@ -842,7 +842,7 @@ public class UniversalPreferencePage
 	 */
 	public static String getSuperTransferTypePreference() 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		return store.getString(ISystemPreferencesConstants.SUPERTRANSFER_ARC_TYPE);
 	}
 	/**
@@ -850,20 +850,20 @@ public class UniversalPreferencePage
 	 */
 	public static void setSuperTransferTypePreference(String type) 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(ISystemPreferencesConstants.SUPERTRANSFER_ARC_TYPE,type);
 		savePreferenceStore();
 	}	
 	
 	public static boolean getDoSuperTransfer() 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
 	}
 	
 	public static int getDownloadBufferSize()
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		int result = store.getInt(ISystemPreferencesConstants.DOWNLOAD_BUFFER_SIZE);
 		if (result == 0)
 		{
@@ -874,7 +874,7 @@ public class UniversalPreferencePage
 	
 	public static int getUploadBufferSize()
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		int result = store.getInt(ISystemPreferencesConstants.UPLOAD_BUFFER_SIZE);
 		if (result == 0)
 		{
@@ -885,7 +885,7 @@ public class UniversalPreferencePage
 	
 	public static void setDoSuperTransfer(boolean flag)
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(ISystemPreferencesConstants.DOSUPERTRANSFER,flag);
 		savePreferenceStore();
 	}
@@ -904,7 +904,7 @@ public class UniversalPreferencePage
 	{
 	    if (size > 0)
 	    {
-	        IPreferenceStore store = SystemPlugin.getDefault().getPreferenceStore();
+	        IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 	    	store.setValue(ISystemPreferencesConstants.DOWNLOAD_BUFFER_SIZE, size);
 	    	savePreferenceStore();
 	    }
@@ -914,7 +914,7 @@ public class UniversalPreferencePage
 	{
 	    if (size > 0)
 	    {
-	        IPreferenceStore store = SystemPlugin.getDefault().getPreferenceStore();
+	        IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 	    	store.setValue(ISystemPreferencesConstants.UPLOAD_BUFFER_SIZE, size);
 	    	savePreferenceStore();
 	    }
@@ -927,7 +927,7 @@ public class UniversalPreferencePage
 	{	 
 		/* DY:  This was causing ClassCastException in 2.0
 		 *      getPreferenceStore retutrns CompatibilityPreferenceStore now
-		PreferenceStore store = (PreferenceStore)SystemPlugin.getDefault().getPreferenceStore();				
+		PreferenceStore store = (PreferenceStore)RSEUIPlugin.getDefault().getPreferenceStore();				
 		try {
 			store.save();
 		} catch (Exception exc)
@@ -937,7 +937,7 @@ public class UniversalPreferencePage
 		*/
 		// ok, a couple hours of research leads me to believe this is now the new
 		// thing to do... phil
-		SystemPlugin.getDefault().savePluginPreferences();
+		RSEUIPlugin.getDefault().savePluginPreferences();
 	}
 	
 	/**

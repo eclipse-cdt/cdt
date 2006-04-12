@@ -41,7 +41,7 @@ public final class SystemSignonInformation {
 	 * Constructor for SystemSignonInformation.
 	 */
 	public SystemSignonInformation(String hostname, String userid, String systemType) {
-		_hostname = hostname;//SystemPlugin.getQualifiedHostName(hostname).toUpperCase();
+		_hostname = hostname;//RSEUIPlugin.getQualifiedHostName(hostname).toUpperCase();
 		_userid = userid;
 		_systemType = systemType;	
 	}
@@ -50,7 +50,7 @@ public final class SystemSignonInformation {
 	 * Constructor for SystemSignonInformation.
 	 */
 	public SystemSignonInformation(String hostname, String userid, String password, String systemType) {
-		_hostname = hostname;//SystemPlugin.getQualifiedHostName(hostname).toUpperCase();
+		_hostname = hostname;//RSEUIPlugin.getQualifiedHostName(hostname).toUpperCase();
 		_userid = userid;
 		_password = password;
 		_systemType = systemType;	
@@ -99,7 +99,7 @@ public final class SystemSignonInformation {
 	 * @param hostname The hostname to set
 	 */
 	public void setHostname(String hostname) {
-		_hostname = hostname;//SystemPlugin.getQualifiedHostName(hostname).toUpperCase();
+		_hostname = hostname;//RSEUIPlugin.getQualifiedHostName(hostname).toUpperCase();
 	}
 
 	/**

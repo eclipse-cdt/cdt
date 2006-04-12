@@ -43,7 +43,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterReference;
@@ -62,6 +61,7 @@ import org.eclipse.rse.ui.ISystemDeleteTarget;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemRenameTarget;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemCommonDeleteAction;
 import org.eclipse.rse.ui.actions.SystemCommonRenameAction;
@@ -185,7 +185,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 
 			setContentProvider(_provider);
 			
-			setLabelProvider(new DecoratingLabelProvider(_provider, SystemPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));	
+			setLabelProvider(new DecoratingLabelProvider(_provider, RSEUIPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));	
 
 			//setLabelProvider(_provider);
 
@@ -197,8 +197,8 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 
 			addSelectionChangedListener(this);
 
-			SystemPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
-			SystemPlugin.getTheSystemRegistry().addSystemRemoteChangeListener(this);
+			RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
+			RSEUIPlugin.getTheSystemRegistry().addSystemRemoteChangeListener(this);
 
 			initDragAndDrop();
 
@@ -387,7 +387,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
    	    	          if (w != null)
    	    	          {
    	    	              remove(child);
-   	    	              SystemPlugin.getTheSystemRegistry().getSystemScratchPad().removeChild(child);
+   	    	              RSEUIPlugin.getTheSystemRegistry().getSystemScratchPad().removeChild(child);
    	    	          }	
 	   	    	  }
    	    	  	}
@@ -627,8 +627,8 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		
 		// remove listeners
 		removeSelectionChangedListener(this);
-		SystemPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
-		SystemPlugin.getTheSystemRegistry().removeSystemRemoteChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().removeSystemRemoteChangeListener(this);
 
 		Composite tree = getTree();
 		
@@ -849,7 +849,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	 */
 	public boolean doDelete(IProgressMonitor monitor)
 	{
-		ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		//int selectedCount = selection.size();
@@ -886,7 +886,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			String msg = exc.getMessage();
 			if ((msg == null) || (exc instanceof ClassCastException))
 				msg = exc.getClass().getName();
-			SystemMessageDialog.displayErrorMessage(getShell(), SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_DELETING).makeSubstitution(element, msg));
+			SystemMessageDialog.displayErrorMessage(getShell(), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_DELETING).makeSubstitution(element, msg));
 			ok = false;
 		}
 		if (anyOk)
@@ -942,7 +942,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	*/
 	public boolean doRename(String[] newNames)
 	{
-		ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		int selectedCount = selection.size();
@@ -987,7 +987,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			//String msg = exc.getMessage();
 			//if ((msg == null) || (exc instanceof ClassCastException))
 			//  msg = exc.getClass().getName();
-			SystemMessageDialog.displayErrorMessage(getShell(), SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_RENAMING).makeSubstitution(element, exc),
+			SystemMessageDialog.displayErrorMessage(getShell(), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_RENAMING).makeSubstitution(element, exc),
 			//msg),
 			exc);
 			ok = false;

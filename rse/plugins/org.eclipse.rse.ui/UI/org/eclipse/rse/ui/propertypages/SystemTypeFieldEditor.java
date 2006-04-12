@@ -35,9 +35,11 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.rse.core.SystemPlugin;
-import org.eclipse.rse.core.SystemType;
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSESystemTypeAdapter;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.SWT;
@@ -64,7 +66,7 @@ public class SystemTypeFieldEditor extends FieldEditor
     private static final char KEYVALUEPAIR_DELIMITER=';';
     public static final char EACHVALUE_DELIMITER='+';
     private Hashtable keyValues;
-    private SystemType[] systemTypes;
+    private IRSESystemType[] systemTypes;
     
     private boolean enabledStateChanged = false;
     
@@ -179,7 +181,6 @@ public class SystemTypeFieldEditor extends FieldEditor
 	{
 		if (systemTypes != null)
 		{
-			SystemPlugin.getDefault().setSystemTypes(systemTypes);
 			String s = createString(keyValues);
 
 			if (s != null)
@@ -230,7 +231,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	   tableData.grabExcessVerticalSpace = true;
 	   table.setLayoutData(tableData);
 	   
-	   SystemWidgetHelpers.setHelp(table, SystemPlugin.HELPPREFIX+"systype_preferences");
+	   SystemWidgetHelpers.setHelp(table, RSEUIPlugin.HELPPREFIX+"systype_preferences");
 	   return table;
     }
 	
@@ -305,9 +306,9 @@ public class SystemTypeFieldEditor extends FieldEditor
 		return sb.toString();
 	}
 	
-	private SystemType[] getSystemTypes(boolean defaults)
+	private IRSESystemType[] getSystemTypes(boolean defaults)
 	{
-		return SystemPlugin.getDefault().getAllSystemTypes(defaults);
+		return RSECorePlugin.getDefault().getRegistry().getSystemTypes();
 	}
 
     // ------------------------
@@ -335,15 +336,16 @@ public class SystemTypeFieldEditor extends FieldEditor
 	 */
 	public Object getValue(Object element, String property)
 	{
-		SystemType row = (SystemType)element;
+		IRSESystemType row = (IRSESystemType)element;
+		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(row.getAdapter(IRSESystemType.class));
 		Object value = "";
 		
 		if (property.equals(P_NAME))
 			value = row.getName();
 		else if (property.equals(P_ENABLED))
-			value = (row.isEnabled() ? new Integer(0) : new Integer(1));
+			value = (adapter.isEnabled(row) ? new Integer(0) : new Integer(1));
 		else if (property.equals(P_USERID))
-			value = (row.getDefaultUserID() == null) ? "" : row.getDefaultUserID();
+			value = (adapter.getDefaultUserId(row) == null) ? "" : adapter.getDefaultUserId(row);
 		else
 			value = (row.getDescription() == null) ? "" : row.getDescription();
 
@@ -360,22 +362,23 @@ public class SystemTypeFieldEditor extends FieldEditor
 	 */
 	public void modify(Object element, String property, Object value)
 	{
-		SystemType row = (SystemType)(((TableItem)element).getData());			
+		IRSESystemType row = (IRSESystemType)(((TableItem)element).getData());			
+		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(row.getAdapter(IRSESystemType.class));
 
 		if (property.equals(P_ENABLED))
 		{
 		    Integer val = (Integer)value;
-			row.setEnabled(enabledStates[val.intValue()]);
+			adapter.setIsEnabled(row, enabledStates[val.intValue()]);
 			enabledStateChanged = true;
 		}
 		else if (property.equals(P_USERID))
 		{
-			row.setDefaultUserID((String)value);			
+			adapter.setDefaultUserId(row, (String)value);			
 		}
 		else
 			return;
 		
-		keyValues.put(row.getName(), SystemType.getPreferenceStoreString(row));		
+		keyValues.put(row.getName(), "");		
 		tableViewer.update(row, null);
 	}
 
@@ -396,14 +399,15 @@ public class SystemTypeFieldEditor extends FieldEditor
 	 */
 	public String getColumnText(Object element, int columnIndex)
 	{
-		SystemType currType = (SystemType)element;
+		IRSESystemType currType = (IRSESystemType)element;
+		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(currType.getAdapter(IRSESystemType.class));
 
 		if (columnIndex == COLUMN_NAME)
 			return currType.getName();
 		else if (columnIndex == COLUMN_ENABLED)
-			return Boolean.toString(currType.isEnabled());
+			return Boolean.toString(adapter.isEnabled(currType));
 		else if (columnIndex == COLUMN_USERID)
-			return (currType.getDefaultUserID()==null ? "" : currType.getDefaultUserID());
+			return (adapter.getDefaultUserId(currType)==null ? "" : adapter.getDefaultUserId(currType));
 		else 
 			return (currType.getDescription()==null ? "" : currType.getDescription());
 	}
@@ -462,14 +466,14 @@ public class SystemTypeFieldEditor extends FieldEditor
     	table.setToolTipText(tip);
     }
 
-    public static Hashtable initSystemTypePreferences(IPreferenceStore store, SystemType[] systemTypes)
+    public static Hashtable initSystemTypePreferences(IPreferenceStore store, IRSESystemType[] systemTypes)
     {
 		String value = store.getString(ISystemPreferencesConstants.SYSTEMTYPE_VALUES);
 		Hashtable keyValues = null;
 	    if ((value == null) || (value.length()==0)) // not initialized yet?
 	    {
 	    	return null;
-	    	// nothing to do, as we have read from systemtype extension points already
+	    	// nothing to do, as we have read from systemTypes extension points already
 	    }
 	    else
 	    {
@@ -500,13 +504,15 @@ public class SystemTypeFieldEditor extends FieldEditor
 					}
 				}
 				// find this system type in the array...
-				SystemType matchingType = SystemType.getSystemType(systemTypes, key);
+				IRSESystemType matchingType = RSECorePlugin.getDefault().getRegistry().getSystemType(key);
+				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(matchingType.getAdapter(IRSESystemType.class));
+				
 				// update this system type's attributes as per preferences...
 				if (matchingType!=null)
 				{
-					matchingType.setEnabled(attr1.equals("true"));
+					adapter.setIsEnabled(matchingType, attr1.equals("true"));
 					if (!attr2.equals("null"))
-						matchingType.setDefaultUserID(attr2);
+						adapter.setDefaultUserId(matchingType, attr2);
 				}
 			}	    		    	
 	    }    

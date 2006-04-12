@@ -19,7 +19,6 @@ import java.util.ResourceBundle;
 import java.util.Vector;
 
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
@@ -30,6 +29,7 @@ import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.filters.ISystemFilterStringEditPaneListener;
@@ -71,7 +71,7 @@ public class SystemFilterStringPropertyPage extends SystemBasePropertyPage imple
 	public SystemFilterStringPropertyPage()
 	{
 		super();
-		SystemPlugin sp = SystemPlugin.getDefault();
+		RSEUIPlugin sp = RSEUIPlugin.getDefault();
 	}
 	
 	// configuration methods, called by customizeFilterStringPropertyPage in SubSystemFactoryImpl...
@@ -304,7 +304,7 @@ public class SystemFilterStringPropertyPage extends SystemBasePropertyPage imple
 		catch (Exception exc) 
 		{
 			//displayErrorMessage("Error updating filter: " + exc.getMessage());
-			SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_UPDATEFILTER_FAILED);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_UPDATEFILTER_FAILED);
 			String excText = exc.getMessage();
 			if (excText == null)
 			  excText = exc.getClass().getName();

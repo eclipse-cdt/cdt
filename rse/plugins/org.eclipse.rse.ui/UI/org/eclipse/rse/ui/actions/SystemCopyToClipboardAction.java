@@ -20,13 +20,13 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -67,7 +67,7 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IS
 
 		allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);
-		setHelp(SystemPlugin.HELPPREFIX+"actn0116");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0116");
 	}
 
 	public void run()
@@ -86,7 +86,7 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IS
 		StringBuffer textStream = new StringBuffer("");
 		StringBuffer dataStream = new StringBuffer("");
 		ArrayList fileNames = new ArrayList();
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
 		while (iterator.hasNext())
 		{

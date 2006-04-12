@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemProfile;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.view.SystemViewResources;
@@ -94,7 +94,7 @@ public class SystemTeamViewProfilePropertyPage extends SystemBasePropertyPage
 		ISystemProfile profile = getProfile();
 		// populate GUI...
 		labelName.setText(profile.getName());
-		boolean active = SystemPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
+		boolean active = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
 		if (active)
 			labelStatus.setText(SystemViewResources.RESID_PROPERTY_PROFILESTATUS_ACTIVE_LABEL);
 		else

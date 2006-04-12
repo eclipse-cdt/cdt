@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
 import org.eclipse.rse.filters.ISystemFilter;
@@ -35,6 +34,7 @@ import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ValidatorArchiveName;
@@ -372,7 +372,7 @@ public class CombineForm extends SystemSelectRemoteFileOrFolderForm
 		setDefaultConnection(connection);
 		setShowNewConnectionPrompt(true);
 		setAutoExpandDepth(0);        
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IRemoteFileSubSystem ss = RemoteFileUtility.getFileSubSystem(connection);
 		IRemoteFileSubSystemConfiguration ssf = ss.getParentRemoteFileSubSystemFactory();
 		RemoteFileFilterString rffs = new RemoteFileFilterString(ssf);
@@ -417,7 +417,7 @@ public class CombineForm extends SystemSelectRemoteFileOrFolderForm
 		  {
 			preSelectFilter = filter;
 			preSelectFilterChild = folderAbsolutePath;
-			//SystemPlugin.logInfo("in setRootFolder. Given: " + folderAbsolutePath);
+			//RSEUIPlugin.logInfo("in setRootFolder. Given: " + folderAbsolutePath);
 		  }
 		}
         
@@ -433,7 +433,7 @@ public class CombineForm extends SystemSelectRemoteFileOrFolderForm
 		  filters[idx] = filter;
         
 		  preSelectFilter = filter;
-		  //SystemPlugin.logInfo("FILTER 2: " + filter.getFilterString());        
+		  //RSEUIPlugin.logInfo("FILTER 2: " + filter.getFilterString());        
 		}
 		inputProvider.setFilterString(null); // undo what ctor did
 		inputProvider.setQuickFilters(filters);

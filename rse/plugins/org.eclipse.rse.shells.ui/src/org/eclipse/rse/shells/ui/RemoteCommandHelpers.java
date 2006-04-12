@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCmdSubSystem;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCommandShell;
@@ -33,6 +32,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
@@ -68,7 +68,7 @@ public class RemoteCommandHelpers
 
 	public static IRemoteCmdSubSystem getCmdSubSystem(IHost connection)
 	{
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		ISubSystem[] sses = sr.getSubSystems(connection);
 		for (int i = 0; i < sses.length; i++)
 		{
@@ -84,7 +84,7 @@ public class RemoteCommandHelpers
 	public static IRemoteCmdSubSystem[] getCmdSubSystems(IHost connection)
 	{
 		List results = new ArrayList();
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		ISubSystem[] sses = sr.getSubSystems(connection);
 		for (int i = 0; i < sses.length; i++)
 		{

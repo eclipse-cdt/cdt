@@ -20,10 +20,10 @@ package org.eclipse.rse.shells.ui.propertypages;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCmdSubSystem;
 import org.eclipse.rse.shells.ui.ShellResources;
 import org.eclipse.rse.shells.ui.view.EncodingForm;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -58,13 +58,13 @@ public class SystemShellPropertyPage extends SystemBasePropertyPage
 			}
 		}
 				
-		SystemPlugin.getDefault().getPreferenceStore().setValue("shell.encodingDefaults", history.toString());
+		RSEUIPlugin.getDefault().getPreferenceStore().setValue("shell.encodingDefaults", history.toString());
 	}
 	
 	public List getShellEncodingDefaults()
 	{
 		List result = new ArrayList();
-		String attribute = SystemPlugin.getDefault().getPreferenceStore().getString("shell.encodingDefaults");
+		String attribute = RSEUIPlugin.getDefault().getPreferenceStore().getString("shell.encodingDefaults");
 		if (attribute != null && attribute.length() > 0)
 		{
 			String[] list = attribute.split(",");

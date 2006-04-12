@@ -16,9 +16,9 @@
 
 package org.eclipse.rse.ui.view;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.internal.model.SystemNewConnectionPromptObject;
 import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -82,9 +82,9 @@ public class SystemViewConnectionSelectionInputProvider extends SystemAbstractAP
 		//System.out.println("Inside getSystemViewRoots. showNew = "+showNew);
 		IHost[] conns = null;
 		if (systemTypes == null)
-			conns = SystemPlugin.getTheSystemRegistry().getHosts();
+			conns = RSEUIPlugin.getTheSystemRegistry().getHosts();
 		else
-			conns = SystemPlugin.getTheSystemRegistry().getHostsBySystemTypes(systemTypes);			
+			conns = RSEUIPlugin.getTheSystemRegistry().getHostsBySystemTypes(systemTypes);			
 		if (showNew)
 		{
 			if ((conns == null) || (conns.length == 0))

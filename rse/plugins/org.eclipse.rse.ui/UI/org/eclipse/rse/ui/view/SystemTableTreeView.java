@@ -45,7 +45,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
@@ -63,6 +62,7 @@ import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemRenameTarget;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemCommonDeleteAction;
@@ -174,8 +174,8 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	
 	    public HeaderSelectionListener()
 	    {
-	        _upI = SystemPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_MOVEUP_ID);
-	        _downI = SystemPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_MOVEDOWN_ID);
+	        _upI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_MOVEUP_ID);
+	        _downI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_MOVEDOWN_ID);
 	    }
 	  
 	    
@@ -317,8 +317,8 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 
 			addSelectionChangedListener(this);
 
-			SystemPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
-			SystemPlugin.getTheSystemRegistry().addSystemRemoteChangeListener(this);
+			RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
+			RSEUIPlugin.getTheSystemRegistry().addSystemRemoteChangeListener(this);
 
 			initDragAndDrop();
 
@@ -1110,8 +1110,8 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		
 		// remove listeners
 		removeSelectionChangedListener(this);
-		SystemPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
-		SystemPlugin.getTheSystemRegistry().removeSystemRemoteChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().removeSystemRemoteChangeListener(this);
 
 		Composite tree = getTableTree();
 		
@@ -1258,7 +1258,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	 */
 	public boolean doDelete(IProgressMonitor monitor)
 	{
-		ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		//int selectedCount = selection.size();
@@ -1295,7 +1295,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			String msg = exc.getMessage();
 			if ((msg == null) || (exc instanceof ClassCastException))
 				msg = exc.getClass().getName();
-			SystemMessageDialog.displayErrorMessage(getShell(), SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_DELETING).makeSubstitution(element, msg));
+			SystemMessageDialog.displayErrorMessage(getShell(), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_DELETING).makeSubstitution(element, msg));
 			ok = false;
 		}
 		if (anyOk)
@@ -1351,7 +1351,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	*/
 	public boolean doRename(String[] newNames)
 	{
-		ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		int selectedCount = selection.size();
@@ -1396,7 +1396,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			//String msg = exc.getMessage();
 			//if ((msg == null) || (exc instanceof ClassCastException))
 			//  msg = exc.getClass().getName();
-			SystemMessageDialog.displayErrorMessage(getShell(), SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_RENAMING).makeSubstitution(element, exc),
+			SystemMessageDialog.displayErrorMessage(getShell(), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_RENAMING).makeSubstitution(element, exc),
 			//msg),
 			exc);
 			ok = false;

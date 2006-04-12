@@ -16,9 +16,9 @@
 
 package org.eclipse.rse.ui.dialogs;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.events.ModifyEvent;
@@ -98,9 +98,9 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 		}
 		
 		if (!change)		
-			SystemWidgetHelpers.setCompositeHelp(parent, SystemPlugin.HELPPREFIX + "envv0001");
+			SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "envv0001");
 		else
-			SystemWidgetHelpers.setCompositeHelp(parent, SystemPlugin.HELPPREFIX + "envv0002");
+			SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "envv0002");
 		
 		
 		// Set name and value limits for known system types
@@ -192,7 +192,7 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 				{
 					if (nameStr.indexOf(invalidNameChars.charAt(i)) != -1)
 					{
-						setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_INVALIDCHAR));
+						setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_INVALIDCHAR));
 						nameTextField.setFocus();
 						return false;
 					}
@@ -208,7 +208,7 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 					{
 						if (!change || !nameStr.equals(name))
 						{
-							SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_DUPLICATE);
+							SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_DUPLICATE);
 							msg.makeSubstitution(nameStr);
 							setErrorMessage(msg);
 							nameTextField.setFocus();
@@ -224,7 +224,7 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 		} 
 		else 
 		{
-			setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_NONAME));
+			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_NONAME));
 			nameTextField.setFocus();
 			return false;
 		}	

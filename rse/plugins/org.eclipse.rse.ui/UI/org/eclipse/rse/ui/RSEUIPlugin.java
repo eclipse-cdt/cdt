@@ -14,12 +14,9 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.core;
+package org.eclipse.rse.ui;
 
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
@@ -29,6 +26,11 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.ISystemViewSupplier;
+import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.SystemPropertyPageExtension;
+import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.core.comm.SystemCommunicationsDaemon;
 import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
@@ -44,19 +46,16 @@ import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.persistence.IRSEPersistenceManager;
-import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
-import org.eclipse.rse.ui.ISystemIconConstants;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.ISystemDynamicPopupMenuExtension;
 import org.eclipse.rse.ui.actions.SystemDynamicPopupMenuExtensionManager;
 import org.eclipse.rse.ui.actions.SystemShowPreferencesPageAction;
+import org.eclipse.rse.ui.internal.RSESystemTypeAdapterFactory;
+import org.eclipse.rse.ui.internal.RSEUIRegistry;
 import org.eclipse.rse.ui.propertypages.RemoteSystemsPreferencePage;
 import org.eclipse.rse.ui.propertypages.SystemCommunicationsPreferencePage;
-import org.eclipse.rse.ui.propertypages.SystemTypeFieldEditor;
 import org.eclipse.rse.ui.view.SubsystemFactoryAdapterFactory;
 import org.eclipse.rse.ui.view.SystemViewAdapterFactory;
 import org.eclipse.rse.ui.view.team.SystemTeamViewResourceAdapterFactory;
@@ -67,19 +66,19 @@ import org.osgi.framework.BundleContext;
 /**
  * Plugin for the core remote systems support.
  */
-public class SystemPlugin extends SystemBasePlugin 
+public class RSEUIPlugin extends SystemBasePlugin 
 {
 	public static final String PLUGIN_ID  = "org.eclipse.rse.ui"; 	
 	public static final String HELPPREFIX = "org.eclipse.rse.ui.";
 	
     public static final boolean INCLUDE_LOCAL_YES = true;
     public static final boolean INCLUDE_LOCAL_NO = false;
-	private static SystemPlugin         inst = null;
+	private static RSEUIPlugin         inst = null;
 	
 	private static SystemMessageFile 	messageFile = null;    
     private static SystemMessageFile    defaultMessageFile = null;    
     
-    private SystemType[]	            allSystemTypes = null;
+//    private SystemType[]	            allSystemTypes = null;
     private String                      enabledSystemTypes;
     private ISystemRegistry              _systemRegistry = null;
     
@@ -100,7 +99,7 @@ public class SystemPlugin extends SystemBasePlugin
 	/**
 	 * Constructor for SystemsPlugin
 	 */
-	public SystemPlugin() 
+	public RSEUIPlugin() 
 	{
 		super();
 		
@@ -112,9 +111,9 @@ public class SystemPlugin extends SystemBasePlugin
 
     /**
      * Return singleton. Same as inherited getBaseDefault but returned object
-     *  is typed as SystemPlugin versus SystemBasePlugin.
+     *  is typed as RSEUIPlugin versus SystemBasePlugin.
      */
-    public static SystemPlugin getDefault() 
+    public static RSEUIPlugin getDefault() 
     {
 	    return inst;
     }
@@ -519,6 +518,9 @@ public class SystemPlugin extends SystemBasePlugin
 	    SubsystemFactoryAdapterFactory ssfaf = new SubsystemFactoryAdapterFactory();
 	    ssfaf.registerWithManager(manager);
 	    
+	    RSESystemTypeAdapterFactory rseSysTypeFactory = new RSESystemTypeAdapterFactory();
+	    manager.registerAdapters(rseSysTypeFactory, IRSESystemType.class);
+	    
 	    svaf = new SystemViewAdapterFactory();
 	    svaf.registerWithManager(manager);
 
@@ -555,7 +557,6 @@ public class SystemPlugin extends SystemBasePlugin
 		registerArchiveHandlers();
 		registerDynamicPopupMenuExtensions();
 		registerKeystoreProviders();
-		registerPersistenceProviders();
 
 		 // if first time creating the remote systems project, add some default connections...
 	    if (SystemResourceManager.isFirstTime() 
@@ -566,8 +567,8 @@ public class SystemPlugin extends SystemBasePlugin
 				registry.createLocalHost(null, SystemResources.TERM_LOCAL, getLocalMachineName()); // profile, name, userId
 				/* replaced with re-usable method by Phil, in v5.1.2	      		
 	      	SystemConnection localConn = registry.createConnection(
-	      	    //SystemResourceConstants.RESOURCE_TEAMPROFILE_NAME, ISystemTypes.SYSTEMTYPE_LOCAL,
-	      	    SystemResourceConstants.RESOURCE_PRIVATEPROFILE_NAME, ISystemTypes.SYSTEMTYPE_LOCAL,
+	      	    //SystemResourceConstants.RESOURCE_TEAMPROFILE_NAME, IRSESystemType.SYSTEMTYPE_LOCAL,
+	      	    SystemResourceConstants.RESOURCE_PRIVATEPROFILE_NAME, IRSESystemType.SYSTEMTYPE_LOCAL,
 	      	    getString(ISystemConstants.TERM_LOCAL, "Local"), // connection name
 	      	    "localhost", // hostname
 	      	    "", // description
@@ -707,9 +708,9 @@ public class SystemPlugin extends SystemBasePlugin
     	  	for (int idx=0; idx < proxies.length; idx++)
     	  	{
     	  	   //System.out.println("In shutdown. proxy " + proxies[idx].getId() + " active? " + proxies[idx].isSubSystemFactoryActive());
-    	  	   if (proxies[idx].isSubSystemFactoryActive())
+    	  	   if (proxies[idx].isSubSystemConfigurationActive())
     	  	   {
-    	  	   	 ISubSystemConfiguration ssf = proxies[idx].getSubSystemFactory();
+    	  	   	 ISubSystemConfiguration ssf = proxies[idx].getSubSystemConfiguration();
     	  	   	 try
     	  	   	 {
     	  	        ssf.disconnectAllSubSystems();
@@ -739,10 +740,10 @@ public class SystemPlugin extends SystemBasePlugin
      * Reset the system types objects to the given array. Called by preferences
      *   page when Defaults is pressed, and then OK/Apply.
      */
-    public void setSystemTypes(SystemType[] systemTypes)
+/*    public void setSystemTypes(SystemType[] systemTypes)
     {
     	allSystemTypes = systemTypes;
-    }
+    }*/
     
     /**
      * Return all system type objects. Unlike {@link #getSystemTypes()}, this method
@@ -752,7 +753,7 @@ public class SystemPlugin extends SystemBasePlugin
      *   must call setSystemTypes. This is used by the preferences page.
      * @return array of SystemType objects, one for every systemtype extension
      */
-    public SystemType[] getAllSystemTypes(boolean refresh)
+ /*   public SystemType[] getAllSystemTypes(boolean refresh)
     {
 
     	SystemType[] tempAllSystemTypes = null;
@@ -869,13 +870,13 @@ public class SystemPlugin extends SystemBasePlugin
     	}
     	
     	return allSystemTypes;
-    }
+    }*/
     
     /**
      * Return the system type that matches the name.  Don't worry about enabled state.
      * @param name the system type name
      */
-    public SystemType getSystemType(String name)
+/*    public SystemType getSystemType(String name)
     {
     	if (allSystemTypes == null)
     		getAllSystemTypes(false);
@@ -888,13 +889,13 @@ public class SystemPlugin extends SystemBasePlugin
     		} 	
     	}    
     	return null;
-    }
+    }*/
     
     /**
      * Return an array of SystemType objects. These are name and image pairs registered
      *  via plugin.xml extension points.
      */
-    public SystemType[] getSystemTypes()
+/*    public SystemType[] getSystemTypes()
     {    	
     	if (allSystemTypes == null)
     		getAllSystemTypes(false);
@@ -907,7 +908,7 @@ public class SystemPlugin extends SystemBasePlugin
     		if (allSystemTypes[idx].isEnabled())
     			systemTypes[jdx++] = allSystemTypes[idx];
     	return systemTypes;
-    }
+    }*/
 
     /**
      * Returns a qualified hostname given a potentially unqualified hostname
@@ -927,7 +928,7 @@ public class SystemPlugin extends SystemBasePlugin
     /**
      * A static version for convenience. 
      */
-    public static SystemType[] getTheSystemTypes(boolean includeLocal)
+/*    public static SystemType[] getTheSystemTypes(boolean includeLocal)
     {
     	SystemType[] allTypes = getDefault().getSystemTypes();
     	if (!includeLocal)
@@ -936,31 +937,31 @@ public class SystemPlugin extends SystemBasePlugin
     	  int typeIdx = 0;
     	  for (int idx=0; idx<allTypes.length; idx++)
     	  {
-    	  	 if (!allTypes[idx].getName().equals(ISystemTypes.SYSTEMTYPE_LOCAL))
+    	  	 if (!allTypes[idx].getName().equals(IRSESystemType.SYSTEMTYPE_LOCAL))
     	  	   types[typeIdx++] = allTypes[idx];
     	  }
     	  return types;
     	}
     	return allTypes;
-    }
+    }*/
 	    
     /**
      * Convenience method to return an array of names-only for registered SystemType 
      *  extension point implementers.
      */
-    public String[] getSystemTypeNames()
+/*    public String[] getSystemTypeNames()
     {
     	return getSystemTypeNames(INCLUDE_LOCAL_NO);
-    }
+    }*/
     
     /**
      * Convenience method to return an array of names-only for registered SystemType
      *  extension point implementers.
      * @param includeLocal true if returned names should include "local"
      */
-    public String[] getSystemTypeNames(boolean includeLocal)
+/*    public String[] getSystemTypeNames(boolean includeLocal)
     {
-    	SystemType[] types = getSystemTypes();
+    	IRSESystemType[] types = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
 
     	String[] names = null;
     	if (types != null)
@@ -978,12 +979,12 @@ public class SystemPlugin extends SystemBasePlugin
     		}
     	}
     	return names;
-    }
+    } */
 
     /**
      * Return the image for a given system type name.
      */
-    public ImageDescriptor getSystemTypeImage(String name, boolean connected)
+/*    public ImageDescriptor getSystemTypeImage(String name, boolean connected)
     {
     	SystemType match = getSystemType(name);
  
@@ -996,14 +997,14 @@ public class SystemPlugin extends SystemBasePlugin
     	}
     	else
     	  return null;
-    }
+    }*/
         
     /**
      * Return whether the system type is enabled for offline support. 
      * 
      * @since RSE 6.0
      */
-    public boolean getSystemTypeEnableOffline(String name)
+/*    public boolean getSystemTypeEnableOffline(String name)
     {
 		SystemType[] types = getSystemTypes();
     	
@@ -1016,14 +1017,14 @@ public class SystemPlugin extends SystemBasePlugin
 		}
 
 		// An unrecognized type was passed in
-		logError("SystemPlugin.getSystemTypeEnableOffline:  invalid systemtype = " + name);
+		logError("RSEUIPlugin.getSystemTypeEnableOffline:  invalid systemtype = " + name);
 		return false;    	
-    }
+    }*/
     
     /**
      *  Return all elements that extend the org.eclipse.rse.ui.systemtype extension point
      */
-    private IConfigurationElement[] getSystemTypePlugins()
+/*    private IConfigurationElement[] getSystemTypePlugins()
     {
    	    // Get reference to the plug-in registry
 	    IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -1031,31 +1032,31 @@ public class SystemPlugin extends SystemBasePlugin
 	    IConfigurationElement[] systemTypeExtensions =
 		  registry.getConfigurationElementsFor("org.eclipse.rse.ui","systemtype");   	
 	    return systemTypeExtensions;
-    }
+    }*/
     /**
      *  Return the value of the "name=" attribute of the "type" tag in a given extension of the 
      *   org.eclipse.rse.ui.systemtype extension point
      */
-    private String getSystemTypeName(IConfigurationElement element)
+/*    private String getSystemTypeName(IConfigurationElement element)
     {
         //logMessage("...in getSystemTypeName: "+element.getAttribute("name"));
    	    return element.getAttribute("name");
-    }
+    }*/
 	/**
      *  Return the value of the "icon=" attribute of the "type" tag in a given extension of the 
      *   org.eclipse.rse.ui.systemtype extension point
      */
-    private String getSystemTypeIcon(IConfigurationElement element)
+/*    private String getSystemTypeIcon(IConfigurationElement element)
     {   	
    	    return element.getAttribute("icon");
-    }    
+    } */   
     /**
      * Return the value of the "enableoffline" attribute of the "type" tag in a given extension of
      * the org.eclipse.rse.ui.systemtype extension point
      * 
      * @since RSE 6.0
      */
-    private boolean getSystemTypeEnableOffline(IConfigurationElement element)
+/*    private boolean getSystemTypeEnableOffline(IConfigurationElement element)
     {
     	String enableOffline = element.getAttribute("enableoffline");
     	if (enableOffline != null)
@@ -1064,17 +1065,17 @@ public class SystemPlugin extends SystemBasePlugin
     	}
     	
     	return false;
-    }
+    }*/
     
     /**
      *  Return the value of the "iconlive=" attribute of the "type" tag in a given extension of the
      *   org.eclipse.rse.ui.systemtype extension point
      */
-    private String getSystemTypeLiveIcon(IConfigurationElement element)
+/*    private String getSystemTypeLiveIcon(IConfigurationElement element)
     {
     	String attribute = element.getAttribute("iconlive");  	
    	    return attribute;
-    }
+    }*/
     
     /**
      * Return an array of SubSystemFactoryProxy objects.
@@ -1130,7 +1131,7 @@ public class SystemPlugin extends SystemBasePlugin
     }
     
     /**
-     * Returns the persistance manager used for persisting RSE profiles
+     * Returns the persistence manager used for persisting RSE profiles
      * @return
      */
     public IRSEPersistenceManager getPersistenceManager()
@@ -1557,42 +1558,6 @@ public class SystemPlugin extends SystemBasePlugin
 		}
 	}
 	
-	protected void registerPersistenceProviders()
-	{
-		// Get reference to the plug-in registry
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		
-		// Get configured extenders
-		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "persistanceProviders");
-		     	
-		for (int i = 0; i < systemTypeExtensions.length; i++) 
-		{
-			try
-			{
-				// get the name space of the declaring extension
-			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespace();
-				
-			    String persistanceProviderType = systemTypeExtensions[i].getAttribute("class");
-			    
-				// use the name space to get the bundle
-			    Bundle bundle = Platform.getBundle(nameSpace);
-			    
-				
-			    if (bundle.getState() != Bundle.UNINSTALLED) 
-			    {
-			        Class persistanceProvider = bundle.loadClass(persistanceProviderType);
-					
-			        IRSEPersistenceProvider extension = (IRSEPersistenceProvider)persistanceProvider.getConstructors()[0].newInstance(null);
-			        getPersistenceManager().registerRSEPersistenceProvider(extension);
-			    }
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-	}
-	
 	protected void registerKeystoreProviders()
 	{
 		// Get reference to the plug-in registry
@@ -1629,4 +1594,12 @@ public class SystemPlugin extends SystemBasePlugin
 		}
 	}
 	
+	/**
+	 * Returns the RSE UI registry. Clients should use this method to get the registry which
+	 * is the starting point for working with UI elements in the RSE framework.
+	 * @return the RSE UI registry.
+	 */
+	public IRSEUIRegistry getRegistry() {
+		return RSEUIRegistry.getDefault();
+	}
 }

@@ -34,7 +34,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.IRemoteLineReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
@@ -56,6 +55,7 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
@@ -119,7 +119,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 		    {
 				if (_copyOutputAction == null)
 				{
-					_copyOutputAction = new SystemCopyToClipboardAction(shell, SystemPlugin.getTheSystemRegistry().getSystemClipboard());
+					_copyOutputAction = new SystemCopyToClipboardAction(shell, RSEUIPlugin.getTheSystemRegistry().getSystemClipboard());
 				}
 				
 				menu.add(menuGroup, _copyOutputAction);
@@ -133,7 +133,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 						{
 						    if (_pasteToPromptAction == null)
 							{
-								_pasteToPromptAction = new SystemPasteFromClipboardAction(shell, SystemPlugin.getTheSystemRegistry().getSystemClipboard());
+								_pasteToPromptAction = new SystemPasteFromClipboardAction(shell, RSEUIPlugin.getTheSystemRegistry().getSystemClipboard());
 							}
 							
 							menu.add(menuGroup, _pasteToPromptAction);
@@ -412,7 +412,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 	
 	protected IEditorRegistry getEditorRegistry()
 	{
-		return SystemPlugin.getDefault().getWorkbench().getEditorRegistry();
+		return RSEUIPlugin.getDefault().getWorkbench().getEditorRegistry();
 	}
 	
 	protected IEditorDescriptor getDefaultTextEditor()
@@ -752,57 +752,57 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 			String type = output.getType();
 			if (type.equals(TYPE_ERROR))
 			{
-				imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ERROR_ID);
+				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ERROR_ID);
 			}
 			else if (type.equals(TYPE_WARNING))
 			{
-				imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_WARNING_ID);
+				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_WARNING_ID);
 			}
 			else if (type.equals(TYPE_INFORMATIONAL))
 			{
-				imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_INFO_ID);
+				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_INFO_ID);
 			}
 			else if (type.equals(TYPE_DIRECTORY))
 			{
 				imageDescriptor = //PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER); 
-					SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FOLDER_ID);
+					RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FOLDER_ID);
 			}
 			else if (type.equals(TYPE_FILE))
 			{
 				imageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE); 
-					//SystemPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_FILE_ID);
+					//RSEUIPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_FILE_ID);
 			}
 			else if (type.equals(TYPE_GREP))
 			{
-				imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SEARCH_RESULT_ID);
+				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SEARCH_RESULT_ID);
 			}
 			else if (type.equals(TYPE_COMMAND))
 			{
-				imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID);
+				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID);
 			}
 			else if (type.equals(TYPE_PROMPT))
 			{
-				imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID);
+				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID);
 			}
 			else if (type.equals(TYPE_PROCESS))
 			{
-				imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROCESS_ID);
+				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROCESS_ID);
 			}
 			else if (type.equals(TYPE_ENVVAR))
 			{
-				imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_ID);
+				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_ID);
 			}
 			else if (type.equals(TYPE_ENVVAR_LIBPATH))
 			{
-				imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_LIBPATH_ID);
+				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_LIBPATH_ID);
 			}
 			else if (type.equals(TYPE_ENVVAR_PATH))
 			{
-				imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_PATH_ID);
+				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_PATH_ID);
 			}
 			else
 			{
-				imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_BLANK_ID);
+				imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_BLANK_ID);
 			}
 
 			return imageDescriptor;
@@ -827,7 +827,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 
 		else
 		{ // return some default	 
-			ImageDescriptor imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_BLANK_ID);
+			ImageDescriptor imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_BLANK_ID);
 			return imageDescriptor;
 		}
 	}

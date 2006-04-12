@@ -21,11 +21,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.rse.core.ISystemUserIdConstants;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemHostPool;
 import org.eclipse.rse.model.ISystemProfile;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
 
@@ -145,7 +145,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      * <p>
      * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU.
      * @param systemType system type matching one of the system type names defined via the
-     *                    systemtype extension point.
+     *                    systemTypes extension point.
      * @param aliasName unique connection name.
      * @param hostName ip name of host.
      * @return SystemConnection object, or null if it failed to create
@@ -161,7 +161,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      * <p>
      * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU.
      * @param systemType system type matching one of the system type names defined via the
-     *                    systemtype extension point.
+     *                    systemTypes extension point.
      * @param aliasName unique connection name.
      * @param hostName ip name of host.
      * @param description optional description of the connection. Can be null.
@@ -178,7 +178,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      * <p>
      * The new connection is added to the list and saved to disk.
      * @param systemType system type matching one of the system type names defined via the
-     *                    systemtype extension point.
+     *                    systemTypes extension point.
      * @param aliasName unique connection name.
      * @param hostName ip name of host.
      * @param description optional description of the connection. Can be null.
@@ -222,7 +222,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      * <p>
      * @param conn SystemConnection to be updated
      * @param systemType system type matching one of the system type names defined via the
-     *                    systemtype extension point.
+     *                    systemTypes extension point.
      * @param aliasName unique connection name.
      * @param hostName ip name of host.
      * @param description optional description of the connection. Can be null.
@@ -380,7 +380,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	
         getHostList().remove(conn);
         setDirty(true);
-        SystemPlugin.getThePersistenceManager().commit(conn.getSystemProfile());
+        RSEUIPlugin.getThePersistenceManager().commit(conn.getSystemProfile());
     }
 
     /**
@@ -487,7 +487,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	 */
 	public boolean commit()
 	{
-		return SystemPlugin.getThePersistenceManager().commit(this);
+		return RSEUIPlugin.getThePersistenceManager().commit(this);
 	}
 	
     /**
@@ -529,7 +529,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
         {
           if (!connection.getAliasName().equalsIgnoreCase(connectionName))
           {
-            SystemPlugin.logDebugMessage(this.getClass().getName(),"Incorrect alias name found in connections.xmi file for " + connectionName+". Name was reset");
+            RSEUIPlugin.logDebugMessage(this.getClass().getName(),"Incorrect alias name found in connections.xmi file for " + connectionName+". Name was reset");
             connection.setAliasName(connectionName); // just in case!
           }
           internalAddConnection(connection);

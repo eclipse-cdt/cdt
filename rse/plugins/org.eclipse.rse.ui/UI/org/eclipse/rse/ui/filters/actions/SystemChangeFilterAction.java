@@ -18,7 +18,6 @@ package org.eclipse.rse.ui.filters.actions;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
@@ -27,6 +26,7 @@ import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;
@@ -51,12 +51,12 @@ public class SystemChangeFilterAction extends SystemBaseDialogAction
 	public SystemChangeFilterAction(Shell parent) 
 	{
 		this( parent, SystemResources.ACTION_UPDATEFILTER_LABEL, SystemResources.ACTION_UPDATEFILTER_TOOLTIP,
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CHANGEFILTER_ID));
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CHANGEFILTER_ID));
 	}
 	
 	public SystemChangeFilterAction(Shell parent, String label, String tooltip)
 	{
-		this(parent, label, tooltip, SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CHANGEFILTER_ID));
+		this(parent, label, tooltip, RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CHANGEFILTER_ID));
 	}
 	
 	public SystemChangeFilterAction(Shell parent, String label, String tooltip, ImageDescriptor image)
@@ -64,7 +64,7 @@ public class SystemChangeFilterAction extends SystemBaseDialogAction
 		super(label, tooltip, image, parent);
         allowOnMultipleSelection(false);        
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CHANGE);
-		setHelp(SystemPlugin.HELPPREFIX+"acfr0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"acfr0000");
 	}
 
 

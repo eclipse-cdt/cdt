@@ -19,13 +19,13 @@ package org.eclipse.rse.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
@@ -49,8 +49,8 @@ public class SystemConnectAllSubSystemsAction extends SystemBaseAction
 	    super(SystemResources.ACTION_CONNECT_ALL_LABEL,SystemResources.ACTION_CONNECT_ALL_TOOLTIP, shell);
 	    allowOnMultipleSelection(false);
 	    setContextMenuGroup(ISystemContextMenuConstants.GROUP_CONNECTION);
-	    sr = SystemPlugin.getTheSystemRegistry();
-  	    //setHelp(SystemPlugin.HELPPREFIX+"actn0022");
+	    sr = RSEUIPlugin.getTheSystemRegistry();
+  	    //setHelp(RSEUIPlugin.HELPPREFIX+"actn0022");
 	}
 	/**
 	 * Override of parent. Called when testing if action should be enabled base on current

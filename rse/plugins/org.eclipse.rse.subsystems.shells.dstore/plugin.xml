@@ -25,7 +25,7 @@ Contributors:
    <extension
          point="org.eclipse.rse.ui.subsystemConfiguration">
       <configuration
-            systemtypes="Linux;Unix;AIX;Power Linux;Windows"
+            systemTypes="Linux;Unix"
             name="%Shells"
             description="%ShellsDescription"
             iconlive="icons/full/obj16/systemcommandslive_obj.gif"

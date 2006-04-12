@@ -26,7 +26,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -66,7 +66,7 @@ public class SystemRemoteMarkerTypeDefinitionCache {
 	 * Load marker type definitions.
 	 */
 	private void loadDefinitions() {
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(SystemPlugin.PLUGIN_ID, ISystemRemoteMarker.EXTENSION_POINT_ID);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(RSEUIPlugin.PLUGIN_ID, ISystemRemoteMarker.EXTENSION_POINT_ID);
 		IExtension[] types = point.getExtensions();
 		definitions = new HashMap(types.length);
 		

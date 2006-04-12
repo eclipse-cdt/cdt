@@ -29,7 +29,6 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
@@ -43,6 +42,7 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.ICandidateCommand;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.swt.graphics.Image;
@@ -291,7 +291,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 				}
 				else
 				{
-				    descriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_RUN_ID);
+				    descriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_RUN_ID);
 				}
 			}
 		}
@@ -314,7 +314,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 	{
 		if (_envImage == null)
 		{
-			_envImage = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_ID).createImage();
+			_envImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ENVVAR_ID).createImage();
 		}
 		return _envImage;
 	}

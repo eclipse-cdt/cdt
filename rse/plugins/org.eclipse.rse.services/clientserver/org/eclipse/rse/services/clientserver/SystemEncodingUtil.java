@@ -120,6 +120,16 @@ public class SystemEncodingUtil {
 			
 			stream.read(temp);
 			
+			stream.close();
+			
+			// UTF-8, ISO 646, ASCII, some part of ISO 8859, Shift-JIS, EUC, or any other 7-bit,
+			// 8-bit, or mixed-width encoding which ensures that the characters of ASCII have their
+			// normal positions, width, and values; the actual encoding declaration must be read to
+			// detect which of these applies, but since all of these encodings use the same bit patterns
+			// for the relevant ASCII characters, the encoding declaration itself may be read reliably
+			if (temp[0] == 0x3C && temp[1] == 0x3F && temp[2] == 0x78 && temp[3] == 0x6D) {
+				encodingGuess = SystemEncodingUtil.ENCODING_UTF_8;
+			}
 			
 			// UCS-4 or other encoding with a 32-bit code unit and ASCII characters encoded as
 			// ASCII values, in respectively big-endian (1234), little-endian (4321) and two
@@ -127,7 +137,7 @@ public class SystemEncodingUtil {
 			// determine which of UCS-4 or other supported 32-bit encodings applies. 
 
 			// UCS-4, big-endian order (1234 order)
-			if (temp[0] == 0x00 && temp[1] == 0x00 && temp[2] == 0x00 && temp[3] == 0x3C) {
+			else if (temp[0] == 0x00 && temp[1] == 0x00 && temp[2] == 0x00 && temp[3] == 0x3C) {
 				encodingGuess = null;
 			}
 			// UCS-4, little-endian order (4321 order)
@@ -160,16 +170,6 @@ public class SystemEncodingUtil {
 			}
 			
 			
-			// UTF-8, ISO 646, ASCII, some part of ISO 8859, Shift-JIS, EUC, or any other 7-bit,
-			// 8-bit, or mixed-width encoding which ensures that the characters of ASCII have their
-			// normal positions, width, and values; the actual encoding declaration must be read to
-			// detect which of these applies, but since all of these encodings use the same bit patterns
-			// for the relevant ASCII characters, the encoding declaration itself may be read reliably
-			else if (temp[0] == 0x3C && temp[1] == 0x3F && temp[2] == 0x78 && temp[3] == 0x6D) {
-				encodingGuess = SystemEncodingUtil.ENCODING_UTF_8;
-			}
-			
-			
 			// EBCDIC (in some flavor; the full encoding declaration must be read to tell which
 			// code page is in use)
 			else if (temp[0] == 0x4C && temp[1] == 0x6F && temp[2] == 0xA7 && temp[3] == 0x94) {
@@ -199,17 +199,20 @@ public class SystemEncodingUtil {
 				// with a text declaration (see 4.3.1 The Text Declaration) containing an encoding declaration. 
 				encodingGuess = SystemEncodingUtil.ENCODING_UTF_8;
 			}
-			
-			stream.close();
 		}
 		
-		// if we have a guess, we need to read in the encoding declaration to get the actula encoding
+		// if we have a guess, we need to read in the encoding declaration to get the actual encoding
 		// the guess tells us the encoding of the family
 		if (encodingGuess != null) {
 			
-			stream = new FileInputStream(filePath);
-			InputStreamReader reader = new InputStreamReader(stream, encodingGuess);
-			BufferedReader bufReader = new BufferedReader(reader);
+			boolean encodingFound = false;
+			
+			FileInputStream inputStream = new FileInputStream(filePath);
+			InputStreamReader reader = new InputStreamReader(inputStream, encodingGuess);
+			
+			// note that buffer capacity must be 1, otherwise we run into a problem
+			// if the XML file has a non UTF-8 encoding and accented characters in the file
+			BufferedReader bufReader = new BufferedReader(reader, 1);
 			
 			String line = bufReader.readLine();
 			
@@ -287,20 +290,29 @@ public class SystemEncodingUtil {
 							// if end quote found, encoding is in between begin quote and end quote
 							if (endQuote != -1) {
 								encoding = line.substring(beginQuote+1, endQuote);
+								encodingFound = true;
 							}
 							
 							break;
 						}
 						
-						line = bufReader.readLine();
-						
 						if (sameLine) {
 							sameLine = false;
 						}
+						
+						line = bufReader.readLine();
 					}
 				}
 				
+				if (encodingFound) {
+					break;
+				}
+				
 				line = bufReader.readLine();
+			}
+			
+			if (bufReader != null) {
+				bufReader.close();
 			}
 			
 			// if the encoding declaration was not found

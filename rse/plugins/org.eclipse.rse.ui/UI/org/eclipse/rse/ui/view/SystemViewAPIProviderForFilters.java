@@ -17,7 +17,6 @@
 package org.eclipse.rse.ui.view;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
@@ -34,6 +33,7 @@ import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemMessageObject;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 
@@ -138,13 +138,13 @@ public class SystemViewAPIProviderForFilters
              ISystemFilter newFilter = adapter.createFilterByPrompting(ssf, fRef, getShell());
              if (newFilter == null)
              {
-		        children[0] = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_CANCELLED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_CANCELLED),
 		                                              ISystemMessageObject.MSGTYPE_CANCEL,element);
              }
              else // filter successfully created!
              {
              	// return "filter created successfully" message object for this node
-		        children[0] = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_FILTERCREATED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FILTERCREATED),
 		                                              ISystemMessageObject.MSGTYPE_OBJECTCREATED,element);
 		        // select the new filter reference...
 		        ISubSystem ss = fRef.getSubSystem();
@@ -152,7 +152,7 @@ public class SystemViewAPIProviderForFilters
 		        ISystemViewInputProvider inputProvider = this;
 		        if ((sfr != null) && (inputProvider != null) && (inputProvider.getViewer()!=null))
 		        {
-		          ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		          ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		          SystemResourceChangeEvent event = new SystemResourceChangeEvent(sfr, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
                   Viewer v = inputProvider.getViewer();
                   if (v instanceof ISystemResourceChangeListener)
@@ -163,11 +163,11 @@ public class SystemViewAPIProviderForFilters
 		        }
              }
     	   } catch (Exception exc) {
-		        children[0] = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_FAILED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FAILED),
 		                                              ISystemMessageObject.MSGTYPE_ERROR, element);
 		     	SystemBasePlugin.logError("Exception prompting for filter ",exc);          
     	   }
-    	   //SystemPlugin.logDebugMessage(this.getClass().getName(),"returning children");
+    	   //RSEUIPlugin.logDebugMessage(this.getClass().getName(),"returning children");
     	   return children;
     	}
     	ISubSystem ss = fRef.getSubSystem();
@@ -194,14 +194,14 @@ public class SystemViewAPIProviderForFilters
 		     catch (InterruptedException exc)
 		     {
 		     	children = new SystemMessageObject[1];
-		        children[0] = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_CANCELLED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_CANCELLED),
 		                                              ISystemMessageObject.MSGTYPE_CANCEL,element);
 		     	SystemBasePlugin.logDebugMessage(this.getClass().getName(),"Filter resolving canceled by user.");
 		     }
 		     catch (Exception exc)
 		     {
 		     	children = new SystemMessageObject[1];
-		        children[0] = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_FAILED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FAILED),
 		                                              ISystemMessageObject.MSGTYPE_ERROR, element);
 		     	SystemBasePlugin.logError("Exception resolving filters' strings ",exc);
 		     } // message already issued
@@ -209,7 +209,7 @@ public class SystemViewAPIProviderForFilters
 			 if ((children == null) || (children.length==0))
 			 {
 		       children = new SystemMessageObject[1];
-		       children[0] = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_EMPTY),
+		       children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_EMPTY),
 		                                             ISystemMessageObject.MSGTYPE_EMPTY, element);
 			 }    	     
     	   	 return children;

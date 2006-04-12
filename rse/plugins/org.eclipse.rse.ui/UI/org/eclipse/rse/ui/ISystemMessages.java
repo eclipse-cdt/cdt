@@ -90,6 +90,7 @@ public interface ISystemMessages
 			
 	public static final String MSG_VALIDATE_PASSWORD_EMPTY   = "RSEG1035"; //MSG_VALIDATE_PREFIX + "PasswordRequired";
 	public static final String MSG_VALIDATE_PASSWORD_EXPIRED = "RSEG1036"; //MSG_VALIDATE_PREFIX + "PasswordExpired";	
+	public static final String MSG_VALIDATE_PASSWORD_INVALID = "RSEG1297";
 	public static final String MSG_VALIDATE_FILTERSTRING_EMPTY    = "RSEG1045";
 	public static final String MSG_VALIDATE_FILTERSTRING_NOTUNIQUE= "RSEG1046";
 	public static final String MSG_VALIDATE_FILTERSTRING_NOTVALID = "RSEG1047";
@@ -409,6 +410,9 @@ public interface ISystemMessages
 	
 	public static final String MSG_COMM_SERVER_OLDER_WARNING  = "RSEC2308";
 	public static final String MSG_COMM_CLIENT_OLDER_WARNING  = "RSEC2309";
+	
+	public static final String MSG_COMM_USING_SSL  = "RSEC2314";
+	public static final String MSG_COMM_NOT_USING_SSL  = "RSEC2315";
 	
 	// Unexpected error message
 	public static final String MSG_ERROR_UNEXPECTED = "RSEF8002";

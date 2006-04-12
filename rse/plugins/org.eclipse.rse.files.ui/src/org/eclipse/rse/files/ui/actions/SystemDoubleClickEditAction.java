@@ -17,8 +17,8 @@
 package org.eclipse.rse.files.ui.actions;
 
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
@@ -42,7 +42,7 @@ public class SystemDoubleClickEditAction extends SystemBaseAction
 	
 	protected IEditorRegistry getEditorRegistry()
 	{
-		return SystemPlugin.getDefault().getWorkbench().getEditorRegistry();
+		return RSEUIPlugin.getDefault().getWorkbench().getEditorRegistry();
 	}
 	
 	protected IEditorDescriptor getDefaultTextEditor()

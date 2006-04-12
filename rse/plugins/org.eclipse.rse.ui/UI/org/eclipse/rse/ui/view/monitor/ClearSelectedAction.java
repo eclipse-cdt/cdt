@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.view.monitor;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
 
@@ -29,7 +29,7 @@ public class ClearSelectedAction extends BrowseAction
 	public ClearSelectedAction(SystemMonitorViewPart view)
 	{
 		super(view, SystemResources.ACTION_CLEAR_SELECTED_LABEL,
-		        SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_SELECTED_ID));
+		        RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_SELECTED_ID));
 	
 		// TODO DKM - get help for this!
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CLEAR_CONSOLE_ACTION);

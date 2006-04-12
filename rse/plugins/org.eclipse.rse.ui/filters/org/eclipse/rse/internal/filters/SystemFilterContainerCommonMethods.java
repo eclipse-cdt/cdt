@@ -86,7 +86,7 @@ public class SystemFilterContainerCommonMethods
         if (exists)
         {
           String msg = "Error creating filter: aliasName " + aliasName + " is not unique"; // no need to xlate, internal only
-		  SystemPlugin.logError(msg);
+		  RSEUIPlugin.logError(msg);
           return null;
         }
         */

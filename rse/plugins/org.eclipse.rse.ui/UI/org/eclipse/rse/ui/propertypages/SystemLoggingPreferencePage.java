@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.propertypages;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.logging.LoggingPreferencePage;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
@@ -30,6 +30,6 @@ public class SystemLoggingPreferencePage extends LoggingPreferencePage {
 	 * @see com.ibm.etools.systems.logging.LoggingPreferencePage#getPlugin()
 	 */
 	protected AbstractUIPlugin getPlugin() {
-		return SystemPlugin.getDefault();
+		return RSEUIPlugin.getDefault();
 	}
 }

@@ -18,13 +18,16 @@ package org.eclipse.rse.internal.model;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemMessageObject;
 import org.eclipse.rse.model.ISystemPromptableObject;
 import org.eclipse.rse.model.SystemMessageObject;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSESystemTypeAdapter;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
 import org.eclipse.rse.ui.view.ISystemViewRunnableObject;
@@ -53,7 +56,7 @@ public class SystemNewConnectionPromptObject
      */
     public SystemNewConnectionPromptObject()
     {
-    	systemTypes = SystemPlugin.getDefault().getSystemTypeNames(true); // true=>include local
+    	systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypeNames();
     	isRootPrompt = true;
     }
     /**
@@ -119,7 +122,7 @@ public class SystemNewConnectionPromptObject
 	    }	    	
 	    else
 	    {
-	    	 String[] typeNames = SystemPlugin.getDefault().getSystemTypeNames(true);
+	    	 String[] typeNames = RSECorePlugin.getDefault().getRegistry().getSystemTypeNames();
 	    	 if (typeNames.length != systemTypes.length)
 	    	 {
 	    		 systemTypes = typeNames;
@@ -154,9 +157,12 @@ public class SystemNewConnectionPromptObject
 	public ImageDescriptor getImageDescriptor()
 	{
 		if (hasChildren())
-          return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWCONNECTION_ID);
-        else
-          return SystemPlugin.getDefault().getSystemTypeImage(systemTypes[0], false);
+          return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWCONNECTION_ID);
+        else {
+        	IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
+        	RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
+            return adapter.getImageDescriptor(sysType);
+        }
 	}
 	
 	/**
@@ -210,7 +216,7 @@ public class SystemNewConnectionPromptObject
 		} catch (Exception exc)
 		{
 		   return new Object[] {
-		       new SystemMessageObject(SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),
+		       new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),
 		                                  ISystemMessageObject.MSGTYPE_ERROR,null)};
 		}
 		
@@ -221,11 +227,11 @@ public class SystemNewConnectionPromptObject
 		ISystemMessageObject result = null;
 		if (newConnection != null)
 		{
-		   result = new SystemMessageObject(SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CONNECTIONCREATED),
+		   result = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CONNECTIONCREATED),
 		                                    ISystemMessageObject.MSGTYPE_OBJECTCREATED,null);
 	    }		  
 	    else
-		   result = new SystemMessageObject(SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED),
+		   result = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED),
 		                                    ISystemMessageObject.MSGTYPE_CANCEL,null);
 	    return new Object[] {result};
 	}

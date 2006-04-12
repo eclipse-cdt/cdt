@@ -31,10 +31,12 @@ import org.eclipse.rse.model.ISystemProfileManager;
 public interface IRSEPersistenceManager 
 {
 	/**
-	 * Register the persistance provider to be used when saving and restoring RSE doms
-	 * @param provider
+	 * Register the persistence provider to be used when saving and restoring RSE doms.
+	 * The provider is registered under the provided id.
+	 * @param id the provider id.
+	 * @param provider the provider.
 	 */
-	public void registerRSEPersistenceProvider(IRSEPersistenceProvider provider);
+	public void registerRSEPersistenceProvider(String id, IRSEPersistenceProvider provider);
 	
 	/**
 	 * Restore all profiles

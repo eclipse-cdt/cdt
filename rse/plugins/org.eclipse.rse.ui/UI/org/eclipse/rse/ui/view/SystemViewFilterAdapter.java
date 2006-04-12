@@ -23,7 +23,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
@@ -43,6 +42,7 @@ import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorFilterName;
@@ -107,7 +107,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 	 */
 	public ImageDescriptor getImageDescriptor(Object element)
 	{
-		//return SystemPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_FILTER_ID);
+		//return RSEUIPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_FILTER_ID);
     	ImageDescriptor filterImage = null;
     	ISystemFilter filter = getFilter(element);
     	if (filter.getProvider() != null)
@@ -116,7 +116,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
     		filterImage = adapter.getSystemFilterImage(filter);
     	}
     	if (filterImage == null)
-    	  filterImage = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTER_ID);
+    	  filterImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTER_ID);
     	return filterImage;  	
 	}
 	
@@ -299,14 +299,14 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
                 //SubSystem ss = (SubSystem)simpleFilter.getParent();
 
              	// return "filter created successfully" message object for this node
-		        children[0] = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_FILTERCREATED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FILTERCREATED),
 		                                              ISystemMessageObject.MSGTYPE_OBJECTCREATED,filter);
 		                                              
 		        // select the new filter and expand it
                 Viewer v = inputProvider.getViewer();
 		        if ((v!=null) && (v instanceof ISystemResourceChangeListener))
 		        {
-		          ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		          ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		          SystemResourceChangeEvent event = new SystemResourceChangeEvent(newFilter, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
                   sr.postEvent((ISystemResourceChangeListener)v, event); // only expand in the current viewer, not all viewers!
 		        }
@@ -317,7 +317,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 		     	SystemBasePlugin.logError("Exception prompting for filter ",exc);          
      	  }
 		}
-    	//SystemPlugin.logDebugMessage(this.getClass().getName(),"returning children");
+    	//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"returning children");
     	return children;
     }
 	

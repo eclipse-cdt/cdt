@@ -122,7 +122,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
      * connections they can create.
      * @param systemTypes An array of system type names
      * 
-     * @see org.eclipse.rse.core.ISystemTypes
+     * @see org.eclipse.rse.core.IRSESystemType
      */
     public void setSystemTypes(String[] systemTypes)
     {
@@ -134,7 +134,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
      *
      * @param systemType The name of the system type to restrict to
      * 
-     * @see org.eclipse.rse.core.ISystemTypes
+     * @see org.eclipse.rse.core.IRSESystemType
      */
     public void setSystemType(String systemType)
     {

@@ -29,7 +29,7 @@ import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
  * <ol>
  * <li>subsystemconfigurationid. For scoping to remote objects for a given subsystem factory
  * <li>subsystemconfigurationCategory. For scoping to remote objects for a given subsystem factory category.
- * <li>systemtypes. For scoping to remote objects from systems of a given type, or comma-separated types.
+ * <li>systemTypes. For scoping to remote objects from systems of a given type, or semicolon-separated types.
  * <li>category. For scoping to remote objects of a given type category
  * <li>namefilter. For scoping to remote objects of a given name
  * <li>typefilter. For scoping to remote objects of a given type
@@ -83,7 +83,7 @@ public class SystemRemoteObjectMatcher
     private boolean genericSubSystemEnd = false;
     
     /**
-     * Historical constructor that doesn't support "subsystemFactoryCategory" or "systemtypes".
+     * Historical constructor that doesn't support "subsystemFactoryCategory" or "systemTypes".
      */
     public SystemRemoteObjectMatcher(String subsystemFactoryId, String categoryFilter,
                                      String nameFilter, String typeFilter,
@@ -92,7 +92,7 @@ public class SystemRemoteObjectMatcher
     	this(subsystemFactoryId, null, categoryFilter, null, nameFilter, typeFilter, subtypeFilter, subsubtypeFilter);
     }
     /**
-     * Constructor that supports "subsystemFactoryCategory" and "systemtypes".
+     * Constructor that supports "subsystemFactoryCategory" and "systemTypes".
      */
     public SystemRemoteObjectMatcher(String subsystemFactoryId, String subsystemFactoryCategoryFilter, String categoryFilter,
                                      String systemTypes, String nameFilter, String typeFilter,
@@ -302,7 +302,7 @@ public class SystemRemoteObjectMatcher
     }        
     /**
      * Getter method.
-     * Return what was specified for the <samp>systemtypes</samp> xml attribute.
+     * Return what was specified for the <samp>systemTypes</samp> xml attribute.
      */
     public String getSystemTypesFilter()
     {

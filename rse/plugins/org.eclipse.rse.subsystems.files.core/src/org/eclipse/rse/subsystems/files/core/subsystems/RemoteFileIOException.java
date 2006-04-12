@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -33,7 +33,7 @@ public class RemoteFileIOException extends RemoteFileException
 	 */
 	public RemoteFileIOException(Exception remoteException)
 	{
-		super(SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_IO_ERROR), remoteException);
+		super(RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IO_ERROR), remoteException);
 		String secondLevel = remoteException.getMessage();
 		if (secondLevel == null)
 		  secondLevel = remoteException.getClass().getName();

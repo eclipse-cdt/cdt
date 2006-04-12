@@ -20,8 +20,8 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.monitor.SystemMonitorUI;
@@ -48,7 +48,7 @@ public class SystemShowInMonitorAction extends SystemBaseAction
 	{
 		super(SystemResources.ACTION_MONITOR_LABEL,			
 			SystemResources.ACTION_MONITOR_TOOLTIP,
-			SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHOW_MONITOR_ID),
+			RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHOW_MONITOR_ID),
 			parent);
 		setAvailableOffline(true);
 	}

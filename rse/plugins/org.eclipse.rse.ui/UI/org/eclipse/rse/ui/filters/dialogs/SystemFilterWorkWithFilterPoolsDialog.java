@@ -27,7 +27,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
@@ -37,6 +36,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemRenameTarget;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.ISystemAction;
@@ -345,7 +345,7 @@ public class SystemFilterWorkWithFilterPoolsDialog
 	
 	public boolean close()
 	{
-		//SystemPlugin.getDefault().getSystemRegistry().removeSystemResourceChangeListener(this);		
+		//RSEUIPlugin.getDefault().getSystemRegistry().removeSystemResourceChangeListener(this);		
 		return super.close();
 	}
 	/**
@@ -434,13 +434,13 @@ public class SystemFilterWorkWithFilterPoolsDialog
    	      tree.refresh(parent);             
         } catch (Exception exc) 
         {
-			//SystemMessage.displayExceptionMessage(getShell(),SystemPlugin.getResourceBundle(),
+			//SystemMessage.displayExceptionMessage(getShell(),RSEUIPlugin.getResourceBundle(),
 			//                                      ISystemMessages.MSG_EXCEPTION_DELETING,exc,
 			//                                      pool.getName()); 
     	    SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), 
-    	            SystemPlugin.getPluginMessage(MSG_EXCEPTION_DELETING).makeSubstitution(pool.getName(),exc));
+    	            RSEUIPlugin.getPluginMessage(MSG_EXCEPTION_DELETING).makeSubstitution(pool.getName(),exc));
     	    msgDlg.open(); 
-    	    //SystemPlugin.logError("Error deleting filter pool in workwith dialog",exc);
+    	    //RSEUIPlugin.logError("Error deleting filter pool in workwith dialog",exc);
         }
         return ok;
     }
@@ -508,13 +508,13 @@ public class SystemFilterWorkWithFilterPoolsDialog
         }
         catch (Exception exc) 
         {
-			//SystemMessage.displayExceptionMessage(getShell(),SystemPlugin.getResourceBundle(),
+			//SystemMessage.displayExceptionMessage(getShell(),RSEUIPlugin.getResourceBundle(),
 			//                                      ISystemMessages.MSG_EXCEPTION_RENAMING,exc,
 			//                                      pool.getName()); 
     	    SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), 
-    	            SystemPlugin.getPluginMessage(MSG_EXCEPTION_RENAMING).makeSubstitution(pool.getName(),exc));
+    	            RSEUIPlugin.getPluginMessage(MSG_EXCEPTION_RENAMING).makeSubstitution(pool.getName(),exc));
     	    msgDlg.open(); 
-    	    //SystemPlugin.logError("Error renaming filter pool in workwith dialog",exc);
+    	    //RSEUIPlugin.logError("Error renaming filter pool in workwith dialog",exc);
         }
     	return ok;
     }
@@ -572,7 +572,7 @@ public class SystemFilterWorkWithFilterPoolsDialog
    	    if (inputObj instanceof ISubSystem)
    	    {
    	    	ISubSystem ss = (ISubSystem)inputObj;
-   	        SystemMessage msg = SystemPlugin.getPluginMessage(MSG_FILTERPOOL_CREATED);
+   	        SystemMessage msg = RSEUIPlugin.getPluginMessage(MSG_FILTERPOOL_CREATED);
    	        msg.makeSubstitution("'"+pool.getName()+"'", "'"+ss.getName()+"'");
    	        if (shell.isDisposed() || !shell.isVisible())
    	          shell = getShell();

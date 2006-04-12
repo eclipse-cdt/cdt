@@ -27,7 +27,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.model.SystemScratchpad;
 import org.eclipse.rse.model.ISystemProfile;
@@ -35,6 +34,7 @@ import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
@@ -241,7 +241,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter implements  ISy
 	 */
 	private Object getObjectFor(String str)
 	{
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		// first extract subsystem id
 		int connectionDelim = str.indexOf(":");
 		if (connectionDelim == -1) // not subsystem, therefore likely to be a connection
@@ -289,14 +289,14 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter implements  ISy
 				}
 				else
 				{
-					SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
+					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
 					msg.makeSubstitution(srcKey, subSystem.getHostAliasName());
 					return msg;
 				}
 			}
 			else
 			{
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_CONNECTION_NOTFOUND);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_CONNECTION_NOTFOUND);
 				msg.makeSubstitution(subSystemId);
 				return msg;
 			}
@@ -305,7 +305,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter implements  ISy
 
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = SystemPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;
@@ -314,13 +314,13 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter implements  ISy
 		{
 			/*
 			// for other cases, use statusbar
-        	IWorkbenchWindow win = SystemPlugin.getActiveWorkbenchWindow();
+        	IWorkbenchWindow win = RSEUIPlugin.getActiveWorkbenchWindow();
         	if (win != null)
         	{
-        		Shell winShell = SystemPlugin.getActiveWorkbenchShell();
+        		Shell winShell = RSEUIPlugin.getActiveWorkbenchShell();
                	if (winShell != null && !winShell.isDisposed() && winShell.isVisible())
         		{
-        			SystemPlugin.logInfo("Using active workbench window as runnable context");
+        			RSEUIPlugin.logInfo("Using active workbench window as runnable context");
         			shell = winShell;
         			return win;	
         		}	
@@ -332,7 +332,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter implements  ISy
      */
       
 			irc = new ProgressMonitorDialog(shell);
-			SystemPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);
+			RSEUIPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);
 			return irc;
 		}
 	}

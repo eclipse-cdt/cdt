@@ -16,13 +16,13 @@
 
 package org.eclipse.rse.ui.view.team;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemProfileManager;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
@@ -41,11 +41,11 @@ public class SystemTeamViewMakeInActiveProfileAction extends SystemBaseAction
 	public SystemTeamViewMakeInActiveProfileAction(Shell parent) 
 	{
 		super(SystemResources.ACTION_PROFILE_MAKEINACTIVE_LABEL,SystemResources.ACTION_PROFILE_MAKEINACTIVE_TOOLTIP,
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_MAKEPROFILEINACTIVE_ID),
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_MAKEPROFILEINACTIVE_ID),
 		      parent);
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CHANGE);
-		setHelp(SystemPlugin.HELPPREFIX+"ActionMakeInactive");
+		setHelp(RSEUIPlugin.HELPPREFIX+"ActionMakeInactive");
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class SystemTeamViewMakeInActiveProfileAction extends SystemBaseAction
 	{
 		// TODO: test if attempting to disable all profiles, and issue an error
 		//  that at least one needs to be active. Or, at least a warning.
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		ISystemProfile profile = (ISystemProfile)getFirstSelection();
 		while (profile != null)
 		{

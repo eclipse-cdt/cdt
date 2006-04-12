@@ -518,7 +518,7 @@ public class SystemResourceManager implements SystemResourceConstants
         if (helpers == null)    	
         {
     	  helpers = SystemResourceHelpers.getResourceHelpers();
-    	  //helpers.setLogFile(SystemPlugin.getDefault().getLogFile());
+    	  //helpers.setLogFile(RSEUIPlugin.getDefault().getLogFile());
         }
     	return helpers;
     }

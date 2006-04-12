@@ -35,9 +35,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Display;
@@ -62,7 +62,7 @@ public class SystemRemoteEditManager
 	public static final String REMOTE_EDIT_PROJECT_BUILDER_ID = "org.eclipse.rse.ui.remoteSystemsTempBuilder";
 
 	private static SystemRemoteEditManager inst;
-	private SystemPlugin plugin;
+	private RSEUIPlugin plugin;
 	private List _mountPathMappers;
 
 	/**
@@ -71,7 +71,7 @@ public class SystemRemoteEditManager
 	private SystemRemoteEditManager()
 	{
 		super();
-		plugin = SystemPlugin.getDefault();
+		plugin = RSEUIPlugin.getDefault();
 		registerMountPathMappers();
 	}
 
@@ -539,7 +539,7 @@ public class SystemRemoteEditManager
 			String pathStr = properties.getRemoteFilePath();
 			if (subsystemStr != null && pathStr != null)
 			{
-				ISubSystem subsystem = SystemPlugin.getTheSystemRegistry().getSubSystem(subsystemStr);
+				ISubSystem subsystem = RSEUIPlugin.getTheSystemRegistry().getSubSystem(subsystemStr);
 				if (subsystem != null)
 				{
 					Object rmtObject = null;
@@ -659,7 +659,7 @@ public class SystemRemoteEditManager
 	protected void cleanupCache()
 	{
 
-		IPreferenceStore store = SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 		boolean enableMaxSize = store.getBoolean(ISystemPreferencesConstants.LIMIT_CACHE);
 		if (enableMaxSize)
 		{	

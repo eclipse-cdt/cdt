@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.view;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemRunAction;
 import org.eclipse.swt.widgets.Shell;
@@ -33,6 +33,6 @@ public class SystemViewNewConnectionPromptAdapter extends SystemViewPromptableAd
 	 */
 	protected SystemRunAction getRunAction(Shell shell) {
 		return (new SystemRunAction(SystemResources.ACTION_NEWCONN_LABEL, SystemResources.ACTION_NEWCONN_TOOLTIP,
-				SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWCONNECTION_ID), shell));
+				RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWCONNECTION_ID), shell));
 	}
 }

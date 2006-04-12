@@ -17,10 +17,10 @@
 package org.eclipse.rse.ui.filters.actions;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
 
@@ -40,7 +40,7 @@ public class SystemFilterPoolReferenceSelectAction extends SystemBaseAction
 	 */
 	public SystemFilterPoolReferenceSelectAction(Shell parent, ISystemFilterPool pool, ISystemFilterPoolReferenceManager refMgr) 
 	{
-		super(pool.getName(), SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERPOOLREF_ID), parent);
+		super(pool.getName(), RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERPOOLREF_ID), parent);
 		this.pool = pool;
 		this.refMgr = refMgr;
 		//setChecked(false);

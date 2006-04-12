@@ -19,13 +19,13 @@ package org.eclipse.rse.files.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.filters.dialogs.SystemNewFilterWizard;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Shell;
@@ -46,7 +46,7 @@ public class SystemNewFileFilterFromFolderAction extends SystemNewFileFilterActi
 	{
 		// initially use null, but update based on selection
 		super(null, null, parent);
-		setHelp(SystemPlugin.HELPPREFIX+"actn0112");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0112");
 	}
 	
 	

@@ -19,7 +19,7 @@ package org.eclipse.rse.files.ui.resources;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 
@@ -55,7 +55,7 @@ public class SystemIFileProperties implements ISystemTextEditorConstants, ISyste
 	
 	// local encoding qualified name
 	// NOTE: DO NOT CHANGE THIS!! This exact qualified name is used by the IBM debugger.
-	private static QualifiedName _nameLocalEncoding		  = new QualifiedName(SystemPlugin.getDefault().getSymbolicName(), LOCAL_ENCODING_KEY);
+	private static QualifiedName _nameLocalEncoding		  = new QualifiedName(RSEUIPlugin.getDefault().getSymbolicName(), LOCAL_ENCODING_KEY);
 		
 	protected IResource _resource = null;
 	

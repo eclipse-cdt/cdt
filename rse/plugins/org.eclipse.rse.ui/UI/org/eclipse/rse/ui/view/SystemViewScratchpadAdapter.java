@@ -21,9 +21,9 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.internal.model.SystemScratchpad;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.widgets.Shell;
@@ -54,7 +54,7 @@ public class SystemViewScratchpadAdapter extends AbstractSystemViewAdapter imple
 	{
 		if (_pasteToScratchpadAction == null)
 		{
-		    _pasteToScratchpadAction = new SystemPasteFromClipboardAction(shell, SystemPlugin.getTheSystemRegistry().getSystemClipboard());
+		    _pasteToScratchpadAction = new SystemPasteFromClipboardAction(shell, RSEUIPlugin.getTheSystemRegistry().getSystemClipboard());
 		}
 		menu.add(menuGroup, _pasteToScratchpadAction);
 	}

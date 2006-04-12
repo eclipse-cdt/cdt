@@ -18,7 +18,6 @@ package org.eclipse.rse.files.ui.actions;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
@@ -27,6 +26,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -49,8 +49,8 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 	public SystemMoveRemoteFileAction(Shell shell) 
 	{
 		super(shell, MODE_MOVE);
-  	    setHelp(SystemPlugin.HELPPREFIX+"actn0111");
-  	    setDialogHelp(SystemPlugin.HELPPREFIX+"dmrf0000"); 
+  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0111");
+  	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dmrf0000"); 
 	}
  
     // --------------------------
@@ -87,7 +87,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		ok = ss.move(srcFileOrFolder, targetFolder, newName, monitor);
 		if (!ok)
 		{
-		  SystemMessage msg = SystemPlugin.getPluginMessage(FILEMSG_MOVE_FILE_FAILED);
+		  SystemMessage msg = RSEUIPlugin.getPluginMessage(FILEMSG_MOVE_FILE_FAILED);
 		  msg.makeSubstitution(srcFileOrFolder.getName());
 		  throw new SystemMessageException(msg); 
 		}
@@ -120,19 +120,19 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
         if (selectedFolder.getAbsolutePath().equals(firstSelectionParent.getAbsolutePath()))
         {
         	if (targetEqualsSrcMsg == null)
-              targetEqualsSrcMsg = SystemPlugin.getPluginMessage(FILEMSG_MOVE_TARGET_EQUALS_SOURCE);
+              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(FILEMSG_MOVE_TARGET_EQUALS_SOURCE);
             return targetEqualsSrcMsg;
         }
         else if (selectedFolder.getAbsolutePath().equals(firstSelection.getAbsolutePath()))
         {
         	if (targetEqualsSrcMsg == null)
-              targetEqualsSrcMsg = SystemPlugin.getPluginMessage(FILEMSG_MOVE_TARGET_EQUALS_SOURCE); // todo: different msg
+              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(FILEMSG_MOVE_TARGET_EQUALS_SOURCE); // todo: different msg
             return targetEqualsSrcMsg;
         }
         else if (selectedFolder.isDescendantOf(firstSelection))
         {
         	if (targetDescendsFromSrcMsg == null)
-        	 targetDescendsFromSrcMsg = SystemPlugin.getPluginMessage(FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOUCE);
+        	 targetDescendsFromSrcMsg = RSEUIPlugin.getPluginMessage(FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOUCE);
         	return targetDescendsFromSrcMsg;
         }
         else
@@ -150,16 +150,16 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 
 		// refresh all instances of the source parent, and all affected filters...
 		ISubSystem fileSS = targetFolder.getParentRemoteFileSubSystem();
-		//SystemPlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
+		//RSEUIPlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
 		  // ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, copiedFiles, firstSelectionParent.getAbsolutePath(), fileSS, null, null);
-    	SystemPlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
+    	RSEUIPlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
 		   ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, movedFiles, firstSelectionParent.getAbsolutePath(), fileSS, null, null);
 		           
     	/* old release 1.0 way of doing it...
 		Viewer v = getViewer();
 		if (v instanceof ISystemTree)
 		{
-		    SystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		    SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		  	ISystemTree tree = (ISystemTree)v;
 		  	Object parent = tree.getSelectedParent();
 		  	if (parent != null)
@@ -185,7 +185,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		  	   }
 		  	}
 		  	else
-		  	  SystemPlugin.logWarning("Hmm, selected parent is null on a move operation!");
+		  	  RSEUIPlugin.logWarning("Hmm, selected parent is null on a move operation!");
 		}*/
     	super.copyComplete();    	
     }

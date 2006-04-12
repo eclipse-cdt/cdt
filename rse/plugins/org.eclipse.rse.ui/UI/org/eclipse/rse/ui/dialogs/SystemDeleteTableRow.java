@@ -21,9 +21,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemViewResources;
@@ -90,9 +90,9 @@ public class SystemDeleteTableRow
     	  this.imageDescriptor = ((ISystemTypedObject)element).getImageDescriptor();
     	else if (element instanceof IFolder)
 		  this.imageDescriptor = //PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER); 
-		  	SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FOLDER_ID);
+		  	RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FOLDER_ID);
     	else if (element instanceof IFile)
-    	  this.imageDescriptor = SystemPlugin.getDefault().getWorkbench().getEditorRegistry().getImageDescriptor(name);
+    	  this.imageDescriptor = RSEUIPlugin.getDefault().getWorkbench().getEditorRegistry().getImageDescriptor(name);
     }
     
     /**

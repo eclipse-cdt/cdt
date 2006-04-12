@@ -29,7 +29,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
@@ -40,6 +39,7 @@ import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -150,7 +150,7 @@ public class SystemMonitorViewPart
 
 			private void setHelp()
 			{
-				setHelp(SystemPlugin.HELPPREFIX + "gnpt0000");
+				setHelp(RSEUIPlugin.HELPPREFIX + "gnpt0000");
 			}
 		}
 
@@ -249,7 +249,7 @@ class SubSetAction extends BrowseAction
 
 			private void setHelp()
 			{
-				setHelp(SystemPlugin.HELPPREFIX + "gnss0000");
+				setHelp(RSEUIPlugin.HELPPREFIX + "gnss0000");
 			}
 		}
 
@@ -278,8 +278,8 @@ class SubSetAction extends BrowseAction
 		public RefreshAction()
 		{
 			super(SystemMonitorViewPart.this, SystemResources.ACTION_REFRESH_LABEL, 
-					//SystemPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_REFRESH_ID));
-					SystemPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_REFRESH_ID));
+					//RSEUIPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_REFRESH_ID));
+					RSEUIPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_REFRESH_ID));
 			setTitleToolTip(SystemResources.ACTION_REFRESH_TOOLTIP);
 		}
 
@@ -566,7 +566,7 @@ class SubSetAction extends BrowseAction
 			
 			private void setHelp()
 			{
-				setHelp(SystemPlugin.HELPPREFIX + "gntc0000");
+				setHelp(RSEUIPlugin.HELPPREFIX + "gntc0000");
 			}
 		}
 	    
@@ -574,7 +574,7 @@ class SubSetAction extends BrowseAction
 		{
 			super(SystemMonitorViewPart.this, SystemResources.ACTION_SELECTCOLUMNS_LABEL, null);
 			setToolTipText(SystemResources.ACTION_SELECTCOLUMNS_TOOLTIP);
-			setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTER_ID));
+			setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTER_ID));
 		}
 
 		public void checkEnabledState()
@@ -663,9 +663,9 @@ class SubSetAction extends BrowseAction
 		selectionService.addSelectionListener(this);
 		
 
-		SystemWidgetHelpers.setHelp(_folder, SystemPlugin.HELPPREFIX + "ucmd0000");
+		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000");
 
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.addSystemResourceChangeListener(this);
 		registry.addSystemRemoteChangeListener(this);
 
@@ -687,7 +687,7 @@ class SubSetAction extends BrowseAction
 		selectionService.removeSelectionListener(this);
 		_folder.dispose();
 
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.removeSystemResourceChangeListener(this);
 		super.dispose();
 	}

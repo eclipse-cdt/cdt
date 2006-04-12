@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
@@ -36,6 +36,6 @@ public class SystemNewConnectionFromExistingConnectionAction extends SystemNewCo
 	{
 		super(shell, SystemResources.ACTION_ANOTHERCONN_LABEL, SystemResources.ACTION_ANOTHERCONN_TOOLTIP, false, true, null);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);
-		setHelp(SystemPlugin.HELPPREFIX+"actn0015");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0015");
 	}
 }

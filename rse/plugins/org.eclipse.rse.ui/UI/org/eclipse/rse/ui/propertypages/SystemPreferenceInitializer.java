@@ -17,7 +17,7 @@
 package org.eclipse.rse.ui.propertypages;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -36,6 +36,6 @@ public class SystemPreferenceInitializer extends AbstractPreferenceInitializer {
      * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
      */
     public void initializeDefaultPreferences() {
-        SystemPlugin.getDefault().initializeDefaultPreferences();
+        RSEUIPlugin.getDefault().initializeDefaultPreferences();
     }
 }

@@ -42,6 +42,11 @@ public class SimpleCommandOperation
 		Object[] result =_subsystem.runCommand(command, null, _workingDirectory, false);
 		_cmdShell = (IRemoteCommandShell)result[0];
 	}
+
+	public IRemoteCommandShell getCommandShell()
+	{
+		return _cmdShell;
+	}
 	
 	public void putInput(String input) throws Exception
 	{

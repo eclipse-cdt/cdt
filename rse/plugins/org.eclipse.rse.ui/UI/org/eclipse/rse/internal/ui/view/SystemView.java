@@ -49,7 +49,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemElapsedTimer;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -85,6 +84,7 @@ import org.eclipse.rse.ui.ISystemDeleteTarget;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemRenameTarget;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemCascadingGoToAction;
@@ -358,7 +358,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	 */
 	public void setLabelAndContentProvider(SystemViewLabelAndContentProvider lcProvider)
 	{
-		setLabelProvider(new DecoratingLabelProvider(lcProvider, SystemPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));
+		setLabelProvider(new DecoratingLabelProvider(lcProvider, RSEUIPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));
 		setContentProvider(lcProvider);
 	}
 	
@@ -398,8 +398,8 @@ public class SystemView extends TreeViewer implements  ISystemTree,
         // ----------------------------------------
 		// register with system registry for events
         // ----------------------------------------
-		SystemPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
-		SystemPlugin.getTheSystemRegistry().addSystemRemoteChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().addSystemRemoteChangeListener(this);
 		// -----------------------------
 		// Enable right-click popup menu
 		// -----------------------------
@@ -937,7 +937,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	      	     item.setInputs(getShell(), this, selection);
 	      	   } catch (Exception e)
 	      	   {
-	      	   	 SystemPlugin.logError("Error configuring action " + item.getClass().getName(),e);
+	      	   	 RSEUIPlugin.logError("Error configuring action " + item.getClass().getName(),e);
 	      	   }
 	      	 }
 	      	 else if (items[idx] instanceof SystemSubMenuManager)
@@ -1199,7 +1199,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	{
 		if (!debugProperties)
 		  return;
-		//SystemPlugin.logDebugMessage(prefix, msg);		
+		//RSEUIPlugin.logDebugMessage(prefix, msg);		
 		System.out.println(prefix+" "+msg);
 	}
 
@@ -1471,9 +1471,9 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	public void handleDispose(DisposeEvent event)
 	{
 		//if (debug)
-		  //SystemPlugin.logDebugMessage(this.getClass().getName(),"Inside handleDispose for SystemView");
-		SystemPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);				
-		SystemPlugin.getTheSystemRegistry().removeSystemRemoteChangeListener(this);				
+		  //RSEUIPlugin.logDebugMessage(this.getClass().getName(),"Inside handleDispose for SystemView");
+		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);				
+		RSEUIPlugin.getTheSystemRegistry().removeSystemRemoteChangeListener(this);				
 		busyCursor.dispose();
 		super.handleDispose(event);		
 	}  
@@ -1723,7 +1723,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	   Object src = event.getSource();
     	   Object parent = event.getParent();
            String[] properties = new String[1];
-    	   if (parent == SystemPlugin.getTheSystemRegistry())
+    	   if (parent == RSEUIPlugin.getTheSystemRegistry())
     	     parent = inputProvider;
     	   ISubSystem ss = null;
     	   Widget item = null;
@@ -2063,7 +2063,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
    	    	      //  refresh(src); // ONLY VALID WHEN USER TRULY WANTS TO REQUERY CHILDREN FROM HOST
    	    	      //else
    	    	      //  refresh(); // refresh entire tree
-   	    	      if ((src == null) || (src == SystemPlugin.getTheSystemRegistry()))
+   	    	      if ((src == null) || (src == RSEUIPlugin.getTheSystemRegistry()))
    	    	        refreshAll();
    	    	      else
    	    	      {
@@ -2666,7 +2666,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     {
     	boolean affected = false;
     	IWorkbenchPart viewPart = getWorkbenchPart();
-    	if ((viewPart != null) && (getInput() != SystemPlugin.getTheSystemRegistry())
+    	if ((viewPart != null) && (getInput() != RSEUIPlugin.getTheSystemRegistry())
     	    && !(getInput() instanceof SystemEmptyListAPIProviderImpl))
     	{
     		for (int idx=0; !affected && (idx<elements.length); idx++)
@@ -2683,7 +2683,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     {
     	boolean affected = false;
     	IWorkbenchPart viewPart = getWorkbenchPart();
-    	if ((viewPart != null) && (getInput() != SystemPlugin.getTheSystemRegistry())
+    	if ((viewPart != null) && (getInput() != RSEUIPlugin.getTheSystemRegistry())
     	    && !(getInput() instanceof SystemEmptyListAPIProviderImpl))
     	{
 
@@ -5024,7 +5024,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
      */
     public boolean doDelete(IProgressMonitor monitor)
     {   	  
-    	ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry(); 
+    	ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry(); 
 		IStructuredSelection selection= (IStructuredSelection)getSelection();		
 		Iterator elements= selection.iterator();
 		//int selectedCount = selection.size();
@@ -5081,7 +5081,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	    String msg = exc.getMessage();
     	    if ((msg == null) || (exc instanceof ClassCastException))
     	      msg = exc.getClass().getName();
-			SystemMessageDialog.displayErrorMessage(getShell(), SystemPlugin.getPluginMessage(
+			SystemMessageDialog.displayErrorMessage(getShell(), RSEUIPlugin.getPluginMessage(
 			                                     ISystemMessages.MSG_EXCEPTION_DELETING).makeSubstitution(element,msg));
 		    ok = false;
 		}
@@ -5135,7 +5135,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
      */
     public boolean doRename(String[] newNames)
     {   	  
-    	ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry(); 
+    	ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry(); 
 		IStructuredSelection selection= (IStructuredSelection)getSelection();		
 		Iterator elements= selection.iterator();
 		int selectedCount = selection.size();
@@ -5183,7 +5183,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	    //String msg = exc.getMessage();
     	    //if ((msg == null) || (exc instanceof ClassCastException))
     	    //  msg = exc.getClass().getName();
-			SystemMessageDialog.displayErrorMessage(getShell(), SystemPlugin.getPluginMessage(
+			SystemMessageDialog.displayErrorMessage(getShell(), RSEUIPlugin.getPluginMessage(
 			                                     ISystemMessages.MSG_EXCEPTION_RENAMING).makeSubstitution(element,exc), //msg),
 			                                  exc);
 			ok = false;
@@ -5193,9 +5193,9 @@ public class SystemView extends TreeViewer implements  ISystemTree,
  
     protected void logDebugMsg(String msg)
     {
-    	//SystemPlugin.logDebugMessage(this.getClass().getName(),msg);
+    	//RSEUIPlugin.logDebugMessage(this.getClass().getName(),msg);
     	msg = this.getClass().getName()+": "+msg;
-    	SystemPlugin.logInfo(msg);
+    	RSEUIPlugin.logInfo(msg);
     	System.out.println(msg);
     }
 

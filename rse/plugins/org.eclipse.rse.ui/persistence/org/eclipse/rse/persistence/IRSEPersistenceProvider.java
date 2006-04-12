@@ -23,7 +23,7 @@ import org.eclipse.rse.persistence.dom.RSEDOM;
 
 /**
  * This is the interface that needs to be implemented when providing an extension
- * using the RSE persistance provider extension point. 
+ * using the RSE persistence provider extension point. 
  * 
  * Implement this class to provide a specialized means of 
  * saving and restoring RSEDOM

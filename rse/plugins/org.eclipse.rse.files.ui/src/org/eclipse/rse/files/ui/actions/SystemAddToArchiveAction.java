@@ -27,7 +27,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.AddToArchiveDialog;
 import org.eclipse.rse.model.IHost;
@@ -42,6 +41,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemDragDropAdapter;
@@ -67,7 +67,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 		_selected = new ArrayList();
 		_parent = parent;
 		allowOnMultipleSelection(true);
-		setHelp(SystemPlugin.HELPPREFIX + "actn0122");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0122");
 	}
 
 	public SystemAddToArchiveAction(Shell parent, String label, String tooltip)
@@ -76,7 +76,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 		_selected = new ArrayList();
 		_parent = parent;
 		allowOnMultipleSelection(true);
-		setHelp(SystemPlugin.HELPPREFIX + "actn0122");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0122");
 	}
 
 	public void run() 
@@ -135,7 +135,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 			
 			if (ArchiveHandlerManager.isVirtual(destinationArchive.getAbsolutePath()))
 			{
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ADDTO_VIRTUAL_DEST);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ADDTO_VIRTUAL_DEST);
 				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 				dlg.open();
 				continue;
@@ -143,7 +143,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 			
 			if (destinationInSource(destinationArchive))
 			{
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_DEST_NOT_IN_SOURCE);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DEST_NOT_IN_SOURCE);
 				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 				dlg.open();
 				continue;
@@ -164,7 +164,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 				IRemoteFile selection = (IRemoteFile) _selected.get(i);
 				addToArchive(selection, destinationArchive, saveFullPathInfo, relativeTo);
 			}
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, destinationArchive, destinationArchive.getParentPath(), destSS, null, null);
 			registry.fireEvent(new SystemResourceChangeEvent(destinationArchive, ISystemResourceChangeEvents.EVENT_REFRESH, destinationArchive.getParentPath()));
 			repeat = false;
@@ -320,7 +320,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 	
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = SystemPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;

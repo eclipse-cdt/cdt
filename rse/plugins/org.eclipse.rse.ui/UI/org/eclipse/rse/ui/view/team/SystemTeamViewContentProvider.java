@@ -23,10 +23,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.widgets.Shell;
@@ -57,7 +57,7 @@ public class SystemTeamViewContentProvider extends WorkbenchContentProvider
 		if (element instanceof IProject) 
 		{
 			//IProject rseProject = (IProject)element;
-			ISystemProfile[] profiles = SystemPlugin.getTheSystemRegistry().getAllSystemProfiles();
+			ISystemProfile[] profiles = RSEUIPlugin.getTheSystemRegistry().getAllSystemProfiles();
 			children = profiles;
 			//return profiles;
 		}
@@ -210,7 +210,7 @@ public class SystemTeamViewContentProvider extends WorkbenchContentProvider
 		else
 			adapter = (ISystemViewElementAdapter)((IAdaptable)o).getAdapter(ISystemViewElementAdapter.class);
 		//if (adapter == null)
-		//	SystemPlugin.logWarning("ADAPTER IS NULL FOR ELEMENT OF TYPE: " + o.getClass().getName());
+		//	RSEUIPlugin.logWarning("ADAPTER IS NULL FOR ELEMENT OF TYPE: " + o.getClass().getName());
 		if ((adapter!=null) && (viewer != null))
 		{    	
 			Shell shell = null;

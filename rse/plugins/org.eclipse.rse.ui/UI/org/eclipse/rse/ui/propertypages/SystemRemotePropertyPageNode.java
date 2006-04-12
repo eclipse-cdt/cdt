@@ -32,11 +32,11 @@ public class SystemRemotePropertyPageNode extends PreferenceNode
 	private SystemPropertyPageExtension contributor;
 	private IWorkbenchPropertyPage page;
 	private Image icon;
-	private IAdaptable element;
+	private Object element;
 	/**
 	 * Constructor.
 	 */
-	public SystemRemotePropertyPageNode(SystemPropertyPageExtension contributor, IAdaptable element) 
+	public SystemRemotePropertyPageNode(SystemPropertyPageExtension contributor, Object element) 
 	{
 		super(contributor.getId());
 		this.contributor = contributor;

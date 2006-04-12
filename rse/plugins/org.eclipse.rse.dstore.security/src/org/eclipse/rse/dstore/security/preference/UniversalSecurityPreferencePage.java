@@ -43,11 +43,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.dstore.security.UniversalSecurityPlugin;
 import org.eclipse.rse.dstore.security.UniversalSecurityProperties;
 import org.eclipse.rse.dstore.security.util.GridUtil;
 import org.eclipse.rse.dstore.security.util.StringModifier;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -119,7 +119,7 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		createButtons(buttons);
 		initializeValues();
 
-		SystemWidgetHelpers.setCompositeHelp(parent, SystemPlugin.HELPPREFIX + "ssls0000");
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "ssls0000");
 		return composite;
 	}
 

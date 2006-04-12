@@ -17,10 +17,10 @@
 package org.eclipse.rse.ui.actions;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemRenameTarget;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.dialogs.SystemRenameDialog;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
@@ -65,12 +65,12 @@ public class SystemCommonRenameAction extends SystemBaseDialogAction
 	public SystemCommonRenameAction(Shell parent, ISystemRenameTarget target) 
 	{
 		super(SystemResources.ACTION_RENAME_LABEL, SystemResources.ACTION_RENAME_TOOLTIP, 
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_RENAME_ID), parent);
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_RENAME_ID), parent);
 		allowOnMultipleSelection(true);
 		setProcessAllSelections(true);
 		renameTarget = target;
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);		
-  	    setHelp(SystemPlugin.HELPPREFIX+"actn0018");
+  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0018");
 	}
 	
 	/**

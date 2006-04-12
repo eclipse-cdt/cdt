@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeEvent;
 import org.eclipse.rse.model.ISystemPreferenceChangeEvents;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
@@ -43,7 +43,7 @@ public class SystemPreferenceShowFilterPoolsAction extends SystemBaseAction
         setChecked(SystemPreferencesManager.getPreferencesManager().getShowFilterPools());
         setSelectionSensitive(false);
         
-		setHelp(SystemPlugin.HELPPREFIX+"actn0011");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0011");
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class SystemPreferenceShowFilterPoolsAction extends SystemBaseAction
      */
     private void firePreferenceChangeEvent(int type, boolean oldValue, boolean newValue)
     {
-    	SystemPlugin.getDefault().getSystemRegistry().fireEvent(
+    	RSEUIPlugin.getDefault().getSystemRegistry().fireEvent(
     	  new SystemPreferenceChangeEvent(type,
     	                                  oldValue ? Boolean.TRUE : Boolean.FALSE,
     	                                  newValue ? Boolean.TRUE : Boolean.FALSE));

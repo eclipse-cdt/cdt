@@ -25,7 +25,7 @@ Contributors:
    <extension
          point="org.eclipse.rse.ui.subsystemConfiguration">
       <configuration
-            systemtypes="Linux;Unix;AIX;Power Linux"
+            systemTypes="Linux;Unix"
             name="%Processes"
             description="%ProcessesDescription"
             iconlive="icons/full/obj16/processsubsystemlive_obj.gif"

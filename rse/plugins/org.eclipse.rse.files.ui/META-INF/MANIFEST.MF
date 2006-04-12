@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.compare,
  org.eclipse.rse.subsystems.shells.core,
  org.eclipse.rse.subsystems.files.core,
- org.eclipse.rse.ui
+ org.eclipse.rse.ui,
+ org.eclipse.rse.core
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.files.ui,
  org.eclipse.rse.files.ui.actions,

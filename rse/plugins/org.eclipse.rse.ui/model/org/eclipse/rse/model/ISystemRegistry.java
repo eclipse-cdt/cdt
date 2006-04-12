@@ -37,8 +37,8 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Registry or front door for all remote system connections.
  * There is a singleton of the class implementation of this interface.
- * To get it, call the {@link org.eclipse.rse.core.SystemPlugin#getTheSystemRegistry() getTheSystemRegistry}
- * method in the SystemPlugin object.
+ * To get it, call the {@link org.eclipse.rse.ui.RSEUIPlugin#getTheSystemRegistry() getTheSystemRegistry}
+ * method in the RSEUIPlugin object.
  * <p>
  * The idea here is that connections are grouped by system profile. At any 
  *  time, there is a user-specified number of profiles "active" and connections
@@ -90,9 +90,9 @@ public interface ISystemRegistry extends ISystemViewInputProvider, ISchedulingRu
     // SUBSYSTEM FACTORY METHODS...
     // ----------------------------            
 	/**
-	 * Private method used by SystemPlugin to tell registry all registered subsystem
+	 * Private method used by RSEUIPlugin to tell registry all registered subsystem
 	 *  factories. This way, all code can use this registry to access them versus the
-	 *  SystemPlugin.
+	 *  RSEUIPlugin.
 	 */
 	public void setSubSystemConfigurationProxies(ISubSystemConfigurationProxy[] proxies);
 	/**
@@ -466,7 +466,7 @@ public interface ISystemRegistry extends ISystemViewInputProvider, ISchedulingRu
      * <p>
      * @param profileName Name of the system profile the connection is to be added to.
      * @param systemType system type matching one of the system type names defined via the
-     *                    systemtype extension point.
+     *                    systemTypes extension point.
      * @param connectionName unique connection name.
      * @param hostName ip name of host.
      * @param description optional description of the connection. Can be null.
@@ -498,7 +498,7 @@ public interface ISystemRegistry extends ISystemViewInputProvider, ISchedulingRu
 	 * <p>
 	 * @param profileName Name of the system profile the connection is to be added to.
 	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemtype extension point.
+	 *                    systemTypes extension point.
 	 * @param connectionName unique connection name.
 	 * @param hostName ip name of host.
 	 * @param description optional description of the connection. Can be null.
@@ -523,7 +523,7 @@ public interface ISystemRegistry extends ISystemViewInputProvider, ISchedulingRu
 	 * </ul>
 	 * <p>
 	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemtype extension point.
+	 *                    systemTypes extension point.
 	 * @param connectionName unique connection name.
 	 * @param hostName ip name of host.
 	 * @param description optional description of the connection. Can be null.
@@ -548,7 +548,7 @@ public interface ISystemRegistry extends ISystemViewInputProvider, ISchedulingRu
      * <p>
      * @param conn SystemConnection to be updated
      * @param systemType system type matching one of the system type names defined via the
-     *                    systemtype extension point.
+     *                    systemTypes extension point.
      * @param connectionName unique connection name.
      * @param hostName ip name of host.
      * @param description optional description of the connection. Can be null.

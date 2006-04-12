@@ -19,6 +19,7 @@ package org.eclipse.rse.core;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
@@ -107,7 +108,7 @@ public class SystemAdapterHelpers
 	 */
 	public SystemViewAdapterFactory getSystemViewAdapterFactory()
 	{
-		return SystemPlugin.getDefault().getSystemViewAdapterFactory();
+		return RSEUIPlugin.getDefault().getSystemViewAdapterFactory();
 	}
 	
 }

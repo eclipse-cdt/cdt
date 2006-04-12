@@ -27,7 +27,6 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.IRemoteLineReference;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
@@ -39,6 +38,7 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -99,9 +99,9 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 		{
 			super(SystemResources.ACTION_CLEAR_LABEL,
 			//	DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_CLEAR));
-			SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_ID));
+			RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_ID));
 
-			ImageDescriptor des = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_ID);
+			ImageDescriptor des = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_ID);
 
 			/*
 			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CLEAR));
@@ -208,7 +208,7 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 		ISelectionService selectionService = getSite().getWorkbenchWindow().getSelectionService();
 		selectionService.addSelectionListener(this);
 
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
 		registry.addSystemResourceChangeListener(this);
 		
@@ -219,7 +219,7 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 					handleDoubleClick(event);
 				}
 			});
-		SystemWidgetHelpers.setHelp(_viewer.getControl(), SystemPlugin.HELPPREFIX + "uerr0000");
+		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "uerr0000");
 		fillLocalToolBar();
 	}
 
@@ -251,7 +251,7 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 		selectionService.removeSelectionListener(this);
 		_viewer.dispose();
 
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.removeSystemResourceChangeListener(this);
 		super.dispose();
 	}
@@ -305,7 +305,7 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 		
 		}
 		
-		SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_LIST_TITLE);
+		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_LIST_TITLE);
 		msg.makeSubstitution(cmdString);
 		setPartName(msg.getLevelOneText());
 	}
@@ -354,7 +354,7 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 			Object source = event.getSource();
 			if (source instanceof IRemoteCmdSubSystem)
 			{
-				Shell shell = SystemPlugin.getTheSystemRegistry().getShell();
+				Shell shell = RSEUIPlugin.getTheSystemRegistry().getShell();
 				//shell.getDisplay().asyncExec(new CommandSubSystemDisconnectedRunnable((RemoteCmdSubSystem) source));
 			}
 			else

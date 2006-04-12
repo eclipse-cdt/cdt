@@ -19,11 +19,11 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.validators.ValidatorFileName;
 import org.eclipse.rse.ui.validators.ValidatorFolderName;
 import org.eclipse.rse.ui.validators.ValidatorUniqueString;
@@ -96,15 +96,15 @@ public class ValidatorFileFilterString
 
     private void init()
     {
-		//setErrorMessages(SystemPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_EMPTY),
-		setErrorMessages(SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
-		                 SystemPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE),
-		                 SystemPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID));  
+		//setErrorMessages(RSEUIPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_EMPTY),
+		setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
+		                 RSEUIPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE),
+		                 RSEUIPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID));  
 		isFileName = isFolderName = true;
     }
     
 	/**
-	 * Supply your own error message text. By default, messages from SystemPlugin resource bundle are used.
+	 * Supply your own error message text. By default, messages from RSEUIPlugin resource bundle are used.
 	 * @param error message when entry field is empty
 	 * @param error message when value entered is not unique
 	 * @param error message when syntax is not valid

@@ -26,9 +26,10 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.ISystemUserIdConstants;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemProfile;
@@ -139,7 +140,7 @@ public class SystemConnectionForm
 	{
 		this.msgLine = msgLine;
 		this.caller = caller;
-		this.defaultProfileNames = SystemPlugin.getTheSystemRegistry().getActiveSystemProfileNames();
+		this.defaultProfileNames = RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfileNames();
 		callerInstanceOfWizardPage = (caller instanceof WizardPage);
 		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);		
 		callerInstanceOfPropertyPage = (caller instanceof PropertyPage);
@@ -410,7 +411,7 @@ public class SystemConnectionForm
 			if (currentHostName.length() > 0)
 			{
 			    if (verifyingHostName == null) {
-			        verifyingHostName = SystemPlugin.getPluginMessage(MSG_HOSTNAME_VERIFYING);
+			        verifyingHostName = RSEUIPlugin.getPluginMessage(MSG_HOSTNAME_VERIFYING);
 			    }
 			    
 			    try 
@@ -426,7 +427,7 @@ public class SystemConnectionForm
 			    catch (InvocationTargetException e)
 			    {
 				 	// error found
-				    errorMessage = SystemPlugin.getPluginMessage(MSG_HOSTNAME_NOTFOUND);
+				    errorMessage = RSEUIPlugin.getPluginMessage(MSG_HOSTNAME_NOTFOUND);
 				    errorMessage.makeSubstitution(currentHostName);
 				    controlInError = textHostName;				
 			    }			
@@ -507,7 +508,9 @@ public class SystemConnectionForm
 			return false;
 		}
 		
-		return SystemPlugin.getDefault().getSystemTypeEnableOffline(defaultSystemType);
+		IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(defaultSystemType);
+		RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
+		return sysTypeAdapter.isEnableOffline(sysType);
 	}
 	
 	/**
@@ -644,7 +647,7 @@ public class SystemConnectionForm
 	      {
 		    profileCombo  = SystemWidgetHelpers.createReadonlyCombo(
 		      composite_prompts,null,SystemResources.RESID_CONNECTION_PROFILE_TIP);		
-		    SystemWidgetHelpers.setHelp(profileCombo, SystemPlugin.HELPPREFIX + "ccon0001");     
+		    SystemWidgetHelpers.setHelp(profileCombo, RSEUIPlugin.HELPPREFIX + "ccon0001");     
 	      }
         }
         
@@ -675,7 +678,7 @@ public class SystemConnectionForm
 	    labelConnectionName.setToolTipText(SystemResources.RESID_CONNECTION_CONNECTIONNAME_TIP);
 		textConnectionName  = SystemWidgetHelpers.createTextField(
 			composite_prompts,null,SystemResources.RESID_CONNECTION_CONNECTIONNAME_TIP);			
-	    SystemWidgetHelpers.setHelp(textConnectionName, SystemPlugin.HELPPREFIX + "ccon0002"); 
+	    SystemWidgetHelpers.setHelp(textConnectionName, RSEUIPlugin.HELPPREFIX + "ccon0002"); 
 
 		// SYSTEMTYPE PROMPT IN CREATE MODE
 	    //if (!updateMode)
@@ -686,7 +689,7 @@ public class SystemConnectionForm
           labelSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
 		  textSystemType = SystemWidgetHelpers.createSystemTypeCombo(composite_prompts,null,restrictSystemTypesTo);		
           textSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
-	      SystemWidgetHelpers.setHelp(textSystemType, SystemPlugin.HELPPREFIX + "ccon0003"); 
+	      SystemWidgetHelpers.setHelp(textSystemType, RSEUIPlugin.HELPPREFIX + "ccon0003"); 
 	    }
 
 		// HOSTNAME PROMPT
@@ -705,7 +708,7 @@ public class SystemConnectionForm
         
 		textHostName = SystemWidgetHelpers.createHostNameCombo(composite_prompts,null,defaultSystemType);
         textHostName.setToolTipText(SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
-	    SystemWidgetHelpers.setHelp(textHostName, SystemPlugin.HELPPREFIX + "ccon0004");     
+	    SystemWidgetHelpers.setHelp(textHostName, RSEUIPlugin.HELPPREFIX + "ccon0004");     
 		
 		// USERID PROMPT
 		/* We are testing the usability of not prompting for the user ID, so that the
@@ -718,7 +721,7 @@ public class SystemConnectionForm
    		   labelUserId.setToolTipText(SystemResources.RESID_CONNECTION_DEFAULTUSERID_TIP);
            textUserId = SystemWidgetHelpers.createInheritableTextField(
                composite_prompts,SystemResources.RESID_CONNECTION_DEFAULTUSERID_INHERITBUTTON_TIP,SystemResources.RESID_CONNECTION_DEFAULTUSERID_TIP);
-	       SystemWidgetHelpers.setHelp(textUserId, SystemPlugin.HELPPREFIX + "ccon0005");     
+	       SystemWidgetHelpers.setHelp(textUserId, RSEUIPlugin.HELPPREFIX + "ccon0005");     
 		}
 
 		// DESCRIPTION PROMPT
@@ -727,7 +730,7 @@ public class SystemConnectionForm
         labelDescription.setToolTipText(SystemResources.RESID_CONNECTION_DESCRIPTION_TIP);
 		textDescription  = SystemWidgetHelpers.createTextField(
 		   composite_prompts,null,SystemResources.RESID_CONNECTION_DESCRIPTION_TIP);		   
-	    SystemWidgetHelpers.setHelp(textDescription, SystemPlugin.HELPPREFIX + "ccon0006");     
+	    SystemWidgetHelpers.setHelp(textDescription, RSEUIPlugin.HELPPREFIX + "ccon0006");     
 
 		// VERIFY HOST NAME CHECKBOX
 	    SystemWidgetHelpers.createLabel(composite_prompts, " ", nbrColumns); // filler
@@ -741,7 +744,7 @@ public class SystemConnectionForm
 	    if (enableOfflineCB())
 	    {
 		    workOfflineCB = SystemWidgetHelpers.createCheckBox(composite_prompts, nbrColumns, null, SystemResources.RESID_OFFLINE_WORKOFFLINE_LABEL, SystemResources.RESID_OFFLINE_WORKOFFLINE_TOOLTIP);
-			SystemWidgetHelpers.setHelp(workOfflineCB, SystemPlugin.HELPPREFIX + "wofp0000");
+			SystemWidgetHelpers.setHelp(workOfflineCB, RSEUIPlugin.HELPPREFIX + "wofp0000");
 	    }     
 
 	    if (!initDone)	
@@ -839,7 +842,7 @@ public class SystemConnectionForm
 			String currHostName = textHostName.getText().trim();
 			boolean hostNameChanged = !currHostName.equals(originalHostName);
 			String currSystemType = textSystemType.getText().trim();
-		    textHostName.setItems(SystemPlugin.getTheSystemRegistry().getHostNames(currSystemType));
+		    textHostName.setItems(RSEUIPlugin.getTheSystemRegistry().getHostNames(currSystemType));
 		    if (hostNameChanged)
 		    {
 		      textHostName.setText(currHostName);
@@ -873,7 +876,7 @@ public class SystemConnectionForm
 		    if (!verifyHostNameCB.getSelection()) {
 		    	
 		        // clear host name not valid or not found error message so that wizard next page is enabled
-		        if (errorMessage != null && errorMessage == SystemPlugin.getPluginMessage(MSG_HOSTNAME_NOTFOUND)) {
+		        if (errorMessage != null && errorMessage == RSEUIPlugin.getPluginMessage(MSG_HOSTNAME_NOTFOUND)) {
 		            errorMessage = null;
 		            
 		    		if (msgLine != null) {
@@ -1161,7 +1164,7 @@ public class SystemConnectionForm
 		if (hostValidator != null)
 	      errorMessage= hostValidator.validate(hostName);
 	    else if (getHostName().length() == 0)
-		  errorMessage = SystemPlugin.getPluginMessage(MSG_VALIDATE_HOSTNAME_EMPTY);    	
+		  errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_HOSTNAME_EMPTY);    	
 		if (updateMode && !userPickedVerifyHostnameCB)
 		{
 			boolean hostNameChanged = !hostName.equals(defaultHostName);
@@ -1186,7 +1189,7 @@ public class SystemConnectionForm
 		  if (userIdValidator != null)
 	        errorMessage= userIdValidator.validate(textUserId.getText());
 	      else if (getDefaultUserId().length()==0)    	
-		     errorMessage = SystemPlugin.getPluginMessage(MSG_VALIDATE_USERID_EMPTY);    	
+		     errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_USERID_EMPTY);    	
 	    }
 		showErrorMessage(errorMessage);		
 		setPageComplete();
@@ -1241,7 +1244,7 @@ public class SystemConnectionForm
 	public static ISystemValidator getConnectionNameValidator(IHost conn)
 	{
 		ISystemProfile profile = conn.getSystemProfile();
-    	Vector v = SystemPlugin.getTheSystemRegistry().getHostAliasNames(profile);
+    	Vector v = RSEUIPlugin.getTheSystemRegistry().getHostAliasNames(profile);
     	if (conn != null) // hmm, line 1 of this method will crash if this is the case!
     	  v.removeElement(conn.getAliasName());
 	    ValidatorConnectionName connNameValidator = new ValidatorConnectionName(v);		
@@ -1254,7 +1257,7 @@ public class SystemConnectionForm
 	 */
 	public static ISystemValidator getConnectionNameValidator(ISystemProfile profile)
 	{
-    	Vector v = SystemPlugin.getTheSystemRegistry().getHostAliasNames(profile);
+    	Vector v = RSEUIPlugin.getTheSystemRegistry().getHostAliasNames(profile);
 	    ValidatorConnectionName connNameValidator = new ValidatorConnectionName(v);		
 	    return connNameValidator;
 	}	
@@ -1265,7 +1268,7 @@ public class SystemConnectionForm
 	 */
 	public static ISystemValidator[] getConnectionNameValidators()
 	{
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		ISystemProfile[] profiles = sr.getActiveSystemProfiles();
 		ISystemValidator[] connNameValidators = new ISystemValidator[profiles.length];
 		for (int idx=0; idx<profiles.length; idx++)

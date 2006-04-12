@@ -19,13 +19,13 @@ package org.eclipse.rse.ui.widgets.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.internal.model.IPropertyType;
 import org.eclipse.rse.internal.model.PropertySet;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.IProperty;
 import org.eclipse.rse.model.IPropertySet;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -57,7 +57,7 @@ implements IPropertySource
 	
 	public Image getImage()
 	{
-		return SystemPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_PROPERTIES_ID);
+		return RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_PROPERTIES_ID);
 	}
 	
 	public String getName()

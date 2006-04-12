@@ -45,7 +45,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilterReference;
@@ -66,6 +65,7 @@ import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemRenameTarget;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemCommonDeleteAction;
@@ -166,8 +166,8 @@ public class SystemTableView
 	
 	    public HeaderSelectionListener()
 	    {
-	        _upI = SystemPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_MOVEUP_ID);
-	        _downI = SystemPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_MOVEDOWN_ID);
+	        _upI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_MOVEUP_ID);
+	        _downI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_MOVEDOWN_ID);
 	    }
 	  
 	    
@@ -292,7 +292,7 @@ public class SystemTableView
 
 		setContentProvider(_provider);
 		
-		setLabelProvider(new SystemDecoratingLabelProvider(_provider, SystemPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));	
+		setLabelProvider(new SystemDecoratingLabelProvider(_provider, RSEUIPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));	
 		//setLabelProvider(_provider);
 
 		_filter = new SystemTableViewFilter();
@@ -309,8 +309,8 @@ public class SystemTableView
 
 		addSelectionChangedListener(this);
 
-		SystemPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
-		SystemPlugin.getTheSystemRegistry().addSystemRemoteChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().addSystemRemoteChangeListener(this);
 
 		initDragAndDrop();
 	
@@ -333,8 +333,8 @@ public class SystemTableView
 				});		
 		
 		
-        _upI = SystemPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_ARROW_UP_ID);
-        _downI = SystemPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_ARROW_DOWN_ID);
+        _upI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_ARROW_UP_ID);
+        _downI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_ARROW_DOWN_ID);
 	}
 	
 	protected SystemTableViewProvider getProvider()
@@ -915,7 +915,7 @@ public class SystemTableView
 				
 			case ISystemResourceChangeEvents.EVENT_REFRESH:
 			{
-				  if (child == SystemPlugin.getTheSystemRegistry())
+				  if (child == RSEUIPlugin.getTheSystemRegistry())
 				  {
 					  // treat this as refresh all
 					  child = _objectInput;
@@ -1184,8 +1184,8 @@ public class SystemTableView
 	public void dispose()
 	{
 		removeSelectionChangedListener(this);
-		SystemPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
-		SystemPlugin.getTheSystemRegistry().removeSystemRemoteChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().removeSystemRemoteChangeListener(this);
 		_menuManager.removeAll();
 
 		Table table = getTable();
@@ -1405,7 +1405,7 @@ public class SystemTableView
 	 */
 	public boolean doDelete(IProgressMonitor monitor)
 	{
-		ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		//int selectedCount = selection.size();
@@ -1442,7 +1442,7 @@ public class SystemTableView
 			String msg = exc.getMessage();
 			if ((msg == null) || (exc instanceof ClassCastException))
 				msg = exc.getClass().getName();
-			SystemMessageDialog.displayErrorMessage(getShell(), SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_DELETING).makeSubstitution(element, msg));
+			SystemMessageDialog.displayErrorMessage(getShell(), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_DELETING).makeSubstitution(element, msg));
 			ok = false;
 		}
 		if (anyOk)
@@ -1498,7 +1498,7 @@ public class SystemTableView
 	*/
 	public boolean doRename(String[] newNames)
 	{
-		ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		int selectedCount = selection.size();
@@ -1552,7 +1552,7 @@ public class SystemTableView
 			//String msg = exc.getMessage();
 			//if ((msg == null) || (exc instanceof ClassCastException))
 			//  msg = exc.getClass().getName();
-			SystemMessageDialog.displayErrorMessage(getShell(), SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_RENAMING).makeSubstitution(element, exc),
+			SystemMessageDialog.displayErrorMessage(getShell(), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_RENAMING).makeSubstitution(element, exc),
 			//msg),
 			exc);
 			ok = false;

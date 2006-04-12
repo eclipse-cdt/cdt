@@ -29,14 +29,14 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.PasswordPersistenceManager;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.SystemSignonInformation;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
-import org.eclipse.rse.ui.dialogs.SystemPasswordPersistancePrompt;
+import org.eclipse.rse.ui.dialogs.SystemPasswordPersistencePrompt;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -191,7 +191,7 @@ public final class SignonPreferencePage extends PreferencePage implements IWorkb
 		pwdTable.setLinesVisible(true);
 		pwdTable.setHeaderVisible(true);
 		pwdTable.addListener(SWT.Selection, this);
-		SystemWidgetHelpers.setHelp(pwdTable, SystemPlugin.HELPPREFIX + "pwdi0000");
+		SystemWidgetHelpers.setHelp(pwdTable, RSEUIPlugin.HELPPREFIX + "pwdi0000");
 		
 		TableLayout tableLayout = new TableLayout();
 		tableLayout.addColumnData(new ColumnWeightData(100, true));
@@ -235,11 +235,11 @@ public final class SignonPreferencePage extends PreferencePage implements IWorkb
 		changeButton.setEnabled(false);
 		removeButton.setEnabled(false);
 		
-		SystemWidgetHelpers.setHelp(addButton, SystemPlugin.HELPPREFIX + "pwdi0000");
-		SystemWidgetHelpers.setHelp(changeButton, SystemPlugin.HELPPREFIX + "pwdi0000");
-		SystemWidgetHelpers.setHelp(removeButton, SystemPlugin.HELPPREFIX + "pwdi0000");
+		SystemWidgetHelpers.setHelp(addButton, RSEUIPlugin.HELPPREFIX + "pwdi0000");
+		SystemWidgetHelpers.setHelp(changeButton, RSEUIPlugin.HELPPREFIX + "pwdi0000");
+		SystemWidgetHelpers.setHelp(removeButton, RSEUIPlugin.HELPPREFIX + "pwdi0000");
 
-		SystemWidgetHelpers.setCompositeHelp(parent, SystemPlugin.HELPPREFIX + "pwdi0000");
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "pwdi0000");
 		SystemWidgetHelpers.setMnemonics(parent);
 		
 		return parent;
@@ -266,7 +266,7 @@ public final class SignonPreferencePage extends PreferencePage implements IWorkb
 	public void handleEvent(Event event) {
 		if (event.type == SWT.Selection) {
 			if (event.widget == addButton) {
-				SystemPasswordPersistancePrompt dialog = new SystemPasswordPersistancePrompt(getShell(), SystemResources.RESID_PREF_SIGNON_ADD_DIALOG_TITLE, passwords, false);
+				SystemPasswordPersistencePrompt dialog = new SystemPasswordPersistencePrompt(getShell(), SystemResources.RESID_PREF_SIGNON_ADD_DIALOG_TITLE, passwords, false);
 				if (dialog.open() == Window.OK)
 				{
 					SystemSignonInformation info = dialog.getSignonInformation();
@@ -278,7 +278,7 @@ public final class SignonPreferencePage extends PreferencePage implements IWorkb
 				}
 				
 			} else if (event.widget  == changeButton) {
-				SystemPasswordPersistancePrompt dialog = new SystemPasswordPersistancePrompt(getShell(), SystemResources.RESID_PREF_SIGNON_CHANGE_DIALOG_TITLE, passwords, true);
+				SystemPasswordPersistencePrompt dialog = new SystemPasswordPersistencePrompt(getShell(), SystemResources.RESID_PREF_SIGNON_CHANGE_DIALOG_TITLE, passwords, true);
 				int index = pwdTable.getSelectionIndex();
 				SystemSignonInformation info = (SystemSignonInformation) passwords.get(index);
 				dialog.setInputData(info.getSystemType(), info.getHostname(), info.getUserid());
@@ -339,7 +339,7 @@ public final class SignonPreferencePage extends PreferencePage implements IWorkb
 		{
 			PasswordModification mod;
 			PasswordPersistenceManager manager = PasswordPersistenceManager.getInstance();
-			IHost[] connections = SystemPlugin.getTheSystemRegistry().getHosts();
+			IHost[] connections = RSEUIPlugin.getTheSystemRegistry().getHosts();
 			ISubSystem[] subsystems;
 			IConnectorService system;
 			

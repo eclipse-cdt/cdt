@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
 import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
@@ -29,6 +28,7 @@ import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorFilterPoolName;
 import org.eclipse.swt.widgets.Shell;
@@ -87,7 +87,7 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter imple
 	 */
 	public ImageDescriptor getImageDescriptor(Object element)
 	{
-        //return SystemPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_FILTERPOOL_ID);
+        //return RSEUIPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_FILTERPOOL_ID);
     	ImageDescriptor poolImage = null;
     	ISystemFilterPool pool = (ISystemFilterPool)element;
     	if (pool.getProvider() != null)
@@ -97,7 +97,7 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter imple
           poolImage = adapter.getSystemFilterPoolImage(pool); 
     	}
     	if (poolImage == null)
-    	  poolImage = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID);
+    	  poolImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID);
     	return poolImage;  	
 	}
 	

@@ -17,8 +17,8 @@
 package org.eclipse.rse.ui.validators;
 import java.util.Vector;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -46,10 +46,10 @@ public class ValidatorSystemName
 	public ValidatorSystemName(Vector existingNameList)
 	{
 		super(existingNameList, true); // case sensitive uniqueness
-		super.setErrorMessages(SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
-		                       SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));  
 		fUnique = true;
-		msg_Invalid = SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTVALID);				
+		msg_Invalid = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTVALID);				
 	}
 	/**
 	 * Use this constructor when the name must be unique. Give the
@@ -58,10 +58,10 @@ public class ValidatorSystemName
 	public ValidatorSystemName(String existingNameList[])
 	{
 		super(existingNameList, true); // case sensitive uniqueness
-		super.setErrorMessages(SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
-		                       SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));  
 		fUnique = true;
-		msg_Invalid = SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTVALID);				
+		msg_Invalid = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTVALID);				
 	}
 	
 	/**
@@ -71,13 +71,13 @@ public class ValidatorSystemName
 	public ValidatorSystemName()
 	{
 		super(new String[0], true);
-		super.setErrorMessages(SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
-		                       SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));  
 		fUnique = false;		
-		msg_Invalid = SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTVALID);				
+		msg_Invalid = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTVALID);				
 	}	
 	/**
-	 * Supply your own error message text. By default, messages from SystemPlugin resource bundle are used.
+	 * Supply your own error message text. By default, messages from RSEUIPlugin resource bundle are used.
 	 * @param error message when entry field is empty
 	 * @param error message when value entered is not unique
 	 * @param error message when syntax is not valid

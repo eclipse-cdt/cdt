@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.view.search;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
@@ -37,7 +37,7 @@ public class SystemSearchClearHistoryAction extends SystemBaseAction {
 	 */
 	public SystemSearchClearHistoryAction(SystemSearchViewPart searchView, Shell shell) {
 		super(SystemResources.RESID_SEARCH_CLEAR_HISTORY_LABEL,SystemResources.RESID_SEARCH_CLEAR_HISTORY_TOOLTIP,
-			  SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SEARCH_CLEAR_HISTORY_ID), shell);
+			  RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SEARCH_CLEAR_HISTORY_ID), shell);
 			  
 		this.searchView = searchView;
 	}

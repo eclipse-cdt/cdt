@@ -25,13 +25,14 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.osgi.framework.Bundle;
 
 
@@ -60,7 +61,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		this.id = element.getAttribute("id");
 		this.name = element.getAttribute("name").trim();
 		this.description = element.getAttribute("description").trim();
-		this.types = element.getAttribute("systemtypes");
+		this.types = element.getAttribute("systemTypes");
 		this.vendor = element.getAttribute("vendor");
 		this.category = element.getAttribute("category");
 		this.systemClassName = element.getAttribute("systemClass");
@@ -70,9 +71,9 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		if (types == null) types = "*";
 		this.allTypes = types.equals("*");
 		this.image = getPluginImage(element, element.getAttribute("icon"));
-		if (this.image == null) this.image = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTION_ID);
+		if (this.image == null) this.image = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTION_ID);
 		this.liveImage = getPluginImage(element, element.getAttribute("iconlive"));
-		if (this.liveImage == null) this.liveImage = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTIONLIVE_ID);
+		if (this.liveImage == null) this.liveImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTIONLIVE_ID);
 		//createFolderTree();
 	}
 	/**
@@ -111,7 +112,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
     	if (systemTypes == null)
     	{
     	  if (allTypes)
-            systemTypes = SystemPlugin.getDefault().getSystemTypeNames(true);
+            systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypeNames();
           else
           {
           	StringTokenizer tokens = new StringTokenizer(types,";");
@@ -157,11 +158,10 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
           return image;
     }
     /**
-     * Return true if this extension's systemtypes attribute matches the given system type
+     * Return true if this extension's systemTypes attribute matches the given system type
      */        
     public boolean appliesToSystemType(String type)
     {
-    	//System.out.println("INSIDE APPLIESTO FOR " + type + ". allTypes = " + allTypes + ". types = " + types);
     	if (allTypes)
     	  return true;
     	else
@@ -205,7 +205,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
      * Return true if this subsystem factory has been instantiated yet.
      * Use this when you want to avoid the side effect of starting the subsystem factory object.
      */    
-    public boolean isSubSystemFactoryActive()
+    public boolean isSubSystemConfigurationActive()
     {
     	return (object != null);
     }
@@ -215,7 +215,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
      * specified in the class attribute of the extender's xml for the factory extension point.
      * The object is only instantiated once, and returned on each call to this.
      */
-    public ISubSystemConfiguration getSubSystemFactory()
+    public ISubSystemConfiguration getSubSystemConfiguration()
     {
     	if ( firstSubSystemQuery == true && object == null )
     	{

@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.wizards.ISystemWizard;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -150,15 +150,15 @@ public class SystemWizardDialog
         	IProgressMonitor pm = getProgressMonitor();
         	((ProgressMonitorPart)pm).dispose();
         }
-        if (needsMonitor && SystemPlugin.isTheSystemRegistryActive())
+        if (needsMonitor && RSEUIPlugin.isTheSystemRegistryActive())
         {
-        	SystemPlugin.getTheSystemRegistry().setRunnableContext(getShell(), this);
+        	RSEUIPlugin.getTheSystemRegistry().setRunnableContext(getShell(), this);
 	        // add a dispose listener
 	        getShell().addDisposeListener(new DisposeListener() 
 	        {
 		      public void widgetDisposed(DisposeEvent e) 
 		      {
-        	      SystemPlugin.getTheSystemRegistry().clearRunnableContext();		      	
+        	      RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();		      	
 		      }
  	        });
         }

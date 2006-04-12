@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.progress.IProgressConstants;
@@ -223,7 +223,7 @@ public final class SystemJobRunnableContext implements ISystemRunnableContext {
 			}
 			
 			// return an error status
-			return new Status(IStatus.ERROR, SystemPlugin.getDefault().getSymbolicName(), 0, msg, target);
+			return new Status(IStatus.ERROR, RSEUIPlugin.getDefault().getSymbolicName(), 0, msg, target);
 		}
 		catch (InterruptedException e) {
 			return Status.OK_STATUS;

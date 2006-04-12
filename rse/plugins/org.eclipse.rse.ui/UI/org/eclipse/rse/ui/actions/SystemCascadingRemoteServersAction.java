@@ -19,10 +19,10 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
 
@@ -43,7 +43,7 @@ public class SystemCascadingRemoteServersAction extends SystemBaseSubMenuAction 
 		setMenuID(ISystemContextMenuConstants.MENU_STARTSERVER);
         setCreateMenuEachTime(false);
         setPopulateMenuEachTime(false);
-        setHelp(SystemPlugin.HELPPREFIX+"actnsrsv");
+        setHelp(RSEUIPlugin.HELPPREFIX+"actnsrsv");
 	}
 
 	/**

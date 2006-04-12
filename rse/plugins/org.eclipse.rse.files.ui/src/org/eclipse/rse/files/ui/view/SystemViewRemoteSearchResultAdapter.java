@@ -25,7 +25,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.actions.SystemRemoteFileSearchOpenWithMenu;
@@ -37,6 +36,7 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ISystemDragDropAdapter;
@@ -107,7 +107,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 		{
 			if (_copyOutputAction == null)
 			{
-				_copyOutputAction = new SystemCopyToClipboardAction(shell, SystemPlugin.getTheSystemRegistry().getSystemClipboard());
+				_copyOutputAction = new SystemCopyToClipboardAction(shell, RSEUIPlugin.getTheSystemRegistry().getSystemClipboard());
 			}
 			menu.add(menuGroup, _copyOutputAction);
 
@@ -460,13 +460,13 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 		if (element instanceof IHostSearchResult)
 		{
 			ImageDescriptor imageDescriptor = null;
-			imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SEARCH_RESULT_ID);
+			imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SEARCH_RESULT_ID);
 
 			return imageDescriptor;
 		}
 		else
 		{ // return some default	 
-			ImageDescriptor imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_BLANK_ID);
+			ImageDescriptor imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_BLANK_ID);
 			return imageDescriptor;
 		}
 	}

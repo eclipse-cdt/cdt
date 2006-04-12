@@ -17,11 +17,11 @@
 package org.eclipse.rse.ui.filters;
 import java.util.Vector;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.SWT;
@@ -617,7 +617,7 @@ public class SystemFilterStringEditPane implements SelectionListener
 		//if (validator != null)
 	    //  errorMessage = validateFilterString(textString.getText());
 	    if ((textString!=null) && (textString.getText().trim().length() == 0))
-	      errorMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERSTRING_EMPTY);
+	      errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERSTRING_EMPTY);
 	    fireChangeEvent(errorMessage);
 		//setPageComplete();	      
         //setErrorMessage(errorMessage);	      

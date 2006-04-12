@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -35,6 +35,6 @@ public class RemoteFileCancelledException extends RemoteFileIOException
 	 */
 	public RemoteFileCancelledException()
 	{
-		super(new SystemMessageException(SystemPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED)));	
+		super(new SystemMessageException(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED)));	
 	}
 }

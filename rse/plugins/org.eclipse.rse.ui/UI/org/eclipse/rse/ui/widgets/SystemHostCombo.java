@@ -21,13 +21,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
@@ -169,7 +169,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	public SystemHostCombo(Composite parent, int style, IHost defaultConnection, String ssFactoryId, boolean showNewButton)
 	{
 		super(parent, style);	
-	    restrictSystemTypesTo = SystemPlugin.getTheSystemRegistry().getSubSystemConfiguration(ssFactoryId).getSystemTypes();
+	    restrictSystemTypesTo = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfiguration(ssFactoryId).getSystemTypes();
 		init(parent, showNewButton);	
 		populateSSFactoryId = ssFactoryId;
 	    populateConnectionCombo(connectionCombo, ssFactoryId, defaultConnection);
@@ -208,7 +208,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 		super(parent, style);	
 		if (showNewButton) // this is expensive, so only need to do this if New is enabled
 		{
-		  ISubSystemConfigurationProxy[] ssfProxies = SystemPlugin.getTheSystemRegistry().getSubSystemConfigurationProxiesByCategory(ssFactoryCategory);
+		  ISubSystemConfigurationProxy[] ssfProxies = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationProxiesByCategory(ssFactoryCategory);
 		  Vector vTypes = new Vector();
 		  for (int idx=0; idx<ssfProxies.length; idx++)
 		  {
@@ -687,9 +687,9 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 		boolean matchFound = false;
 		IHost[] additionalConnections = null;
         if ( (systemType == null) || (systemType.equals("*")) )        
-          additionalConnections = SystemPlugin.getTheSystemRegistry().getHosts();
+          additionalConnections = RSEUIPlugin.getTheSystemRegistry().getHosts();
         else
-          additionalConnections = SystemPlugin.getTheSystemRegistry().getHostsBySystemType(systemType);
+          additionalConnections = RSEUIPlugin.getTheSystemRegistry().getHostsBySystemType(systemType);
         if (additionalConnections != null)
         {
           String[] connectionNames = new String[additionalConnections.length];
@@ -771,7 +771,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	 */
 	protected boolean populateConnectionCombo(Combo combo, ISubSystemConfiguration ssFactory, IHost defaultConnection)
 	{
-		connections = SystemPlugin.getTheSystemRegistry().getHostsBySubSystemConfiguration(ssFactory);
+		connections = RSEUIPlugin.getTheSystemRegistry().getHostsBySubSystemConfiguration(ssFactory);
         return addConnections(combo, connections, defaultConnection);
 	}	
 	/**
@@ -785,7 +785,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	 */
 	protected boolean populateConnectionCombo(Combo combo, String ssFactoryId, IHost defaultConnection)
 	{
-		connections = SystemPlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationId(ssFactoryId);
+		connections = RSEUIPlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationId(ssFactoryId);
         return addConnections(combo, connections, defaultConnection);
 	}
 
@@ -800,7 +800,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	 */
 	protected boolean populateConnectionCombo(Combo combo, IHost defaultConnection, String ssFactoryCategory)
 	{
-		connections = SystemPlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory(ssFactoryCategory);
+		connections = RSEUIPlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory(ssFactoryCategory);
         return addConnections(combo, connections, defaultConnection);
 	}
 	/**
@@ -943,7 +943,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 			// register with system registry for events
 			// ----------------------------------------
 			listeningForConnectionEvents = true;
-			SystemPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
+			RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
 		}
 		else
 		{
@@ -951,7 +951,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 			// remove register with system registry for events
 			// ----------------------------------------
 			listeningForConnectionEvents = false;
-			SystemPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+			RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
 		}
 	}
 	/**
@@ -962,7 +962,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 		if (listeningForConnectionEvents)
 		{
 			listeningForConnectionEvents = false;
-			SystemPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);			
+			RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);			
 		}
 	}
 	

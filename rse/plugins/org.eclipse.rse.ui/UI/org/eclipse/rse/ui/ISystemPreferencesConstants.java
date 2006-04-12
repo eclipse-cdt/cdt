@@ -55,7 +55,10 @@ public interface ISystemPreferencesConstants
     public static final String UPLOAD_BUFFER_SIZE      = ROOT + "upload.buffer.size";
     
     public static final String VERIFY_CONNECTION       = ROOT + "verify.connection";
-	
+    
+    public static final String ALERT_SSL       = ROOT + "alert.ssl";
+    public static final String ALERT_NONSSL    = ROOT + "alert.nonssl";
+
     // DEFAULTS
     public static final boolean DEFAULT_SHOWFILTERPOOLS          = false;
     public static final boolean DEFAULT_QUALIFY_CONNECTION_NAMES = false;
@@ -67,7 +70,7 @@ public interface ISystemPreferencesConstants
     public static final String  DEFAULT_ORDER_CONNECTIONS        = "";    
     public static final String  DEFAULT_HISTORY_FOLDER           = "";
     public static final boolean DEFAULT_SHOW_HIDDEN              = true;
-    public static final boolean DEFAULT_SHOWNEWCONNECTIONPROMPT  = true;
+    public static final boolean DEFAULT_SHOWNEWCONNECTIONPROMPT  = false;
     public static final boolean DEFAULT_REMEMBER_STATE           = true; // changed in R2. Phil
 	public static final boolean DEFAULT_RESTORE_STATE_FROM_CACHE = true; // yantzi: artemis 6.0      
     public static final boolean DEFAULT_CASCADE_UDAS_BYPROFILE   = false;
@@ -90,4 +93,8 @@ public interface ISystemPreferencesConstants
 	public static final int DEFAULT_DOWNLOAD_BUFFER_SIZE        = 4;
 	
     public static final boolean DEFAULT_VERIFY_CONNECTION = true;	
+    
+    public static final boolean DEFAULT_ALERT_SSL = true;
+    public static final boolean DEFAULT_ALERT_NON_SSL = true;
+
 }

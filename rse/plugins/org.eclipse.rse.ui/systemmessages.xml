@@ -749,6 +749,10 @@ Contributors:
                     	<LevelOne>Uploading resources...</LevelOne>
                     	<LevelTwo></LevelTwo>
                     </Message>
+                       <Message ID="1297" Indicator="E">
+                    	<LevelOne>The new password is invalid.</LevelOne>
+                    	<LevelTwo>The remote system indicated that the new password is unacceptable. Please ensure the new password follows all password rules for the remote system.</LevelTwo>
+                    </Message>
 
                        <!-- remote install issues -->
                     <Message ID="1300" Indicator="E">
@@ -1348,6 +1352,15 @@ Contributors:
                           <LevelOne>Initializing Remote Systems Explorer host server</LevelOne>
                           <LevelTwo></LevelTwo>
                     </Message>
+                    <Message ID="2314" Indicator="I">
+                          <LevelOne>Communication with the remote system %1 has been secured using SSL. Continue?</LevelOne>
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    <Message ID="2315" Indicator="I">
+                          <LevelOne>Connection %1 has not been secured using SSL. Proceed anyways?</LevelOne>
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                    
                     <Message ID="3001" Indicator="E">
                           <LevelOne>The connection %1 is currently offline and cannot be connected.</LevelOne>
                           <LevelTwo>You have performed an action which requires a live connection to the remote system.  Switch the connection to online and perform the action again.  To switch the connection online, right click on the connection %1 and select the Work Offline action.</LevelTwo>

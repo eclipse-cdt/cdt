@@ -17,9 +17,9 @@
 package org.eclipse.rse.ui.actions;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.view.ISystemViewRunnableObject;
 import org.eclipse.swt.widgets.Shell;
@@ -39,7 +39,7 @@ public class SystemRunAction extends SystemBaseAction
 	public SystemRunAction(Shell shell) 
 	{
 		this(SystemResources.ACTION_RUN_LABEL, SystemResources.ACTION_RUN_TOOLTIP,
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_RUN_ID),
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_RUN_ID),
 		      shell);
 	}
 	
@@ -63,7 +63,7 @@ public class SystemRunAction extends SystemBaseAction
 	protected void init() {
         allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_OPEN);
-		setHelp(SystemPlugin.HELPPREFIX+"actn0100");		
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0100");		
 	}
 
 

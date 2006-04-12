@@ -19,7 +19,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -27,6 +26,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileIOException;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSecurityException;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.swt.events.SelectionEvent;
@@ -61,7 +61,7 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	public SystemFilePropertyPage()
 	{
 		super();
-		SystemPlugin sp = SystemPlugin.getDefault();
+		RSEUIPlugin sp = RSEUIPlugin.getDefault();
 	}
 	/**
 	 * Create the page's GUI contents.
@@ -258,16 +258,16 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
    		  try
     	  {
     	     getRemoteFile().getParentRemoteFileSubSystem().setReadOnly(getRemoteFile());
-		     SystemPlugin.getTheSystemRegistry().fireEvent(
+		     RSEUIPlugin.getTheSystemRegistry().fireEvent(
                    new org.eclipse.rse.model.SystemResourceChangeEvent(
                    getRemoteFile(),ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE,null)); 
     	     
     	  } catch (RemoteFileIOException exc) 
     	  {
-             setMessage(SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_IO_ERROR));
+             setMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IO_ERROR));
     	  } catch (RemoteFileSecurityException exc)
     	  {
-             setMessage(SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR));
+             setMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR));
     	  }
     	  //catch (RemoteFileException e)
     	  //{ 	

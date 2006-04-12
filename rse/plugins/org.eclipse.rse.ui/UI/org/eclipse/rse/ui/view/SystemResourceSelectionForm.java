@@ -27,12 +27,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -301,7 +301,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 		ISystemViewElementAdapter adapter = getAdapter(selection);
 		if (adapter != null)
 		{
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			ISubSystem ss = adapter.getSubSystem(selection);
 			IHost connection = ss.getHost();
 			if (_inputProvider.allowMultipleConnections())

@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.services.dstore,
  org.eclipse.dstore.core,
  org.eclipse.dstore.extra,
- org.eclipse.rse.ui
+ org.eclipse.rse.ui,
+ org.eclipse.rse.core
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.connectorservice.dstore,
  org.eclipse.rse.connectorservice.dstore.util

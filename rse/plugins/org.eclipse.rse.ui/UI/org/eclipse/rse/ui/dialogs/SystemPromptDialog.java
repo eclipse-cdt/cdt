@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,14 +26,15 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.Mnemonics;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -148,6 +150,8 @@ public abstract class SystemPromptDialog
 	protected Button  okButton, cancelButton, testButton, browseButton, addButton, detailsButton;
 	protected String  title, labelOk, labelBrowse, labelTest, labelCancel, labelAdd, labelDetailsShow, labelDetailsHide;
 	protected String  tipOk, tipBrowse, tipTest, tipCancel, tipAdd, tipDetailsShow, tipDetailsHide;
+	protected boolean noShowAgainOption;
+	protected Button noShowAgainButton;
 	protected String  detailsShowLabel;
 	protected String  detailsHideLabel;
 	protected String  helpId;
@@ -174,7 +178,12 @@ public abstract class SystemPromptDialog
 	protected Cursor waitCursor;
 	protected Cursor arrowCursor;
 	protected MessageDialog windowClosingDialog;
-	protected SelectionAdapter cancelListener;	
+	protected SelectionAdapter cancelListener;
+	
+	// preference stuff for option to not show the dialog again
+	protected IPreferenceStore prefStore;
+	protected String prefId;
+	protected boolean prefValAsSelected;
 	
 	private static final String FOCUS_CONTROL = "focusControl";//$NON-NLS-1$
 	
@@ -796,7 +805,22 @@ public abstract class SystemPromptDialog
 	 */
 	public void handleEvent(Event e)
 	{
-	    //Widget source = e.widget;
+	    if (e.type == SWT.Selection) {
+	    	
+	    	if (e.widget == noShowAgainButton) {
+	    		boolean isNoShowSelected = noShowAgainButton.getSelection();
+	    		
+	    		if ((prefStore != null) && (prefId != null)) {
+	    			
+	    			if (prefValAsSelected) {
+	    				prefStore.setValue(prefId, isNoShowSelected);
+	    			}
+	    			else {
+	    				prefStore.setValue(prefId, !isNoShowSelected);
+	    			}
+	    		}
+	    	}
+	    }
 	}
 	
 	/**
@@ -1048,16 +1072,16 @@ public abstract class SystemPromptDialog
 			  separator= new Label(parentComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
 			  separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			}
-			if (SystemPlugin.isTheSystemRegistryActive())
+			if (RSEUIPlugin.isTheSystemRegistryActive())
 			{
-			  SystemPlugin.getTheSystemRegistry().setRunnableContext(getShell(),this);
+			  RSEUIPlugin.getTheSystemRegistry().setRunnableContext(getShell(),this);
 	          // add a dispose listener for the shell
 	          getShell().addDisposeListener(new DisposeListener() 
 	          {
 		        public void widgetDisposed(DisposeEvent e) 
 		        {
 		          //System.out.println("Inside dispose for SystemPromptDialog");
-        	      SystemPlugin.getTheSystemRegistry().clearRunnableContext();		      	
+        	      RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();		      	
 		        }
  	          });
 			}
@@ -1135,6 +1159,11 @@ public abstract class SystemPromptDialog
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Control inner = createInner(c); // allows for child classes to override.
+		
+		// if user wants the option to not show the dialog again
+		if (noShowAgainOption) {
+			noShowAgainButton = createNoShowAgainButton(c);
+		}
 
 		/*
 		 * And now is the time to auto-size if so requested...
@@ -1172,6 +1201,38 @@ public abstract class SystemPromptDialog
 		//this.parent = c;
 		//contentsComposite = c; // remember the contents part of the dialog so we can add mnemonics
 		return c; 
+	}
+	
+	/**
+	 * Set option to not show this dialog again and specify the preference that should be set
+	 * according to whether the user selects to show the dialog again or no. The caller can
+	 * query this preference to find out what the user selection is. 
+	 * @param noShowAgainOption <code>true</code> to show the option in the dialog, <code>false</code> to not show it.
+	 * @param prefStore the preference store.
+	 * @param prefId the preference id for which a boolean value will be stored according to the user's selection.
+	 * @param prefValAsSelected whether to mirror the user selection in the preference. If this is set to
+	 * <code>true</code>, then the value stored in the preference is <code>true</code> if the user selects the option,
+	 * and <code>false</code> if the user does not select the option. If this is set to <code>false</code>, then the
+	 * value stored in the preference will be <code>false</code> if the user selects the option, and <code>true</code>
+	 * if the user does not select the option
+	 */
+	public void setNoShowAgainOption(boolean noShowAgainOption, IPreferenceStore prefStore, String prefId, boolean prefValAsSelected) {
+		this.noShowAgainOption = noShowAgainOption;
+		this.prefStore = prefStore;
+		this.prefId = prefId;
+		this.prefValAsSelected = prefValAsSelected;
+	}
+	
+	/**
+	 * Creates a button to allow option to not show this dialog again.
+	 * @return the button that allows option to not show this dialog again.
+	 */
+	protected Button createNoShowAgainButton(Composite c) {
+		Button b = new Button(c, SWT.CHECK);
+		b.setText(SystemResources.RESID_DO_NOT_SHOW_MESSAGE_AGAIN_LABEL);
+		b.setToolTipText(SystemResources.RESID_DO_NOT_SHOW_MESSAGE_AGAIN_TOOLTIP);
+		b.addListener(SWT.Selection, this);
+		return b;
 	}
 	
 	/**
@@ -1366,7 +1427,7 @@ public abstract class SystemPromptDialog
 		  fMessageLine.setErrorMessage(exc);
 		else
 		{
-	     	SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
+	     	SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
 		    msg.makeSubstitution(exc);
 		    (new SystemMessageDialog(getShell(),msg)).open();
 		}

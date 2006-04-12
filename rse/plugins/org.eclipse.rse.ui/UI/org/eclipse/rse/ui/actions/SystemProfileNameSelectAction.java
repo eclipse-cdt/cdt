@@ -15,11 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemProfileManager;
 import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -43,7 +43,7 @@ public class SystemProfileNameSelectAction extends SystemBaseAction
 		setChecked(mgr.isSystemProfileActive(profile.getName()));
         setSelectionSensitive(false);
         
-		setHelp(SystemPlugin.HELPPREFIX+"actn0004");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0004");
 	}
 
 
@@ -53,7 +53,7 @@ public class SystemProfileNameSelectAction extends SystemBaseAction
 	 */
 	public void run() 
 	{
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		sr.setSystemProfileActive(profile, isChecked());
 	}		
 }

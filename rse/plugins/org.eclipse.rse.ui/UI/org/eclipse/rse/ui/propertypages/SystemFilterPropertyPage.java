@@ -15,11 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterReference;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.widgets.Composite;
@@ -45,7 +45,7 @@ public class SystemFilterPropertyPage extends SystemBasePropertyPage
 	public SystemFilterPropertyPage()
 	{
 		super();
-		SystemPlugin sp = SystemPlugin.getDefault();
+		RSEUIPlugin sp = RSEUIPlugin.getDefault();
 	}
 	/**
 	 * Create the page's GUI contents.

@@ -17,10 +17,10 @@
 package org.eclipse.rse.ui.view;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemMessageObject;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
@@ -53,17 +53,17 @@ public class SystemViewMessageAdapter
 		ISystemMessageObject msg = (ISystemMessageObject)element;
 		int type = msg.getType();
 		if (type==ISystemMessageObject.MSGTYPE_ERROR)
-          	return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ERROR_ID);
+          	return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_ERROR_ID);
         else if (type==ISystemMessageObject.MSGTYPE_CANCEL)
-          	return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_INFO_TREE_ID);
+          	return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_INFO_TREE_ID);
           	// DY:  icon vetoed by UCD
-          	// return SystemPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_CANCEL_ID);
+          	// return RSEUIPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_CANCEL_ID);
         else if (type==ISystemMessageObject.MSGTYPE_EMPTY)
-          	return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EMPTY_ID);
+          	return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EMPTY_ID);
         else if (type==ISystemMessageObject.MSGTYPE_OBJECTCREATED)
-          	return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_OK_ID);
+          	return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_OK_ID);
         else 
-          	return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_INFO_TREE_ID);
+          	return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_INFO_TREE_ID);
 	}
 	
 	/**

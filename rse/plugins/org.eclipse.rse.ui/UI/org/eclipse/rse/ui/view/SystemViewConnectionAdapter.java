@@ -21,15 +21,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.ISystemTypes;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.ISystemUserIdConstants;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemClearAllPasswordsAction;
 import org.eclipse.rse.ui.actions.SystemConnectAllSubSystemsAction;
@@ -108,8 +110,11 @@ public class SystemViewConnectionAdapter
 	    
 	    menu.add(menuGroup, clearPasswordAction);
 	    
+		IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType((((IHost)selection.getFirstElement()).getSystemType()));
+		RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
+	    
 	    // yantzi: artemis 6.0, offline support, only add work offline action for system types that support offline mode
-   	    if (SystemPlugin.getDefault().getSystemTypeEnableOffline(((IHost)selection.getFirstElement()).getSystemType()))
+   	    if (sysTypeAdapter.isEnableOffline(sysType))
 	    {    
 		    menu.add(menuGroup, offlineAction);
 	    }
@@ -118,7 +123,7 @@ public class SystemViewConnectionAdapter
 	private void addConnectOrDisconnectAction(SystemMenuManager menu, String menuGroup, IStructuredSelection selection)
 	{
 		IHost sysCon = (IHost) selection.getFirstElement();
-		ISystemRegistry sysReg = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sysReg = RSEUIPlugin.getTheSystemRegistry();
 		boolean anyConnected = sysReg.isAnySubSystemConnected(sysCon);
 	    boolean allConnected = sysReg.areAllSubSystemsConnected(sysCon);
 		if (!allConnected) menu.add(menuGroup, connectAction);
@@ -145,23 +150,23 @@ public class SystemViewConnectionAdapter
 	 * Returns an image descriptor for the image. More efficient than getting the image.
 	 * @param element The element for which an image is desired
 	 */
-	public ImageDescriptor getImageDescriptor(Object element)
-	{
-		IHost conn = (IHost)element;
-		String systype = conn.getSystemType();		
-		/* history is over! phil
-		if (systype.equals("OS/400")) // historical
-		{
-			systype = ISystemTypes.SYSTEMTYPE_ISERIES;
-			conn.setSystemType(systype);
-			try {
-			conn.getConnectionPool().save(conn);
-			} catch (Exception exc) {}
+	public ImageDescriptor getImageDescriptor(Object element) {
+		IHost connection = (IHost)element;
+		String systemTypeName = connection.getSystemType();		
+		boolean anyConnected = RSEUIPlugin.getTheSystemRegistry().isAnySubSystemConnected(connection);
+		ImageDescriptor descriptor = null;
+		IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeName);
+		if (systemType != null) {
+			RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
+			if (anyConnected) {
+				descriptor = sysTypeAdapter.getLiveImageDescriptor(systemType);
+			} else {
+				descriptor = sysTypeAdapter.getImageDescriptor(systemType); 
+			}
+		} else {
+			descriptor = ImageDescriptor.getMissingImageDescriptor();
 		}
-		*/
-		boolean anyConnected = SystemPlugin.getTheSystemRegistry().isAnySubSystemConnected(conn);		
-		ImageDescriptor imageD = SystemPlugin.getDefault().getSystemTypeImage(systype, anyConnected);
-		return imageD;
+		return descriptor;
 	}
 	
 	/**
@@ -170,7 +175,7 @@ public class SystemViewConnectionAdapter
 	public String getText(Object element)
 	{
 		IHost conn = (IHost)element;	
-		boolean qualifyNames = SystemPlugin.getTheSystemRegistry().getQualifiedHostNames();		
+		boolean qualifyNames = RSEUIPlugin.getTheSystemRegistry().getQualifiedHostNames();		
 		if (!qualifyNames)
 		  return conn.getAliasName();
 		else
@@ -234,7 +239,7 @@ public class SystemViewConnectionAdapter
 	 */
 	public Object getParent(Object element)
 	{
-		return SystemPlugin.getTheSystemRegistry();
+		return RSEUIPlugin.getTheSystemRegistry();
 	}
 	
 	/**
@@ -298,7 +303,7 @@ public class SystemViewConnectionAdapter
 		    
 		  	// add our unique property descriptors...
 		  	//idx = defaultProperties.length;
-		  	//SystemPlugin plugin = SystemPlugin.getDefault();
+		  	//RSEUIPlugin plugin = RSEUIPlugin.getDefault();
 
 		  	// profile
 		  	propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_PROFILE, SystemViewResources.RESID_PROPERTY_PROFILE_LABEL, SystemViewResources.RESID_PROPERTY_PROFILE_TOOLTIP);	      
@@ -321,13 +326,13 @@ public class SystemViewConnectionAdapter
 		  	SystemInheritableTextPropertyDescriptor userIdDescriptor =
 				   new SystemInheritableTextPropertyDescriptor(ISystemPropertyConstants.P_DEFAULTUSERID, 
 															   SystemViewResources.RESID_PROPERTY_DEFAULTUSERID_LABEL);
-		  	//SystemPlugin sp = SystemPlugin.getDefault();
+		  	//RSEUIPlugin sp = RSEUIPlugin.getDefault();
 		  	userIdDescriptor.setToggleButtonToolTipText(SystemResources.RESID_CONNECTION_DEFAULTUSERID_INHERITBUTTON_TIP);
 		  	userIdDescriptor.setEntryFieldToolTipText(SystemResources.RESID_CONNECTION_DEFAULTUSERID_TIP);
 		  	ICellEditorValidator userIdValidator = 
 					new ValidatorSpecialChar("=;",false,
-										 SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_NOTVALID),            
-										 SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY)); // false => allow empty? No.
+										 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_NOTVALID),            
+										 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY)); // false => allow empty? No.
 		  	userIdDescriptor.setValidator(userIdValidator);
 		 	propertyDescriptorArray[++idx] = userIdDescriptor;
 		  	propertyDescriptorArray[idx].setDescription(SystemViewResources.RESID_PROPERTY_DEFAULTUSERID_TOOLTIP);
@@ -375,7 +380,7 @@ public class SystemViewConnectionAdapter
 			}
 			else
 			{
-			 	boolean anyConnected = SystemPlugin.getTheSystemRegistry().isAnySubSystemConnected(conn);
+			 	boolean anyConnected = RSEUIPlugin.getTheSystemRegistry().isAnySubSystemConnected(conn);
 			  	if (anyConnected)
 			    	return SystemViewResources.RESID_PROPERTY_CONNECTIONSTATUS_CONNECTED_VALUE;
 		  		else
@@ -446,7 +451,7 @@ public class SystemViewConnectionAdapter
         //System.out.println("Inside resetPropertyValue in adapter");    
 		String property = (String)propertyObject;    	
 	    IHost conn = (IHost)propertySourceInput;   	
-	    ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+	    ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 	    	   
 	    if (property.equals(P_DEFAULTUSERID))
 	    {
@@ -474,7 +479,7 @@ public class SystemViewConnectionAdapter
     	//if (!data.getIsLocal())
     	  //whereToUpdate = USERID_LOCATION_DEFAULT_SYSTEMTYPE;
     	String userId = data.getLocalValue(); // will be "" if !data.getIsLocal(), which results in wiping out local override
-	    ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();    	
+	    ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();    	
 		sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
 		                      conn.getHostName(), conn.getDescription(), userId, whereToUpdate);
     }
@@ -486,7 +491,7 @@ public class SystemViewConnectionAdapter
     {
 		String name = (String)property;    	
 	    IHost conn = (IHost)propertySourceInput;   		   
-	    ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+	    ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 	       	
 	    if (name.equals(P_DEFAULTUSERID))
 	    {
@@ -530,8 +535,8 @@ public class SystemViewConnectionAdapter
 	    if (element instanceof IHost)
 	    {
 	    	IHost sysCon = (IHost) element;
-	    	if (sysCon.getSystemType().equals(ISystemTypes.SYSTEMTYPE_LOCAL)) return existsMoreThanOneLocalConnection();
-	        ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+	    	if (sysCon.getSystemType().equals(IRSESystemType.SYSTEMTYPE_LOCAL)) return existsMoreThanOneLocalConnection();
+	        ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 	    	return !sr.isAnySubSystemConnected((IHost)element);
 	    }
 		return true;
@@ -539,7 +544,7 @@ public class SystemViewConnectionAdapter
 	
 	protected boolean existsMoreThanOneLocalConnection()
 	{
-		IHost[] localCons = SystemPlugin.getDefault().getSystemRegistry().getHostsBySystemType(ISystemTypes.SYSTEMTYPE_LOCAL);
+		IHost[] localCons = RSEUIPlugin.getDefault().getSystemRegistry().getHostsBySystemType(IRSESystemType.SYSTEMTYPE_LOCAL);
 		return localCons.length > 1;		
 	}
 	
@@ -550,7 +555,7 @@ public class SystemViewConnectionAdapter
 	{
 		boolean ok = true;
 		IHost conn = (IHost)element;
-		ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		sr.deleteHost(conn);
 		return ok;
 	}
@@ -571,7 +576,7 @@ public class SystemViewConnectionAdapter
 	{
 		boolean ok = true;
 		IHost conn = (IHost)element;
-		ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();		
+		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();		
 		sr.renameHost(conn,name); // renames and saves to disk
 		return ok;
 	}    

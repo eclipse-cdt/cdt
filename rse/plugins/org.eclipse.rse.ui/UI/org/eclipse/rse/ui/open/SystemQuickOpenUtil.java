@@ -24,7 +24,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -88,7 +88,7 @@ public class SystemQuickOpenUtil {
 		
 		if (pageDescriptors == null) {
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IConfigurationElement[] elements = registry.getConfigurationElementsFor(SystemPlugin.PLUGIN_ID, QUICK_OPEN_PAGE_EXTENSION_POINT);
+			IConfigurationElement[] elements = registry.getConfigurationElementsFor(RSEUIPlugin.PLUGIN_ID, QUICK_OPEN_PAGE_EXTENSION_POINT);
 			pageDescriptors = createQuickOpenPageDescriptors(elements);
 		}
 			

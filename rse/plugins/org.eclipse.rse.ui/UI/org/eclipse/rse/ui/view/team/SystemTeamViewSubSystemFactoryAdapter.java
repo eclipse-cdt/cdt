@@ -251,7 +251,7 @@ public class SystemTeamViewSubSystemFactoryAdapter
 		{
 			/*
 		  	propertyDescriptorArray = new PropertyDescriptor[1];
-		 	SystemPlugin plugin = SystemPlugin.getDefault();
+		 	RSEUIPlugin plugin = RSEUIPlugin.getDefault();
 		 	int idx = 0;
 		  	// status
 		  	propertyDescriptorArray[idx] = new PropertyDescriptor(ISystemPropertyConstants.P_IS_ACTIVE, 
@@ -274,7 +274,7 @@ public class SystemTeamViewSubSystemFactoryAdapter
 		/*		
 		if (name.equals(P_IS_ACTIVE))
 		{			
-			boolean active = SystemPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
+			boolean active = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
 			if (active)
 				return SystemViewResources.RESID_PROPERTY_PROFILESTATUS_ACTIVE_LABEL);
 			else

@@ -18,7 +18,6 @@ package org.eclipse.rse.ui.actions;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.filters.ISystemFilterReference;
@@ -26,6 +25,7 @@ import org.eclipse.rse.filters.ISystemFilterStringReference;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.wizards.SystemNewConnectionWizard;
 import org.eclipse.swt.widgets.Shell;
@@ -86,12 +86,12 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction
 	                                 boolean fromPopupMenu, boolean wantIcon, ISelectionProvider sp) 
 	{
 		super(label, tooltip, 
-		      wantIcon ? SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWCONNECTION_ID) : null ,
+		      wantIcon ? RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWCONNECTION_ID) : null ,
 		      shell);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);
 		this.fromPopupMenu = fromPopupMenu;
 		this.sp = sp;
-		setHelp(SystemPlugin.HELPPREFIX+"actn0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0000");
 	}
 
 	/**

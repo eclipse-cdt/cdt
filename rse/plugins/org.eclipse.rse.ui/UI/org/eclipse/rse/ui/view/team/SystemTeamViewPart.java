@@ -55,7 +55,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilter;
@@ -74,6 +73,7 @@ import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
 import org.eclipse.rse.ui.ISystemRenameTarget;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemCollapseAllAction;
@@ -147,7 +147,7 @@ public class SystemTeamViewPart
 	protected SystemTeamViewRefreshAllAction toolBarRefreshAllAction, menuRefreshAllAction;
 	protected SystemCollapseAllAction collapseAllAction;
 	
-	protected ISystemViewElementAdapter profileAdapter = SystemPlugin.getDefault().getSystemViewAdapterFactory().getProfileAdapter();
+	protected ISystemViewElementAdapter profileAdapter = RSEUIPlugin.getDefault().getSystemViewAdapterFactory().getProfileAdapter();
 
 	// remember-state variables...	
 	private IMemento                 fMemento;
@@ -283,7 +283,7 @@ public class SystemTeamViewPart
 		// update F1 help
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IF1HelpContextID.NAV01);
 
-		SystemPlugin.getTheSystemRegistry().addSystemModelChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().addSystemModelChangeListener(this);
 		
 		treeViewer.setAutoExpandLevel(2); // dang, it doesn't work!
 
@@ -490,6 +490,7 @@ public class SystemTeamViewPart
 		{
 			// Scrub unrelated menu items
 			scrubOtherContributions(menu);
+
 			createStandardGroups(menu);			
 			if (selection.size() == 1)
 		      fillProjectContextMenu(ourMenu, selection);
@@ -708,8 +709,8 @@ public class SystemTeamViewPart
 		{
 		  	deleteAction = new SystemCommonDeleteAction(getShell(),this);
 		  	deleteAction.setViewer(getViewer());
-		  	deleteAction.setHelp(SystemPlugin.HELPPREFIX+"actndlpr");
-		  	deleteAction.setDialogHelp(SystemPlugin.HELPPREFIX+"ddltprfl");
+		  	deleteAction.setHelp(RSEUIPlugin.HELPPREFIX+"actndlpr");
+		  	deleteAction.setDialogHelp(RSEUIPlugin.HELPPREFIX+"ddltprfl");
 		  	deleteAction.setPromptLabel(SystemResources.RESID_DELETE_PROFILES_PROMPT);
 		}
 		deleteAction.setSelection(selection);
@@ -752,7 +753,7 @@ public class SystemTeamViewPart
 
 	public void dispose() 
 	{
-		SystemPlugin.getTheSystemRegistry().removeSystemModelChangeListener(this);		
+		RSEUIPlugin.getTheSystemRegistry().removeSystemModelChangeListener(this);		
 		super.dispose();
 	}
 
@@ -1007,7 +1008,7 @@ public class SystemTeamViewPart
 		boolean ok = true;
 		IStructuredSelection selection= (IStructuredSelection)getStructuredSelection();		
 		Iterator elements= selection.iterator();
-		ISystemProfileManager mgr = SystemPlugin.getTheSystemRegistry().getSystemProfileManager();
+		ISystemProfileManager mgr = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager();
 		int nbrActiveProfiles = mgr.getActiveSystemProfiles().length;
 		int activeCount = 0;
 		while (ok && elements.hasNext())
@@ -1374,7 +1375,7 @@ public class SystemTeamViewPart
 		if (memento == null)
 		  return null;
 
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		ISystemProfile  profile = null;
 		IProject       project = null; 
 		SystemTeamViewCategoryNode category = null;
@@ -1404,7 +1405,7 @@ public class SystemTeamViewPart
 					profile = sr.getSystemProfile(token);
 					break;
 				case 3: 					
-					SystemTeamViewProfileAdapter profileAdapter = SystemPlugin.getDefault().getSystemViewAdapterFactory().getProfileAdapter();
+					SystemTeamViewProfileAdapter profileAdapter = RSEUIPlugin.getDefault().getSystemViewAdapterFactory().getProfileAdapter();
 				    category = profileAdapter.restoreCategory(profile, token);
 				    //System.out.println("Restored category: "+(category==null?"null":category.getLabel()));					
 					break;

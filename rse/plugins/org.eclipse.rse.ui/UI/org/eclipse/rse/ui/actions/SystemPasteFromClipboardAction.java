@@ -26,12 +26,12 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemDragDropAdapter;
@@ -65,7 +65,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 	{
 		super(SystemResources.ACTION_PASTE_LABEL, 
 			  PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE),
-			  //SystemPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_PASTE_ID), 
+			  //RSEUIPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_PASTE_ID), 
 			  shell);
 		_clipboard = clipboard;
 		_srcType = SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE;
@@ -73,7 +73,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 
 		allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);
-		setHelp(SystemPlugin.HELPPREFIX + "actn0117");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0117");
 	}
 
 	public void run()
@@ -87,7 +87,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 	
 	private void pasteClipboardToSelection(Object target)
 	{
-		List srcObjects = SystemPlugin.getTheSystemRegistry().getSystemClipboardObjects(_srcType);
+		List srcObjects = RSEUIPlugin.getTheSystemRegistry().getSystemClipboardObjects(_srcType);
 		if (srcObjects.size() > 0)
 		{
 			// do the transfer
@@ -137,7 +137,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 				}
 			}
 			runnable.schedule();
-			SystemPlugin.getTheSystemRegistry().clearRunnableContext();
+			RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();
 		}
 		// clear clipboard
 		// _clipboard.setContents(new Object[] { null }, new Transfer[] { PluginTransfer.getInstance()});
@@ -314,7 +314,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 	
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = SystemPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;
@@ -323,13 +323,13 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 		{
 			/*
 			// for other cases, use statusbar
-        	IWorkbenchWindow win = SystemPlugin.getActiveWorkbenchWindow();
+        	IWorkbenchWindow win = RSEUIPlugin.getActiveWorkbenchWindow();
         	if (win != null)
         	{
-        		Shell winShell = SystemPlugin.getActiveWorkbenchShell();
+        		Shell winShell = RSEUIPlugin.getActiveWorkbenchShell();
                	if (winShell != null && !winShell.isDisposed() && winShell.isVisible())
         		{
-        			SystemPlugin.logInfo("Using active workbench window as runnable context");
+        			RSEUIPlugin.logInfo("Using active workbench window as runnable context");
         			shell = winShell;
         			return win;	
         		}	
@@ -341,7 +341,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
      */
       
 			irc = new ProgressMonitorDialog(shell);
-			SystemPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);
+			RSEUIPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);
 			return irc;
 		}
 	}

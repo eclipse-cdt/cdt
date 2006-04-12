@@ -16,11 +16,16 @@
 
 package org.eclipse.rse.internal.persistence;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilter;
@@ -35,11 +40,10 @@ import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemHostPool;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemProfileManager;
-import org.eclipse.rse.persistence.DefaultRSEPersistenceProvider;
 import org.eclipse.rse.persistence.IRSEPersistenceManager;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
-
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class RSEPersistenceManager implements IRSEPersistenceManager
 {
@@ -47,11 +51,12 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	public static final int STATE_IMPORTING = 1;
 	public static final int STATE_EXPORTING = 2;
 	
+	private Map loadedProviders = new HashMap(10);
+	
 	private int _currentState = STATE_NONE;
 	
 	private RSEDOMExporter _exporter;
 	private RSEDOMImporter _importer;
-	private IRSEPersistenceProvider _persistenceProvider;
 	
 	public RSEPersistenceManager()
 	{
@@ -59,18 +64,57 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 		_importer = RSEDOMImporter.getInstance();
 	}
 	
-	public void registerRSEPersistenceProvider(IRSEPersistenceProvider provider)
+	public void registerRSEPersistenceProvider(String id, IRSEPersistenceProvider provider)
 	{
-		_persistenceProvider = provider;
+		loadedProviders.put(id,	provider);
 	}
 	
-	public IRSEPersistenceProvider getRSEPersistanceProvider()
-	{
-		if (_persistenceProvider == null)
-		{
-			_persistenceProvider = new DefaultRSEPersistenceProvider();
+	/**
+	 * Returns the persistence provider denoted by the id. Only one instance of this 
+	 * persistence provider is created.
+	 * @param id The id of the persistence provider, as denoted by the id attribute on its declaration.
+	 * @return an IRSEPersistenceProvider which may be null if this id is not found.
+	 */
+	public IRSEPersistenceProvider getRSEPersistenceProvider(String id) {
+		IRSEPersistenceProvider provider = (IRSEPersistenceProvider) loadedProviders.get(id);
+		if (provider == null) {
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IConfigurationElement[] providerCandidates = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "persistenceProviders");
+			for (int j = 0; j < providerCandidates.length; j++) {
+				IConfigurationElement providerCandidate = providerCandidates[j];
+				if (providerCandidate.getName().equals("persistenceProvider")) {
+					String candidateId = providerCandidate.getAttribute("id");
+					if (candidateId != null) {
+						if (candidateId.equals(id)) {
+							try {
+								provider = (IRSEPersistenceProvider) providerCandidate.createExecutableExtension("class");
+							} catch (CoreException e) {
+								RSEUIPlugin.logError("Exception loading persistence provider", e); // TODO: dwd nls
+							}
+						}
+					} else {
+						RSEUIPlugin.logError("Missing id attribute in persistenceProvider element"); // TODO: dwd nls
+					}
+				} else {
+					RSEUIPlugin.logError("Invalid element in persistenceProviders extension point"); // TODO: dwd nls
+				}
+			}
+			if (provider == null) {
+				RSEUIPlugin.logError("Persistence provider not found."); // TODO: dwd nls
+			}
+			loadedProviders.put(id, provider); // even if provider is null
 		}
-		return _persistenceProvider;
+		return provider;
+	}
+	
+	/**
+	 * @return the default IRSEPersistenceProvider for this installation.
+	 * TODO: need to determine what this is. Having more than one is problematic.
+	 */
+	public IRSEPersistenceProvider getRSEPersistenceProvider()
+	{
+		IRSEPersistenceProvider provider = getRSEPersistenceProvider("org.eclipse.rse.persistence.SerializingProvider");
+		return provider;
 	}
 	
 	
@@ -147,7 +191,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 		 * SystemConnection connection = (SystemConnection)iList.next(); if
 		 * (connection != null) { if
 		 * (!connection.getAliasName().equalsIgnoreCase(connectionName)) {
-		 * SystemPlugin.logDebugMessage(this.getClass().getName(),"Incorrect
+		 * RSEUIPlugin.logDebugMessage(this.getClass().getName(),"Incorrect
 		 * alias name found in connections.xmi file for " + connectionName+".
 		 * Name was reset"); connection.setAliasName(connectionName); // just in
 		 * case! } internalAddConnection(connection); } return connection;
@@ -173,7 +217,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 		}
 		return true;
 		*/
-		return false; // all persistance should be at profile level
+		return false; // all persistence should be at profile level
 	}
 
 	public boolean commit(ISystemFilterPoolManager filterPoolManager)
@@ -199,7 +243,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	public boolean restore(ISystemFilterPool filterPool)
 	{
 		System.out.println("restore filterpool");
-		// TODO Auto-generated method stub
+		// TODO: dwd function
 		return false;
 	}
 
@@ -207,6 +251,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	 public boolean commit(ISystemFilter filter)
    {
 		 System.out.println("commit filter");
+		 // TODO: dwd function
 		 /*
 		 if (filter.isDirty())
 		 {
@@ -226,7 +271,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	public ISystemFilterPool restoreFilterPool(String name)
 	{
 		System.out.println("restore filter pool "+name);
-		// FIXME
+		// TODO: dwd function
 		return null;
 	}
 
@@ -239,7 +284,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 			try
 			{
 				// commit everything for now
-				ISystemProfileManager mgr = SystemPlugin.getTheSystemRegistry().getSystemProfileManager();
+				ISystemProfileManager mgr = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager();
 				commit(mgr);
 				subSystem.setDirty(false);
 			}
@@ -287,7 +332,6 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	{
 		if (profile != null)
 		{
-			String name = profile.getName();
 			return save(profile, false);			
 		}
 		return false;
@@ -370,10 +414,10 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 			if (dom.needsSave() && !dom.saveScheduled())
 			{
 		
-				IProject project = SystemResourceManager.getRemoteSystemsProject();
+//				IProject project = SystemResourceManager.getRemoteSystemsProject();
 					
-				SaveRSEDOMJob job = new SaveRSEDOMJob(this, dom, getRSEPersistanceProvider());
-				//job.setRule(project);
+				SaveRSEDOMJob job = new SaveRSEDOMJob(this, dom, getRSEPersistenceProvider());
+//				job.setRule(project);
 				job.schedule();
 				dom.markSaveScheduled();
 			}
@@ -412,7 +456,13 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	
 	public RSEDOM importRSEDOM(ISystemProfileManager profileManager, String domName)
 	{
-		RSEDOM dom = getRSEPersistanceProvider().loadRSEDOM(profileManager, domName, null);
+		RSEDOM dom = null;
+		IRSEPersistenceProvider provider = getRSEPersistenceProvider();
+		if (provider != null) {
+			dom = provider.loadRSEDOM(profileManager, domName, null);
+		} else {
+			RSEUIPlugin.logError("Persistence provider is not available."); // TODO: dwd NLS
+		}
 		return dom;
 	}
 

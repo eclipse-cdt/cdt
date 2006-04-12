@@ -21,7 +21,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemProfile;
@@ -29,6 +28,7 @@ import org.eclipse.rse.model.ISystemProfileManager;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.dialogs.SystemCopyProfileDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -64,10 +64,10 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
 			  PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY), 
 			  shell);
 		mgr = SystemProfileManager.getSystemProfileManager();
-		sr = SystemPlugin.getTheSystemRegistry();
+		sr = RSEUIPlugin.getTheSystemRegistry();
 		setSelectionSensitive(true);
         allowOnMultipleSelection(false);
-		setHelp(SystemPlugin.HELPPREFIX+"actndupr");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actndupr");
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
 	 */
 	protected IRunnableContext getRunnableContext()
 	{
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IRunnableContext irc = sr.getRunnableContext();
 		if (irc == null)
 		  irc = new ProgressMonitorDialog(getShell());
@@ -180,7 +180,7 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
      */
     public static String getCopyingMessage(String oldName, String newName)
     {
-    	SystemMessage msg = SystemPlugin.getPluginMessage(MSG_COPY_PROGRESS);
+    	SystemMessage msg = RSEUIPlugin.getPluginMessage(MSG_COPY_PROGRESS);
     	msg.makeSubstitution(oldName,newName);
     	return msg.getLevelOneText();
     }
@@ -205,7 +205,7 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
      */
     protected void showOperationErrorMessage(Shell shell, Throwable exc)
     {
-    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, SystemPlugin.getPluginMessage(MSG_OPERATION_FAILED).makeSubstitution(exc.getMessage()));
+    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(MSG_OPERATION_FAILED).makeSubstitution(exc.getMessage()));
     	msgDlg.open();
         SystemBasePlugin.logError("Copy profile operation failed",exc);
     }	
@@ -216,7 +216,7 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
      */
     protected void showOperationCancelledMessage(Shell shell)
     {
-    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, SystemPlugin.getPluginMessage(MSG_OPERATION_CANCELLED));
+    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(MSG_OPERATION_CANCELLED));
     	msgDlg.open();
     }	
 

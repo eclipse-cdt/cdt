@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
@@ -31,6 +30,7 @@ import org.eclipse.rse.shells.ui.actions.SystemExportShellOutputAction;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.SubsystemFactoryAdapter;
 import org.eclipse.swt.widgets.Shell;
 
@@ -117,7 +117,7 @@ public class ShellServiceSubSystemFactoryAdapter extends SubsystemFactoryAdapter
     {
         if (_activeShellImageDescriptor == null)
         {
-            _activeShellImageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELLLIVE_ID);
+            _activeShellImageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELLLIVE_ID);
             
         }
         return _activeShellImageDescriptor;
@@ -130,7 +130,7 @@ public class ShellServiceSubSystemFactoryAdapter extends SubsystemFactoryAdapter
     {
         if (_inactiveShellImageDescriptor == null)
         {
-            _inactiveShellImageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID);
+            _inactiveShellImageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID);
         }
         return _inactiveShellImageDescriptor;
     }

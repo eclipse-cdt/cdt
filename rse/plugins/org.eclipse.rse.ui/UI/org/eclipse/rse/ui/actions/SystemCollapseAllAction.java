@@ -16,13 +16,13 @@
 
 package org.eclipse.rse.ui.actions;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -43,14 +43,14 @@ public class SystemCollapseAllAction extends SystemBaseAction
 	public SystemCollapseAllAction(Shell parent) 
 	{
 		super(SystemResources.ACTION_COLLAPSE_ALL_LABEL, SystemResources.ACTION_COLLAPSE_ALL_TOOLTIP,
-				SystemPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_COLLAPSEALL_ID), // D54577
+				RSEUIPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_COLLAPSEALL_ID), // D54577
 		      	parent);
-		setHoverImageDescriptor(SystemPlugin.getDefault().getImageDescriptorFromIDE("elcl16/collapseall.gif")); //$NON-NLS-1$		      	
+		setHoverImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptorFromIDE("elcl16/collapseall.gif")); //$NON-NLS-1$		      	
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_EXPAND); // should never be used       
         setSelectionSensitive(false);
         
-		setHelp(SystemPlugin.HELPPREFIX+"actn0023");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0023");
 		setAccelerator(SWT.CTRL | '-');
 	}
 
@@ -68,7 +68,7 @@ public class SystemCollapseAllAction extends SystemBaseAction
 	 */
 	public void run() 
 	{
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		if ((viewer != null) && (viewer instanceof ISystemResourceChangeListener))
 		{			
 		  sr.fireEvent((ISystemResourceChangeListener)viewer,

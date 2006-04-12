@@ -24,13 +24,15 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.IndicatorException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -40,7 +42,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -48,7 +52,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  */
-public class SystemMessageDialog extends ErrorDialog {
+public class SystemMessageDialog extends ErrorDialog implements Listener {
 
 	/**
 	 * Reserve room for this many list items.
@@ -145,7 +149,15 @@ public class SystemMessageDialog extends ErrorDialog {
 	/**
 	 *  whether or not to open the dialog with the yes/no/cancel buttons
 	 */
-	private boolean yesNoCancelButtons=false;	
+	private boolean yesNoCancelButtons=false;
+	
+	protected boolean noShowAgainOption;
+	protected Button noShowAgainButton;
+	
+	// preference stuff for option to not show the dialog again
+	protected IPreferenceStore prefStore;
+	protected String prefId;
+	protected boolean prefValAsSelected;
 	
 	/**
 	 * Creates an error dialog.
@@ -299,6 +311,15 @@ public class SystemMessageDialog extends ErrorDialog {
 			GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 			messageArea.setLayoutData(data);
+		}
+		
+		// if user wants the option to not show the dialog again
+		if (noShowAgainOption) {
+			Label l = new Label(composite, SWT.NONE);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER, GridData.VERTICAL_ALIGN_CENTER));
+			noShowAgainButton = createNoShowAgainButton(composite);
+			GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
+			noShowAgainButton.setLayoutData(data);
 		}
 	
 //		composite.pack(true);
@@ -598,7 +619,7 @@ public class SystemMessageDialog extends ErrorDialog {
 	 */
 	public static void displayErrorMessage(Shell shell, String msgText)
 	{
-		SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E);
+		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E);
 		msg.makeSubstitution(msgText);
 		displayErrorMessage(shell,msg);
 	}	
@@ -608,7 +629,7 @@ public class SystemMessageDialog extends ErrorDialog {
 	 */
 	public static void displayMessage(Shell shell, String msgText)
 	{
-		SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_I);
+		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_I);
 		msg.makeSubstitution(msgText);
 		displayErrorMessage(shell,msg);
 	}	
@@ -629,7 +650,7 @@ public class SystemMessageDialog extends ErrorDialog {
 	 */
 	public static void displayHostErrorMessage(Shell shell, String hostMsg)
 	{
-		SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E);
+		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E);
 		msg.makeSubstitution(hostMsg);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		msgDlg.open();
@@ -641,7 +662,7 @@ public class SystemMessageDialog extends ErrorDialog {
 	 */
 	public static void displayHostErrorMessage(Shell shell, String hostMsg, String levelTwo)
 	{
-		SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E_HELP);
+		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_E_HELP);
 		msg.makeSubstitution(hostMsg,levelTwo);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		msgDlg.open();
@@ -652,7 +673,7 @@ public class SystemMessageDialog extends ErrorDialog {
 	 */
 	public static void displayHostWarningMessage(Shell shell, String hostMsg)
 	{
-		SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_W);
+		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_W);
 		msg.makeSubstitution(hostMsg);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		msgDlg.open();
@@ -664,7 +685,7 @@ public class SystemMessageDialog extends ErrorDialog {
 	 */
 	public static void displayHostWarningMessage(Shell shell, String hostMsg, String levelTwo)
 	{
-		SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_W_HELP);
+		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_GENERIC_W_HELP);
 		msg.makeSubstitution(hostMsg,levelTwo);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		msgDlg.open();
@@ -690,7 +711,7 @@ public class SystemMessageDialog extends ErrorDialog {
 	 */
 	public static SystemMessage getExceptionMessage(Shell shell, Exception exc)
 	{
-		SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_OCCURRED);
+		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_OCCURRED);
 		msg.makeSubstitution(exc);
 		return msg;
 	}
@@ -724,4 +745,60 @@ public class SystemMessageDialog extends ErrorDialog {
 		return yes;
 	}
 
+	/**
+	 * Set option to not show this dialog again and specify the preference that should be set
+	 * according to whether the user selects to show the dialog again or no. The caller can
+	 * query this preference to find out what the user selection is. 
+	 * @param noShowAgainOption <code>true</code> to show the option in the dialog, <code>false</code> to not show it.
+	 * @param prefStore the preference store.
+	 * @param prefId the preference id for which a boolean value will be stored according to the user's selection.
+	 * @param prefValAsSelected whether to mirror the user selection in the preference. If this is set to
+	 * <code>true</code>, then the value stored in the preference is <code>true</code> if the user selects the option,
+	 * and <code>false</code> if the user does not select the option. If this is set to <code>false</code>, then the
+	 * value stored in the preference will be <code>false</code> if the user selects the option, and <code>true</code>
+	 * if the user does not select the option
+	 */
+	public void setNoShowAgainOption(boolean noShowAgainOption, IPreferenceStore prefStore, String prefId, boolean prefValAsSelected) {
+		this.noShowAgainOption = noShowAgainOption;
+		this.prefStore = prefStore;
+		this.prefId = prefId;
+		this.prefValAsSelected = prefValAsSelected;
+	}
+	
+	/**
+	 * Creates a button to allow option to not show this dialog again.
+	 * @return the button that allows option to not show this dialog again.
+	 */
+	protected Button createNoShowAgainButton(Composite c) {
+		Button b = new Button(c, SWT.CHECK);
+		b.setText(SystemResources.RESID_DO_NOT_SHOW_MESSAGE_AGAIN_LABEL);
+		b.setToolTipText(SystemResources.RESID_DO_NOT_SHOW_MESSAGE_AGAIN_TOOLTIP);
+		b.addListener(SWT.Selection, this);
+		return b;
+	}
+
+	/**
+	 * Handles events generated by controls on this page.
+	 * Should be overridden by child.
+	 * Only public because of interface requirement!
+	 */
+	public void handleEvent(Event e)
+	{
+	    if (e.type == SWT.Selection) {
+	    	
+	    	if (e.widget == noShowAgainButton) {
+	    		boolean isNoShowSelected = noShowAgainButton.getSelection();
+	    		
+	    		if ((prefStore != null) && (prefId != null)) {
+	    			
+	    			if (prefValAsSelected) {
+	    				prefStore.setValue(prefId, isNoShowSelected);
+	    			}
+	    			else {
+	    				prefStore.setValue(prefId, !isNoShowSelected);
+	    			}
+	    		}
+	    	}
+	    }
+	}
 }

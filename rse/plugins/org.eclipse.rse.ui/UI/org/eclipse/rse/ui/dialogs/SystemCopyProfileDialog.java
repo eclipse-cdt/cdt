@@ -17,10 +17,10 @@
 package org.eclipse.rse.ui.dialogs;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -71,9 +71,9 @@ public class SystemCopyProfileDialog extends SystemPromptDialog
 		{		
 		   setInputObject(profile);
 		}
-		nameValidator = SystemPlugin.getTheSystemRegistry().getSystemProfileManager().getProfileNameValidator((String)null);		
+		nameValidator = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().getProfileNameValidator((String)null);		
 		//pack();
-		setHelp(SystemPlugin.HELPPREFIX+"drnp0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"drnp0000");
 	}
 	/**
 	 * Create message line. Intercept so we can set msg line of form.
@@ -120,10 +120,10 @@ public class SystemCopyProfileDialog extends SystemPromptDialog
 			composite_prompts, nbrColumns, null, SystemResources.RESID_NEWPROFILE_MAKEACTIVE_LABEL, SystemResources.RESID_NEWPROFILE_MAKEACTIVE_TOOLTIP);
 
 		// SET HELP CONTEXT IDS...                                                    
-		//SystemWidgetHelpers.setHelp(newName, SystemPlugin.HELPPREFIX+"drnp0002", SystemPlugin.HELPPREFIX+"drnp0000");
-		SystemWidgetHelpers.setHelp(newName, SystemPlugin.HELPPREFIX+"drnp0002");
-		//SystemWidgetHelpers.setHelp(makeActiveCB, SystemPlugin.HELPPREFIX+"drnp0003", SystemPlugin.HELPPREFIX+"drnp0000");
-		SystemWidgetHelpers.setHelp(makeActiveCB, SystemPlugin.HELPPREFIX+"drnp0003");
+		//SystemWidgetHelpers.setHelp(newName, RSEUIPlugin.HELPPREFIX+"drnp0002", RSEUIPlugin.HELPPREFIX+"drnp0000");
+		SystemWidgetHelpers.setHelp(newName, RSEUIPlugin.HELPPREFIX+"drnp0002");
+		//SystemWidgetHelpers.setHelp(makeActiveCB, RSEUIPlugin.HELPPREFIX+"drnp0003", RSEUIPlugin.HELPPREFIX+"drnp0000");
+		SystemWidgetHelpers.setHelp(makeActiveCB, RSEUIPlugin.HELPPREFIX+"drnp0003");
 		                  
 	    initialize();
 			

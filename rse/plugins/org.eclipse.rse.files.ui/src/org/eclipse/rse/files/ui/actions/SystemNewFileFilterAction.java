@@ -15,12 +15,12 @@
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.actions;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.SystemFileFilterStringEditPane;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
 import org.eclipse.rse.ui.filters.dialogs.SystemNewFilterWizard;
 import org.eclipse.swt.widgets.Shell;
@@ -43,12 +43,12 @@ public class SystemNewFileFilterAction
 
 	{
 		super(shell, parentPool, SystemFileResources.ACTION_NEWFILTER_LABEL, SystemFileResources.ACTION_NEWFILTER_TOOLTIP,
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTER_ID));
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTER_ID));
 
-        //setHelp(SystemPlugin.HELPPREFIX+"anff0000");
-        //setDialogHelp(SystemPlugin.HELPPREFIX+"wnff0000");
-		setHelp(SystemPlugin.HELPPREFIX+"actn0042");
-		setDialogHelp(SystemPlugin.HELPPREFIX+"wnfr0000");       
+        //setHelp(RSEUIPlugin.HELPPREFIX+"anff0000");
+        //setDialogHelp(RSEUIPlugin.HELPPREFIX+"wnff0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0042");
+		setDialogHelp(RSEUIPlugin.HELPPREFIX+"wnfr0000");       
 	}		
 
 	/**
@@ -74,7 +74,7 @@ public class SystemNewFileFilterAction
 	{		
 		// configuration that used to only be possible via subclasses...
 		wizard.setWizardPageTitle(SystemFileResources.RESID_NEWFILEFILTER_PAGE1_TITLE);
-	  	wizard.setWizardImage(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERWIZARD_ID));
+	  	wizard.setWizardImage(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERWIZARD_ID));
 		wizard.setPage1Description(SystemFileResources.RESID_NEWFILEFILTER_PAGE1_DESCRIPTION);
 		wizard.setFilterStringEditPane(new SystemFileFilterStringEditPane(wizard.getShell()));		
 	}

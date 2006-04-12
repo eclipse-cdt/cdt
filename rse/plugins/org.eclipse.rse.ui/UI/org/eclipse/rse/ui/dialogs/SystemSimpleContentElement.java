@@ -18,8 +18,8 @@ package org.eclipse.rse.ui.dialogs;
 import java.util.Vector;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
  * When we populate a TreeViewer in a dialog, we need a simple
@@ -249,7 +249,7 @@ public class SystemSimpleContentElement
     	if (imageDescriptor != null)
     	  return imageDescriptor;
     	else
-    	  return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FOLDER_ID);
+    	  return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FOLDER_ID);
     	  //return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
     }    
 

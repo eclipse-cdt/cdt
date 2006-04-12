@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.dialogs;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.SWT;
@@ -70,7 +70,7 @@ public class SystemWorkWithHistoryDialog extends SystemPromptDialog implements I
 		historyInput = history;
 
 		//pack();
-        setHelp(SystemPlugin.HELPPREFIX+"dwwh0000");
+        setHelp(RSEUIPlugin.HELPPREFIX+"dwwh0000");
         setInitialOKButtonEnabledState(false);     //d41471
 	}
 

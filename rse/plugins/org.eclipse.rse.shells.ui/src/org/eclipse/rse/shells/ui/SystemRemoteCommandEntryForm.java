@@ -16,13 +16,13 @@
 
 package org.eclipse.rse.shells.ui;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISubSystemFactoryCategories;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.subsystems.files.core.model.ISystemRemoteCommand;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.widgets.SystemHostCombo;
 import org.eclipse.swt.SWT;
@@ -123,7 +123,7 @@ public class SystemRemoteCommandEntryForm extends Composite
         // ----------------------------------------
 		// register with system registry for events
         // ----------------------------------------
-		SystemPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
 	}
 	
 	private void runCommand()
@@ -134,7 +134,7 @@ public class SystemRemoteCommandEntryForm extends Composite
 			IHost sysConn = sysConnCombo.getHost();
 			if ( sysConn != null )
 			{
-				//SubSystem[] cmdSubSystems = SystemPlugin.getDefault().getSystemRegistry().getSubSystemsBySubSystemFactoryCategory(ISubSystemFactoryCategories.SUBSYSTEM_CATEGORY_CMDS, sysConn);
+				//SubSystem[] cmdSubSystems = RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemsBySubSystemFactoryCategory(ISubSystemFactoryCategories.SUBSYSTEM_CATEGORY_CMDS, sysConn);
 				IRemoteCmdSubSystem[] cmdSubSystems = RemoteCommandHelpers.getCmdSubSystems(sysConn);
 				IRemoteCmdSubSystem currSubSystem = null;
 				String subSystemName = subSysCombo.getText();
@@ -208,7 +208,7 @@ public class SystemRemoteCommandEntryForm extends Composite
 		IHost sysConn = sysConnCombo.getHost();
 		if ( sysConn != null )
 		{
-			//subSystems = SystemPlugin.getDefault().getSystemRegistry().getSubSystemsBySubSystemFactoryCategory(ISubSystemFactoryCategories.SUBSYSTEM_CATEGORY_CMDS, sysConn);
+			//subSystems = RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemsBySubSystemFactoryCategory(ISubSystemFactoryCategories.SUBSYSTEM_CATEGORY_CMDS, sysConn);
 			subSystems = RemoteCommandHelpers.getCmdSubSystems(sysConn);
 			for (int i = 0; i < subSystems.length; i++)
 			{

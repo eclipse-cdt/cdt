@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.model.SystemSignonInformation;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -213,7 +214,7 @@ public class PasswordPersistenceManager {
 	 */
 	public void remove(String systemtype, String hname, String userid)
 	{
-		String hostname = hname;//SystemPlugin.getQualifiedHostName(hname);
+		String hostname = hname;//RSEUIPlugin.getQualifiedHostName(hname);
 		// Convert userid to upper case if required
 		if (!isUserIDCaseSensitive(systemtype))
 		{
@@ -262,7 +263,7 @@ public class PasswordPersistenceManager {
 	 */
 	public boolean passwordExists(String systemtype, String hname, String userid, boolean checkDefault)
 	{
-		String hostname = hname;//SystemPlugin.getQualifiedHostName(hname);
+		String hostname = hname;//RSEUIPlugin.getQualifiedHostName(hname);
 		return (find(systemtype, hostname, userid) != null);
 	}
 
@@ -470,8 +471,8 @@ public class PasswordPersistenceManager {
 							// uid matches, check if hosts are the same
 							if (khostname.startsWith(phostname) || phostname.startsWith(khostname))
 							{
-								String qkhost = SystemPlugin.getQualifiedHostName(khostname);
-								String qphost = SystemPlugin.getQualifiedHostName(phostname);
+								String qkhost = RSEUIPlugin.getQualifiedHostName(khostname);
+								String qphost = RSEUIPlugin.getQualifiedHostName(phostname);
 								if (qkhost.equals(qphost))
 								{
 									password = (String)passwords.get(key);
@@ -520,8 +521,8 @@ public class PasswordPersistenceManager {
 						// uid matches, check if hosts are the same
 						if (khostname.startsWith(phostname) || phostname.startsWith(khostname))
 						{
-							String qkhost = SystemPlugin.getQualifiedHostName(khostname);
-							String qphost = SystemPlugin.getQualifiedHostName(phostname);
+							String qkhost = RSEUIPlugin.getQualifiedHostName(khostname);
+							String qphost = RSEUIPlugin.getQualifiedHostName(phostname);
 							if (qkhost.equals(qphost))
 							{
 								password = (String)passwords.get(key);
@@ -547,7 +548,7 @@ public class PasswordPersistenceManager {
 	 */
 	public SystemSignonInformation find(String systemtype, String hname, String userid, boolean checkDefault)
 	{
-		String hostname = hname;//SystemPlugin.getQualifiedHostName(hname);
+		String hostname = hname;//RSEUIPlugin.getQualifiedHostName(hname);
 		// Convert userid to upper case if required
 		if (!isUserIDCaseSensitive(systemtype))
 		{
@@ -581,7 +582,7 @@ public class PasswordPersistenceManager {
 	 */
 	private String getPasswordKey(String hname, String userid)
 	{
-		String hostname = hname;//SystemPlugin.getQualifiedHostName(hname);
+		String hostname = hname;//RSEUIPlugin.getQualifiedHostName(hname);
 		StringBuffer buffer = new StringBuffer(hostname);
 		buffer.append("//");
 		buffer.append(userid);
@@ -607,7 +608,7 @@ public class PasswordPersistenceManager {
 	{
 		if (DEFAULT_SYSTEM_TYPE.equals(systemType))
 		{
-			IPreferenceStore store = SystemPlugin.getDefault().getPreferenceStore();
+			IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 			systemType = store.getString(ISystemPreferencesConstants.SYSTEMTYPE);
 		}
 	

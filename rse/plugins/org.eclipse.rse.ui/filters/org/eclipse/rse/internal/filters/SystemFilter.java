@@ -23,7 +23,6 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterConstants;
 import org.eclipse.rse.filters.ISystemFilterContainer;
@@ -35,6 +34,7 @@ import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.filters.SystemFilterSimple;
 import org.eclipse.rse.internal.references.SystemReferencedObject;
 import org.eclipse.rse.references.ISystemReferencedObject;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
 
@@ -65,7 +65,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
     protected ISystemFilterString[]               filterStringObjectArray = null;    
     protected Vector                             filterStringVector = null;
     
-    // persistance
+    // persistence
     protected boolean 							_isDirty = true;
     protected boolean 							_wasRestored = false;
     
@@ -1383,7 +1383,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	
 	public boolean commit()
 	{
-		return SystemPlugin.getThePersistenceManager().commit(this);
+		return RSEUIPlugin.getThePersistenceManager().commit(this);
 	}
 	
 	public boolean wasRestored() 

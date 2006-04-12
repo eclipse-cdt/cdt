@@ -15,12 +15,12 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.subsystems.files.core.model.ISystemFileAPIProvider;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.SystemAbstractAPIProvider;
 
 
@@ -45,7 +45,7 @@ public class SystemFileAPIProviderImpl
 	{
 		super();
 		this.directoryMode = directoryMode;
-		sr = SystemPlugin.getTheSystemRegistry();
+		sr = RSEUIPlugin.getTheSystemRegistry();
 	}
 	
 	/**

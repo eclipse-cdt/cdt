@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemRemoteObjectMatcher;
 import org.eclipse.rse.files.ui.ISystemAddFileListener;
 import org.eclipse.rse.filters.ISystemFilter;
@@ -46,6 +45,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConf
 import org.eclipse.rse.subsystems.files.core.util.SystemRemoteFileMatcher;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -168,8 +168,8 @@ public class SystemSelectRemoteFileOrFolderForm
 		this.fileMode = fileMode;
 		callerInstanceOfWizardPage = (caller instanceof WizardPage);
 		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);				
-		//rb = SystemPlugin.getResourceBundle();
-		sr = SystemPlugin.getTheSystemRegistry();
+		//rb = RSEUIPlugin.getResourceBundle();
+		sr = RSEUIPlugin.getTheSystemRegistry();
 
 		// set default GUI
 		verbage = fileMode ? SystemFileResources.RESID_SELECTFILE_VERBAGE: SystemFileResources.RESID_SELECTDIRECTORY_VERBAGE;
@@ -246,7 +246,7 @@ public class SystemSelectRemoteFileOrFolderForm
      * Restrict to certain system types
      * @param systemTypes the system types to restrict what connections are shown and what types of connections
      *  the user can create
-     * @see org.eclipse.rse.core.ISystemTypes
+     * @see org.eclipse.rse.core.IRSESystemType
      */
     public void setSystemTypes(String[] systemTypes)
     {
@@ -286,7 +286,7 @@ public class SystemSelectRemoteFileOrFolderForm
         setSystemConnection(connection);
         setShowNewConnectionPrompt(false);
         setAutoExpandDepth(1);        
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IRemoteFileSubSystem ss = RemoteFileUtility.getFileSubSystem(connection);
 		IRemoteFileSubSystemConfiguration ssf = ss.getParentRemoteFileSubSystemFactory();
 		RemoteFileFilterString rffs = new RemoteFileFilterString(ssf);
@@ -331,7 +331,7 @@ public class SystemSelectRemoteFileOrFolderForm
     	  {
     	    preSelectFilter = filter;
     	    preSelectFilterChild = folderAbsolutePath;
-		    //SystemPlugin.logInfo("in setRootFolder. Given: " + folderAbsolutePath);
+		    //RSEUIPlugin.logInfo("in setRootFolder. Given: " + folderAbsolutePath);
     	  }
         }
         
@@ -347,7 +347,7 @@ public class SystemSelectRemoteFileOrFolderForm
           filters[idx] = filter;
         
           preSelectFilter = filter;
-          //SystemPlugin.logInfo("FILTER 2: " + filter.getFilterString());        
+          //RSEUIPlugin.logInfo("FILTER 2: " + filter.getFilterString());        
         }
         inputProvider.setFilterString(null); // undo what ctor did
         inputProvider.setQuickFilters(filters);
@@ -403,7 +403,7 @@ public class SystemSelectRemoteFileOrFolderForm
 		     setRestrictFolders(parentFolder.isRoot());
 		   setRootFolder(parentFolder);
 		   preSelectFilterChild = selection.getName();
-		   //SystemPlugin.logInfo("Setting preSelectFilterChild to '"+preSelectFilterChild+"'");
+		   //RSEUIPlugin.logInfo("Setting preSelectFilterChild to '"+preSelectFilterChild+"'");
 		}
 		else
 		{

@@ -19,8 +19,8 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.view.SystemViewPart;
 import org.eclipse.swt.widgets.Control;
@@ -45,7 +45,7 @@ public class SystemCascadingPulldownMenuAction
 	public SystemCascadingPulldownMenuAction(Shell shell, ISelectionProvider selectionProviderForToolbarActions)
 	{
 		super(SystemResources.ACTION_CASCADING_PULLDOWN_LABEL, SystemResources.ACTION_CASCADING_PULLDOWN_TOOLTIP, 
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID),shell);
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID),shell);
  	    sp = selectionProviderForToolbarActions;
         setCreateMenuEachTime(false);
         setPopulateMenuEachTime(false);

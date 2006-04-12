@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
@@ -30,6 +29,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.RemoteSearchResultsConte
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -77,7 +77,7 @@ public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAd
 	 */
 	public ImageDescriptor getImageDescriptor(Object element)
 	{ 
-		ImageDescriptor imageDescriptor= SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SEARCH_RESULT_ID);
+		ImageDescriptor imageDescriptor= RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SEARCH_RESULT_ID);
 		return imageDescriptor;
 	}
 
@@ -102,16 +102,16 @@ public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAd
 			SystemMessage msg = null;
 				
 			if (set.isRunning()) {
-				msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_RUNNING);
+				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_RUNNING);
 			}
 			else if (set.isFinished()) {
-				msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FINISHED);
+				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FINISHED);
 			}
 			else if (set.isCancelled()) {
-				msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_OPERTION_STOPPED);
+				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERTION_STOPPED);
 			}
 			else if (set.isDisconnected()) {
-				msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_DISCONNECTED);
+				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_DISCONNECTED);
 			}
 			
 			msg.makeSubstitution(name);

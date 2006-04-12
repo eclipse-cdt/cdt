@@ -19,10 +19,10 @@ package org.eclipse.rse.files.ui.actions;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.swt.SWT;
@@ -252,7 +252,7 @@ public class SystemDownloadConflictAction extends SystemBaseAction implements Ru
 
 		dlg.setReplaceText(FileResources.RESID_CONFLICT_DOWNLOAD_REPLACELOCAL);
 		dlg.setOpenLocalText(FileResources.RESID_CONFLICT_DOWNLOAD_OPENWITHLOCAL);
-		dlg.setHelpId(SystemPlugin.HELPPREFIX + "lcdl0000");
+		dlg.setHelpId(RSEUIPlugin.HELPPREFIX + "lcdl0000");
 		return dlg;
 	}
 
@@ -261,7 +261,7 @@ public class SystemDownloadConflictAction extends SystemBaseAction implements Ru
 	 */
 	public void run()
 	{
-		setShell(SystemPlugin.getTheSystemRegistry().getShell());
+		setShell(RSEUIPlugin.getTheSystemRegistry().getShell());
 		SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
 
 		DownloadConflictDialog cnfDialog = getConflictDialog();

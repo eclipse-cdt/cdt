@@ -21,7 +21,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.model.ISystemProfileManager;
 import org.eclipse.rse.model.ISystemRegistry;
@@ -30,6 +29,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.dialogs.SystemSimpleCopyDialog;
@@ -87,12 +87,12 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
 		super(label, 
 		      (mode==MODE_COPY ? 
 		            PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY)
-		      		//SystemPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_COPY_ID) 
-		            : SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_MOVE_ID)), 
+		      		//RSEUIPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_COPY_ID) 
+		            : RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_MOVE_ID)), 
 		      parent);
 		this.mode = mode;
 		mgr = SystemProfileManager.getSystemProfileManager();
-		sr = SystemPlugin.getTheSystemRegistry();
+		sr = RSEUIPlugin.getTheSystemRegistry();
 		allowOnMultipleSelection(true);
         setProcessAllSelections(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);
@@ -217,7 +217,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
 	 */
 	protected IRunnableContext getRunnableContext()
 	{
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IRunnableContext irc = sr.getRunnableContext();
 		if (irc == null)
 		  irc = new ProgressMonitorDialog(getShell());
@@ -342,9 +342,9 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
     protected SystemMessage getCopyingMessage()
     {
 		if (mode == MODE_COPY)		
-		  return SystemPlugin.getPluginMessage(MSG_COPYGENERIC_PROGRESS); 
+		  return RSEUIPlugin.getPluginMessage(MSG_COPYGENERIC_PROGRESS); 
 		else
-		  return SystemPlugin.getPluginMessage(MSG_MOVEGENERIC_PROGRESS); 
+		  return RSEUIPlugin.getPluginMessage(MSG_MOVEGENERIC_PROGRESS); 
     }
 	/**
 	 * Get the specific "Copying %1..." or "Moving %1..." message
@@ -353,9 +353,9 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
     {
     	SystemMessage msg = null;
 		if (mode == MODE_COPY)		
-		  msg = SystemPlugin.getPluginMessage(MSG_COPYTHINGGENERIC_PROGRESS); 
+		  msg = RSEUIPlugin.getPluginMessage(MSG_COPYTHINGGENERIC_PROGRESS); 
 		else
-		  msg = SystemPlugin.getPluginMessage(MSG_MOVETHINGGENERIC_PROGRESS); 
+		  msg = RSEUIPlugin.getPluginMessage(MSG_MOVETHINGGENERIC_PROGRESS); 
 		msg.makeSubstitution(oldName);
 		return msg;
     }
@@ -404,10 +404,10 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
     	    msg = exc.getClass().getName();
     	  SystemMessageDialog msgDlg = 
     	    new SystemMessageDialog(shell, 
-    	      SystemPlugin.getPluginMessage(MSG_OPERATION_FAILED).makeSubstitution(msg));
+    	      RSEUIPlugin.getPluginMessage(MSG_OPERATION_FAILED).makeSubstitution(msg));
     	  msgDlg.setException(exc);
     	  msgDlg.open();
-          //SystemPlugin.logError("Copy/Move operation failed",exc);
+          //RSEUIPlugin.logError("Copy/Move operation failed",exc);
         }
     }	
     /**
@@ -421,7 +421,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
     	SystemMessageDialog msgDlg = 
     	  new SystemMessageDialog(shell, msg);
     	msgDlg.open();
-        //SystemPlugin.logError("Copy/Move operation failed",exc);
+        //RSEUIPlugin.logError("Copy/Move operation failed",exc);
     }	
 
     /**
@@ -431,7 +431,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
      */
     protected void showOperationCancelledMessage(Shell shell)
     {
-    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, SystemPlugin.getPluginMessage(MSG_OPERATION_CANCELLED));
+    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(MSG_OPERATION_CANCELLED));
     	msgDlg.open();
     }	
 

@@ -58,7 +58,7 @@ public class SystemSelectConnectionAction extends SystemBaseDialogAction
 	 * Restrict to certain system types
 	 * @param systemTypes the system types to restrict what connections are shown and what types of connections
 	 *  the user can create
-	 * @see org.eclipse.rse.core.ISystemTypes
+	 * @see org.eclipse.rse.core.IRSESystemType
 	 */
 	public void setSystemTypes(String[] systemTypes)
 	{
@@ -68,7 +68,7 @@ public class SystemSelectConnectionAction extends SystemBaseDialogAction
 	 * Restrict to a certain system type
 	 * @param systemType the system type to restrict what connections are shown and what types of connections
 	 *  the user can create
-	 * @see org.eclipse.rse.core.ISystemTypes
+	 * @see org.eclipse.rse.core.IRSESystemType
 	 */
 	public void setSystemType(String systemType)
 	{

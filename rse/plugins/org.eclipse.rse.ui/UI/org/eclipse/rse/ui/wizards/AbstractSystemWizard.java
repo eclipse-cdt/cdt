@@ -21,9 +21,9 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.dialogs.SystemWizardDialog;
 import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.swt.SWT;
@@ -375,7 +375,7 @@ public abstract class      AbstractSystemWizard
     	IWizardPage currentPage = getContainer().getCurrentPage();
     	if (currentPage != pageInError)
     	{
-    		SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_WIZARD_PAGE_ERROR);
+    		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_WIZARD_PAGE_ERROR);
     		if (currentPage instanceof AbstractSystemWizardPage)
     		  ((AbstractSystemWizardPage)currentPage).setErrorMessage(msg);
     		else if (pageInError instanceof WizardPage)

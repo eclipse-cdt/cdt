@@ -24,7 +24,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog;
 import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
@@ -36,6 +35,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
@@ -74,8 +74,8 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	SystemCopyRemoteFileAction(Shell shell, int mode) 
 	{
 		super(shell, mode);
-  	    setHelp(SystemPlugin.HELPPREFIX+"actn0110"); 
-  	    setDialogHelp(SystemPlugin.HELPPREFIX+"dcrf0000"); 
+  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0110"); 
+  	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dcrf0000"); 
 	}
 	
 	/**
@@ -138,9 +138,9 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 			targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName);
 	
 	
-			//SystemPlugin.logInfo("CHECKING FOR COLLISION ON '"+srcFileOrFolder.getAbsolutePath() + "' IN '" +targetFolder.getAbsolutePath()+"'");
-			//SystemPlugin.logInfo("...TARGET FILE: '"+tgtFileOrFolder.getAbsolutePath()+"'");  		
-			//SystemPlugin.logInfo("...target.exists()? "+tgtFileOrFolder.exists());
+			//RSEUIPlugin.logInfo("CHECKING FOR COLLISION ON '"+srcFileOrFolder.getAbsolutePath() + "' IN '" +targetFolder.getAbsolutePath()+"'");
+			//RSEUIPlugin.logInfo("...TARGET FILE: '"+tgtFileOrFolder.getAbsolutePath()+"'");  		
+			//RSEUIPlugin.logInfo("...target.exists()? "+tgtFileOrFolder.exists());
 			if (targetFileOrFolder.exists())
 			{
 			  //monitor.setVisible(false); wish we could!
@@ -189,7 +189,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 			ok = ss.copy(srcFileOrFolder, targetFolder, newName, null);
 			if (!ok)
 			{
-			  SystemMessage msg = SystemPlugin.getPluginMessage(FILEMSG_COPY_FILE_FAILED);
+			  SystemMessage msg = RSEUIPlugin.getPluginMessage(FILEMSG_COPY_FILE_FAILED);
 			  msg.makeSubstitution(srcFileOrFolder.getName());
 			  throw new SystemMessageException(msg); 
 			}
@@ -330,13 +330,13 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		dlg.setSystemConnection(sourceConnection);
 		if (mode==MODE_MOVE)
 		  dlg.setSelectionValidator(this);
-		//SystemPlugin.logInfo("Calling getParentRemoteFile for '"+firstSelection.getAbsolutePath()+"'");
+		//RSEUIPlugin.logInfo("Calling getParentRemoteFile for '"+firstSelection.getAbsolutePath()+"'");
 		firstSelectionParent = firstSelection.getParentRemoteFile();
 		/*
 		if (firstSelectionParent != null)
-		  SystemPlugin.logInfo("Result of getParentRemoteFile: '"+firstSelectionParent.getAbsolutePath()+"'");
+		  RSEUIPlugin.logInfo("Result of getParentRemoteFile: '"+firstSelectionParent.getAbsolutePath()+"'");
 		else
-		  SystemPlugin.logInfo("Result of getParentRemoteFile: null");
+		  RSEUIPlugin.logInfo("Result of getParentRemoteFile: null");
 		*/
 		dlg.setPreSelection(firstSelectionParent);
 		
@@ -398,7 +398,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
           	  }
           }
 		}
-		SystemPlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
+		RSEUIPlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
 		   ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, copiedFiles, targetFolder.getAbsolutePath(), fileSS, null, originatingViewer);
 		
 		/* Old release 1.0 way...
@@ -408,7 +408,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		  Viewer v = getViewer();
 		  if (v instanceof ISystemTree)
 		  {
-		    SystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		    SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		  	ISystemTree tree = (ISystemTree)v;
 		  	Object parent = tree.getSelectedParent();
 		  	if (parent == null)

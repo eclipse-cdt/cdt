@@ -17,11 +17,11 @@
 
 package org.eclipse.rse.shells.ui.actions;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.shells.ui.ShellResources;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -32,7 +32,7 @@ public class SystemTerminateRemoveShellAction extends SystemTerminateShellAction
 	{
 		super(ShellResources.ACTION_CANCEL_REMOVE_SHELL_LABEL,			
 				ShellResources.ACTION_CANCEL_REMOVE_SHELL_TOOLTIP,
-			SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_REMOVE_SHELL_ID),
+			RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_REMOVE_SHELL_ID),
 			parent);
 	}
     
@@ -54,7 +54,7 @@ public class SystemTerminateRemoveShellAction extends SystemTerminateShellAction
 		}
 		catch (Exception e)
 		{
-			//	SystemPlugin.getDefault().logInfo("Exception invoking command " + cmd + " on " + sysConn.getAliasName());
+			//	RSEUIPlugin.getDefault().logInfo("Exception invoking command " + cmd + " on " + sysConn.getAliasName());
 		}
 	}			  
 

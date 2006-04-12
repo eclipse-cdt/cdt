@@ -34,6 +34,7 @@ public class SSLForm extends SystemBaseForm {
 
 
 	private Button _sslCheckBox;
+	private Button _nonsslCheckBox;
 	
 	/**
 	 * Constructor for SSLForm.
@@ -47,9 +48,29 @@ public class SSLForm extends SystemBaseForm {
 	 * Determines whether ssl is checked or not
 	 * @return
 	 */
-	public boolean isChecked()
+	public boolean isSSLAlertChecked()
+
 	{
 		return _sslCheckBox.getSelection();
+	}
+	
+	/**
+	 * Check/uncheck the ssl checkbox
+	 * @param flag
+	 */
+	public void setSSLALertIsChecked(boolean flag)
+
+	{
+		_sslCheckBox.setSelection(flag);
+	}
+	
+	/**
+	 * Determines whether non-ssl is checked or not
+	 * @return
+	 */
+	public boolean isNonSSLAlertChecked()
+	{
+		return _nonsslCheckBox.getSelection();
 	}
 	
 	
@@ -57,18 +78,20 @@ public class SSLForm extends SystemBaseForm {
 	 * Check/uncheck the ssl checkbox
 	 * @param flag
 	 */
-	public void setIsChecked(boolean flag)
+	public void setNonSSLALertIsChecked(boolean flag)
 	{
-		_sslCheckBox.setSelection(flag);
+		_nonsslCheckBox.setSelection(flag);
 	}
 	
 	/**
 	 * Enable/disable the ssl checkbox
 	 * @param flag
 	 */
-	public void enableCheckBox(boolean flag)
+	public void enableCheckBoxes(boolean flag)
+
 	{
 		_sslCheckBox.setEnabled(flag);
+		_nonsslCheckBox.setEnabled(flag);
 	}
 	
 	/**
@@ -77,11 +100,11 @@ public class SSLForm extends SystemBaseForm {
 	public Control createContents(Composite parent) 
 	{
 		super.setShell(parent.getShell());
-		_sslCheckBox = SystemWidgetHelpers.createCheckBox(parent, SystemResources.RESID_SUBSYSTEM_SSL_LABEL, this);
-		_sslCheckBox.setToolTipText(SystemResources.RESID_SUBSYSTEM_SSL_TIP);
-		
-
-		return _sslCheckBox;		
+		_sslCheckBox = SystemWidgetHelpers.createCheckBox(parent, SystemResources.RESID_SUBSYSTEM_SSL_ALERT_LABEL, this);
+		_sslCheckBox.setToolTipText(SystemResources.RESID_SUBSYSTEM_SSL_ALERT_TIP);
+		_nonsslCheckBox = SystemWidgetHelpers.createCheckBox(parent, SystemResources.RESID_SUBSYSTEM_NONSSL_ALERT_LABEL, this);
+		_nonsslCheckBox.setToolTipText(SystemResources.RESID_SUBSYSTEM_NONSSL_ALERT_TIP);
+		return parent;		
 	}
 	
 

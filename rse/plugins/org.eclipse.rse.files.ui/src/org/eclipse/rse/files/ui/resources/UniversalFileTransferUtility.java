@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.model.IHost;
@@ -55,6 +54,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFolderNotEmptyExce
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -124,7 +124,7 @@ public class UniversalFileTransferUtility
 		/*
 		if (monitor != null)
 		{
-			SystemMessage copyMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COPYTHINGGENERIC_PROGRESS);
+			SystemMessage copyMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYTHINGGENERIC_PROGRESS);
 			copyMessage.makeSubstitution(srcFileOrFolder.getName());
 
 			monitor.beginTask(copyMessage.getLevelOneText(), IProgressMonitor.UNKNOWN);
@@ -188,7 +188,7 @@ public class UniversalFileTransferUtility
 
 		String remotePath = remoteFile.getAbsolutePath();
 
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		String subSystemId = registry.getAbsoluteNameForSubSystem(subSystem);
 		properties.setRemoteFileSubSystem(subSystemId);
 		properties.setRemoteFilePath(remotePath);
@@ -226,7 +226,7 @@ public class UniversalFileTransferUtility
 			return null;
 		}
 	
-		boolean doSuperTransferProperty = SystemPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
+		boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
 
 
 		List set = remoteSet.getResourceSet();
@@ -241,7 +241,7 @@ public class UniversalFileTransferUtility
 			IRemoteFile srcFileOrFolder = (IRemoteFile)set.get(i);
 			if (!srcFileOrFolder.exists())
 			{
-				SystemMessage errorMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
+				SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
 				errorMessage.makeSubstitution(srcFileOrFolder.getAbsolutePath(), srcFS.getHostAliasName());
 				resultSet.setMessage(errorMessage);
 			}
@@ -355,7 +355,7 @@ public class UniversalFileTransferUtility
 		}
 		if (!srcFileOrFolder.exists())
 		{
-			SystemMessage errorMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
+			SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
 			errorMessage.makeSubstitution(srcFileOrFolder.getAbsolutePath(), srcFS.getHostAliasName());
 			return errorMessage;
 		}
@@ -389,7 +389,7 @@ public class UniversalFileTransferUtility
 		{
 			IResource tempFolder = null;
 			
-			boolean doSuperTransferProperty = SystemPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
+			boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
 			
 			if (doCompressedTransfer && doSuperTransferProperty && !srcFileOrFolder.isRoot() 
 					&& !(srcFileOrFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local")))
@@ -480,7 +480,7 @@ public class UniversalFileTransferUtility
 	 */
 	private static IRemoteFileSubSystem getLocalFileSubSystem()
 	{
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		IHost[] connections = registry.getHosts();
 		for (int i = 0; i < connections.length; i++)
 		{
@@ -522,7 +522,7 @@ public class UniversalFileTransferUtility
 	 */
 	public static SystemRemoteResourceSet copyWorkspaceResourcesToRemote(SystemWorkspaceResourceSet workspaceSet, IRemoteFile targetFolder, IProgressMonitor monitor, Shell shell, boolean checkForCollisions)
 	{	
-		boolean doSuperTransferPreference = SystemPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER)
+		boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER)
 											&& targetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement();
 
 		IRemoteFileSubSystem targetFS = targetFolder.getParentRemoteFileSubSystem();
@@ -541,7 +541,7 @@ public class UniversalFileTransferUtility
 
 		if (!targetFolder.canWrite())
 		{
-			SystemMessage errorMsg = SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR);
+			SystemMessage errorMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR);
 			errorMsg.makeSubstitution(targetFS.getHostAliasName());
 			resultSet.setMessage(errorMsg);
 			return resultSet;
@@ -759,7 +759,7 @@ public class UniversalFileTransferUtility
 
 		if (!targetFolder.canWrite())
 		{
-			SystemMessage errorMsg = SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR);
+			SystemMessage errorMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR);
 			errorMsg.makeSubstitution(targetFS.getHostAliasName());
 			return errorMsg;
 		}
@@ -770,7 +770,7 @@ public class UniversalFileTransferUtility
 		}
 
 		/*
-		SystemMessage copyMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COPY_PROGRESS);
+		SystemMessage copyMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPY_PROGRESS);
 		copyMessage.makeSubstitution(srcFileOrFolder.getName(), targetFolder.getAbsolutePath());
 		*/
 		
@@ -884,7 +884,7 @@ public class UniversalFileTransferUtility
 				
 				boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local");
 				boolean destInArchive = (newTargetFolder  instanceof IVirtualRemoteFile) || newTargetFolder.isArchive();
-				boolean doSuperTransferPreference = SystemPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
+				boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
 				
 				if (doCompressedTransfer && doSuperTransferPreference && !destInArchive && !isTargetLocal)
 				{
@@ -1045,7 +1045,7 @@ public class UniversalFileTransferUtility
 	protected static String getArchiveExtensionFromProperties()
 	{
 	
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		String archiveType = store.getString(ISystemPreferencesConstants.SUPERTRANSFER_ARC_TYPE);
 		if (archiveType == null || !ArchiveHandlerManager.getInstance().isRegisteredArchive("test." + archiveType))
 		{
@@ -1186,7 +1186,7 @@ public class UniversalFileTransferUtility
 						
 						if (shouldExtract)
 						{
-							SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXTRACT_PROGRESS);
+							SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXTRACT_PROGRESS);
 							msg.makeSubstitution(currentSource.getName());
 							monitor.subTask(msg.getLevelOneText());
 							
@@ -1481,9 +1481,9 @@ public class UniversalFileTransferUtility
 			IRemoteFileSubSystem ss = targetFolder.getParentRemoteFileSubSystem();
 			IRemoteFile targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName);
 
-			//SystemPlugin.logInfo("CHECKING FOR COLLISION ON '"+srcFileOrFolder.getAbsolutePath() + "' IN '" +targetFolder.getAbsolutePath()+"'");
-			//SystemPlugin.logInfo("...TARGET FILE: '"+tgtFileOrFolder.getAbsolutePath()+"'");  		
-			//SystemPlugin.logInfo("...target.exists()? "+tgtFileOrFolder.exists());
+			//RSEUIPlugin.logInfo("CHECKING FOR COLLISION ON '"+srcFileOrFolder.getAbsolutePath() + "' IN '" +targetFolder.getAbsolutePath()+"'");
+			//RSEUIPlugin.logInfo("...TARGET FILE: '"+tgtFileOrFolder.getAbsolutePath()+"'");  		
+			//RSEUIPlugin.logInfo("...target.exists()? "+tgtFileOrFolder.exists());
 			if (targetFileOrFolder.exists())
 			{
 				//monitor.setVisible(false); wish we could!

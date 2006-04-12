@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.wizards;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemProfileForm;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -49,7 +49,7 @@ public class SystemNewConnectionWizardRenameProfilePage
 	          SystemResources.RESID_RENAMEDEFAULTPROFILE_PAGE1_TITLE,
 	          SystemResources.RESID_RENAMEDEFAULTPROFILE_PAGE1_DESCRIPTION);
 		form = getForm();
-		setHelp(SystemPlugin.HELPPREFIX + "wncp0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "wncp0000");
 	}
 
     /**
@@ -83,7 +83,7 @@ public class SystemNewConnectionWizardRenameProfilePage
 		Control c = form.createContents(parent);
 		form.getInitialFocusControl().setFocus();
 		
-  		String initProfileName = SystemPlugin.getLocalMachineName();
+  		String initProfileName = RSEUIPlugin.getLocalMachineName();
   		int dotIndex = initProfileName.indexOf('.');
   		
   		if (dotIndex != -1) {

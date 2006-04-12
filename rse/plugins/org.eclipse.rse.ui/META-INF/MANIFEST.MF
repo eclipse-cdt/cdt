@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.eclipse.rse.ui;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: org.eclipse.rse.core.SystemPlugin
+Bundle-Activator: org.eclipse.rse.ui.RSEUIPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -15,7 +15,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms,
  org.eclipse.ui.ide,
  org.eclipse.debug.ui,
- org.eclipse.ui.workbench.texteditor
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.rse.core
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.core,
  org.eclipse.rse.core.comm,

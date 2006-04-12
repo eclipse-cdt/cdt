@@ -188,7 +188,7 @@ public class SystemResourceHelpers implements FileFilter
     		String msg = "Someone asked to create Private folder!";
     		Exception e = new Exception(msg);
     		e.fillInStackTrace();
-    		SystemPlugin.logError(msg, e);
+    		RSEUIPlugin.logError(msg, e);
     	}
     	*/
     	boolean ok = true;
@@ -260,7 +260,7 @@ public class SystemResourceHelpers implements FileFilter
     		 String msg = "Someone asked to create Private folder!";
     		 Exception e = new Exception(msg);
     		 e.fillInStackTrace();
-    		 SystemPlugin.logError(msg, e);
+    		 RSEUIPlugin.logError(msg, e);
     	   }
            */
 	    } catch (CoreException e)

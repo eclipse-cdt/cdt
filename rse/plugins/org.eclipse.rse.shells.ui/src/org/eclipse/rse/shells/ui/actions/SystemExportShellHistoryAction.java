@@ -18,13 +18,13 @@ package org.eclipse.rse.shells.ui.actions;
 
 import java.io.FileWriter;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.shells.ui.ShellResources;
 import org.eclipse.rse.shells.ui.view.SystemCommandsUI;
 import org.eclipse.rse.shells.ui.view.SystemCommandsViewPart;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -40,7 +40,7 @@ public class SystemExportShellHistoryAction extends SystemBaseShellAction
     {
         super(ShellResources.ACTION_EXPORT_SHELL_HISTORY_LABEL,			
         		ShellResources.ACTION_EXPORT_SHELL_HISTORY_TOOLTIP,
-			SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXPORT_SHELL_HISTORY_ID),
+			RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXPORT_SHELL_HISTORY_ID),
 			parent); 
         allowOnMultipleSelection(false);
     }
@@ -59,7 +59,7 @@ public class SystemExportShellHistoryAction extends SystemBaseShellAction
 		    
 			FileDialog fdlg = new FileDialog(getShell(), SWT.SAVE);
 			fdlg.setText(SystemFileResources.RESID_ENTER_OR_SELECT_FILE_TITLE);
-			//fdlg.setText(SystemPlugin.getString("com.ibm.etools.systems.ui.RmtJarExport.selectOrEnterJarDialog.title"));
+			//fdlg.setText(RSEUIPlugin.getString("com.ibm.etools.systems.ui.RmtJarExport.selectOrEnterJarDialog.title"));
 			fdlg.setFileName(cmdShell.getId() + "-history.txt");
 			fdlg.setFilterExtensions(new String[] {"*.txt"});
 			String fileName = fdlg.open();

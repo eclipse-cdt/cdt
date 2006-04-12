@@ -113,7 +113,7 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 	{
 		if (_serverLauncherEnumType == null)
 		{
-			// for persistance
+			// for persistence
 			_serverLauncherEnumType = new PropertyType(IPropertyType.TYPE_ENUM);
 			List values = ServerLaunchType.VALUES;
 			String[] enumValues = new String[values.size()];

@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -45,7 +46,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemElapsedTimer;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
@@ -63,6 +63,7 @@ import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCascadingPreferencesAction;
@@ -106,10 +107,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.framelist.FrameList;
 
-
 /**
  * This is the desktop view wrapper of the System View viewer.
- * ViewPart is from com.ibm.itp.ui.support.parts
  */
 public class SystemViewPart 
 	extends ViewPart
@@ -159,7 +158,7 @@ public class SystemViewPart
 	protected SystemCopyToClipboardAction _copyAction;
 	protected SystemPasteFromClipboardAction _pasteAction;
 
-	// Persistance tags.
+	// Persistence tags.
 	static final String TAG_RELEASE = "release";
 	static final String TAG_SELECTION = "selection";
 	static final String TAG_EXPANDED_TO = "expandedTo";
@@ -185,7 +184,7 @@ public class SystemViewPart
 	public SystemViewPart()
 	{
 		super();
-		//SystemPlugin.logDebugMessage(this.getClass().getName(),"INSIDE CTOR FOR SYSTEMVIEWPART.");
+		//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"INSIDE CTOR FOR SYSTEMVIEWPART.");
 	}
 	/**
 	 * Easy access to the TreeViewer object
@@ -275,7 +274,7 @@ public class SystemViewPart
 				String path = properties.getRemoteFilePath();
 				if (subsystemId != null && path != null)
 				{
-					ISubSystem subSystem = SystemPlugin.getTheSystemRegistry().getSubSystem(subsystemId);
+					ISubSystem subSystem = RSEUIPlugin.getTheSystemRegistry().getSubSystem(subsystemId);
 					if (subSystem != null)
 					{
 						if (subSystem.isConnected())
@@ -356,7 +355,7 @@ public class SystemViewPart
 	 *
 	public void setInputProvider(ISystemViewInputProvider input)
 	{
-		SystemPlugin.logDebugMessage(this.getClass().getName(),"INSIDE SETINPUTPROVIDER FOR SYSTEMVIEWPART.");
+		RSEUIPlugin.logDebugMessage(this.getClass().getName(),"INSIDE SETINPUTPROVIDER FOR SYSTEMVIEWPART.");
 		this.input = input;
 	}*/
 	/**
@@ -365,9 +364,9 @@ public class SystemViewPart
 	 */
 	public void createPartControl(Composite parent)
 	{
-		//SystemPlugin.logInfo("INSIDE CREATEPARTCONTROL FOR SYSTEMVIEWPART.");
+		//RSEUIPlugin.logInfo("INSIDE CREATEPARTCONTROL FOR SYSTEMVIEWPART.");
 		if (input == null)
-			//input = SystemPlugin.getTheSystemRegistry();
+			//input = RSEUIPlugin.getTheSystemRegistry();
 			input = getInputProvider();
 		systemView = new SystemView(getShell(), parent, input, this);
 		frameList = createFrameList();
@@ -387,7 +386,7 @@ public class SystemViewPart
 		}
 
 		// register global edit actions 		
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
 		Clipboard clipboard = registry.getSystemClipboard();
 
@@ -426,7 +425,7 @@ public class SystemViewPart
 		// listen to editor events for linking
 		getSite().getPage().addPartListener(partListener);
 
-		SystemWidgetHelpers.setHelp(parent, SystemPlugin.HELPPREFIX + "sysv0000");
+		SystemWidgetHelpers.setHelp(parent, RSEUIPlugin.HELPPREFIX + "sysv0000");
 
 		// ----------------------
 		// Restore previous state
@@ -440,7 +439,7 @@ public class SystemViewPart
 
 		// if this is the primary RSE view, and there are no user-defined
 		// connections, auto-expand the New Connection prompt...
-		if ((input == SystemPlugin.getTheSystemRegistry()) && (SystemPlugin.getTheSystemRegistry().getHosts().length == 1))
+		if ((input == RSEUIPlugin.getTheSystemRegistry()) && (RSEUIPlugin.getTheSystemRegistry().getHosts().length == 1))
 		{
 			// assume this is the primary RSE view
 
@@ -504,7 +503,7 @@ public class SystemViewPart
 	public void setFocus()
 	{
 		//System.out.println("INSIDE SETFOCUS FOR SYSTEMVIEWPART. SYSTEMVIEW NULL? " + (systemView==null));
-		SystemPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell().setFocus();
+		RSEUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell().setFocus();
 		systemView.getControl().setFocus();
 		/* the following was an attempt to fix problem with scrollbar needing two clicks to activate. didn't help.		
 		if (!SystemPreferencesGlobal.getGlobalSystemPreferences().getRememberState())
@@ -705,7 +704,7 @@ public class SystemViewPart
 		super.dispose();
 		if (platformManager != null)
 			unregisterWithManager(platformManager);
-		SystemPlugin.getTheSystemRegistry().removeSystemPreferenceChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().removeSystemPreferenceChangeListener(this);
 		getSite().getPage().removePartListener(partListener);
 		//System.out.println("INSIDE DISPOSE FOR SYSTEMVIEWPART.");
 	}
@@ -718,7 +717,7 @@ public class SystemViewPart
 	{
 		IAdaptable inputObj = getSite().getPage().getInput();
 		inputIsRoot = false;
-		ISystemViewInputProvider inputProvider = SystemPlugin.getTheSystemRegistry();
+		ISystemViewInputProvider inputProvider = RSEUIPlugin.getTheSystemRegistry();
 		if (inputObj != null)
 		{
 			platformManager = Platform.getAdapterManager();
@@ -766,7 +765,7 @@ public class SystemViewPart
 		{
 			//msg = "INSIDE GETINPUTPROVIDER FOR SYSTEMVIEWPART: inputObj is null, inputProvider="+inputProvider;		
 		}
-		//SystemPlugin.logDebugMessage(this.getClass().getName(),msg);
+		//RSEUIPlugin.logDebugMessage(this.getClass().getName(),msg);
 		//System.out.println("INSIDE getInputProvider. inputProvider = "+inputProvider);
 		return inputProvider;
 	}
@@ -909,7 +908,7 @@ public class SystemViewPart
 	 */
 	protected ImageDescriptor getNavigatorImageDescriptor(String relativePath)
 	{
-		return SystemPlugin.getDefault().getImageDescriptorFromIDE(relativePath); // more reusable
+		return RSEUIPlugin.getDefault().getImageDescriptorFromIDE(relativePath); // more reusable
 		/*
 		String iconPath = "icons/full/"; //$NON-NLS-1$
 		try
@@ -1069,7 +1068,7 @@ public class SystemViewPart
 	protected void restoreState(IMemento memento)
 	{
 		RestoreStateRunnable restoreAction = new RestoreStateRunnable(memento);
-		restoreAction.setRule(SystemPlugin.getTheSystemRegistry());
+		restoreAction.setRule(RSEUIPlugin.getTheSystemRegistry());
 		restoreAction.schedule();
 
 		/* DKM - Moved to RestoreStateRunnable
@@ -1243,7 +1242,7 @@ public class SystemViewPart
 	 */
 	protected Object getObjectFromMemento(boolean showFilterPools, boolean showFilterStrings, String memento)
 	{
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 
 		ISystemProfile profile = null;
 		IHost conn = null;
@@ -1605,7 +1604,7 @@ public class SystemViewPart
 				// to restore system view from cache (if the subsystem supports this)
 				List cacheSubSystemList = new ArrayList();
 				ISubSystem cacheSubSystem;
-				boolean restoreFromCache = SystemPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);
+				boolean restoreFromCache = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);
 
 				// walk through list of expanded nodes, breaking into 2 lists: non-remote and remote
 				for (int i = 0; i < elementMem.length; i++)

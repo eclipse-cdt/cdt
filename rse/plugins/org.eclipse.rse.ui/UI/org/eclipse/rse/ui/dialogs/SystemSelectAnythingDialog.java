@@ -19,7 +19,7 @@ package org.eclipse.rse.ui.dialogs;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.rse.ui.view.SystemViewForm;
@@ -63,7 +63,7 @@ public class SystemSelectAnythingDialog extends SystemPromptDialog
 	 */
 	protected ISystemViewInputProvider getInputProvider() 
 	{
-		ISystemViewInputProvider inputProvider = SystemPlugin.getTheSystemRegistry();
+		ISystemViewInputProvider inputProvider = RSEUIPlugin.getTheSystemRegistry();
 		
 		return inputProvider;
 	}

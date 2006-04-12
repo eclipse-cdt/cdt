@@ -21,13 +21,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.SystemFileTreeAndListGroup;
 import org.eclipse.rse.files.ui.actions.SystemSelectFileTypesAction;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileRoot;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -163,7 +163,7 @@ public class SystemSelectRemoteFilesForm extends Composite
      * connections they can create.
      * @param systemTypes An array of system type names
      * 
-     * @see org.eclipse.rse.core.ISystemTypes
+     * @see org.eclipse.rse.core.IRSESystemType
      */
     public void setSystemTypes(String[] systemTypes)
     {
@@ -175,7 +175,7 @@ public class SystemSelectRemoteFilesForm extends Composite
      *
      * @param systemType The name of the system type to restrict to
      * 
-     * @see org.eclipse.rse.core.ISystemTypes
+     * @see org.eclipse.rse.core.IRSESystemType
      */
     public void setSystemType(String systemType)
     {
@@ -601,7 +601,7 @@ public class SystemSelectRemoteFilesForm extends Composite
 	{				
 		if (msgLine != null)
 		{
-    	  SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_OCCURRED);
+    	  SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_OCCURRED);
     	  msg.makeSubstitution(exc);
 		  msgLine.setErrorMessage(msg);
 		}

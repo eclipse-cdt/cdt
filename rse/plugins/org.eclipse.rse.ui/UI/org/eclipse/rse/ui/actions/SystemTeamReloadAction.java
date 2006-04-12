@@ -16,11 +16,11 @@
 
 package org.eclipse.rse.ui.actions;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemResourceListener;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -47,7 +47,7 @@ public class SystemTeamReloadAction extends SystemBaseAction
         allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_BUILD);        
         //setSelectionSensitive(false);        
-		setHelp(SystemPlugin.HELPPREFIX+"actn0009");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0009");
 	}
 
 	/**
@@ -64,8 +64,8 @@ public class SystemTeamReloadAction extends SystemBaseAction
 	 */
 	public void run() 
 	{
-		//SystemRegistry sr = SystemPlugin.getTheSystemRegistry();
-		SystemMessage confirmMsg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_CONFIRM_RELOADRSE);
+		//SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		SystemMessage confirmMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONFIRM_RELOADRSE);
 		SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), confirmMsg);
 		boolean ok = msgDlg.openQuestionNoException();
 		if (ok)

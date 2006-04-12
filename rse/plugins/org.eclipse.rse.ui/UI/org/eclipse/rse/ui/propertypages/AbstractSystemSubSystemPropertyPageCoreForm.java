@@ -18,11 +18,11 @@ package org.eclipse.rse.ui.propertypages;
 import java.util.ResourceBundle;
 
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -66,7 +66,7 @@ public abstract class AbstractSystemSubSystemPropertyPageCoreForm
 		callerInstanceOfWizardPage         = (caller instanceof WizardPage);
 		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);		
 		callerInstanceOfPropertyPage       = (caller instanceof PropertyPage);
-		SystemPlugin sp = SystemPlugin.getDefault();
+		RSEUIPlugin sp = RSEUIPlugin.getDefault();
 	}
 	/**
 	 * Get the input element

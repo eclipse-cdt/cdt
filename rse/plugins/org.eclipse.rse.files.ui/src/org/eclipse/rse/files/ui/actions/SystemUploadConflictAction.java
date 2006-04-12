@@ -19,7 +19,6 @@ package org.eclipse.rse.files.ui.actions;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.ISaveAsDialog;
 import org.eclipse.rse.files.ui.resources.SaveAsDialog;
@@ -34,6 +33,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileIOException;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSecurityException;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -237,7 +237,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 else
                 {
                     enableOkButton(false);
-                    _errorMessage = SystemPlugin.getPluginMessage(MSG_VALIDATE_PATH_EMPTY);
+                    _errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PATH_EMPTY);
                     setErrorMessage(_errorMessage);
                 }
             }
@@ -303,7 +303,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 
         private void setHelp()
         {
-            setHelp(SystemPlugin.HELPPREFIX + "scdl0000");
+            setHelp(RSEUIPlugin.HELPPREFIX + "scdl0000");
         }
     }
 
@@ -370,7 +370,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             try
             {
                 _saveasFile = _saveasFile.getParentRemoteFileSubSystem().getRemoteFileObject(_saveasFile.getAbsolutePath());
-                SystemPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(_saveasFile.getParentRemoteFile(), ISystemResourceChangeEvents.EVENT_REFRESH, null));
+                RSEUIPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(_saveasFile.getParentRemoteFile(), ISystemResourceChangeEvents.EVENT_REFRESH, null));
                         
             }
             catch (SystemMessageException e)
@@ -502,7 +502,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                     catch (SystemMessageException e)
                     {
                         SystemBasePlugin.logError("Error in performSaveAs", e);
-                        SystemMessage message = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
+                        SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
                         SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), message);
                         dialog.open();
                         return;

@@ -21,7 +21,6 @@ import java.util.Stack;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
@@ -29,6 +28,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -103,7 +103,7 @@ public abstract class RemoteCommandShellOperation implements ISystemResourceChan
 	{
 		try
 		{
-			SystemPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
+			RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
 			_remoteCmdShell = _cmdSubSystem.runShell(getShell(), _pwd);	
 		}
 		catch (Exception e)
@@ -131,7 +131,7 @@ public abstract class RemoteCommandShellOperation implements ISystemResourceChan
 	 */
 	public void finish()
 	{
-		SystemPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
 		if (_remoteCmdShell != null && _remoteCmdShell.isActive())
 		{
 			try

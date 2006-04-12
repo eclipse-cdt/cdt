@@ -16,13 +16,13 @@
 
 package org.eclipse.rse.ui.filters.actions;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.ISystemWizardAction;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
@@ -61,7 +61,7 @@ public class SystemFilterNewFilterPoolAction
 	                                       SystemFilterWorkWithFilterPoolsDialog wwdialog) 
 	{
 		super(parent, 
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERPOOL_ID),
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERPOOL_ID),
 		      SystemResources.ACTION_NEWFILTERPOOL_LABEL, SystemResources.ACTION_NEWFILTERPOOL_TOOLTIP);
 		this.wwdialog = wwdialog;
 		allowOnMultipleSelection(false);		

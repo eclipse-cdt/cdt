@@ -26,11 +26,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemSeparatorAction;
 import org.eclipse.swt.widgets.Shell;
@@ -109,7 +109,7 @@ public class SystemCreateEditActions
 	
 	protected IEditorRegistry getEditorRegistry()
 	{
-		return SystemPlugin.getDefault().getWorkbench().getEditorRegistry();
+		return RSEUIPlugin.getDefault().getWorkbench().getEditorRegistry();
 	}
 	
 	protected IEditorDescriptor getDefaultTextEditor()

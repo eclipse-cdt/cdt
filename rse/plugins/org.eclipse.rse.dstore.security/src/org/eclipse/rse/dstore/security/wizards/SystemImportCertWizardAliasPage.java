@@ -16,10 +16,14 @@
 
 package org.eclipse.rse.dstore.security.wizards;
 
+import java.security.KeyStore;
 import java.security.cert.X509Certificate;
+import java.util.Enumeration;
 import java.util.List;
 
+import org.eclipse.dstore.core.util.ssl.DStoreKeyStore;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.rse.dstore.security.UniversalSecurityPlugin;
 import org.eclipse.rse.dstore.security.UniversalSecurityProperties;
 import org.eclipse.rse.dstore.security.preference.X509CertificateElement;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -48,16 +52,18 @@ public class SystemImportCertWizardAliasPage
 	protected SystemMessage errorMessage;
 	protected ISystemValidator nameValidator;
 	protected ISystemMessageLine msgLine;
+	private String _systemName;
 	
     private Text _alias;
 	/**
 	 * Constructor.
 	 */
-	public SystemImportCertWizardAliasPage(Wizard wizard, List certs)
+	public SystemImportCertWizardAliasPage(Wizard wizard, List certs, String systemName)
 	{
 		super(wizard, "SpecifyAlias", 
   		      UniversalSecurityProperties.RESID_SECURITY_TRUST_WIZ_ALIAS_TITLE, 
 		      UniversalSecurityProperties.RESID_SECURITY_TRUST_WIZ_ALIAS_DESC);
+		_systemName = systemName;
 	}
 
 	/**
@@ -85,6 +91,7 @@ public class SystemImportCertWizardAliasPage
 					}
 				}
 			);		
+		initializeInput();
 		return _alias;
 	}
 	
@@ -116,6 +123,7 @@ public class SystemImportCertWizardAliasPage
 	 */
 	protected void initializeInput()
 	{
+		_alias.setText(getAlias());
 	}
 	
   	/**
@@ -159,7 +167,30 @@ public class SystemImportCertWizardAliasPage
 	 */
 	public String getAlias()
 	{
-		return _alias.getText();
+		String alias = _alias.getText().trim();
+		if (alias.equals(""))
+		{
+			try
+			{
+				int count = 0;
+				String storePath = UniversalSecurityPlugin.getKeyStoreLocation();
+				String passw = UniversalSecurityPlugin.getKeyStorePassword();
+				KeyStore keyStore = DStoreKeyStore.getKeyStore(storePath, passw);
+				Enumeration aliases = keyStore.aliases();
+				while (aliases.hasMoreElements())
+				{
+					String existingalias = (String) (aliases.nextElement());
+					if (existingalias.toLowerCase().startsWith(_systemName.toLowerCase())) count++;
+				}
+				count++;
+				alias = _systemName + count;
+			}
+			catch (Exception e)
+			{
+				alias = _systemName;
+			}
+		}
+		return alias;
 	}    
 
 	/**
@@ -168,7 +199,7 @@ public class SystemImportCertWizardAliasPage
 	 */
 	public boolean isPageComplete()
 	{
-		return (errorMessage==null) && (_alias.getText().trim().length()>0);
+		return (errorMessage==null);
 	}
 	
 

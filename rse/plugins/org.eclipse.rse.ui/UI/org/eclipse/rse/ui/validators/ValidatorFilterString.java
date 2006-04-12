@@ -17,10 +17,10 @@
 package org.eclipse.rse.ui.validators;
 import java.util.Vector;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 
@@ -103,13 +103,13 @@ public class ValidatorFilterString
 
     private void init()
     {
-		setErrorMessages(SystemPlugin.getPluginMessage(MSG_VALIDATE_FILTERSTRING_EMPTY),
-		                 SystemPlugin.getPluginMessage(MSG_VALIDATE_FILTERSTRING_NOTUNIQUE),  
-		                 SystemPlugin.getPluginMessage(MSG_VALIDATE_FILTERSTRING_NOTVALID));  
+		setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERSTRING_EMPTY),
+		                 RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERSTRING_NOTUNIQUE),  
+		                 RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERSTRING_NOTVALID));  
     }
     
 	/**
-	 * Supply your own error message text. By default, messages from SystemPlugin resource bundle are used.
+	 * Supply your own error message text. By default, messages from RSEUIPlugin resource bundle are used.
 	 * @param error message when entry field is empty
 	 * @param error message when value entered is not unique
 	 * @param error message when syntax is not valid

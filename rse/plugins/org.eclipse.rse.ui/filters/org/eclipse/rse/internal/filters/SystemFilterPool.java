@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemResourceHelpers;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterConstants;
@@ -34,6 +33,7 @@ import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.internal.references.SystemPersistableReferencedObject;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
 /**
@@ -87,7 +87,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     private boolean debug = false;
 	protected static final String DELIMITER = SystemFilterPoolReference.DELIMITER;        	
 	
-	// persistance
+	// persistence
 	protected boolean _isDirty = true;
 	protected boolean _wasRestored = false;
 	
@@ -310,7 +310,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	{
     	  try
     	  {
-             pool = (SystemFilterPool)SystemPlugin.getThePersistenceManager().restoreFilterPool(name);
+             pool = (SystemFilterPool)RSEUIPlugin.getThePersistenceManager().restoreFilterPool(name);
     	  }
     	  catch (Exception exc) // real error trying to restore, versus simply not found.
     	  {
@@ -1034,7 +1034,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
           // special case: data file might not exist, as only started saving it recently.
           pool = createPool();
           ((SystemFilterPoolImpl)pool).specialCaseNoDataRestored = true;
-          SystemPlugin.logInfo("Created filter pool file " + fileName+".xmi during restore");
+          RSEUIPlugin.logInfo("Created filter pool file " + fileName+".xmi during restore");
         }
         else
         {
@@ -1053,7 +1053,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
           }
         }
         else
-          SystemPlugin.logInfo("Hmmm, pool is still null after restore: " + fileName+".xmi");
+          RSEUIPlugin.logInfo("Hmmm, pool is still null after restore: " + fileName+".xmi");
           */
         return pool;	        
     }
@@ -1382,7 +1382,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	
 	public boolean commit()
 	{
-		return SystemPlugin.getThePersistenceManager().commit(this);
+		return RSEUIPlugin.getThePersistenceManager().commit(this);
 	}
 
 	public boolean wasRestored() 

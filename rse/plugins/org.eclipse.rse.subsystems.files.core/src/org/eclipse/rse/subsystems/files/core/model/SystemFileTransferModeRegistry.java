@@ -29,11 +29,11 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemSorter;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IMemento;
@@ -56,7 +56,7 @@ public class SystemFileTransferModeRegistry
 	
 	private HashMap typeModeMappings;
 	
-	private SystemPlugin plugin;
+	private RSEUIPlugin plugin;
 	
 	// Constants for reading from and writing to xml file
 	private static final String FILENAME = "fileTransferMode.xml";
@@ -75,7 +75,7 @@ public class SystemFileTransferModeRegistry
 	 */
 	private SystemFileTransferModeRegistry() {
 		super();
-		this.plugin = SystemPlugin.getDefault();
+		this.plugin = RSEUIPlugin.getDefault();
 		initialize();
 	}
 	
@@ -105,7 +105,7 @@ public class SystemFileTransferModeRegistry
 		// editor registry. We can be out of sync because we may not have
 		// been listening for editor registry changes (e.g. if our plugin wasn't
 		// started while those changes were made).
-		IEditorRegistry registry = SystemPlugin.getDefault().getWorkbench().getEditorRegistry();
+		IEditorRegistry registry = RSEUIPlugin.getDefault().getWorkbench().getEditorRegistry();
 		syncWithEditorRegistry(registry);
 		
 		registry.addPropertyListener(this);
@@ -347,7 +347,7 @@ public class SystemFileTransferModeRegistry
 	 */
 	public static int getFileTransferModeDefaultPreference() 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		return store.getInt(ISystemPreferencesConstants.FILETRANSFERMODEDEFAULT);
 	}
 	

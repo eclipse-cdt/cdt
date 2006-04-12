@@ -19,13 +19,13 @@ package org.eclipse.rse.internal.subsystems.shells.servicesubsystem;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.subsystems.shells.core.ShellStrings;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.ui.progress.UIJob;
 
 
@@ -54,7 +54,7 @@ public class OutputRefreshJob extends UIJob
 		{
 			try
 			{
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			if (_outputs != null)
 			{
 				registry.fireEvent(

@@ -17,9 +17,9 @@
 package org.eclipse.rse.ui.validators;
 import java.util.Vector;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -41,9 +41,9 @@ public class ValidatorProfileName
 	public ValidatorProfileName(Vector existingNameList)
 	{
 		super(existingNameList);
-		super.setErrorMessages(SystemPlugin.getPluginMessage(MSG_VALIDATE_PROFILENAME_EMPTY),
-		                       SystemPlugin.getPluginMessage(MSG_VALIDATE_PROFILENAME_NOTUNIQUE),  
-		                       SystemPlugin.getPluginMessage(MSG_VALIDATE_PROFILENAME_NOTVALID));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PROFILENAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PROFILENAME_NOTUNIQUE),  
+		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PROFILENAME_NOTVALID));  
 	}
 
     /**
@@ -60,7 +60,7 @@ public class ValidatorProfileName
     private SystemMessage getReservedNameMessage()
     {
     	if (reservedNameMsg == null)
-    	   reservedNameMsg = SystemPlugin.getPluginMessage(MSG_VALIDATE_PROFILENAME_RESERVED);
+    	   reservedNameMsg = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PROFILENAME_RESERVED);
     	return reservedNameMsg;
     }
 

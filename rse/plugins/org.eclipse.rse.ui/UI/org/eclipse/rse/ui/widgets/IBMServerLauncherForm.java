@@ -16,12 +16,12 @@
 
 package org.eclipse.rse.ui.widgets;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.IIBMServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -45,14 +45,14 @@ import org.eclipse.swt.widgets.Text;
 public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 {
 
-	private Button _radioDaemon, _radioRexec, _radioNone;
+	private Button _radioDaemon, _radioRexec, _radioNone, _checkBoxSSL;
 	private Text _fieldDaemonPort;
 	private Label _labelDaemonPort;
 
 	private Text _fieldRexecPath, _fieldRexecInvocation, _fieldRexecPort;
 	private Label _labelRexecPath, _labelRexecInvocation, _labelRexecPort;
 
-	private Composite _daemonControls, _rexecControls;
+	private Composite _daemonControls, _rexecControls, _noneControls;
 
 	private ValidatorServerPortInput _serverPortValidator;
 	private ValidatorPortInput       _daemonPortValidator;
@@ -64,6 +64,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 	private String _origInvocation;
 	private int _origRexecPort;
 	private int _origDaemonPort;
+	private boolean _origUseSSL;
 
 	/**
 	 * Constructor for EnvironmentVariablesForm.
@@ -83,7 +84,8 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 					!_origPath.equals(getServerInstallPath()) ||
 					!_origInvocation.equals(getServerInvocation()) ||
 					_origRexecPort != getREXECPortAsInt() ||
-					_origDaemonPort != getDaemonPortAsInt();
+					_origDaemonPort != getDaemonPortAsInt() ||
+					_origUseSSL != getUseSSL();
 		return isDirty;
 	}
 	
@@ -96,6 +98,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		_fieldRexecPath.setEnabled(false);
 		_fieldRexecPort.setEnabled(false);
 		_fieldDaemonPort.setEnabled(false);
+		_checkBoxSSL.setEnabled(false);
 	}
 
 
@@ -191,13 +194,21 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 				this);
 		_radioNone.setToolTipText(
 			SystemResources.RESID_PROP_SERVERLAUNCHER_RADIO_NONE_TOOLTIP);
+		_noneControls = SystemWidgetHelpers.createComposite(group, 1);
+		GridLayout nlayout = new GridLayout();
+		GridData ndata = new GridData(GridData.FILL_HORIZONTAL);
+		ndata.horizontalIndent = 20;
+		_checkBoxSSL = SystemWidgetHelpers.createCheckBox(_noneControls, SystemResources.RESID_SUBSYSTEM_SSL_LABEL, this);
+		_checkBoxSSL.setToolTipText(SystemResources.RESID_SUBSYSTEM_SSL_TIP);
+		_noneControls.setLayout(nlayout);
+		_noneControls.setLayoutData(ndata);
 
 		// help
-		SystemWidgetHelpers.setHelp(_radioDaemon, SystemPlugin.HELPPREFIX + "srln0001");
-		SystemWidgetHelpers.setHelp(_radioRexec, SystemPlugin.HELPPREFIX + "srln0002");
-		SystemWidgetHelpers.setHelp(_radioNone, SystemPlugin.HELPPREFIX + "srln0003");
-		SystemWidgetHelpers.setHelp(_fieldRexecPath, SystemPlugin.HELPPREFIX + "srln0004");
-		SystemWidgetHelpers.setHelp(_fieldRexecInvocation, SystemPlugin.HELPPREFIX + "srln0005");
+		SystemWidgetHelpers.setHelp(_radioDaemon, RSEUIPlugin.HELPPREFIX + "srln0001");
+		SystemWidgetHelpers.setHelp(_radioRexec, RSEUIPlugin.HELPPREFIX + "srln0002");
+		SystemWidgetHelpers.setHelp(_radioNone, RSEUIPlugin.HELPPREFIX + "srln0003");
+		SystemWidgetHelpers.setHelp(_fieldRexecPath, RSEUIPlugin.HELPPREFIX + "srln0004");
+		SystemWidgetHelpers.setHelp(_fieldRexecInvocation, RSEUIPlugin.HELPPREFIX + "srln0005");
 	}
 
 	protected void initDefaults()
@@ -210,6 +221,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		_labelRexecInvocation.setEnabled(_radioRexec.getSelection());
 		_labelRexecPort.setEnabled(_radioRexec.getSelection());
 		_fieldRexecPort.setEnabled(_radioRexec.getSelection());
+		_checkBoxSSL.setEnabled(_radioNone.getSelection());
 		
 		_fieldDaemonPort.setText(String.valueOf(DEFAULT_DAEMON_PORT));
 		_fieldRexecPath.setText(DEFAULT_REXEC_PATH);
@@ -229,6 +241,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		String invocation = isl.getServerScript();
 		int rexecport = isl.getRexecPort(); // changed from getPortAsInt via d54335
 		int daemonPort = isl.getDaemonPort(); // defect 54335
+		boolean useSSL = isl.getConnectorService().isUsingSSL();
 				
 		// find out if daemon can be launched
 		boolean allowDaemon = isl.isEnabledServerLaunchType(ServerLaunchType.DAEMON_LITERAL);
@@ -250,6 +263,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		setServerInstallPath(path);
 		setServerInvocation(invocation);
 		setREXECPort(rexecport);
+		setUseSSL(useSSL);
 	
 		if (!allowDaemon && !allowRexec && !allowNo) {
 			disable();
@@ -261,6 +275,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		_origInvocation = getServerInvocation();
 		_origRexecPort = getREXECPortAsInt();
 		_origDaemonPort = getDaemonPortAsInt();
+		_origUseSSL = getUseSSL();
 	}
 	
 	/**
@@ -282,7 +297,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 
 				if (path == null || path.length() == 0)
 				{
-					msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD);
+					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD);
 				}
 
 				if (msg != null)
@@ -332,15 +347,23 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		String invocation = getServerInvocation();
 		int rexecPort = getREXECPortAsInt();
 		int daemonPort = getDaemonPortAsInt();
-		
+		boolean useSSL = getUseSSL();
 
 		IIBMServerLauncher isl = (IIBMServerLauncher)launcher;
 		isl.setServerLaunchType(launchType);
 		isl.setServerPath(path);
 		isl.setServerScript(invocation);
 		isl.setRexecPort(rexecPort); // changed from setPort via d54335. Phil
-		isl.setDaemonPort(daemonPort);	
-
+		isl.setDaemonPort(daemonPort);
+		isl.getConnectorService().setIsUsingSSL(useSSL);
+		try
+		{
+			isl.getConnectorService().commit();
+		}
+		catch (Exception e)
+		{	
+			return false;
+		}
 		return true;
 	}
 	
@@ -356,6 +379,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		_labelRexecInvocation.setEnabled(useRexec);
 		_fieldRexecPort.setEnabled(useRexec);
 		_labelRexecPort.setEnabled(useRexec);
+		_checkBoxSSL.setEnabled(_radioNone.getSelection());
 
 		verify();
 	}
@@ -370,6 +394,16 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 			return ServerLaunchType.RUNNING_LITERAL;
 		else
 			return null;
+	}
+	
+	protected boolean getUseSSL()
+	{
+		return _checkBoxSSL.getSelection();
+	}
+	
+	protected void setUseSSL(boolean use)
+	{
+		_checkBoxSSL.setSelection(use);
 	}
 
 	protected void setLaunchType(ServerLaunchType type)
@@ -525,6 +559,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 	public void setNoLaunchEnabled(boolean enable)
 	{
 		_radioNone.setEnabled(enable);
+		_checkBoxSSL.setEnabled(enable);
 	}
 	/**
 	 * Return the current value of the REXEC server install path widget 

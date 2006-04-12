@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.rse.ui" id="persistenceProviders" name="Persistence Providers"/>
       </appInfo>
       <documentation>
-         This extension point is used to allow the delegation of client persistences to vendors where needed.
+         This extension point is used to allow the delegation of profile persistence to vendors where needed.
       </documentation>
    </annotation>
 
@@ -73,7 +73,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         8.0.0
+         1.0.0
       </documentation>
    </annotation>
 

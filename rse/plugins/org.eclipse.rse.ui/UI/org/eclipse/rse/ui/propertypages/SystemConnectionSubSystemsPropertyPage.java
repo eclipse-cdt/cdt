@@ -20,10 +20,10 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.ui.ISystemConnectionFormCaller;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemTabFolderLayout;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -71,8 +71,8 @@ public class SystemConnectionSubSystemsPropertyPage extends SystemBasePropertyPa
 	public SystemConnectionSubSystemsPropertyPage()
 	{
 		super();
-		SystemPlugin sp = SystemPlugin.getDefault();
-		parentHelpId = SystemPlugin.HELPPREFIX + "pcon0000";
+		RSEUIPlugin sp = RSEUIPlugin.getDefault();
+		parentHelpId = RSEUIPlugin.HELPPREFIX + "pcon0000";
 	}
 	
 	/**
@@ -227,7 +227,7 @@ public class SystemConnectionSubSystemsPropertyPage extends SystemBasePropertyPa
 	protected ISubSystem[] getSubSystems()
 	{
 		ISubSystem[] subsystems = 
-			SystemPlugin.getTheSystemRegistry().getSubSystems(getConnection());		
+			RSEUIPlugin.getTheSystemRegistry().getSubSystems(getConnection());		
 		return subsystems;
 	}
 	

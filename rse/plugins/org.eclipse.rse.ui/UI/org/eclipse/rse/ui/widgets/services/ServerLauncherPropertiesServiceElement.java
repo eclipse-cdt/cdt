@@ -16,10 +16,10 @@
 
 package org.eclipse.rse.ui.widgets.services;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.graphics.Image;
 
 
@@ -40,7 +40,7 @@ public class ServerLauncherPropertiesServiceElement extends RSEModelServiceEleme
 
 	public Image getImage()
 	{
-		return SystemPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_LAUNCHER_CONFIGURATION_ID);
+		return RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_LAUNCHER_CONFIGURATION_ID);
 	}
 	
 	protected ServiceElement[] internalGetChildren()

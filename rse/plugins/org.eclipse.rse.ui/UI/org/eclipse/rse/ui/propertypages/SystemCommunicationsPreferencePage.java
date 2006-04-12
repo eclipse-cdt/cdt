@@ -19,11 +19,11 @@ package org.eclipse.rse.ui.propertypages;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.comm.SystemCommunicationsDaemon;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.Mnemonics;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.widgets.Composite;
@@ -46,7 +46,7 @@ public class SystemCommunicationsPreferencePage extends FieldEditorPreferencePag
 	public SystemCommunicationsPreferencePage() 
 	{
 		super(GRID);
-		setPreferenceStore(SystemPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(RSEUIPlugin.getDefault().getPreferenceStore());
 		setDescription(SystemResources.RESID_PREF_COMMUNICATIONS_TITLE);
 	}
 
@@ -83,15 +83,15 @@ public class SystemCommunicationsPreferencePage extends FieldEditorPreferencePag
 			parent
 		);
 		portEditor.setValidRange(1, 65536);
-		portEditor.setErrorMessage(SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_NOTVALID).getLevelOneText());
+		portEditor.setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_NOTVALID).getLevelOneText());
 		addField(portEditor);
 		portEditor.getTextControl(parent).setToolTipText(SystemResources.RESID_PREF_DAEMON_PORT_TOOLTIP);
 
-		SystemWidgetHelpers.setHelp(portEditor.getTextControl(parent), SystemPlugin.HELPPREFIX + "cmmp0000");
+		SystemWidgetHelpers.setHelp(portEditor.getTextControl(parent), RSEUIPlugin.HELPPREFIX + "cmmp0000");
 
 		
         (new Mnemonics()).setOnPreferencePage(true).setMnemonics(parent);	
-		SystemWidgetHelpers.setCompositeHelp(parent, SystemPlugin.HELPPREFIX + "cmmp0000");
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "cmmp0000");
 
 	}
 

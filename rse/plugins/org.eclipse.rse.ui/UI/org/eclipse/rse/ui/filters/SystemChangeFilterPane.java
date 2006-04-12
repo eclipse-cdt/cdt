@@ -23,7 +23,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
@@ -35,6 +34,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemBaseForm;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.ISystemAction;
@@ -369,7 +369,7 @@ public class SystemChangeFilterPane extends SystemBaseForm
 	 */
 	public Control createContents(Composite parent)
 	{
-		SystemWidgetHelpers.setHelp(parent, SystemPlugin.HELPPREFIX+"dufr0000");
+		SystemWidgetHelpers.setHelp(parent, RSEUIPlugin.HELPPREFIX+"dufr0000");
 		
 		if (getShell()==null)
 			setShell(parent.getShell());
@@ -645,7 +645,7 @@ public class SystemChangeFilterPane extends SystemBaseForm
 			String duplicate = checkForDuplicates();
 			if (duplicate != null)
 			{
-			  SystemMessage errMsg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERSTRING_DUPLICATES).makeSubstitution(duplicate);
+			  SystemMessage errMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERSTRING_DUPLICATES).makeSubstitution(duplicate);
 			  getMessageLine().setErrorMessage(errMsg);
 			  listView.setFocus();
 			  return false;
@@ -679,7 +679,7 @@ public class SystemChangeFilterPane extends SystemBaseForm
 		catch (Exception exc) 
 		{
 		  	//displayErrorMessage("Error updating filter: " + exc.getMessage());
-		  	SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_UPDATEFILTER_FAILED);
+		  	SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_UPDATEFILTER_FAILED);
 		  	String excText = exc.getMessage();
 		  	if (excText == null)
 		  	  excText = exc.getClass().getName();
@@ -724,7 +724,7 @@ public class SystemChangeFilterPane extends SystemBaseForm
 			String duplicate = checkForDuplicates();
 			if (duplicate != null)
 			{
-			  SystemMessage errMsg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERSTRING_DUPLICATES).makeSubstitution(duplicate);
+			  SystemMessage errMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERSTRING_DUPLICATES).makeSubstitution(duplicate);
 			  getMessageLine().setErrorMessage(errMsg);
 			  listView.setFocus();
 			  return false;
@@ -1209,7 +1209,7 @@ public class SystemChangeFilterPane extends SystemBaseForm
 	public void doDelete()
 	{
 		int idx = listView.getSelectionIndex();		
-	    SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_CONFIRM_DELETE);
+	    SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONFIRM_DELETE);
 	    SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), msg);
 	    try{
 	      if (msgDlg.openQuestion())

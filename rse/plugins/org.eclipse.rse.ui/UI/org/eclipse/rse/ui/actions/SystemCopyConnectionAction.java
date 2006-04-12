@@ -21,13 +21,13 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
@@ -48,9 +48,9 @@ public class SystemCopyConnectionAction extends SystemBaseCopyAction
 	public SystemCopyConnectionAction(Shell parent) 
 	{
 		super(parent, SystemResources.ACTION_COPY_CONNECTION_LABEL, MODE_COPY);
-		sr = SystemPlugin.getTheSystemRegistry();
-  	    setHelp(SystemPlugin.HELPPREFIX+"actn0019"); 
-  	    setDialogHelp(SystemPlugin.HELPPREFIX+"dccn0000"); 
+		sr = RSEUIPlugin.getTheSystemRegistry();
+  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0019"); 
+  	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dccn0000"); 
 	}
  
 	/**
@@ -63,7 +63,7 @@ public class SystemCopyConnectionAction extends SystemBaseCopyAction
 	public boolean updateSelection(IStructuredSelection selection)
 	{
 		boolean enable = true;
-		ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();		
+		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();		
 		ISystemProfile prevProfile = null;
 		Iterator e= ((IStructuredSelection) selection).iterator();		
 		while (enable && e.hasNext())
@@ -120,7 +120,7 @@ public class SystemCopyConnectionAction extends SystemBaseCopyAction
     {
     	IHost oldConnection = (IHost)oldObject;
     	String oldName = oldConnection.getAliasName();
-    	//SystemPlugin.logDebugMessage(this.getClass().getName(),"starting to copy "+oldName+" to "+newName);
+    	//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"starting to copy "+oldName+" to "+newName);
     	ISystemProfile targetProfile = (ISystemProfile)targetContainer;
         IHost newConn = sr.copyHost(monitor, oldConnection, targetProfile, newName);
 		return (newConn != null);
@@ -153,14 +153,14 @@ public class SystemCopyConnectionAction extends SystemBaseCopyAction
 	 */
 	protected SystemMessage getCopyingMessage() 
 	{
-		return SystemPlugin.getPluginMessage(MSG_COPYCONNECTIONS_PROGRESS);
+		return RSEUIPlugin.getPluginMessage(MSG_COPYCONNECTIONS_PROGRESS);
 	}
 	/**
 	 * @see SystemBaseCopyAction#getCopyingMessage( String)
 	 */
 	protected SystemMessage getCopyingMessage(String oldName) 
 	{
-		return SystemPlugin.getPluginMessage(MSG_COPYCONNECTION_PROGRESS).makeSubstitution(oldName);
+		return RSEUIPlugin.getPluginMessage(MSG_COPYCONNECTION_PROGRESS).makeSubstitution(oldName);
 	}
 
 	/**
@@ -222,8 +222,8 @@ public class SystemCopyConnectionAction extends SystemBaseCopyAction
     	veryRootElement.setRenamable(false);
     	veryRootElement.setDeletable(false);
     	                
-    	ISystemProfile[] profiles = SystemPlugin.getTheSystemRegistry().getActiveSystemProfiles();
-    	ImageDescriptor image = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID);
+    	ISystemProfile[] profiles = RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfiles();
+    	ImageDescriptor image = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID);
     	                                  
     	if (profiles == null)
     	  return veryRootElement;

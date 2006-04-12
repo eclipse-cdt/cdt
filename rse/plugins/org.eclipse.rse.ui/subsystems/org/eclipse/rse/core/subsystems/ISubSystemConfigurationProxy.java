@@ -35,12 +35,12 @@ public interface ISubSystemConfigurationProxy
     public String getDescription();
     /**
      * Return value of the <samp>id</samp> xml attribute.
-     * Return unique id of this factory.
+     * Return unique id of this configuration.
      */
     public String getId();
     /**
-     * Return value of the <samp>systemtypes</samp> xml attribute.
-     * Return the system types this subsystem factory supports.
+     * Return value of the <samp>systemTypes</samp> xml attribute.
+     * Return the system types this subsystem configuration supports.
      */
     public String[] getSystemTypes();
 	/**
@@ -50,12 +50,12 @@ public interface ISubSystemConfigurationProxy
 
     /**
      * Return value of the <samp>vendor</samp> xml attribute.
-     * Return vendor of this factory.
+     * Return vendor of this configuration.
      */
     public String getVendor();
     /**
      * Return value of the <samp>category</samp> xml attribute.
-     * Return the category this subsystem factory subscribes to.
+     * Return the category this subsystem configuration subscribes to.
      * @see org.eclipse.rse.model.ISubSystemFactoryCategories
      */
     public String getCategory();
@@ -73,11 +73,11 @@ public interface ISubSystemConfigurationProxy
     /**
      * Return true if the subsystem factory has been instantiated yet
      */
-    public boolean isSubSystemFactoryActive();
+    public boolean isSubSystemConfigurationActive();
     /**
      * Return the subsystem factory singleton instance. Will instantiate if not already.
      */
-    public ISubSystemConfiguration getSubSystemFactory();
+    public ISubSystemConfiguration getSubSystemConfiguration();
 	/**
 	 * Return an instance of the ISystem class identified by the "systemClass" attribute
 	 * of this subsystemFactory extension point. Note each call to this method returns a
@@ -86,8 +86,8 @@ public interface ISubSystemConfigurationProxy
 	public IConnectorService getSystemObject();
 	
     /**
-     * Test if the given system type matches one or more of the types declared in the
-     *  <samp>systemtypes</samp> attribute of this extension.
+     * Test if the given system type matches one or more of the type names declared in the
+     *  <samp>systemTypes</samp> attribute of this extension.
      */
     public boolean appliesToSystemType(String type);    
     

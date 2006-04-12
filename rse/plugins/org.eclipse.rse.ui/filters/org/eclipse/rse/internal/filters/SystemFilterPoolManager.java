@@ -21,7 +21,6 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterConstants;
 import org.eclipse.rse.filters.ISystemFilterContainer;
@@ -36,6 +35,7 @@ import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.persistence.IRSEPersistenceManager;
 import org.eclipse.rse.references.ISystemBaseReferencingObject;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 //
 //
@@ -112,7 +112,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
 	private Logger    logger = null;
 	private ISystemProfile _profile;
 	
-	// persistance	
+	// persistence	
 	protected boolean _isDirty = true;
 	private boolean   _wasRestored = false;
 		
@@ -265,7 +265,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     	  namingPolicy = SystemFilterNamingPolicy.getNamingPolicy();
     	try
     	{
-    		mgr = (SystemFilterPoolManager)SystemPlugin.getThePersistenceManager().restoreFilterPoolManager(profile, logger, caller, name);    		
+    		mgr = (SystemFilterPoolManager)RSEUIPlugin.getThePersistenceManager().restoreFilterPoolManager(profile, logger, caller, name);    		
     		/*
     	   if (savePolicy != SystemFilterConstants.SAVE_POLICY_NONE)
              mgr = (SystemFilterPoolManagerImpl)restore(;
@@ -314,7 +314,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
       		for (int idx=0; idx<poolNames.size(); idx++)
       		{
       			String poolName = (String)poolNames.elementAt(idx);
-      			pool = SystemPlugin.getThePersistenceManager().restoreFilterPool(poolName);
+      			pool = RSEUIPlugin.getThePersistenceManager().restoreFilterPool(poolName);
       			pool.setSystemFilterPoolManager(this);
       			pools.add(pool);
       			if (((SystemFilterPool)pool).specialCaseNoDataRestored)
@@ -750,7 +750,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
             boolean inUse = poolFile.exists() && SystemResourceHelpers.testIfResourceInUse(poolFile);
             if (inUse)
             {
-        	    SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_FILE_INUSE);
+        	    SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FILE_INUSE);
         	    msg.makeSubstitution(poolFile.getFullPath());
         	    throw new SystemMessageException(msg);
             }
@@ -760,7 +760,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
                 inUse = poolFolder.exists() && SystemResourceHelpers.testIfResourceInUse(poolFolder);
                 if (inUse)
                 {
-        	        SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_FOLDER_INUSE);
+        	        SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FOLDER_INUSE);
         	        msg.makeSubstitution(poolFolder.getFullPath());
         	        throw new SystemMessageException(msg);
                 }
@@ -774,7 +774,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
             boolean inUse = poolFile.exists() && SystemResourceHelpers.testIfResourceInUse(poolFile);
             if (inUse)
             {
-        	    SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_FILE_INUSE);
+        	    SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FILE_INUSE);
         	    msg.makeSubstitution(poolFile.getFullPath());
         	    throw new SystemMessageException(msg);
             }
@@ -823,7 +823,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
             boolean inUse = poolFile.exists() && SystemResourceHelpers.testIfResourceInUse(poolFile);
             if (inUse)
             {
-        	    SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_FILE_INUSE);
+        	    SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FILE_INUSE);
         	    msg.makeSubstitution(poolFile.getFullPath());
         	    throw new SystemMessageException(msg);
             }
@@ -833,7 +833,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
                 inUse = poolFolder.exists() && SystemResourceHelpers.testIfResourceInUse(poolFolder);
                 if (inUse)
                 {
-        	        SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_FOLDER_INUSE);
+        	        SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FOLDER_INUSE);
         	        msg.makeSubstitution(poolFolder.getFullPath());
         	        throw new SystemMessageException(msg);
                 }
@@ -874,7 +874,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
             boolean inUse = poolFile.exists() && SystemResourceHelpers.testIfResourceInUse(poolFile);
             if (inUse)
             {
-        	    SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_FILE_INUSE);
+        	    SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FILE_INUSE);
         	    msg.makeSubstitution(poolFile.getFullPath());
         	    throw new SystemMessageException(msg);
             }
@@ -1667,7 +1667,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
      */
     public boolean commit()       
     {
-    	IRSEPersistenceManager mgr = SystemPlugin.getThePersistenceManager();
+    	IRSEPersistenceManager mgr = RSEUIPlugin.getThePersistenceManager();
     	
     	return mgr.commit(this); 
     }    
@@ -1679,7 +1679,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
      */
     public boolean commit(ISystemFilterPool pool)       
     {
-    	IRSEPersistenceManager mgr = SystemPlugin.getThePersistenceManager();
+    	IRSEPersistenceManager mgr = RSEUIPlugin.getThePersistenceManager();
     	return mgr.commit(pool);   
     }    
  
@@ -1720,7 +1720,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     public Logger getLogger()
     {
     	if (logger == null)
-    	  logger = SystemPlugin.getDefault().getLogger();
+    	  logger = RSEUIPlugin.getDefault().getLogger();
     	return logger;
     }
     

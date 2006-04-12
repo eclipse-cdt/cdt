@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.eclipse.rse.connectorservice.dstore.DStoreConnectorService;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.services.dstore.files.DStoreVirtualHostFile;
 import org.eclipse.rse.services.files.IHostFile;
@@ -31,6 +30,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 import org.eclipse.rse.subsystems.files.dstore.subsystem.RemoteFilePropertyChangeListener;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 import org.eclipse.dstore.core.model.DataElement;
 
@@ -51,7 +51,7 @@ public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes) 
 	{
 		registerFilePropertyChangeListener(ss);
-		boolean showHidden = SystemPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.SHOWHIDDEN);
+		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.SHOWHIDDEN);
 		
 		List results = new ArrayList();
 		for (int i = 0; i < nodes.length; i++) 

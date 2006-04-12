@@ -18,11 +18,11 @@ package org.eclipse.rse.ui.filters.actions;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
@@ -43,7 +43,7 @@ public class SystemFilterRemoveFilterPoolReferenceAction
 	public SystemFilterRemoveFilterPoolReferenceAction(Shell parent) 
 	{
 		super(SystemResources.ACTION_RMVFILTERPOOLREF_LABEL,SystemResources.ACTION_RMVFILTERPOOLREF_TOOLTIP,
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_DELETEREF_ID),
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_DELETEREF_ID),
 		      parent);
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE); 

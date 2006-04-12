@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
-import org.eclipse.rse.core.ISystemTypes;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.ui.widgets.SystemHostCombo;
 import org.eclipse.swt.SWT;
@@ -28,10 +28,10 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class SystemRemoteConnectionCombo extends SystemHostCombo {
 	
-	private static final String[] SYSTEM_TYPES = {	ISystemTypes.SYSTEMTYPE_LINUX,
-													ISystemTypes.SYSTEMTYPE_LOCAL,
-													ISystemTypes.SYSTEMTYPE_UNIX,
-													ISystemTypes.SYSTEMTYPE_WINDOWS };
+	private static final String[] SYSTEM_TYPES = {	IRSESystemType.SYSTEMTYPE_LINUX,
+													IRSESystemType.SYSTEMTYPE_LOCAL,
+													IRSESystemType.SYSTEMTYPE_UNIX,
+													IRSESystemType.SYSTEMTYPE_WINDOWS };
 
 	/**
 	 * Constructor when you want to set the style.

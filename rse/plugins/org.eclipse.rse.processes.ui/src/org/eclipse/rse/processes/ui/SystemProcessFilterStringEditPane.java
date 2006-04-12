@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.processes.ui.view.SystemProcessStatesContentProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -28,6 +27,7 @@ import org.eclipse.rse.services.clientserver.processes.HostProcessFilterImpl;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemTestFilterStringAction;
@@ -475,7 +475,7 @@ public class SystemProcessFilterStringEditPane extends
 			  notUnique = true;
 			if (notUnique)
 			{
-			  errorMessage = SystemPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE).makeSubstitution(currFilterString);
+			  errorMessage = RSEUIPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE).makeSubstitution(currFilterString);
 			}
 			controlInError = txtExeName;
 		}

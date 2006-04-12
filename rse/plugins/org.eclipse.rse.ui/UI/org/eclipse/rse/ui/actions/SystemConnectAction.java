@@ -16,11 +16,11 @@
 
 package org.eclipse.rse.ui.actions;
 
-import org.eclipse.rse.core.ISystemTypes;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
@@ -43,7 +43,7 @@ public class SystemConnectAction extends SystemBaseAction
 	  super(SystemResources.ACTION_CONNECT_LABEL,SystemResources.ACTION_CONNECT_TOOLTIP, shell);
 	  allowOnMultipleSelection(false);
 	  setContextMenuGroup(ISystemContextMenuConstants.GROUP_CONNECTION);
-    	setHelp(SystemPlugin.HELPPREFIX+"actn0047");
+    	setHelp(RSEUIPlugin.HELPPREFIX+"actn0047");
 	}
 	/**
 	 * Override of parent. Called when testing if action should be enabled base on current
@@ -66,7 +66,7 @@ public class SystemConnectAction extends SystemBaseAction
 	{
 		ISubSystem ss = (ISubSystem)getFirstSelection();
 		try {
-			if (ss.getHost().getSystemType().equals(ISystemTypes.SYSTEMTYPE_WINDOWS))
+			if (ss.getHost().getSystemType().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
 				ss.connect(getShell());
 			else	
 			  	ss.connect(getShell(), true);

@@ -18,9 +18,9 @@ package org.eclipse.rse.ui.validators;
 import java.util.Arrays;
 import java.util.Vector;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -59,8 +59,8 @@ public class ValidatorUniqueString
 		this.caseSensitive = caseSensitive;		
 		setExistingNamesList(existingList);
 		// initialize error messages
-		setErrorMessages(SystemPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_EMPTY),
-		                 SystemPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_NOTUNIQUE));
+		setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_EMPTY),
+		                 RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_NOTUNIQUE));
 	}
 	/**
 	 * Constructor accepting an Array. 
@@ -72,8 +72,8 @@ public class ValidatorUniqueString
 		this.caseSensitive = caseSensitive;		
 		init(existingList, caseSensitive);
 		// initialize error messages
-		setErrorMessages(SystemPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_EMPTY),
-		                 SystemPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_NOTUNIQUE));
+		setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_EMPTY),
+		                 RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_NOTUNIQUE));
 	}
 	/**
 	 * Constructor accepting a Vector and another validator to use for the syntax checking.
@@ -208,7 +208,7 @@ public class ValidatorUniqueString
 	}
 	
 	/**
-	 * Supply your own error message text. By default, messages from SystemPlugin resource bundle are used.
+	 * Supply your own error message text. By default, messages from RSEUIPlugin resource bundle are used.
 	 * @param error message when entry field is empty or null if to keep the default
 	 * @param error message when value entered is not unique or null if to keep the default
 	 */

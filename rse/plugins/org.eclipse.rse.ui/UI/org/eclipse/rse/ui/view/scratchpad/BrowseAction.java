@@ -17,8 +17,8 @@
 package org.eclipse.rse.ui.view.scratchpad;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.internal.model.SystemScratchpad;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 
@@ -32,7 +32,7 @@ class BrowseAction extends Action
         _view = view;
 		setImageDescriptor(des);
 		setToolTipText(label);
-		_scratchPad = SystemPlugin.getTheSystemRegistry().getSystemScratchPad();
+		_scratchPad = RSEUIPlugin.getTheSystemRegistry().getSystemScratchPad();
 	}
 
 	public void checkEnabledState()

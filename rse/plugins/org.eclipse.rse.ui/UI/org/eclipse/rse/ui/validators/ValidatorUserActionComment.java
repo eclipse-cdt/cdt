@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -36,8 +36,8 @@ public class ValidatorUserActionComment
      */
     public ValidatorUserActionComment()
     {
-    	setErrorMessages(SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDACMT_EMPTY),
-    	                 SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDACMT_NOTVALID));
+    	setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDACMT_EMPTY),
+    	                 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDACMT_NOTVALID));
     }
 
 	/**

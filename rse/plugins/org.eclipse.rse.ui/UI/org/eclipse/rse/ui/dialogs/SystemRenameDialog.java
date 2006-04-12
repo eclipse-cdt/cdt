@@ -35,10 +35,10 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -184,7 +184,7 @@ public class SystemRenameDialog extends SystemPromptDialog
 		super(shell, title);				
 
 		//pack();
-		setHelp(SystemPlugin.HELPPREFIX+"drnm0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"drnm0000");
 	}
 	/**
 	 * Set the verbage to show above the table. The default is "Enter new name for each resource"
@@ -390,12 +390,12 @@ public class SystemRenameDialog extends SystemPromptDialog
 			String canonicalNewName = rows[idx].getCanonicalNewName(); // defect 42145
 			//if (oldName.equalsIgnoreCase(newName)) // does not consider case for linux or unix or quoted names on iseries
 			if (rows[idx].newNameEqualsOldName())
-				errMsg = SystemPlugin.getPluginMessage(MSG_VALIDATE_RENAME_OLDEQUALSNEW).makeSubstitution(oldName);
-		     	//errMsg = SystemMessage.sub(SystemPlugin.getString(MSG_VALIDATE_RENAME_OLDEQUALSNEW),SystemMessage.MSG_SUB1,newName);
+				errMsg = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_RENAME_OLDEQUALSNEW).makeSubstitution(oldName);
+		     	//errMsg = SystemMessage.sub(RSEUIPlugin.getString(MSG_VALIDATE_RENAME_OLDEQUALSNEW),SystemMessage.MSG_SUB1,newName);
 			//else if (newNames.contains(newName)) defect 42145
 			else if (newNames.contains(canonicalNewName))
-				errMsg = SystemPlugin.getPluginMessage(MSG_VALIDATE_RENAME_NOTUNIQUE).makeSubstitution(newName);
-             	//errMsg = SystemMessage.sub(SystemPlugin.getString(MSG_VALIDATE_RENAME_NOTUNIQUE),SystemMessage.MSG_SUB1,newName);
+				errMsg = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_RENAME_NOTUNIQUE).makeSubstitution(newName);
+             	//errMsg = SystemMessage.sub(RSEUIPlugin.getString(MSG_VALIDATE_RENAME_NOTUNIQUE),SystemMessage.MSG_SUB1,newName);
 			else
 			{
            	 	ISystemValidator nameValidator = rows[idx].getNameValidator();
@@ -411,7 +411,7 @@ public class SystemRenameDialog extends SystemPromptDialog
            	 	{
            	 		boolean ok = ValidatorConnectionName.validateNameNotInUse(newName, getShell());
            	 		if (!ok)
-           	 			errMsg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED);
+           	 			errMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED);
            	 	}
            	 		
 			}			
@@ -630,8 +630,8 @@ public class SystemRenameDialog extends SystemPromptDialog
 		  	  if ((names != null) && (names.length>0))
 		  	  {
 		  		    uniqueNameValidator = new ValidatorUniqueString(names,caseSensitive);
-		            uniqueNameValidator.setErrorMessages(SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
-		                                                 SystemPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));
+		            uniqueNameValidator.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
+		                                                 RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));
 		            uniqueNameValidatorPerParent.put(parentName, uniqueNameValidator);
 		            if (debug)
 		            {

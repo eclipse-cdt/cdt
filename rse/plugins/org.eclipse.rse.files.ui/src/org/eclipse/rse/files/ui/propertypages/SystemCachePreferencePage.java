@@ -34,7 +34,6 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
@@ -45,6 +44,7 @@ import org.eclipse.rse.ui.GenericMessages;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.Mnemonics;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
@@ -95,7 +95,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 	public SystemCachePreferencePage()
 	{
 		super();
-		setPreferenceStore(SystemPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(RSEUIPlugin.getDefault().getPreferenceStore());
 		setDescription(FileResources.RESID_PREF_CACHE_DESCRIPTION);
 	}
 
@@ -186,7 +186,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 			FileResources.RESID_PREF_CACHE_CLEAR_WARNING_DESCRIPTION);
 
 		(new Mnemonics()).setOnPreferencePage(true).setMnemonics(parent);
-		SystemWidgetHelpers.setCompositeHelp(parent, SystemPlugin.HELPPREFIX + "fchp0000");
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "fchp0000");
 
 		initControls();
 		return parent;
@@ -194,7 +194,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 
 	private void initControls()
 	{
-		IPreferenceStore store = SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 		boolean enableMaxSize = store.getBoolean(ISystemPreferencesConstants.LIMIT_CACHE);
 		_maxCacheSize.setEnabled(enableMaxSize);
 		
@@ -223,7 +223,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 	{
 		super.performDefaults();
 
-		IPreferenceStore store = SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 
 		boolean enableMaxSize = store.getDefaultBoolean(ISystemPreferencesConstants.LIMIT_CACHE);
 		_maxCacheCheckbox.setSelection(enableMaxSize);
@@ -248,7 +248,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 	 */
 	public boolean performOk()
 	{
-		IPreferenceStore store = SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 		String size = _maxCacheSize.getText();
 		
 		if (size == null || size.trim().equals("")) {
@@ -341,7 +341,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = SystemPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;
@@ -420,7 +420,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 						else if (properties.getDownloadFileTimeStamp() != child.getLocalTimeStamp())
 						{
 							String ssString = properties.getRemoteFileSubSystem();
-							ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+							ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 							ISubSystem subsystem = registry.getSubSystem(ssString);
 							if (subsystem != null)
 							{
@@ -532,7 +532,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 								else
 								{
 									String ssString = properties.getRemoteFileSubSystem();
-									ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+									ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 									ISubSystem subsystem = registry.getSubSystem(ssString);
 									if (subsystem != null)
 									{
@@ -599,7 +599,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 		List dirtyEditors = new ArrayList();
 		if (!getDirtyReplicas(dirtyEditors))
 		{
-			SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_CACHE_UNABLE_TO_SYNCH);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CACHE_UNABLE_TO_SYNCH);
 			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 			dlg.open();
 
@@ -617,7 +617,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 			WorkbenchContentProvider cprovider = new WorkbenchContentProvider();
 			SystemTableViewProvider lprovider = new SystemTableViewProvider();
 
-			SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_CACHE_UPLOAD_BEFORE_DELETE);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CACHE_UPLOAD_BEFORE_DELETE);
 
 			ListSelectionDialog dlg =
 				new ListSelectionDialog(getShell(), input, cprovider, lprovider, msg.getLevelOneText());

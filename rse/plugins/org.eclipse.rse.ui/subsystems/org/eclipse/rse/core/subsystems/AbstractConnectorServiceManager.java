@@ -18,10 +18,10 @@ package org.eclipse.rse.core.subsystems;
 import java.util.Hashtable;
 import java.util.Set;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.DummyHost;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -189,7 +189,7 @@ public abstract class AbstractConnectorServiceManager implements IConnectorServi
      */    
     public void updateSubSystems(Shell shell, ISubSystem subsystem, boolean updateUserId, String userId, boolean updatePort, int port)
     {
-    	ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();    	
+    	ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();    	
     	IHost conn = subsystem.getHost();
     	ISubSystem[] subsystems = sr.getSubSystems(conn);
         if (subsystems != null)

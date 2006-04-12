@@ -26,7 +26,7 @@ Contributors:
    <extension
          point="org.eclipse.rse.core.subsystemfactory">
       <factory
-            systemtypes="Local"
+            systemTypes="Local"
             name="Local Processes (new)"
             iconlive="icons/full/obj16/processsubsystemlive_obj.gif"
             icon="icons/full/obj16/processsubsystem_obj.gif"

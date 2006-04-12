@@ -16,11 +16,11 @@
 
 package org.eclipse.rse.ui.propertypages;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -219,7 +219,7 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
 		  if (userIdValidator != null)
 	        errorMessage= userIdValidator.validate(textUserId.getText());
 	      else if (getUserId().equals(""))
-		    errorMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY);
+		    errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY);
 	    }
 		setErrorMessage(errorMessage);		
 		//setPageComplete();
@@ -239,7 +239,7 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
 		  if (portValidator != null)
 	        errorMessage= portValidator.validate(textPort.getText());
 	      else if (getPort().equals(""))
-		    errorMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY);
+		    errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY);
 	    }
 		setErrorMessage(errorMessage);		
 		//setPageComplete();

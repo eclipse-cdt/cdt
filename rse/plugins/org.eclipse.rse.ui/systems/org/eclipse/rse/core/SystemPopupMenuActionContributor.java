@@ -76,7 +76,7 @@ public class SystemPopupMenuActionContributor extends PluginActionBuilder implem
 	private static final String ATT_SUBSUBTYPE_FILTER = "subsubtypefilter"; //$NON-NLS-1$
 	private static final String ATT_SUBSYSTEM_FACTORY_ID = "subsystemconfigurationid"; //$NON-NLS-1$
 	private static final String ATT_SUBSYSTEM_FACTORY_CATEGORY = "subsystemconfigurationCategory"; //$NON-NLS-1$
-	private static final String ATT_SYSTEM_TYPES = "systemtypes"; //$NON-NLS-1$
+	private static final String ATT_SYSTEM_TYPES = "systemTypes"; //$NON-NLS-1$
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	private static final String ATT_NAME = "name"; //$NON-NLS-1$
 	private static final String ATT_LABEL = "label"; //$NON-NLS-1$
@@ -165,7 +165,7 @@ public class SystemPopupMenuActionContributor extends PluginActionBuilder implem
 	}
 
 	/**
-	 * Return what was specified for the <samp>systemtypes</samp> xml attribute.
+	 * Return what was specified for the <samp>systemTypes</samp> xml attribute.
 	 */
 	public String getSystemTypesFilter() {
 		return matcher.getSystemTypesFilter();

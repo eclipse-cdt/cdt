@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -47,6 +46,7 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystemConfiguration;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -114,7 +114,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	public boolean checkForCancel(IProgressMonitor monitor)
 	{
 		if ((monitor != null) && monitor.isCanceled())
-			throw new OperationCanceledException(SystemPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED)
+			throw new OperationCanceledException(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED)
 					.getLevelOneText());
 		return false;
 	}
@@ -618,7 +618,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			}
 			_cmdShells.remove(command);
 		}
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
 		// tell remote shell view of removed shell
 		registry.fireEvent(new SystemResourceChangeEvent(command,
@@ -658,7 +658,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			}
 		}
 
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
 
 		return results;
@@ -666,7 +666,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	public void cancelAllShells()
 	{
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		for (int i = _cmdShells.size() - 1; i >= 0; i--)
 		{
 			IRemoteCommandShell cmdShell = (IRemoteCommandShell) _cmdShells.get(i);
@@ -718,7 +718,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 		public void run()
 		{
-			SystemPlugin.getTheSystemRegistry().fireEvent(
+			RSEUIPlugin.getTheSystemRegistry().fireEvent(
 					new SystemResourceChangeEvent(_ss, ISystemResourceChangeEvents.EVENT_COMMAND_SHELL_REMOVED, _ss));
 		}
 
@@ -837,7 +837,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			}
 		}
 
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
 
 		return cmdShell;
@@ -1029,7 +1029,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			msg = getRunningMessage(_cmd);
 
 			if (!implicitConnect(false, mon, msg, totalWorkUnits))
-				throw new Exception(SystemPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(
+				throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(
 						getHostName()).getLevelOneText());
 			runOutputs = internalRunCommand(mon, _cmd, _runContext, _runInterpret);
 		}
@@ -1061,7 +1061,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			int totalWorkUnits = IProgressMonitor.UNKNOWN;
 
 			if (!implicitConnect(false, mon, msg, totalWorkUnits))
-				throw new Exception(SystemPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(
+				throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(
 						getHostName()).getLevelOneText());
 			runOutputs = new Object[]
 			{
@@ -1096,7 +1096,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			int totalWorkUnits = IProgressMonitor.UNKNOWN;
 
 			if (!implicitConnect(false, mon, msg, totalWorkUnits))
-				throw new Exception(SystemPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(
+				throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(
 						getHostName()).getLevelOneText());
 			internalCancelShell(mon, _runContext);
 		}
@@ -1136,7 +1136,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			msg = getRunningMessage(_cmd);
 
 			if (!implicitConnect(false, mon, msg, totalWorkUnits))
-				throw new Exception(SystemPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(
+				throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(
 						getHostName()).getLevelOneText());
 			internalSendCommandToShell(mon, _cmd, _runContext);
 		}
@@ -1169,7 +1169,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			int totalWorkUnits = IProgressMonitor.UNKNOWN;
 
 			if (!implicitConnect(false, mon, msg, totalWorkUnits))
-				throw new Exception(SystemPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(
+				throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(
 						getHostName()).getLevelOneText());
 			internalRemoveShell(_runContext);
 		}

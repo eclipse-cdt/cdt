@@ -38,7 +38,7 @@ import org.eclipse.rse.persistence.dom.RSEDOM;
  * @author dmcknigh
  *
  */
-public class DefaultRSEPersistenceProvider implements IRSEPersistenceProvider 
+public class SerializingProvider implements IRSEPersistenceProvider 
 {
 
 	/**
@@ -54,7 +54,7 @@ public class DefaultRSEPersistenceProvider implements IRSEPersistenceProvider
 		IFile profileFile = getProfileFile(domName, monitor);
 		if (profileFile.exists())
 		{
-			System.out.println("loading "+ profileFile.getLocation().toOSString() + "...");
+			System.out.println("loading "+ profileFile.getLocation().toOSString() + "..."); // TODO: dwd debugging
 			try
 			{
 				InputStream iStream = profileFile.getContents();
@@ -118,7 +118,7 @@ public class DefaultRSEPersistenceProvider implements IRSEPersistenceProvider
 		
 		IFile profileFile = getProfileFile(dom.getName(), monitor);
 		File osFile = profileFile.getLocation().toFile();
-		System.out.println("saving "+ osFile.getAbsolutePath() + "...");
+		System.out.println("saving "+ osFile.getAbsolutePath() + "..."); // TODO: dwd debugging
 		try
 		{
 			OutputStream oStream = new FileOutputStream(osFile);

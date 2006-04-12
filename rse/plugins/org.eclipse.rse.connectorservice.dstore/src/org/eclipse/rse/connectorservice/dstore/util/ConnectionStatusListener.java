@@ -26,12 +26,12 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -112,7 +112,7 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
 		{
 			Shell shell = getShell();
 			_connectionDown = true;
-			SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
 			msg.makeSubstitution(_connection.getPrimarySubSystem().getHost().getAliasName());
 			SystemMessageDialog dialog = new SystemMessageDialog(internalGetShell(), msg);
 			dialog.open();
@@ -121,7 +121,7 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
 				IRunnableContext runnableContext = getRunnableContext(getShell());
 		    	runnableContext.run(false,true,_listener); // inthread, cancellable, IRunnableWithProgress
 		    	_connection.reset();
-				ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();    	    
+				ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();    	    
 	            sr.connectedStatusChange(_connection.getPrimarySubSystem(), false, true, true);
 			}
 	    	catch (InterruptedException exc) // user cancelled
@@ -216,7 +216,7 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
        	IWorkbenchWindow win = SystemBasePlugin.getActiveWorkbenchWindow();
        	if (win != null)
        	{
-       		Shell winShell = SystemPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+       		Shell winShell = RSEUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
        		if (winShell != null && !winShell.isDisposed() && winShell.isVisible())
        		{
        			SystemBasePlugin.logInfo("Using active workbench window as runnable context");
@@ -247,12 +247,12 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
      */
     protected void showDisconnectErrorMessage(Shell shell, String hostName, int port, Exception exc)
     {
-         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR,shell,SystemPlugin.getResourceBundle(),
+         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR,shell,RSEUIPlugin.getResourceBundle(),
          //                             ISystemMessages.MSG_DISCONNECT_FAILED,
          //                             hostName, exc.getMessage()); 	
-         //SystemPlugin.logError("Disconnect failed",exc); // temporary
+         //RSEUIPlugin.logError("Disconnect failed",exc); // temporary
     	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,
-    	            SystemPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_FAILED).makeSubstitution(hostName,exc));
+    	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_FAILED).makeSubstitution(hostName,exc));
     	 msgDlg.setException(exc);
     	 msgDlg.open();
     }	
@@ -263,10 +263,10 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
      */
     protected void showDisconnectCancelledMessage(Shell shell, String hostName, int port)
     {
-         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell, SystemPlugin.getResourceBundle(),
+         //SystemMessage.displayMessage(SystemMessage.MSGTYPE_ERROR, shell, RSEUIPlugin.getResourceBundle(),
          //                             ISystemMessages.MSG_DISCONNECT_CANCELLED, hostName);
     	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell,
-    	            SystemPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_CANCELLED).makeSubstitution(hostName));
+    	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_CANCELLED).makeSubstitution(hostName));
     	 msgDlg.open();
     }
 }

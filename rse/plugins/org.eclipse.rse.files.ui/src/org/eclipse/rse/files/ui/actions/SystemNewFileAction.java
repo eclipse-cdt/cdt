@@ -17,10 +17,10 @@
 package org.eclipse.rse.files.ui.actions;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.wizards.SystemNewFileWizard;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseWizardAction;
 import org.eclipse.swt.widgets.Shell;
@@ -41,7 +41,7 @@ public class SystemNewFileAction extends SystemBaseWizardAction
 		this(SystemResources.ACTION_NEWFILE_LABEL, 
 		     SystemResources.ACTION_NEWFILE_TOOLTIP,
 			 //PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE), 
-		     SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILE_ID), 
+		     RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILE_ID), 
 		     parent);
 	}
 

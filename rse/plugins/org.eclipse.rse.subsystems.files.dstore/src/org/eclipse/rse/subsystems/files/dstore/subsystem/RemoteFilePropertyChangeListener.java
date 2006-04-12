@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -30,6 +29,7 @@ import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.dstore.model.DStoreFile;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
@@ -129,7 +129,7 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
         this._fileSubSystem = fileSS;
         this.dataStore = dataStore;
         this.system = system;
-        this._registry = SystemPlugin.getTheSystemRegistry();
+        this._registry = RSEUIPlugin.getTheSystemRegistry();
         system.addCommunicationsListener(this);
         dataStore.getDomainNotifier().addDomainListener(this);
     }

@@ -20,13 +20,13 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemProfileManager;
 import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorProfileName;
 
@@ -67,7 +67,7 @@ public class SystemProfileManager implements ISystemProfileManager
 			defaultInst = new SystemProfileManager();
 			
 			// restores all of RSE
-			SystemPlugin.getThePersistenceManager().restore(defaultInst);
+			RSEUIPlugin.getThePersistenceManager().restore(defaultInst);
 		}
 		return defaultInst;
 	}
@@ -106,7 +106,7 @@ public class SystemProfileManager implements ISystemProfileManager
 		  	SystemPreferencesManager.getPreferencesManager().addActiveProfile(name);
 		  	((SystemProfile)newProfile).setActive(makeActive);
 		}	
-		SystemPlugin.getThePersistenceManager().commit(this);
+		RSEUIPlugin.getThePersistenceManager().commit(this);
 		return newProfile;
 	}
 	
@@ -183,7 +183,7 @@ public class SystemProfileManager implements ISystemProfileManager
 		  for (int idx=0; (!defaultProfileExist) && (idx<profiles.size()); idx++)
 		  {
 		  	ISystemProfile profile = (ISystemProfile)profiles.get(idx);
-      		String initProfileName = SystemPlugin.getLocalMachineName();
+      		String initProfileName = RSEUIPlugin.getLocalMachineName();
       		int dotIndex = initProfileName.indexOf('.');
       		
       		if (dotIndex != -1)
@@ -208,7 +208,7 @@ public class SystemProfileManager implements ISystemProfileManager
 		       {
 		         profile.setDefaultPrivate(true);
 		
-		         SystemPlugin.getThePersistenceManager().commit(SystemStartHere.getSystemProfileManager());
+		         RSEUIPlugin.getThePersistenceManager().commit(SystemStartHere.getSystemProfileManager());
 		         defaultProfileExist = true; 
 		       }
 		  	}   	
@@ -302,7 +302,7 @@ public class SystemProfileManager implements ISystemProfileManager
 		if (isActive)
 		  SystemPreferencesManager.getPreferencesManager().renameActiveProfile(oldName, newName);
 		invalidateCache(); 
-		// FIXME SystemPlugin.getThePersistanceManager().save(this);
+		// FIXME RSEUIPlugin.getThePersistenceManager().save(this);
 	}
 	
 	/**
@@ -332,7 +332,7 @@ public class SystemProfileManager implements ISystemProfileManager
 		  SystemPreferencesManager.getPreferencesManager().deleteActiveProfile(oldName);
         invalidateCache();	
         
-        //FIXME SystemPlugin.getThePersistanceManager().save(this);
+        //FIXME RSEUIPlugin.getThePersistenceManager().save(this);
    
 	}
 
@@ -399,7 +399,7 @@ public class SystemProfileManager implements ISystemProfileManager
 		for (int activeIdx = 0; activeIdx < activeProfileNames.length; activeIdx++)
 		{
 			// skip Team and Private profiles
-			if (SystemPlugin.getLocalMachineName().equals(activeProfileNames[activeIdx]))
+			if (RSEUIPlugin.getLocalMachineName().equals(activeProfileNames[activeIdx]))
 			{
 				found_private = true;
 			}
@@ -446,7 +446,7 @@ public class SystemProfileManager implements ISystemProfileManager
 		        if (systemProfiles[systemIdx].isActive() || systemProfiles[systemIdx].isDefaultPrivate())
 		        {
 		            SystemPreferencesManager.getPreferencesManager().addActiveProfile(name);
-		            SystemPreferencesManager.getPreferencesManager().deleteActiveProfile(SystemPlugin.getLocalMachineName());
+		            SystemPreferencesManager.getPreferencesManager().deleteActiveProfile(RSEUIPlugin.getLocalMachineName());
 		            activeProfileNames = SystemPreferencesManager.getPreferencesManager().getActiveProfileNames();		            
 		        }
 		    }
@@ -469,7 +469,7 @@ public class SystemProfileManager implements ISystemProfileManager
 				
 				if (!found_private)
 				{
-					SystemPreferencesManager.getPreferencesManager().addActiveProfile(SystemPlugin.getLocalMachineName());
+					SystemPreferencesManager.getPreferencesManager().addActiveProfile(RSEUIPlugin.getLocalMachineName());
 					changed = true;
 				}				
 	      	}
@@ -523,7 +523,7 @@ public class SystemProfileManager implements ISystemProfileManager
 	 */
 	public ISystemProfile getDefaultPrivateSystemProfile()
 	{
-		return getSystemProfile(SystemPlugin.getLocalMachineName());
+		return getSystemProfile(RSEUIPlugin.getLocalMachineName());
 	}
 	/**
 	 * Return the default team profile created at first touch.
@@ -632,7 +632,7 @@ public class SystemProfileManager implements ISystemProfileManager
 			// FIXME
 			ISystemProfile profile = new SystemProfile();
 			//profile.setName("Private");
-			profile.setName(SystemPlugin.getLocalMachineName());
+			profile.setName(RSEUIPlugin.getLocalMachineName());
 			profile.setDefaultPrivate(true);
 			_profiles = new ArrayList();
 			_profiles.add(profile);

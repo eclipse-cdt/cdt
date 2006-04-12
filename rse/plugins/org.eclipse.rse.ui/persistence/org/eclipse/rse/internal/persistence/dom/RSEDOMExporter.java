@@ -86,7 +86,7 @@ public class RSEDOMExporter implements IRSEDOMExporter
 	}
 	
 	/**
-	 * Creates an RSE DOM for use in persistance
+	 * Creates an RSE DOM for use in persistence
 	 * @param dom
 	 * @param profile
 	 * @return

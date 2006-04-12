@@ -17,13 +17,13 @@
 package org.eclipse.rse.ui.actions;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.ISystemTypes;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
@@ -45,7 +45,7 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 		super(SystemResources.RESID_OFFLINE_WORKOFFLINE_LABEL, SystemResources.RESID_OFFLINE_WORKOFFLINE_TOOLTIP, shell);
 		allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CONNECTION);
-		setHelp(SystemPlugin.HELPPREFIX+"wofa0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"wofa0000");
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 	public void run()	
 	{		  
 		IHost conn = (IHost)getFirstSelection();
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry(); 
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry(); 
 	
 		if (conn.isOffline())
 		{
@@ -102,7 +102,7 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 			}
 			
 			// check that everything was disconnedted okay and this is not the local connection
-			if(sr.isAnySubSystemConnected(conn) && !ISystemTypes.SYSTEMTYPE_LOCAL.equals(conn.getSystemType()))
+			if(sr.isAnySubSystemConnected(conn) && !IRSESystemType.SYSTEMTYPE_LOCAL.equals(conn.getSystemType()))
 			{
 				// backout changes, likely because user cancelled the disconnect
 				setChecked(false);

@@ -15,7 +15,6 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
@@ -27,6 +26,7 @@ import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemMessageObject;
 import org.eclipse.rse.model.SystemMessageObject;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -140,21 +140,21 @@ public class SystemViewAPIProviderForFilterStrings
 			if ((children == null) || (children.length==0))
 			{
 		      children = new SystemMessageObject[1];
-		      children[0] = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_EMPTY),
+		      children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_EMPTY),
 		                                            ISystemMessageObject.MSGTYPE_EMPTY, element);
 			}
 		}
 		catch (InterruptedException exc)
 		{
 		    children = new SystemMessageObject[1];
-		    children[0] = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_CANCELLED),
+		    children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_CANCELLED),
 		                                          ISystemMessageObject.MSGTYPE_CANCEL, element);
 		 	System.out.println("Canceled.");
 		}
 		catch (Exception exc)
 		{
 		    children = new SystemMessageObject[1];
-		    children[0] = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_FAILED),
+		    children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FAILED),
 		                                          ISystemMessageObject.MSGTYPE_ERROR, element);
 		    System.out.println("Exception resolving filter strings: " + exc.getClass().getName() + ", " + exc.getMessage());			
 		    exc.printStackTrace();

@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.core.internal.subsystems;
 
-import org.eclipse.rse.core.ISystemTypes;
+import org.eclipse.rse.core.IRSESystemType;
 
 /**
  * This interface defines constants for IBM Server Launcher.
@@ -42,12 +42,12 @@ public interface IBMServerLauncherConstants
 	/**
 	 * Linux REXEC script command, "perl ./server.linux".
 	 */
-	public static final String LINUX_REXEC_SCRIPT = "perl ./server." + ISystemTypes.SYSTEMTYPE_LINUX.toLowerCase();
+	public static final String LINUX_REXEC_SCRIPT = "perl ./server." + IRSESystemType.SYSTEMTYPE_LINUX.toLowerCase();
 	
 	/**
 	 * Unix REXEC script command, "./server.unix".
 	 */
-	public static final String UNIX_REXEC_SCRIPT = "./server." + ISystemTypes.SYSTEMTYPE_UNIX.toLowerCase();
+	public static final String UNIX_REXEC_SCRIPT = "./server." + IRSESystemType.SYSTEMTYPE_UNIX.toLowerCase();
 	
 	/**
 	 * Default REXEC script command. TIt is equivalent to <code>LINUX_REXEC_SCRIPT</code>.

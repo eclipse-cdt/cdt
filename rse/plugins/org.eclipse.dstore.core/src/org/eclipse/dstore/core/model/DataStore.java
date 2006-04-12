@@ -2977,7 +2977,7 @@ public final class DataStore
 	 *
 	 * @param root the element to persist from
 	 * @param remotePath the path where the persisted file should be saved
-	 * @param depth the depth of persistance from the root
+	 * @param depth the depth of persistence from the root
 	 */
 	public void saveFile(DataElement root, String remotePath, int depth)
 	{
@@ -3302,7 +3302,16 @@ public final class DataStore
 		if (_userPreferencesDirectory == null) {
 			
 			_userPreferencesDirectory = System.getProperty("user.home");
-			String userID = System.getProperty("user.name");
+			
+			String clientUserID = System.getProperty("client.username");
+			if (clientUserID == null || clientUserID.equals(""))
+			{
+				clientUserID = "";
+			}
+			else
+			{
+				clientUserID += File.separator;
+			}
 			
  			// append a '/' if not there
   			if ( _userPreferencesDirectory.length() == 0 || 
@@ -3312,13 +3321,12 @@ public final class DataStore
 		    }
   		
   			_userPreferencesDirectory = _userPreferencesDirectory + ".eclipse" + File.separator + 
-  																	"RSE" + File.separator + userID + File.separator;
+  			         												"RSE" + File.separator + clientUserID;
 	  		File dirFile = new File(_userPreferencesDirectory);
 	  		if (!dirFile.exists()) {
 	 	 		dirFile.mkdirs();
 	  		}
 		}
-	  	
 	  return _userPreferencesDirectory;
 	}
 

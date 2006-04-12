@@ -17,12 +17,12 @@
 package org.eclipse.rse.files.ui.wizards;
 
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
@@ -103,7 +103,7 @@ public class SystemNewFileWizardMainPage
 			}
 		);			
     		
-		SystemWidgetHelpers.setCompositeHelp(composite_prompts, SystemPlugin.HELPPREFIX+NEW_FILE_WIZARD);	
+		SystemWidgetHelpers.setCompositeHelp(composite_prompts, RSEUIPlugin.HELPPREFIX+NEW_FILE_WIZARD);	
 		
 		return composite_prompts;		
 

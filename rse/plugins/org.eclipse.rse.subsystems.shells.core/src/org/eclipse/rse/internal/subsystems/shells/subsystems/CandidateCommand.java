@@ -97,7 +97,7 @@ public class CandidateCommand implements IAdaptable, ICandidateCommand
 	    if (_imageDescriptor == null)
 	    {
 	        _imageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
-	        //_imageDescriptor = SystemPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_RUN_ID);	    
+	        //_imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_RUN_ID);	    
 	    }
 	    return _imageDescriptor;
 	}

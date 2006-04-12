@@ -32,7 +32,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.internal.subsystems.AbstractResource;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
@@ -47,6 +46,7 @@ import org.eclipse.rse.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemDynamicPopupMenuExtensionManager;
@@ -330,7 +330,7 @@ public abstract class AbstractSystemViewAdapter
 	{
 		// system view adapter menu extensions
 		// these extensions are independent of subsystem factories and are contributed via extension point
-		SystemDynamicPopupMenuExtensionManager.getInstance().populateMenu(shell, menu.getMenuManager(), selection, menuGroup);	
+		SystemDynamicPopupMenuExtensionManager.getInstance().populateMenu(shell, menu, selection, menuGroup);	
 	}
 
 	/**
@@ -1517,7 +1517,7 @@ public abstract class AbstractSystemViewAdapter
         else
     	  adapter = (ISystemViewElementAdapter)((IAdaptable)o).getAdapter(ISystemViewElementAdapter.class);
     	if (adapter == null)
-    	  SystemPlugin.logDebugMessage(this.getClass().getName(), "ADAPTER IS NULL FOR ELEMENT : " + o);
+    	  RSEUIPlugin.logDebugMessage(this.getClass().getName(), "ADAPTER IS NULL FOR ELEMENT : " + o);
     	else
     	{
     		adapter.setViewer(getViewer()); // added this in V5.0, just in case. Phil
@@ -1658,9 +1658,9 @@ public abstract class AbstractSystemViewAdapter
      */
 	protected void initMsgObjects()
 	{
-		nullObject     = new SystemMessageObject(SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),ISystemMessageObject.MSGTYPE_EMPTY, null);
-		canceledObject = new SystemMessageObject(SystemPlugin.getPluginMessage(ISystemMessages.MSG_LIST_CANCELLED),ISystemMessageObject.MSGTYPE_CANCEL, null);
-		errorObject    = new SystemMessageObject(SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),ISystemMessageObject.MSGTYPE_ERROR, null);
+		nullObject     = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),ISystemMessageObject.MSGTYPE_EMPTY, null);
+		canceledObject = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LIST_CANCELLED),ISystemMessageObject.MSGTYPE_CANCEL, null);
+		errorObject    = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),ISystemMessageObject.MSGTYPE_ERROR, null);
 	}
 	
     /**

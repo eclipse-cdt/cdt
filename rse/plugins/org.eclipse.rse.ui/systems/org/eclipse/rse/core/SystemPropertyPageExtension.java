@@ -44,7 +44,7 @@ import org.osgi.framework.Bundle;
  * <li>class. The class which implements IWorkbenchPropertyPage
  * <li>subsystemconfigurationid. For scoping to remote objects for a given subsystem factory
  * <li>subsystemconfigurationCategory. For scoping to remote objects for a given subsystem factory category
- * <li>systemtypes. For scoping to remote objects from systems of a given type, or comma-separated types.
+ * <li>systemTypes. For scoping to remote objects from systems of a given type, or semicolon-separated types.
  * <li>namefilter. For scoping to remote objects of a given name
  * <li>typecategoryfilter. For scoping to remote objects for a given remote object type category
  * <li>typefilter. For scoping to remote objects of a given type
@@ -87,7 +87,7 @@ public class SystemPropertyPageExtension implements IPropertyPageContributor
     	subsubtypefilter = element.getAttribute("subsubtypefilter");
     	subsystemfilter = element.getAttribute("subsystemconfigurationid");    	
     	subsystemCategoryFilter = element.getAttribute("subsystemconfigurationCategory");    
- 	    systypes = element.getAttribute("systemtypes");    
+ 	    systypes = element.getAttribute("systemTypes");    
     	    	
 	    filterProperties = null;
    		IConfigurationElement[] children = element.getChildren();
@@ -214,7 +214,7 @@ public class SystemPropertyPageExtension implements IPropertyPageContributor
     }        
     /**
      * Getter method.
-     * Return what was specified for the <samp>systemtypes</samp> xml attribute.
+     * Return what was specified for the <samp>systemTypes</samp> xml attribute.
      */
     public String getSystemTypesFilter()
     {
@@ -329,7 +329,7 @@ public class SystemPropertyPageExtension implements IPropertyPageContributor
 	 * property page manager.
 	 * @return true if pages were added, false if not.
 	 */	
-	public boolean contributePropertyPages(PropertyPageManager manager, IAdaptable object)
+	public boolean contributePropertyPages(PropertyPageManager manager, Object object)
 	{
 		boolean added = false;
 	    SystemRemotePropertyPageNode node = new SystemRemotePropertyPageNode(this, object);
@@ -347,12 +347,15 @@ public class SystemPropertyPageExtension implements IPropertyPageContributor
 	/**
 	 * Creates the page based on the information in the configuration element.
 	 */
-	public IWorkbenchPropertyPage createPage(IAdaptable element) // throws CoreException
+	public IWorkbenchPropertyPage createPage(Object element) // throws CoreException
 	{
 		IWorkbenchPropertyPage ppage = getPropertyPage();
 		if (ppage != null)
 		{
-		  ppage.setElement(element);
+		  if (element instanceof IAdaptable) {
+			  ppage.setElement((IAdaptable)element);
+		  }
+		  
 		  ppage.setTitle(name);
 		}
 		return ppage;

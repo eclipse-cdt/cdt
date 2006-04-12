@@ -110,7 +110,7 @@ public class DataStoreTrustManager implements X509TrustManager
 					X509Certificate tcert = (X509Certificate)_trustedCerts.get(j);
 					try
 					{
-						tcert.verify(cert.getPublicKey());
+						cert.verify(tcert.getPublicKey());
 						foundMatch = true;
 					}
 					catch (Exception e)

@@ -30,7 +30,9 @@ public class SystemImportCertAction extends SystemBaseWizardAction
 	{
 		private List _certificates;
 		private ISystemKeystoreProvider _provider;
-		public SystemImportCertAction(ISystemKeystoreProvider provider, List certs)
+		private String _systemName;
+		
+		public SystemImportCertAction(ISystemKeystoreProvider provider, List certs, String systemName)
 		{
 			super(UniversalSecurityProperties.RESID_SECURITY_TRUST_IMPORT_CERTIFICATE_WIZARD, 
 					ImageRegistry.getImageDescriptor(ImageRegistry.IMG_CERTIF_FILE),
@@ -38,12 +40,13 @@ public class SystemImportCertAction extends SystemBaseWizardAction
 					);
 			_certificates = certs;
 			_provider = provider;
+			_systemName = systemName;
 		}
 		
 		public IWizard createWizard()
 		{
 			Shell shell = Display.getDefault().getActiveShell();
-			SystemImportCertWizard importWiz = new SystemImportCertWizard(_provider);
+			SystemImportCertWizard importWiz = new SystemImportCertWizard(_provider, _systemName);
 			importWiz.setInputObject(_certificates);
 			return importWiz;
 		}	

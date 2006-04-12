@@ -18,11 +18,11 @@ Contributors:
 <plugin>
 
 <!-- ============================================== -->
-<!-- Define subsystem factories for processes...     -->
+<!-- Define subsystem configurations for processes...     -->
 <!-- ============================================== -->
 <!-- let's wait until this is supported on windows
       <extension
-         point="org.eclipse.rse.ui.subsystemconfiguration">
+         point="org.eclipse.rse.ui.subsystemConfiguration">
       <factory
             systemtypes="Local"
             name="%Factory.LocalProcesses"

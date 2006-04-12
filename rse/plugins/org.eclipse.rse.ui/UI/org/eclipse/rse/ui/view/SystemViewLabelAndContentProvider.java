@@ -35,11 +35,11 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemMessageObject;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -225,7 +225,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	
 	protected boolean supportsDeferredQueries()
 	{
-	    IPreferenceStore store = SystemPlugin.getDefault().getPreferenceStore();
+	    IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 	    return store.getBoolean(ISystemPreferencesConstants.USE_DEFERRED_QUERIES);
 	}
 

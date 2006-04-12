@@ -16,11 +16,11 @@
 
 package org.eclipse.rse.ui.actions;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.view.team.SystemTeamView;
 import org.eclipse.rse.ui.wizards.SystemNewProfileWizard;
@@ -39,10 +39,10 @@ public class SystemNewProfileAction extends SystemBaseWizardAction
 	 */
 	public SystemNewProfileAction(Shell parent) 
 	{
-		super(SystemResources.ACTION_NEWPROFILE_LABEL, SystemResources.ACTION_NEWPROFILE_TOOLTIP, SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWPROFILE_ID), parent);
+		super(SystemResources.ACTION_NEWPROFILE_LABEL, SystemResources.ACTION_NEWPROFILE_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWPROFILE_ID), parent);
         setSelectionSensitive(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);  		  
-		setHelp(SystemPlugin.HELPPREFIX+"actn0003");		    
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0003");		    
 	}
 	/**
 	 * Constructor for SystemNewProfileAction where you can choose between "New profile..." and "New -> Profile"
@@ -51,13 +51,13 @@ public class SystemNewProfileAction extends SystemBaseWizardAction
 	{
 		super(cascading ? SystemResources.ACTION_NEWPROFILE_LABEL : SystemResources.ACTION_NEW_PROFILE_LABEL, 
 				cascading ? SystemResources.ACTION_NEWPROFILE_TOOLTIP : SystemResources.ACTION_NEW_PROFILE_TOOLTIP,
-				SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWPROFILE_ID), parent);
+				RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWPROFILE_ID), parent);
 		setSelectionSensitive(false);
 		if (cascading)
 			setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);
 		else  		  
 			setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW_NONCASCADING);
-		setHelp(SystemPlugin.HELPPREFIX+"actn0003");		    
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0003");		    
 	}
 	
 	/**

@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.filters.ISystemFilterReference;
@@ -46,6 +45,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -133,7 +133,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 				}
 				else
 				{
-					if (!SystemPlugin.getThePersistenceManager().isExporting())
+					if (!RSEUIPlugin.getThePersistenceManager().isExporting())
 					{
 						List changes = new ArrayList();
 						checkLocalChanges(delta, changes);
@@ -155,7 +155,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 		
 		public IStatus run(IProgressMonitor monitor)
 		{
-			SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_SYNCHRONIZE_PROGRESS);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_SYNCHRONIZE_PROGRESS);
 			monitor.beginTask(msg.getLevelOneText(), _resources.size());
 			for (int i = 0; i < _resources.size(); i++)
 			{
@@ -180,7 +180,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 			_isSynching = true;
 			synchronized (_changedResources)
 			{				
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_SYNCHRONIZE_PROGRESS);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_SYNCHRONIZE_PROGRESS);
 				monitor.beginTask(msg.getLevelOneText(), IProgressMonitor.UNKNOWN);
 				setName(msg.getLevelOneText());
 				for (int i = 0; i < _changedResources.size(); i++)
@@ -300,7 +300,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 	
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = SystemPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;
@@ -365,7 +365,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 						    String ssStr = properties.getRemoteFileSubSystem();
 						    if (ssStr != null)
 						    {
-						        ISubSystem ss = SystemPlugin.getTheSystemRegistry().getSubSystem(ssStr);
+						        ISubSystem ss = RSEUIPlugin.getTheSystemRegistry().getSubSystem(ssStr);
 						        if (doesHandle(ss))
 						        {
 						            _changedResources.add(resource);
@@ -385,7 +385,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 					 */
 					///*
 					// check if this file is being edited
-					/*IWorkbenchWindow window = SystemPlugin.getActiveWorkbenchWindow();
+					/*IWorkbenchWindow window = RSEUIPlugin.getActiveWorkbenchWindow();
 					if (window == null)
 					{
 						// DKM:
@@ -499,7 +499,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 		// to handle migration of this smoothly, we can use another method to determine the subsystem                         
 		if (subsystemId != null)
 		{
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			fs = registry.getSubSystem(subsystemId);
 		}
 
@@ -581,7 +581,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 
 	protected void refreshRemoteResource(Object parent)
 	{
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		// refresh
 		if (parent != null)
 		{							
@@ -619,7 +619,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 
 	private IRemoteFileSubSystem getLocalFileSubSystem()
 	{
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		IHost con = registry.getLocalHost();
 		if (con != null)
 		{

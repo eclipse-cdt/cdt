@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 
@@ -37,7 +37,7 @@ public class ValidatorIntegerInput implements ISystemValidator
      */
     public ValidatorIntegerInput()
     {
-    	this(SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_ENTRY_EMPTY));
+    	this(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_ENTRY_EMPTY));
     }
     /**
      * Constructor to use when wanting to specify the "value required" error message,
@@ -46,7 +46,7 @@ public class ValidatorIntegerInput implements ISystemValidator
      */
     public ValidatorIntegerInput(SystemMessage emptyMsg)
     {
-    	this(emptyMsg, SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NOT_NUMERIC));
+    	this(emptyMsg, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NOT_NUMERIC));
     }
     /**
      * Constructor to use when wanting to specify both error messages

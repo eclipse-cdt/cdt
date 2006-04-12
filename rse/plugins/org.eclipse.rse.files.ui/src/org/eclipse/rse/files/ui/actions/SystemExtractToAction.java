@@ -16,8 +16,7 @@
 
 package org.eclipse.rse.files.ui.actions;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.rse.core.ISystemTypes;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.ExtractToDialog;
 import org.eclipse.rse.model.IHost;
@@ -30,6 +29,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -44,13 +44,13 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemExtractToAction extends SystemExtractAction implements IValidatorRemoteSelection, ISystemMessages
 {	
-	protected static final String[] systemTypes = { ISystemTypes.SYSTEMTYPE_LOCAL,
-													ISystemTypes.SYSTEMTYPE_WINDOWS,
-													ISystemTypes.SYSTEMTYPE_LINUX,
-													ISystemTypes.SYSTEMTYPE_POWER_LINUX,
-													ISystemTypes.SYSTEMTYPE_UNIX,
-													ISystemTypes.SYSTEMTYPE_AIX,
-													ISystemTypes.SYSTEMTYPE_ISERIES
+	protected static final String[] systemTypes = { IRSESystemType.SYSTEMTYPE_LOCAL,
+													IRSESystemType.SYSTEMTYPE_WINDOWS,
+													IRSESystemType.SYSTEMTYPE_LINUX,
+													IRSESystemType.SYSTEMTYPE_POWER_LINUX,
+													IRSESystemType.SYSTEMTYPE_UNIX,
+													IRSESystemType.SYSTEMTYPE_AIX,
+													IRSESystemType.SYSTEMTYPE_ISERIES
 												  };
 	protected SystemMessage targetDescendsFromSrcMsg = null;
 	protected int currentlyProcessingSelection = 0;
@@ -58,16 +58,16 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 	public SystemExtractToAction(Shell parent)
 	{
 		super(parent,FileResources.ACTION_EXTRACT_TO_LABEL, FileResources.ACTION_EXTRACT_TO_TOOLTIP);
-		setHelp(SystemPlugin.HELPPREFIX + "actn0119");
-		setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXTRACTTO_ID));
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0119");
+		setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXTRACTTO_ID));
 
 	}
 
 	public SystemExtractToAction(Shell parent, String label, String tooltip)
 	{
 		super(parent, label, tooltip);
-		setHelp(SystemPlugin.HELPPREFIX + "actn0119");
-		setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXTRACTTO_ID));
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0119");
+		setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXTRACTTO_ID));
 	}
 
 	public void run()
@@ -122,7 +122,7 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 			}
 			if (selection.isAncestorOf(destination))
 			{
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_DEST_NOT_IN_SOURCE);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DEST_NOT_IN_SOURCE);
 				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 				dlg.open();
 				i--;
@@ -130,7 +130,7 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 			}
 			if (!destination.canWrite())
 			{
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_DEST_TARGET_READONLY);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DEST_TARGET_READONLY);
 				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 				dlg.open();
 				i--;
@@ -153,7 +153,7 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 			{
 			}
 			//	always refresh
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, destination, destination.getParentPath(), destSS, null, null);
 			registry.fireEvent(new SystemResourceChangeEvent(destination, ISystemResourceChangeEvents.EVENT_REFRESH, destination.getParentPath()));
 		}
@@ -189,7 +189,7 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 	   if (selectedFolder.isDescendantOf(currentSelection))
 	   {
 		   if (targetDescendsFromSrcMsg == null)
-			targetDescendsFromSrcMsg = SystemPlugin.getPluginMessage(FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOUCE);
+			targetDescendsFromSrcMsg = RSEUIPlugin.getPluginMessage(FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOUCE);
 		   return targetDescendsFromSrcMsg;
 	   }
 	   else

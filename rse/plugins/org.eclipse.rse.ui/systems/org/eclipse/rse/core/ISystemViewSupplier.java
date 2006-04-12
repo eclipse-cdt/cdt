@@ -18,7 +18,7 @@ package org.eclipse.rse.core;
 
 /**
  * You own views launchable from the Remote Systems Explorer. You must register yourself
- *  with SystemPlugin via the registerViewSupplier method.
+ *  with RSEUIPlugin via the registerViewSupplier method.
  */
 public interface ISystemViewSupplier 
 {

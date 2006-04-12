@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystem;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -29,6 +28,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.model.DummyHost;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.widgets.services.FactoryServiceElement;
 import org.eclipse.rse.ui.widgets.services.RootServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServiceElement;
@@ -106,7 +106,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 	protected IServiceSubSystemConfiguration[] getServiceSubSystemFactories(String systemType, Class serviceType)
 	{
 		List results = new ArrayList();
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType);
 		
 		for (int i = 0; i < factories.length; i++)

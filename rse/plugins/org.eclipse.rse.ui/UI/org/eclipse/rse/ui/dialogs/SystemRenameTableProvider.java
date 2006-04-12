@@ -92,7 +92,7 @@ public class SystemRenameTableProvider implements ITableLabelProvider, IStructur
 		  if (row.getError())
 		  {
 		  	Image errorImage = JFaceResources.getImage(org.eclipse.jface.dialogs.Dialog.DLG_IMG_MESSAGE_ERROR); 
-		  	   //SystemPlugin.getDefault().getImage(ISystemConstants.ICON_SYSTEM_ERROR_ID);
+		  	   //RSEUIPlugin.getDefault().getImage(ISystemConstants.ICON_SYSTEM_ERROR_ID);
 		    return errorImage;
 		  }
 		  else

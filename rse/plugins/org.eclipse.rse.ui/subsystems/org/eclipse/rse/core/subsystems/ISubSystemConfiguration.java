@@ -241,7 +241,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	// PROXY METHODS. USED INTERNALLY...
 	// ---------------------------------
 	/**
-	 * Private method called by SystemPlugin
+	 * Private method called by RSEUIPlugin
 	 */
     public void setSubSystemFactoryProxy(ISubSystemConfigurationProxy proxy);
     /**
@@ -466,7 +466,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
     public void renameSubSystem(ISubSystem subsystem, String newName);
     /**
      * Disconnect all subsystems currently connected.
-     * Called by shutdown() of SystemPlugin.
+     * Called by shutdown() of RSEUIPlugin.
      */
     public void disconnectAllSubSystems()
                 throws Exception;

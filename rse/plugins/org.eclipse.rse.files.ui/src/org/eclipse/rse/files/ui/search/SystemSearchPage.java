@@ -29,7 +29,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.actions.SystemSelectRemoteFolderAction;
 import org.eclipse.rse.model.IHost;
@@ -48,6 +47,7 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.search.SystemSearchUI;
@@ -604,7 +604,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			if (searchString != null && searchString.length() != 0) {
 				
 				if (!util.isValidRegex(searchString)) {
-					SystemMessage message = SystemPlugin.getPluginMessage(ISystemMessages.MSG_REMOTE_SEARCH_INVALID_REGEX);
+					SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_REMOTE_SEARCH_INVALID_REGEX);
 					message.makeSubstitution(searchString);
 					SystemMessageDialog.displayErrorMessage(getShell(), message);
 					stringCombo.setFocus();
@@ -621,7 +621,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			if (fileNameString != null && fileNameString.length() != 0) {
 				
 				if (!util.isValidRegex(fileNameString)) {
-					SystemMessage message = SystemPlugin.getPluginMessage(ISystemMessages.MSG_REMOTE_SEARCH_INVALID_REGEX);
+					SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_REMOTE_SEARCH_INVALID_REGEX);
 					message.makeSubstitution(fileNameString);
 					SystemMessageDialog.displayErrorMessage(getShell(), message);
 					fileNameCombo.setFocus();
@@ -975,7 +975,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		setControl(main);
 		
 		// set help
-		SystemWidgetHelpers.setHelp(main, SystemPlugin.HELPPREFIX + "rsdi0000");
+		SystemWidgetHelpers.setHelp(main, RSEUIPlugin.HELPPREFIX + "rsdi0000");
 	}
 	
 	/**
@@ -1103,7 +1103,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			return null;
 		}
 		else {
-			ISystemRegistry reg = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry reg = RSEUIPlugin.getTheSystemRegistry();
 			ISystemProfile profile = reg.getSystemProfile(profName);
 			
 			if (profile == null) {
@@ -1330,7 +1330,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 	 * @return the dialog settings of the plugin.
 	 */
 	private IDialogSettings getPluginDialogSettings() {
-		return SystemPlugin.getDefault().getDialogSettings();
+		return RSEUIPlugin.getDefault().getDialogSettings();
 	}
 		
 	/**

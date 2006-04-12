@@ -230,6 +230,6 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	public boolean commit() 
 	{
 		return false;
-	//	return SystemPlugin.getThePersistenceManager().commit(getProvider().);
+	//	return RSEUIPlugin.getThePersistenceManager().commit(getProvider().);
 	}
 }

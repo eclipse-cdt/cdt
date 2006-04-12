@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.part.IDropActionDelegate;
 
@@ -133,7 +133,7 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 						{
 						}
 					}
-					SystemPlugin.getTheSystemRegistry().clearRunnableContext();
+					RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();
 				}
 			}
 			catch (SystemMessageException e)
@@ -148,14 +148,14 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = SystemPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;
 		}
 
 		irc = new ProgressMonitorDialog(shell);
-		SystemPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);
+		RSEUIPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);
 		return irc;
 	}
 }

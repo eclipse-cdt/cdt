@@ -40,7 +40,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
@@ -51,6 +50,7 @@ import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
@@ -156,7 +156,7 @@ public class SystemSearchViewPart extends ViewPart implements ISystemResourceCha
 	public class CancelAction extends Action {
 		
 		public CancelAction() {
-			super(SystemResources.ACTION_CANCEL_SEARCH_LABEL, SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_STOP_ID));
+			super(SystemResources.ACTION_CANCEL_SEARCH_LABEL, RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_STOP_ID));
 			setToolTipText(SystemResources.ACTION_CANCEL_SEARCH_TOOLTIP);
 		}
 
@@ -249,10 +249,10 @@ public class SystemSearchViewPart extends ViewPart implements ISystemResourceCha
 		actionBars.updateActionBars();
 
 		// add view as a system listener
-		SystemPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
 
 		// set help
-		SystemWidgetHelpers.setHelp(pageBook, SystemPlugin.HELPPREFIX + "srch0000");
+		SystemWidgetHelpers.setHelp(pageBook, RSEUIPlugin.HELPPREFIX + "srch0000");
 	}
 
 	private void initToolBarActions(IToolBarManager tbMgr) {
@@ -307,7 +307,7 @@ public class SystemSearchViewPart extends ViewPart implements ISystemResourceCha
 		tbMgr.add(removeAllAction);
 
 		// register global edit actions 		
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		
 		// clipboard
 		Clipboard clipboard = registry.getSystemClipboard();
@@ -443,7 +443,7 @@ public class SystemSearchViewPart extends ViewPart implements ISystemResourceCha
 		currentViewer.addDoubleClickListener(new SystemSearchDoubleClickListener());
 
 		// set help for control
-		SystemWidgetHelpers.setHelp(currentViewer.getControl(), SystemPlugin.HELPPREFIX + "srch0000");
+		SystemWidgetHelpers.setHelp(currentViewer.getControl(), RSEUIPlugin.HELPPREFIX + "srch0000");
 
 		// add current viewer to viewer list
 		viewers.add(currentViewer);
@@ -457,7 +457,7 @@ public class SystemSearchViewPart extends ViewPart implements ISystemResourceCha
 		int num = viewers.size()-1;
 
 		// create history action
-		SystemSearchHistoryAction historyAction = new SystemSearchHistoryAction(title, SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SEARCH_RESULT_ID), this, num);
+		SystemSearchHistoryAction historyAction = new SystemSearchHistoryAction(title, RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SEARCH_RESULT_ID), this, num);
 		
 		// add to list of history actions
 		historyActions.add(historyAction);
@@ -550,7 +550,7 @@ public class SystemSearchViewPart extends ViewPart implements ISystemResourceCha
 	public void dispose() {
 		
 		// remove as resource change listener
-		SystemPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
 		
 		// clear viewers
 		clearViewers();

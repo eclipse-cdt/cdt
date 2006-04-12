@@ -16,10 +16,10 @@
 
 package org.eclipse.rse.ui.actions;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
@@ -42,7 +42,7 @@ public class SystemDisconnectAction extends SystemBaseAction
 	    super(SystemResources.ACTION_DISCONNECT_LABEL, SystemResources.ACTION_DISCONNECT_TOOLTIP, shell);
 	    allowOnMultipleSelection(false);
 	    setContextMenuGroup(ISystemContextMenuConstants.GROUP_CONNECTION);
-    	setHelp(SystemPlugin.HELPPREFIX+"actn0048");
+    	setHelp(RSEUIPlugin.HELPPREFIX+"actn0048");
 	}
 	/**
 	 * Override of parent. Called when testing if action should be enabled based on current

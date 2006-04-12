@@ -23,10 +23,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.view.ISystemSelectAllTarget;
 import org.eclipse.swt.widgets.Composite;
@@ -53,7 +53,7 @@ public class SystemTeamView extends TreeViewer implements ISystemSelectAllTarget
 	{
 		super(parent);
 		this.teamViewPart = teamViewPart;
-		SystemWidgetHelpers.setHelp(getTree(), SystemPlugin.HELPPREFIX+"teamview");
+		SystemWidgetHelpers.setHelp(getTree(), RSEUIPlugin.HELPPREFIX+"teamview");
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class SystemTeamView extends TreeViewer implements ISystemSelectAllTarget
 	{
 		super(parent, style);
 		this.teamViewPart = teamViewPart;
-		SystemWidgetHelpers.setHelp(getTree(), SystemPlugin.HELPPREFIX+"teamview");
+		SystemWidgetHelpers.setHelp(getTree(), RSEUIPlugin.HELPPREFIX+"teamview");
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class SystemTeamView extends TreeViewer implements ISystemSelectAllTarget
 	{
 		super(tree);
 		this.teamViewPart = teamViewPart;
-		SystemWidgetHelpers.setHelp(getTree(), SystemPlugin.HELPPREFIX+"teamview");		
+		SystemWidgetHelpers.setHelp(getTree(), RSEUIPlugin.HELPPREFIX+"teamview");		
 	}
 	
 	/**

@@ -90,7 +90,7 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	 */
 	protected ISystemFilterPool createDefaultFilterPool(ISystemFilterPoolManager mgr)
 	{
-		//SystemPlugin.logDebugMessage(this.getClass().getName(),"in createDefaultFilterPool for remote file subsystem factory");
+		//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"in createDefaultFilterPool for remote file subsystem factory");
 		ISystemFilterPool pool = null;
 		try {
 		  // -----------------------------------------------------

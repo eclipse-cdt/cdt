@@ -16,11 +16,11 @@
 
 package org.eclipse.rse.ui.widgets;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.internal.subsystems.IBMServerLauncherConstants;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.ui.SystemBaseForm;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -68,7 +68,7 @@ public abstract class IBMBaseServerLauncherForm extends SystemBaseForm implement
 		createLauncherControls(group);
 
 		// help
-		SystemWidgetHelpers.setCompositeHelp(parent, SystemPlugin.HELPPREFIX + "srln0000");
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "srln0000");
 
 		// initialization
 		initDefaults();

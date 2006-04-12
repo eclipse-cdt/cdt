@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
@@ -32,6 +31,7 @@ import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.filters.ISystemFilterStringReference;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
@@ -175,7 +175,7 @@ public class SystemFilterMoveFilterStringAction extends SystemBaseCopyAction
 		ISystemFilterString match = newFilter.getSystemFilterString(oldName);
 		if (match != null)
 		{
-		  SystemMessage msg = SystemPlugin.getPluginMessage(MSG_VALIDATE_FILTERSTRING_ALREADYEXISTS);
+		  SystemMessage msg = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERSTRING_ALREADYEXISTS);
 		  msg.makeSubstitution(oldName, newFilter.getName());
   		  SystemMessageDialog.displayErrorMessage(shell, msg);
   		  
@@ -270,14 +270,14 @@ public class SystemFilterMoveFilterStringAction extends SystemBaseCopyAction
 	 */
 	protected SystemMessage getCopyingMessage() 
 	{
-		return SystemPlugin.getPluginMessage(MSG_MOVEFILTERSTRINGS_PROGRESS);
+		return RSEUIPlugin.getPluginMessage(MSG_MOVEFILTERSTRINGS_PROGRESS);
 	}
 	/**
 	 * @see SystemBaseCopyAction#getCopyingMessage( String)
 	 */
 	protected SystemMessage getCopyingMessage(String oldName) 
 	{
-		return SystemPlugin.getPluginMessage(MSG_MOVEFILTERSTRING_PROGRESS).makeSubstitution(oldName);
+		return RSEUIPlugin.getPluginMessage(MSG_MOVEFILTERSTRING_PROGRESS).makeSubstitution(oldName);
 	}
 
 	/**

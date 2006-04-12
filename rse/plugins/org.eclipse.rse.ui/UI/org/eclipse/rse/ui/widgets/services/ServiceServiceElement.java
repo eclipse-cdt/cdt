@@ -17,10 +17,10 @@
 package org.eclipse.rse.ui.widgets.services;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.IService;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.graphics.Image;
 
 
@@ -41,7 +41,7 @@ public class ServiceServiceElement extends ServiceElement
 	{
 		if (_imageDescriptor == null)
 		{
-			_imageDescriptor= SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SERVICE_ID);
+			_imageDescriptor= RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SERVICE_ID);
 		}
 		return _imageDescriptor.createImage();
 	}

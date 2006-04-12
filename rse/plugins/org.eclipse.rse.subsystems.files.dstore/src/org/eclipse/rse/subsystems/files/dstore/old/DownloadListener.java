@@ -22,13 +22,13 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.connectorservice.dstore.util.ICommunicationsDiagnosticFactory;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -53,7 +53,7 @@ public class DownloadListener implements IDomainListener, ICommunicationsListene
 	private boolean _isCancelled = false;
 	private long _totalBytesNotified = 0;
 	private long _totalLength;
-	private static SystemMessage _percentMsg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_PERCENT_DONE);
+	private static SystemMessage _percentMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_PERCENT_DONE);
 
 	public DownloadListener(Shell shell, IProgressMonitor monitor, IConnectorService system, DataElement status, File localFile, String remotePath, long totalLength)
 	{

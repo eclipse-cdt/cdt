@@ -19,7 +19,6 @@ package org.eclipse.rse.files.ui;
 import java.util.Vector;
 
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.files.ui.actions.SystemSelectFileTypesAction;
@@ -36,6 +35,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConf
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileFilterString;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemTestFilterStringAction;
 import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;
@@ -183,7 +183,7 @@ public class SystemFileFilterStringEditPane
         boolean readonly = false;
         folderCombo = SystemFileWidgetHelpers.createFolderCombo(composite_prompts, null, gridColumns, historyKey, readonly);        
         folderCombo.setShowNewConnectionPrompt(false);
-        SystemWidgetHelpers.setHelp(folderCombo, SystemPlugin.HELPPREFIX+"ffsd0001");
+        SystemWidgetHelpers.setHelp(folderCombo, RSEUIPlugin.HELPPREFIX+"ffsd0001");
         SystemWidgetHelpers.createLabel(composite_prompts," ",gridColumns); // FILLER
                 			
 		// parent folder prompt    
@@ -191,8 +191,8 @@ public class SystemFileFilterStringEditPane
 
         // "Subset by file name filter" radiobutton
         subsetByFileNameRadioButton = SystemWidgetHelpers.createRadioButton(composite_prompts, null, SystemFileResources.RESID_FILEFILTERSTRING_BYFILENAME_LABEL, SystemFileResources.RESID_FILEFILTERSTRING_BYFILENAME_TOOLTIP);
-        //SystemWidgetHelpers.setHelp(subsetByFileNameRadioButton, SystemPlugin.HELPPREFIX+"ffsd0002", SystemPlugin.HELPPREFIX+"ffsd0003");
-        SystemWidgetHelpers.setHelp(subsetByFileNameRadioButton, SystemPlugin.HELPPREFIX+"ffsd0002");
+        //SystemWidgetHelpers.setHelp(subsetByFileNameRadioButton, RSEUIPlugin.HELPPREFIX+"ffsd0002", RSEUIPlugin.HELPPREFIX+"ffsd0003");
+        SystemWidgetHelpers.setHelp(subsetByFileNameRadioButton, RSEUIPlugin.HELPPREFIX+"ffsd0002");
         updateGridData(subsetByFileNameRadioButton, gridColumns);
                 
 		// File name prompt    
@@ -203,22 +203,22 @@ public class SystemFileFilterStringEditPane
 		labelFile.setToolTipText(SystemFileResources.RESID_FILEFILTERSTRING_FILE_TOOLTIP);
 		textFile = SystemWidgetHelpers.createTextField(composite_prompts, null);
 		textFile.setToolTipText(SystemFileResources.RESID_FILEFILTERSTRING_FILE_TOOLTIP);
-        //SystemWidgetHelpers.setHelp(textFile, SystemPlugin.HELPPREFIX+"ffsd0003",SystemPlugin.HELPPREFIX+"ffsd0002");
-        SystemWidgetHelpers.setHelp(textFile, SystemPlugin.HELPPREFIX+"ffsd0003");
+        //SystemWidgetHelpers.setHelp(textFile, RSEUIPlugin.HELPPREFIX+"ffsd0003",RSEUIPlugin.HELPPREFIX+"ffsd0002");
+        SystemWidgetHelpers.setHelp(textFile, RSEUIPlugin.HELPPREFIX+"ffsd0003");
         updateGridData(textFile, gridColumns-1);
 		textFile.setText("*");
 
 
         // "Subset by file types filter" radiobutton
         subsetByFileTypesRadioButton = SystemWidgetHelpers.createRadioButton(composite_prompts, null, SystemFileResources.RESID_FILEFILTERSTRING_BYFILETYPES_LABEL,  SystemFileResources.RESID_FILEFILTERSTRING_BYFILETYPES_TOOLTIP);
-        //SystemWidgetHelpers.setHelp(subsetByFileTypesRadioButton, SystemPlugin.HELPPREFIX+"ffsd0004", SystemPlugin.HELPPREFIX+"ffsd0005");
-        SystemWidgetHelpers.setHelp(subsetByFileTypesRadioButton, SystemPlugin.HELPPREFIX+"ffsd0004");
+        //SystemWidgetHelpers.setHelp(subsetByFileTypesRadioButton, RSEUIPlugin.HELPPREFIX+"ffsd0004", RSEUIPlugin.HELPPREFIX+"ffsd0005");
+        SystemWidgetHelpers.setHelp(subsetByFileTypesRadioButton, RSEUIPlugin.HELPPREFIX+"ffsd0004");
         updateGridData(subsetByFileTypesRadioButton, gridColumns);
 
 		// File types prompt 
 		Composite typesGroup = SystemWidgetHelpers.createComposite(composite_prompts, 3);   
-        //SystemWidgetHelpers.setHelp(typesGroup, SystemPlugin.HELPPREFIX+"ffsd0005",SystemPlugin.HELPPREFIX+"ffsd0004");
-        SystemWidgetHelpers.setHelp(typesGroup, SystemPlugin.HELPPREFIX+"ffsd0005");
+        //SystemWidgetHelpers.setHelp(typesGroup, RSEUIPlugin.HELPPREFIX+"ffsd0005",RSEUIPlugin.HELPPREFIX+"ffsd0004");
+        SystemWidgetHelpers.setHelp(typesGroup, RSEUIPlugin.HELPPREFIX+"ffsd0005");
 		GridLayout layout = (GridLayout)typesGroup.getLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;		
@@ -251,7 +251,7 @@ public class SystemFileFilterStringEditPane
         SystemWidgetHelpers.createLabel(composite_prompts," ",gridColumns); // FILLER
 		filesOnlyCheckBox = SystemWidgetHelpers.createCheckBox(composite_prompts, gridColumns, null,
 		                                                  SystemFileResources.RESID_FILEFILTERSTRING_INCFILESONLY_LABEL,  SystemFileResources.RESID_FILEFILTERSTRING_INCFILESONLY_TOOLTIP);
-        SystemWidgetHelpers.setHelp(filesOnlyCheckBox, SystemPlugin.HELPPREFIX+"ffsd0006");
+        SystemWidgetHelpers.setHelp(filesOnlyCheckBox, RSEUIPlugin.HELPPREFIX+"ffsd0006");
 
         // Test button
         /*
@@ -260,7 +260,7 @@ public class SystemFileFilterStringEditPane
           SystemWidgetHelpers.createLabel(composite_prompts," ",gridColumns); // FILLER
           SystemWidgetHelpers.createLabel(composite_prompts," ",gridColumns); // FILLER
           createTestButton(composite_prompts, RESID_FILEFILTERSTRING_TEST_ROOT);
-          SystemWidgetHelpers.setHelp(testButton, SystemPlugin.HELPPREFIX+"ffsd0007");
+          SystemWidgetHelpers.setHelp(testButton, RSEUIPlugin.HELPPREFIX+"ffsd0007");
           updateGridData(testButton, gridColumns);
         }
         */
@@ -331,7 +331,7 @@ public class SystemFileFilterStringEditPane
 		if (folderCombo == null)
 		  return;
 		//if (refProvider == null)
-		  //SystemPlugin.logError("Programming Error: input subsystem is not set for SystemFileFilterStringEditPane",null);
+		  //RSEUIPlugin.logError("Programming Error: input subsystem is not set for SystemFileFilterStringEditPane",null);
 			
 		if (inputFilterString != null)
 		{
@@ -482,7 +482,7 @@ public class SystemFileFilterStringEditPane
 			{
 				if (textTypes.getText().trim().length() == 0)
 				{
-				  errorMessage = SystemPlugin.getPluginMessage(FILEMSG_ERROR_NOFILETYPES);
+				  errorMessage = RSEUIPlugin.getPluginMessage(FILEMSG_ERROR_NOFILETYPES);
 				}
 			}
 			controlInError = textFile;
@@ -495,7 +495,7 @@ public class SystemFileFilterStringEditPane
 			  notUnique = true;
 			if (notUnique)
 			{
-			  errorMessage = SystemPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE).makeSubstitution(currFilterString);
+			  errorMessage = RSEUIPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE).makeSubstitution(currFilterString);
 			}
 			controlInError = textFile;
 		}		  
@@ -611,7 +611,7 @@ public class SystemFileFilterStringEditPane
 					}
 					// no path validator, so just use default path empty message
 					else {
-						errorMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PATH_EMPTY);
+						errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PATH_EMPTY);
 					}
 				}
 				// KM: defect 53210
@@ -627,7 +627,7 @@ public class SystemFileFilterStringEditPane
 						}
 						// no path validator, so just use default path empty message
 						else {
-							errorMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PATH_EMPTY);
+							errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PATH_EMPTY);
 						}						
 					}
 				}

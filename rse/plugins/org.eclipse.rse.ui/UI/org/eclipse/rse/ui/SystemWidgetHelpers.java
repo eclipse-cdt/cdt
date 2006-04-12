@@ -18,13 +18,13 @@ package org.eclipse.rse.ui;
 import java.util.Locale;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.ui.widgets.InheritableEntryField;
-import org.eclipse.rse.ui.widgets.SystemHostCombo;
 import org.eclipse.rse.ui.widgets.SystemHistoryCombo;
+import org.eclipse.rse.ui.widgets.SystemHostCombo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -1072,7 +1072,7 @@ public class SystemWidgetHelpers {
 	 */
 	public static Combo createSystemTypeCombo(Composite parent, Listener listener, String[] systemTypes) {
 		Combo combo = createReadonlyCombo(parent, listener, SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
-			String[] typeItems = ((systemTypes == null) ? SystemPlugin.getDefault().getSystemTypeNames(true) : // true ==> include "local"
+			String[] typeItems = ((systemTypes == null) ? RSECorePlugin.getDefault().getRegistry().getSystemTypeNames() :
 	systemTypes);
 		combo.setItems(typeItems);
 		combo.select(0);
@@ -1089,7 +1089,7 @@ public class SystemWidgetHelpers {
 		//System.out.println("TipId: " + ISystemConstants.RESID_HOSTNAME_TIP);		
 		Combo combo = createCombo(parent, listener, SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
 		//System.out.println("Tip  : " + combo.getToolTipText());
-		combo.setItems(SystemPlugin.getTheSystemRegistry().getHostNames(systemType));
+		combo.setItems(RSEUIPlugin.getTheSystemRegistry().getHostNames(systemType));
 		combo.select(0);
 		return combo;
 	}

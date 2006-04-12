@@ -36,7 +36,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -63,6 +62,7 @@ import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultConfigurationFactory;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.propertypages.SystemSubSystemPropertyPageCore;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -164,7 +164,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	public boolean checkForCancel()
 	{
 		if ((monitor != null) && monitor.isCanceled())
-			throw new OperationCanceledException(SystemPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED).getLevelOneText());
+			throw new OperationCanceledException(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED).getLevelOneText());
 		return false;
 	}
 
@@ -664,7 +664,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			// otherwise return message saying parent could not be found
 			else if (parent != null && !parentExists) {
 				children = new SystemMessageObject[1];
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND);
 				msg.makeSubstitution(parent.getAbsolutePath());
 				children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, null);
 			}
@@ -1594,7 +1594,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			case CommunicationsEvent.AFTER_DISCONNECT :	
 				_cachedRemoteFiles.clear();
 				// DKM - taking this out because it causes an exception when the event occurs in Modal Context
-				//SystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();	
+				//SystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();	
 				//sr.connectedStatusChange(this, false, true, true);
 				getConnectorService().removeCommunicationsListener(this);
 		

@@ -16,12 +16,11 @@
 
 package org.eclipse.rse.ui.wizards;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
-import org.eclipse.rse.ui.dialogs.SystemUserIdPerSystemTypeDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorProfileName;
@@ -53,7 +52,7 @@ public class SystemNewProfileWizardMainPage
 	private boolean makeActive;
 	private SystemMessage errorMessage;
 	protected ISystemValidator nameValidator;
-	private static final String HELPID_PREFIX = SystemPlugin.HELPPREFIX + "wnpr";
+	private static final String HELPID_PREFIX = RSEUIPlugin.HELPPREFIX + "wnpr";
 		  
 	/**
 	 * Constructor.
@@ -63,7 +62,7 @@ public class SystemNewProfileWizardMainPage
 		super(wizard, "NewProfile", 
 		      SystemResources.RESID_NEWPROFILE_PAGE1_TITLE, 
 		      SystemResources.RESID_NEWPROFILE_PAGE1_DESCRIPTION);
-		nameValidator = new ValidatorProfileName(SystemPlugin.getTheSystemRegistry().getAllSystemProfileNamesVector());
+		nameValidator = new ValidatorProfileName(RSEUIPlugin.getTheSystemRegistry().getAllSystemProfileNamesVector());
 		setHelp(HELPID_PREFIX+"0000");	
 	}
 
@@ -124,8 +123,7 @@ public class SystemNewProfileWizardMainPage
 	 * This hook method is called whenever the text changes in the input field.
 	 * The default implementation delegates the request to an <code>ISystemValidator</code> object.
 	 * If the <code>ISystemValidator</code> reports an error the error message is displayed
-	 * in the Dialog's message line.
-	 * @see SystemUserIdPerSystemTypeDialog#setUserIdValidator(ISystemValidator)	
+	 * in the Dialog's message line.	
 	 */	
 	protected SystemMessage validateNameInput() 
 	{			

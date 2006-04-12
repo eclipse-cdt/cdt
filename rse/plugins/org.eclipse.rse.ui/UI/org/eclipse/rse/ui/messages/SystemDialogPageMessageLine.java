@@ -20,9 +20,9 @@ import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.MouseEvent;
@@ -230,7 +230,7 @@ public class SystemDialogPageMessageLine implements ISystemMessageLine, MouseLis
 	 * Convenience method to set an error message from an exception
 	 */
 	public void setErrorMessage(Throwable exc) {
-		SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
+		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
 		msg.makeSubstitution(exc);
 		setErrorMessage(msg);
 	}

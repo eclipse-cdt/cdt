@@ -18,7 +18,6 @@ package org.eclipse.rse.files.ui.widgets;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.actions.SystemSelectRemoteFolderAction;
@@ -32,6 +31,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.widgets.ISystemCombo;
 import org.eclipse.rse.ui.widgets.SystemHistoryCombo;
@@ -133,7 +133,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
      * connections they can create.
      * @param systemTypes An array of system type names
      * 
-     * @see org.eclipse.rse.core.ISystemTypes
+     * @see org.eclipse.rse.core.IRSESystemType
      */
     public void setSystemTypes(String[] systemTypes)
     {
@@ -145,7 +145,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
      *
      * @param systemType The name of the system type to restrict to
      * 
-     * @see org.eclipse.rse.core.ISystemTypes
+     * @see org.eclipse.rse.core.IRSESystemType
      */
     public void setSystemType(String systemType)
     {
@@ -412,11 +412,11 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	String connName = extractConnectionName(fileString);
     	if ((profileName == null) || (connName == null))
     	  return null;
-    	ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+    	ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
     	ISystemProfile profile = sr.getSystemProfile(profileName);
     	if (profile == null)
           return null;
-    	IHost conn = SystemPlugin.getTheSystemRegistry().getHost(profile,connName);
+    	IHost conn = RSEUIPlugin.getTheSystemRegistry().getHost(profile,connName);
     	return conn;
 	}
 	
@@ -564,22 +564,22 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	if ((profileName == null) || (connName == null) || (dirName == null))
     	  return null;
     	  
-    	ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+    	ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
     	
     	// turn profile name into profile object...
     	ISystemProfile profile = sr.getSystemProfile(profileName);
     	if (profile == null)
     	{
-    	  msg = SystemPlugin.getPluginMessage(MSG_ERROR_PROFILE_NOTFOUND);
+    	  msg = RSEUIPlugin.getPluginMessage(MSG_ERROR_PROFILE_NOTFOUND);
     	  msg.makeSubstitution(profileName);
     	  throw new Exception(msg.getLevelOneText());
     	}
     	
 		// turn connection name into connection object...
-    	IHost conn = SystemPlugin.getTheSystemRegistry().getHost(profile,connName);
+    	IHost conn = RSEUIPlugin.getTheSystemRegistry().getHost(profile,connName);
     	if (conn == null)
     	{
-    	  msg = SystemPlugin.getPluginMessage(MSG_ERROR_CONNECTION_NOTFOUND);
+    	  msg = RSEUIPlugin.getPluginMessage(MSG_ERROR_CONNECTION_NOTFOUND);
     	  msg.makeSubstitution(connName);
     	  throw new Exception(msg.getLevelOneText());
     	}
@@ -594,7 +594,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	
     	if (filesubsystems.length == 0)
     	{
-    	  msg = SystemPlugin.getPluginMessage(MSG_ERROR_CONNECTION_NOTFOUND);// hmm, what else to say?
+    	  msg = RSEUIPlugin.getPluginMessage(MSG_ERROR_CONNECTION_NOTFOUND);// hmm, what else to say?
     	  msg.makeSubstitution(connName);
     	  throw new Exception(msg.getLevelOneText());
     	}
@@ -606,12 +606,12 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	     ss.connect(getShell()); // will throw exception if fails.
     	   } catch (InterruptedException exc)
     	   {
-    	     msg = SystemPlugin.getPluginMessage(MSG_CONNECT_CANCELLED);
+    	     msg = RSEUIPlugin.getPluginMessage(MSG_CONNECT_CANCELLED);
     	     msg.makeSubstitution(conn.getHostName());
     	     throw new Exception(msg.getLevelOneText());    	   	 
     	   } catch (Exception exc)
     	   {
-    	     msg = SystemPlugin.getPluginMessage(MSG_CONNECT_FAILED);
+    	     msg = RSEUIPlugin.getPluginMessage(MSG_CONNECT_FAILED);
     	     msg.makeSubstitution(conn.getHostName());
     	     throw new Exception(msg.getLevelOneText());    	   	 
     	   }     	   

@@ -27,11 +27,11 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Event;
@@ -244,7 +244,7 @@ protected void setDefaultEditor(IRemoteFile remoteFile, String editorId)
 
 protected IEditorRegistry getEditorRegistry()
 {
-	return SystemPlugin.getDefault().getWorkbench().getEditorRegistry();
+	return RSEUIPlugin.getDefault().getWorkbench().getEditorRegistry();
 }
 
 protected IEditorDescriptor getDefaultTextEditor()

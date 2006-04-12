@@ -21,7 +21,6 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
@@ -31,6 +30,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.ICandidateCommand;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandShell
@@ -183,7 +183,7 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 				try
 				{
 					IHost host = _fileSubSystem.getHost();
-					ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+					ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 					ISubSystem[] sses = sr.getSubSystems(host);
 					for (int i = 0; i < sses.length; i++)
 					{

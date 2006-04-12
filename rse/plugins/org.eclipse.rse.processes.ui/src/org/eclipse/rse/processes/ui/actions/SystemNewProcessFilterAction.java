@@ -16,11 +16,11 @@
 
 package org.eclipse.rse.processes.ui.actions;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.processes.ui.SystemProcessFilterStringEditPane;
 import org.eclipse.rse.processes.ui.SystemProcessesResources;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
 import org.eclipse.rse.ui.filters.dialogs.SystemNewFilterWizard;
 import org.eclipse.swt.widgets.Shell;
@@ -36,9 +36,9 @@ public class SystemNewProcessFilterAction extends SystemNewFilterAction implemen
 
 	{
 		super(shell, parentPool, SystemProcessesResources.ACTION_NEWPROCESSFILTER_LABEL, 
-		      SystemProcessesResources.ACTION_NEWPROCESSFILTER_TOOLTIP, SystemPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_NEWFILTER_ID));
-		setHelp(SystemPlugin.HELPPREFIX+"actn0042");
-		setDialogHelp(SystemPlugin.HELPPREFIX+"wnfr0000"); 
+		      SystemProcessesResources.ACTION_NEWPROCESSFILTER_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_NEWFILTER_ID));
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0042");
+		setDialogHelp(RSEUIPlugin.HELPPREFIX+"wnfr0000"); 
 	}		
 
 	/**
@@ -64,7 +64,7 @@ public class SystemNewProcessFilterAction extends SystemNewFilterAction implemen
 	{		
 		// configuration that used to only be possible via subclasses...
 		wizard.setWizardPageTitle(SystemProcessesResources.RESID_NEWPROCESSFILTER_PAGE1_TITLE);
-	  	wizard.setWizardImage(SystemPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_NEWFILTERWIZARD_ID));
+	  	wizard.setWizardImage(RSEUIPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_NEWFILTERWIZARD_ID));
 		wizard.setPage1Description(SystemProcessesResources.RESID_NEWPROCESSFILTER_PAGE1_DESCRIPTION);
 		wizard.setFilterStringEditPane(new SystemProcessFilterStringEditPane(wizard.getShell()));
 	}

@@ -19,7 +19,6 @@ package org.eclipse.rse.subsystems.files.dstore.old;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
@@ -41,6 +40,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.RemoteSearchResultsConte
 import org.eclipse.rse.subsystems.files.dstore.model.DStoreFile;
 import org.eclipse.rse.subsystems.files.dstore.model.DStoreSearchResult;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -83,7 +83,7 @@ public class SearchResultsChangeListener implements IDomainListener, ICommunicat
 		
 		_lastUpdateTime = 0;
 
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
 		//_factory = ((FileServiceSubSystem)_subsys).getRemoteFileFactory();
 
@@ -157,7 +157,7 @@ public class SearchResultsChangeListener implements IDomainListener, ICommunicat
 	}
 
 	private void handleSearchResults() {
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
 		// append new results to existing results
 		List results = _status.getNestedData();
@@ -322,7 +322,7 @@ public class SearchResultsChangeListener implements IDomainListener, ICommunicat
 			if (totalSize >= MAX_RESULTS) {
 				RemoteSearchResult warning = new RemoteSearchResult(_searchConfig, _searchConfig, _searchConfig.getSearchString());
 				warning.setLine(0);
-				warning.setText(SystemPlugin.getPluginMessage(ISystemMessages.MSG_LIST_CANCELLED).getLevelOneText());
+				warning.setText(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LIST_CANCELLED).getLevelOneText());
 				_searchConfig.addResult(warning);
 			}
 	
@@ -354,7 +354,7 @@ public class SearchResultsChangeListener implements IDomainListener, ICommunicat
 			_searchConfig.setStatus(IRemoteSearchConstants.DISCONNECTED);
 		}
 
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.fireEvent(new SystemResourceChangeEvent(_searchConfig, ISystemResourceChangeEvents.EVENT_SEARCH_FINISHED, null));
 	}
 

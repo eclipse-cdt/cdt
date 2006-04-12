@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.ui;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -77,7 +76,7 @@ public class SystemProfileForm
 		this.showVerbage = showVerbage;
 		callerInstanceOfWizardPage = (caller instanceof WizardPage);
 		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);		
-		nameValidator = SystemPlugin.getTheSystemRegistry().getSystemProfileManager().getProfileNameValidator(profile);
+		nameValidator = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().getProfileNameValidator(profile);
 	}
 	
 	/**

@@ -21,7 +21,6 @@ import java.util.Vector;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterContainer;
 import org.eclipse.rse.filters.ISystemFilterContainerReference;
@@ -37,6 +36,7 @@ import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -114,7 +114,7 @@ public class SystemNewFilterWizard
 	public SystemNewFilterWizard(ISystemFilterPool parentPool)
 	{
 		this(new SystemNewFilterWizardConfigurator(),
-	  	      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERWIZARD_ID),
+	  	      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERWIZARD_ID),
 	  	      parentPool);		      
 	}	
 	/**
@@ -260,7 +260,7 @@ public class SystemNewFilterWizard
     public void setSystemFilterPoolReferenceManagerProvider(ISystemFilterPoolReferenceManagerProvider provider)
     {
     	this.provider = provider;
-    	//SystemPlugin.logDebugMessage(this.getClass().getName(),"Inside setSystemFilterPoolReferenceManagerProvider. null? " + (provider==null));
+    	//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"Inside setSystemFilterPoolReferenceManagerProvider. null? " + (provider==null));
     }
 	/**
 	 * Set the verbage to show on the final page. By default, it shows a tip about creating multiple
@@ -525,7 +525,7 @@ public class SystemNewFilterWizard
 		          	*/
 	            } catch (Exception exc)
 	            {
-		        	SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_OCCURRED);
+		        	SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_OCCURRED);
 		    	    msg.makeSubstitution(exc);
 		    	    SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), msg);
 		    	    msgDlg.openWithDetails();
@@ -656,7 +656,7 @@ public class SystemNewFilterWizard
 		    newFilter = fpMgr.createSystemFilter(filterParent,aliasName,filterStrings,type);		  
 		//} catch (Exception exc)
 		//{
-		  //SystemPlugin.logError("Exception in createNewFilter in SystemFilterAbstractNewFilterWizard. ",);
+		  //RSEUIPlugin.logError("Exception in createNewFilter in SystemFilterAbstractNewFilterWizard. ",);
 		  //System.out.println("Exception in createNewFilter in SystemFilterAbstractNewFilterWizard: "+exc.getMessage());
 		  //exc.printStackTrace();
 		//}

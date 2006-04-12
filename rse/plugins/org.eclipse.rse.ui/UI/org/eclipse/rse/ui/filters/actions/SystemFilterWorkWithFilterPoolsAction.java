@@ -16,11 +16,11 @@
 
 package org.eclipse.rse.ui.filters.actions;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.filters.SystemFilterPoolDialogInterface;
@@ -48,13 +48,13 @@ public class SystemFilterWorkWithFilterPoolsAction
 	public SystemFilterWorkWithFilterPoolsAction(Shell parent) 
 	{
 		super(parent,
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_WORKWITHFILTERPOOLS_ID),		
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_WORKWITHFILTERPOOLS_ID),		
 		      SystemResources.ACTION_WORKWITH_FILTERPOOLS_LABEL, SystemResources.ACTION_WORKWITH_FILTERPOOLS_TOOLTIP);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_WORKWITH);
 		allowOnMultipleSelection(false);
 		// set default action and dialog help 
-		setHelp(SystemPlugin.HELPPREFIX + "actn0044");
-		setDialogHelp(SystemPlugin.HELPPREFIX + "dwfp0000");		
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0044");
+		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dwfp0000");		
 	}	
 	/**
 	 * Constructor when default label desired, and you want to choose between
@@ -63,7 +63,7 @@ public class SystemFilterWorkWithFilterPoolsAction
 	public SystemFilterWorkWithFilterPoolsAction(Shell parent, boolean cascadingAction) 
 	{
 		super(parent,
-			  SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_WORKWITHFILTERPOOLS_ID),		
+			  RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_WORKWITHFILTERPOOLS_ID),		
 			  cascadingAction ? SystemResources.ACTION_WORKWITH_FILTERPOOLS_LABEL : SystemResources.ACTION_WORKWITH_WWFILTERPOOLS_LABEL,
 			  cascadingAction ? SystemResources.ACTION_WORKWITH_FILTERPOOLS_TOOLTIP : SystemResources.ACTION_WORKWITH_WWFILTERPOOLS_TOOLTIP 
 		);
@@ -73,8 +73,8 @@ public class SystemFilterWorkWithFilterPoolsAction
 			setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);
 		allowOnMultipleSelection(false);
 		// set default action and dialog help 
-		setHelp(SystemPlugin.HELPPREFIX + "actn0044");
-		setDialogHelp(SystemPlugin.HELPPREFIX + "dwfp0000");		
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0044");
+		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dwfp0000");		
 	}		
 	/**
 	 * Constructor when given the translated action label
@@ -85,8 +85,8 @@ public class SystemFilterWorkWithFilterPoolsAction
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE); 
 		allowOnMultipleSelection(false);
 		// set default action and dialog help 
-		setHelp(SystemPlugin.HELPPREFIX + "actn0044");
-		setDialogHelp(SystemPlugin.HELPPREFIX + "dwfp0000");		
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0044");
+		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dwfp0000");		
 	}
 
 

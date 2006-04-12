@@ -20,11 +20,11 @@ import java.util.Stack;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemThemeConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -282,7 +282,7 @@ public class SystemMessageLine
 				id = isError() ? ISystemMessages.MSG_GENERIC_E_HELP : ISystemMessages.MSG_GENERIC_I_HELP;
 				data = new Object[] {text1, text2};
 			}
-			SystemMessage result = SystemPlugin.getPluginMessage(id, data);
+			SystemMessage result = RSEUIPlugin.getPluginMessage(id, data);
 			return result;
 		}
 		
@@ -359,7 +359,7 @@ public class SystemMessageLine
 		widget.setBackground(parent.getBackground());
 		
 		moreButton = new Button(this, SWT.NONE);
-		moreButton.setImage(SystemPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_HELP_ID));
+		moreButton.setImage(RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_HELP_ID));
 		moreButton.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
 		moreButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -477,7 +477,7 @@ public class SystemMessageLine
 	 */
 	public void setErrorMessage(Throwable throwable)
 	{
-		SystemMessage message = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
+		SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
 		message.makeSubstitution(throwable);
 		setErrorMessage(message);
 	}

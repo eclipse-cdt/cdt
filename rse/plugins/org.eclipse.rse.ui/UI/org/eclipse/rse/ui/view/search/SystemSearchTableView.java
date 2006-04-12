@@ -18,7 +18,6 @@ package org.eclipse.rse.ui.view.search;
 
 import java.util.Vector;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
@@ -26,6 +25,7 @@ import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemDecoratingLabelProvider;
@@ -48,7 +48,7 @@ public class SystemSearchTableView extends SystemTableTreeView
 		super(tabletree, msgLine);
 		this.resultSet = resultSet;
 				
-		setLabelProvider(new SystemDecoratingLabelProvider(_provider, SystemPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));	
+		setLabelProvider(new SystemDecoratingLabelProvider(_provider, RSEUIPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));	
 	}
 	
 	public IHostSearchResultSet getResultSet() {

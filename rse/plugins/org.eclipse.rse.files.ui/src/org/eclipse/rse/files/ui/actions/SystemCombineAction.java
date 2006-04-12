@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.files.ui.actions;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.CombineDialog;
 import org.eclipse.rse.model.ISystemRegistry;
@@ -30,6 +29,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
@@ -45,8 +45,8 @@ public class SystemCombineAction extends SystemExtractToAction {
 	public SystemCombineAction(Shell parent)
 	{
 		super(parent, FileResources.ACTION_COMBINE_LABEL, FileResources.ACTION_COMBINE_TOOLTIP);
-		setHelp(SystemPlugin.HELPPREFIX + "actn0120");
-		setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_COMBINE_ID));
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0120");
+		setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_COMBINE_ID));
 
 	}
 
@@ -95,7 +95,7 @@ public class SystemCombineAction extends SystemExtractToAction {
 			
 			if (ArchiveHandlerManager.isVirtual(destination.getAbsolutePath()))
 			{
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMBINETO_VIRTUAL_DEST);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMBINETO_VIRTUAL_DEST);
 				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 				dlg.open();
 				continue;
@@ -103,7 +103,7 @@ public class SystemCombineAction extends SystemExtractToAction {
 			
 			if (destinationInSource(destination))
 			{
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_DEST_NOT_IN_SOURCE);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DEST_NOT_IN_SOURCE);
 				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 				dlg.open();
 				continue;
@@ -162,7 +162,7 @@ public class SystemCombineAction extends SystemExtractToAction {
 				{
 				}
 			}
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, destination, destination.getParentPath(), destSS, null, null);
 			registry.fireEvent(new SystemResourceChangeEvent(destination, ISystemResourceChangeEvents.EVENT_REFRESH, destination.getParentPath()));
 			repeat = false;

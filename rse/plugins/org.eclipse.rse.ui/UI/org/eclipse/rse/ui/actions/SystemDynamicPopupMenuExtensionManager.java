@@ -18,8 +18,8 @@ package org.eclipse.rse.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -58,14 +58,14 @@ public class SystemDynamicPopupMenuExtensionManager implements
 	 * @param menuGroup the default menu group to add actions to
 	 * @return the menu is populated with actions 
 	 */
-	public void populateMenu(Shell shell, IMenuManager menu,IStructuredSelection selection, String menuGroup)
+	public void populateMenu(Shell shell, SystemMenuManager menu,IStructuredSelection selection, String menuGroup)
 	{
 		for (int i = 0; i <_extensions.size(); i++)
 		{
 			ISystemDynamicPopupMenuExtension extension = (ISystemDynamicPopupMenuExtension)_extensions.get(i);
 			if (extension.supportsSelection(selection))
 			{
-				extension.populateMenu(shell, menu,selection, menuGroup);
+				extension.populateMenu(shell, menu, selection, menuGroup);
 			}
 		}
 	}

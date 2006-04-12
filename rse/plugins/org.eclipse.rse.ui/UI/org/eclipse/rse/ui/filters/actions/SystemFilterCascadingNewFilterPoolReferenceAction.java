@@ -17,11 +17,11 @@
 package org.eclipse.rse.ui.filters.actions;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseSubMenuAction;
@@ -52,7 +52,7 @@ public class SystemFilterCascadingNewFilterPoolReferenceAction
 	public SystemFilterCascadingNewFilterPoolReferenceAction(Shell shell, ISystemFilterPoolReferenceManager refMgr)
 	{
 		super(SystemResources.ACTION_CASCADING_FILTERPOOL_NEWREFERENCE_LABEL, SystemResources.ACTION_CASCADING_FILTERPOOL_NEWREFERENCE_TOOLTIP, 
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERPOOLREF_ID),shell);
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERPOOLREF_ID),shell);
         setCreateMenuEachTime(false);
         setPopulateMenuEachTime(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);        		        

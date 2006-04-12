@@ -22,18 +22,20 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.internal.model.RSEModelObject;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.SystemSignonInformation;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.dialogs.ISignonValidator;
 import org.eclipse.rse.ui.dialogs.ISystemPasswordPromptDialog;
+import org.eclipse.rse.ui.dialogs.SystemChangePasswordDialog;
 import org.eclipse.rse.ui.dialogs.SystemPasswordPromptDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.ISystemValidator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -421,7 +423,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		if (passwordInformation != null && !forcePrompt)
     	{
           boolean same = getPrimarySubSystem().getHost().compareUserIds(oldUserId, passwordInformation.getUserid());
-          String hostName = getHostName();//SystemPlugin.getQualifiedHostName(getHostName());
+          String hostName = getHostName();//RSEUIPlugin.getQualifiedHostName(getHostName());
           same = same && hostName.equalsIgnoreCase(passwordInformation.getHostname());
           if (!same)
           {
@@ -464,7 +466,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		// If we had a saved password (in memory or on disk) that was invalid the tell the user
 		if ((passwordInformation == null) && (pwdInvalidFlag == true))
 		{
-       		SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_INVALID);
+       		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_INVALID);
        		msg.makeSubstitution(getLocalUserId(), getHostName());
        		SystemMessageDialog dialog = new SystemMessageDialog(shell, msg);
        		dialog.open();
@@ -535,7 +537,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     	if (uid != null)
     	{
 	        IHost connection = getHost();
-	        ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+	        ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 	        ISubSystem[] subsystems = registry.getSubSystems(connection);
 	        
 	        List uniqueSystems = new ArrayList();
@@ -566,7 +568,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     protected void updatePasswordForOtherSystemsInConnection(String uid, String password, boolean persistPassword)
     {
         IHost connection = getPrimarySubSystem().getHost();
-        ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+        ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
         ISubSystem[] subsystems = registry.getSubSystems(connection);
         
         List uniqueSystems = new ArrayList();
@@ -617,7 +619,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     	{
     	  int whereToUpdate = USERID_LOCATION_CONNECTION;
     	  IHost conn = subsystem.getHost();
-	      ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();    	
+	      ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();    	
 		  sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
 		                    conn.getHostName(), conn.getDescription(), userId, whereToUpdate);
     	}
@@ -1100,6 +1102,74 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 
 	public boolean commit()
 	{
-		return SystemPlugin.getThePersistenceManager().commit(getHost());
+		return RSEUIPlugin.getThePersistenceManager().commit(getHost());
+	}
+	
+	
+	protected NewPasswordInfo promptForNewPassword(SystemMessage prompt) throws InterruptedException
+	{
+		ShowPromptForNewPassword msgAction = new ShowPromptForNewPassword(prompt);
+		Display.getDefault().syncExec(msgAction);
+		if (msgAction.isCancelled()) throw new InterruptedException();
+		return new NewPasswordInfo(msgAction.getNewPassword(), msgAction.isSavePassword());
+	}
+	
+	private class ShowPromptForNewPassword implements Runnable
+	{
+		private SystemMessage _msg;
+		private String newPassword;
+		private boolean savePassword;
+		private boolean cancelled = false;
+		
+		public ShowPromptForNewPassword(SystemMessage msg)
+		{
+			_msg = msg;
+		}
+		
+		public void run()
+		{
+			SystemChangePasswordDialog dlg = new SystemChangePasswordDialog(RSEUIPlugin.getActiveWorkbenchShell(), getHostName(), getUserId(), _msg);
+    	  	// Check if password was saved, if so preselect the save checkbox
+			if (getLocalUserId() != null)
+			{
+				dlg.setSavePassword(PasswordPersistenceManager.getInstance().passwordExists(getHostType(), getHostName(), getLocalUserId()));
+			}
+			dlg.open();
+			if (dlg.wasCancelled())
+			{
+				cancelled = true;
+				return;
+			}
+			newPassword = dlg.getNewPassword();
+			savePassword = dlg.getIsSavePassword();
+			return;
+		}
+		
+		public boolean isCancelled()
+		{
+			return cancelled;
+		}
+		
+		public String getNewPassword()
+		{
+			return newPassword;
+		}
+		
+		public boolean isSavePassword()
+		{
+			return savePassword;
+		}
+	}
+	
+	protected class NewPasswordInfo
+	{
+		public String newPassword;
+		public boolean savePassword;
+		
+		public NewPasswordInfo(String newPW, boolean savePW)
+		{
+			newPassword = newPW;
+			savePassword = savePW;	
+		}
 	}
 }

@@ -29,8 +29,8 @@ import org.eclipse.swt.widgets.Shell;
 public class DisplaySystemMessageAction implements Runnable {
 
 	
-	private SystemMessage message;
-	private int rc;
+	protected SystemMessage message;
+	protected int rc;
 	
 	public DisplaySystemMessageAction(SystemMessage message) {
 		this.message = message;

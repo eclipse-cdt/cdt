@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
@@ -30,6 +29,7 @@ import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
@@ -222,21 +222,21 @@ public class SystemFilterMoveFilterPoolAction extends SystemBaseCopyAction
 	 */
 	protected SystemMessage getCopyingMessage() 
 	{
-		return SystemPlugin.getPluginMessage(MSG_MOVEFILTERPOOLS_PROGRESS);
+		return RSEUIPlugin.getPluginMessage(MSG_MOVEFILTERPOOLS_PROGRESS);
 	}
 	/**
 	 * @see SystemBaseCopyAction#getCopyingMessage( String)
 	 */
 	protected SystemMessage getCopyingMessage(String oldName) 
 	{
-		return SystemPlugin.getPluginMessage(MSG_MOVEFILTERPOOL_PROGRESS).makeSubstitution(oldName);
+		return RSEUIPlugin.getPluginMessage(MSG_MOVEFILTERPOOL_PROGRESS).makeSubstitution(oldName);
 	}
 	/**
 	 * Return complete message
 	 */
 	public SystemMessage getCompletionMessage(Object targetContainer, String[] oldNames, String[] newNames)
 	{
-		return SystemPlugin.getPluginMessage(MSG_MOVEFILTERPOOL_COMPLETE).makeSubstitution(((ISystemFilterPoolManager)targetContainer).getName());		
+		return RSEUIPlugin.getPluginMessage(MSG_MOVEFILTERPOOL_COMPLETE).makeSubstitution(((ISystemFilterPoolManager)targetContainer).getName());		
 	}
 
 	/**

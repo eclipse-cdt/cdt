@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.filters.dialogs;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
 /**
@@ -54,7 +54,7 @@ public class SystemNewFilterWizardConfigurator
 		this.page1Description = SystemResources.RESID_NEWFILTER_PAGE1_DESCRIPTION;
 		this.page3Tip1 = SystemResources.RESID_NEWFILTER_PAGE3_STRINGS_VERBAGE;
 		this.page3Tip2 = SystemResources.RESID_NEWFILTER_PAGE3_POOLS_VERBAGE;
-		this.page2Help = SystemPlugin.HELPPREFIX + "nfp20000";
+		this.page2Help = RSEUIPlugin.HELPPREFIX + "nfp20000";
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public class SystemNewFilterWizardConfigurator
 	 *
 	public String getPage1HelpID()
 	{
-		return SystemPlugin.HELPPREFIX + "nfp10000";
+		return RSEUIPlugin.HELPPREFIX + "nfp10000";
 	}*/
 
 	/**

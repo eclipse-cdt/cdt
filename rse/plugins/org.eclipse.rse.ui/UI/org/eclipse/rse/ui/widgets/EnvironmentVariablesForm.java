@@ -31,11 +31,11 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemBaseForm;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.EnvironmentVariablesPromptDialog;
@@ -328,7 +328,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		moveDownButton.addSelectionListener(this);
 		moveDownButton.setEnabled(false);
 
-		SystemWidgetHelpers.setCompositeHelp(parent, SystemPlugin.HELPPREFIX + "envv0000");
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "envv0000");
 		
 		return parent;
 	}
@@ -565,7 +565,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		String name = (String) value;
 		if (name == null || name.trim().equals(""))
 		{
-			msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_NONAME);					
+			msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_NONAME);					
 		}
 		else
 		{
@@ -583,7 +583,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 					{
 						if (name.indexOf(invalidNameChars.charAt(i)) != -1)
 						{
-							msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_INVALIDCHAR);
+							msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_INVALIDCHAR);
 						}
 					}
 				}
@@ -596,7 +596,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 					existingName = ((EnvironmentVariable) envVars.get(i)).getName();
 					if (currentSelection != i && existingName.equals(name))
 					{
-						msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_DUPLICATE);
+						msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_DUPLICATE);
 						msg.makeSubstitution(existingName);
 					}
 				}							

@@ -35,7 +35,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
@@ -50,6 +49,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemBaseDummyAction;
@@ -174,9 +174,9 @@ public class SystemCommandsViewPart
 		{
 
 			super(SystemResources.ACTION_CLEAR_LABEL,
-			SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_ID));
+			RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_ID));
 
-			ImageDescriptor des = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_ID);
+			ImageDescriptor des = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_ID);
 
 			setImageDescriptor(des);
 
@@ -313,9 +313,9 @@ public class SystemCommandsViewPart
 		selectionService.addSelectionListener(this);
 		
 
-		SystemWidgetHelpers.setHelp(_folder, SystemPlugin.HELPPREFIX + "ucmd0000");
+		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000");
 
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
 
 	
@@ -337,7 +337,7 @@ public class SystemCommandsViewPart
 		selectionService.removeSelectionListener(this);
 		_folder.dispose();
 
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.removeSystemResourceChangeListener(this);
 		super.dispose();
 	}
@@ -509,7 +509,7 @@ public class SystemCommandsViewPart
 	    {
 			boolean hasItem = false;
 	
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			IHost[] connections = registry.getHosts();
 	
 			for (int i = 0; i < connections.length; i++)
@@ -633,7 +633,7 @@ public class SystemCommandsViewPart
 
 	protected void initDefaultCommandShells()
 	{
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		IHost[] connections = registry.getHosts();
 		CommandsViewPage curpage = _folder.getCurrentTabItem();
 		 
@@ -696,7 +696,7 @@ public class SystemCommandsViewPart
 			Object source = event.getSource();
 			if (source instanceof IRemoteCmdSubSystem)
 			{
-				Shell shell = SystemPlugin.getTheSystemRegistry().getShell();
+				Shell shell = RSEUIPlugin.getTheSystemRegistry().getShell();
 				shell.getDisplay().asyncExec(new CommandSubSystemDisconnectedRunnable((IRemoteCmdSubSystem) source));
 			}
 			else if (source instanceof IRemoteCommandShell)
@@ -743,7 +743,7 @@ public class SystemCommandsViewPart
 			else if (parent instanceof ISubSystem)
 			{
 			    // DKM - for now assuming only 1 cmd subsystem
-			    //SystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			    //SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			    //registry.getCmdSubSystems()
 			    cmdSS = RemoteCommandHelpers.getCmdSubSystem(((ISubSystem)parent).getHost());
 			}
@@ -758,7 +758,7 @@ public class SystemCommandsViewPart
 		    Object source = event.getSource();
 			if (source instanceof IRemoteCmdSubSystem)
 			{
-				Shell shell = SystemPlugin.getTheSystemRegistry().getShell();
+				Shell shell = RSEUIPlugin.getTheSystemRegistry().getShell();
 				shell.getDisplay().asyncExec(new CommandSubSystemDisconnectedRunnable((IRemoteCmdSubSystem) source));
 			}		    
 		}

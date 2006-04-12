@@ -16,12 +16,12 @@
 
 package org.eclipse.rse.ui.view;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemMessageObject;
 import org.eclipse.rse.model.SystemMessageObject;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -55,9 +55,9 @@ public class SystemTestFilterStringAPIProviderImpl
 	
 	private void initMsgObjects()
 	{
-		nullObject     = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_EMPTY),ISystemMessageObject.MSGTYPE_EMPTY, null);
-		canceledObject = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_LIST_CANCELLED),ISystemMessageObject.MSGTYPE_CANCEL, null);
-		errorObject    = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_FAILED),ISystemMessageObject.MSGTYPE_ERROR, null);
+		nullObject     = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_EMPTY),ISystemMessageObject.MSGTYPE_EMPTY, null);
+		canceledObject = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_LIST_CANCELLED),ISystemMessageObject.MSGTYPE_CANCEL, null);
+		errorObject    = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FAILED),ISystemMessageObject.MSGTYPE_ERROR, null);
 	}
 	
 	/**

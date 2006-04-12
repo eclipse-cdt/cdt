@@ -43,13 +43,13 @@ public class SystemCommonSelectAllAction
 	 */
 	public SystemCommonSelectAllAction(Shell parent, ISelectionProvider selProvider, ISystemSelectAllTarget target)
 	{
-		//super(SystemPlugin.getResourceBundle(), ISystemConstants.ACTION_SELECTALL, null, parent); TODO: XLATE!
+		//super(RSEUIPlugin.getResourceBundle(), ISystemConstants.ACTION_SELECTALL, null, parent); TODO: XLATE!
 		super("Select All", (ImageDescriptor)null, parent);
 		setSelectionProvider(selProvider);
 		this.target = target;
 		allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);		
-  	    //setHelp(SystemPlugin.HELPPREFIX+"actn0021"); // TODO: ADD HELP!
+  	    //setHelp(RSEUIPlugin.HELPPREFIX+"actn0021"); // TODO: ADD HELP!
 	}
 	
     /**

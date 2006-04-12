@@ -20,11 +20,11 @@ import java.net.URI;
 
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileSystem;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class RSEFileSystem extends FileSystem 
 {
@@ -41,7 +41,7 @@ public class RSEFileSystem extends FileSystem
 
 	private IHost getConnectionFor(String hostName)
 	{
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IHost[] connections = sr.getHosts();
 		for (int i = 0; i < connections.length; i++)
 		{

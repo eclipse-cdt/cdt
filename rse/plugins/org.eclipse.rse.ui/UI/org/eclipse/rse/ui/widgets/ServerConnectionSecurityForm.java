@@ -42,12 +42,12 @@ public class ServerConnectionSecurityForm extends SystemBaseForm
 
 	public void disable()
 	{
-		_sslForm.enableCheckBox(false);	
+		_sslForm.enableCheckBoxes(false);	
 	}
 	
 	public void enable()
 	{
-		_sslForm.enableCheckBox(true);
+		_sslForm.enableCheckBoxes(true);
 	}
 
 	/**
@@ -68,20 +68,27 @@ public class ServerConnectionSecurityForm extends SystemBaseForm
 
 	private void initDefaults()
 	{
-		// pull info from preferences and/or persistance model	
+		// pull info from preferences and/or persistence model	
 		
 	}
 
-
-	public void setUseSSL(boolean flag)
+	public void setAlertSSL(boolean flag)
 	{
-		_sslForm.setIsChecked(flag);
+		_sslForm.setSSLALertIsChecked(flag);
 	}
 
-	public boolean getUseSSL()
+	public boolean getAlertSSL()
 	{
-		return _sslForm.isChecked();
+		return _sslForm.isSSLAlertChecked();
 	}
 
+	public void setAlertNonSSL(boolean flag)
+	{
+		_sslForm.setNonSSLALertIsChecked(flag);
+	}
 
+	public boolean getAlertNonSSL()
+	{
+		return _sslForm.isNonSSLAlertChecked();
+	}
 }

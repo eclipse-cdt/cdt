@@ -18,13 +18,13 @@ package org.eclipse.rse.ui.filters.actions;
 import java.util.Vector;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.dialogs.SystemSimpleSelectDialog;
@@ -79,12 +79,12 @@ public class SystemFilterSelectFilterPoolsAction
 	public SystemFilterSelectFilterPoolsAction(Shell parent) 
 	{
 		super(parent,
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SELECTFILTERPOOLS_ID),
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SELECTFILTERPOOLS_ID),
 		      SystemResources.ACTION_SELECTFILTERPOOLS_LABEL, SystemResources.ACTION_SELECTFILTERPOOLS_TOOLTIP);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CHANGE);        		
 		// set default help for action and dialog
-		setHelp(SystemPlugin.HELPPREFIX + "actn0043");
-		setDialogHelp(SystemPlugin.HELPPREFIX + "dsfp0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0043");
+		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dsfp0000");
 	}	
 	/**
 	 * Constructor when given the translated action label
@@ -94,8 +94,8 @@ public class SystemFilterSelectFilterPoolsAction
 		super(parent, title);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CHANGE);        		
 		// set default help for action and dialog
-		setHelp(SystemPlugin.HELPPREFIX + "actn0043");
-		setDialogHelp(SystemPlugin.HELPPREFIX + "dsfp0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0043");
+		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dsfp0000");
 	}
 	
 	
@@ -107,8 +107,8 @@ public class SystemFilterSelectFilterPoolsAction
 		super(parent, title, tooltip);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CHANGE);        		
 		// set default help for action and dialog
-		setHelp(SystemPlugin.HELPPREFIX + "actn0043");
-		setDialogHelp(SystemPlugin.HELPPREFIX + "dsfp0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0043");
+		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dsfp0000");
 	}
 	
 

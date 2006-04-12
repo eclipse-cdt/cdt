@@ -16,13 +16,13 @@
 
 package org.eclipse.rse.ui.view.team;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemProfileManager;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
@@ -45,11 +45,11 @@ public class SystemTeamViewActiveProfileAction extends SystemBaseAction
 	public SystemTeamViewActiveProfileAction(Shell parent) 
 	{
 		super(SystemResources.ACTION_PROFILE_ACTIVATE_LABEL,SystemResources.ACTION_PROFILE_ACTIVATE_TOOLTIP,
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_MAKEPROFILEACTIVE_ID),
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_MAKEPROFILEACTIVE_ID),
 		      parent);
         allowOnMultipleSelection(true); // as requested by WSDD team
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CHANGE);
-		setHelp(SystemPlugin.HELPPREFIX+"actnactp");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actnactp");
 		setChecked(false);
 	}
 
@@ -76,7 +76,7 @@ public class SystemTeamViewActiveProfileAction extends SystemBaseAction
 	 */
 	public void run() 
 	{
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		ISystemProfile profile = (ISystemProfile)getFirstSelection();
 		boolean check = isChecked();
 		while (profile != null)

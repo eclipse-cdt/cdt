@@ -18,13 +18,13 @@ package org.eclipse.rse.ui.filters.actions;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterContainer;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemSortableSelection;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
@@ -44,7 +44,7 @@ public class SystemFilterMoveUpFilterAction extends SystemBaseAction
 	public SystemFilterMoveUpFilterAction(Shell parent) 
 	{
 		super(SystemResources.ACTION_MOVEUP_LABEL,SystemResources.ACTION_MOVEUP_TOOLTIP,
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_MOVEUP_ID),
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_MOVEUP_ID),
 		      parent);
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORDER);        

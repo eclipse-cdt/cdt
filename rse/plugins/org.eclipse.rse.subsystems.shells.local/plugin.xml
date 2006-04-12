@@ -25,7 +25,7 @@ Contributors:
    <extension
          point="org.eclipse.rse.ui.subsystemConfiguration">
       <configuration
-            systemtypes="Local"
+            systemTypes="Local"
             name="%Shells"
             description="%ShellsDescription"
             iconlive="icons/full/obj16/systemcommandslive_obj.gif"

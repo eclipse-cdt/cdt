@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.files.ui.actions.SystemFileUpdateFilterAction;
 import org.eclipse.rse.files.ui.actions.SystemNewFileAction;
@@ -38,6 +37,7 @@ import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.view.SubsystemFactoryAdapter;
 import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
@@ -135,7 +135,7 @@ public class RemoteFileSubSystemFactoryAdapter extends SubsystemFactoryAdapter
 			// FIXME - can't do this here anymore
 			//_additionalActions.add(new SystemCommandAction(shell, true));
 			
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			Clipboard clipboard = registry.getSystemClipboard();
 			_additionalActions.add(new SystemPasteFromClipboardAction(shell, clipboard));
     	}

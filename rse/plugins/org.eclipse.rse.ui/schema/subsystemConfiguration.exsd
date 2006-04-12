@@ -132,11 +132,11 @@ Remote System Explorer perspective.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="systemtypes" type="string">
+         <attribute name="systemTypes" type="string">
             <annotation>
                <documentation>
-                  A semi-colon separated list of system types that subsystems from this configuration support.
-For example, &quot;Windows;Unix;Linux&quot;. If not specified, defaults to all system types.
+                  A semicolon separated list of system types that subsystems from this configuration support.
+For example, &quot;Unix;Linux&quot;. If not specified, defaults to all system types.
                </documentation>
             </annotation>
          </attribute>

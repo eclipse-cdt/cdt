@@ -69,7 +69,7 @@ public class SystemSimpleCopyDialog
 		promptString = prompt;		
 		this.copyTreeContent = copyTreeContent;
 		this.initialSelection = selection;	
-        //setCancelButtonLabel(SystemPlugin.getString(BUTTON_CLOSE));
+        //setCancelButtonLabel(RSEUIPlugin.getString(BUTTON_CLOSE));
 		//pack();
 	}	
 	/**
@@ -133,7 +133,7 @@ public class SystemSimpleCopyDialog
         //ActionContributionItem[] actionItems = createActionContributionItems();
         //Composite buttons = createButtonBar(composite_prompts, actionItems);
 
-		//SystemPlugin.getDefault().getSystemRegistry().addSystemResourceChangeListener(this);
+		//RSEUIPlugin.getDefault().getSystemRegistry().addSystemResourceChangeListener(this);
                 			    			
 		return composite_prompts;
 	}
@@ -202,7 +202,7 @@ public class SystemSimpleCopyDialog
 	
 	public boolean close()
 	{
-		//SystemPlugin.getDefault().getSystemRegistry().removeSystemResourceChangeListener(this);		
+		//RSEUIPlugin.getDefault().getSystemRegistry().removeSystemResourceChangeListener(this);		
 		return super.close();
 	}
 	/**

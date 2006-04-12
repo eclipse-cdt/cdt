@@ -16,12 +16,12 @@
 
 package org.eclipse.rse.shells.ui.actions;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.shells.ui.ShellResources;
 import org.eclipse.rse.shells.ui.view.SystemCommandsUI;
 import org.eclipse.rse.shells.ui.view.SystemCommandsViewPart;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -37,7 +37,7 @@ public class SystemShowInShellViewAction extends SystemBaseShellAction
 	{
 		super(ShellResources.ACTION_SHOW_SHELL_LABEL,			
 				ShellResources.ACTION_SHOW_SHELL_TOOLTIP,
-			SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHOW_SHELL_ID),
+			RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHOW_SHELL_ID),
 			parent);
 		allowOnMultipleSelection(false);
 	}

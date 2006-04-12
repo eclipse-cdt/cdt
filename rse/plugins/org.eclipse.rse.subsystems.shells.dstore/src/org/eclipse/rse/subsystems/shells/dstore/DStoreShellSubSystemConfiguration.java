@@ -35,7 +35,7 @@ import org.eclipse.dstore.core.model.IDataStoreProvider;
 
 /**
  * Provides a factory for generating instances of the class
- * SampleFileSubSystem.
+ * ShellServiceSubSystem.
  */
 public class DStoreShellSubSystemConfiguration extends ShellServiceSubSystemConfiguration
 {

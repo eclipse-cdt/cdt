@@ -3,12 +3,12 @@
 <schema targetNamespace="org.eclipse.rse.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.rse.ui" id="systemtype" name="System Type"/>
+         <meta.schema plugin="org.eclipse.rse.ui" id="systemType" name="System Type"/>
       </appInfo>
       <documentation>
-         This extension point is used in combination with the org.eclipse.rse.ui.subsystemfactory
+         This extension point is used in combination with the org.eclipse.rse.ui.subsystemConfiguration
 extension point for defining new subsystems, which appear under a connection when it is expanded in the
-Remote Systems view. The systemtype extension point allows subsystem providers to define a new system
+Remote Systems view. The systemType extension point allows subsystem providers to define a new system
 type that appears in the list of valid system types in the New Connection wizard, used by users when defining
 a new connection to a remote system. The system type is simply a string identifying the operating system
 type, such as Solaris, and an pair of icons used to identify connections to systems of this type. One
@@ -57,16 +57,11 @@ icon is used when the connection is not connected, while the other is used when 
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The display name for the system type, such as &quot;Solaris&quot;. IBM pre-defines a number of system types, although they may not appear until a subsystem factory is registered against that type. These are the IBM-supplied system types:
+                  The display name for the system type, such as &quot;Solaris&quot;. RSE pre-defines a number of system types, although they may not appear unless a subsystem configuration is registered against that type. These are the supplied system types:
 &lt;ul&gt;
 &lt;li&gt;Local&lt;/li&gt;
-&lt;li&gt;Windows&lt;/li&gt;
 &lt;li&gt;Unix&lt;/li&gt;
 &lt;li&gt;Linux&lt;/li&gt;
-&lt;li&gt;AIX&lt;/li&gt;
-&lt;li&gt;Power Linux&lt;/li&gt;
-&lt;li&gt;iSeries&lt;/li&gt;
-&lt;li&gt;z/OS&lt;/li&gt;
 &lt;/ul&gt;
                </documentation>
             </annotation>
@@ -112,7 +107,7 @@ attribute, adorned with a bright green arrow.
          The following is an example of the extension point schema:
 &lt;p&gt;
 &lt;pre&gt;
-  &lt;extension point=&quot;org.eclipse.rse.ui.systemtype&quot;&gt;
+  &lt;extension point=&quot;org.eclipse.rse.ui.systemType&quot;&gt;
        &lt;type id=&quot;com.acme.systemtype.Solaris&quot;
              name=&quot;Solaris&quot;
              iconlive=&quot;icons/solarisLive.gif&quot;
@@ -147,7 +142,7 @@ attribute, adorned with a bright green arrow.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-Copyright (c) 2002, 2006 IBM Corporation. All Rights Reserved.
+         Copyright (c) 2002, 2006 IBM Corporation. All Rights Reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html

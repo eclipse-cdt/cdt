@@ -23,12 +23,14 @@ import java.util.StringTokenizer;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.rse.core.SystemPlugin;
-import org.eclipse.rse.core.SystemType;
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeEvent;
 import org.eclipse.rse.model.ISystemPreferenceChangeEvents;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.Mnemonics;
+import org.eclipse.rse.ui.RSESystemTypeAdapter;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemConnectionForm;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -71,7 +73,7 @@ public class RemoteSystemsPreferencePage
 	{
 		super(GRID);
 		setTitle(SystemResources.RESID_PREF_ROOT_PAGE);		
-		setPreferenceStore(SystemPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(RSEUIPlugin.getDefault().getPreferenceStore());
 		setDescription(SystemResources.RESID_PREF_ROOT_TITLE);
 	}
 	/**
@@ -91,7 +93,7 @@ public class RemoteSystemsPreferencePage
 		SystemComboBoxFieldEditor systemTypeEditor = new SystemComboBoxFieldEditor(
 			ISystemPreferencesConstants.SYSTEMTYPE,
 			SystemResources.RESID_PREF_SYSTEMTYPE_PREFIX_LABEL,
-			SystemPlugin.getDefault().getSystemTypeNames(),
+			RSECorePlugin.getDefault().getRegistry().getSystemTypeNames(),
 			true, // readonly
 			getFieldEditorParent()
 		);
@@ -188,7 +190,7 @@ public class RemoteSystemsPreferencePage
         (new Mnemonics()).setOnPreferencePage(true).setMnemonics(getFieldEditorParent());
         
         // set help
-		SystemWidgetHelpers.setCompositeHelp(getFieldEditorParent(), SystemPlugin.HELPPREFIX+"rsep0000");
+		SystemWidgetHelpers.setCompositeHelp(getFieldEditorParent(), RSEUIPlugin.HELPPREFIX+"rsep0000");
 	}
 	
 	// ---------------------------------------------------------
@@ -199,7 +201,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static String[] getActiveProfiles()
 	{
-		IPreferenceStore store = SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 		return parseStrings(store.getString(ISystemPreferencesConstants.ACTIVEUSERPROFILES));		
 	}
 	
@@ -208,7 +210,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static void setActiveProfiles(String[] newProfileNames)
 	{		
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(ISystemPreferencesConstants.ACTIVEUSERPROFILES, makeString(newProfileNames));		
 		savePreferenceStore();
 	}
@@ -218,7 +220,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static String[] getConnectionNamesOrder()
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		return parseStrings(store.getString(ISystemPreferencesConstants.ORDER_CONNECTIONS));		
 	}
     /**
@@ -226,7 +228,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static void setConnectionNamesOrder(String[] newConnectionNamesOrder)
 	{		
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(ISystemPreferencesConstants.ORDER_CONNECTIONS, makeString(newConnectionNamesOrder));		
 		savePreferenceStore();
 	}
@@ -235,7 +237,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static boolean getShowFilterPoolsPreference() 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(ISystemPreferencesConstants.SHOWFILTERPOOLS);
 	}
     /**
@@ -243,7 +245,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static void setShowFilterPoolsPreference(boolean show) 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(ISystemPreferencesConstants.SHOWFILTERPOOLS,show);
 		savePreferenceStore();
 	}
@@ -253,7 +255,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static boolean getShowNewConnectionPromptPreference() 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		boolean value = store.getBoolean(ISystemPreferencesConstants.SHOWNEWCONNECTIONPROMPT);
 		return value;
 	}
@@ -262,7 +264,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static void setShowNewConnectionPromptPreference(boolean show) 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(ISystemPreferencesConstants.SHOWNEWCONNECTIONPROMPT,show);
 		savePreferenceStore();
 	}
@@ -272,7 +274,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static boolean getQualifyConnectionNamesPreference() 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(ISystemPreferencesConstants.QUALIFY_CONNECTION_NAMES);
 	}
     /**
@@ -280,7 +282,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static void setQualifyConnectionNamesPreference(boolean set) 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(ISystemPreferencesConstants.QUALIFY_CONNECTION_NAMES,set);
 		savePreferenceStore();
 	}
@@ -290,7 +292,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static boolean getRememberStatePreference() 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(ISystemPreferencesConstants.REMEMBER_STATE);
 	}
     /**
@@ -298,7 +300,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static void setRememberStatePreference(boolean set) 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(ISystemPreferencesConstants.REMEMBER_STATE,set);
 		savePreferenceStore();
 	}
@@ -308,7 +310,7 @@ public class RemoteSystemsPreferencePage
 	 */
 	public static boolean getRestoreStateFromCachePreference() 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);
 	}
 
@@ -317,7 +319,7 @@ public class RemoteSystemsPreferencePage
 	 */
 	public static void setRestoreStateFromCachePreference(boolean set) 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE, set);
 		savePreferenceStore();
 	}
@@ -327,7 +329,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static boolean getCascadeUserActionsPreference() 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(ISystemPreferencesConstants.CASCADE_UDAS_BYPROFILE);
 	}
     /**
@@ -335,7 +337,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static void setCascadeUserActionsPreference(boolean set) 
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(ISystemPreferencesConstants.CASCADE_UDAS_BYPROFILE,set);
 		savePreferenceStore();
 	}
@@ -348,10 +350,11 @@ public class RemoteSystemsPreferencePage
 	{
 		if (systemType == null)
 		  return null;
-		SystemType[] systemTypes = SystemPlugin.getDefault().getAllSystemTypes(false);
-		SystemType type = SystemType.getSystemType(systemTypes, systemType);
-		if (type != null)
-			return type.getDefaultUserID();
+
+		IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemType);
+		RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
+		if (sysTypeAdapter != null)
+			return sysTypeAdapter.getDefaultUserId(sysType);
 		else
 			return null;
 	}
@@ -361,29 +364,36 @@ public class RemoteSystemsPreferencePage
      */
 	public static void setUserIdPreference(String systemType, String userId)
 	{
-		SystemType[] systemTypes = SystemPlugin.getDefault().getAllSystemTypes(false);
-		SystemType type = SystemType.getSystemType(systemTypes, systemType);
-		if (type != null)
-			type.setDefaultUserID(userId);
+		IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemType);
+		RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
+		if (sysTypeAdapter != null)
+			sysTypeAdapter.setDefaultUserId(sysType, userId);
 		else
 			return;
 		// following needs to stay in synch with modify() method in SystemTypeFieldEditor...
-		String value = SystemPlugin.getDefault().getPreferenceStore().getString(ISystemPreferencesConstants.SYSTEMTYPE_VALUES);
+		String value = RSEUIPlugin.getDefault().getPreferenceStore().getString(ISystemPreferencesConstants.SYSTEMTYPE_VALUES);
 		Hashtable keyValues = null;
 	    if ((value == null) || (value.length()==0)) // not initialized yet?
 	    {
     		keyValues = new Hashtable();
-	    	// nothing to do, as we have read from systemtype extension points already
+	    	// nothing to do, as we have read from systemTypes extension points already
 	    }
 	    else
 	    {
 	    	keyValues = parseString(value);
 	    }
-	    keyValues.put(type.getName(),SystemType.getPreferenceStoreString(type));
+	    
+	    String defaultUserId = sysTypeAdapter.getDefaultUserId(sysType);
+	    
+	    if (defaultUserId == null) {
+	    	defaultUserId = "null";
+	    }
+	    
+	    keyValues.put(sysType.getName(), "" + sysTypeAdapter.isEnabled(sysType) + SystemTypeFieldEditor.EACHVALUE_DELIMITER + defaultUserId);
 		String s = SystemTypeFieldEditor.createString(keyValues);
 
 		if (s != null)
-			SystemPlugin.getDefault().getPreferenceStore().setValue(ISystemPreferencesConstants.SYSTEMTYPE_VALUES, s);	
+			RSEUIPlugin.getDefault().getPreferenceStore().setValue(ISystemPreferencesConstants.SYSTEMTYPE_VALUES, s);	
 				        
 		savePreferenceStore();
 	}
@@ -395,7 +405,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static Hashtable getUserIdsPerKey()
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		Hashtable keyValues = null;
 		String value = store.getString(ISystemPreferencesConstants.USERIDPERKEY);
 		if (value != null)
@@ -411,7 +421,7 @@ public class RemoteSystemsPreferencePage
 	 */
 	public static void setUserIdsPerKey(Hashtable uidsPerKey)
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();				
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();				
 		store.setValue(ISystemPreferencesConstants.USERIDPERKEY, makeString(uidsPerKey));		
 		savePreferenceStore();
 	}
@@ -423,7 +433,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static String getSystemTypePreference()
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		return store.getString(ISystemPreferencesConstants.SYSTEMTYPE);		
 	}
 
@@ -446,7 +456,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static String[] getWidgetHistory(String key)
 	{
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		return parseStrings(store.getString(key));		
 	}
     /**
@@ -454,7 +464,7 @@ public class RemoteSystemsPreferencePage
      */
 	public static void setWidgetHistory(String key, String[] newHistory)
 	{		
-		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(key, makeString(newHistory));		
 		savePreferenceStore();
 	}
@@ -557,7 +567,7 @@ public class RemoteSystemsPreferencePage
 	 */
 	private static void savePreferenceStore()
 	{
-		SystemPlugin.getDefault().savePluginPreferences();
+		RSEUIPlugin.getDefault().savePluginPreferences();
 	}
 
 	public void init(IWorkbench workbench) 
@@ -566,7 +576,7 @@ public class RemoteSystemsPreferencePage
 
     /**
      * Initialize our preference store with our defaults.
-     * This is called in SystemPlugin.initializeDefaultPreferences
+     * This is called in RSEUIPlugin.initializeDefaultPreferences
      */
 	public static void initDefaults(IPreferenceStore store, boolean showNewConnectionPromptDefault) 
 	{
@@ -575,7 +585,7 @@ public class RemoteSystemsPreferencePage
 		store.setDefault(ISystemPreferencesConstants.SHOWFILTERPOOLS,          ISystemPreferencesConstants.DEFAULT_SHOWFILTERPOOLS);
 		
 		String defaultProfileNames = ISystemPreferencesConstants.DEFAULT_ACTIVEUSERPROFILES;
-		String userProfileName = SystemPlugin.getLocalMachineName();
+		String userProfileName = RSEUIPlugin.getLocalMachineName();
 		defaultProfileNames += ";" + userProfileName;
 		
 		
@@ -615,14 +625,14 @@ public class RemoteSystemsPreferencePage
     {
     	boolean ok = super.performOk();
     	savePreferenceStore(); // better save to disk, just in case.
-        if (!SystemPlugin.getDefault().isSystemRegistryActive())    	
+        if (!RSEUIPlugin.getDefault().isSystemRegistryActive())    	
           	return ok;
     	if (showFilterPoolsEditor != null)
     	{
     	   	boolean newValue = showFilterPoolsEditor.getBooleanValue();
     	   	if (newValue != lastShowFilterPoolsValue)
     	   	{
-    	     	SystemPlugin.getDefault().getSystemRegistry().setShowFilterPools(newValue);
+    	     	RSEUIPlugin.getDefault().getSystemRegistry().setShowFilterPools(newValue);
     	     	firePreferenceChangeEvent(ISystemPreferenceChangeEvents.EVENT_SHOWFILTERPOOLS,lastShowFilterPoolsValue,newValue);
     	   	}
     	   	lastShowFilterPoolsValue = newValue;
@@ -632,7 +642,7 @@ public class RemoteSystemsPreferencePage
     	   	boolean newValue = showNewConnectionPromptEditor.getBooleanValue();
     	   	if (newValue != lastShowNewConnectionPromptValue)
     	   	{
-    	     	SystemPlugin.getDefault().getSystemRegistry().setShowNewHostPrompt(newValue);
+    	     	RSEUIPlugin.getDefault().getSystemRegistry().setShowNewHostPrompt(newValue);
     	   	}
     	   	lastShowNewConnectionPromptValue = newValue;    		
     	}
@@ -641,7 +651,7 @@ public class RemoteSystemsPreferencePage
     	   	boolean newValue = qualifyConnectionNamesEditor.getBooleanValue();
     	   	if (newValue != lastQualifyConnectionNamesValue)
     	   	{
-    	     	SystemPlugin.getDefault().getSystemRegistry().setQualifiedHostNames(newValue);
+    	     	RSEUIPlugin.getDefault().getSystemRegistry().setQualifiedHostNames(newValue);
     	     	firePreferenceChangeEvent(ISystemPreferenceChangeEvents.EVENT_QUALIFYCONNECTIONNAMES,lastQualifyConnectionNamesValue,newValue);
     	   	}
     	   	lastQualifyConnectionNamesValue = newValue;    		
@@ -673,7 +683,7 @@ public class RemoteSystemsPreferencePage
      */
     private void firePreferenceChangeEvent(int type, boolean oldValue, boolean newValue)
     {
-    	SystemPlugin.getDefault().getSystemRegistry().fireEvent(
+    	RSEUIPlugin.getDefault().getSystemRegistry().fireEvent(
     	  new SystemPreferenceChangeEvent(type,
     	                                  oldValue ? Boolean.TRUE : Boolean.FALSE,
     	                                  newValue ? Boolean.TRUE : Boolean.FALSE));

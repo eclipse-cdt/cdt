@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.DisplaySystemMessageAction;
 import org.eclipse.rse.ui.actions.SystemStartCommunicationsDaemonAction;
 import org.eclipse.swt.widgets.Display;
@@ -151,7 +151,7 @@ public class SystemCommunicationsDaemon extends Thread {
 		setName(THREAD_NAME);
 
 		// Create server socket and start listening
-		int port = SystemPlugin.getDefault().getPreferenceStore().getInt(ISystemPreferencesConstants.DAEMON_PORT);
+		int port = RSEUIPlugin.getDefault().getPreferenceStore().getInt(ISystemPreferencesConstants.DAEMON_PORT);
 		
 		try {
 			serverSocket = new ServerSocket(port);
@@ -202,7 +202,7 @@ public class SystemCommunicationsDaemon extends Thread {
 				// yantzi:2.1.2 (defect 51016) Suppress error messages when workbench is first starting up
 				if (displayErrors)
 				{
-					SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_DAEMON_NOTSTARTED);
+					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_DAEMON_NOTSTARTED);
 					msg.makeSubstitution(new Integer(port));
 					Display.getDefault().asyncExec(new DisplaySystemMessageAction(msg));
 				}
@@ -320,7 +320,7 @@ public class SystemCommunicationsDaemon extends Thread {
 	 * when the Workbench starts.
 	 */
 	public static boolean isAutoStart() {
-		return SystemPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DAEMON_AUTOSTART);
+		return RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DAEMON_AUTOSTART);
 	}
 
 	/**

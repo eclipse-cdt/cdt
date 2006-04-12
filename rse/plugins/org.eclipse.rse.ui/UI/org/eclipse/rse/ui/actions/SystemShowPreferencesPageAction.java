@@ -25,7 +25,7 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
@@ -51,7 +51,7 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 	private String preferencePageCategory;
 	
 	/**
-	 * Constructor. We are instantiated inside {@link SystemPlugin#getPreferencePageActionPlugins()}
+	 * Constructor. We are instantiated inside {@link RSEUIPlugin#getPreferencePageActionPlugins()}
 	 *  for each extension of our extension point <code>org.eclipse.rse.core.remoteSystemsViewPreferencesActions</code>
 	 */
 	public SystemShowPreferencesPageAction()

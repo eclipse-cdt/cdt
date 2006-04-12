@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.rse.internal.model.SystemModelChangeEvent;
 import org.eclipse.rse.model.ISystemModelChangeEvents;
 import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.SystemPerspectiveLayout;
 import org.eclipse.rse.ui.view.SystemView;
 import org.eclipse.rse.ui.view.SystemViewPart;
@@ -238,12 +239,12 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
                 }
             }
             //else
-            //  SystemPlugin.logWarning("IN RESOURCeListener, RESOURCE AND PROJECT ARE NULL, UNABLE TO FILTER THE EVENT");
+            //  RSEUIPlugin.logWarning("IN RESOURCeListener, RESOURCE AND PROJECT ARE NULL, UNABLE TO FILTER THE EVENT");
         }
         else
         {
             //if (resource == null)
-            //  SystemPlugin.logWarning("IN RESOURCeListener, RESOURCE IS NULL, UNABLE TO FILTER THE EVENT");
+            //  RSEUIPlugin.logWarning("IN RESOURCeListener, RESOURCE IS NULL, UNABLE TO FILTER THE EVENT");
         }
 
         if (delta != null)
@@ -274,7 +275,7 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
             String sType = getTypeString(type);
             if (!fullDebug)
                 SystemBasePlugin.logInfo("RESOURCE CHANGED EVENT: eventType=" + sType + ", eventSource=" + source);
-            //SystemPlugin.logInfo("RESOURCE DELTA:"); //$NON-NLS-1$
+            //RSEUIPlugin.logInfo("RESOURCE DELTA:"); //$NON-NLS-1$
         }
         boolean ignored = false;
         if (delta != null)
@@ -580,7 +581,7 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
     {
     	return SystemPerspectiveHelpers.findRSEView();
     	/*
-        SystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+        SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
         IWorkbench wb = PlatformUI.getWorkbench();
         IWorkbenchWindow[] wbWindows = wb.getWorkbenchWindows();
         for (int idx = 0; idx < wbWindows.length; idx++)
@@ -605,7 +606,7 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
      */
     private IWorkbenchPage[] getRSEPerspectives()
     {
-        ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+        ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
         IWorkbench wb = PlatformUI.getWorkbench();
         IWorkbenchWindow[] wbWindows = wb.getWorkbenchWindows();
         Vector v = new Vector();
@@ -661,7 +662,7 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
         }
         else if (runAction == RSE_RESTART)
         {
-            SystemPlugin.getDefault().restart();
+            RSEUIPlugin.getDefault().restart();
         }
         else if (runAction == OPEN_VIEWS)
         {
@@ -669,7 +670,7 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
         }
         else if (runAction == FIRE_EVENT)
         {
-            SystemPlugin.getTheSystemRegistry().fireEvent(
+            RSEUIPlugin.getTheSystemRegistry().fireEvent(
               new SystemModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ALL_RELOADED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_ALL, "dummy"));
         }
 

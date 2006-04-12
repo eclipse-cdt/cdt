@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.model;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.model.SystemProfileManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -29,11 +29,11 @@ public class SystemStartHere
    /**
     * STEP 1. Get system registry singleton
     * <p>
-    * SAME AS: <code>SystemPlugin.getTheSystemRegistry</code>
+    * SAME AS: <code>RSEUIPlugin.getTheSystemRegistry</code>
     */
    public static ISystemRegistry getSystemRegistry()
    {
-   	   return SystemPlugin.getTheSystemRegistry();
+   	   return RSEUIPlugin.getTheSystemRegistry();
    }
    
    /**
@@ -60,7 +60,7 @@ public class SystemStartHere
     *  <li>"Linux"
     *  <li>"Local"
     * </ul>
-    * @see org.eclipse.rse.core.ISystemTypes
+    * @see org.eclipse.rse.core.IRSESystemType
     * @see org.eclipse.rse.model.ISystemRegistry#getHostsBySystemType(String)
     */
    public static IHost[] getConnectionsBySystemType(String systemType)

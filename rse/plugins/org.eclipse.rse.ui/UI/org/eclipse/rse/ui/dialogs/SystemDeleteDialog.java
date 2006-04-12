@@ -25,8 +25,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -96,7 +96,7 @@ public class SystemDeleteDialog extends SystemPromptDialog
 	{
 		super(shell, SystemResources.RESID_DELETE_TITLE);				
 		super.setOkButtonLabel(SystemResources.RESID_DELETE_BUTTON);
-		setHelp(SystemPlugin.HELPPREFIX+"ddlt0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"ddlt0000");
 	}
 
 	/**

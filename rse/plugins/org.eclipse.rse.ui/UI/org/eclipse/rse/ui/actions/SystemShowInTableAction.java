@@ -20,8 +20,8 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableViewPart;
@@ -47,7 +47,7 @@ public class SystemShowInTableAction extends SystemBaseAction
 	{
 		super(SystemResources.ACTION_TABLE_LABEL,			
 			SystemResources.ACTION_TABLE_TOOLTIP,
-			SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHOW_TABLE_ID),
+			RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHOW_TABLE_ID),
 			parent);
 		setAvailableOffline(true);
 	}

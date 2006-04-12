@@ -22,13 +22,13 @@ import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorPortInput;
@@ -79,7 +79,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		  return; // does not make sense adding unique actions per multi-selection
 		Object element = selection.getFirstElement();	
 		ISubSystem ss = (ISubSystem)element;
-		ISubSystemConfiguration ssFactory = SystemPlugin.getDefault().getSystemRegistry().getSubSystemConfiguration(ss);
+		ISubSystemConfiguration ssFactory = RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemConfiguration(ss);
 		ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssFactory.getAdapter(ISubsystemConfigurationAdapter.class);
 			
 		IAction[] actions = adapter.getSubSystemActions(ssFactory, ss,shell);
@@ -101,7 +101,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		//System.out.println("INSIDE GETIMAGEDESCRIPTOR FOR SUBSYSTEM VIEW ADAPTER: "+element);				
 		ISubSystem ss = (ISubSystem)element;
-		ISubSystemConfiguration ssFactory = SystemPlugin.getDefault().getSystemRegistry().getSubSystemConfiguration(ss);
+		ISubSystemConfiguration ssFactory = RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemConfiguration(ss);
 		if (ssFactory != null)
 		{
 		  if (ss.isConnected())
@@ -159,7 +159,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		//System.out.println("INSIDE GETPARENT FOR SUBSYSTEM VIEW ADAPTER: "+element);		
 		ISubSystem ss = (ISubSystem)element;		
-		return SystemPlugin.getDefault().getSystemRegistry().getHost(ss.getSystemProfile(),ss.getHostAliasName());
+		return RSEUIPlugin.getDefault().getSystemRegistry().getHost(ss.getSystemProfile(),ss.getHostAliasName());
 	}
 	
 	/**
@@ -203,7 +203,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		    
 		  // add our unique property descriptors...
 		  //idx = defaultProperties.length; assertion
-	      SystemPlugin plugin = SystemPlugin.getDefault();
+	      RSEUIPlugin plugin = RSEUIPlugin.getDefault();
 	      
 	      // user id	      
 	      //propertyDescriptorArray[idx] = new TextPropertyDescriptor(ISystemPropertyConstants.P_USERID, 
@@ -248,7 +248,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		if (portDescriptor == null)
 		{
 	      SystemViewPlugin plugin = SystemViewPlugin.getDefault();
-	      SystemPlugin sp = SystemPlugin.getDefault();			
+	      RSEUIPlugin sp = RSEUIPlugin.getDefault();			
 	      portDescriptor =
 	           new SystemInheritableTextPropertyDescriptor(ISystemPropertyConstants.P_PORT, 
 	                                                       SystemViewResources.RESID_PROPERTY_PORT_LABEL));	                                                      
@@ -626,7 +626,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		//System.out.println("INSIDE DODELETE FOR SUBSYSTEM VIEW ADAPTER: "+element);		
 		ISubSystem ss = (ISubSystem)element;		
-		ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();								
+		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();								
 		sr.deleteSubSystem(ss);
 		return true;
 	}	

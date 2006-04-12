@@ -22,10 +22,10 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.dialogs.SystemDeleteDialog;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -72,7 +72,7 @@ public class SystemCommonDeleteAction
 		allowOnMultipleSelection(true);
 		setProcessAllSelections(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);		
-  	    setHelp(SystemPlugin.HELPPREFIX+"actn0021");
+  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0021");
 	}
 	
 	/**
@@ -172,7 +172,7 @@ public class SystemCommonDeleteAction
 			catch (Exception e)
 			{				
 			}
-			SystemPlugin.getTheSystemRegistry().clearRunnableContext();
+			RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();
 	      setEnabled(target.canDelete());
 		}
 		return null;
@@ -180,7 +180,7 @@ public class SystemCommonDeleteAction
 	
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{
-		IRunnableContext irc = SystemPlugin.getTheSystemRegistry().getRunnableContext();
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
 		if (irc != null)
 		{
 			return irc;
@@ -188,7 +188,7 @@ public class SystemCommonDeleteAction
 		else
 		{
 			irc = new ProgressMonitorDialog(shell);
-			SystemPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);
+			RSEUIPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);
 			return irc;
 		}
 	}

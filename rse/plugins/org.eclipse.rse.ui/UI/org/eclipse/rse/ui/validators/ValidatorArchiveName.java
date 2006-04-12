@@ -19,9 +19,9 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -57,7 +57,7 @@ public class ValidatorArchiveName extends ValidatorFileName {
 	 */
 	public SystemMessage isSyntaxOk(String newText)
 	{
-		msg_NotRegisteredArchive = SystemPlugin.getPluginMessage(MSG_VALIDATE_ARCHIVE_NAME);
+		msg_NotRegisteredArchive = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ARCHIVE_NAME);
 		msg_NotRegisteredArchive.makeSubstitution(newText);
 		IStatus rc = workspace.validateName(newText, IResource.FILE);
 		if (rc.getCode() != IStatus.OK)

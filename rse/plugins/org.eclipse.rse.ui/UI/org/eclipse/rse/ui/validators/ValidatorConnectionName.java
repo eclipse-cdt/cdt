@@ -17,10 +17,10 @@
 package org.eclipse.rse.ui.validators;
 import java.util.Vector;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
@@ -43,9 +43,9 @@ public class ValidatorConnectionName extends ValidatorFolderName implements ISys
 	public ValidatorConnectionName(Vector existingNameList)
 	{
 		super(existingNameList);
-		super.setErrorMessages(SystemPlugin.getPluginMessage(MSG_VALIDATE_CONNECTIONNAME_EMPTY),
-		                       SystemPlugin.getPluginMessage(MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE),
-		                       SystemPlugin.getPluginMessage(MSG_VALIDATE_CONNECTIONNAME_NOTVALID));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_CONNECTIONNAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE),
+		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_CONNECTIONNAME_NOTVALID));  
 	}
 	
 	/**
@@ -59,16 +59,16 @@ public class ValidatorConnectionName extends ValidatorFolderName implements ISys
 	public static boolean validateNameNotInUse(String proposedName, Shell shell)
 	{
 		SystemMessage msg = null;
-		Vector profileNames = SystemPlugin.getTheSystemProfileManager().getSystemProfileNamesVector();
+		Vector profileNames = RSEUIPlugin.getTheSystemProfileManager().getSystemProfileNamesVector();
 		String profileName = null;
 		for (int idx=0; (msg==null)&& (idx<profileNames.size()); idx++)
 		{
 			profileName = (String)profileNames.elementAt(idx);
-			IHost[] conns = SystemPlugin.getTheSystemProfileManager().getSystemProfile(profileName).getHosts();
+			IHost[] conns = RSEUIPlugin.getTheSystemProfileManager().getSystemProfile(profileName).getHosts();
 			for (int jdx=0; (msg==null) && (jdx<conns.length); jdx++)
 			{				
 				if (conns[jdx].getAliasName().equalsIgnoreCase(proposedName))
-					msg = SystemPlugin.getPluginMessage(MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE_OTHERPROFILE);
+					msg = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE_OTHERPROFILE);
 			}
 		}
 		if (msg != null)

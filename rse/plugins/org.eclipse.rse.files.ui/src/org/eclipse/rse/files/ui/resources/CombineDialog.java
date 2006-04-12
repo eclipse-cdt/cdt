@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -37,7 +37,7 @@ public class CombineDialog extends SystemSelectRemoteFileOrFolderDialog {
 	public CombineDialog(Shell shell)
 	{
 		super(shell, false);
-		setHelp(SystemPlugin.HELPPREFIX + "cmbd0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "cmbd0000");
 	}	
 	
 	/**
@@ -48,7 +48,7 @@ public class CombineDialog extends SystemSelectRemoteFileOrFolderDialog {
 	public CombineDialog(Shell shell, String title)
 	{
 		super(shell, title, false);
-		setHelp(SystemPlugin.HELPPREFIX + "cmbd0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "cmbd0000");
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class CombineDialog extends SystemSelectRemoteFileOrFolderDialog {
 		super(shell, title, false);
 		prePop = prePopSelection;
 		if (form != null) form.setPrePopSelection(prePop);
-		setHelp(SystemPlugin.HELPPREFIX + "cmbd0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "cmbd0000");
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class CombineDialog extends SystemSelectRemoteFileOrFolderDialog {
 		super(shell, title, false);
 		prePop = prePopSelection;
 		if (form != null) form.setPrePopSelection(prePop);
-		setHelp(SystemPlugin.HELPPREFIX + "cmbd0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "cmbd0000");
 	}
 
 		

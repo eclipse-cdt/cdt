@@ -23,12 +23,12 @@ import java.util.List;
 import org.eclipse.dstore.core.util.ssl.DStoreKeyStore;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.dstore.security.ImageRegistry;
 import org.eclipse.rse.dstore.security.UniversalSecurityProperties;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizard;
 
 public class SystemImportCertWizard 
@@ -39,16 +39,18 @@ public class SystemImportCertWizard
 	private SystemImportCertWizardMainPage  _mainPage;
 	private SystemImportCertWizardAliasPage _aliasPage;
 	private ISystemKeystoreProvider _provider;
+	private String _systemName;
   
 
     /**
      * Constructor
      */	
-	public SystemImportCertWizard(ISystemKeystoreProvider provider)
+	public SystemImportCertWizard(ISystemKeystoreProvider provider, String systemName)
 	{
 	   	super(UniversalSecurityProperties.RESID_SECURITY_TRUST_IMPORT_CERTIFICATE_WIZARD,
 				ImageRegistry.getImageDescriptor(ImageRegistry.IMG_WZ_IMPORT_CERTIF));	
 		_provider = provider;
+		_systemName = systemName;
 	}
 	
 	/**
@@ -92,7 +94,7 @@ public class SystemImportCertWizard
 	{
 		SystemMessage errMsg = null;
 		
-   	    _aliasPage = new SystemImportCertWizardAliasPage(this, getCertificates()); 
+   	    _aliasPage = new SystemImportCertWizardAliasPage(this, getCertificates(), _systemName); 
    	    if (errMsg != null)
    	      _aliasPage.setErrorMessage(errMsg);
    	    return _aliasPage;

@@ -18,12 +18,12 @@ package org.eclipse.rse.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemSortableSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -44,11 +44,11 @@ public class SystemMoveUpConnectionAction extends SystemBaseAction
 	public SystemMoveUpConnectionAction(Shell parent) 
 	{
 		super(SystemResources.ACTION_MOVEUP_LABEL, SystemResources.ACTION_MOVEUP_TOOLTIP,
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_MOVEUP_ID),
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_MOVEUP_ID),
 		      parent);
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORDER);  
-		setHelp(SystemPlugin.HELPPREFIX+"actn0001");      
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0001");      
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class SystemMoveUpConnectionAction extends SystemBaseAction
 	public boolean updateSelection(IStructuredSelection selection)
 	{
 		boolean enable = true;
-		ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();		
+		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();		
 		prevProfile = null;
 		Iterator e= ((IStructuredSelection) selection).iterator();		
 		while (enable && e.hasNext())
@@ -92,7 +92,7 @@ public class SystemMoveUpConnectionAction extends SystemBaseAction
 	 */
 	public void run() 
 	{
-		ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();		
+		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();		
 
 		SystemSortableSelection[] sortableArray = SystemSortableSelection.makeSortableArray(getSelection());
 		IHost conn = null;

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.actions.SystemUploadConflictAction;
 import org.eclipse.rse.model.ISystemRegistry;
@@ -30,6 +29,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileIOException;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSecurityException;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.DisplaySystemMessageAction;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Display;
@@ -115,7 +115,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 	{
 		if (subsystem instanceof IRemoteFileSubSystem)
 		{
-			Shell shell = SystemPlugin.getTheSystemRegistry().getShell();
+			Shell shell = RSEUIPlugin.getTheSystemRegistry().getShell();
 			IRemoteFileSubSystem fs = (IRemoteFileSubSystem) subsystem;
 			
 			// first we need to get the stored timestamp property and the actual remote timestamp
@@ -254,7 +254,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				
 				IRemoteFile parent = remoteFile.getParentRemoteFile();
 	
-				ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+				ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 				// refresh
 				if (parent != null)
 				{
@@ -300,7 +300,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				//			2) Overwrite remote
 				//			3) Save as...
 				//			4) Cancel
-				Shell shell = SystemPlugin.getTheSystemRegistry().getShell();
+				Shell shell = RSEUIPlugin.getTheSystemRegistry().getShell();
 
 				SystemUploadConflictAction conflictAction = new SystemUploadConflictAction(shell, tempFile, remoteFile, remoteNewer);
 				conflictAction.run();

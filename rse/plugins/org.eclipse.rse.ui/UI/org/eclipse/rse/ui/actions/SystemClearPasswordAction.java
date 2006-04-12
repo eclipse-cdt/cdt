@@ -16,13 +16,13 @@
 
 package org.eclipse.rse.ui.actions;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
@@ -45,7 +45,7 @@ public class SystemClearPasswordAction extends SystemBaseAction
 		super(SystemResources.ACTION_CLEARPASSWORD_LABEL, SystemResources.ACTION_CLEARPASSWORD_TOOLTIP, shell);
 		allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CONNECTION);
-		setHelp(SystemPlugin.HELPPREFIX+"actn0049");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0049");
 	}
 	
 	/**
@@ -80,7 +80,7 @@ public class SystemClearPasswordAction extends SystemBaseAction
 			// clear userid/password from memory and fire event
 			//DKM and disk now
 			system.clearPasswordCache(true);
-			SystemPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(ss, 
+			RSEUIPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(ss, 
 					ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, 
 					ss.getHost()));
 			

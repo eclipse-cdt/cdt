@@ -37,6 +37,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 
 import org.eclipse.dstore.core.model.DE;
+import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.model.ISSLProperties;
 import org.eclipse.dstore.core.util.ssl.DStoreSSLContext;
 
@@ -285,7 +286,7 @@ public class ServerLauncher extends Thread
 
 					if ((launchStatus == null) || !launchStatus.equals("success"))
 					{
-						_writer.println("Authentification Failed");
+						_writer.println(IDataStoreConstants.AUTHENTICATION_FAILED);
 					}
 					else
 					{
@@ -295,7 +296,7 @@ public class ServerLauncher extends Thread
 						if ((status != null) && status.equals(ServerReturnCodes.RC_SUCCESS))
 						{
 							_errReader.readLine();
-							_writer.println("connected");
+							_writer.println(IDataStoreConstants.CONNECTED);
 							_writer.println(_port);
 							_writer.println(ticket);
 
@@ -306,7 +307,7 @@ public class ServerLauncher extends Thread
 						{
 							if (status == null)
 							{
-								status = new String("unknown problem connecting to server");
+								status = new String(IDataStoreConstants.UNKNOWN_PROBLEM);
 							}
 
 							_writer.println(status);
@@ -323,7 +324,7 @@ public class ServerLauncher extends Thread
 				}
 				catch (IOException e)
 				{
-					_writer.println("server failure: " + e);
+					_writer.println(IDataStoreConstants.SERVER_FAILURE + e);
 				}
 			}
 

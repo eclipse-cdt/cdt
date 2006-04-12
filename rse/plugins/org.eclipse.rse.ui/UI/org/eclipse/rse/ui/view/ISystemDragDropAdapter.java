@@ -22,7 +22,6 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemResourceSet;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 
-
 public interface ISystemDragDropAdapter extends IRemoteObjectIdentifier 
 {
 	
@@ -65,7 +64,7 @@ public interface ISystemDragDropAdapter extends IRemoteObjectIdentifier
 	public boolean canDrop(Object element);
 	
 	/**
-	 *  Perform drop from the "from" object to the "to" object
+	 * Perform drop from the "from" object to the "to" object
 	 * @param from the source object for the drop
 	 * @param to the target object for the drop
 	 * @param sameSystemType indication of whether the source and target reside of the same type of system
@@ -77,7 +76,7 @@ public interface ISystemDragDropAdapter extends IRemoteObjectIdentifier
 	public Object doDrop(Object from, Object to, boolean sameSystemType, boolean sameSystem, int srcType, IProgressMonitor monitor);
 	  
 	/**
-	 *  Perform drop from the "fromSet" of objects to the "to" object
+	 * Perform drop from the "fromSet" of objects to the "to" object
 	 * @param from the source objects for the drop
 	 * @param to the target object for the drop
 	 * @param sameSystemType indication of whether the source and target reside of the same type of system
@@ -86,7 +85,6 @@ public interface ISystemDragDropAdapter extends IRemoteObjectIdentifier
 	 * @param monitor the progress monitor
 	 * 
 	 * @return the set of new objects created from the drop
-	 * 
 	 */ 
 	public ISystemResourceSet doDrop(ISystemResourceSet fromSet, Object to, boolean sameSystemType, boolean sameSystem, int srcType, IProgressMonitor monitor);
 
@@ -111,7 +109,6 @@ public interface ISystemDragDropAdapter extends IRemoteObjectIdentifier
    
    	/**
      * Get the subsystem that corresponds to this object if one exists.
-     * 	
      */
 	public ISubSystem getSubSystem(Object element);	  
 }

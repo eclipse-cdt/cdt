@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view.monitor;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
 
@@ -27,7 +27,7 @@ public class ClearAction extends BrowseAction
     public ClearAction(SystemMonitorViewPart view)
 	{
 		super(view, SystemResources.ACTION_CLEAR_ALL_LABEL,
-		        SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_ALL_ID));
+		        RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_ALL_ID));
 
 
 		// TODO DKM - get help for this!

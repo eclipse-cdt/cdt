@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
-import org.eclipse.rse.core.SystemPlugin;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -57,7 +57,7 @@ public class InheritControl
 	   setLayout(new InheritControlLayout());
 	   //Class c = InheritControl.class;
 	   //String imagePath = "icons" + java.io.File.separatorChar;
-	   SystemPlugin sp = SystemPlugin.getDefault();
+	   RSEUIPlugin sp = RSEUIPlugin.getDefault();
 	   try 
 	   {
 		 //ImageData source = new ImageData(c.getResourceAsStream (imagePath+"local.gif"));	   	

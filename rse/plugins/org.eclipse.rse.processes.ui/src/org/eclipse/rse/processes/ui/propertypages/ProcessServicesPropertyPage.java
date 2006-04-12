@@ -19,13 +19,13 @@ package org.eclipse.rse.processes.ui.propertypages;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.propertypages.ServicesPropertyPage;
 import org.eclipse.rse.ui.widgets.services.FactoryServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServiceElement;
@@ -66,7 +66,7 @@ public class ProcessServicesPropertyPage extends ServicesPropertyPage
 	protected IProcessServiceSubSystemConfiguration[] getProcessServiceSubSystemFactories(String systemType)
 	{
 		List results = new ArrayList();
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType);
 		
 		for (int i = 0; i < factories.length; i++)

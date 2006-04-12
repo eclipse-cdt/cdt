@@ -16,12 +16,12 @@
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.search.IHostSearchConstants;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 public class OutputRefresh implements Runnable 
@@ -39,7 +39,7 @@ public class OutputRefresh implements Runnable
 		
 		if (searchConfig != null) 
 		{
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(searchConfig, ISystemResourceChangeEvents.EVENT_REFRESH, null));
 			
 			if (isDone) 

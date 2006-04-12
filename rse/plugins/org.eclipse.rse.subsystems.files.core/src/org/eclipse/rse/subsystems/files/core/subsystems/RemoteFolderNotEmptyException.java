@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -36,6 +36,6 @@ public class RemoteFolderNotEmptyException extends RemoteFileException
 	 */
 	public RemoteFolderNotEmptyException(Exception remoteException)
 	{
-		super(SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTEMPTY), remoteException);
+		super(RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTEMPTY), remoteException);
 	}
 }

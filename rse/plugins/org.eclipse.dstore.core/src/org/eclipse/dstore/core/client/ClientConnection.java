@@ -19,6 +19,7 @@ package org.eclipse.dstore.core.client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -37,6 +38,7 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
+import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.model.ISSLProperties;
 import org.eclipse.dstore.core.server.ServerCommandHandler;
 import org.eclipse.dstore.core.server.ServerLauncher;
@@ -67,7 +69,7 @@ import org.eclipse.dstore.extra.internal.extra.DomainNotifier;
  * 
  *
  */
-public class ClientConnection
+public class ClientConnection implements IDataStoreConstants
 {
 
 
@@ -91,6 +93,7 @@ public class ClientConnection
 	private String _host;
 	private String _port;
 	private String _hostDirectory;
+	private Socket _launchSocket;
 	
 	private DataStoreTrustManager _trustManager;
 
@@ -103,6 +106,7 @@ public class ClientConnection
 	private static final int HANDSHAKE_SERVER_NEWER = 4;
 	private static final int HANDSHAKE_SERVER_RECENT_OLDER = 5;
 	private static final int HANDSHAKE_SERVER_RECENT_NEWER = 6;
+	private static final int HANDSHAKE_TIMEOUT = 7;
 	
 	private static final int VERSION_INDEX_PROTOCOL = 0;
 	private static final int VERSION_INDEX_VERSION  = 1;
@@ -112,6 +116,7 @@ public class ClientConnection
 	public static String SERVER_OLDER = "Older DataStore Server.";
 	public static String CLIENT_OLDER = "Older DataStore Client.";
 	public static String INCOMPATIBLE_PROTOCOL = "Incompatible Protocol.";
+	public static String CANNOT_CONNECT = "Cannot connect to server.";
 
 	/**
 	 * Creates a new ClientConnection instance
@@ -431,7 +436,7 @@ public class ClientConnection
 	 */
 	public ConnectionStatus connect(String ticket)
 	{
-		return connect(ticket, -1);
+		return connect(ticket, 0);
 	}
 	
 	public ConnectionStatus connect(String ticket, int timeout)
@@ -446,7 +451,13 @@ public class ClientConnection
 				port = Integer.parseInt(_port);
 			}
 
-			if (_dataStore.usingSSL())
+			if (!_dataStore.usingSSL())
+			{
+				_theSocket = new Socket(_host, port);
+				if (doTimeOut && (_theSocket != null))
+					_theSocket.setSoTimeout(timeout);
+			}
+			else
 			{
 				String location = _dataStore.getKeyStoreLocation();
 				String pw = _dataStore.getKeyStorePassword();
@@ -476,12 +487,6 @@ public class ClientConnection
 					result = new ConnectionStatus(false, e);
 					return result;
 				}
-			}
-			else
-			{
-				_theSocket = new Socket(_host, port);
-				if (doTimeOut && (_theSocket != null))
-					_theSocket.setSoTimeout(timeout);
 			}
 
 			String msg = null;
@@ -521,7 +526,8 @@ public class ClientConnection
 			}
 			case HANDSHAKE_INCORRECT:
 			{
-				msg = INCOMPATIBLE_PROTOCOL;
+				msg = CANNOT_CONNECT;
+				msg += INCOMPATIBLE_PROTOCOL;
 				msg += "\nThe server running on "
 					+ _host
 					+ " under port "
@@ -531,9 +537,16 @@ public class ClientConnection
 			}
 			case HANDSHAKE_UNEXPECTED:
 			{
-				msg = "Unexpected exception";
+				msg = CANNOT_CONNECT;
+				msg += "Unexpected exception.";
 				break;
 			}
+			case HANDSHAKE_TIMEOUT:
+			{
+				msg = CANNOT_CONNECT;
+				msg += "Timeout waiting for socket activity.";
+				break;
+			}	
 			default:
 				break;
 			}
@@ -615,78 +628,44 @@ public class ClientConnection
 	 */
 	public ConnectionStatus launchServer(String user, String password, int daemonPort)
 	{
-		ConnectionStatus result = null;
+		return launchServer(user, password, daemonPort, 0);
+	}
+	
+	public ConnectionStatus launchServer(String user, String password, int daemonPort, int timeout)
+	{
+		ConnectionStatus result = connectDaemon(daemonPort);
+		boolean doTimeOut = timeout > 0;
+		if (!result.isConnected()) {
+			return result;
+		}
 		try
 		{
-			Socket launchSocket = null;
-			if (_dataStore.usingSSL())
-			{
-				try
-				{
-					String location = _dataStore.getKeyStoreLocation();
-					String pw = _dataStore.getKeyStorePassword();
-					DataStoreTrustManager mgr = getTrustManager();
-					SSLContext context = DStoreSSLContext.getClientSSLContext(location, pw, mgr);
-				
-					try
-					{
-						SocketFactory factory = context.getSocketFactory();
-						SSLSocket lSocket = (SSLSocket) factory.createSocket(_host, daemonPort);
-						launchSocket = lSocket;
-
-						lSocket.startHandshake();
-
-						SSLSession session = lSocket.getSession();
-						if (session == null)
-						{
-							System.out.println("handshake failed");
-							lSocket.close();
-						}
-					}
-					catch (SSLHandshakeException e)
-					{						
-
-						result = new ConnectionStatus(false, e, true, mgr.getUntrustedCerts());
-						return result;
-					}
-					catch (Exception e)
-					{
-						if (launchSocket != null)
-						{
-							launchSocket.close();
-						}
-						e.printStackTrace();
-						result = new ConnectionStatus(false, e);
-						
-						return result;
-					}
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-			else
-			{
-				launchSocket = new Socket(_host, daemonPort);
-			}
-
 			PrintWriter writer = null;
 			BufferedReader reader = null;
 
 			// create output stream for server launcher
 			try
 			{
-				writer = new PrintWriter(new OutputStreamWriter(launchSocket.getOutputStream(), DE.ENCODING_UTF_8));
+				if (doTimeOut) _launchSocket.setSoTimeout(timeout);
+				writer = new PrintWriter(new OutputStreamWriter(_launchSocket.getOutputStream(), DE.ENCODING_UTF_8));
 				writer.println(user);
 				writer.println(password);
 				writer.println(_port);
 				writer.flush();
 
-				reader = new BufferedReader(new InputStreamReader(launchSocket.getInputStream(), DE.ENCODING_UTF_8));
-				String status = reader.readLine();
+				reader = new BufferedReader(new InputStreamReader(_launchSocket.getInputStream(), DE.ENCODING_UTF_8));
+				String status = null;
+				try
+				{
+					status = reader.readLine();
+				}
+				catch (InterruptedIOException e)
+				{
+					result = new ConnectionStatus(false, e);
+				}
 
-				if (status != null && !status.equals("connected"))
+
+				if (status != null && !status.equals(CONNECTED))
 				{
 					result = new ConnectionStatus(false, status);
 				}
@@ -710,7 +689,81 @@ public class ClientConnection
 
 			if (writer != null)
 				writer.close();
-			launchSocket.close();
+			_launchSocket.close();
+		}
+		catch (IOException ioe)
+		{
+			System.out.println(ioe);
+			ioe.printStackTrace();
+			result = new ConnectionStatus(false, ioe);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Connect to a remote daemon
+	 * 
+	 * @param daemonPort the port of the daemon
+	 * @return the status of the connection
+	 */
+	public ConnectionStatus connectDaemon(int daemonPort) {
+		ConnectionStatus result = new ConnectionStatus(true);
+		try
+		{
+			_launchSocket = null;
+			if (_dataStore.usingSSL())
+			{
+				try
+				{
+					String location = _dataStore.getKeyStoreLocation();
+					String pw = _dataStore.getKeyStorePassword();
+					DataStoreTrustManager mgr = getTrustManager();
+					SSLContext context = DStoreSSLContext.getClientSSLContext(location, pw, mgr);
+				
+					try
+					{
+						SocketFactory factory = context.getSocketFactory();
+						SSLSocket lSocket = (SSLSocket) factory.createSocket(_host, daemonPort);
+						_launchSocket = lSocket;
+
+						lSocket.startHandshake();
+		
+
+						SSLSession session = lSocket.getSession();
+						if (session == null)
+						{
+							System.out.println("handshake failed");
+							lSocket.close();
+						}
+					}
+					catch (SSLHandshakeException e)
+					{						
+
+						result = new ConnectionStatus(false, e, true, mgr.getUntrustedCerts());
+						return result;
+					}
+					catch (Exception e)
+					{
+						if (_launchSocket != null)
+						{
+							_launchSocket.close();
+						}
+						e.printStackTrace();
+						result = new ConnectionStatus(false, e);
+						
+						return result;
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				_launchSocket = new Socket(_host, daemonPort);
+			}
 		}
 		catch (java.net.ConnectException e)
 		{
@@ -731,7 +784,16 @@ public class ClientConnection
 
 		return result;
 	}
-
+	
+	/**
+	 * Reeturns the launch socket
+	 * 
+	 * @return the launch socket
+	 */
+	public Socket getLaunchSocket() {
+		return _launchSocket;
+	}
+	
 	/**
 	 * Returns the DataStore that the client is connected to.
 	 * @return the DataStore
@@ -749,31 +811,50 @@ public class ClientConnection
 	private void init(int initialSize)
 	{
 		_clientAttributes = new ClientAttributes();
-		_clientAttributes.setAttribute(DataStoreAttributes.A_ROOT_NAME, _name);
+		_clientAttributes.setAttribute(ClientAttributes.A_ROOT_NAME, _name);
 
 
 		_dataStore = new DataStore(_clientAttributes, initialSize);
 		_dataStore.setDomainNotifier(_domainNotifier);
 		_dataStore.createRoot();
 
-		_host = _clientAttributes.getAttribute(DataStoreAttributes.A_HOST_NAME);
-		_hostDirectory = _clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PATH);
-		_port = _clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PORT);
-		
-		String[] clientVersionStr = DataStoreAttributes.DATASTORE_VERSION.split("\\.");		
-		_clientVersion =  Integer.parseInt(clientVersionStr[VERSION_INDEX_VERSION]);
-		_clientMinor = Integer.parseInt(clientVersionStr[VERSION_INDEX_MINOR]);
+		_host = _clientAttributes.getAttribute(ClientAttributes.A_HOST_NAME);
+		_hostDirectory = _clientAttributes.getAttribute(ClientAttributes.A_HOST_PATH);
+		_port = _clientAttributes.getAttribute(ClientAttributes.A_HOST_PORT);
 	}
 
+	private void flush(DataElement object)
+	{
+		_dataStore.flush(object);
+	}
+
+	private void flush()
+	{
+		_dataStore.flush(_dataStore.getHostRoot());
+		_dataStore.flush(_dataStore.getLogRoot());
+		_dataStore.flush(_dataStore.getDescriptorRoot());
+		_dataStore.createRoot();
+	}
 	private int doHandShake()
 	{
 		try
 		{
 			BufferedReader reader = new BufferedReader(new InputStreamReader(_theSocket.getInputStream(), DE.ENCODING_UTF_8));
-
+			PrintWriter writer = new PrintWriter(new OutputStreamWriter(_theSocket.getOutputStream(), DE.ENCODING_UTF_8));
+			writer.println("");
+			writer.println("");
+			writer.println("");
+			writer.flush();
 			
-			String handshake = reader.readLine();
-			
+			String handshake = null;
+			try
+			{
+				handshake = reader.readLine();
+			}
+			catch (InterruptedIOException e)
+			{
+				return HANDSHAKE_TIMEOUT;
+			}
 			_theSocket.setSoTimeout(0);
 
 			String[] clientVersionStr = DataStoreAttributes.DATASTORE_VERSION.split("\\.");			
@@ -844,5 +925,14 @@ public class ClientConnection
 		}
 
 	}
-
+		
+	public boolean isKnownStatus(String status)
+	{
+		return  status.equals(CONNECTED) ||
+				status.equals(AUTHENTICATION_FAILED) ||
+				status.equals(UNKNOWN_PROBLEM) ||
+				status.startsWith(SERVER_FAILURE) ||
+				status.equals(PASSWORD_EXPIRED) ||
+				status.equals(NEW_PASSWORD_INVALID);
+	}
 }

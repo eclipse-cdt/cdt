@@ -17,8 +17,8 @@
 package org.eclipse.rse.ui.actions;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.comm.SystemCommunicationsDaemon;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
@@ -40,7 +40,7 @@ public class SystemStartCommunicationsDaemonAction extends SystemBaseAction impl
 			  SystemResources.ACTION_DAEMON_STOP_TOOLTIP,
 			  shell);
 			  	
-		setHelp(SystemPlugin.HELPPREFIX + "dmna0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "dmna0000");
 					  	
 		if (!SystemCommunicationsDaemon.isAutoStart() || !SystemCommunicationsDaemon.getInstance().isRunning())
 		{

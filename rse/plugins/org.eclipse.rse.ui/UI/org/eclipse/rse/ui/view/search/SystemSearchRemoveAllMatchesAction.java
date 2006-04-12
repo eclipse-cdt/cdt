@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.view.search;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
@@ -37,7 +37,7 @@ public class SystemSearchRemoveAllMatchesAction extends SystemBaseAction {
 	 */
 	public SystemSearchRemoveAllMatchesAction(SystemSearchViewPart searchView, Shell shell) {
 		super(SystemResources.RESID_SEARCH_REMOVE_ALL_MATCHES_LABEL,SystemResources.RESID_SEARCH_REMOVE_ALL_MATCHES_TOOLTIP,
-			  SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SEARCH_REMOVE_ALL_MATCHES_ID),
+			  RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SEARCH_REMOVE_ALL_MATCHES_ID),
 			  shell);
 			  
 		this.searchView = searchView;

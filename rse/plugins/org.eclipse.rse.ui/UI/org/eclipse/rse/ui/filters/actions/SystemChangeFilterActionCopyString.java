@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.filters.actions;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.filters.SystemChangeFilterPane;
@@ -46,7 +46,7 @@ public class SystemChangeFilterActionCopyString extends SystemBaseAction
         allowOnMultipleSelection(false);
         this.parentDialog = parentDialog;
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);  
-		setHelp(SystemPlugin.HELPPREFIX+"dufr2000");      
+		setHelp(RSEUIPlugin.HELPPREFIX+"dufr2000");      
 	}
 
 	/**

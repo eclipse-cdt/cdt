@@ -29,5 +29,5 @@ public interface ISystemKeystoreProvider
 {
 	public String getKeyStorePassword();
 	public String getKeyStorePath();
-	public boolean importCertificates(List certificates);
+	public boolean importCertificates(List certificates, String systemName);
 }

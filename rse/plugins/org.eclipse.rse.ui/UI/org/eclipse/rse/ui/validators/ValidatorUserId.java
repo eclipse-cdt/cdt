@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -37,7 +37,7 @@ public class ValidatorUserId
 	 */
 	public ValidatorUserId(boolean isEmptyAllowed)
 	{
-		super("=;", isEmptyAllowed, SystemPlugin.getPluginMessage(MSG_VALIDATE_USERID_NOTVALID), SystemPlugin.getPluginMessage(MSG_VALIDATE_USERID_EMPTY));
+		super("=;", isEmptyAllowed, RSEUIPlugin.getPluginMessage(MSG_VALIDATE_USERID_NOTVALID), RSEUIPlugin.getPluginMessage(MSG_VALIDATE_USERID_EMPTY));
 	}
 
 	/**

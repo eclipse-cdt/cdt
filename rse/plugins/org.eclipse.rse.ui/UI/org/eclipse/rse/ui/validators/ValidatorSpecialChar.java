@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -47,7 +47,7 @@ public class ValidatorSpecialChar
 	 */
 	public ValidatorSpecialChar(String specialChars, boolean isEmptyAllowed)
 	{
-		this(specialChars, isEmptyAllowed, SystemPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_NOTVALID), SystemPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_EMPTY));
+		this(specialChars, isEmptyAllowed, RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_NOTVALID), RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_EMPTY));
 	}
 	/**
 	 * Constructor
@@ -57,7 +57,7 @@ public class ValidatorSpecialChar
 	 */
 	public ValidatorSpecialChar(String specialChars, boolean isEmptyAllowed, SystemMessage msg_Invalid)
 	{
-		this(specialChars, isEmptyAllowed, msg_Invalid, SystemPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_EMPTY));
+		this(specialChars, isEmptyAllowed, msg_Invalid, RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_EMPTY));
 	}	
 	/**
 	 * Constructor
@@ -74,7 +74,7 @@ public class ValidatorSpecialChar
 	    setErrorMessages(msg_Empty, msg_Invalid);
 	}		
 	/**
-	 * Supply your own error message text. By default, messages from SystemPlugin resource bundle are used.
+	 * Supply your own error message text. By default, messages from RSEUIPlugin resource bundle are used.
 	 * @param error message when entry field is empty or null if to keep the default
 	 * @param error message when value entered is not valid, or null if to keep the default
 	 */

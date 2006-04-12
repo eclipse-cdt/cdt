@@ -28,10 +28,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.graphics.Image;
@@ -75,10 +75,10 @@ public class SystemTeamViewLabelProvider extends LabelProvider
 		if (element instanceof ISystemProfile) 
 		{
 			ISystemProfile profile = (ISystemProfile)element;
-			if (SystemPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName()))
-			  return SystemPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_PROFILE_ACTIVE_ID);
+			if (RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName()))
+			  return RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_PROFILE_ACTIVE_ID);
 			else
-			  return SystemPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID);
+			  return RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID);
 		}
 
 		// If we have a project, return the resource project images. 
@@ -188,7 +188,7 @@ public class SystemTeamViewLabelProvider extends LabelProvider
 		else
 			adapter = (ISystemViewElementAdapter)((IAdaptable)o).getAdapter(ISystemViewElementAdapter.class);
 		//if (adapter == null)
-		//	SystemPlugin.logWarning("ADAPTER IS NULL FOR ELEMENT OF TYPE: " + o.getClass().getName());
+		//	RSEUIPlugin.logWarning("ADAPTER IS NULL FOR ELEMENT OF TYPE: " + o.getClass().getName());
 		if ((adapter!=null) && (viewer != null))
 		{    	
 			Shell shell = null;

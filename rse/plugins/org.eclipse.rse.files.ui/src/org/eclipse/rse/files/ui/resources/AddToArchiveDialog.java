@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -33,18 +33,18 @@ public class AddToArchiveDialog extends CombineDialog {
 	public AddToArchiveDialog(Shell shell) 
 	{
 		super(shell);
-		setHelp(SystemPlugin.HELPPREFIX + "atad0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000");
 	}
 
 	public AddToArchiveDialog(Shell shell, String title) {
 		super(shell, title);
-		setHelp(SystemPlugin.HELPPREFIX + "atad0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000");
 	}
 	
 	public AddToArchiveDialog(Shell shell, String title, String[] relativePaths) 
 	{
 		super(shell, title);
-		setHelp(SystemPlugin.HELPPREFIX + "atad0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000");
 		_relativePaths = relativePaths;
 		((AddToArchiveForm)form).setRelativePathList(_relativePaths);
 	}
@@ -55,7 +55,7 @@ public class AddToArchiveDialog extends CombineDialog {
 		boolean prePopSelection) 
 	{
 		super(shell, title, prePopSelection);
-		setHelp(SystemPlugin.HELPPREFIX + "atad0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000");
 	}
 	
 	public AddToArchiveDialog(
@@ -65,7 +65,7 @@ public class AddToArchiveDialog extends CombineDialog {
 		String[] relativePaths) 
 	{
 		super(shell, title, prePopSelection);
-		setHelp(SystemPlugin.HELPPREFIX + "atad0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000");
 		_relativePaths = relativePaths;
 		((AddToArchiveForm)form).setRelativePathList(_relativePaths);
 	}

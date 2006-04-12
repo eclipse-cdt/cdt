@@ -16,10 +16,10 @@
 
 
 package org.eclipse.rse.ui.view.scratchpad;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
 
@@ -30,7 +30,7 @@ public class ClearAction extends BrowseAction
     public ClearAction(SystemScratchpadView view)
 	{
 		super(view, SystemResources.ACTION_CLEAR_ALL_LABEL,
-		        SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_ALL_ID));
+		        RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CLEAR_ALL_ID));
 
 
 		// TODO DKM - get help for this!
@@ -51,7 +51,7 @@ public class ClearAction extends BrowseAction
 	private void clear()
 	{
 	    _scratchPad.clearChildren();
-	    SystemPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(_scratchPad, ISystemResourceChangeEvents.EVENT_REFRESH, _scratchPad));
+	    RSEUIPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(_scratchPad, ISystemResourceChangeEvents.EVENT_REFRESH, _scratchPad));
 	    //_view.updateActionStates();
 	}
 }

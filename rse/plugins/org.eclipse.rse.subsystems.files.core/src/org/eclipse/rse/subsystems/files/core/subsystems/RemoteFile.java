@@ -27,7 +27,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.IRemoteContainer;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.model.IHost;
@@ -38,6 +37,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -600,7 +600,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	
 	private Object[] combineAndFilterHidden(Object[] set1, Object[] set2)
 	{
-		boolean showHidden = SystemPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.SHOWHIDDEN);
+		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.SHOWHIDDEN);
 		ArrayList result = new ArrayList(set1.length + set2.length);
 		for (int i = 0; i < set1.length; i++)
 		{			
@@ -649,7 +649,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	
 	private Object[] filterHidden(Object[] set, boolean checkInstanceOf)
 	{
-		boolean showHidden = SystemPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.SHOWHIDDEN);
+		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.SHOWHIDDEN);
 		ArrayList result = new ArrayList(set.length);
 		for (int i = 0; i < set.length; i++)
 		{			

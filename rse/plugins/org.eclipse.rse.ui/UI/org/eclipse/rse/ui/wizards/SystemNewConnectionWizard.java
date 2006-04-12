@@ -20,10 +20,9 @@ import java.util.Vector;
 
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.rse.core.ISystemTypes;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPerspectiveHelpers;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
@@ -37,6 +36,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.SystemConnectionForm;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 
@@ -70,7 +70,7 @@ public class      SystemNewConnectionWizard
 	public SystemNewConnectionWizard()
 	{
 		super(SystemResources.RESID_NEWCONN_TITLE,
-	  	      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWCONNECTIONWIZARD_ID));		      
+	  	      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWCONNECTIONWIZARD_ID));		      
     	activeProfileNames = SystemStartHere.getSystemProfileManager().getActiveSystemProfileNames();
     	super.setForcePreviousAndNextButtons(true);
     	super.setNeedsProgressMonitor(true);
@@ -127,7 +127,7 @@ public class      SystemNewConnectionWizard
 	      
 	      ISystemProfile defaultProfile = SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile();
 	      
-	      showProfilePageInitially = SystemPlugin.getDefault().getShowProfilePageInitially();
+	      showProfilePageInitially = RSEUIPlugin.getDefault().getShowProfilePageInitially();
 	      /* DKM - I don't think we should force profiles into the faces of users
 	       *     we no longer default to "private" so hopefully this would never be
 	       *     desirable
@@ -153,7 +153,7 @@ public class      SystemNewConnectionWizard
 	      	else {
 	      		rnmProfilePage = null;
 	      		
-	      		String initProfileName = SystemPlugin.getLocalMachineName();
+	      		String initProfileName = RSEUIPlugin.getLocalMachineName();
 	      		int dotIndex = initProfileName.indexOf('.');
 	      		
 	      		if (dotIndex != -1) {
@@ -209,7 +209,7 @@ public class      SystemNewConnectionWizard
 		else
 		{
 			String onlySystemType = restrictSystemTypesTo[0];
-			if (onlySystemType.equals(ISystemTypes.SYSTEMTYPE_LOCAL))
+			if (onlySystemType.equals(IRSESystemType.SYSTEMTYPE_LOCAL))
 			  pageTitle =SystemResources.RESID_NEWCONN_PAGE1_LOCAL_TITLE;
 			else
 			{
@@ -288,7 +288,7 @@ public class      SystemNewConnectionWizard
 		{
     		boolean cursorSet = true;
     		setBusyCursor(true);
-            ISystemRegistry sr = SystemPlugin.getDefault().getSystemRegistry();
+            ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
             
             // if private profile is not null, then we have to rename the private profile
             // with the new profile name
@@ -333,7 +333,7 @@ public class      SystemNewConnectionWizard
                   // a tweak that is the result of UCD feedback. Phil
                   if ((conn!=null) && SystemPerspectiveHelpers.isRSEPerspectiveActive())
                   {
-                   	 if (sysType.equals(ISystemTypes.SYSTEMTYPE_ISERIES))
+                   	 if (sysType.equals(IRSESystemType.SYSTEMTYPE_ISERIES))
                   	 {
                   		ISubSystem[] objSubSystems = sr.getSubSystemsBySubSystemConfigurationCategory("nativefiles", conn);
                   		if ((objSubSystems != null) 
@@ -423,7 +423,7 @@ public class      SystemNewConnectionWizard
     	{
     	    // query all affected subsystems for their list of additional wizard pages...
     		Vector additionalPages = new Vector();
-    		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+    		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
             ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType, true);
             for (int idx=0; idx<factories.length; idx++)
             {

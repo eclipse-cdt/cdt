@@ -19,9 +19,9 @@ package org.eclipse.rse.ui.filters.actions;
 //import com.ibm.etools.systems.model.impl.*; 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
@@ -43,7 +43,7 @@ public class SystemFilterWorkWithFilterPoolsRefreshAllAction extends SystemBaseA
 	public SystemFilterWorkWithFilterPoolsRefreshAllAction(TreeViewer viewer, Shell parent) 
 	{
 		super(SystemResources.ACTION_REFRESH_ALL_LABEL,SystemResources.ACTION_REFRESH_ALL_TOOLTIP,
-		      SystemPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_REFRESH_ID),
+		      RSEUIPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_REFRESH_ID),
 		      parent);
 		this.viewer = viewer;
         allowOnMultipleSelection(true);

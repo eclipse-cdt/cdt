@@ -19,7 +19,6 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
@@ -27,6 +26,7 @@ import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemProfileManager;
 import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
 
@@ -105,7 +105,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
      */
     public IHost createHost(String systemType, String connectionName, String hostName, String description) throws Exception
     {
-		return SystemPlugin.getTheSystemRegistry().createHost(getName(), systemType, connectionName,  hostName, description);
+		return RSEUIPlugin.getTheSystemRegistry().createHost(getName(), systemType, connectionName,  hostName, description);
     }
     
 	/**
@@ -113,14 +113,14 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	 */
 	public IHost[] getHosts()
 	{
-		return SystemPlugin.getTheSystemRegistry().getHostsByProfile(this);
+		return RSEUIPlugin.getTheSystemRegistry().getHostsByProfile(this);
 	}
 	/**
 	 * Return all filter pools for this profile
 	 */
 	public ISystemFilterPool[] getFilterPools()
 	{
-		ISubSystemConfiguration[] ssFactories = SystemPlugin.getTheSystemRegistry().getSubSystemConfigurations();
+		ISubSystemConfiguration[] ssFactories = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurations();
 		Vector poolsVector = new Vector();
 		for (int idx = 0; idx < ssFactories.length; idx++)
 		{
@@ -236,7 +236,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	
 	public boolean commit() 
 	{
-		return SystemPlugin.getThePersistenceManager().commit(this);
+		return RSEUIPlugin.getThePersistenceManager().commit(this);
 	}
 
 }

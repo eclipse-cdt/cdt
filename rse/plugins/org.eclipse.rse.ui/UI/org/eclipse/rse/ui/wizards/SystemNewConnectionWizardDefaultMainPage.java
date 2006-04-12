@@ -18,11 +18,11 @@ package org.eclipse.rse.ui.wizards;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.ui.ISystemConnectionFormCaller;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemConnectionForm;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.widgets.Composite;
@@ -60,7 +60,7 @@ public class SystemNewConnectionWizardDefaultMainPage
 													String description)
 	{
 		super(wizard, "NewConnection", title, description);
-        parentHelpId = SystemPlugin.HELPPREFIX + "wncc0000";
+        parentHelpId = RSEUIPlugin.HELPPREFIX + "wncc0000";
 	    setHelp(parentHelpId);
 		form = getForm();
 	}

@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.actions;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
@@ -44,7 +44,7 @@ public class SystemRemoteServerStartAction extends SystemBaseAction
 	  	this.parentAction = parentAction;
 	  	allowOnMultipleSelection(false);
 	  	//setContextMenuGroup(ISystemContextMenuConstants.GROUP_CONNECTION);
-    	setHelp(SystemPlugin.HELPPREFIX+"actnstsv");
+    	setHelp(RSEUIPlugin.HELPPREFIX+"actnstsv");
 	}
 	
 	/**

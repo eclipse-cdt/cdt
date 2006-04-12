@@ -15,11 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.internal.subsystems;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.internal.model.RSEModelObject;
 import org.eclipse.rse.model.IPropertySet;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
 
@@ -101,7 +101,7 @@ public abstract class ServerLauncher extends RSEModelObject implements IServerLa
 
 	public boolean commit() 
 	{
-		return SystemPlugin.getThePersistenceManager().commit(getConnectorService().getHost());
+		return RSEUIPlugin.getThePersistenceManager().commit(getConnectorService().getHost());
 	}
 	
 	

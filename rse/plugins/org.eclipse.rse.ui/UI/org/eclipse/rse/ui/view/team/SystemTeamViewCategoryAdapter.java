@@ -21,11 +21,11 @@ import java.util.Vector;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.ISystemUserIdConstants;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -159,7 +159,7 @@ public class SystemTeamViewCategoryAdapter
 	{
 		SystemTeamViewSubSystemFactoryNode[] nodes = null;
 		
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		ISubSystemConfiguration[] factories = sr.getSubSystemConfigurations();
 		if (factories != null)
 		{
@@ -215,7 +215,7 @@ public class SystemTeamViewCategoryAdapter
 		{
 			/*
 		  	propertyDescriptorArray = new PropertyDescriptor[1];
-		 	SystemPlugin plugin = SystemPlugin.getDefault();
+		 	RSEUIPlugin plugin = RSEUIPlugin.getDefault();
 		 	int idx = 0;
 		  	// status
 		  	propertyDescriptorArray[idx] = new PropertyDescriptor(ISystemPropertyConstants.P_IS_ACTIVE, 
@@ -238,7 +238,7 @@ public class SystemTeamViewCategoryAdapter
 		/*		
 		if (name.equals(P_IS_ACTIVE))
 		{			
-			boolean active = SystemPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
+			boolean active = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
 			if (active)
 				return SystemViewResources.RESID_PROPERTY_PROFILESTATUS_ACTIVE_LABEL);
 			else

@@ -17,8 +17,8 @@
 package org.eclipse.rse.ui.validators;
 import java.util.Vector;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -60,9 +60,9 @@ public class ValidatorFilterName
 
     private void init()
     {		
-		super.setErrorMessages(SystemPlugin.getPluginMessage(MSG_VALIDATE_FILTERNAME_EMPTY),
-		                       SystemPlugin.getPluginMessage(MSG_VALIDATE_FILTERNAME_NOTUNIQUE),  
-		                       SystemPlugin.getPluginMessage(MSG_VALIDATE_FILTERNAME_NOTVALID));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERNAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERNAME_NOTUNIQUE),  
+		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERNAME_NOTVALID));  
     }
 
 	public String toString()

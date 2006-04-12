@@ -18,7 +18,6 @@ package org.eclipse.rse.files.ui.wizards;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterReference;
@@ -30,6 +29,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileIOException;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSecurityException;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizard;
 
@@ -51,8 +51,8 @@ public class SystemNewFolderWizard
 	public SystemNewFolderWizard()
 	{
 	   	super(FileResources.RESID_NEWFOLDER_TITLE,
-			//  SystemPlugin.getDefault().getImageDescriptorFromIDE("wizban/newfolder_wiz.gif")
-	 	      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFOLDERWIZARD_ID)
+			//  RSEUIPlugin.getDefault().getImageDescriptorFromIDE("wizban/newfolder_wiz.gif")
+	 	      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFOLDERWIZARD_ID)
 	 	      );		      
 	}
 	
@@ -114,7 +114,7 @@ public class SystemNewFolderWizard
             if (!parentFolder.exists())
             {
             	/* Be nice to do this someday...
-			    msg = SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE);
+			    msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND_WANTTOCREATE);
 			    msg.makeSubstitution(parentFolder.getAbsolutePath());            	
 			    SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), msg);
 			    if (msgDlg.openQuestionNoException())
@@ -124,15 +124,15 @@ public class SystemNewFolderWizard
 			  	   } 
 			  	   catch (RemoteFileIOException exc)
 			  	   {
-                     SystemPlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileIOException " );  	
-                     msg = (SystemPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED_EXIST)).makeSubstitution(parentFolder.getAbsolutePath());
+                     RSEUIPlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileIOException " );  	
+                     msg = (RSEUIPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED_EXIST)).makeSubstitution(parentFolder.getAbsolutePath());
 	                 mainPage.setMessage(msg);	
 	                 return false;		  	   	 
 			  	   }
 			  	   catch (RemoteFileSecurityException exc)
 			  	   {
-                     SystemPlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileSecurityException " );  	
-                     msg = (SystemPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED)).makeSubstitution(parentFolder.getAbsolutePath());
+                     RSEUIPlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileSecurityException " );  	
+                     msg = (RSEUIPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED)).makeSubstitution(parentFolder.getAbsolutePath());
 	                 mainPage.setMessage(msg);	
 	                 return false;		  	   	 
 			  	   }
@@ -140,7 +140,7 @@ public class SystemNewFolderWizard
 			    else
 			    */
 			    {
-			  	   msg = SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND);
+			  	   msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND);
 			       msg.makeSubstitution(parentFolder.getAbsolutePath());            	
 			       mainPage.setMessage(msg);
 			       return false;
@@ -166,14 +166,14 @@ public class SystemNewFolderWizard
                }
                else
                {
-               	msg = (SystemPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED_EXIST)).makeSubstitution(absName);
+               	msg = (RSEUIPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED_EXIST)).makeSubstitution(absName);
                }
 	           mainPage.setMessage(msg);
 	           ok = false;
 // DY       } catch (Exception RemoteFileSecurityException)  {
             } catch (RemoteFileSecurityException e)  {
 	           SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileSecurityException ");  	
-               msg = (SystemPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED)).makeSubstitution(absName);
+               msg = (RSEUIPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED)).makeSubstitution(absName);
                //SystemMessage.displayErrorMessage(SystemMessage.getDefaultShell(), msg); 
 	           mainPage.setMessage(msg);	                                                
 	           ok = false;
@@ -228,7 +228,7 @@ public class SystemNewFolderWizard
     	}
 		if (!meets)
 		{
-			SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_RESOURCE_NOTVISIBLE);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_RESOURCE_NOTVISIBLE);
 			SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), msg);
 			if (msgDlg.openQuestionNoException()) // ask user if they want to proceed
 			  meets = true; // they do, so pretend it meets the criteria

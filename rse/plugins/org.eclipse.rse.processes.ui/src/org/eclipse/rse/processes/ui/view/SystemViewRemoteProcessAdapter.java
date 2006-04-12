@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemMessageObject;
 import org.eclipse.rse.model.ISystemResourceSet;
@@ -37,6 +36,7 @@ import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSyste
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -88,7 +88,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
         
         if (copyClipboardAction == null)
 		{
-        	Clipboard clipboard = SystemPlugin.getTheSystemRegistry().getSystemClipboard();
+        	Clipboard clipboard = RSEUIPlugin.getTheSystemRegistry().getSystemClipboard();
 			copyClipboardAction = new SystemCopyToClipboardAction(shell, clipboard);
 		}
         menu.add(menuGroup, copyClipboardAction);
@@ -106,7 +106,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 	
 	public ImageDescriptor getImageDescriptor(Object element)
 	{
-		//return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROCESS_ID);
+		//return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROCESS_ID);
 		return ProcessesPlugin.getDefault().getImageDescriptorFromPath("icons/full/obj16/activeprocess_obj.gif");
 	}
 
@@ -175,12 +175,12 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		/*catch (InterruptedException exc)
 		{
 			children = new SystemMessageObject[1];
-			children[0] = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, element);
+			children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, element);
 		}*/
 		catch (Exception exc)
 		{
 			children = new SystemMessageObject[1];
-			children[0] = new SystemMessageObject(SystemPlugin.getPluginMessage(MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
+			children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
 			SystemBasePlugin.logError("Exception resolving file filter strings", exc);
 		}
 		return children;

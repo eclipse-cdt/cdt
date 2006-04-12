@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -40,5 +40,5 @@ public interface ISystemDynamicPopupMenuExtension
 	 * @param selection the resources to contriubte menu items to
 	 * 
 	 */	
-	public void populateMenu(Shell shell, IMenuManager menu, IStructuredSelection selection, String menuGroup);
+	public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup);
 }

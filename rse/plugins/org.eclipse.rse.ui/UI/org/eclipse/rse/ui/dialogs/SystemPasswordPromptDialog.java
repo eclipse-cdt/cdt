@@ -15,11 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.validators.ISystemValidator;
@@ -79,7 +79,7 @@ public final class SystemPasswordPromptDialog
 	{
 		super(shell, SystemResources.RESID_PASSWORD_TITLE);
 		//pack();
-		setHelp(SystemPlugin.HELPPREFIX+"pwdp0000");		
+		setHelp(RSEUIPlugin.HELPPREFIX+"pwdp0000");		
 	}
 	/**
 	 * Set the input System object in which the user is attempting to do a connect action.
@@ -238,7 +238,7 @@ public final class SystemPasswordPromptDialog
 		);
 			
 		
-		//SystemWidgetHelpers.setHelp(composite, SystemPlugin.HELPPREFIX+"pwdp0000");
+		//SystemWidgetHelpers.setHelp(composite, RSEUIPlugin.HELPPREFIX+"pwdp0000");
         return composite;		
 	}
 
@@ -357,7 +357,7 @@ public final class SystemPasswordPromptDialog
 		if (userIdValidator != null)
 	      errorMessage= userIdValidator.validate(userId);
 		else if (userId.equals(""))
-		  errorMessage = SystemPlugin.getPluginMessage(MSG_VALIDATE_USERID_EMPTY);    	
+		  errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_USERID_EMPTY);    	
 		userIdOK = (errorMessage == null);
 	    if (!userIdOK)
 	    {
@@ -389,7 +389,7 @@ public final class SystemPasswordPromptDialog
 		if (passwordValidator != null)
 	      errorMessage= passwordValidator.validate(password);
 		else if (password.equals(""))
-		  errorMessage = SystemPlugin.getPluginMessage(MSG_VALIDATE_PASSWORD_EMPTY);	
+		  errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PASSWORD_EMPTY);	
 		passwordOK = (errorMessage == null);
 	    if (!passwordOK)
 	    {

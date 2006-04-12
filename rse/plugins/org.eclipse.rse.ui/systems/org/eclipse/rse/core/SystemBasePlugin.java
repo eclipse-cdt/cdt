@@ -38,6 +38,7 @@ import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.logging.LoggerFactory;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemUIMessageFile;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
@@ -393,22 +394,34 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	{
 		String iconPath = "icons/full/"; //$NON-NLS-1$
 		String key = iconPath + relativePath;
-		ImageDescriptor image = (ImageDescriptor)imageDescriptorRegistry.get(key);
-		
-		if (image != null)
-			return image;
-		
-		try {
-		    Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-		    URL installURL = bundle.getEntry("/");
-			URL url = new URL(installURL, key);
-			image = ImageDescriptor.createFromURL(url);
-			imageDescriptorRegistry.put(key, image);
-			return image;
-		} catch (MalformedURLException e) {
-			// should not happen
-			return ImageDescriptor.getMissingImageDescriptor();
+		ImageDescriptor descriptor = (ImageDescriptor)imageDescriptorRegistry.get(key);
+		if (descriptor == null) {
+			String[] bundleNames = new String[] {"org.eclipse.ui", "org.eclipse.ui.ide"};
+			for (int i = 0; (i < bundleNames.length) && (descriptor == null); i++) {
+				String bundleName = bundleNames[i];
+			    Bundle bundle = Platform.getBundle(bundleName);
+			    URL url = bundle.getResource(key);
+			    if (url != null) {
+			    	descriptor = ImageDescriptor.createFromURL(url);
+			    }
+			}
+			if (descriptor == null) {
+				descriptor = ImageDescriptor.getMissingImageDescriptor();
+			}
+			imageDescriptorRegistry.put(key, descriptor);
 		}
+		return descriptor;
+//		try {
+//		    Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+//		    URL installURL = bundle.getEntry("/");
+//			URL url = new URL(installURL, key);
+//			image = ImageDescriptor.createFromURL(url);
+//			imageDescriptorRegistry.put(key, image);
+//			return image;
+//		} catch (MalformedURLException e) {
+//			// should not happen
+//			return ImageDescriptor.getMissingImageDescriptor();
+//		}
 	}    
             
     // ----------------------------------------
@@ -671,7 +684,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 			
 			if (url!=null) {
 			    url = Platform.resolve(url);
-				URL temp = Platform.getBundle(SystemPlugin.PLUGIN_ID).getEntry("/");
+				URL temp = Platform.getBundle(RSEUIPlugin.PLUGIN_ID).getEntry("/");
 				temp = Platform.resolve(temp);
 				url = Platform.resolve(url);
 				mf = new SystemUIMessageFile(url.getPath(), temp.getFile());

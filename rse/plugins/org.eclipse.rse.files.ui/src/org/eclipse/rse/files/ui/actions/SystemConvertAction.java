@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.files.ui.actions;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.CombineDialog;
 import org.eclipse.rse.model.ISystemRegistry;
@@ -30,6 +29,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
@@ -46,8 +46,8 @@ public class SystemConvertAction extends SystemExtractToAction {
 	public SystemConvertAction(Shell parent)
 	{
 		super(parent, FileResources.ACTION_CONVERT_LABEL, FileResources.ACTION_CONVERT_TOOLTIP);
-		setHelp(SystemPlugin.HELPPREFIX + "actn0121");
-		setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONVERT_ID));
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0121");
+		setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONVERT_ID));
 
 	}
 
@@ -70,7 +70,7 @@ public class SystemConvertAction extends SystemExtractToAction {
 			dialog.setPreSelection(selection);
 	
 			dialog.setBlockOnOpen(true);
-			dialog.setHelp(SystemPlugin.HELPPREFIX + "cnvd0000");
+			dialog.setHelp(RSEUIPlugin.HELPPREFIX + "cnvd0000");
 			dialog.setShowLocationPrompt(true);
 			dialog.setLocationPrompt(FileResources.RESID_CONVERT_LOCATION);
 	  		dialog.setNameAndTypePrompt(FileResources.RESID_CONVERT_NAMEANDTYPE);
@@ -100,7 +100,7 @@ public class SystemConvertAction extends SystemExtractToAction {
 			
 			if (ArchiveHandlerManager.isVirtual(destination.getAbsolutePath()))
 			{
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_CONVERTTO_VIRTUAL_DEST);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONVERTTO_VIRTUAL_DEST);
 				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 				dlg.open();
 				i--;
@@ -108,7 +108,7 @@ public class SystemConvertAction extends SystemExtractToAction {
 			}
 			if (!destination.canWrite())
 			{
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_DEST_TARGET_READONLY);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DEST_TARGET_READONLY);
 				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 				dlg.open();
 				i--;
@@ -116,7 +116,7 @@ public class SystemConvertAction extends SystemExtractToAction {
 			}
 			if (selection.isAncestorOf(destination))
 			{
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_DEST_NOT_IN_SOURCE);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DEST_NOT_IN_SOURCE);
 				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 				dlg.open();
 				i--;
@@ -127,7 +127,7 @@ public class SystemConvertAction extends SystemExtractToAction {
 			{
 				if (destination.exists()) 
 				{
-					SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_UPLOAD_FILE_EXISTS);
+					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_UPLOAD_FILE_EXISTS);
 					msg.makeSubstitution(destination.getName());
 					SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 					boolean ok = dlg.openQuestionNoException();
@@ -171,7 +171,7 @@ public class SystemConvertAction extends SystemExtractToAction {
 			catch (java.lang.InterruptedException e)
 			{
 			}
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, destination, destination.getParentPath(), destSS, null, null);
 			registry.fireEvent(new SystemResourceChangeEvent(destination, ISystemResourceChangeEvents.EVENT_REFRESH, destination.getParentPath()));
 		}

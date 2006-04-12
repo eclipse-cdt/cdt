@@ -27,14 +27,13 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.rse.core.ISystemTypes;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.ISystemUserIdConstants;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPerspectiveHelpers;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
-import org.eclipse.rse.core.SystemType;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystem;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -69,6 +68,8 @@ import org.eclipse.rse.references.ISystemBaseReferencingObject;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSESystemTypeAdapter;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.SystemDNDTransferRunnable;
@@ -238,15 +239,15 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	{
 		//DKM - only return enabled connections now
 		IHost[] connections = getHosts();
-
 		List result = new ArrayList(); 
-		for (int i = 0; i < connections.length; i++)
-		{
+		for (int i = 0; i < connections.length; i++) {
 			IHost con = connections[i];
-			SystemType systemType = SystemPlugin.getDefault().getSystemType(con.getSystemType());
-			if (systemType.isEnabled())
-			{
-				result.add(con);
+			IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(con.getSystemType());
+			if (sysType != null) { // sysType can be null if workspace contains a host that is no longer defined by the workbench
+				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
+				if (adapter.isEnabled(sysType)) {
+					result.add(con);
+				}
 			}
 		}
 		return result.toArray();
@@ -327,7 +328,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	// thread safe shell
 	public Shell getShell()
 	{
-		IWorkbench workbench = SystemPlugin.getDefault().getWorkbench();
+		IWorkbench workbench = RSEUIPlugin.getDefault().getWorkbench();
 		if (workbench != null)
 		{
 			// first try to get the active workbench window
@@ -487,9 +488,9 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	// ----------------------------
 
 	/**
-	 * Private method used by SystemPlugin to tell registry all registered subsystem
+	 * Private method used by RSEUIPlugin to tell registry all registered subsystem
 	 *  factories. This way, all code can use this registry to access them versus the
-	 *  SystemPlugin.
+	 *  RSEUIPlugin.
 	 */
 	public void setSubSystemConfigurationProxies(ISubSystemConfigurationProxy[] proxies)
 	{
@@ -544,7 +545,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		for (int idx = 0;(match == null) && idx < proxies.length; idx++)
 		{
 			if (proxies[idx].getId().equals(id))
-				match = proxies[idx].getSubSystemFactory();
+				match = proxies[idx].getSubSystemConfiguration();
 		}
 		return match;
 	}
@@ -569,7 +570,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			{
 				if (subsystemFactoryProxies[idx].getCategory().equals(factoryCategory))
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemFactory();
+					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 						v.addElement(factory);
 				}
@@ -605,7 +606,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 				ISubSystemConfigurationProxy ssfProxy = subsystemFactoryProxies[idx];
 				if (ssfProxy.appliesToSystemType(systemType))
 				{
-					ISubSystemConfiguration ssFactory = ssfProxy.getSubSystemFactory();
+					ISubSystemConfiguration ssFactory = ssfProxy.getSubSystemConfiguration();
 					if (ssFactory != null)
 					{
 						if (ssFactory instanceof IServiceSubSystemConfiguration && filterDuplicateServiceSubSystemFactories)
@@ -691,9 +692,9 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		{
 			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
 			{
-				if (subsystemFactoryProxies[idx].isSubSystemFactoryActive())
+				if (subsystemFactoryProxies[idx].isSubSystemConfigurationActive())
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemFactory();
+					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if ((factory != null) && factory.supportsFilters())
 						factory.setShowFilterPools(show);
 				}
@@ -808,7 +809,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		boolean inUse = SystemResourceManager.testIfResourceInUse(testResource);
 		if (inUse)
 		{
-			SystemMessage msg = SystemPlugin.getPluginMessage((testResource instanceof IFolder) ? ISystemMessages.MSG_FOLDER_INUSE : ISystemMessages.MSG_FILE_INUSE);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage((testResource instanceof IFolder) ? ISystemMessages.MSG_FOLDER_INUSE : ISystemMessages.MSG_FILE_INUSE);
 			msg.makeSubstitution(testResource.getFullPath());
 			throw new SystemMessageException(msg);
 		}
@@ -827,8 +828,8 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			for (int idx = 0; idx < proxies.length; idx++)
 			{
 				// the following call will throw an exception if any of the affected folders/files are in use.
-				if (proxies[idx] != null && proxies[idx].getSubSystemFactory() != null)
-					proxies[idx].getSubSystemFactory().preTestRenameSubSystemProfile(oldName);
+				if (proxies[idx] != null && proxies[idx].getSubSystemConfiguration() != null)
+					proxies[idx].getSubSystemConfiguration().preTestRenameSubSystemProfile(oldName);
 			}
 		}
 
@@ -849,7 +850,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 				//  for EVERY factory. Hence this commented line of code, new for v5 (and to fix a bug I found in
 				//  profile renaming... the local connection's filter pool folder was not renamed). Phil...
 				//if (proxies[idx].isSubSystemFactoryActive())
-				ISubSystemConfiguration factory = proxies[idx].getSubSystemFactory();
+				ISubSystemConfiguration factory = proxies[idx].getSubSystemConfiguration();
 				if (factory != null)
 				{
 					ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)factory.getAdapter(ISubsystemConfigurationAdapter.class);
@@ -893,7 +894,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		String oldName = profile.getName();
 		IHost[] newConns = null;
 
-		//SystemPlugin.logDebugMessage(this.getClass().getName(), "Start of system profile copy. From: "+oldName+" to: "+newName+", makeActive: "+makeActive);             
+		//RSEUIPlugin.logDebugMessage(this.getClass().getName(), "Start of system profile copy. From: "+oldName+" to: "+newName+", makeActive: "+makeActive);             
 		// STEP 0: BRING ALL IMPACTED SUBSYSTEM FACTORIES TO LIFE NOW, BEFORE CREATING THE NEW PROFILE.
 		// IF WE DO NOT DO THIS NOW, THEN THEY WILL CREATE A FILTER POOL MGR FOR THE NEW PROFILE AS THEY COME
 		// TO LIFE... SOMETHING WE DON'T WANT!
@@ -917,7 +918,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			if ((conns != null) && (conns.length > 0))
 			{
 				newConns = new IHost[conns.length];
-				SystemMessage msgNoSubs = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COPYCONNECTION_PROGRESS);
+				SystemMessage msgNoSubs = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYCONNECTION_PROGRESS);
 				for (int idx = 0; idx < conns.length; idx++)
 				{
 					msgNoSubs.makeSubstitution(conns[idx].getAliasName());
@@ -930,7 +931,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 					//try { java.lang.Thread.sleep(3000l); } catch (InterruptedException e) {}
 				}
 			}
-			msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COPYFILTERPOOLS_PROGRESS).getLevelOneText();
+			msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYFILTERPOOLS_PROGRESS).getLevelOneText();
 			monitor.subTask(msg);
 			SystemBasePlugin.logDebugMessage(this.getClass().getName(), msg);
 
@@ -949,7 +950,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			monitor.worked(1);
 
 			// STEP 6: COPY ALL SUBSYSTEMS FOR EACH COPIED CONNECTION
-			msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COPYSUBSYSTEMS_PROGRESS).getLevelOneText();
+			msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYSUBSYSTEMS_PROGRESS).getLevelOneText();
 			monitor.subTask(msg);
 			SystemBasePlugin.logDebugMessage(this.getClass().getName(), msg);
 			if ((conns != null) && (conns.length > 0))
@@ -994,7 +995,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 						deleteHost(newConns[idx]);
 				for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemFactory();
+					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 						factory.deletingSystemProfile(newProfile);
 				}
@@ -1043,7 +1044,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		{
 			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
 			{
-				ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemFactory();
+				ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 				if (factory != null)
 					factory.deletingSystemProfile(profile);
 			}
@@ -1071,7 +1072,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			{
 				//if (subsystemFactoryProxies[idx].isSubSystemFactoryActive()) // don't bother if not yet alive
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemFactory();
+					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 					{
 						ISubSystem[] activeReferences = factory.testForActiveReferences(profile);
@@ -1097,7 +1098,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			}
 			ISubSystem firstSubSystem = (ISubSystem) activeReferenceVector.elementAt(0);
 			String connectionName = firstSubSystem.getHost().getSystemProfileName() + "." + firstSubSystem.getHost().getAliasName();
-			SystemMessage sysMsg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED);
+			SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED);
 			sysMsg.makeSubstitution(profile.getName(), connectionName);
 			SystemBasePlugin.logWarning(sysMsg.getFullMessageID() + ": " + sysMsg.getLevelOneText());
 			SystemMessageDialog msgDlg = new SystemMessageDialog(null, sysMsg);
@@ -1113,9 +1114,9 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		{
 			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
 			{
-				if (subsystemFactoryProxies[idx].isSubSystemFactoryActive()) // don't bother if not yet alive
+				if (subsystemFactoryProxies[idx].isSubSystemConfigurationActive()) // don't bother if not yet alive
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemFactory();
+					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 						factory.changingSystemProfileActiveStatus(profile, makeActive);
 				}
@@ -1213,7 +1214,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			{
 				if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType()))
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemFactory();
+					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 					{
 						ISubSystem[] sss = factory.getSubSystems(conn, force);
@@ -1365,9 +1366,9 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		{
 			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
 			{
-				if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType()) && subsystemFactoryProxies[idx].isSubSystemFactoryActive())
+				if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType()) && subsystemFactoryProxies[idx].isSubSystemConfigurationActive())
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemFactory();
+					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 					{
 						ISubSystem[] sss = factory.getSubSystems(conn, ISubSystemConfiguration.LAZILY);
@@ -1474,7 +1475,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	
 			for (int idx = 0; idx < proxies.length; idx++)
 			{
-				v.add(proxies[idx].getSubSystemFactory());
+				v.add(proxies[idx].getSubSystemConfiguration());
 			}
 		}
 		return (ISubSystemConfiguration[])v.toArray(new ISubSystemConfiguration[v.size()]);
@@ -1606,7 +1607,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	public IHost getLocalHost()
 	{
 		IHost localConn = null;
-		IHost[] conns = getHostsBySystemType(ISystemTypes.SYSTEMTYPE_LOCAL);
+		IHost[] conns = getHostsBySystemType(IRSESystemType.SYSTEMTYPE_LOCAL);
 		if (conns != null && conns.length > 0) return conns[0];
 		else return localConn;
 	}
@@ -1706,7 +1707,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			{
 				if (subsystemFactoryProxies[idx].getCategory().equals(factoryCategory))
 				{
-					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemFactory();
+					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 					{
 						ISubSystem[] subsystems = factory.getSubSystems(true); // true ==> force full restore
@@ -1898,7 +1899,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 				}
 			}
 		}
-		if ((systemType != null) && (systemType.equals(ISystemTypes.SYSTEMTYPE_LOCAL) && (v.size() == 0)))
+		if ((systemType != null) && (systemType.equals(IRSESystemType.SYSTEMTYPE_LOCAL) && (v.size() == 0)))
 			v.addElement("localhost");
 		String[] names = new String[v.size()];
 		for (int idx = 0; idx < names.length; idx++)
@@ -1935,7 +1936,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		String subSystemId = str.substring(0, subsystemDelim);
 		String srcKey = str.substring(subsystemDelim + 1, str.length());
 
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		ISubSystem subSystem = registry.getSubSystem(subSystemId);
 		if (subSystem != null)
 		{
@@ -1957,14 +1958,14 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			}
 			else
 			{
-				SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
 				msg.makeSubstitution(srcKey, subSystem.getHostAliasName());
 				return msg;
 			}
 		}
 		else
 		{
-			SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_CONNECTION_NOTFOUND);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_CONNECTION_NOTFOUND);
 			msg.makeSubstitution(subSystemId);
 			return msg;
 		}
@@ -2080,7 +2081,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		try
 		{
 	  	 	localConn = createHost(
-		  			profile.getName(), ISystemTypes.SYSTEMTYPE_LOCAL,
+		  			profile.getName(), IRSESystemType.SYSTEMTYPE_LOCAL,
 		  			name, // connection name
 		  			"localhost", // hostname
 		  			"", // description
@@ -2112,7 +2113,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	 * <p>
 	 * @param profileName Name of the system profile the connection is to be added to.
 	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemtype extension point.
+	 *                    systemTypes extension point.
 	 * @param connectionName unique connection name.
 	 * @param hostName ip name of host.
 	 * @param description optional description of the connection. Can be null.
@@ -2138,7 +2139,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		lastException = null;
 		ISystemHostPool pool = getHostPool(profileName);
 		IHost conn = null;
-		boolean promptable = false; // systemType.equals(ISystemTypes.SYSTEMTYPE_PROMPT);
+		boolean promptable = false; // systemType.equals(IRSESystemType.SYSTEMTYPE_PROMPT);
 		try
 		{
 			// create, register and save new connection...
@@ -2217,7 +2218,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	 * <p>
 	 * @param profileName Name of the system profile the connection is to be added to.
 	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemtype extension point.
+	 *                    systemTypes extension point.
 	 * @param connectionName unique connection name.
 	 * @param hostName ip name of host.
 	 * @param description optional description of the connection. Can be null.
@@ -2244,7 +2245,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	 * </ul>
 	 * <p>
 	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemtype extension point.
+	 *                    systemTypes extension point.
 	 * @param connectionName unique connection name.
 	 * @param hostName ip name of host.
 	 * @param description optional description of the connection. Can be null.
@@ -2296,7 +2297,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	 * <p>
 	 * @param conn SystemConnection to be updated
 	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemtype extension point.
+	 *                    systemTypes extension point.
 	 * @param connectionName unique connection name.
 	 * @param hostName ip name of host.
 	 * @param description optional description of the connection. Can be null.
@@ -2494,7 +2495,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			newConn = oldPool.cloneHost(targetPool, conn, newName);
 
 			// STEP 2: COPY ALL SUBSYSTEMS FOR THE COPIED CONNECTION
-			msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COPYSUBSYSTEMS_PROGRESS).getLevelOneText();
+			msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYSUBSYSTEMS_PROGRESS).getLevelOneText();
 			//monitor.subTask(msg);
 			SystemBasePlugin.logDebugMessage(this.getClass().getName(), msg);
 
@@ -2576,7 +2577,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		}
 		catch (Exception exc)
 		{
-			//SystemPlugin.logError("Exception moving system connection " + conn.getAliasName() + " to profile " + targetProfile.getName(), exc);
+			//RSEUIPlugin.logError("Exception moving system connection " + conn.getAliasName() + " to profile " + targetProfile.getName(), exc);
 			throw exc;
 		}
 		return newConn;
@@ -3086,7 +3087,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		if (proxies != null)
 		{
 			for (int idx = 0; idx < proxies.length; idx++)
-				proxies[idx].getSubSystemFactory();
+				proxies[idx].getSubSystemConfiguration();
 		}
 
 		// step 0_b: force every subsystem of every connection to be active!
@@ -3116,7 +3117,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	public boolean save()
 	{
 		ISystemProfileManager profileManager = getSystemProfileManager();
-		return SystemPlugin.getThePersistenceManager().commit(profileManager);
+		return RSEUIPlugin.getThePersistenceManager().commit(profileManager);
 	}
 
 	/**
@@ -3125,7 +3126,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	 */
 	public boolean saveHostPool(ISystemHostPool pool)
 	{
-		return SystemPlugin.getThePersistenceManager().commit(pool);
+		return RSEUIPlugin.getThePersistenceManager().commit(pool);
 	}
 
 	/**
@@ -3134,7 +3135,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	 */
 	public boolean saveHost(IHost conn)
 	{
-		return SystemPlugin.getThePersistenceManager().commit(conn);
+		return RSEUIPlugin.getThePersistenceManager().commit(conn);
 	}
 
 	/**
@@ -3150,7 +3151,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 
 		SystemHostPool pool = null;
 		SystemPreferencesManager prefmgr = SystemPreferencesManager.getPreferencesManager();
-		if (!SystemPlugin.getThePersistenceManager().restore(profileManager))
+		if (!RSEUIPlugin.getThePersistenceManager().restore(profileManager))
 		{
 			SystemProfile[] profiles = profileManager.getActiveSystemProfiles();
 			for (int idx = 0; idx < profiles.length; idx++)
@@ -3164,7 +3165,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 				catch (Exception exc)
 				{
 					lastException = exc;
-					SystemPlugin.logError("Exception in restore for connection pool " + profiles[idx].getName(), exc);
+					RSEUIPlugin.logError("Exception in restore for connection pool " + profiles[idx].getName(), exc);
 				}
 			}
 		}

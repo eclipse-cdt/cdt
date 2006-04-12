@@ -20,7 +20,6 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
@@ -29,6 +28,7 @@ import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -94,7 +94,7 @@ public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter imp
           filterImage = adapter.getSystemFilterStringImage(filterString); 
     	}
     	if (filterImage == null)
-    	  filterImage = SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERSTRING_ID);
+    	  filterImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERSTRING_ID);
     	return filterImage;  	
 	}
 	
@@ -171,7 +171,7 @@ public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter imp
 		if (propertyDescriptorArray == null)
 		{
 			propertyDescriptorArray = new PropertyDescriptor[3];
-			SystemPlugin plugin = SystemPlugin.getDefault();
+			RSEUIPlugin plugin = RSEUIPlugin.getDefault();
 			int idx = 0;
 			// parent filter pool
 			propertyDescriptorArray[idx] = createSimplePropertyDescriptor(P_PARENT_FILTERPOOL,SystemViewResources.RESID_PROPERTY_FILTERPARENTPOOL_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPARENTPOOL_TOOLTIP);

@@ -42,7 +42,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilterReference;
@@ -59,6 +58,7 @@ import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -260,7 +260,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		public LockAction()
 		{
 			super();
-			setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_LOCK_ID));
+			setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_LOCK_ID));
 			String label = determineLabel();
 			setText(label);
 			setToolTipText(label);
@@ -317,8 +317,8 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		public RefreshAction()
 		{
 			super(SystemResources.ACTION_REFRESH_LABEL, 
-					//SystemPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_REFRESH_ID));
-					SystemPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_REFRESH_ID));
+					//RSEUIPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_REFRESH_ID));
+					RSEUIPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_REFRESH_ID));
 		}
 
 		public void run()
@@ -329,7 +329,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 				((ISystemContainer)inputObject).markStale(true);
 			}
 			((SystemTableViewProvider) _viewer.getContentProvider()).flushCache();
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(inputObject, ISystemResourceChangeEvents.EVENT_REFRESH, inputObject));
 
 			//_viewer.refresh();
@@ -387,7 +387,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 			Object inputObject = _viewer.getInput();
 			if (inputObject == null)
 			{
-				inputObject = SystemPlugin.getTheSystemRegistry();
+				inputObject = RSEUIPlugin.getTheSystemRegistry();
 			}
 			dlg.setInputObject(inputObject);
 			if (dlg.open() == Window.OK)
@@ -451,7 +451,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 
 			private void setHelp()
 			{
-				setHelp(SystemPlugin.HELPPREFIX + "gnpt0000");
+				setHelp(RSEUIPlugin.HELPPREFIX + "gnpt0000");
 			}
 		}
 
@@ -564,7 +564,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 
 			private void setHelp()
 			{
-				setHelp(SystemPlugin.HELPPREFIX + "gnss0000");
+				setHelp(RSEUIPlugin.HELPPREFIX + "gnss0000");
 			}
 		}
 
@@ -632,7 +632,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 			String filterID = memento.getString(TAG_TABLE_VIEW_FILTER_ID);
 			String objectID = memento.getString(TAG_TABLE_VIEW_OBJECT_ID);
 
-			ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			Object input = null;
 			if (subsystemId == null)
 			{
@@ -1007,7 +1007,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 			
 			private void setHelp()
 			{
-				setHelp(SystemPlugin.HELPPREFIX + "gntc0000");
+				setHelp(RSEUIPlugin.HELPPREFIX + "gntc0000");
 			}
 		}
 	    
@@ -1015,7 +1015,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		{
 			super(SystemResources.ACTION_SELECTCOLUMNS_LABEL, null);
 			setToolTipText(SystemResources.ACTION_SELECTCOLUMNS_TOOLTIP);
-			setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTER_ID));
+			setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTER_ID));
 		}
 
 		public void checkEnabledState()
@@ -1106,7 +1106,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	        }
 	        else
 	        {
-	            setInput(SystemPlugin.getTheSystemRegistry());
+	            setInput(RSEUIPlugin.getTheSystemRegistry());
 	        }
 	    }
 
@@ -1151,7 +1151,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		_browsePosition = 0;
 
 		// register global edit actions 		
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		Clipboard clipboard = registry.getSystemClipboard();
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
@@ -1168,7 +1168,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		registry.addSystemResourceChangeListener(this);
 		registry.addSystemRemoteChangeListener(this);
 
-		SystemWidgetHelpers.setHelp(_viewer.getControl(), SystemPlugin.HELPPREFIX + "sysd0000");
+		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "sysd0000");
 		
 		getSite().registerContextMenu(_viewer.getContextMenuManager(), _viewer);
 	}
@@ -1216,7 +1216,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		selectionService.removeSelectionListener(this);
 		_viewer.removeSelectionChangedListener(this);
 
-		SystemPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
 		if (_viewer != null)
 		{
 			_viewer.dispose();
@@ -1626,7 +1626,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	private void restoreState(IMemento memento)
 	{
 		RestoreStateRunnable rsr = new RestoreStateRunnable(memento);
-		rsr.setRule(SystemPlugin.getTheSystemRegistry());
+		rsr.setRule(RSEUIPlugin.getTheSystemRegistry());
 		rsr.schedule();
 		_memento = null;
 	}
@@ -1687,7 +1687,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 					ISubSystem subsystem = va.getSubSystem(input);
 					if (subsystem != null)
 					{
-						ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+						ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 						String subsystemID = registry.getAbsoluteNameForSubSystem(subsystem);
 						String profileID = subsystem.getHost().getSystemProfileName();
 						String connectionID = subsystem.getHost().getAliasName();

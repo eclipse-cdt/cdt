@@ -19,7 +19,6 @@ import java.util.Vector;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterContainer;
@@ -32,6 +31,7 @@ import org.eclipse.rse.filters.ISystemFilterPoolWrapperInformation;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseWizardAction;
 import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;
@@ -98,7 +98,7 @@ public class SystemNewFilterAction
 	public SystemNewFilterAction(Shell shell, ISystemFilterPool parentPool) 
 	{
 		this(shell, parentPool, SystemResources.ACTION_NEWFILTER_LABEL, SystemResources.ACTION_NEWFILE_TOOLTIP,
-		      SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTER_ID), false);
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTER_ID), false);
 	}		
 	
 	// ------------------------
@@ -360,7 +360,7 @@ public class SystemNewFilterAction
 		if (editPane != null)
 		  wizard.setFilterStringEditPane(editPane);
 		ISystemFilterPoolReferenceManagerProvider provider = getSystemFilterPoolReferenceManagerProvider();
-    	//SystemPlugin.logDebugMessage(this.getClass().getName(),"Inside createWizard. null? " + (provider==null));		
+    	//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"Inside createWizard. null? " + (provider==null));		
         wizard.setSystemFilterPoolReferenceManagerProvider(provider);
         configureNewFilterWizard(wizard);
 		return wizard;		

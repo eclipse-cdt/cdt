@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -214,7 +214,7 @@ public class SystemPortPrompt
 		  if (portValidator != null)
 	        errorMessage= portValidator.validate(textPort.getText().trim());
 	      else if (internalGetPort().equals(""))
-		    errorMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY);
+		    errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY);
 	    }
 	    if (errorMessage == null)
 	    {

@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilterReference;
@@ -42,6 +41,7 @@ import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.GenericMessages;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.ui.progress.UIJob;
 
@@ -521,7 +521,7 @@ public class SystemDNDTransferRunnable extends UIJob
 				    }
 				}
 
-				SystemMessage copyMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COPYGENERIC_PROGRESS);
+				SystemMessage copyMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYGENERIC_PROGRESS);
 				if (monitor != null)
 				    monitor.beginTask(copyMessage.getLevelOneText(), IProgressMonitor.UNKNOWN);
 				
@@ -542,7 +542,7 @@ public class SystemDNDTransferRunnable extends UIJob
 			monitor.done();
 		}
 		// always refresh
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		
 		if (target != null && target instanceof ISystemContainer)
 		{
@@ -592,14 +592,14 @@ public class SystemDNDTransferRunnable extends UIJob
 
 	private void showInvalidTransferMessage(String srcPath, String targetPath)
 	{
-		SystemMessage errorMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_TRANSFER_INVALID);
+		SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_TRANSFER_INVALID);
 		errorMessage.makeSubstitution(srcPath, targetPath);
 		showErrorMessage(errorMessage);
 	}
 	
 	private void showInvalidTransferMessage(ISystemResourceSet resourceSet, String targetPath)
 	{
-		SystemMessage errorMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_TRANSFER_INVALID);
+		SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_TRANSFER_INVALID);
 		errorMessage.makeSubstitution(resourceSet.toString(), targetPath);
 		showErrorMessage(errorMessage);
 	}

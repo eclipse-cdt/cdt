@@ -15,12 +15,17 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core;
+
+import org.eclipse.core.runtime.IAdaptable;
+import org.osgi.framework.Bundle;
+
 /**
- * Constants for system types.
- * These are kept in synch with the definitions from plugin.xml in org.eclipse.rse.core.
+ * Interface for a system type. Constants are defined for various system types.
+ * These constants are kept in sync with definitions in plugin.xml.
+ * 
+ * This interface is not intended to be implemented by clients.
  */
-public interface ISystemTypes
-{
+public interface IRSESystemType extends IAdaptable {
 	
 	/**
 	 * Linux system type, "Linux".
@@ -71,4 +76,40 @@ public interface ISystemTypes
 	 * Windows system type, "Windows".
 	 */
 	public static final String SYSTEMTYPE_WINDOWS = "Windows";
+	
+	/**
+	 * Returns the id of the system type.
+	 * @return the id of the system type
+	 */
+	public String getId();
+	
+	/**
+	 * Returns the name of the system type.
+	 * @return the name of the system type
+	 */
+	public String getName();
+	
+	/**
+	 * Returns the description of the system type.
+	 * @return the description of the system type
+	 */
+	public String getDescription();
+	
+	/**
+	 * Returns the property of this system type with the given key.
+	 * <code>null</code> is returned if there is no such key/value pair.
+	 * 
+	 * @param key the name of the property to return
+	 * @return the value associated with the given key or <code>null</code> if none
+	 */
+	public String getProperty(String key);
+	
+	/**
+	 * Returns the bundle which is responsible for the definition of this system type.
+	 * Typically this is used as a base for searching for images and other files 
+	 * that are needed in presenting the system type.
+	 * 
+	 * @return the bundle which defines this system type or <code>null</code> if none
+	 */
+	public Bundle getDefiningBundle();
 }

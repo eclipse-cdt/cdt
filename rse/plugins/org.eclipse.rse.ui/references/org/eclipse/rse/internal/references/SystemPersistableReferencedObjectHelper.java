@@ -19,7 +19,7 @@ import org.eclipse.rse.references.ISystemBasePersistableReferencedObject;
 
 /**
  * This class extends the support for a class that supports being managing by a transient 
- * in-memory reference to one which also supports the persistance of such references.
+ * in-memory reference to one which also supports the persistence of such references.
  * To do this, such a referencable class must be able to return a name that is 
  * so unique that it can be used after restoration from disk to resolve a pointer to this
  * specific object, in memory.

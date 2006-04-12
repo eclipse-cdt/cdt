@@ -17,9 +17,9 @@
 package org.eclipse.rse.files.ui.actions;
 
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.search.SystemSearchPage;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.search.ui.NewSearchUI;
@@ -31,9 +31,9 @@ public class SystemSearchAction extends SystemBaseAction {
 
     public SystemSearchAction(Shell parent) {
         super(SystemResources.ACTION_SEARCH_LABEL, 
-        SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SEARCH_ID), parent);
+        RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SEARCH_ID), parent);
         setToolTipText(SystemResources.ACTION_SEARCH_TOOLTIP);
-		setHelp(SystemPlugin.HELPPREFIX + "rsdi0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "rsdi0000");
 		
 		allowOnMultipleSelection(false);
     }

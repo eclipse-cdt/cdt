@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -36,8 +36,8 @@ public class ValidatorUserTypeTypes
      */
     public ValidatorUserTypeTypes()
     {
-    	setErrorMessages(SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDTTYPES_EMPTY),
-    	                 SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDTTYPES_NOTVALID));
+    	setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDTTYPES_EMPTY),
+    	                 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDTTYPES_NOTVALID));
     }
 
 	/**

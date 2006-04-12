@@ -17,12 +17,12 @@
 package org.eclipse.rse.ui.filters.dialogs;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.filters.SystemFilterPoolDialogOutputs;
 import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterPoolAction;
@@ -50,7 +50,7 @@ public class      SystemFilterNewFilterPoolWizard
 	public SystemFilterNewFilterPoolWizard()
 	{
 		this(SystemResources.RESID_NEWFILTERPOOL_TITLE,
-		     SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERPOOLWIZARD_ID));
+		     RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWFILTERPOOLWIZARD_ID));
 	}
     /**
      * Constructor
@@ -137,10 +137,10 @@ public class      SystemFilterNewFilterPoolWizard
 		    }
 		    catch (Exception exc)
 		    {
-		    	//SystemPlugin.logError("Error in performFinish of filter pool wizard!", exc);
+		    	//RSEUIPlugin.logError("Error in performFinish of filter pool wizard!", exc);
 		    	//System.out.println("Error in performFinish of filter pool wizard!");
 		    	//exc.printStackTrace();
-		    	SystemMessage msg = SystemPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_OCCURRED);
+		    	SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_OCCURRED);
 		    	msg.makeSubstitution(exc);
 		    	SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), msg);
 		    	msgDlg.openWithDetails();

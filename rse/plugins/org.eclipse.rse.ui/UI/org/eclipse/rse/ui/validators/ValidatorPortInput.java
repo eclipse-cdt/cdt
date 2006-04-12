@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -31,8 +31,8 @@ public class ValidatorPortInput extends ValidatorIntegerInput
 	
 	public ValidatorPortInput()
 	{
-		super(SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_EMPTY),
-		      SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_NOTVALID));
+		super(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_EMPTY),
+		      RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_NOTVALID));
 	}
 
 	/**
@@ -47,8 +47,8 @@ public class ValidatorPortInput extends ValidatorIntegerInput
 		  if (number < 0 || number > MAXIMUM_PORT_NUMBER)
 		  {
 		  //if (number <= 0) // we don't let user enter 0 explicitly, only via button selection.
-		    //currentMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_EMPTY);
-			currentMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_NOTVALID);
+		    //currentMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_EMPTY);
+			currentMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_NOTVALID);
 		    msg = currentMessage.getLevelOneText();
 		  }
 		}
@@ -68,8 +68,8 @@ public class ValidatorPortInput extends ValidatorIntegerInput
 		  if (number < 0 || number > MAXIMUM_PORT_NUMBER)
 		  {
 		  //if (number <= 0) // we don't let user enter 0 explicitly, only via button selection.
-			//currentMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_EMPTY);
-			currentMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_NOTVALID);
+			//currentMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_EMPTY);
+			currentMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PORT_NOTVALID);
 			msg = currentMessage.getLevelOneText();
 		  }		 
 		}

@@ -19,10 +19,10 @@ package org.eclipse.rse.files.ui.actions;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.files.ui.resources.ISystemRemoteEditConstants;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.swt.widgets.Shell;
 
@@ -31,7 +31,7 @@ public class SystemEditFilePlatformAction extends SystemBaseAction implements IS
 
 
 
-	private SystemPlugin plugin;
+	private RSEUIPlugin plugin;
 	
 	
 	/**
@@ -53,7 +53,7 @@ public class SystemEditFilePlatformAction extends SystemBaseAction implements IS
 		// had to add it in the group in the adapter
 		// setContextMenuGroup(ISystemContextMenuConstants.GROUP_OPENWITH);
 		
-		plugin = SystemPlugin.getDefault();
+		plugin = RSEUIPlugin.getDefault();
 	}
 
 	

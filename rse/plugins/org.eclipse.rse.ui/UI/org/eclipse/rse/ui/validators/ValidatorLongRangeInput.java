@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -47,9 +47,9 @@ public class ValidatorLongRangeInput extends ValidatorLongInput
      */
 	public ValidatorLongRangeInput(long minRange, long maxRange, boolean allowBlank)
 	{
-		super(SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NUMBER_EMPTY),
-		       SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NUMBER_NOTVALID));
-		msg_InvalidRange = SystemPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NUMBER_OUTOFRANGE);
+		super(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NUMBER_EMPTY),
+		       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NUMBER_NOTVALID));
+		msg_InvalidRange = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NUMBER_OUTOFRANGE);
 		this.orgMinRange = minRange;
 		this.orgMaxRange = maxRange;
 		super.setBlankAllowed(allowBlank);

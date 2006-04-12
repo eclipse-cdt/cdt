@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.model.IHost;
@@ -36,6 +35,7 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -173,7 +173,7 @@ public class SystemCommandAction extends SystemBaseAction
 
 		private void setHelp()
 		{
-			setHelp(SystemPlugin.HELPPREFIX + "cmdi0000");
+			setHelp(RSEUIPlugin.HELPPREFIX + "cmdi0000");
 		}
 
 		/**
@@ -187,7 +187,7 @@ public class SystemCommandAction extends SystemBaseAction
 
 			if (theNewName.length() == 0)
 			{
-				_errorMessage = SystemPlugin.getPluginMessage(MSG_UCMD_INVOCATION_EMPTY);
+				_errorMessage = RSEUIPlugin.getPluginMessage(MSG_UCMD_INVOCATION_EMPTY);
 			}
 
 			if (_errorMessage != null)
@@ -266,7 +266,7 @@ public class SystemCommandAction extends SystemBaseAction
 		this(
 			title,
 			tooltip,
-			isShell ? SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID) : SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_RUN_ID),
+			isShell ? RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SHELL_ID) : RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_RUN_ID),
 			parent,
 			isShell,
 			cmdSubSystem);
@@ -288,9 +288,9 @@ public class SystemCommandAction extends SystemBaseAction
 		_isShell = isShell;
 		_cmdSubSystem = cmdSubSystem;
 		if (_isShell)
-			setHelp(SystemPlugin.HELPPREFIX+"actn0113");
+			setHelp(RSEUIPlugin.HELPPREFIX+"actn0113");
 		else
-			setHelp(SystemPlugin.HELPPREFIX+"actn0114");		
+			setHelp(RSEUIPlugin.HELPPREFIX+"actn0114");		
 	}
 
 	public void setSubSystem(IRemoteCmdSubSystem ss)
@@ -501,7 +501,7 @@ public class SystemCommandAction extends SystemBaseAction
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			//	SystemPlugin.getDefault().logInfo("Exception invoking command " + cmd + " on " + sysConn.getAliasName());
+			//	RSEUIPlugin.getDefault().logInfo("Exception invoking command " + cmd + " on " + sysConn.getAliasName());
 		}
 
 	}

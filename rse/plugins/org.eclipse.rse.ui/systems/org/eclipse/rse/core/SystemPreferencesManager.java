@@ -22,6 +22,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.propertypages.RemoteSystemsPreferencePage;
 
 
@@ -201,7 +202,7 @@ public class SystemPreferencesManager
     */
    public void setConnectionNamesOrder()
    {
-   	   ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+   	   ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
    	   IHost[] conns = sr.getHosts();
    	   String[] names = new String[conns.length];
        for (int idx=0; idx<names.length; idx++)
@@ -379,7 +380,7 @@ public class SystemPreferencesManager
     */
    public boolean getVerifyConnection()
    {
-   		IPreferenceStore store = SystemPlugin.getDefault().getPreferenceStore();
+   		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setDefault(ISystemPreferencesConstants.VERIFY_CONNECTION, ISystemPreferencesConstants.DEFAULT_VERIFY_CONNECTION);
    		return store.getBoolean(ISystemPreferencesConstants.VERIFY_CONNECTION);		
    }
@@ -403,7 +404,7 @@ public class SystemPreferencesManager
        boolean prevValue = getShowFilterPools();
    	   RemoteSystemsPreferencePage.setShowFilterPoolsPreference(show);       
        if (show != prevValue)
-    	 SystemPlugin.getTheSystemRegistry().setShowFilterPools(show);
+    	 RSEUIPlugin.getTheSystemRegistry().setShowFilterPools(show);
    }
 
    /**
@@ -432,9 +433,9 @@ public class SystemPreferencesManager
     */
    public void setVerifyConnection(boolean verify)
    {
-   		IPreferenceStore store= SystemPlugin.getDefault().getPreferenceStore();
+   		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(ISystemPreferencesConstants.VERIFY_CONNECTION,verify);
-		SystemPlugin.getDefault().savePluginPreferences();   		
+		RSEUIPlugin.getDefault().savePluginPreferences();   		
    }
    
    // ------------------

@@ -16,7 +16,11 @@
 
 package org.eclipse.rse.connectorservice.dstore;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
+import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.osgi.framework.BundleContext;
 
 
@@ -38,8 +42,14 @@ public class Activator extends SystemBasePlugin {
 	/**
 	 * This method is called upon plug-in activation
 	 */
-	public void start(BundleContext context) throws Exception {
+	public void start(BundleContext context) throws Exception 
+	{
 		super.start(context);
+        IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+    	store.setDefault(IUniversalDStoreConstants.RESID_PREF_SOCKET_TIMEOUT, IUniversalDStoreConstants.DEFAULT_PREF_SOCKET_TIMEOUT);
+		store.setDefault(ISystemPreferencesConstants.ALERT_SSL, ISystemPreferencesConstants.DEFAULT_ALERT_SSL);
+		store.setDefault(ISystemPreferencesConstants.ALERT_NONSSL, ISystemPreferencesConstants.DEFAULT_ALERT_NON_SSL);
+
 	}
 
 	/**

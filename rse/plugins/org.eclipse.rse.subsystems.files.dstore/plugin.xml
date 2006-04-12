@@ -21,7 +21,7 @@ Contributors:
    <extension
          point="org.eclipse.rse.ui.subsystemConfiguration">
       <configuration
-            systemtypes="Linux;Unix;AIX;Power Linux"
+            systemTypes="Linux;Unix"
             name="%Files"
             description="%FilesDescription"
             iconlive="icons/full/obj16/systemfileslive_obj.gif"
@@ -31,8 +31,9 @@ Contributors:
             vendor="IBM Corp"
             id="dstore.files">
       </configuration>
+  <!--
           <configuration 
-            systemtypes="Windows"
+            systemTypes="Windows"
             name="%Files"
             description="%FilesDescription"
             iconlive="icons/full/obj16/systemfileslive_obj.gif"
@@ -42,6 +43,7 @@ Contributors:
             vendor="IBM Corp"
             id="dstore.windows.files">
       </configuration>
+ -->
       </extension>
 
 </plugin>

@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
@@ -49,6 +48,7 @@ import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemClearPasswordAction;
@@ -488,7 +488,7 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 						   SystemFilterPoolReferenceManager refMgr = selectedSubSystem.getSystemFilterPoolReferenceManager();
 						   SystemFilterPool[] refdPools = refMgr.getReferencedSystemFilterPools();
 						   if ( refdPools.length == 0 )
-						      SystemPlugin.logInfo("SubSystemFactoryImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of lenght zero.");
+						      RSEUIPlugin.logInfo("SubSystemFactoryImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of lenght zero.");
 						   for (int idx=0; idx<newFilterActions.length; idx++)
 						   {
 						         if (newFilterActions[idx] instanceof SystemFilterBaseNewFilterAction && refdPools.length > 0 )
@@ -625,7 +625,7 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 				{
 					boolean anyAdded = false;
 					SystemFilterPoolWrapperInformation poolWrapperInfo = getNewFilterWizardPoolWrapperInformation();
-					ISystemProfile[] activeProfiles = SystemPlugin.getTheSystemRegistry().getActiveSystemProfiles();
+					ISystemProfile[] activeProfiles = RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfiles();
 					ISystemProfile activeProfile = selectedSubSystem.getHost().getSystemProfile();
 					for (int idx = 0; idx < activeProfiles.length; idx++)
 					{
@@ -676,10 +676,10 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 		{
 			IAction[] actions = new IAction[2];
 			actions[0] = new SystemFilterNewFilterPoolAction(shell);
-			((ISystemAction) actions[0]).setHelp(SystemPlugin.HELPPREFIX + "actn0040");
-			((SystemFilterNewFilterPoolAction) actions[0]).setDialogHelp(SystemPlugin.HELPPREFIX + "wnfp0000");
+			((ISystemAction) actions[0]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0040");
+			((SystemFilterNewFilterPoolAction) actions[0]).setDialogHelp(RSEUIPlugin.HELPPREFIX + "wnfp0000");
 			actions[1] = new SystemFilterCascadingNewFilterPoolReferenceAction(shell, selectedSubSystem.getSystemFilterPoolReferenceManager());
-			((ISystemAction) actions[1]).setHelp(SystemPlugin.HELPPREFIX + "actn0041");
+			((ISystemAction) actions[1]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0041");
 			return actions;
 		}
 		/**
@@ -706,7 +706,7 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 		 */
 		public ImageDescriptor getSystemFilterPoolManagerImage()
 		{
-			return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID);
+			return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID);
 		}
 		/**
 		 * Supply the image to be used for filter pools, within actions.
@@ -714,7 +714,7 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 		 */
 		public ImageDescriptor getSystemFilterPoolImage(ISystemFilterPool filterPool)
 		{
-			return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID);
+			return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID);
 		}
 		/**
 		 * Supply the image to be used for filters, within actions.
@@ -722,7 +722,7 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 		 */
 		public ImageDescriptor getSystemFilterImage(ISystemFilter filter)
 		{
-			return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTER_ID);
+			return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTER_ID);
 		}
 		/*
 		 * Supply the image to be used for the given filter string, within actions.
@@ -739,7 +739,7 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 		 */
 		public ImageDescriptor getSystemFilterStringImage(String filterStringString)
 		{
-			return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERSTRING_ID);
+			return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERSTRING_ID);
 		}
 
 
@@ -794,12 +794,12 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 				filterPoolActions = new IAction[nbr];
 				SystemFilterCopyFilterPoolAction copyAction = new SystemFilterCopyFilterPoolAction(shell);
 				copyAction.setPromptString(SystemResources.RESID_COPY_TARGET_PROFILE_PROMPT);
-				copyAction.setHelp(SystemPlugin.HELPPREFIX + "actn0060");
-				copyAction.setDialogHelp(SystemPlugin.HELPPREFIX + "dcfp0000");
+				copyAction.setHelp(RSEUIPlugin.HELPPREFIX + "actn0060");
+				copyAction.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dcfp0000");
 				SystemFilterMoveFilterPoolAction moveAction = new SystemFilterMoveFilterPoolAction(shell);
 				moveAction.setPromptString(SystemResources.RESID_MOVE_TARGET_PROFILE_PROMPT);
-				moveAction.setHelp(SystemPlugin.HELPPREFIX + "actn0061");
-				moveAction.setDialogHelp(SystemPlugin.HELPPREFIX + "dmfp0000");
+				moveAction.setHelp(RSEUIPlugin.HELPPREFIX + "actn0061");
+				moveAction.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dmfp0000");
 				filterPoolActions[0] = copyAction;
 				filterPoolActions[1] = moveAction;
 			}
@@ -859,8 +859,8 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 		protected IAction getNewFilterPoolFilterAction(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
 		{
 			SystemNewFilterAction action = new SystemNewFilterAction(shell, selectedPool);
-			action.setHelp(SystemPlugin.HELPPREFIX + "actn0042");
-			action.setDialogHelp(SystemPlugin.HELPPREFIX + "wnfr0000");
+			action.setHelp(RSEUIPlugin.HELPPREFIX + "actn0042");
+			action.setDialogHelp(RSEUIPlugin.HELPPREFIX + "wnfr0000");
 			return action;
 		}
 		/**
@@ -892,8 +892,8 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 				return null;
 			}*/
 			SystemChangeFilterAction action = new SystemChangeFilterAction(shell);
-			action.setHelp(SystemPlugin.HELPPREFIX + "actn0081");
-			action.setDialogHelp(SystemPlugin.HELPPREFIX + "dufr0000");
+			action.setHelp(RSEUIPlugin.HELPPREFIX + "actn0081");
+			action.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dufr0000");
 			return action;
 		}
 		/**
@@ -1029,9 +1029,9 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 				filterPoolReferenceActions = new IAction[nbr + nbrChildActions];
 				filterPoolReferenceActions[fpIdx++] = getRemoveFilterPoolReferenceAction(factory, selectedPool, shell);
 				filterPoolReferenceActions[fpIdx] = new SystemFilterMoveUpFilterPoolReferenceAction(shell);
-				((ISystemAction) filterPoolReferenceActions[fpIdx++]).setHelp(SystemPlugin.HELPPREFIX + "actn0063");
+				((ISystemAction) filterPoolReferenceActions[fpIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0063");
 				filterPoolReferenceActions[fpIdx] = new SystemFilterMoveDownFilterPoolReferenceAction(shell);
-				((ISystemAction) filterPoolReferenceActions[fpIdx++]).setHelp(SystemPlugin.HELPPREFIX + "actn0064");
+				((ISystemAction) filterPoolReferenceActions[fpIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0064");
 			}
 
 			if (childActions != null)
@@ -1063,7 +1063,7 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 		protected IAction getRemoveFilterPoolReferenceAction(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
 		{
 			ISystemAction action = new SystemFilterRemoveFilterPoolReferenceAction(shell);
-			action.setHelp(SystemPlugin.HELPPREFIX + "actn0062");
+			action.setHelp(RSEUIPlugin.HELPPREFIX + "actn0062");
 			return action;
 		}
 
@@ -1140,8 +1140,8 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 				filterActions = new IAction[additionalActions];
 				SystemFilterCopyFilterAction copyAction = new SystemFilterCopyFilterAction(shell);
 				copyAction.setPromptString(SystemResources.RESID_COPY_TARGET_FILTERPOOL_PROMPT);
-				copyAction.setHelp(SystemPlugin.HELPPREFIX + "actn0082");
-				copyAction.setDialogHelp(SystemPlugin.HELPPREFIX + "dcfr0000");
+				copyAction.setHelp(RSEUIPlugin.HELPPREFIX + "actn0082");
+				copyAction.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dcfr0000");
 				filterActions[fsIdx++] = copyAction;
 
 				// we want to make sure the order is kept consistent at
@@ -1153,14 +1153,14 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 				
 				SystemFilterMoveFilterAction moveAction = new SystemFilterMoveFilterAction(shell);
 				moveAction.setPromptString(SystemResources.RESID_MOVE_TARGET_FILTERPOOL_PROMPT);
-				moveAction.setHelp(SystemPlugin.HELPPREFIX + "actn0083");
-				moveAction.setDialogHelp(SystemPlugin.HELPPREFIX + "dmfr0000");
+				moveAction.setHelp(RSEUIPlugin.HELPPREFIX + "actn0083");
+				moveAction.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dmfr0000");
 				filterActions[fsIdx++] = moveAction;
 
 				filterActions[fsIdx] = new SystemFilterMoveUpFilterAction(shell);
-				((SystemFilterMoveUpFilterAction) filterActions[fsIdx++]).setHelp(SystemPlugin.HELPPREFIX + "actn0084");
+				((SystemFilterMoveUpFilterAction) filterActions[fsIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0084");
 				filterActions[fsIdx] = new SystemFilterMoveDownFilterAction(shell);
-				((SystemFilterMoveDownFilterAction) filterActions[fsIdx++]).setHelp(SystemPlugin.HELPPREFIX + "actn0085");
+				((SystemFilterMoveDownFilterAction) filterActions[fsIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0085");
 			}
 			// add overridable dynamic actions
 			if (factory.supportsNestedFilters())
@@ -1289,19 +1289,19 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 			{
 				filterStringActions = new IAction[4];
 				filterStringActions[0] = new SystemFilterMoveUpFilterStringAction(shell);
-		        ((ISystemAction)filterStringActions[0]).setHelp(SystemPlugin.HELPPREFIX+"actn0093");
+		        ((ISystemAction)filterStringActions[0]).setHelp(RSEUIPlugin.HELPPREFIX+"actn0093");
 				filterStringActions[1] = new SystemFilterMoveDownFilterStringAction(shell);
-		        ((ISystemAction)filterStringActions[1]).setHelp(SystemPlugin.HELPPREFIX+"actn0094");
+		        ((ISystemAction)filterStringActions[1]).setHelp(RSEUIPlugin.HELPPREFIX+"actn0094");
 		
 			    SystemFilterCopyFilterStringAction copyAction = new SystemFilterCopyFilterStringAction(shell);
 			    copyAction.setPromptString(SystemResources.RESID_COPY_TARGET_FILTER_PROMPT));
-			    copyAction.setHelp(SystemPlugin.HELPPREFIX+"actn0091");
-			    copyAction.setDialogHelp(SystemPlugin.HELPPREFIX+"dcfs0000");
+			    copyAction.setHelp(RSEUIPlugin.HELPPREFIX+"actn0091");
+			    copyAction.setDialogHelp(RSEUIPlugin.HELPPREFIX+"dcfs0000");
 				filterStringActions[2] = copyAction;
 			    SystemFilterMoveFilterStringAction moveAction = new SystemFilterMoveFilterStringAction(shell);
 			    moveAction.setPromptString(SystemResources.RESID_MOVE_TARGET_FILTER_PROMPT));
-			    moveAction.setHelp(SystemPlugin.HELPPREFIX+"actn0093");
-			    moveAction.setDialogHelp(SystemPlugin.HELPPREFIX+"dmfs0000");
+			    moveAction.setHelp(RSEUIPlugin.HELPPREFIX+"actn0093");
+			    moveAction.setDialogHelp(RSEUIPlugin.HELPPREFIX+"dmfs0000");
 				filterStringActions[3] = moveAction;
 			}
 		    IAction chgAction = getChangeFilterStringAction(selectedFilterString, shell);
@@ -1417,7 +1417,7 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 		 */
 		public void renameSubSystemProfile(ISubSystemConfiguration factory, String oldProfileName, String newProfileName)
 		{
-			//SystemPlugin.logDebugMessage(this.getClass().getName(), "Inside renameSubSystemProfile. newProfileName = "+newProfileName);
+			//RSEUIPlugin.logDebugMessage(this.getClass().getName(), "Inside renameSubSystemProfile. newProfileName = "+newProfileName);
 			ISystemProfile profile = factory.getSystemProfile(newProfileName);
 			factory.renameFilterPoolManager(profile); // update filter pool manager name
 			//if (profile.isDefaultPrivate()) // I don't remember why this was here, but it caused bad things, Phil.

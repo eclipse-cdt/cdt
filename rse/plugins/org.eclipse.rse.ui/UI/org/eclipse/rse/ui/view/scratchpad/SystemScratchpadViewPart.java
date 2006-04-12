@@ -28,12 +28,12 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCommonDeleteAction;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
@@ -119,7 +119,7 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 		fillLocalToolBar();
 
 		// register global edit actions 		
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		Clipboard clipboard = registry.getSystemClipboard();
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
@@ -135,7 +135,7 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 
 		registry.addSystemResourceChangeListener(this);
 
-		SystemWidgetHelpers.setHelp(_viewer.getControl(), SystemPlugin.HELPPREFIX + "scrp0000");
+		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "scrp0000");
 
 		setInput(registry.getSystemScratchPad());
 		
@@ -152,7 +152,7 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 		selectionService.removeSelectionListener(this);
 		_viewer.removeSelectionChangedListener(this);
 
-		SystemPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
 		
 		if (_viewer != null)
 		{

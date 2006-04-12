@@ -27,7 +27,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.model.ISystemRegistry;
@@ -43,6 +42,7 @@ import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -146,7 +146,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 	 */
 	protected IRunnableContext getRunnableContext()
 	{
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IRunnableContext irc = sr.getRunnableContext();
 		if (irc == null)
 		  irc = new ProgressMonitorDialog(getShell());
@@ -240,7 +240,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 		
 		
 		// update the ui
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		for (int i = 0; i < results.size(); i++)
 		{
 			ISystemFilterReference ref = (ISystemFilterReference)results.get(i);
@@ -259,7 +259,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 	 */
 	protected List getAffectedFilters(Object[] processesDeathRow, ISubSystem subSystem)
 	{
-		ISystemRegistry registry = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		List result = new ArrayList();
 		for (int i = 0; i < processesDeathRow.length; i++)
 		{
@@ -328,7 +328,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
     	    msg = exc.getClass().getName();
     	  SystemMessageDialog msgDlg = 
     	    new SystemMessageDialog(shell, 
-    	      SystemPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED).makeSubstitution(msg));
+    	      RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED).makeSubstitution(msg));
     	  msgDlg.setException(exc);
     	  msgDlg.open();
         }
@@ -353,7 +353,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
      */
     protected void showOperationCancelledMessage(Shell shell)
     {
-    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, SystemPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED));
+    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED));
     	msgDlg.open();
     }	
 

@@ -17,8 +17,8 @@
 
 package org.eclipse.rse.ui.validators;
 
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 
@@ -36,7 +36,7 @@ public class ValidatorServerPortInput extends ValidatorPortInput
 		  	// check that it's not a used port
 		  	if (number == 4035)
 		  	{
-		  		currentMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PORT_WARNING);
+		  		currentMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PORT_WARNING);
 		  		currentMessage.makeSubstitution("4035", "RSE daemon");
 		  		msg = currentMessage.getLevelOneText();
 		  	}
@@ -54,7 +54,7 @@ public class ValidatorServerPortInput extends ValidatorPortInput
 		  	// check that it's not a used port
 		  	if (number == 4035)
 		  	{
-		  		currentMessage = SystemPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PORT_WARNING);
+		  		currentMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PORT_WARNING);
 		  		currentMessage.makeSubstitution("4035", "RSE daemon");
 		  		msg = currentMessage.getLevelOneText();
 		  	}

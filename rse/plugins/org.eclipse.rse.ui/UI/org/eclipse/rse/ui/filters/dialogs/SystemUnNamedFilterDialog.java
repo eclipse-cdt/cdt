@@ -87,7 +87,7 @@ public class SystemUnNamedFilterDialog extends SystemPromptDialog
     public void setSystemFilterPoolReferenceManagerProvider(ISystemFilterPoolReferenceManagerProvider provider)
     {
     	this.provider = provider;
-    	//SystemPlugin.logDebugMessage(this.getClass().getName(),"Inside setSystemFilterPoolReferenceManagerProvider. null? " + (provider==null));
+    	//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"Inside setSystemFilterPoolReferenceManagerProvider. null? " + (provider==null));
     }
 	/**
 	 * Specify an edit pane that prompts the user for the contents of a filter string.

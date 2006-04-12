@@ -21,13 +21,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.ISystemUserIdConstants;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemCommonDeleteAction;
 import org.eclipse.rse.ui.actions.SystemCommonRenameAction;
@@ -113,14 +113,14 @@ public class SystemTeamViewProfileAdapter
 		copyProfileAction = new SystemProfileNameCopyAction(getShell());		
 
 		deleteAction = new SystemCommonDeleteAction(getShell(),getTeamViewPart());
-		deleteAction.setHelp(SystemPlugin.HELPPREFIX+"actndlpr");
-		deleteAction.setDialogHelp(SystemPlugin.HELPPREFIX+"ddltprfl");
+		deleteAction.setHelp(RSEUIPlugin.HELPPREFIX+"actndlpr");
+		deleteAction.setDialogHelp(RSEUIPlugin.HELPPREFIX+"ddltprfl");
 		deleteAction.setPromptLabel(SystemResources.RESID_DELETE_PROFILES_PROMPT);
 
 		renameAction = new SystemCommonRenameAction(getShell(),getTeamViewPart());
-		renameAction.setHelp(SystemPlugin.HELPPREFIX+"actnrnpr");
-		renameAction.setDialogSingleSelectionHelp(SystemPlugin.HELPPREFIX+"drnsprfl");
-		renameAction.setDialogMultiSelectionHelp(SystemPlugin.HELPPREFIX+"drnmprfl");
+		renameAction.setHelp(RSEUIPlugin.HELPPREFIX+"actnrnpr");
+		renameAction.setDialogSingleSelectionHelp(RSEUIPlugin.HELPPREFIX+"drnsprfl");
+		renameAction.setDialogMultiSelectionHelp(RSEUIPlugin.HELPPREFIX+"drnmprfl");
 		renameAction.setSingleSelectPromptLabel(SystemResources.RESID_SIMPLE_RENAME_PROFILE_PROMPT_LABEL, 
 												SystemResources.RESID_SIMPLE_RENAME_PROFILE_PROMPT_TIP);
 		renameAction.setMultiSelectVerbage(SystemResources.RESID_MULTI_RENAME_PROFILE_VERBAGE);
@@ -135,10 +135,10 @@ public class SystemTeamViewProfileAdapter
 	public ImageDescriptor getImageDescriptor(Object element)
 	{
 		ISystemProfile profile = (ISystemProfile)element;				
-		if (SystemPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName()))
-		  return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROFILE_ACTIVE_ID);
+		if (RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName()))
+		  return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROFILE_ACTIVE_ID);
 		else
-		  return SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID);
+		  return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID);
 	}
 	/**
 	 * Return the team view part
@@ -192,7 +192,7 @@ public class SystemTeamViewProfileAdapter
 	public String getStatusLineText(Object element)
 	{
 		ISystemProfile profile = (ISystemProfile)element;
-		boolean active = SystemPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
+		boolean active = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
 		return getType(element) + ": " + profile.getName() + ", " +
 		       SystemViewResources.RESID_PROPERTY_PROFILESTATUS_LABEL + ": " +
 		       (active ? SystemViewResources.RESID_PROPERTY_PROFILESTATUS_ACTIVE_LABEL : SystemViewResources.RESID_PROPERTY_PROFILESTATUS_NOTACTIVE_LABEL);
@@ -229,28 +229,28 @@ public class SystemTeamViewProfileAdapter
 				children[idx] = new SystemTeamViewCategoryNode(profile);
 			children[0].setLabel(SystemResources.RESID_TEAMVIEW_CATEGORY_CONNECTIONS_LABEL);
 			children[0].setDescription(SystemResources.RESID_TEAMVIEW_CATEGORY_CONNECTIONS_TOOLTIP);
-			children[0].setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTION_ID));
+			children[0].setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTION_ID));
 			children[0].setMementoHandle(SystemTeamViewCategoryNode.MEMENTO_CONNECTIONS);
 
 			children[1].setLabel(SystemResources.RESID_TEAMVIEW_CATEGORY_FILTERPOOLS_LABEL);
 			children[1].setDescription(SystemResources.RESID_TEAMVIEW_CATEGORY_FILTERPOOLS_TOOLTIP);
-			children[1].setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID));
+			children[1].setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID));
 			children[1].setMementoHandle(SystemTeamViewCategoryNode.MEMENTO_FILTERPOOLS);
 
 			children[2].setLabel(SystemResources.RESID_TEAMVIEW_CATEGORY_USERACTIONS_LABEL);
 			children[2].setDescription(SystemResources.RESID_TEAMVIEW_CATEGORY_USERACTIONS_TOOLTIP);
-			children[2].setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_USERACTION_USR_ID));
+			children[2].setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_USERACTION_USR_ID));
 			children[2].setMementoHandle(SystemTeamViewCategoryNode.MEMENTO_USERACTIONS);
 
 			children[3].setLabel(SystemResources.RESID_TEAMVIEW_CATEGORY_COMPILECMDS_LABEL);
 			children[3].setDescription(SystemResources.RESID_TEAMVIEW_CATEGORY_COMPILECMDS_TOOLTIP);
-			children[3].setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_COMPILE_ID));
+			children[3].setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_COMPILE_ID));
 			children[3].setMementoHandle(SystemTeamViewCategoryNode.MEMENTO_COMPILECMDS);
 			
 			/*
 			children[4].setLabel(SystemResources.RESID_TEAMVIEW_CATEGORY_TARGETS_LABEL);
 			children[4].setDescription(SystemResources.RESID_TEAMVIEW_CATEGORY_TARGETS_TOOLTIP);
-			children[4].setImageDescriptor(SystemPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_TARGET_ID));
+			children[4].setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_TARGET_ID));
 			children[4].setMementoHandle(SystemTeamViewCategoryNode.MEMENTO_TARGETS);
 			*/
 						
@@ -291,7 +291,7 @@ public class SystemTeamViewProfileAdapter
 		if (propertyDescriptorArray == null)
 		{
 		  	propertyDescriptorArray = new PropertyDescriptor[1];
-		 	SystemPlugin plugin = SystemPlugin.getDefault();
+		 	RSEUIPlugin plugin = RSEUIPlugin.getDefault();
 		 	int idx = 0;
 		  	// status
 			propertyDescriptorArray[idx++] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_IS_ACTIVE,SystemViewResources.RESID_PROPERTY_PROFILESTATUS_LABEL, SystemViewResources.RESID_PROPERTY_PROFILESTATUS_TOOLTIP);	      
@@ -312,7 +312,7 @@ public class SystemTeamViewProfileAdapter
 		
 		if (name.equals(P_IS_ACTIVE))
 		{			
-			boolean active = SystemPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
+			boolean active = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
 			if (active)
 				return SystemViewResources.RESID_PROPERTY_PROFILESTATUS_ACTIVE_LABEL;
 			else
@@ -344,7 +344,7 @@ public class SystemTeamViewProfileAdapter
 	public boolean doDelete(Shell shell, Object element, IProgressMonitor monitor) throws Exception
 	{
 		boolean ok = true;
-		SystemPlugin.getTheSystemRegistry().deleteSystemProfile((ISystemProfile)element);
+		RSEUIPlugin.getTheSystemRegistry().deleteSystemProfile((ISystemProfile)element);
 		return ok;
 	}
   
@@ -366,7 +366,7 @@ public class SystemTeamViewProfileAdapter
 	public boolean doRename(Shell shell, Object element, String newName) throws Exception
 	{
 		boolean ok = true;		
-		SystemPlugin.getTheSystemRegistry().renameSystemProfile((ISystemProfile)element, newName);
+		RSEUIPlugin.getTheSystemRegistry().renameSystemProfile((ISystemProfile)element, newName);
 		return ok;
 	}    
 	/**
@@ -374,7 +374,7 @@ public class SystemTeamViewProfileAdapter
 	 */
     public ISystemValidator getNameValidator(Object element)
     {
-		return new ValidatorProfileName(SystemPlugin.getTheSystemRegistry().getSystemProfileManager().getSystemProfileNamesVector());
+		return new ValidatorProfileName(RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().getSystemProfileNamesVector());
     }
     /**
      * Parent override.

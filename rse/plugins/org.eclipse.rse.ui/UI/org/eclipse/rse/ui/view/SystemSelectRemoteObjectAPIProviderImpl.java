@@ -127,7 +127,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	/**
 	 * Specify system types to restrict what types of connections the user can create, and see.
 	 * This will override subsystemFactoryId,if that has been set!
-	 * @see org.eclipse.rse.core.ISystemTypes
+	 * @see org.eclipse.rse.core.IRSESystemType
 	 */
 	public void setSystemTypes(String[] systemTypes)
 	{

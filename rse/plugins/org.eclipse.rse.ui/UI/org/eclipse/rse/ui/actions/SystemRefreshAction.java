@@ -18,7 +18,6 @@ package org.eclipse.rse.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemPlugin;
 import org.eclipse.rse.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
@@ -26,6 +25,7 @@ import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
@@ -44,11 +44,11 @@ public class SystemRefreshAction extends SystemBaseAction
 	public SystemRefreshAction(Shell parent) 
 	{
 		super(SystemResources.ACTION_REFRESH_LABEL, SystemResources.ACTION_REFRESH_TOOLTIP,
-				SystemPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_REFRESH_ID), // D54577
+				RSEUIPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_REFRESH_ID), // D54577
 		      	parent);
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_BUILD);
-		setHelp(SystemPlugin.HELPPREFIX+"actn0017");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0017");
 		setAvailableOffline(true);
 	}
 
@@ -68,7 +68,7 @@ public class SystemRefreshAction extends SystemBaseAction
 	 */
 	public void run() 
 	{
-		ISystemRegistry sr = SystemPlugin.getTheSystemRegistry();
+		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		if (_selection != null)
 		{
 			Iterator iter = _selection.iterator();

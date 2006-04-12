@@ -195,7 +195,7 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 				try {
 					sharedMgr.setAutoLoadSymbols( target, autolib );
 					sharedMgr.setStopOnSolibEvents( target, stopOnSolibEvents );
-					sharedMgr.setDeferredBreakpoint( false );
+					sharedMgr.setDeferredBreakpoint( target, false );
 					// The idea is that if the user set autolib, by default
 					// we provide with the capability of deferred breakpoints
 					// And we set setStopOnSolib events for them(but they should not see those things.
@@ -203,8 +203,8 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 					// If the user explicitly set stopOnSolibEvents well it probably
 					// means that they wanted to see those events so do no do deferred breakpoints.
 					if ( autolib && !stopOnSolibEvents ) {
-						sharedMgr.setDeferredBreakpoint( true );
 						sharedMgr.setStopOnSolibEvents( target, true );
+						sharedMgr.setDeferredBreakpoint( target, true );
 					}
 				}
 				catch( CDIException e ) {
@@ -224,6 +224,8 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 				for ( int j = 0; j < autoSolibs.length; ++j )
 					libs.add( new File( autoSolibs[j].getName() ) );
 				sharedMgr.autoLoadSymbols( (File[])libs.toArray( new File[libs.size()] ) );
+				if ( !autolib && !stopOnSolibEvents )
+					sharedMgr.setDeferredBreakpoint( target, libs.size() > 0 );
 			}
 		}
 		catch( CDIException e ) {

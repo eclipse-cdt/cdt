@@ -235,12 +235,12 @@ public class SharedLibraryManager extends Manager {
 		return null;
 	}
 
-	public void setDeferredBreakpoint (boolean set) {
-		isDeferred = set;
+	public void setDeferredBreakpoint(Target target, boolean set) {
+		target.deferBreakpoints( set );
 	}
 
-	public boolean isDeferredBreakpoint() {
-		return isDeferred;
+	public boolean isDeferredBreakpoint(Target target) {
+		return target.areBreakpointsDeferred();
 	}
 
 	public void setAutoLoadSymbols(Target target, boolean set) throws CDIException {

@@ -49,8 +49,8 @@ public class GDBDebugger implements ICDebugger {
 					// If the user explicitly set stopOnSolibEvents well it probably
 					// means that they wanted to see those events so do no do deferred breakpoints.
 					if (autolib && !stopOnSolibEvents) {
-						mgr.setDeferredBreakpoint(true);
 						mgr.setStopOnSolibEvents(target, true);
+						mgr.setDeferredBreakpoint(target, true);
 					}
 				} catch (CDIException e) {
 					// Ignore this error

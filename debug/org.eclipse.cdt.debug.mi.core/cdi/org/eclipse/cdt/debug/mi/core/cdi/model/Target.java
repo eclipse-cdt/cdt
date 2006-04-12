@@ -95,6 +95,7 @@ public class Target extends SessionObject implements ICDITarget {
 	int currentThreadId;
 	String fEndian = null;
 	boolean suspended = true;
+	boolean deferBreakpoints = true;
 	
 	public Target(Session s, MISession mi) {
 		super(s);
@@ -1123,5 +1124,11 @@ public class Target extends SessionObject implements ICDITarget {
 		return null;		
 	}
 
+	public void deferBreakpoints( boolean defer ) {
+		this.deferBreakpoints = defer;
+	}
 
+	public boolean areBreakpointsDeferred() {
+		return this.deferBreakpoints;
+	}
 }

@@ -649,7 +649,7 @@ public class BreakpointManager extends Manager {
 			}
 			Session session = (Session)target.getSession();
 			SharedLibraryManager sharedMgr  = session.getSharedLibraryManager();
-			if (sharedMgr.isDeferredBreakpoint()) {
+			if (sharedMgr.isDeferredBreakpoint(target)) {
 				List dList = (List)deferredMap.get(target);
 				if (dList == null) {
 					dList = Collections.synchronizedList(new ArrayList());

@@ -1,3 +1,14 @@
+2006-04-12 Mikhail Khodjaiants
+	Bug 119740: allow to specify only a subset of shared objects that we want symbols to be loaded for.
+	Support for deferred breakpoints.
+	* BreakpointManager.java
+	* EventManager.java
+	* SharedLibraryManager.java
+	* Target.java
+	* GDBCDIDebugger.java
+	* GDBCDIDebugger2.java
+	* GDBDebugger.java
+
 2006-04-10 Mikhail Khodjaiants
 	Bug 119740: allow to specify only a subset of shared objects that we want symbols to be loaded for.
 	* SharedLibraryManager.java

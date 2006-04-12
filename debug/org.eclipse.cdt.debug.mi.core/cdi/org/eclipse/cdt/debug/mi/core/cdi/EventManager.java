@@ -371,7 +371,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		Target currentTarget = session.getTarget(miSession);
 		SharedLibraryManager mgr = session.getSharedLibraryManager();
 
-		if (mgr.isDeferredBreakpoint()) {
+		if (mgr.isDeferredBreakpoint(currentTarget)) {
 			if (stopped instanceof MISharedLibEvent) {
 				// Check if we have a new library loaded
 				try {

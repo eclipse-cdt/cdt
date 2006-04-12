@@ -64,7 +64,7 @@
 
 	<target name="suite">
 		<antcall target="cdt-core"/>
-		<antcall target="cdt-ui"/>
+		<!--antcall target="cdt-ui"/-->
 		<antcall target="cdt-debug-ui"/>
 		<antcall target="cdt-mbs-core"/>
 		<antcall target="cdt-mbs-ui"/>

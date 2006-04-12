@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 public abstract class MIEvent extends EventObject {
 
 	int token;
+	boolean propagate = true;
 
 	public MIEvent(MISession session, int token) {
 		super(session);
@@ -31,5 +32,13 @@ public abstract class MIEvent extends EventObject {
 
 	public MISession getMISession() {
 		return (MISession)getSource();
+	}
+
+	public boolean propagate() {
+		return propagate;
+	}
+
+	public void setPropagate( boolean propagate ) {
+		this.propagate = propagate;
 	}
 }

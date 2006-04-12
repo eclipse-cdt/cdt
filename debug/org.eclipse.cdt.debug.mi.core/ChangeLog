@@ -1,4 +1,11 @@
 2006-04-12 Mikhail Khodjaiants
+	Bug 136206: Suppress Resumed events when processing solib events.
+	* EventManager.java
+	* RxThread.java
+	* Command.java
+	* MIEvent.java
+
+2006-04-12 Mikhail Khodjaiants
 	Bug 119740: allow to specify only a subset of shared objects that we want symbols to be loaded for.
 	Support for deferred breakpoints.
 	* BreakpointManager.java

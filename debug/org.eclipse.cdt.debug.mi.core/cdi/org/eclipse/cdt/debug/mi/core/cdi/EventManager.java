@@ -399,9 +399,10 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 							break;
 						case MIRunningEvent.RETURN:
 							lastUserCommand = factory.createMIExecReturn();
-						break;
+							break;
 						case MIRunningEvent.CONTINUE: {
 							MIExecContinue cont = factory.createMIExecContinue();
+							cont.setQuiet(true);
 							try {
 								miSession.postCommand(cont);
 								MIInfo info = cont.getMIInfo();
@@ -462,6 +463,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				if (miLevel >= 0) {
 					MIStackSelectFrame selectFrame = factory.createMIStackSelectFrame(miLevel);
 					MIExecFinish finish = factory.createMIExecFinish();
+					finish.setQuiet(true);
 					try {
 						miSession.postCommand(selectFrame);
 						miSession.postCommand(finish);
@@ -473,6 +475,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					// for example the StopEventLib was on a different thread
 					// redo the last command.
 					Command cmd = lastUserCommand;
+					cmd.setQuiet(true);
 					lastUserCommand = null;
 					try {
 						miSession.postCommand(cmd);
@@ -483,6 +486,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				return true;
 			} else if (lastUserCommand != null) {
 				Command cmd = lastUserCommand;
+				cmd.setQuiet(true);
 				lastUserCommand = null;
 				try {
 					miSession.postCommand(cmd);
@@ -516,7 +520,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		currentTarget.setSupended(false);
 
 		// Bailout early if we do not want to process any events.
-		if (!isAllowingProcessingEvents()) {
+		if (!isAllowingProcessingEvents() || !running.propagate()) {
 			return false;
 		}
 

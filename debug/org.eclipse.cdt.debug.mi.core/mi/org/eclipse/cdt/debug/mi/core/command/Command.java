@@ -27,6 +27,7 @@ public abstract class Command
 
 	int token = 0;
 	MIOutput output;
+	boolean quiet = false;
 
 	/**
 	 * A global counter for all command, the token
@@ -104,4 +105,11 @@ public abstract class Command
 		throw new MIException(mesg, details);
 	}
 
+	public boolean isQuiet() {
+		return this.quiet;
+	}
+
+	public void setQuiet( boolean quiet ) {
+		this.quiet = quiet;
+	}
 }

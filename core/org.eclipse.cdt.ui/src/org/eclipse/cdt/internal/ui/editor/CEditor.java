@@ -31,7 +31,6 @@ import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.JoinLinesAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
-import org.eclipse.cdt.internal.ui.browser.typehierarchy.OpenTypeHierarchyAction;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDefinitionAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
@@ -43,7 +42,6 @@ import org.eclipse.cdt.internal.ui.util.CUIHelp;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
 import org.eclipse.cdt.ui.actions.ShowInCViewAction;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 import org.eclipse.core.resources.IFile;
@@ -153,8 +151,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	
 	/** Search actions **/
 	private ActionGroup fSelectionSearchGroup;
-    /** Groups refactoring actions. */
-	private ActionGroup fRefactoringActionGroup;
     /** Action which shows selected element in CView. */
 	private ShowInCViewAction fShowInCViewAction;
 	
@@ -573,7 +569,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			fCEditorErrorTickUpdater = null;
 		}
 		
-        final CSourceViewer sourceViewer = (CSourceViewer) getSourceViewer();
         if (fSelectionUpdateListener != null) {
 			getSelectionProvider().addSelectionChangedListener(fSelectionUpdateListener);
 			fSelectionUpdateListener = null;
@@ -598,11 +593,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		if (fShowInCViewAction != null) {
 			fShowInCViewAction.dispose();
 			fShowInCViewAction = null;
-		}
-		
-		if (fRefactoringActionGroup != null) {
-			fRefactoringActionGroup.dispose();
-			fRefactoringActionGroup = null;
 		}
 		
 		if (fSelectionSearchGroup != null) {
@@ -744,7 +734,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
         //Assorted action groupings
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
-		fRefactoringActionGroup = new RefactoringActionGroup(this, null);		
 	}
 
 	/**
@@ -776,9 +765,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ShowInCView"); //$NON-NLS-1$
 
-        fRefactoringActionGroup.fillContextMenu(menu);
 		fSelectionSearchGroup.fillContextMenu(menu);
-	
 	}
 
 	/**

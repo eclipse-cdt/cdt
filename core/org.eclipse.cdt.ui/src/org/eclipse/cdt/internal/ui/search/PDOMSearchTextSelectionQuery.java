@@ -11,40 +11,48 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.text.ITextSelection;
 
 /**
  * @author Doug Schaefer
- * 
- * This is the search query to be used for searching the PDOM.
+ *
  */
-public class PDOMSearchBindingQuery extends PDOMSearchQuery {
+public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 
-	private PDOMBinding binding;
+	private ITranslationUnit tu;
+	private ITextSelection selection;
 	
-	public PDOMSearchBindingQuery(ICElement[] scope, PDOMBinding binding, int flags) {
+	public PDOMSearchTextSelectionQuery(ICElement[] scope, ITranslationUnit tu, ITextSelection selection, int flags) {
 		super(scope, flags);
-		this.binding = binding;
+		this.tu = tu;
+		this.selection = selection;
 	}
-	
+
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 		try {
-			createMatches(binding.getLinkage().getLanguage(), binding);
+			ILanguage language = tu.getLanguage();
+			IASTTranslationUnit ast = language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
+			IASTName[] names = language.getSelectedNames(ast, selection.getOffset(), selection.getLength());
+			
+			for (int i = 0; i < names.length; ++i) {
+				IBinding binding = names[i].resolveBinding();
+				createMatches(language, binding);
+			}
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
-			return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, e.getLocalizedMessage(), e);
+			return e.getStatus();
 		}
-	}
-
-	public String getLabel() {
-		return super.getLabel() + " " + binding.getName();
 	}
 
 }

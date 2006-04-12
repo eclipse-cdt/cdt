@@ -35,7 +35,6 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
-import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -84,7 +83,6 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	private MemberFilterActionGroup fMemberFilterActionGroup;
 
 	private ActionGroup fSelectionSearchGroup;
-	private ActionGroup fRefactoringActionGroup;
 	private ActionGroup fOpenViewActionGroup;
 	/**
 	 * Custom filter action group.
@@ -245,8 +243,6 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			fSelectionSearchGroup.fillContextMenu(menu);
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		}
-		
-		fRefactoringActionGroup.fillContextMenu(menu);
 	}
 
 	protected CContentOutlinerProvider createContentProvider(TreeViewer viewer) {
@@ -300,7 +296,6 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
 
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
-		fRefactoringActionGroup = new RefactoringActionGroup(this, null);
 		fOpenViewActionGroup = new OpenViewActionGroup(this);
 		// Custom filter group
 		fCustomFiltersActionGroup= new CustomFiltersActionGroup("org.eclipse.cdt.ui.COutlinePage", getTreeViewer()); //$NON-NLS-1$
@@ -327,10 +322,6 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			fMemberFilterActionGroup= null;
 		}
 		
-		if (fRefactoringActionGroup != null) {
-			fRefactoringActionGroup.dispose();
-			fRefactoringActionGroup= null;
-		}
 		if (fOpenViewActionGroup != null) {
 		    fOpenViewActionGroup.dispose();
 		    fOpenViewActionGroup= null;

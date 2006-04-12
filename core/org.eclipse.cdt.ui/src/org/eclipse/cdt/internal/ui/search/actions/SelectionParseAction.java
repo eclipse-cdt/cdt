@@ -14,10 +14,9 @@ package org.eclipse.cdt.internal.ui.search.actions;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
@@ -32,16 +31,14 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.core.search.ILineLocatable;
-import org.eclipse.cdt.core.search.IMatchLocatable;
-import org.eclipse.cdt.core.search.IOffsetLocatable;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.ExternalSearchEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -52,16 +49,16 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * @author aniefer
@@ -551,165 +548,43 @@ public class SelectionParseAction extends Action {
         return getSelection( (ITextSelection)selection );
     }
     
-    String projectName = "";  //$NON-NLS-1$
-    protected static class Storage
-    {
-        private IResource resource;
-        private String fileName;
-		private IMatchLocatable locatable;
-		
-        public final String getFileName() {
-            return fileName;
-        }
-        public Storage() {
-        }
-        public final IResource getResource() {
-            return resource;
-        }
-	    public final IMatchLocatable getLocatable() {
-	        return locatable;
-	    }
-        public void setFileName(String fileName) {
-            this.fileName = fileName;
-        }
-        public void setLocatable(IMatchLocatable locatable) {
-            this.locatable = locatable;
-        }
-        public void setResource(IResource resource) {
-            this.resource = resource;
-        }
-        
-    }
-    
     /**
-     * @param string
-     * @param i
+     * Open the editor on the given name.
+     * 
+     * @param name
      */
-    protected boolean open(String filename, IMatchLocatable locatable) throws PartInitException, CModelException {
-        IPath path = new Path( filename );
-        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-        if( file != null )
-        {
-            open( file, locatable );
-            return true;
-        }
-
-        ICProject cproject = CoreModel.getDefault().getCModel().getCProject( projectName );
-        ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, path);
-        if (unit != null) {
-            setSelectionAtOffset( EditorUtility.openInEditor(unit), locatable );
-            return true;
-        }
-        
-        // check the IWorkspaceRoot to see if it knows of any IFiles that are open for the corresponding filename (i.e. linked resources)
-        IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
-        for(int i=0; i<files.length; i++) {
-        	if (files[i] != null) {
-        		open( files[i], locatable );
-        		return true;
-        	}
-        }
-
-        FileStorage storage = new FileStorage(null, path);
-        IEditorPart part = EditorUtility.openInEditor(storage);
-        setSelectionAtOffset(part, locatable);
-        return true;
-        
-    }
-    protected Shell getShell() {
-        return fEditor.getSite().getShell();
-    }
-    
-    /**
-     * Opens the editor on the given element and subsequently selects it.
-     */
-    protected void open( IResource resource, IMatchLocatable locatable ) throws CModelException, PartInitException {
-        IEditorPart part= EditorUtility.openInEditor(resource);
-        setSelectionAtOffset(part, locatable);
-    }
-                        
-    /**
-     * @param part
-     * @param offset
-     * @param length TODO
-     */
-    protected void setSelectionAtOffset(IEditorPart part, IMatchLocatable locatable) {
-        if( part instanceof AbstractTextEditor )
-        {
-			int startOffset=0;
-			int length=0;
-		
-			if (locatable instanceof IOffsetLocatable){
-			    startOffset = ((IOffsetLocatable)locatable).getNameStartOffset();
-			    length = ((IOffsetLocatable)locatable).getNameEndOffset() - startOffset;
-			} else if (locatable instanceof ILineLocatable){
-				int tempstartOffset = ((ILineLocatable)locatable).getStartLine();
-				
-				IDocument doc =  ((AbstractTextEditor) part).getDocumentProvider().getDocument(part.getEditorInput());
-				try {
-					//NOTE: Subtract 1 from the passed in line number because, even though the editor is 1 based, the line
-					//resolver doesn't take this into account and is still 0 based
-					startOffset = doc.getLineOffset(tempstartOffset-1);
-					length=doc.getLineLength(tempstartOffset-1);
-				} catch (BadLocationException e) {}			
-				
-				//Check to see if an end offset is provided
-				int tempendOffset = ((ILineLocatable)locatable).getEndLine();
-				//Make sure that there is a real value for the end line
-				if (tempendOffset>0 && tempendOffset>tempstartOffset){
-					try {
-						//See NOTE above
-						int endOffset = doc.getLineOffset(tempendOffset-1);
-						length=endOffset - startOffset;
-					} catch (BadLocationException e) {}		
-				}
-					
+    protected void open(IASTName name) throws CoreException {
+    	IASTFileLocation fileloc = name.getFileLocation();
+    	int currentOffset = fileloc.getNodeOffset();
+    	int currentLength = fileloc.getNodeLength();
+    	
+		IPath path = new Path(fileloc.getFileName());
+		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+		if (files.length > 0) {
+			IEditorPart editor = IDE.openEditor(CUIPlugin.getActivePage(), files[0]);
+			try {
+				IMarker marker = files[0].createMarker(NewSearchUI.SEARCH_MARKER);
+				marker.setAttribute(IMarker.CHAR_START, currentOffset);
+				marker.setAttribute(IMarker.CHAR_END, currentOffset + currentLength);
+				IDE.gotoMarker(editor, marker);
+				marker.delete();
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
 			}
-            try {
-            ((AbstractTextEditor) part).selectAndReveal(startOffset, length);
-            } catch (Exception e) {}
-        }
-    }
-//  /**
-//   * Shows a dialog for resolving an ambigous C element.
-//   * Utility method that can be called by subclassers.
-//   */
-//  protected IMatch selectCElement(List elements, Shell shell, String title, String message) {
-//      
-//      int nResults= elements.size();
-//      
-//      if (nResults == 0)
-//          return null;
-//      
-//      if (nResults == 1)
-//          return (IMatch) elements.get(0);
-//          
-//
-//      ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new CSearchResultLabelProvider(), false, false);
-//      dialog.setTitle(title);
-//      dialog.setMessage(message);
-//      dialog.setElements(elements);
-//      
-//      if (dialog.open() == Window.OK) {
-//          Object[] selection= dialog.getResult();
-//          if (selection != null && selection.length > 0) {
-//              nResults= selection.length;
-//              for (int i= 0; i < nResults; i++) {
-//                  Object current= selection[i];
-//                  if (current instanceof IMatch)
-//                      return (IMatch) current;
-//              }
-//          }
-//      }       
-//      return null;
-//  }   
-    
+		} else {
+			// external file
+			IEditorInput input = new ExternalEditorInput(new FileStorage(path));
+			IEditorPart editor = CUIPlugin.getActivePage().openEditor(input, ExternalSearchEditor.EDITOR_ID);
+			if (editor instanceof ITextEditor) {
+				ITextEditor textEditor = (ITextEditor)editor;
+				textEditor.selectAndReveal(currentOffset, currentLength);
+			}
+		}
 
-    /* (non-Javadoc)
-      * @see org.eclipse.ui.texteditor.IUpdate#update()
-      */
-     public void update() {
-             setEnabled(getSelectedStringFromEditor() != null);
-     }
-	     
+    }
+    
+    public void update() {
+		setEnabled(getSelectedStringFromEditor() != null);
+	}
+
 }

@@ -14,10 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.IRegion;
-
 import org.eclipse.text.edits.TextEdit;
-import org.eclipse.cdt.internal.corext.Assert;
 
 public class GroupDescription {
 

@@ -877,20 +877,6 @@ public class DOMAST extends ViewPart {
 	   searchNamesAction.setToolTipText(SEARCH_FOR_IASTNAME);
 	   searchNamesAction.setImageDescriptor(DOMASTPluginImages.DESC_SEARCH_NAMES);
 	   
-	   openDeclarationsAction = new DisplayDeclarationsAction();
-	   openDeclarationsAction.setText(OPEN_DECLARATIONS);
-	   openDeclarationsAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-			   .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-	   
-	   openReferencesAction = new DisplayReferencesAction();
-	   openReferencesAction.setText(OPEN_REFERENCES);
-	   openReferencesAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-			   .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-	   
-	   displayProblemsAction = new DisplayProblemsResultAction();
-	   displayProblemsAction.setText(DISPLAY_PROBLEMS);
-	   displayProblemsAction.setImageDescriptor(DOMASTPluginImages.DESC_IASTProblem);
-	   
 	   displayNodeTypeAction = new Action() { 
 		   public void run() {
 			   ISelection selection = viewer.getSelection();
@@ -1037,82 +1023,6 @@ public class DOMAST extends ViewPart {
        }
 
    }
-
-   private class DisplayDeclarationsAction extends DisplaySearchResultAction {
-    private static final String STRING_QUOTE = "\""; //$NON-NLS-1$
-	public void run() {
-     	ISelection selection = viewer.getSelection();
-     	if (selection instanceof IStructuredSelection &&
-     			((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
-     			((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTName) {
-     		IASTName name = (IASTName)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode();
-     		StringBuffer pattern = new StringBuffer(STRING_QUOTE);
-     		if (name.toString() != null)
-     			pattern.append(name.toString());
-     		pattern.append(STRING_QUOTE);
-     		
-     		if (lang == ParserLanguage.CPP) {
-     			IASTName[] names = ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getDeclarations(name.resolveBinding());
-     			displayNames(names, OPEN_DECLARATIONS, pattern.toString());
-     		} else {
-     			IASTName[] names = ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getDeclarations(name.resolveBinding());
-     			displayNames(names, OPEN_DECLARATIONS, pattern.toString());
-     		}
-     	}
-     }
-   }
-   
-   private class DisplayReferencesAction extends DisplaySearchResultAction {
-   	private static final String STRING_QUOTE = "\""; //$NON-NLS-1$
-    public void run() {
-     	ISelection selection = viewer.getSelection();
-     	if (selection instanceof IStructuredSelection &&
-     			((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
-     			((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTName) {
-     		IASTName name = (IASTName)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode();
-     		StringBuffer pattern = new StringBuffer(STRING_QUOTE);
-     		if (name.toString() != null)
-     			pattern.append(name.toString());
-     		pattern.append(STRING_QUOTE);
-     		
-     		if (lang == ParserLanguage.CPP) {
-     			IASTName[] names = ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getReferences(name.resolveBinding());
-     			displayNames(names, OPEN_REFERENCES, pattern.toString());
-     		} else {
-     			IASTName[] names = ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getReferences(name.resolveBinding());
-     			displayNames(names, OPEN_REFERENCES, pattern.toString());
-     		}
-     	}
-     }
-   }
-   
-   private class DisplaySearchResultAction extends Action {
-	   	protected void displayNames(IASTName[] names, String queryLabel, String pattern) {
-	        DOMDisplaySearchNames job = new DOMDisplaySearchNames(names, queryLabel, pattern);
-	        NewSearchUI.activateSearchResultView();
-	        NewSearchUI.runQueryInBackground(job);
-	     }
-   }
-   
-   private class DisplayProblemsResultAction extends Action {
-	   	private static final String IASTPROBLEM = "IASTProblem"; //$NON-NLS-1$
-		private static final String PROBLEMS_FOUND = "Problems Found"; //$NON-NLS-1$
-		protected void displayProblems(IASTProblem[] problems, String queryLabel, String pattern) {
-	        DOMDisplaySearchNames job = new DOMDisplaySearchNames(problems, queryLabel, pattern);
-	        NewSearchUI.activateSearchResultView();
-	        NewSearchUI.runQueryInBackground(job);
-	     }
-		
-		public void run() {
-			if (viewer.getTree().getItems().length == 0) {
-        		showMessage(DOM_AST_HAS_NO_CONTENT);
-        	}
-        	
-        	if (viewer.getContentProvider() instanceof ViewContentProvider) {
-				displayProblems(((ViewContentProvider)viewer.getContentProvider()).getASTProblems(), PROBLEMS_FOUND, IASTPROBLEM);
-        	}
-		}
-  }
 
    private void hookSingleClickAction() {
       viewer.addSelectionChangedListener(new ISelectionChangedListener() {

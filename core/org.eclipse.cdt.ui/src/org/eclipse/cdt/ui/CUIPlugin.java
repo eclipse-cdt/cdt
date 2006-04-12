@@ -21,13 +21,11 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
-import org.eclipse.cdt.internal.corext.refactoring.base.Refactoring;
 import org.eclipse.cdt.internal.corext.template.c.CContextType;
 import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
@@ -433,17 +431,13 @@ public class CUIPlugin extends AbstractUIPlugin {
 				return CUIPlugin.getSharedWorkingCopies();
 			}
 		};
-        AllTypesCache.initialize(workingCopyProvider);
 		CCorePlugin.getDefault().getDOM().setWorkingCopyProvider(workingCopyProvider);
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		AllTypesCache.terminate();
-		
 		if (fTextTools != null) {
 			fTextTools.dispose();
 		}
@@ -465,7 +459,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 			fDocumentProvider.shutdown();
 			fDocumentProvider= null;
 		}
-		Refactoring.getUndoManager().shutdown();		
 
 		// Do this last.
 		super.stop(context);

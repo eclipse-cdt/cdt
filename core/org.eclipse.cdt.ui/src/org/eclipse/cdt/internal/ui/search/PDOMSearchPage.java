@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.util.RowLayouter;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.Dialog;
@@ -140,11 +140,12 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 	
 	private IStatusLineManager fLineManager;
 
-	private static IProject getProject(Object object) {
-		if (object instanceof IResource)
-			return ((IResource)object).getProject();
-		else if (object instanceof ICElement)
-			return ((ICElement)object).getCProject().getProject();
+	private static ICProject getProject(Object object) {
+		if (object instanceof ICElement)
+			return ((ICElement)object).getCProject();
+		else if (object instanceof IResource) {
+			return CoreModel.getDefault().create(((IResource)object).getProject());
+		}
 		else
 			return null;
 	}
@@ -175,13 +176,12 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		// get the list of elements for the scope
 		List elements = new ArrayList();
 		String scopeDescription = ""; //$NON-NLS-1$
-		IWorkspaceRoot workspaceRoot = CUIPlugin.getWorkspace().getRoot();
 		switch (getContainer().getSelectedScope()) {
 		case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
 			if (structuredSelection != null) {
 				scopeDescription = CSearchMessages.getString("ProjectScope"); //$NON-NLS-1$
 				for (Iterator i = structuredSelection.iterator(); i.hasNext();) {
-					IProject project = getProject(i.next());
+					ICProject project = getProject(i.next());
 					if (project != null)
 						elements.add(project);
 				}
@@ -193,16 +193,16 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 				for (Iterator i = structuredSelection.iterator(); i.hasNext();) {
 					Object obj = i.next();
 					if (obj instanceof IResource)
-						elements.add(obj);
+						elements.add(CoreModel.getDefault().create((IResource)obj));
 					else if (obj instanceof ICElement)
-						elements.add(((ICElement)obj).getUnderlyingResource());
+						elements.add(obj);
 				}
 				break;
 			}
 			break;
 		case ISearchPageContainer.WORKSPACE_SCOPE:
 			scopeDescription = CSearchMessages.getString("WorkspaceScope"); //$NON-NLS-1$
-			elements.add(workspaceRoot);
+			// Don't add anything
 			break;
 		case ISearchPageContainer.WORKING_SET_SCOPE:
 			IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();
@@ -210,7 +210,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 			for (int i = 0; i < workingSets.length; ++i) {
 				IAdaptable[] wsElements = workingSets[i].getElements();
 				for (int j = 0; j < wsElements.length; ++j) {
-					IProject project = getProject(wsElements[j]);
+					ICProject project = getProject(wsElements[j]);
 					if (project != null)
 						elements.add(project);
 				}
@@ -218,11 +218,11 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 			break;
 		}
 		
-		if (elements.isEmpty()) {
-			// default to workspace scope
-		}
+		ICElement[] scope
+			= elements.isEmpty()
+			? null
+			: (ICElement[])elements.toArray(new ICElement[elements.size()]);
 		
-		IResource[] scope = (IResource[])elements.toArray(new IResource[elements.size()]);
 		PDOMSearchPatternQuery job = new PDOMSearchPatternQuery(scope, scopeDescription, pattern, 
 				isCaseSensitive, searchFlags);
 

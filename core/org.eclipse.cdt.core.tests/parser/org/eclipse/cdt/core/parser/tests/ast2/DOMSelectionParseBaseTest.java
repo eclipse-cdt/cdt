@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.DOMSearchUtil;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.search.DOMSearchUtil;
-import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IFile;
 
 /**
@@ -30,30 +32,15 @@ public class DOMSelectionParseBaseTest extends DOMFileBasePluginTest {
 		return parse( code, offset1, offset2, true );
 	}
 
-	/**
-	 * @param code
-	 * @param offset1
-	 * @param offset2
-	 * @param b
-	 * @return
-	 */
 	protected IASTNode parse(String code, int offset1, int offset2, boolean expectedToPass) throws Exception {
 		IFile file = importFile("temp.cpp", code); //$NON-NLS-1$
-		IASTName[] names = DOMSearchUtil.getSelectedNamesFrom(file, offset1, offset2 - offset1);
-		
-		if (!expectedToPass) return null;
-		
-		if (names.length == 0) {
-			assertFalse(true);
-		} else {
-			return names[0];
-		}
-		
-		return null;
+		return parse(file, offset1, offset2, expectedToPass);
 	}
 	
 	protected IASTNode parse(IFile file, int offset1, int offset2, boolean expectedToPass) throws Exception {
-		IASTName[] names = DOMSearchUtil.getSelectedNamesFrom(file, offset1, offset2 - offset1);
+		ITranslationUnit tu = (ITranslationUnit)CCorePlugin.getDefault().getCoreModel().create(file);
+		IASTTranslationUnit ast = tu.getLanguage().getASTTranslationUnit(tu, 0);
+		IASTName[] names = tu.getLanguage().getSelectedNames(ast, offset1, offset2 - offset1);
 		
 		if (!expectedToPass) return null;
 		
@@ -67,10 +54,10 @@ public class DOMSelectionParseBaseTest extends DOMFileBasePluginTest {
 	}
 	
 	protected IASTName[] getDeclarationOffTU(IASTName name) {
-        return DOMSearchUtil.getNamesFromDOM(name, ICSearchConstants.DECLARATIONS);
+        return DOMSearchUtil.getNamesFromDOM(name, DOMSearchUtil.DECLARATIONS);
 	}
     
     protected IASTName[] getReferencesOffTU(IASTName name) {
-        return DOMSearchUtil.getNamesFromDOM(name, ICSearchConstants.REFERENCES);
+        return DOMSearchUtil.getNamesFromDOM(name, DOMSearchUtil.REFERENCES);
     }
 }

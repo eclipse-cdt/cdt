@@ -19,7 +19,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
+import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.IPDOMWriter;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -48,7 +50,8 @@ import org.eclipse.core.runtime.QualifiedName;
  * 
  * @author Doug Schaefer
  */
-public class PDOM extends PlatformObject implements IPDOM {
+public class PDOM extends PlatformObject
+		implements IPDOM, IPDOMResolver, IPDOMWriter {
 
 	private final ICProject project;
 	private IPDOMIndexer indexer;
@@ -86,7 +89,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public Object getAdapter(Class adapter) {
-		if (adapter == PDOM.class)
+		if (adapter == IPDOM.class)
+			return this;
+		else if (adapter == IPDOMResolver.class)
+			return this;
+		else if (adapter == IPDOMWriter.class)
+			return this;
+		else if (adapter == PDOM.class)
+			// TODO this use is deprecated (or bad at least)
 			return this;
 		else
 			return super.getAdapter(adapter);
@@ -246,10 +256,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public IASTName[] getDeclarations(IBinding binding) {
 		try {
 			if (binding instanceof PDOMBinding) {
-				PDOMName name = ((PDOMBinding)binding).getFirstDeclaration();
-				if (name == null)
-					return new IASTName[0];
-				return new IASTName[] { name }; 
+				List names = new ArrayList();
+				for (PDOMName name = ((PDOMBinding)binding).getFirstDeclaration(); name != null; name = name.getNextInBinding())
+					names.add(name);
+				// Add in definitions, too
+				for (PDOMName name = ((PDOMBinding)binding).getFirstDefinition(); name != null; name = name.getNextInBinding())
+					names.add(name);
+				return (IASTName[])names.toArray(new IASTName[names.size()]);
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -257,6 +270,20 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return new IASTName[0];
 	}
 
+	public IASTName[] getDefinitions(IBinding binding) {
+		try {
+			if (binding instanceof PDOMBinding) {
+				List names = new ArrayList();
+				for (PDOMName name = ((PDOMBinding)binding).getFirstDefinition(); name != null; name = name.getNextInBinding())
+					names.add(name);
+				return (IASTName[])names.toArray(new IASTName[names.size()]);
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return new IASTName[0];
+	}
+	
 	public IBinding resolveBinding(IASTName name) {
 		try {
 			ILanguage language = name.getTranslationUnit().getLanguage();

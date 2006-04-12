@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
-import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -56,7 +55,6 @@ public class AST2FileBasePluginTest extends TestCase {
 	        	cPrj = CProjectHelper.createCCProject("AST2BasedProjectMofo", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
 	        	
 	            project = cPrj.getProject();
-	            project.setSessionProperty(DOMSourceIndexer.activationKey,new Boolean(false));
 	            
 	            // ugly
 	            if (className == null || !className.equals(aClassName)) {

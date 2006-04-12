@@ -40,10 +40,8 @@ public class RegressionTestSuite extends TestSuite {
 	public static Test suite() {
 		final RegressionTestSuite suite = new RegressionTestSuite();
 
-		suite.addTest( SearchRegressionTests.suite( false ) );
 		suite.addTest( SelectionRegressionTest.suite( false ) );
 		
-		suite.addTest( new SearchRegressionTests("cleanupProject") ); //$NON-NLS-1$
 		return suite;
 	}
 }

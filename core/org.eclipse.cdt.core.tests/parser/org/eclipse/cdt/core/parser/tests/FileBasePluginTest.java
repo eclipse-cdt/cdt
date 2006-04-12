@@ -70,7 +70,6 @@ import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
-import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.core.resources.IFile;
@@ -105,7 +104,6 @@ public class FileBasePluginTest extends TestCase {
 	        	cPrj = CProjectHelper.createCCProject("ParserTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
 	        	
 	            project = cPrj.getProject();
-	            project.setSessionProperty(DOMSourceIndexer.activationKey,new Boolean(false));
 	            
 	            // ugly
 	            if (className == null || !className.equals(aClassName)) {

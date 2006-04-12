@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -748,7 +749,7 @@ public class CPPSemantics {
 			// Let's try the pdom
 			IPDOM pdom = name.getTranslationUnit().getIndex();
 			if (pdom != null)
-				binding = pdom.resolveBinding(name);
+				binding = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).resolveBinding(name);
 
 			// If we're still null...
 			if (binding == null) {

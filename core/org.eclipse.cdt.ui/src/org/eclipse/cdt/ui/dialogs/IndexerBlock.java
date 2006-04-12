@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.index.nullindexer.NullIndexer;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.index.AbstractIndexerPage;
@@ -63,8 +62,6 @@ public class IndexerBlock extends AbstractCOptionPage {
     private String 					selectedIndexerId = null;
 	private Composite 				parentComposite;
     private ICOptionPage 		 	currentPage;
-    
-    int nullIndexerIndex;
     
 	String initialSelected;
 	
@@ -241,8 +238,6 @@ public class IndexerBlock extends AbstractCOptionPage {
         for (int i = 0; i < infos.length; i++) {
             if (infos[i].getName().equals("indexerUI")) { //$NON-NLS-1$
                 String id = infos[i].getAttribute("indexerID"); //$NON-NLS-1$
-                if (NullIndexer.ID.equals(id))
-                	nullIndexerIndex = i;
                 indexerPageMap.put(id, new IndexerPageConfiguration(infos[i]));
                 indexerPageList.add(id);
             }
@@ -346,10 +341,6 @@ public class IndexerBlock extends AbstractCOptionPage {
 				CCorePlugin.getPDOMManager().setIndexerId(cproject, indexerID);
 				if (currentPage != null && currentPage.getControl() != null) {
 					currentPage.performApply(new SubProgressMonitor(monitor, 1));
-				}
-				//Only send out an index changed notification if the indexer has actually changed
-				if (initialSelected == null || !selected.equals(initialSelected)) {
-					CCorePlugin.getDefault().getCoreModel().getIndexManager().indexerChangeNotification(project);
 				}
 			} else {
 				if (initialSelected == null || !selected.equals(initialSelected)) {

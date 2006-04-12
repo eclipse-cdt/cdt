@@ -86,10 +86,15 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 		case ICElement.C_PROJECT:
 			// Find the appropriate indexer and pass the delta on
 			ICProject project = (ICProject)delta.getElement();
-			IPDOM pdom = getPDOM(project);
-			if (pdom != null)
-				// TODO project delete, should do something fancier here.
-				pdom.getIndexer().handleDelta(delta);
+			if (delta.getKind() != ICElementDelta.REMOVED) {
+				if (project.getProject().exists()) {
+					IPDOM pdom = getPDOM(project);
+					if (pdom != null)
+						// TODO project delete, should do something fancier here.
+						pdom.getIndexer().handleDelta(delta);
+				}
+			}
+			// TODO handle delete too.
 		}
 	}
 	

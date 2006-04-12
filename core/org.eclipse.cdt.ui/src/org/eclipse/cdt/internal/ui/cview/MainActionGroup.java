@@ -17,7 +17,6 @@ import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
-import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -78,7 +77,6 @@ public class MainActionGroup extends CViewActionGroup {
 	CustomFiltersActionGroup fCustomFiltersActionGroup;	
 
 	SelectionSearchGroup selectionSearchGroup;
-	RefactoringActionGroup refactoringActionGroup;
 
     private NewWizardMenu newWizardMenu;
 
@@ -161,8 +159,6 @@ public class MainActionGroup extends CViewActionGroup {
 //		toggleLinkingAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif"));//$NON-NLS-1$
 
 		selectionSearchGroup = new SelectionSearchGroup(getCView().getSite());
-		refactoringActionGroup = new RefactoringActionGroup(getCView().getSite(), null);	
-	
 	}
 
 	/**
@@ -177,8 +173,6 @@ public class MainActionGroup extends CViewActionGroup {
 
 		if (resources.isEmpty()) {
 			menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
-			refactoringActionGroup.fillContextMenu(menu);						
-			menu.add(new Separator());
 			importAction.selectionChanged(resources);
 			menu.add(importAction);
 			exportAction.selectionChanged(resources);

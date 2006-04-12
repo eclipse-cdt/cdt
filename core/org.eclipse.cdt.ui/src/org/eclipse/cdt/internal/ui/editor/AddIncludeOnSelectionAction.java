@@ -13,40 +13,19 @@ package org.eclipse.cdt.internal.ui.editor;
 
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
-import org.eclipse.cdt.core.browser.AllTypesCache;
-import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.ITypeReference;
-import org.eclipse.cdt.core.browser.ITypeSearchScope;
-import org.eclipse.cdt.core.browser.QualifiedTypeName;
-import org.eclipse.cdt.core.browser.TypeSearchScope;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.search.BasicSearchResultCollector;
-import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.core.search.IMatch;
-import org.eclipse.cdt.core.search.OrPattern;
-import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
 import org.eclipse.cdt.internal.ui.codemanipulation.AddIncludesOperation;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
-import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
-import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -56,15 +35,13 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
-
+// TODO this is a big TODO. 
 public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		
 	private ITextEditor fEditor;
@@ -189,18 +166,10 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 
 			// Try the type caching.
 			if (fRequiredIncludes == null && fUsings == null) {
-				ITypeInfo[] typeInfos= findTypeInfos(name);
-				if (typeInfos != null && typeInfos.length > 0) {
-					selectResult(typeInfos, name, getShell());
-				}
 			}
 
 			// Do a full search
 			if (fRequiredIncludes == null && fUsings == null) {
-				IMatch[] matches = findMatches(name);
-				if (matches != null && matches.length > 0) {
-					selectResult(matches, name, getShell());
-				}
 			}
 		} catch (BadLocationException e) {
 			MessageDialog.openError(getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message3"), CEditorMessages.getString("AddIncludeOnSelection.error.message4") + e.getMessage()); //$NON-NLS-2$ //$NON-NLS-1$
@@ -238,223 +207,6 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			// Do nothing. Operation has been canceled.
 		}
 		return fs[0];
-	}
-
-	/**
-	 * Finds a type by the simple name.
-	 */
-	private ITypeInfo[] findTypeInfos(final String name) {
-		final ITypeInfo[][] infos = new ITypeInfo[1][];
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				ITranslationUnit unit = getTranslationUnit();
-				int[] types= {ICElement.C_CLASS, ICElement.C_UNION, ICElement.C_STRUCT, ICElement.C_ENUMERATION, ICElement.C_TYPEDEF};
-				ITypeSearchScope scope = new TypeSearchScope();
-				scope.add(unit.getCProject().getProject());
-				if (!AllTypesCache.isCacheUpToDate(scope)) {
-					AllTypesCache.updateCache(scope, monitor);
-				}
-				ITypeInfo[] results = null;
-			    if (!monitor.isCanceled()) {
-					results = AllTypesCache.getTypes(scope, new QualifiedTypeName(name), types, true);
-				    if (!monitor.isCanceled()) {
-						for (int i = 0; i < results.length; ++i) {
-						    ITypeInfo info = results[i];
-						    AllTypesCache.resolveTypeLocation(info, monitor);
-						    if (monitor.isCanceled())
-						        break;
-						}
-				    }
-			    }
-				infos[0] = results;
-			}
-		};
-		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
-		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message1"), null); //$NON-NLS-1$
-		} catch (InterruptedException e) {
-			// Do nothing. Operation has been canceled.
-		}
-		return infos[0];
-	}
-
-	private IMatch[] findMatches(final String name) {
-		final BasicSearchResultCollector searchResultCollector = new BasicSearchResultCollector();
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				ICProject cproject = getTranslationUnit().getCProject();
-				ICSearchScope scope = SearchEngine.createCSearchScope(new ICElement[]{cproject}, true);
-				OrPattern orPattern = new OrPattern();
-				orPattern.addPattern(SearchEngine.createSearchPattern( 
-						name, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, false));
-				orPattern.addPattern(SearchEngine.createSearchPattern( 
-						name, ICSearchConstants.TYPE, ICSearchConstants.DEFINITIONS, false));
-				orPattern.addPattern(SearchEngine.createSearchPattern( 
-						name, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false));
-				orPattern.addPattern(SearchEngine.createSearchPattern( 
-						name, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, false));				
-				orPattern.addPattern(SearchEngine.createSearchPattern( 
-						name, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, false));
-				orPattern.addPattern(SearchEngine.createSearchPattern( 
-						name, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false));
-
-				SearchEngine searchEngine = new SearchEngine();
-				searchEngine.setWaitingPolicy(ICSearchConstants.FORCE_IMMEDIATE_SEARCH);
-				searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, searchResultCollector, true);
-			}
-		};
-		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
-		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message1"), null); //$NON-NLS-1$
-		} catch (InterruptedException e) {
-			// Do nothing. Operation has been canceled.
-		}
-
-		Set set = searchResultCollector.getSearchResults();
-		if (set != null) {
-			IMatch[] matches = new IMatch[set.size()];
-			set.toArray(matches);
-			return matches;
-		}
-		return null;
-	}
-
-	private void selectResult(ITypeInfo[] results, String name, Shell shell) {
-		int nResults= results.length;
-		ITranslationUnit unit = getTranslationUnit();
-		if (nResults == 0) {
-			return; // bail out
-		}
-
-		int occurences = 0;
-		int index = 0;
-		for (int i = 0; i < results.length; i++) {
-			if (name.equals(results[i].getName())) {
-				occurences++;
-				index = i;
-			}
-		}
-
-		// if only one
-		if (occurences == 1 || results.length == 1) {
-			ITypeInfo curr= results[index];
-			IRequiredInclude include = getRequiredInclude(curr, unit);
-			if (include != null) {
-		    	fRequiredIncludes = new IRequiredInclude[] { include };
-			}
-			if (curr.hasEnclosedTypes()) {
-				ITypeInfo[] ns = curr.getEnclosedTypes();
-				fUsings = new String[ns.length];
-				for (int j = 0; j < fUsings.length; j++) {
-					fUsings[j] = ns[j].getName();
-				}
-			}
-			return;
-		}
-
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_TYPE_ONLY));
-		dialog.setElements(results);
-		dialog.setTitle(CEditorMessages.getString("AddIncludeOnSelection.label")); //$NON-NLS-1$
-		dialog.setMessage(CEditorMessages.getString("AddIncludeOnSelection.description")); //$NON-NLS-1$
-		if (dialog.open() == Window.OK) {
-			ITypeInfo[] selects = (ITypeInfo[])dialog.getResult();
-			fRequiredIncludes = new IRequiredInclude[selects.length];
-			List usings = new ArrayList(selects.length);
-			for (int i = 0; i < fRequiredIncludes.length; i++) {
-				IRequiredInclude include = getRequiredInclude(selects[i], unit);
-				if (include != null) {
-					fRequiredIncludes[i] = include;
-					if (selects[i].hasEnclosedTypes()) {
-						ITypeInfo[] ns = results[0].getEnclosedTypes();
-						for (int j = 0; j < ns.length; j++) {
-							usings.add(ns[j].getName());
-						}
-					}
-				} else {
-					fRequiredIncludes[i] = new RequiredIncludes(""); //$NON-NLS-1$
-				}
-			}
-			if (!usings.isEmpty()) {
-				fUsings = new String[usings.size()];
-				usings.toArray(fUsings);
-			}
-		}
-	}
-	
-	private IRequiredInclude getRequiredInclude(ITypeInfo curr, ITranslationUnit tu) {
-        ITypeReference ref = curr.getResolvedReference();
-        if (ref != null) {
-            IPath typeLocation = ref.getLocation();
-    		IProject project = tu.getCProject().getProject();
-            IPath projectLocation = project.getLocation();
-        	IPath headerLocation = tu.getResource().getLocation();
-            boolean isSystemIncludePath = false;
-
-            IPath includePath = PathUtil.makeRelativePathToProjectIncludes(typeLocation, project);
-            if (includePath != null && !projectLocation.isPrefixOf(typeLocation)) {
-                isSystemIncludePath = true;
-            } else if (projectLocation.isPrefixOf(typeLocation)
-                    && projectLocation.isPrefixOf(headerLocation)) {
-                includePath = PathUtil.makeRelativePath(typeLocation, headerLocation.removeLastSegments(1));
-            }
-            if (includePath == null)
-                includePath = typeLocation;
-        	return new RequiredIncludes(includePath.toString(), isSystemIncludePath);
-        }
-        return null;
-    }
-
-    private void selectResult(IMatch[] results, String name, Shell shell) {
-		int nResults = results.length;
-		if (nResults == 0) {
-			return;
-		}
-
-		int occurences = 0;
-		int index = 0;	
-		for (int i= 0; i < results.length; i++) {
-			IMatch curr= results[i];
-			if (curr.getName().startsWith(name)) {
-				occurences++;
-				index = i;
-			}
-		}
-
-		// if only one
-		if (occurences == 1 || results.length == 1) {
-			IMatch curr = results[index];
-			fRequiredIncludes = new IRequiredInclude[1];
-			fRequiredIncludes[0] = new RequiredIncludes(curr.getLocation().lastSegment());
-			String parentName = curr.getParentName();
-			if (parentName != null && parentName.length() > 0) {
-				fUsings = new String[] {parentName};
-			}
-			return;
-		}
-
-		// Make them choose
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new CSearchResultLabelProvider(null));
-		dialog.setElements(results);
-		dialog.setTitle(CEditorMessages.getString("AddIncludeOnSelection.label")); //$NON-NLS-1$
-		dialog.setMessage(CEditorMessages.getString("AddIncludeOnSelection.description")); //$NON-NLS-1$
-		if (dialog.open() == Window.OK) {
-			IMatch[] selects = (IMatch[])dialog.getResult();
-			fRequiredIncludes = new IRequiredInclude[selects.length];
-			List usings = new ArrayList(selects.length);
-			for (int i = 0; i < fRequiredIncludes.length; i++) {
-				fRequiredIncludes[i] = new RequiredIncludes(selects[i].getLocation().lastSegment());
-				String parentName = selects[i].getParentName();
-				if (parentName != null && parentName.length() > 0) {
-					usings.add(parentName);
-				}
-			}
-			if (!usings.isEmpty()) {
-				fUsings = new String [usings.size()];
-				usings.toArray(fUsings);
-			}
-		}
 	}
 
 	public void setContentEditor(ITextEditor editor) {

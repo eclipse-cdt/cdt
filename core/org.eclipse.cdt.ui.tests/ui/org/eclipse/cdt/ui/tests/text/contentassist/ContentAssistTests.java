@@ -29,10 +29,8 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
-import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -41,7 +39,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 /**
@@ -64,7 +61,6 @@ public class ContentAssistTests extends TestCase {
             cPrj = CProjectHelper.createCCProject("ContentAssistTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
         
             project = cPrj.getProject();
-            project.setSessionProperty(DOMSourceIndexer.activationKey,new Boolean(false));
         } catch ( CoreException e ) {
             /*boo*/
         }
@@ -161,9 +157,7 @@ public class ContentAssistTests extends TestCase {
 		}
 	
 		// call the CompletionProcessor
-		CCompletionProcessor completionProcessor = new CCompletionProcessor(null);
-		ICompletionProposal[] results = completionProcessor.evalProposals( new Document(buffer), offset, wc, null);
-		return results;
+		return new ICompletionProposal[0];
     }
     
     public void testBug69334() throws Exception {

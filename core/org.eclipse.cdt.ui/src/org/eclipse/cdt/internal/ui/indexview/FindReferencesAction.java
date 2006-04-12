@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.ui.search.PDOMSearchBindingQuery;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -39,7 +41,12 @@ public class FindReferencesAction extends IndexAction {
 	}
 	
 	public void run() {
-		PDOMSearchBindingQuery query = new PDOMSearchBindingQuery(getBinding(), PDOMSearchBindingQuery.FIND_REFERENCES);
+		PDOMBinding binding = getBinding();
+		ICProject project = binding.getPDOM().getProject();
+		PDOMSearchBindingQuery query = new PDOMSearchBindingQuery(
+				new ICElement[] { project },
+				getBinding(),
+				PDOMSearchBindingQuery.FIND_REFERENCES);
 		
 		NewSearchUI.activateSearchResultView();
 		

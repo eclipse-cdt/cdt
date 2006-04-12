@@ -31,20 +31,15 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.resources.ScannerProvider;
-import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.cdt.internal.core.PathEntryVariableManager;
-import org.eclipse.cdt.internal.core.index.domsourceindexer.AbstractIndexerRunner;
 import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.DeltaProcessor;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
-import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
-import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -931,31 +926,9 @@ public class CCorePlugin extends Plugin {
 			option = Platform.getDebugOption(MODEL);
 			if(option != null) Util.VERBOSE_MODEL = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 			
-			boolean indexFlag = false;
-			option = Platform.getDebugOption(INDEX_MANAGER);
-			if(option != null) {
-				indexFlag = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-				IndexManager.VERBOSE = indexFlag;
-			} //$NON-NLS-1$
-			
-			option = Platform.getDebugOption(INDEXER);
-			if(option != null) AbstractIndexerRunner.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
-		
-			option = Platform.getDebugOption(INDEXER_TIMES);
-			if (option != null) AbstractIndexerRunner.TIMING =  option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			    
-			option = Platform.getDebugOption(SEARCH);
-			if(option != null) SearchEngine.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
-			
 			option = Platform.getDebugOption(DELTA);
 			if(option != null) DeltaProcessor.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 			
-			option = Platform.getDebugOption(MATCH_LOCATOR);
-			if(option != null) MatchLocator.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
-
-			if (indexFlag == true){
-			   JobManager.VERBOSE = true; 	
-			}
 		}
 	}
 

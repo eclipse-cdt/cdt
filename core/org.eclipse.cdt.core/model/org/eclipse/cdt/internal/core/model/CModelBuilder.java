@@ -165,8 +165,9 @@ public class CModelBuilder {
 				scanInfo = new ExtendedScannerInfo();
 			}
 
+			IResource resource = translationUnit.getUnderlyingResource();
 			CodeReader reader =
-				translationUnit.getUnderlyingResource() != null
+				resource != null && resource.getLocation() != null
 					? new CodeReader(translationUnit.getUnderlyingResource().getLocation().toOSString(), code)
 					: new CodeReader(code);
 			parser = ParserFactory.createParser( 

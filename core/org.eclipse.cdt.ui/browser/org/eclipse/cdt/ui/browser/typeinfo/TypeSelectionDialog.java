@@ -11,17 +11,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.browser.typeinfo;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.core.browser.IQualifiedTypeName;
-import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.util.QualifiedTypeName;
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -121,46 +117,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		 * @see FilteredList.FilterMatcher#match(Object)
 		 */
 		public boolean match(Object element) {
-			if (!(element instanceof ITypeInfo))
-				return false;
-
-			ITypeInfo info = (ITypeInfo) element;
-			IQualifiedTypeName qualifiedName = info.getQualifiedTypeName();
-			
-			if (fVisibleTypes != null && !fVisibleTypes.contains(new Integer(info.getCElementType())))
-				return false;
-
-			if (!fShowLowLevelTypes && qualifiedName.isLowLevel())
-				return false;
-			
-			if (fSegmentMatchers.length == 1 && !fMatchGlobalNamespace)
-				return fNameMatcher.match(qualifiedName.getName());
-			
-			return matchQualifiedName(info);
-		}
-
-		private boolean matchQualifiedName(ITypeInfo info) {
-			IQualifiedTypeName qualifiedName = info.getQualifiedTypeName();
-			if (fSegmentMatchers.length != qualifiedName.segmentCount())
-				return false;
-			
-			if (fMatchGlobalNamespace) {
-				// must match global namespace (eg ::foo)
-				if (info.getRootNamespace(false) != null)
-					return false;
-			}
-			
-			boolean matchFound = true;
-			int max = Math.min(fSegmentMatchers.length, qualifiedName.segmentCount());
-			for (int i = 0; i < max; ++i) {
-				StringMatcher matcher = fSegmentMatchers[i];
-				String name = qualifiedName.segment(i);
-				if (name == null || !matcher.match(name)) {
-					matchFound = false;
-					break;
-				}
-			}
-			return matchFound;
+			return false;
 		}
 
 		private static String adjustPattern(String pattern) {
@@ -203,9 +160,6 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	private static final String SETTINGS_SHOW_UNIONS = "show_unions"; //$NON-NLS-1$
 	private static final String SETTINGS_SHOW_LOWLEVEL = "show_lowlevel"; //$NON-NLS-1$
 
-	private static final TypeInfoLabelProvider fElementRenderer = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_TYPE_ONLY);
-	private static final TypeInfoLabelProvider fQualifierRenderer = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_ENCLOSING_TYPE_ONLY + TypeInfoLabelProvider.SHOW_PATH);
-	
 	static final TypeFilterMatcher fFilterMatcher = new TypeFilterMatcher();
 	private static final StringComparator fStringComparator = new StringComparator();
 
@@ -226,7 +180,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	 * @param parent  the parent shell.
 	 */
 	public TypeSelectionDialog(Shell parent) {
-		super(parent, fElementRenderer, fQualifierRenderer);
+		super(parent, null, null);//fElementRenderer, fQualifierRenderer);
 		setMatchEmptyString(false);
 		setUpperListLabel(TypeInfoMessages.getString("TypeSelectionDialog.upperLabel")); //$NON-NLS-1$
 		setLowerListLabel(TypeInfoMessages.getString("TypeSelectionDialog.lowerLabel")); //$NON-NLS-1$
@@ -341,7 +295,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			default:
 				return;
 		}
-		Image icon = TypeInfoLabelProvider.getTypeIcon(type);
+		Image icon = null; //TypeInfoLabelProvider.getTypeIcon(type);
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout(2, false);
@@ -570,12 +524,5 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
 	protected void computeResult() {
-		ITypeInfo selection = (ITypeInfo) getLowerSelectedElement();
-		if (selection == null)
-			return;
-			
-		List result = new ArrayList(1);
-		result.add(selection);
-		setResult(result);
 	}
 }

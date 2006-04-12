@@ -10,20 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.tests.suite;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.managedbuilder.ui.tests.TestCProjectPlatformPage;
-import org.eclipse.cdt.managedbuilder.ui.tests.TestCustomPageManager;
-
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.eclipse.cdt.managedbuilder.ui.tests.TestCProjectPlatformPage;
+import org.eclipse.cdt.managedbuilder.ui.tests.TestCustomPageManager;
 
 /**
  *
  */
 public class AllManagedBuildUITests {
 	public static void main(String[] args) {
-	    CCorePlugin.getDefault().getCoreModel().getIndexManager().reset();
 		junit.textui.TestRunner.run(AllManagedBuildUITests.suite());
 	}
 	public static Test suite() {

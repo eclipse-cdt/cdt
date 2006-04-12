@@ -5,8 +5,6 @@
 	<classpathentry kind="src" path="model"/>
 	<classpathentry kind="src" path="parser"/>
 	<classpathentry kind="src" path="suite"/>
-	<classpathentry kind="src" path="indexer"/>
-	<classpathentry kind="src" path="search"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="regression"/>

@@ -21,8 +21,10 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.search.DOMSearchUtil;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -38,6 +40,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
@@ -250,11 +253,11 @@ public class CSelectionTestsNoIndexer extends TestCase {
 //		return folder;
 //    }
     
-	protected IASTNode testF3(IFile file, int offset) throws ParserException {
+	protected IASTNode testF3(IFile file, int offset) throws ParserException, CoreException {
 		return testF3(file, offset, 0);
 	}
 	
-    protected IASTNode testF3(IFile file, int offset, int length) throws ParserException {
+    protected IASTNode testF3(IFile file, int offset, int length) throws ParserException, CoreException {
 		disableIndex();
 		
 		if (offset < 0)
@@ -278,7 +281,10 @@ public class CSelectionTestsNoIndexer extends TestCase {
             ISelection sel = ((AbstractTextEditor)part).getSelectionProvider().getSelection();
             
             if (sel instanceof TextSelection) {
-                IASTName[] names = DOMSearchUtil.getSelectedNamesFrom(file, ((TextSelection)sel).getOffset(), ((TextSelection)sel).getLength());
+            	ITextSelection textSel = (ITextSelection)sel;
+            	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
+            	IASTTranslationUnit ast = tu.getLanguage().getASTTranslationUnit(tu, 0);
+                IASTName[] names = tu.getLanguage().getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
                 
                 if (names == null || names.length == 0)
                     return null;
@@ -290,11 +296,11 @@ public class CSelectionTestsNoIndexer extends TestCase {
         return null;
     }
     
-	protected IASTNode testCtrl_F3(IFile file, int offset) throws ParserException {
+	protected IASTNode testCtrl_F3(IFile file, int offset) throws ParserException, CoreException {
 		return testCtrl_F3(file, offset, 0);
 	}
 	
-    protected IASTNode testCtrl_F3(IFile file, int offset, int length) throws ParserException {
+    protected IASTNode testCtrl_F3(IFile file, int offset, int length) throws ParserException, CoreException {
 		disableIndex();
 		
 		if (offset < 0)
@@ -318,7 +324,10 @@ public class CSelectionTestsNoIndexer extends TestCase {
             ISelection sel = ((AbstractTextEditor)part).getSelectionProvider().getSelection();
             
             if (sel instanceof TextSelection) {
-                IASTName[] names = DOMSearchUtil.getSelectedNamesFrom(file, ((TextSelection)sel).getOffset(), ((TextSelection)sel).getLength());
+            	ITextSelection textSel = (ITextSelection)sel;
+            	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
+            	IASTTranslationUnit ast = tu.getLanguage().getASTTranslationUnit(tu, 0);
+                IASTName[] names = tu.getLanguage().getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
                 
                 if (names == null || names.length == 0)
                     return null;

@@ -20,8 +20,6 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
@@ -31,7 +29,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
@@ -75,20 +72,7 @@ abstract public class BaseTestFramework extends TestCase {
 	}
         
     public void disableIndexing(){
-		if ( project != null) {
-			ICDescriptorOperation op = new ICDescriptorOperation() {
-
-				public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-						descriptor.remove(CCorePlugin.INDEXER_UNIQ_ID);
-						descriptor.create(CCorePlugin.INDEXER_UNIQ_ID,CCorePlugin.NULL_INDEXER_UNIQUE_ID);
-				}
-			};
-			try {
-				CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, op, new NullProgressMonitor());
-				CCorePlugin.getDefault().getCoreModel().getIndexManager().indexerChangeNotification(project);
-				indexDisabled=true;
-			} catch (CoreException e) {}
-		}
+    	// TODO turn off PDOM indexing?
     }
     
     public BaseTestFramework()

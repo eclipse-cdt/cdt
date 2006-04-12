@@ -35,7 +35,6 @@ import org.eclipse.cdt.managedbuilder.core.tests.ResourceBuildCoreTests;
  */
 public class AllManagedBuildTests {
 	public static void main(String[] args) {
-	    CCorePlugin.getDefault().getCoreModel().getIndexManager().reset();
 		junit.textui.TestRunner.run(AllManagedBuildTests.suite());
 	}
 	public static Test suite() {

@@ -21,9 +21,9 @@ import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.index.IIndexDelta;
-import org.eclipse.cdt.core.index.IndexChangeEvent;
-import org.eclipse.cdt.core.search.DOMSearchUtil;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorInput;
@@ -70,13 +71,6 @@ public class BaseSelectionTestsIndexer extends TestCase {
 		{ 
 			Thread.sleep(TIMEOUT);
 			delay += TIMEOUT;
-		}
-	}
-	
-	public void indexChanged(IndexChangeEvent event) {
-		IIndexDelta delta = event.getDelta();
-		if (delta.getDeltaType() == IIndexDelta.MERGE_DELTA){
-			fileIndexed = true;
 		}
 	}
 	
@@ -177,11 +171,11 @@ public class BaseSelectionTestsIndexer extends TestCase {
 		fileIndexed = false;
 	}
 	
-	protected IASTNode testF3(IFile file, int offset) throws ParserException {
+	protected IASTNode testF3(IFile file, int offset) throws ParserException, CoreException {
 		return testF3(file, offset, 0);
 	}
 	
-    protected IASTNode testF3(IFile file, int offset, int length) throws ParserException {
+    protected IASTNode testF3(IFile file, int offset, int length) throws ParserException, CoreException {
 		if (offset < 0)
 			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
 		
@@ -211,12 +205,15 @@ public class BaseSelectionTestsIndexer extends TestCase {
             // the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
             ISelection sel = ((AbstractTextEditor)part).getSelectionProvider().getSelection();
             
-            if (sel instanceof TextSelection) {
-                IASTName[] names = DOMSearchUtil.getSelectedNamesFrom(file, ((TextSelection)sel).getOffset(), ((TextSelection)sel).getLength());
-                
+            if (sel instanceof ITextSelection) {
+            	ITextSelection textSel = (ITextSelection)sel;
+            	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
+            	IASTTranslationUnit ast = tu.getLanguage().getASTTranslationUnit(tu, 0);
+                IASTName[] names = tu.getLanguage().getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
+	                
                 if (names == null || names.length == 0)
                     return null;
-
+	
 				return names[0];
             }
         }
@@ -262,11 +259,11 @@ public class BaseSelectionTestsIndexer extends TestCase {
         return null;
     }
     
-	protected IASTNode testCtrl_F3(IFile file, int offset) throws ParserException {
+	protected IASTNode testCtrl_F3(IFile file, int offset) throws ParserException, CoreException {
 		return testCtrl_F3(file, offset, 0);
 	}
 	
-    protected IASTNode testCtrl_F3(IFile file, int offset, int length) throws ParserException {
+    protected IASTNode testCtrl_F3(IFile file, int offset, int length) throws ParserException, CoreException {
 		if (offset < 0)
 			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
 		
@@ -297,7 +294,10 @@ public class BaseSelectionTestsIndexer extends TestCase {
             ISelection sel = ((AbstractTextEditor)part).getSelectionProvider().getSelection();
             
             if (sel instanceof TextSelection) {
-                IASTName[] names = DOMSearchUtil.getSelectedNamesFrom(file, ((TextSelection)sel).getOffset(), ((TextSelection)sel).getLength());
+            	ITextSelection textSel = (ITextSelection)sel;
+            	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
+            	IASTTranslationUnit ast = tu.getLanguage().getASTTranslationUnit(tu, 0);
+                IASTName[] names = tu.getLanguage().getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
                 
                 if (names == null || names.length == 0)
                     return null;
@@ -386,7 +386,6 @@ public class BaseSelectionTestsIndexer extends TestCase {
 			};
 			try {
 				CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, op, new NullProgressMonitor());
-				CCorePlugin.getDefault().getCoreModel().getIndexManager().indexerChangeNotification(project);
 			} catch (CoreException e) {}
 		}
     }

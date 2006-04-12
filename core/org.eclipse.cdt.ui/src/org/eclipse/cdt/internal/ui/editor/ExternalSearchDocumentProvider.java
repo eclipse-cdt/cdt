@@ -16,6 +16,7 @@ import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -51,18 +52,11 @@ public class ExternalSearchDocumentProvider extends FileDocumentProvider {
 	 */
 	private IAnnotationModel createExternalSearchAnnotationModel(ExternalEditorInput externalInput) {
 	
-		Object storage = externalInput.getStorage();
-		ExternalSearchFile externalSearchFile = null;
-		if (storage instanceof ExternalSearchFile){
-			externalSearchFile = (ExternalSearchFile) storage;
-		}
-		
-		if (externalSearchFile == null)
-			return null;
+		IStorage storage = externalInput.getStorage();
 		
 		IProject projectToUseForMarker = null;
 		
-		IFile resourceFile = CUIPlugin.getWorkspace().getRoot().getFileForLocation(externalSearchFile.searchMatch.getReferringElement());
+		IFile resourceFile = CUIPlugin.getWorkspace().getRoot().getFileForLocation(storage.getFullPath());
 		
 		if (resourceFile == null){
 			IProject[] proj = CUIPlugin.getWorkspace().getRoot().getProjects();

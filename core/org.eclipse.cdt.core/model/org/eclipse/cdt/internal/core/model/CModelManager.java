@@ -48,7 +48,6 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -1111,10 +1110,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 *  
 	 */
 	public void shutdown() {
-		if (this.fDeltaProcessor.indexManager != null) { // no more indexing
-			this.fDeltaProcessor.indexManager.shutdown();
-		}
-
 		// Remove ourself from the DescriptorManager.
 		CCorePlugin.getDefault().getCDescriptorManager().removeDescriptorListener(factory);
 		// Remove ourself from the ContentTypeManager
@@ -1129,13 +1124,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 
-	public IndexManager getIndexManager() {
-		return this.fDeltaProcessor.indexManager;
-	}
-	
 	public void deleting(IProject project) {
-		// discard all indexing jobs for this project
-		this.getIndexManager().discardJobs(project.getName());
 		// stop the binary runner for this project
 		removeBinaryRunner(project);
 	}

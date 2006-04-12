@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -1303,7 +1304,7 @@ public class CVisitor {
 			IPDOM pdom = tu.getIndex();
 			binding = null;
 			if (pdom != null)
-				binding = pdom.resolveBinding(name);
+				binding = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).resolveBinding(name);
 
 			if (binding == null)
 				return externalBinding( (IASTTranslationUnit) blockItem, name );

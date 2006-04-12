@@ -27,10 +27,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
-import org.eclipse.cdt.core.parser.ast.IASTNode;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
@@ -103,13 +100,6 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 		if (!fCProject.getProject().hasNature(CCProjectNature.CC_NATURE_ID)) {
 			addNatureToProject(fCProject.getProject(), CCProjectNature.CC_NATURE_ID, null);
 		}
-
-		//TEMPORARY: Disable type cache
-		TypeCacheManager typeCacheManager = TypeCacheManager.getInstance();
-		typeCacheManager.setProcessTypeCacheEvents(false);
-		
-		// use the new indexer
-		//IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 	}
 
 	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {

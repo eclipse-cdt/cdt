@@ -16,12 +16,8 @@
  */
 package org.eclipse.cdt.internal.ui.search.actions;
 
-import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.core.search.LimitTo;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchSite;
 
 public class WorkingSetFindAction extends FindAction {
@@ -34,49 +30,26 @@ public class WorkingSetFindAction extends FindAction {
 		setText(string); //$NON-NLS-1$
 	}
 
-	/**
-	 * @param site
-	 * @param action
-	 * @param string
-	 */
 	public WorkingSetFindAction(IWorkbenchSite site,FindAction action, String string) {
 		super(site);
 		this.findAction = action;
 		setText(string); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.search.actions.FindAction#getScopeDescription()
-	 */
 	protected String getScopeDescription() {
 		return findAction.getScopeDescription();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.search.actions.FindAction#getScope(org.eclipse.core.resources.IProject)
-	 */
-	protected ICSearchScope getScope() {
-		// TODO Auto-generated method stub
+	protected ICElement[] getScope() {
 		return findAction.getScope();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.search.actions.FindAction#getLimitTo()
-	 */
-	protected LimitTo getLimitTo() {
+	protected int getLimitTo() {
 		return findAction.getLimitTo();
 	}
 	
 	public void run() {
-		ISelection sel = getSelection();
-		
-		if (sel instanceof IStructuredSelection){
-			findAction.run((IStructuredSelection) sel);
-		}
-		else if  (sel instanceof ITextSelection){
-			findAction.run((ITextSelection) sel);
-		}
-		
+		findAction.run();
 	}
 
 }

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -47,6 +49,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
 import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
 import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner2.InvalidPreprocessorNodeException;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author jcamelon
@@ -125,8 +129,18 @@ public class CASTTranslationUnit extends CASTNode implements
             return resolver.getDeclarations( (IMacroBinding)binding );
         }
 		IASTName[] names = CVisitor.getDeclarations(this, binding);
-		if (names.length == 0 && pdom != null) 
-			names = pdom.getDeclarations(binding);
+		
+        if (names.length == 0 && pdom != null) {
+        	try {
+        		binding = ((PDOM)pdom).getLinkage(getLanguage()).adaptBinding(binding);
+        		if (binding != null)
+        			names = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).getDeclarations(binding);
+        	} catch (CoreException e) {
+        		CCorePlugin.log(e);
+        		return names;
+        	}
+        }
+
 		return names;
 	}
     
@@ -135,15 +149,32 @@ public class CASTTranslationUnit extends CASTNode implements
      * 
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDefinitions(org.eclipse.cdt.core.dom.ast.IBinding)
      */
-    public IASTName[] getDefinitions(IBinding aBinding) {
-        IASTName[] foundDefs = getDeclarations(aBinding);
-        
-        for(int i=0; i<foundDefs.length; i++) {
-            if (!foundDefs[i].isDefinition())
-                foundDefs[i] = null;
+    public IASTName[] getDefinitions(IBinding binding) {
+    	if (binding instanceof IMacroBinding) {
+    		if( resolver == null )
+    			return EMPTY_NAME_ARRAY;
+    		return resolver.getDeclarations((IMacroBinding)binding);
         }
         
-        return (IASTName[])ArrayUtil.removeNulls(IASTName.class, foundDefs);
+        IASTName[] names = CVisitor.getDeclarations(this, binding);
+        for (int i = 0; i < names.length; i++) {
+            if (!names[i].isDefinition())
+                names[i] = null;
+        }
+        names = (IASTName[])ArrayUtil.removeNulls(IASTName.class, names);
+        
+        if (names.length == 0 && pdom != null) {
+        	try {
+        		binding = ((PDOM)pdom).getLinkage(getLanguage()).adaptBinding(binding);
+        		if (binding != null)
+        			names = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).getDefinitions(binding);
+        	} catch (CoreException e) {
+        		CCorePlugin.log(e);
+        		return names;
+        	}
+        }
+        
+        return names;
     }
 
 	/*

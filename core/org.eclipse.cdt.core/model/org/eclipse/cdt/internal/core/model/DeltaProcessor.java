@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.internal.core.model;
 
-import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
@@ -23,7 +22,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -43,8 +41,6 @@ public class DeltaProcessor {
 	 */
 	protected CElementDelta fCurrentDelta;
 	
-	protected IndexManager indexManager = new IndexManager();
-
 	/* The C element that was last created (see createElement(IResource). 
 	 * This is used as a stack of C elements (using getParent() to pop it, and 
 	 * using the various get*(...) to push it. */
@@ -543,7 +539,6 @@ public class DeltaProcessor {
 		switch (delta.getKind()) {
 			case IResourceDelta.ADDED :
 				if (element != null) {
-					updateIndexAddResource(element, delta, false);
 					elementAdded(element, delta);
 					return element instanceof ICContainer;
 				}
@@ -551,7 +546,6 @@ public class DeltaProcessor {
 
 			case IResourceDelta.REMOVED :
 				if (element != null) {
-					updateIndexRemoveResource(element, delta);
 					elementRemoved(element, delta);
 				}
 				return element instanceof ICContainer;
@@ -562,10 +556,6 @@ public class DeltaProcessor {
 					// content has changed
 					if (element != null) {
 						elementChanged(element, delta);
-						updateIndexAddResource(element, delta, true);
-						//check to see if any projects need to be reindexed
-						updateDependencies(element);
-						
 					}
 				} else if (resource.getType() == IResource.PROJECT) {
 					if ((flags & IResourceDelta.OPEN) != 0) {
@@ -574,11 +564,9 @@ public class DeltaProcessor {
 						if (element != null) {
 							if (project.isOpen()) {
 								elementOpened(element, delta);
-								updateIndexAddResource(element, delta, true);
 								return false;
 							}
 							elementClosed(element, delta);
-							updateIndexRemoveResource(element, delta);
 							//Don't process children
 							return false; 
 						}
@@ -594,10 +582,8 @@ public class DeltaProcessor {
 								// note its resources are still visible as roots to other projects
 								if (isCProject) {
 									elementOpened(element, delta);
-									updateIndexAddResource(element, delta, true);
 								} else {
 									elementRemoved(element, delta);
-									updateIndexRemoveResource(element, delta);
 								}
 								return true;
 							}
@@ -608,63 +594,5 @@ public class DeltaProcessor {
 		}
 		return true;
 	}
-
-	protected void updateIndexAddResource(ICElement element, IResourceDelta delta, boolean elementHasChanged) {
-	
-		if (indexManager == null)
-			return;
-	
-		switch (element.getElementType()){
-		 	case ICElement.C_PROJECT:
-		 	indexManager.addResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.PROJECT);
-		    break;
-		 	
-		 	case ICElement.C_CCONTAINER:
-		 	indexManager.addResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.FOLDER);
-		 	break;
-		 	
-		 	case ICElement.C_UNIT:
-			indexManager.addResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.COMPILATION_UNIT);
-		 	break;
-		}
-		
-		
-	}
-
-	protected void updateIndexRemoveResource(ICElement element, IResourceDelta delta) {
-		
-		if (indexManager == null)
-						return;
-		
-		switch (element.getElementType()){
-		 	case ICElement.C_PROJECT:
-		 	indexManager.removeResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.PROJECT);
-		    break;
-		 	
-		 	case ICElement.C_CCONTAINER:
-		 	indexManager.removeResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.FOLDER);
-		 	break;
-		 	
-		 	case ICElement.C_UNIT:
-		 	indexManager.removeResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.COMPILATION_UNIT);
-		 	break;
-	 	   
-		}
-
-	}
-
-	private void updateDependencies(ICElement element){
-		
-		IResource resource = element.getResource();
-		if (resource == null)
-			return;
-		
-		IProject project = resource.getProject();
-		String filename = resource.getName();
-		
-		if (CoreModel.isValidHeaderUnitName(project, filename)) {
-			indexManager.updateDependencies(project, resource);
-		}
-	}	
 
 }

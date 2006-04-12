@@ -18,13 +18,9 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexer;
-import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
@@ -43,14 +39,11 @@ import org.eclipse.jface.viewers.ISelection;
  * 
  * @author dsteffle
  */
-public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
-		implements IIndexChangeListener {
+public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer {
 
 	private static final String INDEX_TAG = "3931153591.index"; //$NON-NLS-1$
 	IFile 					file;
 	NullProgressMonitor		monitor;
-	IndexManager 			indexManager;
-	CTagsIndexer			sourceIndexer;
 
 	static final String sourceIndexerID = "org.eclipse.cdt.core.ctagsindexer"; //$NON-NLS-1$
 	
@@ -71,10 +64,8 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 		
 		//Set the id of the source indexer extension point as a session property to allow
 		//index manager to instantiate it
-		project.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);
 		
 		//Enable indexing on test project
-		project.setSessionProperty(DOMSourceIndexer.activationKey,new Boolean(true));
 
 		if (project==null) fail("Unable to create project");	 //$NON-NLS-1$
 		IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(project.getName());
@@ -82,20 +73,16 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 		ScannerConfigNature.addScannerConfigNature(project);
 		PerProjectSICollector.calculateCompilerBuiltins(project);
 
-		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 		
 		resetIndexer(sourceIndexerID); // set indexer
 		
 		//indexManager.reset();
 		//Get the indexer used for the test project
-		sourceIndexer = (CTagsIndexer) indexManager.getIndexerForProject(project);
-		sourceIndexer.addIndexChangeListener(this);
 	}
 
 	protected void tearDown() {
 		try {
 			super.tearDown();
-			sourceIndexer.removeIndexChangeListener(this);
 		} catch (Exception e1) {
 		}
 		//Delete project

@@ -11,10 +11,16 @@
 
 package org.eclipse.cdt.core.dom.ast.gnu.c;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -86,7 +92,7 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 		
 		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project).getAdapter(PDOM.class);
 		ICodeReaderFactory fileCreator;
-		if ((style & ILanguage.AST_SKIP_INDEXED_HEADERS) != 0)
+		if ((style & (ILanguage.AST_SKIP_INDEXED_HEADERS | ILanguage.AST_SKIP_ALL_HEADERS)) != 0)
 			fileCreator = new PDOMCodeReaderFactory(pdom);
 		else
 			fileCreator = SavedCodeReaderFactory.getInstance();
@@ -169,6 +175,34 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 		return node;
 	}
 
+	private static class NameCollector extends CASTVisitor {
+        {
+            shouldVisitNames = true;
+        }
+        private List nameList = new ArrayList();
+        public int visit( IASTName name ){
+            nameList.add( name );
+            return PROCESS_CONTINUE;
+        }
+        public IASTName[] getNames() {
+        	return (IASTName[])nameList.toArray(new IASTName[nameList.size()]);
+        }
+	}
+	
+	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length) {
+		IASTNode selectedNode = ast.selectNodeForLocation(ast.getFilePath(), start, length);
+		
+		if (selectedNode == null)
+			return new IASTName[0];
+		
+		if (selectedNode instanceof IASTName)
+			return new IASTName[] { (IASTName)selectedNode };
+		
+		NameCollector collector = new NameCollector();
+		selectedNode.accept(collector);
+		return collector.getNames();
+	}
+	
 	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu) {
 		// Use the default CDT model builder
 		return null;

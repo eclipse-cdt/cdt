@@ -14,9 +14,7 @@ package org.eclipse.cdt.ui.dialogs;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
-import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.index.AbstractIndexerPage;
@@ -59,7 +57,7 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 		monitor.beginTask(CUIMessages.getString("IndexerOptiosn.task.savingAttributes "), 1);  //$NON-NLS-1$
 		ICOptionContainer container = getContainer();
 		IProject proj = null;
-        String indexMarkers = getIndexerProblemsValuesString();
+//        String indexMarkers = getIndexerProblemsValuesString();
 		
 		if (container != null){
 			proj = container.getProject();
@@ -75,16 +73,16 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 				for (int i = 0; i < cext.length; i++) {
 					String id = cext[i].getID();
 					String orig = cext[i].getExtensionData("indexmarkers"); //$NON-NLS-1$
-					String indexProblems = getIndexerProblemsValuesString();
-					if (orig == null || !orig.equals(indexProblems)) {
-						cext[i].setExtensionData("indexmarkers", indexProblems); //$NON-NLS-1$
-					}
+//					String indexProblems = getIndexerProblemsValuesString();
+//					if (orig == null || !orig.equals(indexProblems)) {
+//						cext[i].setExtensionData("indexmarkers", indexProblems); //$NON-NLS-1$
+//					}
 				
 				}
 			}
 		} else {
 			if (prefStore != null) {
-				prefStore.setValue(PREF_INDEX_MARKERS, indexMarkers);
+//				prefStore.setValue(PREF_INDEX_MARKERS, indexMarkers);
 			}
 		}
 
@@ -92,14 +90,6 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 		//an indexAll as one will come through the DeltaProcessor
 		if (currentProject == null)
 			return;
-		
-        ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(currentProject.getProject());
-
-        int indexMarkersInt = Integer.parseInt(indexMarkers);
-        if (indexMarkersInt != oldIndexerProblemsValue && indexMarkersInt == 0) 
-            if (indexer instanceof DOMSourceIndexer)
-                ((DOMSourceIndexer) indexer).removeIndexerProblems(currentProject.getProject());
-		
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
@@ -129,16 +119,16 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 		
 	}
 	
-	public String getIndexerProblemsValuesString(){
-		int result = 0;
-		result |= preprocessorProblemsEnabled.getSelection() ? DOMSourceIndexer.PREPROCESSOR_PROBLEMS_BIT : 0;
-		if( syntacticProblemsEnabled != null )
-			result |= syntacticProblemsEnabled.getSelection() ? DOMSourceIndexer.SYNTACTIC_PROBLEMS_BIT : 0;
-		result |= semanticProblemsEnabled.getSelection() ? DOMSourceIndexer.SEMANTIC_PROBLEMS_BIT : 0;
-		Integer tempInt = new Integer(result);
-		
-		return tempInt.toString();
-	}
+//	public String getIndexerProblemsValuesString(){
+//		int result = 0;
+//		result |= preprocessorProblemsEnabled.getSelection() ? DOMSourceIndexer.PREPROCESSOR_PROBLEMS_BIT : 0;
+//		if( syntacticProblemsEnabled != null )
+//			result |= syntacticProblemsEnabled.getSelection() ? DOMSourceIndexer.SYNTACTIC_PROBLEMS_BIT : 0;
+//		result |= semanticProblemsEnabled.getSelection() ? DOMSourceIndexer.SEMANTIC_PROBLEMS_BIT : 0;
+//		Integer tempInt = new Integer(result);
+//		
+//		return tempInt.toString();
+//	}
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.index2.AbstractIndexerPage#initialize(org.eclipse.core.resources.IProject)
@@ -151,7 +141,7 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 		} catch (CoreException e) {}
 	
 		//Set the IProblem checkboxes
-		setIndexerProblemValues(oldIndexerProblemsValue);
+//		setIndexerProblemValues(oldIndexerProblemsValue);
 	}
 
 	public void loadPersistedValues(IProject project) throws CoreException {
@@ -172,18 +162,18 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 	
 	}
 	
-	public void setIndexerProblemValues( int value ){
-		preprocessorProblemsEnabled.setSelection( (value & DOMSourceIndexer.PREPROCESSOR_PROBLEMS_BIT) != 0 );
-		if( syntacticProblemsEnabled != null ) 
-			syntacticProblemsEnabled.setSelection( (value & DOMSourceIndexer.SYNTACTIC_PROBLEMS_BIT) != 0 );
-		semanticProblemsEnabled.setSelection( (value & DOMSourceIndexer.SEMANTIC_PROBLEMS_BIT) != 0 );
-	}
+//	public void setIndexerProblemValues( int value ){
+//		preprocessorProblemsEnabled.setSelection( (value & DOMSourceIndexer.PREPROCESSOR_PROBLEMS_BIT) != 0 );
+//		if( syntacticProblemsEnabled != null ) 
+//			syntacticProblemsEnabled.setSelection( (value & DOMSourceIndexer.SYNTACTIC_PROBLEMS_BIT) != 0 );
+//		semanticProblemsEnabled.setSelection( (value & DOMSourceIndexer.SEMANTIC_PROBLEMS_BIT) != 0 );
+//	}
 	
 	public void loadPreferences() {
 		String indexerId=prefStore.getString(PREF_INDEX_MARKERS);
 		if (!indexerId.equals("")) { //$NON-NLS-1$
 		   oldIndexerProblemsValue = (new Integer(indexerId)).intValue();
-		   setIndexerProblemValues(oldIndexerProblemsValue);
+//		   setIndexerProblemValues(oldIndexerProblemsValue);
 		}
 	}
 	

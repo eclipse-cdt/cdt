@@ -14,8 +14,8 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.ToolFactory;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
-import org.eclipse.cdt.internal.corext.Assert;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;

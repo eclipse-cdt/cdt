@@ -32,8 +32,6 @@ import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.tests.CompleteParseBaseTest.FullParseCallback;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
-import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -103,8 +101,6 @@ public class SelectionRegressionTest extends BaseTestFramework {
 			}
 		} catch ( CoreException e ) { //boo
 		}
-		TypeCacheManager typeCacheManager = TypeCacheManager.getInstance();
-		typeCacheManager.setProcessTypeCacheEvents(false);
     }
     
     protected void tearDown() throws Exception {
@@ -112,7 +108,6 @@ public class SelectionRegressionTest extends BaseTestFramework {
             return;
     
 		try{
-		    project.setSessionProperty( DOMSourceIndexer.activationKey, new Boolean( false ) );
 			project.delete(true,true,new NullProgressMonitor());
 			project = null;
 		} catch ( CoreException e ) { //boo

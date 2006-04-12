@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
@@ -76,6 +77,10 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	public static final int CPPNAMESPACE = 6;
 	public static final int CPPNAMESPACEALIAS = 7;
 
+	public ILanguage getLanguage() {
+		return new GPPLanguage();
+	}
+	
 	public PDOMNode getParent(IBinding binding) throws CoreException {
 		PDOMNode parent = this;
 		IScope scope = binding.getScope();

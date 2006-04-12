@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexer;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -82,26 +81,26 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 			monitor.beginTask(CUIMessages.getString("IndexerOptiosn.task.savingAttributes "), 1);  //$NON-NLS-1$
 			ICOptionContainer container = getContainer();
 			IProject proj = null;
-	        String internalExternalCTagsString = internalTagsFile ? CTagsIndexer.CTAGS_INTERNAL  : CTagsIndexer.CTAGS_EXTERNAL;
+	        String internalExternalCTagsString = ""; //internalTagsFile ? CTagsIndexer.CTAGS_INTERNAL  : CTagsIndexer.CTAGS_EXTERNAL;
 			String cTagsFileLocation = ""; //$NON-NLS-1$
 			if (!internalTagsFile)
 				cTagsFileLocation = cTagsFile.getText();
 			
 			String indexIncludeFiles = new Boolean(indexIncludePaths.getSelection()).toString();
 			
-			String cTagsLocationType = useDefaultCTags ? CTagsIndexer.CTAGS_PATH_DEFAULT : CTagsIndexer.CTAGS_PATH_SPECIFIED;
+			String cTagsLocationType = ""; //useDefaultCTags ? CTagsIndexer.CTAGS_PATH_DEFAULT : CTagsIndexer.CTAGS_PATH_SPECIFIED;
 			String cTagsLocation = ""; //$NON-NLS-1$
 			if (!useDefaultCTags)
 				cTagsLocation=cTagsExecutable.getText();
 				
 			//if external has been chosen, ensure that there is a cTagsFileLocation selected; otherwise default
 			//to internal file
-			if (internalExternalCTagsString.equals(CTagsIndexer.CTAGS_EXTERNAL) && cTagsFileLocation.equals("")) //$NON-NLS-1$
-				internalExternalCTagsString=CTagsIndexer.CTAGS_INTERNAL;
+//			if (internalExternalCTagsString.equals(CTagsIndexer.CTAGS_EXTERNAL) && cTagsFileLocation.equals("")) //$NON-NLS-1$
+//				internalExternalCTagsString=CTagsIndexer.CTAGS_INTERNAL;
 			
 			//if an external CPaths has been selected but no path has been provided, switch back to default setting
-			if (cTagsLocationType.equals(CTagsIndexer.CTAGS_PATH_SPECIFIED) && cTagsLocation.equals("")) //$NON-NLS-1$
-				cTagsLocationType=CTagsIndexer.CTAGS_PATH_DEFAULT;
+//			if (cTagsLocationType.equals(CTagsIndexer.CTAGS_PATH_SPECIFIED) && cTagsLocation.equals("")) //$NON-NLS-1$
+//				cTagsLocationType=CTagsIndexer.CTAGS_PATH_DEFAULT;
 			
 			if (container != null){
 				proj = container.getProject();
@@ -127,7 +126,7 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 						if (orig == null || !orig.equals(indexIncludeFiles)) {
 							cext[i].setExtensionData("ctagsindexincludes", indexIncludeFiles); //$NON-NLS-1$
 							if (indexIncludeFiles.equals( "true")){ //$NON-NLS-1$
-								CCorePlugin.getDefault().getCoreModel().getIndexManager().addResource(proj,proj);
+//								CCorePlugin.getDefault().getCoreModel().getIndexManager().addResource(proj,proj);
 							}
 						}
 						orig = cext[i].getExtensionData("ctagslocationtype"); //$NON-NLS-1$
@@ -188,10 +187,10 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 				useSpecifiedCTagsExecutable = useCTagsExecutable.getSelection();
 				
 				if (useDefaultCTags){
-					setButtonState(CTagsIndexer.CTAGS_PATH_DEFAULT);
+//					setButtonState(CTagsIndexer.CTAGS_PATH_DEFAULT);
 				}
 				if (useSpecifiedCTagsExecutable){
-					setButtonState(CTagsIndexer.CTAGS_PATH_SPECIFIED);
+//					setButtonState(CTagsIndexer.CTAGS_PATH_SPECIFIED);
 				}
 			}
 		};
@@ -246,10 +245,10 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 				externalTagsFile = externalCTagsFile.getSelection();
 				
 				if (externalTagsFile){
-					setButtonState(CTagsIndexer.CTAGS_EXTERNAL);
+//					setButtonState(CTagsIndexer.CTAGS_EXTERNAL);
 				}
 				if (internalTagsFile){
-					setButtonState(CTagsIndexer.CTAGS_INTERNAL);
+//					setButtonState(CTagsIndexer.CTAGS_INTERNAL);
 				}
 			}
 		};
@@ -335,31 +334,31 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 	}
 	
 	private void setButtonState(String orig){
-		if (orig.equals(CTagsIndexer.CTAGS_INTERNAL)){ 
-			internalTagsFile=true;
-			externalTagsFile=false;
-			internalCTagsFile.setSelection(true);
-			externalCTagsFile.setSelection(false);
-			browseButton.setEnabled(false);
-		} else if (orig.equals(CTagsIndexer.CTAGS_EXTERNAL)){
-			externalTagsFile=true;
-			internalTagsFile=false;
-			externalCTagsFile.setSelection(true);
-			internalCTagsFile.setSelection(false);
-			browseButton.setEnabled(true);
-		} else if(orig.equals(CTagsIndexer.CTAGS_PATH_DEFAULT)){
-			useDefaultCTags=true;
-			useSpecifiedCTagsExecutable=false;
-			useCTagsPath.setSelection(true);
-			useCTagsExecutable.setSelection(false);
-			browseButtonCTagsExec.setEnabled(false);
-		} else if(orig.equals(CTagsIndexer.CTAGS_PATH_SPECIFIED)){
-			useDefaultCTags=false;
-			useSpecifiedCTagsExecutable=true;
-			useCTagsPath.setSelection(false);
-			useCTagsExecutable.setSelection(true);
-			browseButtonCTagsExec.setEnabled(true);
-		}
+//		if (orig.equals(CTagsIndexer.CTAGS_INTERNAL)){ 
+//			internalTagsFile=true;
+//			externalTagsFile=false;
+//			internalCTagsFile.setSelection(true);
+//			externalCTagsFile.setSelection(false);
+//			browseButton.setEnabled(false);
+//		} else if (orig.equals(CTagsIndexer.CTAGS_EXTERNAL)){
+//			externalTagsFile=true;
+//			internalTagsFile=false;
+//			externalCTagsFile.setSelection(true);
+//			internalCTagsFile.setSelection(false);
+//			browseButton.setEnabled(true);
+//		} else if(orig.equals(CTagsIndexer.CTAGS_PATH_DEFAULT)){
+//			useDefaultCTags=true;
+//			useSpecifiedCTagsExecutable=false;
+//			useCTagsPath.setSelection(true);
+//			useCTagsExecutable.setSelection(false);
+//			browseButtonCTagsExec.setEnabled(false);
+//		} else if(orig.equals(CTagsIndexer.CTAGS_PATH_SPECIFIED)){
+//			useDefaultCTags=false;
+//			useSpecifiedCTagsExecutable=true;
+//			useCTagsPath.setSelection(false);
+//			useCTagsExecutable.setSelection(true);
+//			browseButtonCTagsExec.setEnabled(true);
+//		}
 	}
 
 	public void loadPreferences() {

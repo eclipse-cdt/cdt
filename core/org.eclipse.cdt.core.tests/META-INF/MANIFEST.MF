@@ -7,7 +7,6 @@ Bundle-ClassPath: cdtcoretests.jar
 Bundle-Activator: org.eclipse.cdt.core.testplugin.CTestPlugin
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.core.cdescriptor.tests,
- org.eclipse.cdt.core.indexer.tests,
  org.eclipse.cdt.core.internal.errorparsers.tests,
  org.eclipse.cdt.core.model.failedTests,
  org.eclipse.cdt.core.model.tests,
@@ -16,7 +15,6 @@ Export-Package: org.eclipse.cdt.core.cdescriptor.tests,
  org.eclipse.cdt.core.parser.tests.ast2,
  org.eclipse.cdt.core.parser.tests.prefix,
  org.eclipse.cdt.core.parser.tests.scanner2,
- org.eclipse.cdt.core.search.tests,
  org.eclipse.cdt.core.suite,
  org.eclipse.cdt.core.testplugin,
  org.eclipse.cdt.core.testplugin.util,

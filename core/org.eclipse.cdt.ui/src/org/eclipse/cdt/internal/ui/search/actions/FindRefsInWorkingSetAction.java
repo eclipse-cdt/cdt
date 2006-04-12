@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
-import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.core.search.LimitTo;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.search.CSearchScopeFactory;
 import org.eclipse.cdt.internal.ui.search.CSearchUtil;
+import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkingSet;
 
@@ -42,59 +45,41 @@ public class FindRefsInWorkingSetAction extends FindAction {
 		if (workingSets != null)
 			fWorkingSet= workingSets;
 	}
-	/**
-	 * @param editor
-	 * @param string
-	 * @param string2
-	 * @param string3
-	 */
+
 	public FindRefsInWorkingSetAction(CEditor editor, String label, String tooltip) {
 		super(editor);
 		setText(label); //$NON-NLS-1$
 		setToolTipText(tooltip); //$NON-NLS-1$
 	}
-	/**
-	 * @param site
-	 * @param string
-	 * @param string2
-	 * @param string3
-	 */
+
 	public FindRefsInWorkingSetAction(IWorkbenchSite site, String label, String tooltip) {
 		super(site);
 		setText(label); //$NON-NLS-1$
 		setToolTipText(tooltip); //$NON-NLS-1
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getLimitTo()
-	 */
-	protected LimitTo getLimitTo() {
-		return ICSearchConstants.REFERENCES;
+
+	protected int getLimitTo() {
+		return PDOMSearchQuery.FIND_REFERENCES;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScopeDescription()
-	 */
+
 	protected String getScopeDescription() {
 		return scopeDescription;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScope(org.eclipse.core.resources.IProject)
-	 */
-	protected ICSearchScope getScope() {
-		IWorkingSet[] workingSets= null;
-		if (fWorkingSet == null) {
-			workingSets= CSearchScopeFactory.getInstance().queryWorkingSets();
-			if (workingSets == null)
-				return null;
-		}
-		else {
-			workingSets = fWorkingSet;
+
+	protected ICElement[] getScope() {
+		List scope = new ArrayList();
+		
+		for (int i = 0; i < fWorkingSet.length; ++i) {
+			IAdaptable[] elements = fWorkingSet[i].getElements();
+			for (int j = 0; j < elements.length; ++j) {
+				ICElement element = (ICElement)elements[j].getAdapter(IResource.class);
+				if (element != null)
+					scope.add(element);
+			}
 		}
 		
-		ICSearchScope scope= CSearchScopeFactory.getInstance().createCSearchScope(workingSets);
-		scopeDescription = CSearchMessages.getFormattedString("WorkingSetScope", new String[] {CSearchUtil.toString(workingSets)}); //$NON-NLS-1$
-		CSearchUtil.updateLRUWorkingSets(workingSets);
-		
-		return scope;
+		scopeDescription = CSearchMessages.getFormattedString("WorkingSetScope", new String[] {CSearchUtil.toString(fWorkingSet)}); //$NON-NLS-1$
+		return (ICElement[])scope.toArray(new ICElement[scope.size()]);
 	}
-	
+
 }

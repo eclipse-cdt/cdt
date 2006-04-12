@@ -11,12 +11,10 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
-import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.core.search.LimitTo;
-import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
+import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
 import org.eclipse.ui.IWorkbenchSite;
 
 
@@ -39,35 +37,22 @@ public class FindDeclarationsAction extends FindAction {
 			CSearchMessages.getString("CSearch.FindDeclarationAction.label"), //$NON-NLS-1$
 			CSearchMessages.getString("CSearch.FindDeclarationAction.tooltip")); //$NON-NLS-1$
 	}
-	/**
-	 * @param site
-	 * @param string
-	 * @param string2
-	 * @param string3
-	 */
+
 	public FindDeclarationsAction(IWorkbenchSite site, String label, String tooltip) {
 		super(site);
 		setText(label);
 		setToolTipText(tooltip);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScope(org.eclipse.core.resources.IProject)
-	 */
-	protected ICSearchScope getScope() {
-        return SearchEngine.createWorkspaceScope();
+
+	protected ICElement[] getScope() {
+		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScopeDescription()
-	 */
+	
 	protected String getScopeDescription() {
-		// TODO Auto-generated method stub
 		return CSearchMessages.getString("WorkspaceScope"); //$NON-NLS-1$
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getLimitTo()
-	 */
-	protected LimitTo getLimitTo() {
-		// TODO Auto-generated method stub
-		return ICSearchConstants.DECLARATIONS_DEFINITIONS;
+	
+	protected int getLimitTo() {
+		return PDOMSearchQuery.FIND_DECLARATIONS_DEFINITIONS;
 	}
 }

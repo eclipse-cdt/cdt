@@ -11,18 +11,12 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -52,50 +46,32 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 		| FIND_UNION | FIND_METHOD | FIND_FIELD | FIND_ENUM
 		| FIND_ENUMERATOR | FIND_NAMESPACE | FIND_TYPEDEF | FIND_MACRO;
 	
-	private IResource[] scope;
 	private String scopeDesc;
 	private String pattern;
 	
 	public PDOMSearchPatternQuery(
-			IResource[] scope,
+			ICElement[] scope,
 			String scopeDesc,
 			String pattern,
 			boolean isCaseSensitive,
 			int flags) {
-		super(flags);
-		this.scope = scope;
+		super(scope, flags);
 		this.scopeDesc = scopeDesc;
 		this.pattern = pattern;
 	}
 	
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
-		// get the list of projects we need to search
-		List projects = new ArrayList();
-		for (int i = 0; i < scope.length; ++i) {
-			if (scope[i] instanceof IWorkspaceRoot) {
-				IProject[] p = ((IWorkspaceRoot)scope[i]).getProjects();
-				for (int j = 0; j < p.length; ++j)
-					projects.add(p[j]);
-			} else
-				projects.add(scope[i].getProject());
-		}
-		
 		try {
-			for (Iterator iproject = projects.iterator(); iproject.hasNext();)
-				searchProject((IProject)iproject.next(), monitor);
+			for (int i = 0; i < projects.length; ++i)
+				searchProject(projects[i], monitor);
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
 	}
 	
-	private void searchProject(IProject project, IProgressMonitor monitor) throws CoreException {
-		if (!CoreModel.hasCNature(project))
-			// Not a CDT project
-			return;
-
-		ICProject cproject = CoreModel.getDefault().create(project);
-		IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(cproject);
+	private void searchProject(ICProject project, IProgressMonitor monitor) throws CoreException {
+		IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
 
 		try {
 			pdom.acquireReadLock();
@@ -106,7 +82,8 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 		try {
 			IBinding[] bindings = pdom.findBindings(pattern);
 			for (int i = 0; i < bindings.length; ++i) {
-				createMatches(bindings[i]);
+				PDOMBinding pdomBinding = (PDOMBinding)bindings[i];
+				createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
 			}
 		} finally {
 			pdom.releaseReadLock();

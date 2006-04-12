@@ -31,7 +31,6 @@ import org.eclipse.cdt.internal.core.model.OutputEntry;
 import org.eclipse.cdt.internal.core.model.PathEntryManager;
 import org.eclipse.cdt.internal.core.model.ProjectEntry;
 import org.eclipse.cdt.internal.core.model.SourceEntry;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -1214,14 +1213,6 @@ public class CoreModel {
 			workspace.run(new BatchOperation(action), rule, IWorkspace.AVOID_UPDATE, monitor);
 		}
 	}	
-	
-	public void startIndexing() {
-		manager.getIndexManager().reset();
-	}
-
-	public IndexManager getIndexManager() {
-		return manager.getIndexManager();
-	}
 	
 	/**
 	 * The method returns whether scanner information for a resource is empty or not.

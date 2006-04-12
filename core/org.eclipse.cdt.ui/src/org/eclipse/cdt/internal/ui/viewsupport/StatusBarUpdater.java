@@ -11,13 +11,10 @@
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 
-import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
-
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -34,8 +31,6 @@ public class StatusBarUpdater implements ISelectionChangedListener {
 			CElementLabels.M_PARAMETER_TYPES | CElementLabels.M_PARAMETER_NAMES | CElementLabels.M_APP_RETURNTYPE | CElementLabels.M_EXCEPTIONS | 
 		 	CElementLabels.F_APP_TYPE_SIGNATURE;
 
-	private final TypeInfoLabelProvider fTypeInfoLabelProvider = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_FULLY_QUALIFIED + TypeInfoLabelProvider.SHOW_PATH);
-		 	
 	private IStatusLineManager fStatusLineManager;
 	
 	public StatusBarUpdater(IStatusLineManager statusLineManager) {
@@ -62,8 +57,6 @@ public class StatusBarUpdater implements ISelectionChangedListener {
 			Object elem= selection.getFirstElement();
 			if (elem instanceof ICElement) {
 				return formatCElementMessage((ICElement) elem);
-			} else if (elem instanceof ITypeInfo) {
-				return formatTypeInfoMessage((ITypeInfo) elem);
 			} else if (elem instanceof IResource) {
 				return formatResourceMessage((IResource) elem);
 			}
@@ -75,10 +68,6 @@ public class StatusBarUpdater implements ISelectionChangedListener {
 		return CElementLabels.getElementLabel(element, LABEL_FLAGS);
 	}
 		
-	private String formatTypeInfoMessage(ITypeInfo info) {
-		return fTypeInfoLabelProvider.getText(info);
-	}
-
 	private String formatResourceMessage(IResource element) {
 		IContainer parent= element.getParent();
 		if (parent != null && parent.getType() != IResource.ROOT)

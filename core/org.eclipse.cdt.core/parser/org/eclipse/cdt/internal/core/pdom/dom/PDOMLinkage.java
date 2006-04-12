@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -91,6 +92,8 @@ public abstract class PDOMLinkage extends PDOMNode {
 		int namerec = db.getInt(record + ID_OFFSET);
 		return db.getString(namerec);
 	}
+	
+	public abstract ILanguage getLanguage();
 
 	public static int getNextLinkageRecord(PDOM pdom, int record) throws CoreException {
 		return pdom.getDB().getInt(record + NEXT_OFFSET);

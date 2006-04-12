@@ -12,6 +12,7 @@
 package org.eclipse.cdt.core.model;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -75,6 +76,18 @@ public interface ILanguage extends IAdaptable {
 	 */
 	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy, int offset);
 
+	/**
+	 * Gather the list of IASTNames that appear the selection with the given start offset
+	 * and length in the given ITranslationUnit.
+	 * 
+	 * @param tu
+	 * @param start
+	 * @param length
+	 * @param style
+	 * @return
+	 */
+	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length);
+	
 	/**
 	 * Used to override the default model building behavior for a translation unit.
 	 * 

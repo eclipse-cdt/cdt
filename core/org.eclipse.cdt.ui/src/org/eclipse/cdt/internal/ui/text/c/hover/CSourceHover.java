@@ -12,34 +12,20 @@
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.search.BasicSearchResultCollector;
-import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.core.search.ILineLocatable;
-import org.eclipse.cdt.core.search.IMatch;
-import org.eclipse.cdt.core.search.IMatchLocatable;
-import org.eclipse.cdt.core.search.IOffsetLocatable;
-import org.eclipse.cdt.core.search.OrPattern;
-import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.ui.codemanipulation.StubUtility;
 import org.eclipse.cdt.internal.ui.text.CCodeReader;
 import org.eclipse.cdt.internal.ui.util.Strings;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -172,75 +158,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				return null;
 			
 			if (copy != null) {
-				try {
-					BasicSearchResultCollector searchResultCollector = new BasicSearchResultCollector();			
-					ICProject cproject = copy.getCProject();
-					ICSearchScope scope = SearchEngine.createCSearchScope(new ICElement[]{cproject}, true);
-					OrPattern orPattern = new OrPattern();
-					orPattern.addPattern(SearchEngine.createSearchPattern( 
-							name, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, false));
-					orPattern.addPattern(SearchEngine.createSearchPattern( 
-							name, ICSearchConstants.TYPE, ICSearchConstants.DEFINITIONS, false));
-					orPattern.addPattern(SearchEngine.createSearchPattern( 
-							name, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false));
-					orPattern.addPattern(SearchEngine.createSearchPattern( 
-							name, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, false));				
-					orPattern.addPattern(SearchEngine.createSearchPattern( 
-							name, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, false));
-					orPattern.addPattern(SearchEngine.createSearchPattern( 
-							name, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false));
-					
-					SearchEngine searchEngine = new SearchEngine();
-					searchEngine.setWaitingPolicy(ICSearchConstants.FORCE_IMMEDIATE_SEARCH);
-					searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, searchResultCollector, true);
-					
-					Set set = searchResultCollector.getSearchResults();
-					if (set != null && set.size() > 0 ) {
-						IMatch[] matches = new IMatch[set.size()];
-						set.toArray(matches);
-						IResource resource = matches[0].getResource();
-						if (resource != null) {
-							ICElement celement = CoreModel.getDefault().create(resource);
-							if (celement instanceof ITranslationUnit) {	
-								ITranslationUnit unit = (ITranslationUnit)celement;
-								//Check offset type
-								IMatchLocatable searchLocatable = matches[0].getLocatable();
-								int startOffset=0;
-								int length=0;
-								if (searchLocatable instanceof IOffsetLocatable){
-									   startOffset = ((IOffsetLocatable)searchLocatable).getNameStartOffset();
-									   length = ((IOffsetLocatable)searchLocatable).getNameEndOffset() - startOffset;
-									} else if (searchLocatable instanceof ILineLocatable){
-										int tempstartOffset = ((ILineLocatable)searchLocatable).getStartLine();
-										IDocument doc =textViewer.getDocument();
-										try {
-											//NOTE: Subtract 1 from the passed in line number because, even though the editor is 1 based, the line
-											//resolver doesn't take this into account and is still 0 based
-											startOffset = doc.getLineOffset(tempstartOffset-1);
-											length=doc.getLineLength(tempstartOffset-1);
-										} catch (BadLocationException e) {}
-										  catch (NullPointerException e) {return null;}
-										
-										//Check to see if an end offset is provided
-										int tempendOffset = ((ILineLocatable)searchLocatable).getEndLine();
-										//Make sure that there is a real value for the end line
-										if (tempendOffset>0 && tempendOffset>tempstartOffset){
-											try {
-												//See NOTE above
-												int endOffset = doc.getLineOffset(tempendOffset-1);
-												length=endOffset - startOffset;
-											} catch (BadLocationException e) {}	
-											  catch (NullPointerException e) {return null;}
-										}
-										
-								}
-								
-								return unit.getBuffer().getText(startOffset, length);
-							}
-						}
-					}
-				}catch (InterruptedException e) {} 
-				 catch (CModelException e) {}
+				// TODO actually find some matches...
 			}
 		}
 		return null;

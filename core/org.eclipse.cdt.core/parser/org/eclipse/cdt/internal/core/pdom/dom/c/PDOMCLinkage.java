@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -56,6 +57,10 @@ public class PDOMCLinkage extends PDOMLinkage {
 	public static final int CSTRUCTURE = 3;
 	public static final int CFIELD = 4;
 
+	public ILanguage getLanguage() {
+		return new GCCLanguage();
+	}
+	
 	public PDOMNode getParent(IBinding binding) throws CoreException {
 		IScope scope = binding.getScope();
 		if (scope == null)

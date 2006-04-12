@@ -482,12 +482,12 @@ public class MIPlugin extends Plugin {
 			while (message.length() > 100) {
 				String partial = message.substring(0, 100);
 				message = message.substring(100);
-				System.err.println(partial + "\\"); //$NON-NLS-1$
+				System.out.println(partial + "\\"); //$NON-NLS-1$
 			}
 			if (message.endsWith("\n")) { //$NON-NLS-1$
-				System.err.print(message);
+				System.out.print(message);
 			} else {
-				System.err.println(message);
+				System.out.println(message);
 			}
 		}
 	}

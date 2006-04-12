@@ -1,4 +1,8 @@
 2006-04-12 Mikhail Khodjaiants
+	Write log messages to the system out instead of err.
+	* MIPlugin.java
+
+2006-04-12 Mikhail Khodjaiants
 	Bug 136206: Suppress Resumed events when processing solib events.
 	* EventManager.java
 	* RxThread.java

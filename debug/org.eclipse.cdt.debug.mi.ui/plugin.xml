@@ -53,5 +53,24 @@
          <adapter type="org.eclipse.ui.IActionFilter"/>
       </factory>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.eclipse.cdt.debug.mi.ui.gdbProcessActions"
+            objectClass="org.eclipse.cdt.debug.mi.core.GDBProcess">
+         <action
+               class="org.eclipse.cdt.debug.mi.internal.ui.actions.VerboseModeActionDelegate"
+               enablesFor="1"
+               helpContextId="verbose_mode_console_action_context"
+               icon="icons/obj16/verbose_mode_co.gif"
+               id="org.eclipse.cdt.debug.mi.ui.verboseModeAction"
+               label="%VerboseMode.label"
+               menubarPath="renderGroup"
+               state="false"
+               style="toggle"
+               tooltip="%VerboseMode.tooltip"/>
+      </objectContribution>
+   </extension>
 
 </plugin>

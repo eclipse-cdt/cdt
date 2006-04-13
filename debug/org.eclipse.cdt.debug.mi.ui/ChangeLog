@@ -1,3 +1,12 @@
+2006-04-13 Mikhail Khodjaiants
+	Bug 113107: Make trace logs more readily available.
+	Implementation of the "Verbose Mode" action.
+	* MANIFEST.MF
+	* plugin.properties
+	* plugin.xml
+	+ VerboseModeActionDelegate.java
+	+ icons/obj16/verbose_mode_co.gif
+
 2006-04-11 Mikhail Khodjaiants
 	Bug 119740: allow to specify only a subset of shared objects that we want symbols to be loaded for.
 	Sort the shared library list.

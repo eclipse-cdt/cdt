@@ -10,13 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
 import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
@@ -28,7 +28,7 @@ public class CodeReader {
     public static final String SYSTEM_DEFAULT_ENCODING = System.getProperty( "file.encoding" ); //$NON-NLS-1$
 	//private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 	private static final String NF = "<text>"; //$NON-NLS-1$
-	private static final char [] NOFILE = NF.toCharArray(); //$NON-NLS-1$
+	private static final char [] NOFILE = NF.toCharArray(); 
 	
 	public final char[] buffer;
 	public final char[] filename;
@@ -94,11 +94,29 @@ public class CodeReader {
 	private char[] load( String charSet, FileInputStream stream ) throws IOException {
 	    String encoding = Charset.isSupported( charSet ) ? charSet : SYSTEM_DEFAULT_ENCODING; 
 
-        FileChannel channel = stream.getChannel();
-		ByteBuffer byteBuffer = ByteBuffer.allocateDirect((int)channel.size());
-		channel.read(byteBuffer);
-		byteBuffer.rewind();
-
+        BufferedInputStream bufferedStream = new BufferedInputStream(stream);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        final int blocksize = 2048;
+        byte [] b = new byte[blocksize];
+        int count = 0;
+        while( true )
+        {
+            int size = bufferedStream.read(b);
+            if( size != blocksize )
+            {
+                outputStream.write(b, 0, size );
+                count += size;
+                break;
+            }
+            // if we get this far, the full buffer was read in
+            outputStream.write(b);
+            count += blocksize;
+        }
+        
+        
+		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(count);
+        byteBuffer.put(outputStream.toByteArray());
+        byteBuffer.rewind();
 		
 		CharBuffer charBuffer = Charset.forName(encoding).decode(byteBuffer);
 		if (charBuffer.hasArray())
@@ -107,22 +125,6 @@ public class CodeReader {
 		char[] buff = new char[charBuffer.length()];
 		charBuffer.get(buff);
 		return buff;
-	}
-	
-	protected char[] xload(FileInputStream stream) throws IOException {
-		FileChannel channel = stream.getChannel();
-		MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
-
-		// TODO use the real encoding
-		CharBuffer charBuffer = Charset.forName(SYSTEM_DEFAULT_ENCODING).decode(map);
-		if (charBuffer.hasArray())
-			return charBuffer.array();
-		
-		// Got to copy it out
-		char[] buff = new char[charBuffer.length()];
-		charBuffer.get(buff);
-		return buff;
-		
 	}
 	
 	public boolean isFile() {

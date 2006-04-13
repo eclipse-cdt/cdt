@@ -14,6 +14,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.Map;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.ICDIDebugger2;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -33,7 +34,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
@@ -69,7 +69,7 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 				for( int i = 0; i < targets.length; i++ ) {
 					Process debugger = session.getSessionProcess( targets[i] );
 					if ( debugger != null ) {
-						IProcess debuggerProcess = DebugPlugin.newProcess( launch, debugger, renderDebuggerProcessLabel( launch ) );
+						IProcess debuggerProcess = createGDBProcess( (Target)targets[i], launch, debugger, renderDebuggerProcessLabel( launch ), null );
 						launch.addProcess( debuggerProcess );
 					}
 					((Target)targets[i]).getMISession().start();
@@ -192,5 +192,9 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 		MultiStatus status = new MultiStatus( ID, code, message, exception );
 		status.add( new Status( IStatus.ERROR, ID, code, exception == null ? new String() : exception.getLocalizedMessage(), exception ) );
 		return new CoreException( status );
+	}
+
+	protected IProcess createGDBProcess( Target target, ILaunch launch, Process process, String label, Map attributes ) {
+		return new GDBProcess( target, launch, process, label, attributes );
 	}
 }

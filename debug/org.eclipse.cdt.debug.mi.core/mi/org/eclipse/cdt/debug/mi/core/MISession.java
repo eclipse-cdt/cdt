@@ -59,6 +59,7 @@ public class MISession extends Observable {
 
 	boolean terminated;
 	boolean useInterpreterExecConsole;
+	boolean verboseMode = false;
 
 	// hold the type of the session(post-mortem, attach etc ..)
 	int sessionType;
@@ -579,6 +580,9 @@ public class MISession extends Observable {
 			MIPlugin.getDefault().debugLog(cmd.toString());
 		}
 
+		if (isVerboseModeEnabled())
+			writeToConsole(cmd.toString());
+
 		txQueue.addCommand(cmd);
 
 		// do not wait around the answer.
@@ -806,4 +810,23 @@ public class MISession extends Observable {
 		}
 	}
 
+	protected void writeToConsole(String text) {
+		OutputStream console = getConsolePipe();
+		if (console != null) {
+			try {
+				console.write(text.getBytes());
+				console.flush();
+			}
+			catch(IOException e) {
+			}
+		}
+	}
+
+	public void enableVerboseMode(boolean enabled) {
+		verboseMode = enabled;
+	}
+
+	public boolean isVerboseModeEnabled() {
+		return verboseMode;
+	}
 }

@@ -90,6 +90,10 @@ public class RxThread extends Thread {
 				if (MIPlugin.getDefault().isDebugging()) {
 					MIPlugin.getDefault().debugLog(line);
 				}
+				
+				if (session.isVerboseModeEnabled())
+					session.writeToConsole(line + "\n"); //$NON-NLS-1$
+
 				setPrompt(line);
 				processMIOutput(line + "\n"); //$NON-NLS-1$
 			}

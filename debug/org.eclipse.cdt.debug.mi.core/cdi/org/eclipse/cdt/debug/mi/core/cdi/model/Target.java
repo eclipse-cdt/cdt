@@ -13,7 +13,6 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
@@ -59,6 +58,9 @@ import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalManager;
 import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
+import org.eclipse.cdt.debug.mi.core.command.CLIInfoThreads;
+import org.eclipse.cdt.debug.mi.core.command.CLIJump;
+import org.eclipse.cdt.debug.mi.core.command.CLISignal;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
@@ -68,20 +70,17 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecRun;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
-import org.eclipse.cdt.debug.mi.core.command.CLIInfoThreads;
-import org.eclipse.cdt.debug.mi.core.command.CLIJump;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowEndian;
-import org.eclipse.cdt.debug.mi.core.command.CLISignal;
 import org.eclipse.cdt.debug.mi.core.command.MITargetDetach;
 import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
 import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
+import org.eclipse.cdt.debug.mi.core.output.CLIInfoThreadsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
-import org.eclipse.cdt.debug.mi.core.output.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.CLIInfoThreadsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowEndianInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 
 /**
@@ -110,6 +109,7 @@ public class Target extends SessionObject implements ICDITarget {
 	public void setConfiguration(ICDITargetConfiguration configuration) {
 		fConfiguration = configuration;
 	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getTarget()
 	 */
@@ -1130,5 +1130,13 @@ public class Target extends SessionObject implements ICDITarget {
 
 	public boolean areBreakpointsDeferred() {
 		return this.deferBreakpoints;
+	}
+
+	public void enableVerboseMode(boolean enabled) {
+		miSession.enableVerboseMode(enabled);
+	}
+
+	public boolean isVerboseModeEnabled() {
+		return miSession.isVerboseModeEnabled();
 	}
 }

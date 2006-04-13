@@ -1,3 +1,12 @@
+2006-04-13 Mikhail Khodjaiants
+	Bug 113107: Make trace logs more readily available.
+	Core support for the "Verbose Mode" action.
+	* Target.java
+	* MISession.java
+	* RxThread.java
+	* AbstractGDBCDIDebugger.java
+	+ GDBProcess.java
+
 2006-04-12 Mikhail Khodjaiants
 	Write log messages to the system out instead of err.
 	* MIPlugin.java

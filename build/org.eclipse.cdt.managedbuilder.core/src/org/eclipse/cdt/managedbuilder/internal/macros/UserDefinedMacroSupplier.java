@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,8 +152,10 @@ public class UserDefinedMacroSupplier implements IBuildMacroSupplier {
 			return null;
 		
 		IBuildMacro macro = macros.createMacro(macroName,type,value);
-		if(macros.isChanged())
+		if(macros.isChanged()){
 			setRebuildStateForContext(contextType, contextData);
+			macros.setChanged(false);
+		}
 		
 		return macro;
 
@@ -171,8 +173,10 @@ public class UserDefinedMacroSupplier implements IBuildMacroSupplier {
 			return null;
 		
 		IBuildMacro macro = macros.createMacro(macroName,type,value);
-		if(macros.isChanged())
+		if(macros.isChanged()){
 			setRebuildStateForContext(contextType, contextData);
+			macros.setChanged(false);
+		}
 		
 		return macro;
 
@@ -189,8 +193,10 @@ public class UserDefinedMacroSupplier implements IBuildMacroSupplier {
 			return null;
 		
 		IBuildMacro macro = macros.createMacro(copy);
-		if(macros.isChanged())
+		if(macros.isChanged()){
 			setRebuildStateForContext(contextType, contextData);
+			macros.setChanged(false);
+		}
 		
 		return macro;
 	}
@@ -221,8 +227,10 @@ public class UserDefinedMacroSupplier implements IBuildMacroSupplier {
 			return;
 
 		macros.setMacros(m);
-		if(macros.isChanged())
+		if(macros.isChanged()){
 			setRebuildStateForContext(contextType, contextData);
+			macros.setChanged(false);
+		}
 	}
 
 	/*

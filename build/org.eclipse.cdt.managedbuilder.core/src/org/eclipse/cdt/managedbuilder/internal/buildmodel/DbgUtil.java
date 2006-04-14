@@ -23,7 +23,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
  * this is the build description debug utility class
  */
 public class DbgUtil {
-	public static final boolean DEBUG = false;
+	public static boolean DEBUG = false;
 	private static PrintStream out = System.out;
 	
 	public static void trace(String str){

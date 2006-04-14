@@ -208,6 +208,81 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 	}
 
+	private static class OtherConfigVerifier implements IResourceDeltaVisitor {
+		IConfiguration config;
+		IConfiguration configs[];
+		Configuration otherConfigs[];
+		int resourceChangeState;
+		
+		private static final IPath[] ignoreList = {
+			new Path(".cdtproject"), //$NON-NLS-1$
+			new Path(".cproject"), //$NON-NLS-1$
+			new Path(".cdtbuild"), //$NON-NLS-1$
+			new Path(".settings"), //$NON-NLS-1$
+		};
+		
+		OtherConfigVerifier(IConfiguration cfg){
+			config = cfg;
+			configs = cfg.getManagedProject().getConfigurations();
+			otherConfigs = new Configuration[configs.length - 1];
+			int counter = 0;
+			for(int i = 0; i < configs.length; i++){
+				if(configs[i] != config)
+					otherConfigs[counter++] = (Configuration)configs[i];
+			}
+		}
+		
+		public boolean visit(IResourceDelta delta) throws CoreException {
+			
+			IResource rc = delta.getResource();
+			if(rc.getType() == IResource.FILE){
+				if(isResourceValuable(rc))
+					resourceChangeState |= delta.getKind();
+				return false;
+			}
+			return !isGeneratedForConfig(rc, config) && isResourceValuable(rc);
+		}
+		
+		public void updateOtherConfigs(IResourceDelta delta){
+			if(delta == null)
+				resourceChangeState = ~0;
+			else {
+				try {
+					delta.accept(this);
+				} catch (CoreException e) {
+					resourceChangeState = ~0;
+				}
+			}
+				
+			setResourceChangeStateForOtherConfigs();
+		}
+		
+		private void setResourceChangeStateForOtherConfigs(){
+			for(int i = 0; i < otherConfigs.length; i++){
+				otherConfigs[i].addResourceChangeState(resourceChangeState);
+			}
+		}
+	
+		private boolean isGeneratedForConfig(IResource resource, IConfiguration cfg) {
+			// Is this a generated directory ...
+			IPath path = resource.getProjectRelativePath();
+			IPath root = new Path(cfg.getName());
+			// It is if it is a root of the resource pathname
+			if (root.isPrefixOf(path))
+				return true;
+			return false;
+		}
+
+		private boolean isResourceValuable(IResource rc){
+			IPath path = rc.getProjectRelativePath();
+			for(int i = 0; i < ignoreList.length; i++){
+				if(ignoreList[i].equals(path))
+					return false;
+			}
+			return true;
+		}
+	}
+
 	// String constants
 	private static final String BUILD_ERROR = "ManagedMakeBuilder.message.error";	//$NON-NLS-1$
 	private static final String BUILD_FINISHED = "ManagedMakeBuilder.message.finished";	//$NON-NLS-1$
@@ -340,18 +415,16 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 		IConfiguration cfg = info.getDefaultConfiguration();
 
-// 		Uncomment the below code for using the Internal Builder
-// 		TODO: the info of what builder is to be used
-// 		should be held in and obtained from the Configuration
-/*
-		if(true){
-			invokeInternalBuilder(cfg, kind != FULL_BUILD, true, monitor);
+		updateOtherConfigs(cfg, kind);
+
+		if(((Configuration)cfg).isInternalBuilderEnabled()){
+			invokeInternalBuilder(cfg, kind != FULL_BUILD, ((Configuration)cfg).getInternalBuilderIgnoreErr(), monitor);
 
 			// Scrub the build info the project
 			info.setRebuildState(false);
 			return referencedProjects;
 		}
-*/
+
 		// Create a makefile generator for the build
 		IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
 		generator.initialize(getProject(), info, monitor);
@@ -474,6 +547,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		return referencedProjects;
 	}
 
+	private void updateOtherConfigs(IConfiguration cfg, int buildKind){
+		new OtherConfigVerifier(cfg).updateOtherConfigs(buildKind == FULL_BUILD ? null : getDelta(getProject()));
+	}
+	
 	/**
 	 * Check whether the build has been canceled. Cancellation requests 
 	 * propagated to the caller by throwing <code>OperationCanceledException</code>.

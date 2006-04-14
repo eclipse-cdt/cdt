@@ -50,6 +50,8 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 
 	private static final String EMPTY_STRING = new String();
 
+	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
+
 	private static final boolean resolvedDefault = true;
 	
 	//  Superclass
@@ -234,6 +236,11 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 
 			}
 		}
+		
+		String rebuild = PropertyManager.getInstance().getProperty(this, REBUILD_STATE);
+		if(rebuild == null || Boolean.parseBoolean(rebuild))
+			rebuildState = true;
+
 	}
 
 	/**
@@ -683,7 +690,9 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			
 			if(userDefinedEnvironment != null)
 				EnvironmentVariableProvider.fUserSupplier.storeEnvironment(getParent(),true);
-		
+
+			saveRebuildState();
+
 			// I am clean now
 			isDirty = false;
 		} catch (Exception e) {
@@ -1746,9 +1755,16 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		if(isExtensionElement() && rebuild)
 			return;
 
-		rebuildState = rebuild;
+		if(rebuildState != rebuild){
+			rebuildState = rebuild;
+			saveRebuildState();
+		}
 		
 		if(!rebuild)
 			super.setRebuildState(rebuild);
+	}
+	
+	private void saveRebuildState(){
+		PropertyManager.getInstance().setProperty(this, REBUILD_STATE, Boolean.toString(needsRebuild()));
 	}
 }

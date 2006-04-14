@@ -44,6 +44,7 @@ import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
@@ -80,6 +81,43 @@ public class Configuration extends BuildObject implements IConfiguration {
 	private boolean resolved = true;
 	private boolean isTemporary = false;
 
+	//property name for holding the rebuild state
+	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
+
+	//The resource delta passed to the builder is not always up-to-date
+	//for the given configuration because between two builds of the same configuration
+	//any number of other configuration builds may occur
+	//that is why we need to keep some information regarding what happened
+	//with the resource tree between the two configuration builds
+	//
+	//The trivial approach implemented currently is to hold
+	//the general information of whether some resources were 
+	//removed,changed,etc. and detect whether the rebuild is needed
+	//based upon this information
+	//
+	//In the future we might implement some more smart mechanism
+	//for tracking delta, e.g calculate the pre-cinfiguration resource delta, etc.
+	//
+	//property for holding the resource change state
+	private static final String RC_CHANGE_STATE = "rcState";  //$NON-NLS-1$
+	//resource change state
+	private int resourceChangeState;
+
+	//Internal Builder state
+	//NOTE: these are temporary properties
+	//In the future we are going present the Internal Builder
+	//as a special Builder object of the tool-chain and implement the internal
+	//builder enabling/disabling as the Builder substitution functionality
+	//
+	//property that holds the Internal Builder enable state 
+	private static final String INTERNAL_BUILDER_ENABLED = "internalBuilderOn";  //$NON-NLS-1$
+	//property that holds the internal builder mode
+	private static final String INTERNAL_BUILDER_IGNORE_ERR = "internalBuilderIgnoreErr";  //$NON-NLS-1$
+	//Internal Builder enable state
+	private boolean internalBuilderEnabled;
+	//Internal Builder mode
+	private boolean internalBuilderIgnoreErr;
+	
 	
 	/*
 	 *  C O N S T R U C T O R S
@@ -215,6 +253,28 @@ public class Configuration extends BuildObject implements IConfiguration {
 				addResourceConfiguration(resConfig);
 			}
 		}
+		
+		PropertyManager mngr = PropertyManager.getInstance();
+		String rebuild = mngr.getProperty(this, REBUILD_STATE);
+		if(rebuild == null || Boolean.parseBoolean(rebuild))
+			rebuildNeeded = true;
+		
+		String rcChangeState = mngr.getProperty(this, RC_CHANGE_STATE);
+		if(rcChangeState == null)
+			resourceChangeState = ~0;
+		else {
+			try {
+			resourceChangeState = Integer.parseInt(rcChangeState);
+			} catch (NumberFormatException e){
+				resourceChangeState = ~0;
+			}
+		}
+		
+		internalBuilderEnabled = Boolean.parseBoolean(
+				mngr.getProperty(this, INTERNAL_BUILDER_ENABLED));
+		String tmp = mngr.getProperty(this, INTERNAL_BUILDER_IGNORE_ERR);
+		if(tmp == null || Boolean.parseBoolean(tmp))
+			internalBuilderIgnoreErr = true;
 	}
 
 	/**
@@ -266,6 +326,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (cloneConfig.postannouncebuildStep != null) {
 			postannouncebuildStep = new String(cloneConfig.postannouncebuildStep);
 		} 
+		
+		internalBuilderEnabled = cloneConfig.internalBuilderEnabled;
+		internalBuilderIgnoreErr = cloneConfig.internalBuilderIgnoreErr;
 		
 		// Clone the configuration's children
 		// Tool Chain
@@ -522,6 +585,8 @@ public class Configuration extends BuildObject implements IConfiguration {
 			element.appendChild(resElement);
 			resConfig.serialize(doc, resElement);
 		}
+
+		PropertyManager.getInstance().serialize(this);
 		
 		// I am clean now
 		isDirty = false;
@@ -1314,8 +1379,10 @@ public class Configuration extends BuildObject implements IConfiguration {
 	}
 	
 	public boolean needsRebuild(boolean checkChildren) {
-		if(rebuildNeeded || !checkChildren)
-			return rebuildNeeded;
+		boolean needRebuild = rebuildNeeded || resourceChangesRequireRebuild(); 
+		
+		if(needRebuild || !checkChildren)
+			return needRebuild;
 		
 		if(toolChain.needsRebuild())
 			return true;
@@ -1365,18 +1432,25 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if(isExtensionElement() && rebuild)
 			return;
 		
-		rebuildNeeded = rebuild;
+		if(rebuildNeeded != rebuild){
+			rebuildNeeded = rebuild;
+			saveRebuildState();
+		}
 		
 		if(!rebuildNeeded){
+			setResourceChangeState(0);
+			
 			toolChain.setRebuildState(false);
 			
-			for(Iterator iter = resourceConfigurationList.iterator();iter.hasNext();){
-				IResourceConfiguration rcCfg = (IResourceConfiguration)iter.next();
-				rcCfg.setRebuildState(false);
-				
-				ITool tools[] = rcCfg.getToolsToInvoke();
-				for(int i = 0; i < tools.length; i++){
-					tools[i].setRebuildState(false);
+			if(resourceConfigurationList != null){
+				for(Iterator iter = resourceConfigurationList.iterator();iter.hasNext();){
+					IResourceConfiguration rcCfg = (IResourceConfiguration)iter.next();
+					rcCfg.setRebuildState(false);
+					
+					ITool tools[] = rcCfg.getToolsToInvoke();
+					for(int i = 0; i < tools.length; i++){
+						tools[i].setRebuildState(false);
+					}
 				}
 			}
 	
@@ -1581,5 +1655,109 @@ public class Configuration extends BuildObject implements IConfiguration {
 		}
 		
 		return tool;
+	}
+
+	/*
+	 * The resource delta passed to the builder is not always up-to-date
+	 * for the given configuration because between two builds of the same configuration
+	 * any number of other configuration builds may occur
+	 * that is why we need to keep some information regarding what happened
+	 * with the resource tree between the two configuration builds
+	 *
+	 * The trivial approach implemented currently is to hold
+	 * the general information of whether some resources were 
+	 * removed,changed,etc. and detect whether the rebuild is needed
+	 * based upon this information
+	 * 
+	 * This method adds the resource change state for the configuration
+	 * specifying the resource change type performed on the project
+	 * reported while building another configuration
+	 * The method is not exported to the public API since delta handling
+	 * mechanism will likely to be changed in the future 
+	 *
+	 * In the future we might implement some more smart mechanism
+	 * for tracking delta, e.g calculate the pre-cinfiguration resource delta, etc.
+	 *  
+	 */
+	public void addResourceChangeState(int state){
+		setResourceChangeState(state | resourceChangeState);
+	}
+
+	private void setResourceChangeState(int state){
+		if(resourceChangeState != state){
+			resourceChangeState = state;
+			saveResourceChangeState();
+		}
+	}
+	
+	private boolean resourceChangesRequireRebuild(){
+		return isInternalBuilderEnabled() ?
+				resourceChangeState != 0 :
+					(resourceChangeState & IResourceDelta.REMOVED) == IResourceDelta.REMOVED;
+	}
+	
+	private void saveRebuildState(){
+		PropertyManager.getInstance().setProperty(this, REBUILD_STATE, Boolean.toString(rebuildNeeded));
+	}
+
+	private void saveResourceChangeState(){
+		PropertyManager.getInstance().setProperty(this, RC_CHANGE_STATE, Integer.toString(resourceChangeState));
+	}
+	
+	/*
+	 * Internal Builder state API
+	 * NOTE: this is a temporary API
+	 * In the future we are going present the Internal Builder
+	 * as a special Builder object of the tool-chain and implement the internal
+	 * builder enabling/disabling as the Builder substitution functionality
+	 * 
+	 */
+	
+	/*
+	 * this method is used for enabling/disabling the internal builder
+	 * for the given configuration
+	 * 
+	 * @param enable boolean
+	 */
+	public void enableInternalBuilder(boolean enable){
+		if(internalBuilderEnabled != enable){
+			internalBuilderEnabled = enable;
+			PropertyManager.getInstance().setProperty(this, INTERNAL_BUILDER_ENABLED, Boolean.toString(internalBuilderEnabled));
+		}
+	}
+	
+	/*
+	 * returns whether the internal builder is enabled
+	 *  
+	 * @return boolean
+	 */
+	public boolean isInternalBuilderEnabled(){
+		return internalBuilderEnabled;
+	}
+	
+	/*
+	 * 
+	 * sets the Internal Builder mode
+	 * 
+	 * @param ignore if true, internal builder will ignore 
+	 * build errors while building,
+	 * otherwise it will stop at the first build error
+	 */
+	public void setInternalBuilderIgnoreErr(boolean ignore){
+		if(internalBuilderIgnoreErr != ignore){
+			internalBuilderIgnoreErr = ignore;
+			PropertyManager.getInstance().setProperty(this, INTERNAL_BUILDER_IGNORE_ERR, Boolean.toString(internalBuilderIgnoreErr));
+		}
+	}
+
+	/*
+	 * returns the Internal Builder mode
+	 * if true, internal builder will ignore build errors while building,
+	 * otherwise it will stop at the first build error
+	 * 
+	 * @return boolean
+	 */
+	public boolean getInternalBuilderIgnoreErr(){
+		return internalBuilderIgnoreErr;
 	}
 }

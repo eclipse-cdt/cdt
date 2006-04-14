@@ -125,7 +125,7 @@ public class BuildDescriptionManager {
 			fVisitedSteps.add(action);
 		}
 		
-		if(doNext){
+		if(doNext && proceed){
 			IBuildStep[] nextActions = getSteps(action, !fUp);
 			for(int i = 0; i < nextActions.length; i++){
 				if(!fVisitedSteps.contains(nextActions[i])){

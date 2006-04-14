@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -950,8 +948,15 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			defaultConfig = configuration;
 			defaultConfigId = configuration.getId();
 			
-			defaultConfig.setRebuildState(true);
-			
+			IProject proj = getOwner().getProject();
+			IResource cdtbuildFile = proj.findMember(ManagedBuildManager.SETTINGS_FILE_NAME);
+			if(cdtbuildFile != null){
+				try {
+					cdtbuildFile.touch(new NullProgressMonitor());
+				} catch (CoreException e) {
+					//TODO: log an error
+				}
+			}
 			// TODO: is this appropriate?
 			persistDefaultConfiguration();
 		}

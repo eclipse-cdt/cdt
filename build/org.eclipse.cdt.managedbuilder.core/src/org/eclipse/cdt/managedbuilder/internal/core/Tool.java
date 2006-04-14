@@ -75,6 +75,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	public static final String DEFAULT_PATTERN = "${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"; //$NON-NLS-1$
 	public static final String DEFAULT_CBS_PATTERN = "${COMMAND}"; //$NON-NLS-1$
 
+	//property name for holding the rebuild state
+	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
+
 	private static final String DEFAULT_SEPARATOR = ","; //$NON-NLS-1$
 	//private static final IOptionCategory[] EMPTY_CATEGORIES = new IOptionCategory[0];
 	//private static final IOption[] EMPTY_OPTIONS = new IOption[0];
@@ -291,6 +294,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 				addOutputType(outputType);
 			}
 		}
+		
+		String rebuild = PropertyManager.getInstance().getProperty(this, REBUILD_STATE);
+		if(rebuild == null || Boolean.parseBoolean(rebuild))
+			rebuildState = true;
+
 	}
 
 	/**
@@ -872,7 +880,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 				// Save as URL in string form
 				element.setAttribute(IOptionCategory.ICON, iconPathURL.toString());
 			}
-			
+
+			saveRebuildState();
+
 			// I am clean now
 			isDirty = false;
 		} catch (Exception e) {
@@ -2861,7 +2871,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		if(isExtensionElement() && rebuild)
 			return;
 		
-		rebuildState = rebuild;
+		if(rebuildState != rebuild){
+			rebuildState = rebuild;
+			saveRebuildState();
+		}
 		
 		if(!rebuild){
 			super.setRebuildState(rebuild);
@@ -2881,7 +2894,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 				}
 			}
 		}
-		
-		
 	}
+	
+	private void saveRebuildState(){
+		PropertyManager.getInstance().setProperty(this, REBUILD_STATE, Boolean.toString(needsRebuild()));
+	}
+
 }

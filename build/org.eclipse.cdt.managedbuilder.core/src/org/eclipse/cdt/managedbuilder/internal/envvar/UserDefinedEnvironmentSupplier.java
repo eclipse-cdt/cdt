@@ -235,8 +235,10 @@ public class UserDefinedEnvironmentSupplier extends
 		if(env == null)
 			return null;
 		IBuildEnvironmentVariable var =  env.createVariable(name,value,op,delimiter);
-		if(env.isChanged())
+		if(env.isChanged()){
 			setRebuildStateForContext(context);
+			env.setChanged(false);
+		}
 		return var;
 	}
 
@@ -265,8 +267,10 @@ public class UserDefinedEnvironmentSupplier extends
 			return;
 		
 		env.setVariales(vars);
-		if(env.isChanged())
+		if(env.isChanged()){
 			setRebuildStateForContext(context);
+			env.setChanged(false);
+		}
 	}
 	
 	protected void setRebuildStateForContext(Object context){

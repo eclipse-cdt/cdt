@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,7 +118,7 @@ public class StoredBuildPathEnvironmentContainer extends
 		}
 		boolean changed = env.isChanged();
 		env.setChanged(false);
-		if(changed)
+		if(changed && !configuration.isTemporary())
 			try{
 				storeEnvironment(env,configuration,false);
 			}catch(CoreException e){

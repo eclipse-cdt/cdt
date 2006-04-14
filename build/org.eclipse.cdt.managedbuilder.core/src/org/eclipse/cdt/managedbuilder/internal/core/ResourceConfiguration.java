@@ -38,6 +38,9 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 
 	private static final String EMPTY_STRING = new String();
 
+	//property name for holding the rebuild state
+	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
+
 	//  Parent and children
 	private IConfiguration parent;
 	private List toolList;
@@ -112,6 +115,10 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 				addTool(tool);
 			}
 		}
+		
+		String rebuild = PropertyManager.getInstance().getProperty(this, REBUILD_STATE);
+		if(rebuild == null || Boolean.parseBoolean(rebuild))
+			rebuildState = true;
 	}
 	
 	public ResourceConfiguration(IConfiguration parent, String id, String resourceName, String path){
@@ -888,7 +895,10 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		if(isExtensionResourceConfiguration() && rebuild)
 			return;
 		
-		rebuildState = rebuild;
+		if(rebuildState != rebuild){
+			rebuildState = rebuild;
+			saveRebuildState();
+		}
 		
 		if(!rebuildState){
 			ITool tools[] = getToolsToInvoke();
@@ -898,4 +908,9 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		}
 
 	}
+	
+	private void saveRebuildState(){
+		PropertyManager.getInstance().setProperty(this, REBUILD_STATE, Boolean.toString(rebuildState));
+	}
+
 }

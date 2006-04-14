@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,15 +16,14 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -41,7 +40,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class BuildSettingsBlock extends AbstractCOptionPage {
@@ -58,8 +56,12 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	private static final String OUTPUT_EXT = LABEL + ".output.extension";	//$NON-NLS-1$
 	private static final String OUTPUT_NAME = LABEL + ".output.name";	//$NON-NLS-1$
 	private static final String MACROS_GROUP = LABEL + ".macros.group";	//$NON-NLS-1$
-	private static final String PACROS_EXPAND_BTN = LABEL + ".macros.expand";	//$NON-NLS-1$
-
+	private static final String MACROS_EXPAND_BTN = LABEL + ".macros.expand";	//$NON-NLS-1$
+	private static final String INTERNAL_BUILDER_GROUP = LABEL + ".internal.builder.group";	//$NON-NLS-1$
+	private static final String INTERNAL_BUILDER_ENABLE_BTN = LABEL + ".internal.builder.enable";	//$NON-NLS-1$
+	private static final String INTERNAL_BUILDER_IGNORE_ERR_BTN = LABEL + ".internal.builder.ignore.err";	//$NON-NLS-1$
+	private static final String INTERNAL_BUILDER_EXPERIMENTAL_NOTE = LABEL + ".internal.builder.experimental.note";	//$NON-NLS-1$
+	
 	private static final String EMPTY_STRING = new String();
 	
 	/*
@@ -68,9 +70,13 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	protected Text buildArtifactExt;
 	protected Text buildArtifactName;
 	protected Button makeCommandDefault;
+	protected Group makeCommandGroup;
 	protected Text makeCommandEntry;
 	protected Button buildMacrosExpand;
 	protected Group buildMacrosExpandGroup;
+	protected Group internalBuilderGroup;
+	protected Button internalBuilderEnable;
+	protected Button internalBuilderIgnoreErr;
 
 	/*
 	 * Bookeeping variables
@@ -137,6 +143,9 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		
 		// Create the build macros usage configuration area
 		createExpandMacrosGroup(comp);
+		
+		// Create the Internal Builder configuration area
+		createInternalBuilderGroup(comp);
 	}
 
 	/* (non-Javadoc)
@@ -210,7 +219,7 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	 * @param parent
 	 */
 	private void createMakeCommandGroup(Composite parent) {
-		final Group makeCommandGroup = new Group(parent, SWT.NONE);
+		makeCommandGroup = new Group(parent, SWT.NONE);
 		makeCommandGroup.setFont(parent.getFont());
 		makeCommandGroup.setText(ManagedBuilderUIMessages.getResourceString(GROUP));
 		makeCommandGroup.setLayout(new GridLayout(1, true));
@@ -256,7 +265,7 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		buildMacrosExpandGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		buildMacrosExpand = new Button(buildMacrosExpandGroup, SWT.CHECK | SWT.LEFT);
 		buildMacrosExpand.setFont(buildMacrosExpandGroup.getFont());
-		buildMacrosExpand.setText(ManagedBuilderUIMessages.getResourceString(PACROS_EXPAND_BTN));
+		buildMacrosExpand.setText(ManagedBuilderUIMessages.getResourceString(MACROS_EXPAND_BTN));
 		buildMacrosExpand.setBackground(buildMacrosExpandGroup.getBackground());
 		buildMacrosExpand.setForeground(buildMacrosExpandGroup.getForeground());
 		buildMacrosExpand.addSelectionListener(new SelectionAdapter () {
@@ -278,6 +287,62 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		});
 	}
 	
+	/* (non-Javadoc)
+	 * Creates the group containing the check-box that allow user to specify 
+	 * whether the environment variable macros should be expanded or kept in the makefile
+	 * @param parent
+	 */
+	private void createInternalBuilderGroup(Composite parent) {
+		internalBuilderGroup = new Group(parent, SWT.NONE);
+		internalBuilderGroup.setFont(parent.getFont());
+		internalBuilderGroup.setText(ManagedBuilderUIMessages.getResourceString(INTERNAL_BUILDER_GROUP));
+		internalBuilderGroup.setLayout(new GridLayout(1, true));
+		internalBuilderGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Label dotLabel = new Label(internalBuilderGroup, SWT.CENTER);
+		dotLabel.setFont(internalBuilderGroup.getFont());
+		dotLabel.setText(ManagedBuilderUIMessages.getResourceString(INTERNAL_BUILDER_EXPERIMENTAL_NOTE));
+
+		internalBuilderEnable = new Button(internalBuilderGroup, SWT.CHECK | SWT.LEFT);
+		internalBuilderEnable.setFont(internalBuilderGroup.getFont());
+		internalBuilderEnable.setText(ManagedBuilderUIMessages.getResourceString(INTERNAL_BUILDER_ENABLE_BTN));
+		internalBuilderEnable.setBackground(internalBuilderGroup.getBackground());
+		internalBuilderEnable.setForeground(internalBuilderGroup.getForeground());
+		internalBuilderEnable.addSelectionListener(new SelectionAdapter () {
+			public void widgetSelected(SelectionEvent e) {
+				Configuration config = (Configuration)BuildSettingsBlock.this.parent.getSelectedConfigurationClone();
+				config.enableInternalBuilder(internalBuilderEnable.getSelection());
+				setValues();
+				setDirty(true);
+			}
+		});
+		internalBuilderEnable.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				internalBuilderEnable = null;
+			}
+		});
+
+		internalBuilderIgnoreErr = new Button(internalBuilderGroup, SWT.CHECK | SWT.LEFT);
+		internalBuilderIgnoreErr.setFont(internalBuilderGroup.getFont());
+		internalBuilderIgnoreErr.setText(ManagedBuilderUIMessages.getResourceString(INTERNAL_BUILDER_IGNORE_ERR_BTN));
+		internalBuilderIgnoreErr.setBackground(internalBuilderGroup.getBackground());
+		internalBuilderIgnoreErr.setForeground(internalBuilderGroup.getForeground());
+		internalBuilderIgnoreErr.addSelectionListener(new SelectionAdapter () {
+			public void widgetSelected(SelectionEvent e) {
+				Configuration config = (Configuration)BuildSettingsBlock.this.parent.getSelectedConfigurationClone();
+				config.setInternalBuilderIgnoreErr(internalBuilderIgnoreErr.getSelection());
+				setValues();
+				setDirty(true);
+			}
+		});
+		internalBuilderIgnoreErr.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				internalBuilderIgnoreErr = null;
+			}
+		});
+
+	}
+
 	protected void initializeValues() {
 		setValues();
 		setDirty(false);
@@ -290,7 +355,7 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	}
 
 	protected void setValues() {
-		IConfiguration config = parent.getSelectedConfigurationClone();
+		Configuration config = (Configuration)parent.getSelectedConfigurationClone();
 		if(!config.getArtifactName().equals(buildArtifactName.getText()))
 			buildArtifactName.setText(config.getArtifactName());
 		
@@ -311,6 +376,17 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 			buildMacrosExpandGroup.setVisible(true);
 			buildMacrosExpand.setSelection(provider.areMacrosExpandedInBuildfile(config));
 		}
+
+		boolean internalBuilderOn = config.isInternalBuilderEnabled();
+		internalBuilderEnable.setSelection(internalBuilderOn);
+		internalBuilderIgnoreErr.setSelection(config.getInternalBuilderIgnoreErr());
+		
+		makeCommandDefault.setEnabled(!internalBuilderOn);
+		makeCommandEntry.setEnabled(!internalBuilderOn);
+		makeCommandGroup.setEnabled(!internalBuilderOn);
+		buildMacrosExpand.setEnabled(!internalBuilderOn);
+		buildMacrosExpandGroup.setEnabled(!internalBuilderOn);
+		internalBuilderIgnoreErr.setEnabled(internalBuilderOn);
 
 //		setDirty(false);
 	}
@@ -350,8 +426,8 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(IProgressMonitor)
 	 */
 	public void performApply(IProgressMonitor monitor) throws CoreException {
-		IConfiguration selectedConfiguration = parent.getSelectedConfiguration();
-		IConfiguration cloneConfig = parent.getSelectedConfigurationClone();
+		Configuration selectedConfiguration = (Configuration)parent.getSelectedConfiguration();
+		Configuration cloneConfig = (Configuration)parent.getSelectedConfigurationClone();
 
 		String buildCommand = cloneConfig.getBuildCommand();
 		String buildArgs = cloneConfig.getBuildArguments();
@@ -377,6 +453,9 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		provider.expandMacrosInBuildfile(
 				selectedConfiguration,
 				provider.areMacrosExpandedInBuildfile(cloneConfig));
+		
+		selectedConfiguration.enableInternalBuilder(cloneConfig.isInternalBuilderEnabled());
+		selectedConfiguration.setInternalBuilderIgnoreErr(cloneConfig.getInternalBuilderIgnoreErr());
 		
 		setDirty(false);
 	}

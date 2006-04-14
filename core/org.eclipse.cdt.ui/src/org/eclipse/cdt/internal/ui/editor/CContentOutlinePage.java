@@ -22,44 +22,22 @@ import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.internal.ui.cview.SelectionTransferDragAdapter;
 import org.eclipse.cdt.internal.ui.cview.SelectionTransferDropAdapter;
-import org.eclipse.cdt.internal.ui.dnd.CDTViewerDragAdapter;
-import org.eclipse.cdt.internal.ui.dnd.DelegatingDropAdapter;
-import org.eclipse.cdt.internal.ui.dnd.TransferDragSourceListener;
-import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
+import org.eclipse.cdt.internal.ui.dnd.*;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.StandardCElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
-import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
-import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.cdt.ui.actions.*;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.IPageSite;
@@ -72,7 +50,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	private CEditor fEditor;
 	private ITranslationUnit fInput;
 	private ProblemTreeViewer fTreeViewer;
-	private ListenerList selectionChangedListeners = new ListenerList();
+	private ListenerList selectionChangedListeners = new ListenerList(ListenerList.IDENTITY);
 	private TogglePresentationAction fTogglePresentation;
 	private String fContextMenuId;
 	private Menu fMenu;
@@ -246,7 +224,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	}
 
 	protected CContentOutlinerProvider createContentProvider(TreeViewer viewer) {
-		return new CContentOutlinerProvider(viewer, CUIPlugin.getActiveWorkbenchWindow().getActivePage().getActivePart().getSite());
+		IWorkbenchPartSite site= getSite().getPage().getActiveEditor().getSite();
+		return new CContentOutlinerProvider(viewer, site);
 	}
 
 	protected ProblemTreeViewer createTreeViewer(Composite parent) {

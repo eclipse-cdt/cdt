@@ -238,13 +238,12 @@ public class BuildConsolePage extends Page
 						getViewer().getTextWidget().redraw();
 					}
 				});
-			} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT)) {
-				setFont(JFaceResources.getFont(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT));
-			} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH)) {
-				setTabs(CUIPlugin.getDefault().getPluginPreferences().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
-			}
+			} 
+		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT)) {
+			setFont(JFaceResources.getFont(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT));
+		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH)) {
+			setTabs(CUIPlugin.getDefault().getPluginPreferences().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
 		}
-
 	}
 
 	protected void createActions() {

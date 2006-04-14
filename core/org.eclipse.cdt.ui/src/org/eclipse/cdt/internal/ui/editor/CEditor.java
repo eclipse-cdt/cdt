@@ -84,6 +84,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.search.ui.actions.TextSearchGroup;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -151,6 +152,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	
 	/** Search actions **/
 	private ActionGroup fSelectionSearchGroup;
+	private ActionGroup fTextSearchGroup;
     /** Action which shows selected element in CView. */
 	private ShowInCViewAction fShowInCViewAction;
 	
@@ -600,6 +602,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			fSelectionSearchGroup = null;
 		}
 
+		if (fTextSearchGroup != null) {
+			fTextSearchGroup.dispose();
+			fTextSearchGroup = null;
+		}
+
 		if (fEditorSelectionChangedListener != null)  {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener= null;
@@ -734,6 +741,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
         //Assorted action groupings
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
+		fTextSearchGroup= new TextSearchGroup(this);
 	}
 
 	/**
@@ -766,6 +774,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ShowInCView"); //$NON-NLS-1$
 
 		fSelectionSearchGroup.fillContextMenu(menu);
+		fTextSearchGroup.fillContextMenu(menu);
 	}
 
 	/**
@@ -1071,7 +1080,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			try {
 				boolean isProblem= marker.isSubtypeOf(IMarker.PROBLEM);
 				IWorkbenchPage page= getSite().getPage();
-				IViewPart view= page.findView(isProblem ? IPageLayout.ID_PROBLEM_VIEW: IPageLayout.ID_TASK_LIST); //$NON-NLS-1$  //$NON-NLS-2$
+				IViewPart view= page.findView(isProblem ? IPageLayout.ID_PROBLEM_VIEW: IPageLayout.ID_TASK_LIST); 
 				if (view != null) {
 					Method method= view.getClass().getMethod("setSelection", new Class[] { IStructuredSelection.class, boolean.class}); //$NON-NLS-1$
 					method.invoke(view, new Object[] {new StructuredSelection(marker), Boolean.TRUE });

@@ -62,6 +62,7 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 		if ( monitor.isCanceled() ) {
 			throw new OperationCanceledException();
 		}
+		boolean verboseMode = verboseMode( launch.getLaunchConfiguration() );
 		Session session = createGDBSession( launch, executable, monitor );
 		if ( session != null ) {
 			try {
@@ -72,6 +73,7 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 						IProcess debuggerProcess = createGDBProcess( (Target)targets[i], launch, debugger, renderDebuggerProcessLabel( launch ), null );
 						launch.addProcess( debuggerProcess );
 					}
+					((Target)targets[i]).enableVerboseMode( verboseMode );
 					((Target)targets[i]).getMISession().start();
 				}
 				doStartSession( launch, session, monitor );
@@ -196,5 +198,16 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 
 	protected IProcess createGDBProcess( Target target, ILaunch launch, Process process, String label, Map attributes ) {
 		return new GDBProcess( target, launch, process, label, attributes );
+	}
+
+	protected boolean verboseMode( ILaunchConfiguration config ) {
+		boolean result = IMILaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT; 
+		try {
+			return config.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, result );
+		}
+		catch( CoreException e ) {
+			// use default
+		}
+		return result;
 	}
 }

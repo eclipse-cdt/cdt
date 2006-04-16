@@ -60,6 +60,8 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 
 	protected Combo fProtocolCombo;
 
+	protected Button fVerboseModeButton;
+
 	private IMILaunchConfigurationComponent fSolibBlock;
 
 	private CommandFactoryDescriptor[] fCommandFactoryDescriptors;
@@ -81,6 +83,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT );
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT );
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_COMMAND_FACTORY, MIPlugin.getDefault().getCommandFactoryManager().getDefaultDescriptor( getDebuggerIdentifier() ).getIdentifier() );
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, IMILaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT );
 		if ( fSolibBlock != null )
 			fSolibBlock.setDefaults( configuration );
 	}
@@ -157,7 +160,14 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 			}
 		}
 		fProtocolCombo.select( miIndex );
-
+		boolean verboseMode = IMILaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT;
+		try {
+			verboseMode = configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, IMILaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT );
+		}
+		catch( CoreException e ) {
+			// use default
+		}
+		fVerboseModeButton.setSelection( verboseMode );
 		setInitializing( false ); 
 	}
 
@@ -176,6 +186,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, str );
 		if ( fSolibBlock != null )
 			fSolibBlock.performApply( configuration );
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, fVerboseModeButton.getSelection() );
 	}
 
 	public String getName() {
@@ -312,6 +323,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		options.setLayoutData( gd );
 		createCommandFactoryCombo( options );
 		createProtocolCombo( options );
+		createVerboseModeButton( subComp );
 	}
 
 	public void createSolibTab( TabFolder tabFolder ) {
@@ -398,5 +410,21 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 			}
 		}
 		return ""; //$NON-NLS-1$
+	}
+
+	protected void createVerboseModeButton( Composite parent ) {
+		fVerboseModeButton = createCheckButton( parent, MIUIMessages.getString( "StandardGDBDebuggerPage.13" ) ); //$NON-NLS-1$
+		fVerboseModeButton.addSelectionListener( new SelectionListener() {
+
+			public void widgetDefaultSelected( SelectionEvent e ) {
+				if ( !isInitializing() )
+					updateLaunchConfigurationDialog();
+			}
+			
+			public void widgetSelected( SelectionEvent e ) {
+				if ( !isInitializing() )
+					updateLaunchConfigurationDialog();
+			}
+		} );
 	}
 }

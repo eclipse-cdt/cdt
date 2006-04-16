@@ -69,8 +69,18 @@ public interface IMILaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_COMMAND_FACTORY = MIPlugin.getUniqueIdentifier() + ".commandFactory"; //$NON-NLS-1$
 
 	/**
-	 * launch configuration attribute key.  The value is a string specifying the protocol to
+	 * Launch configuration attribute key.  The value is a string specifying the protocol to
 	 * use.  For now only "mi", "mi1", "m2", "mi3" are supported.
 	 */
 	public static final String ATTR_DEBUGGER_PROTOCOL = MIPlugin.getUniqueIdentifier() + ".protocol"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key.  The value is a boolean specifying the mode of the gdb console.
+	 */
+	public static final String ATTR_DEBUGGER_VERBOSE_MODE = MIPlugin.getUniqueIdentifier() + ".verboseMode"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_VERBOSE_MODE.
+	 */
+	public static final boolean DEBUGGER_VERBOSE_MODE_DEFAULT = false;
 }

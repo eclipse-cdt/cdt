@@ -67,7 +67,7 @@
 		<!--antcall target="cdt-ui"/-->
 		<antcall target="cdt-debug-ui"/>
 		<antcall target="cdt-mbs-core"/>
-		<antcall target="cdt-mbs-ui"/>
+		<!--antcall target="cdt-mbs-ui"/-->
 	</target>
 
 </project>

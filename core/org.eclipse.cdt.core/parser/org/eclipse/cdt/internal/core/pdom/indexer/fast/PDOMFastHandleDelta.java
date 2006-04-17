@@ -27,11 +27,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 
-class PDOMFastHandleDelta extends Job {
-
-	private final PDOM pdom;
+class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 
 	private final ICElementDelta delta;
 
@@ -42,8 +39,7 @@ class PDOMFastHandleDelta extends Job {
 	private List removedTUs;
 
 	public PDOMFastHandleDelta(PDOM pdom, ICElementDelta delta) {
-		super("Delta Handler");
-		this.pdom = pdom;
+		super("Delta Handler", pdom);
 		this.delta = delta;
 	}
 
@@ -152,27 +148,6 @@ class PDOMFastHandleDelta extends Job {
 		}
 	}
 
-	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
-		ILanguage language = tu.getLanguage();
-		if (language == null)
-			return;
-
-		// get the AST in a "Fast" way
-		IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
-				ILanguage.AST_USE_INDEX
-						| ILanguage.AST_SKIP_INDEXED_HEADERS
-						| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
-		if (ast == null)
-			return;
-
-		pdom.acquireWriteLock();
-		try {
-			pdom.addSymbols(language, ast);
-		} finally {
-			pdom.releaseWriteLock();
-		}
-	}
-	
 	protected void changeTU(ITranslationUnit tu) throws InterruptedException, CoreException {
 		ILanguage language = tu.getLanguage();
 		if (language == null)

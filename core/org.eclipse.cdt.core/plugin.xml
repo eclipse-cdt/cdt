@@ -551,7 +551,7 @@
           class="org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexer">
          </run>
       </cextension>
-      <run class="org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer"/>
+      <run class="org.eclipse.cdt.internal.core.pdom.indexer.ctags.CtagsIndexer"/>
    </extension>
    <extension
    		 id="nullindexer"

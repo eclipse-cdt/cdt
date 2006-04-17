@@ -108,14 +108,4 @@ public interface IASTNode {
      */
     public String getRawSignature();
 
-    /**
-     * Internal interface.
-     * 
-     * Get the scope for this node. Different children may get different nodes.
-     * 
-     * @param childProperty
-     * @return
-     */
-    public IScope2 getScope(IASTNode child, ASTNodeProperty childProperty);
-    
 }

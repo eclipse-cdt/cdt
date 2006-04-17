@@ -59,6 +59,13 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 		return new CodeReader(tu.getResource().getLocation().toOSString(), tu.getContents());
 	}
 	
+	private static class SkippedInclusion extends CodeReader {
+		private static char[] buffer = "".toCharArray();
+		public SkippedInclusion(String filename) {
+			super(filename, buffer);
+		}
+	}
+	
 	public CodeReader createCodeReaderForInclusion(String path) {
 		// Don't parse inclusion if it is already captured
 		try {
@@ -70,7 +77,7 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 			PDOMFile file = PDOMFile.find(pdom, path); 
 			if (file != null && file.getFirstName() != null)
 				// Already got things from here
-				return null;
+				return new SkippedInclusion(path);
 		} catch (CoreException e) {
 			CCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
 					CCorePlugin.PLUGIN_ID, 0, "PDOM Exception", e)));

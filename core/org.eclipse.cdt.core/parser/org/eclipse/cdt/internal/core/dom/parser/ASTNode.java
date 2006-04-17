@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IScope2;
 
 /**
  * @author jcamelon
@@ -103,10 +102,6 @@ public abstract class ASTNode implements IASTNode {
         return fileLocation;
     }
     
-    public IScope2 getScope(IASTNode child, ASTNodeProperty childProperty) {
-    	return parent != null ? parent.getScope(this, property) : null;
-    }
-
     public IASTTranslationUnit getTranslationUnit() {
        	return parent != null ? parent.getTranslationUnit() : null;
     }

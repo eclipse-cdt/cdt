@@ -16,9 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IFile;
@@ -31,19 +29,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @author Doug Schaefer
  *
  */
-public class PDOMFastReindex extends Job {
+public class PDOMFastReindex extends PDOMFastIndexerJob {
 
-	private final PDOM pdom;
-	
 	public PDOMFastReindex(PDOM pdom) {
-		super("Reindex");
-		this.pdom = pdom;
+		super("Reindex", pdom);
 	}
 	
 	protected IStatus run(IProgressMonitor monitor) {
@@ -90,27 +84,6 @@ public class PDOMFastReindex extends Job {
 			return e.getStatus();
 		} catch (InterruptedException e) {
 			return Status.CANCEL_STATUS;
-		}
-	}
-
-	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
-		ILanguage language = tu.getLanguage();
-		if (language == null)
-			return;
-
-		// get the AST in a "Fast" way
-		IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
-				ILanguage.AST_USE_INDEX
-						| ILanguage.AST_SKIP_INDEXED_HEADERS
-						| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
-		if (ast == null)
-			return;
-
-		pdom.acquireWriteLock();
-		try {
-			pdom.addSymbols(language, ast);
-		} finally {
-			pdom.releaseWriteLock();
 		}
 	}
 

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.IPDOMWriter;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ICProject;
@@ -164,50 +165,20 @@ public class PDOM extends PlatformObject
 		return fileIndex;
 	}
 	
-	/**
-	 * @deprecated
-	 */
-	public void addSymbols(ITranslationUnit tu) throws CoreException {
-		final ILanguage language = tu.getLanguage();
-		if (language == null)
-			return;
-		
-		final PDOMLinkage linkage = getLinkage(language);
-		if (linkage == null)
-			return;
-
-		IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
-				ILanguage.AST_USE_INDEX |
-				ILanguage.AST_SKIP_INDEXED_HEADERS |
-				ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
-		if (ast == null)
-			return;
-
-		ast.accept(new ASTVisitor() {
-				{
-					shouldVisitNames = true;
-					shouldVisitDeclarations = true;
-				}
-
-				public int visit(IASTName name) {
-					try {
-						linkage.addName(name);
-						return PROCESS_CONTINUE;
-					} catch (CoreException e) {
-						CCorePlugin.log(e);
-						return PROCESS_ABORT;
-					}
-				};
-			});;
-		
-		fireChange();
-	}
-	
 	public void addSymbols(ILanguage language, IASTTranslationUnit ast) throws CoreException {
 		final PDOMLinkage linkage = getLinkage(language);
 		if (linkage == null)
 			return;
 		
+		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
+		for (int i = 0; i < includes.length; ++i) {
+			IASTPreprocessorIncludeStatement include = includes[i];
+			
+			String sourcePath = include.getFileLocation().getFileName();
+			String destPath = include.getPath();
+			//System.out.println(sourcePath + " -> " + destPath);
+		}
+	
 		ast.accept(new ASTVisitor() {
 			{
 				shouldVisitNames = true;

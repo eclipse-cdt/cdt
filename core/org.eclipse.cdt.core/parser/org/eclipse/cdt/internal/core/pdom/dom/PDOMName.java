@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope2;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
@@ -321,11 +320,6 @@ public class PDOMName implements IASTName, IASTFileLocation {
 		}
 	}
 
-	public IScope2 getScope(IASTNode child, ASTNodeProperty childProperty) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	public void delete() throws CoreException {
 		// Delete from the binding chain
 		PDOMName prevName = getPrevInBinding();

@@ -27,10 +27,12 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -143,17 +145,47 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     			if (ref != null && ref.length > 0) {
     				indexerId = ref[0].getID();
     			}
+    			if (indexerId != null) {
+    				// Make sure it is a valid indexer
+    		    	IExtension indexerExt = Platform.getExtensionRegistry()
+    	    			.getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);
+    		    	if (indexerExt == null) {
+    		    		// It is not, forget about it.
+    		    		indexerId = null;
+    		    	}
+    			}
     		} catch (CoreException e) {
     		}
     		
     		if (indexerId == null)
     			// make it the default
     			indexerId = getDefaultIndexerId();
+    		
+    		// Start a job to set the id.
+    		new SetId(project, indexerId).schedule();
     	}
   	    return indexerId;
     }
 
-    public void setIndexerId(ICProject project, String indexerId) throws CoreException {
+    private static class SetId extends Job {
+    	private final ICProject project;
+    	private final String indexerId;
+    	public SetId(ICProject project, String indexerId) {
+    		super("Set Indexer Id");
+    		this.project = project;
+    		this.indexerId = indexerId;
+    	}
+    	protected IStatus run(IProgressMonitor monitor) {
+    		try {
+    			setId(project, indexerId);
+        		return Status.OK_STATUS;
+    		} catch (CoreException e) {
+    			return e.getStatus();
+    		}
+    	}
+    }
+    
+    private static void setId(ICProject project, String indexerId) throws CoreException {
     	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
     	if (prefs == null)
     		return; // TODO why would this be null?
@@ -163,7 +195,10 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     		prefs.flush();
     	} catch (BackingStoreException e) {
     	}
-    	
+    }
+    
+    public void setIndexerId(ICProject project, String indexerId) throws CoreException {
+    	setId(project, indexerId);
     	IPDOM pdom = getPDOM(project);
     	pdom.setIndexer(createIndexer(indexerId));
     }

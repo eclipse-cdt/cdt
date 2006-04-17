@@ -17,8 +17,6 @@ import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * @author Doug Schaefer

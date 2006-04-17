@@ -39,20 +39,9 @@ public class CASTName extends CASTNode implements IASTName {
         name = EMPTY_CHAR_ARRAY;
     }
 
-    private static boolean inited = false;
-    private static boolean useScope2 = false;
-    
     public IBinding resolveBinding() {
         if (binding == null) {
-        	if (!inited) {
-        		useScope2 = System.getProperty("doug.useScope2") != null ? true : false;
-        		inited = true;
-        	}
-        	
-        	if (useScope2)
-        		binding = getScope(this, getPropertyInParent()).getBinding(this);
-        	else
-        		CVisitor.createBinding(this);
+       		CVisitor.createBinding(this);
         }
 
         return binding;

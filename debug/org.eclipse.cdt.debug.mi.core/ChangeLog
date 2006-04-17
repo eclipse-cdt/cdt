@@ -1,3 +1,7 @@
+2006-04-17 Mikhail Khodjaiants
+	Breakpoint can be temporary and hardware at the same time.
+	* MIBreakInsert.java
+
 2006-04-16 Mikhail Khodjaiants
 	Bug 113107: Make trace logs more readily available.
 	* AbstractGDBCDIDebugger.java

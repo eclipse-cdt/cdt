@@ -69,7 +69,10 @@ public class MIBreakInsert extends MICommand
 		super(miVersion, "-break-insert"); //$NON-NLS-1$
 
 		int i = 0;
-		if (isTemporary || isHardware) {
+		if (isTemporary) {
+			i++;
+		}
+		if (isHardware) {
 			i++;
 		}
 		if (condition != null && condition.length() > 0) {
@@ -87,7 +90,8 @@ public class MIBreakInsert extends MICommand
 		if (isTemporary) {
 			opts[i] = "-t"; //$NON-NLS-1$
 			i++;
-		} else if (isHardware) {
+		} 
+		if (isHardware) {
 			opts[i] = "-h"; //$NON-NLS-1$
 			i++;
 		}

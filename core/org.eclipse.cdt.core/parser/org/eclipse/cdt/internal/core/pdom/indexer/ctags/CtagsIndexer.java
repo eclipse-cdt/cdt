@@ -74,7 +74,6 @@ public class CtagsIndexer implements IPDOMIndexer {
 				"--c-types=cdefgmnpstuvx", //$NON-NLS-1$
 				"--c++-types=cdefgmnpstuvx", //$NON-NLS-1$
 				"--languages=c,c++", //$NON-NLS-1$
-				"-a", //$NON-NLS-1$ // All locations are collected in one file
 				"-f", //$NON-NLS-1$
 				ctagsFileName,
 				"-R",  //$NON-NLS-2$

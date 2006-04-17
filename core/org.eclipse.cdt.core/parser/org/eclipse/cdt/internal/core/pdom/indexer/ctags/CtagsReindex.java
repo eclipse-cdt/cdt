@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.ctags;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
@@ -23,6 +25,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import com.sun.corba.se.impl.interceptors.PINoOpHandlerImpl;
+
 /**
  * @author Doug Schaefer
  *
@@ -33,63 +37,77 @@ public class CtagsReindex extends Job {
 	private final PDOM pdom;
 	
 	public CtagsReindex(CtagsIndexer indexer) {
-		super("Ctags Indexer");
+		super("ctags Indexer: " + ((PDOM)indexer.getPDOM()).getProject().getElementName());
 		this.indexer = indexer;
 		this.pdom = (PDOM)indexer.getPDOM();
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
+			// What do we need to index
+			final ICProject project = pdom.getProject();
+			final IIncludeReference[] pincludes = project.getIncludeReferences();
+			IIncludeReference[] includes = new IIncludeReference[pincludes.length];
+			System.arraycopy(pincludes, 0, includes, 0, pincludes.length);
+			
+			// Find common prefix paths
+			for (int i = 0; i < includes.length; ++i) {
+				if (includes[i] == null)
+					continue;
+				IPath pathi = includes[i].getPath();
+				for (int j = i + 1; j < includes.length; ++j) {
+					if (includes[j] == null)
+						continue;
+					IPath pathj = includes[j].getPath();
+					if (pathi.isPrefixOf(pathj)) {
+						includes[j] = null;
+					} else if (pathj.isPrefixOf(pathi)) {
+						includes[i] = null;
+						break;
+					}
+				}
+			}
+			
+			includes = (IIncludeReference[])ArrayUtil.removeNulls(IIncludeReference.class, includes);
+			
+			ISourceRoot[] sourceRoots = project.getAllSourceRoots();
+
+			monitor.beginTask("Indexing", sourceRoots.length + includes.length);
+			
+			// Clear out the PDOM
+			if (monitor.isCanceled())
+				return Status.CANCEL_STATUS;
+			monitor.subTask("Clearing Index");
+			pdom.clear();
+			monitor.worked(1);
+			
 			// Index the include path
-			indexIncludes();
+			for (int i = 0; i < includes.length; ++i) {
+				if (monitor.isCanceled())
+					return Status.CANCEL_STATUS;
+				monitor.subTask(includes[i].getElementName());
+				indexer.runCtags(includes[i].getPath());
+				monitor.worked(1);
+			}
 			
 			// Index the source roots
-			final ICProject project = pdom.getProject();
-			ISourceRoot[] sourceRoots = project.getAllSourceRoots();
-			
 		    for (int i = 0; i < sourceRoots.length; ++i) {
 				ISourceRoot sourceRoot = sourceRoots[i];
 				IPath sourcePath = sourceRoot.getResource().getLocation();
-				if (sourcePath != null)
+				if (sourcePath != null) {
+					if (monitor.isCanceled())
+						return Status.CANCEL_STATUS;
+					monitor.subTask(sourceRoot.getElementName());
 					indexer.runCtags(sourcePath);
+					monitor.worked(1);
+				}
 		    }
-			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			return e.getStatus();
+		} finally {
+		    monitor.done();
 		}
+		return Status.OK_STATUS;
 	}
 
-	protected void indexIncludes() throws CoreException {
-		ICProject project = pdom.getProject();
-		IIncludeReference[] includes = project.getIncludeReferences();
-		
-		// This project has no references, don't bother processing any further
-		if (includes.length == 0)
-			return;
-		
-		// Find common prefix paths
-		for (int i = 0; i < includes.length; ++i) {
-			if (includes[i] == null)
-				continue;
-			IPath pathi = includes[i].getPath();
-			for (int j = i + 1; j < includes.length; ++j) {
-				if (includes[j] == null)
-					continue;
-				IPath pathj = includes[j].getPath();
-				if (pathi.isPrefixOf(pathj)) {
-					includes[j] = null;
-				} else if (pathj.isPrefixOf(pathi)) {
-					includes[i] = null;
-					break;
-				}
-			}
-		}
-		
-		includes = (IIncludeReference[])ArrayUtil.removeNulls(IIncludeReference.class, includes);
-		for (int i = 0; i < includes.length; ++i) {
-			indexer.runCtags(includes[i].getPath());
-		}
-	}
-	
-	
 }

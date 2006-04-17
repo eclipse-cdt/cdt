@@ -256,7 +256,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		
 		PropertyManager mngr = PropertyManager.getInstance();
 		String rebuild = mngr.getProperty(this, REBUILD_STATE);
-		if(rebuild == null || Boolean.parseBoolean(rebuild))
+		if(rebuild == null || Boolean.valueOf(rebuild).booleanValue())
 			rebuildNeeded = true;
 		
 		String rcChangeState = mngr.getProperty(this, RC_CHANGE_STATE);
@@ -270,10 +270,10 @@ public class Configuration extends BuildObject implements IConfiguration {
 			}
 		}
 		
-		internalBuilderEnabled = Boolean.parseBoolean(
-				mngr.getProperty(this, INTERNAL_BUILDER_ENABLED));
+		internalBuilderEnabled = Boolean.valueOf(
+				mngr.getProperty(this, INTERNAL_BUILDER_ENABLED)).booleanValue();
 		String tmp = mngr.getProperty(this, INTERNAL_BUILDER_IGNORE_ERR);
-		if(tmp == null || Boolean.parseBoolean(tmp))
+		if(tmp == null || Boolean.valueOf(tmp).booleanValue())
 			internalBuilderIgnoreErr = true;
 	}
 

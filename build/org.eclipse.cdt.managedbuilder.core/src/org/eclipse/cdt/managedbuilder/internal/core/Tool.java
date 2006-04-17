@@ -296,7 +296,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		}
 		
 		String rebuild = PropertyManager.getInstance().getProperty(this, REBUILD_STATE);
-		if(rebuild == null || Boolean.parseBoolean(rebuild))
+		if(rebuild == null || Boolean.valueOf(rebuild).booleanValue())
 			rebuildState = true;
 
 	}

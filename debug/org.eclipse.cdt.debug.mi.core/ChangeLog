@@ -1,3 +1,8 @@
+2006-04-18 Mikhail Khodjaiants
+	Duplicate message key.
+	* MIPluginResources.properties
+	* AbstractGDBCDIDebugger.java
+
 2006-04-17 Mikhail Khodjaiants
 	Breakpoint can be temporary and hardware at the same time.
 	* MIBreakInsert.java

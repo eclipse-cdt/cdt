@@ -147,7 +147,7 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 	protected String renderDebuggerProcessLabel( ILaunch launch ) {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format( new Date( System.currentTimeMillis() ) );
-		String label = MIPlugin.getResourceString( "src.AbstractGDBCDIDebugger.0" ); //$NON-NLS-1$
+		String label = MIPlugin.getResourceString( "src.AbstractGDBCDIDebugger.2" ); //$NON-NLS-1$
 		try {
 			IPath path = getGDBPath( launch );
 			label = path.toOSString();

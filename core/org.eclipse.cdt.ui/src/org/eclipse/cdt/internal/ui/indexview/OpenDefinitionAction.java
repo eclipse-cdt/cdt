@@ -21,6 +21,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -63,8 +65,27 @@ public class OpenDefinitionAction extends IndexAction {
 
 				IEditorPart editor = EditorUtility.openInEditor(input);
 				if (editor != null && editor instanceof ITextEditor) {
-					((ITextEditor)editor).selectAndReveal(location.getNodeOffset(), location.getNodeLength());
-					return;
+					ITextEditor textEditor = (ITextEditor)editor;
+					int nodeOffset = location.getNodeOffset();
+					int nodeLength = location.getNodeLength();
+					int offset;
+					int length;
+					if (nodeLength == -1) {
+						// This means the offset is actually a line number
+						try {
+							IDocument document = textEditor.getDocumentProvider().getDocument(editor.getEditorInput());
+							offset = document.getLineOffset(nodeOffset);
+							length = document.getLineLength(nodeOffset);
+						} catch (BadLocationException e) {
+							CUIPlugin.getDefault().log(e);
+							return;
+						}
+					} else {
+						offset = nodeOffset;
+						length = nodeLength;
+					}
+					
+					textEditor.selectAndReveal(offset, length);
 				}
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);

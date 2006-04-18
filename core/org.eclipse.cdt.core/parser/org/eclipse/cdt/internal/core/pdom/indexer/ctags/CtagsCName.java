@@ -30,13 +30,11 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A fake AST Name derived from a ctags entry.
- * 
  * @author Doug Schaefer
+ *
  */
-public class CtagsName implements IASTName, IASTFileLocation {
-
-	private final PDOM pdom;
+public class CtagsCName implements IASTName, IASTFileLocation {
+	
 	private final PDOMLinkage linkage;
 	private final String fileName;
 	private final int lineNum;
@@ -76,8 +74,8 @@ public class CtagsName implements IASTName, IASTFileLocation {
 			"externvar", //$NON-NLS-1$
 	};
 
-    public CtagsName(PDOM pdom, String fileName, int lineNum, String elementName, Map fields) throws CoreException {
-    	this.pdom = pdom;
+    public CtagsCName(PDOMLinkage linkage, String fileName, int lineNum, String elementName, Map fields) throws CoreException {
+    	this.linkage = linkage;
 		this.fileName = fileName;
 		this.lineNum = lineNum;
 		this.elementName = elementName;
@@ -94,13 +92,6 @@ public class CtagsName implements IASTName, IASTFileLocation {
 			}
 		}
 		
-		String languageName = (String)fields.get("language");
-		ILanguage language
-			= (languageName != null && languageName.equals("C++"))
-			? (ILanguage)new GPPLanguage()
-			: (ILanguage)new GCCLanguage();
-	
-		linkage = pdom.getLinkage(language);
 	}
 
     public void addToPDOM() throws CoreException {

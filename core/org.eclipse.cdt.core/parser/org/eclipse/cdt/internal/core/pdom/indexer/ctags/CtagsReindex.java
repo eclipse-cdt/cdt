@@ -11,8 +11,6 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.ctags;
 
-import java.util.Arrays;
-
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
@@ -24,8 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-
-import com.sun.corba.se.impl.interceptors.PINoOpHandlerImpl;
 
 /**
  * @author Doug Schaefer
@@ -72,7 +68,7 @@ public class CtagsReindex extends Job {
 			
 			ISourceRoot[] sourceRoots = project.getAllSourceRoots();
 
-			monitor.beginTask("Indexing", sourceRoots.length + includes.length);
+			monitor.beginTask("Indexing", sourceRoots.length + includes.length + 1);
 			
 			// Clear out the PDOM
 			if (monitor.isCanceled())

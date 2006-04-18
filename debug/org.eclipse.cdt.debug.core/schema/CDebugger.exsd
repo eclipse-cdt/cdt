@@ -82,7 +82,7 @@
          <attribute name="cpu" type="string">
             <annotation>
                <documentation>
-                  specifies a comma separated list of supported platforms.
+                  specifies a comma separated list of supported architectures.
                </documentation>
             </annotation>
          </attribute>

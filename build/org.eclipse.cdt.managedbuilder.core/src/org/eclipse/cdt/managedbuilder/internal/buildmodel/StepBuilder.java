@@ -92,8 +92,9 @@ public class StepBuilder implements IBuildModelBuilder {
 					break;
 				}
 			}
+			status = postProcess(status, monitor);
 		}
-		return postProcess(status, monitor);
+		return status;
 	}
 	
 	protected int postProcess(int status, IProgressMonitor monitor){
@@ -138,6 +139,9 @@ public class StepBuilder implements IBuildModelBuilder {
 	}
 	
 	protected void cleanOutputs(IProgressMonitor monitor){
+		if(fStep == fStep.getBuildDescription().getInputStep())
+			return;
+		
 		IBuildResource bRcs[] = fStep.getOutputResources();
 		for(int i = 0; i < bRcs.length; i++){
 			IResource rc = BuildDescriptionManager.findResourceForBuildResource(bRcs[i]);

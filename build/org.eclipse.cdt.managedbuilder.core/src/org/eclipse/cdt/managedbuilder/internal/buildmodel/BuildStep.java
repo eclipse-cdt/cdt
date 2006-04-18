@@ -248,7 +248,7 @@ public class BuildStep implements IBuildStep {
 				step = fBuildDescription.getConfiguration().getPostbuildStep();
 			}
 			
-			if(step != null){
+			if(step != null && (step = step.trim()).length() > 0){
 				String commands[] = step.split(";"); 	//$NON-NLS-1$
 				if(cwd == null)
 					cwd = calcCWD();

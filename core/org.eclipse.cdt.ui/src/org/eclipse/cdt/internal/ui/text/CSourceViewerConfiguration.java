@@ -226,13 +226,16 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 				protected void initialProcess() {
 					// prevent case where getDocument() returns null
 					// and causes exception in initialProcess()
+					// PR 63890
 					IDocument doc = getDocument();
 					if (doc != null)
 						super.initialProcess();
 				}
 			};
-			reconciler.setDelay(1000);
-//			reconciler.setIsIncrementalReconciler(false);
+			//Delay changed and non-incremental reconciler used due to 
+			//PR 130089
+			reconciler.setDelay(500);
+			reconciler.setIsIncrementalReconciler(false);
 			reconciler.setReconcilingStrategy(new CReconcilingStrategy(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
 			return reconciler;
 		}

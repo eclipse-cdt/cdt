@@ -47,7 +47,7 @@ public class GenDirInfo {
 		if(path != null
 				&& fProjPath.isPrefixOf(path)){
 			path = path.removeLastSegments(1).removeFirstSegments(1);
-			if(fDirPathSet.add(path)){
+			if(path.segmentCount() > 0 && fDirPathSet.add(path)){
 				IFolder folder = fProject.getFolder(path);
 				if(!folder.exists()){
 					try {

@@ -391,6 +391,9 @@ public class BuildDescription implements IBuildDescription {
 			DbgUtil.traceln("--->Synch started");	//$NON-NLS-1$
 
 		BuildDescriptionManager.accept(new RebuildStateSynchronizer(), this, true);
+		
+		if(fOutputStep.needsRebuild())
+			fInputStep.setRebuildState(true);//needed for the pre-build step invocation
 
 		if(DbgUtil.DEBUG)
 			DbgUtil.traceln("<---Synch stopped");	//$NON-NLS-1$

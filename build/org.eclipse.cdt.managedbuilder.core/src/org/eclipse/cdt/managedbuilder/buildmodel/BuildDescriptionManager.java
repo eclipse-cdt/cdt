@@ -39,8 +39,9 @@ public class BuildDescriptionManager {
 	public static final int REMOVED = 0x01;
 	public static final int REBUILD = 0x02;
 	public static final int DEPS = 0x04;
-	public static final int DEPS_CMODEL = DEPS & 0x08;
-	public static final int DEPS_DEPGEN = DEPS & 0x10;
+	public static final int DEPS_CMODEL = DEPS | 0x08;
+	public static final int DEPS_DEPGEN = DEPS | 0x10;
+	public static final int DEPS_DEPFILE_INFO = DEPS | 0x20;
 	
 	private Set fVisitedSteps = new HashSet();
 	private boolean fUp;
@@ -168,7 +169,7 @@ public class BuildDescriptionManager {
 		return (IBuildStep[])set.toArray(new IBuildStep[set.size()]);
 	}
 
-	public static IBuildResource[] filterBuildResources(IBuildResource rc[], int rcState){
+	public static IBuildResource[] filterGeneratedBuildResources(IBuildResource rc[], int rcState){
 		List list = new ArrayList();
 		
 		addBuildResources(rc, list, rcState);
@@ -231,8 +232,8 @@ public class BuildDescriptionManager {
 	 * @param des build description
 	 * @throws CoreException
 	 */
-	public static void cleanRebuildResources(IBuildDescription des) throws CoreException{
-		IBuildResource bRcs[] = filterBuildResources(des.getResources(), REMOVED | REBUILD);
+	public static void cleanGeneratedRebuildResources(IBuildDescription des) throws CoreException{
+		IBuildResource bRcs[] = filterGeneratedBuildResources(des.getResources(), REMOVED | REBUILD);
 		List failList = new ArrayList();
 		
 		for(int i = 0; i < bRcs.length; i++){

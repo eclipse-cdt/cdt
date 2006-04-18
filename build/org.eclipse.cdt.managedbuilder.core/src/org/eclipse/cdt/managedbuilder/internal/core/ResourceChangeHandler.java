@@ -436,7 +436,6 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		//	No state to be saved by the plug-in, but request a
 	    //  resource delta to be used on next activation.
 	    context.needDelta();
-	    PropertyManager.getInstance().serialize();
 	}
 
 	/* (non-Javadoc)

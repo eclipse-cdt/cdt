@@ -48,6 +48,11 @@ import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -649,7 +654,7 @@ public class BuildDescription implements IBuildDescription {
 		return fOutputStep;
 	}
 	
-	private boolean checkFlags(int flags){
+	public boolean checkFlags(int flags){
 		return (fFlags & flags) == flags;
 	}
 	
@@ -882,14 +887,18 @@ public class BuildDescription implements IBuildDescription {
 				
 				if(outFullPath.isAbsolute()){
 					outLocation = outFullPath;
-					if(!fProject.getLocation().isPrefixOf(outLocation))
+					if(fProject.getLocation().isPrefixOf(outLocation))
+						outFullPath = fProject.getFullPath().append(outLocation.removeFirstSegments(fProject.getLocation().segmentCount()));
+					else
 						outFullPath = null;
 				} else {
 					if (outFullPath.segmentCount() == 1) {
 						outFullPath = outDirPath.append(outFullPath); 
+						outLocation = fProject.getLocation().append(outFullPath.removeFirstSegments(1));
+					} else {
+						outLocation = getTopBuildDirLocation().append(outFullPath);
+						outFullPath = getTopBuildDirFullPath().append(outFullPath);
 					}
-
-					outLocation = fProject.getLocation().append(outFullPath.removeFirstSegments(1));
 				}
 
 				BuildResource outRc = createResource(outLocation, outFullPath);
@@ -1191,6 +1200,54 @@ public class BuildDescription implements IBuildDescription {
 
 				BuildResource outRc = createResource(outLocation, outFullPath);
 				buildArg.addResource(outRc);
+		}
+		
+		if(checkFlags(BuildDescriptionManager.DEPS_DEPFILE_INFO)){
+			if(tool != null && buildRc != null){
+				IInputType type = action.getInputType();
+				String ext = null;
+				if(type != null){
+					String exts[] = type.getSourceExtensions(tool);
+					String location = buildRc.getLocation().toOSString();
+					for(int i = 0; i < exts.length; i++){
+						if(location.endsWith(exts[i])){
+							ext = exts[i];
+							break;
+						}
+					}
+				}
+				if(ext == null)
+					ext = buildRc.getLocation().getFileExtension();
+				
+				if(ext != null){
+					IManagedDependencyGeneratorType depGenType = tool.getDependencyGeneratorForExtension(ext);
+					if(depGenType != null){
+						IPath depFiles[] = null;
+						if(depGenType instanceof IManagedDependencyGenerator2){
+							IBuildObject context = tool.getParent();
+							if(context instanceof IToolChain){
+								context = ((IToolChain)context).getParent();
+							}
+							IPath path = buildRc.isProjectResource() ?
+									buildRc.getFullPath().removeFirstSegments(1) :
+										buildRc.getLocation();
+							IManagedDependencyInfo info = ((IManagedDependencyGenerator2)depGenType).getDependencySourceInfo(path, context, tool, getDefaultBuildDirLocation());
+							if(info instanceof IManagedDependencyCommands){
+								depFiles = ((IManagedDependencyCommands)info).getDependencyFiles();
+							}
+						} else if (depGenType.getCalculatorType() == IManagedDependencyGeneratorType.TYPE_COMMAND
+								&& depGenType instanceof IManagedDependencyGenerator) {
+							depFiles = new IPath[1];
+							depFiles[0] = new Path(buildRc.getLocation().segment(buildRc.getLocation().segmentCount() -1 )).removeFileExtension().addFileExtension("d");  //$NON-NLS-1$
+						}
+						
+						if(depFiles != null){
+							BuildIOType depType = action.createIOType(false, false, null);
+							addOutputs(depFiles, depType, outDirPath);
+						}
+					}
+				}
+			}
 		}
 	}
 	

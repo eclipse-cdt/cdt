@@ -448,7 +448,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				//use a build desacription model to calculate the resources to be cleaned 
 				//only in case there are some changes to the project sources or build information
 				try{
-					int flags = BuildDescriptionManager.REBUILD;
+					int flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.DEPS_DEPFILE_INFO;
 					if(delta != null)
 						flags |= BuildDescriptionManager.REMOVED;
 
@@ -456,7 +456,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 					des = BuildDescriptionManager.createBuildDescription(info.getDefaultConfiguration(), getDelta(getProject()), flags);
 	
-					BuildDescriptionManager.cleanRebuildResources(des);
+					BuildDescriptionManager.cleanGeneratedRebuildResources(des);
 				} catch (Throwable e){
 					//TODO: log error
 					outputError(getProject().getName(), "error occured while build description calculation: " + e.getLocalizedMessage());	//$NON-NLS-1$
@@ -1249,10 +1249,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			
 			int status = builder.build(epmOutputStream, epmOutputStream, monitor);
 
-			// Force a resync of the projects without allowing the user to cancel. 
-			// This is probably unkind, but short of this there is no way to insure 
-			// the UI is up-to-date with the build results 
-			monitor.subTask(ManagedMakeMessages
+			//no refresh is needed since the builder now performs 
+			//a refresh automatically after each build step
+/*			monitor.subTask(ManagedMakeMessages
 					.getResourceString(REFRESH));
 			try {
 				currentProject.refreshLocal(
@@ -1261,7 +1260,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				monitor.subTask(ManagedMakeMessages
 						.getResourceString(REFRESH_ERROR));
 			}
-
+*/
 			// Report either the success or failure of our mission 
 			buf = new StringBuffer();
 			

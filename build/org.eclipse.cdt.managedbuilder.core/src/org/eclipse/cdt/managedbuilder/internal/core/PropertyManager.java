@@ -60,8 +60,10 @@ public class PropertyManager {
 
 	protected void setProperty(IConfiguration cfg, IBuildObject bo, String prop, String value){
 		Properties props = getProperties(cfg, bo);
-		if(props != null)
+		if(props != null){
 			props.setProperty(prop, value);
+			serialize(cfg);
+		}
 	}
 
 	protected String getProperty(IConfiguration cfg, IBuildObject bo, String prop){

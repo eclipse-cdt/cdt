@@ -240,14 +240,33 @@ public class BuildStep implements IBuildStep {
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildStep#getCommands(org.eclipse.core.runtime.IPath, java.util.Map, java.util.Map, boolean)
 	 */
 	public IBuildCommand[] getCommands(IPath cwd, Map inputArgValues, Map outputArgValues, boolean resolveAll) {
-		if(fTool == null)
+		if(fTool == null){
+			String step = null;
+			if(this == fBuildDescription.getInputStep()){
+				step = fBuildDescription.getConfiguration().getPrebuildStep();
+			} else if(this == fBuildDescription.getOutputStep()){
+				step = fBuildDescription.getConfiguration().getPostbuildStep();
+			}
+			
+			if(step != null){
+				String commands[] = step.split(";"); 	//$NON-NLS-1$
+				if(cwd == null)
+					cwd = calcCWD();
+
+				List list = new ArrayList(); 
+				for(int i = 0; i < commands.length; i++){
+					IBuildCommand cmds[] = createCommandsFromString(commands[i], cwd, getEnvironment());
+					for(int j = 0; j < cmds.length; j++){
+						list.add(cmds[j]);
+					}
+				}
+				return (IBuildCommand[])list.toArray(new BuildCommand[list.size()]);
+			}
 			return null;
+		}
 		
 		if(cwd == null)
-			cwd = fBuildDescription.getDefaultBuildDirLocation();
-		
-		if(!cwd.isAbsolute())
-			cwd = fBuildDescription.getConfiguration().getOwner().getProject().getLocation().append(cwd);
+			cwd = calcCWD();
 		
 		performAsignToOption(cwd);
 		
@@ -270,6 +289,15 @@ public class BuildStep implements IBuildStep {
 		return createCommandsFromString(info.getCommandLine(), cwd, getEnvironment());
 	}
 	
+	private IPath calcCWD(){
+		IPath cwd = fBuildDescription.getDefaultBuildDirLocation();
+		
+		if(!cwd.isAbsolute())
+			cwd = fBuildDescription.getConfiguration().getOwner().getProject().getLocation().append(cwd);
+ 
+		return cwd;
+	}
+
 	protected Map getEnvironment(){
 		return fBuildDescription.getEnvironment();
 	}

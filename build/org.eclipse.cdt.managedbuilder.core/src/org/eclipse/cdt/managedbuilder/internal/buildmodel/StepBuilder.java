@@ -16,7 +16,10 @@ import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -90,10 +93,13 @@ public class StepBuilder implements IBuildModelBuilder {
 				}
 			}
 		}
-		return postProcess(status);
+		return postProcess(status, monitor);
 	}
 	
-	protected int postProcess(int status){
+	protected int postProcess(int status, IProgressMonitor monitor){
+		if(status != STATUS_ERROR_LAUNCH){
+			refreshOutputs(monitor);
+		}
 		switch(status){
 		case STATUS_OK:
 			break;
@@ -101,24 +107,48 @@ public class StepBuilder implements IBuildModelBuilder {
 		case STATUS_ERROR_BUILD:
 		case STATUS_ERROR_LAUNCH:
 		default:
-			cleanOutputs();
+			cleanOutputs(monitor);
 			break;
 		}
 		return status;
 	}
 	
-	protected void cleanOutputs(){
+	protected void refreshOutputs(IProgressMonitor monitor){
+		if(fStep == fStep.getBuildDescription().getInputStep())
+			return;
+		
+		IBuildResource rcs[] = fStep.getOutputResources();
+		
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		for(int i = 0; i < rcs.length; i++){
+			IPath path = rcs[i].getFullPath();
+			if(path != null){
+				IFile file = root.getFile(path);
+				try {
+					file.refreshLocal(IResource.DEPTH_ZERO, monitor);
+				} catch (CoreException e) {
+					if(DbgUtil.DEBUG){
+						DbgUtil.traceln("failed to refresh resource " 	//$NON-NLS-1$
+								+ file.getFullPath() 
+								+ ", error: " + e.getLocalizedMessage());	//$NON-NLS-1$
+					}
+				}
+			}
+		}
+	}
+	
+	protected void cleanOutputs(IProgressMonitor monitor){
 		IBuildResource bRcs[] = fStep.getOutputResources();
 		for(int i = 0; i < bRcs.length; i++){
 			IResource rc = BuildDescriptionManager.findResourceForBuildResource(bRcs[i]);
 			if(rc != null){
 				try {
-					rc.delete(true, null);
+					rc.delete(true, monitor);
 				} catch (CoreException e) {
 					if(DbgUtil.DEBUG){
-						DbgUtil.traceln("failed to delete resource " 
+						DbgUtil.traceln("failed to delete resource " 	//$NON-NLS-1$
 								+ rc.getFullPath() 
-								+ ", error: " + e.getLocalizedMessage());
+								+ ", error: " + e.getLocalizedMessage());	//$NON-NLS-1$
 					}
 				}
 			}

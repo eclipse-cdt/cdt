@@ -2382,13 +2382,13 @@ public class BuildDescriptionModelTests extends TestCase {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
 		
-		IBuildResource rcs[] = BuildDescriptionManager.filterBuildResources(des.getResources(), BuildDescriptionManager.REBUILD);
+		IBuildResource rcs[] = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REBUILD);
 		assertEquals(rcs.length, 0);
 		
-		rcs = BuildDescriptionManager.filterBuildResources(des.getResources(), BuildDescriptionManager.REMOVED);
+		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REMOVED);
 		assertEquals(rcs.length, 0);
 
-		rcs = BuildDescriptionManager.filterBuildResources(des.getResources(), BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
 		assertEquals(rcs.length, 0);
 
 		//target
@@ -2400,7 +2400,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
-		rcs = BuildDescriptionManager.filterBuildResources(des.getResources(), BuildDescriptionManager.REBUILD);
+		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REBUILD);
 		IBuildResource oRcs[] = des.getOutputStep().getInputResources();
 		IBuildResource targetRc;
 		assertEquals(rcs.length, 1);
@@ -2410,10 +2410,10 @@ public class BuildDescriptionModelTests extends TestCase {
 		
 		targetRc = oRcs[0];
 		
-		rcs = BuildDescriptionManager.filterBuildResources(des.getResources(), BuildDescriptionManager.REMOVED);
+		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REMOVED);
 		assertEquals(rcs.length, 0);
 
-		rcs = BuildDescriptionManager.filterBuildResources(des.getResources(), BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
 		assertEquals(rcs.length, 1);
 		assertEquals(oRcs.length, 1);
 		if(rcs[0] != oRcs[0])
@@ -2429,7 +2429,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
-		rcs = BuildDescriptionManager.filterBuildResources(des.getResources(), BuildDescriptionManager.REBUILD);
+		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REBUILD);
 		oRcs = des.getOutputStep().getInputResources();
 		assertEquals(oRcs.length, 1);
 		targetRc = oRcs[0];
@@ -2451,10 +2451,10 @@ public class BuildDescriptionModelTests extends TestCase {
 			fail("rebuild resources do not match");
 		
 		
-		rcs = BuildDescriptionManager.filterBuildResources(des.getResources(), BuildDescriptionManager.REMOVED);
+		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REMOVED);
 		assertEquals(rcs.length, 0);
 
-		rcs = BuildDescriptionManager.filterBuildResources(des.getResources(), BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
 		assertEquals(rcs.length, 5);
 		if(!resourcesEqual(rcs, oRcs))
 			fail("rebuild resources do not match");
@@ -2469,7 +2469,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
-		rcs = BuildDescriptionManager.filterBuildResources(des.getResources(), BuildDescriptionManager.REBUILD);
+		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REBUILD);
 		oRcs = des.getOutputStep().getInputResources();
 		assertEquals(oRcs.length, 1);
 		targetRc = oRcs[0];
@@ -2487,10 +2487,10 @@ public class BuildDescriptionModelTests extends TestCase {
 			fail("rebuild resources do not match");
 		
 		
-		rcs = BuildDescriptionManager.filterBuildResources(des.getResources(), BuildDescriptionManager.REMOVED);
+		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REMOVED);
 		assertEquals(rcs.length, 0);
 
-		rcs = BuildDescriptionManager.filterBuildResources(des.getResources(), BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
 		assertEquals(rcs.length, 3);
 		if(!resourcesEqual(rcs, oRcs))
 			fail("rebuild resources do not match");

@@ -14,11 +14,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.cdt.managedbuilder.buildmodel.IBuildGroup;
-import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 
-public class BuildGroup implements IBuildGroup {
+public class BuildGroup {
 	private Set fActions = new HashSet();
 	private boolean fNeedsRebuild;
 

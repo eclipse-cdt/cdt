@@ -11,8 +11,9 @@
 package org.eclipse.cdt.core.browser;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.core.browser.cache.ITypeCache;
+import org.eclipse.core.resources.IProject;
 
 /**
  * Type information.
@@ -126,7 +127,7 @@ public interface ITypeInfo extends Comparable {
 	/**
 	 * Gets the enclosing project.
 	 */
-	public ICProject getEnclosingProject();
+	public IProject getEnclosingProject();
 	
 	/**
 	 * Returns true if type is enclosed in the given scope.
@@ -155,6 +156,9 @@ public interface ITypeInfo extends Comparable {
 	 */
 	public boolean canSubstituteFor(ITypeInfo info);
 
+	public ITypeCache getCache();
+	public void setCache(ITypeCache typeCache);
+	
 	/**
 	 * Returns true if other types extend this type.
 	 */

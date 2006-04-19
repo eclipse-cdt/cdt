@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.browser;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.browser.typehierarchy.ITypeHierarchy;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMember;
@@ -20,6 +21,7 @@ import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class TypeUtil {
 
@@ -285,4 +287,33 @@ public class TypeUtil {
 		return findMethod(name, paramTypes, isConstructor, isDestructor, getMethods(type));
 	}
 
+	/**
+	 * Finds a method declararion in a type's hierarchy. The search is top down, so this
+	 * returns the first declaration of the method in the hierarchy.
+	 * This searches for a method with a name and signature. Parameter types are only
+	 * compared by the simple name, no resolving for the fully qualified type name is done.
+	 * Constructors are only compared by parameters, not the name.
+	 * @param type Searches in this type's supertypes.
+	 * @param name The name of the method to find
+	 * @param paramTypes The type signatures of the parameters e.g. <code>{"QString;","I"}</code>
+	 * @param isConstructor If the method is a constructor
+	 * @return The first method found or null, if nothing found
+	 */
+//	TODO move methods to CModelUtil
+	public static IMethodDeclaration findMethodDeclarationInHierarchy(ITypeHierarchy hierarchy, ICElement type, String name, String[] paramTypes, boolean isConstructor, boolean isDestructor) throws CModelException {
+		ICElement[] superTypes= hierarchy.getAllSupertypes(type);
+		for (int i= superTypes.length - 1; i >= 0; i--) {
+		    IMethodDeclaration first= findMethod(name, paramTypes, isConstructor, isDestructor, superTypes[i]);
+			if (first != null && first.getVisibility() != ASTAccessVisibility.PRIVATE) {
+				// the order getAllSupertypes does make assumptions of the order of inner elements -> search recursivly
+			    IMethodDeclaration res= findMethodDeclarationInHierarchy(hierarchy, TypeUtil.getDeclaringClass(first), name, paramTypes, isConstructor, isDestructor);
+				if (res != null) {
+					return res;
+				}
+				return first;
+			}
+		}
+		return null;
+	}
+	
 }

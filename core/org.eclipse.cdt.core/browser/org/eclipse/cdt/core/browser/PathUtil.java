@@ -14,8 +14,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.core.resources.IProject;
@@ -132,14 +130,14 @@ public class PathUtil {
         return relativePath;
     }
 
-    public static ICProject getEnclosingProject(IPath fullPath) {
+    public static IProject getEnclosingProject(IPath fullPath) {
 		IWorkspaceRoot root = getWorkspaceRoot();
 		if (root != null) {
 			IPath path = getWorkspaceRelativePath(fullPath);
 			while (!path.isEmpty()) {
 				IResource res = root.findMember(path);
 				if (res != null)
-				    return CoreModel.getDefault().create(res.getProject());
+				    return res.getProject();
 
 				path = path.removeLastSegments(1);
 			}

@@ -11,13 +11,14 @@
 package org.eclipse.cdt.core.browser;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.core.browser.cache.ITypeCache;
 import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
+import org.eclipse.core.resources.IProject;
 
 public class TypeInfo implements ITypeInfo
 {
-//	protected ITypeCache fTypeCache;
+	protected ITypeCache fTypeCache;
 	protected int fElementType;
 	protected IQualifiedTypeName fQualifiedName;
 	protected ITypeReference[] fSourceRefs = null;
@@ -104,8 +105,8 @@ public class TypeInfo implements ITypeInfo
 			return false;
 		if (fElementType == info.getCElementType() 
 			&& fQualifiedName.equals(info.getQualifiedTypeName())) {
-			ICProject project1 = getEnclosingProject();
-			ICProject project2 = info.getEnclosingProject();
+			IProject project1 = getEnclosingProject();
+			IProject project2 = info.getEnclosingProject();
 			if (project1 == null && project2 == null)
 				return true;
 			if (project1 == null || project2 == null)
@@ -116,8 +117,7 @@ public class TypeInfo implements ITypeInfo
 	}
 	
 	public boolean exists() {
-//		return fTypeCache != null;
-		return true;
+		return fTypeCache != null;
 	}
 	
 	public int getCElementType() {
@@ -141,9 +141,9 @@ public class TypeInfo implements ITypeInfo
 	}
 
 	public ITypeInfo getEnclosingType(int kinds[]) {
-//		if (fTypeCache != null) {
-//			return fTypeCache.getEnclosingType(this, kinds);
-//		}
+		if (fTypeCache != null) {
+			return fTypeCache.getEnclosingType(this, kinds);
+		}
 		return null;
 	}
 
@@ -152,16 +152,16 @@ public class TypeInfo implements ITypeInfo
 	}
 	
 	public ITypeInfo getEnclosingNamespace(boolean includeGlobalNamespace) {
-//		if (fTypeCache != null) {
-//			return fTypeCache.getEnclosingNamespace(this, includeGlobalNamespace);
-//		}
+		if (fTypeCache != null) {
+			return fTypeCache.getEnclosingNamespace(this, includeGlobalNamespace);
+		}
 		return null;
 	}
 
 	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
-//		if (fTypeCache != null) {
-//			return fTypeCache.getRootNamespace(this, includeGlobalNamespace);
-//		}
+		if (fTypeCache != null) {
+			return fTypeCache.getRootNamespace(this, includeGlobalNamespace);
+		}
 		return null;
 	}
 	
@@ -172,9 +172,9 @@ public class TypeInfo implements ITypeInfo
 	}
 	
 	public boolean encloses(ITypeInfo info) {
-//		if (isEnclosingType() && fTypeCache == info.getCache()) {
-//			return fQualifiedName.isPrefixOf(info.getQualifiedTypeName());
-//		}
+		if (isEnclosingType() && fTypeCache == info.getCache()) {
+			return fQualifiedName.isPrefixOf(info.getQualifiedTypeName());
+		}
 		return false;
 	}
 	
@@ -183,9 +183,9 @@ public class TypeInfo implements ITypeInfo
 	}
 
 	public boolean hasEnclosedTypes() {
-//		if (isEnclosingType() && fTypeCache != null) {
-//			return fTypeCache.hasEnclosedTypes(this);
-//		}
+		if (isEnclosingType() && fTypeCache != null) {
+			return fTypeCache.hasEnclosedTypes(this);
+		}
 		return false;
 	}
 	
@@ -194,16 +194,16 @@ public class TypeInfo implements ITypeInfo
 	}
 
 	public ITypeInfo[] getEnclosedTypes(int kinds[]) {
-//		if (fTypeCache != null) {
-//			return fTypeCache.getEnclosedTypes(this, kinds);
-//		}
+		if (fTypeCache != null) {
+			return fTypeCache.getEnclosedTypes(this, kinds);
+		}
 		return EMPTY_TYPES;
 	}
 
-	public ICProject getEnclosingProject() {
-//		if (fTypeCache != null) {
-//			return fTypeCache.getProject();
-//		}
+	public IProject getEnclosingProject() {
+		if (fTypeCache != null) {
+			return fTypeCache.getProject();
+		}
 		return null;
 	}
 
@@ -227,7 +227,7 @@ public class TypeInfo implements ITypeInfo
 	
 	public int hashCode() {
 		int hashCode = fQualifiedName.hashCode() + fElementType;
-		ICProject project = getEnclosingProject();
+		IProject project = getEnclosingProject();
 		if (project != null)
 			hashCode += project.hashCode();
 		return hashCode;
@@ -260,6 +260,14 @@ public class TypeInfo implements ITypeInfo
 		return ArrayUtil.contains(KNOWN_TYPES, type);
 	}
 	
+	public ITypeCache getCache() {
+		return fTypeCache;
+	}
+
+	public void setCache(ITypeCache typeCache) {
+		fTypeCache = typeCache;
+	}
+	
 	public void addDerivedReference(ITypeReference location) {
 		if (fDerivedSourceRefs == null) {
 		    fDerivedSourceRefs = new ITypeReference[INITIAL_REFS_SIZE];
@@ -287,31 +295,31 @@ public class TypeInfo implements ITypeInfo
 	}
 	
 	public ITypeInfo[] getSubTypes() {
-//		if (fTypeCache != null) {
-//			return fTypeCache.getSubtypes(this);
-//		}
+		if (fTypeCache != null) {
+			return fTypeCache.getSubtypes(this);
+		}
 		return null;
 	}
 	
 	public boolean hasSuperTypes() {
-//		if (fTypeCache != null) {
-//			return (fTypeCache.getSupertypes(this) != null);
-//		}
+		if (fTypeCache != null) {
+			return (fTypeCache.getSupertypes(this) != null);
+		}
 		return false;
 //		return true;	//TODO can't know this until we parse
 	}
 	
 	public ITypeInfo[] getSuperTypes() {
-//		if (fTypeCache != null) {
-//			return fTypeCache.getSupertypes(this);
-//		}
+		if (fTypeCache != null) {
+			return fTypeCache.getSupertypes(this);
+		}
 		return null;
 	}
 
 	public ASTAccessVisibility getSuperTypeAccess(ITypeInfo superType) {
-//		if (fTypeCache != null) {
-//			return fTypeCache.getSupertypeAccess(this, superType);
-//		}
+		if (fTypeCache != null) {
+			return fTypeCache.getSupertypeAccess(this, superType);
+		}
 		return null;
 	}
 

@@ -16,13 +16,15 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -35,8 +37,8 @@ public class TypeSearchScope implements ITypeSearchScope {
 	private boolean fWorkspaceScope = false;
 
 	// cached arrays
-	private ICProject[] fAllProjects = null;
-	private ICProject[] fProjects = null;
+	private IProject[] fAllProjects = null;
+	private IProject[] fProjects = null;
 	private IPath[] fContainerPaths = null;
 
 	public TypeSearchScope() {
@@ -50,7 +52,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 		add(scope);
 	}
 	
-	public TypeSearchScope(ICProject project) {
+	public TypeSearchScope(IProject project) {
 		add(project);
 	}
 
@@ -92,7 +94,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 		if (!scope.projectSet().isEmpty()) {
 			// check if this scope encloses the other scope's projects
 			for (Iterator i = scope.projectSet().iterator(); i.hasNext(); ) {
-				ICProject project = (ICProject) i.next();
+				IProject project = (IProject) i.next();
 				if (!encloses(project))
 					return false;
 			}
@@ -101,7 +103,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 		return true;
 	}
 
-	public boolean encloses(ICProject project) {
+	public boolean encloses(IProject project) {
 		if (isWorkspaceScope())
 			return true;
 		
@@ -140,7 +142,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 
 		// check projects that were explicity added to scope
 		if (fProjects == null) {
-			fProjects = (ICProject[]) fProjectSet.toArray(new ICProject[fProjectSet.size()]);
+			fProjects = (IProject[]) fProjectSet.toArray(new IProject[fProjectSet.size()]);
 		}
 		// check if one of the projects contains path
 		for (int i = 0; i < fProjects.length; ++i) {
@@ -164,15 +166,15 @@ public class TypeSearchScope implements ITypeSearchScope {
 		return encloses(workingCopy.getOriginalElement().getPath());
 	}
 	
-	public ICProject[] getEnclosingProjects() {
+	public IProject[] getEnclosingProjects() {
 		if (isWorkspaceScope()) {
 			return getAllProjects();
 		}
-		return (ICProject[]) fEnclosingProjectSet.toArray(new ICProject[fEnclosingProjectSet.size()]);
+		return (IProject[]) fEnclosingProjectSet.toArray(new IProject[fEnclosingProjectSet.size()]);
 	}
 	
-	private static boolean projectContainsPath(ICProject project, IPath path, boolean checkIncludePaths) {
-		IPath projectPath = project.getProject().getFullPath();
+	private static boolean projectContainsPath(IProject project, IPath path, boolean checkIncludePaths) {
+		IPath projectPath = project.getFullPath();
 		if (projectPath.isPrefixOf(path)) {
 //			ISourceRoot[] sourceRoots = null;
 //			try {
@@ -204,10 +206,10 @@ public class TypeSearchScope implements ITypeSearchScope {
 		return false;
 	}
 
-	private static IPath[] getIncludePaths(ICProject project) {
-		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project.getProject());
+	private static IPath[] getIncludePaths(IProject project) {
+		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 		if (provider != null) {
-			IScannerInfo info = provider.getScannerInformation(project.getProject());
+			IScannerInfo info = provider.getScannerInformation(project);
 			if (info != null) {
 				String[] includes = info.getIncludePaths();
 				if (includes != null && includes.length > 0) {
@@ -223,22 +225,56 @@ public class TypeSearchScope implements ITypeSearchScope {
 		return null;
 	}
 
-	private static ICProject[] getAllProjects() {
-		ICProject[] projects = getCProjects();
+	private static IProject[] getAllProjects() {
+		IProject[] projects = getCProjects();
 		if (projects == null)
-			projects = new ICProject[0];
+			projects = new IProject[0];
 		return projects;
 	}
 	
-	private static ICProject[] getCProjects() {
-		try {
-			return CoreModel.getDefault().getCModel().getCProjects();
-		} catch (CModelException e) {
-			CCorePlugin.log(e);
-			return new ICProject[0];
+	private static IProject[] getCProjects() {
+		IProject[] allProjects = CCorePlugin.getWorkspace().getRoot().getProjects();
+		if (allProjects != null) {
+			IProject[] cProjects = new IProject[allProjects.length];
+			int count = 0;
+			for (int i = 0; i < allProjects.length; ++i) {
+				IProject project = allProjects[i];
+				if (isCProject(project)) {
+					cProjects[count++] = project;
+				}
+			}
+			if (count > 0) {
+				if (count == allProjects.length) {
+					return cProjects;
+				}
+				IProject[] newProjects = new IProject[count];
+				System.arraycopy(cProjects, 0, newProjects, 0, count);
+				return newProjects;
+			}
 		}
+		return null;
 	}
 	
+	private static boolean isCProject(IProject project) {
+		IProjectDescription projDesc = null;
+		try {
+			projDesc = project.getDescription();
+			if (projDesc == null)
+				return false;
+		} catch (CoreException e) {
+			return false;
+		}
+		String[] natures = projDesc.getNatureIds();
+		if (natures != null) {
+			for (int i = 0; i < natures.length; ++i) {
+				if (natures[i].equals(CProjectNature.C_NATURE_ID)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public boolean isPathScope() {
 		return !fPathSet.isEmpty();
 	}
@@ -257,12 +293,16 @@ public class TypeSearchScope implements ITypeSearchScope {
 	
 	public void add(IWorkingCopy workingCopy) {
 		IPath path = workingCopy.getOriginalElement().getPath();
+		IProject enclosingProject = null;
 		ICProject cProject = workingCopy.getCProject();
+		if (cProject != null)
+			enclosingProject = cProject.getProject();
 		fPathSet.add(path);
-		addEnclosingProject(cProject);
+		if (enclosingProject != null)
+			addEnclosingProject(enclosingProject);
 	}
 
-	public void add(IPath path, boolean addSubfolders, ICProject enclosingProject) {
+	public void add(IPath path, boolean addSubfolders, IProject enclosingProject) {
 		if (addSubfolders) {
 			fContainerSet.add(path);
 			fContainerPaths = null;
@@ -286,14 +326,14 @@ public class TypeSearchScope implements ITypeSearchScope {
 		}
 	}
 
-	public void add(ICProject project) {
+	public void add(IProject project) {
 		fProjectSet.add(project);
 		fProjects = null;
 		fAllProjects = null;
 		addEnclosingProject(project);
 	}
 
-	private void addEnclosingProject(ICProject project) {
+	private void addEnclosingProject(IProject project) {
 		fEnclosingProjectSet.add(project);
 	}
 
@@ -314,19 +354,25 @@ public class TypeSearchScope implements ITypeSearchScope {
 			}
 			
 			case ICElement.C_PROJECT: {
-				ICProject project = ((ICProject)elem);
+				IProject project = ((ICProject)elem).getProject();
 				add(project);
 				break;
 			}
 			
 			case ICElement.C_CCONTAINER: {
-				ICProject project = elem.getCProject();
+				IProject project = null;
+				ICProject cProject = elem.getCProject();
+				if (cProject != null)
+					project = cProject.getProject();
 				add(elem.getPath(), true, project);
 				break;
 			}
 
 			case ICElement.C_UNIT: {
-				ICProject project = elem.getCProject();
+				IProject project = null;
+				ICProject cProject = elem.getCProject();
+				if (cProject != null)
+					project = cProject.getProject();
 				add(elem.getPath(), false, project);
 				break;
 			}
@@ -339,7 +385,10 @@ public class TypeSearchScope implements ITypeSearchScope {
 			case ICElement.C_UNION:
 			case ICElement.C_ENUMERATION:
 			case ICElement.C_TYPEDEF: {
-				ICProject project = elem.getCProject();
+				IProject project = null;
+				ICProject cProject = elem.getCProject();
+				if (cProject != null)
+					project = cProject.getProject();
 				add(elem.getPath(), false, project);
 				break;
 			}

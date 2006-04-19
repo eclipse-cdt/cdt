@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,14 +27,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
-//  NOTE: The code below is for tracking resource renaming and deleting.  This is needed to keep
-//        ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
-//        elements
-//import org.eclipse.cdt.managedbuilder.internal.core.ResourceChangeHandler;
-//import org.eclipse.core.resources.*;
 
 
 public class ManagedBuilderCorePlugin extends Plugin {
@@ -88,9 +82,9 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		//      ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
 		//      elements
 		
-		IJobManager jobManager = Platform.getJobManager();
+//		IJobManager jobManager = Platform.getJobManager();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		try {
+/*		try {
 			jobManager.beginRule(root, null);
 
 			startResourceChangeHandling();
@@ -99,7 +93,10 @@ public class ManagedBuilderCorePlugin extends Plugin {
 			//or core exception is thrown by the startResourceChangeHandling()
 			//in any case, schedule a job with the root rule
 			//that will perform the resource change handling initialization
-			
+*/			
+		//The startResourceChangeHandling() might result in throwing an error
+		//see bug# 132001
+		//Always schedule a job
 			Job rcJob = new Job(ManagedMakeMessages.getResourceString("ManagedBuilderCorePlugin.resourceChangeHandlingInitializationJob")){ 	//$NON-NLS-1$
 				protected IStatus run(IProgressMonitor monitor) {
 					try{
@@ -121,10 +118,11 @@ public class ManagedBuilderCorePlugin extends Plugin {
 			rcJob.setPriority(Job.INTERACTIVE);
 			rcJob.setSystem(true);
 			rcJob.schedule();
-
+/*
 		} finally {
 			jobManager.endRule(root);
 		}
+*/
 	}
 	
 	/*

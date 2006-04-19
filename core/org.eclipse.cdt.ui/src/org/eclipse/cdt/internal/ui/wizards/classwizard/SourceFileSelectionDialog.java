@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -30,7 +31,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CElementSorter;
-import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;

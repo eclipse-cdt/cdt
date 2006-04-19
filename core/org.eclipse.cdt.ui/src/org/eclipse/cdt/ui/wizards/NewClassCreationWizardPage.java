@@ -10,37 +10,48 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.browser.AllTypesCache;
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.ITypeSearchScope;
+import org.eclipse.cdt.core.browser.PathUtil;
+import org.eclipse.cdt.core.browser.QualifiedTypeName;
+import org.eclipse.cdt.core.browser.TypeSearchScope;
+import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.model.util.IQualifiedTypeName;
-import org.eclipse.cdt.core.model.util.QualifiedTypeName;
-import org.eclipse.cdt.core.model.util.TypeUtil;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.internal.ui.wizards.NewElementWizardPage;
 import org.eclipse.cdt.internal.ui.wizards.SourceFolderSelectionDialog;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.BaseClassInfo;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.BaseClassesListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.ConstructorMethodStub;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.DestructorMethodStub;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.IBaseClassInfo;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.IMethodStub;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.MethodStubsListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NamespaceSelectionDialog;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NewBaseClassSelectionDialog;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassCodeGenerator;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardMessages;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardPrefs;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardUtil;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.SourceFileSelectionDialog;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardUtil;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NewBaseClassSelectionDialog.ITypeSelectionListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
@@ -52,7 +63,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -63,6 +73,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -562,7 +574,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * 
      * @return the current project
      */
-    protected IProject getCurrentProject() {
+    protected ICProject getCurrentProject() {
         IPath folderPath = getSourceFolderFullPath();
         if (folderPath != null) {
             return PathUtil.getEnclosingProject(folderPath);
@@ -677,25 +689,25 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * @param access the access visibility (public/private/protected)
      * @param isVirtual <code>true</code> if the inheritance is virtual
      */
-//    protected void addBaseClass(ITypeInfo newBaseClass, ASTAccessVisibility access, boolean isVirtual) {
-//        // check if already exists
-//        List baseClasses = fBaseClassesDialogField.getElements();
-//        if (baseClasses != null) {
-//            for (Iterator i = baseClasses.iterator(); i.hasNext(); ) {
-//                BaseClassInfo info = (BaseClassInfo) i.next();
-//                if (info.getType().equals(newBaseClass)) {
-//                    // already added
-//                    return;
-//                }
-//            }
-//        }
-//
-//        if (verifyBaseClasses()) {
-//            NewClassWizardUtil.resolveClassLocation(newBaseClass, getContainer());
-//        }
-//
-//        fBaseClassesDialogField.addBaseClass(new BaseClassInfo(newBaseClass, access, isVirtual));
-//    }
+    protected void addBaseClass(ITypeInfo newBaseClass, ASTAccessVisibility access, boolean isVirtual) {
+        // check if already exists
+        List baseClasses = fBaseClassesDialogField.getElements();
+        if (baseClasses != null) {
+            for (Iterator i = baseClasses.iterator(); i.hasNext(); ) {
+                BaseClassInfo info = (BaseClassInfo) i.next();
+                if (info.getType().equals(newBaseClass)) {
+                    // already added
+                    return;
+                }
+            }
+        }
+
+        if (verifyBaseClasses()) {
+            NewClassWizardUtil.resolveClassLocation(newBaseClass, getContainer());
+        }
+
+        fBaseClassesDialogField.addBaseClass(new BaseClassInfo(newBaseClass, access, isVirtual));
+    }
 
     /**
      * Returns the selection state of the file group checkbox.
@@ -963,6 +975,34 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      */
     private final class NamespaceFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
 		public void changeControlPressed(DialogField field) {
+	        ITypeInfo ns = chooseNamespace();
+		    if (ns != null) {
+		        int changedFields = NAMESPACE_ID|CLASS_NAME_ID;
+		        IPath oldFolderPath = getSourceFolderFullPath();
+		        if (oldFolderPath == null) {
+					IPath headerPath = getHeaderFileFullPath();
+					IPath sourcePath = getSourceFileFullPath();
+		            IPath newFolderPath = updateSourceFolderFromPath(ns.getEnclosingProject().getProject().getFullPath());
+			        if (newFolderPath != null) {
+			            changedFields |= SOURCE_FOLDER_ID | HEADER_FILE_ID | SOURCE_FILE_ID;
+					    // adjust the relative paths
+						if (oldFolderPath != null && oldFolderPath.matchingFirstSegments(newFolderPath) == 0) {
+						    if (headerPath != null) {
+						        headerPath = newFolderPath.append(headerPath.lastSegment());
+						    }
+						    if (sourcePath != null) {
+						        sourcePath = newFolderPath.append(sourcePath.lastSegment());
+						    }
+						}
+					    setSourceFolderFullPath(newFolderPath, false);
+					    // adjust the relative paths
+					    setHeaderFileFullPath(headerPath, false);
+					    setSourceFileFullPath(sourcePath, false);
+			        }
+		        }
+		        setNamespaceText(ns.getQualifiedTypeName().toString(), false);
+				handleFieldChanged(changedFields);
+	        }
 		}
 		
 		public void dialogFieldChanged(DialogField field) {
@@ -982,9 +1022,36 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         if (folder != null) {
             return folder.getPath();
         }
-        IProject proj = PathUtil.getEnclosingProject(filePath);
+        ICProject proj = PathUtil.getEnclosingProject(filePath);
         if (proj != null)
-            return proj.getFullPath(); 
+            return proj.getProject().getFullPath(); 
+        return null;
+    }
+    
+    private ITypeInfo chooseNamespace() {
+        ITypeSearchScope scope;
+        ICProject project = getCurrentProject();
+        if (project != null) {
+            scope = new TypeSearchScope(project);
+        } else {
+            scope = new TypeSearchScope(true);
+        }
+
+        ITypeInfo[] elements = AllTypesCache.getNamespaces(scope, false);
+        if (elements == null || elements.length == 0) {
+            String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noNamespaces.title"); //$NON-NLS-1$
+            String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noNamespaces.message"); //$NON-NLS-1$
+            MessageDialog.openInformation(getShell(), title, message);
+            return null;
+        }
+        
+        NamespaceSelectionDialog dialog = new NamespaceSelectionDialog(getShell());
+        dialog.setElements(elements);
+        int result = dialog.open();
+        if (result == IDialogConstants.OK_ID) {
+            return (ITypeInfo) dialog.getFirstResult();
+        }
+        
         return null;
     }
     
@@ -1021,6 +1088,27 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     }
     
     private void chooseBaseClasses() {
+        ITypeInfo[] elements = NewClassWizardUtil.getReachableClasses(getCurrentProject());
+        if (elements == null || elements.length == 0) {
+            String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noClasses.title"); //$NON-NLS-1$
+            String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noClasses.message"); //$NON-NLS-1$
+            MessageDialog.openInformation(getShell(), title, message);
+            return;
+        }
+        
+        List oldContents = fBaseClassesDialogField.getElements();
+        NewBaseClassSelectionDialog dialog = new NewBaseClassSelectionDialog(getShell());
+        dialog.addListener(new ITypeSelectionListener() {
+            public void typeAdded(ITypeInfo newBaseClass) {
+                addBaseClass(newBaseClass, ASTAccessVisibility.PUBLIC, false);
+            }
+        });
+        dialog.setElements(elements);
+        int result = dialog.open();
+        if (result != IDialogConstants.OK_ID) {
+            // restore the old contents
+            fBaseClassesDialogField.setElements(oldContents);
+        }
     }
     
     /**
@@ -1114,9 +1202,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         SourceFileSelectionDialog dialog = new SourceFileSelectionDialog(getShell());
         dialog.setTitle(NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseHeaderFileDialog.title")); //$NON-NLS-1$
         ICElement input = CoreModel.create(NewClassWizardUtil.getWorkspaceRoot());
-        IProject project = getCurrentProject();
+        ICProject project = getCurrentProject();
         if (project != null)
-            input = CoreModel.getDefault().create(project);
+            input = project;
         dialog.setInput(input);
 
         IPath filePath = getHeaderFileFullPath();
@@ -1141,9 +1229,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         SourceFileSelectionDialog dialog = new SourceFileSelectionDialog(getShell());
         dialog.setTitle(NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseSourceFileDialog.title")); //$NON-NLS-1$
         ICElement input = CoreModel.create(NewClassWizardUtil.getWorkspaceRoot());
-        IProject project = getCurrentProject();
+        ICProject project = getCurrentProject();
         if (project != null)
-            input = CoreModel.getDefault().create(project);
+            input = project;
         dialog.setInput(input);
 
         IPath filePath = getSourceFileFullPath();
@@ -1392,14 +1480,62 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 
         IQualifiedTypeName typeName = new QualifiedTypeName(namespace);
-		IProject project = getCurrentProject();
+		ICProject project = getCurrentProject();
 	    if (project != null) {
 		    if (typeName.isQualified()) {
 			    // make sure enclosing namespace exists
+			    ITypeInfo parentNamespace = AllTypesCache.getType(project, ICElement.C_NAMESPACE, typeName.getEnclosingTypeName());
+			    if (parentNamespace == null) {
+	                status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnclosingNamespaceNotExists")); //$NON-NLS-1$
+	                return status;
+			    }
 			}
 		    
+		    ITypeInfo[] types = AllTypesCache.getTypes(project, typeName, false, true);
+		    if (types.length > 0) {
 			    // look for namespace
+			    boolean foundNamespace = false;
+			    boolean exactMatch = false;
+		        for (int i = 0; i < types.length; ++i) {
+		            ITypeInfo currType = types[i];
+					if (currType.getCElementType() == ICElement.C_NAMESPACE) {
+					    foundNamespace = true;
+						exactMatch = currType.getQualifiedTypeName().equals(typeName);
+					    if (exactMatch) {
+					        // found a matching namespace
+					        break;
+					    }
+					}
+		        }
+		        if (foundNamespace) {
+		            if (exactMatch) {
+		                // we're good to go
+		                status.setOK();
+		            } else {
+		                status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.NamespaceExistsDifferentCase")); //$NON-NLS-1$
+		            }
+	                return status;
+			    }
 		        // look for other types
+		        exactMatch = false;
+		        for (int i = 0; i < types.length; ++i) {
+		        	ITypeInfo currType = types[i];
+		        	if (currType.getCElementType() != ICElement.C_NAMESPACE) {
+		        		exactMatch = currType.getQualifiedTypeName().equals(typeName);
+		        		if (exactMatch) {
+		        			// found a matching type
+		        			break;
+		        		}
+		        	}
+		        }
+		        if (exactMatch) {
+		        	status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExists")); //$NON-NLS-1$
+		        } else {
+		        	status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExistsDifferentCase")); //$NON-NLS-1$
+		        }
+		    } else {
+		        status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NamespaceNotExists")); //$NON-NLS-1$
+		    }
 	    }
 
 	    val = CConventions.validateNamespaceName(typeName.lastSegment());
@@ -1442,7 +1578,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			// continue checking
 		}
 	
-	    IProject project = getCurrentProject();
+	    ICProject project = getCurrentProject();
 	    if (project != null) {
 		    IQualifiedTypeName fullyQualifiedName = typeName;
 			if (isNamespaceSelected()) {
@@ -1452,8 +1588,51 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			    }
 			}
 			
+		    ITypeInfo[] types = AllTypesCache.getTypes(project, fullyQualifiedName, false, true);
+		    if (types.length > 0) {
 			    // look for class
+			    boolean foundClass = false;
+			    boolean exactMatch = false;
+		        for (int i = 0; i < types.length; ++i) {
+		            ITypeInfo currType = types[i];
+					if (currType.getCElementType() == ICElement.C_CLASS
+					        || currType.getCElementType() == ICElement.C_STRUCT) {
+					    foundClass = true;
+						exactMatch = currType.getQualifiedTypeName().equals(fullyQualifiedName);
+					    if (exactMatch) {
+					        // found a matching class
+					        break;
+					    }
+					}
+		        }
+		        if (foundClass) {
+		            if (exactMatch) {
+						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExists")); //$NON-NLS-1$
+		            } else {
+						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExistsDifferentCase")); //$NON-NLS-1$
+		            }
+	                return status;
+			    }
 		        // look for other types
+		        exactMatch = false;
+		        for (int i = 0; i < types.length; ++i) {
+		        	ITypeInfo currType = types[i];
+		        	if (currType.getCElementType() != ICElement.C_CLASS
+		        			&& currType.getCElementType() != ICElement.C_STRUCT) {
+		        		exactMatch = currType.getQualifiedTypeName().equals(fullyQualifiedName);
+		        		if (exactMatch) {
+		        			// found a matching type
+		        			break;
+		        		}
+		        	}
+		        }
+		        if (exactMatch) {
+		        	status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExists")); //$NON-NLS-1$
+		        } else {
+		        	status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExistsDifferentCase")); //$NON-NLS-1$
+		        }
+		        return status;
+		    }
 	    }
 		return status;
 	}
@@ -1467,7 +1646,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected IStatus baseClassesChanged() {
         if (verifyBaseClasses()) {
 			IPath folder = getSourceFolderFullPath();
-            IProject project = getCurrentProject();
+            ICProject project = getCurrentProject();
 			if (project != null) {
                 IBaseClassInfo[] baseClasses = getBaseClasses();
                 // make sure all classes belong to the project
@@ -1494,17 +1673,21 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * 
      * @return the status of the validation
      */
-    protected IStatus baseClassesChanged(IProject project, IPath sourceFolder, IBaseClassInfo[] baseClasses) {
+    protected IStatus baseClassesChanged(ICProject project, IPath sourceFolder, IBaseClassInfo[] baseClasses) {
         MultiStatus status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
-        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
+        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project.getProject());
         if (provider != null) {
             //TODO get the scanner info for the actual source folder
-            IScannerInfo info = provider.getScannerInformation(project);
+            IScannerInfo info = provider.getScannerInformation(project.getProject());
             if (info != null) {
                 String[] includePaths = info.getIncludePaths();
                 for (int i = 0; i < baseClasses.length; ++i) {
                     IBaseClassInfo baseClass = baseClasses[i];
+                    ITypeInfo baseType = baseClass.getType();
                     StatusInfo baseClassStatus = new StatusInfo();
+                    if (!NewClassWizardUtil.isTypeReachable(baseType, project, includePaths)) {
+                        baseClassStatus.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.BaseClassNotExistsInProject", baseType.getQualifiedTypeName().toString())); //$NON-NLS-1$
+                    }
                     status.add(baseClassStatus);
                 }
             }
@@ -1588,7 +1771,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 
 		if (!fileExists) {
-			IStatus val = CConventions.validateHeaderFileName(getCurrentProject(), path.lastSegment());
+			IStatus val = CConventions.validateHeaderFileName(getCurrentProject().getProject(), path.lastSegment());
 			if (val.getSeverity() == IStatus.ERROR) {
 				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidHeaderFileName", val.getMessage())); //$NON-NLS-1$
 				return status;
@@ -1655,7 +1838,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 
 		if (!fileExists) {
-			IStatus val = CConventions.validateSourceFileName(getCurrentProject(), path.lastSegment());
+			IStatus val = CConventions.validateSourceFileName(getCurrentProject().getProject(), path.lastSegment());
 			if (val.getSeverity() == IStatus.ERROR) {
 				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidSourceFileName", val.getMessage())); //$NON-NLS-1$
 				return status;

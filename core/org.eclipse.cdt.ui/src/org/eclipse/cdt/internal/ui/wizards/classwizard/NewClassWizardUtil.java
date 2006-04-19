@@ -10,22 +10,35 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.browser.AllTypesCache;
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
 import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -252,5 +265,82 @@ public class NewClassWizardUtil {
     public static IWorkspaceRoot getWorkspaceRoot() {
         return ResourcesPlugin.getWorkspace().getRoot();
     }
+    
+    /**
+     * Resolve the location of the given class.
+     * 
+     * @param type the class to resolve
+     * @param context the runnable context
+     * @return the class location, or <code>null</code> if not found
+     */
+    public static ITypeReference resolveClassLocation(ITypeInfo type, IRunnableContext context) {
+        return type.getResolvedReference();
+    }
 
+    private static final int[] CLASS_TYPES = { ICElement.C_CLASS, ICElement.C_STRUCT };
+    
+    /**
+     * Returns all classes/structs which are accessible from the include
+     * paths of the given project.
+     * 
+     * @param project the given project
+     * @return array of classes/structs
+     */
+    public static ITypeInfo[] getReachableClasses(ICProject cProject) {
+        ITypeInfo[] elements = AllTypesCache.getTypes(new TypeSearchScope(true), CLASS_TYPES);
+        if (elements != null && elements.length > 0) {
+            if (cProject != null) {
+            	IProject project = cProject.getProject();
+                IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
+                if (provider != null) {
+                    //TODO get the scanner info for the actual source folder
+                    IScannerInfo info = provider.getScannerInformation(project);
+                    if (info != null) {
+                        String[] includePaths = info.getIncludePaths();
+                        List filteredTypes = new ArrayList();
+                        for (int i = 0; i < elements.length; ++i) {
+                            ITypeInfo baseType = elements[i];
+                            if (isTypeReachable(baseType, cProject, includePaths)) {
+                                filteredTypes.add(baseType);
+                            }
+                        }
+                        return (ITypeInfo[]) filteredTypes.toArray(new ITypeInfo[filteredTypes.size()]);
+                    }
+                }
+            }
+        }
+        return elements;
+    }
+    
+    /**
+     * Checks whether the given type can be found in the given project or the
+     * given include paths.
+     * 
+     * @param type the type
+     * @param project the project
+     * @param includePaths the include paths
+     * @return <code>true</code> if the given type is found
+     */
+    public static boolean isTypeReachable(ITypeInfo type, ICProject project, String[] includePaths) {
+        ICProject baseProject = type.getEnclosingProject();
+        if (baseProject != null) {
+            if (baseProject.equals(project)) {
+                return true;
+            }
+            ITypeReference ref = type.getResolvedReference();
+            for (int i = 0; i < includePaths.length; ++i) {
+                IPath includePath = new Path(includePaths[i]);
+                if (ref != null) {
+                    if (includePath.isPrefixOf(ref.getLocation()))
+                        return true;
+                } else {
+                    // we don't have the real location, so just check the project path
+                    if (baseProject.getProject().getLocation().isPrefixOf(includePath))
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+    
 }

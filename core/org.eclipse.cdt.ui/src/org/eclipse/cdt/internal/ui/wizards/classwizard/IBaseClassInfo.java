@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
+import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 
 public interface IBaseClassInfo {
+	public ITypeInfo getType();
     public ASTAccessVisibility getAccess();
     public boolean isVirtual();
     

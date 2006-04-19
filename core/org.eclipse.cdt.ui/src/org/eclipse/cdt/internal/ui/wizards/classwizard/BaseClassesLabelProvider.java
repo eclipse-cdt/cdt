@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -36,6 +37,8 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
            return ACCESS_PUBLIC;
     }
 
+    private static TypeInfoLabelProvider fTypeInfoLabelProvider = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_FULLY_QUALIFIED);
+    
 	/*
 	 * @see ITableLabelProvider#getColumnImage(Object, int)
 	 */
@@ -44,7 +47,7 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
 			return null;
 		
 	    IBaseClassInfo info = (IBaseClassInfo) element;
-		return null; //fTypeInfoLabelProvider.getImage(info.getType());
+		return fTypeInfoLabelProvider.getImage(info.getType());
 	}
 
 	/*
@@ -55,7 +58,7 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
 		
 		switch (columnIndex) {
 			case 0:
-			    return null; //fTypeInfoLabelProvider.getText(info.getType());
+			    return fTypeInfoLabelProvider.getText(info.getType());
 			case 1:
 			    return getAccessText(info.getAccess());
 			case 2:

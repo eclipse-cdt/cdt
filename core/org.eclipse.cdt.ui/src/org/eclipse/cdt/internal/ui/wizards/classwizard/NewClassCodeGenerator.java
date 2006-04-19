@@ -15,6 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
+import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.browser.PathUtil;
+import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -24,15 +28,12 @@ import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.model.util.IQualifiedTypeName;
-import org.eclipse.cdt.core.model.util.QualifiedTypeName;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -385,22 +386,22 @@ public class NewClassCodeGenerator {
         if (fBaseClasses != null && fBaseClasses.length > 0) {
             text.append(" : "); //$NON-NLS-1$
             for (int i = 0; i < fBaseClasses.length; ++i) {
-//                IBaseClassInfo baseClass = fBaseClasses[i];
-//                String baseClassName = baseClass.getType().getQualifiedTypeName().getFullyQualifiedName();
-//                if (i > 0)
-//                    text.append(", "); //$NON-NLS-1$
-//                if (baseClass.getAccess() == ASTAccessVisibility.PRIVATE)
-//                    text.append("private"); //$NON-NLS-1$
-//                else if (baseClass.getAccess() == ASTAccessVisibility.PROTECTED)
-//                    text.append("private"); //$NON-NLS-1$
-//                else
-//                    text.append("public"); //$NON-NLS-1$
-//                text.append(' ');
-//
-//                if (baseClass.isVirtual())
-//                    text.append("virtual "); //$NON-NLS-1$
-//
-//                text.append(baseClassName);
+                IBaseClassInfo baseClass = fBaseClasses[i];
+                String baseClassName = baseClass.getType().getQualifiedTypeName().getFullyQualifiedName();
+                if (i > 0)
+                    text.append(", "); //$NON-NLS-1$
+                if (baseClass.getAccess() == ASTAccessVisibility.PRIVATE)
+                    text.append("private"); //$NON-NLS-1$
+                else if (baseClass.getAccess() == ASTAccessVisibility.PROTECTED)
+                    text.append("private"); //$NON-NLS-1$
+                else
+                    text.append("public"); //$NON-NLS-1$
+                text.append(' ');
+
+                if (baseClass.isVirtual())
+                    text.append("virtual "); //$NON-NLS-1$
+
+                text.append(baseClassName);
             }
         }
     }
@@ -521,10 +522,10 @@ public class NewClassCodeGenerator {
                 if (cProject.getPath().segment(0).equals(folderToAdd.segment(0)))
                 	continue;
                 
-                IProject includeProject = PathUtil.getEnclosingProject(folderToAdd);
+                ICProject includeProject = PathUtil.getEnclosingProject(folderToAdd);
 
                 // make sure that the include is made the same way that build properties for projects makes them, so .contains below is a valid check
-                IIncludeEntry entry = CoreModel.newIncludeEntry(addToResourcePath, null, includeProject.getLocation(), true);
+                IIncludeEntry entry = CoreModel.newIncludeEntry(addToResourcePath, null, includeProject.getProject().getLocation(), true);
                 
                 if (!checkEntryList.contains(entry)) // if the path already exists in the #includes then don't add it
                 	pathEntryList.add(entry);
@@ -623,20 +624,20 @@ public class NewClassCodeGenerator {
     private List getBaseClassPaths(boolean verifyLocation) throws CodeGeneratorException {
         List list = new ArrayList();
 	    for (int i = 0; i < fBaseClasses.length; ++i) {
-//	        IBaseClassInfo baseClass = fBaseClasses[i];
-//	        ITypeReference ref = baseClass.getType().getResolvedReference();
-//	        IPath baseClassLocation = null;
-//	        if (ref != null) {
-//	            baseClassLocation = ref.getLocation();
-//            }
-//            
-//	        if (baseClassLocation == null) {
-//                if (verifyLocation) {
-//                    throw new CodeGeneratorException("Could not find base class " + baseClass.toString()); //$NON-NLS-1$
-//                }
-//	        } else if (!list.contains(baseClassLocation)) {
-//                list.add(baseClassLocation);
-//            }
+	        IBaseClassInfo baseClass = fBaseClasses[i];
+	        ITypeReference ref = baseClass.getType().getResolvedReference();
+	        IPath baseClassLocation = null;
+	        if (ref != null) {
+	            baseClassLocation = ref.getLocation();
+            }
+            
+	        if (baseClassLocation == null) {
+                if (verifyLocation) {
+                    throw new CodeGeneratorException("Could not find base class " + baseClass.toString()); //$NON-NLS-1$
+                }
+	        } else if (!list.contains(baseClassLocation)) {
+                list.add(baseClassLocation);
+            }
 	    }
 	    return list;
     }

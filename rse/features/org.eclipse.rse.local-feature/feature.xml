@@ -14,14 +14,14 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://update.eclipse.org/updates/3.0"/>
-      <discovery label="%updateSiteName" url="http://update.eclipse.org/updates/3.0"/>
+      <update label="%updateSiteName" url="http://update.eclipse.org/updates/3.2"/>
+      <discovery label="%updateSiteName" url="http://update.eclipse.org/updates/3.2"/>
    </url>
 
    <requires>
+      <import feature="org.eclipse.rse.core"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import feature="org.eclipse.rse.core" version="8.0.0"/>
       <import plugin="org.eclipse.rse.services"/>
       <import plugin="org.eclipse.rse.files.ui"/>
       <import plugin="org.eclipse.rse.subsystems.files.core"/>

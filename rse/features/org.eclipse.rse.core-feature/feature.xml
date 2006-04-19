@@ -14,8 +14,8 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://update.eclipse.org/updates/3.0"/>
-      <discovery label="%updateSiteName" url="http://update.eclipse.org/updates/3.0"/>
+      <update label="%updateSiteName" url="http://update.eclipse.org/updates/3.2"/>
+      <discovery label="%updateSiteName" url="http://update.eclipse.org/updates/3.2"/>
    </url>
 
    <requires>

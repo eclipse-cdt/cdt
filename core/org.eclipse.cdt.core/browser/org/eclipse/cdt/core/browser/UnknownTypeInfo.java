@@ -30,11 +30,9 @@ public class UnknownTypeInfo extends TypeInfo {
 	}
 
 	public boolean canSubstituteFor(ITypeInfo info) {
-		if (fTypeCache == info.getCache()) {
-			int compareType = info.getCElementType();
-			if (fElementType == 0 || compareType == 0 || fElementType == compareType) {
-				return fQualifiedName.equals(info.getQualifiedTypeName());
-			}
+		int compareType = info.getCElementType();
+		if (fElementType == 0 || compareType == 0 || fElementType == compareType) {
+			return fQualifiedName.equals(info.getQualifiedTypeName());
 		}
 		return false;
 	}

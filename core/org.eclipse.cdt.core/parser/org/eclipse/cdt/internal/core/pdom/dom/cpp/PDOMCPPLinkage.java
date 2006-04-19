@@ -97,8 +97,12 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	}
 	
 	public PDOMBinding addName(IASTName name) throws CoreException {
-		if (name == null || name.toCharArray().length == 0 
-				|| name instanceof ICPPASTQualifiedName)
+		if (name == null || name instanceof ICPPASTQualifiedName)
+			return null;
+
+		// Check for null name
+		char[] namechars = name.toCharArray();
+		if (namechars == null || namechars.length == 0)
 			return null;
 		
 		IBinding binding = name.resolveBinding();

@@ -352,9 +352,12 @@ public class RemoteSystemsPreferencePage
 		  return null;
 
 		IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemType);
-		RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
-		if (sysTypeAdapter != null)
+		Object adapter = sysType.getAdapter(IRSESystemType.class);
+		if (adapter instanceof RSESystemTypeAdapter)
+		{
+			RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)adapter;
 			return sysTypeAdapter.getDefaultUserId(sysType);
+		}
 		else
 			return null;
 	}

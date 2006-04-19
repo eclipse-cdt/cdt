@@ -356,7 +356,8 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	
 			try
 			{
-				project.refreshLocal(IResource.DEPTH_ONE, null);
+				if (!project.isSynchronized(IResource.DEPTH_ONE))
+					project.refreshLocal(IResource.DEPTH_ONE, null);
 				IResource[] folders = project.members();
 				for (int f = 0; f < folders.length; f++)
 				{

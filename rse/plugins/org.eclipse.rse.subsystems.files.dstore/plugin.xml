@@ -15,7 +15,7 @@ Contributors:
 {Name} (company) - description of contribution.
 -->
 <?eclipse version="3.1"?>
-<plugin>
+<plugin> 
 
 
    <extension
@@ -31,7 +31,7 @@ Contributors:
             vendor="IBM Corp"
             id="dstore.files">
       </configuration>
-  <!--
+
           <configuration 
             systemTypes="Windows"
             name="%Files"
@@ -43,7 +43,7 @@ Contributors:
             vendor="IBM Corp"
             id="dstore.windows.files">
       </configuration>
- -->
+
       </extension>
 
 </plugin>

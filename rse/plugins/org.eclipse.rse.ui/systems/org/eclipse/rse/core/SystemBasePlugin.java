@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ide.IDEWorkbenchAdvisor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -248,11 +249,22 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		if (headlessSet && headless) // already been here?
 		 	return wb;
 		try {
+			
+			
 			wb = super.getWorkbench();
 			headless = false;			
 		} catch (Exception exc)
 		{
-			headless = true;
+			IDEWorkbenchAdvisor advisor = new IDEWorkbenchAdvisor();
+			PlatformUI.createAndRunWorkbench(Display.getDefault(), advisor);
+			try
+			{
+				wb = super.getWorkbench();			
+			}
+			catch (Exception e)
+			{
+				headless = true;
+			}
 		}
 		headlessSet = true;
 		return wb;

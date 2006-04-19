@@ -12,6 +12,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.services,
  org.eclipse.rse.files.ui,
  org.eclipse.core.resources,
- org.eclipse.rse.ui
+ org.eclipse.rse.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.rse.core
 Eclipse-LazyStart: true
 Bundle-Vendor: Eclipse.org

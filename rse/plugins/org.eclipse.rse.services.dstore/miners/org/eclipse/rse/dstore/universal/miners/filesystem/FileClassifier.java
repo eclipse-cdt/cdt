@@ -574,29 +574,19 @@ public class FileClassifier extends Thread
         
         try
         {
+        	byte[] readBytes = new byte[1024];
 
             // find out how many bytes are available to be read
             int available = stream.available();
             while (available > -1)
             {
-	            // if there's none, wait a bit and return true to continue
-	            if (available == 0)
-	            {
-	                sleep(100);
-	                available = stream.available();
-	                if (available == 0)
-	                    return _lines;
-	            }
-	
-	            byte[] readBytes = new byte[available];
-	
+
 	            // read the available bytes
-	            int numRead = stream.read(readBytes, 0, available);
-	
+	            int numRead = stream.read(readBytes, 0, 1024);
 	            // if we've reached end of stream, quit
 	            if (numRead == -1)
 	            {
-	                return null;
+	            	return _lines;
 	            }
 	
 	
@@ -623,28 +613,28 @@ public class FileClassifier extends Thread
 	                        }
 	                        
 	                        for (int i = 0; i< tokens.length; i++)
-	                    	{
-	                        _lines.add(tokens[i]);
+	                        {
+	                        	_lines.add(tokens[i]);
 	                    	}
 	                    }
 	                }
 	            }
-	            catch (Exception e)
-	            {
-	            }
-	            available = stream.available();
+	         catch (Exception e)
+	         {
+	           e.printStackTrace();
+	          }
+	            available = stream.available();                   
             }
-       
         }
         catch (Exception e)
         {
-
+        	e.printStackTrace();
         }
        
         return _lines;
 
     }
-
+  
     protected String readLine(DataInputStream stream, String encoding) throws Exception
     {
         if (_lines.size() == 0)

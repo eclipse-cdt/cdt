@@ -16,7 +16,14 @@
 
 package org.eclipse.rse.eclipse.filesystem;
 
+import org.eclipse.core.filesystem.provider.FileSystem;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.ide.filesystem.FileSystemSupportRegistry;
+import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -40,6 +47,7 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		RSECorePlugin.getDefault();
 	}
 
 	/**

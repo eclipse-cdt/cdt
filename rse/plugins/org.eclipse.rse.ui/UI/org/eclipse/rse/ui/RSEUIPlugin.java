@@ -70,7 +70,7 @@ public class RSEUIPlugin extends SystemBasePlugin
 {
 	public static final String PLUGIN_ID  = "org.eclipse.rse.ui"; 	
 	public static final String HELPPREFIX = "org.eclipse.rse.ui.";
-	
+	 
     public static final boolean INCLUDE_LOCAL_YES = true;
     public static final boolean INCLUDE_LOCAL_NO = false;
 	private static RSEUIPlugin         inst = null;

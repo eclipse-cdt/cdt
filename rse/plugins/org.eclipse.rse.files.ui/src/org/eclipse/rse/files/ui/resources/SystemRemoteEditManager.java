@@ -32,10 +32,12 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
@@ -309,6 +311,8 @@ public class SystemRemoteEditManager
 			
 			description.setNatureIds(newNatures);
 			editProject.setDescription(description, null);
+			editProject.setDefaultCharset(SystemEncodingUtil.ENCODING_UTF_8, new NullProgressMonitor());
+	
 			
 			// add java support
 			//addJavaSupport(editProject);

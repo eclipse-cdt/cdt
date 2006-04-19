@@ -135,7 +135,8 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		preferenceListManager = new SystemPreferenceChangeManager();
 
 		// get initial shell
-		getShell(); // will quietly fail in headless mode. Phil
+		//FIXME - this can cause problems - don't think we should do this here anyway
+		//getShell(); // will quietly fail in headless mode. Phil
 
 		registry = this;
 		restore();

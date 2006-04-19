@@ -206,10 +206,18 @@ public class SystemViewRemoteFileAdapter
 		xlatedSize = SystemViewResources.RESID_PROPERTY_FILE_SIZE_VALUE;
 		xlatedCompressedSize = SystemViewResources.RESID_PROPERTY_VIRTUALFILE_COMPRESSEDSIZE_VALUE;
 		xlatedExpandedSize = SystemViewResources.RESID_PROPERTY_ARCHIVE_EXPANDEDSIZE_VALUE;
-		
-		IWorkbench workbench = RSEUIPlugin.getDefault().getWorkbench();
-		if (workbench != null)
-			registry = workbench.getEditorRegistry();
+			
+	}
+	
+	private IEditorRegistry getEditorRegistry()
+	{
+		if (registry == null)
+		{
+			IWorkbench workbench = RSEUIPlugin.getDefault().getWorkbench();
+			if (workbench != null)
+				registry = workbench.getEditorRegistry();
+		}
+		return registry;
 	}
 	/**
 	 * Constructor for folders or files only
@@ -503,8 +511,8 @@ public class SystemViewRemoteFileAdapter
 	{
 		IRemoteFile file = (IRemoteFile) element;
 		if (file.isFile() || file.isArchive()) // hack to show zips without folder icons
-		{
-			return registry.getImageDescriptor(file.getName());
+		{			
+			return getEditorRegistry().getImageDescriptor(file.getName());
 		}
 		else
 		{

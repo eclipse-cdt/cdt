@@ -101,11 +101,13 @@ public class DStoreStatusMonitor implements IDomainListener
 		_workingStatuses = new ArrayList();
 		_doneStatuses = new ArrayList();
 		_cancelledStatuses = new ArrayList();
+		if (_dataStore != null)
+		{
 		IDomainNotifier notifier = _dataStore.getDomainNotifier();
 		if (notifier != null)
 		{
 			notifier.addDomainListener(this);
-		}
+		}}
 	}
 	
 	public DataStore getDataStore()

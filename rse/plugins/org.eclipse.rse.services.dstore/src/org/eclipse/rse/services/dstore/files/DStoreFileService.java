@@ -33,6 +33,7 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.DataStoreResources;
+import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalByteStreamHandler;
@@ -604,6 +605,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
 		
 		DataElement de = getElementFor(remotePath);
+		if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
+		{
+			// need to refetch
+			DStoreHostFile hostFile = (DStoreHostFile)getFile(monitor, remoteParent, remoteFile);
+			de = hostFile._element;
+		}
 		long fileLength = DStoreHostFile.getFileLength(de.getSource());
 		
 		
@@ -1127,6 +1134,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		
 		String normalizedPath = PathUtility.normalizeUnknown(path);
 		DataElement element = (DataElement)_fileElementMap.get(normalizedPath);
+		if (element != null && element.isDeleted())
+		{
+			_fileElementMap.remove(normalizedPath);
+			element = null;
+		}
 		if (element == null || element.isDeleted())
 		{
 			DataElement universaltemp = getMinerElement();

@@ -564,12 +564,14 @@ Contributors:
 			<property name="icon" value="icons/full/obj16/system400_obj.gif"/>
 			<property name="iconLive" value="icons/full/obj16/system400live_obj.gif"/>
       </systemType>
+      -->
       <systemType id="org.eclipse.rse.systemtype.windows"
             name="Windows"
 			description="%systemType.windows">
 			<property name="icon" value="icons/full/obj16/systemwin_obj.gif"/>
 			<property name="iconLive" value="icons/full/obj16/systemwinlive_obj.gif"/>
 	  </systemType>
+	  <!--
       <systemType id="org.eclipse.rse.systemtype.zseries"
          	name="z/OS"
 			description="%systemType.zseries">

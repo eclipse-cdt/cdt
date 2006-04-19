@@ -185,7 +185,7 @@ public class DStoreHostFile implements IHostFile
 		String type = _element.getType();
 		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
 		{
-			return parentPath;
+			return name;
 		}
 		
 		if (name.length() == 0)

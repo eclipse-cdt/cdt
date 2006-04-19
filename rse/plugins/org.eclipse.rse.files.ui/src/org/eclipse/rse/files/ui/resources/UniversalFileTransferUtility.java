@@ -136,9 +136,10 @@ public class UniversalFileTransferUtility
 		    // copy remote file to workspace
 		    srcFS.download(srcFileOrFolder, tempFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
 		    
-		    if (!tempFile.exists())
+		    if (!tempFile.exists() && !tempFile.isSynchronized(IResource.DEPTH_ZERO))
 		    {
-		    	tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
+		    	tempFile.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		    	//tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
 		    }
 		    if (tempFile.exists())
 		    {		    	
@@ -153,7 +154,14 @@ public class UniversalFileTransferUtility
 				{
 					try
 					{
-						tempFile.setCharset(SystemEncodingUtil.ENCODING_UTF_8, null/*monitor*/);
+						String cset = tempFile.getCharset();
+						if (!cset.equals(SystemEncodingUtil.ENCODING_UTF_8))
+						{
+						
+							//System.out.println("charset ="+cset);
+							//System.out.println("tempfile ="+tempFile.getFullPath());
+							tempFile.setCharset(SystemEncodingUtil.ENCODING_UTF_8, monitor);
+						}
 					}
 					catch (Exception e)
 					{

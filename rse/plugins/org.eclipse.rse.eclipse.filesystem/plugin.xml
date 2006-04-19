@@ -23,4 +23,38 @@ Contributors:
          <run class="org.eclipse.rse.eclipse.filesystem.RSEFileSystem"/>
       </filesystem>
    </extension>
+   <extension
+         id="org.eclipse.rse.eclipse.filesystemSupport"
+         point="org.eclipse.ui.ide.filesystemSupport">
+      <filesystemContributor 
+       scheme="rse"
+       class="org.eclipse.rse.eclipse.filesystem.RSEFileSystemContributor"
+       label="RSE">
+      </filesystemContributor>
+   </extension>
+   
+      <extension
+         point="org.eclipse.rse.ui.popupMenus">
+      <objectContribution  
+      		adaptable="false" 
+            subsystemfactoryCategory="files"
+   			typefilter="folder"
+   			id="org.eclipse.rse.eclipse.filesystem.createproject.">
+            <visibility> 
+            	<and>
+                	<objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>   
+                </and> 
+            </visibility>
+            
+         <action
+               label="Create Remote Project"
+               tooltip="%ImportToProject.tooltip"
+               class="org.eclipse.rse.eclipse.filesystem.ui.actions.CreateRemoteProjectActionDelegate"
+               menubarPath="group.importexport"
+               enablesFor="1"
+               id="importToProject">
+         </action>
+       </objectContribution>
+      </extension>
+         
 </plugin>

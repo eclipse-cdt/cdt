@@ -17,18 +17,36 @@
 package org.eclipse.rse.eclipse.filesystem;
 
 import java.net.URI;
+import java.util.HashMap;
 
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileSystem;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.Workbench;
 
 public class RSEFileSystem extends FileSystem 
 {
-
+	private static RSEFileSystem _instance = new RSEFileSystem();
+	private HashMap _fileStoreMap;
+	
+	public RSEFileSystem()
+	{
+		super();
+		_fileStoreMap = new HashMap();
+	}
+	
+	public static RSEFileSystem getInstance()
+	{
+		return _instance;
+	}
+	
 	public boolean canDelete() 
 	{
 		return true;
@@ -39,7 +57,7 @@ public class RSEFileSystem extends FileSystem
 		return true;
 	}
 
-	private IHost getConnectionFor(String hostName)
+	public static IHost getConnectionFor(String hostName)
 	{
 		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IHost[] connections = sr.getHosts();
@@ -54,8 +72,24 @@ public class RSEFileSystem extends FileSystem
 		return null;
 	}
 	
+	public static IRemoteFileSubSystem getRemoteFileSubSystem(IHost host)
+	{
+		return RemoteFileUtility.getFileSubSystem(host);
+	}
+	
+	public URI getURIFor(IRemoteFile file)
+	{
+		IFileStore fstore = FileStoreConversionUtility.convert(null, file);
+		return fstore.toURI();
+	}
+	
 	public IFileStore getStore(URI uri) 
 	{
+		Object obj = _fileStoreMap.get(uri);
+		if (obj != null)
+		{
+			return (IFileStore)obj;
+		}
 		try 
 		{
 			String path = uri.getPath();
@@ -63,10 +97,38 @@ public class RSEFileSystem extends FileSystem
 			IHost con = getConnectionFor(hostName);
 			if (con != null)
 			{
-				IRemoteFileSubSystem fs =  RemoteFileUtility.getFileSubSystem(con);
+				IRemoteFileSubSystem fs =  getRemoteFileSubSystem(con);
 				if (fs != null)
 				{
-					return FileStoreConversionUtility.convert(null, fs.getRemoteFileObject(path));
+					
+					if (!fs.isConnected())
+					{
+						
+						Shell shell = null;
+						try
+						{
+							shell = RSEUIPlugin.getActiveWorkbenchShell();
+						}
+						catch (Exception e)
+						{							
+						}
+												
+						if (shell == null)
+						{
+							shell = new Shell();
+						}
+					
+						fs.getConnectorService().promptForPassword(shell, false);
+						fs.getConnectorService().connect(new NullProgressMonitor());
+						//fs.connect(shell);
+					}
+					if (fs.isConnected())
+					{
+						IFileStore fstore = FileStoreConversionUtility.convert(null, fs.getRemoteFileObject(path));
+						_fileStoreMap.put(uri, fstore);
+						return fstore;
+					}
+				
 				}
 			}
 		} 

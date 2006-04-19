@@ -192,6 +192,10 @@ public class SystemIFileProperties implements ISystemTextEditorConstants, ISyste
 		catch( NumberFormatException ex ){
 			return 0;
 		}
+		catch (Exception e)
+		{
+			return 0;
+		}
 	}
 	
 	/**

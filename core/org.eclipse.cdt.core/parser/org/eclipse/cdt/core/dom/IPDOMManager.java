@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * @author Doug Schaefer
@@ -31,4 +32,8 @@ public interface IPDOMManager {
 	public String getIndexerId(ICProject project) throws CoreException;
 	public void setIndexerId(ICProject project, String indexerId) throws CoreException;
 
+	// Scheduling rule used by indexers to make sure we don't get
+	// Too much indexing going on.
+	public ISchedulingRule getIndexerSchedulingRule();
+	
 }

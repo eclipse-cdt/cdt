@@ -60,7 +60,7 @@ public class PDOM extends PlatformObject
 	private final IPath dbPath;
 	private Database db;
 	
-	private static final int VERSION = 0;
+	public static final int VERSION = 1;
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
@@ -84,9 +84,13 @@ public class PDOM extends PlatformObject
 			rproject.setPersistentProperty(dbNameProperty, dbName);
 		}
 		dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
-		db = new Database(dbPath.toOSString(), VERSION);
+		db = new Database(dbPath.toOSString());
 		
-		// Create the appropriate indexer
+		// Check the version and force a rebuild if needed.
+		// TODO Conversion might be a nicer story down the road
+		if (db.getVersion() != VERSION) {
+			indexer.reindex();
+		}
 	}
 
 	public Object getAdapter(Class adapter) {
@@ -153,9 +157,6 @@ public class PDOM extends PlatformObject
 	}
 
 	public Database getDB() throws CoreException {
-		if (db == null)
-			db = new Database(dbPath.toOSString(), VERSION);
-
 		return db;
 	}
 
@@ -208,7 +209,9 @@ public class PDOM extends PlatformObject
 	}
 	
 	public void clear() throws CoreException {
-		getDB().clear();
+		Database db = getDB();
+		db.clear();
+		db.setVersion(VERSION);
 		fileIndex = null;
 	}
 

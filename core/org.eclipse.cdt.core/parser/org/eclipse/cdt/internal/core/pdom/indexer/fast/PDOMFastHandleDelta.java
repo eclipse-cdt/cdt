@@ -39,8 +39,9 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 	private List removedTUs;
 
 	public PDOMFastHandleDelta(PDOM pdom, ICElementDelta delta) {
-		super("Delta Handler", pdom);
+		super(pdom);
 		this.delta = delta;
+		setRule(CCorePlugin.getPDOMManager().getIndexerSchedulingRule());
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {

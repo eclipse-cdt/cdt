@@ -13,16 +13,9 @@ package org.eclipse.cdt.core.browser;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 
 /**
  * Manages a search cache for types in the workspace. Instead of returning

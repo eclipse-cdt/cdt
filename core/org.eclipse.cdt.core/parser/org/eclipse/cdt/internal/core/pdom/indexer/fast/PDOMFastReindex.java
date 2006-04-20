@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.content.IContentType;
 public class PDOMFastReindex extends PDOMFastIndexerJob {
 
 	public PDOMFastReindex(PDOM pdom) {
-		super("Reindex", pdom);
+		super(pdom);
 	}
 	
 	protected IStatus run(IProgressMonitor monitor) {

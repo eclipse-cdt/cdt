@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -27,9 +27,10 @@ public abstract class PDOMFastIndexerJob extends Job {
 
 	protected final PDOM pdom;
 	
-	public PDOMFastIndexerJob(String name, PDOM pdom) {
-		super(name);
+	public PDOMFastIndexerJob(PDOM pdom) {
+		super("Fast Indexer: " + pdom.getProject().getElementName());
 		this.pdom = pdom;
+		setRule(CCorePlugin.getPDOMManager().getIndexerSchedulingRule());
 	}
 
 	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {

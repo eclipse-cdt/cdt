@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -50,6 +51,15 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 	private static final QualifiedName pdomProperty
 		= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdom"); //$NON-NLS-1$
 
+	private final ISchedulingRule indexerSchedulingRule = new ISchedulingRule() {
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
+		}
+	};
+	
 	public IPDOM getPDOM(ICProject project) {
 		try {
 			IProject rproject = project.getProject();
@@ -215,6 +225,10 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     	}
     	throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
     			0, CCorePlugin.getResourceString("indexer.notFound"), null)); //$NON-NLS-1$	
+    }
+
+    public ISchedulingRule getIndexerSchedulingRule() {
+    	return indexerSchedulingRule;
     }
     
 	/**

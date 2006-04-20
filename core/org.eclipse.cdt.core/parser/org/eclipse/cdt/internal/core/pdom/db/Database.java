@@ -42,7 +42,7 @@ public class Database {
 	public static final int NEXT_OFFSET = INT_SIZE * 2;
 	public static final int DATA_AREA = CHUNK_SIZE / MIN_SIZE * INT_SIZE + INT_SIZE;
 	
-	public Database(String filename, int version) throws CoreException {
+	public Database(String filename) throws CoreException {
 		try {
 			file = new RandomAccessFile(filename, "rw"); //$NON-NLS-1$
 			
@@ -54,7 +54,7 @@ public class Database {
 			}
 			
 			toc = new Chunk[(int)nChunks];
-			init(version);
+			init();
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
@@ -69,14 +69,17 @@ public class Database {
 		}
 	}
 
-	private void init(int version) throws CoreException {
+	private void init() throws CoreException {
 		// Load in the magic chunk zero
 		toc[0] = new Chunk(file, 0);
-		int oldversion = toc[0].getInt(0);
-		if (oldversion != version) {
-			// Conversion?
-			toc[0].putInt(0, version);
-		}
+	}
+	
+	public int getVersion() {
+		return toc[0].getInt(0);
+	}
+	
+	public void setVersion(int version) {
+		toc[0].putInt(0, version);
 	}
 
 	/**
@@ -87,7 +90,8 @@ public class Database {
 		int version = toc[0].getInt(0);
 		create();
 		toc = new Chunk[1];
-		init(version);
+		init();
+		setVersion(version);
 	}
 	
 	/**

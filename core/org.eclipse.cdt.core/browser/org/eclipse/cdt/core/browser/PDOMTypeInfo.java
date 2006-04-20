@@ -13,6 +13,8 @@ package org.eclipse.cdt.core.browser;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 
 /**
  * @author Doug Schaefer
@@ -20,169 +22,144 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
  */
 public class PDOMTypeInfo implements ITypeInfo {
 
-	public void addDerivedReference(ITypeReference location) {
-		// TODO Auto-generated method stub
+	private final PDOMBinding binding;
+	private final int elementType;
 
+	public PDOMTypeInfo(PDOMBinding binding, int elementType) {
+		this.binding = binding;
+		this.elementType = elementType;
+	}
+	
+	public void addDerivedReference(ITypeReference location) {
+		throw new PDOMNotImplementedError();
 	}
 
 	public void addReference(ITypeReference location) {
-		// TODO Auto-generated method stub
-
+		throw new PDOMNotImplementedError();
 	}
 
 	public boolean canSubstituteFor(ITypeInfo info) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new PDOMNotImplementedError();
 	}
 
 	public boolean encloses(ITypeInfo info) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new PDOMNotImplementedError();
 	}
 
 	public boolean exists() {
-		// TODO Auto-generated method stub
-		return false;
+		throw new PDOMNotImplementedError();
 	}
 
 	public int getCElementType() {
-		// TODO Auto-generated method stub
-		return 0;
+		return elementType;
 	}
 
 	public ITypeReference[] getDerivedReferences() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public ITypeInfo[] getEnclosedTypes() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public ITypeInfo[] getEnclosedTypes(int[] kinds) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public ITypeInfo getEnclosingNamespace(boolean includeGlobalNamespace) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public ICProject getEnclosingProject() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public ITypeInfo getEnclosingType() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public ITypeInfo getEnclosingType(int[] kinds) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public IQualifiedTypeName getQualifiedTypeName() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public ITypeReference[] getReferences() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public ITypeReference getResolvedReference() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public ITypeInfo[] getSubTypes() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public ASTAccessVisibility getSuperTypeAccess(ITypeInfo subType) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public ITypeInfo[] getSuperTypes() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public boolean hasEnclosedTypes() {
-		// TODO Auto-generated method stub
-		return false;
+		throw new PDOMNotImplementedError();
 	}
 
 	public boolean hasSubTypes() {
-		// TODO Auto-generated method stub
-		return false;
+		throw new PDOMNotImplementedError();
 	}
 
 	public boolean hasSuperTypes() {
-		// TODO Auto-generated method stub
-		return false;
+		throw new PDOMNotImplementedError();
 	}
 
 	public boolean isClass() {
-		// TODO Auto-generated method stub
-		return false;
+		throw new PDOMNotImplementedError();
 	}
 
 	public boolean isEnclosed(ITypeInfo info) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new PDOMNotImplementedError();
 	}
 
 	public boolean isEnclosed(ITypeSearchScope scope) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new PDOMNotImplementedError();
 	}
 
 	public boolean isEnclosedType() {
-		// TODO Auto-generated method stub
-		return false;
+		throw new PDOMNotImplementedError();
 	}
 
 	public boolean isEnclosingType() {
-		// TODO Auto-generated method stub
-		return false;
+		throw new PDOMNotImplementedError();
 	}
 
 	public boolean isReferenced(ITypeSearchScope scope) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new PDOMNotImplementedError();
 	}
 
 	public boolean isUndefinedType() {
-		// TODO Auto-generated method stub
-		return false;
+		throw new PDOMNotImplementedError();
 	}
 
 	public void setCElementType(int type) {
-		// TODO Auto-generated method stub
-
+		throw new PDOMNotImplementedError();
 	}
 
 	public int compareTo(Object arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new PDOMNotImplementedError();
 	}
 
 }

@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.ctags;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
@@ -36,6 +37,7 @@ public class CtagsReindex extends Job {
 		super("ctags Indexer: " + ((PDOM)indexer.getPDOM()).getProject().getElementName());
 		this.indexer = indexer;
 		this.pdom = (PDOM)indexer.getPDOM();
+		setRule(CCorePlugin.getPDOMManager().getIndexerSchedulingRule());
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {

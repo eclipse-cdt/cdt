@@ -3,28 +3,18 @@
 <!-- Custom settings -->
 <!-- ===================================================================== -->
 
-	<property name="MailLogger.mailhost" value="d25ml01.torolab.ibm.com" />
-	<property name="MailLogger.from" value="dmcknigh@ca.ibm.com" />
-	<property name="MailLogger.success.notify" value="true" />
-	<property name="MailLogger.failure.to" value="dmcknigh@ca.ibm.com" />
-	<property name="MailLogger.success.to" value="dmcknigh@ca.ibm.com" />
-	<property name="MailLogger.success.subject" value="Build Success from RSE Head 8.0" />
-	<property name="MailLogger.failure.subject" value="Build Failure from RSE Head 8.0" />
-	<property name="head" value="${baseLocation}\..\..\packagehome" />
-       <property name="configs" value="*,*,*"/>
-       <path id="path_bootclasspath">
-               <fileset dir="${java.home}/lib">
-                 <include name="*.jar" />
-               </fileset>
-       </path>
-       <property name="bootclasspath" refid="path_bootclasspath" />
-
-	<tstamp>
-       	<format property="today" pattern="E" locale="en"/>
-		<format property="timestamp" pattern="yyyyMMdd" locale="en"/>
-	</tstamp>
-
-
+<property name="head" value="${baseLocation}\..\..\packagehome" />
+<property name="configs" value="*,*,*"/>
+<path id="path_bootclasspath">
+	<fileset dir="${java.home}/lib">
+		<include name="*.jar" />
+	</fileset>
+</path>
+<property name="bootclasspath" refid="path_bootclasspath" />
+<tstamp>
+	<format property="today" pattern="E" locale="en"/>
+	<format property="timestamp" pattern="yyyyMMdd" locale="en"/>
+</tstamp>
 
 <!-- ===================================================================== -->
 <!-- Global properties.  See the build.properties for information on -->

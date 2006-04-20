@@ -5,38 +5,21 @@
 <!-- Add on <ant> task for each top level element being built. -->
 <!-- ===================================================================== -->
 <target name="allElements">
-	<ant antfile="${genericTargets}" target="${target}" >
-		<property name="type" value="feature" />
-		<property name="id" value="org.eclipse.rse.core" />
+	<ant antfile="${genericTargets}" target="${target}">
+		<property name="type" value="feature"/>
+		<property name="id" value="org.eclipse.rse.core"/>
 	</ant>	
-	<ant antfile="${genericTargets}" target="${target}" >
-		<property name="type" value="feature" />
-		<property name="id" value="org.eclipse.rse.local" />
+	<ant antfile="${genericTargets}" target="${target}">
+		<property name="type" value="feature"/>
+		<property name="id" value="org.eclipse.rse.local"/>
 	</ant>	
-	<ant antfile="${genericTargets}" target="${target}" >
-		<property name="type" value="feature" />
-		<property name="id" value="org.eclipse.rse.ftp" />
+	<ant antfile="${genericTargets}" target="${target}">
+		<property name="type" value="feature"/>
+		<property name="id" value="org.eclipse.rse.ftp"/>
 	</ant>	
-	<ant antfile="${genericTargets}" target="${target}" >
-		<property name="type" value="feature" />
-		<property name="id" value="org.eclipse.rse.telnet" />
-	</ant>	
-	<ant antfile="${genericTargets}" target="${target}" >
-		<property name="type" value="feature" />
-		<property name="id" value="org.eclipse.rse.dstore" />
-	</ant>	
-	<ant antfile="${genericTargets}" target="${target}" >
-		<property name="type" value="feature" />
-		<property name="id" value="org.eclipse.rse.dstore.services" />
-	</ant>	
-
-	<ant antfile="${genericTargets}" target="${target}" >
-		<property name="type" value="feature" />
-		<property name="id" value="org.eclipse.rse.doc.isv" />
-	</ant>	
-	<ant antfile="${genericTargets}" target="${target}" >
-		<property name="type" value="feature" />
-		<property name="id" value="org.eclipse.rse.sdk" />
+	<ant antfile="${genericTargets}" target="${target}">
+		<property name="type" value="feature"/>
+		<property name="id" value="org.eclipse.rse.dstore"/>
 	</ant>
 </target>
 
@@ -49,62 +32,39 @@
 
 <target name="assemble.org.eclipse.rse.core">
 	<antcall target="buildFeature">
-		<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.core" />
+		<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.core"/>
 	</antcall>
-   </target>
-	<target name="assemble.org.eclipse.rse.local">
-		<antcall target="buildFeature">
-			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.local" />
-		</antcall>	
-	</target>
-	<target name="assemble.org.eclipse.rse.ftp">
-		<antcall target="buildFeature">
-			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.ftp" />
-		</antcall>
-	</target>
-	<target name="assemble.org.eclipse.rse.telnet">
-		<antcall target="buildFeature">
-			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.telnet" />
-		</antcall>
-	</target>
-	<target name="assemble.org.eclipse.rse.dstore">
-		<antcall target="buildFeature">
-			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.dstore" />
-		</antcall>
-	</target>
-	<target name="assemble.org.eclipse.rse.dstore.services">
-		<antcall target="serverruntime"/>
-		<antcall target="buildFeature">
-			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.dstore.services" />
-		</antcall>	
-	</target>
-
-	<target name="assemble.org.eclipse.rse.doc.isv">
-		<antcall target="buildFeature">
-			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.doc.isv" />
-		</antcall>
-	</target>
-	<target name="assemble.org.eclipse.rse.sdk">
-		<antcall target="buildFeature">
-			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.sdk" />
-		</antcall>
-	</target>
-
-
+</target>
+<target name="assemble.org.eclipse.rse.local">
+	<antcall target="buildFeature">
+		<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.local"/>
+	</antcall>	
+</target>
+<target name="assemble.org.eclipse.rse.ftp">
+	<antcall target="buildFeature">
+		<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.ftp"/>
+	</antcall>
+</target>
+<target name="assemble.org.eclipse.rse.dstore">
+	<antcall target="serverruntime"/>
+	<antcall target="buildFeature">
+		<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.dstore"/>
+	</antcall>
+</target>
 	
-	<target name="dstore_extra_server.jar">
-		<mkdir dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime"/>
-		<delete dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild"/>
-		<mkdir dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild"/>
-	    <javac debug="${dbg}" srcdir="${buildDirectory}/plugins/org.eclipse.dstore.extra/server" destdir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild" includeAntRuntime="false"/>
-	    <jar jarfile="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime/dstore_extra_server.jar" basedir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild"/>
-		<delete dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild"/>
-	</target>	
+<target name="dstore_extra_server.jar">
+	<mkdir dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime"/>
+	<delete dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild"/>
+	<mkdir dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild"/>
+	<javac debug="${dbg}" srcdir="${buildDirectory}/plugins/org.eclipse.dstore.extra/server" destdir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild" includeAntRuntime="false"/>
+	<jar jarfile="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime/dstore_extra_server.jar" basedir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild"/>
+	<delete dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild"/>
+</target>	
 	
 <target name="serverruntime">
-		<antcall target="dstore_extra_server.jar"/>
-	    <property name="universalserverfilelist"
-	                  value="${buildDirectory}/plugins/org.eclipse.dstore.core/dstore_core.jar,
+	<antcall target="dstore_extra_server.jar"/>
+	<property name="universalserverfilelist"
+		value="${buildDirectory}/plugins/org.eclipse.dstore.core/dstore_core.jar,
 	    	${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts/auth.pl,
 			${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts/ssl.properties,
 	    	${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime/dstore_extra_server.jar,
@@ -120,56 +80,53 @@
 	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/win.env.bat,
 	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/daemon.win.bat,
 	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/run.win.bat"/>
-
-	    <delete dir="${packageDirectory}\rseserver"/>
-	    <mkdir dir="${packageDirectory}\rseserver"/>
-
-	    <copy todir="${packageDirectory}\rseserver">
-	    				<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core" includes="dstore_core.jar"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts" includes="auth.pl"/>
-	    				<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts" includes="ssl.properties"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime" includes ="dstore_extra_server.jar"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="dstore_miners.jar"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="patterns.dat"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services" includes="clientserver.jar"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="minerFile.dat"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="rsecomm.properties"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="server.linux"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="server.unix"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="patterns.dat"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="daemon.linux"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="win.env.bat"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="daemon.win.bat"/>
-	    		    	<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="run.win.bat"/>
-	    </copy>
-
-	    <fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="server.linux"/>
-   		<fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="daemon.linux"/>
-	    <fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="daemon.unix"/>
-		<fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="server.unix"/>
 	
-		
-	    <jar jarfile="${packageDirectory}\rseserver.jar" filesonly="true">
-	      <fileset dir="${packageDirectory}\rseserver"
-	               includes="*"
-	               excludes="">
-	      </fileset>
-	    </jar>
+	<delete dir="${packageDirectory}\rseserver"/>
+	<mkdir dir="${packageDirectory}\rseserver"/>
 	
-		<delete dir="${packageDirectory}\rseserver"/>
-		<delete> 
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime"
-				includes="*">
-			</fileset>
-		</delete>
+	<copy todir="${packageDirectory}\rseserver">
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core" includes="dstore_core.jar"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts" includes="auth.pl"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts" includes="ssl.properties"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime" includes ="dstore_extra_server.jar"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="dstore_miners.jar"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="patterns.dat"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services" includes="clientserver.jar"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="minerFile.dat"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="rsecomm.properties"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="server.linux"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="server.unix"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="patterns.dat"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="daemon.linux"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="win.env.bat"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="daemon.win.bat"/>
+	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="run.win.bat"/>
+	</copy>
+	
+	<fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="server.linux"/>
+	<fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="daemon.linux"/>
+	<fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="daemon.unix"/>
+	<fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="server.unix"/>
+	
+	<jar jarfile="${packageDirectory}\rseserver.jar" filesonly="true">
+		<fileset dir="${packageDirectory}\rseserver"
+			includes="*"
+			excludes="">
+		</fileset>
+	</jar>
+	
+	<delete dir="${packageDirectory}\rseserver"/>
+	
+	<delete> 
+		<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="*">
+		</fileset>
+	</delete>
 
-		<copy todir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime">
-	  		<fileset dir="${packageDirectory}"
-				includes="rseserver.jar">
-	  		</fileset>
-		</copy>
-			
-	</target>
+	<copy todir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime">
+		<fileset dir="${packageDirectory}" includes="rseserver.jar">
+	  	</fileset>
+	</copy>
+</target>
 	
 <!-- ===================================================================== -->
 <!-- Check out map files from correct repository -->
@@ -187,10 +144,8 @@
 	/>
 	-->
 	<copy todir="${buildDirectory}/maps">
-		      <fileset dir="." includes="*.map"/>
-   </copy>
-
-
+		<fileset dir="." includes="*.map"/>
+	</copy>
 </target>
 
 <!-- ===================================================================== -->
@@ -285,22 +240,16 @@
 <target name="postBuild">
 	<mkdir dir="${packageDirectory}"/>
     <copy todir="${packageDirectory}">   	
-		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.core" includes="org.eclipse.rse.core_8.0.0.bin.dist.zip"/>	
-		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.dstore" includes="org.eclipse.rse.dstore_8.0.0.bin.dist.zip"/>
-		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.dstore.services" includes="org.eclipse.rse.dstore.services_8.0.0.bin.dist.zip"/>	
-		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.ftp" includes="org.eclipse.rse.ftp_8.0.0.bin.dist.zip"/>	
-		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.local" includes="org.eclipse.rse.local_8.0.0.bin.dist.zip"/>	
-       	  <fileset dir="${buildDirectory}\features\org.eclipse.rse.telnet" includes="org.eclipse.rse.telnet_8.0.0.bin.dist.zip"/>	
-	      <fileset dir="${buildDirectory}\features\org.eclipse.rse.sdk" includes="org.eclipse.rse.sdk_8.0.0.bin.dist.zip"/>  
+		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.core" includes="org.eclipse.rse.core_1.0.0.bin.dist.zip"/>	
+		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.dstore" includes="org.eclipse.rse.dstore_1.0.0.bin.dist.zip"/>	
+		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.ftp" includes="org.eclipse.rse.ftp_1.0.0.bin.dist.zip"/>	
+		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.local" includes="org.eclipse.rse.local_1.0.0.bin.dist.zip"/> 
    </copy>
 	
-	<move tofile="${packageDirectory}\rse-core-runtime_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.core_8.0.0.bin.dist.zip"/>
-	<move tofile="${packageDirectory}\rse-dstore-runtime_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.dstore_8.0.0.bin.dist.zip"/>
-	<move tofile="${packageDirectory}\rse-dstore-services-runtime_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.dstore.services_8.0.0.bin.dist.zip"/>	
-	<move tofile="${packageDirectory}\rse-ftp-runtime_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.ftp_8.0.0.bin.dist.zip"/>	
-	<move tofile="${packageDirectory}\rse-local-runtime_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.local_8.0.0.bin.dist.zip"/>
-	<move tofile="${packageDirectory}\rse-telnet-runtime_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.telnet_8.0.0.bin.dist.zip"/>
-	<move tofile="${packageDirectory}\rse-sdk_8.0.0.zip" file="${packageDirectory}\org.eclipse.rse.sdk_8.0.0.bin.dist.zip"/>
+	<move tofile="${packageDirectory}\rse-core-runtime_1.0.0.zip" file="${packageDirectory}\org.eclipse.rse.core_1.0.0.bin.dist.zip"/>
+	<move tofile="${packageDirectory}\rse-dstore-runtime_1.0.0.zip" file="${packageDirectory}\org.eclipse.rse.dstore_1.0.0.bin.dist.zip"/>	
+	<move tofile="${packageDirectory}\rse-ftp-runtime_1.0.0.zip" file="${packageDirectory}\org.eclipse.rse.ftp_1.0.0.bin.dist.zip"/>	
+	<move tofile="${packageDirectory}\rse-local-runtime_1.0.0.zip" file="${packageDirectory}\org.eclipse.rse.local_1.0.0.bin.dist.zip"/>
 	
 	<!--
 	<antcall target="serverruntime"/>

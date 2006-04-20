@@ -129,7 +129,7 @@ public class StepBuilder implements IBuildModelBuilder {
 					file.refreshLocal(IResource.DEPTH_ZERO, monitor);
 				} catch (CoreException e) {
 					if(DbgUtil.DEBUG){
-						DbgUtil.traceln("failed to refresh resource " 	//$NON-NLS-1$
+						DbgUtil.trace("failed to refresh resource " 	//$NON-NLS-1$
 								+ file.getFullPath() 
 								+ ", error: " + e.getLocalizedMessage());	//$NON-NLS-1$
 					}
@@ -150,7 +150,7 @@ public class StepBuilder implements IBuildModelBuilder {
 					rc.delete(true, monitor);
 				} catch (CoreException e) {
 					if(DbgUtil.DEBUG){
-						DbgUtil.traceln("failed to delete resource " 	//$NON-NLS-1$
+						DbgUtil.trace("failed to delete resource " 	//$NON-NLS-1$
 								+ rc.getFullPath() 
 								+ ", error: " + e.getLocalizedMessage());	//$NON-NLS-1$
 					}

@@ -813,7 +813,7 @@ public class BuildDescriptionModelTests extends TestCase {
 	
 	private void doTrace(String str){
 		if(DbgUtil.DEBUG)
-			DbgUtil.traceln(str);
+			DbgUtil.trace(str);
 	}
 	
 	private void doTestBuildDescription(IBuildDescription des, IBuildDescription tDes){

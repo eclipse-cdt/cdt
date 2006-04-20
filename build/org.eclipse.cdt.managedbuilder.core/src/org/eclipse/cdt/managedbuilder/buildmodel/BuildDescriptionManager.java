@@ -182,7 +182,7 @@ public class BuildDescriptionManager {
 		IBuildStep inputAction = rcs[0].getBuildDescription().getInputStep();
 
 		if(DbgUtil.DEBUG)
-			DbgUtil.traceln(">>found resources to clean:");	//$NON-NLS-1$
+			DbgUtil.trace(">>found resources to clean:");	//$NON-NLS-1$
 
 		for(int i = 0; i < rcs.length; i++){
 			IBuildResource buildRc = rcs[i];
@@ -195,14 +195,14 @@ public class BuildDescriptionManager {
 					&& buildRc.isProjectResource()){
 
 				if(DbgUtil.DEBUG)
-					DbgUtil.traceln(path.toString());
+					DbgUtil.trace(path.toString());
 
 				list.add(buildRc);
 			}
 		}
 
 		if(DbgUtil.DEBUG)
-			DbgUtil.traceln("<<");	//$NON-NLS-1$
+			DbgUtil.trace("<<");	//$NON-NLS-1$
 	}
 	
 	private static boolean checkFlags(int var, int flags){

@@ -63,7 +63,7 @@ public class BuildIOType implements IBuildIOType {
 		fResources.add(rc);
 		rc.addToArg(this);
 		if(DbgUtil.DEBUG)
-			DbgUtil.traceln("resource " + DbgUtil.resourceName(rc) + " added as "  	//$NON-NLS-1$	//$NON-NLS-2$
+			DbgUtil.trace("resource " + DbgUtil.resourceName(rc) + " added as "  	//$NON-NLS-1$	//$NON-NLS-2$
 					+ (fIsInput ? "input" : "output")	//$NON-NLS-1$	//$NON-NLS-2$
 					+ " to the action " + DbgUtil.stepName(fStep));	//$NON-NLS-1$
 		
@@ -75,7 +75,7 @@ public class BuildIOType implements IBuildIOType {
 		rc.removeFromArg(this);
 		
 		if(DbgUtil.DEBUG)
-			DbgUtil.traceln("resource " + DbgUtil.resourceName(rc) + " removed as "  	//$NON-NLS-1$	//$NON-NLS-2$
+			DbgUtil.trace("resource " + DbgUtil.resourceName(rc) + " removed as "  	//$NON-NLS-1$	//$NON-NLS-2$
 					+ (fIsInput ? "input" : "output")	//$NON-NLS-1$	//$NON-NLS-2$
 					+ " from the action " + DbgUtil.stepName(fStep));	//$NON-NLS-1$
 

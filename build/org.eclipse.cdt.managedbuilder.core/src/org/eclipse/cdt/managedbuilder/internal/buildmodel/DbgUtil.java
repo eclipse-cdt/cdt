@@ -25,13 +25,16 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 public class DbgUtil {
 	public static boolean DEBUG = false;
 	private static PrintStream out = System.out;
+	private static final String TRACE_PREFIX = "BuildModel[ ";	//$NON-NLS-1$
+	private static final String TRACE_SUFIX = " ]";	//$NON-NLS-1$
+
 	
 	public static void trace(String str){
-		out.print(str);
+		out.println(formatMsg(str));
 	}
-
-	public static void traceln(String str){
-		out.println(str);
+	
+	public static String formatMsg(String msg){
+		return TRACE_PREFIX + msg + TRACE_SUFIX;
 	}
 	
 	public static String stepName(IBuildStep action){

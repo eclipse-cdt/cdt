@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.core;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.DbgUtil;
 import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceChangeHandler;
@@ -167,6 +168,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	private static final String PATH_ENTRY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntry"; //$NON-NLS-1$
 	private static final String PATH_ENTRY_INIT = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntryInit"; //$NON-NLS-1$
 	private static final String BUILDER = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/builder"; //$NON-NLS-1$
+	private static final String BUILD_MODEL = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/buildModel"; //$NON-NLS-1$
 
 	/**
 	 * 
@@ -184,6 +186,10 @@ public class ManagedBuilderCorePlugin extends Plugin {
 			String builder = Platform.getDebugOption(BUILDER);
 			if (builder != null) {
 				GeneratedMakefileBuilder.VERBOSE = builder.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			}
+			String buildModel = Platform.getDebugOption(BUILD_MODEL);
+			if(buildModel != null){
+				DbgUtil.DEBUG = buildModel.equalsIgnoreCase("true"); //$NON-NLS-1$
 			}
 		}
 	}

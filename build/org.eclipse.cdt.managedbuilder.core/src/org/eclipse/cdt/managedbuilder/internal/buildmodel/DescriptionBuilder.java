@@ -59,11 +59,11 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 				return VISIT_STOP;
 			
 			if(DbgUtil.DEBUG)
-				DbgUtil.traceln("visiting step " + DbgUtil.stepName(action));
+				DbgUtil.trace("visiting step " + DbgUtil.stepName(action));
 			if(!action.isRemoved()
 					&& (!fBuildIncrementaly || action.needsRebuild())){
 				if(DbgUtil.DEBUG)
-					DbgUtil.traceln("step " + DbgUtil.stepName(action) + " needs rebuild" );
+					DbgUtil.trace("step " + DbgUtil.stepName(action) + " needs rebuild" );
 				StepBuilder builder = new StepBuilder(action, fCWD, fResumeOnErrs, fDir);
 				
 				switch(builder.build(fOut, fErr, fMonitor)){

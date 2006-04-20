@@ -112,7 +112,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 		} else {
 			fErrMsg = launcher.getErrorMessage(); 
 			if(DbgUtil.DEBUG)
-				DbgUtil.traceln("error launching the command: " + fErrMsg);	//$NON-NLS-1$
+				DbgUtil.trace("error launching the command: " + fErrMsg);	//$NON-NLS-1$
 
 			status = STATUS_ERROR_LAUNCH;
 		}

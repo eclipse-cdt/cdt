@@ -60,7 +60,7 @@ public class BuildStep implements IBuildStep {
 		fBuildDescription = des;
 		
 		if(DbgUtil.DEBUG)
-			DbgUtil.traceln("step " + DbgUtil.stepName(this) + " created");	//$NON-NLS-1$	//$NON-NLS-2$
+			DbgUtil.trace("step " + DbgUtil.stepName(this) + " created");	//$NON-NLS-1$	//$NON-NLS-2$
 		
 		des.stepCreated(this);
 	}
@@ -114,7 +114,7 @@ public class BuildStep implements IBuildStep {
 		BuildResource[][] rcs = clear();
 		
 		if(DbgUtil.DEBUG)
-			DbgUtil.traceln("step  " + DbgUtil.stepName(this) + " removed");	//$NON-NLS-1$	//$NON-NLS-2$
+			DbgUtil.trace("step  " + DbgUtil.stepName(this) + " removed");	//$NON-NLS-1$	//$NON-NLS-2$
 
 		fBuildDescription.stepRemoved(this);
 		fBuildDescription = null;

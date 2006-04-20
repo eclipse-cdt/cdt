@@ -43,7 +43,7 @@ public class BuildResource implements IBuildResource {
 		info.resourceCreated(this);
 		
 		if(DbgUtil.DEBUG)
-			DbgUtil.traceln("resource " + location + " created");	//$NON-NLS-1$	//$NON-NLS-2$
+			DbgUtil.trace("resource " + location + " created");	//$NON-NLS-1$	//$NON-NLS-2$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#getLocation()
@@ -90,7 +90,7 @@ public class BuildResource implements IBuildResource {
 	public void setRemoved(boolean removed) {
 		if(DbgUtil.DEBUG){
 			if(removed)
-				DbgUtil.traceln("REMOVED state: resource " + DbgUtil.resourceName(this));
+				DbgUtil.trace("REMOVED state: resource " + DbgUtil.resourceName(this));
 		}
 		fIsRemoved = removed;
 		if(fIsRemoved)
@@ -153,7 +153,7 @@ public class BuildResource implements IBuildResource {
 		BuildIOType types[][] = clear();
 		
 		if(DbgUtil.DEBUG)
-			DbgUtil.traceln("resource " + DbgUtil.resourceName(this) + " removed");	//$NON-NLS-1$	//$NON-NLS-2$
+			DbgUtil.trace("resource " + DbgUtil.resourceName(this) + " removed");	//$NON-NLS-1$	//$NON-NLS-2$
 		
 		fInfo.resourceRemoved(this);
 		fInfo = null;

@@ -224,8 +224,11 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	}
 
 	protected CContentOutlinerProvider createContentProvider(TreeViewer viewer) {
-		IWorkbenchPartSite site= getSite().getPage().getActiveEditor().getSite();
-		return new CContentOutlinerProvider(viewer, site);
+		IWorkbenchPart part= getSite().getPage().getActivePart();
+		if (part == null) {
+			return new CContentOutlinerProvider(viewer);
+		}
+		return new CContentOutlinerProvider(viewer, part.getSite());
 	}
 
 	protected ProblemTreeViewer createTreeViewer(Composite parent) {

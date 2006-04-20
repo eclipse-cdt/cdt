@@ -233,6 +233,10 @@ public class CoreModel {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
 		if (contentType != null) {
 			String id = contentType.getId();
+			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)
+					|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id))
+				return false;
+
 			return CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)
 				|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)
 				|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)

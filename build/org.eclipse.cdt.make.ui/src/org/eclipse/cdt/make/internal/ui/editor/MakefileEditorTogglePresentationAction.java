@@ -23,7 +23,7 @@ public class MakefileEditorTogglePresentationAction extends TextEditorAction {
 	 * Constructor for MakefileEditorTogglePresentationAction.
 	 */
 	public MakefileEditorTogglePresentationAction() {
-		super(MakeUIPlugin.getDefault().getResourceBundle(), "MakefileEditorTogglePresentation.", null); //$NON-NLS-1$
+		super(MakeUIPlugin.getDefault().getResourceBundle(), "TogglePresentation.", null); //$NON-NLS-1$
 		MakeUIImages.setImageDescriptors(this, MakeUIImages.T_TOOL, MakeUIImages.IMG_TOOLS_MAKEFILE_SEGMENT_EDIT);
 		update();
 	}

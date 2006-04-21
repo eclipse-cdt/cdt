@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Wind River Systems - fix for bugzilla 135150
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
@@ -97,12 +98,13 @@ public class MakefileEditorActionContributor extends BasicTextEditorActionContri
 		}
 
 		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
-
-		IToolBarManager toolBarManager = bars.getToolBarManager();
-		if (toolBarManager != null) {
-			toolBarManager.add(new Separator());
-			toolBarManager.add(fTogglePresentation);
-		}
+		// there is a global action in the toolbar, that is retargeted,
+		// there is no need to add another one.
+//		IToolBarManager toolBarManager = bars.getToolBarManager();
+//		if (toolBarManager != null) {
+//			toolBarManager.add(new Separator());
+//			toolBarManager.add(fTogglePresentation);
+//		}
 	}
 
 }

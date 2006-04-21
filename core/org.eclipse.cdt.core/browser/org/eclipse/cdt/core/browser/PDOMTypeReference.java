@@ -48,7 +48,7 @@ public class PDOMTypeReference implements ITypeReference {
 	}
 
 	public IPath getLocation() {
-		throw new PDOMNotImplementedError();
+		return path;
 	}
 
 	public int getOffset() {

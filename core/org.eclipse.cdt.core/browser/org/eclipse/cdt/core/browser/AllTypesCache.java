@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.browser;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -25,12 +24,13 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCStructure;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPClassType;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespace;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespaceAlias;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -106,6 +106,8 @@ public class AllTypesCache {
 			try {
 				switch (kind) {
 				case ICElement.C_NAMESPACE:
+					if (node instanceof PDOMCPPNamespace || node instanceof PDOMCPPNamespaceAlias)
+						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
 					return;
 				case ICElement.C_CLASS:
 					if (node instanceof PDOMCPPClassType
@@ -133,28 +135,32 @@ public class AllTypesCache {
 		}
 	}
 	
+	private static ITypeInfo[] getTypes(ICProject[] projects, int[] kinds) throws CoreException {
+		List types = new ArrayList();
+		IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
+		
+		for (int i = 0; i < projects.length; ++i) {
+			ICProject project = projects[i];
+			CTypesCollector cCollector = new CTypesCollector(kinds, types, project);
+			CPPTypesCollector cppCollector = new CPPTypesCollector(kinds, types, project);
+				
+			PDOM pdom = (PDOM)pdomManager.getPDOM(project);
+			PDOMLinkage cLinkage = pdom.getLinkage(GCCLanguage.getDefault());
+			cLinkage.accept(cCollector);
+			PDOMLinkage cppLinkage = pdom.getLinkage(GPPLanguage.getDefault());
+			cppLinkage.accept(cppCollector);
+		}
+			
+		return (ITypeInfo[])types.toArray(new ITypeInfo[types.size()]);
+	}
+	
 	/**
 	 * Returns all types in the workspace.
 	 */
 	public static ITypeInfo[] getAllTypes() {
 		try {
-			List types = new ArrayList();
-			IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
-		
 			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
-			for (int i = 0; i < projects.length; ++i) {
-				ICProject project = projects[i];
-				CTypesCollector cCollector = new CTypesCollector(ITypeInfo.KNOWN_TYPES, types, project);
-				CPPTypesCollector cppCollector = new CPPTypesCollector(ITypeInfo.KNOWN_TYPES, types, project);
-				
-				PDOM pdom = (PDOM)pdomManager.getPDOM(project);
-				PDOMLinkage cLinkage = pdom.getLinkage(GCCLanguage.getDefault());
-				cLinkage.accept(cCollector);
-				PDOMLinkage cppLinkage = pdom.getLinkage(GPPLanguage.getDefault());
-				cppLinkage.accept(cppCollector);
-			}
-			
-			return (ITypeInfo[])types.toArray(new ITypeInfo[types.size()]);
+			return getTypes(projects, ITypeInfo.KNOWN_TYPES);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return new ITypeInfo[0];
@@ -169,24 +175,12 @@ public class AllTypesCache {
 	 *              C_UNION, C_ENUMERATION, C_TYPEDEF
 	 */
 	public static ITypeInfo[] getTypes(ITypeSearchScope scope, int[] kinds) {
-		final Collection fTypesFound = new ArrayList();
-		final ITypeSearchScope fScope = scope;
-		final int[] fKinds = kinds;
-		ICProject[] projects = scope.getEnclosingProjects();
-		ITypeInfoVisitor visitor = new ITypeInfoVisitor() {
-			public boolean visit(ITypeInfo info) {
-				if (ArrayUtil.contains(fKinds, info.getCElementType())
-					&& (fScope != null && info.isEnclosed(fScope))) {
-					fTypesFound.add(info);
-				}
-				return true;
-			}
-			public boolean shouldContinue() { return true; }
-		};
-		for (int i = 0; i < projects.length; ++i) {
-//			TypeCacheManager.getInstance().getCache(projects[i]).accept(visitor);
+		try {
+			return getTypes(scope.getEnclosingProjects(), kinds);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new ITypeInfo[0];
 		}
-		return (ITypeInfo[]) fTypesFound.toArray(new ITypeInfo[fTypesFound.size()]);
 	}
 	
 	/**
@@ -196,27 +190,12 @@ public class AllTypesCache {
 	 * @param includeGlobalNamespace <code>true</code> if the global (default) namespace should be returned
 	 */
 	public static ITypeInfo[] getNamespaces(ITypeSearchScope scope, boolean includeGlobalNamespace) {
-		final Collection fTypesFound = new ArrayList();
-		final ITypeSearchScope fScope = scope;
-		ICProject[] projects = scope.getEnclosingProjects();
-		ITypeInfoVisitor visitor = new ITypeInfoVisitor() {
-			public boolean visit(ITypeInfo info) {
-				if (info.getCElementType() == ICElement.C_NAMESPACE
-					&& (fScope != null && info.isEnclosed(fScope))) {
-					fTypesFound.add(info);
-				}
-				return true;
-			}
-			public boolean shouldContinue() { return true; }
-		};
-		for (int i = 0; i < projects.length; ++i) {
-//			ITypeCache cache = TypeCacheManager.getInstance().getCache(projects[i]);
-//			cache.accept(visitor);
-//			if (includeGlobalNamespace) {
-//				fTypesFound.add(cache.getGlobalNamespace());
-//			}
+		try {
+			return getTypes(scope.getEnclosingProjects(), new int[] {ICElement.C_NAMESPACE});
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new ITypeInfo[0];
 		}
-		return (ITypeInfo[]) fTypesFound.toArray(new ITypeInfo[fTypesFound.size()]);
 	}
 	
 	/** Returns first type in the cache which matches the given
@@ -244,8 +223,7 @@ public class AllTypesCache {
 	 * @return Array of types
 	 */
 	public static ITypeInfo[] getTypes(ICProject project, IQualifiedTypeName qualifiedName, boolean matchEnclosed, boolean ignoreCase) {
-//		ITypeCache cache = TypeCacheManager.getInstance().getCache(project);
-//		return cache.getTypes(qualifiedName, matchEnclosed, ignoreCase);
+		// TODO - do we really need this feature? It could be really slow
 		return new ITypeInfo[0];
 	}
 

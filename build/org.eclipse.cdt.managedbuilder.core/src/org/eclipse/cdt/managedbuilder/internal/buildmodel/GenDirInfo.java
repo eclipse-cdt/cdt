@@ -47,18 +47,26 @@ public class GenDirInfo {
 		if(path != null
 				&& fProjPath.isPrefixOf(path)){
 			path = path.removeLastSegments(1).removeFirstSegments(1);
-			if(path.segmentCount() > 0 && fDirPathSet.add(path)){
-				IFolder folder = fProject.getFolder(path);
-				if(!folder.exists()){
-					try {
-						folder.create(true, true, monitor);
-						folder.setDerived(true);
-					} catch (CoreException e) {
-						//TODO: log the error
-					}
+			createDir(path, monitor);
+		}
+	}
+	
+	protected void createDir(IPath path, IProgressMonitor monitor){
+		if(path.segmentCount() > 0 && fDirPathSet.add(path)){
+			IFolder folder = fProject.getFolder(path);
+			if(!folder.exists()){
+				createDir(path.removeLastSegments(1), monitor);
+				try {
+					folder.create(true, true, monitor);
+					folder.setDerived(true);
+				} catch (CoreException e) {
+					if(DbgUtil.DEBUG)
+						DbgUtil.trace("GenDirInfo: failed to create dir: " + e.getLocalizedMessage()); //$NON-NLS-1$ 
+					//TODO: log the error
 				}
 			}
 		}
+
 	}
 	
 }

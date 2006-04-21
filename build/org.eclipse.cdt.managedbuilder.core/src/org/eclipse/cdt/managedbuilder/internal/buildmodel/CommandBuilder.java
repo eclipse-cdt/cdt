@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -36,6 +37,8 @@ public class CommandBuilder implements IBuildModelBuilder {
 	private IBuildCommand fCmd;
 	private Process fProcess;
 	private String fErrMsg;
+	private static final String BUILDER_MSG_HEADER = "InternalBuilder.msg.header"; //$NON-NLS-1$ 
+	private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
 
 	protected class OutputStreamWrapper extends OutputStream {
 		private OutputStream fOut;
@@ -92,31 +95,35 @@ public class CommandBuilder implements IBuildModelBuilder {
 				fProcess.getOutputStream().close();
 			} catch (IOException e) {
 			}
-			//wrapping out and err streams to avoid their closure
-			int st = launcher.waitAndRead(wrap(out), wrap(err),
-					new SubProgressMonitor(monitor,
-							IProgressMonitor.UNKNOWN));
-			switch(st){
-			case CommandLauncher.OK:
-				if(fProcess.exitValue() != 0)
-					status = STATUS_ERROR_BUILD;
-				break;
-			case CommandLauncher.COMMAND_CANCELED:
-				status = STATUS_CANCELLED;
-				break;
-			default:
-				status = STATUS_ERROR_LAUNCH;
-				fErrMsg = launcher.getErrorMessage(); 
-				break;
-			}
-		} else {
+		}
+		
+		//wrapping out and err streams to avoid their closure
+		int st = launcher.waitAndRead(wrap(out), wrap(err),
+				new SubProgressMonitor(monitor,
+						IProgressMonitor.UNKNOWN));
+		switch(st){
+		case CommandLauncher.OK:
+			if(fProcess.exitValue() != 0)
+				status = STATUS_ERROR_BUILD;
+			break;
+		case CommandLauncher.COMMAND_CANCELED:
+			status = STATUS_CANCELLED;
+			fErrMsg = launcher.getErrorMessage(); 
+			if(DbgUtil.DEBUG)
+				DbgUtil.trace("command cancelled: " + fErrMsg);	//$NON-NLS-1$
+			
+			printMessage(fErrMsg, out);
+			break;
+		case CommandLauncher.ILLEGAL_COMMAND:
+		default:
+			status = STATUS_ERROR_LAUNCH;
 			fErrMsg = launcher.getErrorMessage(); 
 			if(DbgUtil.DEBUG)
 				DbgUtil.trace("error launching the command: " + fErrMsg);	//$NON-NLS-1$
-
-			status = STATUS_ERROR_LAUNCH;
+			
+			printMessage(fErrMsg, out);
+			break;
 		}
-		
 		return status;
 	}
 	
@@ -137,4 +144,18 @@ public class CommandBuilder implements IBuildModelBuilder {
 		
 		return (String[])list.toArray(new String[list.size()]);
 	}
+
+	protected void printMessage(String msg, OutputStream os){
+		if (os != null) {
+			msg = ManagedMakeMessages.getFormattedString(BUILDER_MSG_HEADER, msg) + LINE_SEPARATOR;
+			try {
+				os.write(msg.getBytes());
+				os.flush();
+			} catch (IOException e) {
+				// ignore;
+			}
+		}
+		
+	}
+
 }

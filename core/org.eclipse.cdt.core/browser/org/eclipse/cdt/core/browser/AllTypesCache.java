@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCStructure;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPClassType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespace;
@@ -208,9 +209,7 @@ public class AllTypesCache {
 	 * @return the matching type
 	 */
 	public static ITypeInfo getType(ICProject project, int type, IQualifiedTypeName qualifiedName) {
-//		ITypeCache cache = TypeCacheManager.getInstance().getCache(project);
-//		return cache.getType(type, qualifiedName);
-		return null;
+		throw new PDOMNotImplementedError();
 	}
 
 	/**
@@ -223,8 +222,7 @@ public class AllTypesCache {
 	 * @return Array of types
 	 */
 	public static ITypeInfo[] getTypes(ICProject project, IQualifiedTypeName qualifiedName, boolean matchEnclosed, boolean ignoreCase) {
-		// TODO - do we really need this feature? It could be really slow
-		return new ITypeInfo[0];
+		throw new PDOMNotImplementedError();
 	}
 
 }

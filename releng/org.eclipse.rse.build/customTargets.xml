@@ -257,7 +257,7 @@
 	<mkdir dir="${packageSDKDirectory}"/>
 	<mkdir dir="${packageSDKRootDirectory}"/>
 	
-	<unzip src="${packageDirectory}\rse-runtime-M1.zip" dest="${packageSDKRootDirectory}"/>
+	<unzip src="${packageDirectory}\rse-runtime-M1.zip" dest="${packageSDKDirectory}"/>
 	<unzip src="${buildDirectory}\features\org.eclipse.rse.core\org.eclipse.rse.core_1.0.0.src.zip" dest="${packageSDKRootDirectory}"/>
 	<unzip src="${buildDirectory}\features\org.eclipse.rse.dstore\org.eclipse.rse.dstore_1.0.0.src.zip" dest="${packageSDKRootDirectory}"/>
 	<unzip src="${buildDirectory}\features\org.eclipse.rse.ftp\org.eclipse.rse.ftp_1.0.0.src.zip" dest="${packageSDKRootDirectory}"/>

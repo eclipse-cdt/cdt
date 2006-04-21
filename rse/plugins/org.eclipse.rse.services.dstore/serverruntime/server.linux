@@ -19,7 +19,7 @@ $oldClasspath = $ENV{CLASSPATH};
 
 if ($packaged_as == "jar")
 {
-    $ENV{"CLASSPATH"}="$plugins_dir:$plugins_dir/dstore_extra_server.jar:$plugins_dir/dstore_core.jar:$plugins_dir/dstore_miners.jar:$plugins_dir/universalminers.jar:$plugins_dir/clientserver.jar:$oldClasspath";
+    $ENV{"CLASSPATH"}="$plugins_dir:$plugins_dir/dstore_extra_server.jar:$plugins_dir/dstore_core.jar:$plugins_dir/dstore_miners.jar:$plugins_dir/clientserver.jar:$oldClasspath";
 }
 if ($packaged_as == "src")
 {
@@ -27,22 +27,22 @@ if ($packaged_as == "src")
 }
 if (!defined($packaged_as))
 {
-    $ENV{"CLASSPATH"}="$plugins_dir:$plugins_dir/dstore_extra_server.jar:$plugins_dir/dstore_core.jar:$plugins_dir/dstore_miners.jar:$plugins_dir/universalminers.jar:$plugins_dir/clientserver.jar:$oldClasspath";
+    $ENV{"CLASSPATH"}="$plugins_dir:$plugins_dir/dstore_extra_server.jar:$plugins_dir/dstore_core.jar:$plugins_dir/dstore_miners.jar:$plugins_dir/clientserver.jar:$oldClasspath";
 }
 
 if (!defined($timeout))
 {
-	system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH com.ibm.etools.systems.dstore.core.server.Server $port");
+	system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH org.eclipse.dstore.core.server.Server $port");
 }
 else
 {
 	if (!defined($clientUserID))
 	{
-		system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH com.ibm.etools.systems.dstore.core.server.Server $port $timeout");
+		system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH org.eclipse.dstore.core.server.Server $port $timeout");
 	}
 	else
 	{
-		system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH -Dclient.username=$clientUserID com.ibm.etools.systems.dstore.core.server.Server $port $timeout");
+		system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH -Dclient.username=$clientUserID org.eclipse.dstore.core.server.Server $port $timeout");
 	}
 }
 

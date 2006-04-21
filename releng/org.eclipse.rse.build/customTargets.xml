@@ -65,12 +65,12 @@
 	<antcall target="dstore_extra_server.jar"/>
 	<property name="universalserverfilelist"
 		value="${buildDirectory}/plugins/org.eclipse.dstore.core/dstore_core.jar,
-	    	${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts/auth.pl,
-			${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts/ssl.properties,
 	    	${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime/dstore_extra_server.jar,
 	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/patterns.dat,
 	    	${buildDirectory}/plugins/org.eclipse.rse.services/clientserver.jar,
 	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/dstore_miners.jar,
+			${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/auth.pl,
+			${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/ssl.properties,
 	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/minerFile.dat,
 	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/rsecomm.properties,
 	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/server.linux,
@@ -86,12 +86,12 @@
 	
 	<copy todir="${packageDirectory}\rseserver">
 	    <fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core" includes="dstore_core.jar"/>
-	    <fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts" includes="auth.pl"/>
-	    <fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core/serverscripts" includes="ssl.properties"/>
 	    <fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime" includes ="dstore_extra_server.jar"/>
 	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="dstore_miners.jar"/>
 	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="patterns.dat"/>
 	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services" includes="clientserver.jar"/>
+		<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="auth.pl"/>
+		<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="ssl.properties"/>
 	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="minerFile.dat"/>
 	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="rsecomm.properties"/>
 	    <fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="server.linux"/>
@@ -251,6 +251,19 @@
 	<unzip src="${buildDirectory}\features\org.eclipse.rse.local\org.eclipse.rse.local_1.0.0.bin.dist.zip" dest="${packageRuntimeRootDirectory}"/>
 	
 	<zip destfile="${packageDirectory}\rse-runtime-M1.zip" basedir="${packageRuntimeDirectory}"/>
+	
+	<property name="packageSDKDirectory" location="${packageDirectory}\sdk"/>
+	<property name="packageSDKRootDirectory" location="${packageSDKDirectory}\eclipse"/>
+	<mkdir dir="${packageSDKDirectory}"/>
+	<mkdir dir="${packageSDKRootDirectory}"/>
+	
+	<unzip src="${packageDirectory}\rse-runtime-M1.zip" dest="${packageSDKRootDirectory}"/>
+	<unzip src="${buildDirectory}\features\org.eclipse.rse.core\org.eclipse.rse.core_1.0.0.src.zip" dest="${packageSDKRootDirectory}"/>
+	<unzip src="${buildDirectory}\features\org.eclipse.rse.dstore\org.eclipse.rse.dstore_1.0.0.src.zip" dest="${packageSDKRootDirectory}"/>
+	<unzip src="${buildDirectory}\features\org.eclipse.rse.ftp\org.eclipse.rse.ftp_1.0.0.src.zip" dest="${packageSDKRootDirectory}"/>
+	<unzip src="${buildDirectory}\features\org.eclipse.rse.local\org.eclipse.rse.local_1.0.0.src.zip" dest="${packageSDKRootDirectory}"/>
+	
+	<zip destfile="${packageDirectory}\rse-SDK-M1.zip" basedir="${packageSDKDirectory}"/>
 	
 	<!--
 	<antcall target="serverruntime"/>

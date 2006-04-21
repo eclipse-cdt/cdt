@@ -12,12 +12,12 @@ if xxx%3 == xxx goto runNoTicket
 
 @echo on
 
-java -DA_PLUGIN_PATH=%A_PLUGIN_PATH% com.ibm.etools.systems.dstore.core.server.Server %PORT% %TIMEOUT% %TICKET%
+java -DA_PLUGIN_PATH=%A_PLUGIN_PATH% org.eclipse.dstore.core.server.Server %PORT% %TIMEOUT% %TICKET%
 goto done
 
 :runNoTicket
 @echo on
-java -DA_PLUGIN_PATH=%A_PLUGIN_PATH% com.ibm.etools.systems.dstore.core.server.Server %PORT% %TIMEOUT%
+java -DA_PLUGIN_PATH=%A_PLUGIN_PATH% org.eclipse.dstore.core.server.Server %PORT% %TIMEOUT%
 goto done
 
 :usage

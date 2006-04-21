@@ -45,7 +45,7 @@ else
 			$suOptions="-";
 		}
 
-		system("su $suOptions $userIN -c 'java -cp $classpath -DA_PLUGIN_PATH=$pathIN com.ibm.etools.systems.dstore.core.server.Server $portIN $timeoutIN $ticketIN'");
+		system("su $suOptions $userIN -c 'java -cp $classpath -DA_PLUGIN_PATH=$pathIN org.eclipse.dstore.core.server.Server $portIN $timeoutIN $ticketIN -Xshareclasses:name=RSE,verbose'");
 		1;
     }
     else

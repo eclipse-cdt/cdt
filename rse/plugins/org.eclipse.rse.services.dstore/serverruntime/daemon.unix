@@ -32,11 +32,11 @@ else
     
     $oldClasspath = $ENV{CLASSPATH};
 
-	$ENV{"CLASSPATH"}="$plugins_dir:$plugins_dir/dstore_extra_server.jar:$plugins_dir/dstore_core.jar:$plugins_dir/dstore_miners.jar:$plugins_dir/universalminers.jar:$plugins_dir/clientserver.jar:$oldClasspath";
+	$ENV{"CLASSPATH"}="$plugins_dir:$plugins_dir/dstore_extra_server.jar:$plugins_dir/dstore_core.jar:$plugins_dir/dstore_miners.jar:$plugins_dir/clientserver.jar:$oldClasspath";
 
 	
     
-    system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH -DDSTORE_TRACING_ON=$trace com.ibm.etools.systems.dstore.core.server.ServerLauncher $port");
+    system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH -DDSTORE_TRACING_ON=$trace org.eclipse.dstore.core.server.ServerLauncher $port");
     $ENV{CLASSPATH}=$oldClasspath;
     
 }

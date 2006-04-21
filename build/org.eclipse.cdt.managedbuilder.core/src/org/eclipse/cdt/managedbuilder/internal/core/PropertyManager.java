@@ -23,6 +23,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
@@ -33,6 +34,7 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -207,9 +209,7 @@ public class PropertyManager {
 	}
 	
 	protected void storeString(IConfiguration cfg, String str){
-		IProject proj = cfg.getOwner().getProject();
-		
-		Preferences prefs = getNode(proj);
+		Preferences prefs = getNode(cfg.getManagedProject());
 		if(prefs != null){
 			if(str != null)
 				prefs.put(cfg.getId(), str);
@@ -223,23 +223,38 @@ public class PropertyManager {
 	}
 
 	protected String loadString(IConfiguration cfg){
-		IProject proj = cfg.getOwner().getProject();
-		
-		if(proj == null || !proj.exists() || !proj.isOpen())
-			return null;
-
 		String str = null;
-		Preferences prefs = getNode(proj);
+		Preferences prefs = getNode(cfg.getManagedProject());
 		if(prefs != null)
 			str = prefs.get(cfg.getId(), null);
 		return str;	
 	}
 	
-	protected Preferences getNode(IProject project){
+	protected Preferences getNode(IManagedProject mProject){
+		//TODO: should we store the data as the workspaces preferences?
+		return getProjNode(mProject);
+//		return getInstNode(mProject);
+	}
+	
+	protected Preferences getProjNode(IManagedProject mProject){
+		IProject project = mProject.getOwner().getProject();
+		if(project == null || !project.exists() || !project.isOpen())
+			return null;
+
 		Preferences prefs = new ProjectScope(project).getNode(ManagedBuilderCorePlugin.getUniqueIdentifier());
 		if(prefs != null)
 			return prefs.node(NODE_NAME);
 		return null;
+	}
+	
+	protected Preferences getInstNode(IManagedProject mProject){
+		Preferences prefs = new InstanceScope().getNode(ManagedBuilderCorePlugin.getUniqueIdentifier());
+		if(prefs != null){
+			prefs = prefs.node(NODE_NAME);
+			if(prefs != null)
+				prefs = prefs.node(mProject.getId());
+		}
+		return prefs;
 	}
 
 	

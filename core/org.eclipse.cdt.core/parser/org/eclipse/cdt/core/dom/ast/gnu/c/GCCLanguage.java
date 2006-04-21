@@ -61,6 +61,12 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 	// Must match the id in the extension
 	public static final String ID = CCorePlugin.PLUGIN_ID + ".gcc"; //$NON-NLS-1$ 
 
+	private static final GCCLanguage myDefault = new GCCLanguage();
+	
+	public static GCCLanguage getDefault() {
+		return myDefault;
+	}
+	
 	public String getId() {
 		return ID; 
 	}

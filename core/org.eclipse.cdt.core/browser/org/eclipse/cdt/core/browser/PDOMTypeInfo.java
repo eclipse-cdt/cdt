@@ -11,10 +11,13 @@
 
 package org.eclipse.cdt.core.browser;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
@@ -24,10 +27,12 @@ public class PDOMTypeInfo implements ITypeInfo {
 
 	private final PDOMBinding binding;
 	private final int elementType;
+	private final ICProject project;
 
-	public PDOMTypeInfo(PDOMBinding binding, int elementType) {
+	public PDOMTypeInfo(PDOMBinding binding, int elementType, ICProject project) {
 		this.binding = binding;
 		this.elementType = elementType;
+		this.project = project;
 	}
 	
 	public void addDerivedReference(ITypeReference location) {
@@ -71,11 +76,12 @@ public class PDOMTypeInfo implements ITypeInfo {
 	}
 
 	public ICProject getEnclosingProject() {
-		throw new PDOMNotImplementedError();
+		return project;
 	}
 
 	public ITypeInfo getEnclosingType() {
-		throw new PDOMNotImplementedError();
+		// TODO not sure
+		return null;
 	}
 
 	public ITypeInfo getEnclosingType(int[] kinds) {
@@ -83,11 +89,13 @@ public class PDOMTypeInfo implements ITypeInfo {
 	}
 
 	public String getName() {
-		throw new PDOMNotImplementedError();
+		return binding.getName();
 	}
 
 	public IQualifiedTypeName getQualifiedTypeName() {
-		throw new PDOMNotImplementedError();
+		String bindingName = binding.getName();
+		// TODO really do qualified type names
+		return new QualifiedTypeName(bindingName);
 	}
 
 	public ITypeReference[] getReferences() {
@@ -95,7 +103,13 @@ public class PDOMTypeInfo implements ITypeInfo {
 	}
 
 	public ITypeReference getResolvedReference() {
-		throw new PDOMNotImplementedError();
+		try {
+			PDOMName name = binding.getFirstDefinition();
+			return name != null ? new PDOMTypeReference(name, project) : null;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
 	}
 
 	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {

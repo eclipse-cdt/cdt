@@ -59,6 +59,12 @@ public class GPPLanguage extends PlatformObject implements ILanguage {
 
 	protected static final GPPScannerExtensionConfiguration CPP_GNU_SCANNER_EXTENSION = new GPPScannerExtensionConfiguration();
 	public static final String ID = CCorePlugin.PLUGIN_ID + ".g++"; //$NON-NLS-1$
+
+	private static final GPPLanguage myDefault = new GPPLanguage();
+	
+	public static GPPLanguage getDefault() {
+		return myDefault;
+	}
 	
 	public String getId() {
 		return ID;

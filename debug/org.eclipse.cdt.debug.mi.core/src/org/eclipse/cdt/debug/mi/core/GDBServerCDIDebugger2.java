@@ -124,4 +124,11 @@ public class GDBServerCDIDebugger2 extends GDBCDIDebugger2 {
 		}
 		return new String[]{ "remote", remote }; //$NON-NLS-1$
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.core.AbstractGDBCDIDebugger#usePty(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	protected boolean usePty( ILaunchConfiguration config ) throws CoreException {
+		return false;
+	}
 }

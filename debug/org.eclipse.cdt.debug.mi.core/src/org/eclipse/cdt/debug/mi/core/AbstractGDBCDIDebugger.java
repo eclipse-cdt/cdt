@@ -104,7 +104,7 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
 		CommandFactory factory = getCommandFactory( config );
 		String[] extraArgs = getExtraArguments( config );
-		boolean usePty = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true );
+		boolean usePty = usePty( config );
 		try {
 			session = MIPlugin.getDefault().createSession( getSessionType( config ), gdbPath.toOSString(), factory, executable, extraArgs, usePty, monitor );
 			ICDISessionConfiguration sessionConfig = getSessionConfiguration( session );
@@ -137,6 +137,10 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 
 	protected String[] getExtraArguments( ILaunchConfiguration config ) throws CoreException {
 		return new String[0];
+	}
+
+	protected boolean usePty( ILaunchConfiguration config ) throws CoreException {
+		return config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true );
 	}
 
 	abstract protected CommandFactory getCommandFactory( ILaunchConfiguration config ) throws CoreException;

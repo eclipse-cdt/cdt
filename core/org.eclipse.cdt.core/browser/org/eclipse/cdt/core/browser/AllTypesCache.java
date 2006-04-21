@@ -209,7 +209,9 @@ public class AllTypesCache {
 	 * @return the matching type
 	 */
 	public static ITypeInfo getType(ICProject project, int type, IQualifiedTypeName qualifiedName) {
-		throw new PDOMNotImplementedError();
+		// TODO - seems to be only used when a namespace name is changed
+		// which would be pretty slow against the PDOM.
+		return null;
 	}
 
 	/**
@@ -222,7 +224,9 @@ public class AllTypesCache {
 	 * @return Array of types
 	 */
 	public static ITypeInfo[] getTypes(ICProject project, IQualifiedTypeName qualifiedName, boolean matchEnclosed, boolean ignoreCase) {
-		throw new PDOMNotImplementedError();
+		// TODO - seems to be only used when a class or namespace name is changed
+		// which would be pretty slow against the PDOM.
+		return new ITypeInfo[0];
 	}
 
 }

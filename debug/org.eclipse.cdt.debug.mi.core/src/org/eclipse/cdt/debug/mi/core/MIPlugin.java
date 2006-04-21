@@ -434,23 +434,49 @@ public class MIPlugin extends Plugin {
 		}
 		String[] args = (String[])argList.toArray(new String[argList.size()]);
 		int launchTimeout = MIPlugin.getDefault().getPluginPreferences().getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);		
-		MIProcess pgdb = new MIProcessAdapter(args, launchTimeout, monitor);
 
-		if (MIPlugin.getDefault().isDebugging()) {
-			StringBuffer sb = new StringBuffer();
-			for (int i = 0; i < args.length; ++i) {
-				sb.append(args[i]);
-				sb.append(' ');
-			}
-			MIPlugin.getDefault().debugLog(sb.toString());
-		}
-		
-		MISession miSession;
+		MISession miSession = null;
+		MIProcess pgdb = null;
+		boolean failed = false;
 		try {
+			pgdb = new MIProcessAdapter(args, launchTimeout, monitor);
+	
+			if (MIPlugin.getDefault().isDebugging()) {
+				StringBuffer sb = new StringBuffer();
+				for (int i = 0; i < args.length; ++i) {
+					sb.append(args[i]);
+					sb.append(' ');
+				}
+				MIPlugin.getDefault().debugLog(sb.toString());
+			}
+		
 			miSession = createMISession0(sessionType, pgdb, factory, pty, getCommandTimeout());
 		} catch (MIException e) {
-			pgdb.destroy();
+			failed = true;
 			throw e;
+		} catch(IOException e ) {
+			failed = true;
+			throw e;
+		} finally {
+			if (failed) {
+				// Kill gdb
+				if ( pgdb != null )
+					pgdb.destroy();
+				// Shutdown the pty console.
+				if (pty != null) {
+					try {
+						OutputStream out = pty.getOutputStream();
+						if (out != null) {
+							out.close();
+						}
+						InputStream in = pty.getInputStream();
+						if (in != null) {
+							in.close();
+						}
+					} catch (IOException e) {
+					}
+				}
+			}
 		}
 		
 		return new Session(miSession);

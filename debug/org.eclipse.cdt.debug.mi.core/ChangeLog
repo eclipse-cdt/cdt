@@ -1,3 +1,7 @@
+2006-04-21 Mikhail Khodjaiants
+	Close the pty if the session creation failed.
+	* MIPlugin.java
+ 
 2006-04-18 Mikhail Khodjaiants
 	Duplicate message key.
 	* MIPluginResources.properties

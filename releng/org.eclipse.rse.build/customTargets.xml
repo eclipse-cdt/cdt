@@ -239,17 +239,18 @@
 <!-- ===================================================================== -->
 <target name="postBuild">
 	<mkdir dir="${packageDirectory}"/>
-    <copy todir="${packageDirectory}">   	
-		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.core" includes="org.eclipse.rse.core_1.0.0.bin.dist.zip"/>	
-		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.dstore" includes="org.eclipse.rse.dstore_1.0.0.bin.dist.zip"/>	
-		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.ftp" includes="org.eclipse.rse.ftp_1.0.0.bin.dist.zip"/>	
-		  <fileset dir="${buildDirectory}\features\org.eclipse.rse.local" includes="org.eclipse.rse.local_1.0.0.bin.dist.zip"/> 
-   </copy>
 	
-	<move tofile="${packageDirectory}\rse-core-runtime_1.0.0.zip" file="${packageDirectory}\org.eclipse.rse.core_1.0.0.bin.dist.zip"/>
-	<move tofile="${packageDirectory}\rse-dstore-runtime_1.0.0.zip" file="${packageDirectory}\org.eclipse.rse.dstore_1.0.0.bin.dist.zip"/>	
-	<move tofile="${packageDirectory}\rse-ftp-runtime_1.0.0.zip" file="${packageDirectory}\org.eclipse.rse.ftp_1.0.0.bin.dist.zip"/>	
-	<move tofile="${packageDirectory}\rse-local-runtime_1.0.0.zip" file="${packageDirectory}\org.eclipse.rse.local_1.0.0.bin.dist.zip"/>
+	<property name="packageRuntimeDirectory" location="${packageDirectory}\runtime"/>
+	<property name="packageRuntimeRootDirectory" location="${packageRuntimeDirectory}\eclipse"/>
+	<mkdir dir="${packageRuntimeDirectory}"/>
+	<mkdir dir="${packageRuntimeRootDirectory}"/> 
+	
+	<unzip src="${buildDirectory}\features\org.eclipse.rse.core\org.eclipse.rse.core_1.0.0.bin.dist.zip" dest="${packageRuntimeRootDirectory}"/>
+	<unzip src="${buildDirectory}\features\org.eclipse.rse.dstore\org.eclipse.rse.dstore_1.0.0.bin.dist.zip" dest="${packageRuntimeRootDirectory}"/>
+	<unzip src="${buildDirectory}\features\org.eclipse.rse.ftp\org.eclipse.rse.ftp_1.0.0.bin.dist.zip" dest="${packageRuntimeRootDirectory}"/>
+	<unzip src="${buildDirectory}\features\org.eclipse.rse.local\org.eclipse.rse.local_1.0.0.bin.dist.zip" dest="${packageRuntimeRootDirectory}"/>
+	
+	<zip destfile="${packageDirectory}\rse-runtime-M1.zip" basedir="${packageRuntimeDirectory}"/>
 	
 	<!--
 	<antcall target="serverruntime"/>
@@ -290,6 +291,7 @@
 	<ant antfile="${featureFolder}\build.xml" dir="${featureFolder}" target="build.jars" />
 -->
 	<ant antfile="${featureFolder}\build.xml" dir="${featureFolder}" target="zip.distribution" />
+	<ant antfile="${featureFolder}\build.xml" dir="${featureFolder}" target="zip.sources" />
 </target>
 
 <!-- ===================================================================== -->

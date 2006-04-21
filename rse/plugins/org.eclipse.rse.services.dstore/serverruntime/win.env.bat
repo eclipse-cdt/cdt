@@ -2,7 +2,6 @@ set ECLIPSEDIR=.
 set CORE=%ECLIPSEDIR%\dstore_core.jar
 set MINERS=%ECLIPSEDIR%\dstore_miners.jar
 set EXTRA=%ECLIPSEDIR%\dstore_extra_server.jar
-set UNIVERSALJAR=%ECLIPSEDIR%\universalminers.jar
 set CLIENTSERVER=%ECLIPSEDIR%\clientserver.jar
 set A_PLUGIN_PATH=%ECLIPSEDIR%
 set CLASSPATH=%CORE%;%MINERS%;%UNIVERSAL%;%UNIVERSALJAR%;%CLIENTSERVER%;%EXTRA%;%CLASSPATH%

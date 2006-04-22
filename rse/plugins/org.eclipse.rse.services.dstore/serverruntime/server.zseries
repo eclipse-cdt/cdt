@@ -1,3 +1,4 @@
+#!/bin/sh
 #
 # Shell script to start RSE communications server
 # This script will start the datastore listening on any socket

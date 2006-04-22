@@ -39,6 +39,8 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile.Comparator;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile.Finder;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -60,7 +62,10 @@ public class PDOM extends PlatformObject
 	private final IPath dbPath;
 	private Database db;
 	
-	public static final int VERSION = 1;
+	public static final int VERSION = 2;
+	// 0 - the beginning of it all
+	// 1 - first change to kick off upgrades
+	// 2 - added file inclusions
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
@@ -165,21 +170,41 @@ public class PDOM extends PlatformObject
 			fileIndex = new BTree(getDB(), FILE_INDEX);
 		return fileIndex;
 	}
+
+	public PDOMFile getFile(String filename) throws CoreException {
+		Finder finder = new Finder(db, filename);
+		getFileIndex().accept(finder);
+		int record = finder.getRecord();
+		return record != 0 ? new PDOMFile(this, record) : null;
+	}
+	
+	public PDOMFile addFile(String filename) throws CoreException {
+		PDOMFile file = getFile(filename);
+		if (file == null) {
+			file = new PDOMFile(this, filename);
+			getFileIndex().insert(file.getRecord(), new Comparator(db));
+		}
+		return file;		
+	}
 	
 	public void addSymbols(ILanguage language, IASTTranslationUnit ast) throws CoreException {
 		final PDOMLinkage linkage = getLinkage(language);
 		if (linkage == null)
 			return;
 		
+		// Add in the includes
 		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
 		for (int i = 0; i < includes.length; ++i) {
 			IASTPreprocessorIncludeStatement include = includes[i];
 			
 			String sourcePath = include.getFileLocation().getFileName();
+			PDOMFile sourceFile = addFile(sourcePath);
 			String destPath = include.getPath();
-			//System.out.println(sourcePath + " -> " + destPath);
+			PDOMFile destFile = addFile(destPath);
+			sourceFile.addIncludeTo(destFile);
 		}
 	
+		// Add in the names
 		ast.accept(new ASTVisitor() {
 			{
 				shouldVisitNames = true;
@@ -197,12 +222,13 @@ public class PDOM extends PlatformObject
 			};
 		});;
 	
+		// Tell the world
 		fireChange();
 	}
 	
 	public void removeSymbols(ITranslationUnit tu) throws CoreException {
 		String filename = ((IFile)tu.getResource()).getLocation().toOSString();
-		PDOMFile file = PDOMFile.find(this, filename);
+		PDOMFile file = getFile(filename);
 		if (file == null)
 			return;
 		file.clear();

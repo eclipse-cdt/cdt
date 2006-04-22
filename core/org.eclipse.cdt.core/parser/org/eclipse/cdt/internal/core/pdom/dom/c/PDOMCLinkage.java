@@ -161,7 +161,7 @@ public class PDOMCLinkage extends PDOMLinkage {
 		PDOMNode parent = getParent(binding);
 		if (parent == this) {
 			FindBinding visitor = new FindBinding(pdom, binding.getNameCharArray(), getBindingType(binding));
-			getIndex().visit(visitor);
+			getIndex().accept(visitor);
 			return visitor.pdomBinding;
 		} else if (parent instanceof PDOMMemberOwner) {
 			PDOMMemberOwner owner = (PDOMMemberOwner)parent;
@@ -200,16 +200,16 @@ public class PDOMCLinkage extends PDOMLinkage {
 			IASTNode eParent = parent.getParent();
 			if (eParent instanceof IASTFunctionCallExpression) {
 				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CFUNCTION);
-				getIndex().visit(visitor);
+				getIndex().accept(visitor);
 				return visitor.pdomBinding;
 			} else {
 				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CVARIABLE);
-				getIndex().visit(visitor);
+				getIndex().accept(visitor);
 				return visitor.pdomBinding;
 			}
 		} else if (parent instanceof ICASTElaboratedTypeSpecifier) {
 			FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CSTRUCTURE);
-			getIndex().visit(visitor);
+			getIndex().accept(visitor);
 			return visitor.pdomBinding;
 		}
 		return null;
@@ -217,6 +217,6 @@ public class PDOMCLinkage extends PDOMLinkage {
 	
 	public void findBindings(String pattern, List bindings) throws CoreException {
 		MatchBinding visitor = new MatchBinding(pdom, pattern, bindings);
-		getIndex().visit(visitor);
+		getIndex().accept(visitor);
 	}
 }

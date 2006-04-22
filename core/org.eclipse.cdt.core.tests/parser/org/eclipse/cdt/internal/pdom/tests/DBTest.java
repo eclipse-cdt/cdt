@@ -92,7 +92,7 @@ public class DBTest extends TestCase {
 		}
 		
 		public int findIn(BTree btree) throws CoreException {
-			btree.visit(this);
+			btree.accept(this);
 			return record;
 		}
 		

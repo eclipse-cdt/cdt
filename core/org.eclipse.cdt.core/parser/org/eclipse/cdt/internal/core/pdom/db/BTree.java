@@ -191,11 +191,11 @@ public class BTree {
 	 * 
 	 * @param visitor
 	 */
-	public void visit(IBTreeVisitor visitor) throws CoreException {
-		visit(db.getInt(rootPointer), visitor, false);
+	public void accept(IBTreeVisitor visitor) throws CoreException {
+		accept(db.getInt(rootPointer), visitor, false);
 	}
 	
-	private boolean visit(int node, IBTreeVisitor visitor, boolean found) throws CoreException {
+	private boolean accept(int node, IBTreeVisitor visitor, boolean found) throws CoreException {
 		// if found is false, we are still in search mode
 		// once found is true visit everything
 		// return false when ready to quit
@@ -207,7 +207,7 @@ public class BTree {
 		if (found) {
 			int child = getChild(chunk, node, 0);
 			if (child != 0)
-				if (!visit(child, visitor, true))
+				if (!accept(child, visitor, true))
 					return false;
 		}
 		
@@ -220,23 +220,23 @@ public class BTree {
 			if (found) {
 				if (!visitor.visit(record))
 					return false;
-				if (!visit(getChild(chunk, node, i + 1), visitor, true))
+				if (!accept(getChild(chunk, node, i + 1), visitor, true))
 					return false;
 			} else {
 				int compare = visitor.compare(record);
 				if (compare > 0) {
 					// start point is to the left
-					if (!visit(getChild(chunk, node, i), visitor, false))
+					if (!accept(getChild(chunk, node, i), visitor, false))
 						return false;
 					if (!visitor.visit(record))
 						return false;
-					if (!visit(getChild(chunk, node, i + 1), visitor, true))
+					if (!accept(getChild(chunk, node, i + 1), visitor, true))
 						return false;
 					found = true;
 				} else if (compare == 0) {
 					if (!visitor.visit(record))
 						return false;
-					if (!visit(getChild(chunk, node, i + 1), visitor, true))
+					if (!accept(getChild(chunk, node, i + 1), visitor, true))
 							return false;
 					found = true;
 				}
@@ -244,7 +244,7 @@ public class BTree {
 		}
 		
 		if (!found)
-			return visit(getChild(chunk, node, i), visitor, false);
+			return accept(getChild(chunk, node, i), visitor, false);
 		
 		return true;
 	}

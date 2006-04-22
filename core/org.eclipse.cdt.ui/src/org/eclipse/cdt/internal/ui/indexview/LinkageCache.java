@@ -68,10 +68,10 @@ public class LinkageCache {
 		this.linkage = linkage;
 		
 		Counter counter = new Counter(pdom);
-		linkage.getIndex().visit(counter);
+		linkage.getIndex().accept(counter);
 		cache = new int[counter.count];
 		FillCache fillCache = new FillCache(pdom, cache);
-		linkage.getIndex().visit(fillCache);
+		linkage.getIndex().accept(fillCache);
 	}
 	
 	public int getCount() {

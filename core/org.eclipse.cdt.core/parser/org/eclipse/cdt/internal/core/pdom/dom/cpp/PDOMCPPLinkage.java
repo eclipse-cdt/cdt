@@ -192,7 +192,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		PDOMNode parent = getParent(binding);
 		if (parent == this) {
 			FindBinding visitor = new FindBinding(pdom, binding.getNameCharArray(), getBindingType(binding));
-			getIndex().visit(visitor);
+			getIndex().accept(visitor);
 			return visitor.pdomBinding;
 		} else if (parent instanceof PDOMMemberOwner) {
 			PDOMMemberOwner owner = (PDOMMemberOwner)parent;
@@ -240,23 +240,23 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			IASTNode eParent = parent.getParent();
 			if (eParent instanceof IASTFunctionCallExpression) {
 				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CPPFUNCTION);
-				getIndex().visit(visitor);
+				getIndex().accept(visitor);
 				return visitor.pdomBinding;
 			} else {
 				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), 
 						(name.getParent() instanceof ICPPASTQualifiedName
 								&& ((ICPPASTQualifiedName)name.getParent()).getLastName() != name)
 							? CPPNAMESPACE : CPPVARIABLE);
-				getIndex().visit(visitor);
+				getIndex().accept(visitor);
 				return visitor.pdomBinding;
 			}
 		} else if (parent instanceof IASTNamedTypeSpecifier) {
 			FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CPPCLASSTYPE);
-			getIndex().visit(visitor);
+			getIndex().accept(visitor);
 			return visitor.pdomBinding;
 		} else if (parent instanceof ICPPASTNamespaceAlias) {
 			FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CPPNAMESPACE);
-			getIndex().visit(visitor);
+			getIndex().accept(visitor);
 			return visitor.pdomBinding;
 		}
 		
@@ -265,7 +265,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	
 	public void findBindings(String pattern, List bindings) throws CoreException {
 		MatchBinding visitor = new MatchBinding(pdom, pattern, bindings);
-		getIndex().visit(visitor);
+		getIndex().accept(visitor);
 	}
 	
 }

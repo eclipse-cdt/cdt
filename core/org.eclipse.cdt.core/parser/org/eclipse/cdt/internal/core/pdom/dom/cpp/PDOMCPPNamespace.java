@@ -61,7 +61,7 @@ public class PDOMCPPNamespace extends PDOMBinding
 
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
-		getIndex().visit(new IBTreeVisitor() {
+		getIndex().accept(new IBTreeVisitor() {
 			public int compare(int record) throws CoreException {
 				return 1;
 			};
@@ -163,19 +163,19 @@ public class PDOMCPPNamespace extends PDOMBinding
 				IASTNode eParent = parent.getParent();
 				if (eParent instanceof IASTFunctionCallExpression) {
 					FindBinding visitor = new FindBinding(pdom, name.toCharArray(), PDOMCPPLinkage.CPPFUNCTION);
-					getIndex().visit(visitor);
+					getIndex().accept(visitor);
 					return visitor.pdomBinding;
 				} else {
 					FindBinding visitor = new FindBinding(pdom, name.toCharArray(), 
 							(name.getParent() instanceof ICPPASTQualifiedName
 									&& ((ICPPASTQualifiedName)name.getParent()).getLastName() != name)
 								? PDOMCPPLinkage.CPPNAMESPACE : PDOMCPPLinkage.CPPVARIABLE);
-					getIndex().visit(visitor);
+					getIndex().accept(visitor);
 					return visitor.pdomBinding;
 				}
 			} else if (parent instanceof IASTNamedTypeSpecifier) {
 				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), PDOMCPPLinkage.CPPCLASSTYPE);
-				getIndex().visit(visitor);
+				getIndex().accept(visitor);
 				return visitor.pdomBinding;
 			}
 			return null;

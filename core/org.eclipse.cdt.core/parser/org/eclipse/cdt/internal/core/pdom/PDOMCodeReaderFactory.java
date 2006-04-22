@@ -74,7 +74,7 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 			} catch (IOException e) {
 				// ignore and use the path we were passed in
 			}
-			PDOMFile file = PDOMFile.find(pdom, path); 
+			PDOMFile file = pdom.getFile(path);
 			if (file != null && file.getFirstName() != null)
 				// Already got things from here
 				return new SkippedInclusion(path);

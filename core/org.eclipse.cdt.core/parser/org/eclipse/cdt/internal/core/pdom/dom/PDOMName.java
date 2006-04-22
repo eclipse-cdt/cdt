@@ -84,7 +84,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 		// Hook us up the the liked name list from file
 		IASTFileLocation fileloc = name.getFileLocation();
 		String filename = fileloc.getFileName();
-		PDOMFile pdomFile = PDOMFile.insert(pdom, filename);
+		PDOMFile pdomFile = pdom.addFile(filename);
 		db.putInt(record + FILE_REC_OFFSET, pdomFile.getRecord());
 		PDOMName firstName = pdomFile.getFirstName();
 		if (firstName != null) {

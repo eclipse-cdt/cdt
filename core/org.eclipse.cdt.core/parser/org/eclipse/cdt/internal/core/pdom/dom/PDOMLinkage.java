@@ -113,7 +113,7 @@ public abstract class PDOMLinkage extends PDOMNode {
 	
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
-		getIndex().visit(new IBTreeVisitor() {
+		getIndex().accept(new IBTreeVisitor() {
 			public int compare(int record) throws CoreException {
 				return 1;
 			};

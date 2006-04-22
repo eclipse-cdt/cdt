@@ -43,12 +43,13 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
-			final List addedTUs = new ArrayList();
 			
 			// First clear out the DB
 			pdom.clear();
 			
-			// Now repopulate it
+			// First index all the source files (i.e. not headers)
+			final List addedSources = new ArrayList();
+			
 			pdom.getProject().getProject().accept(new IResourceProxyVisitor() {
 				public boolean visit(IResourceProxy proxy) throws CoreException {
 					if (proxy.getType() == IResource.FILE) {
@@ -60,8 +61,7 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 						
 						if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(contentTypeId)
 								|| CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentTypeId)) {
-							// TODO handle header files
-							addedTUs.add((ITranslationUnit)CoreModel.getDefault().create((IFile)proxy.requestResource()));
+							addedSources.add((ITranslationUnit)CoreModel.getDefault().create((IFile)proxy.requestResource()));
 						}
 						return false;
 					} else {
@@ -70,15 +70,43 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 				}
 			}, 0);
 			
-			for (Iterator i = addedTUs.iterator(); i.hasNext();)
+			for (Iterator i = addedSources.iterator(); i.hasNext();)
+				addTU((ITranslationUnit)i.next());
+
+			// Now add in the header files but only if they aren't already indexed
+			final List addedHeaders = new ArrayList();
+			
+			pdom.getProject().getProject().accept(new IResourceProxyVisitor() {
+				public boolean visit(IResourceProxy proxy) throws CoreException {
+					if (proxy.getType() == IResource.FILE) {
+						String fileName = proxy.getName();
+						IContentType contentType = Platform.getContentTypeManager().findContentTypeFor(fileName);
+						if (contentType == null)
+							return true;
+						String contentTypeId = contentType.getId();
+						
+						if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(contentTypeId)
+								|| CCorePlugin.CONTENT_TYPE_CHEADER.equals(contentTypeId)) {
+							IFile rfile = (IFile)proxy.requestResource();
+							String filename = rfile.getLocation().toOSString();
+							if (pdom.getFile(filename) == null)
+								addedHeaders.add((ITranslationUnit)CoreModel.getDefault().create(rfile));
+						}
+						return false;
+					} else {
+						return true;
+					}
+				}
+			}, 0);
+
+			for (Iterator i = addedHeaders.iterator(); i.hasNext();)
 				addTU((ITranslationUnit)i.next());
 			
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 					+ "/debug/pdomtimings"); //$NON-NLS-1$
 			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
-				System.out.println("PDOM Reindex Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
+				System.out.println("PDOM Fast Reindex Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
 
-			monitor.done();
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			return e.getStatus();

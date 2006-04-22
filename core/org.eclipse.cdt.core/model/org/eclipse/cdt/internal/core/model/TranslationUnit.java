@@ -631,6 +631,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isSourceUnit()
 	 */
 	public boolean isSourceUnit() {
+		if (isHeaderUnit())
+			return false;
+			
 		return (
 				CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentTypeId)
 				|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(contentTypeId)

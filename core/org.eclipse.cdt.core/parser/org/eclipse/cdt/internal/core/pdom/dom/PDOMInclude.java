@@ -67,7 +67,8 @@ public class PDOMInclude {
 	}
 	
 	public void setIncludes(PDOMFile includes) throws CoreException {
-		pdom.getDB().putInt(record + INCLUDES, includes.getRecord());
+		int rec = includes != null ? includes.getRecord() : 0;
+		pdom.getDB().putInt(record + INCLUDES, rec);
 	}
 	
 	public PDOMFile getIncludedBy() throws CoreException {
@@ -86,7 +87,8 @@ public class PDOMInclude {
 	}
 	
 	public void setNextInIncludes(PDOMInclude include) throws CoreException {
-		pdom.getDB().putInt(record + INCLUDES_NEXT, include.getRecord());
+		int rec = include != null ? include.getRecord() : 0;
+		pdom.getDB().putInt(record + INCLUDES_NEXT, rec);
 	}
 	
 	public PDOMInclude getNextInIncludedBy() throws CoreException {
@@ -95,7 +97,8 @@ public class PDOMInclude {
 	}
 	
 	public void setNextInIncludedBy(PDOMInclude include) throws CoreException {
-		pdom.getDB().putInt(record + INCLUDED_BY_NEXT, include.getRecord());
+		int rec = include != null ? include.getRecord() : 0;
+		pdom.getDB().putInt(record + INCLUDED_BY_NEXT, rec);
 	}
 	
 	public PDOMInclude getPrevInIncludedBy() throws CoreException {
@@ -104,7 +107,8 @@ public class PDOMInclude {
 	}
 	
 	public void setPrevInIncludedBy(PDOMInclude include) throws CoreException {
-		pdom.getDB().putInt(record + INCLUDED_BY_PREV, include.getRecord());
+		int rec = include != null ? include.getRecord() : 0;
+		pdom.getDB().putInt(record + INCLUDED_BY_PREV, rec);
 	}
 	
 }

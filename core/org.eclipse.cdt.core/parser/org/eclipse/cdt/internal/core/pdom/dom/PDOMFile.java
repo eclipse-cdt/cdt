@@ -151,6 +151,8 @@ public class PDOMFile {
 	
 	public PDOMInclude addIncludeTo(PDOMFile file) throws CoreException {
 		PDOMInclude include = new PDOMInclude(pdom);
+		include.setIncludedBy(this);
+		include.setIncludes(file);
 		
 		PDOMInclude firstInclude = getFirstInclude();
 		if (firstInclude != null) {

@@ -29,8 +29,7 @@ public class PDOMFullIndexer implements IPDOMIndexer {
 	private IPDOM pdom;
 	
 	public void handleDelta(ICElementDelta delta) {
-		// TODO Auto-generated method stub
-
+		new PDOMFullHandleDelta((PDOM)pdom, delta).schedule();
 	}
 
 	public void reindex() throws CoreException {

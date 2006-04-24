@@ -33,23 +33,13 @@ public abstract class PDOMFullIndexerJob extends Job {
 		setRule(CCorePlugin.getPDOMManager().getIndexerSchedulingRule());
 	}
 
-	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
+	protected IASTTranslationUnit parse(ITranslationUnit tu) throws CoreException {
 		ILanguage language = tu.getLanguage();
 		if (language == null)
-			return;
+			return null;
 		
 		// get the AST in the "Full" way, i.e. don't skip anything.
-		IASTTranslationUnit ast = language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
-		
-		if (ast == null)
-			return;
-		
-		pdom.acquireWriteLock();
-		try {
-			pdom.addSymbols(language, ast);
-		} finally {
-			pdom.releaseWriteLock();
-		}
+		return language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
 	}
 	
 }

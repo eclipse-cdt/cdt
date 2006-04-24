@@ -23,6 +23,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  * 
@@ -39,6 +41,8 @@ public class StepBuilder implements IBuildModelBuilder {
 	private IPath fCWD;
 	private GenDirInfo fDirs;
 	private boolean fResumeOnErrs;
+	private int fNumCommands = -1;
+	private CommandBuilder fCommandBuilders[];
 
 	public StepBuilder(IBuildStep step){
 		this(step, null);
@@ -66,18 +70,23 @@ public class StepBuilder implements IBuildModelBuilder {
 	 */
 	public int build(OutputStream out, OutputStream err,
 			IProgressMonitor monitor){
+
+		monitor.beginTask("", getNumCommands());	//$NON-NLS-1$
+		monitor.subTask("");	//$NON-NLS-1$
+
 		int status = STATUS_OK;
-		IBuildCommand cmds[] = fStep.getCommands(fCWD, null, null, true);
-		if(cmds != null){
-			createOutDirs(monitor);
+		CommandBuilder bs[] = getCommandBuilders();
+		if(bs.length > 0){
+			//TODO: monitor
+			createOutDirs(new NullProgressMonitor());
 			
 			for(int i = 0; 
-					i < cmds.length 
+					i < bs.length 
 						&& status != STATUS_CANCELLED
 						&& (fResumeOnErrs || status == STATUS_OK);
 					i++){
-				CommandBuilder builder = new CommandBuilder(cmds[i]);
-				switch(builder.build(out, err, monitor)){
+				CommandBuilder builder = bs[i];
+				switch(builder.build(out, err, new SubProgressMonitor(monitor, builder.getNumCommands()))){
 				case STATUS_OK:
 					break;
 				case STATUS_CANCELLED:
@@ -92,8 +101,10 @@ public class StepBuilder implements IBuildModelBuilder {
 					break;
 				}
 			}
-			status = postProcess(status, monitor);
+			//TODO: monitor
+			status = postProcess(status, new NullProgressMonitor());
 		}
+		monitor.done();
 		return status;
 	}
 	
@@ -165,5 +176,31 @@ public class StepBuilder implements IBuildModelBuilder {
 		for(int i = 0; i < rcs.length; i++){
 			fDirs.createDir(rcs[i], monitor);
 		}
+	}
+
+	public int getNumCommands() {
+		if(fNumCommands == -1){
+			CommandBuilder bs[] = getCommandBuilders();
+			fNumCommands = 0;
+			for(int i = 0; i < bs.length; i++){
+				fNumCommands += bs[i].getNumCommands();
+			}
+		}
+		return fNumCommands;
+	}
+	
+	protected CommandBuilder[] getCommandBuilders(){
+		if(fCommandBuilders == null){
+			IBuildCommand cmds[] = fStep.getCommands(fCWD, null, null, true);
+			if(cmds == null)
+				fCommandBuilders = new CommandBuilder[0];
+			else {
+				fCommandBuilders = new CommandBuilder[cmds.length];
+				for(int i = 0; i < cmds.length; i++){
+					fCommandBuilders[i] = new CommandBuilder(cmds[i]);
+				}
+			}
+		}
+		return fCommandBuilders;
 	}
 }

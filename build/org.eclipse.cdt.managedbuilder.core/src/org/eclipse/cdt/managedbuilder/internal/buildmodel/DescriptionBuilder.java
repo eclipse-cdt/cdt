@@ -11,6 +11,8 @@
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
@@ -19,6 +21,8 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IStepVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  * 
@@ -36,19 +40,27 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 	private IPath fCWD;
 	private boolean fBuildIncrementaly;
 	private boolean fResumeOnErrs;
+	private Map fStepToStepBuilderMap = new HashMap();
+	private int fNumCommands = -1;
+	private GenDirInfo fDir;
 	
 	private class BuildStepVisitor implements IStepVisitor{
 		private OutputStream fOut;
 		private OutputStream fErr;
 		private IProgressMonitor fMonitor;
-		private GenDirInfo fDir = new GenDirInfo(fDes.getConfiguration());
 		private int fStatus;
+		private boolean fBuild;
 
 		public BuildStepVisitor(OutputStream out, OutputStream err, IProgressMonitor monitor){
+			this(out, err, monitor, true);
+		}
+
+		public BuildStepVisitor(OutputStream out, OutputStream err, IProgressMonitor monitor, boolean build){
 			fOut = out;
 			fErr = err;
 			fMonitor = monitor;
 			fStatus = STATUS_OK;
+			fBuild = build;
 		}
 		
 		/* (non-Javadoc)
@@ -64,19 +76,23 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 					&& (!fBuildIncrementaly || action.needsRebuild())){
 				if(DbgUtil.DEBUG)
 					DbgUtil.trace("step " + DbgUtil.stepName(action) + " needs rebuild" );
-				StepBuilder builder = new StepBuilder(action, fCWD, fResumeOnErrs, fDir);
+				StepBuilder builder = getStepBuilder(action);//new StepBuilder(action, fCWD, fResumeOnErrs, fDir);
 				
-				switch(builder.build(fOut, fErr, fMonitor)){
-				case STATUS_OK:
+				if(fBuild){
+					switch(builder.build(fOut, fErr, new SubProgressMonitor(fMonitor, builder.getNumCommands()))){
+					case STATUS_OK:
+						break;
+					case STATUS_CANCELLED:
+						fStatus = STATUS_CANCELLED;
+						break;
+					case STATUS_ERROR_BUILD:
+					case STATUS_ERROR_LAUNCH:
+					default:
+						fStatus = STATUS_ERROR_BUILD; 
 					break;
-				case STATUS_CANCELLED:
-					fStatus = STATUS_CANCELLED;
-					break;
-				case STATUS_ERROR_BUILD:
-				case STATUS_ERROR_LAUNCH:
-				default:
-					fStatus = STATUS_ERROR_BUILD; 
-				break;
+					}
+				} else {
+					fNumCommands += builder.getNumCommands();
 				}
 			}
 			
@@ -105,6 +121,7 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 		fCWD = cwd;
 		fBuildIncrementaly = buildIncrementaly;
 		fResumeOnErrs = resumeOnErrs;
+		fDir = new GenDirInfo(fDes.getConfiguration());
 		
 		if(fCWD == null)
 			fCWD = fDes.getDefaultBuildDirLocation();
@@ -116,6 +133,10 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 	public int build(OutputStream out, OutputStream err,
 			IProgressMonitor monitor){
 		
+		//TODO: should we specify some task name here?
+		monitor.beginTask("", getNumCommands());	//$NON-NLS-1$
+		monitor.subTask("");	//$NON-NLS-1$
+
 		BuildStepVisitor visitor = new BuildStepVisitor(out, err, monitor);
 		try {
 			BuildDescriptionManager.accept(visitor,
@@ -123,7 +144,35 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 		} catch (CoreException e) {
 			return STATUS_ERROR_LAUNCH;
 		}
+		
+		monitor.done();
+		
 		return visitor.fStatus;
+	}
+
+	public int getNumCommands() {
+		if(fNumCommands == -1){
+			fNumCommands = 0;
+			BuildStepVisitor visitor = new BuildStepVisitor(null, null, new NullProgressMonitor(), false);
+			try {
+				BuildDescriptionManager.accept(visitor,
+						fDes, true);
+			} catch (CoreException e) {
+				//TODO: report an error
+			}
+			if(DbgUtil.DEBUG)
+				DbgUtil.trace("Description Builder: total work = " + fNumCommands);	//$NON-NLS-1$
+		}
+		return fNumCommands;
+	}
+	
+	protected StepBuilder getStepBuilder(IBuildStep step){
+		StepBuilder b = (StepBuilder)fStepToStepBuilderMap.get(step);
+		if(b == null){
+			b = new StepBuilder(step, fCWD, fResumeOnErrs, fDir);
+			fStepToStepBuilderMap.put(step, b);
+		}
+		return b;
 	}
 	
 }

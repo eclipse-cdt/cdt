@@ -1188,6 +1188,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
+		
+		String[] msgs = new String[2];
+		msgs[0] = ManagedMakeMessages.getResourceString(INTERNAL_BUILDER);
+		msgs[1] = currentProject.getName();
+
+		monitor.beginTask("", 1000);	//$NON-NLS-1$
+		monitor.subTask(ManagedMakeMessages.getFormattedString(MAKE, msgs));
 
 		try {
 			int flags = 0;
@@ -1200,12 +1207,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			
 			IBuildDescription des = BuildDescriptionManager.createBuildDescription(cfg, delta, flags);
 			
-			IBuildModelBuilder builder = new DescriptionBuilder(des, buildIncrementaly, resumeOnErr);
-
-			String[] msgs = new String[2];
-			msgs[0] = ManagedMakeMessages.getResourceString(INTERNAL_BUILDER);
-			msgs[1] = currentProject.getName();
-			monitor.subTask(ManagedMakeMessages.getFormattedString(MAKE, msgs));
+			DescriptionBuilder builder = new DescriptionBuilder(des, buildIncrementaly, resumeOnErr);
 
 			// Get a build console for the project
 			StringBuffer buf = new StringBuffer();
@@ -1247,7 +1249,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			// until we explicitly close it. See bug#123302.
 			OutputStream epmOutputStream = epm.getOutputStream();
 			
-			int status = builder.build(epmOutputStream, epmOutputStream, monitor);
+			int status = builder.build(epmOutputStream, epmOutputStream, new SubProgressMonitor(monitor, 1000));
 
 			//no refresh is needed since the builder now performs 
 			//a refresh automatically after each build step
@@ -1310,6 +1312,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			forgetLastBuiltState();
 		} finally {
 			getGenerationProblems().clear();
+			monitor.done();
 		}
 	}
 }

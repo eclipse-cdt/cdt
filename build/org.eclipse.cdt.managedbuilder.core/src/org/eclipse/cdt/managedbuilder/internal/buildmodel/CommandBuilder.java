@@ -82,6 +82,10 @@ public class CommandBuilder implements IBuildModelBuilder {
 	public int build(OutputStream out, OutputStream err,
 			IProgressMonitor monitor){
 		
+		//TODO: should we display the command line here?
+		monitor.beginTask("", getNumCommands());	//$NON-NLS-1$
+		monitor.subTask(""/*getCommandLine()*/);	//$NON-NLS-1$
+		
 		CommandLauncher launcher = new CommandLauncher();
 		int status = STATUS_OK;
 
@@ -99,8 +103,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 		
 		//wrapping out and err streams to avoid their closure
 		int st = launcher.waitAndRead(wrap(out), wrap(err),
-				new SubProgressMonitor(monitor,
-						IProgressMonitor.UNKNOWN));
+				new SubProgressMonitor(monitor,	getNumCommands()));
 		switch(st){
 		case CommandLauncher.OK:
 			if(fProcess.exitValue() != 0)
@@ -124,6 +127,8 @@ public class CommandBuilder implements IBuildModelBuilder {
 			printMessage(fErrMsg, out);
 			break;
 		}
+		
+		monitor.done();
 		return status;
 	}
 	
@@ -156,6 +161,24 @@ public class CommandBuilder implements IBuildModelBuilder {
 			}
 		}
 		
+	}
+
+	public int getNumCommands() {
+		return 1;
+	}
+	
+	protected String getCommandLine() {
+		StringBuffer buf = new StringBuffer();
+		if (fCmd != null) {
+			buf.append(fCmd.getCommand().toOSString());
+			String args[] = fCmd.getArgs();
+			for (int i = 0; i < args.length; i++) {
+				buf.append(' ');
+				buf.append(args[i]);
+			}
+			buf.append(LINE_SEPARATOR);
+		}
+		return buf.toString();
 	}
 
 }

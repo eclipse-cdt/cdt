@@ -34,9 +34,7 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 	}
 	
 	public void reindex() throws CoreException {
-		// Just clear out the old index
-		pdom.clear();
-		((PDOM)pdom).fireChange();
+		new PDOMNullReindex((PDOM)pdom).schedule();
 	}
 
 }

@@ -48,6 +48,7 @@
 	<!-- ===================================================================== -->
 	<!-- ******* add in the descriptions for each of the top level targets to the target decl -->
 	<target name="main" description="the main build target">
+		<echo message="**********************************************************"/>
 		<antcall target="preBuild" />
 		<antcall target="fetch" />
 		<antcall target="generate" />

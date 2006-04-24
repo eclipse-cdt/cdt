@@ -25,31 +25,47 @@
 
 	<!-- ===================================================================== -->
 	<!-- Targets to assemble the built elements for particular configurations  -->
-	<!-- These generally call the generated assemble scripts (named in -->
-	<!-- ${assembleScriptName}) but may also add pre and post processing -->
-	<!-- Add one target for each root element and each configuration -->
+	<!-- These generally call the generated assemble scripts (named in         -->
+	<!-- ${assembleScriptName}) but may also add pre and post processing       -->
+	<!-- Add one target for each root element and each configuration           -->
 	<!-- ===================================================================== -->
 
 	<target name="assemble.org.eclipse.rse.core">
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		</ant>
+		<!--
 		<antcall target="buildFeature">
 			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.core" />
 		</antcall>
+		-->
 	</target>
 	<target name="assemble.org.eclipse.rse.local">
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		</ant>
+		<!--
 		<antcall target="buildFeature">
 			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.local" />
 		</antcall>
+		-->
 	</target>
 	<target name="assemble.org.eclipse.rse.ftp">
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		</ant>
+		<!--
 		<antcall target="buildFeature">
 			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.ftp" />
 		</antcall>
+		-->
 	</target>
 	<target name="assemble.org.eclipse.rse.dstore">
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		</ant>
+		<!--
 		<antcall target="serverruntime" />
 		<antcall target="buildFeature">
 			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.dstore" />
 		</antcall>
+		-->
 	</target>
 
 	<target name="dstore_extra_server.jar">
@@ -63,7 +79,7 @@
 
 	<target name="serverruntime">
 		<antcall target="dstore_extra_server.jar" />
-		<property name="universalserverfilelist" value="${buildDirectory}/plugins/org.eclipse.dstore.core/dstore_core.jar,
+		<!-- property name="universalserverfilelist" value="${buildDirectory}/plugins/org.eclipse.dstore.core/dstore_core.jar,
 	    	${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime/dstore_extra_server.jar,
 	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/patterns.dat,
 	    	${buildDirectory}/plugins/org.eclipse.rse.services/clientserver.jar,
@@ -78,7 +94,7 @@
 	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/daemon.linux,
 	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/win.env.bat,
 	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/daemon.win.bat,
-	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/run.win.bat" />
+	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/run.win.bat" /-->
 
 		<delete dir="${packageDirectory}\rseserver" />
 		<mkdir dir="${packageDirectory}\rseserver" />
@@ -163,6 +179,7 @@
 	<target name="preFetch">
 		<!-- clean up the old driver -->
 		<!--	<delete includeEmptyDirs="true">-->
+		<!--
 		<fileset dir="${buildDirectory}\plugins" casesensitive="yes" defaultexcludes="no">
 			<include name="org.eclipse.*/**" />
 		</fileset>
@@ -180,6 +197,7 @@
 		<fileset dir="${head}\eclipse\features" casesensitive="yes" defaultexcludes="no">
 			<include name="org.eclipse.*/**" />
 		</fileset>
+		-->
 		<!--	</delete>-->
 	</target>
 
@@ -205,12 +223,19 @@
 	<!-- Steps to do before running the build.xmls for the elements being built. -->
 	<!-- ===================================================================== -->
 	<target name="preProcess">
+		<antcall target="allElements">
+			<param name="target" value="gatherSources" />
+		</antcall>
 	</target>
 
 	<!-- ===================================================================== -->
 	<!-- Steps to do after running the build.xmls for the elements being built. -->
 	<!-- ===================================================================== -->
 	<target name="postProcess">
+		<antcall target="serverruntime" />
+		<antcall target="allElements">
+			<param name="target" value="gatherLogs" />
+		</antcall>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -232,9 +257,7 @@
 		<mkdir dir="${packageDirectory}" />
 
 		<property name="packageRuntimeDirectory" location="${packageDirectory}\runtime" />
-		<property name="packageRuntimeRootDirectory" location="${packageRuntimeDirectory}\eclipse" />
 		<mkdir dir="${packageRuntimeDirectory}" />
-		<mkdir dir="${packageRuntimeRootDirectory}" />
 
 		<unzip src="${buildDirectory}\features\org.eclipse.rse.core\org.eclipse.rse.core_1.0.0.bin.dist.zip" dest="${packageRuntimeRootDirectory}" />
 		<unzip src="${buildDirectory}\features\org.eclipse.rse.dstore\org.eclipse.rse.dstore_1.0.0.bin.dist.zip" dest="${packageRuntimeRootDirectory}" />

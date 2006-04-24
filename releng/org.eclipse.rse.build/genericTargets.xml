@@ -73,11 +73,16 @@
 	<ant antfile="build.xml" dir="${elementPath}" target="build.jars">
 		<property name="target" value="build.jars"/>
 	</ant>
+	<!-- dwd
+	<ant antfile="build.xml" dir="${elementPath}" target="build.sources">
+		<property name="target" value="build.sources"/>
+	</ant>
+	-->
 </target>
 
 <!-- **********************
 1) the gather targets do more than just gather.  These are packaging targets.
-We need to continue ot separate the two concepts (gather and package) as
+We need to continue to separate the two concepts (gather and package) as
 the packaging is different if we wanted to create an update site packaging
 (for example).  The gathers are commented out for now as the new generated
 scripts do not seem to have them.
@@ -101,7 +106,6 @@ set here?
 <!-- Gather source for a build element -->
 <!-- ===================================================================== -->
 <target name="gatherSources" description="Gathering source distribution..." depends="init">
-	<!--suspect:  this call is required to create the *.src.zip inside each plugin-->
 	<ant antfile="build.xml" dir="${elementPath}" target="build.sources">
 		<property name="os" value="${os}" />
 		<property name="ws" value="${ws}" />	

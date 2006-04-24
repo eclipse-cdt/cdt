@@ -89,7 +89,20 @@ public class RSEFileSystem extends FileSystem
 		Object obj = _fileStoreMap.get(uri);
 		if (obj != null)
 		{
-			return (IFileStore)obj;
+			RSEFileStoreRemoteFileWrapper store = (RSEFileStoreRemoteFileWrapper)obj;
+			IRemoteFileSubSystem ss = store.getRemoteFileSubSystem();
+			if (!ss.isConnected())
+			{
+				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+				try
+				{
+					ss.connect(shell);
+				}
+				catch (Exception e)
+				{					
+				}
+			}
+			return store;
 		}
 		try 
 		{

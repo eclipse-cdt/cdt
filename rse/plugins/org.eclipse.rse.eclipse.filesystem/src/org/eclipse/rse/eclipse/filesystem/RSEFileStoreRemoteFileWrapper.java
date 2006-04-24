@@ -40,18 +40,28 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
+import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 
 
 public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileStore 
 {
 	private IRemoteFile _remoteFile;
+	private IRemoteFileSubSystem _subSystem;
 	private IFileStore _parent;
 	public RSEFileStoreRemoteFileWrapper(IFileStore parent, IRemoteFile remoteFile)
 	{
 		_remoteFile = remoteFile;
 		_parent = parent;
+		_subSystem = _remoteFile.getParentRemoteFileSubSystem();
 	}
+	
+	public IRemoteFileSubSystem getRemoteFileSubSystem()
+	{
+		return _subSystem;
+	}
+	
 	public String[] childNames(int options, IProgressMonitor monitor) 
 	{
 		String[] names;
@@ -67,7 +77,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		}
 		else
 		{
-			IRemoteFile[] children = _remoteFile.getParentRemoteFileSubSystem().listFoldersAndFiles(_remoteFile);
+			IRemoteFile[] children = _subSystem.listFoldersAndFiles(_remoteFile);
 			names = new String[children.length];
 			for (int i = 0; i < children.length; i++)
 			{
@@ -130,7 +140,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		if (_remoteFile.exists())
 		{
 			IFile file = null;
-			if (_remoteFile.isFile() && _remoteFile.getParentRemoteFileSubSystem().isConnected())
+			if (_remoteFile.isFile() && _subSystem.isConnected())
 			{
 				/*
 				SystemEditableRemoteFile editable = new SystemEditableRemoteFile(_remoteFile);
@@ -184,7 +194,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 	{
 		try 
 		{
-			return new URI("rse", _remoteFile.getParentRemoteFileSubSystem().getHost().getHostName(), _remoteFile.getAbsolutePath(), null); //$NON-NLS-1$
+			return new URI("rse", _subSystem.getHost().getHostName(), _remoteFile.getAbsolutePath(), null); //$NON-NLS-1$
 		} 
 		catch (URISyntaxException e) 
 		{
@@ -198,8 +208,8 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		{
 		try
 		{
-			_remoteFile.getParentRemoteFileSubSystem().createFolder(_remoteFile);
-			_remoteFile = _remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(_remoteFile.getAbsolutePath());
+			_subSystem.createFolder(_remoteFile);
+			_remoteFile = _subSystem.getRemoteFileObject(_remoteFile.getAbsolutePath());
 		}
 		catch (Exception e)
 		{			
@@ -215,8 +225,8 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			// create temp file first
 			if (!_remoteFile.exists())
 			{
-				_remoteFile.getParentRemoteFileSubSystem().createFile(_remoteFile);
-				_remoteFile = _remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(_remoteFile.getAbsolutePath());
+				_subSystem.createFile(_remoteFile);
+				_remoteFile = _subSystem.getRemoteFileObject(_remoteFile.getAbsolutePath());
 			}
 			SystemEditableRemoteFile editable = new SystemEditableRemoteFile(_remoteFile);
 			editable.download(monitor);
@@ -275,7 +285,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 				// need empty one
 				try
 				{
-					IRemoteFile child = _remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(_remoteFile, name);
+					IRemoteFile child = _subSystem.getRemoteFileObject(_remoteFile, name);
 					return FileStoreConversionUtility.convert(_parent, child);
 				}
 				catch (Exception e)
@@ -288,7 +298,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		{
 			try
 			{
-				IRemoteFile child = _remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(_remoteFile, name);
+				IRemoteFile child = _subSystem.getRemoteFileObject(_remoteFile, name);
 				return FileStoreConversionUtility.convert(_parent, child);
 			}
 			catch (Exception e)
@@ -306,7 +316,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		if (_remoteFile.exists())
 		{
 		
-			if (_remoteFile.isFile() && _remoteFile.getParentRemoteFileSubSystem().isConnected())
+			if (_remoteFile.isFile() && _subSystem.isConnected())
 			{
 				file = UniversalFileTransferUtility.copyRemoteFileToWorkspace(_remoteFile, monitor);			
 			}

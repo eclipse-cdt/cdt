@@ -94,7 +94,7 @@ public class UniversalFileTransferUtility
 	 * @param shell 
 	 * @return the resulting local replica
 	 */
-	public static IFile copyRemoteFileToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
+	protected static IFile copyRemoteFileToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
 	{
 		IRemoteFileSubSystem srcFS = srcFileOrFolder.getParentRemoteFileSubSystem();
 		IResource tempResource = getTempFileFor(srcFileOrFolder);

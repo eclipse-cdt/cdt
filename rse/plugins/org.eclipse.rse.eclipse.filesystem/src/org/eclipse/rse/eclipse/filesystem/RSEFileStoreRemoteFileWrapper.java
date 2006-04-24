@@ -167,8 +167,8 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 				}
 				if (file == null || !file.exists())
 				{
-					file = UniversalFileTransferUtility.copyRemoteFileToWorkspace(_remoteFile, monitor);
-					if (file != null)
+					file = (IFile)UniversalFileTransferUtility.copyRemoteResourceToWorkspace(_remoteFile, monitor);
+					if (file != null && !file.isSynchronized(IResource.DEPTH_ZERO))
 					{
 						file.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 					}
@@ -318,7 +318,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		
 			if (_remoteFile.isFile() && _subSystem.isConnected())
 			{
-				file = UniversalFileTransferUtility.copyRemoteFileToWorkspace(_remoteFile, monitor);			
+				file = (IResource)UniversalFileTransferUtility.copyRemoteResourceToWorkspace(_remoteFile, monitor);			
 			}
 			else
 			{

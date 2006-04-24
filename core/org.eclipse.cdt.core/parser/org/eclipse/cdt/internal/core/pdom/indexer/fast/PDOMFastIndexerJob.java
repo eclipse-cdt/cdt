@@ -33,22 +33,26 @@ public abstract class PDOMFastIndexerJob extends Job {
 		setRule(CCorePlugin.getPDOMManager().getIndexerSchedulingRule());
 	}
 
-	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
+	protected IASTTranslationUnit parse(ITranslationUnit tu) throws CoreException {
 		ILanguage language = tu.getLanguage();
 		if (language == null)
-			return;
+			return null;
 	
 		// get the AST in a "Fast" way
-		IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
+		return language.getASTTranslationUnit(tu,
 				ILanguage.AST_USE_INDEX
 						| ILanguage.AST_SKIP_INDEXED_HEADERS
 						| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
+	}
+	
+	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
+		IASTTranslationUnit ast = parse(tu);
 		if (ast == null)
 			return;
 		
 		pdom.acquireWriteLock();
 		try {
-			pdom.addSymbols(language, ast);
+			pdom.addSymbols(tu.getLanguage(), ast);
 		} finally {
 			pdom.releaseWriteLock();
 		}

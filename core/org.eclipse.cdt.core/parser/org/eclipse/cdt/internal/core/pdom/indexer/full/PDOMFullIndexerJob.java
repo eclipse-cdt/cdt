@@ -41,5 +41,18 @@ public abstract class PDOMFullIndexerJob extends Job {
 		// get the AST in the "Full" way, i.e. don't skip anything.
 		return language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
 	}
+
+	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
+		IASTTranslationUnit ast = parse(tu);
+		if (ast == null)
+			return;
+		
+		pdom.acquireWriteLock();
+		try {
+			pdom.addSymbols(tu.getLanguage(), ast);
+		} finally {
+			pdom.releaseWriteLock();
+		}
+	}
 	
 }

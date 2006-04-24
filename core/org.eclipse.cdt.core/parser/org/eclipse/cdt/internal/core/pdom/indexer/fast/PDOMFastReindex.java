@@ -11,24 +11,17 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.content.IContentType;
 
 /**
  * @author Doug Schaefer
@@ -40,67 +33,82 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 		super(pdom);
 	}
 	
-	protected IStatus run(IProgressMonitor monitor) {
+	protected IStatus run(final IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
 			
 			// First clear out the DB
 			pdom.clear();
 			
+			// Get a count of all the elements that we'll be visiting for the monitor
+			final int[] count = { 0 };
+			pdom.getProject().accept(new ICElementVisitor() {
+				public boolean visit(ICElement element) throws CoreException {
+					switch (element.getElementType()) {
+					case ICElement.C_UNIT:
+						++count[0];
+						return false;
+					case ICElement.C_CCONTAINER:
+					case ICElement.C_PROJECT:
+						return true;
+					}
+					return false;
+				}
+			});
+			
+			monitor.beginTask("Indexing", count[0]);
+			
 			// First index all the source files (i.e. not headers)
-			final List addedSources = new ArrayList();
-			
-			pdom.getProject().getProject().accept(new IResourceProxyVisitor() {
-				public boolean visit(IResourceProxy proxy) throws CoreException {
-					if (proxy.getType() == IResource.FILE) {
-						String fileName = proxy.getName();
-						IContentType contentType = Platform.getContentTypeManager().findContentTypeFor(fileName);
-						if (contentType == null)
-							return true;
-						String contentTypeId = contentType.getId();
-						
-						if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(contentTypeId)
-								|| CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentTypeId)) {
-							addedSources.add((ITranslationUnit)CoreModel.getDefault().create((IFile)proxy.requestResource()));
+			pdom.getProject().accept(new ICElementVisitor() {
+				public boolean visit(ICElement element) throws CoreException {
+					switch (element.getElementType()) {
+					case ICElement.C_UNIT:
+						ITranslationUnit tu = (ITranslationUnit)element;
+						if (tu.isSourceUnit()) {
+							monitor.subTask(tu.getElementName());
+							try {
+								addTU(tu);
+							} catch (InterruptedException e) {
+								throw new CoreException(Status.CANCEL_STATUS);
+							}
+							monitor.worked(1);
 						}
 						return false;
-					} else {
+					case ICElement.C_CCONTAINER:
+					case ICElement.C_PROJECT:
 						return true;
 					}
+					return false;
 				}
-			}, 0);
+			});
 			
-			for (Iterator i = addedSources.iterator(); i.hasNext();)
-				addTU((ITranslationUnit)i.next());
-
 			// Now add in the header files but only if they aren't already indexed
-			final List addedHeaders = new ArrayList();
-			
-			pdom.getProject().getProject().accept(new IResourceProxyVisitor() {
-				public boolean visit(IResourceProxy proxy) throws CoreException {
-					if (proxy.getType() == IResource.FILE) {
-						String fileName = proxy.getName();
-						IContentType contentType = Platform.getContentTypeManager().findContentTypeFor(fileName);
-						if (contentType == null)
-							return true;
-						String contentTypeId = contentType.getId();
-						
-						if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(contentTypeId)
-								|| CCorePlugin.CONTENT_TYPE_CHEADER.equals(contentTypeId)) {
-							IFile rfile = (IFile)proxy.requestResource();
+			pdom.getProject().accept(new ICElementVisitor() {
+				public boolean visit(ICElement element) throws CoreException {
+					switch (element.getElementType()) {
+					case ICElement.C_UNIT:
+						ITranslationUnit tu = (ITranslationUnit)element;
+						if (tu.isHeaderUnit()) {
+							IFile rfile = (IFile)tu.getUnderlyingResource();
 							String filename = rfile.getLocation().toOSString();
-							if (pdom.getFile(filename) == null)
-								addedHeaders.add((ITranslationUnit)CoreModel.getDefault().create(rfile));
+							if (pdom.getFile(filename) == null) {
+								monitor.subTask(tu.getElementName());
+								try {
+									addTU(tu);
+								} catch (InterruptedException e) {
+									throw new CoreException(Status.CANCEL_STATUS);
+								}
+							}
+							monitor.worked(1);
 						}
 						return false;
-					} else {
+					case ICElement.C_CCONTAINER:
+					case ICElement.C_PROJECT:
 						return true;
 					}
+					return false;
 				}
-			}, 0);
-
-			for (Iterator i = addedHeaders.iterator(); i.hasNext();)
-				addTU((ITranslationUnit)i.next());
+			});
 			
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 					+ "/debug/pdomtimings"); //$NON-NLS-1$
@@ -110,8 +118,6 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			return e.getStatus();
-		} catch (InterruptedException e) {
-			return Status.CANCEL_STATUS;
 		}
 	}
 

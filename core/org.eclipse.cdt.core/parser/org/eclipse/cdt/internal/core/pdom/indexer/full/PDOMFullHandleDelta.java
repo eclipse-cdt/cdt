@@ -172,11 +172,13 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 		if (ast == null)
 			return;
 
+		// Remove the old symbols in the tu and all the headers
 		pdom.acquireWriteLock();
-
 		try {
-			// Remove the old symbols in the tu and all the headers
-			removeTU(tu);
+			IPath path = ((IFile)tu.getResource()).getLocation();
+			PDOMFile file = pdom.getFile(path);
+			if (file != null)
+				file.clear();
 	
 			IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
 			for (int i = 0; i < includes.length; ++i) {
@@ -193,24 +195,16 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 		}
 	}
 
-	protected void addTU(ITranslationUnit tu) throws CoreException, InterruptedException {
-		IASTTranslationUnit ast = parse(tu);
-		if (ast == null)
-			return;
-
+	protected void removeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
 		pdom.acquireWriteLock();
 		try {
-			pdom.addSymbols(tu.getLanguage(), ast);
+			IPath path = ((IFile)tu.getResource()).getLocation();
+			PDOMFile file = pdom.getFile(path);
+			if (file != null)
+				file.clear();
 		} finally {
 			pdom.releaseWriteLock();
 		}
-	}
-	
-	protected void removeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
-		IPath path = ((IFile)tu.getResource()).getLocation();
-		PDOMFile file = pdom.getFile(path);
-		if (file != null)
-			file.clear();
 	}
 
 }

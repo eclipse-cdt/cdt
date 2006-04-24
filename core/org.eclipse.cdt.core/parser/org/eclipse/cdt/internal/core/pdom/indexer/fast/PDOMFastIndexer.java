@@ -24,19 +24,18 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMFastIndexer implements IPDOMIndexer {
 
-	private PDOM pdom;
+	private IPDOM pdom;
 
 	public void setPDOM(IPDOM pdom) {
-		if (pdom instanceof PDOM)
-			this.pdom = (PDOM)pdom;
+		this.pdom = pdom;
 	}
 	
 	public void handleDelta(ICElementDelta delta) {
-		new PDOMFastHandleDelta(pdom, delta).schedule();
+		new PDOMFastHandleDelta((PDOM)pdom, delta).schedule();
 	}
 	
 	public void reindex() throws CoreException {
-		new PDOMFastReindex(pdom).schedule();
+		new PDOMFastReindex((PDOM)pdom).schedule();
 	}
 	
 }

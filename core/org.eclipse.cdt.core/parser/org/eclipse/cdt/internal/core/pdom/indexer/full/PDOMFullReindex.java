@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -119,19 +118,6 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			return e.getStatus();
-		}
-	}
-
-	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
-		IASTTranslationUnit ast = parse(tu);
-		if (ast == null)
-			return;
-		
-		pdom.acquireWriteLock();
-		try {
-			pdom.addSymbols(tu.getLanguage(), ast);
-		} finally {
-			pdom.releaseWriteLock();
 		}
 	}
 

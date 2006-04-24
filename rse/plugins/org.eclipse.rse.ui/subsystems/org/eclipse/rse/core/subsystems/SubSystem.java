@@ -59,6 +59,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -3122,9 +3123,17 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	public static Shell getActiveWorkbenchShell() 
 	{
 		Shell result = null;
-		IWorkbenchWindow window = getActiveWorkbenchWindow();
-		if (window != null) {
-			result = window.getShell();
+		if (PlatformUI.isWorkbenchRunning())
+		{
+			IWorkbenchWindow window = getActiveWorkbenchWindow();
+			if (window != null) 
+			{
+				result = window.getShell();
+			}
+		}
+		else // workbench has not been loaded yet!
+		{
+			return null;
 		}
 		return result;
 	}

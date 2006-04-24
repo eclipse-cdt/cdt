@@ -138,8 +138,8 @@ public class UniversalFileTransferUtility
 		    
 		    if (!tempFile.exists() && !tempFile.isSynchronized(IResource.DEPTH_ZERO))
 		    {
-		    	tempFile.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		    	//tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
+		    	//tempFile.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		    	tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
 		    }
 		    if (tempFile.exists())
 		    {		    	

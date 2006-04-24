@@ -31,6 +31,8 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 import org.eclipse.rse.subsystems.files.dstore.subsystem.RemoteFilePropertyChangeListener;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.dstore.core.model.DataElement;
 
@@ -43,7 +45,8 @@ public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 		if (_listener == null)
 		{
 			DStoreConnectorService connectorService = (DStoreConnectorService)ss.getConnectorService();
-			_listener = new RemoteFilePropertyChangeListener(SystemBasePlugin.getActiveWorkbenchShell(), connectorService, connectorService.getDataStore(), ss);
+			Shell shell = FileServiceSubSystem.getActiveWorkbenchShell();
+			_listener = new RemoteFilePropertyChangeListener(shell, connectorService, connectorService.getDataStore(), ss);
 		}
 	}
 

@@ -143,7 +143,10 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 				if (file == null || !file.exists())
 				{
 					file = UniversalFileTransferUtility.copyRemoteFileToWorkspace(_remoteFile, monitor);
-					file.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+					if (file != null)
+					{
+						file.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+					}
 				}
 			}
 			else
@@ -152,7 +155,10 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			}
 //			if (!file.isSynchronized(IFile.DEPTH_ZERO))
 	//			file.refreshLocal(IFile.DEPTH_ZERO, monitor);
-			return file.getContents();
+			if (file != null)
+			{
+				return file.getContents();
+			}
 		}
 		return null;
 	}
@@ -281,9 +287,10 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 
 	public File toLocalFile(int options, IProgressMonitor monitor) throws CoreException 
 	{
+		IResource file = null;
 		if (_remoteFile.exists())
 		{
-			IResource file = null;
+		
 			if (_remoteFile.isFile() && _remoteFile.getParentRemoteFileSubSystem().isConnected())
 			{
 				file = UniversalFileTransferUtility.copyRemoteFileToWorkspace(_remoteFile, monitor);			
@@ -295,6 +302,14 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		//	if (!file.isSynchronized(IFile.DEPTH_ZERO))
 			//	file.refreshLocal(IFile.DEPTH_ZERO, monitor);
 			return file.getLocation().toFile();
+		}
+		else
+		{
+			if (_remoteFile.getName().equals(".project"))
+			{
+				file = UniversalFileTransferUtility.getTempFileFor(_remoteFile);
+				return file.getLocation().toFile();
+			}
 		}
 		return null;
 	}

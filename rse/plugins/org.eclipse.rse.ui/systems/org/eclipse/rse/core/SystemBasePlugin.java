@@ -249,12 +249,14 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		if (headlessSet && headless) // already been here?
 		 	return wb;
 		try {
+			wb = PlatformUI.getWorkbench();
 			
-			
-			wb = super.getWorkbench();
+			//wb = super.getWorkbench();
 			headless = false;			
-		} catch (Exception exc)
+		} 
+		catch (Exception exc)
 		{
+			/*
 			IDEWorkbenchAdvisor advisor = new IDEWorkbenchAdvisor();
 			PlatformUI.createAndRunWorkbench(Display.getDefault(), advisor);
 			try
@@ -265,6 +267,8 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 			{
 				headless = true;
 			}
+			*/
+			headless = true;
 		}
 		headlessSet = true;
 		return wb;

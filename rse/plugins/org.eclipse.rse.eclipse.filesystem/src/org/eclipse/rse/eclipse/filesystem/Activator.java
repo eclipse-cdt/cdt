@@ -17,10 +17,12 @@
 package org.eclipse.rse.eclipse.filesystem;
 
 import org.eclipse.core.filesystem.provider.FileSystem;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.ui.actions.WorkspaceAction;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.ide.filesystem.FileSystemSupportRegistry;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;

@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.eclipse.filesystem.RSEFileSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.swt.widgets.Display;
@@ -68,17 +69,30 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 			IProjectDescription description = root.getWorkspace().newProjectDescription(directory.getName());
 			URI location = RSEFileSystem.getInstance().getURIFor(directory);
 			description.setLocationURI(location);
+
 			
+		
+			//description.setReferencedProjects(new IProject[]{SystemResourceManager.getRemoteSystemsTempFilesProject()});
 			editProject.create(description, monitor);
+			
 
 			editProject.open(monitor);
 			
 		    editProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
+		    IProject tempFilesProject = SystemResourceManager.getRemoteSystemsTempFilesProject();
+			IProjectDescription tempFilesDescription = tempFilesProject.getDescription();
+			tempFilesDescription.setReferencedProjects(new IProject[]{editProject});
+			tempFilesProject.setDescription(tempFilesDescription, monitor);
 		}
 		catch (CoreException e)
 		{
+			e.printStackTrace();
 			SystemBasePlugin.logError("Error creating temp project", e);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 		return editProject;
 	}

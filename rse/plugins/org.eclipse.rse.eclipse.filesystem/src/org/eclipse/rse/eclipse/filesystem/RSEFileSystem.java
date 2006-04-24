@@ -29,6 +29,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
 
 public class RSEFileSystem extends FileSystem 
@@ -107,7 +108,8 @@ public class RSEFileSystem extends FileSystem
 						Shell shell = null;
 						try
 						{
-							shell = RSEUIPlugin.getActiveWorkbenchShell();
+							shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+							//shell = RSEUIPlugin.getActiveWorkbenchShell();
 						}
 						catch (Exception e)
 						{							

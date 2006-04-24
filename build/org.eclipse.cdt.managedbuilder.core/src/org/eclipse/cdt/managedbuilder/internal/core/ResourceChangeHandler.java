@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -48,6 +49,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.MultiRule;
 
 public class ResourceChangeHandler implements IResourceChangeListener, ISaveParticipant {
+	
+	private Map fRmProjectToBuildInfoMap = new HashMap();
 
 	private class ResourceConfigurationChecker implements IResourceDeltaVisitor{
 		private IResourceDelta fRootDelta;
@@ -73,9 +76,16 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 				IResource rcToCheck = null;
 				switch (delta.getKind()) {
 				case IResourceDelta.REMOVED :
-					if ((delta.getFlags() & IResourceDelta.MOVED_TO) == 0 && rcType == IResource.PROJECT) {
-						sendClose((IProject)dResource);
-						break;
+					if (rcType == IResource.PROJECT){
+						IManagedBuildInfo info = (IManagedBuildInfo)fRmProjectToBuildInfoMap.remove(dResource);
+
+						if((delta.getFlags() & IResourceDelta.MOVED_TO) == 0) {
+							if(info != null){
+								sendClose(info);
+								PropertyManager.getInstance().clearProperties(info.getManagedProject());
+							}
+							break;
+						}
 					}
 				case IResourceDelta.CHANGED :
 					if ((delta.getFlags() & IResourceDelta.MOVED_TO) != 0) {
@@ -279,9 +289,12 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 			return makeGen;
 		}
 	}
-	
+
 	public void sendClose(IProject project){
-		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project,false);
+		sendClose(ManagedBuildManager.getBuildInfo(project,false));
+	}
+
+	private void sendClose(IManagedBuildInfo info){
 		if(info != null){
 			IManagedProject managedProj = info.getManagedProject();
 			if (managedProj != null) {
@@ -292,7 +305,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 			}
 		}
 	}
-	
+
 	/*
 	 *  I R e s o u r c e C h a n g e L i s t e n e r 
 	 */
@@ -313,9 +326,21 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 					if(proj instanceof IProject)
 						sendClose((IProject)proj);
 					break;
+				case IResourceChangeEvent.PRE_DELETE :
+					IResource rc = event.getResource();
+					if(rc instanceof IProject){
+						IProject project = (IProject)rc;
+						try {
+							if (project.hasNature(ManagedCProjectNature.MNG_NATURE_ID)) {
+								IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+								if(info != null)
+									fRmProjectToBuildInfoMap.put(project, info);
+							}
+						} catch (CoreException e) {
+						}
+					}
 				case IResourceChangeEvent.POST_CHANGE :
 				case IResourceChangeEvent.POST_BUILD :
-				case IResourceChangeEvent.PRE_DELETE :
 					IResourceDelta resDelta = event.getDelta();
 					if (resDelta == null) {
 						break;
@@ -433,8 +458,9 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
 	 */
 	public void saving(ISaveContext context) throws CoreException {
-		//	No state to be saved by the plug-in, but request a
-	    //  resource delta to be used on next activation.
+		PropertyManager.getInstance().serialize();
+
+		//Request a resource delta to be used on next activation.
 	    context.needDelta();
 	}
 

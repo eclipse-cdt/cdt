@@ -35,6 +35,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.envvar.UserDefinedEnvironmentSupplier;
@@ -45,9 +46,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -109,10 +113,11 @@ public class Configuration extends BuildObject implements IConfiguration {
 	//as a special Builder object of the tool-chain and implement the internal
 	//builder enabling/disabling as the Builder substitution functionality
 	//
-	//property that holds the Internal Builder enable state 
-	private static final String INTERNAL_BUILDER_ENABLED = "internalBuilderOn";  //$NON-NLS-1$
-	//property that holds the internal builder mode
-	private static final String INTERNAL_BUILDER_IGNORE_ERR = "internalBuilderIgnoreErr";  //$NON-NLS-1$
+	private static final String INTERNAL_BUILDER = "internalBuilder";
+	//preference key that holds the Internal Builder enable state 
+	private static final String INTERNAL_BUILDER_ENABLED = "enabled";  //$NON-NLS-1$
+	//preference key that holds the internal builder mode
+	private static final String INTERNAL_BUILDER_IGNORE_ERR = "ignoreErr";  //$NON-NLS-1$
 	//Internal Builder enable state
 	private boolean internalBuilderEnabled;
 	//Internal Builder mode
@@ -270,11 +275,12 @@ public class Configuration extends BuildObject implements IConfiguration {
 			}
 		}
 		
-		internalBuilderEnabled = Boolean.valueOf(
-				mngr.getProperty(this, INTERNAL_BUILDER_ENABLED)).booleanValue();
-		String tmp = mngr.getProperty(this, INTERNAL_BUILDER_IGNORE_ERR);
-		if(tmp == null || Boolean.valueOf(tmp).booleanValue())
-			internalBuilderIgnoreErr = true;
+		Preferences prefs = getPreferences(INTERNAL_BUILDER);
+		
+		internalBuilderEnabled = prefs != null ?
+				prefs.getBoolean(INTERNAL_BUILDER_ENABLED, false) : false;
+		internalBuilderIgnoreErr = prefs != null ?
+				prefs.getBoolean(INTERNAL_BUILDER_IGNORE_ERR, true) : true;
 	}
 
 	/**
@@ -1722,7 +1728,14 @@ public class Configuration extends BuildObject implements IConfiguration {
 	public void enableInternalBuilder(boolean enable){
 		if(internalBuilderEnabled != enable){
 			internalBuilderEnabled = enable;
-			PropertyManager.getInstance().setProperty(this, INTERNAL_BUILDER_ENABLED, Boolean.toString(internalBuilderEnabled));
+			Preferences prefs = getPreferences(INTERNAL_BUILDER);
+			if(prefs != null){
+				prefs.putBoolean(INTERNAL_BUILDER_ENABLED, internalBuilderEnabled);
+				try {
+					prefs.flush();
+				} catch (BackingStoreException e) {
+				}
+			}
 		}
 	}
 	
@@ -1746,7 +1759,14 @@ public class Configuration extends BuildObject implements IConfiguration {
 	public void setInternalBuilderIgnoreErr(boolean ignore){
 		if(internalBuilderIgnoreErr != ignore){
 			internalBuilderIgnoreErr = ignore;
-			PropertyManager.getInstance().setProperty(this, INTERNAL_BUILDER_IGNORE_ERR, Boolean.toString(internalBuilderIgnoreErr));
+			Preferences prefs = getPreferences(INTERNAL_BUILDER);
+			if(prefs != null){
+				prefs.putBoolean(INTERNAL_BUILDER_IGNORE_ERR, internalBuilderIgnoreErr);
+				try {
+					prefs.flush();
+				} catch (BackingStoreException e) {
+				}
+			}
 		}
 	}
 
@@ -1759,5 +1779,23 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 */
 	public boolean getInternalBuilderIgnoreErr(){
 		return internalBuilderIgnoreErr;
+	}
+	
+	private Preferences getPreferences(String name){
+		if(isTemporary)
+			return null;
+		
+		IProject project = (IProject)getOwner();
+		
+		if(project == null || !project.exists() || !project.isOpen())
+			return null;
+
+		Preferences prefs = new ProjectScope(project).getNode(ManagedBuilderCorePlugin.getUniqueIdentifier());
+		if(prefs != null){
+			prefs = prefs.node(getId());
+			if(prefs != null && name != null)
+				prefs = prefs.node(name);
+		}
+		return prefs;
 	}
 }

@@ -40,7 +40,6 @@ import org.osgi.service.prefs.Preferences;
 
 /**
  * This class allows specifying BuildObject-specific persisted properties
- * The properties are stored as project preferences for now
  *
  */
 public class PropertyManager {
@@ -64,7 +63,6 @@ public class PropertyManager {
 		Properties props = getProperties(cfg, bo);
 		if(props != null){
 			props.setProperty(prop, value);
-			serialize(cfg);
 		}
 	}
 
@@ -231,9 +229,8 @@ public class PropertyManager {
 	}
 	
 	protected Preferences getNode(IManagedProject mProject){
-		//TODO: should we store the data as the workspaces preferences?
-		return getProjNode(mProject);
-//		return getInstNode(mProject);
+//		return getProjNode(mProject);
+		return getInstNode(mProject);
 	}
 	
 	protected Preferences getProjNode(IManagedProject mProject){
@@ -342,7 +339,24 @@ public class PropertyManager {
 	public String getProperty(IBuilder builder, String key){
 		return getProperty(getConfiguration(builder), builder, key);
 	}
-	
+
+	public void clearProperties(IManagedProject mProject){
+		IConfiguration cfgs[] = mProject.getConfigurations();
+		for(int i = 0; i < cfgs.length; i++)
+			clearLoaddedData(cfgs[i]);
+		
+		Preferences prefs = getNode(mProject);
+		if(prefs != null){
+			try {
+				Preferences parent = prefs.parent();
+				prefs.removeNode();
+				if(parent != null)
+					parent.flush();
+			} catch (BackingStoreException e) {
+			}
+		}
+	}
+
 	public void clearProperties(IConfiguration cfg){
 		clearLoaddedData(cfg);
 		storeData(cfg, null);

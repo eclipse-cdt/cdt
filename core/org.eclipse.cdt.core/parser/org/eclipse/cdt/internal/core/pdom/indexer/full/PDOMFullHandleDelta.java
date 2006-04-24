@@ -11,8 +11,10 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -28,6 +30,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -43,7 +46,9 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 	private final ICElementDelta delta;
 	
 	// Map of filename, TU of files that need to be parsed.
-	private Map todo = new HashMap();
+	private Map changed = new HashMap();
+	private List added = new ArrayList();
+	private List removed = new ArrayList();
 	
 	public PDOMFullHandleDelta(PDOM pdom, ICElementDelta delta) {
 		super(pdom);
@@ -56,26 +61,46 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 		
 			processDelta(delta);
 			
-			if (!todo.isEmpty()) {
-				monitor.beginTask("Indexing", todo.size());
+			int count = changed.size() + added.size() + removed.size();
+
+			if (count > 0) {
+				monitor.beginTask("Indexing", count);
+					
+				Iterator i = changed.values().iterator();
+				while (i.hasNext()) {
+					ITranslationUnit tu = (ITranslationUnit)i.next();
+					monitor.subTask(tu.getElementName());
+					changeTU(tu);
+					monitor.worked(1);
+				}
 				
-				Iterator i = todo.values().iterator();
+				i = added.iterator();
 				while (i.hasNext()) {
 					ITranslationUnit tu = (ITranslationUnit)i.next();
 					monitor.subTask(tu.getElementName());
 					addTU(tu);
 					monitor.worked(1);
 				}
+				
+				i = removed.iterator();
+				while (i.hasNext()) {
+					ITranslationUnit tu = (ITranslationUnit)i.next();
+					monitor.subTask(tu.getElementName());
+					removeTU(tu);
+					monitor.worked(1);
+				}
+				
+				String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
+						+ "/debug/pdomtimings"); //$NON-NLS-1$
+				if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
+					System.out.println("PDOM Full Delta Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
 			}
-			
-			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
-					+ "/debug/pdomtimings"); //$NON-NLS-1$
-			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
-				System.out.println("PDOM Full Delta Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
-			
+		
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			return e.getStatus();
+		} catch (InterruptedException e) {
+			return Status.CANCEL_STATUS;
 		}
 	}
 
@@ -89,19 +114,31 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 			}
 		}
 		
-		if ((flags & ICElementDelta.F_CONTENT) != 0) {
-			ICElement element = delta.getElement();
-			switch (element.getElementType()) {
-			case ICElement.C_UNIT:
-				processTranslationUnit((ITranslationUnit)element);
+		ICElement element = delta.getElement();
+		switch (element.getElementType()) {
+		case ICElement.C_UNIT:
+			ITranslationUnit tu = (ITranslationUnit)element;
+			switch (delta.getKind()) {
+			case ICElementDelta.CHANGED:
+				if ((flags & ICElementDelta.F_CONTENT) != 0)
+					processTranslationUnit(tu);
+				break;
+			case ICElementDelta.ADDED:
+				if (!tu.isWorkingCopy())
+					added.add(tu);
+				break;
+			case ICElementDelta.REMOVED:
+				if (!tu.isWorkingCopy())
+					removed.add(tu);
 				break;
 			}
+			break;
 		}
 	}
 	
 	protected void processTranslationUnit(ITranslationUnit tu) throws CoreException {
-		String filename = tu.getUnderlyingResource().getLocation().toOSString();
-		PDOMFile pdomFile = pdom.getFile(filename);
+		IPath path = tu.getUnderlyingResource().getLocation();
+		PDOMFile pdomFile = pdom.getFile(path);
 		boolean found = false;
 		if (pdomFile != null) {
 			// Look for all source units in the included list,
@@ -112,12 +149,12 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 				for (int i = 0; i < includedBy.length; ++i) {
 					String incfilename = includedBy[i].getFileName();
 					if (CoreModel.isValidSourceUnitName(project, incfilename)) {
-						if (todo.get(incfilename) == null) {
+						if (changed.get(incfilename) == null) {
 							IFile[] rfiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(incfilename));
 							for (int j = 0; j < rfiles.length; ++j) {
 								if (rfiles[j].getProject().equals(project)) {
 									ITranslationUnit inctu = (ITranslationUnit)CoreModel.getDefault().create(rfiles[j]);
-									todo.put(incfilename, inctu);
+									changed.put(incfilename, inctu);
 									found = true;
 								}
 							}
@@ -127,28 +164,53 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 			}
 		}
 		if (!found)
-			todo.put(filename, tu);
+			changed.put(path.toOSString(), tu);
 	}
 	
-	protected void addTU(ITranslationUnit tu) throws CoreException {
+	protected void changeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
 		IASTTranslationUnit ast = parse(tu);
-		
-		// Remove the old symbols in the tu and all the headers
-		String filename = ((IFile)tu.getResource()).getLocation().toOSString();
-		PDOMFile file = pdom.getFile(filename);
+		if (ast == null)
+			return;
+
+		pdom.acquireWriteLock();
+
+		try {
+			// Remove the old symbols in the tu and all the headers
+			removeTU(tu);
+	
+			IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
+			for (int i = 0; i < includes.length; ++i) {
+				String incname = includes[i].getFileLocation().getFileName();
+				PDOMFile incfile = pdom.getFile(incname);
+				if (incfile != null)
+					incfile.clear();
+			}
+			
+			// Add the new symbols
+			pdom.addSymbols(tu.getLanguage(), ast);
+		} finally {
+			pdom.releaseWriteLock();
+		}
+	}
+
+	protected void addTU(ITranslationUnit tu) throws CoreException, InterruptedException {
+		IASTTranslationUnit ast = parse(tu);
+		if (ast == null)
+			return;
+
+		pdom.acquireWriteLock();
+		try {
+			pdom.addSymbols(tu.getLanguage(), ast);
+		} finally {
+			pdom.releaseWriteLock();
+		}
+	}
+	
+	protected void removeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
+		IPath path = ((IFile)tu.getResource()).getLocation();
+		PDOMFile file = pdom.getFile(path);
 		if (file != null)
 			file.clear();
-
-		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
-		for (int i = 0; i < includes.length; ++i) {
-			String incname = includes[i].getFileLocation().getFileName();
-			PDOMFile incfile = pdom.getFile(incname);
-			if (incfile != null)
-				incfile.clear();
-		}
-		
-		// Add the new symbols
-		pdom.addSymbols(tu.getLanguage(), ast);
 	}
-	
+
 }

@@ -178,6 +178,10 @@ public class PDOM extends PlatformObject
 		return record != 0 ? new PDOMFile(this, record) : null;
 	}
 	
+	public PDOMFile getFile(IPath path) throws CoreException {
+		return getFile(path.toOSString());
+	}
+	
 	public PDOMFile addFile(String filename) throws CoreException {
 		PDOMFile file = getFile(filename);
 		if (file == null) {

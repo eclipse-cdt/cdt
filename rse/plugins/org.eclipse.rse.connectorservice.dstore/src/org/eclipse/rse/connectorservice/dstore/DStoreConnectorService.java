@@ -614,7 +614,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 					}
 					if (launchMsg != null && launchMsg.equals(IDataStoreConstants.ATTEMPT_RECONNECT))
 					{
-						connect(monitor);
+						internalConnect(monitor);
 						return;
 					}
 				}
@@ -842,7 +842,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 						{
 							if (provider.importCertificates(certs, getHostName()))
 							{
-								connect(monitor);
+								internalConnect(monitor);
 								return;
 							}
 						}				
@@ -1047,7 +1047,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			{
 				if (provider.importCertificates(certs, getHostName()))
 				{
-					connect(monitor);
+					internalConnect(monitor);
 					return;
 				}
 				else

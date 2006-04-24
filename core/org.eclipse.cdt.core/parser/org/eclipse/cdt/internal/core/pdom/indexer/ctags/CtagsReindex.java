@@ -11,33 +11,24 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.ctags;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @author Doug Schaefer
  *
  */
-public class CtagsReindex extends Job {
+public class CtagsReindex extends CtagsIndexerJob {
 
-	private final CtagsIndexer indexer;
-	private final PDOM pdom;
-	
 	public CtagsReindex(CtagsIndexer indexer) {
-		super("ctags Indexer: " + ((PDOM)indexer.getPDOM()).getProject().getElementName());
-		this.indexer = indexer;
-		this.pdom = (PDOM)indexer.getPDOM();
-		setRule(CCorePlugin.getPDOMManager().getIndexerSchedulingRule());
+		super(indexer);
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
@@ -84,7 +75,7 @@ public class CtagsReindex extends Job {
 				if (monitor.isCanceled())
 					return Status.CANCEL_STATUS;
 				monitor.subTask(includes[i].getElementName());
-				indexer.runCtags(includes[i].getPath());
+				runCtags(includes[i].getPath());
 				monitor.worked(1);
 			}
 			
@@ -96,7 +87,7 @@ public class CtagsReindex extends Job {
 					if (monitor.isCanceled())
 						return Status.CANCEL_STATUS;
 					monitor.subTask(sourceRoot.getElementName());
-					indexer.runCtags(sourcePath);
+					runCtags(sourcePath);
 					monitor.worked(1);
 				}
 		    }

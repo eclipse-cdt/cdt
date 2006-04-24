@@ -46,51 +46,61 @@ public class ServerSSLProperties implements ISSLProperties
 		try 
 		{ 
 			ResourceBundle properties = ResourceBundle.getBundle("ssl");
-			_enableSSL = properties.getString(ENABLE_SSL).equals("true");
-			if (_enableSSL)
+			if (properties != null)
 			{
-				try
+				_enableSSL = properties.getString(ENABLE_SSL).equals("true");
+				if (_enableSSL)
 				{
-					_daemonKeyStorePath = properties.getString(DAEMON_KEYSTORE_FILE);
-					_daemonKeyStorePassword = properties.getString(DAEMON_KEYSTORE_PASSWORD);
-				}
-				catch (Exception e)
-				{					
-				}
-				try
-				{
-					_serverKeyStorePath = properties.getString(SERVER_KEYSTORE_FILE);
-					_serverKeyStorePassword = properties.getString(SERVER_KEYSTORE_PASSWORD);			
-				}
-				catch (Exception e)
-				{
+					try
+					{
+						_daemonKeyStorePath = properties.getString(DAEMON_KEYSTORE_FILE);
+						_daemonKeyStorePassword = properties.getString(DAEMON_KEYSTORE_PASSWORD);
+					}
+					catch (Exception e)
+					{					
+					}
+					try
+					{
+						_serverKeyStorePath = properties.getString(SERVER_KEYSTORE_FILE);
+						_serverKeyStorePassword = properties.getString(SERVER_KEYSTORE_PASSWORD);			
+					}
+					catch (Exception e)
+					{
+					}
+					
+					if (_daemonKeyStorePath == null && _serverKeyStorePath != null)
+					{
+						_daemonKeyStorePath = _serverKeyStorePath;
+						_daemonKeyStorePassword = _serverKeyStorePassword;
+					}
+					if (_serverKeyStorePath == null && _daemonKeyStorePath != null)
+					{
+						_serverKeyStorePath = _daemonKeyStorePath;
+						_serverKeyStorePassword = _daemonKeyStorePassword;
+					}
+					
 				}
 				
-				if (_daemonKeyStorePath == null && _serverKeyStorePath != null)
+				if (_enableSSL)
 				{
-					_daemonKeyStorePath = _serverKeyStorePath;
-					_daemonKeyStorePassword = _serverKeyStorePassword;
+					System.out.println("SSL Settings");
+					System.out.println("[daemon keystore:\t"+_daemonKeyStorePath+"]");
+					System.out.println("[daemon keystore pw:\t"+_daemonKeyStorePassword+"]");
+					System.out.println("[server keystore:\t"+_serverKeyStorePath+"]");
+					System.out.println("[server keystore pw:\t"+_serverKeyStorePassword+"]");					
 				}
-				if (_serverKeyStorePath == null && _daemonKeyStorePath != null)
-				{
-					_serverKeyStorePath = _daemonKeyStorePath;
-					_serverKeyStorePassword = _daemonKeyStorePassword;
-				}
-				
 			}
-			
-			if (_enableSSL)
+			else
 			{
-				System.out.println("SSL Settings");
-				System.out.println("[daemon keystore:\t"+_daemonKeyStorePath+"]");
-				System.out.println("[daemon keystore pw:\t"+_daemonKeyStorePassword+"]");
-				System.out.println("[server keystore:\t"+_serverKeyStorePath+"]");
-				System.out.println("[server keystore pw:\t"+_serverKeyStorePassword+"]");					
+				_enableSSL = false;
 			}
 		} 
 		catch (Exception e) 
 		{
-			e.printStackTrace();
+			// no ssl properties...set to disabled
+			_enableSSL = false;
+			
+			//e.printStackTrace();
 		}
 	}
 	

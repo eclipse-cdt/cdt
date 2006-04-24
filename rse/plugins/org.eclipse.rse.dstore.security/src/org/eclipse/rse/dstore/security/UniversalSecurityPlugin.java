@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 public class UniversalSecurityPlugin extends AbstractUIPlugin
@@ -73,7 +74,8 @@ public class UniversalSecurityPlugin extends AbstractUIPlugin
 
 	public static String getKeyStoreLocation() {
 		
-		return Platform.getPluginStateLocation(inst).append(KEYSTORE).toOSString();
+		Bundle bundle = Platform.getBundle(PLUGIN_ID);
+		return Platform.getStateLocation(bundle).append(KEYSTORE).toOSString();
 	}
 
 	public static String getKeyStorePassword()
@@ -84,7 +86,7 @@ public class UniversalSecurityPlugin extends AbstractUIPlugin
 	public static String getWorkspaceName(){
 		IPath workspace = Platform.getLocation();
 		int nr = workspace.segmentCount();
-		String workspaceName = workspaceName = workspace.segment(nr - 1);
+		String workspaceName = workspace.segment(nr - 1);
 		return workspaceName;		
 	}
 

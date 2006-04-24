@@ -110,6 +110,21 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		}
 		return _parent;
 	}
+	
+	public boolean isParentOf(IFileStore other) 
+	{
+		if (other instanceof RSEFileStoreRemoteFileWrapper)
+		{
+			RSEFileStoreRemoteFileWrapper otherWrapper = (RSEFileStoreRemoteFileWrapper)other;
+			RSEFileStoreRemoteFileWrapper parent = (RSEFileStoreRemoteFileWrapper)otherWrapper.getParent();
+			return _remoteFile == parent._remoteFile;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
 	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException 
 	{
 		if (_remoteFile.exists())

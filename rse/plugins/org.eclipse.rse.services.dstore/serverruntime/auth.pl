@@ -31,7 +31,7 @@ else
     $passwd=$passwdStruct[1];
     $encryptedPWD = crypt($pwdIN, $passwd);
     $classpath=$ENV{CLASSPATH};
-    $suOptions="-p";
+    $suOptions="-lp";
 
     if ($passwd eq $encryptedPWD)
     {
@@ -45,7 +45,7 @@ else
 			$suOptions="-";
 		}
 
-		system("su $suOptions $userIN -c 'java -cp $classpath -DA_PLUGIN_PATH=$pathIN org.eclipse.dstore.core.server.Server $portIN $timeoutIN $ticketIN'");
+		system("su $suOptions $userIN -c 'java -cp $classpath -DA_PLUGIN_PATH=$pathIN org.eclipse.dstore.core.server.Server $portIN $timeoutIN $ticketIN -Xshareclasses:name=RSE,verbose'");
 		1;
     }
     else

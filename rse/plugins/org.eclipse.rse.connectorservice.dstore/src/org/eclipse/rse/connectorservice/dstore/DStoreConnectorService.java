@@ -905,7 +905,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 					// Try to connect again.  This is a recursive call, but will only 
 					// call if the user presses OK on the password prompt dialog, otherwise
 					// it will continue and return
-					connect(monitor);
+					internalConnect(monitor);
 
 					// Since we got here we must be connected so skip error checking below
 					return;
@@ -1017,7 +1017,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				// Try to connect again.  This is a recursive call, but will only 
 				// call if the user presses OK on the password prompt dialog, otherwise
 				// it will continue and return
-				connect(monitor);
+				internalConnect(monitor);
 				
 				// we are connected from recursive so continue
 				return; 

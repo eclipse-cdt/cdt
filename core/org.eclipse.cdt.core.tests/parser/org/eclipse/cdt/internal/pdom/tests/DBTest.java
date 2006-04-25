@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
+import org.eclipse.cdt.internal.core.pdom.db.DBString;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -148,7 +149,7 @@ public class DBTest extends TestCase {
 			int record = new FindVisitor(db, name).findIn(btree);
 			assertTrue(record != 0);
 			assertEquals(i, db.getInt(record));
-			String rname = db.getString(record + Database.INT_SIZE);
+			DBString rname = db.getString(record + Database.INT_SIZE);
 			assertEquals(name, rname);
 		}
 	}

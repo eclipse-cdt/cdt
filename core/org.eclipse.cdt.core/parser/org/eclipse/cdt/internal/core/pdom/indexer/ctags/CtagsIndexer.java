@@ -12,6 +12,8 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.ctags;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.model.ICElementDelta;
@@ -38,7 +40,7 @@ public class CtagsIndexer implements IPDOMIndexer {
 	private String ctagsFileName = ""; //$NON-NLS-1$
 	
 	public void handleDelta(ICElementDelta delta) {
-		// TODO Auto-generated method stub
+		new CtagsHandleDelta(this,delta).schedule();
 	}
 
 	public void reindex() throws CoreException {
@@ -67,17 +69,55 @@ public class CtagsIndexer implements IPDOMIndexer {
 		if (prefs == null)
 			return;
 		
-		useCtagsOnPath = prefs.getBoolean(useCtagsOnPathId, getDefaultUseCtagsOnPath());
-		ctagsCommand = prefs.get(ctagsCommandId, getDefaultCtagsCommand());
-		useInternalCtagsFile = prefs.getBoolean(useInternalCtagsFileId, getDefaultUseInternalCtagsFile());
-		ctagsFileName = prefs.get(ctagsFileNameId, getDefaultCtagsFileName());
+		ctagsCommand = prefs.get(ctagsCommandId, null);
+		if (ctagsCommand != null) {
+			useCtagsOnPath = prefs.getBoolean(useCtagsOnPathId, getDefaultUseCtagsOnPath());
+			useInternalCtagsFile = prefs.getBoolean(useInternalCtagsFileId, getDefaultUseInternalCtagsFile());
+			ctagsFileName = prefs.get(ctagsFileNameId, getDefaultCtagsFileName());
+		} else {
+			// Not defined yet check in cdescriptor
+			try {
+				ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+				if (desc != null) {
+					ICExtensionReference[] cext = desc.get(CCorePlugin.INDEXER_UNIQ_ID);
+					if (cext.length > 0) {
+						for (int i = 0; i < cext.length; i++) {
+							String orig = cext[i].getExtensionData("ctagslocationtype"); //$NON-NLS-1$
+							useCtagsOnPath = orig != null
+								? !orig.equals("ctags_path_specified")
+								: getDefaultUseCtagsOnPath();
+							
+							orig = cext[i].getExtensionData("ctagslocation"); //$NON-NLS-1$
+							ctagsCommand = orig != null ? orig : getDefaultCtagsCommand();
+							
+							orig = cext[i].getExtensionData("ctagfiletype"); //$NON-NLS-1$
+							useInternalCtagsFile = orig != null
+								? !orig.equals("ctags_external") //$NON-NLS-1$
+								: getDefaultUseInternalCtagsFile();
+
+							orig = cext[i].getExtensionData("ctagfilelocation"); //$NON-NLS-1$
+							ctagsFileName = orig != null ? orig : getDefaultCtagsFileName();
+							
+						}
+					}
+				}
+			} catch (CoreException e) {
+			}
+			
+			if (ctagsCommand == null) {
+				useCtagsOnPath = getDefaultUseCtagsOnPath();
+				ctagsCommand = getDefaultCtagsCommand();
+				useInternalCtagsFile = getDefaultUseInternalCtagsFile();
+				ctagsFileName = getDefaultCtagsFileName();
+			}
+		}
 	}
 
 	public void setPreferences(
 			boolean useCtagsOnPath,
 			String ctagsCommand,
 			boolean useInternalCtagsFile,
-			String ctagsFileName) {
+			String ctagsFileName) throws CoreException {
 		
 		IProject project = pdom.getProject().getProject();
     	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
@@ -115,6 +155,7 @@ public class CtagsIndexer implements IPDOMIndexer {
 			} catch (BackingStoreException e) {
 	    		CCorePlugin.log(e);
 			}
+			reindex();
 		}
 		
 	}

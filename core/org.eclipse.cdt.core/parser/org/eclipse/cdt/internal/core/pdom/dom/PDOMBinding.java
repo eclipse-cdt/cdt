@@ -144,7 +144,7 @@ public abstract class PDOMBinding extends PDOMNode implements IBinding {
 	
 	public String getName() {
 		try {
-			return super.getName();
+			return super.getDBName().getString();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

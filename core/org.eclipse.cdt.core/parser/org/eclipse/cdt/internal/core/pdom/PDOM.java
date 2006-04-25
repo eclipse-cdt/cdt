@@ -11,9 +11,12 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
@@ -70,7 +73,9 @@ public class PDOM extends PlatformObject
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
 	
+	// Local caches
 	private BTree fileIndex;
+	private Map linkageCache = new HashMap();
 
 	private static final QualifiedName dbNameProperty
 		= new QualifiedName(CCorePlugin.PLUGIN_ID, "dbName"); //$NON-NLS-1$
@@ -95,6 +100,13 @@ public class PDOM extends PlatformObject
 		// TODO Conversion might be a nicer story down the road
 		if (db.getVersion() != VERSION) {
 			indexer.reindex();
+		} else {
+			// populate the linkage cache
+			PDOMLinkage linkage = getFirstLinkage();
+			while (linkage != null) {
+				linkageCache.put(linkage.getLanguage().getId(), linkage);
+				linkage = linkage.getNextLinkage();
+			}
 		}
 	}
 
@@ -243,6 +255,7 @@ public class PDOM extends PlatformObject
 		db.clear();
 		db.setVersion(VERSION);
 		fileIndex = null;
+		linkageCache.clear();
 	}
 
 	public boolean isEmpty() throws CoreException {
@@ -310,11 +323,16 @@ public class PDOM extends PlatformObject
 	}
 	
 	public PDOMLinkage getLinkage(ILanguage language) throws CoreException {
+		PDOMLinkage linkage = (PDOMLinkage)linkageCache.get(language.getId());
+		if (linkage != null)
+			return linkage;
+		
+		// Need to create it
 		IPDOMLinkageFactory factory = (IPDOMLinkageFactory)language.getAdapter(IPDOMLinkageFactory.class);
 		String id = language.getId();
 		int linkrec = db.getInt(LINKAGES);
 		while (linkrec != 0) {
-			if (id.equals(PDOMLinkage.getId(this, linkrec)))
+			if (PDOMLinkage.getId(this, linkrec).equals(id))
 				return factory.getLinkage(this, linkrec);
 			else
 				linkrec = PDOMLinkage.getNextLinkageRecord(this, linkrec);
@@ -327,7 +345,16 @@ public class PDOM extends PlatformObject
 		if (record == 0)
 			return null;
 		
-		String id = PDOMLinkage.getId(this, record);
+		// First check the cache. We do a linear search since there will be very few linkages
+		// in a given database.
+		Iterator i = linkageCache.values().iterator();
+		while (i.hasNext()) {
+			PDOMLinkage linkage = (PDOMLinkage)i.next();
+			if (linkage.getRecord() == record)
+				return linkage;
+		}
+		
+		String id = PDOMLinkage.getId(this, record).getString();
 		ILanguage language = LanguageManager.getInstance().getLanguage(id);
 		return getLinkage(language);
 	}
@@ -336,9 +363,14 @@ public class PDOM extends PlatformObject
 		return getLinkage(db.getInt(LINKAGES));
 	}
 	
+	public PDOMLinkage[] getLinkages() {
+		Collection values = linkageCache.values();
+		return (PDOMLinkage[])values.toArray(new PDOMLinkage[values.size()]);
+	}
 	public void insertLinkage(PDOMLinkage linkage) throws CoreException {
 		linkage.setNext(db.getInt(LINKAGES));
 		db.putInt(LINKAGES, linkage.getRecord());
+		linkageCache.put(linkage.getLanguage().getId(), linkage);
 	}
 	
 	public PDOMBinding getBinding(int record) throws CoreException {

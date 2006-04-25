@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -92,6 +91,8 @@ public class CtagsHandleDelta extends CtagsIndexerJob {
 			return e.getStatus();
 		} catch (InterruptedException e) {
 			return Status.CANCEL_STATUS;
+		} finally {
+			pdom.fireChange();
 		}
 	}
 

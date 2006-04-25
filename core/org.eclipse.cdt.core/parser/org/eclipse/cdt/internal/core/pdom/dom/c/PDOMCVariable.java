@@ -13,10 +13,8 @@ package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVariable;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -31,8 +29,10 @@ public class PDOMCVariable extends PDOMBinding implements IVariable {
 
 	public PDOMCVariable(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name, PDOMCLinkage.CVARIABLE);
-		CVariable binding = (CVariable)name.getBinding();
-		IType type = binding.getType();
+		IVariable binding = (IVariable)name.getBinding();
+		if (binding != null) {
+			IType type = binding.getType();
+		}
 	}
 
 	public PDOMCVariable(PDOM pdom, int record) {

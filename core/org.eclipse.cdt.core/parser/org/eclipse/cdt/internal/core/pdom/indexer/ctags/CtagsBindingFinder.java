@@ -36,7 +36,7 @@ public class CtagsBindingFinder implements IPDOMVisitor {
 	
 	public boolean visit(IPDOMNode node) throws CoreException {
 		PDOMBinding binding = (PDOMBinding)node;
-		if (binding.getName().equals(name)) {
+		if (name.equals(binding.getDBName())) {
 			int type = binding.getBindingType();
 			for (int i = 0; i < types.length; ++i) {
 				if (type == types[i]) {

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.DBString;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
@@ -287,7 +288,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 	public String getFileName() {
 		try {
 			PDOMFile file = getFile();
-			return file != null ? file.getFileName() : null;
+			return file != null ? file.getFileName().getString() : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

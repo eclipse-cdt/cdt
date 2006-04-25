@@ -11,18 +11,19 @@
 package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.pdom.indexer.ctags.CtagsIndexer;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.index.AbstractIndexerPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -39,16 +40,15 @@ import org.eclipse.swt.widgets.Text;
  */
 public class CTagsIndexerBlock extends AbstractIndexerPage {
 	
+	protected CtagsIndexer ctagsIndexer;
+	
 	protected boolean internalTagsFile = true;
-    protected boolean externalTagsFile = false;
     protected Button internalCTagsFile;
     protected Button externalCTagsFile;
-    protected Button indexIncludePaths;
 	protected Button browseButton;
 	protected Text cTagsFile;
 	
 	protected boolean useDefaultCTags = true;
-    protected boolean useSpecifiedCTagsExecutable = false;
 	protected Button useCTagsPath;
 	protected Button useCTagsExecutable;
 	protected Button browseButtonCTagsExec;
@@ -60,120 +60,50 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 	public final static String PREF_CTAGS_LOCATION_TYPE = CUIPlugin.PLUGIN_ID + ".ctagslocationtype"; //$NON-NLS-1$
 	public final static String PREF_CTAGS_LOCATION = CUIPlugin.PLUGIN_ID + ".ctagslocation"; //$NON-NLS-1$
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.ui.index.AbstractIndexerPage#initialize(org.eclipse.core.resources.IProject)
-     */
     public void initialize(ICProject project) {
-		
 		this.currentProject = project;
 		try {
-			loadPersistedValues(project.getProject());
+			loadPersistedValues(project);
 		} catch (CoreException e) {}
-		
     }
 
 	public void performApply(IProgressMonitor monitor) throws CoreException {
-		
-			if (monitor == null) {
-				monitor = new NullProgressMonitor();
-			}
-
-			monitor.beginTask(CUIMessages.getString("IndexerOptiosn.task.savingAttributes "), 1);  //$NON-NLS-1$
-			ICOptionContainer container = getContainer();
-			IProject proj = null;
-	        String internalExternalCTagsString = ""; //internalTagsFile ? CTagsIndexer.CTAGS_INTERNAL  : CTagsIndexer.CTAGS_EXTERNAL;
-			String cTagsFileLocation = ""; //$NON-NLS-1$
-			if (!internalTagsFile)
-				cTagsFileLocation = cTagsFile.getText();
-			
-			String indexIncludeFiles = new Boolean(indexIncludePaths.getSelection()).toString();
-			
-			String cTagsLocationType = ""; //useDefaultCTags ? CTagsIndexer.CTAGS_PATH_DEFAULT : CTagsIndexer.CTAGS_PATH_SPECIFIED;
-			String cTagsLocation = ""; //$NON-NLS-1$
-			if (!useDefaultCTags)
-				cTagsLocation=cTagsExecutable.getText();
-				
-			//if external has been chosen, ensure that there is a cTagsFileLocation selected; otherwise default
-			//to internal file
-//			if (internalExternalCTagsString.equals(CTagsIndexer.CTAGS_EXTERNAL) && cTagsFileLocation.equals("")) //$NON-NLS-1$
-//				internalExternalCTagsString=CTagsIndexer.CTAGS_INTERNAL;
-			
-			//if an external CPaths has been selected but no path has been provided, switch back to default setting
-//			if (cTagsLocationType.equals(CTagsIndexer.CTAGS_PATH_SPECIFIED) && cTagsLocation.equals("")) //$NON-NLS-1$
-//				cTagsLocationType=CTagsIndexer.CTAGS_PATH_DEFAULT;
-			
-			if (container != null){
-				proj = container.getProject();
-			}
-			else{
-				proj = currentProject.getProject();
-			}
-			
-			if (proj != null) {
-				ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj, false);
-				ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
-				if (cext.length > 0) {
-					for (int i = 0; i < cext.length; i++) {
-						String orig = cext[i].getExtensionData("ctagfiletype"); //$NON-NLS-1$
-						if (orig == null || !orig.equals(internalExternalCTagsString)) {
-							cext[i].setExtensionData("ctagfiletype", internalExternalCTagsString); //$NON-NLS-1$
-						}
-						orig = cext[i].getExtensionData("ctagfilelocation"); //$NON-NLS-1$
-						if (orig == null || !orig.equals(cTagsFileLocation)) {
-							cext[i].setExtensionData("ctagfilelocation", cTagsFileLocation); //$NON-NLS-1$
-						}
-						orig = cext[i].getExtensionData("ctagsindexincludes"); //$NON-NLS-1$
-						if (orig == null || !orig.equals(indexIncludeFiles)) {
-							cext[i].setExtensionData("ctagsindexincludes", indexIncludeFiles); //$NON-NLS-1$
-							if (indexIncludeFiles.equals( "true")){ //$NON-NLS-1$
-//								CCorePlugin.getDefault().getCoreModel().getIndexManager().addResource(proj,proj);
-							}
-						}
-						orig = cext[i].getExtensionData("ctagslocationtype"); //$NON-NLS-1$
-						if (orig == null || !orig.equals(cTagsLocationType)) {
-							cext[i].setExtensionData("ctagslocationtype", cTagsLocationType); //$NON-NLS-1$
-						}
-						orig = cext[i].getExtensionData("ctagslocation"); //$NON-NLS-1$
-						if (orig == null || !orig.equals(cTagsLocation)) {
-							cext[i].setExtensionData("ctagslocation", cTagsLocation); //$NON-NLS-1$
-						}
-					}
-				}
-			} else {
-				if (prefStore != null) {
-					prefStore.setValue(PREF_INTOREXT_CTAGS, internalExternalCTagsString);
-					prefStore.setValue(PREF_CTAGS_FILE_LOCATION_CTAGS,cTagsFileLocation);
-					prefStore.setValue(PREF_CTAGS_INDEXINCLUDEFILES,indexIncludeFiles);
-					prefStore.setValue(PREF_CTAGS_LOCATION_TYPE,cTagsLocationType);
-					prefStore.setValue(PREF_CTAGS_LOCATION,cTagsLocation);
-				}
-			}
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
 		}
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
-     */
-    public void performDefaults() {
+
+		monitor.beginTask(CUIMessages.getString("IndexerOptiosn.task.savingAttributes "), 1);  //$NON-NLS-1$
+		if (ctagsIndexer != null) {
+			ctagsIndexer.setPreferences(
+					useDefaultCTags,
+					cTagsExecutable.getText(),
+					internalTagsFile,
+					cTagsFile.getText());
+		} else {
+			CtagsIndexer.setDefaultPreferences(
+					useDefaultCTags,
+					cTagsExecutable.getText(),
+					internalTagsFile,
+					cTagsFile.getText());
+		}
+	}
+
+	public void performDefaults() {
     	//ctag file options
 		internalTagsFile=true;
-		externalTagsFile=false;
 		internalCTagsFile.setSelection(true);
 		externalCTagsFile.setSelection(false);
 		cTagsFile.setText(""); //$NON-NLS-1$
 		browseButton.setEnabled(false);
 		//ctag path options
 		useDefaultCTags=true;
-		useSpecifiedCTagsExecutable=false;
 		useCTagsPath.setSelection(true);
 		useCTagsExecutable.setSelection(false);
 		cTagsExecutable.setText(""); //$NON-NLS-1$
 		browseButtonCTagsExec.setEnabled(false);
-		//index include paths
-		indexIncludePaths.setSelection(false);
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
-    public void createControl(Composite parent) {
+
+	public void createControl(Composite parent) {
         Composite page = ControlFactory.createComposite(parent, 1);	
 		
         Group cTagsExecutableGroup = ControlFactory.createGroup(page,CUIMessages.getString("CTagsIndexerBlock.ctagsLocation"),3); //$NON-NLS-1$
@@ -184,13 +114,8 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
     	SelectionListener cTagsListener =  new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {				
 				useDefaultCTags  = useCTagsPath.getSelection();
-				useSpecifiedCTagsExecutable = useCTagsExecutable.getSelection();
-				
 				if (useDefaultCTags){
-//					setButtonState(CTagsIndexer.CTAGS_PATH_DEFAULT);
-				}
-				if (useSpecifiedCTagsExecutable){
-//					setButtonState(CTagsIndexer.CTAGS_PATH_SPECIFIED);
+					setCommandState();
 				}
 			}
 		};
@@ -223,15 +148,6 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
         });
         //
 		
-        Group includeGroup = ControlFactory.createGroup(page,CUIMessages.getString("CTagsIndexerBlock.includeGroup"),1); //$NON-NLS-1$
-        GridData gd2 = (GridData) includeGroup.getLayoutData();
-        gd2.grabExcessHorizontalSpace = true;
-        gd2.horizontalAlignment = GridData.FILL;
-       
-        indexIncludePaths = ControlFactory.createCheckBox(includeGroup,CUIMessages.getString("CTagsIndexerBlock.indexIncludes"));//$NON-NLS-1$ //$NON-NLS-2$
-		((GridData)indexIncludePaths.getLayoutData()).horizontalSpan =1;
-		((GridData)indexIncludePaths.getLayoutData()).grabExcessHorizontalSpace = true;
-    
 		Group group = ControlFactory.createGroup(page, CUIMessages.getString("CTagsIndexerBlock.blockName"),3); //$NON-NLS-1$
         
         GridData gd = (GridData) group.getLayoutData();
@@ -242,13 +158,8 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 		SelectionListener cListener =  new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {				
 				internalTagsFile = internalCTagsFile.getSelection();
-				externalTagsFile = externalCTagsFile.getSelection();
-				
-				if (externalTagsFile){
-//					setButtonState(CTagsIndexer.CTAGS_EXTERNAL);
-				}
 				if (internalTagsFile){
-//					setButtonState(CTagsIndexer.CTAGS_INTERNAL);
+					setFilenameState();
 				}
 			}
 		};
@@ -294,83 +205,41 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
         return fileName;
     }
     
-	public void loadPersistedValues(IProject project) throws CoreException {
+	public void loadPersistedValues(ICProject project) throws CoreException {
+		IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getPDOM(project).getIndexer();
+		if (!(indexer instanceof CtagsIndexer))
+			throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "Wrong indexer", null));
+		ctagsIndexer = (CtagsIndexer)indexer;
+
+		useDefaultCTags = ctagsIndexer.useCtagsOnPath();
+		cTagsExecutable.setText(ctagsIndexer.getCtagsCommand());
+		setCommandState();
 		
-		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
-		ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
-		if (cext.length > 0) {
-			for (int i = 0; i < cext.length; i++) {
-				String orig = cext[i].getExtensionData("ctagfiletype"); //$NON-NLS-1$
-				if (orig != null){
-					setButtonState(orig);
-				}
-
-				orig = cext[i].getExtensionData("ctagfilelocation"); //$NON-NLS-1$
-				if (orig != null){
-					cTagsFile.setText(orig);
-				}
-				
-				orig = cext[i].getExtensionData("ctagsindexincludes"); //$NON-NLS-1$
-				if (orig != null){
-					if (new Boolean(orig).booleanValue()){
-						indexIncludePaths.setSelection(true);
-					} else {
-						indexIncludePaths.setSelection(false);
-					}
-				}
-				
-				orig = cext[i].getExtensionData("ctagslocationtype"); //$NON-NLS-1$
-				if (orig != null){
-					setButtonState(orig);
-				}
-				
-				orig = cext[i].getExtensionData("ctagslocation"); //$NON-NLS-1$
-				if (orig != null){
-					cTagsExecutable.setText(orig);
-				}
-			}
-		}
-	
+		internalTagsFile = ctagsIndexer.useInternalCtagsFile();
+		cTagsFile.setText(ctagsIndexer.getCtagsFileName());
+		setFilenameState();
 	}
 	
-	private void setButtonState(String orig){
-//		if (orig.equals(CTagsIndexer.CTAGS_INTERNAL)){ 
-//			internalTagsFile=true;
-//			externalTagsFile=false;
-//			internalCTagsFile.setSelection(true);
-//			externalCTagsFile.setSelection(false);
-//			browseButton.setEnabled(false);
-//		} else if (orig.equals(CTagsIndexer.CTAGS_EXTERNAL)){
-//			externalTagsFile=true;
-//			internalTagsFile=false;
-//			externalCTagsFile.setSelection(true);
-//			internalCTagsFile.setSelection(false);
-//			browseButton.setEnabled(true);
-//		} else if(orig.equals(CTagsIndexer.CTAGS_PATH_DEFAULT)){
-//			useDefaultCTags=true;
-//			useSpecifiedCTagsExecutable=false;
-//			useCTagsPath.setSelection(true);
-//			useCTagsExecutable.setSelection(false);
-//			browseButtonCTagsExec.setEnabled(false);
-//		} else if(orig.equals(CTagsIndexer.CTAGS_PATH_SPECIFIED)){
-//			useDefaultCTags=false;
-//			useSpecifiedCTagsExecutable=true;
-//			useCTagsPath.setSelection(false);
-//			useCTagsExecutable.setSelection(true);
-//			browseButtonCTagsExec.setEnabled(true);
-//		}
+	private void setCommandState() {
+		useCTagsPath.setSelection(useDefaultCTags);
+		useCTagsExecutable.setSelection(!useDefaultCTags);
+		browseButtonCTagsExec.setEnabled(!useDefaultCTags);
 	}
-
+	
+	private void setFilenameState() {
+		internalCTagsFile.setSelection(internalTagsFile);
+		externalCTagsFile.setSelection(!internalTagsFile);
+		browseButton.setEnabled(!internalTagsFile);
+	}
+	
 	public void loadPreferences() {
-		String indexerId=prefStore.getString(PREF_INTOREXT_CTAGS);
-		if (!indexerId.equals("")) { //$NON-NLS-1$
-		  setButtonState(indexerId);
-		}
+		useDefaultCTags = CtagsIndexer.getDefaultUseCtagsOnPath();
+		cTagsExecutable.setText(CtagsIndexer.getDefaultCtagsCommand());
+		setCommandState();
 		
-		indexerId=prefStore.getString(PREF_CTAGS_FILE_LOCATION_CTAGS);
-		if (!indexerId.equals("")) { //$NON-NLS-1$
-			cTagsFile.setText(indexerId);
-		}
+		internalTagsFile = CtagsIndexer.getDefaultUseInternalCtagsFile();
+		cTagsFile.setText(CtagsIndexer.getDefaultCtagsFileName());
+		setFilenameState();
 	}
 
 	public void removePreferences() {

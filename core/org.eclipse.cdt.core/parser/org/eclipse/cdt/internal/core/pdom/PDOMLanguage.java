@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.pdom;
 
+import org.eclipse.cdt.internal.core.pdom.db.DBString;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
@@ -49,7 +50,7 @@ public class PDOMLanguage {
 		return pdom.getDB().getChar(record + ID);
 	}
 	
-	public String getName() throws CoreException {
+	public DBString getName() throws CoreException {
 		return pdom.getDB().getString(record + NAME);
 	}
 	

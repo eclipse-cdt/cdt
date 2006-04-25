@@ -297,9 +297,8 @@ public class Database {
 		return record;
 	}
 	
-	public String getString(int offset) throws CoreException {
-		Chunk chunk = getChunk(offset);
-		return chunk.getString(offset);
+	public DBString getString(int offset) throws CoreException {
+		return new DBString(this, offset);
 	}
 	
 	public int getNumChunks() {

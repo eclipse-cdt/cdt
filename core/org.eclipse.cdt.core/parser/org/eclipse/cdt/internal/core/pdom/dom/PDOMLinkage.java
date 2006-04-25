@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
+import org.eclipse.cdt.internal.core.pdom.db.DBString;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.core.runtime.CoreException;
@@ -87,7 +88,7 @@ public abstract class PDOMLinkage extends PDOMNode {
 		return RECORD_SIZE;
 	}
 
-	public static String getId(PDOM pdom, int record) throws CoreException {
+	public static DBString getId(PDOM pdom, int record) throws CoreException {
 		Database db = pdom.getDB();
 		int namerec = db.getInt(record + ID_OFFSET);
 		return db.getString(namerec);

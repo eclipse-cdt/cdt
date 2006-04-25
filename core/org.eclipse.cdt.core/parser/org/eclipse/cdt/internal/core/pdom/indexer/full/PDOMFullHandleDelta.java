@@ -147,7 +147,7 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 			if (includedBy.length > 0) {
 				IProject project = tu.getCProject().getProject();
 				for (int i = 0; i < includedBy.length; ++i) {
-					String incfilename = includedBy[i].getFileName();
+					String incfilename = includedBy[i].getFileName().getString();
 					if (CoreModel.isValidSourceUnitName(project, incfilename)) {
 						if (changed.get(incfilename) == null) {
 							IFile[] rfiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(incfilename));

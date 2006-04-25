@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPFunction;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPVariable;
 import org.eclipse.core.runtime.CoreException;
@@ -58,6 +59,8 @@ public class CtagsCPPName implements IASTName, IASTFileLocation {
 	private final static int K_UNION = 11;
 	private final static int K_VARIABLE = 12;
 	private final static int K_EXTERNALVAR = 13;
+	
+	private PDOMBinding binding;
 
 	private final static String[] kinds = { // Order must match value of enum above
 			null, // unknown kinds
@@ -100,7 +103,7 @@ public class CtagsCPPName implements IASTName, IASTFileLocation {
     }
     
 	public IBinding getBinding() {
-		throw new PDOMNotImplementedError();
+		return binding;
 	}
 
 	public boolean isDeclaration() {
@@ -121,6 +124,8 @@ public class CtagsCPPName implements IASTName, IASTFileLocation {
 		switch (kind) {
 		case K_VARIABLE:
 			return new PDOMCPPVariable(linkage.getPDOM(), (PDOMNode)scope, this);
+		case K_FUNCTION:
+			return new PDOMCPPFunction(linkage.getPDOM(), (PDOMNode)scope, this);
 		default:
 			return null;
 		}
@@ -134,6 +139,9 @@ public class CtagsCPPName implements IASTName, IASTFileLocation {
 			case K_VARIABLE:
 				types = new int[] { PDOMCPPLinkage.CPPVARIABLE };
 				break;
+			case K_FUNCTION:
+				types = new int[] { PDOMCPPLinkage.CPPFUNCTION };
+				break;
 			default:
 				return null;
 			}
@@ -142,12 +150,13 @@ public class CtagsCPPName implements IASTName, IASTFileLocation {
 			scope.accept(finder);
 			PDOMBinding[] bindings = finder.getBindings();
 			if (bindings.length == 0)
-				return makeNewBinding(scope);
+				binding = makeNewBinding(scope);
 			else if (bindings.length == 1)
-				return bindings[0];
+				binding = bindings[0];
 			else
 				// TODO resolve overloads
-				return bindings[0];
+				binding = bindings[0];
+			return binding;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

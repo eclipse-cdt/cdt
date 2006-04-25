@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.ctags;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -46,6 +47,10 @@ public abstract class CtagsIndexerJob extends Job {
 	// Indexing functions
 	void runCtags(IPath sourcePath) {
 		String ctagsFileName = indexer.getResolvedCtagsFileName();
+		File ctagsFile = new File(ctagsFileName);
+		if (ctagsFile.exists())
+			ctagsFile.delete();
+		
     	String[] cmd = new String[] {
     			indexer.getResolvedCtagsCommand(),
     			"--excmd=number", //$NON-NLS-1$

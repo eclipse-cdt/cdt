@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.core.pdom.indexer.ctags;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -21,12 +23,13 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCFunction;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCVariable;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -40,6 +43,7 @@ public class CtagsCName implements IASTName, IASTFileLocation {
 	private final int lineNum;
 	private final String elementName;
 	private final Map fields;
+	private PDOMBinding binding;
 	private int kind; // Enum from below
 	
 	private final static int K_UNKNOWN = 0;
@@ -99,7 +103,7 @@ public class CtagsCName implements IASTName, IASTFileLocation {
     }
     
 	public IBinding getBinding() {
-		throw new PDOMNotImplementedError();
+		return binding;
 	}
 
 	public boolean isDeclaration() {
@@ -107,7 +111,8 @@ public class CtagsCName implements IASTName, IASTFileLocation {
 	}
 
 	public boolean isDefinition() {
-		throw new PDOMNotImplementedError();
+		// TODO base on kind
+		return true;
 	}
 
 	public boolean isReference() {
@@ -115,9 +120,45 @@ public class CtagsCName implements IASTName, IASTFileLocation {
 		return false;
 	}
 
-	public IBinding resolveBinding() {
+	private PDOMBinding makeNewBinding(IPDOMNode scope) throws CoreException {
 		switch (kind) {
+		case K_VARIABLE:
+			return new PDOMCVariable(linkage.getPDOM(), (PDOMNode)scope, this);
+		case K_FUNCTION:
+			return new PDOMCFunction(linkage.getPDOM(), (PDOMNode)scope, this);
 		default:
+			return null;
+		}
+	}
+	
+	public IBinding resolveBinding() {
+		try {
+			IPDOMNode scope = linkage;
+			int[] types = null;
+			switch (kind) {
+			case K_VARIABLE:
+				types = new int[] { PDOMCLinkage.CVARIABLE };
+				break;
+			case K_FUNCTION:
+				types = new int[] { PDOMCLinkage.CFUNCTION };
+				break;
+			default:
+				return null;
+			}
+			
+			CtagsBindingFinder finder = new CtagsBindingFinder(elementName, types);
+			scope.accept(finder);
+			PDOMBinding[] bindings = finder.getBindings();
+			if (bindings.length == 0)
+				binding = makeNewBinding(scope);
+			else if (bindings.length == 1)
+				binding = bindings[0];
+			else
+				// TODO resolve overloads
+				binding = bindings[0];
+			return binding;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 			return null;
 		}
 	}

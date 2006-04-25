@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.DBString;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -89,7 +90,7 @@ public abstract class PDOMNode implements IPDOMNode{
 		return pdom.getLinkage(linkagerec);
 	}
 	
-	public String getName() throws CoreException {
+	public DBString getDBName() throws CoreException {
 		Database db = pdom.getDB();
 		int namerec = db.getInt(record + NAME_OFFSET);
 		return db.getString(namerec);

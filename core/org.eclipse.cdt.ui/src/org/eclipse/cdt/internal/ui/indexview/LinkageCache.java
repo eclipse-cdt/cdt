@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.indexview;
 
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.DBString;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -82,7 +83,7 @@ public class LinkageCache {
 		return pdom.getBinding(cache[index]);
 	}
 	
-	public String getName() throws CoreException {
-		return linkage.getName();
+	public DBString getName() throws CoreException {
+		return linkage.getDBName();
 	}
 }

@@ -60,7 +60,7 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 		}
 	};
 	
-	public IPDOM getPDOM(ICProject project) {
+	public synchronized IPDOM getPDOM(ICProject project) {
 		try {
 			IProject rproject = project.getProject();
 			IPDOM pdom = (IPDOM)rproject.getSessionProperty(pdomProperty);
@@ -150,19 +150,21 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     	if (indexerId == null) {
     		// See if it is in the ICDescriptor
     		try {
-    			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project.getProject(), true);
-    			ICExtensionReference[] ref = desc.get(CCorePlugin.INDEXER_UNIQ_ID);
-    			if (ref != null && ref.length > 0) {
-    				indexerId = ref[0].getID();
-    			}
-    			if (indexerId != null) {
-    				// Make sure it is a valid indexer
-    		    	IExtension indexerExt = Platform.getExtensionRegistry()
-    	    			.getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);
-    		    	if (indexerExt == null) {
-    		    		// It is not, forget about it.
-    		    		indexerId = null;
-    		    	}
+    			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project.getProject(), false);
+    			if (desc != null) {
+	    			ICExtensionReference[] ref = desc.get(CCorePlugin.INDEXER_UNIQ_ID);
+	    			if (ref != null && ref.length > 0) {
+	    				indexerId = ref[0].getID();
+	    			}
+	    			if (indexerId != null) {
+	    				// Make sure it is a valid indexer
+	    		    	IExtension indexerExt = Platform.getExtensionRegistry()
+	    	    			.getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);
+	    		    	if (indexerExt == null) {
+	    		    		// It is not, forget about it.
+	    		    		indexerId = null;
+	    		    	}
+	    			}
     			}
     		} catch (CoreException e) {
     		}

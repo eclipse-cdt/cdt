@@ -90,10 +90,6 @@ public class Chunk {
 			buffer.putChar(value.charAt(i));
 	}
 	
-	public String getString(int offset) {
-		return new String(getChars(offset));
-	}
-
 	Chunk getNextChunk() {
 		return nextChunk;
 	}

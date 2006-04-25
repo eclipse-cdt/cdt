@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.ui.CUIMessages;
@@ -338,7 +339,9 @@ public class IndexerBlock extends AbstractCOptionPage {
 		
 			if ( project != null) {
 				ICProject cproject = CoreModel.getDefault().create(project);
-				CCorePlugin.getPDOMManager().setIndexerId(cproject, indexerID);
+				IPDOMManager manager = CCorePlugin.getPDOMManager();
+				if (!indexerID.equals(manager.getIndexerId(cproject)))
+					manager.setIndexerId(cproject, indexerID);
 				if (currentPage != null && currentPage.getControl() != null) {
 					currentPage.performApply(new SubProgressMonitor(monitor, 1));
 				}

@@ -219,12 +219,12 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 			try {
 				if (element instanceof ICProject) {
 					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM((ICProject)element);
-					PDOMLinkage firstLinkage = pdom.getFirstLinkage();
-					if (firstLinkage == null)
+					PDOMLinkage[] linkages = pdom.getLinkages();
+					if (linkages.length == 0)
 						return false;
-					else if (firstLinkage.getNextLinkage() == null)
+					else if (linkages.length == 1)
 						// Skipping linkages if only one
-						return hasChildren(firstLinkage);
+						return hasChildren(linkages[0]);
 					else
 						return true;
 				} else if (element instanceof IPDOMNode) {
@@ -270,13 +270,13 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 				return "null :(";
 			} else if (element instanceof PDOMNode) {
 				try {
-					return ((PDOMNode)element).getName();
+					return ((PDOMNode)element).getDBName().getString();
 				} catch (CoreException e) {
 					return e.getMessage();
 				}
 			} else if (element instanceof LinkageCache) {
 				try {
-					return ((LinkageCache)element).getName();
+					return ((LinkageCache)element).getName().getString();
 				} catch (CoreException e) {
 					return e.getMessage();
 				}

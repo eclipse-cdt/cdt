@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.DBString;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -94,7 +95,7 @@ public class PDOMFile {
 		return record;
 	}
 	
-	public String getFileName() throws CoreException {
+	public DBString getFileName() throws CoreException {
 		return pdom.getDB().getString(record + FILE_NAME);
 	}
 	
@@ -178,7 +179,7 @@ public class PDOMFile {
 		LinkedList todo = new LinkedList();
 		
 		// Add me in to make sure we don't get caught in a circular include
-		String myFileName = getFileName();
+		DBString myFileName = getFileName();
 		files.put(myFileName, this);
 		
 		todo.addLast(this);
@@ -187,7 +188,7 @@ public class PDOMFile {
 			PDOMInclude includedBy = getFirstIncludedBy();
 			while (includedBy != null) {
 				PDOMFile incFile = includedBy.getIncludedBy();
-				String incFileName = incFile.getFileName();
+				DBString incFileName = incFile.getFileName();
 				if (files.get(incFileName) == null) {
 					files.put(incFileName, incFile);
 					todo.addLast(incFile);

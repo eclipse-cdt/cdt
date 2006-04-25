@@ -482,7 +482,7 @@
    <extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxSource"
-       file-extensions="C,cpp,cxx,cc"/>
+       file-extensions="C,cpp,cxx,cc,c++"/>
    </extension> 
 
    <extension point="org.eclipse.core.runtime.contentTypes"> 

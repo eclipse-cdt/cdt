@@ -19,4 +19,3 @@ Export-Package: org.eclipse.dstore.core,
  org.eclipse.dstore.core.util,
  org.eclipse.dstore.core.util.ssl
 Bundle-Vendor: Eclipse.org
-Bundle-ClassPath: dstore_core.jar

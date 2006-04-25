@@ -554,6 +554,8 @@ public class ClientConnection implements IDataStoreConstants
 			if (result == null && msg != null)
 			{
 				result = new ConnectionStatus(false, msg);
+				_isConnected = false;
+				_theSocket.close();
 			}
 		}
 		catch (java.net.ConnectException e)
@@ -572,7 +574,6 @@ public class ClientConnection implements IDataStoreConstants
 			_isConnected = false;
 			result = new ConnectionStatus(_isConnected, ioe);
 		}
-
 		return result;		
 	}
 	

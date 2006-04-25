@@ -633,11 +633,9 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 					monitor.subTask(cmsg.getLevelOneText());
 				}
 				// connect to launched server
-				setSSLProperties(false);
 				connectStatus = clientConnection.connect(launchStatus.getTicket(), timeout);
 				if (!connectStatus.isConnected() && connectStatus.getMessage().startsWith(ClientConnection.CANNOT_CONNECT))
 				{
-					setSSLProperties(usedSSL);
 					launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
 					if (!launchStatus.isConnected())
 					{
@@ -646,7 +644,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 					}
 					else
 					{
-						if (setSSLProperties(true))
+						if (setSSLProperties(!usedSSL))
 						{
 							connectStatus = clientConnection.connect(launchStatus.getTicket(), timeout);
 						}
@@ -926,7 +924,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 					}
 					if (launchMsg != null && launchMsg.equals(IDataStoreConstants.ATTEMPT_RECONNECT))
 					{
-						connect(monitor);
+						internalConnect(monitor);
 						return;
 					}
 				}

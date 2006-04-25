@@ -254,6 +254,7 @@
 	<!-- Steps to do after the build is done. -->
 	<!-- ===================================================================== -->
 	<target name="postBuild">
+		<!--
 		<mkdir dir="${packageDirectory}" />
 
 		<property name="packageRuntimeDirectory" location="${packageDirectory}\runtime" />
@@ -279,7 +280,6 @@
 
 		<zip destfile="${packageDirectory}\RSE-SDK-1.0M1.zip" basedir="${packageSDKDirectory}" />
 
-		<!--
 		<antcall target="serverruntime"/>
 		<antcall target="publish"/>
 		-->

@@ -1,7 +1,7 @@
-feature@org.eclipse.rse.core=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.core.feature
-feature@org.eclipse.rse.local=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.local.feature
-feature@org.eclipse.rse.dstore=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.dstore.feature
-feature@org.eclipse.rse.ftp=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.ftp.feature
+feature@org.eclipse.rse.core=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.core-feature
+feature@org.eclipse.rse.local=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.local-feature
+feature@org.eclipse.rse.dstore=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.dstore-feature
+feature@org.eclipse.rse.ftp=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.ftp-feature
 
 plugin@org.eclipse.rse.services=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.services
 plugin@org.eclipse.rse.core=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.core

@@ -22,11 +22,11 @@
 	<!-- ===================================================================== -->
 	<property name="builderDirectory" location="${builder}" />
 	<property name="buildProperties" location="${builder}/build.properties" />
-	<property file="${buildProperties}" />
 	<property name="customTargets" location="${builderDirectory}/customTargets.xml" />
-	<property name="genericTargets" location="genericTargets.xml" />
+	<property name="genericTargets" location="${builderDirectory}/genericTargets.xml" />
 	<property name="packageDirectory" location="%{packageDirectory}" />
 	<property name="publishDirectory" location="%{publishDirectory}" />
+	<property file="${buildProperties}" />
 
 	<condition property="doExtract" value="true">
 		<equals arg1="${bld_do_extract}" arg2="yes" />
@@ -37,7 +37,6 @@
 	<condition property="doPackage" value="true">
 		<equals arg1="${bld_do_package}" arg2="yes" />
 	</condition>
-
 	<condition property="doPublish" value="true">
 		<equals arg1="${bld_do_publish}" arg2="yes" />
 	</condition>
@@ -48,7 +47,6 @@
 	<!-- ===================================================================== -->
 	<!-- ******* add in the descriptions for each of the top level targets to the target decl -->
 	<target name="main" description="the main build target">
-		<echo message="**********************************************************"/>
 		<antcall target="preBuild" />
 		<antcall target="fetch" />
 		<antcall target="generate" />
@@ -74,11 +72,11 @@
 
 	<!-- ===================================================================== -->
 	<!-- Fetch the elements identified in the customTargets -->
+	<!-- Generates and then execute the fetch scripts for each build element-->
 	<!-- ===================================================================== -->
 	<target name="fetch" if="doExtract">
 		<echo message="Extracting..." />
 		<ant antfile="${customTargets}" target="preFetch" />
-		<!-- Generates and then execute the fetch scripts for each build element-->
 		<ant antfile="${customTargets}" target="allElements">
 			<property name="target" value="fetchElement" />
 		</ant>
@@ -92,7 +90,6 @@
 	<target name="generate" if="doBuild">
 		<echo message="Generating build scripts..." />
 		<ant antfile="${customTargets}" target="preGenerate" />
-		<!-- Generate the build.xml for each build element-->
 		<ant antfile="${customTargets}" target="allElements">
 			<property name="target" value="generateScript" />
 		</ant>
@@ -101,18 +98,16 @@
 
 	<!-- ===================================================================== -->
 	<!-- Run the build scripts for each element identified in the customTargets -->
+	<!-- 1) Run custom tasks before processing, i.e. creating source build zip files -->
+	<!-- 2) Process all of the build elements-->
+	<!-- 3) Run custom tasks after compiling, i.e. reporting compile errors -->
 	<!-- ===================================================================== -->
 	<target name="process" if="doBuild">
 		<echo message="Building..." />
-		<!-- Run custom tasks before processing, i.e. creating source build zip files -->
 		<ant antfile="${customTargets}" target="preProcess" />
-
-		<!-- Process all of the build elements-->
 		<ant antfile="${customTargets}" target="allElements">
 			<property name="target" value="processElement" />
 		</ant>
-
-		<!-- Run custom tasks after compiling, i.e. reporting compile errors -->
 		<ant antfile="${customTargets}" target="postProcess" />
 	</target>
 

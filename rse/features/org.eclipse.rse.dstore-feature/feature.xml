@@ -43,36 +43,42 @@
          id="org.eclipse.rse.connectorservice.dstore"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.services.dstore"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.files.dstore"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.processes.dstore"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.shells.dstore"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.dstore.security"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

@@ -93,7 +93,13 @@ public class RSEFileSystem extends FileSystem
 			IRemoteFileSubSystem ss = store.getRemoteFileSubSystem();
 			if (!ss.isConnected())
 			{
-				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+				Shell shell = null;
+	
+				if (PlatformUI.isWorkbenchRunning())
+				{
+					shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+				}
+				
 				try
 				{
 					ss.connect(shell);
@@ -121,8 +127,12 @@ public class RSEFileSystem extends FileSystem
 						Shell shell = null;
 						try
 						{
-							shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-							//shell = RSEUIPlugin.getActiveWorkbenchShell();
+							//if (PlatformUI.isWorkbenchRunning())
+							{
+								//shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+				
+								shell = RSEUIPlugin.getActiveWorkbenchShell();
+							}
 						}
 						catch (Exception e)
 						{							

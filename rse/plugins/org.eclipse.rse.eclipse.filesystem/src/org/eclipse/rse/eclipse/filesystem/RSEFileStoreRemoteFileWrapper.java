@@ -156,13 +156,19 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 				*/
 				if (_remoteFile.getName().equals(".project"))
 				{
+					
 					try
 					{
 						// only temp file has contents
 						file = (IFile)UniversalFileTransferUtility.getTempFileFor(_remoteFile);
+						if (file == null || !file.exists())
+						{
+							file.create(null, true, monitor);
+						}
 					}
 					catch (Exception e)
 					{
+						e.printStackTrace();
 					}
 				}
 				if (file == null || !file.exists())

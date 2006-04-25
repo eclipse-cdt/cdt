@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -121,8 +122,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.PluginTransfer;
@@ -358,7 +361,13 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	 */
 	public void setLabelAndContentProvider(SystemViewLabelAndContentProvider lcProvider)
 	{
-		setLabelProvider(new DecoratingLabelProvider(lcProvider, RSEUIPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));
+		ILabelDecorator decorator = null;
+		if (PlatformUI.isWorkbenchRunning())
+		{
+			IWorkbench wb = PlatformUI.getWorkbench();
+			decorator = wb.getDecoratorManager().getLabelDecorator();
+		}
+		setLabelProvider(new DecoratingLabelProvider(lcProvider, decorator));
 		setContentProvider(lcProvider);
 	}
 	

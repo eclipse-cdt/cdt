@@ -1915,7 +1915,17 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	{
 		if (clipboard == null)
 		{
-			clipboard = new Clipboard(getShell().getDisplay());
+			Display display = null;
+			Shell shell = getShell();
+			if (shell == null)
+			{
+				display = Display.getDefault();
+			}
+			else
+			{
+				display = shell.getDisplay();
+			}
+			clipboard = new Clipboard(display);
 		}
 
 		return clipboard;

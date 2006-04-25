@@ -59,6 +59,7 @@ import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -138,8 +139,16 @@ public class UniversalFileTransferUtility
 		    
 		    if (!tempFile.exists() && !tempFile.isSynchronized(IResource.DEPTH_ZERO))
 		    {
-		    	//tempFile.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		    	tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
+		    	// eclipse doesn't like this if the resource appears to be from another project
+		    	try
+		    	{
+		    		//tempFile.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		    		tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
+		    	}
+		    	catch (Exception e)
+		    	{
+		    		
+		    	}
 		    }
 		    if (tempFile.exists())
 		    {		    	
@@ -377,7 +386,10 @@ public class UniversalFileTransferUtility
 				// refresh temp file in project
 				try
 				{
-					tempFile.refreshLocal(IResource.DEPTH_ONE, monitor);
+					if (PlatformUI.isWorkbenchRunning())
+					{
+						tempFile.refreshLocal(IResource.DEPTH_ONE, monitor);
+					}
 				}
 				catch (CoreException e)
 				{

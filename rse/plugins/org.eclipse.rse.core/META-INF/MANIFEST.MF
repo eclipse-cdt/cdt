@@ -8,4 +8,3 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.core
-Bundle-ClassPath: rsecore.jar

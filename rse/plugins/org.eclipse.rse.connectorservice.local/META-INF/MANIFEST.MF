@@ -12,4 +12,3 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.connectorservice.local
 Bundle-Vendor: Eclipse.org
-Bundle-ClassPath: local_connector_service.jar

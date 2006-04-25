@@ -11,4 +11,3 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.services
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.services.files.ftp
-Bundle-ClassPath: ftpfiles.jar

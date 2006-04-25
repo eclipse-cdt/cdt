@@ -32,4 +32,3 @@ Export-Package: org.eclipse.rse.processes.ui,
  org.eclipse.rse.processes.ui.view
 Eclipse-LazyStart: true
 Bundle-Vendor: Eclipse.org
-Bundle-ClassPath: processes_ui.jar

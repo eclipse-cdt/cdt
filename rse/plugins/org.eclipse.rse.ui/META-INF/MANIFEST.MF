@@ -54,4 +54,3 @@ Export-Package: org.eclipse.rse.core,
  org.eclipse.rse.ui.widgets.services,
  org.eclipse.rse.ui.wizards
 Bundle-Vendor: Eclipse.org
-Bundle-ClassPath: systems.jar

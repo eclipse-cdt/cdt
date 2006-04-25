@@ -26,4 +26,3 @@ Export-Package: org.eclipse.rse.shells.ui,
  org.eclipse.rse.shells.ui.propertypages,
  org.eclipse.rse.shells.ui.view
 Bundle-Vendor: Eclipse.org
-Bundle-ClassPath: shells_ui.jar

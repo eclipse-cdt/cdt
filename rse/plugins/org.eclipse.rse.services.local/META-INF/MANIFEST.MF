@@ -17,4 +17,3 @@ Export-Package: org.eclipse.rse.internal.services.local.search,
  org.eclipse.rse.services.local.processes,
  org.eclipse.rse.services.local.search,
  org.eclipse.rse.services.local.shells
-Bundle-ClassPath: localfiles.jar

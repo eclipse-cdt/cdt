@@ -20,4 +20,3 @@ Export-Package: org.eclipse.rse.internal.subsystems.shells.servicesubsystem,
  org.eclipse.rse.subsystems.shells.core.subsystems,
  org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem
 Bundle-Vendor: Eclipse.org
-Bundle-ClassPath: shells_core.jar

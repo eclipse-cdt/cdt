@@ -20,4 +20,3 @@ Export-Package: org.eclipse.rse.subsystems.files.dstore,
  org.eclipse.rse.subsystems.files.dstore.model,
  org.eclipse.rse.subsystems.files.dstore.subsystem
 Bundle-Vendor: Eclipse.org
-Bundle-ClassPath: filesDstore.jar

@@ -17,4 +17,3 @@ Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.connectorservice.dstore,
  org.eclipse.rse.connectorservice.dstore.util
 Bundle-Vendor: Eclipse.org
-Bundle-ClassPath: dstore_connector_service.jar

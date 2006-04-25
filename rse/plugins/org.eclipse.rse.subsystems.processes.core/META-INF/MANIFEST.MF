@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.eclipse.rse.subsystems.processes.core;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-ClassPath: processes.jar
 Bundle-Vendor: Eclipse.org
 Bundle-Localization: plugin
 Export-Package: org.eclipse.rse.subsystems.processes.core,

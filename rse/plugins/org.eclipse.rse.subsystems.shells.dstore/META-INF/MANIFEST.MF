@@ -18,6 +18,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.subsystems.files.core
 Eclipse-LazyStart: true
 Bundle-Vendor: Eclipse.org
-Bundle-ClassPath: shellsDStore.jar
 Export-Package: org.eclipse.rse.subsystems.shells.dstore,
  org.eclipse.rse.subsystems.shells.dstore.model

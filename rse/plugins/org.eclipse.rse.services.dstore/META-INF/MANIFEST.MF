@@ -25,5 +25,3 @@ Export-Package: org.eclipse.rse.dstore.universal.miners,
  org.eclipse.rse.services.dstore.shells,
  org.eclipse.rse.services.dstore.util
 Bundle-Vendor: Eclipse.org
-Bundle-ClassPath: dstore_services.jar,
- dstore_miners.jar

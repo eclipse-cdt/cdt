@@ -18,4 +18,3 @@ Export-Package: org.eclipse.rse.internal.subsystems.files.core,
  org.eclipse.rse.subsystems.files.core.subsystems,
  org.eclipse.rse.subsystems.files.core.util
 Bundle-Vendor: Eclipse.org
-Bundle-ClassPath: files_core.jar

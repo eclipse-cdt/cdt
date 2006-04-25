@@ -32,4 +32,3 @@ Export-Package: org.eclipse.rse.files.ui,
  org.eclipse.rse.files.ui.widgets,
  org.eclipse.rse.files.ui.wizards
 Bundle-Vendor: Eclipse.org
-Bundle-ClassPath: files_ui.jar

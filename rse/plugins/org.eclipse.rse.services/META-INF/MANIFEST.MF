@@ -22,5 +22,3 @@ Export-Package: org.eclipse.rse.services,
  org.eclipse.rse.services.processes,
  org.eclipse.rse.services.search,
  org.eclipse.rse.services.shells
-Bundle-ClassPath: clientserver.jar,
- services.jar

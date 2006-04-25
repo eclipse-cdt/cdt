@@ -19,4 +19,3 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.ui
 Eclipse-LazyStart: true
 Bundle-Vendor: Eclipse.org
-Bundle-ClassPath: dstore_security.jar

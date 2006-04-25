@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Wind River Systems, Inc.
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
@@ -80,14 +81,6 @@ public class AsmTextTools {
 			store = CUIPlugin.getDefault().getPreferenceStore();
 		}
         
-        fPreferenceStore = store;
-		store.addPropertyChangeListener(fPreferenceListener);
-        
-        fCorePreferenceStore= coreStore;
-        if (fCorePreferenceStore != null) {
-            fCorePreferenceStore.addPropertyChangeListener(fPreferenceListener);
-        }
-        
 		fColorManager= new CColorManager();
 		fCodeScanner= new AsmCodeScanner(fColorManager, store);
 		fPartitionScanner= new AsmPartitionScanner();
@@ -95,7 +88,15 @@ public class AsmTextTools {
         fMultilineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_MULTI_LINE_COMMENT);
         fSinglelineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
 		fStringScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_STRING);
-	}
+
+        fPreferenceStore = store;
+		store.addPropertyChangeListener(fPreferenceListener);
+        
+        fCorePreferenceStore= coreStore;
+        if (fCorePreferenceStore != null) {
+            fCorePreferenceStore.addPropertyChangeListener(fPreferenceListener);
+        }
+    }
 	
 	/**
 	 * Creates a new Asm text tools collection and eagerly creates 

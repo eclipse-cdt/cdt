@@ -657,12 +657,15 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 		// now wait till we have all the bytes local
 		long localBytes = localFile.length();
-		while (localBytes < fileLength && (monitor == null || !monitor.isCanceled()))
+		long lastLocalBytes = 0;
+		while (localBytes < fileLength && (monitor == null || !monitor.isCanceled()) && lastLocalBytes != localBytes)
 		{
 			try
 			{
+				lastLocalBytes= localBytes;
 				Thread.sleep(100);
 				localBytes = localFile.length();
+				
 			}
 			catch (Exception e)
 			{				

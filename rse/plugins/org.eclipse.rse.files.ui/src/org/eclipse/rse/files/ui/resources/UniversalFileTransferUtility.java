@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -103,7 +104,7 @@ public class UniversalFileTransferUtility
 		IFile tempFile = (IFile) tempResource;
 		
 		// before we make the transfer to the temp file check whether a temp file already exists
-		if (tempFile.exists())
+		if (tempFile.exists() && ((Resource)tempFile).getPropertyManager() != null)
 		{
 			SystemIFileProperties properties = new SystemIFileProperties(tempFile);
 
@@ -330,7 +331,14 @@ public class UniversalFileTransferUtility
 			}
 			if (tempResource instanceof IFile)
 			{
-				setIFileProperties((IFile)tempResource, rmtFile, srcFS);	
+				try
+				{
+					setIFileProperties((IFile)tempResource, rmtFile, srcFS);	
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 			/*
 			else
@@ -398,9 +406,16 @@ public class UniversalFileTransferUtility
 			}
 
 			tempFile = (IFile) getTempFileFor(srcFileOrFolder);
-			if (tempFile.exists())
+			if (tempFile.exists() && ((Resource)tempFile).getPropertyManager() != null)
 			{
-				setIFileProperties(tempFile, srcFileOrFolder, srcFS);		
+				try
+				{
+					setIFileProperties(tempFile, srcFileOrFolder, srcFS);		
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 
 			return tempFile;

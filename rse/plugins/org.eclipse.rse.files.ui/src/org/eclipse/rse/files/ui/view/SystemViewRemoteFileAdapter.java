@@ -213,7 +213,7 @@ public class SystemViewRemoteFileAdapter
 	{
 		if (registry == null)
 		{
-			IWorkbench workbench = RSEUIPlugin.getDefault().getWorkbench();
+			IWorkbench workbench = PlatformUI.getWorkbench();
 			if (workbench != null)
 				registry = workbench.getEditorRegistry();
 		}

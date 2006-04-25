@@ -142,19 +142,9 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			IFile file = null;
 			if (_remoteFile.isFile() && _subSystem.isConnected())
 			{
-				/*
-				SystemEditableRemoteFile editable = new SystemEditableRemoteFile(_remoteFile);
-				try
-				{
-					editable.download(monitor);
-				}
-				catch (Exception e)
-				{
-					
-				}
-				file = editable.getLocalResource();
-				*/
-				if (_remoteFile.getName().equals(".project"))
+				
+				
+				if (_remoteFile.getName().equals(".project") && _remoteFile.getLength() == 0)
 				{
 					
 					try
@@ -343,5 +333,17 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			}
 		}
 		return null;
+	}
+
+	public void delete(int options, IProgressMonitor monitor) throws CoreException 
+	{
+		try
+		{
+			_subSystem.delete(_remoteFile, monitor);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

@@ -292,7 +292,7 @@ public class SystemTableView
 
 		setContentProvider(_provider);
 		
-		setLabelProvider(new SystemDecoratingLabelProvider(_provider, RSEUIPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));	
+		setLabelProvider(new SystemDecoratingLabelProvider(_provider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));	
 		//setLabelProvider(_provider);
 
 		_filter = new SystemTableViewFilter();

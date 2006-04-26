@@ -292,8 +292,19 @@ public class CommandMinerThread extends MinerThread
 					args[1] = "/C ";
 				}
 				args[2] = _invocation;
-				_theProcess = Runtime.getRuntime().exec(args, getEnvironment(_subject), theDirectory);
-				System.out.println("started shell:"+args[0]  + " " + args[1] + " " + args[2]);
+				System.out.println("getting env...");
+				String[] env = getEnvironment(_subject);
+				System.out.println("...got env");
+				if (_invocation.equals(theShell))
+				{
+					
+					_theProcess = Runtime.getRuntime().exec(_invocation, env, theDirectory);
+				}
+				else
+				{
+					_theProcess = Runtime.getRuntime().exec(args, env, theDirectory);
+				}
+	
 			}
 
 			
@@ -555,7 +566,7 @@ public class CommandMinerThread extends MinerThread
 				writer.flush();
 				
 
-				if (input.startsWith("cd ") || input.equals("cd"))
+				if (!_isWindows && (input.startsWith("cd ") || input.equals("cd")))
 				{
 					queryCWD();
 				}
@@ -612,12 +623,15 @@ public class CommandMinerThread extends MinerThread
 		DataElement projectEnv = null;
 		if (projectEnvReference != null && (projectEnvReference.size() > 0))
 			projectEnv = (DataElement) projectEnvReference.get(0);
+		
+
 		String[] theEnv = mergeEnvironments(systemEnv, projectEnv);
 		return theEnv;
 	}
 	
 	private String[] mergeEnvironments(DataElement systemEnv, DataElement projectEnv)
 	{
+
 		List prjVars = null;
 		List sysVars = null;
 		//Fill the ArrayLists with the environment variables
@@ -633,8 +647,10 @@ public class CommandMinerThread extends MinerThread
 		//If we get here, then we have both system and project variables...to make merging the 2 lists easier, we'll
 		//use a Hashtable (Variable Names are the keys, Variables Values are the values):
 		Hashtable varTable = new Hashtable();
+	
 		//First fill the varTable with the sysVars
 		varTable.putAll(mapVars(sysVars));
+
 		//Now for every project variable, check to see if it already exists, and if the value contains other variables:
 		for (int i = 0; i < prjVars.size(); i++)
 		{
@@ -648,12 +664,14 @@ public class CommandMinerThread extends MinerThread
 			varTable.put(theKey, theValue);
 		}
 		
-		
+
 		if (_isTTY)
 		{
 			varTable.put("PS1","$PWD/>");
 			varTable.put("COLUMNS","256");
 		}
+		
+
 		/*  DKM: for some reason this isn't getting applied properly here
 		 * but it works via export
 		 * */
@@ -700,7 +718,7 @@ public class CommandMinerThread extends MinerThread
 					}
 				}
 				//If the current char is a $, then look for a { or just match alphanumerics
-				else if (c == '$')
+				else if (c == '$' && !_isWindows)
 				{
 					int nextIndex = index + 1;
 					if (nextIndex < theValue.length())
@@ -721,9 +739,14 @@ public class CommandMinerThread extends MinerThread
 						{
 							if (Character.isJavaIdentifierStart(c))
 							{
-								while ((nextIndex < theValue.length()) && (Character.isJavaIdentifierPart(c)))
-									c = theValue.charAt(++nextIndex);
-								String replacementValue = findValue(theValue.substring(index + 1, nextIndex), theTable, true);
+								while (nextIndex + 1 < theValue.length() && (Character.isJavaIdentifierPart(c)))
+								{
+									nextIndex++;
+									c = theValue.charAt(nextIndex);							
+								}
+				
+								String v = theValue.substring(index + 1, nextIndex);
+								String replacementValue = findValue(v, theTable, true);
 								theValue.replace(index, nextIndex, replacementValue);
 								index += replacementValue.length() - 1;
 							}

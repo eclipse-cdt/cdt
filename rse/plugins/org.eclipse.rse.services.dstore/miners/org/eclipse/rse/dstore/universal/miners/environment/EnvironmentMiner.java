@@ -155,7 +155,7 @@ public class EnvironmentMiner extends Miner
 	String theOS = System.getProperty("os.name").toLowerCase();
 	//If we're on windows, change the envCommand. 
 	if (theOS.startsWith("win"))
-	    envCommand = "cmd /c set"; 
+	    envCommand = "cmd /C set"; 
 	
 	if (theOS.startsWith("os/400"))
 	{

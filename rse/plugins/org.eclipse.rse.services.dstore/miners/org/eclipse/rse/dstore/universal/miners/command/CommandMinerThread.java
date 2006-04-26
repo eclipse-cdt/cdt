@@ -264,7 +264,7 @@ public class CommandMinerThread extends MinerThread
 					}
 				}
 			}
-			else
+			else // windows
 			{
 				if ((theOS.indexOf("95") >= 0) || (theOS.indexOf("98") >= 0) || (theOS.indexOf("ME") >= 0))
 				{
@@ -293,6 +293,7 @@ public class CommandMinerThread extends MinerThread
 				}
 				args[2] = _invocation;
 				_theProcess = Runtime.getRuntime().exec(args, getEnvironment(_subject), theDirectory);
+				System.out.println("started shell:"+args[0]  + " " + args[1] + " " + args[2]);
 			}
 
 			

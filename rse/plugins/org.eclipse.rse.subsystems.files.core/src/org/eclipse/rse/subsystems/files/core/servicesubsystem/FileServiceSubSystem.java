@@ -782,5 +782,10 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		getFileService().initService(monitor);
 	}
 
+	public void uninitializeSubSystem(IProgressMonitor monitor)
+	{
+		super.uninitializeSubSystem(monitor);
+		getFileService().uninitService(monitor);
+	}
 	
 } 

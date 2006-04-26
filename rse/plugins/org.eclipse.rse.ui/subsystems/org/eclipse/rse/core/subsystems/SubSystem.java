@@ -2823,7 +2823,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     {
 		try 
 		{			
-		  getConnectorService().disconnect();
+		  getConnectorService().disconnect(monitor);
 		}
 		catch(Exception exc)
 		{

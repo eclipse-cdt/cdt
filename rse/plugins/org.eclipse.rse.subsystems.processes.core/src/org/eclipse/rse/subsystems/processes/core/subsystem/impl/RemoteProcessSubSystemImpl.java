@@ -101,6 +101,14 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#uninitializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void uninitializeSubSystem(IProgressMonitor monitor)
+	{
+		getConnectorService().removeCommunicationsListener(this);			
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem#getParentProcess(org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess)
 	 */
 	public IRemoteProcess getParentProcess(IRemoteProcess process)

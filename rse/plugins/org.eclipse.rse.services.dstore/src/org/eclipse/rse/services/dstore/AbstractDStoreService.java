@@ -253,6 +253,13 @@ public abstract class AbstractDStoreService implements IDStoreService
 	{
 		initMiner(monitor);
 	}
+	
+	public void uninitService(IProgressMonitor monitor)
+	{
+		_initializeStatus = null;
+		_cmdDescriptorMap.clear();
+		_minerElement = null;
+	}
 
 	protected void initMiner(IProgressMonitor monitor)
 	{

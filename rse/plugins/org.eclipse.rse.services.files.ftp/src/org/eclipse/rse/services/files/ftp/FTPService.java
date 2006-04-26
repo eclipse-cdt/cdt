@@ -383,7 +383,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 
 	public void initService(IProgressMonitor monitor)
 	{
-		
+	}
+	
+	public void uninitService(IProgressMonitor monitor)
+	{
 	}
 
 	public boolean isCaseSensitive()

@@ -148,4 +148,8 @@ public class LocalProcessService extends AbstractProcessService implements ILoca
 	{
 		
 	}
+	
+	public void uninitService(IProgressMonitor monitor)
+	{
+	}
 }

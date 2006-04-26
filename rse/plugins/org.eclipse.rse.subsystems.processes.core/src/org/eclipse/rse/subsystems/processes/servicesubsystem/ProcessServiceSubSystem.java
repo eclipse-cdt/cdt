@@ -197,5 +197,13 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 		getProcessService().initService(monitor);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.impl.RemoteProcessSubSystemImpl#initializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void uninitializeSubSystem(IProgressMonitor monitor)
+	{
+		super.uninitializeSubSystem(monitor);
+		getProcessService().uninitService(monitor);
+	}
 	
 }

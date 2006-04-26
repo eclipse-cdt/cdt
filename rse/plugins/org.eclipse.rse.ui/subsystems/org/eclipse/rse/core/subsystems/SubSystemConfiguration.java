@@ -24,6 +24,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -1764,7 +1765,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				{
 					try
 					{
-						ss.getConnectorService().disconnect();
+						ss.getConnectorService().disconnect(new NullProgressMonitor());
 					}
 					catch (Exception exc)
 					{

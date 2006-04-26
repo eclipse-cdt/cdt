@@ -189,7 +189,7 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
 		monitor.beginTask(message, IProgressMonitor.UNKNOWN);
 		try 
 		{			
-		  _connection.disconnect();
+		  _connection.disconnect(monitor);
 		}
 		catch(Exception exc)
 		{

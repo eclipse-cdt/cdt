@@ -265,6 +265,12 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		initMiner(monitor);
 	}
 	
+	public void uninitService(IProgressMonitor monitor)
+	{
+		_minerElement = null;
+		_procMinerStatus = null;
+	}
+	
 	public boolean isInitialized()
 	{
 		if (_procMinerStatus != null)

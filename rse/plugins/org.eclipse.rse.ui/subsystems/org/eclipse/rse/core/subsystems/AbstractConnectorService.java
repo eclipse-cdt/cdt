@@ -786,6 +786,15 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     		ss.initializeSubSystem(monitor);    		
     	}
     }
+    
+    protected void unintializeSubSystems(IProgressMonitor monitor)
+    {
+    	for (int i = 0; i < _registeredSubSystems.size(); i++)
+    	{
+    		ISubSystem ss = (ISubSystem)_registeredSubSystems.get(i);
+    		ss.uninitializeSubSystem(monitor);    		
+    	}
+    }
      
     /**
      * <i><b>Abstract</b> - you must override, </i>unless subsystem.getParentSubSystemFactory().supportsServerLaunchProperties 
@@ -850,10 +859,15 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * method of the subsystem.
 	 * @see IServerLauncher#disconnect()
      */
-    public void disconnect() throws Exception
+    public final void disconnect(IProgressMonitor monitor) throws Exception
     {
-		if (supportsServerLaunchProperties() &&
-		    (starter != null))
+    	internalDisconnect(monitor);
+		unintializeSubSystems(monitor);
+    }
+    
+    public void internalDisconnect(IProgressMonitor monitor) throws Exception 
+    {
+		if (supportsServerLaunchProperties() &&(starter != null))
 		{
 			try {
 				starter.disconnect();

@@ -78,7 +78,7 @@ public interface IConnectorService extends IRSEModelObject
     /**
      * Disconnect from the remote system
      */
-    public void disconnect() throws Exception;
+    public void disconnect(IProgressMonitor monitor) throws Exception;
     /**
      * Notifies all listeners of a disconnection through a communications event
      */

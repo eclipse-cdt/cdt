@@ -162,6 +162,12 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 		super.waitForInitialize(monitor);
 	}
 	
+	public void uninitService(IProgressMonitor monitor)
+	{
+		super.uninitService(monitor);
+		
+	}
+	
 	protected void initMiner(IProgressMonitor monitor)
 	{
 		// init env miner first

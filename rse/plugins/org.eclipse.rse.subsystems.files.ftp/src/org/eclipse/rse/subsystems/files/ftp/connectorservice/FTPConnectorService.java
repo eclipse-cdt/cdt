@@ -55,7 +55,7 @@ public class FTPConnectorService extends AbstractConnectorService
 		return _ftpService;
 	}
 	
-	public void disconnect()
+	public void internalDisconnect(IProgressMonitor monitor)
 	{
 		_ftpService.disconnect();
 	}

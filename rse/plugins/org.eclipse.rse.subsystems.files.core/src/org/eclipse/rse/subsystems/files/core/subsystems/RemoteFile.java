@@ -168,6 +168,11 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     {
     	if (this._parentFile == null)
     	{
+    		if (isRoot())
+    		{
+    			return null;
+    		}
+    		
 	    	IRemoteFile parentFile = null;
 	    		
 //	    		_context.getParentRemoteFile();

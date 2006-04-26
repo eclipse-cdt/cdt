@@ -24,5 +24,6 @@ public interface IService
 	public String getName();
 	public String getDescription();
 	public void initService(IProgressMonitor monitor);
+	public void uninitService(IProgressMonitor monitor);
 	public SystemMessage getMessage(String messageID);
 }

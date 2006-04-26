@@ -239,9 +239,14 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 	}
 
 	public void initializeSubSystem(IProgressMonitor monitor)
-	{
+	{ 
 		getShellService().initService(monitor);
 	}
 
+	public void uninitializeSubSystem(IProgressMonitor monitor)
+	{
+		cancelAllShells();
+		getShellService().uninitService(monitor);
+	}
 	
 } 

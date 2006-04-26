@@ -43,7 +43,7 @@ public class LocalConnectorService extends AbstractConnectorService
 	/**
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#disconnect()
 	 */
-	public void disconnect() throws Exception
+	public void internalDisconnect(IProgressMonitor monitor) throws Exception
 	{
 		fireCommunicationsEvent(CommunicationsEvent.BEFORE_DISCONNECT);
 

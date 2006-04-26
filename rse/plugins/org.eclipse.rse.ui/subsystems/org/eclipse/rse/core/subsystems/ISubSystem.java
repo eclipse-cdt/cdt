@@ -82,6 +82,11 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	public void initializeSubSystem(IProgressMonitor monitor);
 	
 	/**
+	 * Called on each subsystem associated with a particular ISystem after it disconnects
+	 */
+	public void uninitializeSubSystem(IProgressMonitor monitor);
+	
+	/**
 	 * @return true if this subsystem's properties should take precedence over other subsystems that share the same ISystem
 	 */
 	public boolean isPrimarySubSystem();

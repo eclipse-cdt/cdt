@@ -1148,6 +1148,10 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		
 	}
 	
+	public void uninitService(IProgressMonitor monitor)
+	{
+	}
+	
 	public boolean isCaseSensitive()
 	{
 		return true;

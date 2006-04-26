@@ -181,6 +181,7 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder
      */    
     public boolean isArchive();
     
+
     /**
      * Returns true if this is a binary file
      */

@@ -137,6 +137,10 @@ public class LocalShellService implements IShellService, ILocalService
 		
 	}
 	
+	public void uninitService(IProgressMonitor monitor)
+	{
+		
+	}
 	public SystemMessage getMessage(String messageID)
 	{
 		return null;

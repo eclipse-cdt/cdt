@@ -1497,6 +1497,11 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		getConnectorService().addCommunicationsListener(this);
 	}
 	
+	public void uninitializeSubSystem(IProgressMonitor monitor)
+	{
+		getConnectorService().removeCommunicationsListener(this);
+	}
+	
 	/**
 	 * Store the IRemoteFile in a hashmap to quick subsequent retrieval
 	 * @param file the file

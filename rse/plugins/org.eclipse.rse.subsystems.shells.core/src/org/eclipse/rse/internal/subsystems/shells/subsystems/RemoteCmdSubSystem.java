@@ -658,15 +658,16 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			}
 		}
 
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
-		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
+		//ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+//		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
 
+		Display.getDefault().asyncExec(new Refresh(this));
 		return results;
 	}
 
 	public void cancelAllShells()
 	{
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+	
 		for (int i = _cmdShells.size() - 1; i >= 0; i--)
 		{
 			IRemoteCommandShell cmdShell = (IRemoteCommandShell) _cmdShells.get(i);
@@ -687,8 +688,23 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		// registry.fireEvent(new
 		// org.eclipse.rse.model.SystemResourceChangeEvent(this,
 		// ISystemResourceChangeEvent.EVENT_COMMAND_SHELL_FINISHED, null));
-		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
+		Display.getDefault().asyncExec(new Refresh(this));
 
+	}
+	
+	public class Refresh implements Runnable
+	{
+		private RemoteCmdSubSystem _ss;
+		public Refresh(RemoteCmdSubSystem ss)
+		{
+			_ss = ss;
+		}
+
+		public void run() 
+		{
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			registry.fireEvent(new SystemResourceChangeEvent(_ss, ISystemResourceChangeEvents.EVENT_REFRESH, _ss));
+		}
 	}
 
 	/**

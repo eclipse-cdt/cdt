@@ -291,7 +291,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#disconnect()
 	 */
-	public void disconnect() throws Exception
+	public void internalDisconnect(IProgressMonitor monitor) throws Exception
 	{
 		try
 		{
@@ -716,7 +716,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				Display.getDefault().syncExec(msgAction);
 				if (msgAction.getReturnCode() != IDialogConstants.YES_ID)
 				{
-					disconnect();
+					internalDisconnect(monitor);
 					throw new InterruptedException();
 				}
 			}
@@ -728,7 +728,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				Display.getDefault().syncExec(msgAction);
 				if (msgAction.getReturnCode() != IDialogConstants.YES_ID)
 				{
-					disconnect();
+					internalDisconnect(monitor);
 					throw new InterruptedException();
 				}
 			}

@@ -257,16 +257,8 @@ public class LocalShellThread extends Thread
 				}
 			}
 
-			if (_encoding.equals("Cp1252") && !theOS.startsWith("Windows XP"))
-			{
-				_stdInput = new BufferedReader(new InputStreamReader(_theProcess.getInputStream(), "Cp850"));
-				_stdError = new BufferedReader(new InputStreamReader(_theProcess.getErrorStream(), "Cp850"));
-			}
-			else
-			{
-				_stdInput = new BufferedReader(new InputStreamReader(_theProcess.getInputStream()));
-				_stdError = new BufferedReader(new InputStreamReader(_theProcess.getErrorStream()));
-			}
+			_stdInput = new BufferedReader(new InputStreamReader(_theProcess.getInputStream()));
+			_stdError = new BufferedReader(new InputStreamReader(_theProcess.getErrorStream()));
 
 		}
 		catch (IOException e)

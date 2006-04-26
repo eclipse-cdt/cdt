@@ -119,7 +119,7 @@ public class CProjectPlatformPage extends WizardPage {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());
 		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
 		// Create a check box table of valid configurations
 		final Label configLabel = new Label(composite, SWT.LEFT);
@@ -173,6 +173,7 @@ public class CProjectPlatformPage extends WizardPage {
 		});
 		
 		Button deselectAll = new Button(composite2, SWT.NONE);
+		deselectAll.setLayoutData(new GridData(GridData.FILL_BOTH));
 		deselectAll.setText(ManagedBuilderUIMessages.getResourceString(DESELECT_ALL_LABEL));
 		deselectAll.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {

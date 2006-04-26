@@ -19,13 +19,10 @@ Contributors:
 
 
 
-<!-- ============================================== -->
-<!-- Define subsystem factories for sample        -->
-<!-- ============================================== -->
    <extension
          point="org.eclipse.rse.ui.subsystemConfiguration">
       <configuration
-            systemTypes="Linux;Unix"
+            systemTypes="Linux;Unix;Windows"
             name="%Shells"
             description="%ShellsDescription"
             iconlive="icons/full/obj16/systemcommandslive_obj.gif"
@@ -34,7 +31,7 @@ Contributors:
             class="org.eclipse.rse.subsystems.shells.dstore.DStoreShellSubSystemConfiguration"
             vendor="IBM Corp"
             id="dstore.shells">
-      </configuration>
-      </extension>
-  
+         </configuration>
+
+    </extension>
 </plugin>

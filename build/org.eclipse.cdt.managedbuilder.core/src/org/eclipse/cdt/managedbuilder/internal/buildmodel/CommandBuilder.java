@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -37,8 +38,27 @@ public class CommandBuilder implements IBuildModelBuilder {
 	private IBuildCommand fCmd;
 	private Process fProcess;
 	private String fErrMsg;
+	private boolean fUseSpawner;
+	
 	private static final String BUILDER_MSG_HEADER = "InternalBuilder.msg.header"; //$NON-NLS-1$ 
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
+
+	protected class SpawnerfreeLauncher extends CommandLauncher{
+
+		public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory) {
+			try {
+				// add platform specific arguments (shell invocation)
+				fCommandArgs = constructCommandArray(commandPath.toOSString(), args);
+				fProcess = Runtime.getRuntime().exec(fCommandArgs, env, changeToDirectory.toFile()); 
+//					ProcessFactory.getFactory().exec(fCommandArgs, env, changeToDirectory.toFile());
+				fErrorMessage = ""; //$NON-NLS-1$
+			} catch (IOException e) {
+				setErrorMessage(e.getMessage());
+				fProcess = null;
+			}
+			return fProcess;
+		}
+	}
 
 	protected class OutputStreamWrapper extends OutputStream {
 		private OutputStream fOut;
@@ -86,7 +106,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 		monitor.beginTask("", getNumCommands());	//$NON-NLS-1$
 		monitor.subTask(""/*getCommandLine()*/);	//$NON-NLS-1$
 		
-		CommandLauncher launcher = new CommandLauncher();
+		CommandLauncher launcher = createLauncher();
 		int status = STATUS_OK;
 
 		launcher.showCommand(true);
@@ -130,6 +150,12 @@ public class CommandBuilder implements IBuildModelBuilder {
 		
 		monitor.done();
 		return status;
+	}
+	
+	protected CommandLauncher createLauncher() {
+		if(fUseSpawner)
+			return new CommandLauncher();
+		return new SpawnerfreeLauncher();
 	}
 	
 	public String getErrMsg(){

@@ -3,6 +3,7 @@ package org.eclipse.rse.subsystems.files.dstore.subsystem;
 import java.util.Vector;
 
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
@@ -35,6 +36,7 @@ public class DStoreWindowsFileSubSystemConfiguration extends DStoreFileSubSystem
 
 		      mgr.createSystemFilter(pool, filterName, filterStrings);
 		      
+		      /*
 		      // Create 'My Home' filter for local (should apply to both _isWindows and linux clients)
 	    	  filterName = SystemFileResources.RESID_FILTER_MYHOME;
 	    	  RemoteFileFilterString myDocsFilterString = new RemoteFileFilterString(this);
@@ -42,6 +44,20 @@ public class DStoreWindowsFileSubSystemConfiguration extends DStoreFileSubSystem
 	    	  Vector myDocsFilterStrings = new Vector();
 	    	  myDocsFilterStrings.add(myDocsFilterString.toString());
 	    	  mgr.createSystemFilter(pool, filterName, myDocsFilterStrings);
+	    	  */
+	    	  
+
+		      // ----------------------
+		      // "My Home" filter...
+		      // ----------------------
+		      filterStrings = new Vector();
+		      RemoteFileFilterString myHomeFilterString = new RemoteFileFilterString(this);
+		      myHomeFilterString.setPath(getSeparator());
+		      filterStrings.add(".\\*");
+		      ISystemFilter filter = mgr.createSystemFilter(pool, SystemFileResources.RESID_FILTER_MYHOME,filterStrings);
+		      filter.setNonChangable(true);
+		      filter.setSingleFilterStringOnly(true);
+
 
 		      //System.out.println("filter created");		  
 		      // -----------------------------------------------------

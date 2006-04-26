@@ -31,114 +31,99 @@
 	<!-- ===================================================================== -->
 
 	<target name="assemble.org.eclipse.rse.core">
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
-		</ant>
-		<!--
-		<antcall target="buildFeature">
-			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.core" />
-		</antcall>
-		-->
-	</target>
-	<target name="assemble.org.eclipse.rse.local">
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
-		</ant>
-		<!--
-		<antcall target="buildFeature">
-			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.local" />
-		</antcall>
-		-->
-	</target>
-	<target name="assemble.org.eclipse.rse.ftp">
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
-		</ant>
-		<!--
-		<antcall target="buildFeature">
-			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.ftp" />
-		</antcall>
-		-->
-	</target>
-	<target name="assemble.org.eclipse.rse.dstore">
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
-		</ant>
-		<!--
-		<antcall target="serverruntime" />
-		<antcall target="buildFeature">
-			<param name="featureFolder" value="${buildDirectory}\features\org.eclipse.rse.dstore" />
-		</antcall>
-		-->
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="assemble.source.feature"/>
 	</target>
 
-	<target name="dstore_extra_server.jar">
-		<mkdir dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime" />
-		<delete dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild" />
-		<mkdir dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild" />
-		<javac debug="${dbg}" srcdir="${buildDirectory}/plugins/org.eclipse.dstore.extra/server" destdir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild" includeAntRuntime="false" />
-		<jar jarfile="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime/dstore_extra_server.jar" basedir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild" />
-		<delete dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverbuild" />
+	<target name="assemble.org.eclipse.rse.local">
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+	</target>
+
+	<target name="assemble.org.eclipse.rse.ftp">
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+	</target>
+
+	<target name="assemble.org.eclipse.rse.dstore">
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+	</target>
+	
+	<target name="assemble.source.feature">
+		<echo message="buildDirectory = ${buildDirectory}"/>
+		<echo message="id = ${id}"/>
+		<echo message="buildLabel = ${buildLabel}"/>
+		<echo message="buildId = ${buildId}"/>
+		<echo message="archivePrefix = ${archivePrefix}"/>
 	</target>
 
 	<target name="serverruntime">
-		<antcall target="dstore_extra_server.jar" />
-		<!-- property name="universalserverfilelist" value="${buildDirectory}/plugins/org.eclipse.dstore.core/dstore_core.jar,
-	    	${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime/dstore_extra_server.jar,
-	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/patterns.dat,
-	    	${buildDirectory}/plugins/org.eclipse.rse.services/clientserver.jar,
-	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/dstore_miners.jar,
-			${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/auth.pl,
-			${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/ssl.properties,
-	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/minerFile.dat,
-	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/rsecomm.properties,
-	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/server.linux,
-	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/server.unix,
-	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/patterns.dat,
-	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/daemon.linux,
-	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/win.env.bat,
-	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/daemon.win.bat,
-	    	${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime/run.win.bat" /-->
 
-		<delete dir="${packageDirectory}\rseserver" />
-		<mkdir dir="${packageDirectory}\rseserver" />
+		<property name="working" value="${packageDirectory}/rseserver"/>
+		<mkdir dir="${working}" />
+		<mkdir dir="${working}/jars" />
 
-		<copy todir="${packageDirectory}\rseserver">
+		<copy todir="${working}">
+			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="**" />
+		</copy>
+
+		<copy todir="${working}/jars">
 			<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core" includes="dstore_core.jar" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.extra/serverruntime" includes="dstore_extra_server.jar" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="dstore_miners.jar" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="patterns.dat" />
+			<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.extra" includes="dstore_extra_server.jar" />
 			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services" includes="clientserver.jar" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="auth.pl" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="ssl.properties" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="minerFile.dat" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="rsecomm.properties" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="server.linux" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="server.unix" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="patterns.dat" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="daemon.linux" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="win.env.bat" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="daemon.win.bat" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="run.win.bat" />
+			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="dstore_miners.jar" />
 		</copy>
+		
+		<antcall target="rseserver-os">
+			<param name="os" value="aix"/>
+			<param name="eol" value="lf"/>
+		</antcall>
+		<antcall target="rseserver-os">
+			<param name="os" value="unix"/>
+			<param name="eol" value="lf"/>
+		</antcall>
+		<antcall target="rseserver-os">
+			<param name="os" value="linux"/>
+			<param name="eol" value="lf"/>
+		</antcall>
+		<antcall target="rseserver-os">
+			<param name="os" value="windows"/>
+			<param name="eol" value="crlf"/>
+		</antcall>
+		
+		<delete dir="${working}" />
 
-		<fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="server.linux" />
-		<fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="daemon.linux" />
-		<fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="daemon.unix" />
-		<fixcrlf srcdir="${packageDirectory}\rseserver" eol="crlf" eof="asis" includes="server.unix" />
-
-		<jar jarfile="${packageDirectory}\rseserver.jar" filesonly="true">
-			<fileset dir="${packageDirectory}\rseserver" includes="*" excludes="">
-			</fileset>
-		</jar>
-
-		<delete dir="${packageDirectory}\rseserver" />
-
-		<delete>
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="*">
-			</fileset>
-		</delete>
-
-		<copy todir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime">
-			<fileset dir="${packageDirectory}" includes="rseserver.jar">
-			</fileset>
+	</target>
+	
+	<target name="rseserver-os">
+		<mkdir dir="${working}/collector" />
+		<copy todir="${working}/collector">
+			<fileset dir="${working}/scripts/${os}" includes="*"/>
 		</copy>
+		<chmod perm="u+rx" includes="${working}/collector/*"/>
+		<copy todir="${working}/collector">
+			<fileset dir="${working}/data" includes="*"/>
+		</copy>
+		<fixcrlf srcdir="${working}/collector" eol="${eol}" eof="asis" includes="*"/>
+		<copy todir="${working}/collector">
+			<fileset dir="${working}/jars" includes="*"/>
+		</copy>
+		<tar destfile="${packageDirectory}\rseserver-${os}.tar" basedir="${working}/collector" includes="*"/>
+		<zip destfile="${packageDirectory}\rseserver-${os}.zip" basedir="${working}/collector" includes="*"/>
+		<delete dir="${working}/collector" />
+	</target>
+	
+	<target name="hideServerStuff">
+		<move todir="${buildDirectory}/plugins">
+			<fileset dir="${buildDirectory}/plugins" includes="**/*.jar" />
+			<fileset dir="${buildDirectory}/plugins" includes="**/*.zip" excludes="**/src.zip"/>
+			<globmapper from="*" to="*.hidden"/>
+		</move>
+	</target>
+
+	<target name="revealServerStuff">
+		<move todir="${buildDirectory}/plugins">
+			<fileset dir="${buildDirectory}/plugins" includes="**/*.hidden" />
+			<globmapper from="*.hidden" to="*"/>
+		</move>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -223,16 +208,12 @@
 	<!-- Steps to do before running the build.xmls for the elements being built. -->
 	<!-- ===================================================================== -->
 	<target name="preProcess">
-		<antcall target="allElements">
-			<param name="target" value="gatherSources" />
-		</antcall>
 	</target>
 
 	<!-- ===================================================================== -->
 	<!-- Steps to do after running the build.xmls for the elements being built. -->
 	<!-- ===================================================================== -->
 	<target name="postProcess">
-		<antcall target="serverruntime" />
 		<antcall target="allElements">
 			<param name="target" value="gatherLogs" />
 		</antcall>
@@ -242,12 +223,18 @@
 	<!-- Steps to do before running assemble. -->
 	<!-- ===================================================================== -->
 	<target name="preAssemble">
+		<antcall target="serverruntime" />
+		<antcall target="hideServerStuff" />
+		<antcall target="allElements">
+			<param name="target" value="gatherSources" />
+		</antcall>
 	</target>
 
 	<!-- ===================================================================== -->
 	<!-- Steps to do after  running assemble. -->
 	<!-- ===================================================================== -->
 	<target name="postAssemble">
+		<antcall target="revealServerStuff" />
 	</target>
 
 	<!-- ===================================================================== -->

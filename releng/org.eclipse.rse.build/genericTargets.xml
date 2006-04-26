@@ -73,11 +73,10 @@
 	<ant antfile="build.xml" dir="${elementPath}" target="build.jars">
 		<property name="target" value="build.jars"/>
 	</ant>
-	<!-- dwd
 	<ant antfile="build.xml" dir="${elementPath}" target="build.sources">
-		<property name="target" value="build.sources"/>
+		<property name="os" value="${os}" />
+		<property name="ws" value="${ws}" />	
 	</ant>
-	-->
 </target>
 
 <!-- **********************
@@ -106,10 +105,6 @@ set here?
 <!-- Gather source for a build element -->
 <!-- ===================================================================== -->
 <target name="gatherSources" description="Gathering source distribution..." depends="init">
-	<ant antfile="build.xml" dir="${elementPath}" target="build.sources">
-		<property name="os" value="${os}" />
-		<property name="ws" value="${ws}" />	
-	</ant>
 	<ant antfile="build.xml" dir="${elementPath}" target="zip.sources">
 		<property name="os" value="${os}" />
 		<property name="ws" value="${ws}" />	

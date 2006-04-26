@@ -480,9 +480,11 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		IIBMServerLauncher serverLauncher = getIBMServerLauncher(); 
 		
 		ServerLaunchType serverLauncherType = null;
+		boolean autoDetectSSL = true;
 		if (serverLauncher != null)
 		{
 		    serverLauncherType = serverLauncher.getServerLaunchType();
+		    autoDetectSSL = serverLauncher.getAutoDetectSSL();
 		}
 		else
 		{
@@ -511,7 +513,8 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			IServerLauncher starter = getRemoteServerLauncher();
 			starter.setSignonInformation(info);
 			starter.setServerLauncherProperties(serverLauncher);
-
+			if (autoDetectSSL) timeout = 3000;
+			else setSSLProperties(isUsingSSL());
 
 			int iServerPort = launchUsingRexec(monitor, info, serverLauncher);
 			
@@ -528,7 +531,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				
 				// connect to launched server
 				connectStatus = clientConnection.connect(null, timeout);
-				if (!connectStatus.isConnected() && connectStatus.getMessage().startsWith(ClientConnection.CANNOT_CONNECT))
+				if (!connectStatus.isConnected() && connectStatus.getMessage().startsWith(ClientConnection.CANNOT_CONNECT) && autoDetectSSL)
 				{
 					if (setSSLProperties(true))
 					{

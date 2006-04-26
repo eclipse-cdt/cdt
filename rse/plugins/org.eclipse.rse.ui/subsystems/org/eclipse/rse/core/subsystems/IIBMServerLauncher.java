@@ -111,7 +111,13 @@ public interface IIBMServerLauncher extends IServerLauncherProperties{
 	 */
 	public void setRexecPort(int newRexecPort);
 
-
+	/**
+	 * Sets whether or not to auto-detect SSL
+	 */
+	public void setAutoDetectSSL(boolean auto);
+	
+	boolean getAutoDetectSSL();
+	
 	int getDaemonPort();
 
 	/**

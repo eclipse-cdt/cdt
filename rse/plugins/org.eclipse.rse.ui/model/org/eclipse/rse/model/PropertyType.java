@@ -50,6 +50,10 @@ public  class PropertyType implements IPropertyType
 			String[] enumValues = subString.split(",");
 			setEnumValues(enumValues);
 		}
+		else if (typeStr.equals(Boolean.class.toString()))
+		{
+			setType(TYPE_BOOLEAN);
+		}
 		else
 		{
 			setType(TYPE_STRING);
@@ -79,6 +83,11 @@ public  class PropertyType implements IPropertyType
 	public boolean isEnum()
 	{
 		return _type == TYPE_ENUM;
+	}
+	
+	public boolean isBoolean()
+	{
+		return _type == TYPE_BOOLEAN;
 	}
 
 	public void setEnumValues(String[] enumValues)
@@ -116,6 +125,10 @@ public  class PropertyType implements IPropertyType
 				}				
 			}
 			return buf.toString();
+		}
+		else if (isBoolean())
+		{
+			return Boolean.class.getName();
 		}
 		return super.toString();
 	}

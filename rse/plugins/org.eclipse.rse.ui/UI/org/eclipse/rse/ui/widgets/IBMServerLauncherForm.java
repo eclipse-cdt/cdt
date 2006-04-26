@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Text;
 public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 {
 
-	private Button _radioDaemon, _radioRexec, _radioNone, _checkBoxSSL;
+	private Button _radioDaemon, _radioRexec, _radioNone, _checkBoxSSL, _checkBoxRexecSSL, _checkBoxAutoDetect;
 	private Text _fieldDaemonPort;
 	private Label _labelDaemonPort;
 
@@ -65,6 +65,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 	private int _origRexecPort;
 	private int _origDaemonPort;
 	private boolean _origUseSSL;
+	private boolean _origAutoDetect;
 
 	/**
 	 * Constructor for EnvironmentVariablesForm.
@@ -85,7 +86,8 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 					!_origInvocation.equals(getServerInvocation()) ||
 					_origRexecPort != getREXECPortAsInt() ||
 					_origDaemonPort != getDaemonPortAsInt() ||
-					_origUseSSL != getUseSSL();
+					_origUseSSL != getUseSSL() ||
+					_origAutoDetect != getAutoDetect();
 		return isDirty;
 	}
 	
@@ -99,6 +101,8 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		_fieldRexecPort.setEnabled(false);
 		_fieldDaemonPort.setEnabled(false);
 		_checkBoxSSL.setEnabled(false);
+		_checkBoxRexecSSL.setEnabled(false);
+		_checkBoxAutoDetect.setEnabled(false);
 	}
 
 
@@ -182,6 +186,11 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 
 		subRexecControls.setLayout(l2);
 		subRexecControls.setLayoutData(d2);
+		
+		_checkBoxAutoDetect = SystemWidgetHelpers.createCheckBox(_rexecControls, SystemResources.RESID_SUBSYSTEM_AUTODETECT_LABEL, this);
+		_checkBoxAutoDetect.setToolTipText(SystemResources.RESID_SUBSYSTEM_AUTODETECT_TIP);
+		_checkBoxRexecSSL = SystemWidgetHelpers.createCheckBox(_rexecControls, SystemResources.RESID_SUBSYSTEM_SSL_LABEL, this);
+		_checkBoxRexecSSL.setToolTipText(SystemResources.RESID_SUBSYSTEM_SSL_TIP);
 
 		_rexecControls.setLayout(layout);
 		_rexecControls.setLayoutData(data);
@@ -221,6 +230,8 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		_labelRexecInvocation.setEnabled(_radioRexec.getSelection());
 		_labelRexecPort.setEnabled(_radioRexec.getSelection());
 		_fieldRexecPort.setEnabled(_radioRexec.getSelection());
+		_checkBoxRexecSSL.setEnabled(_radioRexec.getSelection());
+		_checkBoxAutoDetect.setEnabled(_radioRexec.getSelection());
 		_checkBoxSSL.setEnabled(_radioNone.getSelection());
 		
 		_fieldDaemonPort.setText(String.valueOf(DEFAULT_DAEMON_PORT));
@@ -242,6 +253,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		int rexecport = isl.getRexecPort(); // changed from getPortAsInt via d54335
 		int daemonPort = isl.getDaemonPort(); // defect 54335
 		boolean useSSL = isl.getConnectorService().isUsingSSL();
+		boolean autoDetectSSL = isl.getAutoDetectSSL();
 				
 		// find out if daemon can be launched
 		boolean allowDaemon = isl.isEnabledServerLaunchType(ServerLaunchType.DAEMON_LITERAL);
@@ -264,6 +276,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		setServerInvocation(invocation);
 		setREXECPort(rexecport);
 		setUseSSL(useSSL);
+		setAutoDetect(autoDetectSSL);
 	
 		if (!allowDaemon && !allowRexec && !allowNo) {
 			disable();
@@ -276,6 +289,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		_origRexecPort = getREXECPortAsInt();
 		_origDaemonPort = getDaemonPortAsInt();
 		_origUseSSL = getUseSSL();
+		_origAutoDetect = getAutoDetect();
 	}
 	
 	/**
@@ -348,6 +362,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		int rexecPort = getREXECPortAsInt();
 		int daemonPort = getDaemonPortAsInt();
 		boolean useSSL = getUseSSL();
+		boolean autoDetect = getAutoDetect();
 
 		IIBMServerLauncher isl = (IIBMServerLauncher)launcher;
 		isl.setServerLaunchType(launchType);
@@ -355,6 +370,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		isl.setServerScript(invocation);
 		isl.setRexecPort(rexecPort); // changed from setPort via d54335. Phil
 		isl.setDaemonPort(daemonPort);
+		isl.setAutoDetectSSL(autoDetect);
 		isl.getConnectorService().setIsUsingSSL(useSSL);
 		try
 		{
@@ -379,6 +395,8 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		_labelRexecInvocation.setEnabled(useRexec);
 		_fieldRexecPort.setEnabled(useRexec);
 		_labelRexecPort.setEnabled(useRexec);
+		_checkBoxAutoDetect.setEnabled(useRexec);
+		_checkBoxRexecSSL.setEnabled(useRexec && !_checkBoxAutoDetect.getSelection());
 		_checkBoxSSL.setEnabled(_radioNone.getSelection());
 
 		verify();
@@ -398,12 +416,28 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 	
 	protected boolean getUseSSL()
 	{
-		return _checkBoxSSL.getSelection();
+		if (_radioRexec.getSelection())
+			return _checkBoxRexecSSL.getSelection();
+		else return _checkBoxSSL.getSelection();
+	}
+	
+	protected boolean getAutoDetect()
+	{
+		if (_radioNone.getSelection()) return false;
+		if (_radioRexec.getSelection())
+			return _checkBoxAutoDetect.getSelection();
+		else return true;
 	}
 	
 	protected void setUseSSL(boolean use)
 	{
 		_checkBoxSSL.setSelection(use);
+		_checkBoxRexecSSL.setSelection(use);
+	}
+	
+	protected void setAutoDetect(boolean use)
+	{
+		_checkBoxAutoDetect.setSelection(use);
 	}
 
 	protected void setLaunchType(ServerLaunchType type)

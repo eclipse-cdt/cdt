@@ -21,10 +21,12 @@ public interface IPropertyType
 	public static final int TYPE_STRING = 0;
 	public static final int TYPE_INTEGER = 1;
 	public static final int TYPE_ENUM = 2;
+	public static final int TYPE_BOOLEAN = 3;
 	
 	public boolean isString();
 	public boolean isInteger();
 	public boolean isEnum();
+	public boolean isBoolean();
 	
 	public int getType();
 	public String[] getEnumValues();

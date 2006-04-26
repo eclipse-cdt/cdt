@@ -521,6 +521,9 @@ public class SystemResources extends NLS
 	public static String RESID_SUBSYSTEM_SSL_LABEL;
 	public static String RESID_SUBSYSTEM_SSL_TIP;
 	
+	public static String RESID_SUBSYSTEM_AUTODETECT_LABEL;
+	public static String RESID_SUBSYSTEM_AUTODETECT_TIP;
+	
 	public static String RESID_SUBSYSTEM_SSL_ALERT_LABEL;
 	public static String RESID_SUBSYSTEM_SSL_ALERT_TIP;
 	

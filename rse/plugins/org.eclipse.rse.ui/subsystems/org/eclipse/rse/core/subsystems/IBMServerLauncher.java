@@ -66,6 +66,7 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 	protected final String KEY_SERVER_LAUNCH_TYPE_NAME = "server.launch.type.name";
 	protected final String KEY_SERVER_PATH = "server.path";
 	protected final String KEY_SERVER_SCRIPT = "server.script";
+	protected final String KEY_AUTODETECT_SSL = "autodetect.ssl";
 
 
 	protected ServerLaunchType _serverLaunchType = SERVER_LAUNCH_TYPE_EDEFAULT;
@@ -91,9 +92,14 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 	protected static final String IBM_ATTRIBUTES_EDEFAULT = null;
 
 	protected static final String RESTRICTED_TYPES_EDEFAULT = null;
+	
+	protected static final boolean AUTODETECT_SSL_EDEFAULT = true;
+	
+	protected boolean _autoDetectSSL = AUTODETECT_SSL_EDEFAULT;
 
 	protected PropertyType _serverLauncherEnumType;
 	protected PropertyType _intPropertyType;
+	protected PropertyType _booleanPropertyType;
 	
 	protected IBMServerLauncher(String name, IConnectorService connectorService)
 	{
@@ -107,6 +113,15 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 			_intPropertyType = new PropertyType(IPropertyType.TYPE_INTEGER);
 		}
 		return _intPropertyType;
+	}
+	
+	public IPropertyType getBooleanPropertyType()
+	{
+		if (_booleanPropertyType == null)
+		{
+			_booleanPropertyType = new PropertyType(IPropertyType.TYPE_BOOLEAN);
+		}
+		return _booleanPropertyType;
 	}
 	
 	public IPropertyType getServerLauncherPropertyType()
@@ -145,6 +160,15 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 				daemonPortProperty.setLabel(SystemResources.RESID_CONNECTION_DAEMON_PORT_LABEL);
 				
 				_daemonPort = Integer.parseInt(daemonPortProperty.getValue());
+				
+				IProperty autoDetectProperty = set.getProperty(KEY_AUTODETECT_SSL);
+				if (autoDetectProperty != null)
+				{
+					autoDetectProperty.setEnabled(_serverLaunchType.getType() == ServerLaunchType.REXEC);
+					autoDetectProperty.setLabel(SystemResources.RESID_SUBSYSTEM_AUTODETECT_LABEL);
+				
+					_autoDetectSSL = Boolean.getBoolean(autoDetectProperty.getValue());
+				}
 				
 				boolean usingRexec = _serverLaunchType.getType() == ServerLaunchType.REXEC;
 				IProperty rexecPortProperty = set.getProperty(KEY_REXEC_PORT);
@@ -193,6 +217,10 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 		rexecPortProperty.setEnabled(usingRexec);
 		rexecPortProperty.setLabel(SystemResources.RESID_CONNECTION_PORT_LABEL);
 		
+		IProperty autoDetectSSLProperty  = set.addProperty(KEY_AUTODETECT_SSL, ""+_autoDetectSSL, getBooleanPropertyType());	
+		autoDetectSSLProperty.setEnabled(usingRexec);
+		autoDetectSSLProperty.setLabel(SystemResources.RESID_SUBSYSTEM_AUTODETECT_LABEL);
+		
 		IProperty serverPathProperty  = set.addProperty(KEY_SERVER_PATH, ""+_serverPath);
 		serverPathProperty.setLabel(SystemResources.RESID_PROP_SERVERLAUNCHER_PATH);
 		serverPathProperty.setEnabled(usingRexec);
@@ -219,6 +247,7 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 		ibmNewOne.setServerLaunchType(getServerLaunchTypeGen());
 		ibmNewOne.setServerPath(getServerPath());
 		ibmNewOne.setServerScript(getServerScript());
+		ibmNewOne.setAutoDetectSSL(getAutoDetectSSL());
 		return ibmNewOne;
 	}
 	
@@ -302,6 +331,25 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 		if (newRexecPort != _rexecPort)
 		{
 			_rexecPort = newRexecPort;
+			setDirty(true);
+		}
+	}
+	
+	/**
+	 * Return the whether or not to auto-detect SSL
+	 */
+	public boolean getAutoDetectSSL()
+	{
+		return _autoDetectSSL;
+	}
+	/**
+	 * Sets whether or not to auto-detect SSL
+	 */
+	public void setAutoDetectSSL(boolean auto)
+	{
+		if (auto != _autoDetectSSL)
+		{
+			_autoDetectSSL = auto;
 			setDirty(true);
 		}
 	}

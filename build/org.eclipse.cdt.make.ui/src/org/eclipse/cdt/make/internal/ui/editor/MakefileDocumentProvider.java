@@ -62,7 +62,10 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 	/**
 	 */
 	private IMakefile createMakefile(IFile file) {
-		return MakeCorePlugin.getDefault().createMakefile(file);
+		if (file.exists()) {
+			return MakeCorePlugin.getDefault().createMakefile(file);
+		}
+		return null;
 	}
 
     /* (non-Javadoc)

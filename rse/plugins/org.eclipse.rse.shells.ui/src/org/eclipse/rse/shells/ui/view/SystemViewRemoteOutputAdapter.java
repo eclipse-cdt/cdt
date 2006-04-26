@@ -129,7 +129,8 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 					 if (firstSelection instanceof IRemoteLineReference)
 					{
 						IRemoteOutput result = (IRemoteOutput) firstSelection;
-						if (result.getType().equals("prompt"))
+						String type = result.getType();
+						if (type.equals("prompt"))
 						{
 						    if (_pasteToPromptAction == null)
 							{
@@ -137,6 +138,15 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 							}
 							
 							menu.add(menuGroup, _pasteToPromptAction);
+						}
+						else if (type.equals("directory"))
+						{
+							IRemoteOutput output = (IRemoteOutput)firstSelection;
+							if (output.getAbsolutePath() != null)
+							{
+								// TODO
+								// add directory actions here						
+							}
 						}
 						else
 						{

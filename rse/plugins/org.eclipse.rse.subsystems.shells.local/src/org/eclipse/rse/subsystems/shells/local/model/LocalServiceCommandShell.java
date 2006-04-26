@@ -1,6 +1,8 @@
 package org.eclipse.rse.subsystems.shells.local.model;
 
 
+import java.io.File;
+
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.services.local.shells.ParsedOutput;
 import org.eclipse.rse.internal.services.local.shells.Patterns;
@@ -83,7 +85,7 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 			if (event.isError())
 			{
 				output = new RemoteError(this, type);
-			}
+			}		
 			else
 			{
 				output = new RemoteOutput(this, type);
@@ -98,9 +100,15 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 					_workingDir = file;
 					output.setAbsolutePath(_workingDir);
 				}
+				/*
+				else if (type.equals("file") || type.equals("directory"))
+				{
+					output.setAbsolutePath(parsedMsg.file);
+				}
+				*/
 				else
 				{
-					output.setAbsolutePath(_workingDir + "\\" + file);
+					output.setAbsolutePath(_workingDir + File.separatorChar + file);
 				}
 			}
 		

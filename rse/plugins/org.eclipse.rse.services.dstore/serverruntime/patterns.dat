@@ -96,10 +96,11 @@ command: .*bat\s.*
 	 error         file line	     pattern=file:([\w,.,/,\\,:]*):(\d*):.*
 	
 command: dir.*
-	 directory     file              pattern=\d{2}/\d{2}/\d*\s\d{2}:\d{2}[a,p,AM,PM,\s].*\s*<DIR>\s*([\w,.,/,\\,\s,\-,\+\+,\d]*).*
-	 file          file              pattern=\d{2}/\d{2}/\d*\s\d{2}:\d{2}[a,p,AM,PM,\s].*\s*[\d,,]* ([\w,.,/,\\,\s,\-,\+\+,\d]*).*
-	 directory     file              pattern=[\d,/,\\,.,-]+.\s*\d{2}[:,.]\d{2}.\s*<DIR>\s*([\w,.,/,\\,\s,\-,\+\+,\d]*)
-	 file          file              pattern=[\d,/,\\,.,-]+.\s*\d{2}[:,.]\d{2}.\s*[\d,,,.]*\s*([\w,.,/,\\,\s,\-,\+\+,\d]*)	 
+	 directory     file              pattern=\d{2}/\d{2}/\d*\s*\d{2}:\d{2}\s[a,p,AM,PM]+\s*<DIR>\s*([\w,.,/,\\,\s,\-,\+,\d]*).*
+	 directory     file              pattern=.*<DIR>\s*([\w,.,/,\\,\s,\-,\+,\d]*).*
+	 file          file              pattern=\d{2}/\d{2}/\d*\s*\d{2}:\d{2}\s[a,p,AM,PM]+\s*[\d,,]*\s*([\w,.,/,\\,\s,\-,\+,\d]*).*
+	 directory     file              pattern=[\d,/,\\,.,-]+.\s*\d{2}[:,.]\d{2}.\s*<DIR>\s*([\w,.,/,\\,\s,\-,\+,\d]*)
+	 file          file              pattern=[\d,/,\\,.,-]+.\s*\d{2}[:,.]\d{2}.\s*[\d,,,.]*\s*([\w,.,/,\\,\s,\-,\+,\d]*)	 
 	 
 command: ls -l.*
 	 file          file              pattern=-[-,r,w,x]+\s.*\s[\d{4},\d{2}:\d{2}]+,\s([\w,.,/,(,),\\,\-,\+\s,\d]*)	

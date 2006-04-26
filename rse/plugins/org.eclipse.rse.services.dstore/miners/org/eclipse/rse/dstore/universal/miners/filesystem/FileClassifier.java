@@ -407,6 +407,7 @@ public class FileClassifier extends Thread
 
         boolean matchesExe = (fulltype.indexOf(STR_EXECUTABLE) > -1);
         boolean matchesScript = (fulltype.indexOf(STR_SCRIPT) > -1);
+        
         // shared
         if (matchesLib && (name.endsWith(STR_DOT_A) || name.endsWith(STR_DOT_SO) || name.indexOf(STR_DOT_SO_DOT) > 0))
         {
@@ -440,6 +441,10 @@ public class FileClassifier extends Thread
         else if (fulltype.startsWith(symbolicLinkStr))
         {
             type = resolveSymbolicLink(parentFile, name, fulltype, symbolicLinkStr, resolveLink, specialEncoding);
+        }
+        else
+        {
+        	type = fulltype;
         }
 
         return type;

@@ -13,6 +13,7 @@ package org.eclipse.cdt.ui.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.ui.tests.text.NumberRuleTest;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionFailedTest_MemberReference_Arrow_Prefix2;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ArgumentType_NoPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ArgumentType_NoPrefix2;
@@ -79,6 +80,7 @@ public class AutomatedSuite extends TestSuite {
 		
 		// Success Tests
 		//addTest(PartitionTokenScannerTest.suite());
+		addTest(NumberRuleTest.suite());
 		// completion tests
 		addTest(CompletionTest_FieldType_Prefix.suite());
 		addTest(CompletionTest_FieldType_NoPrefix.suite());

@@ -90,7 +90,7 @@ public interface ISystemPreferencesConstants
 	public static final String DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE 	= "zip";
 	public static final boolean DEFAULT_DOSUPERTRANSFER 			= true;
 	
-	public static final int DEFAULT_DOWNLOAD_BUFFER_SIZE        = 4;
+	public static final int DEFAULT_DOWNLOAD_BUFFER_SIZE        = 40;
 	
     public static final boolean DEFAULT_VERIFY_CONNECTION = true;	
     

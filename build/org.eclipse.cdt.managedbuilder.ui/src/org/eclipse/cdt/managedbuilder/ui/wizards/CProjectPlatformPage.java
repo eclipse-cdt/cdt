@@ -12,13 +12,13 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
-import java.util.LinkedHashSet;
 
-import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
@@ -34,12 +34,12 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.wizard.IWizardContainer;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -65,6 +65,8 @@ public class CProjectPlatformPage extends WizardPage {
 	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
 	private static final String TIP = PREFIX + ".tip"; //$NON-NLS-1$
 	private static final String CONFIG_LABEL = LABEL + ".configs"; //$NON-NLS-1$
+	private static final String SELECT_ALL_LABEL = LABEL + ".selectAll"; //$NON-NLS-1$
+	private static final String DESELECT_ALL_LABEL = LABEL + ".deselectAll"; //$NON-NLS-1$
 	private static final String SHOWALL_LABEL = LABEL + ".showall"; //$NON-NLS-1$
 	private static final String SHOWALL_CONFIG_LABEL = LABEL + ".showall.config"; //$NON-NLS-1$
 	private static final String TARGET_LABEL = LABEL + ".platform"; //$NON-NLS-1$
@@ -124,7 +126,13 @@ public class CProjectPlatformPage extends WizardPage {
 		configLabel.setFont(composite.getFont());
 		configLabel.setText(ManagedBuilderUIMessages.getResourceString(CONFIG_LABEL));
 
-		Table table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.MULTI
+		// Create the Table/Select group
+		Composite composite1 = new Composite(parent, SWT.NULL);
+		composite1.setFont(parent.getFont());
+		composite1.setLayout(new GridLayout(2, false));
+		composite1.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		Table table = new Table(composite1, SWT.CHECK | SWT.BORDER | SWT.MULTI
 								| SWT.SINGLE | SWT.H_SCROLL	| SWT.V_SCROLL);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setHeaderVisible(true);
@@ -145,7 +153,35 @@ public class CProjectPlatformPage extends WizardPage {
 				handleConfigurationSelectionChange();
 			}
 		});
+		
+		// Create the select/deselect all group composite
+		Composite composite2 = new Composite(composite1, SWT.NULL);
+		composite2.setFont(parent.getFont());
+		composite2.setLayout(new GridLayout());
+		composite2.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, true));
 
+		Button selectAll = new Button(composite2, SWT.NONE);
+		selectAll.setLayoutData(new GridData(GridData.FILL_BOTH));
+		selectAll.setText(ManagedBuilderUIMessages.getResourceString(SELECT_ALL_LABEL));
+		selectAll.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				tableViewer.setAllChecked(true);
+			}
+			public void widgetSelected(SelectionEvent e) {
+				tableViewer.setAllChecked(true);
+			}
+		});
+		
+		Button deselectAll = new Button(composite2, SWT.NONE);
+		deselectAll.setText(ManagedBuilderUIMessages.getResourceString(DESELECT_ALL_LABEL));
+		deselectAll.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				tableViewer.setAllChecked(false);
+			}
+			public void widgetSelected(SelectionEvent e) {
+				tableViewer.setAllChecked(false);
+			}
+		});
 	}
 	
 	/**
@@ -423,6 +459,11 @@ public class CProjectPlatformPage extends WizardPage {
 			}
 		}
 		
+		if (configurations.length > 10) {
+			Table table = tableViewer.getTable();
+			int heightHint = table.getItemHeight() * 10 + table.getGridLineWidth() * 2; 
+			((GridData)table.getLayoutData()).heightHint = heightHint;
+		}
 		tableViewer.setInput(configurations);
 		tableViewer.setCheckedElements(selected);
 		handleConfigurationSelectionChange();

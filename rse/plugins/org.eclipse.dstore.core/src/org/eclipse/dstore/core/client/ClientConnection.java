@@ -729,18 +729,15 @@ public class ClientConnection implements IDataStoreConstants
 						_launchSocket = lSocket;
 
 						lSocket.startHandshake();
-		
 
 						SSLSession session = lSocket.getSession();
 						if (session == null)
 						{
-							System.out.println("handshake failed");
 							lSocket.close();
 						}
 					}
 					catch (SSLHandshakeException e)
 					{						
-
 						result = new ConnectionStatus(false, e, true, mgr.getUntrustedCerts());
 						return result;
 					}
@@ -750,15 +747,15 @@ public class ClientConnection implements IDataStoreConstants
 						{
 							_launchSocket.close();
 						}
-						e.printStackTrace();
-						result = new ConnectionStatus(false, e);
-						
+
+						result = new ConnectionStatus(false, e);						
 						return result;
 					}
 				}
 				catch (Exception e)
 				{
-					e.printStackTrace();
+					result = new ConnectionStatus(false, e);						
+					return result;				
 				}
 			}
 			else
@@ -778,8 +775,6 @@ public class ClientConnection implements IDataStoreConstants
 		}
 		catch (IOException ioe)
 		{
-			System.out.println(ioe);
-			ioe.printStackTrace();
 			result = new ConnectionStatus(false, ioe);
 		}
 

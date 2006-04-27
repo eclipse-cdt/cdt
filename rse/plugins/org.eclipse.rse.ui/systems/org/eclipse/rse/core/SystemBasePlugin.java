@@ -48,51 +48,30 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-
-
-
 /**
  * A base plugin class offering common operations.
  */
 public abstract class SystemBasePlugin extends AbstractUIPlugin 
 {
-	
+
+	/**
+	 * Default folder for icons, relative to this plugin's install folder: "icons".
+	 */
+	private static final String ICON_PATH = "icons";
+
+	// static variables
+    private static SystemBasePlugin baseInst = null;
+
+    /**
+     * Logger object for logging messages for servicing purposes.
+     */
+	protected static Logger log = null;		
+    
 	// instance variables
     private Hashtable imageDescriptorRegistry = new Hashtable();	
     private ImageRegistry imageRegistry = null;
     private boolean headless;
     private boolean headlessSet;
-
-	// static variables
-    private static SystemBasePlugin baseInst = null;
-    
-    /**
-     * Default folder for icons, relative to this plugin's install folder: "icons".
-     */
-    protected static final String ICON_PATH = "icons";
-    
-    /**
-     * Logger object for logging messages for servicing purposes.
-     */
-	protected static Logger log = null;		
-		
-	/**
-	 * Constructor.
-	 */
-	public SystemBasePlugin() {
-	    super();
-	    
-	    if (baseInst == null) {
-	        baseInst = this;
-	    }
-	    
-		headless = false;
-		headlessSet = false;
-	}
-	
-	// ------------------------
-	// STATIC HELPER METHODS...
-	// ------------------------
 
     /**
      * Returns the singleton object representing the base plugin.
@@ -102,18 +81,10 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	    return baseInst;
     }
     
-    /**
-     * Returns the symbolic name of the bundle.
-     * @return the symbolic name of the bundle.
-     */   
-	public String getSymbolicName() {
-		return getBundle().getSymbolicName();
-	}
-	
-    /**
-     * Returns the active workbench shell.
-     * @return the active workbench shell.
-     */
+	/**
+	 * Returns the active workbench shell.
+	 * @return the active workbench shell.
+	 */
 	public static Shell getActiveWorkbenchShell() {
 	    
 	    IWorkbenchWindow window = getActiveWorkbenchWindow();
@@ -124,7 +95,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		
 		return null;
 	}
-	
+
 	/**
 	 * Returns the active workbench window.
 	 * @return the active workbench window. 
@@ -164,14 +135,14 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 			return null;
 		}
 	}
-	
-    /**
-     * Returns the workspace root.
-     * @return the workspace root.
-     */
-    public static IWorkspaceRoot getWorkspaceRoot() {
+
+	/**
+	 * Returns the workspace root.
+	 * @return the workspace root.
+	 */
+	public static IWorkspaceRoot getWorkspaceRoot() {
 	    return getWorkspace().getRoot();
-    }
+	}
 
 	/**
 	 * Returns the workspace.
@@ -181,10 +152,503 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		return ResourcesPlugin.getWorkspace();
 	}
 
-	// ----------------------------
-	// NON-STATIC HELPER METHODS...
-	// ----------------------------
+	/**
+	 * Helper to get the typical icons path ... usually just "icons/".
+	 */
+	public static String getIconPath()
+	{
+		return ICON_PATH;
+	}
 
+	/**
+	 * Retrieve image in any plugin's directory tree, given its file name.
+	 * The file name should be qualified relative to this plugin's bundle. Eg "icons/myicon.gif"
+	 */
+	public static ImageDescriptor getPluginImage(Bundle bundle, String fileName)
+	{
+	   URL path = bundle.getEntry("/" + fileName);
+	   ImageDescriptor descriptor = ImageDescriptor.createFromURL(path);
+	   return descriptor;
+	}
+
+	// ----------------------------------------
+	// TRANSLATABLE RESOURCE-RELATED METHODS...
+	// ----------------------------------------
+	
+	/**
+	 * Sets the resource bundle. Called by child class in their
+	 *  constructor, say, to load in their resource bundle. Handles
+	 *  rare case when not found by telling user, then dying.
+	 *  Note: This is NOT to be used for plugin.properties since Eclipse handles that file differently.
+	 * @param descriptor for the plugin where the file is
+	 * @param name of .properties file, without the '.properties' specified
+	 * @return ResourceBundle if loaded successfully, null if not.
+	 */
+	public static final ResourceBundle loadResourceBundle(Bundle bundle, String fileName)
+	{
+	    ResourceBundle rb = null;
+	    boolean ok = false;
+	    try
+		{
+			IPath path = new Path("$nl$/"+fileName+".properties");
+			URL url = Platform.find(bundle, path);
+			logDebugMessage("SystemBasePlugin", "Trying this now: " + url.toString());
+			rb = new PropertyResourceBundle(url.openStream());
+			ok = true;
+	    } 
+	    catch (Exception exc)
+	    {
+		    logError("SystemBasePlugin - try for resource bundle " + fileName + " not successful!",exc);
+	    }
+	    
+	    if (!ok)
+	    {
+	      Shell s = getActiveWorkbenchShell();
+	      
+	      if (s == null) {
+	      	Display d = Display.getCurrent();
+	      	
+	      	if (d != null) {
+	      		s = d.getActiveShell();
+	      	}
+	      	else {
+	      		d = Display.getDefault();
+	      		
+	      		if (d != null) {
+	      			s = d.getActiveShell();
+	      		}
+	      	}
+	      }
+	      
+	      if (s != null) {
+	      	org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(s);
+	      	mb.setText("Unexcepted Error");
+	      	mb.setMessage("Unable to load resource file " + fileName + ".properties");
+	      	mb.open();
+	      }
+	    }
+	    
+	    return rb;
+	}
+
+	/**
+	 * Returns the plugin.properties resource bundle associated with the specified plugin descriptor
+	 * 
+	 * @param descriptor for the plugin where the file is
+	 * @return ResourceBundle if loaded successfully, null if not.
+	 */
+	public static final ResourceBundle loadPluginResourceBundle(Bundle bundle)
+	{
+	     ResourceBundle rb = null;
+	     try
+	    {
+	         rb = Platform.getResourceBundle(bundle);
+	     } 
+	     catch (Exception exc)
+	     {
+	         logInfo("try for resource bundle plugin.properties not successful!");
+	     }
+	
+	     return rb;
+	}
+
+	/**
+	   * Sets the default resource bundle for handling cases where strings aren't translated. Called by child class in their
+	   *  constructor, say, to load in their resource bundle. Handles
+	   *  rare case when not found by telling user, then dying.
+	   *  Note: This is NOT to be used for plugin.properties since Eclipse handles that file differently.
+	   * @param descriptor for the plugin where the file is
+	   * @param name of .properties file, without the '.properties' specified
+	   * @return ResourceBundle if loaded successfully, null if not.
+	   */
+	  public static final ResourceBundle loadDefaultResourceBundle(Bundle bundle,
+															   String fileName)
+	  {
+		  ResourceBundle rb = null;
+		  boolean ok = false;
+		  try
+		  {
+			  IPath path = new Path(fileName+".properties");
+			  URL url = Platform.find(bundle, path);
+			  logDebugMessage("SystemBasePlugin", "Trying this now: " + url.toString());
+			  rb = new PropertyResourceBundle(url.openStream());
+			  ok = true;
+		  } 
+		  catch (Exception exc)
+		  {
+			  logError("SystemBasePlugin - try for resource bundle " + fileName + " not successful!",exc);
+		  }
+	    
+		  if (!ok)
+		  {
+		  	
+		  	Shell s = getActiveWorkbenchShell();
+		      
+		    if (s == null) {
+		      Display d = Display.getCurrent();
+		      	
+		      if (d != null) {
+		      	s = d.getActiveShell();
+		      }
+		      else {
+		      	d = Display.getDefault();
+		      		
+		      	if (d != null) {
+		      		s = d.getActiveShell();
+		      	}
+		      }
+		    }
+		  	
+		    if (s != null) {
+		    	org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(s);
+		    	mb.setText("Unexcepted Error");
+		    	mb.setMessage("Unable to load resource file " + fileName + ".properties");
+		    	mb.open();
+		    }
+		  }
+		  
+		  return rb;
+	  }
+
+	/**
+	 * Get a string from a given resource bundle.
+	 * If not found, stack trace info is placed in the
+	 *  plugin's log file to help pinpoint the offending code.
+	 */
+	public static String getString(ResourceBundle resourceBundle, String key)
+	{
+	    try
+	    {
+		   return resourceBundle.getString(key);
+	    }
+	    catch (MissingResourceException exc)
+	    {
+		   SystemBasePlugin.logError("Missing resource: " + key, exc);		   
+	    }
+	    return null;
+	}
+
+	/**
+	 * Get a string from a given resource bundle, with an english string to 
+	 *  use a default if the given key is not found. 
+	 * <p>
+	 * If not found, stack trace info is placed in the
+	 *  plugin's log file to help pinpoint the offending code.
+	 */
+	public static String getString(ResourceBundle resourceBundle, String key, String defaultString)
+	{
+		String s = defaultString;
+	    try
+	    {
+		   s = resourceBundle.getString(key);
+	    }
+	    catch (MissingResourceException exc)
+	    {	    	
+		   SystemBasePlugin.logError("Missing resource: " + key, exc);		   
+	    }
+	    return s;
+	}
+
+	// ------------------    
+	// MESSAGE METHODS...
+	// ------------------
+	
+	/**
+	 * Parse the given message file into memory, into a SystemMessageFile object.
+	 * @param descriptor - the descriptor for this plugin
+	 * @param fileName - unqualified name of the .xml message file, inluding the .xml extension.
+	 * @return SystemMessageFile (null if unable to load the file)
+	 */
+	public static final SystemMessageFile loadMessageFile(Bundle bundle,
+	                                                         String fileName)
+	{
+	    SystemMessageFile mf = null;
+	    boolean ok = false;
+		try	
+		{
+			IPath path = new Path("$nl$/"+fileName);
+			URL url = Platform.find(bundle, path);
+			
+			if (url!=null) {
+			    url = Platform.resolve(url);
+				URL temp = Platform.getBundle(RSEUIPlugin.PLUGIN_ID).getEntry("/");
+				temp = Platform.resolve(temp);
+				url = Platform.resolve(url);
+				mf = new SystemUIMessageFile(url.getPath(), temp.getFile());
+				ok = true;
+			}
+	    } catch (Throwable t) 
+	    {
+		    logError("Error loading message file " + fileName + " in " + bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME), t);		    
+		    ok = false;	// DY 
+		}
+	    if (!ok)
+	    {
+	      org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(getActiveWorkbenchShell());
+	      mb.setText("Unexpected Error");
+	      mb.setMessage("Unable to load message file " + fileName + " in " + bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME));
+	      mb.open();
+	    }
+	    return mf;
+	}
+
+	/**
+		* Parse the given message file into memory, into a SystemMessageFile object.
+		* @param descriptor - the descriptor for this plugin
+		* @param fileName - unqualified name of the .xml message file, inluding the .xml extension.
+		* @return SystemMessageFile (null if unable to load the file)
+		*/
+	   public static final SystemMessageFile loadDefaultMessageFile(Bundle bundle,
+																String fileName)
+	   {
+		   SystemMessageFile mf = null;
+		   boolean ok = false;
+		   try	
+		   {
+			   IPath path = new Path(fileName);
+			   URL url = Platform.find(bundle, path);
+			   //URL url = new URL(descriptor.getInstallURL(), fileName);
+			   if (url!=null) {
+			       url = Platform.resolve(url);
+				   mf = new SystemUIMessageFile(/*url.toString()*/url.getPath(), bundle.getEntry("/").getPath());
+				   ok = true;
+			   }
+		   } catch (Throwable t) 
+		   {
+			   logError("Error loading message file " + fileName + " in " + bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME), t);		    
+			   ok = false;	// DY 
+		   }
+		   
+		   if (!ok)
+		   {
+		   	 Shell s = getActiveWorkbenchShell();
+		      
+		     if (s == null) {
+		       Display d = Display.getCurrent();
+		      	
+		       if (d != null) {
+		      	 s = d.getActiveShell();
+		       }
+		       else {
+		      	 d = Display.getDefault();
+		      		
+		      	 if (d != null) {
+		      		 s = d.getActiveShell();
+		      	 }
+		       }
+		     }
+		     
+		     if (s != null) {
+		     	org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(s);
+		     	mb.setText("Unexpected Error");
+		     	mb.setMessage("Unable to load message file " + fileName + " in " + bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME));
+		     	mb.open();
+		     }
+		   }
+		   
+		   return mf;
+	   }
+
+	/**
+	 * Retrieve a message from a message file.
+	 * @param msgFile - the system message file containing the message.
+	 * @param msgId - the ID of the message to retrieve. This is the concatenation of the 
+	 *   message's component abbreviation, subcomponent abbreviation, and message ID as declared
+	 *   in the message xml file.
+	 */
+	public static SystemMessage getMessage(SystemMessageFile msgFile, String msgId)
+	{
+	   SystemMessage msg = null;
+	   if ( msgFile != null )
+	   	 msg = msgFile.getMessage(msgId);
+	   else
+	     logWarning("No message file set.");
+	
+	   if ( msg == null )
+	     logWarning("Unable to find message ID: " + msgId);
+	   return msg;  	
+	}
+
+	/**
+	 * Scan this plugin's message file for duplicates. This just calls the {@link org.eclipse.rse.ui.messages.SystemMessageFile#scanForDuplicates()}
+	 * method on the SystemMessageFile object.
+	 * @param msgFile - the message file to scan
+	 * @return true if duplicates found. The duplicates are written to standard out and the system core log file.
+	 */
+	public static boolean scanForDuplicateMessages(SystemMessageFile msgFile)
+	{
+		return msgFile.scanForDuplicates();
+	}
+
+	/**
+	 * Generate HTML from this plugin's message file. This is handy for documentation purposes.
+	 * This just calls the {@link org.eclipse.rse.ui.messages.SystemMessageFile#printHTML(String)}
+	 * method on the SystemMessageFile object.
+	 * @param msgFile - the message file to print
+	 * @return true if all went well, false if it failed for some reason.
+	 */
+	public static boolean printMessages(SystemMessageFile msgFile, String fullyQualifiedTargetFile)
+	{
+		return msgFile.printHTML(fullyQualifiedTargetFile);
+	}
+
+	// -----------------    
+	// LOGGER METHODS...
+	// -----------------
+	      
+	/**
+	 * Helper method for logging information to the RSE-style logging file.
+	 * This file is located in the .metadata subfolder for this plugin.
+	 * 
+	 * @param message - System message to be written to the log file
+	 */               	        
+	public static void logMessage(SystemMessage message)
+	{
+		logMessage(message, null);
+	}
+
+	/**
+	 * Helper method for logging information to the RSE-style logging file.
+	 * This file is located in the .metadata subfolder for this plugin.
+	 * 
+	 * @param message - System message to be written to the log file
+	 * @param ex - Exception to log.  If not applicable, this can be null.
+	 */               	        
+	public static void logMessage(SystemMessage message, Throwable ex)
+	{
+		char type = message.getIndicator();
+		switch (type)
+		{
+			case SystemMessage.ERROR:
+				log.logError(message.toString(), ex);	
+				break;
+			case SystemMessage.WARNING: 
+				log.logWarning(message.toString(), ex);
+				break;
+			case SystemMessage.INFORMATION:
+			case SystemMessage.COMPLETION:
+				log.logInfo(message.toString(), ex);
+				break;
+			case SystemMessage.INQUIRY:
+			case SystemMessage.UNEXPECTED:
+			default:
+				log.logInfo(message.toString(), ex);
+				break;							
+		}                       	       
+	}
+
+	/**
+	 * Helper method for logging information to the RSE-style logging file.
+	 * This file is located in the .metadata subfolder for this plugin.
+	 * <p>
+	 * Because this is an information message, it will only actually be logged if the
+	 * user has enabled logging of information messages via the Logging preferences page
+	 * within the Remote Systems preference pages tree.
+	 * 
+	 * @param message - Message to be written to the log file
+	 */
+	public static void logInfo(String message) 
+	{
+		log.logInfo(message);
+	}
+
+	// -----------------    
+	// LOGGER METHODS...
+	// -----------------
+	      
+	/**
+	 * Helper method for logging warnings to the RSE-style logging file.
+	 * This file is located in the .metadata subfolder for this plugin.
+	 * <p>
+	 * Because this is a warning message, it will only actually be logged if the
+	 * user has enabled logging of warning messages via the Logging preferences page
+	 * within the Remote Systems preference pages tree.
+	 * 
+	 * @param message - Message to be written to the log file
+	 * Because these messages are only used for servicing purposes, the message typically is not translated.
+	 */
+	public static void logWarning(String message) 
+	{
+		log.logWarning(message);
+	}
+
+	/**
+	 * Helper method for logging errors (but not exceptions) to the RSE-style logging file.
+	 * This file is located in the .metadata subfolder for this plugin. 
+	 * <p>
+	 * Because this is an error message, it is always logged, no matter what the preferences settings for
+	 * the logger.
+	 * 
+	 * @param message - Message to be written to the log file
+	 * Because these messages are only used for servicing purposes, the message typically is not translated.
+	 */
+	public static void logError(String message) 
+	{
+		log.logError(message, null);
+	}
+
+	/**
+	 * Helper method for logging errors (exceptions) to the RSE-style logging file.
+	 * This file is located in the .metadata subfolder for this plugin. 
+	 * <p>
+	 * Because this is an error message, it is always logged, no matter what the preferences settings for
+	 * the logger.
+	 * 
+	 * @param message - Message to be written to the log file. 
+	 * Because these messages are only used for servicing purposes, the message typically is not translated.
+	 * 
+	 * @param exception - Any exception that generated the error condition. Used to print a stack trace in the log file.
+	 * If you pass null, it is the same as calling {@link #logError(String)}
+	 */
+	public static void logError(String message, Throwable exception) 
+	{
+		log.logError(message, exception);
+	}
+
+	/**
+	 * Helper method for logging debug messages to the RSE-style logging file.
+	 * This file is located in the .metadata subfolder for this plugin. 
+	 * <p>
+	 * Debug messages are only logged when running this plugin in the workbench,
+	 * and when Logger.DEBUG has been set to true.
+	 * 
+	 * @param classname - Class issuing the debug message. Typically you pass getClass().getName()
+	 * @param message - Message to be written to the log file
+	 */
+	public static void logDebugMessage(String prefix, String message) 
+	{		
+		if (Logger.DEBUG) 
+		{
+			log.logDebugMessage(prefix, message);
+		}
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public SystemBasePlugin() {
+	    super();
+	    
+	    if (baseInst == null) {
+	        baseInst = this;
+	    }
+	    
+		headless = false;
+		headlessSet = false;
+	}
+	
+	// ------------------------
+	// STATIC HELPER METHODS...
+	// ------------------------
+
+    /**
+     * Returns the symbolic name of the bundle.
+     * @return the symbolic name of the bundle.
+     */   
+	public String getSymbolicName() {
+		return getBundle().getSymbolicName();
+	}
+	
     /**
 	 * Return the fully qualified install directory for this plugin.
 	 */
@@ -284,38 +748,6 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
     protected abstract void initializeImageRegistry();
 
 	/**
-	 * Parse the given message file that is in the plugin into memory, into a SystemMessageFile object.
-	 * @param fileName - unqualified name of the .xml message file, inluding the .xml extension.
-	 * @return SystemMessageFile (null if unable to load the file)
-	 */
-	public final SystemMessageFile loadMessageFile(String fileName)
-	{
-	    SystemMessageFile mf = null;
-	    try	
-		{
-			IPath path = new Path("$nl$/"+fileName);	
-			URL url = Platform.find(getBundle(), path);
-
-			if (url != null) {
-			    url = Platform.resolve(url);
-				mf = new SystemUIMessageFile(/*url.toString()*/url.getPath(), getBundle().getEntry("/").getPath());
-			}
-	    } catch (Exception exc) 
-	    {
-		    logError("Error loading message file " + fileName ,exc);
-		}
-	    return mf;
-	} 
-    
-    /**
-     * Helper to get the typical icons path ... usually just "icons/".
-     */
-    public static String getIconPath()
-    {
-    	return ICON_PATH;
-    }
-
-    /**
      * Helper method to put an image into the registry
      * @param id - an arbitrary ID to assign to this image. Used later when retrieving it.
      * @param fileName - the name of the icon file, with extension, relative to this plugin's folder.
@@ -344,17 +776,6 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
     {
        return getPluginImage(getBundle(), fileName);
     }
-
-    /**
-     * Retrieve image in any plugin's directory tree, given its file name.
-     * The file name should be qualified relative to this plugin's bundle. Eg "icons/myicon.gif"
-     */
-    public static ImageDescriptor getPluginImage(Bundle bundle, String fileName)
-    {
-	   URL path = bundle.getEntry("/" + fileName);
-	   ImageDescriptor descriptor = ImageDescriptor.createFromURL(path);
-       return descriptor;
-    }    
 
     /**
 	 * Easy retrieval of image by id
@@ -442,144 +863,6 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 *  constructor, say, to load in their resource bundle. Handles
 	 *  rare case when not found by telling user, then dying.
 	 *  Note: This is NOT to be used for plugin.properties since Eclipse handles that file differently.
-	 * @param descriptor for the plugin where the file is
-	 * @param name of .properties file, without the '.properties' specified
-	 * @return ResourceBundle if loaded successfully, null if not.
-	 */
-    public static final ResourceBundle loadResourceBundle(Bundle bundle, String fileName)
-    {
-	    ResourceBundle rb = null;
-	    boolean ok = false;
-	    try
-		{
-			IPath path = new Path("$nl$/"+fileName+".properties");
-			URL url = Platform.find(bundle, path);
-			logDebugMessage("SystemBasePlugin", "Trying this now: " + url.toString());
-			rb = new PropertyResourceBundle(url.openStream());
-			ok = true;
-	    } 
-	    catch (Exception exc)
-	    {
-		    logError("SystemBasePlugin - try for resource bundle " + fileName + " not successful!",exc);
-	    }
-	    
-	    if (!ok)
-	    {
-	      Shell s = getActiveWorkbenchShell();
-	      
-	      if (s == null) {
-	      	Display d = Display.getCurrent();
-	      	
-	      	if (d != null) {
-	      		s = d.getActiveShell();
-	      	}
-	      	else {
-	      		d = Display.getDefault();
-	      		
-	      		if (d != null) {
-	      			s = d.getActiveShell();
-	      		}
-	      	}
-	      }
-	      
-	      if (s != null) {
-	      	org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(s);
-	      	mb.setText("Unexcepted Error");
-	      	mb.setMessage("Unable to load resource file " + fileName + ".properties");
-	      	mb.open();
-	      }
-	    }
-	    
-	    return rb;
-    }    
-   
-   
-   /**
-	 * Returns the plugin.properties resource bundle associated with the specified plugin descriptor
-	 * 
-	 * @param descriptor for the plugin where the file is
-	 * @return ResourceBundle if loaded successfully, null if not.
-	 */
-    public static final ResourceBundle loadPluginResourceBundle(Bundle bundle)
-    {
-         ResourceBundle rb = null;
-         try
-        {
-             rb = Platform.getResourceBundle(bundle);
-         } 
-         catch (Exception exc)
-         {
-             logInfo("try for resource bundle plugin.properties not successful!");
-         }
-   
-         return rb;
-    }    
-
-
-
-	/**
-	   * Sets the default resource bundle for handling cases where strings aren't translated. Called by child class in their
-	   *  constructor, say, to load in their resource bundle. Handles
-	   *  rare case when not found by telling user, then dying.
-	   *  Note: This is NOT to be used for plugin.properties since Eclipse handles that file differently.
-	   * @param descriptor for the plugin where the file is
-	   * @param name of .properties file, without the '.properties' specified
-	   * @return ResourceBundle if loaded successfully, null if not.
-	   */
-	  public static final ResourceBundle loadDefaultResourceBundle(Bundle bundle,
-															   String fileName)
-	  {
-		  ResourceBundle rb = null;
-		  boolean ok = false;
-		  try
-		  {
-			  IPath path = new Path(fileName+".properties");
-			  URL url = Platform.find(bundle, path);
-			  logDebugMessage("SystemBasePlugin", "Trying this now: " + url.toString());
-			  rb = new PropertyResourceBundle(url.openStream());
-			  ok = true;
-		  } 
-		  catch (Exception exc)
-		  {
-			  logError("SystemBasePlugin - try for resource bundle " + fileName + " not successful!",exc);
-		  }
-	    
-		  if (!ok)
-		  {
-		  	
-		  	Shell s = getActiveWorkbenchShell();
-		      
-		    if (s == null) {
-		      Display d = Display.getCurrent();
-		      	
-		      if (d != null) {
-		      	s = d.getActiveShell();
-		      }
-		      else {
-		      	d = Display.getDefault();
-		      		
-		      	if (d != null) {
-		      		s = d.getActiveShell();
-		      	}
-		      }
-		    }
-		  	
-		    if (s != null) {
-		    	org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(s);
-		    	mb.setText("Unexcepted Error");
-		    	mb.setMessage("Unable to load resource file " + fileName + ".properties");
-		    	mb.open();
-		    }
-		  }
-		  
-		  return rb;
-	  }    
-	  
-    /**
-	 * Sets the resource bundle. Called by child class in their
-	 *  constructor, say, to load in their resource bundle. Handles
-	 *  rare case when not found by telling user, then dying.
-	 *  Note: This is NOT to be used for plugin.properties since Eclipse handles that file differently.
 	 * @param name of .properties file, without the '.properties' specified
 	 * @return ResourceBundle if loaded successfully, null if not.
 	 */
@@ -634,144 +917,30 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	    
 	    
     /**
-	 * Get a string from a given resource bundle.
-  	 * If not found, stack trace info is placed in the
-	 *  plugin's log file to help pinpoint the offending code.
+	 * Parse the given message file that is in the plugin into memory, into a SystemMessageFile object.
+	 * @param fileName - unqualified name of the .xml message file, inluding the .xml extension.
+	 * @return SystemMessageFile (null if unable to load the file)
 	 */
-    public static String getString(ResourceBundle resourceBundle, String key)
-    {
-	    try
-	    {
-		   return resourceBundle.getString(key);
-	    }
-	    catch (MissingResourceException exc)
-	    {
-		   SystemBasePlugin.logError("Missing resource: " + key, exc);		   
-	    }
-	    return null;
-    }
-    /**
-	 * Get a string from a given resource bundle, with an english string to 
-	 *  use a default if the given key is not found. 
-	 * <p>
-  	 * If not found, stack trace info is placed in the
-	 *  plugin's log file to help pinpoint the offending code.
-	 */
-    public static String getString(ResourceBundle resourceBundle, String key, String defaultString)
-    {
-    	String s = defaultString;
-	    try
-	    {
-		   s = resourceBundle.getString(key);
-	    }
-	    catch (MissingResourceException exc)
-	    {	    	
-		   SystemBasePlugin.logError("Missing resource: " + key, exc);		   
-	    }
-	    return s;
-    }
-        
-    // ------------------    
-    // MESSAGE METHODS...
-    // ------------------
-    
-    /**
-     * Parse the given message file into memory, into a SystemMessageFile object.
-     * @param descriptor - the descriptor for this plugin
-     * @param fileName - unqualified name of the .xml message file, inluding the .xml extension.
-     * @return SystemMessageFile (null if unable to load the file)
-     */
-    public static final SystemMessageFile loadMessageFile(Bundle bundle,
-	                                                         String fileName)
-    {
+	public final SystemMessageFile loadMessageFile(String fileName)
+	{
 	    SystemMessageFile mf = null;
-	    boolean ok = false;
-    	try	
-    	{
-			IPath path = new Path("$nl$/"+fileName);
-			URL url = Platform.find(bundle, path);
-			
-			if (url!=null) {
+	    try	
+		{
+			IPath path = new Path("$nl$/"+fileName);	
+			URL url = Platform.find(getBundle(), path);
+	
+			if (url != null) {
 			    url = Platform.resolve(url);
-				URL temp = Platform.getBundle(RSEUIPlugin.PLUGIN_ID).getEntry("/");
-				temp = Platform.resolve(temp);
-				url = Platform.resolve(url);
-				mf = new SystemUIMessageFile(url.getPath(), temp.getFile());
-				ok = true;
+				mf = new SystemUIMessageFile(/*url.toString()*/url.getPath(), getBundle().getEntry("/").getPath());
 			}
-	    } catch (Throwable t) 
+	    } catch (Exception exc) 
 	    {
-		    logError("Error loading message file " + fileName + " in " + bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME), t);		    
-		    ok = false;	// DY 
-  		}
-	    if (!ok)
-	    {
-	      org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(getActiveWorkbenchShell());
-	      mb.setText("Unexpected Error");
-	      mb.setMessage("Unable to load message file " + fileName + " in " + bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME));
-	      mb.open();
-	    }
+		    logError("Error loading message file " + fileName ,exc);
+		}
 	    return mf;
-    } 
-    
-	/**
-		* Parse the given message file into memory, into a SystemMessageFile object.
-		* @param descriptor - the descriptor for this plugin
-		* @param fileName - unqualified name of the .xml message file, inluding the .xml extension.
-		* @return SystemMessageFile (null if unable to load the file)
-		*/
-	   public static final SystemMessageFile loadDefaultMessageFile(Bundle bundle,
-																String fileName)
-	   {
-		   SystemMessageFile mf = null;
-		   boolean ok = false;
-		   try	
-		   {
-			   IPath path = new Path(fileName);
-			   URL url = Platform.find(bundle, path);
-			   //URL url = new URL(descriptor.getInstallURL(), fileName);
-			   if (url!=null) {
-			       url = Platform.resolve(url);
-				   mf = new SystemUIMessageFile(/*url.toString()*/url.getPath(), bundle.getEntry("/").getPath());
-				   ok = true;
-			   }
-		   } catch (Throwable t) 
-		   {
-			   logError("Error loading message file " + fileName + " in " + bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME), t);		    
-			   ok = false;	// DY 
-		   }
-		   
-		   if (!ok)
-		   {
-		   	 Shell s = getActiveWorkbenchShell();
-		      
-		     if (s == null) {
-		       Display d = Display.getCurrent();
-		      	
-		       if (d != null) {
-		      	 s = d.getActiveShell();
-		       }
-		       else {
-		      	 d = Display.getDefault();
-		      		
-		      	 if (d != null) {
-		      		 s = d.getActiveShell();
-		      	 }
-		       }
-		     }
-		     
-		     if (s != null) {
-		     	org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(s);
-		     	mb.setText("Unexpected Error");
-		     	mb.setMessage("Unable to load message file " + fileName + " in " + bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME));
-		     	mb.open();
-		     }
-		   }
-		   
-		   return mf;
-	   } 
+	}
 
-    /**
+	/**
      * Parse the given message file that is in the plugin into memory, into a SystemMessageFile object.
      * @param fileName - unqualified name of the .xml message file, inluding the .xml extension.
      * @return SystemMessageFile (null if unable to load the file)
@@ -796,48 +965,6 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
     } 
     
 	/**
-	 * Retrieve a message from a message file.
-	 * @param msgFile - the system message file containing the message.
-	 * @param msgId - the ID of the message to retrieve. This is the concatenation of the 
-	 *   message's component abbreviation, subcomponent abbreviation, and message ID as declared
-	 *   in the message xml file.
-	 */
-    public static SystemMessage getMessage(SystemMessageFile msgFile, String msgId)
-    {
-       SystemMessage msg = null;
-       if ( msgFile != null )
-       	 msg = msgFile.getMessage(msgId);
-       else
-         logWarning("No message file set.");
-       
-       if ( msg == null )
-         logWarning("Unable to find message ID: " + msgId);
-       return msg;  	
-    } 
-    
-    /**
-     * Scan this plugin's message file for duplicates. This just calls the {@link org.eclipse.rse.ui.messages.SystemMessageFile#scanForDuplicates()}
-     * method on the SystemMessageFile object.
-     * @param msgFile - the message file to scan
-     * @return true if duplicates found. The duplicates are written to standard out and the system core log file.
-     */
-    public static boolean scanForDuplicateMessages(SystemMessageFile msgFile)
-    {
-    	return msgFile.scanForDuplicates();
-    }
-    /**
-     * Generate HTML from this plugin's message file. This is handy for documentation purposes.
-     * This just calls the {@link org.eclipse.rse.ui.messages.SystemMessageFile#printHTML(String)}
-     * method on the SystemMessageFile object.
-     * @param msgFile - the message file to print
-     * @return true if all went well, false if it failed for some reason.
-     */
-    public static boolean printMessages(SystemMessageFile msgFile, String fullyQualifiedTargetFile)
-    {
-    	return msgFile.printHTML(fullyQualifiedTargetFile);
-    }
-    
-    /**
 	 * Put up an error message when a programming error is detected.
 	 * Please note this should never happen in production so we don't translate!
 	 */
@@ -857,129 +984,6 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
     // -----------------
           
 	/**
-	 * Helper method for logging information to the RSE-style logging file.
-	 * This file is located in the .metadata subfolder for this plugin.
-	 * 
-	 * @param message - System message to be written to the log file
-	 */               	        
-	public static void logMessage(SystemMessage message)
-	{
-		logMessage(message, null);
-	}
-          
-	/**
-	 * Helper method for logging information to the RSE-style logging file.
-	 * This file is located in the .metadata subfolder for this plugin.
-	 * 
-	 * @param message - System message to be written to the log file
-	 * @param ex - Exception to log.  If not applicable, this can be null.
-	 */               	        
-  	public static void logMessage(SystemMessage message, Throwable ex)
-  	{
-  		char type = message.getIndicator();
-  		switch (type)
-  		{
-  			case SystemMessage.ERROR:
-  				log.logError(message.toString(), ex);	
-  				break;
-  			case SystemMessage.WARNING: 
-  				log.logWarning(message.toString(), ex);
-  				break;
-  			case SystemMessage.INFORMATION:
-  			case SystemMessage.COMPLETION:
-  				log.logInfo(message.toString(), ex);
-  				break;
-  			case SystemMessage.INQUIRY:
-  			case SystemMessage.UNEXPECTED:
-  			default:
-  				log.logInfo(message.toString(), ex);
-  				break;							
-  		}                       	       
-  	}                          	        
-                                   	        
-    /**
-	 * Helper method for logging information to the RSE-style logging file.
-	 * This file is located in the .metadata subfolder for this plugin.
-	 * <p>
-	 * Because this is an information message, it will only actually be logged if the
-	 * user has enabled logging of information messages via the Logging preferences page
-	 * within the Remote Systems preference pages tree.
-	 * 
-	 * @param message - Message to be written to the log file
-     */
-    public static void logInfo(String message) 
-    {
-    	log.logInfo(message);
-    }
-
-    /**
-	 * Helper method for logging warnings to the RSE-style logging file.
-	 * This file is located in the .metadata subfolder for this plugin.
-	 * <p>
-	 * Because this is a warning message, it will only actually be logged if the
-	 * user has enabled logging of warning messages via the Logging preferences page
-	 * within the Remote Systems preference pages tree.
-	 * 
-	 * @param message - Message to be written to the log file
-	 * Because these messages are only used for servicing purposes, the message typically is not translated.
-     */
-    public static void logWarning(String message) 
-    {
-    	log.logWarning(message);
-    }
-        
-    /**
-	 * Helper method for logging errors (but not exceptions) to the RSE-style logging file.
-	 * This file is located in the .metadata subfolder for this plugin. 
-	 * <p>
-	 * Because this is an error message, it is always logged, no matter what the preferences settings for
-	 * the logger.
-	 * 
-	 * @param message - Message to be written to the log file
-	 * Because these messages are only used for servicing purposes, the message typically is not translated.
-     */
-    public static void logError(String message) 
-    {
-    	log.logError(message, null);
-    }
-
-    /**
-	 * Helper method for logging errors (exceptions) to the RSE-style logging file.
-	 * This file is located in the .metadata subfolder for this plugin. 
-	 * <p>
-	 * Because this is an error message, it is always logged, no matter what the preferences settings for
-	 * the logger.
-	 * 
-	 * @param message - Message to be written to the log file. 
-	 * Because these messages are only used for servicing purposes, the message typically is not translated.
-	 * 
-	 * @param exception - Any exception that generated the error condition. Used to print a stack trace in the log file.
-	 * If you pass null, it is the same as calling {@link #logError(String)}
-     */
-    public static void logError(String message, Throwable exception) 
-    {
-    	log.logError(message, exception);
-    }
-
-    /**
-	 * Helper method for logging debug messages to the RSE-style logging file.
-	 * This file is located in the .metadata subfolder for this plugin. 
-	 * <p>
-	 * Debug messages are only logged when running this plugin in the workbench,
-	 * and when Logger.DEBUG has been set to true.
-	 * 
-	 * @param classname - Class issuing the debug message. Typically you pass getClass().getName()
-	 * @param message - Message to be written to the log file
-     */
-	public static void logDebugMessage(String prefix, String message) 
-	{		
-		if (Logger.DEBUG) 
-		{
-			log.logDebugMessage(prefix, message);
-		}
-	}		     
-
-    /**
      * Get the logger for this plugin. You should not have to directly access
      * the logger, since helper methods are already provided in this class.
      * Use with care.

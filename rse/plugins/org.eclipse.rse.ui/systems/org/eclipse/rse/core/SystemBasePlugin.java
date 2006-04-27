@@ -20,9 +20,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.Stack;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -40,6 +44,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemUIMessageFile;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -354,107 +359,155 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	// ------------------
 	
 	/**
-	 * Parse the given message file into memory, into a SystemMessageFile object.
-	 * @param descriptor - the descriptor for this plugin
-	 * @param fileName - unqualified name of the .xml message file, inluding the .xml extension.
+	 * Resolves the bundle relative name to its URL inside a bundle if the resource
+	 * named by that name exists. Returns null if the resources does not exist.
+	 * Looks for the resource in NL directories as well.
+	 * @param bundle The bundle in which to look for the resource
+	 * @param name The name of the resource
+	 * @return The resource URL or null.
+	 */
+	public static final URL resolveBundleNameNL(Bundle bundle, String name) {
+		URL result = null;
+		Stack candidates = new Stack();
+		Locale locale = Locale.getDefault();
+		String language = locale.getLanguage();
+		String country = locale.getCountry();
+		candidates.push("/" + name);
+		if (language.length() > 0) {
+			candidates.push("/" + language + "/" + name);
+			if (country.length() > 0) {
+				candidates.push("/" + language + "/" + country + "/" + name);
+			}
+		}
+		while (!candidates.isEmpty() && result == null) {
+			String candidate = (String) candidates.pop();
+			result = bundle.getEntry(candidate);
+		}
+		return result;
+	}
+	
+	/**
+	 * Parse the given message file into memory, into a SystemMessageFile
+	 * object.
+	 * 
+	 * @param descriptor -
+	 *            the descriptor for this plugin
+	 * @param fileName -
+	 *            unqualified name of the .xml message file, inluding the .xml
+	 *            extension.
 	 * @return SystemMessageFile (null if unable to load the file)
 	 */
 	public static final SystemMessageFile loadMessageFile(Bundle bundle,
-	                                                         String fileName)
-	{
-	    SystemMessageFile mf = null;
-	    boolean ok = false;
-		try	
-		{
-			IPath path = new Path("$nl$/"+fileName);
-			URL url = Platform.find(bundle, path);
-			
-			if (url!=null) {
-			    url = Platform.resolve(url);
-				URL temp = Platform.getBundle(RSEUIPlugin.PLUGIN_ID).getEntry("/");
-				temp = Platform.resolve(temp);
-				url = Platform.resolve(url);
-				mf = new SystemUIMessageFile(url.getPath(), temp.getFile());
+			String fileName) {
+		SystemMessageFile mf = null;
+		boolean ok = false;
+		try {
+			URL url = resolveBundleNameNL(bundle, fileName);
+			if (url != null) {
+				// url = Platform.resolve(url);
+				// URL temp = Platform.getBundle(RSEUIPlugin.PLUGIN_ID).getEntry("/");
+				// temp = Platform.resolve(temp);
+				// url = Platform.resolve(url);
+				InputStream messageFileStream = url.openStream();
+				mf = SystemUIMessageFile.getMessageFile(fileName, messageFileStream);
+				messageFileStream.close();
 				ok = true;
 			}
-	    } catch (Throwable t) 
-	    {
-		    logError("Error loading message file " + fileName + " in " + bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME), t);		    
-		    ok = false;	// DY 
+		} catch (Throwable t) {
+			logError("Error loading message file "
+					+ fileName
+					+ " in "
+					+ bundle.getHeaders().get(
+							org.osgi.framework.Constants.BUNDLE_NAME), t);
+			ok = false; // DY
 		}
-	    if (!ok)
-	    {
-	      org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(getActiveWorkbenchShell());
-	      mb.setText("Unexpected Error");
-	      mb.setMessage("Unable to load message file " + fileName + " in " + bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME));
-	      mb.open();
-	    }
-	    return mf;
+		if (!ok) {
+			MessageBox mb = new MessageBox(getActiveWorkbenchShell());
+			mb.setText("Unexpected Error");
+			mb.setMessage("Unable to load message file "
+					+ fileName
+					+ " in "
+					+ bundle.getHeaders().get(
+							org.osgi.framework.Constants.BUNDLE_NAME));
+			mb.open();
+		}
+		return mf;
 	}
 
 	/**
-		* Parse the given message file into memory, into a SystemMessageFile object.
-		* @param descriptor - the descriptor for this plugin
-		* @param fileName - unqualified name of the .xml message file, inluding the .xml extension.
-		* @return SystemMessageFile (null if unable to load the file)
-		*/
-	   public static final SystemMessageFile loadDefaultMessageFile(Bundle bundle,
-																String fileName)
-	   {
-		   SystemMessageFile mf = null;
-		   boolean ok = false;
-		   try	
-		   {
-			   IPath path = new Path(fileName);
-			   URL url = Platform.find(bundle, path);
-			   //URL url = new URL(descriptor.getInstallURL(), fileName);
-			   if (url!=null) {
-			       url = Platform.resolve(url);
-				   mf = new SystemUIMessageFile(/*url.toString()*/url.getPath(), bundle.getEntry("/").getPath());
-				   ok = true;
-			   }
-		   } catch (Throwable t) 
-		   {
-			   logError("Error loading message file " + fileName + " in " + bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME), t);		    
-			   ok = false;	// DY 
-		   }
-		   
-		   if (!ok)
-		   {
-		   	 Shell s = getActiveWorkbenchShell();
-		      
-		     if (s == null) {
-		       Display d = Display.getCurrent();
-		      	
-		       if (d != null) {
-		      	 s = d.getActiveShell();
-		       }
-		       else {
-		      	 d = Display.getDefault();
-		      		
-		      	 if (d != null) {
-		      		 s = d.getActiveShell();
-		      	 }
-		       }
-		     }
-		     
-		     if (s != null) {
-		     	org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(s);
-		     	mb.setText("Unexpected Error");
-		     	mb.setMessage("Unable to load message file " + fileName + " in " + bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME));
-		     	mb.open();
-		     }
-		   }
-		   
-		   return mf;
-	   }
+	 * Parse the given message file into memory, into a SystemMessageFile
+	 * object.
+	 * 
+	 * @param descriptor -
+	 *            the descriptor for this plugin
+	 * @param fileName -
+	 *            unqualified name of the .xml message file, inluding the .xml
+	 *            extension.
+	 * @return SystemMessageFile (null if unable to load the file)
+	 */
+	public static final SystemMessageFile loadDefaultMessageFile(Bundle bundle,
+			String fileName) {
+		SystemMessageFile mf = null;
+		boolean ok = false;
+		try {
+			URL url = bundle.getEntry(fileName);
+			// IPath path = new Path(fileName);
+			// URL url = Platform.find(bundle, path);
+			// URL url = new URL(descriptor.getInstallURL(), fileName);
+			if (url != null) {
+				// url = Platform.resolve(url);
+				InputStream messageFileStream = url.openStream();
+				mf = SystemUIMessageFile.getMessageFile(fileName, messageFileStream);
+				messageFileStream.close();
+				ok = true;
+			}
+		} catch (Throwable t) {
+			logError("Error loading message file "
+					+ fileName
+					+ " in "
+					+ bundle.getHeaders().get(
+							org.osgi.framework.Constants.BUNDLE_NAME), t);
+			ok = false; // DY
+		}
+
+		if (!ok) {
+			Shell s = getActiveWorkbenchShell();
+			if (s == null) {
+				Display d = Display.getCurrent();
+				if (d != null) {
+					s = d.getActiveShell();
+				} else {
+					d = Display.getDefault();
+					if (d != null) {
+						s = d.getActiveShell();
+					}
+				}
+			}
+			if (s != null) {
+				MessageBox mb = new MessageBox(s);
+				mb.setText("Unexpected Error");
+				mb.setMessage("Unable to load message file "
+						+ fileName
+						+ " in "
+						+ bundle.getHeaders().get(
+								org.osgi.framework.Constants.BUNDLE_NAME));
+				mb.open();
+			}
+		}
+
+		return mf;
+	}
 
 	/**
 	 * Retrieve a message from a message file.
-	 * @param msgFile - the system message file containing the message.
-	 * @param msgId - the ID of the message to retrieve. This is the concatenation of the 
-	 *   message's component abbreviation, subcomponent abbreviation, and message ID as declared
-	 *   in the message xml file.
+	 * 
+	 * @param msgFile -
+	 *            the system message file containing the message.
+	 * @param msgId -
+	 *            the ID of the message to retrieve. This is the concatenation
+	 *            of the message's component abbreviation, subcomponent
+	 *            abbreviation, and message ID as declared in the message xml
+	 *            file.
 	 */
 	public static SystemMessage getMessage(SystemMessageFile msgFile, String msgId)
 	{

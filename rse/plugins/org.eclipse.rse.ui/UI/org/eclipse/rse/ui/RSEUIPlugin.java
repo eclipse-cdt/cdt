@@ -17,6 +17,7 @@
 package org.eclipse.rse.ui;
 
 import java.net.InetAddress;
+import java.net.URL;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
@@ -1336,6 +1337,14 @@ public class RSEUIPlugin extends SystemBasePlugin
 			}
 		}
 		return showPrefPageActions;
+	}
+	
+	/**
+	 * @return The URL to the message file DTD. Null if it is not found.
+	 */
+	public URL getMessageFileDTD() {
+		URL result = getBundle().getEntry("/messageFile.dtd");
+		return result;
 	}
 
 	/**

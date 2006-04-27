@@ -106,24 +106,7 @@ public class SystemMessageFile implements ErrorHandler
 			return xmlDocument;
 		}
 	}
-	/**
-	 * Constructor
-	 * @param messageFileName - name of xml file which will contain the messages
-	 */
-	public SystemMessageFile (String messageFileName, String defaultMessageFileLocation) 
-	{
-		this.defaultMsgFileLocation = defaultMessageFileLocation;
-		// have we already loaded this message file?
-		msgFile = getFromCache(messageFileName);
-		
-		// now, we haven't. Load it now.		
-		if (msgFile == null) 
-		{
-			msgFile=new MessageFileInfo(messageFileName.toUpperCase(), messageFileName, loadAndParseXMLFile(messageFileName));
-			msgfList.add(msgFile);
-			//scanForDuplicates(); // don't keep this for production. Too expensive
-		}		
-	}
+
 	/**
 	 * Constructor
 	 * @param messageFileName - name of xml file which will contain the messages
@@ -137,7 +120,8 @@ public class SystemMessageFile implements ErrorHandler
 		this.dtdInputStream = dtdStream;
 		if (msgFile == null) 
 		{
-			msgFile=new MessageFileInfo(messageFileName.toUpperCase(), messageFileName, loadAndParseXMLFile(messageFile));
+			Document doc = loadAndParseXMLFile(messageFile);
+			msgFile=new MessageFileInfo(messageFileName.toUpperCase(), messageFileName, doc);
 			msgfList.add(msgFile);
 			//scanForDuplicates(); // don't keep this for production. Too expensive
 		}		

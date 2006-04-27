@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 BitMethods Inc and others.
+ * Copyright (c) 2004, 2006 BitMethods Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,13 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
+import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -199,7 +202,14 @@ public class FileListControlFieldEditor extends FieldEditor {
 					if (config != null) {
 						IResource project = config.getOwner();
 						if (project != null) {
-							list.setPath(project.getLocation());
+							/* Enable workspace support for list and set project */
+							list.setWorkspaceSupport(true);
+							if (store instanceof BuildToolSettingsPreferenceStore){
+								Object[] option = ((BuildToolSettingsPreferenceStore)store).getOption(getPreferenceName());
+								if(option != null){
+									list.setContext((IOption)option[1], (IHoldsOptions)option[0]);
+								}
+							}
 						}
 					}
 				}

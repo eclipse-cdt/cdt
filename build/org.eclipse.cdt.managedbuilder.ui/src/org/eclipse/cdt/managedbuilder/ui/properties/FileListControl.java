@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 BitMethods Inc and others.
+ * Copyright (c) 2004, 2006 BitMethods Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,22 +7,43 @@
  *
  * Contributors:
  *     BitMethods Inc - initial API and implementation
+ *     Sascha Radike <sradike@ejectlag.com> - Support for workspace browsing and small improvements
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIImages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
+import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -45,6 +66,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
  * Instances of this class allow the user to add,remove, delete, moveup and movedown
@@ -58,9 +84,10 @@ public class FileListControl {
 	 * @since 2.0
 	 */
 	class SelectPathInputDialog extends InputDialog {
-		// Constants for externalized strings
-		private static final String BROWSE = "BuildPropertyCommon.label.browse"; //$NON-NLS-1$
 		private int type;
+		/* True if user sucessfully set the text value by a browse dialog */
+		private boolean fSetByBrowseDialog = false;
+		
 
 		/**
 		 * @param parentShell
@@ -75,14 +102,154 @@ public class FileListControl {
 			this.type = type;
 		}
 		
+		/**
+		 * Returns true if the value has been set by a browse dialog. 
+		 * @return
+		 */
+		public boolean isValueSetByBrowse() {
+			return fSetByBrowseDialog;
+		}
+		
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 		 */
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
+			
+			if (((type == IOption.BROWSE_DIR) || (type == IOption.BROWSE_FILE)
+					) && (fWorkspaceSupport)) {
+
+				/* Browse button for workspace folders/files */
+				final Button workspaceButton = createButton(parent, 3, WORKSPACEBUTTON_NAME, false);
+				workspaceButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent ev) {
+						/* Before opening the browse dialog we try to convert the current
+						 * path text to a valid workspace resource, so we can set it
+						 * as initial selection in the dialog.
+						 * 
+						 * First we remove all double-quotes. Then the build macro provider
+						 * will resolve all macros/variables (like workspace_loc, ...).
+						 * 
+						 * If the workspace location path is a prefix of our resolved path,
+						 * we will remove that part and finally get a full path relative to the
+						 * workspace. We can use that path to set the initially selected resource.
+						 */
+						
+						String currentPathText;
+						IPath path;
+						IResource resource = null;
+						
+						currentPathText = getText().getText();
+						if(option != null && holder != null){
+							try {
+								currentPathText = ManagedBuildManager.getBuildMacroProvider().
+									resolveValue(
+											currentPathText,
+											"", //$NON-NLS-1$
+											" ", //$NON-NLS-1$
+											IBuildMacroProvider.CONTEXT_OPTION,
+											new OptionContextData(option, holder));
+							} catch (BuildMacroException e) {
+							}
+						}
+
+						/* Remove double quotes */
+						currentPathText = currentPathText.replaceAll("\"", ""); //$NON-NLS-1$ //$NON-NLS-2$
+
+						/* Resolve variables */
+						IStringVariableManager variableManager =
+							VariablesPlugin.getDefault().getStringVariableManager();
+/*						
+						try	{
+							currentPathText = variableManager.performStringSubstitution(
+									currentPathText, false);
+						} catch (CoreException e)
+						{}
+*/						
+						/* Remove workspace location prefix (if any) */
+						path = new Path(currentPathText);
+						IPath workspacePath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+
+						if (workspacePath.isPrefixOf(path)) {
+							path = path.removeFirstSegments(workspacePath.segmentCount());
+							path = path.setDevice(null);
+						}
+						
+						/* Get resource for path. We use fProject if path is invalid.*/
+						if (!path.toString().trim().equals("")) { //$NON-NLS-1$ 
+							resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+						}
+						if (resource == null){
+							if(holder instanceof ITool){
+								IBuildObject bo = ((ITool)holder).getParent();
+								if(bo instanceof IResourceConfiguration){
+									resource = ((IResourceConfiguration)bo).getParent().getOwner();
+								} else if(bo instanceof IToolChain){
+									resource = ((IToolChain)bo).getParent().getOwner();
+								}
+							} else if(holder instanceof IToolChain){
+								resource = ((IToolChain)holder).getParent().getOwner();
+							}
+						}
+
+						/* Create workspace folder/file selection dialog and
+						 * set initial selection */
+						ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(),
+								new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+
+						dialog.setInitialSelection(resource);
+						
+		                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot()); 
+		                dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+						
+						if (type == IOption.BROWSE_DIR)	{
+							if (!(resource instanceof IContainer))
+								resource = null;
+
+							Class[] filteredResources = {IContainer.class, IProject.class};
+							dialog.addFilter(new TypedViewerFilter(filteredResources));
+							dialog.setTitle(WORKSPACE_DIR_DIALOG_TITLE); 
+			                dialog.setMessage(WORKSPACE_DIR_DIALOG_MSG); 
+						} else {
+							dialog.setValidator(new ISelectionStatusValidator() {
+							    public IStatus validate(Object[] selection) {
+							    	if (selection != null)
+							    		if (selection.length > 0)
+							    			if (!(selection[0] instanceof IFile))
+							    				return new StatusInfo(IStatus.ERROR, WORKSPACE_FILE_DIALOG_ERR);
+							    	return new StatusInfo();
+							    }
+
+							});
+							
+							dialog.setTitle(WORKSPACE_FILE_DIALOG_TITLE); 
+			                dialog.setMessage(WORKSPACE_FILE_DIALOG_MSG); 
+						}
+						
+						/* Open dialog and process result. If a resource has
+						 * been selected we create an absolute file system
+						 * path for it based on the workspace_loc variable */
+						if (dialog.open() == Window.OK) {
+							fSetByBrowseDialog = true;
+							
+							resource = (IResource) dialog.getFirstResult();
+							
+							if (resource != null) {
+								getText().setText(variableManager.generateVariableExpression(WORKSPACELOC_VAR,
+										resource.getFullPath().toOSString()));
+							}
+						}
+							
+						
+					}
+				});
+			}
+			
 			if (type != IOption.BROWSE_NONE) {
-				final Button browse = createButton(parent, 3, ManagedBuilderUIMessages.getResourceString(BROWSE), false);
-				browse.addSelectionListener(new SelectionAdapter() {
+				/* Browse button for external directories/files */
+				final Button externalButton = createButton(parent, 4, FILESYSTEMBUTTON_NAME, false);
+				externalButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent ev) {
 						String currentName;
 						String result;
@@ -93,8 +260,10 @@ public class FileListControl {
 								if(currentName != null && currentName.trim().length() != 0) {
 									dialog.setFilterPath(currentName);
 								}
+								dialog.setMessage(FILESYSTEM_DIR_DIALOG_MSG);
 								result = dialog.open();
 								if(result != null) {
+									fSetByBrowseDialog = true;
 									getText().setText(result);
 								}
 								break;
@@ -106,6 +275,7 @@ public class FileListControl {
 								}
 								result = browseDialog.open();
 								if (result != null) {
+									fSetByBrowseDialog = true;
 									getText().setText(result);
 								}
 								break;
@@ -117,6 +287,32 @@ public class FileListControl {
 
 	}
 
+	/* Variable names */
+	private static final String WORKSPACELOC_VAR = "workspace_loc"; //$NON-NLS-1$
+	
+	/* Names, messages and titles */
+	private static final String WORKSPACEBUTTON_NAME = ManagedBuilderUIMessages.getResourceString("FileListControl.button.workspace"); //$NON-NLS-1$
+	private static final String FILESYSTEMBUTTON_NAME = ManagedBuilderUIMessages.getResourceString("FileListControl.button.fs"); //$NON-NLS-1$
+
+	private static final String ADD_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.add"); //$NON-NLS-1$
+	private static final String DEL_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.delete"); //$NON-NLS-1$
+	private static final String EDIT_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.edit"); //$NON-NLS-1$
+	private static final String MOVEUP_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.moveup"); //$NON-NLS-1$
+	private static final String MOVEDOWN_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.movedown"); //$NON-NLS-1$
+	private static final String FILE_TITLE_ADD = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.file.title.add");	//$NON-NLS-1$
+	private static final String DIR_TITLE_ADD = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.dir.title.add");	//$NON-NLS-1$
+	private static final String FILE_TITLE_EDIT = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.file.title.edit");	//$NON-NLS-1$
+	private static final String DIR_TITLE_EDIT = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.dir.title.edit");	//$NON-NLS-1$
+	private static final String WORKSPACE_DIR_DIALOG_TITLE = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.wsp.dir.dlg.title");	//$NON-NLS-1$
+	private static final String WORKSPACE_FILE_DIALOG_TITLE = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.wsp.file.dlg.title");	//$NON-NLS-1$
+	private static final String WORKSPACE_DIR_DIALOG_MSG = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.wsp.dir.dlg.msg");	//$NON-NLS-1$
+	private static final String WORKSPACE_FILE_DIALOG_MSG = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.wsp.file.dlg.msg");	//$NON-NLS-1$
+	private static final String WORKSPACE_FILE_DIALOG_ERR = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.wsp.file.dlg.err");	//$NON-NLS-1$
+	private static final String FILESYSTEM_DIR_DIALOG_MSG = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.fs.dir.dlg.msg");	//$NON-NLS-1$
+	private static final String FILE_MSG = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.message.file");	//$NON-NLS-1$
+	private static final String DIR_MSG = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.message.directory");	//$NON-NLS-1$
+	private static final String TITLE = ManagedBuilderUIMessages.getResourceString("BuildPropertyCommon.label.title");	//$NON-NLS-1$
+	
 	//toolbar
 	private ToolBar toolBar;
 	// toolbar items
@@ -136,20 +332,15 @@ public class FileListControl {
 	// The type of browse support that is required
 	private int browseType;
 	private IPath path;
+	
+	/* Workspace support */
+	private boolean fWorkspaceSupport = false;
+	private IOption option;
+	private IHoldsOptions holder;
 
 	private java.util.List listeners = new ArrayList();
 	private String oldValue[];
 	
-	private static final String ADD_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.add"); //$NON-NLS-1$
-	private static final String DEL_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.delete"); //$NON-NLS-1$
-	private static final String EDIT_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.edit"); //$NON-NLS-1$
-	private static final String MOVEUP_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.moveup"); //$NON-NLS-1$
-	private static final String MOVEDOWN_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.movedown"); //$NON-NLS-1$
-	private static final String FILE_TITLE = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.title.file");	//$NON-NLS-1$
-	private static final String DIR_TITLE = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.title.directory");	//$NON-NLS-1$
-	private static final String FILE_MSG = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.message.file");	//$NON-NLS-1$
-	private static final String DIR_MSG = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.message.directory");	//$NON-NLS-1$
-	private static final String TITLE = ManagedBuilderUIMessages.getResourceString("BuildPropertyCommon.label.title");	//$NON-NLS-1$
 	//images
 	private final Image IMG_ADD = ManagedBuilderUIImages
 			.get(ManagedBuilderUIImages.IMG_FILELIST_ADD);
@@ -467,13 +658,48 @@ public class FileListControl {
 		int index = list.getSelectionIndex();
 		if (index != -1) {
 			String selItem = list.getItem(index);
-			String title = ManagedBuilderUIMessages.getResourceString("FileListControl.editdialog.title"); //$NON-NLS-1$
 			if (selItem != null) {
-				InputDialog dialog = new InputDialog(null, title, compTitle,
-						selItem, null);
+				/* Use SelectPathInputDialog for IOption.BROWSE_DIR and
+				 * IOption.BROWSE_FILE. Use simple input dialog otherwise.
+				 */
+				InputDialog dialog;
+				if ((browseType == IOption.BROWSE_DIR) ||
+						(browseType == IOption.BROWSE_FILE)) {
+
+					String title;
+					String message;
+					if (browseType == IOption.BROWSE_DIR) {
+						title = DIR_TITLE_EDIT;
+						message = DIR_MSG;
+					} else {
+						title = FILE_TITLE_EDIT;
+						message = FILE_MSG;
+					}
+					dialog =  new SelectPathInputDialog(getListControl().getShell(), title,
+							message, selItem, null, browseType);
+					
+				} else {
+					String title = ManagedBuilderUIMessages.getResourceString("FileListControl.editdialog.title"); //$NON-NLS-1$
+					dialog = new InputDialog(null, title, compTitle,
+							selItem, null);
+				}
+					
+				
 				String newItem = null;
 				if (dialog.open() == InputDialog.OK) {
 					newItem = dialog.getValue();
+					
+					/* If newItem is a directory or file path we need to
+					 * double-quote it if required. We only do this if the user
+					 * selected a new path using a browse button. If he/she simply
+					 * edited the text, we skip this so the user can remove quotes if he/she
+					 * wants to.
+					 */
+					if (dialog instanceof SelectPathInputDialog) {
+						if (((SelectPathInputDialog) dialog).isValueSetByBrowse())
+							newItem = doubleQuotePath(newItem);
+					}
+					
 					if (newItem != null && !newItem.equals(selItem)) {
 						list.setItem(index, newItem);
 						checkNotificationNeeded();
@@ -521,6 +747,24 @@ public class FileListControl {
 	}
 
 	/**
+	 * Enable/Disable workspace support. If enabled, the workspace browse button
+	 * will be visible in the SelectPathInputDialog.
+	 * @param enable
+	 */
+	public void setWorkspaceSupport(boolean enable)	{
+		fWorkspaceSupport = enable;
+	}
+	
+	/**
+	 * Set the project the field editor was created for.
+	 * @param project
+	 */
+	public void setContext(IOption option, IHoldsOptions holder) {
+		this.option = option;
+		this.holder = holder;
+	}
+	
+	/**
 	 * Returns the input dialog string
 	 * 
 	 * @return
@@ -533,13 +777,13 @@ public class FileListControl {
 		String initVal = new String();
 		
 		if (browseType == IOption.BROWSE_DIR) {
-			title = DIR_TITLE;
+			title = DIR_TITLE_ADD;
 			message = DIR_MSG;
-			initVal = path == null ? initVal : path.toString();
+			initVal = (path == null ? initVal : path.toString());
 		} else if (browseType == IOption.BROWSE_FILE) {
-			title = FILE_TITLE;
+			title = FILE_TITLE_ADD;
 			message = FILE_MSG;
-			initVal = path == null ? initVal : path.toString();
+			initVal = (path == null ? initVal : path.toString());
 		} else {
 			title = TITLE;
 			message = compTitle;
@@ -551,17 +795,11 @@ public class FileListControl {
 			input = dialog.getValue();
 		}
 		
-		// Double-quote the spaces or backslashes in paths (if any)
+		/* Double-quote (if required) the text if it is a directory or file */
 		if (input != null && input.length() > 0) {
 			if (browseType == IOption.BROWSE_DIR ||
 					browseType == IOption.BROWSE_FILE) {
-				// Check for spaces 
-				int firstWhitespace = input.indexOf(" ");	//$NON-NLS-1$
-				int firstBackslash = input.indexOf("\\");	//$NON-NLS-1$
-				if (firstWhitespace != -1 || firstBackslash != -1) {
-					// Double-quote paths with whitespaces
-					input = "\"" + input + "\"";	//$NON-NLS-1$ //$NON-NLS-2$
-				}
+				input = doubleQuotePath(input);
 			}
 		}
 
@@ -576,5 +814,35 @@ public class FileListControl {
 		title.setEnabled(enabled);
 		toolBar.setEnabled(enabled);
 		list.setEnabled(enabled);
+	}
+	
+	/**
+	 * Double-quotes a path name if it contains white spaces, backslahes
+	 * or a macro/variable (We don't know if a macro will contain spaces, so we
+	 * have to be on the safe side).
+	 * @param pathName The path name to double-quote.
+	 * @return
+	 */
+	private String doubleQuotePath(String pathName)	{
+		/* Trim */
+		pathName = pathName.trim();
+		
+		/* Check if path is already double-quoted */
+		boolean bStartsWithQuote = pathName.startsWith("\""); //$NON-NLS-1$
+		boolean bEndsWithQuote = pathName.endsWith("\""); //$NON-NLS-1$
+		
+		/* Check for spaces, backslashes or macros */ 
+		int i = pathName.indexOf(" ") + pathName.indexOf("\\") //$NON-NLS-1$ //$NON-NLS-2$
+			+ pathName.indexOf("${"); //$NON-NLS-1$
+		
+		/* If indexof didn't fail all three times, double-quote path */
+		if (i != -3) {
+			if (!bStartsWithQuote)
+				pathName = "\"" + pathName; //$NON-NLS-1$
+			if (!bEndsWithQuote)
+				pathName = pathName + "\""; //$NON-NLS-1$
+		}
+		
+		return pathName;
 	}
 }

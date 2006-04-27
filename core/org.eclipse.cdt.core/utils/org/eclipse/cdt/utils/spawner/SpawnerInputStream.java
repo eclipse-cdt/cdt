@@ -43,6 +43,7 @@ class SpawnerInputStream extends InputStream {
 	 * @see InputStream#read(byte[], int, int)
 	 */
 	public int read(byte[] buf, int off, int len) throws IOException {
+		available();
 		if (buf == null) {
 			throw new NullPointerException();
 		} else if (
@@ -78,11 +79,23 @@ class SpawnerInputStream extends InputStream {
 		fd = -1;
 	}
 
+	public int available() throws IOException {
+		try {
+			return available0(fd);
+		}
+		catch (UnsatisfiedLinkError e) {
+			// for those platforms that do not implement available0
+			return super.available();
+		}
+	}
+
 	private native int read0(int fileDesc, byte[] buf, int len) throws IOException;
 	private native int close0(int fileDesc) throws IOException;
+	private native int available0(int fileDesc) throws IOException;
 
 	static {
 		System.loadLibrary("spawner"); //$NON-NLS-1$
 	}
+
 
 }

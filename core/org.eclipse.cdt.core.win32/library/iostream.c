@@ -168,6 +168,18 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_clo
 		return (rc ? GetLastError() : 0);
 }
 
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_available0
+  (JNIEnv * env, jobject proc, jint fd)
+{
+	int nAvail = 0;
+
+	if (0 == PeekNamedPipe((HANDLE)fd, NULL, 0, NULL, &nAvail, NULL)) {
+		// error
+		return 0;
+	}
+	return nAvail;
+}
+
 /*
  * Class:     SpawnerOutputStream
  * Method:    write0

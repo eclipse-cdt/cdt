@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Wind River Systems, Inc.  
  *******************************************************************************/
 #include <unistd.h>
 #include <stdlib.h>
@@ -247,23 +248,38 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv * env, jobject jobj,
 
     switch (sig) {
     case 0:                    /* NOOP */
-        status = kill(pid, 0);
+        status = killpg(pid, 0);
+        if(status == -1) {
+	        status = kill(pid, 0);
+        }
 	break;
 
     case 2:                    /* INTERRUPT */
-        status = kill(pid, SIGINT);
+        status = killpg(pid, SIGINT);
+        if(status == -1) {
+	        status = kill(pid, SIGINT);
+        }
 	break;
 
     case 9:                    /* KILL */
-        status = kill(pid, SIGKILL);
+        status = killpg(pid, SIGKILL);
+        if(status == -1) {
+        	status = kill(pid, SIGKILL);
+        }
 	break;
 
     case 15:                   /* TERM */
-        status = kill(pid, SIGTERM);
+        status = killpg(pid, SIGTERM);
+        if(status == -1) {
+    	    status = kill(pid, SIGTERM);
+        }
 	break;
 
     default:
-        status = kill(pid, sig);        /* WHAT ?? */
+        status = killpg(pid, sig);        /* WHAT ?? */
+        if(status == -1) {
+	        status = kill(pid, sig);        /* WHAT ?? */
+        }
 	break;
     }
 

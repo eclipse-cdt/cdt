@@ -19,7 +19,7 @@ package org.eclipse.cdt.managedbuilder.buildmodel;
  */
 public interface IBuildIOType {
 	/**
-	 * Specifies whether this argument is Action input or output
+	 * Specifies whether this argument is Step input or output
 	 * 
 	 * @return boolean
 	 */
@@ -33,9 +33,9 @@ public interface IBuildIOType {
 	IBuildResource[] getResources();
 	
 	/**
-	 * Specifies the build action this argument belongs to
+	 * Specifies the build step this argument belongs to
 	 * 
-	 * @return IBuildAction
+	 * @return IBuildStep
 	 */
 	IBuildStep getStep();
 }

@@ -26,34 +26,55 @@ public interface IBuildResource {
 	IPath getLocation();
 	
 	/**
-	 * Returns the resource path related to the project directory
-	 * or an absolute path(location) in case the resource 
-	 * is located outside the project directory
+	 * In case the resource is a workspace resource,
+	 * returns the full workspace path for the resource
+	 * otherwise returns null
 	 * 
 	 * @return IPath
 	 */
 	IPath getFullPath();
 	
 	/**
-	 * Returns the output argument of the action
-	 * That generates this resource.
+	 * Returns the output io type of the step
+	 * that generates this resource.
 	 * In case the resource is the project source,
-	 * The main input action is returned
-	 * @see IBuildRepresentation.getInputAction()
+	 * The returned output io type belongs to the main input step
 	 * 
-	 * @return IBuildArgument
+	 * @see IBuildRepresentation.getInputStep()
+	 * 
+	 * @return IBuildIOType
 	 */
 	IBuildIOType getProducerIOType();
 	
 	/**
-	 * Returns an array of arguments where this resource is used as an input
+	 * Returns an array of io types where this resource is used as an input
 	 * 
-	 * @return IBuildArgument[]
+	 * @return IBuildIOType[]
 	 */
 	IBuildIOType[] getDependentIOTypes();
 	
 	/**
+	 * Returns the step that generates this resource.
+	 * In case the resource is the project source,
+	 * The main input step is returned
+	 * 
+	 * @see IBuildRepresentation.getInputStep()
+	 * 
+	 * @return IBuildIOType
+	 */
+	IBuildStep getProducerStep();
+
+	/**
+	 * Returns an array of steps that use this resource as an input
+	 * 
+	 * @return IBuildIOType[]
+	 */
+	IBuildStep[] getDependentSteps();
+
+	/**
 	 * Returns true if the resource needs rebuild
+	 * this implies that all build steps dependent on this resource
+	 * are to be invoked
 	 * 
 	 * @return boolean
 	 */

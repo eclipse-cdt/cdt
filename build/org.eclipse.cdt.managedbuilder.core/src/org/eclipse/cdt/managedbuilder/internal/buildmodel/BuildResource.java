@@ -11,11 +11,15 @@
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
@@ -163,6 +167,20 @@ public class BuildResource implements IBuildResource {
 	
 	public IBuildDescription getBuildDescription(){
 		return fInfo;
+	}
+
+	public IBuildStep[] getDependentSteps() {
+		Set set = new HashSet();
+		for(Iterator iter = fDepArgs.iterator(); iter.hasNext();){
+			set.add(((BuildIOType)iter.next()).getStep());
+		}
+		return (BuildStep[])set.toArray(new BuildStep[set.size()]);
+	}
+
+	public IBuildStep getProducerStep() {
+		if(fProducerArg != null)
+			return fProducerArg.getStep();
+		return null;
 	}
 
 }

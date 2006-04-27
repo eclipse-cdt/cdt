@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IBuildStep {
 	/**
-	 * Returns an array of input arguments for this action
+	 * Returns an array of input types for this step
 	 * @see IBuildIOType
 	 * 
 	 * @return IBuildIOType[]
@@ -30,7 +30,7 @@ public interface IBuildStep {
 	IBuildIOType[] getInputIOTypes();
 	
 	/**
-	 * Returns an array of input arguments for this action
+	 * Returns an array of output types for this step
 	 * @see IBuildIOType
 	 * 
 	 * @return IBuildIOType[]
@@ -38,28 +38,28 @@ public interface IBuildStep {
 	IBuildIOType[] getOutputIOTypes();
 
 	/**
-	 * Returns true if the action needs rebuild, false - otherwise
+	 * Returns true if the step needs rebuild, false - otherwise
 	 * 
 	 * @return boolean
 	 */
 	boolean needsRebuild();
 	
 	/**
-	 * Returns the complete set of input resources for this action
+	 * Returns the complete set of input resources for this step
 	 * 
 	 * @return IBuildResource[]
 	 */
 	IBuildResource[] getInputResources();
 
 	/**
-	 * Returns the complete set of output resources for this action
+	 * Returns the complete set of output resources for this step
 	 * 
 	 * @return IBuildResource[]
 	 */
 	IBuildResource[] getOutputResources();
 	
 	/**
-	 * Returns true if the action is removed (due to removal 
+	 * Returns true if the step is removed (due to removal 
 	 * of the project resources that were ised in thie action)
 	 * 
 	 * @return boolean

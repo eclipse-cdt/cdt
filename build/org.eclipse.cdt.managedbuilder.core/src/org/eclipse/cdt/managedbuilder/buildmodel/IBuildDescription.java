@@ -23,16 +23,16 @@ import org.eclipse.core.runtime.IPath;
 public interface IBuildDescription {
 	
 	/**
-	 * Returns the main input action
+	 * Returns the main input step
 	 * 
-	 * @return IBuildAction
+	 * @return IBuildStep
 	 */
 	IBuildStep getInputStep();
 	
 	/**
-	 * Returns the main output action
+	 * Returns the main output step
 	 * 
-	 * @return IBuildAction
+	 * @return IBuildStep
 	 */
 	IBuildStep getOutputStep();
 

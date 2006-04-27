@@ -16,10 +16,8 @@
 
 package org.eclipse.rse.core;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.MissingResourceException;
@@ -46,7 +44,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ide.IDEWorkbenchAdvisor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -70,9 +67,9 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
     private static SystemBasePlugin baseInst = null;
     
     /**
-     * Default folder for icons, relative to this plugin's install folder: "icons\".
+     * Default folder for icons, relative to this plugin's install folder: "icons".
      */
-    protected static final String ICON_PATH = "icons" + File.separatorChar;
+    protected static final String ICON_PATH = "icons";
     
     /**
      * Logger object for logging messages for servicing purposes.
@@ -311,7 +308,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	} 
     
     /**
-     * Helper to get the typical icons path ... usually just "icons\".
+     * Helper to get the typical icons path ... usually just "icons/".
      */
     public static String getIconPath()
     {
@@ -341,7 +338,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
     
     /**
      * Retrieve image in this plugin's directory tree, given its file name.
-     * The file name should be qualified relative to this plugin's folder. Eg "icons\myicon.gif"
+     * The file name should be qualified relative to this plugin's bundle. Eg "icons/myicon.gif"
      */
     public ImageDescriptor getPluginImage(String fileName)
     {
@@ -350,17 +347,13 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 
     /**
      * Retrieve image in any plugin's directory tree, given its file name.
-     * The file name should be qualified relative to this plugin's folder. Eg "icons\myicon.gif"
+     * The file name should be qualified relative to this plugin's bundle. Eg "icons/myicon.gif"
      */
     public static ImageDescriptor getPluginImage(Bundle bundle, String fileName)
     {
-	   URL path = bundle.getEntry("/");
-	   URL fullPathString = null;
-	   try {
-		   fullPathString = new URL(path,fileName);
-		   return ImageDescriptor.createFromURL(fullPathString);
-	   } catch (MalformedURLException e) {}
-       return null;
+	   URL path = bundle.getEntry("/" + fileName);
+	   ImageDescriptor descriptor = ImageDescriptor.createFromURL(path);
+       return descriptor;
     }    
 
     /**

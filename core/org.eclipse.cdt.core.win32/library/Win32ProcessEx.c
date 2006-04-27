@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
- *
+ *     Wind River Systems, Inc.  
+ * 
  *  Win32ProcessEx.c
  *
  *  This is a JNI implementation of spawner 
@@ -24,7 +25,7 @@
 
 
 #define PIPE_SIZE 512			// Size of pipe buffer
-#define MAX_CMD_SIZE 2049		// Maximum size of command line
+#define MAX_CMD_SIZE 2049		// Initial size of command line
 #define MAX_ENV_SIZE 4096		// Initial size of environment block
 #define PIPE_NAME_LENGTH 100	// Size of pipe name buffer
 #define PIPE_TIMEOUT 10000		// Default time-out value, in milliseconds.
@@ -102,6 +103,24 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2
 	return -1;
 }
 
+void ensureSize(_TCHAR** ptr, int* psize, int requiredLength) 
+{ 
+	int size= *psize;
+	if (requiredLength > size) { 
+	   size= 2*size;
+	   if (size < requiredLength) {
+	      size= requiredLength;
+	   }
+	   *ptr= (_TCHAR *)realloc(*ptr, size * sizeof(_TCHAR));
+	   if (NULL == *ptr) {
+	   	  *psize= 0;
+	   }
+	   else {
+	   	  *psize= size;
+	   }
+    }
+}
+
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
   (JNIEnv * env, jobject process, jobjectArray cmdarray, jobjectArray envp, jstring dir, jintArray channels) 
 {
@@ -112,7 +131,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
     const _TCHAR  * cwd = NULL;
 	LPVOID envBlk = NULL;
     int ret = 0;
-	_TCHAR  szCmdLine[MAX_CMD_SIZE];
+    int nCmdLineLength= 0;
+	_TCHAR * szCmdLine= 0;
 	int nBlkSize = MAX_ENV_SIZE; 
 	_TCHAR * szEnvBlock = NULL;
 	jsize nCmdTokens = 0;
@@ -133,6 +153,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	_TCHAR outPipeName[PIPE_NAME_LENGTH];
 	_TCHAR errPipeName[PIPE_NAME_LENGTH];
 
+    nCmdLineLength= MAX_CMD_SIZE;
+    szCmdLine= (_TCHAR *)malloc(nCmdLineLength * sizeof(_TCHAR));
+    szCmdLine[0]= _T('\0');
 	if((HIBYTE(LOWORD(GetVersion()))) & 0x80)
 		{
 		ThrowByName(env, "java/io/IOException", "Does not support Windows 3.1/95/98/Me");
@@ -205,25 +228,35 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
 	// Prepare command line
 	for(i = 0; i < nCmdTokens; ++i) 
-		{
+    	{
 		jobject item = (*env) -> GetObjectArrayElement(env, cmdarray, i);
 		jsize    len = (*env) -> GetStringLength(env, item);
 		int nCpyLen;
 		const _TCHAR *  str = (*env) -> GetStringChars(env, item, 0);	
-		if(NULL != str)
+		if(NULL != str) 
 			{
-			if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, MAX_CMD_SIZE - nPos)))
-				{
-				ThrowByName(env, "java/io/IOException", "Too long command line");
+			int requiredSize= nPos+len+2;
+			if (requiredSize > 32*1024) {
+				ThrowByName(env, "java/io/IOException", "Command line too long");
 				return 0;
-				}
+			}				
+			ensureSize(&szCmdLine, &nCmdLineLength, requiredSize);
+			if (NULL == szCmdLine) {
+				ThrowByName(env, "java/io/IOException", "Not enough memory");
+				return 0;
+			}
+			    
+			if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, nCmdLineLength - nPos)))
+                {
+				ThrowByName(env, "java/io/IOException", "Command line too long");
+				return 0;
+			}
 			nPos += nCpyLen;
 			szCmdLine[nPos] = _T(' ');
 			++nPos;
 			(*env) -> ReleaseStringChars(env, item, str);
-			}
 		}
-
+	}
 	szCmdLine[nPos] = _T('\0');
 
 
@@ -315,19 +348,19 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
                         cwd,              /* change to the new current directory */
                         &si,              /* (in)  startup information */
                         &pi);             /* (out) process information */
-
     
-
 	if(NULL != cwd)
 		free((void *)cwd);
 
 	if(NULL != szEnvBlock)
 		free(szEnvBlock);
 
+    if(NULL != szCmdLine) 
+        free(szCmdLine);
+      
     if (!ret) // Launching error
 		{
-		char * lpMsgBuf;
-
+		char * lpMsgBuf;	    
 		CloseHandle(stdHandles[0]);
 		CloseHandle(stdHandles[1]);
 		CloseHandle(stdHandles[2]); 
@@ -423,10 +456,14 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 	jsize nEnvVars = 0;
 	int i;
 	int nPos;
-	_TCHAR  szCmdLine[MAX_CMD_SIZE];
+    int nCmdLineLength= 0;
+	_TCHAR * szCmdLine= 0;
 	int nBlkSize = MAX_ENV_SIZE; 
 	_TCHAR * szEnvBlock = NULL;
 
+    nCmdLineLength= MAX_CMD_SIZE;
+	szCmdLine= (_TCHAR *)malloc(nCmdLineLength * sizeof(_TCHAR));
+    szCmdLine[0]= 0;
 
     sa.nLength = sizeof(sa);
     sa.lpSecurityDescriptor = 0;
@@ -447,9 +484,20 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 		const _TCHAR *  str = (*env) -> GetStringChars(env, item, 0);	
 		if(NULL != str)
 			{
-			if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, MAX_CMD_SIZE - nPos)))
+			int requiredSize= nPos+len+2;
+			if (requiredSize > 32*1024) {
+				ThrowByName(env, "java/io/IOException", "Command line too long");
+				return 0;
+			}				
+			ensureSize(&szCmdLine, &nCmdLineLength, requiredSize);
+			if (NULL == szCmdLine) {
+				ThrowByName(env, "java/io/IOException", "Not enough memory");
+				return 0;
+			}
+			    
+			if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, nCmdLineLength - nPos)))
 				{
-				ThrowByName(env, "java/io/Exception", "Too long command line");
+				ThrowByName(env, "java/io/Exception", "Command line too long");
 				return 0;
 				}
 			nPos += nCpyLen;
@@ -516,7 +564,6 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 
 	flags = CREATE_NEW_CONSOLE;
 	flags |= CREATE_UNICODE_ENVIRONMENT;
-	
     ret = CreateProcessW(0,                /* executable name */
                         szCmdLine,              /* command line */
                         0,                /* process security attribute */
@@ -534,6 +581,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 		free(cwd);
 	if(NULL != szEnvBlock)
 		free(szEnvBlock);
+	if(NULL != szCmdLine)
+		free(szCmdLine);
 
     if (!ret)  // error
 		{

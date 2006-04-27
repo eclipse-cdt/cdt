@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Wind River Systems, Inc.  
  *
  *  starter.cpp
  *
@@ -55,6 +56,23 @@ BOOL WINAPI HandlerRoutine(  DWORD dwCtrlType)   //  control signal type
 	return ret;
 }
 
+void ensureSize(_TCHAR** ptr, int* psize, int requiredLength) 
+{ 
+	int size= *psize;
+	if (requiredLength > size) { 
+	   size= 2*size;
+	   if (size < requiredLength) {
+	      size= requiredLength;
+	   }
+	   *ptr= (_TCHAR *)realloc(*ptr, size * sizeof(_TCHAR));
+	   if (NULL == *ptr) {
+	   	  *psize= 0;
+	   }
+	   else {
+	   	  *psize= size;
+	   }
+    }
+}
 
 
 extern "C" int  _tmain(int argc, _TCHAR * argv[]) {
@@ -67,19 +85,36 @@ extern "C" int  _tmain(int argc, _TCHAR * argv[]) {
    }
 
    // Construct the full command line
-   _TCHAR szCmdLine[MAX_CMD_LINE_LENGTH] = { 0 };
+   int nCmdLineLength= MAX_CMD_LINE_LENGTH;
+   _TCHAR * szCmdLine= (_TCHAR *)malloc(nCmdLineLength * sizeof(_TCHAR));
+   szCmdLine[0]= 0;
    int nPos = 0;
 
    for(int i = 6; i < argc; ++i) 
 		{
 		int nCpyLen;
-		if(0 > (nCpyLen = copyTo(szCmdLine + nPos, argv[i], _tcslen(argv[i]), MAX_CMD_LINE_LENGTH - nPos)))
-			{
+		int len= _tcslen(argv[i]);
+		int requiredSize= nPos+len+2;
+		if (requiredSize > 32*1024) {
 #ifdef DEBUG_MONITOR
-			OutputDebugStringW(_T("Not enough space to build command line\n"));
+			OutputDebugStringW(_T("Command line too long!\n"));
 #endif
 			return 0;
-			}
+		}				
+		ensureSize(&szCmdLine, &nCmdLineLength, requiredSize);
+		if (NULL == szCmdLine) {
+#ifdef DEBUG_MONITOR
+			OutputDebugStringW(_T("Not enough memory to build cmd line!\n"));
+#endif
+			return 0;
+		}
+		if(0 > (nCpyLen = copyTo(szCmdLine + nPos, argv[i], len, nCmdLineLength - nPos)))
+		   {
+#ifdef DEBUG_MONITOR
+		   OutputDebugStringW(_T("Not enough space to build command line\n"));
+#endif
+		   return 0;
+		}
 		nPos += nCpyLen;
 		szCmdLine[nPos] = _T(' ');
 		++nPos;
@@ -288,6 +323,11 @@ extern "C" int  _tmain(int argc, _TCHAR * argv[]) {
 
 	   DisplayErrorMessage();
 #endif
+   }
+   
+   if (NULL != szCmdLine) 
+      {
+      free(szCmdLine);
    }
 
    CloseHandle(waitEvent);

@@ -18,6 +18,10 @@
       <discovery label="%updateSiteName" url="http://update.eclipse.org/updates/3.2"/>
    </url>
 
+   <includes
+         id="org.eclipse.rse.dstore.source"
+         version="0.0.0"/>
+
    <requires>
       <import feature="org.eclipse.rse.core"/>
       <import plugin="org.eclipse.ui"/>

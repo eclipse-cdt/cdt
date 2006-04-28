@@ -16,23 +16,18 @@
 
 package org.eclipse.rse.core;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.Stack;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -40,7 +35,6 @@ import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.logging.LoggerFactory;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemUIMessageFile;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
@@ -189,52 +183,54 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 * @param name of .properties file, without the '.properties' specified
 	 * @return ResourceBundle if loaded successfully, null if not.
 	 */
-	public static final ResourceBundle loadResourceBundle(Bundle bundle, String fileName)
-	{
-	    ResourceBundle rb = null;
-	    boolean ok = false;
-	    try
-		{
-			IPath path = new Path("$nl$/"+fileName+".properties");
-			URL url = Platform.find(bundle, path);
-			logDebugMessage("SystemBasePlugin", "Trying this now: " + url.toString());
-			rb = new PropertyResourceBundle(url.openStream());
-			ok = true;
-	    } 
-	    catch (Exception exc)
-	    {
-		    logError("SystemBasePlugin - try for resource bundle " + fileName + " not successful!",exc);
-	    }
-	    
-	    if (!ok)
-	    {
-	      Shell s = getActiveWorkbenchShell();
-	      
-	      if (s == null) {
-	      	Display d = Display.getCurrent();
-	      	
-	      	if (d != null) {
-	      		s = d.getActiveShell();
-	      	}
-	      	else {
-	      		d = Display.getDefault();
-	      		
-	      		if (d != null) {
-	      			s = d.getActiveShell();
-	      		}
-	      	}
-	      }
-	      
-	      if (s != null) {
-	      	org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(s);
-	      	mb.setText("Unexcepted Error");
-	      	mb.setMessage("Unable to load resource file " + fileName + ".properties");
-	      	mb.open();
-	      }
-	    }
-	    
-	    return rb;
-	}
+//	public static final ResourceBundle loadResourceBundle(Bundle bundle, String fileName)
+//	{
+//	    ResourceBundle rb = null;
+//	    boolean ok = false;
+//	    try
+//		{
+//			URL url = resolveBundleNameNL(bundle, fileName+".properties");
+//			logDebugMessage("SystemBasePlugin", "Trying this now: " + url.toString());
+//			InputStream in = url.openStream();
+//			rb = new PropertyResourceBundle(in);
+//			in.close();
+//			ok = true;
+//			
+//	    } 
+//	    catch (Exception exc)
+//	    {
+//		    logError("SystemBasePlugin - try for resource bundle " + fileName + " not successful!",exc);
+//	    }
+//	    
+//	    if (!ok)
+//	    {
+//	      Shell s = getActiveWorkbenchShell();
+//	      
+//	      if (s == null) {
+//	      	Display d = Display.getCurrent();
+//	      	
+//	      	if (d != null) {
+//	      		s = d.getActiveShell();
+//	      	}
+//	      	else {
+//	      		d = Display.getDefault();
+//	      		
+//	      		if (d != null) {
+//	      			s = d.getActiveShell();
+//	      		}
+//	      	}
+//	      }
+//	      
+//	      if (s != null) {
+//	      	org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(s);
+//	      	mb.setText("Unexcepted Error");
+//	      	mb.setMessage("Unable to load resource file " + fileName + ".properties");
+//	      	mb.open();
+//	      }
+//	    }
+//	    
+//	    return rb;
+//	}
 
 	/**
 	 * Returns the plugin.properties resource bundle associated with the specified plugin descriptor
@@ -242,20 +238,20 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 * @param descriptor for the plugin where the file is
 	 * @return ResourceBundle if loaded successfully, null if not.
 	 */
-	public static final ResourceBundle loadPluginResourceBundle(Bundle bundle)
-	{
-	     ResourceBundle rb = null;
-	     try
-	    {
-	         rb = Platform.getResourceBundle(bundle);
-	     } 
-	     catch (Exception exc)
-	     {
-	         logInfo("try for resource bundle plugin.properties not successful!");
-	     }
-	
-	     return rb;
-	}
+//	public static final ResourceBundle loadPluginResourceBundle(Bundle bundle)
+//	{
+//	     ResourceBundle rb = null;
+//	     try
+//	    {
+//	         rb = Platform.getResourceBundle(bundle);
+//	     } 
+//	     catch (Exception exc)
+//	     {
+//	         logInfo("try for resource bundle plugin.properties not successful!");
+//	     }
+//	
+//	     return rb;
+//	}
 
 	/**
 	   * Sets the default resource bundle for handling cases where strings aren't translated. Called by child class in their
@@ -266,72 +262,74 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	   * @param name of .properties file, without the '.properties' specified
 	   * @return ResourceBundle if loaded successfully, null if not.
 	   */
-	  public static final ResourceBundle loadDefaultResourceBundle(Bundle bundle,
-															   String fileName)
-	  {
-		  ResourceBundle rb = null;
-		  boolean ok = false;
-		  try
-		  {
-			  IPath path = new Path(fileName+".properties");
-			  URL url = Platform.find(bundle, path);
-			  logDebugMessage("SystemBasePlugin", "Trying this now: " + url.toString());
-			  rb = new PropertyResourceBundle(url.openStream());
-			  ok = true;
-		  } 
-		  catch (Exception exc)
-		  {
-			  logError("SystemBasePlugin - try for resource bundle " + fileName + " not successful!",exc);
-		  }
-	    
-		  if (!ok)
-		  {
-		  	
-		  	Shell s = getActiveWorkbenchShell();
-		      
-		    if (s == null) {
-		      Display d = Display.getCurrent();
-		      	
-		      if (d != null) {
-		      	s = d.getActiveShell();
-		      }
-		      else {
-		      	d = Display.getDefault();
-		      		
-		      	if (d != null) {
-		      		s = d.getActiveShell();
-		      	}
-		      }
-		    }
-		  	
-		    if (s != null) {
-		    	org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(s);
-		    	mb.setText("Unexcepted Error");
-		    	mb.setMessage("Unable to load resource file " + fileName + ".properties");
-		    	mb.open();
-		    }
-		  }
-		  
-		  return rb;
-	  }
+//	  public static final ResourceBundle loadDefaultResourceBundle(Bundle bundle,
+//															   String fileName)
+//	  {
+//		  ResourceBundle rb = null;
+//		  boolean ok = false;
+//		  try
+//		  {
+//			  String name = fileName+".properties";
+//			  URL url = bundle.getEntry("/"+name);
+//			  logDebugMessage("SystemBasePlugin", "Trying this now: " + url.toString());
+//			  InputStream in = url.openStream();
+//			  rb = new PropertyResourceBundle(in);
+//			  in.close();
+//			  ok = true;
+//		  } 
+//		  catch (Exception exc)
+//		  {
+//			  logError("SystemBasePlugin - try for resource bundle " + fileName + " not successful!",exc);
+//		  }
+//	    
+//		  if (!ok)
+//		  {
+//		  	
+//		  	Shell s = getActiveWorkbenchShell();
+//		      
+//		    if (s == null) {
+//		      Display d = Display.getCurrent();
+//		      	
+//		      if (d != null) {
+//		      	s = d.getActiveShell();
+//		      }
+//		      else {
+//		      	d = Display.getDefault();
+//		      		
+//		      	if (d != null) {
+//		      		s = d.getActiveShell();
+//		      	}
+//		      }
+//		    }
+//		  	
+//		    if (s != null) {
+//		    	org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(s);
+//		    	mb.setText("Unexcepted Error");
+//		    	mb.setMessage("Unable to load resource file " + fileName + ".properties");
+//		    	mb.open();
+//		    }
+//		  }
+//		  
+//		  return rb;
+//	  }
 
 	/**
 	 * Get a string from a given resource bundle.
 	 * If not found, stack trace info is placed in the
 	 *  plugin's log file to help pinpoint the offending code.
 	 */
-	public static String getString(ResourceBundle resourceBundle, String key)
-	{
-	    try
-	    {
-		   return resourceBundle.getString(key);
-	    }
-	    catch (MissingResourceException exc)
-	    {
-		   SystemBasePlugin.logError("Missing resource: " + key, exc);		   
-	    }
-	    return null;
-	}
+//	public static String getString(ResourceBundle resourceBundle, String key)
+//	{
+//	    try
+//	    {
+//		   return resourceBundle.getString(key);
+//	    }
+//	    catch (MissingResourceException exc)
+//	    {
+//		   SystemBasePlugin.logError("Missing resource: " + key, exc);		   
+//	    }
+//	    return null;
+//	}
 
 	/**
 	 * Get a string from a given resource bundle, with an english string to 
@@ -340,19 +338,19 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 * If not found, stack trace info is placed in the
 	 *  plugin's log file to help pinpoint the offending code.
 	 */
-	public static String getString(ResourceBundle resourceBundle, String key, String defaultString)
-	{
-		String s = defaultString;
-	    try
-	    {
-		   s = resourceBundle.getString(key);
-	    }
-	    catch (MissingResourceException exc)
-	    {	    	
-		   SystemBasePlugin.logError("Missing resource: " + key, exc);		   
-	    }
-	    return s;
-	}
+//	public static String getString(ResourceBundle resourceBundle, String key, String defaultString)
+//	{
+//		String s = defaultString;
+//	    try
+//	    {
+//		   s = resourceBundle.getString(key);
+//	    }
+//	    catch (MissingResourceException exc)
+//	    {	    	
+//		   SystemBasePlugin.logError("Missing resource: " + key, exc);		   
+//	    }
+//	    return s;
+//	}
 
 	// ------------------    
 	// MESSAGE METHODS...
@@ -404,10 +402,6 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		try {
 			URL url = resolveBundleNameNL(bundle, fileName);
 			if (url != null) {
-				// url = Platform.resolve(url);
-				// URL temp = Platform.getBundle(RSEUIPlugin.PLUGIN_ID).getEntry("/");
-				// temp = Platform.resolve(temp);
-				// url = Platform.resolve(url);
 				InputStream messageFileStream = url.openStream();
 				mf = SystemUIMessageFile.getMessageFile(fileName, messageFileStream);
 				messageFileStream.close();
@@ -450,12 +444,8 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		SystemMessageFile mf = null;
 		boolean ok = false;
 		try {
-			URL url = bundle.getEntry(fileName);
-			// IPath path = new Path(fileName);
-			// URL url = Platform.find(bundle, path);
-			// URL url = new URL(descriptor.getInstallURL(), fileName);
+			URL url = bundle.getEntry("/"+fileName);
 			if (url != null) {
-				// url = Platform.resolve(url);
 				InputStream messageFileStream = url.openStream();
 				mf = SystemUIMessageFile.getMessageFile(fileName, messageFileStream);
 				messageFileStream.close();
@@ -705,19 +695,19 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
     /**
 	 * Return the fully qualified install directory for this plugin.
 	 */
-    protected IPath getInstallLocation() {
-        IPath prefix = null;
-        try
-        {
-	        String filePath = Platform.resolve(getBundle().getEntry("/")).getPath();
-	        prefix = new Path(filePath);
-        }
-        catch (Exception e)
-        {
-            prefix = new Path(getBundle().getEntry("/").getFile());
-        }
- 	   return prefix;
-    }    
+//    protected IPath getInstallLocation() {
+//        IPath prefix = null;
+//        try
+//        {
+//	        String filePath = Platform.resolve(getBundle().getEntry("/")).getPath();
+//	        prefix = new Path(filePath);
+//        }
+//        catch (Exception e)
+//        {
+//            prefix = new Path(getBundle().getEntry("/").getFile());
+//        }
+// 	   return prefix;
+//    }    
 	
 	// -------------------------------------
 	// ABSTRACTUIPLUGIN LIFECYCLE METHODS...

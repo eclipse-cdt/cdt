@@ -529,7 +529,7 @@ public class RSEUIPlugin extends SystemBasePlugin
 	    svraf.registerWithManager(manager);
 
 	
-		getInstallLocation();
+//		getInstallLocation();
 	
 	    //org.eclipse.rse.core.ui.uda.UserDefinedActionAdapterFactory udaaf = new org.eclipse.rse.core.ui.uda.UserDefinedActionAdapterFactory();	
 	    //udaaf.registerWithManager(manager);	

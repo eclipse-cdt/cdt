@@ -61,6 +61,16 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		return fSupportedTypes.contains( type.getId() );
 	}
 
+	public boolean contains( String source ) {
+		ISourceContainer[] containers = getSourceContainers();
+		for ( int i = 0; i < containers.length; ++i ) {
+			if ( contains( containers[i], source ) )
+				return true;
+		}
+
+		return false;
+	}
+
 	public boolean contains( ICBreakpoint breakpoint ) {
 		try {
 			String handle = breakpoint.getSourceHandle();

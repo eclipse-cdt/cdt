@@ -27,6 +27,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.IRegisterDescriptor;
@@ -384,6 +385,13 @@ public class CRegister extends CVariable implements IRegister {
 	public void dispose() {
 		internalDispose( true );
 		setDisposed( true );
+	}
+
+	protected ICStackFrame getStackFrame() {
+		ICStackFrame frame = super.getStackFrame();
+		if (frame == null)
+			frame = getCurrentStackFrame();
+		return frame;
 	}
 
 	protected CStackFrame getCurrentStackFrame() {

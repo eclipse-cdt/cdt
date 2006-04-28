@@ -60,6 +60,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
@@ -1032,8 +1033,9 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		getRegisterManager().targetSuspended();
 		getBreakpointManager().skipBreakpoints( false );
 		List newThreads = refreshThreads();
-		if ( event.getSource() instanceof ICDITarget ) {
-			suspendThreads( event );
+		if (event.getSource() instanceof ICDITarget) {
+			if (!(this.getConfiguration() instanceof ICDITargetConfiguration2) || !((ICDITargetConfiguration2)this.getConfiguration()).supportsThreadControl())
+				suspendThreads(event);
 		}
 		// We need this for debuggers that don't have notifications
 		// for newly created threads.
@@ -1093,7 +1095,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 				break;
 		}
 		debugEvents.add( createResumeEvent( detail ) );
-		resumeThreads( debugEvents, detail );
+		
+		if (!(this.getConfiguration() instanceof ICDITargetConfiguration2) || !((ICDITargetConfiguration2)this.getConfiguration()).supportsThreadControl())
+			resumeThreads( debugEvents, detail );
+		
 		fireEventSet( (DebugEvent[])debugEvents.toArray( new DebugEvent[debugEvents.size()] ) );
 	}
 

@@ -64,32 +64,6 @@ public class Chunk {
 		return buffer.getChar(offset % Database.CHUNK_SIZE);
 	}
 	
-	// Strings have a 16 bit length followed by the chars
-	
-	public void putChars(int offset, char[] value) {
-		buffer.position(offset % Database.CHUNK_SIZE);
-		buffer.putChar((char)value.length);
-		for (int i = 0; i < value.length; ++i)
-			buffer.putChar(value[i]);
-	}
-	
-	public char[] getChars(int offset) {
-		buffer.position(offset % Database.CHUNK_SIZE);
-		int n = buffer.getChar();
-		char[] chars = new char[n];
-		for (int i = 0; i < n; ++i)
-			chars[i] = buffer.getChar();
-		return chars;
-	}
-	
-	public void putString(int offset, String value) {
-		buffer.position(offset % Database.CHUNK_SIZE);
-		int n = value.length();
-		buffer.putChar((char)n);
-		for (int i = 0; i < n; ++i)
-			buffer.putChar(value.charAt(i));
-	}
-	
 	Chunk getNextChunk() {
 		return nextChunk;
 	}

@@ -26,8 +26,10 @@ import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.IPDOMWriter;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ICProject;
@@ -65,10 +67,11 @@ public class PDOM extends PlatformObject
 	private final IPath dbPath;
 	private Database db;
 	
-	public static final int VERSION = 2;
+	public static final int VERSION = 3;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
+	// 3 - added macros and change string implementation
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
@@ -213,13 +216,32 @@ public class PDOM extends PlatformObject
 		for (int i = 0; i < includes.length; ++i) {
 			IASTPreprocessorIncludeStatement include = includes[i];
 			
-			String sourcePath = include.getFileLocation().getFileName();
+			IASTFileLocation sourceLoc = include.getFileLocation();
+			String sourcePath
+				= sourceLoc != null
+				? sourceLoc.getFileName()
+				: ast.getFilePath(); // command-line includes
+				
 			PDOMFile sourceFile = addFile(sourcePath);
 			String destPath = include.getPath();
 			PDOMFile destFile = addFile(destPath);
 			sourceFile.addIncludeTo(destFile);
 		}
 	
+		// Add in the macros
+		IASTPreprocessorMacroDefinition[] macros = ast.getMacroDefinitions();
+		for (int i = 0; i < macros.length; ++i) {
+			IASTPreprocessorMacroDefinition macro = macros[i];
+			
+			IASTFileLocation sourceLoc = macro.getFileLocation();
+			if (sourceLoc == null)
+				continue; // skip built-ins and command line macros
+			
+			PDOMFile sourceFile = getFile(sourceLoc.getFileName());
+			if (sourceFile != null) // not sure why this would be null
+				sourceFile.addMacro(macro);
+		}
+		
 		// Add in the names
 		ast.accept(new ASTVisitor() {
 			{

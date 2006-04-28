@@ -42,6 +42,8 @@ public class Database {
 	public static final int NEXT_OFFSET = INT_SIZE * 2;
 	public static final int DATA_AREA = CHUNK_SIZE / MIN_SIZE * INT_SIZE + INT_SIZE;
 	
+	public static final int MAX_SIZE = CHUNK_SIZE - 4; // Room for overhead
+		
 	public Database(String filename) throws CoreException {
 		try {
 			file = new RandomAccessFile(filename, "rw"); //$NON-NLS-1$
@@ -136,6 +138,11 @@ public class Database {
 	 * @return
 	 */ 
 	public int malloc(int size) throws CoreException {
+		if (size > MAX_SIZE)
+			// Too Big
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0,
+					CCorePlugin.getResourceString("pdom.requestTooLarge"), new IllegalArgumentException())); //$NON-NLS-1$
+		
 		// Which block size
 		int freeblock = 0;
 		int blocksize;
@@ -270,127 +277,30 @@ public class Database {
 		return chunk.getChar(offset);
 	}
 	
-	public void putChars(int offset, char[] value) throws CoreException {
-		Chunk chunk = getChunk(offset);
-		chunk.putChars(offset, value);
-	}
-	
-	public int putChars(char[] value) throws CoreException {
-		int record = malloc((value.length + 1) * 2);
-		putChars(record, value);
-		return record;
-	}
-	
-	public char[] getChars(int offset) throws CoreException {
-		Chunk chunk = getChunk(offset);
-		return chunk.getChars(offset);
+	public IString newString(String string) throws CoreException {
+		if (string.length() > ShortString.MAX_LENGTH)
+			return new LongString(this, string);
+		else
+			return new ShortString(this, string);
 	}
 
-	public void putString(int offset, String value) throws CoreException {
-		Chunk chunk = getChunk(offset);
-		chunk.putString(offset, value);
+	public IString newString(char[] chars) throws CoreException {
+		if (chars.length > ShortString.MAX_LENGTH)
+			return new LongString(this, chars);
+		else
+			return new ShortString(this, chars);
 	}
-	
-	public int putString(String value) throws CoreException {
-		int record = malloc((value.length() + 1) * 2);
-		putString(record, value);
-		return record;
-	}
-	
-	public DBString getString(int offset) throws CoreException {
-		return new DBString(this, offset);
+
+	public IString getString(int offset) throws CoreException {
+		int length = getInt(offset);
+		if (length > ShortString.MAX_LENGTH)
+			return new LongString(this, offset);
+		else
+			return new ShortString(this, offset);
 	}
 	
 	public int getNumChunks() {
 		return toc.length;
-	}
-
-	public int stringCompare(int record1, int record2) throws CoreException {
-		Chunk chunk1 = getChunk(record1);
-		Chunk chunk2 = getChunk(record2);
-
-		int i1 = record1 + 2;
-		int i2 = record2 + 2;
-		int n1 = i1 + chunk1.getChar(record1) * 2;
-		int n2 = i2 + chunk2.getChar(record2) * 2;
-		
-		while (i1 < n1 && i2 < n2) {
-			char c1 = chunk1.getChar(i1);
-			char c2 = chunk2.getChar(i2);
-			
-			if (c1 < c2)
-				return -1;
-			if (c1 > c2)
-				return 1;
-			
-			i1 += 2;
-			i2 += 2;
-		}
-
-		if (i1 == n1 && i2 != n2)
-			return -1;
-		else if (i2 == n2 && i1 != n1)
-			return 1;
-		else
-			return 0;
-	}
-	
-	public int stringCompare(int record1, char[] record2) throws CoreException {
-		Chunk chunk1 = getChunk(record1);
-		
-		int i1 = record1 + 2;
-		int i2 = 0;
-		int n1 = i1 + chunk1.getChar(record1) * 2;
-		int n2 = record2.length;
-		
-		while (i1 < n1 && i2 < n2) {
-			char c1 = chunk1.getChar(i1);
-			char c2 = record2[i2];
-			
-			if (c1 < c2)
-				return -1;
-			if (c1 > c2)
-				return 1;
-			
-			i1 += 2;
-			++i2;
-		}
-
-		if (i1 == n1 && i2 != n2)
-			return -1;
-		else if (i2 == n2 && i1 != n1)
-			return 1;
-		else
-			return 0;
-	}
-	
-	public int stringCompare(int record1, String record2) throws CoreException {
-		Chunk chunk1 = getChunk(record1);
-		
-		int i1 = record1 + 2;
-		int i2 = 0;
-		int n1 = i1 + chunk1.getChar(record1) * 2;
-		int n2 = record2.length();
-		
-		while (i1 < n1 && i2 < n2) {
-			char c1 = chunk1.getChar(i1);
-			char c2 = record2.charAt(i2);
-			
-			if (c1 < c2)
-				return -1;
-			if (c1 > c2)
-				return 1;
-			
-			i1 += 2;
-			++i2;
-		}
-
-		if (i1 == n1 && i2 != n2)
-			return -1;
-		else if (i2 == n2 && i1 != n1)
-			return 1;
-		else
-			return 0;
 	}
 
 }

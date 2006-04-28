@@ -15,11 +15,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.db.DBString;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
+import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -36,9 +37,10 @@ public class PDOMFile {
 	private static final int FIRST_NAME = 0;
 	private static final int FIRST_INCLUDE = 4;
 	private static final int FIRST_INCLUDED_BY = 8;
-	private static final int FILE_NAME = 12;
+	private static final int FIRST_MACRO = 12;
+	private static final int FILE_NAME = 16;
 	
-	private static final int RECORD_SIZE = 12; // + length of string
+	private static final int RECORD_SIZE = 20;
 	
 	public static class Comparator implements IBTreeComparator {
 		private Database db;
@@ -48,7 +50,9 @@ public class PDOMFile {
 		}
 		
 		public int compare(int record1, int record2) throws CoreException {
-			return db.stringCompare(record1 + FILE_NAME, record2 + FILE_NAME);
+			IString name1 = db.getString(db.getInt(record1 + FILE_NAME));
+			IString name2 = db.getString(db.getInt(record2 + FILE_NAME));
+			return name1.compare(name2);
 		}
 	}
 	
@@ -63,7 +67,8 @@ public class PDOMFile {
 		}
 		
 		public int compare(int record) throws CoreException {
-			return db.stringCompare(record + FILE_NAME, key);
+			IString name = db.getString(db.getInt(record + FILE_NAME));
+			return name.compare(key);
 		}
 
 		public boolean visit(int record) throws CoreException {
@@ -84,8 +89,8 @@ public class PDOMFile {
 	public PDOMFile(PDOM pdom, String filename) throws CoreException {
 		this.pdom = pdom;
 		Database db = pdom.getDB();
-		record = db.malloc(RECORD_SIZE + (filename.length() + 1) * 2);
-		db.putString(record + FILE_NAME, filename);
+		record = db.malloc(RECORD_SIZE);
+		db.putInt(record + FILE_NAME, db.newString(filename).getRecord());
 		setFirstName(null);
 		setFirstInclude(null);
 		setFirstIncludedBy(null);
@@ -95,8 +100,9 @@ public class PDOMFile {
 		return record;
 	}
 	
-	public DBString getFileName() throws CoreException {
-		return pdom.getDB().getString(record + FILE_NAME);
+	public IString getFileName() throws CoreException {
+		Database db = pdom.getDB();
+		return db.getString(db.getInt(record + FILE_NAME));
 	}
 	
 	public PDOMName getFirstName() throws CoreException {
@@ -129,6 +135,34 @@ public class PDOMFile {
 		pdom.getDB().putInt(record + FIRST_INCLUDED_BY, rec);
 	}
 	
+	public PDOMMacro getFirstMacro() throws CoreException {
+		int rec = pdom.getDB().getInt(record + FIRST_MACRO);
+		return rec != 0 ? new PDOMMacro(pdom, rec) : null;
+	}
+
+	public void setFirstMacro(PDOMMacro macro) throws CoreException {
+		int rec = macro != null ? macro.getRecord() : 0;
+		pdom.getDB().putInt(record + FIRST_MACRO, rec);
+	}
+	
+	public void addMacro(IASTPreprocessorMacroDefinition macro) throws CoreException {
+		PDOMMacro firstMacro = getFirstMacro();
+		
+		// Make sure we don't already have one
+		char[] name = macro.getName().toCharArray();
+		PDOMMacro pdomMacro = firstMacro;
+		while (pdomMacro != null) {
+			if (pdomMacro.getName().equals(name))
+				return;
+			pdomMacro = pdomMacro.getNextMacro();
+		}
+		
+		// Nope, add it in
+		pdomMacro = new PDOMMacro(pdom, macro);
+		pdomMacro.setNextMacro(getFirstMacro());
+		setFirstMacro(pdomMacro);
+	}
+	
 	public void clear() throws CoreException {
 		// Remove the includes
 		PDOMInclude include = getFirstInclude();
@@ -139,6 +173,15 @@ public class PDOMFile {
 		}
 		setFirstInclude(include);
 		
+		// Delete all the macros in this file
+		PDOMMacro macro = getFirstMacro();
+		while (macro != null) {
+			PDOMMacro nextMacro = macro.getNextMacro();
+			macro.delete();
+			macro = nextMacro;
+		}
+		setFirstMacro(null);
+		
 		// Delete all the names in this file
 		PDOMName name = getFirstName();
 		while (name != null) {
@@ -146,7 +189,6 @@ public class PDOMFile {
 			name.delete();
 			name = nextName;
 		}
-		
 		setFirstName(null);
 	}
 	
@@ -179,16 +221,16 @@ public class PDOMFile {
 		LinkedList todo = new LinkedList();
 		
 		// Add me in to make sure we don't get caught in a circular include
-		DBString myFileName = getFileName();
+		IString myFileName = getFileName();
 		files.put(myFileName, this);
 		
 		todo.addLast(this);
 		while (todo.size() > 0) {
 			PDOMFile file = (PDOMFile)todo.removeFirst();
-			PDOMInclude includedBy = getFirstIncludedBy();
+			PDOMInclude includedBy = file.getFirstIncludedBy();
 			while (includedBy != null) {
 				PDOMFile incFile = includedBy.getIncludedBy();
-				DBString incFileName = incFile.getFileName();
+				IString incFileName = incFile.getFileName();
 				if (files.get(incFileName) == null) {
 					files.put(incFileName, incFile);
 					todo.addLast(incFile);

@@ -6,10 +6,10 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
-import org.eclipse.cdt.internal.core.pdom.db.DBString;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
+import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
@@ -84,7 +84,7 @@ public class DBTest extends TestCase {
 		}
 
 		public int compare(int record) throws CoreException {
-			return db.stringCompare(record + 4, key);
+			return db.getString(db.getInt(record + 4)).compare(key);
 		}
 		
 		public boolean visit(int record) throws CoreException {
@@ -92,8 +92,7 @@ public class DBTest extends TestCase {
 			return false;
 		}
 		
-		public int findIn(BTree btree) throws CoreException {
-			btree.accept(this);
+		public int getRecord() {
 			return record;
 		}
 		
@@ -134,23 +133,28 @@ public class DBTest extends TestCase {
 		BTree btree = new BTree(db, Database.DATA_AREA);
 		for (int i = 0; i < names.length; ++i) {
 			String name = names[i];
-			int record = db.malloc((name.length() + 1) * Database.CHAR_SIZE + Database.INT_SIZE);
-			db.putInt(record, i);
-			db.putString(record + Database.INT_SIZE, name);
+			int record = db.malloc(8);
+			db.putInt(record + 0, i);
+			IString string = db.newString(name);
+			db.putInt(record + 4, string.getRecord());
 			btree.insert(record, new IBTreeComparator() {
 				public int compare(int record1, int record2) throws CoreException {
-					return db.stringCompare(record1 + 4, record2 + 4);
+					IString string1 = db.getString(db.getInt(record1 + 4));
+					IString string2 = db.getString(db.getInt(record2 + 4));
+					return string1.compare(string2);
 				}
 			});
 		}
 		
 		for (int i = 0; i < names.length; ++i) {
 			String name = names[i];
-			int record = new FindVisitor(db, name).findIn(btree);
+			FindVisitor finder = new FindVisitor(db, name);
+			btree.accept(finder);
+			int record = finder.getRecord();
 			assertTrue(record != 0);
 			assertEquals(i, db.getInt(record));
-			DBString rname = db.getString(record + Database.INT_SIZE);
-			assertEquals(name, rname);
+			IString rname = db.getString(db.getInt(record + 4));
+			assertTrue(rname.equals(name));
 		}
 	}
 

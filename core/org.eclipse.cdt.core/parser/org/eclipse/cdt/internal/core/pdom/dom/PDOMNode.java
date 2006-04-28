@@ -14,10 +14,10 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.db.DBString;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
+import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -29,8 +29,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 public abstract class PDOMNode implements IPDOMNode{
 
-	private static final int PARENT_OFFSET = 0;
-	private static final int NAME_OFFSET = 4;
+	private static final int PARENT = 0;
+	private static final int NAME = 4;
 	
 	protected static final int RECORD_SIZE = 8;
 	
@@ -49,12 +49,11 @@ public abstract class PDOMNode implements IPDOMNode{
 		record = db.malloc(getRecordSize());
 
 		// name - must be before parent
-		int namerec = db.putChars(name);
-		db.putInt(record + NAME_OFFSET, namerec);
+		db.putInt(record + NAME, db.newString(name).getRecord());
 
 		// parent
 		if (parent != null) {
-			pdom.getDB().putInt(record + PARENT_OFFSET, parent.getRecord());
+			pdom.getDB().putInt(record + PARENT, parent.getRecord());
 			parent.addChild(this);
 		}
 		
@@ -81,29 +80,23 @@ public abstract class PDOMNode implements IPDOMNode{
 	public static PDOMLinkage getLinkage(PDOM pdom, int record) throws CoreException {
 		Database db = pdom.getDB();
 		int linkagerec = record;
-		int parentrec = db.getInt(linkagerec + PARENT_OFFSET);
+		int parentrec = db.getInt(linkagerec + PARENT);
 		while (parentrec != 0) {
 			linkagerec = parentrec;
-			parentrec = db.getInt(linkagerec + PARENT_OFFSET);
+			parentrec = db.getInt(linkagerec + PARENT);
 		}
 		
 		return pdom.getLinkage(linkagerec);
 	}
 	
-	public DBString getDBName() throws CoreException {
+	public IString getDBName() throws CoreException {
 		Database db = pdom.getDB();
-		int namerec = db.getInt(record + NAME_OFFSET);
+		int namerec = db.getInt(record + NAME);
 		return db.getString(namerec);
 	}
 	
 	public char[] getNameCharArray() throws CoreException {
-		Database db = pdom.getDB();
-		int namerec = db.getInt(record + NAME_OFFSET);
-		return db.getChars(namerec);
-	}
-	
-	protected int getNameRecord() throws CoreException {
-		return pdom.getDB().getInt(record + NAME_OFFSET);
+		return getDBName().getChars(); 
 	}
 	
 	protected void addChild(PDOMNode child) throws CoreException {
@@ -111,18 +104,16 @@ public abstract class PDOMNode implements IPDOMNode{
 	}
 
 	public boolean hasName(char[] name) throws CoreException {
-		Database db = pdom.getDB();
-		int namerec = db.getInt(record + NAME_OFFSET);
-		return pdom.getDB().stringCompare(namerec, name) == 0;
+		return getDBName().equals(name);
 	}
 	
 	public IBTreeComparator getIndexComparator() {
 		return new IBTreeComparator() {
 			public int compare(int record1, int record2) throws CoreException {
 				Database db = pdom.getDB();
-				int string1 = db.getInt(record1 + NAME_OFFSET);
-				int string2 = db.getInt(record2 + NAME_OFFSET);
-				return db.stringCompare(string1, string2);
+				int string1 = db.getInt(record1 + NAME);
+				int string2 = db.getInt(record2 + NAME);
+				return db.getString(string1).compare(db.getString(string2));
 			};
 		};
 	}
@@ -136,8 +127,8 @@ public abstract class PDOMNode implements IPDOMNode{
 		}
 		public int compare(int record) throws CoreException {
 			Database db = pdom.getDB();
-			int namerec = db.getInt(record + NAME_OFFSET);
-			return db.stringCompare(namerec, name);
+			int namerec = db.getInt(record + NAME);
+			return db.getString(namerec).compare(name);
 		}
 	}
 }

@@ -13,7 +13,9 @@ package org.eclipse.cdt.internal.core.pdom;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
@@ -22,7 +24,10 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -59,10 +64,28 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 		return new CodeReader(tu.getResource().getLocation().toOSString(), tu.getContents());
 	}
 	
-	private static class SkippedInclusion extends CodeReader {
-		private static char[] buffer = "".toCharArray();
-		public SkippedInclusion(String filename) {
-			super(filename, buffer);
+	private void fillMacros(PDOMFile file, StringBuffer buffer, Set visited) throws CoreException {
+		IString filename = file.getFileName();
+		if (visited.contains(filename))
+			return;
+		visited.add(filename);
+		
+		// Follow the includes
+		PDOMInclude include = file.getFirstInclude();
+		while (include != null) {
+			fillMacros(include.getIncludes(), buffer, visited);
+			include = include.getNextInIncludes();
+		}
+		
+		// Add in my macros now
+		PDOMMacro macro = file.getFirstMacro();
+		while (macro != null) {
+			buffer.append("#define "); //$NON-NLS-1$
+			buffer.append(macro.getName().getChars());
+			buffer.append(' ');
+			buffer.append(macro.getExpansion().getChars());
+			buffer.append('\n');
+			macro = macro.getNextMacro();
 		}
 	}
 	
@@ -75,9 +98,16 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 				// ignore and use the path we were passed in
 			}
 			PDOMFile file = pdom.getFile(path);
-			if (file != null && file.getFirstName() != null)
-				// Already got things from here
-				return new SkippedInclusion(path);
+			if (file != null) {
+				// Already got things from here, pass in a magic
+				// buffer with the macros in it
+				StringBuffer buffer = new StringBuffer();
+				fillMacros(file, buffer, new HashSet());
+				int length = buffer.length();
+				char[] chars = new char[length];
+				buffer.getChars(0, length, chars, 0);
+				return new CodeReader(path, chars);
+			}
 		} catch (CoreException e) {
 			CCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
 					CCorePlugin.PLUGIN_ID, 0, "PDOM Exception", e)));

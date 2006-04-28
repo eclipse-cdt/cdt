@@ -160,10 +160,6 @@ public abstract class PDOMBinding extends PDOMNode implements IBinding {
 		return new char[0];
 	}
 
-	public boolean hasName(char[] name) throws CoreException {
-		return pdom.getDB().stringCompare(getNameRecord(), name) == 0;
-	}
-	
 	public IScope getScope() throws DOMException {
 		// TODO implement this
 		return null;

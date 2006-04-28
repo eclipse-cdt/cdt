@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.internal.core.pdom;
 
-import org.eclipse.cdt.internal.core.pdom.db.DBString;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -28,6 +28,8 @@ public class PDOMLanguage {
 	private static final int ID = 4;	// char
 	private static final int NAME = 6;	// string
 	
+	private static int RECORD_SIZE = 10;
+	
 	public PDOMLanguage(PDOM pdom, int record) {
 		this.pdom = pdom;
 		this.record = record;
@@ -36,10 +38,10 @@ public class PDOMLanguage {
 	public PDOMLanguage(PDOM pdom, String name, int id, int next) throws CoreException {
 		this.pdom = pdom;
 		Database db = pdom.getDB();
-		record = db.malloc(6 + (name.length() + 1) * 2);
+		record = db.malloc(RECORD_SIZE);
 		db.putInt(record + NEXT, next);
 		db.putChar(record + ID, (char)id);
-		db.putString(record + NAME, name);
+		db.putInt(record + NAME, db.newString(name).getRecord());
 	}
 	
 	public int getRecord() {
@@ -50,8 +52,10 @@ public class PDOMLanguage {
 		return pdom.getDB().getChar(record + ID);
 	}
 	
-	public DBString getName() throws CoreException {
-		return pdom.getDB().getString(record + NAME);
+	public IString getName() throws CoreException {
+		Database db = pdom.getDB();
+		int rec = db.getInt(record + NAME);
+		return db.getString(rec);
 	}
 	
 	public PDOMLanguage getNext() throws CoreException {
@@ -60,6 +64,7 @@ public class PDOMLanguage {
 	}
 	
 	public boolean equals(String id) throws CoreException {
-		return pdom.getDB().stringCompare(record + NAME, id) == 0;
+		return getName().equals(id);
 	}
+	
 }

@@ -43,7 +43,6 @@ class SpawnerInputStream extends InputStream {
 	 * @see InputStream#read(byte[], int, int)
 	 */
 	public int read(byte[] buf, int off, int len) throws IOException {
-		available();
 		if (buf == null) {
 			throw new NullPointerException();
 		} else if (

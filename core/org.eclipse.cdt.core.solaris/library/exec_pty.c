@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Wind River Systems, Inc.
  *******************************************************************************/
 #include "exec0.h"
 #include <unistd.h>
@@ -94,6 +95,8 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 			while (fd < fdlimit)
 				close(fd++);
 		}
+
+		setpgid(getpid(), getpid());
 
 		if (envp[0] == NULL) {
 			execv(full_path, argv);

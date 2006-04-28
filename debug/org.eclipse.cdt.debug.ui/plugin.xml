@@ -1224,5 +1224,22 @@
             class="org.eclipse.cdt.debug.internal.ui.DebugMarkerAnnotationModelFactory"
             contentTypeId="org.eclipse.cdt.core.cSource"/>
    </extension>
+<!-- Import Executable Wizard -->
+  <extension
+         point="org.eclipse.ui.importWizards">
+      <wizard
+            category="org.eclipse.cdt.ui.import"
+            icon="icons/obj16/c_app.gif"
+            name="%importExecutableWizard.name"
+            class="org.eclipse.cdt.debug.ui.importexecutable.ImportExecutableWizard"
+            id="org.eclipse.cdt.ui.wizardse.ImportExecutableWizard">
+            <description>
+ 				%importExecutableWizard.description
+ 	        </description>
+      </wizard>
+      <category
+            id="org.eclipse.cdt.ui.import"
+            name="%importCPPCategory.name"/>
+   </extension>
 
 </plugin>

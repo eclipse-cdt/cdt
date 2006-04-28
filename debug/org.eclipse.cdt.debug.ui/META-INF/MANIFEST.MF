@@ -19,6 +19,7 @@ Export-Package:
  org.eclipse.cdt.debug.internal.ui.views.modules,
  org.eclipse.cdt.debug.internal.ui.views.signals,
  org.eclipse.cdt.debug.ui,
+ org.eclipse.cdt.debug.ui.importexecutable,
  org.eclipse.cdt.debug.ui.sourcelookup
 Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.jface.text,

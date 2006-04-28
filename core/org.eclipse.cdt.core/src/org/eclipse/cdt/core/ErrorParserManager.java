@@ -104,6 +104,10 @@ public class ErrorParserManager extends OutputStream {
 		}
 	}
 
+	public IProject getProject() {
+		return fProject;
+	}
+	
 	public IPath getWorkingDirectory() {
 		if (fDirectoryStack.size() != 0) {
 			return (IPath) fDirectoryStack.lastElement();

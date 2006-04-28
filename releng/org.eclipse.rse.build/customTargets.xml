@@ -45,82 +45,6 @@
 	<target name="assemble.org.eclipse.rse.dstore">
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 	</target>
-	
-	<target name="serverruntime">
-
-		<property name="working" value="${packageDirectory}/rseserver"/>
-		<mkdir dir="${working}" />
-		<mkdir dir="${working}/jars" />
-
-		<copy todir="${working}">
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="**" />
-		</copy>
-
-		<copy todir="${working}/jars">
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core" includes="dstore_core.jar" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.extra" includes="dstore_extra_server.jar" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services" includes="clientserver.jar" />
-			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="dstore_miners.jar" />
-		</copy>
-		
-		<antcall target="rseserver-os">
-			<param name="os" value="aix"/>
-			<param name="eol" value="lf"/>
-		</antcall>
-		<antcall target="rseserver-os">
-			<param name="os" value="unix"/>
-			<param name="eol" value="lf"/>
-		</antcall>
-		<antcall target="rseserver-os">
-			<param name="os" value="linux"/>
-			<param name="eol" value="lf"/>
-		</antcall>
-		<antcall target="rseserver-os">
-			<param name="os" value="windows"/>
-			<param name="eol" value="crlf"/>
-		</antcall>
-		
-		<delete dir="${working}" />
-
-	</target>
-	
-	<target name="rseserver-os">
-		<mkdir dir="${working}/collector" />
-		<copy todir="${working}/collector">
-			<fileset dir="${working}/scripts/${os}" includes="*"/>
-		</copy>
-		<chmod perm="+x">
-			<fileset dir="${working}/collector" includes="*"/>
-		</chmod>
-		<copy todir="${working}/collector">
-			<fileset dir="${working}/data" includes="*"/>
-		</copy>
-		<fixcrlf srcdir="${working}/collector" eol="${eol}" eof="asis" includes="*"/>
-		<copy todir="${working}/collector">
-			<fileset dir="${working}/jars" includes="*"/>
-		</copy>
-		<chmod perm="+x">
-			<fileset dir="${working}/collector" includes="*.jar"/>
-		</chmod>
-		<tar destfile="${packageDirectory}\rseserver-${os}.tar" basedir="${working}/collector" includes="*"/>
-		<zip destfile="${packageDirectory}\rseserver-${os}.zip" basedir="${working}/collector" includes="*"/>
-		<delete dir="${working}/collector" />
-	</target>
-	
-	<target name="hideServerStuff">
-		<move todir="${buildDirectory}/plugins">
-			<fileset dir="${buildDirectory}/plugins" includes="**/*.jar" />
-			<fileset dir="${buildDirectory}/plugins" includes="**/*.zip" excludes="**/src.zip"/>
-			<globmapper from="*" to="*.hidden"/>
-		</move>
-	</target>
-
-	<target name="revealServerStuff">
-		<move todir="${buildDirectory}/plugins">
-			<fileset dir="${buildDirectory}/plugins" includes="**/*.hidden" />
-			<globmapper from="*.hidden" to="*"/>
-		</move>
-	</target>
 
 	<!-- ===================================================================== -->
 	<!-- Check out map files from correct repository -->
@@ -273,6 +197,91 @@
 	<!-- ===================================================================== -->
 	<target name="noDefault">
 		<echo message="You must specify a target when invoking this file" />
+	</target>
+
+	<!-- =====================================================================
+	     Specialized targets to build the server runtime.           
+	     ===================================================================== -->
+
+	<target name="serverruntime">
+
+		<property name="working" value="${packageDirectory}/rseserver"/>
+		<mkdir dir="${working}" />
+		<mkdir dir="${working}/jars" />
+
+		<copy todir="${working}">
+			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore/serverruntime" includes="**" />
+		</copy>
+
+		<copy todir="${working}/jars">
+			<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.core" includes="dstore_core.jar" />
+			<fileset dir="${buildDirectory}/plugins/org.eclipse.dstore.extra" includes="dstore_extra_server.jar" />
+			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services" includes="clientserver.jar" />
+			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="dstore_miners.jar" />
+		</copy>
+
+		<antcall target="rseserver-os">
+			<param name="os" value="aix"/>
+			<param name="eol" value="lf"/>
+		</antcall>
+		<antcall target="rseserver-os">
+			<param name="os" value="unix"/>
+			<param name="eol" value="lf"/>
+		</antcall>
+		<antcall target="rseserver-os">
+			<param name="os" value="linux"/>
+			<param name="eol" value="lf"/>
+		</antcall>
+		<antcall target="rseserver-os">
+			<param name="os" value="windows"/>
+			<param name="eol" value="crlf"/>
+		</antcall>
+
+		<delete dir="${working}" />
+
+	</target>
+
+	<target name="rseserver-os">
+		<mkdir dir="${working}/collector" />
+		<copy todir="${working}/collector">
+			<fileset dir="${working}/scripts/${os}" includes="*"/>
+		</copy>
+		<chmod perm="+x">
+			<fileset dir="${working}/collector" includes="*"/>
+		</chmod>
+		<copy todir="${working}/collector">
+			<fileset dir="${working}/data" includes="*"/>
+		</copy>
+		<fixcrlf srcdir="${working}/collector" eol="${eol}" eof="asis" includes="*"/>
+		<copy todir="${working}/collector">
+			<fileset dir="${working}/jars" includes="*"/>
+		</copy>
+		<chmod perm="+x">
+			<fileset dir="${working}/collector" includes="*.jar"/>
+		</chmod>
+		<tar destfile="${packageDirectory}\rseserver-${buildId}-${os}.tar" basedir="${working}/collector" includes="*"/>
+		<zip destfile="${packageDirectory}\rseserver-${buildId}-${os}.zip" basedir="${working}/collector" includes="*"/>
+		<delete dir="${working}/collector" />
+	</target>
+
+	<!-- =====================================================================
+	     Specialized targets hide/reveal the server stuff so it doesn't get packaged
+	     in the client.          
+	     ===================================================================== -->
+
+	<target name="hideServerStuff">
+		<mkdir dir="${buildDirectory}/hidden"/>
+		<move todir="${buildDirectory}/hidden">
+			<fileset dir="${buildDirectory}/plugins" includes="**/*.jar" />
+			<fileset dir="${buildDirectory}/plugins" includes="**/*src.zip" excludes="**/src.zip"/>
+		</move>
+	</target>
+
+	<target name="revealServerStuff">
+		<move todir="${buildDirectory}/plugins">
+			<fileset dir="${buildDirectory}/hidden" includes="**" />
+		</move>
+		<delete dir="${buildDirectory}/hidden"/>
 	</target>
 
 	<!-- ===================================================================== -->

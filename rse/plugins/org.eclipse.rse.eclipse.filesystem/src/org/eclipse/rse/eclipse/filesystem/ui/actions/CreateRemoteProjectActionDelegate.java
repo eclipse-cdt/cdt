@@ -79,11 +79,6 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 			editProject.open(monitor);
 			
 		    editProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-
-		    IProject tempFilesProject = SystemResourceManager.getRemoteSystemsTempFilesProject();
-			IProjectDescription tempFilesDescription = tempFilesProject.getDescription();
-			tempFilesDescription.setReferencedProjects(new IProject[]{editProject});
-			tempFilesProject.setDescription(tempFilesDescription, monitor);
 		}
 		catch (CoreException e)
 		{

@@ -16,9 +16,12 @@
 
 package org.eclipse.rse.eclipse.filesystem;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -31,11 +34,17 @@ import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.internal.filesystem.Messages;
 import org.eclipse.core.internal.filesystem.Policy;
+import org.eclipse.core.internal.resources.ModelObjectWriter;
+import org.eclipse.core.internal.resources.ProjectDescription;
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
@@ -43,6 +52,8 @@ import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileStore 
@@ -64,6 +75,10 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 	
 	public String[] childNames(int options, IProgressMonitor monitor) 
 	{
+		IPreferenceStore prefStore = RSEUIPlugin.getDefault().getPreferenceStore();
+		boolean origShowHidden = prefStore.getBoolean(ISystemPreferencesConstants.SHOWHIDDEN);
+		prefStore.setValue(ISystemPreferencesConstants.SHOWHIDDEN, true);
+		
 		String[] names;
 		if (!_remoteFile.isStale() && _remoteFile.hasContents(RemoteChildrenContentsType.getInstance()))
 		{
@@ -84,13 +99,33 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 				names[i] = ((IRemoteFile)children[i]).getName();
 			}		
 		}
+		prefStore.setValue(ISystemPreferencesConstants.SHOWHIDDEN, false);
 		return names;
 	}
 	
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException 
 	{	
+		if (_remoteFile.isStale())
+		{
+			try
+			{
+				_remoteFile = _subSystem.getRemoteFileObject(_remoteFile.getAbsolutePath());
+			}
+			catch (Exception e)
+			{				
+			}
+		}
 		FileInfo info = new FileInfo(getName());
-		info.setExists(_remoteFile.exists());
+		/*
+		if (_remoteFile.getName().equals(".project") && _remoteFile.getLength() == 0)
+		{
+			info.setExists(false);
+		}
+		else
+		*/
+		{
+			info.setExists(_remoteFile.exists());
+		}
 		info.setLastModified(_remoteFile.getLastModified());
 		boolean isDir = _remoteFile.isDirectory();
 		info.setDirectory(isDir);
@@ -146,7 +181,20 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 				
 				if (_remoteFile.getName().equals(".project") && _remoteFile.getLength() == 0)
 				{
-					
+					System.out.println("reading empty .project");
+					InputStream stream = getDummyProjectFileStream();
+					try
+					{
+						int size = stream.available();
+						_subSystem.upload(stream, (long)size, _remoteFile, "utf8", monitor);
+						_remoteFile = _subSystem.getRemoteFileObject(_remoteFile.getAbsolutePath());
+						
+					}
+					catch (Exception e)
+					{						
+					}
+					//return stream;
+					/*
 					try
 					{
 						// only temp file has contents
@@ -160,13 +208,15 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 					{
 						e.printStackTrace();
 					}
+					*/
 				}
+			
 				if (file == null || !file.exists())
 				{
 					file = (IFile)UniversalFileTransferUtility.copyRemoteResourceToWorkspace(_remoteFile, monitor);
 					if (file != null && !file.isSynchronized(IResource.DEPTH_ZERO))
 					{
-						file.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+						//file.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 					}
 				}
 			}
@@ -184,7 +234,24 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		return null;
 	}
 	
+	private InputStream getDummyProjectFileStream()
+	{
+		
+		IProjectDescription  description = new ProjectDescription();
+//		write the model to a byte array
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			new ModelObjectWriter().write(description, out);
+		} catch (IOException e) {
+			
+		}
+		byte[] newContents = out.toByteArray();
 
+		ByteArrayInputStream in = new ByteArrayInputStream(newContents);
+		
+		return in;
+	}
+	
 	
 	public URI toURI() 
 	{

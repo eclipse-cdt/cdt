@@ -17,6 +17,9 @@
 package org.eclipse.rse.services.local;
 
 import org.eclipse.ui.plugin.*;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.osgi.framework.BundleContext;
 
@@ -28,6 +31,24 @@ public class Activator extends AbstractUIPlugin {
 	//The shared instance.
 	private static Activator plugin;
 	
+	/**
+	 * Returns the shared instance.
+	 */
+	public static Activator getDefault() {
+		return plugin;
+	}
+
+	/**
+	 * Returns an image descriptor for the image file at the given
+	 * plug-in relative path.
+	 *
+	 * @param path the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return AbstractUIPlugin.imageDescriptorFromPlugin("com.ibm.rse.services.files.local", path);
+	}
+
 	/**
 	 * The constructor.
 	 */
@@ -51,20 +72,13 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the shared instance.
+	 * Logs an throwable to the log for this plugin.
+	 * @param t the Throwable to be logged.
 	 */
-	public static Activator getDefault() {
-		return plugin;
-	}
-
-	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path.
-	 *
-	 * @param path the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("com.ibm.rse.services.files.local", path);
+	public void logException(Throwable t) {
+		ILog log = getLog();
+		String id = getBundle().getSymbolicName();
+		IStatus status = new Status(IStatus.ERROR, id, 0, "Unexpected exception", t);
+		log.log(status);
 	}
 }

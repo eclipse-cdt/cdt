@@ -198,9 +198,18 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			}
 			if (res != null && !res.exists()) {
 				res = null;
+			}			
+		}
+
+		// In case this is an external resource see if we can find
+		// a file for it.
+		if (res == null) {
+			IFile[] files = root.findFilesForLocation(path);
+			if (files.length > 0) {
+				res = files[0];
 			}
 		}
-		// TODO: for extenal resources ??
+
 		return create(res, null);
 	}
 

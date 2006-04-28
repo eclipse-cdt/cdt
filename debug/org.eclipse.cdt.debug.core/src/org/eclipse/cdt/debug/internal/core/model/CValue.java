@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharValue;
@@ -180,6 +181,12 @@ public class CValue extends AbstractCValue {
 			fValueString = null;
 			resetStatus();
 		}
+		else {
+			if (getCDITarget().getConfiguration() instanceof ICDITargetConfiguration2 &&
+					((ICDITargetConfiguration2)getCDITarget().getConfiguration()).supportsPassiveVariableUpdate())
+				fValueString = null;
+		}
+		
 		Iterator it = fVariables.iterator();
 		while( it.hasNext() ) {
 			((AbstractCVariable)it.next()).setChanged( changed );

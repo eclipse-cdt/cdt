@@ -32,7 +32,6 @@
 
 	<target name="assemble.org.eclipse.rse.core">
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="assemble.source.feature"/>
 	</target>
 
 	<target name="assemble.org.eclipse.rse.local">
@@ -47,14 +46,6 @@
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 	</target>
 	
-	<target name="assemble.source.feature">
-		<echo message="buildDirectory = ${buildDirectory}"/>
-		<echo message="id = ${id}"/>
-		<echo message="buildLabel = ${buildLabel}"/>
-		<echo message="buildId = ${buildId}"/>
-		<echo message="archivePrefix = ${archivePrefix}"/>
-	</target>
-
 	<target name="serverruntime">
 
 		<property name="working" value="${packageDirectory}/rseserver"/>
@@ -98,7 +89,9 @@
 		<copy todir="${working}/collector">
 			<fileset dir="${working}/scripts/${os}" includes="*"/>
 		</copy>
-		<chmod perm="u+rx" includes="${working}/collector/*"/>
+		<chmod perm="+x">
+			<fileset dir="${working}/collector" includes="*"/>
+		</chmod>
 		<copy todir="${working}/collector">
 			<fileset dir="${working}/data" includes="*"/>
 		</copy>
@@ -106,6 +99,9 @@
 		<copy todir="${working}/collector">
 			<fileset dir="${working}/jars" includes="*"/>
 		</copy>
+		<chmod perm="+x">
+			<fileset dir="${working}/collector" includes="*.jar"/>
+		</chmod>
 		<tar destfile="${packageDirectory}\rseserver-${os}.tar" basedir="${working}/collector" includes="*"/>
 		<zip destfile="${packageDirectory}\rseserver-${os}.zip" basedir="${working}/collector" includes="*"/>
 		<delete dir="${working}/collector" />
@@ -241,35 +237,19 @@
 	<!-- Steps to do after the build is done. -->
 	<!-- ===================================================================== -->
 	<target name="postBuild">
-		<!--
+		<property name="packageSDKDirectory" location="${packageDirectory}/sdk" />
+		<property name="packageRuntimeDirectory" location="${packageDirectory}/runtime" />
 		<mkdir dir="${packageDirectory}" />
-
-		<property name="packageRuntimeDirectory" location="${packageDirectory}\runtime" />
 		<mkdir dir="${packageRuntimeDirectory}" />
-
-		<unzip src="${buildDirectory}\features\org.eclipse.rse.core\org.eclipse.rse.core_1.0.0.bin.dist.zip" dest="${packageRuntimeRootDirectory}" />
-		<unzip src="${buildDirectory}\features\org.eclipse.rse.dstore\org.eclipse.rse.dstore_1.0.0.bin.dist.zip" dest="${packageRuntimeRootDirectory}" />
-		<unzip src="${buildDirectory}\features\org.eclipse.rse.ftp\org.eclipse.rse.ftp_1.0.0.bin.dist.zip" dest="${packageRuntimeRootDirectory}" />
-		<unzip src="${buildDirectory}\features\org.eclipse.rse.local\org.eclipse.rse.local_1.0.0.bin.dist.zip" dest="${packageRuntimeRootDirectory}" />
-
-		<zip destfile="${packageDirectory}\RSE-1.0M1.zip" basedir="${packageRuntimeDirectory}" />
-
-		<property name="packageSDKDirectory" location="${packageDirectory}\sdk" />
-		<property name="packageSDKRootDirectory" location="${packageSDKDirectory}\eclipse" />
 		<mkdir dir="${packageSDKDirectory}" />
-		<mkdir dir="${packageSDKRootDirectory}" />
-
-		<unzip src="${packageDirectory}\RSE-1.0M1.zip" dest="${packageSDKDirectory}" />
-		<unzip src="${buildDirectory}\features\org.eclipse.rse.core\org.eclipse.rse.core_1.0.0.src.zip" dest="${packageSDKRootDirectory}" />
-		<unzip src="${buildDirectory}\features\org.eclipse.rse.dstore\org.eclipse.rse.dstore_1.0.0.src.zip" dest="${packageSDKRootDirectory}" />
-		<unzip src="${buildDirectory}\features\org.eclipse.rse.ftp\org.eclipse.rse.ftp_1.0.0.src.zip" dest="${packageSDKRootDirectory}" />
-		<unzip src="${buildDirectory}\features\org.eclipse.rse.local\org.eclipse.rse.local_1.0.0.src.zip" dest="${packageSDKRootDirectory}" />
-
-		<zip destfile="${packageDirectory}\RSE-SDK-1.0M1.zip" basedir="${packageSDKDirectory}" />
-
-		<antcall target="serverruntime"/>
-		<antcall target="publish"/>
-		-->
+		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.core-${buildId}.zip" dest="${packageSDKDirectory}" />
+		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.dstore-${buildId}.zip" dest="${packageSDKDirectory}" />
+		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.ftp-${buildId}.zip" dest="${packageSDKDirectory}" />
+		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.local-${buildId}.zip" dest="${packageSDKDirectory}" />
+		<zip destfile="${packageDirectory}/RSE-SDK-${buildId}.zip" basedir="${packageSDKDirectory}" />
+		<tar destfile="${packageDirectory}/RSE-SDK-${buildId}.tar" basedir="${packageSDKDirectory}" />
+		<delete dir="$packageSDKDirectory}" />
+		<delete dir="$packageRuntimeDirectory}" />
 	</target>
 
 	<!-- ===================================================================== -->
@@ -293,19 +273,6 @@
 	<!-- ===================================================================== -->
 	<target name="noDefault">
 		<echo message="You must specify a target when invoking this file" />
-	</target>
-
-	<!-- ===================================================================== -->
-	<!-- Build the feature in own way                                          -->
-	<!-- Somehow the default builder doesn't work                              -->
-	<!-- ===================================================================== -->
-	<target name="buildFeature">
-		<echo message="Building feature ${featureFolder}" />
-		<!--
-		<ant antfile="${featureFolder}\build.xml" dir="${featureFolder}" target="build.jars" />
-		-->
-		<ant antfile="${featureFolder}\build.xml" dir="${featureFolder}" target="zip.distribution" />
-		<ant antfile="${featureFolder}\build.xml" dir="${featureFolder}" target="zip.sources" />
 	</target>
 
 	<!-- ===================================================================== -->

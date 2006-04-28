@@ -569,6 +569,7 @@ public class SystemMessageLine
 		widget.setForeground(color);
 		widget.setText(text);
 		widget.setData(text);
+		widget.setVisible(text.length() > 0);
 		adjustText();
 	}
 

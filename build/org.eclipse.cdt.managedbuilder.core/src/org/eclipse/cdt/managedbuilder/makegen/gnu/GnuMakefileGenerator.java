@@ -1572,8 +1572,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
             }
 
             
-			buffer.append(TAB + AT + escapedEcho(buildCmd));
-			buffer.append(TAB + AT + buildCmd);
+			//buffer.append(TAB + AT + escapedEcho(buildCmd));
+			//buffer.append(TAB + AT + buildCmd);
+			buffer.append(TAB + buildCmd);
 	
 			// TODO
 			// NOTE WELL:  Dependency file generation is not handled for this type of Tool
@@ -2455,8 +2456,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			} catch (BuildMacroException e) {
 			}
 
-			buffer.append(TAB + AT + escapedEcho(buildCmd));
-			buffer.append(TAB + AT + buildCmd);
+			//buffer.append(TAB + AT + escapedEcho(buildCmd));
+			//buffer.append(TAB + AT + buildCmd);
+			buffer.append(TAB + buildCmd);
 		
 			// Determine if there are any dependencies to calculate
 			if (doDepGen) {
@@ -2632,8 +2634,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		
 						} catch (BuildMacroException e) {
 						}
-						buffer.append(TAB + AT + escapedEcho(depLine));
-						buffer.append(TAB + AT + depLine + NEWLINE);
+						//buffer.append(TAB + AT + escapedEcho(depLine));
+						//buffer.append(TAB + AT + depLine + NEWLINE);
+						buffer.append(TAB + depLine + NEWLINE);
 					}
 				}
 				if (addedDepLines) {
@@ -3471,8 +3474,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @return
 	 */
 	static public String escapedEcho(String string) {
-		String escapedString = string.replaceAll("(['\"\\\\])", "\\\\$1"); 
-		return ECHO + WHITESPACE + escapedString + NEWLINE;
+		String escapedString = string.replaceAll("'", "'\"'\"'"); 
+		return ECHO + WHITESPACE + SINGLE_QUOTE + escapedString + SINGLE_QUOTE + NEWLINE;
 	}
 	
 	static public String ECHO_BLANK_LINE = ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE;

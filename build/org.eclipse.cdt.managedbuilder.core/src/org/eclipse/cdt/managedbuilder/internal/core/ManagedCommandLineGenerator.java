@@ -98,7 +98,7 @@ public class ManagedCommandLineGenerator implements
 							{
 //								 if the output name isn't a variable then quote it
 								if(outputName.indexOf("$(") != 0) //$NON-NLS-1$
-									tempBuffer.append( SINGLE_QUOTE + outputName + SINGLE_QUOTE);
+									tempBuffer.append( DOUBLE_QUOTE + outputName + DOUBLE_QUOTE);
 								else
 									tempBuffer.append(outputName);
 							}
@@ -113,7 +113,7 @@ public class ManagedCommandLineGenerator implements
 							{
 								// if the input resource isn't a variable then quote it
 								if(inputResources[k].indexOf("$(") != 0) //$NON-NLS-1$
-									tempBuffer.append(SINGLE_QUOTE + inputResources[k] + SINGLE_QUOTE + WHITESPACE); //$NON-NLS-1$ //$NON-NLS-2$
+									tempBuffer.append(DOUBLE_QUOTE + inputResources[k] + DOUBLE_QUOTE + WHITESPACE); //$NON-NLS-1$ //$NON-NLS-2$
 								else
 									tempBuffer.append(inputResources[k] + WHITESPACE);
 							}

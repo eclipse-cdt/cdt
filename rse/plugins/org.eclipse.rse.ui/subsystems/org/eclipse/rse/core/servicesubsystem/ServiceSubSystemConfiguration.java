@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * This class is typically used together with:</p>
  * <ul>
- *   <li>{@link org.eclipse.rse.core.servicesubsystem.SeviceSubSystem} for the subsystem
+ *   <li>{@link org.eclipse.rse.core.servicesubsystem.ServiceSubSystem} for the subsystem
  *   <li>{@link org.eclipse.rse.core.internal.subsystems.AbstractSystem} for the system
  *   <li>{@link org.eclipse.rse.core.internal.subsystems.AbstractSystemManager} for the system manager
  *   <li>{@link org.eclipse.rse.core.internal.subsystems.AbstractResource} for the individual remote resources
@@ -53,7 +53,7 @@ import org.eclipse.swt.widgets.Shell;
  * In general, for what methods to override, only worry about the non-generated methods in
  * this class, and ignore the hundreds in {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration}
  * 
- * @see org.eclipse.rse.core.servicesubsystem.SeviceSubSystem
+ * @see org.eclipse.rse.core.servicesubsystem.ServiceSubSystem
  * @see org.eclipse.rse.core.internal.subsystems.AbstractSystem
  * @see org.eclipse.rse.core.internal.subsystems.AbstractSystemManager
  */

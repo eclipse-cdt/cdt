@@ -78,7 +78,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * </ol>
  * <p>
  * This is the base class that subsystem suppliers subclass, although this is usually done
- *  by subclassing the child class {@link org.eclipse.rse.core.servicesubsystem.impl.SeviceSubSystem DefaultSubSystemImpl}.<br>
+ *  by subclassing the child class {@link org.eclipse.rse.core.servicesubsystem.impl.ServiceSubSystem DefaultSubSystemImpl}.<br>
  * Each instance of this class represents a subsystem instance for a particular connection.
  * <p>
  * When a {@link org.eclipse.rse.model.SystemConnection SystemConnection} is created, this subsystem's factory will be asked to create an

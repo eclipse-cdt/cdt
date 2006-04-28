@@ -56,8 +56,8 @@ import org.eclipse.swt.widgets.Shell;
  *  	return inst;
  *  }
  * </code></pre>
- * Your {@link org.eclipse.rse.core.servicesubsystem.SeviceSubSystem SubSystem} class 
- * should then call this factory method in its {@link org.eclipse.rse.core.servicesubsystem.SeviceSubSystem#getSystemManager() getSystemManager()} method.
+ * Your {@link org.eclipse.rse.core.servicesubsystem.ServiceSubSystem SubSystem} class 
+ * should then call this factory method in its {@link org.eclipse.rse.core.servicesubsystem.ServiceSubSystem#getSystemManager() getSystemManager()} method.
  */
 public abstract class AbstractConnectorServiceManager implements IConnectorServiceManager
 {

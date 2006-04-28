@@ -27,14 +27,14 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 
 
-public abstract class SeviceSubSystem extends SubSystem implements IServiceSubSystem 
+public abstract class ServiceSubSystem extends SubSystem implements IServiceSubSystem 
 {
 
 	/**
 	 * Constructor 
 	 * Subclasses must call this via super().
 	 */
-	protected SeviceSubSystem(IHost host, IConnectorService connectorService) 
+	protected ServiceSubSystem(IHost host, IConnectorService connectorService) 
 	{
 		super(host, connectorService);
 	}

@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocalVariableDescriptor;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
@@ -223,6 +224,9 @@ public class CLocalVariable extends CVariable {
 								fValue = CValueFactory.createValue( getVariable(), cdiValue );
 							}
 						}
+						if (getCDITarget().getConfiguration() instanceof ICDITargetConfiguration2 &&
+								((ICDITargetConfiguration2)getCDITarget().getConfiguration()).supportsRuntimeTypeIdentification())
+							fType = null; // When the debugger supports RTTI getting a new value may also mean a new type.
 					}
 					catch( CDIException e ) {
 						requestFailed( e.getMessage(), e );

@@ -249,7 +249,7 @@ Contributors:
             <enablement>
             	<and>
                 	<objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
-                	<objectState name="classification" value="*executable(binary)*"/>
+	               	<objectState name="classification" value="*executable*"/>
                 </and> 
             </enablement>
         </decorator>
@@ -264,9 +264,11 @@ Contributors:
             	<and>
                 	<objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
                 	<or>
-	                	<objectState name="classification" value="*executable(script)*"/>
-	                	<objectState name="classification" value="script"/>
 	                	<objectState name="classification" value="symbolic link(script)*"/>
+	                	<and>
+		                	<objectState name="classification" value="*script*"/>
+		                	<objectState name="classification" value="*executable*"/>
+		                </and>
 	                </or>
                 </and> 
             </enablement>
@@ -295,7 +297,12 @@ Contributors:
             <enablement>
             	<and> 
                 	<objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
-                	<objectState name="classification" value="*module*"/>
+    				<or>
+    					<objectState name="classification" value="*module*"/>
+    					<objectState name="classification" value="*archive*"/>
+    					<objectState name="classification" value="*shared object*"/>
+    					<objectState name="extension" value="so a so so.*"/>
+    				</or>
                 </and> 
             </enablement>
         </decorator>

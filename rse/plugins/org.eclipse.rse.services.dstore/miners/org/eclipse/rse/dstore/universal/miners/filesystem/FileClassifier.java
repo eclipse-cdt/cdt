@@ -402,7 +402,8 @@ public class FileClassifier extends Thread
         if (_systemSupportsClassFilesOnly) {
         	return type;
         }
-
+/* DKM - let the client have the raw type instead of doing this for it
+ *  
         boolean matchesLib = (fulltype.indexOf(STR_SHARED_OBJECT) > -1) || (fulltype.indexOf(STR_OBJECT_MODULE) > -1) || (fulltype.indexOf(STR_ARCHIVE) > -1);
 
         boolean matchesExe = (fulltype.indexOf(STR_EXECUTABLE) > -1);
@@ -435,10 +436,11 @@ public class FileClassifier extends Thread
         {
             type = STR_DIRECTORY;
         }
+        */
         // finally, if the full type contains the symbolic link string, then we
         // know
         // we have a symbolic link
-        else if (fulltype.startsWith(symbolicLinkStr))
+        if (fulltype.startsWith(symbolicLinkStr))
         {
             type = resolveSymbolicLink(parentFile, name, fulltype, symbolicLinkStr, resolveLink, specialEncoding);
         }

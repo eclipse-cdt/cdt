@@ -15,6 +15,16 @@ else
   $timeoutIN = $ARGV[3];
   $ticketIN  = $ARGV[4];
 
+  if (defined($ARGV[5]))
+  {
+    $javaHome = $ARGV[5];
+    $javaExe = "$javaHome/bin/java";
+  }
+  else
+  {
+    $javaExe = "java"
+  }
+  
   $pwdIN = <STDIN>;
   chomp($pwdIN);
 
@@ -36,7 +46,8 @@ else
     if ($passwd eq $encryptedPWD)
     {
 		print("success\n");
-		system("su $suOptions $userIN -c 'java -cp $classpath -DA_PLUGIN_PATH=$pathIN org.eclipse.dstore.core.server.Server $portIN $timeoutIN $ticketIN'");
+		
+		system("su $suOptions $userIN -c '$javaExe -cp $classpath -DA_PLUGIN_PATH=$pathIN org.eclipse.dstore.core.server.Server $portIN $timeoutIN $ticketIN'");
 		1;
     }
     else

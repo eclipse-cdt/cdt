@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
@@ -231,6 +232,9 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 								fValue = CValueFactory.createValue( getVariable(), cdiValue );
 							}
 						}
+						if (getCDITarget().getConfiguration() instanceof ICDITargetConfiguration2 &&
+								((ICDITargetConfiguration2)getCDITarget().getConfiguration()).supportsRuntimeTypeIdentification())
+							fType = null; // When the debugger supports RTTI getting a new value may also mean a new type.
 					}
 					catch( CDIException e ) {
 						requestFailed( e.getMessage(), e );
@@ -347,6 +351,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 					ICDITarget cdiTarget = source.getTarget();
 					if (  getCDITarget().equals( cdiTarget ) ) {
 						setChanged( false );
+						resetValue(); // Reset the value cache so the display value will be updated.
 					}
 				}
 			}

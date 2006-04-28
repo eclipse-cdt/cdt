@@ -44,6 +44,8 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 			final int[] count = { 0 };
 			pdom.getProject().accept(new ICElementVisitor() {
 				public boolean visit(ICElement element) throws CoreException {
+					if (monitor.isCanceled())
+						throw new CoreException(Status.CANCEL_STATUS);
 					switch (element.getElementType()) {
 					case ICElement.C_UNIT:
 						++count[0];
@@ -61,6 +63,8 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 			// First index all the source files (i.e. not headers)
 			pdom.getProject().accept(new ICElementVisitor() {
 				public boolean visit(ICElement element) throws CoreException {
+					if (monitor.isCanceled())
+						throw new CoreException(Status.CANCEL_STATUS);
 					switch (element.getElementType()) {
 					case ICElement.C_UNIT:
 						ITranslationUnit tu = (ITranslationUnit)element;
@@ -85,6 +89,8 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 			// Now add in the header files but only if they aren't already indexed
 			pdom.getProject().accept(new ICElementVisitor() {
 				public boolean visit(ICElement element) throws CoreException {
+					if (monitor.isCanceled())
+						throw new CoreException(Status.CANCEL_STATUS);
 					switch (element.getElementType()) {
 					case ICElement.C_UNIT:
 						ITranslationUnit tu = (ITranslationUnit)element;

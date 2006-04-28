@@ -45,12 +45,12 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
     private static String INPUTS_VAL = "[inputs]";
     private static String[] INPUTS_ARRAY_VAL = INPUTS_VAL.split( "\\s" );
     private static String[] commandLineEtalonesForPatterns = {
-            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + "'" + OUTPUT_VAL + "'" + " " + "'" + INPUTS_VAL + "'",
+            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL + "\"" + " " + "\"" + INPUTS_VAL + "\"",
             COMMAND_VAL, COMMAND_VAL + " " + FLAGS_VAL, COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL, 
             COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL,
-            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL +  OUTPUT_PREFIX_VAL + "'" + OUTPUT_VAL + "'",
-            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + "'" + OUTPUT_VAL + "'" + " " + "'" + INPUTS_VAL + "'",
-            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + "'" + OUTPUT_VAL + "'" + " " + "${WRONG_VAR_NAME}" };
+            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL +  OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL + "\"",
+            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL + "\"" + " " + "\"" + INPUTS_VAL + "\"",
+            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL + "\"" + " " + "${WRONG_VAR_NAME}" };
     private static String[] commandLineEtalonesForParameters = {
             FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + OUTPUT_VAL + " " + INPUTS_VAL,
             COMMAND_VAL + "  " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + OUTPUT_VAL + " " + INPUTS_VAL,

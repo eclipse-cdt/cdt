@@ -300,20 +300,20 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 //Path.fromOSString("subdir.mk")   // Can't compare this yet since it contains absolute paths!
 				 Path.fromOSString("sources.mk")}; 
 		IPath[] linkedFiles = {
-				 Path.fromOSString("f1.c"), 
-				 Path.fromOSString("f2.c"), 
-				 Path.fromOSString("test_ar.h")};
-		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/linkedLib/"));
+				 Path.fromOSString("f1_30.c"), 
+				 Path.fromOSString("f2_30.c"), 
+				 Path.fromOSString("test_ar_30.h")};
+		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/linkedLib30/"));
 		IPath srcDir = Path.fromOSString(srcDirFile.toString());
 		IPath tmpSubDir = Path.fromOSString("CDTMBSTest");
 		IPath tmpDir = ManagedBuildTestHelper.copyFilesToTempDir(srcDir, tmpSubDir, linkedFiles);
 		try {
-			IProject[] projects = createProjects("linkedLib", null, "cdt.managedbuild.target.gnu30.lib", true);
+			IProject[] projects = createProjects("linkedLib30", null, "cdt.managedbuild.target.gnu30.lib", true);
 			//  There should be only one project.  Add our linked files to it.
 			IProject project = projects[0];
-			createFileLink(project, tmpDir, "f1.c", "f1.c");
-			createFileLink(project, tmpDir, "f2link.c", "f2.c");
-			createFileLink(project, tmpDir, "test_ar.h", "test_ar.h");
+			createFileLink(project, tmpDir, "f1_30.c", "f1_30.c");
+			createFileLink(project, tmpDir, "f2link_30.c", "f2_30.c");
+			createFileLink(project, tmpDir, "test_ar_30.h", "test_ar_30.h");
 			//  Build the project
 			buildProjects(projects, makefiles);
 		} finally {ManagedBuildTestHelper.deleteTempDir(tmpSubDir, linkedFiles);}

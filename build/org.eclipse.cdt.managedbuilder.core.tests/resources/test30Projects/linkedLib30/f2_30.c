@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "test_ar.h"
+#include "test_ar_30.h"
 
 void f2_ar()
 {

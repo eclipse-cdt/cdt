@@ -32,6 +32,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
@@ -783,6 +784,11 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	}
 
 	protected void setCurrent( boolean current ) {
+		if (!current)
+		{
+			if (getCDITarget().getConfiguration() instanceof ICDITargetConfiguration2 && ((ICDITargetConfiguration2)getCDITarget().getConfiguration()).supportsThreadControl())
+				current = true; // When the debugger can control individual threads treat every thread is "current"
+		}
 		fIsCurrent = current;
 	}
 

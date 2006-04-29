@@ -166,7 +166,7 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 	}
 
 	public IScope getParent() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return null;
 	}
 
 	public IASTNode getPhysicalNode() throws DOMException {

@@ -87,7 +87,9 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	        IASTName [] ns = qual.getNames();
 	        if( ns.length > 1){
 	            IBinding binding = ns[ ns.length - 2 ].resolveBinding();
-	            if( binding instanceof ICPPClassType )
+	            if (binding == null)
+	            	return null;
+	            else if( binding instanceof ICPPClassType )
 	                return ((ICPPClassType)binding).getCompositeScope();
 	            else if( binding instanceof ICPPNamespace )
 	                return ((ICPPNamespace)binding).getNamespaceScope();

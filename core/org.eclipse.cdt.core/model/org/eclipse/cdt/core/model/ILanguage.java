@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.core.model;
 
+import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -64,7 +65,22 @@ public interface ILanguage extends IAdaptable {
 	 * @param style
 	 * @return
 	 */
-	public IASTTranslationUnit getASTTranslationUnit(ITranslationUnit file, int style);
+	public IASTTranslationUnit getASTTranslationUnit(
+			ITranslationUnit file,
+			int style);
+
+	/**
+	 * Create the AST for the given file with the given style with a given
+	 * code reader factory.
+	 * 
+	 * @param file
+	 * @param style
+	 * @return
+	 */
+	public IASTTranslationUnit getASTTranslationUnit(
+			ITranslationUnit file,
+			ICodeReaderFactory codeReaderFactory,
+			int style);
 
 	/**
 	 * Return the AST Completion Node for the given working copy at the given

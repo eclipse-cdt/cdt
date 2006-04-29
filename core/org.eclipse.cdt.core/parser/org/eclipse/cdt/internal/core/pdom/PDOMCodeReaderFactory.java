@@ -39,7 +39,8 @@ import org.eclipse.core.runtime.Status;
 public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 
 	private final PDOM pdom;
-	private List workingCopies;
+	private List workingCopies = new ArrayList(1);
+	private Set skippedHeaders = new HashSet();
 	
 	public PDOMCodeReaderFactory(PDOM pdom) {
 		this.pdom = pdom;
@@ -47,7 +48,6 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 
 	public PDOMCodeReaderFactory(PDOM pdom, IWorkingCopy workingCopy) {
 		this(pdom);
-		workingCopies = new ArrayList(1);
 		workingCopies.add(workingCopy);
 	}
 	
@@ -55,6 +55,10 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 		return 0;
 	}
 
+	public Set getSkippedHeaders() {
+		return skippedHeaders;
+	}
+	
 	public CodeReader createCodeReaderForTranslationUnit(String path) {
 		return ParserUtil.createReader(path,
 				workingCopies != null ? workingCopies.iterator() : null);
@@ -101,6 +105,7 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 			if (file != null) {
 				// Already got things from here, pass in a magic
 				// buffer with the macros in it
+				skippedHeaders.add(path);
 				StringBuffer buffer = new StringBuffer();
 				fillMacros(file, buffer, new HashSet());
 				int length = buffer.length();

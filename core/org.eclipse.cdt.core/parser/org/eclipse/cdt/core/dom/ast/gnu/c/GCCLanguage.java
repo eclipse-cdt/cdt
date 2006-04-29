@@ -79,6 +79,20 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 	}
 	
 	public IASTTranslationUnit getASTTranslationUnit(ITranslationUnit file, int style) {
+		ICodeReaderFactory fileCreator;
+		if ((style & (ILanguage.AST_SKIP_INDEXED_HEADERS | ILanguage.AST_SKIP_ALL_HEADERS)) != 0) {
+			PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(file.getCProject()).getAdapter(PDOM.class);
+			fileCreator = new PDOMCodeReaderFactory(pdom);
+		} else
+			fileCreator = SavedCodeReaderFactory.getInstance();
+
+		return getASTTranslationUnit(file, fileCreator, style);
+	}
+	
+	public IASTTranslationUnit getASTTranslationUnit(
+			ITranslationUnit file,
+			ICodeReaderFactory codeReaderFactory,
+			int style) {
 		IResource resource = file.getResource();
 		ICProject project = file.getCProject();
 		IProject rproject = project.getProject();
@@ -97,12 +111,6 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 		}
 		
 		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project).getAdapter(PDOM.class);
-		ICodeReaderFactory fileCreator;
-		if ((style & (ILanguage.AST_SKIP_INDEXED_HEADERS | ILanguage.AST_SKIP_ALL_HEADERS)) != 0)
-			fileCreator = new PDOMCodeReaderFactory(pdom);
-		else
-			fileCreator = SavedCodeReaderFactory.getInstance();
-
 		CodeReader reader;
 		IFile rfile = (IFile)file.getResource();
 		if (file instanceof IWorkingCopy) {
@@ -113,7 +121,7 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 				= rfile != null
 				? rfile.getLocation().toOSString()
 				: file.getPath().toOSString();
-			reader = fileCreator.createCodeReaderForTranslationUnit(path);
+			reader = codeReaderFactory.createCodeReaderForTranslationUnit(path);
 			if (reader == null)
 				return null;
 		}
@@ -122,7 +130,7 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 	    	= C_GNU_SCANNER_EXTENSION;
 	    
 		IScanner scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
-                ParserLanguage.C, ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, fileCreator );
+                ParserLanguage.C, ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, codeReaderFactory);
 	    //assume GCC
 		ISourceCodeParser parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(),
 				new GCCParserExtensionConfiguration()  );

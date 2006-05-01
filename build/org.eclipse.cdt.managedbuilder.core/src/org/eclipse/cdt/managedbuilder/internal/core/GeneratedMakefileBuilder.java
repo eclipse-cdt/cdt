@@ -14,9 +14,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -28,13 +30,18 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DescriptionBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IBuildModelBuilder;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.StepBuilder;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
@@ -312,6 +319,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	protected Vector generationProblems;
 	protected IProject[] referencedProjects;
 	protected List resourcesToBuild;
+	private IConsole console;
+	private ConsoleOutputStream consoleOutStream;
 	public static void outputTrace(String resourceName, String message) {
 		if (VERBOSE) {
 			System.out.println(TRACE_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
@@ -1314,5 +1323,322 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			getGenerationProblems().clear();
 			monitor.done();
 		}
+	}
+	
+	/**
+	 * Called to invoke the MBS Internal Builder for building the given resources in
+	 * the given configuration
+	 * 
+	 * This method is considered experimental.  Clients implementing this API should expect
+	 * possible changes in the API.
+	 *  
+	 * @param cfg configuration to be built
+	 * @param buildIncrementaly if true, incremental build will be performed,
+	 * only files that need rebuild will be built.
+	 * If false, full rebuild will be performed
+	 * @param resumeOnErr if true, build will continue in case of error while building.
+	 * If false the build will stop on the first error 
+	 * @param monitor Progress monitor.  For every resource built this monitor will consume one unit of work.
+	 */
+	public void invokeInternalBuilder(IResource[] resourcesToBuild, IConfiguration cfg, 
+			boolean buildIncrementaly,
+			boolean resumeOnErr,
+			boolean initNewConsole,
+			boolean printFinishedMessage,
+			IProgressMonitor monitor) {
+		// Get the project and make sure there's a monitor to cancel the build
+		IProject currentProject = cfg.getOwner().getProject();
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		
+		try {
+			int flags = 0;
+			IResourceDelta delta = null;
+			
+			if(buildIncrementaly){
+				flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED;
+				delta = getDelta(currentProject);
+			}
+			
+			
+			String[] msgs = new String[2];
+			msgs[0] = ManagedMakeMessages.getResourceString(INTERNAL_BUILDER);
+			msgs[1] = currentProject.getName();
+
+			if(initNewConsole)
+				initNewBuildConsole(currentProject);
+			
+			StringBuffer buf = new StringBuffer();
+			
+			if (initNewConsole) {
+				if (buildIncrementaly)
+					buf.append(ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.buildSelectedIncremental")); //$NON-NLS-1$
+				else
+					buf.append(ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.buildSelectedRebuild")); //$NON-NLS-1$
+				
+
+				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$	//$NON-NLS-2$
+				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$	//$NON-NLS-2$
+
+				buf.append(ManagedMakeMessages
+						.getResourceString(INTERNAL_BUILDER_HEADER_NOTE));
+				buf.append("\n"); //$NON-NLS-1$
+			}
+			
+			
+			if(!cfg.isSupported()){
+				buf.append(ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,new String[] {cfg.getName(),cfg.getToolChain().getName()}));
+				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			}
+			consoleOutStream.write(buf.toString().getBytes());
+			consoleOutStream.flush();
+				
+			// Remove all markers for this project
+			// TODO remove only necessary markers
+			removeAllMarkers(currentProject);
+			
+			IBuildDescription des = BuildDescriptionManager.createBuildDescription(cfg, delta, flags);
+			
+			// Hook up an error parser manager
+			String[] errorParsers = cfg.getErrorParserList(); 
+			ErrorParserManager epm = new ErrorParserManager(currentProject, des.getDefaultBuildDirLocation(), this, errorParsers);
+			epm.setOutputStream(consoleOutStream);
+			// This variable is necessary to ensure that the EPM stream stay open
+			// until we explicitly close it. See bug#123302.
+			OutputStream epmOutputStream = epm.getOutputStream();
+			
+			boolean errorsFound = false;
+			
+		doneBuild: for (int k = 0; k < resourcesToBuild.length; k++) {
+				IBuildResource buildResource = des
+						.getBuildResource(resourcesToBuild[k]);
+
+//				step collector 
+				Set dependentSteps = new HashSet();
+
+//				get dependent IO types
+				IBuildIOType depTypes[] = buildResource.getDependentIOTypes();
+
+//				iterate through each type and add the step the type belongs to to the collector
+				for(int j = 0; j < depTypes.length; j++){
+				IBuildIOType type = depTypes[j];
+				if(type != null && type.getStep() != null)
+					dependentSteps.add(type.getStep());
+				}
+
+				monitor.subTask(ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.buildingFile") + resourcesToBuild[k].getProjectRelativePath()); //$NON-NLS-1$
+				
+				// iterate through all build steps
+				Iterator stepIter = dependentSteps.iterator();
+				
+				while(stepIter.hasNext())
+				{
+					IBuildStep step = (IBuildStep) stepIter.next();
+					
+					StepBuilder stepBuilder = new StepBuilder(step);
+					
+					int status = stepBuilder.build(consoleOutStream, epmOutputStream, new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+					
+					// Refresh the output resource without allowing the user to cancel. 
+					// This is probably unkind, but short of this there is no way to ensure 
+					// the UI is up-to-date with the build results 
+					IBuildIOType[] outputIOTypes = step.getOutputIOTypes();
+					
+					for(int j = 0; j < outputIOTypes.length; j++ )
+					{
+						IBuildResource[] resources = outputIOTypes[j].getResources();
+						
+						for(int i = 0; i < resources.length; i++)
+						{
+							IFile file = currentProject.getFile(resources[i].getLocation());
+							file.refreshLocal(IResource.DEPTH_INFINITE, null);
+						}
+					}
+					
+					// check status
+					
+					switch (status) {
+					case IBuildModelBuilder.STATUS_OK:
+						// don't print anything if the step was successful,
+						// since the build might not be done as a whole
+						break;
+					case IBuildModelBuilder.STATUS_CANCELLED:
+						buf.append(ManagedMakeMessages
+								.getResourceString(BUILD_CANCELLED));
+						break doneBuild;
+					case IBuildModelBuilder.STATUS_ERROR_BUILD:
+						errorsFound = true;
+						if (!resumeOnErr) {
+							buf.append(ManagedMakeMessages
+									.getResourceString(BUILD_STOPPED_ERR));
+							break doneBuild;
+						}
+						break;
+					case IBuildModelBuilder.STATUS_ERROR_LAUNCH:
+					default:
+						buf.append(ManagedMakeMessages
+								.getResourceString(BUILD_FAILED_ERR));
+						break doneBuild;
+					}
+				}
+
+				
+			}
+
+			// check status
+			// Report either the success or failure of our mission
+			buf = new StringBuffer();
+
+			
+			buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+			
+			if (printFinishedMessage) {
+				if (errorsFound) {
+					buf.append(ManagedMakeMessages
+							.getResourceString(BUILD_FAILED_ERR));
+				} else {
+					buf
+							.append(ManagedMakeMessages
+									.getResourceString("GeneratedMakefileBuilder.buildResourcesFinished")); //$NON-NLS-1$
+				}
+			}
+			
+			// Write message on the console 
+			consoleOutStream.write(buf.toString().getBytes());
+			consoleOutStream.flush();
+			epmOutputStream.close();
+
+			// Generate any error markers that the build has discovered 
+			addBuilderMarkers(epm);
+			epm.reportProblems();
+			consoleOutStream.close();
+		} catch (Exception e) {
+			StringBuffer buf = new StringBuffer();
+			String errorDesc = ManagedMakeMessages
+						.getResourceString(BUILD_ERROR);
+			buf.append(errorDesc);
+			buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+			buf.append("(").append(e.getLocalizedMessage()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$ 
+
+			forgetLastBuiltState();
+		} finally {
+			getGenerationProblems().clear();
+		}
+	}
+	
+	private void removeAllMarkers(IFile file) {
+		IMarker[] markers;
+		try {
+			markers = file.findMarkers(
+					ICModelMarker.C_MODEL_PROBLEM_MARKER, true,
+					IResource.DEPTH_INFINITE);
+		} catch (CoreException e) {
+			// Handled just about every case in the sanity check
+			return;
+		}
+		if (markers != null) {
+			try {
+				file.getWorkspace().deleteMarkers(markers);
+			} catch (CoreException e) {
+				// The only situation that might cause this is some sort of
+				// resource change event
+				return;
+			}
+		}
+	}
+	
+	public void cleanFile(IFile file, IProgressMonitor monitor) {
+
+		monitor.subTask("Cleaning output file(s) for "
+				+ file.getProjectRelativePath());
+
+		// remove all markers on the file
+		removeAllMarkers(file);
+
+		IProject currentProject = file.getProject();
+
+		IManagedBuildInfo info = ManagedBuildManager
+				.getBuildInfo(currentProject);
+
+		// if we have no info then don't do anything
+		if (info == null) {
+			// monitor.worked(1);
+			return;
+
+		}
+
+		IConfiguration cfg = info.getDefaultConfiguration();
+
+		// figure out the output file for this file
+		IPath sourcePath = file.getProjectRelativePath();
+
+		int flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED;;
+		IResourceDelta delta = getDelta(currentProject);
+		
+		try {
+			IBuildDescription des = BuildDescriptionManager
+					.createBuildDescription(cfg, delta, flags);
+
+			IBuildResource buildResource = des.getBuildResource(file);
+
+			// step collector
+			Set dependentSteps = new HashSet();
+
+			// get dependent IO types
+			IBuildIOType depTypes[] = buildResource.getDependentIOTypes();
+
+			// iterate through each type and add the step the type belongs to to
+			// the collector
+			for (int j = 0; j < depTypes.length; j++) {
+				IBuildIOType type = depTypes[j];
+				if (type != null && type.getStep() != null)
+					dependentSteps.add(type.getStep());
+			}
+
+			// iterate through all build steps
+			Iterator stepIter = dependentSteps.iterator();
+
+			while (stepIter.hasNext()) {
+				IBuildStep step = (IBuildStep) stepIter.next();
+
+				// Delete the output resources
+				IBuildIOType[] outputIOTypes = step.getOutputIOTypes();
+
+				for (int j = 0; j < outputIOTypes.length; j++) {
+					IBuildResource[] resources = outputIOTypes[j]
+							.getResources();
+
+					for (int i = 0; i < resources.length; i++) {
+						IResource outputFile = currentProject
+								.findMember(resources[i].getFullPath().removeFirstSegments(1)); // strip project name
+
+						if (outputFile != null)
+							outputFile.delete(true, new SubProgressMonitor(
+									monitor, 1));
+					}
+				}
+
+			}
+
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+
+	/**
+	 * @param currentProject
+	 * @return
+	 * @throws CoreException
+	 */
+	private void initNewBuildConsole(IProject currentProject) throws CoreException {
+		// Get a build console for the project
+		console = CCorePlugin.getDefault().getConsole();
+		console.start(currentProject);
+		consoleOutStream = console.getOutputStream();
 	}
 }

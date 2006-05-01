@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
@@ -51,6 +52,19 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		fName= name;
 		fType= type;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if(adapter == IFile.class)
+			return (IFile) getUnderlyingResource();
+		if(adapter == IResource.class)
+			return getUnderlyingResource();
+		else
+			return super.getAdapter(adapter);
+	}
+	
 	
 	// setters
 

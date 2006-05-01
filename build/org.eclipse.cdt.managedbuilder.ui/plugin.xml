@@ -147,6 +147,27 @@
               style="pulldown"
               tooltip="%BuildConfigAction.tooltip"/>
      </actionSet>
+     <actionSet
+           id="org.eclipse.cdt.managedbuilder.ui.buildSelectedFilesActionSet"
+           label="%BuildSelectedFilesActionSet.label"
+           visible="true">
+        <action
+              class="org.eclipse.cdt.managedbuilder.ui.actions.BuildFilesAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.managedbuilder.ui.buildFilesAction"
+              label="%BuildSelectedFiles.label"
+              menubarPath="project/build"
+              style="push"
+              tooltip="%buildSelectedFiles.tooltip"/>
+        <action
+              class="org.eclipse.cdt.managedbuilder.ui.actions.CleanFilesAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.managedbuilder.ui.cleanFilesAction"
+              label="%CleanSelectedFiles.label"
+              menubarPath="project/build"
+              style="push"
+              tooltip="%cleanFilesAction.tooltip"/>
+     </actionSet>
   </extension>
   <extension
         point="org.eclipse.ui.popupMenus">
@@ -165,6 +186,23 @@
         <filter
               name="projectNature"
               value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
+     </objectContribution>
+     <objectContribution
+           adaptable="false"
+           id="org.eclipse.cdt.managedbuilder.ui.objectContribution1"
+           objectClass="org.eclipse.cdt.core.model.ITranslationUnit">
+        <action
+              class="org.eclipse.cdt.managedbuilder.ui.actions.BuildFilesAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.managedbuilder.ui.popups.buildFilesAction"
+              label="%BuildSelectedFiles.label"
+              menubarPath="additions"/>
+        <action
+              class="org.eclipse.cdt.managedbuilder.ui.actions.CleanFilesAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.managedbuilder.ui.popups.cleanFilesAction"
+              label="%CleanSelectedFiles.label"
+              menubarPath="additions"/>
      </objectContribution>
   </extension>
   <extension

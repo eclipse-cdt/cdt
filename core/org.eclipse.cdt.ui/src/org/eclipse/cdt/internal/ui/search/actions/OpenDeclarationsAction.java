@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -72,6 +73,17 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 										CUIPlugin.getDefault().log(e);
 									}
 								};
+							});
+						} else if (binding instanceof PDOMBinding) {
+							final IASTName name = ((PDOMBinding)binding).getFirstDeclaration();
+							Display.getDefault().asyncExec(new Runnable() {
+								public void run() {
+									try {
+										open(name);
+									} catch (CoreException e) {
+										CUIPlugin.getDefault().log(e);
+									}
+								}
 							});
 						}
 					}

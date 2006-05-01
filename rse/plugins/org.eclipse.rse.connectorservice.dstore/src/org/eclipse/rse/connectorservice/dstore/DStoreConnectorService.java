@@ -684,8 +684,8 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			}
 			// connection directly
 			boolean useSSL = isUsingSSL();
-			if (setSSLProperties(useSSL))
-				connectStatus = clientConnection.connect(null, timeout);
+			setSSLProperties(useSSL);
+			connectStatus = clientConnection.connect(null, timeout);
 		}
 		// server launcher type is unknown
 		else

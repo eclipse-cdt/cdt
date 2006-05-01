@@ -2,8 +2,9 @@
 <feature
       id="org.eclipse.rse.dstore"
       label="%featureName"
-      version="1.0.0"
-      provider-name="%providerName">
+      version="1.0.0.qualifier"
+      provider-name="%providerName"
+      plugin="org.eclipse.rse.services.dstore">
 
    <description>
       %description
@@ -17,10 +18,6 @@
       <update label="%updateSiteName" url="http://update.eclipse.org/updates/3.2"/>
       <discovery label="%updateSiteName" url="http://update.eclipse.org/updates/3.2"/>
    </url>
-
-   <includes
-         id="org.eclipse.rse.dstore.source"
-         version="0.0.0"/>
 
    <requires>
       <import feature="org.eclipse.rse.core"/>

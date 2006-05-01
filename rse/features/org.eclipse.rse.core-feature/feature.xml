@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.rse.core"
       label="%featureName"
-      version="1.0.0"
+      version="1.0.0.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -17,10 +17,6 @@
       <update label="%updateSiteName" url="http://update.eclipse.org/updates/3.2"/>
       <discovery label="%updateSiteName" url="http://update.eclipse.org/updates/3.2"/>
    </url>
-
-   <includes
-         id="org.eclipse.rse.core.source"
-         version="0.0.0"/>
 
    <requires>
       <import plugin="org.eclipse.ui"/>

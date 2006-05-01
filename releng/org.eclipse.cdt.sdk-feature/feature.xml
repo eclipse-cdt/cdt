@@ -18,7 +18,7 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/eclipse3.2"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/callisto"/>
    </url>
 
    <includes

@@ -164,7 +164,12 @@ public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction, ICPPFu
 	}
 
 	public boolean isSameType(IType type) {
-		throw new PDOMNotImplementedError();
+		if (type instanceof PDOMCPPFunction) {
+			return record == ((PDOMCPPFunction)type).getRecord();
+		} else {
+			// TODO check the other type for matching name, params
+			return false;
+		}
 	}
 
 	public Object clone() {

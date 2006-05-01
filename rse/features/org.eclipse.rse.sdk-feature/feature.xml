@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.rse.sdk"
+      label="%featureName"
+      version="1.0.0.qualifier"
+      provider-name="%providerName">
+
+   <description>
+      %description
+   </description>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="%updateSiteName" url="http://update.eclipse.org/updates/3.2"/>
+      <discovery label="%updateSiteName" url="http://update.eclipse.org/updates/3.2"/>
+   </url>
+
+   <includes
+         id="org.eclipse.rse.core"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rse.dstore"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rse.ftp"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rse.local"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rse.core.source"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rse.dstore.source"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rse.ftp.source"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rse.local.source"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.rse.sdk"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

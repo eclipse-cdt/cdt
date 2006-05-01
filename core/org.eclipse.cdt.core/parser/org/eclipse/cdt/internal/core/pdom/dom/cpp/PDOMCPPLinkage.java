@@ -36,6 +36,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceAlias;
@@ -121,6 +122,8 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 					pdomBinding = new PDOMCPPVariable(pdom, parent, name);
 			} else if (binding instanceof CPPMethod && parent instanceof PDOMCPPClassType) {
 				pdomBinding = new PDOMCPPMethod(pdom, (PDOMCPPClassType)parent, name);
+			} else if (binding instanceof CPPImplicitMethod) {
+				// skip these for now
 			} else if (binding instanceof CPPFunction) {
 				pdomBinding = new PDOMCPPFunction(pdom, parent, name);
 			} else if (binding instanceof CPPClassType) {

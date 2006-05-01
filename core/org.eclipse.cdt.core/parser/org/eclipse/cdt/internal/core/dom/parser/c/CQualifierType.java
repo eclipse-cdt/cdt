@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
@@ -108,6 +109,8 @@ public class CQualifierType implements ICQualifierType, ITypeContainer {
 		} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
 			IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
 			t = (IType) compTypeSpec.getName().resolveBinding();
+		} else if (declSpec instanceof IASTEnumerationSpecifier) {
+			t = new CEnumeration(((IASTEnumerationSpecifier)declSpec).getName());
 		} else {
 		    t = new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
 		}

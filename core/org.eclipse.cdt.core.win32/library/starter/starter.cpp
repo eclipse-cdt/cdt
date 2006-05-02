@@ -29,7 +29,7 @@
 int copyTo(_TCHAR * target, const _TCHAR * source, int cpyLength, int availSpace);
 void DisplayErrorMessage();
 
-BOOL KillProcessEx(DWORD dwProcessId);  // Handle of the process 
+//BOOL KillProcessEx(DWORD dwProcessId);  // Handle of the process 
 
 ///////////////////////////////////////////////////////////////////////////////
 BOOL WINAPI HandlerRoutine(  DWORD dwCtrlType)   //  control signal type
@@ -214,7 +214,7 @@ extern "C" int  _tmain(int argc, _TCHAR * argv[]) {
 	OutputDebugStringW(buffer);
 #endif
 	// Create job object if it is possible
-	HMODULE hKernel = GetModuleHandle("kernel32.dll");
+	HMODULE hKernel = GetModuleHandle(L"kernel32.dll");
 	HANDLE hJob = NULL;
     HANDLE (WINAPI * pCreateJobObject)(LPSECURITY_ATTRIBUTES lpJobAttributes,
 										char * lpName);
@@ -297,12 +297,6 @@ extern "C" int  _tmain(int argc, _TCHAR * argv[]) {
 						}
 					}
 				} else
-                if(!KillProcessEx(pi.dwProcessId)) {
-#ifdef DEBUG_MONITOR
-				    _stprintf(buffer, _T("Cannot kill process (PID %i) tree\n"), pi.dwProcessId);
-				    OutputDebugStringW(buffer);
-#endif
-                }
 				exitProc = TRUE;
 				break;
 			 default:

@@ -1228,8 +1228,11 @@ public class CPPSemantics {
                     if( data.visited == ObjectSet.EMPTY_SET )
 				        data.visited = new ObjectSet(2);
                     IBinding b = bases[i].getBaseClass();
-                    if( b instanceof ICPPClassType )
-                    	data.visited.put( ((ICPPClassType)b).getCompositeScope() );
+                    if( b instanceof ICPPClassType ) {
+                    	IScope bScope = ((ICPPClassType)b).getCompositeScope();
+                    	if (bScope != null)
+                    		data.visited.put(bScope);
+                    }
                 } else {
                 	IBinding b = bases[i].getBaseClass();
                     if( b instanceof ICPPClassType )
@@ -2150,7 +2153,9 @@ public class CPPSemantics {
 					cls = new CPPClassType.CPPClassTypeProblem( scope.getPhysicalNode(), IProblemBinding.SEMANTIC_BAD_SCOPE, fn.getNameCharArray() );
 				}
 				if( cls instanceof ICPPClassTemplate ){
-				    cls = (ICPPClassType) CPPTemplates.instantiateWithinClassTemplate( (ICPPClassTemplate) cls );
+					IBinding within = CPPTemplates.instantiateWithinClassTemplate( (ICPPClassTemplate) cls );
+					if (within instanceof ICPPClassType)
+						cls = (ICPPClassType)within;
 				}
 				IType implicitType = cls;
 				if( ftype.isConst() || ftype.isVolatile() ){

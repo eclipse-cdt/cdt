@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer, Wind River Systems, Inc.
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -1454,5 +1455,21 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			cViewer = (CSourceViewer) viewer;
 		}
 		return cViewer ;
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#collectContextMenuPreferencePages()
+	 */
+	protected String[] collectContextMenuPreferencePages() {
+		// Add C/C++ Editor relevant pages
+		String[] parentPrefPageIds = super.collectContextMenuPreferencePages();
+		String[] prefPageIds = new String[parentPrefPageIds.length + 4];
+		int nIds = 0;
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CEditorPreferencePage"; //$NON-NLS-1$
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeAssistPreferencePage"; //$NON-NLS-1$
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.TemplatePreferencePage"; //$NON-NLS-1$
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage"; //$NON-NLS-1$
+		System.arraycopy(parentPrefPageIds, 0, prefPageIds, nIds, parentPrefPageIds.length);
+		return prefPageIds;
 	}
 }

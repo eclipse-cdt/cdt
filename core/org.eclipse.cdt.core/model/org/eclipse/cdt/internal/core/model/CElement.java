@@ -58,11 +58,25 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 */
 	public Object getAdapter(Class adapter) {
 		if(adapter == IFile.class)
-			return (IFile) getUnderlyingResource();
+		{
+			IResource resource = getUnderlyingResource();
+			if(resource instanceof IFile)
+			{
+				return (IFile) resource;
+			}
+			else
+			{
+				return null;
+			}
+		}
 		if(adapter == IResource.class)
+		{
 			return getUnderlyingResource();
+		}
 		else
+		{
 			return super.getAdapter(adapter);
+		}
 	}
 	
 	

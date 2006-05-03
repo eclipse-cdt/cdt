@@ -298,6 +298,12 @@ public class CleanFilesAction extends ActionDelegate implements IWorkbenchWindow
 						return false;
 					}
 				}
+				
+				else
+				{
+					return false;
+				}
+				
 			}
 		}
 

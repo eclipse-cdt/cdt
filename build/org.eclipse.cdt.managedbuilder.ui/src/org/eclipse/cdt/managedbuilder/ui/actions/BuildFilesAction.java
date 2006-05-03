@@ -304,6 +304,11 @@ public class BuildFilesAction extends ActionDelegate implements IWorkbenchWindow
 						
 					}
 				}
+				
+				else
+				{
+					return false;
+				}
 			}
 		}
 

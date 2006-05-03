@@ -1319,6 +1319,10 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 							superClassId,
 							"toolChain",	//$NON-NLS-1$
 							getId());
+				} else {
+					//  All of our superclasses must be resolved in order to properly
+					//  resolve options to option categories   
+					((ToolChain)getSuperClass()).resolveReferences();
 				}
 			}
 			//  Resolve HoldsOptions 

@@ -2430,6 +2430,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 							superClassId,
 							"tool",	//$NON-NLS-1$
 							getId());
+				} else {
+					//  All of our superclasses must be resolved in order to properly
+					//  resolve options to option categories   
+					((Tool)getSuperClass()).resolveReferences();
 				}
 			}
 			//  Resolve HoldsOptions 

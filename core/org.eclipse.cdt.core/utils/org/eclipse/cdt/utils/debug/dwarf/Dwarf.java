@@ -163,6 +163,8 @@ public class Dwarf {
 
 	CompileUnit currentCU;
 
+	boolean printEnabled = true;
+	
 	public Dwarf(String file) throws IOException {
 		Elf exe = new Elf(file);
 		init(exe);
@@ -340,15 +342,18 @@ public class Dwarf {
 					header.abbreviationOffset = read_4_bytes(data, offset + 6);
 					header.addressSize = data[offset + 10];
 
-					System.out.println("Compilation Unit @ " + Long.toHexString(offset)); //$NON-NLS-1$
-					System.out.println(header);
+					if (printEnabled) {
+						System.out.println("Compilation Unit @ " + Long.toHexString(offset)); //$NON-NLS-1$
+						System.out.println(header);
+					}
 
 					// read the abbrev section.
 					InputStream in = new ByteArrayInputStream(data, offset + 11, length);
 					Map abbrevs = parseDebugAbbreviation(header);
 					parseDebugInfoEntry(requestor, in, abbrevs, header);
 
-					System.out.println();
+					if (printEnabled)
+						System.out.println();
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -562,10 +567,13 @@ public class Dwarf {
 	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List list) {
 		int len = list.size();
 		int tag = (int) entry.tag;
-		System.out.println("Abbrev Number " + entry.code); //$NON-NLS-1$
+		if (printEnabled)
+			System.out.println("Abbrev Number " + entry.code); //$NON-NLS-1$
+		
 		for (int i = 0; i < len; i++) {
 			AttributeValue av = (AttributeValue) list.get(i);
-			System.out.println(av);
+			if (printEnabled)
+				System.out.println(av);
 			// We are only interrested in certain tags.
 			switch (tag) {
 				case DwarfConstants.DW_TAG_array_type :

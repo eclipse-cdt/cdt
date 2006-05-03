@@ -19,11 +19,16 @@ import java.util.Comparator;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
+import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.Addr32Factory;
 import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.cdt.utils.Addr64Factory;
 import org.eclipse.cdt.utils.ERandomAccessFile;
+import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
+import org.eclipse.cdt.utils.coff.PE.Attribute;
+import org.eclipse.cdt.utils.debug.dwarf.DwarfReader;
+import org.eclipse.cdt.utils.debug.stabs.StabsReader;
 
 // test checkin
 public class Elf {
@@ -1141,4 +1146,22 @@ public class Elf {
 		}
 		return result;
 	}
+
+	private ISymbolReader createDwarfReader() {
+		DwarfReader reader = null;
+		// Check if Dwarf data exists
+		try {
+			reader = new DwarfReader(this);
+		} catch (IOException e) {
+			// No Dwarf data in the Elf.
+		}
+		return reader;
+	}
+
+	public ISymbolReader getSymbolReader() {
+		ISymbolReader reader = null;
+		reader = createDwarfReader();
+		return reader;
+	}
+
 }

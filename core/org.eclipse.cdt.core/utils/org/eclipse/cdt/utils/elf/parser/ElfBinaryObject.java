@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.utils.AR;
@@ -181,6 +182,12 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 			try {
 				return new Elf(getPath().toOSString());
 			} catch (IOException e) {
+			}
+		}
+		if (adapter.equals(ISymbolReader.class)) {
+			Elf elf = (Elf)getAdapter(Elf.class);
+			if (elf != null) {
+				return elf.getSymbolReader();
 			}
 		}
 		return super.getAdapter(adapter);

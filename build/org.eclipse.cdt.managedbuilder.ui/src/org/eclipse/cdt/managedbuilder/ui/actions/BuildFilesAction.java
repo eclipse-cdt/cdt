@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
@@ -28,27 +29,32 @@ import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.actions.ActionDelegate;
 
 /**
  * @author crecoskie
  *
  */
-public class BuildFilesAction extends Action implements IWorkbenchWindowActionDelegate {
+public class BuildFilesAction extends ActionDelegate implements IWorkbenchWindowActionDelegate {
 
 	/**
 	 * The workbench window; or <code>null</code> if this action has been
 	 * <code>dispose</code>d.
 	 */
-	private IWorkbenchWindow workbenchWindow;
+	private IWorkbenchWindow workbenchWindow = null;
 
+	private IAction action = null;
+	
 	/**
 	 * 
 	 */
@@ -60,39 +66,10 @@ public class BuildFilesAction extends Action implements IWorkbenchWindowActionDe
 	 * Creates an instance of this action, for use in the given window.
 	 */
 	public BuildFilesAction(IWorkbenchWindow window) {
-		super(ManagedMakeMessages.getResourceString("BuildFilesAction.buildFiles"));  //$NON-NLS-1$
 		if (window == null) {
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
-		setToolTipText(ManagedMakeMessages.getResourceString("BuildFilesAction.buildSelectedFile")); //$NON-NLS-1$
-		setActionDefinitionId("org.eclipse.cdt.managedbuilder.ui.BuildFilesAction"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @param text
-	 */
-	public BuildFilesAction(String text) {
-		super(text);
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * @param text
-	 * @param image
-	 */
-	public BuildFilesAction(String text, ImageDescriptor image) {
-		super(text, image);
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * @param text
-	 * @param style
-	 */
-	public BuildFilesAction(String text, int style) {
-		super(text, style);
-		// TODO Auto-generated constructor stub
 	}
 
 	/*
@@ -105,6 +82,15 @@ public class BuildFilesAction extends Action implements IWorkbenchWindowActionDe
 
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionDelegate#init(org.eclipse.jface.action.IAction)
+	 */
+	public void init(IAction action) {
+		this.action = action;
+		update();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -182,7 +168,7 @@ public class BuildFilesAction extends Action implements IWorkbenchWindowActionDe
 					IManagedBuildInfo buildInfo = ManagedBuildManager
 							.getBuildInfo(file.getProject());
 
-					if (buildInfo.buildsFileType(file.getFileExtension())) {
+					if (buildInfo != null && buildInfo.buildsFileType(file.getFileExtension())) {
 						files.add(file);
 					}
 				}
@@ -260,6 +246,7 @@ public class BuildFilesAction extends Action implements IWorkbenchWindowActionDe
 		
 	}
 
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -275,6 +262,65 @@ public class BuildFilesAction extends Action implements IWorkbenchWindowActionDe
 		
 	}
 
+	private boolean shouldBeEnabled() {
+		ISelectionService selectionService = workbenchWindow
+				.getSelectionService();
+		ISelection selection = selectionService.getSelection();
+
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+			for (Iterator elements = structuredSelection.iterator(); elements
+					.hasNext();) {
+				IFile file = convertToIFile(elements.next());
+				if (file != null) {
+					// we only add files that we can actually build
+					if(!ManagedBuildManager.manages(file.getProject()))
+					{
+						return false;
+					}
+					
+					IManagedBuildInfo buildInfo = ManagedBuildManager
+							.getBuildInfo(file.getProject());
+
+					if(buildInfo == null)
+						return false;
+					
+					IManagedBuilderMakefileGenerator buildfileGenerator = ManagedBuildManager
+							.getBuildfileGenerator(buildInfo
+									.getDefaultConfiguration());
+					
+					if(buildfileGenerator == null)
+						return false;
+					
+					// make sure build file generator is initialized
+					buildfileGenerator.initialize(file.getProject(), buildInfo, new NullProgressMonitor());
+
+					// if we have no build info or we can't build the file, then
+					// disable the action
+					if (!buildInfo.buildsFileType(file.getFileExtension())
+							|| buildfileGenerator.isGeneratedResource(file)	) {
+						
+						return false;
+						
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+	
+	/*
+	 * Updates the enablement state for the action based upon the selection. If
+	 * the selection corresponds to files buildable by MBS, then the action will
+	 * be enabled.
+	 */
+	private void update() {
+		if(action != null)
+			action.setEnabled(shouldBeEnabled());
+	}
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -282,8 +328,8 @@ public class BuildFilesAction extends Action implements IWorkbenchWindowActionDe
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		// TODO Auto-generated method stub
-
+		// update state
+		update();
 	}
 
 

@@ -48,17 +48,20 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionDelegate;
 
 /**
  * @author crecoskie
  *
  */
-public class CleanFilesAction extends Action implements IWorkbenchWindowActionDelegate {
+public class CleanFilesAction extends ActionDelegate implements IWorkbenchWindowActionDelegate {
 	/**
 	 * The workbench window; or <code>null</code> if this action has been
 	 * <code>dispose</code>d.
 	 */
-	private IWorkbenchWindow workbenchWindow;
+	private IWorkbenchWindow workbenchWindow = null;
+	
+	private IAction action = null;
 
 	/**
 	 * 
@@ -71,39 +74,10 @@ public class CleanFilesAction extends Action implements IWorkbenchWindowActionDe
 	 * Creates an instance of this action, for use in the given window.
 	 */
 	public CleanFilesAction(IWorkbenchWindow window) {
-		super(ManagedMakeMessages.getResourceString("CleanFilesAction.cleanFiles")); //$NON-NLS-1$
 		if (window == null) {
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
-		setToolTipText(ManagedMakeMessages.getResourceString("CleanFilesAction.cleanSelectedFiles")); //$NON-NLS-1$
-		setActionDefinitionId("org.eclipse.cdt.managedbuilder.ui.CleanFilesAction"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @param text
-	 */
-	public CleanFilesAction(String text) {
-		super(text);
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * @param text
-	 * @param image
-	 */
-	public CleanFilesAction(String text, ImageDescriptor image) {
-		super(text, image);
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * @param text
-	 * @param style
-	 */
-	public CleanFilesAction(String text, int style) {
-		super(text, style);
-		// TODO Auto-generated constructor stub
 	}
 
 	/*
@@ -116,6 +90,15 @@ public class CleanFilesAction extends Action implements IWorkbenchWindowActionDe
 
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionDelegate#init(org.eclipse.jface.action.IAction)
+	 */
+	public void init(IAction action) {
+		this.action = action;
+		update();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -287,6 +270,53 @@ public class CleanFilesAction extends Action implements IWorkbenchWindowActionDe
 		job.schedule();
 	}
 
+	
+	private boolean shouldBeEnabled() {
+		ISelectionService selectionService = workbenchWindow
+				.getSelectionService();
+		ISelection selection = selectionService.getSelection();
+
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+			for (Iterator elements = structuredSelection.iterator(); elements
+					.hasNext();) {
+				IFile file = convertToIFile(elements.next());
+				if (file != null) {
+					// we only add files that we can actually build
+					if(!ManagedBuildManager.manages(file.getProject()))
+					{
+						return false;
+					}
+					
+					IManagedBuildInfo buildInfo = ManagedBuildManager
+							.getBuildInfo(file.getProject());
+
+					// if we have no build info or we can't build the file, then
+					// disable the action
+					if (buildInfo == null
+							|| !buildInfo.buildsFileType(file.getFileExtension()) ) {
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+	
+	
+	
+	
+	/*
+	 * Updates the enablement state for the action based upon the selection. If
+	 * the selection corresponds to files buildable by MBS, then the action will
+	 * be enabled.
+	 */
+	private void update() {
+		if(action != null)
+			action.setEnabled(shouldBeEnabled());
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -294,8 +324,7 @@ public class CleanFilesAction extends Action implements IWorkbenchWindowActionDe
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		// TODO Auto-generated method stub
-
+		update();
 	}
 
 }

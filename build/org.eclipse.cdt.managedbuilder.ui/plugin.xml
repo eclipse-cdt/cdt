@@ -158,7 +158,8 @@
               label="%BuildSelectedFiles.label"
               menubarPath="project/build"
               style="push"
-              tooltip="%buildSelectedFiles.tooltip"/>
+              tooltip="%buildSelectedFiles.tooltip">
+        </action>
         <action
               class="org.eclipse.cdt.managedbuilder.ui.actions.CleanFilesAction"
               enablesFor="+"
@@ -166,7 +167,8 @@
               label="%CleanSelectedFiles.label"
               menubarPath="project/build"
               style="push"
-              tooltip="%cleanFilesAction.tooltip"/>
+              tooltip="%cleanFilesAction.tooltip">
+        </action>
      </actionSet>
   </extension>
   <extension
@@ -188,9 +190,9 @@
               value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
      </objectContribution>
      <objectContribution
-           adaptable="false"
+           adaptable="true"
            id="org.eclipse.cdt.managedbuilder.ui.objectContribution1"
-           objectClass="org.eclipse.cdt.core.model.ITranslationUnit">
+           objectClass="org.eclipse.core.resources.IResource">
         <action
               class="org.eclipse.cdt.managedbuilder.ui.actions.BuildFilesAction"
               enablesFor="+"

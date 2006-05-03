@@ -84,14 +84,6 @@ LINK32=link.exe
 # Name "starter - Win32 Debug"
 # Begin Source File
 
-SOURCE=.\killer.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\killer.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\starter.cpp
 # End Source File
 # End Target

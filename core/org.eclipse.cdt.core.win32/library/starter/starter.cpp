@@ -214,7 +214,7 @@ extern "C" int  _tmain(int argc, _TCHAR * argv[]) {
 	OutputDebugStringW(buffer);
 #endif
 	// Create job object if it is possible
-	HMODULE hKernel = GetModuleHandle(L"kernel32.dll");
+	HMODULE hKernel = GetModuleHandle("kernel32.dll");
 	HANDLE hJob = NULL;
     HANDLE (WINAPI * pCreateJobObject)(LPSECURITY_ATTRIBUTES lpJobAttributes,
 										char * lpName);

@@ -97,6 +97,9 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 		// Don't parse inclusion if it is already captured
 		try {
 			try {
+				File file = new File(path);
+				if (!file.exists())
+					return null;
 				path = new File(path).getCanonicalPath();
 			} catch (IOException e) {
 				// ignore and use the path we were passed in

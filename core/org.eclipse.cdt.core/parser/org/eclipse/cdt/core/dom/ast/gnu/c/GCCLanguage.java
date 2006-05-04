@@ -113,14 +113,11 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project).getAdapter(PDOM.class);
 		CodeReader reader;
 		IFile rfile = (IFile)file.getResource();
+		String path	= rfile != null	? rfile.getLocation().toOSString() : file.getPath().toOSString();
 		if (file instanceof IWorkingCopy) {
 			// get the working copy contents
-			reader = new CodeReader(((IWorkingCopy)file).getOriginalElement().getPath().toOSString(), file.getContents());
+			reader = new CodeReader(path, file.getContents());
 		} else {
-			String path
-				= rfile != null
-				? rfile.getLocation().toOSString()
-				: file.getPath().toOSString();
 			reader = codeReaderFactory.createCodeReaderForTranslationUnit(path);
 			if (reader == null)
 				return null;

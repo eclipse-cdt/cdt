@@ -15,33 +15,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
-import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISelectionService;
@@ -54,13 +43,14 @@ import org.eclipse.ui.actions.ActionDelegate;
  * @author crecoskie
  *
  */
-public class CleanFilesAction extends ActionDelegate implements IWorkbenchWindowActionDelegate {
+public class CleanFilesAction extends ActionDelegate implements
+		IWorkbenchWindowActionDelegate {
 	/**
 	 * The workbench window; or <code>null</code> if this action has been
 	 * <code>dispose</code>d.
 	 */
 	private IWorkbenchWindow workbenchWindow = null;
-	
+
 	private IAction action = null;
 
 	/**
@@ -90,7 +80,6 @@ public class CleanFilesAction extends ActionDelegate implements IWorkbenchWindow
 
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionDelegate#init(org.eclipse.jface.action.IAction)
 	 */
@@ -98,7 +87,7 @@ public class CleanFilesAction extends ActionDelegate implements IWorkbenchWindow
 		this.action = action;
 		update();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -123,8 +112,9 @@ public class CleanFilesAction extends ActionDelegate implements IWorkbenchWindow
 	 */
 	private IFile convertToIFile(Object object) {
 
-		if (object instanceof IFile)
+		if (object instanceof IFile) {
 			return (IFile) object;
+		}
 
 		if (object instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) object;
@@ -199,7 +189,6 @@ public class CleanFilesAction extends ActionDelegate implements IWorkbenchWindow
 			files = filesToBuild;
 		}
 
-
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -214,16 +203,19 @@ public class CleanFilesAction extends ActionDelegate implements IWorkbenchWindow
 						ResourcesPlugin.FAMILY_MANUAL_BUILD);
 				for (int i = 0; i < buildJobs.length; i++) {
 					Job curr = buildJobs[i];
-					if (curr != this && curr instanceof CleanFilesJob) {
+					if ((curr != this) && (curr instanceof CleanFilesJob)) {
 						curr.cancel(); // cancel all other build jobs of our
-										// kind
+						// kind
 
 					}
 				}
 			}
 			try {
 				if (files != null) {
-					monitor.beginTask(ManagedMakeMessages.getResourceString("CleanFilesAction.cleaningFiles"), files.size()); //$NON-NLS-1$
+					monitor
+							.beginTask(
+									ManagedMakeMessages
+											.getResourceString("CleanFilesAction.cleaningFiles"), files.size()); //$NON-NLS-1$
 
 					Iterator iterator = files.iterator();
 
@@ -233,13 +225,12 @@ public class CleanFilesAction extends ActionDelegate implements IWorkbenchWindow
 
 						GeneratedMakefileBuilder builder = new GeneratedMakefileBuilder();
 						builder.cleanFile(file, monitor);
-						
-						if(monitor.isCanceled())
-						{
+
+						if (monitor.isCanceled()) {
 							return Status.CANCEL_STATUS;
 						}
 					}
-					
+
 					monitor.done();
 
 				}
@@ -265,12 +256,13 @@ public class CleanFilesAction extends ActionDelegate implements IWorkbenchWindow
 
 		List selectedFiles = getSelectedBuildableFiles();
 
-		CleanFilesJob job = new CleanFilesJob(ManagedMakeMessages.getResourceString("CleanFilesAction.cleaningFiles"), selectedFiles); //$NON-NLS-1$
+		CleanFilesJob job = new CleanFilesJob(
+				ManagedMakeMessages
+						.getResourceString("CleanFilesAction.cleaningFiles"), selectedFiles); //$NON-NLS-1$
 
 		job.schedule();
 	}
 
-	
 	private boolean shouldBeEnabled() {
 		ISelectionService selectionService = workbenchWindow
 				.getSelectionService();
@@ -278,57 +270,55 @@ public class CleanFilesAction extends ActionDelegate implements IWorkbenchWindow
 
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-			
-			if(structuredSelection.size() <= 0)
+
+			if (structuredSelection.size() <= 0) {
 				return false;
-			
+			}
+
 			for (Iterator elements = structuredSelection.iterator(); elements
 					.hasNext();) {
 				IFile file = convertToIFile(elements.next());
 				if (file != null) {
 					// we only add files that we can actually build
-					if(!ManagedBuildManager.manages(file.getProject()))
-					{
+					if (!ManagedBuildManager.manages(file.getProject())) {
 						return false;
 					}
-					
+
 					IManagedBuildInfo buildInfo = ManagedBuildManager
 							.getBuildInfo(file.getProject());
 
 					// if we have no build info or we can't build the file, then
 					// disable the action
-					if (buildInfo == null
-							|| !buildInfo.buildsFileType(file.getFileExtension()) ) {
+					if ((buildInfo == null)
+							|| !buildInfo.buildsFileType(file
+									.getFileExtension())) {
 						return false;
 					}
 				}
-				
-				else
-				{
+
+				else {
 					return false;
 				}
-				
+
 			}
-			
+
 			return true;
 		}
 
 		return false;
 	}
-	
-	
-	
-	
+
 	/*
 	 * Updates the enablement state for the action based upon the selection. If
 	 * the selection corresponds to files buildable by MBS, then the action will
 	 * be enabled.
 	 */
 	private void update() {
-		if(action != null)
+		if (action != null) {
 			action.setEnabled(shouldBeEnabled());
+		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

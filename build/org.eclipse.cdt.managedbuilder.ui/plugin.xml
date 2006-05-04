@@ -205,9 +205,19 @@
               id="org.eclipse.cdt.managedbuilder.ui.popups.cleanFilesAction"
               label="%CleanSelectedFiles.label"
               menubarPath="additions"/>
-        <filter
-              name="projectNature"
-              value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
+        <visibility>
+           <and>
+              <not>
+                 <objectClass name="org.eclipse.core.resources.IProject"/>
+              </not>
+              <not>
+                 <objectClass name="org.eclipse.core.resources.IFolder"/>
+              </not>
+              <objectState
+                    name="projectNature"
+                    value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
+           </and>
+        </visibility>
      </objectContribution>
   </extension>
   <extension

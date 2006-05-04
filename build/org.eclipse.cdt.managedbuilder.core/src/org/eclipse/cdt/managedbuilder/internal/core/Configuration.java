@@ -1559,7 +1559,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		String subId = new String();
 		for (int i = 0; i < tools.length; i++) {
 			if( tools[i].buildsFileType(extString) ) {
-				subId = tools[i].getId() + "." + path; //$NON-NLS-1$
+				subId = ManagedBuildManager.calculateChildId(tools[i].getId(), path);				
 				resConfig.createTool(tools[i], subId, tools[i].getName(), false);
 			}
 		}

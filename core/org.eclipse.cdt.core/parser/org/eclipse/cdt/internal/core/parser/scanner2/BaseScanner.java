@@ -2663,6 +2663,7 @@ abstract class BaseScanner implements IScanner {
                 case ppPragma:
                     skipToNewLine();
                     processPragma(pos, bufferPos[bufferStackPos]);
+                    break;
                 default:
                     problem = true;
                     break;

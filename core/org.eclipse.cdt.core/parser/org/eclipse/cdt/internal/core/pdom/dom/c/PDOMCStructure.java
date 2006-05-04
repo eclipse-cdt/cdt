@@ -66,7 +66,11 @@ public class PDOMCStructure extends PDOMMemberOwner implements ICompositeType {
 	}
 
 	public boolean isSameType(IType type) {
-		throw new PDOMNotImplementedError();
+		if (equals(type))
+			return true;
+		else
+			// TODO - see if it matches
+			return false;
 	}
 
 }

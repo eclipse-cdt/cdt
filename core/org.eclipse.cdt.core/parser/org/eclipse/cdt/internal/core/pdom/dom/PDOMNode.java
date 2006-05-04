@@ -69,6 +69,17 @@ public abstract class PDOMNode implements IPDOMNode{
 		return record;
 	}
 	
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj instanceof PDOMNode) {
+			PDOMNode other = (PDOMNode)obj;
+			return pdom.equals(other.pdom) && record == other.record;
+		}
+		
+		return super.equals(obj);
+	}
+
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		// No children here.
 	}

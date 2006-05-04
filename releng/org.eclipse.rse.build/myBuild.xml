@@ -1,0 +1,145 @@
+<project name="Build All Elements" default="main">
+
+	<!-- ===================================================================== -->
+	<!-- Custom settings -->
+	<!-- ===================================================================== -->
+	<property name="head" value="${baseLocation}\..\..\packagehome" />
+	<property name="configs" value="*,*,*" />
+	<path id="path_bootclasspath">
+		<fileset dir="${java.home}/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	<property name="bootclasspath" refid="path_bootclasspath" />
+	<tstamp>
+		<format property="today" pattern="E" locale="en" />
+		<format property="timestamp" pattern="yyyyMMdd" locale="en" />
+	</tstamp>
+
+	<!-- ===================================================================== -->
+	<!-- Global properties.  See the build.properties for information on -->
+	<!-- the properties which callers can control. -->
+	<!-- ===================================================================== -->
+	<property name="builderDirectory" location="${builder}" />
+	<property name="buildProperties" location="${builder}/build.properties" />
+	<property name="customTargets" location="${builderDirectory}/customTargets.xml" />
+	<property name="genericTargets" location="${builderDirectory}/genericTargets.xml" />
+	<property name="packageDirectory" location="%{packageDirectory}" />
+	<property name="publishDirectory" location="%{publishDirectory}" />
+	<property file="${buildProperties}" />
+
+	<condition property="doExtract" value="true">
+		<equals arg1="${bld_do_extract}" arg2="yes" />
+	</condition>
+	<condition property="doBuild" value="true">
+		<equals arg1="${bld_do_build}" arg2="yes" />
+	</condition>
+	<condition property="doPackage" value="true">
+		<equals arg1="${bld_do_package}" arg2="yes" />
+	</condition>
+	<condition property="doPublish" value="true">
+		<equals arg1="${bld_do_publish}" arg2="yes" />
+	</condition>
+
+	<!-- ===================================================================== -->
+	<!-- main entry point to setup, fetch, generate, build etc. Use -->
+	<!-- the customTargets.xml to modify the build behaviour. -->
+	<!-- ===================================================================== -->
+	<!-- ******* add in the descriptions for each of the top level targets to the target decl -->
+	<target name="main" description="the main build target">
+		<antcall target="preBuild" />
+		<antcall target="fetch" />
+		<antcall target="generate" />
+		<antcall target="process" />
+		<antcall target="assemble" />
+		<antcall target="postBuild" />
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do before starting the build.  Typical setup includes -->
+	<!-- fetching the map files and building the directory.  -->
+	<!-- ===================================================================== -->
+	<target name="preBuild" if="doExtract">
+		<echo message="Preparing to extract..." />
+		<mkdir dir="${buildDirectory}" />
+		<ant antfile="${customTargets}" target="preSetup" />
+		<ant antfile="${customTargets}" target="getMapFiles" />
+		<concat destfile="${buildDirectory}/directory.txt" fixlastline="yes">
+			<fileset dir="${buildDirectory}" includes="maps/**/*.map" />
+		</concat>
+		<ant antfile="${customTargets}" target="postSetup" />
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Fetch the elements identified in the customTargets -->
+	<!-- Generates and then execute the fetch scripts for each build element-->
+	<!-- ===================================================================== -->
+	<target name="fetch" if="doExtract">
+		<echo message="Extracting..." />
+		<ant antfile="${customTargets}" target="preFetch" />
+		<ant antfile="${customTargets}" target="allElements">
+			<property name="target" value="fetchElement" />
+		</ant>
+
+		<ant antfile="${customTargets}" target="postFetch" />
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Generate the build scripts for each element identified in the customTargets -->
+	<!-- ===================================================================== -->
+	<target name="generate" if="doBuild">
+		<echo message="Generating build scripts..." />
+		<ant antfile="${customTargets}" target="preGenerate" />
+		<ant antfile="${customTargets}" target="allElements">
+			<property name="target" value="generateScript" />
+		</ant>
+		<ant antfile="${customTargets}" target="postGenerate" />
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Run the build scripts for each element identified in the customTargets -->
+	<!-- 1) Run custom tasks before processing, i.e. creating source build zip files -->
+	<!-- 2) Process all of the build elements-->
+	<!-- 3) Run custom tasks after compiling, i.e. reporting compile errors -->
+	<!-- ===================================================================== -->
+	<target name="process" if="doBuild">
+		<echo message="Building..." />
+		<ant antfile="${customTargets}" target="preProcess" />
+		<ant antfile="${customTargets}" target="allElements">
+			<property name="target" value="processElement" />
+		</ant>
+		<ant antfile="${customTargets}" target="postProcess" />
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Assemble the build elements into final distributions -->
+	<!-- ===================================================================== -->
+	<target name="assemble" if="doPackage">
+		<echo message="Assembling..." />
+		<ant antfile="${customTargets}" target="preAssemble" />
+		<ant antfile="${customTargets}" target="allElements">
+			<property name="target" value="assembleElement" />
+		</ant>
+		<ant antfile="${customTargets}" target="postAssemble" />
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Do any steps required after the build (e.g., posting, testing, ...) -->
+	<!-- ===================================================================== -->
+	<target name="postBuild" if="doPackage">
+		<echo message="Packaging..." />
+		<ant antfile="${customTargets}" target="postBuild" />
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Clean the build elements.  This target is here as an entry -->
+	<!-- point to the customTargets.  It is not called directly in the normal -->
+	<!-- course of events. -->
+	<!-- ===================================================================== -->
+	<target name="clean">
+		<ant antfile="${customTargets}" target="allElements">
+			<property name="target" value="cleanElement" />
+		</ant>
+	</target>
+
+</project>

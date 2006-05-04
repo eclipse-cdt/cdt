@@ -7,6 +7,10 @@
 	<target name="allElements">
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.sdk" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.core" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
@@ -29,6 +33,10 @@
 	<!-- ${assembleScriptName}) but may also add pre and post processing       -->
 	<!-- Add one target for each root element and each configuration           -->
 	<!-- ===================================================================== -->
+
+	<target name="assemble.org.eclipse.rse.sdk">
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+	</target>
 
 	<target name="assemble.org.eclipse.rse.core">
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
@@ -60,9 +68,19 @@
 			dest="${buildDirectory}/maps"
 			tag="${mapVersionTag}"
 		/>
-		-->
 		<copy todir="${buildDirectory}/maps">
-			<fileset dir="." includes="*.map" />
+			<fileset dir="${builder}" includes="*.map" />
+		</copy>
+		-->
+		<property name="cvsRoot" value=":pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp" />
+		<cvs cvsRoot="${cvsRoot}"
+			package="org.eclipse.tm.rse/releng/org.eclipse.rse.build"
+			dest="${buildDirectory}/releng"
+			tag="${mapVersionTag}"
+		/>
+		<copy todir="${buildDirectory}/maps">
+			<mapper type="flatten"/>
+			<fileset dir="${buildDirectory}/releng" includes="**/*.map"/>
 		</copy>
 	</target>
 
@@ -70,6 +88,17 @@
 	<!-- Steps to do before setup -->
 	<!-- ===================================================================== -->
 	<target name="preSetup">
+		<echo message="builder = ${builder}"/>
+		<echo message="builderDirectory = ${builderDirectory}"/>
+		<echo message="buildProperties = ${buildProperties}"/>
+		<echo message="customTargets = ${customTargets}"/>
+		<echo message="genericTargets = ${genericTargets}"/>
+		<echo message="buildId = ${buildId}"/>
+		<echo message="buildName = ${buildName}"/>
+		<echo message="buildType = ${buildType}"/>
+		<echo message="buildLabel = ${buildLabel}"/>
+		<echo message="archivePrefix = ${archivePrefix}"/>
+		<echo message="collectingFolder = ${collectingFolder}"/>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -128,6 +157,9 @@
 	<!-- Steps to do before running the build.xmls for the elements being built. -->
 	<!-- ===================================================================== -->
 	<target name="preProcess">
+		<replace dir="${buildDirectory}/plugins" value="${buildId}" token="@build@">
+			<include name="**/about.mappings" />
+		</replace>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -161,19 +193,6 @@
 	<!-- Steps to do after the build is done. -->
 	<!-- ===================================================================== -->
 	<target name="postBuild">
-		<property name="packageSDKDirectory" location="${packageDirectory}/sdk" />
-		<property name="packageRuntimeDirectory" location="${packageDirectory}/runtime" />
-		<mkdir dir="${packageDirectory}" />
-		<mkdir dir="${packageRuntimeDirectory}" />
-		<mkdir dir="${packageSDKDirectory}" />
-		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.core-${buildId}.zip" dest="${packageSDKDirectory}" />
-		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.dstore-${buildId}.zip" dest="${packageSDKDirectory}" />
-		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.ftp-${buildId}.zip" dest="${packageSDKDirectory}" />
-		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.local-${buildId}.zip" dest="${packageSDKDirectory}" />
-		<zip destfile="${packageDirectory}/RSE-SDK-${buildId}.zip" basedir="${packageSDKDirectory}" />
-		<tar destfile="${packageDirectory}/RSE-SDK-${buildId}.tar" basedir="${packageSDKDirectory}" />
-		<delete dir="$packageSDKDirectory}" />
-		<delete dir="$packageRuntimeDirectory}" />
 	</target>
 
 	<!-- ===================================================================== -->
@@ -205,7 +224,7 @@
 
 	<target name="serverruntime">
 
-		<property name="working" value="${packageDirectory}/rseserver"/>
+		<property name="working" value="${buildDirectory}/${buildLabel}/rseserver"/>
 		<mkdir dir="${working}" />
 		<mkdir dir="${working}/jars" />
 
@@ -252,6 +271,10 @@
 		<copy todir="${working}/collector">
 			<fileset dir="${working}/data" includes="*"/>
 		</copy>
+		<replace file="${working}/collector/build.dat">
+			<replacefilter token="@build@" value="${buildId}"/>
+			<replacefilter token="@version@" value="${mapVersionTag}"/>
+		</replace>
 		<fixcrlf srcdir="${working}/collector" eol="${eol}" eof="asis" includes="*"/>
 		<copy todir="${working}/collector">
 			<fileset dir="${working}/jars" includes="*"/>
@@ -259,8 +282,8 @@
 		<chmod perm="+x">
 			<fileset dir="${working}/collector" includes="*.jar"/>
 		</chmod>
-		<tar destfile="${packageDirectory}\rseserver-${buildId}-${os}.tar" basedir="${working}/collector" includes="*"/>
-		<zip destfile="${packageDirectory}\rseserver-${buildId}-${os}.zip" basedir="${working}/collector" includes="*"/>
+		<tar destfile="${buildDirectory}/${buildLabel}/rseserver-${buildId}-${os}.tar" basedir="${working}/collector" includes="*"/>
+		<zip destfile="${buildDirectory}/${buildLabel}/rseserver-${buildId}-${os}.zip" basedir="${working}/collector" includes="*"/>
 		<delete dir="${working}/collector" />
 	</target>
 
@@ -299,6 +322,28 @@
 				<include name="**/*.css" />
 			</fileset>
 		</zip>
+	</target>
+	
+	<target name="oldpostbuild">
+		<mkdir dir="${packageDirectory}" />
+		
+		<property name="packageRuntimeDirectory" location="${packageDirectory}/runtime" />
+		<mkdir dir="${packageRuntimeDirectory}" />
+		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.core-${buildId}.zip" dest="${packageRuntimeDirectory}" />
+		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.dstore-${buildId}.zip" dest="${packageRuntimeDirectory}" />
+		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.ftp-${buildId}.zip" dest="${packageRuntimeDirectory}" />
+		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.local-${buildId}.zip" dest="${packageRuntimeDirectory}" />
+		<zip destfile="${packageDirectory}/RSE-runtime-${buildId}.zip" basedir="${packageRuntimeDirectory}" />
+		<tar destfile="${packageDirectory}/RSE-runtime-${buildId}.tar" basedir="${packageRuntimeDirectory}" />
+		<delete dir="$packageRuntimeDirectory}" />
+
+		<property name="packageSDKDirectory" location="${packageDirectory}/sdk" />
+		<mkdir dir="${packageSDKDirectory}" />
+		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.sdk-${buildId}.zip" dest="${packageSDKDirectory}" />
+		<zip destfile="${packageDirectory}/RSE-SDK-${buildId}.zip" basedir="${packageSDKDirectory}" />
+		<tar destfile="${packageDirectory}/RSE-SDK-${buildId}.tar" basedir="${packageSDKDirectory}" />
+		<delete dir="$packageSDKDirectory}" />
+		
 	</target>
 
 </project>

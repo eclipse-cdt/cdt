@@ -18,13 +18,6 @@
 <property name="configs" value="*,*,*"/>
 <property name="fetchTag" value=""/>
 <property name="buildingOSGi" value="true"/>
-<property name="generateJnlp" value="false"/>
-<property name="signJars" value="false"/>
-<property name="generateFeatureVersionSuffix" value="false" />
-<property name="generateVersionsLists" value="true" />
-<property name="groupConfigurations" value="false"/>
-<property name="pluginPath" value=""/>
-
 <!-- ===================================================================== -->
 <!-- Fetch a single element (feature, plugin, fragment) -->
 <!-- ===================================================================== -->
@@ -37,15 +30,16 @@
 		directory="${buildDirectory}/directory.txt"
 		fetchTag="${fetchTag}"
 		configInfo="${configs}"
-		baseLocation="${baseLocation}"
 	/>
 	
 	<!-- Run generated fetch script -->
+
+       <echo message="featuresRecursively is :${featuresRecursively}"/>
+
 	<ant antfile="${buildDirectory}/fetch_${id}.xml">
 		<!-- ************  should not have to spec these  *************** -->
 		<property name="featureOnly" value="true"/>
 		<property name="featureAndPlugins" value="true"/>
-		<property name="featuresRecursively" value="true"/>
 	</ant>
 </target>
 
@@ -61,22 +55,14 @@
 <!-- Generate a build.xml file for an element -->
 <!-- ===================================================================== -->
 <target name="generateScript" description="Generating build scripts..." depends="init">
-	<eclipse.buildScript 
-		elements="${type}@${id}" 
+	<echo message="eclipse.buildScript ${type}@${id} buildDirectory=${buildDirectory} buildingOSGi=${buildingOSGi} baseLocation=${baseLocation} " />
+	<eclipse.buildScript
+		elements="${type}@${id}"
 		buildDirectory="${buildDirectory}"
 		configInfo="${configs}"
 		baseLocation="${baseLocation}"
 		buildingOSGi="${buildingOSGi}"
-		outputUpdateJars="${outputUpdateJars}"
-		archivesFormat="${archivesFormat}"
-		product="${product}"
-		forceContextQualifier="${forceContextQualifier}"
-		generateJnlp="${generateJnlp}"
-		signJars="${signJars}"
-		generateFeatureVersionSuffix="${generateFeatureVersionSuffix}"
-		generateVersionsLists="${generateVersionsLists}"
-		groupConfiguration="${groupConfigurations}"
-		pluginPath="${pluginPath}"
+               archivesFormat="${archivesFormat}"
 	/>
 </target>
 
@@ -87,16 +73,20 @@
 	<ant antfile="build.xml" dir="${elementPath}" target="build.jars">
 		<property name="target" value="build.jars"/>
 	</ant>
+	<ant antfile="build.xml" dir="${elementPath}" target="build.sources">
+		<property name="os" value="${os}" />
+		<property name="ws" value="${ws}" />	
+	</ant>
 </target>
 
 <!-- **********************
 1) the gather targets do more than just gather.  These are packaging targets.
-We need to continue ot separate the two concepts (gather and package) as 
+We need to continue to separate the two concepts (gather and package) as
 the packaging is different if we wanted to create an update site packaging
 (for example).  The gathers are commented out for now as the new generated
 scripts do not seem to have them.
 
-2) do we really need the ws and os properties?  In all cases?  Do they have to be 
+2) do we really need the ws and os properties?  In all cases?  Do they have to be
 set here?
 -->
 
@@ -115,11 +105,6 @@ set here?
 <!-- Gather source for a build element -->
 <!-- ===================================================================== -->
 <target name="gatherSources" description="Gathering source distribution..." depends="init">
-	<!--suspect:  this call is required to create the *.src.zip inside each plugin-->
-	<ant antfile="build.xml" dir="${elementPath}" target="build.sources">
-		<property name="os" value="${os}" />
-		<property name="ws" value="${ws}" />	
-	</ant>
 	<ant antfile="build.xml" dir="${elementPath}" target="zip.sources">
 		<property name="os" value="${os}" />
 		<property name="ws" value="${ws}" />	
@@ -150,13 +135,6 @@ set here?
 	<ant antfile="assemble.${id}.all.xml" dir="${buildDirectory}"/>
 </target>
 
-<!-- ===================================================================== -->
-<!-- Package one build element -->
-<!-- ===================================================================== -->
-<target name="packageElement" description="Packaging the build..." depends="init">
-	<ant antfile="package.${id}.all.xml" dir="${buildDirectory}"/>
-</target>
-	
 <!-- ===================================================================== -->
 <!-- Miscellaneous helper targets -->
 <!-- ===================================================================== -->

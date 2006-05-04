@@ -59,19 +59,6 @@
 	<!-- Replace values for cvsRoot, package and mapVersionTag as desired. -->
 	<!-- ===================================================================== -->
 	<target name="getMapFiles">
-		<!-- Notify recipients that build has started.-->
-		<!--
-		<property name="cvsRoot" value=":pserver:build@dbgaix2:/usr/vatpfcvs" />
-		<property name="mapVersionTag" value="HEAD" />
-		<cvs cvsRoot="${cvsRoot}"
-			package="MenuEditorBuilder"
-			dest="${buildDirectory}/maps"
-			tag="${mapVersionTag}"
-		/>
-		<copy todir="${buildDirectory}/maps">
-			<fileset dir="${builder}" includes="*.map" />
-		</copy>
-		-->
 		<property name="cvsRoot" value=":pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp" />
 		<cvs cvsRoot="${cvsRoot}"
 			package="org.eclipse.tm.rse/releng/org.eclipse.rse.build"

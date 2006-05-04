@@ -278,6 +278,10 @@ public class CleanFilesAction extends ActionDelegate implements IWorkbenchWindow
 
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+			
+			if(structuredSelection.size() <= 0)
+				return false;
+			
 			for (Iterator elements = structuredSelection.iterator(); elements
 					.hasNext();) {
 				IFile file = convertToIFile(elements.next());
@@ -305,9 +309,11 @@ public class CleanFilesAction extends ActionDelegate implements IWorkbenchWindow
 				}
 				
 			}
+			
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 	
 	

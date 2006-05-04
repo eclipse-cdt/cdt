@@ -266,9 +266,13 @@ public class BuildFilesAction extends ActionDelegate implements IWorkbenchWindow
 		ISelectionService selectionService = workbenchWindow
 				.getSelectionService();
 		ISelection selection = selectionService.getSelection();
-
+		
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+			
+			if(structuredSelection.size() <= 0)
+				return false;
+			
 			for (Iterator elements = structuredSelection.iterator(); elements
 					.hasNext();) {
 				IFile file = convertToIFile(elements.next());
@@ -310,9 +314,11 @@ public class BuildFilesAction extends ActionDelegate implements IWorkbenchWindow
 					return false;
 				}
 			}
+			return true;
 		}
+		
+		return false;
 
-		return true;
 	}
 	
 	/*

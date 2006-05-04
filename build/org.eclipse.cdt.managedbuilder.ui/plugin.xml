@@ -150,7 +150,7 @@
      <actionSet
            id="org.eclipse.cdt.managedbuilder.ui.buildSelectedFilesActionSet"
            label="%BuildSelectedFilesActionSet.label"
-           visible="true">
+           visible="false">
         <action
               class="org.eclipse.cdt.managedbuilder.ui.actions.BuildFilesAction"
               enablesFor="+"
@@ -191,7 +191,7 @@
      </objectContribution>
      <objectContribution
            adaptable="true"
-           id="org.eclipse.cdt.managedbuilder.ui.objectContribution1"
+           id="org.eclipse.cdt.managedbuilder.ui.BuildSelectedFilesContribution"
            objectClass="org.eclipse.core.resources.IResource">
         <action
               class="org.eclipse.cdt.managedbuilder.ui.actions.BuildFilesAction"
@@ -205,12 +205,16 @@
               id="org.eclipse.cdt.managedbuilder.ui.popups.cleanFilesAction"
               label="%CleanSelectedFiles.label"
               menubarPath="additions"/>
+        <filter
+              name="projectNature"
+              value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
      </objectContribution>
   </extension>
   <extension
         point="org.eclipse.ui.perspectiveExtensions">
      <perspectiveExtension targetID="org.eclipse.cdt.ui.CPerspective">
         <actionSet id="org.eclipse.cdt.managedbuilder.ui.buildConfigActionSet"/>
+        <actionSet id="org.eclipse.cdt.managedbuilder.ui.buildSelectedFilesActionSet"/>
      </perspectiveExtension>
   </extension>   
 </plugin>

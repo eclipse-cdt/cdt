@@ -236,6 +236,8 @@ public class NewBuildMacroDialog extends StatusDialog {
 		/* Enable workspace support for list editor */
 		fListEditor.setWorkspaceSupport(true);
 		
+		fListEditor.setContext(fMacrosBlock.getContextInfo());
+
 		if(fEditedMacro != null){
 			loadMacroSettings(fEditedMacro,true);
 			fMacroNameEdit.setEnabled(false);

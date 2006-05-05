@@ -18,6 +18,8 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -205,9 +207,14 @@ public class FileListControlFieldEditor extends FieldEditor {
 							/* Enable workspace support for list and set project */
 							list.setWorkspaceSupport(true);
 							if (store instanceof BuildToolSettingsPreferenceStore){
-								Object[] option = ((BuildToolSettingsPreferenceStore)store).getOption(getPreferenceName());
+								BuildToolSettingsPreferenceStore btsStore = ((BuildToolSettingsPreferenceStore)store);
+								Object[] option = btsStore.getOption(getPreferenceName());
 								if(option != null){
-									list.setContext((IOption)option[1], (IHoldsOptions)option[0]);
+									list.setContext(
+											btsStore.obtainMacroProvider().getMacroContextInfo(
+													IBuildMacroProvider.CONTEXT_OPTION,
+													new OptionContextData((IOption)option[1],
+															(IHoldsOptions)option[0])));
 								}
 							}
 						}

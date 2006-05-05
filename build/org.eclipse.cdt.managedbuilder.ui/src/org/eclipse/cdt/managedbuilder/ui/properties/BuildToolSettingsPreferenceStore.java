@@ -18,6 +18,7 @@ import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Option;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
@@ -25,9 +26,12 @@ import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor;
 import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
 import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
 import org.eclipse.cdt.managedbuilder.internal.macros.MbsMacroSupplier;
+import org.eclipse.cdt.managedbuilder.internal.ui.MacrosSetBlock;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuildOptionBlock;
 import org.eclipse.cdt.managedbuilder.internal.ui.ToolsSettingsBlock;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
+import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
@@ -220,7 +224,7 @@ public class BuildToolSettingsPreferenceStore implements IPreferenceStore {
 									null,
 									EMPTY_STRING,
 									WHITESPACE,
-									block.obtainMacroProvider())),
+									obtainMacroProvider())),
 							WHITESPACE);
 				} catch (BuildException e) {
 				}
@@ -234,6 +238,12 @@ public class BuildToolSettingsPreferenceStore implements IPreferenceStore {
 		}
 			
 		return getDefaultString(name);
+	}
+	
+	public BuildMacroProvider obtainMacroProvider(){
+		if(block != null)
+			return block.obtainMacroProvider();
+		return (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
 	}
 	
 	public static String listToString(String[] items) {

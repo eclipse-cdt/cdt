@@ -17,14 +17,11 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
-import org.eclipse.cdt.managedbuilder.core.IBuildObject;
-import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
-import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
-import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
+import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor;
+import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
+import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIImages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
@@ -141,15 +138,13 @@ public class FileListControl {
 						IResource resource = null;
 						
 						currentPathText = getText().getText();
-						if(option != null && holder != null){
+						if(contextInfo != null){
 							try {
-								currentPathText = ManagedBuildManager.getBuildMacroProvider().
-									resolveValue(
-											currentPathText,
-											"", //$NON-NLS-1$
-											" ", //$NON-NLS-1$
-											IBuildMacroProvider.CONTEXT_OPTION,
-											new OptionContextData(option, holder));
+								currentPathText = 
+									MacroResolver.resolveToString(currentPathText,
+											new DefaultMacroSubstitutor(contextInfo ,
+													"", //$NON-NLS-1$
+													" ")); //$NON-NLS-1$
 							} catch (BuildMacroException e) {
 							}
 						}
@@ -160,13 +155,7 @@ public class FileListControl {
 						/* Resolve variables */
 						IStringVariableManager variableManager =
 							VariablesPlugin.getDefault().getStringVariableManager();
-/*						
-						try	{
-							currentPathText = variableManager.performStringSubstitution(
-									currentPathText, false);
-						} catch (CoreException e)
-						{}
-*/						
+						
 						/* Remove workspace location prefix (if any) */
 						path = new Path(currentPathText);
 						IPath workspacePath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
@@ -180,18 +169,8 @@ public class FileListControl {
 						if (!path.toString().trim().equals("")) { //$NON-NLS-1$ 
 							resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 						}
-						if (resource == null){
-							if(holder instanceof ITool){
-								IBuildObject bo = ((ITool)holder).getParent();
-								if(bo instanceof IResourceConfiguration){
-									resource = ((IResourceConfiguration)bo).getParent().getOwner();
-								} else if(bo instanceof IToolChain){
-									resource = ((IToolChain)bo).getParent().getOwner();
-								}
-							} else if(holder instanceof IToolChain){
-								resource = ((IToolChain)holder).getParent().getOwner();
-							}
-						}
+						if (resource == null)
+							resource = rc;
 
 						/* Create workspace folder/file selection dialog and
 						 * set initial selection */
@@ -237,7 +216,7 @@ public class FileListControl {
 							
 							if (resource != null) {
 								getText().setText(variableManager.generateVariableExpression(WORKSPACELOC_VAR,
-										resource.getFullPath().toOSString()));
+										resource.getFullPath().toString()));
 							}
 						}
 							
@@ -335,8 +314,8 @@ public class FileListControl {
 	
 	/* Workspace support */
 	private boolean fWorkspaceSupport = false;
-	private IOption option;
-	private IHoldsOptions holder;
+	private IMacroContextInfo contextInfo;
+	private IResource rc;
 
 	private java.util.List listeners = new ArrayList();
 	private String oldValue[];
@@ -754,16 +733,22 @@ public class FileListControl {
 	public void setWorkspaceSupport(boolean enable)	{
 		fWorkspaceSupport = enable;
 	}
-	
+
 	/**
-	 * Set the project the field editor was created for.
+	 * Set the field editor context.
 	 * @param project
 	 */
-	public void setContext(IOption option, IHoldsOptions holder) {
-		this.option = option;
-		this.holder = holder;
+	public void setContext(IMacroContextInfo info) {
+		contextInfo = info;
+		for(;info != null;info = info.getNext()){
+			if(info.getContextType() == IBuildMacroProvider.CONTEXT_PROJECT){
+				IManagedProject mngProj = (IManagedProject)info.getContextData();
+				this.rc = mngProj.getOwner();
+				break;
+			}
+		}
 	}
-	
+
 	/**
 	 * Returns the input dialog string
 	 * 

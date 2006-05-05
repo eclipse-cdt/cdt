@@ -2,15 +2,16 @@
 # Build script for Remote System Explorer
 # Author: Dave Dykstal, Kushal Munir
 # Prerequisites:
-# java and CVS have to be in the path
+# written in ruby
+# java and cvs have to be in the path
 
 require "ftools"
 
 def ask(question, default)
-	message = "#{question} (default is #{default})" 
+	message = "#{question} (default is #{default}): " 
 	STDERR.print message
-	answer = readline()
-	answer = answer.strip.empty? ? default : answer
+	answer = readline().strip
+	answer = answer.empty? ? default : answer
 	return answer
 end
 
@@ -20,12 +21,17 @@ eclipse	= "c:/work/targets/OpenRSE-1.0/eclipse"
 
 # "builder" is the location of the custom build scripts customTargets.xml and build.properties
 # (i.e. the contents of org.eclipse.rse.build)
-builder	= File.expand_path(".") # needs to be an absolute path
+builder	= "."
 
 # "working" is where the build is actually done, does not need to exist
 working = "c:/temp/build"
 
-# Find the base build scripts
+# make these absolute paths
+eclipse = File.expand_path(eclipse)
+builder = File.expand_path(builder)
+working = File.expand_path(working)
+
+# Find the base build scripts: genericTargets.xml and build.xml
 candidates = Dir["#{eclipse}/plugins/org.eclipse.pde.build*"]
 if (candidates.size == 0) then 
 	raise("PDE Build was not found.")

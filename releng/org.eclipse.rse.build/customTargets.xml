@@ -55,20 +55,15 @@
 	</target>
 
 	<!-- ===================================================================== -->
-	<!-- Check out map files from correct repository -->
-	<!-- Replace values for cvsRoot, package and mapVersionTag as desired. -->
+	<!-- Place the map files into the "maps" directory, specify version tags -->
 	<!-- ===================================================================== -->
 	<target name="getMapFiles">
-		<property name="cvsRoot" value=":pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp" />
-		<cvs cvsRoot="${cvsRoot}"
-			package="org.eclipse.tm.rse/releng/org.eclipse.rse.build"
-			dest="${buildDirectory}/releng"
-			tag="${mapVersionTag}"
-		/>
 		<copy todir="${buildDirectory}/maps">
-			<mapper type="flatten"/>
-			<fileset dir="${buildDirectory}/releng" includes="**/*.map"/>
+			<fileset dir="${builder}" includes="*.map" />
 		</copy>
+		<replace token="@tag@" value="$mapVersionTag">
+			<fileset dir="${buildDirectory}/maps" includes="*.map"/>
+		</replace>
 	</target>
 
 	<!-- ===================================================================== -->

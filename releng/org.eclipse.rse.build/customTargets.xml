@@ -61,8 +61,8 @@
 		<copy todir="${buildDirectory}/maps">
 			<fileset dir="${builder}" includes="*.map" />
 		</copy>
-		<replace token="@tag@" value="$mapVersionTag">
-			<fileset dir="${buildDirectory}/maps" includes="*.map"/>
+		<replace dir="${buildDirectory}/maps" token="@tag@" value="${mapVersionTag}">
+			<include name="*.map"/>
 		</replace>
 	</target>
 

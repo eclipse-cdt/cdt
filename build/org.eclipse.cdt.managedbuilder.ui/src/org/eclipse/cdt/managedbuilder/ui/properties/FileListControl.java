@@ -135,7 +135,6 @@ public class FileListControl {
 						
 						String currentPathText;
 						IPath path;
-						IResource resource = null;
 						
 						currentPathText = getText().getText();
 						if(contextInfo != null){
@@ -158,39 +157,45 @@ public class FileListControl {
 						
 						/* Remove workspace location prefix (if any) */
 						path = new Path(currentPathText);
-						IPath workspacePath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-
-						if (workspacePath.isPrefixOf(path)) {
-							path = path.removeFirstSegments(workspacePath.segmentCount());
-							path = path.setDevice(null);
-						}
 						
-						/* Get resource for path. We use fProject if path is invalid.*/
-						if (!path.toString().trim().equals("")) { //$NON-NLS-1$ 
-							resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-						}
-						if (resource == null)
-							resource = rc;
-
 						/* Create workspace folder/file selection dialog and
 						 * set initial selection */
 						ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(),
 								new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 
-						dialog.setInitialSelection(resource);
-						
 		                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot()); 
 		                dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
 						
 						if (type == IOption.BROWSE_DIR)	{
-							if (!(resource instanceof IContainer))
-								resource = null;
+							IResource container = null;
+							if(path.isAbsolute()){
+								IContainer cs[] = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(path);
+								if(cs != null && cs.length > 0)
+									container = cs[0];
+							}
+							if(container == null && rc instanceof IContainer)
+								container = rc;
+
+
+							dialog.setInitialSelection(container);
 
 							Class[] filteredResources = {IContainer.class, IProject.class};
 							dialog.addFilter(new TypedViewerFilter(filteredResources));
 							dialog.setTitle(WORKSPACE_DIR_DIALOG_TITLE); 
 			                dialog.setMessage(WORKSPACE_DIR_DIALOG_MSG); 
 						} else {
+							IResource resource = null;
+							if(path.isAbsolute()){
+								IFile fs[] = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+								if(fs != null && fs.length > 0)
+									resource = fs[0];
+							}
+							if(resource == null)
+								resource = rc;
+
+
+							dialog.setInitialSelection(resource);
+
 							dialog.setValidator(new ISelectionStatusValidator() {
 							    public IStatus validate(Object[] selection) {
 							    	if (selection != null)
@@ -212,7 +217,7 @@ public class FileListControl {
 						if (dialog.open() == Window.OK) {
 							fSetByBrowseDialog = true;
 							
-							resource = (IResource) dialog.getFirstResult();
+							IResource resource = (IResource) dialog.getFirstResult();
 							
 							if (resource != null) {
 								getText().setText(variableManager.generateVariableExpression(WORKSPACELOC_VAR,

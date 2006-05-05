@@ -252,7 +252,11 @@ public class PDOM extends PlatformObject
 
 			public int visit(IASTName name) {
 				try {
-					linkage.addName(name);
+					IASTFileLocation fileloc = name.getFileLocation();
+					if (fileloc != null) {
+						PDOMFile file = addFile(fileloc.getFileName());
+						linkage.addName(name, file);
+					}
 					return PROCESS_CONTINUE;
 				} catch (CoreException e) {
 					CCorePlugin.log(e);

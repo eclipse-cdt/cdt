@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -98,8 +99,8 @@ public class CtagsCPPName implements IASTName, IASTFileLocation {
 		}
 	}
 
-    public void addToPDOM() throws CoreException {
-		linkage.addName(this);
+    public void addToPDOM(PDOMFile file) throws CoreException {
+		linkage.addName(this, file);
     }
     
 	public IBinding getBinding() {

@@ -49,7 +49,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 	private static final int IS_REFERENCE = 3;
 	
 
-	public PDOMName(PDOM pdom, IASTName name, PDOMBinding binding) throws CoreException {
+	public PDOMName(PDOM pdom, IASTName name, PDOMFile file, PDOMBinding binding) throws CoreException {
 		this.pdom = pdom;
 		Database db = pdom.getDB();
 		record = db.malloc(RECORD_SIZE);
@@ -82,17 +82,11 @@ public class PDOMName implements IASTName, IASTFileLocation {
 		}
 		
 		// Hook us up the the liked name list from file
-		IASTFileLocation fileloc = name.getFileLocation();
-		String filename = fileloc.getFileName();
-		PDOMFile pdomFile = pdom.addFile(filename);
-		db.putInt(record + FILE_REC_OFFSET, pdomFile.getRecord());
-		PDOMName firstName = pdomFile.getFirstName();
-		if (firstName != null) {
-			db.putInt(record + FILE_NEXT_OFFSET, firstName.getRecord());
-			firstName.setPrevInFile(this);
-		}
-		pdomFile.setFirstName(this);
+		db.putInt(record + FILE_REC_OFFSET, file.getRecord());
+		file.addName(this);
 
+		// Record our location in the file
+		IASTFileLocation fileloc = name.getFileLocation();
 		db.putInt(record + NODE_OFFSET_OFFSET, fileloc.getNodeOffset());
 		db.putInt(record + NODE_LENGTH_OFFSET, fileloc.getNodeLength());
 	}

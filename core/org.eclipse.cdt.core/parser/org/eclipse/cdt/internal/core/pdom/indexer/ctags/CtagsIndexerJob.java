@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -137,13 +138,14 @@ public abstract class CtagsIndexerJob extends Job {
 			}
 			
 			if (elementName != null && fileName != null) {
+				PDOMFile file = pdom.addFile(fileName);
 				String languageName = (String)fields.get("language"); //$NON-NLS-1$
 				if (languageName.equals("C++")) { //$NON-NLS-1$
 					PDOMLinkage linkage = pdom.getLinkage(new GPPLanguage());
-					new CtagsCPPName(linkage, fileName, lineNum, elementName, fields).addToPDOM();
+					new CtagsCPPName(linkage, fileName, lineNum, elementName, fields).addToPDOM(file);
 				} else {
 					PDOMLinkage linkage = pdom.getLinkage(new GCCLanguage());
-					new CtagsCName(linkage, fileName, lineNum, elementName, fields).addToPDOM();
+					new CtagsCName(linkage, fileName, lineNum, elementName, fields).addToPDOM(file);
 				}
 			}
 		}

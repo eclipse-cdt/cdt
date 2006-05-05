@@ -136,7 +136,7 @@ public abstract class PDOMLinkage extends PDOMNode {
 		getIndex().insert(child.getRecord(), child.getIndexComparator());
 	}
 	
-	public abstract PDOMBinding addName(IASTName name) throws CoreException;
+	public abstract PDOMBinding addName(IASTName name, PDOMFile file) throws CoreException;
 
 	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
 	

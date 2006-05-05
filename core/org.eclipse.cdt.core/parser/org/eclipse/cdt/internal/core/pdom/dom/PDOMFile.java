@@ -115,6 +115,15 @@ public class PDOMFile {
 		pdom.getDB().putInt(record + FIRST_NAME, namerec);
 	}
 	
+	public void addName(PDOMName name) throws CoreException {
+		PDOMName firstName = getFirstName();
+		if (firstName != null) {
+			name.setNextInFile(firstName);
+			firstName.setPrevInFile(name);
+		}
+		setFirstName(name);
+	}
+	
 	public PDOMInclude getFirstInclude() throws CoreException {
 		int increc = pdom.getDB().getInt(record + FIRST_INCLUDE);
 		return increc != 0 ? new PDOMInclude(pdom, increc) : null;

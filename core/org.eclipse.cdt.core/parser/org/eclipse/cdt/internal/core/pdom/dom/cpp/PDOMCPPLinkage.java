@@ -43,6 +43,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceAlias;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
@@ -97,7 +98,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		return parent;
 	}
 	
-	public PDOMBinding addName(IASTName name) throws CoreException {
+	public PDOMBinding addName(IASTName name, PDOMFile file) throws CoreException {
 		if (name == null || name instanceof ICPPASTQualifiedName)
 			return null;
 
@@ -137,7 +138,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		
 		// Add in the name
 		if (pdomBinding != null)
-			new PDOMName(pdom, name, pdomBinding);
+			new PDOMName(pdom, name, file, pdomBinding);
 			
 		return pdomBinding;
 	}

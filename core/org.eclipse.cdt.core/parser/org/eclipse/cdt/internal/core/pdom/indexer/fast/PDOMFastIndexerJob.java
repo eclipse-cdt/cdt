@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -35,6 +37,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public abstract class PDOMFastIndexerJob extends Job {
 
+	protected final Map fileMap = new HashMap();
 	protected final PDOM pdom;
 	
 	public PDOMFastIndexerJob(PDOM pdom) {
@@ -54,6 +57,15 @@ public abstract class PDOMFastIndexerJob extends Job {
 		return language.getASTTranslationUnit(tu,
 				codeReaderFactory,
 				ILanguage.AST_USE_INDEX	| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
+	}
+	
+	protected PDOMFile getCachedFile(String filename) throws CoreException {
+		PDOMFile file = (PDOMFile)fileMap.get(filename);
+		if (file == null) {
+			file = pdom.addFile(filename);
+			fileMap.put(filename, file);
+		}
+		return file;
 	}
 	
 	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
@@ -89,9 +101,9 @@ public abstract class PDOMFastIndexerJob extends Job {
 					? sourceLoc.getFileName()
 					: ast.getFilePath(); // command-line includes
 					
-				PDOMFile sourceFile = pdom.addFile(sourcePath);
+				PDOMFile sourceFile = getCachedFile(sourcePath);
 				String destPath = include.getPath();
-				PDOMFile destFile = pdom.addFile(destPath);
+				PDOMFile destFile = getCachedFile(destPath);
 				sourceFile.addIncludeTo(destFile);
 			}
 		
@@ -108,9 +120,8 @@ public abstract class PDOMFastIndexerJob extends Job {
 				if (skippedHeaders.contains(filename))
 					continue;
 
-				PDOMFile sourceFile = pdom.getFile(filename);
-				if (sourceFile != null) // not sure why this would be null
-					sourceFile.addMacro(macro);
+				PDOMFile sourceFile = getCachedFile(filename);
+				sourceFile.addMacro(macro);
 			}
 			
 			// Add in the names
@@ -122,7 +133,9 @@ public abstract class PDOMFastIndexerJob extends Job {
 
 				public int visit(IASTName name) {
 					try {
-						linkage.addName(name);
+						IASTFileLocation nameLoc = name.getFileLocation();
+						if (nameLoc != null)
+							linkage.addName(name, getCachedFile(nameLoc.getFileName()));
 						return PROCESS_CONTINUE;
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
@@ -136,64 +149,6 @@ public abstract class PDOMFastIndexerJob extends Job {
 		} finally {
 			pdom.releaseWriteLock();
 		}
-	}
-
-	public void addSymbols(ILanguage language, IASTTranslationUnit ast) throws CoreException {
-		final PDOMLinkage linkage = pdom.getLinkage(language);
-		if (linkage == null)
-			return;
-		
-		// Add in the includes
-		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
-		for (int i = 0; i < includes.length; ++i) {
-			IASTPreprocessorIncludeStatement include = includes[i];
-			
-			IASTFileLocation sourceLoc = include.getFileLocation();
-			String sourcePath
-				= sourceLoc != null
-				? sourceLoc.getFileName()
-				: ast.getFilePath(); // command-line includes
-				
-			PDOMFile sourceFile = pdom.addFile(sourcePath);
-			String destPath = include.getPath();
-			PDOMFile destFile = pdom.addFile(destPath);
-			sourceFile.addIncludeTo(destFile);
-		}
-	
-		// Add in the macros
-		IASTPreprocessorMacroDefinition[] macros = ast.getMacroDefinitions();
-		for (int i = 0; i < macros.length; ++i) {
-			IASTPreprocessorMacroDefinition macro = macros[i];
-			
-			IASTFileLocation sourceLoc = macro.getFileLocation();
-			if (sourceLoc == null)
-				continue; // skip built-ins and command line macros
-			
-			PDOMFile sourceFile = pdom.getFile(sourceLoc.getFileName());
-			if (sourceFile != null) // not sure why this would be null
-				sourceFile.addMacro(macro);
-		}
-		
-		// Add in the names
-		ast.accept(new ASTVisitor() {
-			{
-				shouldVisitNames = true;
-				shouldVisitDeclarations = true;
-			}
-
-			public int visit(IASTName name) {
-				try {
-					linkage.addName(name);
-					return PROCESS_CONTINUE;
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-					return PROCESS_ABORT;
-				}
-			};
-		});;
-	
-		// Tell the world
-		pdom.fireChange();
 	}
 
 }

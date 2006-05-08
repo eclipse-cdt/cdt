@@ -803,7 +803,7 @@ public class DOMAST extends ViewPart {
    	  manager.add(clearAction);
       manager.add(new Separator());
       manager.add(searchNamesAction);
-	  manager.add(displayProblemsAction);
+//	  manager.add(displayProblemsAction);
       manager.add(new Separator());
       drillDownAdapter.addNavigationActions(manager);
    }

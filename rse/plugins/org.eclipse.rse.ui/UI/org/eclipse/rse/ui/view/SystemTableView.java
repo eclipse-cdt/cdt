@@ -874,7 +874,8 @@ public class SystemTableView
 						
 					}
 				}
-				break;
+				return;
+				//break;
 			 
 			case ISystemResourceChangeEvents.EVENT_DELETE:   	    	  
   	    	 case ISystemResourceChangeEvents.EVENT_DELETE_MANY:

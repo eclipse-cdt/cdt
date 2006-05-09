@@ -28,8 +28,8 @@ public abstract class PDOMMember extends PDOMBinding {
 	
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 12;
 	
-	public PDOMMember(PDOM pdom, PDOMMemberOwner parent, IASTName name, int type) throws CoreException {
-		super(pdom, parent, name, type);
+	public PDOMMember(PDOM pdom, PDOMMemberOwner parent, IASTName name) throws CoreException {
+		super(pdom, parent, name);
 		parent.addMember(this);
 	}
 
@@ -38,7 +38,7 @@ public abstract class PDOMMember extends PDOMBinding {
 	}
 
 	public PDOMMember getNextMember() throws CoreException {
-		return (PDOMMember)getLinkage().getBinding(
+		return (PDOMMember)getLinkage().getNode(
 				pdom.getDB().getInt(record + NEXT_MEMBER));
 	}
 
@@ -48,7 +48,7 @@ public abstract class PDOMMember extends PDOMBinding {
 	}
 	
 	public PDOMMember getPrevMember() throws CoreException {
-		return (PDOMMember)getLinkage().getBinding(
+		return (PDOMMember)getLinkage().getNode(
 				pdom.getDB().getInt(record + PREV_MEMBER));
 	}
 
@@ -58,7 +58,7 @@ public abstract class PDOMMember extends PDOMBinding {
 	}
 	
 	public PDOMMemberOwner getMemberOwner() throws CoreException {
-		return (PDOMCPPClassType)getLinkage().getBinding(
+		return (PDOMCPPClassType)getLinkage().getNode(
 				pdom.getDB().getInt(record + OWNER));
 	}
 	

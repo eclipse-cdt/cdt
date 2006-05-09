@@ -19,6 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -28,11 +30,13 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Doug Schaefer
  */
-public class PDOMCPPParameter extends PDOMNode implements ICPPParameter {
+public class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 
-	public static final int NEXT_PARAM =  PDOMNode.RECORD_SIZE + 0;
-	public static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
+	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE + 0;
+	private static final int TYPE = PDOMNamedNode.RECORD_SIZE + 4;
 	
+	public static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 8;
+
 	public PDOMCPPParameter(PDOM pdom, int record) {
 		super(pdom, record);
 	}
@@ -40,13 +44,26 @@ public class PDOMCPPParameter extends PDOMNode implements ICPPParameter {
 	public PDOMCPPParameter(PDOM pdom, PDOMNode parent, IASTName name, ICPPParameter param)
 			throws CoreException {
 		super(pdom, parent, name.toCharArray());
-//		IType type = param.getType();
+		
+		Database db = pdom.getDB();
+
+		db.putInt(record + NEXT_PARAM, 0);
+		
+		IType type = param.getType();
+		if (type != null) {
+			PDOMNode typeNode = getLinkage().addType(this, type);
+			db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
+		}
 	}
 
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	public int getNodeType() {
+		return PDOMCPPLinkage.CPPPARAMETER;
+	}
+	
 	public void setNextParameter(PDOMCPPParameter nextParam) throws CoreException {
 		int rec = nextParam != null ? nextParam.getRecord() : 0;
 		pdom.getDB().putInt(record + NEXT_PARAM, rec);
@@ -79,8 +96,13 @@ public class PDOMCPPParameter extends PDOMNode implements ICPPParameter {
 	}
 
 	public IType getType() throws DOMException {
-		return null;
-//		TODO throw new PDOMNotImplementedError();
+		try {
+			PDOMNode node = getLinkage().getNode(pdom.getDB().getInt(record + TYPE));
+			return node instanceof IType ? (IType)node : null;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
 	}
 
 	public boolean isAuto() throws DOMException {

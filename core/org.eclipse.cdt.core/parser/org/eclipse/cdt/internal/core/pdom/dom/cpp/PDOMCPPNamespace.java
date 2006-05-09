@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -44,7 +45,7 @@ public class PDOMCPPNamespace extends PDOMBinding
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 	
 	public PDOMCPPNamespace(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name, PDOMCPPLinkage.CPPNAMESPACE);
+		super(pdom, parent, name);
 	}
 
 	public PDOMCPPNamespace(PDOM pdom, int record) {
@@ -53,6 +54,10 @@ public class PDOMCPPNamespace extends PDOMBinding
 
 	protected int getRecordSize() {
 		return RECORD_SIZE;
+	}
+	
+	public int getNodeType() {
+		return PDOMCPPLinkage.CPPNAMESPACE;
 	}
 	
 	public BTree getIndex() throws CoreException {
@@ -76,7 +81,7 @@ public class PDOMCPPNamespace extends PDOMBinding
 		});
 	}
 	
-	public void addChild(PDOMNode child) throws CoreException {
+	public void addChild(PDOMNamedNode child) throws CoreException {
 		getIndex().insert(child.getRecord(), child.getIndexComparator());
 	}
 
@@ -125,7 +130,7 @@ public class PDOMCPPNamespace extends PDOMBinding
 		throw new PDOMNotImplementedError();
 	}
 
-	private static final class FindBinding extends PDOMNode.NodeFinder {
+	private static final class FindBinding extends PDOMNamedNode.NodeFinder {
 		PDOMBinding pdomBinding;
 		final int desiredType;
 		public FindBinding(PDOM pdom, char[] name, int desiredType) {
@@ -139,7 +144,7 @@ public class PDOMCPPNamespace extends PDOMBinding
 			if (!tBinding.hasName(name))
 				// no more bindings with our desired name
 				return false;
-			if (tBinding.getBindingType() != desiredType)
+			if (tBinding.getNodeType() != desiredType)
 				// wrong type, try again
 				return true;
 			

@@ -37,7 +37,7 @@ public class PDOMCPPVariable extends PDOMBinding implements ICPPVariable {
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 	
 	public PDOMCPPVariable(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name, PDOMCPPLinkage.CPPVARIABLE);
+		super(pdom, parent, name);
 		
 		// Find the type record
 		IASTNode nameParent = name.getParent();
@@ -60,6 +60,10 @@ public class PDOMCPPVariable extends PDOMBinding implements ICPPVariable {
 		return RECORD_SIZE;
 	}
 
+	public int getNodeType() {
+		return PDOMCPPLinkage.CPPVARIABLE;
+	}
+	
 	public boolean isMutable() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
@@ -67,7 +71,7 @@ public class PDOMCPPVariable extends PDOMBinding implements ICPPVariable {
 	public IType getType() throws DOMException {
 		try {
 			int typeRec = pdom.getDB().getInt(record + TYPE_OFFSET);
-			return typeRec != 0 ? (IType)getLinkage().getBinding(typeRec) : null;
+			return (IType)getLinkage().getNode(typeRec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

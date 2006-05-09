@@ -31,7 +31,7 @@ public class PDOMCPPNamespaceAlias extends PDOMBinding implements
 
 	public PDOMCPPNamespaceAlias(PDOM pdom, PDOMNode parent,
 			IASTName name) throws CoreException {
-		super(pdom, parent, name, PDOMCPPLinkage.CPPNAMESPACEALIAS);
+		super(pdom, parent, name);
 	}
 
 	public PDOMCPPNamespaceAlias(PDOM pdom, int record) {
@@ -42,6 +42,10 @@ public class PDOMCPPNamespaceAlias extends PDOMBinding implements
 		return RECORD_SIZE;
 	}
 
+	public int getNodeType() {
+		return PDOMCPPLinkage.CPPNAMESPACEALIAS;
+	}
+	
 	public ICPPNamespaceScope getNamespaceScope() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}

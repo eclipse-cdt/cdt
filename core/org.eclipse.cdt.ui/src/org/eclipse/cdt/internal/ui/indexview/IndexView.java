@@ -29,6 +29,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -270,7 +271,7 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 				return "null :(";
 			} else if (element instanceof PDOMNode) {
 				try {
-					return ((PDOMNode)element).getDBName().getString();
+					return ((PDOMNamedNode)element).getDBName().getString();
 				} catch (CoreException e) {
 					return e.getMessage();
 				}

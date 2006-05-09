@@ -189,7 +189,7 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 			}
 			
 			// Add the new symbols
-			pdom.addSymbols(tu.getLanguage(), ast);
+			addSymbols(tu.getLanguage(), ast);
 		} finally {
 			pdom.releaseWriteLock();
 		}

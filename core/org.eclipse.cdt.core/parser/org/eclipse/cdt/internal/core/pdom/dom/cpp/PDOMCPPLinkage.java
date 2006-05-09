@@ -22,8 +22,10 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -49,6 +51,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -71,14 +74,20 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		return RECORD_SIZE;
 	}
 	
+	public int getNodeType() {
+		return LINKAGE;
+	}
+	
 	// Binding types
-	public static final int CPPVARIABLE = 1;
-	public static final int CPPFUNCTION = 2;
-	public static final int CPPCLASSTYPE = 3;
-	public static final int CPPFIELD = 4;
-	public static final int CPPMETHOD = 5;
-	public static final int CPPNAMESPACE = 6;
-	public static final int CPPNAMESPACEALIAS = 7;
+	public static final int CPPVARIABLE = PDOMLinkage.LAST_NODE_TYPE + 1;
+	public static final int CPPFUNCTION = PDOMLinkage.LAST_NODE_TYPE + 2;
+	public static final int CPPCLASSTYPE = PDOMLinkage.LAST_NODE_TYPE + 3;
+	public static final int CPPFIELD = PDOMLinkage.LAST_NODE_TYPE + 4;
+	public static final int CPPMETHOD = PDOMLinkage.LAST_NODE_TYPE + 5;
+	public static final int CPPNAMESPACE = PDOMLinkage.LAST_NODE_TYPE + 6;
+	public static final int CPPNAMESPACEALIAS = PDOMLinkage.LAST_NODE_TYPE + 7;
+	public static final int CPPBASICTYPE = PDOMLinkage.LAST_NODE_TYPE + 8;
+	public static final int CPPPARAMETER = PDOMLinkage.LAST_NODE_TYPE + 9;
 
 	public ILanguage getLanguage() {
 		return new GPPLanguage();
@@ -147,8 +156,8 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			
 		return pdomBinding;
 	}
-
-	private static final class FindBinding extends PDOMNode.NodeFinder {
+	
+	private static final class FindBinding extends PDOMNamedNode.NodeFinder {
 		PDOMBinding pdomBinding;
 		final int desiredType;
 		public FindBinding(PDOM pdom, char[] name, int desiredType) {
@@ -162,7 +171,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			if (!tBinding.hasName(name))
 				// no more bindings with our desired name
 				return false;
-			if (tBinding.getBindingType() != desiredType)
+			if (tBinding.getNodeType() != desiredType)
 				// wrong type, try again
 				return true;
 			
@@ -216,30 +225,6 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		return null;
 	}
 	
-	public PDOMBinding getBinding(int record) throws CoreException {
-		if (record == 0)
-			return null;
-		
-		switch (PDOMBinding.getBindingType(pdom, record)) {
-		case CPPVARIABLE:
-			return new PDOMCPPVariable(pdom, record);
-		case CPPFUNCTION:
-			return new PDOMCPPFunction(pdom, record);
-		case CPPCLASSTYPE:
-			return new PDOMCPPClassType(pdom, record);
-		case CPPFIELD:
-			return new PDOMCPPField(pdom, record);
-		case CPPMETHOD:
-			return new PDOMCPPMethod(pdom, record);
-		case CPPNAMESPACE:
-			return new PDOMCPPNamespace(pdom, record);
-		case CPPNAMESPACEALIAS:
-			return new PDOMCPPNamespaceAlias(pdom, record);
-		}
-		
-		return null;
-	}
-	
 	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
 		if (name instanceof ICPPASTQualifiedName) {
 			IASTName lastName = ((ICPPASTQualifiedName)name).getLastName();
@@ -279,6 +264,39 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	public void findBindings(String pattern, List bindings) throws CoreException {
 		MatchBinding visitor = new MatchBinding(pdom, pattern, bindings);
 		getIndex().accept(visitor);
+	}
+	
+	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
+		if (type instanceof ICPPBasicType)
+			return new PDOMCPPBasicType(pdom, parent, (ICPPBasicType)type);
+		else
+			return super.addType(parent, type); 
+	}
+
+	public PDOMNode getNode(int record) throws CoreException {
+		if (record == 0)
+			return null;
+		
+		switch (PDOMNode.getNodeType(pdom, record)) {
+		case CPPVARIABLE:
+			return new PDOMCPPVariable(pdom, record);
+		case CPPFUNCTION:
+			return new PDOMCPPFunction(pdom, record);
+		case CPPCLASSTYPE:
+			return new PDOMCPPClassType(pdom, record);
+		case CPPFIELD:
+			return new PDOMCPPField(pdom, record);
+		case CPPMETHOD:
+			return new PDOMCPPMethod(pdom, record);
+		case CPPNAMESPACE:
+			return new PDOMCPPNamespace(pdom, record);
+		case CPPNAMESPACEALIAS:
+			return new PDOMCPPNamespaceAlias(pdom, record);
+		case CPPBASICTYPE:
+			return new PDOMCPPBasicType(pdom, record);
+		}
+		
+		return super.getNode(record);
 	}
 	
 }

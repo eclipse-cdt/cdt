@@ -15,9 +15,6 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
-import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
-import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -29,8 +26,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 public abstract class PDOMNode implements IPDOMNode{
 
-	private static final int PARENT = 0;
-	private static final int NAME = 4;
+	private static final int TYPE = 0;
+	private static final int PARENT = 4;
 	
 	protected static final int RECORD_SIZE = 8;
 	
@@ -42,24 +39,21 @@ public abstract class PDOMNode implements IPDOMNode{
 		this.record = record;
 	}
 	
-	protected PDOMNode(PDOM pdom, PDOMNode parent, char[] name) throws CoreException {
+	protected PDOMNode(PDOM pdom, PDOMNode parent) throws CoreException {
 		this.pdom = pdom;
 		Database db = pdom.getDB();
 		
 		record = db.malloc(getRecordSize());
 
-		// name - must be before parent
-		db.putInt(record + NAME, db.newString(name).getRecord());
-
-		// parent
-		if (parent != null) {
-			pdom.getDB().putInt(record + PARENT, parent.getRecord());
-			parent.addChild(this);
-		}
+		// type
+		db.putInt(record + TYPE, getNodeType());
 		
+		// parent
+		db.putInt(record + PARENT, parent != null ? parent.getRecord() : 0);
 	}
 
 	protected abstract int getRecordSize();
+	public abstract int getNodeType();
 	
 	public PDOM getPDOM() {
 		return pdom;
@@ -84,6 +78,10 @@ public abstract class PDOMNode implements IPDOMNode{
 		// No children here.
 	}
 	
+	public static int getNodeType(PDOM pdom, int record) throws CoreException {
+		return pdom.getDB().getInt(record + TYPE);
+	}
+	
 	public PDOMLinkage getLinkage() throws CoreException {
 		return getLinkage(pdom, record);
 	}
@@ -99,47 +97,9 @@ public abstract class PDOMNode implements IPDOMNode{
 		
 		return pdom.getLinkage(linkagerec);
 	}
-	
-	public IString getDBName() throws CoreException {
-		Database db = pdom.getDB();
-		int namerec = db.getInt(record + NAME);
-		return db.getString(namerec);
-	}
-	
-	public char[] getNameCharArray() throws CoreException {
-		return getDBName().getChars(); 
-	}
-	
-	protected void addChild(PDOMNode child) throws CoreException {
-		// by defaut do nothing
+
+	protected void addChild(PDOMNamedNode child) throws CoreException {
+		// nothing here
 	}
 
-	public boolean hasName(char[] name) throws CoreException {
-		return getDBName().equals(name);
-	}
-	
-	public IBTreeComparator getIndexComparator() {
-		return new IBTreeComparator() {
-			public int compare(int record1, int record2) throws CoreException {
-				Database db = pdom.getDB();
-				int string1 = db.getInt(record1 + NAME);
-				int string2 = db.getInt(record2 + NAME);
-				return db.getString(string1).compare(db.getString(string2));
-			};
-		};
-	}
-	
-	public abstract static class NodeFinder implements IBTreeVisitor {
-		protected final PDOM pdom;
-		protected final char[] name;
-		protected NodeFinder(PDOM pdom, char [] name) {
-			this.pdom = pdom;
-			this.name = name;
-		}
-		public int compare(int record) throws CoreException {
-			Database db = pdom.getDB();
-			int namerec = db.getInt(record + NAME);
-			return db.getString(namerec).compare(name);
-		}
-	}
 }

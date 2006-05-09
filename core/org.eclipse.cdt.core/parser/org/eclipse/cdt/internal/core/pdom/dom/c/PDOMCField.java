@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMCField extends PDOMMember implements IField {
 
 	public PDOMCField(PDOM pdom, PDOMMemberOwner parent, IASTName name) throws CoreException {
-		super(pdom, parent, name, PDOMCLinkage.CFIELD);
+		super(pdom, parent, name);
 	}
 
 	public PDOMCField(PDOM pdom, int record) {
@@ -39,6 +39,10 @@ public class PDOMCField extends PDOMMember implements IField {
 		return RECORD_SIZE;
 	}
 
+	public int getNodeType() {
+		return PDOMCLinkage.CFIELD;
+	}
+	
 	public IType getType() throws DOMException {
 		return null;
 		// TODO - do we need the real type?

@@ -22,16 +22,15 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMMemberOwner extends PDOMBinding {
+public abstract class PDOMMemberOwner extends PDOMBinding {
 
 	private static final int FIRST_MEMBER = PDOMBinding.RECORD_SIZE + 0;
 	private static final int LAST_MEMBER = PDOMBinding.RECORD_SIZE + 4;
 	
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
 
-	public PDOMMemberOwner(PDOM pdom, PDOMNode parent, IASTName name,
-			int type) throws CoreException {
-		super(pdom, parent, name, type);
+	public PDOMMemberOwner(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
+		super(pdom, parent, name);
 	}
 
 	public PDOMMemberOwner(PDOM pdom, int record) {
@@ -63,12 +62,12 @@ public class PDOMMemberOwner extends PDOMBinding {
 	}
 
 	public PDOMMember getFirstMember() throws CoreException {
-		return (PDOMMember)getLinkage().getBinding(
+		return (PDOMMember)getLinkage().getNode(
 				pdom.getDB().getInt(record + FIRST_MEMBER));
 	}
 
 	public PDOMMember getLastMember() throws CoreException {
-		return (PDOMMember)getLinkage().getBinding(
+		return (PDOMMember)getLinkage().getNode(
 				pdom.getDB().getInt(record + LAST_MEMBER));
 	}
 

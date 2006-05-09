@@ -19,8 +19,10 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.PDOMCodeReaderFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -125,7 +127,16 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 	}
 	
 	protected void changeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
-		IASTTranslationUnit ast = parse(tu);
+		ILanguage language = tu.getLanguage();
+		if (language == null)
+			return;
+	
+		PDOMCodeReaderFactory codeReaderFactory = new PDOMCodeReaderFactory(pdom);
+		
+		// get the AST in a "Fast" way
+		IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
+				codeReaderFactory,
+				ILanguage.AST_USE_INDEX	| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
 		if (ast == null)
 			return;
 
@@ -138,10 +149,12 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 				file.clear();
 
 			// Add the new symbols
-			pdom.addSymbols(tu.getLanguage(), ast);
+			addSymbols(tu.getLanguage(), ast, codeReaderFactory.getSkippedHeaders());
 		} finally {
 			pdom.releaseWriteLock();
 		}
+		
+		pdom.fireChange();
 	}
 
 	protected void removeTU(ITranslationUnit tu) throws CoreException, InterruptedException {

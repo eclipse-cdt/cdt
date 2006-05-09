@@ -12,10 +12,17 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -49,10 +56,73 @@ public abstract class PDOMFullIndexerJob extends Job {
 		
 		pdom.acquireWriteLock();
 		try {
-			pdom.addSymbols(tu.getLanguage(), ast);
+			addSymbols(tu.getLanguage(), ast);
 		} finally {
 			pdom.releaseWriteLock();
 		}
 	}
 	
+	public void addSymbols(ILanguage language, IASTTranslationUnit ast) throws CoreException {
+		final PDOMLinkage linkage = pdom.getLinkage(language);
+		if (linkage == null)
+			return;
+		
+		// Add in the includes
+		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
+		for (int i = 0; i < includes.length; ++i) {
+			IASTPreprocessorIncludeStatement include = includes[i];
+			
+			IASTFileLocation sourceLoc = include.getFileLocation();
+			String sourcePath
+				= sourceLoc != null
+				? sourceLoc.getFileName()
+				: ast.getFilePath(); // command-line includes
+				
+			PDOMFile sourceFile = pdom.addFile(sourcePath);
+			String destPath = include.getPath();
+			PDOMFile destFile = pdom.addFile(destPath);
+			sourceFile.addIncludeTo(destFile);
+		}
+	
+		// Add in the macros
+		IASTPreprocessorMacroDefinition[] macros = ast.getMacroDefinitions();
+		for (int i = 0; i < macros.length; ++i) {
+			IASTPreprocessorMacroDefinition macro = macros[i];
+			
+			IASTFileLocation sourceLoc = macro.getFileLocation();
+			if (sourceLoc == null)
+				continue; // skip built-ins and command line macros
+			
+			PDOMFile sourceFile = pdom.getFile(sourceLoc.getFileName());
+			if (sourceFile != null) // not sure why this would be null
+				sourceFile.addMacro(macro);
+		}
+		
+		// Add in the names
+		ast.accept(new ASTVisitor() {
+			{
+				shouldVisitNames = true;
+				shouldVisitDeclarations = true;
+			}
+
+			public int visit(IASTName name) {
+				try {
+					IASTFileLocation fileloc = name.getFileLocation();
+					if (fileloc != null) {
+						PDOMFile file = pdom.addFile(fileloc.getFileName());
+						linkage.addName(name, file);
+					}
+					return PROCESS_CONTINUE;
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+					return PROCESS_ABORT;
+				}
+			};
+		});;
+	
+		// Tell the world
+		pdom.fireChange();
+	}
+	
+
 }

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -52,11 +54,15 @@ public class PDOMCLinkage extends PDOMLinkage {
 	public PDOMCLinkage(PDOM pdom) throws CoreException {
 		super(pdom, GCCLanguage.ID, "C".toCharArray());
 	}
+	
+	public int getNodeType() {
+		return LINKAGE;
+	}
 
-	public static final int CVARIABLE = 1;
-	public static final int CFUNCTION = 2;
-	public static final int CSTRUCTURE = 3;
-	public static final int CFIELD = 4;
+	public static final int CVARIABLE = PDOMLinkage.LAST_NODE_TYPE + 1;
+	public static final int CFUNCTION = PDOMLinkage.LAST_NODE_TYPE + 2;
+	public static final int CSTRUCTURE = PDOMLinkage.LAST_NODE_TYPE + 3;
+	public static final int CFIELD = PDOMLinkage.LAST_NODE_TYPE + 4;
 
 	public ILanguage getLanguage() {
 		return new GCCLanguage();
@@ -127,7 +133,7 @@ public class PDOMCLinkage extends PDOMLinkage {
 		return pdomBinding;
 	}
 
-	private static final class FindBinding extends PDOMNode.NodeFinder {
+	private static final class FindBinding extends PDOMNamedNode.NodeFinder {
 		PDOMBinding pdomBinding;
 		final int desiredType;
 		public FindBinding(PDOM pdom, char[] name, int desiredType) {
@@ -141,7 +147,7 @@ public class PDOMCLinkage extends PDOMLinkage {
 			if (!tBinding.hasName(name))
 				// no more bindings with our desired name
 				return false;
-			if (tBinding.getBindingType() != desiredType)
+			if (tBinding.getNodeType() != desiredType)
 				// wrong type, try again
 				return true;
 			
@@ -182,14 +188,11 @@ public class PDOMCLinkage extends PDOMLinkage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage#getBinding(int)
-	 */
-	public PDOMBinding getBinding(int record) throws CoreException {
+	public PDOMNode getNode(int record) throws CoreException {
 		if (record == 0)
 			return null;
 		
-		switch (PDOMBinding.getBindingType(pdom, record)) {
+		switch (PDOMNode.getNodeType(pdom, record)) {
 		case CVARIABLE:
 			return new PDOMCVariable(pdom, record);
 		case CFUNCTION:
@@ -200,7 +203,7 @@ public class PDOMCLinkage extends PDOMLinkage {
 			return new PDOMCField(pdom, record);
 		}
 
-		return null;
+		return super.getNode(record);
 	}
 
 	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
@@ -229,4 +232,10 @@ public class PDOMCLinkage extends PDOMLinkage {
 		MatchBinding visitor = new MatchBinding(pdom, pattern, bindings);
 		getIndex().accept(visitor);
 	}
+	
+	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

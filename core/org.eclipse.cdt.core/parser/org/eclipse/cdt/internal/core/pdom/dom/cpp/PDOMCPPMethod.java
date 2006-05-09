@@ -45,7 +45,7 @@ public class PDOMCPPMethod extends PDOMMember implements ICPPMethod, ICPPFunctio
 	public static final int RECORD_SIZE = PDOMMember.RECORD_SIZE + 8;
 	
 	public PDOMCPPMethod(PDOM pdom, PDOMMemberOwner parent, IASTName name) throws CoreException {
-		super(pdom, parent, name, PDOMCPPLinkage.CPPMETHOD);
+		super(pdom, parent, name);
 		IASTNode parentNode = name.getParent();
 		if (parentNode instanceof ICPPASTFunctionDeclarator) {
 			ICPPASTFunctionDeclarator funcDecl = (ICPPASTFunctionDeclarator)parentNode;
@@ -69,6 +69,10 @@ public class PDOMCPPMethod extends PDOMMember implements ICPPMethod, ICPPFunctio
 		return RECORD_SIZE;
 	}
 
+	public int getNodeType() {
+		return PDOMCPPLinkage.CPPMETHOD;
+	}
+	
 	public PDOMCPPParameter getFirstParameter() throws CoreException {
 		int rec = pdom.getDB().getInt(record + FIRST_PARAM);
 		return rec != 0 ? new PDOMCPPParameter(pdom, rec) : null;

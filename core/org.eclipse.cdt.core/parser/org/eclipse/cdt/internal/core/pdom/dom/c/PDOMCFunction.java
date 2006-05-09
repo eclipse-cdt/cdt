@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMCFunction extends PDOMBinding implements IFunction {
 
 	public PDOMCFunction(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name, PDOMCLinkage.CFUNCTION);
+		super(pdom, parent, name);
 	}
 
 	public PDOMCFunction(PDOM pdom, int record) {
@@ -41,6 +41,10 @@ public class PDOMCFunction extends PDOMBinding implements IFunction {
 		return RECORD_SIZE;
 	}
 
+	public int getNodeType() {
+		return PDOMCLinkage.CFUNCTION;
+	}
+	
 	public IParameter[] getParameters() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}

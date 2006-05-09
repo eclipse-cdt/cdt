@@ -31,7 +31,7 @@ public class PDOMCPPField extends PDOMMember implements ICPPField {
 
 	public PDOMCPPField(PDOM pdom, PDOMCPPClassType parent, IASTName name)
 			throws CoreException {
-		super(pdom, parent, name, PDOMCPPLinkage.CPPFIELD);
+		super(pdom, parent, name);
 	}		
 
 	public PDOMCPPField(PDOM pdom, int bindingRecord) {
@@ -40,6 +40,10 @@ public class PDOMCPPField extends PDOMMember implements ICPPField {
 
 	protected int getRecordSize() {
 		return RECORD_SIZE;
+	}
+	
+	public int getNodeType() {
+		return PDOMCPPLinkage.CPPFIELD;
 	}
 	
 	public ICPPClassType getClassOwner() throws DOMException {

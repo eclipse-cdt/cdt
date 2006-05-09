@@ -44,7 +44,7 @@ public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction, ICPPFu
 	public static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
 	
 	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name, PDOMCPPLinkage.CPPFUNCTION);
+		super(pdom, parent, name);
 		IASTNode parentNode = name.getParent();
 		if (parentNode instanceof ICPPASTFunctionDeclarator) {
 			ICPPASTFunctionDeclarator funcDecl = (ICPPASTFunctionDeclarator)parentNode;
@@ -66,6 +66,10 @@ public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction, ICPPFu
 
 	protected int getRecordSize() {
 		return RECORD_SIZE;
+	}
+
+	public int getNodeType() {
+		return PDOMCPPLinkage.CPPFUNCTION;
 	}
 	
 	public PDOMCPPParameter getFirstParameter() throws CoreException {
@@ -146,8 +150,19 @@ public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction, ICPPFu
 	}
 
 	public IType[] getParameterTypes() throws DOMException {
-		return new IType[0];
-//		TODO throw new PDOMNotImplementedError();
+		try {
+			int n = pdom.getDB().getInt(record + NUM_PARAMS);
+			IType[] types = new IType[n];
+			PDOMCPPParameter param = getFirstParameter();
+			while (param != null) {
+				types[--n] = param.getType();
+				param = param.getNextParameter();
+			}
+			return types;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new IType[0];
+		}
 	}
 
 	public IType getReturnType() throws DOMException {

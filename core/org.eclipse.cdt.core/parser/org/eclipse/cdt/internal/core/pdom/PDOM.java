@@ -44,6 +44,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile.Comparator;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile.Finder;
 import org.eclipse.core.resources.IFile;
@@ -67,12 +68,13 @@ public class PDOM extends PlatformObject
 	private final IPath dbPath;
 	private Database db;
 	
-	public static final int VERSION = 4;
+	public static final int VERSION = 5;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
 	// 3 - added macros and change string implementation
-	// 4 - added parameters in C++ 
+	// 4 - added parameters in C++
+	// 5 - added types and restructured nodes a bit
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
@@ -207,7 +209,7 @@ public class PDOM extends PlatformObject
 		return file;		
 	}
 	
-	public void addSymbols(ILanguage language, IASTTranslationUnit ast) throws CoreException {
+	public void addSymbolsXXX(ILanguage language, IASTTranslationUnit ast) throws CoreException {
 		final PDOMLinkage linkage = getLinkage(language);
 		if (linkage == null)
 			return;
@@ -403,8 +405,10 @@ public class PDOM extends PlatformObject
 	public PDOMBinding getBinding(int record) throws CoreException {
 		if (record == 0)
 			return null;
-		else
-			return PDOMLinkage.getLinkage(this, record).getBinding(record);
+		else {
+			PDOMNode node = PDOMLinkage.getLinkage(this, record).getNode(record);
+			return node instanceof PDOMBinding ? (PDOMBinding)node : null;
+		}
 	}
 
 	// Read-write lock rules. Readers don't conflict with other readers,

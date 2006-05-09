@@ -42,7 +42,7 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 	protected static final int RECORD_SIZE = PDOMMemberOwner.RECORD_SIZE + 0;
 	
 	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name, PDOMCPPLinkage.CPPCLASSTYPE);
+		super(pdom, parent, name);
 	}
 
 	public PDOMCPPClassType(PDOM pdom, int bindingRecord) {
@@ -51,6 +51,10 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 
 	protected int getRecordSize() {
 		return RECORD_SIZE;
+	}
+
+	public int getNodeType() {
+		return PDOMCPPLinkage.CPPCLASSTYPE;
 	}
 	
 	public boolean isSameType(IType type) {

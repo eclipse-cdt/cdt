@@ -23,21 +23,16 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public abstract class PDOMBinding extends PDOMNode implements IBinding {
+public abstract class PDOMBinding extends PDOMNamedNode implements IBinding {
 
-	private static final int BINDING_TYPE_OFFSET = PDOMNode.RECORD_SIZE +  4; // size 4
-	private static final int FIRST_DECL_OFFSET   = PDOMNode.RECORD_SIZE +  8; // size 4
-	private static final int FIRST_DEF_OFFSET    = PDOMNode.RECORD_SIZE + 12; // size 4
-	private static final int FIRST_REF_OFFSET    = PDOMNode.RECORD_SIZE + 16; // size 4
+	private static final int FIRST_DECL_OFFSET   = PDOMNamedNode.RECORD_SIZE +  0; // size 4
+	private static final int FIRST_DEF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 4; // size 4
+	private static final int FIRST_REF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 8; // size 4
 	
-	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 20;
+	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 12;
 	
-	protected PDOMBinding(PDOM pdom, PDOMNode parent, IASTName name, int type) throws CoreException {
+	protected PDOMBinding(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name.toCharArray());
-		Database db = pdom.getDB();
-		
-		// Binding type
-		db.putInt(record + BINDING_TYPE_OFFSET, type);
 	}
 	
 	public PDOMBinding(PDOM pdom, int record) {
@@ -49,10 +44,6 @@ public abstract class PDOMBinding extends PDOMNode implements IBinding {
 			return this;
 		else
 			return null;
-	}
-	
-	public static int getBindingType(PDOM pdom, int record) throws CoreException {
-		return pdom.getDB().getInt(record + BINDING_TYPE_OFFSET);
 	}
 	
 	/**
@@ -75,10 +66,6 @@ public abstract class PDOMBinding extends PDOMNode implements IBinding {
 		return record;
 	}
 
-	public int getBindingType() throws CoreException {
-		return pdom.getDB().getInt(record + BINDING_TYPE_OFFSET);
-	}
-	
 	public boolean hasDeclarations() throws CoreException {
 		Database db = pdom.getDB();
 		return db.getInt(record + FIRST_DECL_OFFSET) != 0

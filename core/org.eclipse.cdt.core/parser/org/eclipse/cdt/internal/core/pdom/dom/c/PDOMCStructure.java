@@ -32,13 +32,17 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMCStructure extends PDOMMemberOwner implements ICompositeType {
 
 	public PDOMCStructure(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name, PDOMCLinkage.CSTRUCTURE);
+		super(pdom, parent, name);
 	}
 
 	public PDOMCStructure(PDOM pdom, int record) {
 		super(pdom, record);
 	}
 
+	public int getNodeType() {
+		return PDOMCLinkage.CSTRUCTURE;
+	}
+	
 	public Object clone() {
 		throw new PDOMNotImplementedError();
 	}

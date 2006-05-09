@@ -18,6 +18,9 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -32,7 +35,7 @@ import org.eclipse.core.runtime.CoreException;
  * This class represents a collection of symbols that can be linked together at
  * link time. These are generally global symbols specific to a given language.
  */
-public abstract class PDOMLinkage extends PDOMNode {
+public abstract class PDOMLinkage extends PDOMNamedNode {
 
 	protected static final class MatchBinding implements IBTreeVisitor {
 			private final PDOM pdom;
@@ -63,11 +66,19 @@ public abstract class PDOMLinkage extends PDOMNode {
 			}
 		}
 
-	private static final int ID_OFFSET   = PDOMNode.RECORD_SIZE + 0;
-	private static final int NEXT_OFFSET = PDOMNode.RECORD_SIZE + 4;
-	private static final int INDEX_OFFSET = PDOMNode.RECORD_SIZE + 8;
+	// record offsets
+	private static final int ID_OFFSET   = PDOMNamedNode.RECORD_SIZE + 0;
+	private static final int NEXT_OFFSET = PDOMNamedNode.RECORD_SIZE + 4;
+	private static final int INDEX_OFFSET = PDOMNamedNode.RECORD_SIZE + 8;
 	
-	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 12;
+	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 12;
+	
+	// node types
+	protected static final int LINKAGE = 0; // special one for myself
+	static final int POINTER_TYPE = 1;
+	static final int QUALIFIER_TYPE = 2;
+	
+	protected static final int LAST_NODE_TYPE = QUALIFIER_TYPE;
 	
 	public PDOMLinkage(PDOM pdom, int record) {
 		super(pdom, record);
@@ -132,15 +143,32 @@ public abstract class PDOMLinkage extends PDOMNode {
 		return this;
 	}
 
-	protected void addChild(PDOMNode child) throws CoreException {
+	protected void addChild(PDOMNamedNode child) throws CoreException {
 		getIndex().insert(child.getRecord(), child.getIndexComparator());
 	}
 	
-	public abstract PDOMBinding addName(IASTName name, PDOMFile file) throws CoreException;
-
-	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
+	public PDOMNode getNode(int record) throws CoreException {
+		switch (PDOMNode.getNodeType(pdom, record)) {
+		case POINTER_TYPE:
+			return new PDOMPointerType(pdom, record);
+		case QUALIFIER_TYPE:
+			return new PDOMQualifierType(pdom, record);
+		}
+		return null;
+	}
 	
-	public abstract PDOMBinding getBinding(int record) throws CoreException;
+	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
+		if (type instanceof IPointerType)
+			return new PDOMPointerType(pdom, parent, (IPointerType)type);
+		else if (type instanceof IQualifierType)
+			return new PDOMQualifierType(pdom, parent, (IQualifierType)type);
+		else
+			return null;
+	}
+
+	public abstract PDOMBinding addName(IASTName name, PDOMFile file) throws CoreException;
+	
+	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
 	
 	public abstract PDOMBinding resolveBinding(IASTName name) throws CoreException;
 

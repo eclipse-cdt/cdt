@@ -18,6 +18,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -313,6 +314,14 @@ public class ImportExecutablePageOne extends WizardPage {
 				wizard.setupFileDialog(dialog);
 				String res = dialog.open();
 				if (res != null) {
+					if (Platform.getOS().equals(Platform.OS_MACOSX) && res.endsWith(".app"))
+					{
+						// On Mac OS X the file dialog will let you select the 
+						// package but not the executable inside.
+						Path macPath = new Path(res);
+						res = res + "/Contents/MacOS/" + macPath.lastSegment();
+						res = res.substring(0, res.length() - 4);
+					}
 					singleExecutablePathField.setText(res);
 				}
 			}

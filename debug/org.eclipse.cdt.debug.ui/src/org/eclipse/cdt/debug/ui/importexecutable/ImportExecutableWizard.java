@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.swt.widgets.FileDialog;
 
@@ -53,7 +54,10 @@ public class ImportExecutableWizard extends AbstractImportExecutableWizard {
 
 			public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
 				descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-				descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, "org.eclipse.cdt.core.PE");
+				if (Platform.getOS().equals(Platform.OS_MACOSX))
+					descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, "org.eclipse.cdt.core.MachO");					
+				else
+					descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, "org.eclipse.cdt.core.PE");
 			}
 		};
 		CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(newProject.getProject(), op, null);
@@ -65,6 +69,8 @@ public class ImportExecutableWizard extends AbstractImportExecutableWizard {
 
 	public boolean isExecutableFile(File file) {
 		String filename = file.getName().toLowerCase();
+		if (Platform.getOS().equals(Platform.OS_MACOSX))
+			return true; // File extension not needed on Mac OS.
 		if (filename.endsWith(".exe") || filename.endsWith(".dll")
 				|| filename.endsWith(".elf"))
 			return true;

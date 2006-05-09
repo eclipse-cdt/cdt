@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
@@ -112,6 +113,10 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			// Can't tell what it is
 			return null;
 		
+		if (binding instanceof IParameter)
+			// Skip parameters (TODO and others I'm sure)
+			return null;
+		
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		if (pdomBinding == null) {
 			PDOMNode parent = getParent(binding);
@@ -203,6 +208,10 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			PDOMMember[] members = owner.findMembers(binding.getNameCharArray());
 			if (members.length > 0)
 				return members[0];
+		} else if (parent instanceof PDOMCPPNamespace) {
+			FindBinding visitor = new FindBinding(pdom, binding.getNameCharArray(), getBindingType(binding));
+			((PDOMCPPNamespace)parent).getIndex().accept(visitor);
+			return visitor.pdomBinding;
 		}
 		return null;
 	}

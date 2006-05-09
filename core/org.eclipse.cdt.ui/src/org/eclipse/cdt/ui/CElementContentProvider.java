@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems) - Fixed bug 131267
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -376,7 +377,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		}
 	}
 
-    /**
+    /*
      * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer, int)
      */
     public IRegion getSubject(ITextViewer textViewer, int offset) {
@@ -391,16 +392,20 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		return null;
 	}
 
-    /**
+    /*
 	 * @see org.eclipse.jface.text.information.IInformationProvider#getInformation(org.eclipse.jface.text.ITextViewer,
 	 *      org.eclipse.jface.text.IRegion)
 	 */
-    public String getInformation(ITextViewer textViewer, IRegion subject)
-    {
-        return getInformation2(textViewer, subject).toString();
+    public String getInformation(ITextViewer textViewer, IRegion subject) {
+    	// deprecated API - not used anymore
+        Object info = getInformation2(textViewer, subject);
+        if (info != null) {
+        	return info.toString();
+        }
+        return null;
     }
 
-    /**
+    /*
      * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
      */
     public Object getInformation2(ITextViewer textViewer, IRegion subject) {
@@ -409,9 +414,9 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		try {
 			ICElement element = SelectionConverter.getElementAtOffset(fEditor);
 			if (element != null) {
-				return element.toString();
+				return element;
 			}
-			return SelectionConverter.getInput(fEditor).toString();
+			return SelectionConverter.getInput(fEditor);
 		} catch (CModelException e) {
 			return null;
 		}

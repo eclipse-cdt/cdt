@@ -22,6 +22,7 @@ import java.util.List;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.utils.Addr32;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.utils.Addr32Factory;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.Symbol;
+import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.macho.AR;
 import org.eclipse.cdt.utils.macho.MachO;
 import org.eclipse.cdt.utils.macho.MachOHelper;
@@ -375,4 +377,24 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		}
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(MachO.class)) {
+			try {
+				return new MachO(getPath().toOSString());
+			} catch (IOException e) {
+			}
+		}
+		if (adapter.equals(ISymbolReader.class)) {
+			MachO macho = (MachO)getAdapter(MachO.class);
+			if (macho != null) {
+				return macho.getSymbolReader();
+			}
+		}
+		return super.getAdapter(adapter);
+	}
+
 }

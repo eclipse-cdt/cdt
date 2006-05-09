@@ -21,7 +21,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.CPPFilt;
+import org.eclipse.cdt.utils.debug.stabs.StabsReader;
 
 // test checkin
 public class MachO {
@@ -38,7 +40,7 @@ public class MachO {
     private Symbol[] local_symbols;		/* local symbols from DySymtabCommand */
     private boolean dynsym = false;		/* set if DynSymtabCommand is present */
     Line[] lines;				/* line table */
-    private Section[] sections;			/* sections from SegmentCommand */
+    private ArrayList sections = new ArrayList();			/* sections from SegmentCommand */
     SymtabCommand symtab;		/* SymtabCommand that contains the symbol table */
     
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -1173,11 +1175,11 @@ public class MachO {
 		
 	}
 	
-	private Section[] getSections(SegmentCommand seg) throws IOException {
+	private ArrayList getSections(SegmentCommand seg) throws IOException {
 		if ( seg.nsects == 0 ) {
-			return new Section[0];			
+			return new ArrayList();			
 		}
-		Section[] sections = new Section[seg.nsects];
+		ArrayList sections = new ArrayList();
 		for ( int i = 0; i < seg.nsects; i++ ) {
 			Section section = new Section();
 			byte[] sectname = new byte[16];
@@ -1196,7 +1198,7 @@ public class MachO {
 			section.flags = efile.readIntE();
 			section.reserved1 = efile.readIntE();
 			section.reserved2 = efile.readIntE();
-			sections[i] = section;
+			sections.add(section);
 		}
 		return sections;
 	}
@@ -1265,7 +1267,7 @@ public class MachO {
 				        seg.initprot = efile.readIntE();
 				        seg.nsects = efile.readIntE();
 				        seg.flags = efile.readIntE();
-				        sections = getSections(seg);
+				        sections.addAll(getSections(seg));
 				        loadcommands[i] = seg;
 						break;
 
@@ -1532,7 +1534,7 @@ public class MachO {
     	}
     
     public Section[] getSections() {
-        return sections;
+        return (Section[]) sections.toArray(new Section[sections.size()]);
     }
 
     public DyLib[] getDyLibs(int type) {
@@ -1587,4 +1589,40 @@ public class MachO {
     public String getFilename() {
         return file;
     }
+
+	private ISymbolReader createStabsReader() {
+		ISymbolReader symReader = null;
+
+			try {
+				if ( loadcommands == null ) {
+					loadLoadCommands();
+				}
+			} catch (IOException e) { }
+
+
+			for (int i = 0; i < loadcommands.length; i++) {
+				if (loadcommands[i].cmd == LoadCommand.LC_SYMTAB)
+				{
+					symtab = (SymtabCommand)loadcommands[i];
+					try {
+						int symSize = symtab.nsyms * 12;
+						byte[] data = new byte[symSize];
+						efile.seek(symtab.symoff);
+						efile.readFully(data);
+						byte[] stabstr = new byte[symtab.strsize];			
+						efile.seek(symtab.stroff);
+						efile.readFully(stabstr);
+						symReader = new StabsReader(data, stabstr, getAttributes().isLittleEndian());
+					} catch (IOException e) {}
+					
+				}
+			}
+		return symReader;
+	}
+
+	public Object getSymbolReader() {
+		ISymbolReader reader = null;
+		reader = createStabsReader();
+		return reader;
+	}
 }

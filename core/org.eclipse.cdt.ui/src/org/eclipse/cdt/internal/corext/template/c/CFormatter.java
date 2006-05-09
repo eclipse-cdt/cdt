@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Qnx Software System
+ *     Anton Leherbauer (Wind River Systems) - Fixed bug 126617
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
@@ -17,12 +23,7 @@ import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.Strings;
 import org.eclipse.cdt.ui.CUIPlugin;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -40,7 +41,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 
 /**
- * A template editor using the Java formatter to format a template buffer.
+ * A template editor using the C/C++ formatter to format a template buffer.
  */
 public class CFormatter {
 
@@ -52,7 +53,7 @@ public class CFormatter {
 	/** The initial indent level */
 	private final int fInitialIndentLevel;
 	
-	/** The java partitioner */
+	/** Flag indicating whether to use the code formatter or not. */
 	private boolean fUseCodeFormatter;
 
 	public CFormatter(String lineDelimiter, int initialIndentLevel, boolean useCodeFormatter) {
@@ -207,22 +208,13 @@ public class CFormatter {
 		MultiTextEdit root= new MultiTextEdit(0, document.getLength());
 		root.addChildren((TextEdit[]) positions.toArray(new TextEdit[positions.size()]));
 		
-		boolean useSpaces=
-			CUIPlugin.getDefault().getCombinedPreferenceStore().getBoolean(CEditor.SPACES_FOR_TABS); 
-			String indent;
-			if (useSpaces) {
-			int iSpaceIndent =
-			CUIPlugin.getDefault().getCombinedPreferenceStore().getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
+		IPreferenceStore store = CUIPlugin.getDefault().getCombinedPreferenceStore();
+		boolean useSpaces = store.getBoolean(CEditor.SPACES_FOR_TABS);
+		int tabWidth = store
+				.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
+		int indentWidth = tabWidth;
+		String indent = createIndentString(fInitialIndentLevel * indentWidth, tabWidth, useSpaces);
 
-			StringBuffer mystringbuf = new StringBuffer();
-			for ( int i=fInitialIndentLevel * iSpaceIndent; i>0; i-- )
-			     mystringbuf.append ( ' ' );
-
-			indent = mystringbuf.toString();
-			}
-			else {
-			        indent = Strings.createIndentString(fInitialIndentLevel);
-			}
 		// first line
 		int offset= document.getLineOffset(0);
 		TextEdit edit= new InsertEdit(offset, indent);
@@ -236,15 +228,11 @@ public class CFormatter {
 	    
 	    for (int line= 1; line < lineCount; line++) {
 			IRegion region= document.getLineInformation(line);
-			offset= region.getOffset();
-			int nws = offset;
-			for (int i = offset; i < region.getLength(); ++i) {
-				if (! Character.isWhitespace(document.getChar(i))) {
-					nws = i;
-					break;
-				}
-			}
-	    	edit= new ReplaceEdit(offset, nws - offset, indent);
+			String lineContent= document.get(region.getOffset(), region.getLength());
+			String lineIndent= Strings.getIndentString(lineContent, tabWidth);
+			int lineIndentLevel= Strings.computeIndent(lineIndent, tabWidth);
+			indent= createIndentString((fInitialIndentLevel + lineIndentLevel) * indentWidth, tabWidth, useSpaces);
+	    	edit= new ReplaceEdit(region.getOffset(), lineIndent.length(), indent);
 			root.addChild(edit);
 			root.apply(document, TextEdit.UPDATE_REGIONS);
 			root.removeChild(edit);
@@ -299,6 +287,61 @@ public class CFormatter {
 		root.apply(document);
 		
 		return document.get();		
+	}
+
+	/**
+	 * Create an indent string suitable as line prefix using the given
+	 * formatting options.
+	 * 
+	 * @param displayedWidth
+	 *            the desired displayed width (in char units)
+	 * @param tabWidth
+	 *            the displayed tab width
+	 * @param useSpaces
+	 *            if <code>true</code>, only spaces are used for the indent
+	 *            string, otherwise, the indent string will contain mixed tabs
+	 *            and spaces.
+	 * @return the new indent string
+	 */
+	private static String createIndentString(int displayedWidth,
+			int tabWidth, boolean useSpaces) {
+		return appendIndentString(new StringBuffer(displayedWidth),
+				displayedWidth, tabWidth, useSpaces, 0).toString();
+	}
+
+	/**
+	 * Append an indent string to the given buffer so that the resulting string
+	 * ends at the desired column.
+	 * 
+	 * @param buffer
+	 *            the StringBuffer to append to
+	 * @param displayedWidth
+	 *            the desired displayed width (in char units)
+	 * @param tabWidth
+	 *            the displayed tab width
+	 * @param useSpaces
+	 *            if <code>true</code>, only spaces are used for the indent
+	 *            string, otherwise, the indent string will contain mixed tabs
+	 *            and spaces.
+	 * @param startColumn
+	 *            the displayed starting column to correctly identify the tab
+	 *            stops
+	 * @return the same StringBuffer as provided
+	 */
+	private static StringBuffer appendIndentString(StringBuffer buffer,
+			int displayedWidth, int tabWidth, boolean useSpaces, int startColumn) {
+		int tabStop= startColumn - startColumn % tabWidth;
+		int tabs= useSpaces ? 0 : (displayedWidth - tabStop) / tabWidth;
+		for (int i= 0; i < tabs; ++i) {
+			buffer.append('\t');
+			tabStop += tabWidth;
+			startColumn= tabStop;
+		}
+		int spaces= displayedWidth - startColumn;
+		for (int i= 0; i < spaces; ++i) {
+			buffer.append(' ');
+		}
+		return buffer;
 	}
 
 	private static List variablesToPositions(TemplateVariable[] variables) {

@@ -45,6 +45,25 @@ public class OutputRefreshJob extends UIJob
 		    _outputs = outputs;
 		}
 		
+		public void addOutputs(IRemoteOutput[] outputs)
+		{		
+			IRemoteOutput[] oldOutputs = _outputs;
+			int total = oldOutputs.length + outputs.length;
+			IRemoteOutput[] newOutputs = new IRemoteOutput[total];
+			int k = 0;
+			for (int i = 0; i < oldOutputs.length; i++)
+			{
+				newOutputs[k] = oldOutputs[i];
+				k++;
+			}
+			for (int j = 0; j < outputs.length; j++)
+			{
+				newOutputs[k] = outputs[j];
+				k++;
+			}
+			_outputs = newOutputs;
+		}
+		
 		public boolean isComplete()
 		{
 			return _isComplete;

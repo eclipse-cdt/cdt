@@ -93,6 +93,10 @@ public class ServiceCommandShell extends RemoteCommandShell implements IServiceC
 			_lastRefreshJob = new OutputRefreshJob(this, outputs, false);
 			_lastRefreshJob.schedule();
 		}
+		else
+		{
+			_lastRefreshJob.addOutputs(outputs);
+		}
 	}
 	
 

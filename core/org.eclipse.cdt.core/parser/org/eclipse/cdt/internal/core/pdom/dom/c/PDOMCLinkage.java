@@ -86,13 +86,22 @@ public class PDOMCLinkage extends PDOMLinkage {
 	}
 	
 	public PDOMBinding addName(IASTName name, PDOMFile file) throws CoreException {
-		if (name == null || name.toCharArray().length == 0)
+		if (name == null)
+			return null;
+		
+		char[] namechars = name.toCharArray();
+		if (namechars == null || name.toCharArray().length == 0)
 			return null;
 		
 		IBinding binding = name.resolveBinding();
 		if (binding == null || binding instanceof IProblemBinding)
+			// can't tell what it is
 			return null;
 
+		if (binding instanceof IParameter)
+			// skip parameters
+			return null;
+	
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		if (pdomBinding == null) {
 			PDOMNode parent = getParent(binding);

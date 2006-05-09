@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2006 Wind River Systems, Inc.
+All rights reserved. This program and the accompanying materials 
+are made available under the terms of the Eclipse Public License v1.0 
+which accompanies this distribution, and is available at 
+http://www.eclipse.org/legal/epl-v10.html 
+
+Contributors: 
+Martin Oberhuber - initial API and implementation 
+-->
+<?eclipse version="3.1"?>
+<plugin>
+	<extension
+		point="org.eclipse.rse.ui.subsystemConfiguration">
+		<configuration
+			systemTypes="Linux;Unix;AIX;SSH Only"
+			name="%SshShellSubsystemName"
+			description="%SshShellSubsystemDescription"
+			iconlive="icons/full/obj16/systemcommandslive_obj.gif"
+			icon="icons/full/obj16/systemcommands_obj.gif"
+			category="shells"
+			class="org.eclipse.rse.subsystems.shells.ssh.SshShellSubSystemConfiguration"
+			vendor="Wind River Systems, Inc."
+			id="ssh.shells">
+		</configuration>
+	</extension>
+
+</plugin> 

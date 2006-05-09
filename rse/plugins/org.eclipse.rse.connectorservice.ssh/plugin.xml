@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2006 Wind River Systems, Inc.
+All rights reserved. This program and the accompanying materials 
+are made available under the terms of the Eclipse Public License v1.0 
+which accompanies this distribution, and is available at 
+http://www.eclipse.org/legal/epl-v10.html 
+
+Contributors: 
+Martin Oberhuber - initial API and implementation 
+-->
+<?eclipse version="3.1"?>
+<plugin>
+	<extension point="org.eclipse.rse.core.systemTypes">
+		<systemType id="org.eclipse.rse.systemtype.ssh"
+			name="SSH Only"
+			description="%SshSystemDescription">
+			<property name="icon" value="icons/full/obj16/systemcommands_obj.gif"/>
+			<property name="iconLive" value="icons/full/obj16/systemcommandslive_obj.gif"/>
+		</systemType>
+	</extension>
+</plugin> 

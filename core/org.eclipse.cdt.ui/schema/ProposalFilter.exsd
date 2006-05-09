@@ -10,7 +10,7 @@
 
 The notion of what is &quot;optimal&quot; may vary from one application to another. This extension point allows the contribution of completion filters which best suit the needs of the user in any given situation. 
 
-The decision about which filter will actually be used remains with the user who can select his preference from a list of all contributed filters (menu Window - Preferences - C/C++ - Editor - Code Assist).
+The decision about which filter will actually be used remains with the user who can select his preference from a list of all contributed filters (menu Window - Preferences - C/C++ - Editor - Content Assist).
       </documentation>
    </annotation>
 

@@ -19,6 +19,7 @@ package org.eclipse.rse.shells.ui.view;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -59,7 +60,7 @@ public class SystemCommandsUI
 	   {
 		   try
 		   {
-			   IWorkbenchPage page = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();
+	        	IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			   _errorPart = (SystemBuildErrorViewPart) page.showView(SystemCommandsUI.BUILD_ERROR_VIEW_ID);
 			   page.bringToTop(_errorPart);
 		   }
@@ -75,8 +76,8 @@ public class SystemCommandsUI
     {
         try
         {
-            IWorkbenchPage page = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();
-            _viewPart = (SystemCommandsViewPart) page.showView(SystemCommandsUI.COMMANDS_VIEW_ID);
+        	IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+             _viewPart = (SystemCommandsViewPart) page.showView(SystemCommandsUI.COMMANDS_VIEW_ID);
             page.bringToTop(_viewPart);
         }
         catch (PartInitException e)

@@ -18,6 +18,7 @@ package org.eclipse.rse.ui.propertypages;
 import java.util.ResourceBundle;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
@@ -28,6 +29,7 @@ public class SystemBooleanFieldEditor extends BooleanFieldEditor
 {
     private Button button;
     private String tip;
+    private Composite parent;
     
 	/**
 	 * Constructor for SystemBooleanFieldEditor
@@ -50,6 +52,7 @@ public class SystemBooleanFieldEditor extends BooleanFieldEditor
 	public SystemBooleanFieldEditor(String name, String labelText, int style, Composite parent) 
 	{
 		super(name, labelText, style, parent);
+		this.parent = parent;
 	}
 
 	/**
@@ -61,6 +64,7 @@ public class SystemBooleanFieldEditor extends BooleanFieldEditor
 	public SystemBooleanFieldEditor(String name, String labelText, Composite parent) 
 	{
 		super(name, labelText, parent);
+		this.parent = parent;
 	}
 	/**
 	 * Constructor for SystemBooleanFieldEditor, using DEFAULT for the style, and
@@ -75,6 +79,7 @@ public class SystemBooleanFieldEditor extends BooleanFieldEditor
 	{
 		super(name, rb.getString(labelKey+"label"), parent);
 		setToolTipText(rb.getString(labelKey+"tooltip"));
+		this.parent = parent;
 	}	
 	
 	/**
@@ -106,4 +111,23 @@ public class SystemBooleanFieldEditor extends BooleanFieldEditor
     {
     	return tip;
     }
+    
+    /**
+     * Set the help for the control 
+     */
+    public void setHelp(String helpID)
+    {
+    	if (button != null) {
+    		SystemWidgetHelpers.setHelp(button, helpID);
+    	}
+    }
+    
+	/**
+	 * Method setEnabled
+	 * @param enablement state
+	 */
+	public void setEnabled( boolean enablement )
+	{
+		getChangeControl(parent).setEnabled(enablement);
+	}   
 }

@@ -11,32 +11,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.compare;
 
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.cdt.internal.ui.text.*;
 import org.eclipse.cdt.ui.CUIPlugin;
-
-
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
-
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.contentmergeviewer.ITokenComparator;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
-import org.eclipse.compare.internal.TokenComparator;
-
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.text.IDocumentExtension3;
-import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 public class CMergeViewer extends TextMergeViewer {
 	
@@ -141,10 +130,6 @@ public class CMergeViewer extends TextMergeViewer {
 
 	public String getTitle() {
 		return CUIPlugin.getResourceString(TITLE);
-	}
-
-	protected ITokenComparator createTokenComparator(String s) {
-		return new TokenComparator(s);
 	}
 	
 	protected IDocumentPartitioner getDocumentPartitioner() {

@@ -45,7 +45,7 @@ public class FindDeclarationsAction extends IndexAction {
 		ICProject project = binding.getPDOM().getProject();
 		PDOMSearchBindingQuery query = new PDOMSearchBindingQuery(
 				new ICElement[] { project },
-				getBinding(),
+				binding,
 				PDOMSearchBindingQuery.FIND_DECLARATIONS | PDOMSearchBindingQuery.FIND_DEFINITIONS);
 		
 		NewSearchUI.activateSearchResultView();

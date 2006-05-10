@@ -68,13 +68,14 @@ public class PDOM extends PlatformObject
 	private final IPath dbPath;
 	private Database db;
 	
-	public static final int VERSION = 5;
+	public static final int VERSION = 6;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
 	// 3 - added macros and change string implementation
 	// 4 - added parameters in C++
 	// 5 - added types and restructured nodes a bit
+	// 6 - function style macros.
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;

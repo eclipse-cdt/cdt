@@ -29,7 +29,9 @@ public interface IScanner  {
 	public void setContentAssistMode( int offset );
 	public void setASTFactory( IASTFactory f );
 	
-	public void addDefinition(char[] key, char[] value); 
+	public IMacro addDefinition(char[] key, char[] value); 
+	public IMacro addDefinition(char[] name, char[][] params, char[] expansion);
+	
 	public Map 				getDefinitions();
 	public String[] getIncludePaths();
 

@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -71,7 +70,7 @@ public abstract class PDOMFastIndexerJob extends Job {
 
 		pdom.acquireWriteLock();
 		try {
-			addSymbols(language, ast, codeReaderFactory.getSkippedHeaders());
+			addSymbols(language, ast);
 		} finally {
 			pdom.releaseWriteLock();
 		}
@@ -80,7 +79,7 @@ public abstract class PDOMFastIndexerJob extends Job {
 		pdom.fireChange();
 	}
 
-	protected void addSymbols(ILanguage language, IASTTranslationUnit ast, Set skippedHeaders) throws InterruptedException, CoreException {
+	protected void addSymbols(ILanguage language, IASTTranslationUnit ast) throws InterruptedException, CoreException {
 		final PDOMLinkage linkage = pdom.getLinkage(language);
 		if (linkage == null)
 			return;
@@ -112,9 +111,6 @@ public abstract class PDOMFastIndexerJob extends Job {
 				continue; // skip built-ins and command line macros
 				
 			String filename = sourceLoc.getFileName();
-			if (skippedHeaders.contains(filename))
-				continue;
-
 			PDOMFile sourceFile = getCachedFile(filename);
 			sourceFile.addMacro(macro);
 		}

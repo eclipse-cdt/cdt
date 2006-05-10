@@ -23,11 +23,13 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacroParameter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -39,8 +41,10 @@ import org.eclipse.core.runtime.Status;
 public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 
 	private final PDOM pdom;
+	
 	private List workingCopies = new ArrayList(1);
-	private Set skippedHeaders = new HashSet();
+	
+	private static final char[] EMPTY_CHARS = new char[0];
 	
 	public PDOMCodeReaderFactory(PDOM pdom) {
 		this.pdom = pdom;
@@ -55,10 +59,6 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 		return 0;
 	}
 
-	public Set getSkippedHeaders() {
-		return skippedHeaders;
-	}
-	
 	public CodeReader createCodeReaderForTranslationUnit(String path) {
 		return ParserUtil.createReader(path,
 				workingCopies != null ? workingCopies.iterator() : null);
@@ -68,7 +68,7 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 		return new CodeReader(tu.getResource().getLocation().toOSString(), tu.getContents());
 	}
 	
-	private void fillMacros(PDOMFile file, StringBuffer buffer, Set visited) throws CoreException {
+	private void fillMacros(PDOMFile file, IScanner scanner, Set visited) throws CoreException {
 		IString filename = file.getFileName();
 		if (visited.contains(filename))
 			return;
@@ -77,23 +77,32 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 		// Follow the includes
 		PDOMInclude include = file.getFirstInclude();
 		while (include != null) {
-			fillMacros(include.getIncludes(), buffer, visited);
+			fillMacros(include.getIncludes(), scanner, visited);
 			include = include.getNextInIncludes();
 		}
 		
 		// Add in my macros now
 		PDOMMacro macro = file.getFirstMacro();
 		while (macro != null) {
-			buffer.append("#define "); //$NON-NLS-1$
-			buffer.append(macro.getName().getChars());
-			buffer.append(' ');
-			buffer.append(macro.getExpansion().getChars());
-			buffer.append('\n');
+			char[] name = macro.getName().getChars();
+			char[] expansion = macro.getExpansion().getChars();
+			
+			PDOMMacroParameter param = macro.getFirstParameter();
+			if (param != null) {
+				List paramList = new ArrayList();
+				while (param != null) {
+					paramList.add(param.getName().getChars());
+					param = param.getNextParameter();
+				}
+				char[][] params = (char[][])paramList.toArray(new char[paramList.size()][]);
+				scanner.addDefinition(name, params, expansion);
+			} else
+				scanner.addDefinition(name, expansion);
 			macro = macro.getNextMacro();
 		}
 	}
 	
-	public CodeReader createCodeReaderForInclusion(String path) {
+	public CodeReader createCodeReaderForInclusion(IScanner scanner, String path) {
 		// Don't parse inclusion if it is already captured
 		try {
 			try {
@@ -106,15 +115,10 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 			}
 			PDOMFile file = pdom.getFile(path);
 			if (file != null) {
-				// Already got things from here, pass in a magic
-				// buffer with the macros in it
-				skippedHeaders.add(path);
-				StringBuffer buffer = new StringBuffer();
-				fillMacros(file, buffer, new HashSet());
-				int length = buffer.length();
-				char[] chars = new char[length];
-				buffer.getChars(0, length, chars, 0);
-				return new CodeReader(path, chars);
+				// Already got things from here,
+				// add the macros to the scanner
+				fillMacros(file, scanner, new HashSet());
+				return new CodeReader(path, EMPTY_CHARS);
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(new CoreException(new Status(IStatus.ERROR,

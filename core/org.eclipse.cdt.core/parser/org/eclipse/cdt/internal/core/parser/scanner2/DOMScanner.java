@@ -76,40 +76,45 @@ public class DOMScanner extends BaseScanner {
     private void registerMacros() {
         for( int i = 0; i < definitions.size(); ++i )
         {
-            IMacro m = (IMacro) definitions.get( definitions.keyAt(i) );
-            if( m instanceof ObjectStyleMacro && ((ObjectStyleMacro)m).attachment != null ) 
-                continue;
-            
-            if( m instanceof DynamicStyleMacro )
-            {
-                DynamicStyleMacro macro = (DynamicStyleMacro) m;
-                macro.attachment = locationMap.registerBuiltinDynamicStyleMacro( macro );
-            }
-            else if( m instanceof DynamicFunctionStyleMacro )
-            {
-                DynamicFunctionStyleMacro macro = (DynamicFunctionStyleMacro) m;
-                macro.attachment = locationMap.registerBuiltinDynamicFunctionStyleMacro( macro );
-            }
-            else if( m instanceof FunctionStyleMacro )
-            {
-                FunctionStyleMacro macro = (FunctionStyleMacro) m;
-                macro.attachment = locationMap.registerBuiltinFunctionStyleMacro( macro );
-            }
-            else if( m instanceof ObjectStyleMacro )
-            {
-                ObjectStyleMacro macro = (ObjectStyleMacro) m;
-                macro.attachment = locationMap.registerBuiltinObjectStyleMacro( macro );
-            }
-            
+            registerMacro((IMacro)definitions.get(definitions.keyAt(i)));
         }
-        
+    }
+    
+    private void registerMacro(IMacro m) {
+    	if (m == null)
+    		return;
+        if (m instanceof ObjectStyleMacro && ((ObjectStyleMacro)m).attachment != null) 
+        	return;
+            
+        if (m instanceof DynamicStyleMacro) {
+            DynamicStyleMacro macro = (DynamicStyleMacro) m;
+            macro.attachment = locationMap.registerBuiltinDynamicStyleMacro( macro );
+        } else if (m instanceof DynamicFunctionStyleMacro) {
+            DynamicFunctionStyleMacro macro = (DynamicFunctionStyleMacro) m;
+            macro.attachment = locationMap.registerBuiltinDynamicFunctionStyleMacro( macro );
+        } else if (m instanceof FunctionStyleMacro) {
+            FunctionStyleMacro macro = (FunctionStyleMacro) m;
+            macro.attachment = locationMap.registerBuiltinFunctionStyleMacro( macro );
+        } else if (m instanceof ObjectStyleMacro) {
+            ObjectStyleMacro macro = (ObjectStyleMacro) m;
+            macro.attachment = locationMap.registerBuiltinObjectStyleMacro( macro );
+        }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.parser.IScanner#getLocationResolver()
-     */
+    public IMacro addDefinition(char[] key, char[] value) {
+    	IMacro macro = super.addDefinition(key, value);
+    	if (locationMap != null)
+    		registerMacro(macro);
+    	return macro;
+    }
+    
+    public IMacro addDefinition(char[] name, char[][] params, char[] expansion) {
+    	IMacro macro = super.addDefinition(name, params, expansion);
+    	if (locationMap != null)
+    		registerMacro(macro);
+    	return macro;
+    }
+    
     public ILocationResolver getLocationResolver() {
         if (locationMap instanceof ILocationResolver)
             return (ILocationResolver) locationMap;
@@ -170,7 +175,7 @@ public class DOMScanner extends BaseScanner {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#createReaderDuple(java.lang.String)
      */
     protected CodeReader createReaderDuple(String finalPath) {
-        return codeReaderFactory.createCodeReaderForInclusion(finalPath);
+        return codeReaderFactory.createCodeReaderForInclusion(this, finalPath);
     }
 
     /*

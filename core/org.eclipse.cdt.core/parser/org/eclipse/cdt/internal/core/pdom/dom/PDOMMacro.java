@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -28,10 +30,11 @@ public class PDOMMacro {
 	private final int record;
 
 	private static final int NAME = 0;
-	private static final int EXPANSION = 4;
-	private static final int NEXT_MACRO = 8;
+	private static final int FIRST_PARAMETER = 4;
+	private static final int EXPANSION = 8;
+	private static final int NEXT_MACRO = 12;
 	
-	private static final int RECORD_SIZE = 12;
+	private static final int RECORD_SIZE = 16;
 	
 	public PDOMMacro(PDOM pdom, int record) {
 		this.pdom = pdom;
@@ -46,6 +49,20 @@ public class PDOMMacro {
 		db.putInt(record + NAME, db.newString(macro.getName().toCharArray()).getRecord());
 		db.putInt(record + EXPANSION, db.newString(macro.getExpansion()).getRecord());
 		setNextMacro(0);
+		
+		PDOMMacroParameter last = null;
+		if (macro instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
+			IASTPreprocessorFunctionStyleMacroDefinition func = (IASTPreprocessorFunctionStyleMacroDefinition)macro;
+			IASTFunctionStyleMacroParameter[] params = func.getParameters();
+			for (int i = params.length - 1; i >= 0; --i) {
+				IASTFunctionStyleMacroParameter param = params[i];
+				PDOMMacroParameter pdomParam = new PDOMMacroParameter(pdom, param.getParameter());
+				if (last != null)
+					pdomParam.setNextParameter(last);
+				last = pdomParam;
+			}
+		}
+		db.putInt(record + FIRST_PARAMETER, last != null ? last.getRecord() : 0);
 	}
 	
 	public int getRecord() {
@@ -80,4 +97,10 @@ public class PDOMMacro {
 	public void setNextMacro(int rec) throws CoreException {
 		pdom.getDB().putInt(record + NEXT_MACRO, rec);
 	}
+	
+	public PDOMMacroParameter getFirstParameter() throws CoreException {
+		int rec = pdom.getDB().getInt(record + FIRST_PARAMETER);
+		return rec != 0 ? new PDOMMacroParameter(pdom, rec) : null;
+	}
+	
 }

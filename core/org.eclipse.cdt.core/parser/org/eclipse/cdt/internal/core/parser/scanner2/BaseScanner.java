@@ -1410,17 +1410,13 @@ abstract class BaseScanner implements IScanner {
         pushContext(r.buffer, d);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.parser.IScanner#addDefinition(java.lang.String,
-     *      java.lang.String)
-     */
-    public void addDefinition(char[] key, char[] value) {
+    public IMacro addDefinition(char[] key, char[] value) {
         int idx = CharArrayUtils.indexOf('(', key);
-        if (idx == -1)
-            definitions.put(key, new ObjectStyleMacro(key, value));
-        else {
+        if (idx == -1) {
+        	IMacro macro = new ObjectStyleMacro(key, value);
+            definitions.put(key, macro);
+            return macro;
+        } else {
             pushContext(key);
             bufferPos[bufferStackPos] = idx;
             char[][] args = null;
@@ -1432,25 +1428,22 @@ abstract class BaseScanner implements IScanner {
 
             if (args != null) {
                 key = CharArrayUtils.extract(key, 0, idx);
-                definitions.put(key, new FunctionStyleMacro(key, value, args));
-            }
+                return addDefinition(key, args, value);
+            } else
+            	return null;
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.parser.IScanner#getCount()
-     */
+    public IMacro addDefinition(char[] name, char[][] params, char[] expansion) {
+    	IMacro macro = new FunctionStyleMacro(name, expansion, params);
+        definitions.put(name, macro);
+        return macro;
+    }
+    
     public int getCount() {
         return count;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.parser.IScanner#getDefinitions()
-     */
     public Map getDefinitions() {
         CharArrayObjectMap objMap = getRealDefinitions();
         int size = objMap.size();

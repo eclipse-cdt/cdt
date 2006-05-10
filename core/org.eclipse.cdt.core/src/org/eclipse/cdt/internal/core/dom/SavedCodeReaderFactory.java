@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.CodeReaderCache;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.core.runtime.Preferences;
 
 /**
@@ -85,7 +86,7 @@ public class SavedCodeReaderFactory implements ICodeReaderFactory {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
      */
-    public CodeReader createCodeReaderForInclusion(String path) {
+    public CodeReader createCodeReaderForInclusion(IScanner scanner, String path) {
 		return cache.get(path);
     }
 	

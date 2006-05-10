@@ -149,7 +149,7 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 				file.clear();
 
 			// Add the new symbols
-			addSymbols(tu.getLanguage(), ast, codeReaderFactory.getSkippedHeaders());
+			addSymbols(tu.getLanguage(), ast);
 		} finally {
 			pdom.releaseWriteLock();
 		}

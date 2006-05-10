@@ -555,6 +555,9 @@ public class SelectionParseAction extends Action {
      */
     protected void open(IASTName name) throws CoreException {
     	IASTFileLocation fileloc = name.getFileLocation();
+    	if (fileloc == null)
+    		// no source location - TODO spit out an error in the status bar
+    		return;
     	int currentOffset = fileloc.getNodeOffset();
     	int currentLength = fileloc.getNodeLength();
     	

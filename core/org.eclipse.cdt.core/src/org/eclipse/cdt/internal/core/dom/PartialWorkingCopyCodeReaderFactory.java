@@ -12,12 +12,14 @@ package org.eclipse.cdt.internal.core.dom;
 
 import java.util.Arrays;
 import java.util.Iterator;
+
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 
@@ -70,7 +72,7 @@ public class PartialWorkingCopyCodeReaderFactory
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
      */
-    public CodeReader createCodeReaderForInclusion(String path) {
+    public CodeReader createCodeReaderForInclusion(IScanner scanner, String path) {
         return cache.get( path );
     }
 

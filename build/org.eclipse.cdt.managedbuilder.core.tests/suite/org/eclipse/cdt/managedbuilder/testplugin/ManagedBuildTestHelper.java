@@ -109,8 +109,7 @@ public class ManagedBuildTestHelper {
 				}
 			};
 			NullProgressMonitor monitor = new NullProgressMonitor();
-			// TODO: Why is this necessary?
-			//workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, monitor);
+			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, monitor);
 			project = newProjectHandle;
 		}
         

@@ -20,6 +20,10 @@ Contributors:
      <Component Name="Remote_System_Explorer" Abbr="RSE">
           <Subcomponent Name="General" Abbr="G">
                 <MessageList>
+	          		<Message ID="0402" Indicator="E">
+	          			<LevelOne>%1 must be between %2 and %3.</LevelOne>
+	          			<LevelTwo></LevelTwo>
+	          		</Message>
                     <Message ID="1001" Indicator="U">
                           <LevelOne>Under construction</LevelOne>
                           <LevelTwo>This function is not yet available.</LevelTwo>

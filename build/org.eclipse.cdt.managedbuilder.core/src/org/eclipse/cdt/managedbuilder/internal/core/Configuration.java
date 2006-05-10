@@ -121,7 +121,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	//Internal Builder enable state
 	private boolean internalBuilderEnabled;
 	//Internal Builder mode
-	private boolean internalBuilderIgnoreErr;
+	private boolean internalBuilderIgnoreErr = true;
 	
 	
 	/*
@@ -275,12 +275,12 @@ public class Configuration extends BuildObject implements IConfiguration {
 			}
 		}
 		
-		Preferences prefs = getPreferences(INTERNAL_BUILDER);
-		
-		internalBuilderEnabled = prefs != null ?
-				prefs.getBoolean(INTERNAL_BUILDER_ENABLED, false) : false;
-		internalBuilderIgnoreErr = prefs != null ?
-				prefs.getBoolean(INTERNAL_BUILDER_IGNORE_ERR, true) : true;
+//		Preferences prefs = getPreferences(INTERNAL_BUILDER);
+//		
+//		internalBuilderEnabled = prefs != null ?
+//				prefs.getBoolean(INTERNAL_BUILDER_ENABLED, false) : false;
+//		internalBuilderIgnoreErr = prefs != null ?
+//				prefs.getBoolean(INTERNAL_BUILDER_IGNORE_ERR, true) : true;
 	}
 
 	/**
@@ -333,8 +333,10 @@ public class Configuration extends BuildObject implements IConfiguration {
 			postannouncebuildStep = new String(cloneConfig.postannouncebuildStep);
 		} 
 		
-		internalBuilderEnabled = cloneConfig.internalBuilderEnabled;
-		internalBuilderIgnoreErr = cloneConfig.internalBuilderIgnoreErr;
+		enableInternalBuilder(cloneConfig.isInternalBuilderEnabled());
+		setInternalBuilderIgnoreErr(cloneConfig.getInternalBuilderIgnoreErr());
+//		internalBuilderEnabled = cloneConfig.internalBuilderEnabled;
+//		internalBuilderIgnoreErr = cloneConfig.internalBuilderIgnoreErr;
 		
 		// Clone the configuration's children
 		// Tool Chain
@@ -1726,17 +1728,17 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @param enable boolean
 	 */
 	public void enableInternalBuilder(boolean enable){
-		if(internalBuilderEnabled != enable){
+//		if(internalBuilderEnabled != enable){
 			internalBuilderEnabled = enable;
 			Preferences prefs = getPreferences(INTERNAL_BUILDER);
 			if(prefs != null){
-				prefs.putBoolean(INTERNAL_BUILDER_ENABLED, internalBuilderEnabled);
+				prefs.putBoolean(INTERNAL_BUILDER_ENABLED, enable);
 				try {
 					prefs.flush();
 				} catch (BackingStoreException e) {
 				}
 			}
-		}
+//		}
 	}
 	
 	/*
@@ -1745,7 +1747,11 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @return boolean
 	 */
 	public boolean isInternalBuilderEnabled(){
-		return internalBuilderEnabled;
+		Preferences prefs = getPreferences(INTERNAL_BUILDER);
+		
+		return prefs != null ?
+				prefs.getBoolean(INTERNAL_BUILDER_ENABLED, false) : 
+					internalBuilderEnabled;
 	}
 	
 	/*
@@ -1757,17 +1763,17 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * otherwise it will stop at the first build error
 	 */
 	public void setInternalBuilderIgnoreErr(boolean ignore){
-		if(internalBuilderIgnoreErr != ignore){
+//		if(internalBuilderIgnoreErr != ignore){
 			internalBuilderIgnoreErr = ignore;
 			Preferences prefs = getPreferences(INTERNAL_BUILDER);
 			if(prefs != null){
-				prefs.putBoolean(INTERNAL_BUILDER_IGNORE_ERR, internalBuilderIgnoreErr);
+				prefs.putBoolean(INTERNAL_BUILDER_IGNORE_ERR, ignore);
 				try {
 					prefs.flush();
 				} catch (BackingStoreException e) {
 				}
 			}
-		}
+//		}
 	}
 
 	/*
@@ -1778,7 +1784,11 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @return boolean
 	 */
 	public boolean getInternalBuilderIgnoreErr(){
-		return internalBuilderIgnoreErr;
+		Preferences prefs = getPreferences(INTERNAL_BUILDER);
+		
+		return prefs != null ?
+				prefs.getBoolean(INTERNAL_BUILDER_IGNORE_ERR, true) : 
+					internalBuilderIgnoreErr;
 	}
 	
 	private Preferences getPreferences(String name){

@@ -150,7 +150,7 @@ public class CodeViewReader implements ISymbolReader {
 					
 					// now skip to the name length
 					file.skipBytes(2 + segments*4 + segments*8);
-					byte nameLength = file.readByte();
+					int nameLength = file.readUnsignedByte();
 
 					// now extract the filename and add it to our list
 					// if it's not already there

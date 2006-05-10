@@ -79,14 +79,18 @@ managed build system and how to extend it.</font></td>
 </table>
 <table border="1">
  <tr>
-    <td width="50%" rowspan="2">Authors</td>
+    <td width="50%" rowspan="3">Authors</td>
     <td width="50%"> <a href="mailto:sevoy@ca.ibm.com">Sean Evoy</a></td>
   </tr>
   <tr>
     <td width="50%"><a href="mailto:leo.treggiari@intel.com">Leo Treggiari</a></td>
   </tr>
   <tr>
-    <td width="50%" rowspan="5">Revision Date</td>
+    <td width="50%"><a href="mailto:mikhail.sennikovsky@intel.com">Mikhail 
+	Sennikovsky</a></td>
+  </tr>
+  <tr>
+    <td width="50%" rowspan="6">Revision Date</td>
     <td width="50%">10/21/2003 - Version: 0.1.0</td>
   </tr>
   <tr>
@@ -102,7 +106,10 @@ managed build system and how to extend it.</font></td>
     <td width="50%">9/28/2005 - Version 3.0.1</td>
   </tr>
   <tr>
-    <td width="50%" rowspan="5">Change History</td>
+    <td width="50%">05/09/06 - Version 3.1</td>
+  </tr>
+  <tr>
+    <td width="50%" rowspan="6">Change History</td>
     <td width="50%" height="22">0.1.0 - Document Creation</td>
   </tr>
   <tr>
@@ -116,6 +123,9 @@ managed build system and how to extend it.</font></td>
   </tr>
   <tr>
     <td width="50%">3.0.1 - Updated for CDT 3.0.1</td>
+  </tr>
+  <tr>
+    <td width="50%">3.1 - Updated for CDT 3.1</td>
   </tr>
 </table>
 <br>
@@ -572,8 +582,8 @@ file.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">The user can build the currently 
 active configuration<span style="color:red">, or select a different set of 
 configurations to build.</span></p>
-<p class="MsoNormal" style="margin-top:6.0pt"><span style="color:red">The user 
-can rebuild an individual resource separate from building the entire project.</span></p>
+<p class="MsoNormal" style="margin-top:6.0pt">The user 
+can rebuild an individual resource separate from building the entire project.</p>
 <h3 class="subsection">2.1.7 Upgrading a Project to a New MBS or Tool-chain 
 Version.</h3>
 <p class="MsoNormal">MBS defines a version number that is stored in every MBS 
@@ -667,13 +677,11 @@ ancestor that specifies a value for the attribute.</p>
 <h3>Schema Notes</h3>
 <ul>
 	<li>Attributes highlighted in <span style="background-color: #FFFF00">yellow</span> 
-	implement functionality that is new for CDT 3.0.</li>
+	indicate functionality that is new since CDT 3.0.1.</li>
 	<li>Attributes highlighted in <span style="background-color: #00FFFF">aqua</span> 
-	indicate attributes that are deprecated in CDT 3.0.&nbsp; Each of these 
+	indicate attributes that have been deprecated.&nbsp; Each of these 
 	attributes describes the new method to use to obtain equivalent 
 	functionality.</li>
-	<li>Attributes highlighted in <span style="background-color: #00FF00">green</span> 
-	implement functionality that is new for CDT 3.0.1.</li>
 	<li>The &quot;Required&quot; column can contain 3 values.&nbsp; &quot;Yes&quot; means 
 that the attribute is required by the schema for every instance of the element.&nbsp; 
 &quot;No&quot; means that the attribute is never required and an appropriate default is 
@@ -838,8 +846,8 @@ UI.</p>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
- valign="top" height="49">
-      <span style="background-color: #FFFF00">projectMacro Supplier</span></td>
+ valign="top" height="49" bgcolor="#FFFFFF">
+      projectMacro Supplier</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -853,8 +861,8 @@ UI.</p>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
- valign="top" height="49">
-      <span style="background-color: #FFFF00">projectEnvironment Supplier</span></td>
+ valign="top" height="49" bgcolor="#FFFFFF">
+      projectEnvironment Supplier</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -868,8 +876,8 @@ UI.</p>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
- valign="top" height="49">
-      <span style="background-color: #FFFF00">configurationName Provider</span></td>
+ valign="top" height="49" bgcolor="#FFFFFF">
+      configurationName Provider</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -880,6 +888,21 @@ UI.</p>
 		In this case, a configurationNameProvider must be specified to make the 
 		names unique before they are displayed to the user in the New Project 
 		and New Configuration dialog boxes.</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top" height="49">
+      no</td>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
+ valign="top" height="49" bgcolor="#FFFFFF">
+      convertToId</td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top" height="49">
+      The identifier of a projectType, that project types loaded using this 
+		definition should be converted to. MBS will invoke a proper converter.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -1107,7 +1130,7 @@ track of this specific configuration.</td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">prebuildStep</span></td>
+      prebuildStep</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1122,8 +1145,7 @@ track of this specific configuration.</td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">preannouncebuild</span>
-		<span style="background-color: #FFFF00">Step</span></td>
+      preannouncebuild Step</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1138,7 +1160,7 @@ track of this specific configuration.</td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">postbuildStep</span></td>
+      postbuildStep</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1153,8 +1175,7 @@ track of this specific configuration.</td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">postannouncebuild</span>
-		<span style="background-color: #FFFF00">Step</span></td>
+      postannouncebuild Step</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1169,7 +1190,7 @@ track of this specific configuration.</td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">description</span></td>
+      description</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1311,7 +1332,7 @@ the schema table below.</p>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
-      <span style="background-color: #FFFF00">targetTool</span></td>
+      targetTool</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       <span style="font-family: Arial"><font size="2">A semi-colon separated 
@@ -1326,7 +1347,7 @@ the schema table below.</p>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
-      <span style="background-color: #FFFF00">secondaryOutputs</span></td>
+      secondaryOutputs</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       <span style="font-family: Arial"><font size="2">A semi-colon separated 
@@ -1404,7 +1425,7 @@ the schema table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
  valign="top" height="49">
-      <span style="background-color: #FFFF00">configurationMacro Supplier</span></td>
+      configurationMacro Supplier</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -1419,7 +1440,7 @@ the schema table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
  valign="top" height="49">
-      <span style="background-color: #FFFF00">configurationEnviron mentSupplier</span></td>
+      configurationEnviron mentSupplier</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -1434,8 +1455,7 @@ the schema table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
  valign="top" height="49">
-      <span style="background-color: #FFFF00">isToolChain</span>
-		<span style="background-color: #FFFF00">Supported</span></td>
+      isToolChain Supported</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -1459,7 +1479,7 @@ the schema table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
  valign="top" height="49">
-      <span style="background-color: #FFFF00">versionsSupported</span></td>
+      versionsSupported</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -1475,7 +1495,7 @@ the schema table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
  valign="top" height="49">
-      <span style="background-color: #FFFF00">convertToId</span></td>
+      convertToId</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -1501,8 +1521,8 @@ the schema table below.</p>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
- valign="top"><span style="background-color: #FFFF00">scannerConfig 
-		DiscoveryProfileId</span></td>
+ valign="top">scannerConfig 
+		DiscoveryProfileId</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">Specifies the id of a scanner configuration discovery profile for 
@@ -1689,7 +1709,7 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <font face="Arial"><span style="background-color: #FFFF00">variableFormat</span></font></td>
+      <font face="Arial">variableFormat</font></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1713,8 +1733,8 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <font face="Arial"><span style="background-color: #FFFF00">isVariableCase 
-		Sensitive</span></font></td>
+      <font face="Arial"><span style="background-color: #FFFF00">i</span>sVariableCase 
+		Sensitive</font></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1734,8 +1754,8 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <font face="Arial"><span style="background-color: #FFFF00">reservedMacro 
-		Names</span></font></td>
+      <font face="Arial">reservedMacro 
+		Names</font></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1772,8 +1792,8 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <font face="Arial"><span style="background-color: #FFFF00">reservedMacro 
-		NameSupplier</span></font></td>
+      <font face="Arial">reservedMacro 
+		NameSupplier</font></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1798,8 +1818,8 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <font face="Arial"><span style="background-color: #FFFF00">macroInputFile 
-		NameValue</span></font></td>
+      <font face="Arial">macroInputFile 
+		NameValue</font></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1821,8 +1841,8 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <font face="Arial"><span style="background-color: #FFFF00">macroInputFile 
-		ExtValue</span></font></td>
+      <font face="Arial">macroInputFile 
+		ExtValue</font></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1837,8 +1857,8 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <font face="Arial"><span style="background-color: #FFFF00">macroInputFile 
-		BaseNameValue</span></font></td>
+      <font face="Arial">macroInputFile 
+		BaseNameValue</font></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1854,8 +1874,8 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <font face="Arial"><span style="background-color: #FFFF00">macroInputFile 
-		RelPathValue</span></font></td>
+      <font face="Arial">macroInputFile 
+		RelPathValue</font></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1870,8 +1890,8 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <font face="Arial"><span style="background-color: #FFFF00">macroInputDir 
-		RelPathValue</span></font></td>
+      <font face="Arial">macroInputDir 
+		RelPathValue</font></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1887,8 +1907,8 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <font face="Arial"><span style="background-color: #FFFF00">macroInputDir 
-		RelPathValue</span></font></td>
+      <font face="Arial">macroInputDir 
+		RelPathValue</font></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1904,7 +1924,7 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">macroOutput FileNameValue</span></td>
+      macroOutput FileNameValue</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1927,7 +1947,7 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">macroOutput FileExtValue</span></td>
+      macroOutput FileExtValue</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1942,7 +1962,7 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">macroOutput FileBaseNameValue</span></td>
+      macroOutput FileBaseNameValue</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1958,7 +1978,7 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">macroOutput FileRelPathValue</span></td>
+      macroOutput FileRelPathValue</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1973,7 +1993,7 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">macroOutput DirRelPathValue</span></td>
+      macroOutput DirRelPathValue</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1988,7 +2008,7 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">versionsSupported</span></td>
+      versionsSupported</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2004,7 +2024,7 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">convertToId</span></td>
+      convertToId</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2428,14 +2448,17 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">customBuildStep</span></td>
+      customBuildStep</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
       <span style="font-family: Arial"><font size="2">When True, indicates that 
-		the Tool represents a user-defined custom build step.&nbsp; The default is 
+		the Tool represents a CDT end-user-defined custom build step.&nbsp; The default is 
 		False.&nbsp; When True, the default value of the commandLinePattern attribute 
-		changes to &#8220;$(command)&#8221;.</font></span></td>
+		changes to &#8220;$(command)&#8221;.&nbsp; This attribute is used by the 
+		implementation of Custom Build Steps on the MBS configuration property 
+		page.&nbsp; It is not intended for use by tools defined by a 
+		tool-integrator.</font></span></td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2464,7 +2487,7 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">announcement</span></td>
+      announcement</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2480,7 +2503,7 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">icon</span></td>
+      icon</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2496,7 +2519,7 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">versionsSupported</span></td>
+      versionsSupported</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2512,7 +2535,7 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">convertToId</span></td>
+      convertToId</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2562,7 +2585,7 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
   </tbody>
 </table>
 <p class="subsection"><a name="_TocSectionGrammar_9">3.9 
-<span style="background-color: #FFFF00">Input Type</span></a></p>
+Input Type</a></p>
 <p class="MsoNormal">This element is a child of the Tool element.&nbsp; It describes 
 one category of input to the tool.&nbsp; A Tool may have multiple InputType element 
 children.&nbsp; The element may reference an Eclipse content type that corresponds to 
@@ -2595,10 +2618,17 @@ content types:</p>
 	<li>
 	<p class="MsoNormal" style="margin-top:6.0pt">sharedLibrary&nbsp;&nbsp; .dll,.so,.dylib</li>
 </ul>
+<p class="MsoNormal" style="margin-top:6.0pt">A tool can define more than one 
+input type.&nbsp; The primary input type is used in a different manner than any 
+secondary input types.&nbsp; For a multipleOfType == false primary input type, 
+the tool is called for each project resource that is of the primary input type.&nbsp; 
+All files of every secondary input type are added to each invocation of the 
+tool.&nbsp; For a multipleOfType == true primary input type, the primary inputs 
+are listed before the secondary inputs.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">Calculated dependencies of an 
 input type are not described by a separate input type, but are instead 
 determined by a dependency calculator extension callback when necessary.&nbsp; The <var>dependencyCalculator</var> attribute allows the
-implementer to specify a class that implements the <code>IManagedDependencyGenerator</code>
+implementer to specify a class that implements the <code>IManagedDependencyGenerator2</code>
 interface. It is the responsibility of this class to answer all of the
 source-level dependencies for a given input. A discussion of why this
 is important for make-based build utilities can be found in &sect;
@@ -2627,7 +2657,7 @@ attributes of the InputType element are described in the table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">id</span></td>
+      id</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2642,7 +2672,7 @@ attributes of the InputType element are described in the table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="19">
-      <span style="background-color: #FFFF00">name</span></td>
+      name</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="19">
@@ -2657,7 +2687,7 @@ attributes of the InputType element are described in the table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">superclass</span></td>
+      superclass</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2672,7 +2702,7 @@ attributes of the InputType element are described in the table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">sourceContentType</span></td>
+      sourceContentType</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2689,7 +2719,7 @@ attributes of the InputType element are described in the table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">sources</span></td>
+      sources</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2706,7 +2736,7 @@ attributes of the InputType element are described in the table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">dependencyContent Type</span></td>
+      dependencyContent Type</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2724,7 +2754,7 @@ attributes of the InputType element are described in the table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">dependencyExtensions</span></td>
+      dependencyExtensions</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2741,7 +2771,7 @@ attributes of the InputType element are described in the table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">option</span></td>
+      option</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2757,7 +2787,7 @@ attributes of the InputType element are described in the table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #00FF00">assignToOption</span></td>
+      assignToOption</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2770,13 +2800,13 @@ attributes of the InputType element are described in the table below.</p>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      &nbsp;</td>
+      No</td>
     </tr>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">multipleOfType</span></td>
+      multipleOfType</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2793,7 +2823,7 @@ attributes of the InputType element are described in the table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">primaryInput</span></td>
+      primaryInput</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2808,13 +2838,13 @@ attributes of the InputType element are described in the table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">dependencyCalculator</span></td>
+      dependencyCalculator</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
       <span style="font-family: Arial"><font size="2">The name of a class that 
 		provides the source file dependency calculation for the input type.&nbsp; The 
-		class implements the IManagedDependencyGenerator interface.&nbsp; The default 
+		class implements the IManagedDependencyGenerator2 interface.&nbsp; The default 
 		is none.</font></span></td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
@@ -2825,7 +2855,7 @@ attributes of the InputType element are described in the table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">buildVariable</span></td>
+      buildVariable</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2844,7 +2874,7 @@ attributes of the InputType element are described in the table below.</p>
   </tbody>
 </table>
 <p class="subsection"><a name="_TocSectionGrammar_10">3.10 
-<span style="background-color: #FFFF00">Additional Input</span></a></p>
+Additional Input</a></p>
 <p class="MsoNormal">This element is a child of the InputType element.&nbsp; It 
 describes additional input of a particular input type.<span style="font-size:10.0pt;font-family:Arial">
 </span>An InputType may have multiple AdditionalInput element children.&nbsp; 
@@ -2870,7 +2900,7 @@ specified by the user (or tool integrator).</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">paths</span></td>
+      paths</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2889,7 +2919,7 @@ specified by the user (or tool integrator).</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="18">
-      <span style="background-color: #FFFF00">kind</span></td>
+      kind</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="18">
@@ -2920,7 +2950,7 @@ specified by the user (or tool integrator).</p>
   </tbody>
 </table>
 <p class="subsection"><a name="_TocSectionGrammar_11">3.11 
-<span style="background-color: #FFFF00">Output Type</span></a></p>
+Output Type</a></p>
 <p class="MsoNormal">This element is a child of the Tool element.&nbsp; It 
 describes one category of output created by the tool.&nbsp; A Tool may have multiple 
 OutputType element children.&nbsp; The element may reference an Eclipse content type 
@@ -2973,7 +3003,7 @@ attribute.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">id</span></td>
+      id</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2987,7 +3017,7 @@ attribute.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="19">
-      <span style="background-color: #FFFF00">name</span></td>
+      name</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -3001,7 +3031,7 @@ attribute.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">superclass</span></td>
+      superclass</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -3016,7 +3046,7 @@ attribute.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">outputContentType</span></td>
+      outputContentType</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -3032,7 +3062,7 @@ attribute.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">outputs</span></td>
+      outputs</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -3048,7 +3078,7 @@ attribute.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">option</span></td>
+      option</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -3067,7 +3097,7 @@ attribute.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">multipleOfType</span></td>
+      multipleOfType</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -3083,7 +3113,7 @@ attribute.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">primaryInputType</span></td>
+      primaryInputType</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -3099,7 +3129,7 @@ attribute.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">primaryOutput</span></td>
+      primaryOutput</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -3113,11 +3143,11 @@ attribute.</p>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
- valign="top">
-      <span style="background-color: #FFFF00">outputPrefix</span></td>
+ valign="top" height="83">
+      outputPrefix</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
- valign="top">
+ valign="top" height="83">
       Some tools produce files with a special prefix that must be specified.&nbsp; 
 		For example, a librarian on POSIX systems expects the output to be lib.a 
 		so &#8216;lib&#8217; would be the prefix.&nbsp; The default is to use the Tool 
@@ -3125,14 +3155,14 @@ attribute.</p>
 		is an empty string.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
- valign="top">
+ valign="top" height="83">
       No</td>
     </tr>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">outputNames</span></td>
+      outputNames</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -3148,7 +3178,7 @@ attribute.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">namePattern</span></td>
+      namePattern</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -3165,7 +3195,7 @@ attribute.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">nameProvider</span></td>
+      nameProvider</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -3183,7 +3213,7 @@ attribute.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">buildVariable</span></td>
+      buildVariable</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -3288,7 +3318,7 @@ Options'. This will be the name the user sees displayed in the UI.</p>
       <td
  style="border-style: none solid double double; border-width: medium 1pt 1.5pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
  valign="top" height="53">
-      <span style="background-color: #FFFF00">icon</span></td>
+      icon</td>
       <td
  style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
  valign="top" height="52">
@@ -3543,7 +3573,10 @@ list.</p>
     </tr>
   </tbody>
 </table>
-<p class="subsection">3.13.4 Schema</p>
+<p class="subsection">3.13.4 <span style="background-color: #FFFF00">Option 
+Enablement/Applicability</span></p>
+<p>This section will be provided in a future version of the document.</p>
+<p class="subsection">3.13.5 Schema</p>
 <table
  style="border: medium none ; width: 670px; border-collapse: collapse;"
  border="1" cellpadding="0" cellspacing="0">
@@ -3755,7 +3788,7 @@ needed.</td>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
- valign="top"><span style="background-color: #FFFF00">valueHandler</span></td>
+ valign="top">valueHandler</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">The name of a class that implements the IManagedOptionValueHandler 
@@ -3768,8 +3801,7 @@ needed.</td>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
- valign="top"><span style="background-color: #FFFF00">valueHandlerExtra</span>
-		<span style="background-color: #FFFF00">Argument</span></td>
+ valign="top">valueHandlerExtra Argument</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">An optional extra text string that is passed into the valueHandler.</td>
@@ -3780,7 +3812,7 @@ needed.</td>
     <tr>
       <td
  style="border-style: none solid double double; border-width: medium 1pt 1.5pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
- valign="top"><span style="background-color: #FFFF00">applicability Calculator</span></td>
+ valign="top">applicability Calculator</td>
       <td
  style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
  valign="top">The name of class which is used to determine dynamically at 
@@ -3788,6 +3820,18 @@ needed.</td>
 		generation. This class must implement the IOptionApplicability 
 		interface. If no calculator is specified then the option is always 
 		visible, enabled, and used in command line generation.&nbsp; See § 7.12. </td>
+      <td
+ style="border-style: none double double none; border-width: medium 1.5pt 1.5pt medium; border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top">no</td>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid double double; border-width: medium 1pt 1.5pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top"><span style="background-color: #FFFF00">tip</span></td>
+      <td
+ style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top">Specifies a &quot;tip&quot; that can be displayed in hover help or on the 
+		property page.</td>
       <td
  style="border-style: none double double none; border-width: medium 1.5pt 1.5pt medium; border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
  valign="top">no</td>
@@ -4035,7 +4079,7 @@ attributes are specified in the schema table below.</p>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
-      <span style="background-color: #FFFF00">rcbsApplicability</span></td>
+      rcbsApplicability</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       Identifies how the user desires to apply a resource custom build step:<br>
@@ -4050,7 +4094,7 @@ attributes are specified in the schema table below.</p>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
-      <span style="background-color: #FFFF00">toolsToInvoke</span></td>
+      toolsToInvoke</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       Identifies which tools to invoke by a semicolon separated list of child 
@@ -4066,7 +4110,7 @@ attributes are specified in the schema table below.</p>
   </tbody>
 </table>
 <p class="subsection"><a name="_TocSectionGrammar_17">3.17 
-<span style="background-color: #FFFF00">Environment Variable Build Path</span></a></p>
+Environment Variable Build Path</a></p>
 <p class="MsoNormal">The tool-integrator can specify the names of the 
 environment variables used by the tool for specifying the include and the 
 library paths.&nbsp; To specify the build paths variables (either the include 
@@ -4097,7 +4141,7 @@ attributes are specified in the schema table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">pathType</span></td>
+      pathType</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       The build path type. Can be one of the following: &#8220;buildpathInclude&#8221;, 
@@ -4111,7 +4155,7 @@ attributes are specified in the schema table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">variableList</span></td>
+      variableList</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       comma-separated list of the environment variable names used to store the 
@@ -4124,7 +4168,7 @@ attributes are specified in the schema table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">pathDelimiter</span></td>
+      pathDelimiter</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       <p class="MsoNormal">Represent the delimiter used to separate the paths. 
@@ -4140,7 +4184,7 @@ attributes are specified in the schema table below.</p>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <span style="background-color: #FFFF00">buildPathResolver</span></td>
+      buildPathResolver</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       <p class="MsoNormal">The name of a class that implements the IBuildPathResolver interface 
@@ -4370,6 +4414,9 @@ build file generator that is supplied with the CDT (for Gnu makefiles), or
 replace it with a customized generator depending on the variant of build utility 
 that you wish to use. The relationship between the builder, the build file 
 generator, and a compiler dependency calculator are shown in the model below.</p>
+<p>Note:&nbsp; This figure uses the deprecated interface 
+IManagedDependencyGenerator instead of IManagedDependencyGenerator2.&nbsp; 
+However the relationships between the parts remains the same.</p>
 <p>
 <img style="border: 0px solid ;"
  src="./image031.gif"
@@ -4460,9 +4507,7 @@ they are used. The makefile includes external makefiles that have a
 list of build directories, object files, makefile fragments, and
 dependency makefiles. </p>
 <p>
-<img
- src="./image036.gif"
- title="" alt="Generated main makefile" style="border: 0px solid ;"></p>
+<img border="0" src="./image036.gif"></p>
 <p>This makefile is passed as an argument to <span
  style="font-style: italic;">make</span>, so it contains
 <span style="font-style: italic;">clean</span>
@@ -4525,7 +4570,9 @@ header file in the dependency list. This is important because if the
 header file is moved or deleted, make will try to find a rule to build
 the dependency and if a dummy target is not present, it will stop.<br>
 </p>
-The build file invokes the dependency generator command to generate a separate makefile fragment for each file participating in the build.
+The dependency information added to the makefile depends upon the dependency 
+calculator used by the tools in the tool-chain.&nbsp; One mode supported by the 
+MBS is the use of GNU .d files.&nbsp; In this mode, the build file invokes the dependency generator command to generate a separate makefile fragment for each file participating in the build.
 The figure below
 shows the fragment for&nbsp; <span style="font-family: monospace;">Class1</span><code></code>.
 <p>
@@ -4533,6 +4580,9 @@ shows the fragment for&nbsp; <span style="font-family: monospace;">Class1</span>
  src="./image040.gif"
  title="" alt="Generated dependency makefile fragment"
  name="Generated Dependencies"></p>
+<p>
+Additional dependency calculator modes are supported by the MBS.&nbsp; See § 
+7.3.</p>
 <p class="subsection">5.1.4 Support Makefiles</p>
 <p>There are two other makefiles that are generated and included in the
 main makefile. The first, <code>sources.mk</code>,
@@ -5238,56 +5288,436 @@ same set of utilities for discovering them. Some tool integrations might rely
 on an external utility like <var>makedepend</var> to calculate
 source-level
 dependencies. Other tool integrations might provide dependency calculation
-along with the other build tools, like the GCC preprocessor. Still
-others leave
-it to the developer to manage them manually. The replaceable dependency
-generator in the MBS tries to accommodate all three types of dependency
+along with the other build tools, like the GCC preprocessor. The replaceable dependency
+calculator in the MBS tries to accommodate many types of dependency
 discovery mechanisms. </p>
-<p>If you replace the build file generator in your configuration, the odds are
-good that you will also have to replace the dependency calculator or
-perform the calculation internally. The
+<p>The
 mechanism for replacing the dependency calculator is similar to the build file generator, except that the dependency calculator is associated
-with a tool inputType, not a builder. You must create a class that implements the <code>IManagedDependencyGenerator</code>
-shown in the figure below and specify that class in the inputType element, 
-dependencyCalculator attribute. </p>
-<p>
-<img style="border: 0px solid ;"
- src="./image066.gif"
- title="" alt="Dependency generator interface"></p>
-<h5>Figure 11 Dependency generator interface</h5>
-<p>Typically, these types of dependencies are only relevant for the
-compiler but what tool you use to specify the generator (or generators)
-is arbitrary.
-Your replacement
-build file generator can instantiate and use the calculator whenever
-it is needed. Recall that the build file generator will be asked to
-generate the dependencies by the MBS builder, so perhaps that is the
-only time you will need it. Of course, you may prefer to generate the
-dependencies during the build, so the dependency calculator may be
-needed when the command for the compiler is generated in the build file. </p>
+with a tool inputType, not a builder. You must create a class that implements the <code>IManagedDependencyGenerator2</code>
+interface
+shown below and specify that class in the inputType element, 
+dependencyCalculator attribute.&nbsp; Typically, dependency calculators are only 
+relevant for a &quot;compiler&quot; tool, but what tool you use to specify the generator (or generators)
+is arbitrary.</p>
 <p>By design, a dependency calculator must answer what type of
-dependency generation it will do. If it is a command-, or external-type
-generator,
-the client can ask it for the command given a resource and the build
-information for a project configuration. If you are using an external process, the
-answer might be a properly formatted command to execute in an external
-shell. The default dependency calculator provides
-the GCC compiler with a command that gets executed when the source file
-is built. The code snippet below shows the transformation that is
-needed in that case.</p>
-<p>
-<img style="border: 0px solid ;"
- src="./image068.gif"
- title="" alt="Dependency generator code snippet"></p>
-<p>If you do not have an external process or tool to calculate this,
-you can take advantage of the indexer in the CDT. In this case, you are
+dependency generation it will do.&nbsp; <font face="Arial">There are two major, 
+and multiple minor, modes of dependency calculation supported by the MBS.&nbsp; 
+The major modes are:</font></p>
+<ol>
+	<li><font face="Arial">The build file generator invokes tool integrator 
+	provided methods that calculate all dependencies using whatever method the 
+	tool integrator wants.&nbsp; The build file generator then adds the 
+	dependencies to the build file using the appropriate build file syntax.&nbsp; 
+	This is a TYPE_CUSTOM dependency calculator as defined below.&nbsp; See the
+	</font><font face="Courier New">IManagedDependencyCalculator</font><font face="Arial"> 
+	interface discussion below for more information.&nbsp; </font></li>
+	<li><font face="Arial">The build file generator and the tool-chain cooperate 
+	in creating and using separate &quot;dependency&quot; files.&nbsp; In this case, 
+	dependency calculation is done at &quot;build time&quot;, rather than at &quot;build file 
+	generation time&quot; as in mode #1.&nbsp; This currently supports the GNU 
+	concept of using .d files in GNU make.&nbsp; This is either a 
+	TYPE_BUILD_COMMANDS dependency calculator or a TYPE_PREBUILD_COMMANDS 
+	dependency calculator as defined below.&nbsp; See the </font>
+	<font face="Courier New">IManagedDependencyCommands</font><font face="Arial"> 
+	and </font><font face="Courier New">IManagedDependencyPreBuild</font><font face="Arial"> 
+	interfaces discussion below for more information.</font></li>
+</ol>
+<p><font face="Courier New">public interface IManagedDependencyGeneratorType {<br>
+<font color="#336699">&nbsp;&nbsp;&nbsp; /**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp; Constants returned by getCalculatorType<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp;
+</font>	public int TYPE_NODEPS = 0;		//&nbsp; Deprecated - use 
+TYPE_NODEPENDENCIES<br>
+	&nbsp;&nbsp;&nbsp;
+	public int TYPE_COMMAND = 1;		//&nbsp; Deprecated - use 
+TYPE_BUILD_COMMANDS<br>
+	&nbsp;&nbsp;&nbsp;
+	public int TYPE_INDEXER = 2;		//&nbsp; Deprecated - use TYPE_CUSTOM<br>
+	&nbsp;&nbsp;&nbsp;
+	public int TYPE_EXTERNAL = 3;		//&nbsp; Deprecated - use TYPE_CUSTOM<br>
+	&nbsp;&nbsp;&nbsp;
+	public int TYPE_OLD_TYPE_LIMIT = 3;<br>
+	<br>
+	&nbsp;&nbsp;&nbsp; <font color="#336699">//&nbsp; Use these types<br>
+	</font>&nbsp;&nbsp;&nbsp;
+	public int TYPE_NODEPENDENCIES = 4;<br>
+	&nbsp;&nbsp;&nbsp;
+	public int TYPE_BUILD_COMMANDS = 5;<br>
+	&nbsp;&nbsp;&nbsp;
+	public int TYPE_PREBUILD_COMMANDS = 6;<br>
+	&nbsp;&nbsp;&nbsp;
+	public int TYPE_CUSTOM = 7;<br>
+	<br>
+<font color="#336699">&nbsp;&nbsp;&nbsp; /**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * Returns the type of dependency generator that is 
+implemented.&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp; TYPE_NODEPENDENCIES indicates that no 
+dependency generator is <br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; supplied or needed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp; TYPE_CUSTOM indicates that a custom, 
+&quot;build file generation time&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; dependency calculator is 
+implemented.&nbsp; Note that the dependency<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; calculator will be called 
+when the makefile is generated, and <br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; for every source file that is 
+built by this tool in the build <br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; file, not just for those that 
+have changed since the last build<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; file generation.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp; TYPE_BUILD_COMMANDS indicates that 
+command lines or options will <br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; be returned to be used to 
+calculate dependencies.&nbsp; These <br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; commands/options are added to 
+the build file to perform dependency<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; calculation at &quot;build time&quot;.&nbsp; 
+This currently supports <br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; compilers/tools that generate 
+.d files either as a<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; side-effect of tool 
+invocation, or as a separate step that is<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; invoked immediately before or 
+after the tool invocation. <br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp; TYPE_PREBUILD_COMMANDS indicates that a 
+separate build step is <br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; invoked, prior to the the 
+normal build steps, to update the <br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; dependency information.&nbsp; 
+These commands are added to the build<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; file to perform dependency 
+calculation at &quot;build time&quot;.&nbsp; Note <br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; that this step will be 
+invoked every time a build is done in <br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp; order to determine if 
+dependency files need to be re-generated.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @return int<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</font>	public int getCalculatorType();<br>
+}</font></p>
+<p><font face="Arial">After deciding upon the type of dependency calculator, you 
+must implement the methods in<code><font face="Arial"> </font> </code></font><code>IManagedDependencyGenerator2</code><font face="Arial"><code><font face="Arial">.&nbsp; 
+The method </font></code></font><font face="Courier New">getDependencySourceInfo</font><font face="Arial"> 
+returns an instance of the </font><font face="Courier New">
+IManagedDependencyInfo</font><font face="Arial"> interface.&nbsp; This can be 
+any one of the 3 interfaces that derive from </font><font face="Courier New">
+IManagedDependencyInfo</font><font face="Arial">&nbsp; - </font>
+<font color="#336699" face="Courier New">I</font><font face="Courier New">ManagedDependencyCalculator, 
+IManagedDependencyCommands</font><font face="Arial"> or </font>
+<font face="Courier New">IManagedDependencyPreBuild </font><font face="Arial">
+which are discussed below.&nbsp; The returned interface is called to get the 
+dependency information for a particular source file in the configuration.&nbsp; 
+See the descriptions of the other methods in<code><font face="Arial"> </font> </code></font><code>IManagedDependencyGenerator2</code><font face="Arial">
+in the code comments below.</font></p>
+<pre>public interface IManagedDependencyGenerator2 extends IManagedDependencyGeneratorType {
+	
+<font color="#336699">    /**
+     * Returns an instance of IManagedDependencyInfo for this source file.
+     * IManagedDependencyCalculator, IManagedDependencyCommands
+     * and IManagedDependencyPreBuild are all derived from
+     * IManagedDependencyInfo, and any one of the three can be returned.
+     * This is called when getCalculatorType returns TYPE_BUILD_COMMANDS, 
+     * TYPE_CUSTOM or TYPE_PREBUILD_COMMANDS.
+     *
+     * @param source  The source file for which dependencies should be calculated
+     *    The IPath can be either relative to the project directory, or absolute in the file system.
+     * @param buildContext  The IConfiguration or IResourceConfiguration that
+     *   contains the context in which the source file will be built
+     * @param tool  The tool associated with the source file
+     * @param topBuildDirectory  The top build directory of the configuration.  This is
+     *   the working directory for the tool.  This IPath is relative to the project directory.
+     * @return IManagedDependencyInfo    
+     */
+</font>	public IManagedDependencyInfo getDependencySourceInfo(
+		IPath source,
+		IBuildObject buildContext,
+		ITool tool,
+		IPath topBuildDirectory);
+
+<font color="#336699">    /**
+     * Returns the file extension used by dependency files created
+     * by this dependency generator.
+     * This is called when getCalculatorType returns TYPE_BUILD_COMMANDS or 
+     * TYPE_PREBUILD_COMMANDS.
+     *    
+     * @param buildContext  The IConfiguration that contains the context of the build
+     * @param tool  The tool associated with the dependency generator. 
+     *
+     * @return String
+     */
+</font>	public String getDependencyFileExtension(
+		IConfiguration buildContext,
+		ITool tool);
+
+<font color="#336699">    /**
+     * Called to allow the dependency calculator to post-process dependency files.
+     * This method is called after the build has completed for at least every 
+     * dependency file that has changed, and possibly for those that have not
+     * changed as well.  It may also be called with dependency files created by
+     * another tool.  This method should be able to recognize dependency files
+     * that don't belong to it, or that it has already post-processed.
+     * This is called when getCalculatorType returns TYPE_BUILD_COMMANDS or 
+     * TYPE_PREBUILD_COMMANDS.
+     *    
+     * @param dependencyFile  The dependency file  
+     *    The IPath can be either relative to the top build directory, or absolute in the file system.
+     * @param buildContext  The IConfiguration that contains the context of the build
+     * @param tool  The tool associated with the dependency generator.  Note that this is
+     *    not necessarily the tool that created the dependency file
+     * @param topBuildDirectory  The top build directory of the project.  This is
+     *   the working directory for the tool.
+     *
+     * @return boolean  True if the method modified the dependency (e.g., .d) file
+     */
+</font>	public boolean postProcessDependencyFile(
+		IPath dependencyFile,
+		IConfiguration buildContext,
+		ITool tool,
+		IPath topBuildDirectory);
+}</pre>
+<p class="subsection"><font face="Arial">7.3.1 TYPE_CUSTOM dependency calculator
+</font></p>
+<p><font face="Arial">A TYPE_CUSTOM dependency calculator must implement the
+</font><font face="Courier New">IManagedDependencyCalculator</font><font face="Arial"> 
+interface.</font></p>
+<pre>public interface IManagedDependencyCalculator extends IManagedDependencyInfo {
+	
+<font color="#336699">    /**
+     * Returns the list of source file specific dependencies.
+     *   
+     * The paths can be either relative to the project directory, or absolute 
+     * in the file system.
+     *
+     * @return IPath[]    
+     */
+</font>	public IPath[] getDependencies();
+	
+<font color="#336699">    /**
+     * Returns the list of source file specific additional targets that the 
+     * source file creates.  Most source files will return null.  An example 
+     * of where additional targets should be returned is for a Fortran 90 
+     * source file that creates one or more Fortran Modules.
+     * 
+     * Note that these output files that are dependencies to other invocations
+     * of the same tool can be specified here, or as another output type 
+     * of the tool.  If the output file can be used as the input of a different
+     * tool, then use the output type mechanism.
+     *   
+     * The paths can be either relative to the top build directory, or absolute 
+     * in the file system.
+     *
+     * @return IPath[]    
+     */
+</font>	public IPath[] getAdditionalTargets();
+}</pre>
+<p>An example TYPE_CUSTOM dependency calculator can be found in the MBS test 
+suite - org.eclipse.cdt.managedbuilder.core.tests\DefaultFortranDependencyCalculator.</p>
+<p>If you do not have an external process or tool to calculate dependencies, you 
+could take advantage of the indexer in the CDT. In this case, you are
 restricted to generating the dependencies independently of the build
 steps. The dependency calculator asks the indexer for a list of
 dependencies and returns them as an array of <code>IResource</code>
 instances. Obviously, if you rely on the indexer, you must wait for it
 to complete its work before it will answer, so your build may take
-longer to complete.<br>
-</p>
+longer to complete.&nbsp; See the 
+org.eclipse.cdt.managedbuilder.makegen.internal\DefaultIndexerDependencyCalculator 
+class for an example of how this was implemented using the old, deprecated
+<font face="Courier">IManagedDependencyGenerator</font><font face="Arial"> 
+interface.&nbsp; However, it doesn't seem as if it worked with CDT 3.0.&nbsp; 
+Readers are encouraged to update this method to the new interfaces and 
+contribute the implementation to CDT.</font></p>
+<p class="subsection"><font face="Arial">7.3.2 TYPE_BUILD_COMMANDS dependency 
+calculator </font></p>
+When using a TYPE_BUILD_COMMANDS dependency calculator, the build file generator and the tool-chain cooperate in creating and using separate &quot;dependency&quot; files.  The build file generator calls the dependency calculator to get the dependency file names and to get commands that need to be added to the build file.  In this case, dependency calculation is done at &quot;build time&quot;, rather than at &quot;build file generation time&quot; as 
+with TYPE_CUSTOM.  This currently supports the GNU concept of using .d files in GNU make.<p>
+<font face="Arial">There are multiple ways that these separate dependency files can
+ be created by the tool-chain and used by the builder.&nbsp;  In some cases (e.g., Fortran 90 using modules) the dependency files
+ must be created/updated prior to invoking the build of the project 
+ artifact (e.g., an application).  In this case, the dependency 
+ generation step must occur separately before the main build.
+ See 
+</font>TYPE_PREBUILD_COMMANDS<font face="Arial"> for more information.&nbsp;  In other cases (e.g., C/C++) the dependency files can be created as
+ a side effect of the main build.  This implies that the up to date 
+ dependency files are not required for the current build, but for 
+ the next build.  C/C++ builds can be treated in this manner as is 
+ described in the following link: 
+ <a href="http://sourceware.org/automake/automake.html#Dependency-Tracking-Evolution">http://sourceware.org/automake/automake.html#Dependency-Tracking-Evolution</a>.&nbsp;         Use the IManagedDependencyCommands interface         for this mode.</font></p>
+<p><font face="Arial">Two sub-scenarios of this mode are to:
+ </font></p>
+<ol>
+	<li><font face="Arial">Create dependency files in the same invocation of the tool that 
+ 	creates the tool's build artifact - by adding additional options 
+ 	to the tool invocation command line.</font></li>
+	<li><font face="Arial">Create dependency files in a separate invocation of the tool, or
+ 	by the invocation of another tool</font></li>
+</ol>
+<p><font face="Arial">MBS can also help in the generation of the dependency files.  Prior to
+ CDT 3.1, MBS and gcc cooperated in generating dependency files using the
+ following steps:</font></p>
+<ol>
+	<li><font face="Arial">Gcc is invoked to perform the compilation that generates the object 
+ 	file.</font></li>
+	<li><font face="Arial">An &quot;echo&quot; command creates the .d file, adding the name of the .d
+ 	file to the beginning of the newly created .d file.  Note that this
+ 	causes problems with some implementations of &quot;echo&quot; that don't
+ 	work exactly the way that we want (e.g., it doesn't support the  -n
+ 	switch).</font></li>
+	<li><font face="Arial">Gcc is invoked again with the appropriate additional command line
+ 	options to append its dependency file information to the .d file 
+ 	that was created by &quot;echo&quot;.</font></li>
+	<li><font face="Arial">Steps 1 - 3 are invoked in the make file.  Step 4 occurs after the
+ 	make invocation has finished.  In step 4, MBS code post-processes 
+ 	the .d files to add a dummy dependency for each header file, for 
+ 	the reason explained in the link above.</font></li>
+</ol>
+<p><font face="Arial">This mode is no longer used by the default gcc implementation, but can 
+ still be used by selecting the DefaultGCCDependencyCalculator3Commands class.</font></p>
+<p><font face="Arial">Note for GNU make: these separate dependency files are &quot;include&quot;d by
+ a main makefile.  Therefore, if the dependency files are required to 
+ be up to date before the main build begins, they must be updated by
+ a separate invocation of make.  Also, the configuration &quot;clean&quot; step
+ must be invoked by a separate invocation of make.  This is so that
+ we can exclude the dependency files for a &quot;make clean&quot; invocation 
+ using syntax like:</font></p>
+<p style="margin-bottom: 0"><font face="Arial">ifneq ($(MAKECMDGOALS), clean)</font></p>
+<p style="margin-top: 0; margin-bottom: 0"><font face="Arial">-include $(DEPS)</font></p>
+<p style="margin-top: 0; margin-bottom: 0"><font face="Arial">endif
+ </font></p>
+<p><font face="Arial">Otherwise, because GNU make attempts to re-make make files, we
+ can end up with out of date or missing dependency files being 
+ re-generated and then immediately &quot;clean&quot;ed.</font></p>
+<p><font face="Arial">Examples of the use of </font>TYPE_BUILD_COMMANDS 
+<font face="Arial">can be found in org.eclipse.cdt.managedbuilder.makegen.gnu\DefaultGCCDependencyCalculator2Commands 
+and DefaultGCCDependencyCalculator3Commands.</font></p>
+<pre>public interface IManagedDependencyCommands extends IManagedDependencyInfo {
+	
+<font color="#336699">    /**
+     * Returns the list of generated dependency files.
+     *   
+     * The paths can be either relative to the top build directory, or absolute 
+     * in the file system.
+     *
+     * @return IPath[]    
+     */
+</font>	public IPath[] getDependencyFiles();
+
+<font color="#336699">    /**
+     * Returns the command lines to be invoked before the normal tool invocation 
+     * to calculate dependencies.
+     *
+     * @return String[]  This can be null or an empty array if no dependency 
+     *                   generation command needs to be invoked before the normal 
+     *                   tool invocation.
+     */
+</font>	public String[] getPreToolDependencyCommands();
+	
+<font color="#336699">    /**
+     * Returns the command line options to be used to calculate dependencies.
+     * The options are added to the normal tool invocation. 
+     *
+     * @return String[]  This can be null or an empty array if no additional 
+     *                   arguments need to be added to the tool invocation.
+     *         SHOULD THIS RETURN AN IOption[]?
+     */
+</font>	public String[] getDependencyCommandOptions();
+ 	
+<font color="#336699">    /**
+     * Returns the command lines to be invoked after the normal tool invocation  
+     * to calculate dependencies.  
+     *
+     * @return String[]  This can be null or an empty array if no dependency 
+     *                   generation commands needs to be invoked after the normal 
+     *                   tool invocation
+     */
+</font>	public String[] getPostToolDependencyCommands();
+	
+<font color="#336699">    /**
+     * Returns true if the command lines and/or options returned by this interface
+     * are not specific to the particular source file, but are only specific to,
+     * at most, the configuration and tool.  If the build context is a resource 
+     * configuration, this method should return false if any of the command lines 
+     * and/or options are different than if the build context were the parent 
+     * configuration.  This can be used by the build file generator in helping
+     * to determine if a &quot;pattern&quot; (generic) rule can be used.
+     *
+     * @return boolean
+     */
+</font>	public boolean areCommandsGeneric();
+}</pre>
+<p class="subsection"><font face="Arial">7.3.3 TYPE_PREBUILD_COMMANDS dependency 
+calculator </font></p>
+When using a TYPE_BUILD_PRECOMMANDS dependency calculator, the build file generator and the tool-chain cooperate in creating and using separate &quot;dependency&quot; files.  
+For GNU make, these separate dependency files are &quot;include&quot;d by a main makefile. 
+Make performs special processing on make files:<br>
+<p>&quot;To this end, after reading in all makefiles, make will consider each as a goal 
+target and attempt to update it. If a makefile has a rule which says how to 
+update it (found either in that very makefile or in another one)..., it will be 
+updated if necessary.&nbsp; After all makefiles have been checked, if any have 
+actually been changed, make starts with a clean slate and reads all the 
+makefiles over again.&quot; <br>
+<p>We can use this to ensure that the dependency files are up to date by adding 
+rules to the make file for generating the dependency files.&nbsp; These rules 
+are returned by the call to the getDependencyCommands method.&nbsp; However, 
+this has a significant problem when we don&#39;t want to build the build target, but 
+only want to &quot;clean&quot; the configuration, for example. If we invoke make just to 
+clean the configuration, make will still update the dependency files if 
+necessary, thereby re-generating the dependency files only to immediately delete 
+them.&nbsp; The workaround suggested by the make documentation is to check for 
+an invocation using the &quot;clean&quot; target, and to not include the dependency files 
+it that case. For example, <br>
+<p>ifneq ($(MAKECMDGOALS),clean)<br>
+include $(DEPS)<br>
+endif<br>
+<p>The restriction with this is that it only works if &quot;clean&quot; is the only target 
+specified on the make command line. Therefore, the build &quot;clean&quot; step must be 
+invoked separately.<p><font face="Arial">Examples of the use of </font>TYPE_PREBUILD_COMMANDS 
+<font face="Arial">can be found in org.eclipse.cdt.managedbuilder.makegen.gnu\DefaultGCCDependencyCalculatorPreBuildCommands.</font><pre>public interface IManagedDependencyPreBuild extends IManagedDependencyInfo {
+	
+<font color="#336699">    /**
+     * Returns the list of generated dependency files.
+     *   
+     * The paths can be either relative to the top build directory, or absolute 
+     * in the file system.
+     *
+     * @return IPath[]    
+     */
+</font>	public IPath[] getDependencyFiles();
+
+<font color="#336699">    /**
+     * Returns the name to be used in the build file to identify the separate
+     * build step.  Note that this name should be unique to the tool since
+     * multiple tools in a tool-chain may be using this method of
+     * dependency calculation.
+     *    
+     * @return String  
+     */
+</font>	public String getBuildStepName();
+
+<font color="#336699">    /**
+     * Returns the command line(s) to be invoked in the separate 
+     * dependencies pre-build step.
+     *
+     * @return String[]
+     */
+</font>	public String[] getDependencyCommands();
+	
+<font color="#336699">    /**
+     * Returns true if the command lines returned by this interface
+     * are not specific to the particular source file, but are only specific to,
+     * at most, the configuration and tool.  If the build context is a resource 
+     * configuration, this method should return false if any of the command lines 
+     * are different than if the build context were the parent configuration.  
+     * This can be used by the build file generator in helping to determine if 
+     * a &quot;pattern&quot; (generic) rule can be used.
+     *
+     * @return boolean
+     */
+</font>	public boolean areCommandsGeneric();
+}</pre>
 <p class="subsection"><a name="_TocSectionDynamic_4">7.4 Replacing the Command Line Generator</a></p>
 <p>You can specify a replacement command line generator for a tool. You must specify and supply a class
 that

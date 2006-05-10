@@ -337,7 +337,6 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 		    IPath oldFolderPath = getSourceFolderFullPath();
 			IPath newFolderPath = chooseSourceFolder(oldFolderPath);
 			if (newFolderPath != null) {
-				IPath filePath = getFileFullPath();
 				setSourceFolderFullPath(newFolderPath, false);
 				handleFieldChanged(ALL_FIELDS);
 			}
@@ -527,7 +526,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	private ICElement getSourceFolderFromPath(IPath path) {
 	    if (path == null)
 	        return null;
-	    while (!path.isEmpty()) {
+	    while (path.segmentCount() > 0) {
 		    IResource res = fWorkspaceRoot.findMember(path);
 			if (res != null && res.exists()) {
 				int resType = res.getType();

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
@@ -219,14 +220,16 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     	// Look up in extension point
     	IExtension indexerExt = Platform.getExtensionRegistry()
     		.getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);
-    	IConfigurationElement[] elements = indexerExt.getConfigurationElements();
-    	for (int i = 0; i < elements.length; ++i) {
-    		IConfigurationElement element = elements[i];
-    		if ("run".equals(element.getName())) //$NON-NLS-1$
-    			return (IPDOMIndexer)element.createExecutableExtension("class"); //$NON-NLS-1$
+    	if (indexerExt != null) {
+	    	IConfigurationElement[] elements = indexerExt.getConfigurationElements();
+	    	for (int i = 0; i < elements.length; ++i) {
+	    		IConfigurationElement element = elements[i];
+	    		if ("run".equals(element.getName())) //$NON-NLS-1$
+	    			return (IPDOMIndexer)element.createExecutableExtension("class"); //$NON-NLS-1$
+	    	}
     	}
-    	throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
-    			0, CCorePlugin.getResourceString("indexer.notFound"), null)); //$NON-NLS-1$	
+   		// Unknown index, default to the null one
+    	return new PDOMNullIndexer();
     }
 
     public ISchedulingRule getIndexerSchedulingRule() {

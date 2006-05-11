@@ -443,11 +443,13 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	public IScope getCompositeScope() {
 	    if( definition == null )
 	        checkForDefinition();
-		if( definition != null ){
+	    
+		if( definition != null && definition instanceof ICPPASTCompositeTypeSpecifier ){
 			ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) definition.getParent(); 
 			return compSpec.getScope();
+		} else {
+			return null;
 		}
-		return null;
 	}
 
 	/* (non-Javadoc)

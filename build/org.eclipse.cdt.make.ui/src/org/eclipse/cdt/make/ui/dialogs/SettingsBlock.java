@@ -73,9 +73,9 @@ public class SettingsBlock extends AbstractCOptionPage {
 	private static final String MAKE_WORKBENCH_BUILD_FULL = PREFIX + ".makeWorkbench.full"; //$NON-NLS-1$
 	private static final String MAKE_WORKBENCH_BUILD_CLEAN = PREFIX + ".makeWorkbench.clean"; //$NON-NLS-1$
 
-	private static final String MAKE_BUILD_DIR_GROUP = PREFIX + ".makeDir.group_label"; //$NON-NLS-1$
+	private static final String MAKE_BUILD_DIR_GROUP = PREFIX + ".makeLoc.group_label"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_DIR_LABEL = PREFIX + ".makeDir.label"; //$NON-NLS-1$	
-	private static final String MAKE_BUILD_DIR_BROWSE_LOCAL = PREFIX + ".makeDir.browseLocal"; //$NON-NLS-1$
+	private static final String MAKE_BUILD_DIR_BROWSE_FILESYSTEM = PREFIX + ".makeDir.browseFilesystem"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_DIR_BROWSE_WORKSPACE = PREFIX + ".makeDir.browseWorkspace"; //$NON-NLS-1$
 
 	private static final String MAKE_BUILD_AUTO_TARGET = PREFIX + ".makeWorkbench.autoBuildTarget"; //$NON-NLS-1$
@@ -317,7 +317,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 	protected void createBuilderWorkingDirControls(Composite parent) {
 		Group group = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_GROUP), 1);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 5;
+		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = false;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -334,24 +334,18 @@ public class SettingsBlock extends AbstractCOptionPage {
 			}
 		});
 
-		Button browseLocal = new Button(group, SWT.NONE);
-		browseLocal.setText(MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_BROWSE_LOCAL));
-		browseLocal.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.NONE);
-				dialog.setText(MakeUIPlugin.getResourceString("SettingsBlock.title.selectLocationToBuildFrom"));
-				dialog.setFilterPath(getContainer().getProject().toString());
-				String directory = dialog.open();
-				if (directory != null) {
-					if (directory.trim().length() > 0) {
-						buildLocation.setText(directory);
-					}
-				}
-			}
-		});
-
-		Button browseWorkspace = new Button(group, SWT.NONE);
+		Composite buttons = ControlFactory.createComposite(group, 4);
+		layout = new GridLayout(4, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		buttons.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		buttons.setLayoutData(gd);
+		
+		Label emptyLabel = ControlFactory.createLabel(buttons, "");	 //$NON-NLS-1$
+		emptyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Button browseWorkspace = new Button(buttons, SWT.NONE);
 		browseWorkspace.setText(MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_BROWSE_WORKSPACE));
 		browseWorkspace.addSelectionListener(new SelectionAdapter() {
 
@@ -366,8 +360,26 @@ public class SettingsBlock extends AbstractCOptionPage {
 				}
 			}
 		});
+
+		Button browseFilesystem = new Button(buttons, SWT.NONE);
+		browseFilesystem.setText(MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_BROWSE_FILESYSTEM));
+		browseFilesystem.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.NONE);
+				dialog.setText(MakeUIPlugin.getResourceString("SettingsBlock.title.selectLocationToBuildFrom"));
+				dialog.setFilterPath(getContainer().getProject().toString());
+				String directory = dialog.open();
+				if (directory != null) {
+					if (directory.trim().length() > 0) {
+						buildLocation.setText(directory);
+					}
+				}
+			}
+		});
+
 		buildLocation.setText(fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, "")); //$NON-NLS-1$
-		locationVariablesButton = addVariablesButton(group, buildLocation);
+		locationVariablesButton = addVariablesButton(buttons, buildLocation);
 	}
 
 	/**

@@ -43,6 +43,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -72,8 +73,9 @@ public class SettingsBlock extends AbstractCOptionPage {
 	private static final String MAKE_WORKBENCH_BUILD_CLEAN = PREFIX + ".makeWorkbench.clean"; //$NON-NLS-1$
 
 	private static final String MAKE_BUILD_DIR_GROUP = PREFIX + ".makeDir.group_label"; //$NON-NLS-1$
-	private static final String MAKE_BUILD_DIR_LABEL = PREFIX + ".makeDir.label"; //$NON-NLS-1$
-	private static final String MAKE_BUILD_DIR_BROWSE = PREFIX + ".makeDir.browse"; //$NON-NLS-1$
+	private static final String MAKE_BUILD_DIR_LABEL = PREFIX + ".makeDir.label"; //$NON-NLS-1$	
+	private static final String MAKE_BUILD_DIR_BROWSE_LOCAL = PREFIX + ".makeDir.browseLocal"; //$NON-NLS-1$
+	private static final String MAKE_BUILD_DIR_BROWSE_WORKSPACE = PREFIX + ".makeDir.browseWorkspace"; //$NON-NLS-1$
 
 	private static final String MAKE_BUILD_AUTO_TARGET = PREFIX + ".makeWorkbench.autoBuildTarget"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_INCREMENTAL_TARGET = PREFIX + ".makeWorkbench.incrementalBuildTarget"; //$NON-NLS-1$
@@ -314,7 +316,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 	protected void createBuilderWorkingDirControls(Composite parent) {
 		Group group = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_GROUP), 1);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 4;
+		layout.numColumns = 5;
 		layout.makeColumnsEqualWidth = false;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -330,9 +332,27 @@ public class SettingsBlock extends AbstractCOptionPage {
 				getContainer().updateContainer();
 			}
 		});
-		Button browse = new Button(group, SWT.NONE);
-		browse.setText(MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_BROWSE));
-		browse.addSelectionListener(new SelectionAdapter() {
+
+		Button browseLocal = new Button(group, SWT.NONE);
+		browseLocal.setText(MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_BROWSE_LOCAL));
+		browseLocal.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.NONE);
+				dialog.setText(MakeUIPlugin.getResourceString("SettingsBlock.title.selectLocationToBuildFrom"));
+				dialog.setFilterPath(getContainer().getProject().toString());
+				String directory = dialog.open();
+				if (directory != null) {
+					if (directory.trim().length() > 0) {
+						buildLocation.setText(directory);
+					}
+				}
+			}
+		});
+
+		Button browseWorkspace = new Button(group, SWT.NONE);
+		browseWorkspace.setText(MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_BROWSE_WORKSPACE));
+		browseWorkspace.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
 				ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(), getContainer().getProject(), true,

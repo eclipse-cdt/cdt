@@ -21,6 +21,8 @@ import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
+import org.eclipse.cdt.make.core.IMakeBuilderInfo;
+import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
@@ -30,8 +32,10 @@ import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -157,7 +161,29 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
      * @return boolean
      */
     protected boolean initialize() {
-        fWorkingDirectory = resource.getProject().getLocation();
+    	
+		IProject currProject = resource.getProject();
+		IMakeBuilderInfo info;
+		try {
+			info = MakeCorePlugin.createBuildInfo(resource.getProject(), MakeBuilder.BUILDER_ID);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+		IPath workingDirectory = info.getBuildLocation();
+		if (workingDirectory != null && !workingDirectory.isEmpty()) {
+			IResource res = currProject.getParent().findMember(workingDirectory);
+			if (res instanceof IContainer && res.exists()) {
+				workingDirectory = res.getLocation();
+			}
+		}
+		if (workingDirectory == null) {
+			workingDirectory = currProject.getLocation();
+		}
+		
+        //fWorkingDirectory = resource.getProject().getLocation();
+		fWorkingDirectory = workingDirectory;
         fCompileCommand = new Path(buildInfo.getProviderRunCommand(providerId));
         fCompileArguments = ScannerConfigUtil.tokenizeStringWithQuotes(buildInfo.getProviderRunArguments(providerId), "\"");//$NON-NLS-1$
         return (fCompileCommand != null);

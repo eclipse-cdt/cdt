@@ -140,9 +140,9 @@ public class MakeBuilder extends ACBuilder {
 				// remove all markers for this project
 				removeAllMarkers(currProject);
 
-				IPath workingDirectory = null;
-				if (!info.getBuildLocation().isEmpty()) {
-					IResource res = currProject.getParent().findMember(info.getBuildLocation());
+				IPath workingDirectory = info.getBuildLocation();
+				if (workingDirectory != null && !workingDirectory.isEmpty()) {
+					IResource res = currProject.getParent().findMember(workingDirectory);
 					if (res instanceof IContainer && res.exists()) {
 						workingDirectory = res.getLocation();
 					}

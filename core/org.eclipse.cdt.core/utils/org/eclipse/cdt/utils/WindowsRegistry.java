@@ -43,5 +43,17 @@ public class WindowsRegistry {
 	 * @return registry value or null if not found
 	 */
 	public native String getLocalMachineValue(String subkey, String name);
-	
+
+	/**
+	 * Given a subkey of HKEY_LOCAL_MACHINE, and an index (starting from 0)
+	 * to the key's array of values, return the name of the indexed value. 
+	 * The return value is null on any error or when the index is invalid.
+	 * The value name can be used in the above getLocalMachineValue() to retrieve
+	 * the value data.
+	 * @param subkey   subkey of HKEY_LOCAL_MACHINE
+	 * @param index    index to the subkey's array of values, starting from 0. 
+	 * @return name of registry value or null if not found
+	 */
+	public native String getLocalMachineValueName(String subkey, int index);
+
 }

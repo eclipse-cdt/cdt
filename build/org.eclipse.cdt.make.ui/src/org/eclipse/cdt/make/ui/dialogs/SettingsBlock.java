@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.dialogs;
 

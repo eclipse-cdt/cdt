@@ -60,7 +60,13 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 				while (i.hasNext()) {
 					ITranslationUnit tu = (ITranslationUnit)i.next();
 					monitor.subTask(tu.getElementName());
-					changeTU(tu);
+					try {
+						changeTU(tu);
+					} catch (Throwable e) {
+						CCorePlugin.log(e);
+						if (++errorCount > MAX_ERRORS)
+							return Status.CANCEL_STATUS;
+					}
 					monitor.worked(1);
 				}
 				
@@ -68,7 +74,13 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 				while (i.hasNext()) {
 					ITranslationUnit tu = (ITranslationUnit)i.next();
 					monitor.subTask(tu.getElementName());
-					addTU(tu);
+					try {
+						addTU(tu);
+					} catch (Throwable e) {
+						CCorePlugin.log(e);
+						if (++errorCount > MAX_ERRORS)
+							return Status.CANCEL_STATUS;
+					}
 					monitor.worked(1);
 				}
 				

@@ -39,6 +39,10 @@ public abstract class PDOMFastIndexerJob extends Job {
 	protected final Map fileMap = new HashMap();
 	protected final PDOM pdom;
 	
+	// Error counter. If we too many errors we bail
+	protected int errorCount;
+	protected final int MAX_ERRORS = 10;
+
 	public PDOMFastIndexerJob(PDOM pdom) {
 		super("Fast Indexer: " + pdom.getProject().getElementName());
 		this.pdom = pdom;
@@ -74,7 +78,7 @@ public abstract class PDOMFastIndexerJob extends Job {
 		} finally {
 			pdom.releaseWriteLock();
 		}
-		
+			
 		// Tell the world
 		pdom.fireChange();
 	}
@@ -121,18 +125,18 @@ public abstract class PDOMFastIndexerJob extends Job {
 				shouldVisitNames = true;
 				shouldVisitDeclarations = true;
 			}
-				public int visit(IASTName name) {
+			public int visit(IASTName name) {
 				try {
 					IASTFileLocation nameLoc = name.getFileLocation();
 					if (nameLoc != null)
 						linkage.addName(name, getCachedFile(nameLoc.getFileName()));
 					return PROCESS_CONTINUE;
-				} catch (CoreException e) {
+				} catch (Throwable e) {
 					CCorePlugin.log(e);
-					return PROCESS_ABORT;
+					return ++errorCount > MAX_ERRORS ? PROCESS_ABORT : PROCESS_CONTINUE;
 				}
-			};
-		});;
+			}
+		});
 	
 	}		
 }

@@ -72,8 +72,10 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 							monitor.subTask(tu.getElementName());
 							try {
 								addTU(tu);
-							} catch (InterruptedException e) {
-								throw new CoreException(Status.CANCEL_STATUS);
+							} catch (Throwable e) {
+								CCorePlugin.log(e);
+								if (++errorCount > MAX_ERRORS)
+									throw new CoreException(Status.CANCEL_STATUS);
 							}
 							monitor.worked(1);
 						}
@@ -101,8 +103,10 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 								monitor.subTask(tu.getElementName());
 								try {
 									addTU(tu);
-								} catch (InterruptedException e) {
-									throw new CoreException(Status.CANCEL_STATUS);
+								} catch (Throwable e) {
+									CCorePlugin.log(e);
+									if (++errorCount > MAX_ERRORS)
+										throw new CoreException(Status.CANCEL_STATUS);
 								}
 							}
 							monitor.worked(1);

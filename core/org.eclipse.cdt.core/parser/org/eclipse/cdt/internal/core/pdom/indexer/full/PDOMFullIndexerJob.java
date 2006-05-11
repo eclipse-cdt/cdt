@@ -34,6 +34,10 @@ public abstract class PDOMFullIndexerJob extends Job {
 
 	protected final PDOM pdom;
 	
+	// Error count, bail when it gets too high
+	protected int errorCount;
+	protected final int MAX_ERRORS = 10;
+	
 	public PDOMFullIndexerJob(PDOM pdom) {
 		super("Full Indexer: " + pdom.getProject().getElementName());
 		this.pdom = pdom;
@@ -113,9 +117,9 @@ public abstract class PDOMFullIndexerJob extends Job {
 						linkage.addName(name, file);
 					}
 					return PROCESS_CONTINUE;
-				} catch (CoreException e) {
+				} catch (Throwable e) {
 					CCorePlugin.log(e);
-					return PROCESS_ABORT;
+					return ++errorCount > MAX_ERRORS ? PROCESS_ABORT : PROCESS_CONTINUE;
 				}
 			};
 		});;

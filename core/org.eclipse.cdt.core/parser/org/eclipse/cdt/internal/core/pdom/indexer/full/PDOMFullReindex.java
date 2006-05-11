@@ -72,8 +72,10 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 							monitor.subTask(tu.getElementName());
 							try {
 								addTU(tu);
-							} catch (InterruptedException e) {
-								throw new CoreException(Status.CANCEL_STATUS);
+							} catch (Throwable e) {
+								CCorePlugin.log(e);
+								if (++errorCount > MAX_ERRORS)
+									throw new CoreException(Status.CANCEL_STATUS);
 							}
 							monitor.worked(1);
 						}
@@ -102,7 +104,9 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 								try {
 									addTU(tu);
 								} catch (InterruptedException e) {
-									throw new CoreException(Status.CANCEL_STATUS);
+									CCorePlugin.log(e);
+									if (++errorCount > MAX_ERRORS)
+										throw new CoreException(Status.CANCEL_STATUS);
 								}
 							}
 							monitor.worked(1);

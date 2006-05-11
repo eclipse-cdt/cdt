@@ -616,7 +616,11 @@ public class CPPVisitor {
 	    
 	    ICPPASTCompositeTypeSpecifier clsTypeSpec;
         try {
-            clsTypeSpec = (ICPPASTCompositeTypeSpecifier) ((ICPPClassScope)containingScope).getPhysicalNode();
+        	IASTNode node = ((ICPPClassScope)containingScope).getPhysicalNode();
+        	if (node instanceof ICPPASTCompositeTypeSpecifier)
+        		clsTypeSpec = (ICPPASTCompositeTypeSpecifier)node;
+        	else
+        		return false;
         } catch ( DOMException e ) {
             return false;
         }

@@ -1,4 +1,10 @@
 2006-05-12 Mikhail Khodjaiants
+	Bug 118274: Condition is not shown in the tooltip of conditional breakpoint.
+	Moved the "getBreakpointText" method and related methods to CDebugUtils.
+	* CDebugModelPresentation.java
+	* CDebugUIMessages.properties
+
+2006-05-12 Mikhail Khodjaiants
 	Bug 109449: Sort globals in "Add Globals" dialog.
 	* AddGlobalsActionDelegate.java
 

@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.text.MessageFormat;
 import java.util.Map;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -69,21 +70,14 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint {
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
 	protected String getMarkerMessage() throws CoreException {
-		String fileName = ensureMarker().getResource().getName();
-		if ( fileName != null && fileName.length() > 0 ) {
-			fileName = ' ' + fileName + ' ';
-		}
-		String expression = getExpression();
-		if ( expression != null && expression.length() > 0 ) {
-			expression = " '" + expression + "' "; //$NON-NLS-1$ //$NON-NLS-2$
-		}
+		String format = BreakpointMessages.getString( "CWatchpoint.3" ); //$NON-NLS-1$
 		if ( isWriteType() && !isReadType() )
-			return MessageFormat.format( BreakpointMessages.getString( "CWatchpoint.0" ), new String[] { fileName, expression, getConditionText() } ); //$NON-NLS-1$
+			format = BreakpointMessages.getString( "CWatchpoint.0" ); //$NON-NLS-1$
 		else if ( !isWriteType() && isReadType() )
-			return MessageFormat.format( BreakpointMessages.getString( "CWatchpoint.1" ), new String[] { fileName, expression, getConditionText() } ); //$NON-NLS-1$
+			format = BreakpointMessages.getString( "CWatchpoint.1" ); //$NON-NLS-1$
 		else if ( isWriteType() && isReadType() )
-			return MessageFormat.format( BreakpointMessages.getString( "CWatchpoint.2" ), new String[] { fileName, expression, getConditionText() } ); //$NON-NLS-1$
-		return MessageFormat.format( BreakpointMessages.getString( "CWatchpoint.3" ), new String[] { fileName, expression, getConditionText() } ); //$NON-NLS-1$
+			format = BreakpointMessages.getString( "CWatchpoint.2" ); //$NON-NLS-1$
+		return MessageFormat.format( format, new String[] { CDebugUtils.getBreakpointText( this, false ) } );
 	}
 
 	/* (non-Javadoc)

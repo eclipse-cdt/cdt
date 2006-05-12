@@ -372,12 +372,12 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			if ( element instanceof IMarker ) {
 				IBreakpoint breakpoint = getBreakpoint( (IMarker)element );
 				if ( breakpoint != null ) {
-					return getBreakpointText( breakpoint, showQualified );
+					return CDebugUtils.getBreakpointText( breakpoint, showQualified );
 				}
 				return null;
 			}
 			if ( element instanceof IBreakpoint ) {
-				return getBreakpointText( (IBreakpoint)element, showQualified );
+				return CDebugUtils.getBreakpointText( (IBreakpoint)element, showQualified );
 			}
 			if ( element instanceof IDebugTarget )
 				label.append( getTargetText( (IDebugTarget)element, showQualified ) );
@@ -451,127 +451,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 
 	protected IBreakpoint getBreakpoint( IMarker marker ) {
 		return DebugPlugin.getDefault().getBreakpointManager().getBreakpoint( marker );
-	}
-
-	protected String getBreakpointText( IBreakpoint breakpoint, boolean qualified ) throws CoreException {
-		if ( breakpoint instanceof ICAddressBreakpoint ) {
-			return getAddressBreakpointText( (ICAddressBreakpoint)breakpoint, qualified );
-		}
-		if ( breakpoint instanceof ICFunctionBreakpoint ) {
-			return getFunctionBreakpointText( (ICFunctionBreakpoint)breakpoint, qualified );
-		}
-		if ( breakpoint instanceof ICLineBreakpoint ) {
-			return getLineBreakpointText( (ICLineBreakpoint)breakpoint, qualified );
-		}
-		if ( breakpoint instanceof ICWatchpoint ) {
-			return getWatchpointText( (ICWatchpoint)breakpoint, qualified );
-		}
-		return ""; //$NON-NLS-1$
-	}
-
-	protected String getLineBreakpointText( ICLineBreakpoint breakpoint, boolean qualified ) throws CoreException {
-		StringBuffer label = new StringBuffer();
-		appendSourceName( breakpoint, label, qualified );
-		appendLineNumber( breakpoint, label );
-		appendIgnoreCount( breakpoint, label );
-		appendCondition( breakpoint, label );
-		return label.toString();
-	}
-
-	protected String getWatchpointText( ICWatchpoint watchpoint, boolean qualified ) throws CoreException {
-		StringBuffer label = new StringBuffer();
-		appendSourceName( watchpoint, label, qualified );
-		appendWatchExpression( watchpoint, label );
-		appendIgnoreCount( watchpoint, label );
-		appendCondition( watchpoint, label );
-		return label.toString();
-	}
-
-	protected String getAddressBreakpointText( ICAddressBreakpoint breakpoint, boolean qualified ) throws CoreException {
-		StringBuffer label = new StringBuffer();
-		appendSourceName( breakpoint, label, qualified );
-		appendAddress( breakpoint, label );
-		appendIgnoreCount( breakpoint, label );
-		appendCondition( breakpoint, label );
-		return label.toString();
-	}
-
-	protected String getFunctionBreakpointText( ICFunctionBreakpoint breakpoint, boolean qualified ) throws CoreException {
-		StringBuffer label = new StringBuffer();
-		appendSourceName( breakpoint, label, qualified );
-		appendFunction( breakpoint, label );
-		appendIgnoreCount( breakpoint, label );
-		appendCondition( breakpoint, label );
-		return label.toString();
-	}
-
-	protected StringBuffer appendSourceName( ICBreakpoint breakpoint, StringBuffer label, boolean qualified ) throws CoreException {
-		String handle = breakpoint.getSourceHandle();
-		if ( !isEmpty( handle ) ) {
-			IPath path = new Path( handle );
-			if ( path.isValidPath( handle ) ) {
-				label.append( qualified ? path.toOSString() : path.lastSegment() );
-			}
-		}
-		return label;
-	}
-
-	protected StringBuffer appendLineNumber( ICLineBreakpoint breakpoint, StringBuffer label ) throws CoreException {
-		int lineNumber = breakpoint.getLineNumber();
-		if ( lineNumber > 0 ) {
-			label.append( ' ' );
-			label.append( MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.26" ), new String[]{ Integer.toString( lineNumber ) } ) ); //$NON-NLS-1$
-		}
-		return label;
-	}
-
-	protected StringBuffer appendAddress( ICAddressBreakpoint breakpoint, StringBuffer label ) throws CoreException {
-		try {
-			label.append( ' ' );
-			label.append( MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.27" ), new String[]{ breakpoint.getAddress() } ) ); //$NON-NLS-1$
-		}
-		catch( NumberFormatException e ) {
-		}
-		return label;
-	}
-
-	protected StringBuffer appendFunction( ICFunctionBreakpoint breakpoint, StringBuffer label ) throws CoreException {
-		String function = breakpoint.getFunction();
-		if ( function != null && function.trim().length() > 0 ) {
-			label.append( ' ' );
-			label.append( MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.28" ), new String[]{ function.trim() } ) ); //$NON-NLS-1$
-		}
-		return label;
-	}
-
-	protected StringBuffer appendIgnoreCount( ICBreakpoint breakpoint, StringBuffer label ) throws CoreException {
-		int ignoreCount = breakpoint.getIgnoreCount();
-		if ( ignoreCount > 0 ) {
-			label.append( ' ' );
-			label.append( MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.29" ), new String[]{ Integer.toString( ignoreCount ) } ) ); //$NON-NLS-1$
-		}
-		return label;
-	}
-
-	protected void appendCondition( ICBreakpoint breakpoint, StringBuffer buffer ) throws CoreException {
-		String condition = breakpoint.getCondition();
-		if ( condition != null && condition.length() > 0 ) {
-			buffer.append( ' ' );
-			buffer.append( CDebugUIMessages.getString( "CDTDebugModelPresentation.30" ) ); //$NON-NLS-1$
-			buffer.append( ' ' );
-			buffer.append( condition );
-		}
-	}
-
-	private void appendWatchExpression( ICWatchpoint watchpoint, StringBuffer label ) throws CoreException {
-		String expression = watchpoint.getExpression();
-		if ( expression != null && expression.length() > 0 ) {
-			label.append( ' ' );
-			label.append( CDebugUIMessages.getString( "CDTDebugModelPresentation.31" ) ); //$NON-NLS-1$
-			label.append( " \'" ); //$NON-NLS-1$
-			label.append( expression );
-			label.append( '\'' );
-		}
 	}
 
 	private ImageDescriptor[] computeBreakpointOverlays( ICBreakpoint breakpoint ) {

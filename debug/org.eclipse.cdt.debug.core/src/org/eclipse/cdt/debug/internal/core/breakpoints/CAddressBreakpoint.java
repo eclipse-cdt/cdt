@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.util.Map;
 
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -50,10 +51,6 @@ public class CAddressBreakpoint extends AbstractLineBreakpoint implements ICAddr
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
 	protected String getMarkerMessage() throws CoreException {
-		String fileName = ensureMarker().getResource().getName();
-		if ( fileName != null && fileName.length() > 0 ) {
-			fileName = ' ' + fileName + ' ';
-		}
-		return MessageFormat.format( BreakpointMessages.getString( "CAddressBreakpoint.0" ), new String[] { fileName, getAddress(), getConditionText() } ); //$NON-NLS-1$
+		return MessageFormat.format( BreakpointMessages.getString( "CAddressBreakpoint.0" ), new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$
 	}
 }

@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -23,13 +24,21 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICValue;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CFloatingPointValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.w3c.dom.Document;
 
 /**
@@ -285,5 +294,130 @@ public class CDebugUtils {
 				}
 			}
 		}
+	}
+
+	public static String getBreakpointText( IBreakpoint breakpoint, boolean qualified ) throws CoreException {
+		if ( breakpoint instanceof ICAddressBreakpoint ) {
+			return getAddressBreakpointText( (ICAddressBreakpoint)breakpoint, qualified );
+		}
+		if ( breakpoint instanceof ICFunctionBreakpoint ) {
+			return getFunctionBreakpointText( (ICFunctionBreakpoint)breakpoint, qualified );
+		}
+		if ( breakpoint instanceof ICLineBreakpoint ) {
+			return getLineBreakpointText( (ICLineBreakpoint)breakpoint, qualified );
+		}
+		if ( breakpoint instanceof ICWatchpoint ) {
+			return getWatchpointText( (ICWatchpoint)breakpoint, qualified );
+		}
+		return ""; //$NON-NLS-1$
+	}
+
+	protected static String getLineBreakpointText( ICLineBreakpoint breakpoint, boolean qualified ) throws CoreException {
+		StringBuffer label = new StringBuffer();
+		appendSourceName( breakpoint, label, qualified );
+		appendLineNumber( breakpoint, label );
+		appendIgnoreCount( breakpoint, label );
+		appendCondition( breakpoint, label );
+		return label.toString();
+	}
+
+	protected static String getWatchpointText( ICWatchpoint watchpoint, boolean qualified ) throws CoreException {
+		StringBuffer label = new StringBuffer();
+		appendSourceName( watchpoint, label, qualified );
+		appendWatchExpression( watchpoint, label );
+		appendIgnoreCount( watchpoint, label );
+		appendCondition( watchpoint, label );
+		return label.toString();
+	}
+
+	protected static String getAddressBreakpointText( ICAddressBreakpoint breakpoint, boolean qualified ) throws CoreException {
+		StringBuffer label = new StringBuffer();
+		appendSourceName( breakpoint, label, qualified );
+		appendAddress( breakpoint, label );
+		appendIgnoreCount( breakpoint, label );
+		appendCondition( breakpoint, label );
+		return label.toString();
+	}
+
+	protected static String getFunctionBreakpointText( ICFunctionBreakpoint breakpoint, boolean qualified ) throws CoreException {
+		StringBuffer label = new StringBuffer();
+		appendSourceName( breakpoint, label, qualified );
+		appendFunction( breakpoint, label );
+		appendIgnoreCount( breakpoint, label );
+		appendCondition( breakpoint, label );
+		return label.toString();
+	}
+
+	protected static StringBuffer appendSourceName( ICBreakpoint breakpoint, StringBuffer label, boolean qualified ) throws CoreException {
+		String handle = breakpoint.getSourceHandle();
+		if ( !isEmpty( handle ) ) {
+			IPath path = new Path( handle );
+			if ( path.isValidPath( handle ) ) {
+				label.append( qualified ? path.toOSString() : path.lastSegment() );
+			}
+		}
+		return label;
+	}
+
+	protected static StringBuffer appendLineNumber( ICLineBreakpoint breakpoint, StringBuffer label ) throws CoreException {
+		int lineNumber = breakpoint.getLineNumber();
+		if ( lineNumber > 0 ) {
+			label.append( ' ' );
+			label.append( MessageFormat.format( DebugCoreMessages.getString( "CDebugUtils.0" ), new String[]{ Integer.toString( lineNumber ) } ) ); //$NON-NLS-1$
+		}
+		return label;
+	}
+
+	protected static StringBuffer appendAddress( ICAddressBreakpoint breakpoint, StringBuffer label ) throws CoreException {
+		try {
+			label.append( ' ' );
+			label.append( MessageFormat.format( DebugCoreMessages.getString( "CDebugUtils.1" ), new String[]{ breakpoint.getAddress() } ) ); //$NON-NLS-1$
+		}
+		catch( NumberFormatException e ) {
+		}
+		return label;
+	}
+
+	protected static StringBuffer appendFunction( ICFunctionBreakpoint breakpoint, StringBuffer label ) throws CoreException {
+		String function = breakpoint.getFunction();
+		if ( function != null && function.trim().length() > 0 ) {
+			label.append( ' ' );
+			label.append( MessageFormat.format( DebugCoreMessages.getString( "CDebugUtils.2" ), new String[]{ function.trim() } ) ); //$NON-NLS-1$
+		}
+		return label;
+	}
+
+	protected static StringBuffer appendIgnoreCount( ICBreakpoint breakpoint, StringBuffer label ) throws CoreException {
+		int ignoreCount = breakpoint.getIgnoreCount();
+		if ( ignoreCount > 0 ) {
+			label.append( ' ' );
+			label.append( MessageFormat.format( DebugCoreMessages.getString( "CDebugUtils.3" ), new String[]{ Integer.toString( ignoreCount ) } ) ); //$NON-NLS-1$
+		}
+		return label;
+	}
+
+	protected static void appendCondition( ICBreakpoint breakpoint, StringBuffer buffer ) throws CoreException {
+		String condition = breakpoint.getCondition();
+		if ( condition != null && condition.length() > 0 ) {
+			buffer.append( ' ' );
+			buffer.append( DebugCoreMessages.getString( "CDebugUtils.4" ) ); //$NON-NLS-1$
+			buffer.append( ' ' );
+			buffer.append( condition );
+		}
+	}
+
+	private static void appendWatchExpression( ICWatchpoint watchpoint, StringBuffer label ) throws CoreException {
+		String expression = watchpoint.getExpression();
+		if ( expression != null && expression.length() > 0 ) {
+			label.append( ' ' );
+			label.append( DebugCoreMessages.getString( "CDebugUtils.5" ) ); //$NON-NLS-1$
+			label.append( " \'" ); //$NON-NLS-1$
+			label.append( expression );
+			label.append( '\'' );
+		}
+	}
+
+	private static boolean isEmpty( String string ) {
+		return ( string == null || string.trim().length() == 0 );
 	}
 }

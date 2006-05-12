@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 import java.text.MessageFormat;
 import java.util.Map;
 
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
@@ -48,10 +49,6 @@ public class CLineBreakpoint extends AbstractLineBreakpoint {
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
 	protected String getMarkerMessage() throws CoreException {
-		String fileName = ensureMarker().getResource().getName();
-		if ( fileName != null && fileName.length() > 0 ) {
-			fileName = ' ' + fileName + ' ';
-		}
-		return MessageFormat.format( BreakpointMessages.getString( "CLineBreakpoint.0" ), new Object[] { fileName, new Integer( getLineNumber() ), getConditionText() } ); //$NON-NLS-1$
+		return MessageFormat.format( BreakpointMessages.getString( "CLineBreakpoint.0" ), new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$
 	}
 }

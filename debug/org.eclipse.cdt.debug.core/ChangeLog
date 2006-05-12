@@ -1,3 +1,13 @@
+2006-05-12 Mikhail Khodjaiants
+	Bug 118274: Condition is not shown in the tooltip of conditional breakpoint.
+	* CDebugUtils.java
+	* DebugCoreMessages.properties
+	* BreakpointMessages.properties
+	* CAddressBreakpoint.java
+	* CFunctionBreakpoint.java
+	* CLineBreakpoint.java
+	* CWatchpoint.java
+
 2006-03-27 Mikhail Khodjaiants
 	Moved the extraction of the stop symbol to the launch.
 	* CDIDebugModel.java

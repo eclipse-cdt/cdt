@@ -23,15 +23,20 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewActionDelegate;
@@ -45,6 +50,20 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
  * A delegate for the "Add Globals" action.
  */
 public class AddGlobalsActionDelegate extends ActionDelegate implements IViewActionDelegate, ISelectionListener, IPartListener {
+
+	
+	class SortedListSelectionDialog extends ListSelectionDialog {
+
+		public SortedListSelectionDialog( Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider, String message ) {
+			super( parentShell, input, contentProvider, labelProvider, message );
+		}
+
+		protected Control createDialogArea( Composite parent ) {
+			Control da = super.createDialogArea( parent );
+			getViewer().setSorter( new ViewerSorter() );
+			return da;
+		}
+	}
 
 	private IGlobalVariableDescriptor[] fGlobals;
 
@@ -220,8 +239,8 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 		return (element != null && element instanceof IDebugElement && ((IDebugElement)element).getDebugTarget().getAdapter( IExecFileInfo.class ) != null);
 	}
 
-	private ListSelectionDialog createDialog() {
-		return new ListSelectionDialog( getView().getSite().getShell(), fGlobals, new IStructuredContentProvider() {
+	private SortedListSelectionDialog createDialog() {
+		return new SortedListSelectionDialog( getView().getSite().getShell(), fGlobals, new IStructuredContentProvider() {
 
 			public void inputChanged( Viewer viewer, Object oldInput, Object newInput ) {
 			}

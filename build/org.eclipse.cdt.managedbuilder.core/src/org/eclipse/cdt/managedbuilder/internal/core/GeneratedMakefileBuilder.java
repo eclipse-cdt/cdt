@@ -1205,6 +1205,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		monitor.beginTask("", 1000);	//$NON-NLS-1$
 		monitor.subTask(ManagedMakeMessages.getFormattedString(MAKE, msgs));
 
+		ConsoleOutputStream consoleOutStream = null;
+		IConsole console = null;
+		OutputStream epmOutputStream = null;
 		try {
 			int flags = 0;
 			IResourceDelta delta = null;
@@ -1220,9 +1223,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 			// Get a build console for the project
 			StringBuffer buf = new StringBuffer();
-			IConsole console = CCorePlugin.getDefault().getConsole();
+			console = CCorePlugin.getDefault().getConsole();
 			console.start(currentProject);
-			ConsoleOutputStream consoleOutStream = console.getOutputStream();
+			consoleOutStream = console.getOutputStream();
 			String[] consoleHeader = new String[3];
 			if(buildIncrementaly)
 				consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_INC);
@@ -1246,80 +1249,96 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			}
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
+			
+			if(builder.getNumCommands() > 0) {
+				// Remove all markers for this project
+				removeAllMarkers(currentProject);
 				
-			// Remove all markers for this project
-			removeAllMarkers(currentProject);
-			
-			// Hook up an error parser manager
-			String[] errorParsers = cfg.getErrorParserList(); 
-			ErrorParserManager epm = new ErrorParserManager(getProject(), des.getDefaultBuildDirLocation(), this, errorParsers);
-			epm.setOutputStream(consoleOutStream);
-			// This variable is necessary to ensure that the EPM stream stay open
-			// until we explicitly close it. See bug#123302.
-			OutputStream epmOutputStream = epm.getOutputStream();
-			
-			int status = builder.build(epmOutputStream, epmOutputStream, new SubProgressMonitor(monitor, 1000));
-
-			//no refresh is needed since the builder now performs 
-			//a refresh automatically after each build step
-/*			monitor.subTask(ManagedMakeMessages
-					.getResourceString(REFRESH));
-			try {
-				currentProject.refreshLocal(
-						IResource.DEPTH_INFINITE, null);
-			} catch (CoreException e) {
+				// Hook up an error parser manager
+				String[] errorParsers = cfg.getErrorParserList(); 
+				ErrorParserManager epm = new ErrorParserManager(getProject(), des.getDefaultBuildDirLocation(), this, errorParsers);
+				epm.setOutputStream(consoleOutStream);
+				// This variable is necessary to ensure that the EPM stream stay open
+				// until we explicitly close it. See bug#123302.
+				epmOutputStream = epm.getOutputStream();
+				
+				int status = builder.build(epmOutputStream, epmOutputStream, new SubProgressMonitor(monitor, 1000));
+	
+				// Report either the success or failure of our mission 
+				buf = new StringBuffer();
+				
+				switch(status){
+				case IBuildModelBuilder.STATUS_OK:
+					buf.append(ManagedMakeMessages
+							.getFormattedString(BUILD_FINISHED,
+									currentProject.getName()));
+					break;
+				case IBuildModelBuilder.STATUS_CANCELLED:
+					buf.append(ManagedMakeMessages
+							.getResourceString(BUILD_CANCELLED));
+					break;
+				case IBuildModelBuilder.STATUS_ERROR_BUILD:
+					String msg = resumeOnErr ? 
+							ManagedMakeMessages.getResourceString(BUILD_FINISHED_WITH_ERRS) :
+								ManagedMakeMessages.getResourceString(BUILD_STOPPED_ERR);
+					buf.append(msg);
+					break;
+				case IBuildModelBuilder.STATUS_ERROR_LAUNCH:
+				default:
+					buf.append(ManagedMakeMessages
+							.getResourceString(BUILD_FAILED_ERR));
+					break;
+				}
+				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+	
+				// Write message on the console 
+				consoleOutStream.write(buf.toString().getBytes());
+				consoleOutStream.flush();
+				epmOutputStream.close();
+				epmOutputStream = null;
+				// Generate any error markers that the build has discovered 
 				monitor.subTask(ManagedMakeMessages
-						.getResourceString(REFRESH_ERROR));
+						.getResourceString(MARKERS));
+				addBuilderMarkers(epm);
+				epm.reportProblems();
+			} else {
+				buf = new StringBuffer();
+				buf.append(ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName()));
+				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+				consoleOutStream.write(buf.toString().getBytes());
+				consoleOutStream.flush();
 			}
-*/
-			// Report either the success or failure of our mission 
-			buf = new StringBuffer();
-			
-			switch(status){
-			case IBuildModelBuilder.STATUS_OK:
-				buf.append(ManagedMakeMessages
-						.getFormattedString(BUILD_FINISHED,
-								currentProject.getName()));
-				break;
-			case IBuildModelBuilder.STATUS_CANCELLED:
-				buf.append(ManagedMakeMessages
-						.getResourceString(BUILD_CANCELLED));
-				break;
-			case IBuildModelBuilder.STATUS_ERROR_BUILD:
-				String msg = resumeOnErr ? 
-						ManagedMakeMessages.getResourceString(BUILD_FINISHED_WITH_ERRS) :
-							ManagedMakeMessages.getResourceString(BUILD_STOPPED_ERR);
-				buf.append(msg);
-				break;
-			case IBuildModelBuilder.STATUS_ERROR_LAUNCH:
-			default:
-				buf.append(ManagedMakeMessages
-						.getResourceString(BUILD_FAILED_ERR));
-				break;
-			}
-			buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
 
-			// Write message on the console 
-			consoleOutStream.write(buf.toString().getBytes());
-			consoleOutStream.flush();
-			epmOutputStream.close();
-
-			// Generate any error markers that the build has discovered 
-			monitor.subTask(ManagedMakeMessages
-					.getResourceString(MARKERS));
-			addBuilderMarkers(epm);
-			epm.reportProblems();
-			consoleOutStream.close();
 		} catch (Exception e) {
-			StringBuffer buf = new StringBuffer();
-			String errorDesc = ManagedMakeMessages
-						.getResourceString(BUILD_ERROR);
-			buf.append(errorDesc);
-			buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-			buf.append("(").append(e.getLocalizedMessage()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			if(consoleOutStream != null){
+				StringBuffer buf = new StringBuffer();
+				String errorDesc = ManagedMakeMessages
+							.getResourceString(BUILD_ERROR);
+				buf.append(errorDesc);
+				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+				buf.append("(").append(e.getLocalizedMessage()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
 
+				try {
+					consoleOutStream.write(buf.toString().getBytes());
+					consoleOutStream.flush();
+				} catch (IOException e1) {
+				}
+			}
 			forgetLastBuiltState();
 		} finally {
+			if(epmOutputStream != null){
+				try {
+					epmOutputStream.close();
+				} catch (IOException e) {
+				} 
+			}
+			if(consoleOutStream != null){
+				try {
+					consoleOutStream.close();
+				} catch (IOException e) {
+				}
+			}
 			getGenerationProblems().clear();
 			monitor.done();
 		}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.cdt.managedbuilder.buildmodel.IStepVisitor;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,6 +38,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  *  
  */
 public class DescriptionBuilder implements IBuildModelBuilder {
+	private static final String BUILDER_MSG_HEADER = "InternalBuilder.msg.header"; //$NON-NLS-1$
+	private static final String BUILDER_NOTHING_TODO = "InternalBuilder.nothing.todo"; //$NON-NLS-1$
+	private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
+
+
 	private IBuildDescription fDes;
 	private IPath fCWD;
 	private boolean fBuildIncrementaly;
@@ -133,21 +140,34 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 	public int build(OutputStream out, OutputStream err,
 			IProgressMonitor monitor){
 		
+		int num = getNumCommands();
+		int status = STATUS_OK;
+		
 		//TODO: should we specify some task name here?
-		monitor.beginTask("", getNumCommands());	//$NON-NLS-1$
+		monitor.beginTask("", num > 0 ? num : 1);	//$NON-NLS-1$
 		monitor.subTask("");	//$NON-NLS-1$
-
-		BuildStepVisitor visitor = new BuildStepVisitor(out, err, monitor);
-		try {
-			BuildDescriptionManager.accept(visitor,
-					fDes, true);
-		} catch (CoreException e) {
-			return STATUS_ERROR_LAUNCH;
+		
+		if(num > 0){
+			BuildStepVisitor visitor = new BuildStepVisitor(out, err, monitor);
+			try {
+				BuildDescriptionManager.accept(visitor,
+						fDes, true);
+			} catch (CoreException e) {
+				status = STATUS_ERROR_LAUNCH;
+			}
+			
+			if(status == STATUS_OK)
+				status = visitor.fStatus;
+		} else {
+			printMessage(
+					ManagedMakeMessages.getFormattedString(BUILDER_NOTHING_TODO, 
+							fDes.getConfiguration().getOwner().getName()),
+					out);
 		}
-		
+
 		monitor.done();
-		
-		return visitor.fStatus;
+
+		return status;
 	}
 
 	public int getNumCommands() {
@@ -175,4 +195,15 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 		return b;
 	}
 	
+	protected void printMessage(String msg, OutputStream os){
+		if (os != null) {
+			msg = ManagedMakeMessages.getFormattedString(BUILDER_MSG_HEADER, msg) + LINE_SEPARATOR;
+			try {
+				os.write(msg.getBytes());
+				os.flush();
+			} catch (IOException e) {
+				// ignore;
+			}
+		}
+	}
 }

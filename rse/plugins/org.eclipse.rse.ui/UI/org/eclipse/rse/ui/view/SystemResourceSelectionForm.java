@@ -157,13 +157,19 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 		else
 		{
 			String[] systemTypes = _inputProvider.getSystemTypes();
+			String category = _inputProvider.getCategory();
+		
 			if (systemTypes != null)
 			{
-				_connectionCombo = new SystemHostCombo(composite_prompts, SWT.NULL, _inputProvider.getSystemTypes(), _inputProvider.getSystemConnection(), _inputProvider.allNewConnection());	
+				_connectionCombo = new SystemHostCombo(composite_prompts, SWT.NULL, _inputProvider.getSystemTypes(), _inputProvider.getSystemConnection(), _inputProvider.allowNewConnection());	
+			}
+			else if (category != null)
+			{
+				_connectionCombo = new SystemHostCombo(composite_prompts, SWT.NULL, _inputProvider.getSystemConnection(), _inputProvider.allowNewConnection(), category);	
 			}
 			else
 			{
-				_connectionCombo = new SystemHostCombo(composite_prompts, SWT.NULL, "*", _inputProvider.getSystemConnection(), _inputProvider.allNewConnection());	
+				_connectionCombo = new SystemHostCombo(composite_prompts, SWT.NULL, "*", _inputProvider.getSystemConnection(), _inputProvider.allowNewConnection());	
 				
 			}
 			_connectionCombo.addSelectionListener(new SelectionAdapter() 

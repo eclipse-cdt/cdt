@@ -27,6 +27,7 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 	private boolean _onlyConnection = false;
 	private boolean _allowNew = true;
 	private String[] _systemTypes;
+	private String _category = null;
 	
 	public SystemResourceSelectionInputProvider(IHost connection)
 	{
@@ -53,7 +54,7 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 		_allowNew = flag;
 	}
 	
-	public boolean allNewConnection()
+	public boolean allowNewConnection()
 	{
 		return _allowNew;
 	}
@@ -110,6 +111,16 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 	
 	protected abstract ISubSystem getSubSystem(IHost selectedConnection);
 	
+	
+	public void setCategory(String category)
+	{
+		_category = category;
+	}
+	
+	public String getCategory()
+	{
+		return _category;
+	}
 	
 	
 }

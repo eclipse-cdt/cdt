@@ -29,11 +29,13 @@ public class SystemRemoteFileSelectionInputProvider extends
 	public SystemRemoteFileSelectionInputProvider(IHost connection)
 	{
 		super(connection);
+		setCategory("files");
 	}
 	
 	public SystemRemoteFileSelectionInputProvider()
 	{
 		super();
+		setCategory("files");
 	}
 
 	protected ISubSystem getSubSystem(IHost selectedConnection)

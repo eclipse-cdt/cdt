@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ class UpdateManagedProject21 {
 
 		// No physical conversion is need since the 3.0 model is a superset of the 2.1 model 
 		// We need to upgrade the version
-		((ManagedBuildInfo)info).setVersion(ManagedBuildManager.getBuildInfoVersion().toString());
+		((ManagedBuildInfo)info).setVersion("3.0.0"); //$NON-NLS-1$
 		info.setValid(true);		
 
 		// Save the updated file.

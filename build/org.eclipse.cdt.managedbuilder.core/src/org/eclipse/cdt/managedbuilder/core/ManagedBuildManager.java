@@ -135,7 +135,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	
 	// This is the version of the manifest and project files
-	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(3, 0, 0);
+	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(3, 1, 0);
 	private static Map depCalculatorsMap;
 	private static boolean projectTypesLoaded = false;
 	private static boolean projectTypesLoading = false;

@@ -48,21 +48,21 @@ public class ServerSSLProperties implements ISSLProperties
 			ResourceBundle properties = ResourceBundle.getBundle("ssl");
 			if (properties != null)
 			{
-				_enableSSL = properties.getString(ENABLE_SSL).equals("true");
+				_enableSSL = properties.getString(ENABLE_SSL).trim().equals("true");
 				if (_enableSSL)
 				{
 					try
 					{
-						_daemonKeyStorePath = properties.getString(DAEMON_KEYSTORE_FILE);
-						_daemonKeyStorePassword = properties.getString(DAEMON_KEYSTORE_PASSWORD);
+						_daemonKeyStorePath = properties.getString(DAEMON_KEYSTORE_FILE).trim();
+						_daemonKeyStorePassword = properties.getString(DAEMON_KEYSTORE_PASSWORD).trim();
 					}
 					catch (Exception e)
 					{					
 					}
 					try
 					{
-						_serverKeyStorePath = properties.getString(SERVER_KEYSTORE_FILE);
-						_serverKeyStorePassword = properties.getString(SERVER_KEYSTORE_PASSWORD);			
+						_serverKeyStorePath = properties.getString(SERVER_KEYSTORE_FILE).trim();
+						_serverKeyStorePassword = properties.getString(SERVER_KEYSTORE_PASSWORD).trim();			
 					}
 					catch (Exception e)
 					{

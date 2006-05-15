@@ -29,6 +29,7 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.DataStoreSchema;
+import org.eclipse.dstore.core.model.IDataStoreConstants;
 
 /**
  * The ServerCommandHandler is reponsible for maintaining
@@ -224,6 +225,7 @@ public class ServerCommandHandler extends CommandHandler
 					clientTicket.setAttribute(DE.A_VALUE,DataStoreResources.model_invalid);
 				}
 				_dataStore.update(clientTicket);
+				_dataStore.startDataElementRemoverThread();
 				status.setAttribute(DE.A_NAME,DataStoreResources.model_done);
 			}
 			else if (commandName.equals(DataStoreSchema.C_SET))
@@ -330,10 +332,13 @@ public class ServerCommandHandler extends CommandHandler
 				_dataStore.refresh(schemaRoot);
 				status.setAttribute(DE.A_NAME,DataStoreResources.model_done);
 			}
-			else if (_dataStore.validTicket())
+			else if (commandName.equals(IDataStoreConstants.C_START_SPIRIT))
 			{
-			
-
+				_dataStore.receiveStartSpiritCommand();
+				status.setAttribute(DE.A_NAME, DataStoreResources.model_done);
+			}
+			else if (_dataStore.validTicket() && _minerLoader != null)
+			{
 				if (status != null)
 				{
 					boolean failure = false;

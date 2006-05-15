@@ -247,6 +247,8 @@ public class ServerLauncher extends Thread
 								+ timeout
 								+ " "
 								+ ticket
+								+ " " //$NON-NLS-1$
+								+ System.getProperty("java.home"); //$NON-NLS-1$
 								;
 
 						String[] authArray = { "sh", "-c", authString };
@@ -290,11 +292,20 @@ public class ServerLauncher extends Thread
 					}
 					else
 					{
+						//read over stuff coming from the login shell invocation
 						String status = _errReader.readLine();
-						_port = _errReader.readLine();
-
+						while (status!=null && !status.equals(ServerReturnCodes.RC_DSTORE_SERVER_MAGIC))
+						{
+							status = _errReader.readLine();
+						}
+						//now read the real server status
+						if (status != null)
+						{
+							status = _errReader.readLine();
+						}
 						if ((status != null) && status.equals(ServerReturnCodes.RC_SUCCESS))
 						{
+							_port = _errReader.readLine();
 							_errReader.readLine();
 							_writer.println(IDataStoreConstants.CONNECTED);
 							_writer.println(_port);
@@ -309,7 +320,7 @@ public class ServerLauncher extends Thread
 							{
 								status = new String(IDataStoreConstants.UNKNOWN_PROBLEM);
 							}
-
+							//TODO Make sure that the client doesnt try connecting forever
 							_writer.println(status);
 
 							_serverProcess.destroy();

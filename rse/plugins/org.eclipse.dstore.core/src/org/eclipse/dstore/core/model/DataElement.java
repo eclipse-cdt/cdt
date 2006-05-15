@@ -19,6 +19,7 @@ package org.eclipse.dstore.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.dstore.core.util.DataElementRemover;
 import org.eclipse.dstore.core.util.StringCompare;
 import org.eclipse.dstore.extra.internal.extra.DataElementActionFilter;
 import org.eclipse.dstore.extra.internal.extra.DesktopElement;
@@ -44,6 +45,7 @@ public final class DataElement implements IDataElement
 	private boolean _isExpanded = false;
 	private boolean _isUpdated = false;
 	private boolean _isPendingTransfer = false;
+	private boolean _isSpirit = false;
 	
 	private int _depth = 1;
 
@@ -65,6 +67,7 @@ public final class DataElement implements IDataElement
 	{
 		_dataStore = null;
 		_parent = null;
+		DataElementRemover.addToCreatedCount();
 	}
 
 	/**
@@ -76,7 +79,12 @@ public final class DataElement implements IDataElement
 	{
 		_dataStore = dataStore;
 		_parent = null;
-
+		DataElementRemover.addToCreatedCount();
+	}
+	
+	protected void finalize()
+	{
+		DataElementRemover.addToGCedCount();
 	}
 
 	/**
@@ -324,16 +332,16 @@ public final class DataElement implements IDataElement
 
 		String valueAttribute = getAttribute(DE.A_VALUE);
 
-		if (_depth == -1)
+		if (valueAttribute != null && valueAttribute.equals(DataStoreResources.DELETED))
 		{
 			return true;
 		}
-		else if (valueAttribute != null && valueAttribute.equals(DataStoreResources.DELETED))
+		
+		if (_isSpirit && !_dataStore.isVirtual())
 		{
-			_depth = -1;
-			return true;
+			return true; 
 		}
-
+		
 		return false;
 	}
 
@@ -727,6 +735,18 @@ public final class DataElement implements IDataElement
 	}
 	
 	/**
+	 * Indicates whether this element is a 'spirit' element. 
+	 * In a client datastore, this means that the element's counterpart on the
+	 * server is either also a spirit (and will be deleted soon) or has already
+	 * been deleted. In a server datastore, this means that the element is
+	 * to be deleted at the next opportunity in order to free memory.
+	 */
+	public boolean isSpirit()
+	{
+		return _isSpirit;
+	}
+	
+	/**
 	 * Sets an attribute of the element. 
 	 *
 	 * @param attributeIndex the index of the attribute to set 
@@ -836,6 +856,18 @@ public final class DataElement implements IDataElement
 	public void setPendingTransfer(boolean flag)
 	{
 		_isPendingTransfer = flag;
+	}
+	
+	/**
+	 * Sets indication of whether this element is a 'spirit' element. 
+	 * In a client datastore, this means that the element's counterpart on the
+	 * server is either also a spirit (and will be deleted soon) or has already
+	 * been deleted. In a server datastore, this means that the element is
+	 * to be deleted at the next opportunity in order to free memory.
+	 */
+	public void setSpirit(boolean flag)
+	{
+		_isSpirit = flag;
 	}
 
 	/**
@@ -1534,10 +1566,24 @@ public final class DataElement implements IDataElement
 		
 		
 
-		String isRef = getAttribute(DE.A_ISREF);
-		if (isRef != null && isRef.equals(DataStoreResources.TRUE))
+		String refType = getAttribute(DE.A_REF_TYPE);
+		if (refType != null)
 		{
-			_isReference = true;
+			if (refType.equals(DataStoreResources.TRUE) || refType.equals(DataStoreResources.REFERENCE))
+			{
+				_isReference = true;
+				_isSpirit = false;
+			}
+			else if (refType.equals(DataStoreResources.FALSE) || refType.equals(DataStoreResources.VALUE))
+			{
+				_isReference = false;
+				_isSpirit = false;
+			}
+			else if (refType.equals(DataStoreResources.SPIRIT))
+			{
+				_isReference = false;
+				_isSpirit = true;
+			}
 		}
 
 		String type = getAttribute(DE.A_TYPE);
@@ -1608,7 +1654,7 @@ public final class DataElement implements IDataElement
 			_nestedData = null;
 		}
 	}
-
+	
 	public synchronized void notifyUpdate()
 	{
 		notify();

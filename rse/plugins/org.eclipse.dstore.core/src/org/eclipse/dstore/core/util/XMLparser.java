@@ -473,6 +473,12 @@ public class XMLparser
 			if (xmlTag != null)
 			{
 				String trimmedTag = xmlTag.trim();
+				
+				if (_dataStore.getReferenceTag() == null)
+				{
+					if (trimmedTag.indexOf(DE.P_ISREF + "=") > -1) _dataStore.setReferenceTag(DE.P_ISREF);
+					else if (trimmedTag.indexOf(DE.P_REF_TYPE + "=") > -1) _dataStore.setReferenceTag(DE.P_REF_TYPE);
+				}
 
 				if (!_tagStack.empty())
 				{
@@ -752,9 +758,11 @@ public class XMLparser
 				}			
 				else
 				{
-					String isRefStr = attributes[DE.A_ISREF];
+					String refType = attributes[DE.A_REF_TYPE];
+					boolean isSpirit = false;
+					if (refType != null) isSpirit = refType.equals(DataStoreResources.SPIRIT);
 					
-					if ((isRefStr != null) && isRefStr.equals("true"))
+					if ((refType != null) && (refType.equals(DataStoreResources.TRUE) || refType.equals(DataStoreResources.REFERENCE)))
 					{
 						// new reference
 						String origId = attributes[DE.A_NAME];
@@ -806,6 +814,15 @@ public class XMLparser
 							}
 							else
 							{
+								if (isSpirit)
+								{
+									if (!_dataStore.isVirtual()) attributes[DE.A_REF_TYPE] = DataStoreResources.VALUE;
+									result.setSpirit(_dataStore.isVirtual());
+								}
+								else
+								{
+									result.setSpirit(false);
+								}
 								result.setAttributes(attributes);
 							}
 	
@@ -852,8 +869,25 @@ public class XMLparser
 						}
 						else
 						{
-							// new object					  
-							result = _dataStore.createObject(parent, attributes);
+							// new object
+							if (_dataStore.isVirtual() && parent != null) 
+							{
+								result = _dataStore.find(parent, DE.A_NAME, attributes[DE.A_NAME], 1);
+								if (result != null && result.getValue().equals(attributes[DE.A_VALUE]) && result.isSpirit())
+									_dataStore.deleteObject(parent, result);
+							}
+							if (isSpirit)
+							{
+								if (!_dataStore.isVirtual()) attributes[DE.A_REF_TYPE] = DataStoreResources.VALUE;
+								result = _dataStore.createObject(parent, attributes);
+								result.setSpirit(_dataStore.isVirtual());
+							}
+							else
+							{
+								result = _dataStore.createObject(parent, attributes);
+								result.setSpirit(false);
+							}
+
 					
 						}
 

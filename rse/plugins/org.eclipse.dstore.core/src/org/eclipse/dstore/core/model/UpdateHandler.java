@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
-
+import org.eclipse.dstore.core.util.DataElementRemover;
 
 /**
  * <p>
@@ -62,15 +62,11 @@ public abstract class UpdateHandler extends Handler
 
 	protected void clean(DataElement object)
 	{
-		if (_dataObjects.size() == 0)
-		{
-			clean(object, 2);
-		}
+		clean(object, 2);
 	}
 
 	protected synchronized void clean(DataElement object, int depth)
 	{
-
 		if ((depth > 0) && (object != null) && object.getNestedSize() > 0)
 		{
 			List deletedList = _dataStore.findDeleted(object);
@@ -81,6 +77,7 @@ public abstract class UpdateHandler extends Handler
 				if (child != null && child.isDeleted())
 				{
 					DataElement parent = child.getParent();
+					if (child.isSpirit()) DataElementRemover.addToRemovedCount();
 					child.clear();
 					if (parent != null)
 					{

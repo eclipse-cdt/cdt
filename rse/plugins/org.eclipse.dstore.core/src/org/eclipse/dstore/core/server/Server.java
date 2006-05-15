@@ -37,6 +37,8 @@ public class Server
 	 */
 	public static void main(String[] args)
 	{
+		//Tell the Launcher that we are starting
+		System.err.println(ServerReturnCodes.RC_DSTORE_SERVER_MAGIC);
 
 		String jversion = System.getProperty("java.version");
 

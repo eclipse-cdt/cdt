@@ -151,7 +151,7 @@ public class CommandGenerator
 
             commandObject.setAttribute(DE.A_VALUE, commandDescriptor.getName());
 
-            if (dataObject.isUpdated())
+            if (dataObject.isUpdated() && !dataObject.isSpirit())
             {
                 _dataStore.createReference(commandObject, dataObject,DataStoreResources.model_contents);
             }
@@ -168,7 +168,7 @@ public class CommandGenerator
                     DataElement arg = (DataElement) arguments.get(i);
                     if (arg != null)
                     {
-                        if (!arg.isUpdated())
+                        if (!arg.isUpdated() || arg.isSpirit())
                         {
                             commandObject.addNestedData(arg, false);
                         }
@@ -208,7 +208,7 @@ public class CommandGenerator
             DataElement tempRoot = _dataStore.getTempRoot();
             commandObject.setAttribute(DE.A_VALUE, commandDescriptor.getName());
 			clearDeleted(dataObject);
-            if (refArg || dataObject.isUpdated())
+            if ((refArg || dataObject.isUpdated()) && !dataObject.isSpirit())
             {
                 _dataStore.createReference(commandObject, dataObject,DataStoreResources.model_contents);
             }
@@ -218,7 +218,7 @@ public class CommandGenerator
                 commandObject.addNestedData(dataObject, false);
             }
 
-            if (!arg.isUpdated())
+            if (!arg.isUpdated() || arg.isSpirit())
             {
                 commandObject.addNestedData(arg, false);
             }
@@ -254,7 +254,7 @@ public class CommandGenerator
             commandObject.setAttribute(DE.A_VALUE, commandDescriptor.getName());
 
 			clearDeleted(dataObject);
-            if (refArg || dataObject.isUpdated())
+            if ((refArg || dataObject.isUpdated()) && !dataObject.isSpirit())
             {
                 _dataStore.createReference(commandObject, dataObject,DataStoreResources.model_arguments);
             }

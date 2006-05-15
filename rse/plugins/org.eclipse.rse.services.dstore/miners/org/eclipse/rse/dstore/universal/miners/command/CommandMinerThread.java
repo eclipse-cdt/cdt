@@ -361,6 +361,7 @@ public class CommandMinerThread extends MinerThread
 
 		status.setAttribute(DE.A_NAME, "progress");
 		_dataStore.update(status);
+		_dataStore.disconnectObjects(status);
 		_stdOutputHandler = new OutputHandler(_stdInput, null, _isWindows || _isTTY, false, _isShell, this);
 		_stdOutputHandler.setWaitTime(10);
 		_stdOutputHandler.start();
@@ -1005,6 +1006,7 @@ public class CommandMinerThread extends MinerThread
 		}
 		
 		_dataStore.refresh(_status);
+		_dataStore.disconnectObjects(_status);
 	}
 
 	public void createPrompt(String line, String fileName)
@@ -1231,6 +1233,7 @@ public class CommandMinerThread extends MinerThread
 			    obj.setAttribute(DE.A_SOURCE, obj.getSource() + ':' + line.toString());				
 			}
 			_dataStore.refresh(_status);
+			_dataStore.disconnectObjects(_status);
 			return obj;
 		}
 		else

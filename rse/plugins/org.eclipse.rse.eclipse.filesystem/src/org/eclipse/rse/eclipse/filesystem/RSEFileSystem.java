@@ -17,6 +17,7 @@
 package org.eclipse.rse.eclipse.filesystem;
 
 import java.net.URI;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 
 import org.eclipse.core.filesystem.IFileStore;
@@ -27,6 +28,7 @@ import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEmpty;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -160,6 +162,7 @@ public class RSEFileSystem extends FileSystem
 		catch (Exception e) 
 		{
 			e.printStackTrace();
+			return FileStoreConversionUtility.convert(null, new RemoteFileEmpty());
 		}
 		return null;
 	}

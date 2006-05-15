@@ -767,6 +767,8 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			{
 				dataStore.showTicket(null);
 			}
+			
+	        if (dataStore.isDoSpirit()) dataStore.queryServerSpiritState();
 
 			// Fire comm event to signal state changed
 			fireCommunicationsEvent(CommunicationsEvent.AFTER_CONNECT);
@@ -818,7 +820,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		         statusMonitor.waitForUpdate(schemaStatus);
 		         statusMonitor.waitForUpdate(initStatus);
 			}
-			
+
 			long t2 = System.currentTimeMillis();
 			
 			System.out.println("connect time = "+(t2 - t1));

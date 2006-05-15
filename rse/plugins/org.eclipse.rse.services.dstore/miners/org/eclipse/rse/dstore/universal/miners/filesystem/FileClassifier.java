@@ -302,6 +302,7 @@ public class FileClassifier extends Thread
                 }
             }
         }
+        _dataStore.disconnectObject(_subject);
     }
 
     /**

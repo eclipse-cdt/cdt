@@ -105,9 +105,14 @@ public class DE
     public static final String P_VALUE           = "value";
 
     /*
-     * The <I>is reference?</I> property identifier of a <code>DataElement</code>.  
+     * The <I>is reference?</I> property identifier of a <code>DataElement</code>. Deprecated. Use P_REF_TYPE.  
      */
     public static final String P_ISREF           = "isRef";
+    
+    /*
+     * The <I>is reference?</I> property identifier of a <code>DataElement</code>.  
+     */
+    public static final String P_REF_TYPE           = "refType";
 
     /*
      * The visibility property identifier of a <code>DataElement</code>.  
@@ -207,9 +212,14 @@ public class DE
     public static final int    A_SOURCE_LOCATION     = 5;
 
     /*
-     * IsRef attribute index.  
+     * IsRef attribute index. Deprecated. Use A_REF_TYPE. 
      */
     public static final int    A_ISREF      = 6;
+    
+    /*
+     * RefType attribute index.  
+     */
+    public static final int    A_REF_TYPE   = 6;
 
     /*
      * Visibility attribute index.  

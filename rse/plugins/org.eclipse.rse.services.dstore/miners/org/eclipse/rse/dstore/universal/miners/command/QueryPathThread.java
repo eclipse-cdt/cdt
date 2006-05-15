@@ -126,6 +126,7 @@ public class QueryPathThread extends Thread
 		}
 		status.setAttribute(DE.A_NAME, "done");
 		_dataStore.refresh(status);
+		_dataStore.disconnectObjects(status);
 	}
 
 	private void resolveCommandsInPath(File file, DataElement status)

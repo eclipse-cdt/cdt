@@ -22,7 +22,7 @@ package org.eclipse.dstore.core.server;
  */
 public class ServerReturnCodes
 {
-
+	public static final String RC_DSTORE_SERVER_MAGIC = "Dstore Server Starting..."; //$NON-NLS-1$
 
 	public static final String RC_SUCCESS = "Server Started Successfully";
 

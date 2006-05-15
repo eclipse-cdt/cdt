@@ -27,7 +27,7 @@ public abstract class Handler extends Thread
 
 	protected int _waitIncrement;
 	protected DataStore _dataStore;
-	private boolean _keepRunning;
+	protected boolean _keepRunning;
 
 	/**
 	 * Constructor

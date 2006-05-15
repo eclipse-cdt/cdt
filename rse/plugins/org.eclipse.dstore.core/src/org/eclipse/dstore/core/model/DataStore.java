@@ -28,6 +28,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.eclipse.dstore.core.java.ClassByteStreamHandlerRegistry;
 import org.eclipse.dstore.core.java.IClassByteStreamHandler;
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
 import org.eclipse.dstore.core.java.RemoteClassLoader;
+import org.eclipse.dstore.core.util.DataElementRemover;
 import org.eclipse.dstore.core.util.ExternalLoader;
 import org.eclipse.dstore.core.util.StringCompare;
 import org.eclipse.dstore.core.util.XMLgenerator;
@@ -119,6 +121,12 @@ public final class DataStore
 	private File _traceFileHandle;
 	private RandomAccessFile _traceFile;
 	private boolean _tracingOn;
+	
+	private boolean _spiritModeOn = false;
+	private boolean _spiritCommandReceived = false;
+	private File _memLoggingFileHandle;
+	private RandomAccessFile _memLogFile;
+	private boolean _memLoggingOn;
 
 	private ArrayList _waitingStatuses = null;
 	
@@ -128,6 +136,9 @@ public final class DataStore
 	private File _cacheJar;
 	public static final String REMOTE_CLASS_CACHE_JARFILE_NAME = "rmt_classloader_cache";
 	public static final String JARFILE_EXTENSION = ".jar";	
+	private DataElementRemover _deRemover;
+	public static final int SPIRIT_ON_INITIAL_SIZE = 1000;
+	private String referenceTag = null;
 	
 	private int _serverVersion;
 	private int _serverMinor;
@@ -147,8 +158,8 @@ public final class DataStore
 		_domainNotifier = null;
 		_isConnected = false;
 		_logTimes = false;
-		_initialSize = 100000;
-
+		setSpiritModeOnState();
+		_initialSize = _spiritModeOn && !isVirtual() ? SPIRIT_ON_INITIAL_SIZE : 100000;
 		initialize();
 	}
 
@@ -166,8 +177,8 @@ public final class DataStore
 		_domainNotifier = null;
 		_isConnected = false;
 		_logTimes = false;
-		_initialSize = initialSize;
-
+		setSpiritModeOnState();
+		_initialSize = _spiritModeOn && !isVirtual() ? SPIRIT_ON_INITIAL_SIZE : initialSize;
 		initialize();
 	}
 
@@ -187,8 +198,8 @@ public final class DataStore
 		_domainNotifier = domainNotifier;
 		_isConnected = true;
 		_logTimes = false;
-		_initialSize = 10000;
-
+		setSpiritModeOnState();
+		_initialSize = _spiritModeOn && !isVirtual() ? SPIRIT_ON_INITIAL_SIZE : 10000;
 		initialize();
 		createRoot();
 	}
@@ -210,12 +221,21 @@ public final class DataStore
 		_domainNotifier = domainNotifier;
 		_isConnected = true;
 		_logTimes = false;
-		_initialSize = initialSize;
-
+		setSpiritModeOnState();
+		_initialSize = _spiritModeOn && !isVirtual() ? SPIRIT_ON_INITIAL_SIZE : initialSize;
 		initialize();
 		createRoot();
 	}
 
+	protected void setSpiritModeOnState()
+	{
+		if (isVirtual()) _spiritModeOn = true;
+		else
+		{
+			String doSpirit = System.getProperty("DSTORE_SPIRIT_ON");
+			_spiritModeOn = (doSpirit != null && doSpirit.equals("true"));
+		}
+	}
 	
 	public void setServerVersion(int version)
 	{
@@ -1625,6 +1645,28 @@ public final class DataStore
 			//			refresh(from);
 		}
 	}
+	
+	/**
+	 * Disconnect all the elements contained in from
+	 *
+	 * @param from the element from which to disconnect objects
+	 */
+	public void disconnectObjects(DataElement from)
+	{
+		if (from != null)
+		{
+			for (int i = from.getNestedSize() - 1; i >= 0; i--)
+			{
+				DataElement disconnectee = from.get(i);
+				if (disconnectee != null)
+				{
+					disconnectObjectHelper(disconnectee, 5);
+				}
+			}
+
+			//			refresh(from);
+		}
+	}
 
 	/**
 	 * Deletes an element from another element
@@ -1638,6 +1680,21 @@ public final class DataStore
 		{
 			deleteObjectHelper(from, toDelete, 5);
 			//			refresh(toDelete);
+			//			refresh(from);
+		}
+	}
+	
+	/**
+	 * Disconnects an element and makes it a "spirit"
+	 *
+	 * @param toDisconnect the element to disconnect  
+	 */
+	public void disconnectObject(DataElement toDisconnect)
+	{
+		if (toDisconnect != null)
+		{
+			disconnectObjectHelper(toDisconnect, 5);
+			// refresh(toDisconnect);
 			//			refresh(from);
 		}
 	}
@@ -2022,6 +2079,19 @@ public final class DataStore
 	{
 		DataElement cmd = findCommandDescriptor(DataStoreSchema.C_QUERY_CLIENT_IP);//localDescriptorQuery(_root.getDescriptor(), DataStoreSchema.C_QUERY_INSTALL, 1);
 		return synchronizedCommand(cmd, _dummy);
+	}
+	
+	public boolean queryServerSpiritState()
+	{
+		DataElement spirittype = findObjectDescriptor(IDataStoreConstants.DATASTORE_SPIRIT_DESCRIPTOR);
+		if (spirittype == null) return false;
+		DataElement cmd = localDescriptorQuery(spirittype, IDataStoreConstants.C_START_SPIRIT, 2);
+		if (cmd == null) return false;
+		
+		DataElement status = synchronizedCommand(cmd, _dummy);
+		if ((status != null) && status.getName().equals(DataStoreResources.model_done))
+			return true;
+		else return false;
 	}
 	
 	public DataElement queryHostJVM()
@@ -3361,11 +3431,9 @@ public final class DataStore
 		{
 			_tracingOn = false;
 		}
-		
-		String logDir = getUserPreferencesDirectory();
 		if (_tracingOn)
 		{
-			
+			String logDir = getUserPreferencesDirectory();
 			_traceFileHandle = new File(logDir, ".dstoreTrace");
 
 			try
@@ -3377,7 +3445,7 @@ public final class DataStore
 			{
 			}
 		}
-
+		
 		//_remoteClassLoader = new RemoteClassLoader(this);
 		_classReqRepository = new HashMap();
 		
@@ -3392,7 +3460,43 @@ public final class DataStore
 		
 		registerLocalClassLoader(this.getClass().getClassLoader());
 	}
+	
+	public void startDataElementRemoverThread()
+	{
+		if (!isVirtual() && _deRemover == null)
+		{
+			String memLogging = System.getProperty("DSTORE_MEMLOGGING_ON");
+			_memLoggingOn = (memLogging != null && memLogging.equals("true"));
+			
+			if (_memLoggingOn)
+			{
+				String logDir = getUserPreferencesDirectory();
+				_memLoggingFileHandle = new File(logDir, ".dstoreMemLogging");
+	
+				try
+				{
+					_memLogFile = new RandomAccessFile(_memLoggingFileHandle, "rw");
+					startMemLogging();
+				}
+				catch (IOException e)
+				{
+				}
+			}
+			_deRemover = new DataElementRemover(this);
+			_deRemover.start();
+		}
+	}
 
+	public boolean isDoSpirit()
+	{
+		if (isVirtual()) return _spiritModeOn;
+		else return _spiritModeOn && _spiritCommandReceived;
+	}
+	
+	public void receiveStartSpiritCommand()
+	{
+		_spiritCommandReceived = true;
+	}
 	
 	public IByteStreamHandler getDefaultByteStreamHandler()
 	{
@@ -3627,6 +3731,23 @@ public final class DataStore
 		}
 	}
 
+	private void disconnectObjectHelper(DataElement toDisconnect, int depth)
+	{
+		if (depth > 0)
+		{
+			depth--;
+			_deRemover.addToQueueForRemoval(toDisconnect);
+			for (int i = 0; i < toDisconnect.getNestedSize(); i++)
+			{
+				DataElement subDisconnect = toDisconnect.get(i);
+				if (subDisconnect != null && subDisconnect.getDataStore() == this && !subDisconnect.isSpirit())
+				{
+					disconnectObjectHelper(subDisconnect, depth);
+				}
+			}
+		}
+	}
+	
 	private String makeIdUnique(String id)
 	{
 		
@@ -3693,6 +3814,28 @@ public final class DataStore
 			trace("Start Tracing at " + System.currentTimeMillis());
 		}
 	}
+	
+	public void startMemLogging()
+	{
+		if (_memLoggingOn && _memLogFile != null && _memLoggingFileHandle != null)
+		{
+			try
+			{
+				_memLogFile.seek(_memLoggingFileHandle.length());
+			}
+			catch (IOException e)
+			{
+			}
+
+			memLog("-----------------------------------------");
+			memLog("Start Memory Logging at " + System.currentTimeMillis());
+		}
+	}
+	
+	public void memLog(String str)
+	{
+		internalMemLog(str);
+	}
 
 	public void trace(String str)
 	{
@@ -3733,6 +3876,22 @@ public final class DataStore
 			{
 				_traceFile.writeBytes(message);
 				_traceFile.writeBytes(System.getProperty("line.separator"));
+			}
+			catch (IOException e)
+			{
+			}
+		}
+	}
+	
+	private void internalMemLog(String message)
+	{
+		if (_memLoggingOn && _memLogFile != null && message != null)
+		{
+			try
+			{
+				_memLogFile.writeBytes((new Date()).toString() + ": ");
+				_memLogFile.writeBytes(message);
+				_memLogFile.writeBytes(System.getProperty("line.separator"));
 			}
 			catch (IOException e)
 			{
@@ -3988,5 +4147,24 @@ public final class DataStore
 			_updateHandler.sendKeepAliveConfirmation();
 		}
 	}
+	
+	/**
+	 * @return what type of attribute tag is used on the peer DataStore to indicate whether dataelements
+	 * are references, values, or spirit elements. If the peer DataStore is an older one, this will return
+	 * "isRef", if its up-to-date, it will return "refType", and if the tag hasnt been determined yet, this method
+	 * will return null.
+	 */
+	public String getReferenceTag()
+	{
+		return referenceTag;
+	}
 
+	/**
+	 * Sets what type of attribute tag is used on the peer DataStore to indicate whether dataelements
+	 * are references, values, or spirit elements.
+	 */
+	public void setReferenceTag(String tag)
+	{
+		referenceTag = tag;
+	}
 }

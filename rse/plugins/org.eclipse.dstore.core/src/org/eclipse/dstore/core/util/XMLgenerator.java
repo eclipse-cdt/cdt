@@ -17,8 +17,6 @@
 package org.eclipse.dstore.core.util;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PipedInputStream;
@@ -290,6 +288,27 @@ public class XMLgenerator
 		}
 
 	}
+	
+	private void addReferenceTypeAttribute(DataElement object)
+	{
+		if (object.isSpirit())
+		{
+			addAttribute(DE.P_REF_TYPE, DataStoreResources.SPIRIT);
+		}
+		else
+		{
+			if (object.isReference())
+			{
+				if (_dataStore.getReferenceTag() != null && _dataStore.getReferenceTag().equals(DE.P_REF_TYPE)) addAttribute(DE.P_REF_TYPE, DataStoreResources.REFERENCE);
+				else addAttribute(DE.P_REF_TYPE, DataStoreResources.TRUE);
+			}
+			else 
+			{
+				if (_dataStore.getReferenceTag() != null && _dataStore.getReferenceTag().equals(DE.P_REF_TYPE)) addAttribute(DE.P_REF_TYPE, DataStoreResources.VALUE);
+				else addAttribute(DE.P_REF_TYPE, DataStoreResources.FALSE);
+			}
+		}
+	}
 
 	private void addFile(byte[] bytes, int size, boolean binary)
 	{
@@ -500,16 +519,9 @@ public class XMLgenerator
 			addAttribute(DE.P_NAME, object.getAttribute(DE.A_NAME));
 			addAttribute(DE.P_VALUE, object.getAttribute(DE.A_VALUE));
 			addAttribute(DE.P_SOURCE, object.getAttribute(DE.A_SOURCE));
-			addAttribute(DE.P_SOURCE_LOCATION, object.getAttribute(DE.A_SOURCE_LOCATION));	
-			
-			if (object.isReference())
-			{
-				addAttribute(DE.P_ISREF, DataStoreResources.TRUE);
-			}
-			else
-			{
-				addAttribute(DE.P_ISREF, DataStoreResources.FALSE);
-			}
+			addAttribute(DE.P_SOURCE_LOCATION, object.getAttribute(DE.A_SOURCE_LOCATION));
+
+			addReferenceTypeAttribute(object);
 
 			addAttribute(DE.P_DEPTH, "" + size);
 			addFile(bytes, size, binary);
@@ -537,15 +549,9 @@ public class XMLgenerator
 			addAttribute(DE.P_NAME, object.getAttribute(DE.A_NAME));
 			addAttribute(DE.P_VALUE, object.getAttribute(DE.A_VALUE));
 			addAttribute(DE.P_SOURCE, object.getAttribute(DE.A_SOURCE));
-			addAttribute(DE.P_SOURCE_LOCATION, object.getAttribute(DE.A_SOURCE_LOCATION));			
-			if (object.isReference())
-			{
-				addAttribute(DE.P_ISREF, "true");
-			}
-			else
-			{
-				addAttribute(DE.P_ISREF, "false");
-			}
+			addAttribute(DE.P_SOURCE_LOCATION, object.getAttribute(DE.A_SOURCE_LOCATION));
+
+			addReferenceTypeAttribute(object);
 
 			addAttribute(DE.P_DEPTH, "" + size);
 			addFile(bytes, size, true);
@@ -584,16 +590,9 @@ public class XMLgenerator
 					addAttribute(DE.P_NAME, object.getAttribute(DE.A_NAME));
 					addAttribute(DE.P_VALUE, object.getAttribute(DE.A_VALUE));
 					addAttribute(DE.P_SOURCE, object.getAttribute(DE.A_SOURCE));
-					addAttribute(DE.P_SOURCE_LOCATION, object.getAttribute(DE.A_SOURCE_LOCATION));	
-				
-					if (object.isReference())
-					{
-						addAttribute(DE.P_ISREF, "true");
-					}
-					else
-					{
-						addAttribute(DE.P_ISREF, "false");
-					}
+					addAttribute(DE.P_SOURCE_LOCATION, object.getAttribute(DE.A_SOURCE_LOCATION));
+
+					addReferenceTypeAttribute(object);
 
 					addAttribute(DE.P_DEPTH, "" + object.depth());
 					addData(object.getBuffer());
@@ -625,16 +624,9 @@ public class XMLgenerator
 			addAttribute(DE.P_NAME, object.getAttribute(DE.A_NAME));
 			addAttribute(DE.P_VALUE, object.getAttribute(DE.A_VALUE));
 			addAttribute(DE.P_SOURCE, object.getAttribute(DE.A_SOURCE));
-			addAttribute(DE.P_SOURCE_LOCATION, object.getAttribute(DE.A_SOURCE_LOCATION));	
-			
-			if (object.isReference())
-			{
-				addAttribute(DE.P_ISREF, "true");
-			}
-			else
-			{
-				addAttribute(DE.P_ISREF, "false");
-			}
+			addAttribute(DE.P_SOURCE_LOCATION, object.getAttribute(DE.A_SOURCE_LOCATION));
+
+			addReferenceTypeAttribute(object);
 			_state = BODY;
 			endTag(tagType);
 		}
@@ -652,16 +644,9 @@ public class XMLgenerator
 			addAttribute(DE.P_NAME, object.getAttribute(DE.A_NAME));
 			addAttribute(DE.P_VALUE, object.getAttribute(DE.A_VALUE));
 			addAttribute(DE.P_SOURCE, object.getAttribute(DE.A_SOURCE));
-			addAttribute(DE.P_SOURCE_LOCATION, object.getAttribute(DE.A_SOURCE_LOCATION));	
-		
-			if (object.isReference())
-			{
-				addAttribute(DE.P_ISREF, "true");
-			}
-			else
-			{
-				addAttribute(DE.P_ISREF, "false");
-			}
+			addAttribute(DE.P_SOURCE_LOCATION, object.getAttribute(DE.A_SOURCE_LOCATION));
+
+			addReferenceTypeAttribute(object);
 			
 			try
 			{

@@ -109,4 +109,7 @@ public class DataStoreResources
 	public static String DELETED="deleted";
 	public static String KEEPALIVE_TYPE="KEEPALIVE";
 	public static String KEEPALIVECONFIRM_TYPE="CONFIRMKEEPALIVE";
+	public static String REFERENCE="reference";
+	public static String VALUE="value";
+	public static String SPIRIT="spirit";
 }

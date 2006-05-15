@@ -25,4 +25,7 @@ public interface IDataStoreConstants
     public static final String UNKNOWN_PROBLEM = "unknown problem connecting to server";
     public static final String SERVER_FAILURE = "server failure: ";
     public static final String ATTEMPT_RECONNECT = "attempt reconnect";
+    
+    public static final String DATASTORE_SPIRIT_DESCRIPTOR = "datastore.spirit";
+    public static final String C_START_SPIRIT = "C_START_SPIRIT";
 }

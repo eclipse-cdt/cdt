@@ -429,7 +429,7 @@ public class PathEntryUtil {
 			if (!isValidWorkspacePath(project, path)) {
 				return new CModelStatus(
 						ICModelStatusConstants.INVALID_PATHENTRY,
-						CoreModelMessages.getString("PathEntryManager.0") + path.toOSString() + " for " + ((PathEntry)entry).getKindString()); //$NON-NLS-1$ //$NON-NLS-2$
+						CoreModelMessages.getFormattedString("PathEntryManager.0", new Object[]{ path.toOSString(), ((PathEntry)entry).getKindString()})); //$NON-NLS-1$
 			}
 		}
 
@@ -439,11 +439,11 @@ public class PathEntryUtil {
 				IPath includePath = include.getFullIncludePath();
 				if (!isValidExternalPath(includePath)) {
 					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-							CoreModelMessages.getString("PathEntryManager.2") + " (" + includePath.toOSString() + ")"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+							CoreModelMessages.getFormattedString("PathEntryManager.2", includePath.toOSString())); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 				}
 				if (!isValidBasePath(include.getBasePath())) {
 					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-							CoreModelMessages.getString("PathEntryManager.1") + " (" + includePath.toOSString() + ")");  //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+							CoreModelMessages.getFormattedString("PathEntryManager.1", includePath.toOSString()));  //$NON-NLS-1$
 				}
 				break;
 			}
@@ -455,7 +455,7 @@ public class PathEntryUtil {
 						if (!sourceAttach.isAbsolute()) {
 							if (!isValidWorkspacePath(project, sourceAttach) || !isValidExternalPath(sourceAttach)) {
 								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-										CoreModelMessages.getString("PathEntryManager.3") + " (" + sourceAttach.toOSString() + ")"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+										CoreModelMessages.getFormattedString("PathEntryManager.3", sourceAttach.toOSString())); //$NON-NLS-1$
 							}
 						}
 					}
@@ -463,11 +463,11 @@ public class PathEntryUtil {
 				IPath libraryPath = library.getFullLibraryPath();
 				if (!isValidExternalPath(libraryPath)) {
 					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-							CoreModelMessages.getString("PathEntryManager.4") + " (" + libraryPath.toOSString() + ")"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+							CoreModelMessages.getFormattedString("PathEntryManager.4", libraryPath.toOSString())); //$NON-NLS-1$
 				}
 				if (!isValidBasePath(library.getBasePath())) {
 					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-							CoreModelMessages.getString("PathEntryManager.7") + " (" + libraryPath.toOSString() + ")");  //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+							CoreModelMessages.getFormattedString("PathEntryManager.7",libraryPath.toOSString()));  //$NON-NLS-1$
 				}
 				break;
 			}

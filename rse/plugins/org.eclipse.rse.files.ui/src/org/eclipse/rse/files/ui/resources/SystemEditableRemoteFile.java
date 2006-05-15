@@ -62,6 +62,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -890,9 +891,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	{
 		// first we check if it's open in the active page
 		IWorkbenchPage activePage = this.page;
+		IWorkbench wb = PlatformUI.getWorkbench();
 		if (activePage == null)
 		{
-			IWorkbenchWindow activeWindow = SystemBasePlugin.getActiveWorkbenchWindow();
+			IWorkbenchWindow activeWindow = wb.getActiveWorkbenchWindow();
 			activePage = activeWindow.getActivePage();
 		}
 
@@ -929,7 +931,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			}
 		}
 
-		IWorkbenchWindow[] windows = RSEUIPlugin.getDefault().getWorkbench().getWorkbenchWindows();
+		IWorkbenchWindow[] windows = wb.getWorkbenchWindows();
 
 		for (int i = 0; i < windows.length; i++)
 		{
@@ -1279,9 +1281,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	public void openEditor() throws PartInitException
 	{
 		IWorkbenchPage activePage = this.page;
+		IWorkbench wb = PlatformUI.getWorkbench();
 		if (activePage == null)
 		{			
-			activePage = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();
+			activePage = wb.getActiveWorkbenchWindow().getActivePage();
 		}
 		IFile file = getLocalResource();
 		

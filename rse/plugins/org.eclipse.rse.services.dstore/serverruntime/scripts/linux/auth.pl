@@ -55,7 +55,7 @@ else
 			$suOptions="-";
 		}
 
-		system("su $suOptions $userIN -c '$javaExe -cp $classpath -DA_PLUGIN_PATH=$pathIN org.eclipse.dstore.core.server.Server $portIN $timeoutIN $ticketIN'");
+		system("su $suOptions $userIN -c '$javaExe -cp $classpath -DA_PLUGIN_PATH=$pathIN -DDSTORE_SPIRIT_ON=true org.eclipse.dstore.core.server.Server $portIN $timeoutIN $ticketIN'");
 			1;
     }
     else

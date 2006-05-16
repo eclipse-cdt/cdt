@@ -32,17 +32,17 @@ if (!defined($packaged_as))
 
 if (!defined($timeout))
 {
-	system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH org.eclipse.dstore.core.server.Server $port");
+	system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH -DDSTORE_SPIRIT_ON=true org.eclipse.dstore.core.server.Server $port");
 }
 else
 {
 	if (!defined($clientUserID))
 	{
-		system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH org.eclipse.dstore.core.server.Server $port $timeout");
+		system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH -DDSTORE_SPIRIT_ON=true org.eclipse.dstore.core.server.Server $port $timeout");
 	}
 	else
 	{
-		system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH -Dclient.username=$clientUserID org.eclipse.dstore.core.server.Server $port $timeout");
+		system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH -Dclient.username=$clientUserID -DDSTORE_SPIRIT_ON=true org.eclipse.dstore.core.server.Server $port $timeout");
 	}
 }
 

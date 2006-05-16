@@ -2105,15 +2105,17 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	  
     	if (synch)
     	{
-    		while (!job.hasStarted())
-    		{
-    			Display.getCurrent().readAndDispatch(); 
-    		}
-    		while (job.getResult() == null)
-    		{
-    			while (Display.getCurrent().readAndDispatch()); 
-    		}
-    		return job.getResult();
+              while (!job.hasStarted())
+              {
+                     while (Display.getCurrent().readAndDispatch());
+                     if (!job.hasStarted()) Thread.sleep(200);
+              }
+              while (job.getResult() == null)
+              {
+                     while (Display.getCurrent().readAndDispatch());
+                     if (job.getResult() == null) Thread.sleep(200);
+              }
+              return job.getResult();
     	}
     	else
     	{

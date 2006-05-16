@@ -617,15 +617,11 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 				_defaultShell = null;
 			}
 			_cmdShells.remove(command);
+			Display.getDefault().asyncExec(new RefreshRemovedShell(this, cmdShell));
 		}
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
-		// tell remote shell view of removed shell
-		registry.fireEvent(new SystemResourceChangeEvent(command,
-				ISystemResourceChangeEvents.EVENT_COMMAND_SHELL_REMOVED, null));
 
-		// tell systems view to refresh cmd subsystem
-		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
+
 	}
 
 	// called to restore running shells - behaviour determined by UI
@@ -706,6 +702,26 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			registry.fireEvent(new SystemResourceChangeEvent(_ss, ISystemResourceChangeEvents.EVENT_REFRESH, _ss));
 		}
 	}
+
+
+	public class RefreshRemovedShell implements Runnable
+	{
+		private RemoteCmdSubSystem _ss;
+		private IRemoteCommandShell _cmdShell;
+		public RefreshRemovedShell(RemoteCmdSubSystem ss, IRemoteCommandShell cmdShell)
+		{
+			_ss = ss;
+			_cmdShell = cmdShell;
+		}
+
+		public void run() 
+		{
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			registry.fireEvent(new SystemResourceChangeEvent(_cmdShell, ISystemResourceChangeEvents.EVENT_COMMAND_SHELL_REMOVED, null));
+			registry.fireEvent(new SystemResourceChangeEvent(_ss, ISystemResourceChangeEvents.EVENT_REFRESH, _ss));
+		}
+	}
+	
 
 	/**
 	 * @see ICommunicationsListener#isPassiveCommunicationsListener()

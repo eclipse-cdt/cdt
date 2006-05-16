@@ -1747,12 +1747,15 @@ public class SystemViewRemoteFileAdapter
 								resultSet.setMessage(errorMessage);
 								return resultSet;
 							}
+							/* DKM - not sure what this is doing here...
+							 *    maybe there used to be a check for an archive
 							if (!srcFileOrFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement())
 							{
 								SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_ARCHIVEMANAGEMENT_NOTSUPPORTED);
 								resultSet.setMessage(errorMessage);
 								return resultSet;
 							}
+							*/
 			
 		
 							String name = srcFileOrFolder.getName();

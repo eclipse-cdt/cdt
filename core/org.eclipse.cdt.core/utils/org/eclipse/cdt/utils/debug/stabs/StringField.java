@@ -80,7 +80,7 @@ public class StringField {
 				/* SunPRO (3.0 at least) static variable encoding. */
 				break;
 			default :
-				name = CCorePlugin.getResourceString("StringField.unknownName"); //$NON-NLS-1$
+				name = CCorePlugin.getResourceString("Util.unknownName"); //$NON-NLS-1$
 				break;
 			}
 		}

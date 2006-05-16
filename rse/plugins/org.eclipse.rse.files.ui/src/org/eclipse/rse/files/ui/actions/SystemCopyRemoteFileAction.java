@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog;
+import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
 import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
@@ -320,14 +320,16 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		  reset();
 		//return new SystemSimpleCopyDialog(parent, getPromptString(), mode, this, getTreeModel(), getTreeInitialSelection()); 
 		String dlgTitle = (mode==MODE_COPY ? SystemResources.RESID_COPY_TITLE : SystemResources.RESID_MOVE_TITLE);		
-		SystemSelectRemoteFileOrFolderDialog dlg = new SystemSelectRemoteFileOrFolderDialog(shell,dlgTitle,SystemSelectRemoteFileOrFolderDialog.FOLDER_MODE);
-		dlg.setNeedsProgressMonitor(true);
-		dlg.setMessage(getPromptString());
-		dlg.setShowNewConnectionPrompt(false);
-		dlg.setShowPropertySheet(true, false);
+		
 		firstSelection = getFirstSelectedFile();
 		sourceConnection = firstSelection.getSystemConnection();
-		dlg.setSystemConnection(sourceConnection);
+		SystemRemoteFolderDialog dlg = new SystemRemoteFolderDialog(shell, dlgTitle, sourceConnection);
+		dlg.setNeedsProgressMonitor(true);
+		dlg.setMessage(getPromptString());
+		dlg.setShowPropertySheet(true, false);
+		dlg.setDefaultSystemConnection(sourceConnection, true);
+		
+		//dlg.setSystemConnection(sourceConnection);
 		if (mode==MODE_MOVE)
 		  dlg.setSelectionValidator(this);
 		//RSEUIPlugin.logInfo("Calling getParentRemoteFile for '"+firstSelection.getAbsolutePath()+"'");
@@ -363,7 +365,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	 */
 	protected Object getTargetContainer(Dialog dlg)
 	{
-		SystemSelectRemoteFileOrFolderDialog cpyDlg = (SystemSelectRemoteFileOrFolderDialog)dlg;		
+		SystemRemoteFolderDialog cpyDlg = (SystemRemoteFolderDialog)dlg;		
 		Object targetContainer = null;
 		if (!cpyDlg.wasCancelled())
 		   targetContainer = cpyDlg.getSelectedObject();

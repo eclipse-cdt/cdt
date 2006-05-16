@@ -37,6 +37,7 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 	private boolean _showPropertySheet = false;
 	private IHost _outputConnection;
 	private SystemActionViewerFilter _customViewerFilter;
+	private String _message, _tip;
 	
 
 	public SystemRemoteResourceDialog(Shell shell, String title, SystemResourceSelectionInputProvider inputProvider)
@@ -77,6 +78,10 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 		_form.setSelectionValidator(_selectionValidator);
 	 	_form.setShowPropertySheet(_showPropertySheet);
 	 	_form.setSelectionTreeToolTipText(getTreeTip());
+	 	if (_message != null)
+	 		_form.setMessage(_message);
+	 	if (_tip != null)
+	 		_form.setSelectionTreeToolTipText(_tip);
 	}
 
 	public void setDefaultSystemConnection(IHost connection, boolean onlyConnection)
@@ -137,14 +142,22 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
      */
     public void setMessage(String message)
     {
-    	_form.setMessage(message);
+    	_message = message;
+    	if (_form != null)
+    	{
+    		_form.setMessage(message);
+    	}
     }
     /**
      * Set the tooltip text for the remote systems tree from which an item is selected.
      */
     public void setSelectionTreeToolTipText(String tip)
     {
-    	_form.setSelectionTreeToolTipText(tip);
+    	_tip = tip;
+    	if (_tip != null)
+    	{
+    		_form.setSelectionTreeToolTipText(tip);
+    	}
     }
     
     /**

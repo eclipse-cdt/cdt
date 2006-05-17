@@ -39,12 +39,13 @@ import org.eclipse.rse.ui.SystemConnectionForm;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.ui.INewWizard;
 
 /**
  * Wizard for creating a new remote systems connection.
  */
 public class      SystemNewConnectionWizard
-  	   extends    AbstractSystemWizard
+  	   extends    AbstractSystemWizard implements INewWizard
 	   
 {	
 	

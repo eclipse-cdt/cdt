@@ -1039,5 +1039,25 @@ Contributors:
       <provider systemType="AIX"
             id="org.eclipse.rse.universal.passwordPersistence.AIX">
       </provider>
-   </extension> 
+   </extension>
+   
+<!-- ================================================================= -->
+<!-- RSE Creation Wizards from File -> New 							   -->
+<!-- ================================================================= -->
+	<extension point="org.eclipse.ui.newWizards">
+		<category id="org.eclipse.rse.ui.newWizards.rseCategory"
+				name="%Creation.category.name"/>
+		<wizard id="org.eclipse.rse.ui.newWizards.connection"
+				name="%Creation.connection.name"
+				icon="icons/full/etool16/newconnection_wiz.gif"
+				category="org.eclipse.rse.ui.newWizards.rseCategory"
+				class="org.eclipse.rse.ui.wizards.SystemNewConnectionWizard"
+				preferredPerspectives="org.eclipse.rse.ui.view.SystemPerspective"
+				canFinishEarly="false"
+				hasPages="true">
+			<description>
+				%Creation.connection.description
+			</description>
+		</wizard>
+	</extension>
 </plugin>

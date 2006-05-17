@@ -183,6 +183,14 @@
 	<!-- Steps to do after the build is done. -->
 	<!-- ===================================================================== -->
 	<target name="postBuild">
+		<move todir="${buildDirectory}/${buildLabel}">
+			<fileset dir="${buildDirectory}/${buildLabel}" includes="org.eclipse.rse.sdk-*"/>
+			<mapper type="glob" from="org.eclipse.rse.sdk-*" to="RSE-SDK-*"/>
+		</move>
+		<move todir="${buildDirectory}/${buildLabel}">
+			<fileset dir="${buildDirectory}/${buildLabel}" includes="org.eclipse.rse.*" excludes="org.eclipse.rse.sdk-*"/>
+			<mapper type="glob" from="org.eclipse.rse.*" to="RSE-runtime-*"/>
+		</move>
 	</target>
 
 	<!-- ===================================================================== -->

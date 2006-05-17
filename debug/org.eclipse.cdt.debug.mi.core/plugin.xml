@@ -64,6 +64,13 @@
             miVersions="mi,mi1,mi2"
             name="%StandardLinuxCommandFactory.name"
             platforms="linux"/>
+       <commandFactory
+            class="org.eclipse.cdt.debug.mi.core.command.factories.macos.StandardMacOSCommandFactory"
+            debuggerID="org.eclipse.cdt.debug.mi.core.CDebuggerNew"
+            id="org.eclipse.cdt.debug.mi.core.standardMacOSCommandFactory"
+            miVersions="mi,mi1,mi2"
+            name="%StandardMacOSCommandFactory.name"
+            platforms="macosx"/>
       <commandFactory
             class="org.eclipse.cdt.debug.mi.core.command.factories.StandardCommandFactory"
             debuggerID="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger"
@@ -92,6 +99,13 @@
             miVersions="mi,mi1,mi2"
             name="%StandardLinuxCommandFactory.name"
             platforms="linux"/>
+       <commandFactory
+            class="org.eclipse.cdt.debug.mi.core.command.factories.macos.StandardMacOSCommandFactory"
+            debuggerID="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger"
+            id="org.eclipse.cdt.debug.mi.core.standardMacOSCommandFactory"
+            miVersions="mi,mi1,mi2"
+            name="%StandardMacOSCommandFactory.name"
+            platforms="macosx"/>
    </extension>
 
 </plugin>

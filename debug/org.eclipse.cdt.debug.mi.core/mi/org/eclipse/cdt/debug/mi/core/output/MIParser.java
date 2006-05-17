@@ -326,18 +326,31 @@ public class MIParser {
 	 */
 	private MIValue processMITuple(FSB buffer) {
 		MITuple tuple = new MITuple();
-		MIResult[] results = null;
+		List valueList = new ArrayList();
+		List resultList = new ArrayList();
 		// Catch closing '}'
 		while (buffer.length() > 0 && buffer.charAt(0) != '}') {
-			results = processMIResults(buffer);
+			// Try for the MIValue first
+			MIValue value = processMIValue(buffer);
+			if (value != null) {
+				valueList.add(value);
+			} else {
+				MIResult result = processMIResult(buffer);
+				if (result != null) {
+					resultList.add(result);
+				}
+			}
+			if (buffer.length() > 0 && buffer.charAt(0) == ',') {
+				buffer.deleteCharAt(0);
+			}
 		}
 		if (buffer.length() > 0 && buffer.charAt(0) == '}') {
 			buffer.deleteCharAt(0);
 		}
-		if (results == null) {
-			results = new MIResult[0];
-		}
-		tuple.setMIResults(results);
+		MIValue[] values = (MIValue[]) valueList.toArray(new MIValue[valueList.size()]);
+		MIResult[] res = (MIResult[]) resultList.toArray(new MIResult[resultList.size()]);
+		tuple.setMIValues(values);
+		tuple.setMIResults(res);
 		return tuple;
 	}
 

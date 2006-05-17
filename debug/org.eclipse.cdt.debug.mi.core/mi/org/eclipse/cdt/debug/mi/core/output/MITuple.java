@@ -16,7 +16,9 @@ package org.eclipse.cdt.debug.mi.core.output;
 public class MITuple extends MIValue {
 
 	final static MIResult[] nullResults = new MIResult[0];
+	final static MIValue[] nullValues = new MIValue[0];
 	MIResult[] results = nullResults;
+	MIValue[] values = nullValues;
 
 	public MIResult[] getMIResults() {
 		return results;
@@ -24,6 +26,14 @@ public class MITuple extends MIValue {
 
 	public void setMIResults(MIResult[] res) {
 		results = res;
+	}
+
+	public MIValue[] getMIValues() {
+		return values;
+	}
+
+	public void setMIValues(MIValue[] vals) {
+		values = vals;
 	}
 
 	public String toString() {
@@ -34,6 +44,12 @@ public class MITuple extends MIValue {
 				buffer.append(',');
 			}
 			buffer.append(results[i].toString());
+		}
+		for (int i = 0; i < values.length; i++) {
+			if (i != 0) {
+				buffer.append(',');
+			}
+			buffer.append(values[i].toString());
 		}
 		buffer.append('}');
 		return buffer.toString();

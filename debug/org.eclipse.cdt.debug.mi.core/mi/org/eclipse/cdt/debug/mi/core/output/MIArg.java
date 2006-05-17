@@ -65,6 +65,33 @@ public class MIArg {
 
 	/**
 	 * Parsing a MITuple of the form:
+	 * {{name="xxx",value="yyy"},{name="xxx",value="yyy"},..}
+	 * {name="xxx",name="xxx",..}
+	 * {{name="xxx"},{name="xxx"}}
+	 */
+	public static MIArg[] getMIArgs(MITuple miTuple) {
+		List aList = new ArrayList();
+		MIValue[] values = miTuple.getMIValues();
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] instanceof MITuple) {
+				MIArg arg = getMIArg((MITuple)values[i]);
+				if (arg != null) {
+					aList.add(arg);
+				}
+			}
+		}
+		MIResult[] results = miTuple.getMIResults();
+		for (int i = 0; i < results.length; i++) {
+			MIValue value = results[i].getMIValue();
+			if (value instanceof MIConst) {
+				String str = ((MIConst)value).getCString();
+				aList.add(new MIArg(str, "")); //$NON-NLS-1$
+			}
+		}
+		return ((MIArg[])aList.toArray(new MIArg[aList.size()]));
+	}
+	/**
+	 * Parsing a MITuple of the form:
 	 * {name="xxx",value="yyy"}
 	 * {name="xxx"}
 	 */

@@ -46,6 +46,8 @@ public class MIStackListArgumentsInfo extends MIInfo {
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIList) {
 							parseStack((MIList)val, aList);
+						} else if (val instanceof MITuple) {
+							parseStack((MITuple)val, aList);
 						}
 					}
 				}
@@ -56,6 +58,18 @@ public class MIStackListArgumentsInfo extends MIInfo {
 
 	void parseStack(MIList miList, List aList) {
 		MIResult[] results = miList.getMIResults();
+		for (int i = 0; i < results.length; i++) {
+			String var = results[i].getVariable();
+			if (var.equals("frame")) { //$NON-NLS-1$
+				MIValue value = results[i].getMIValue();
+				if (value instanceof MITuple) {
+					aList.add (new MIFrame((MITuple)value));
+				}
+			}
+		}
+	}
+	void parseStack(MITuple miTuple, List aList) {
+		MIResult[] results = miTuple.getMIResults();
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			if (var.equals("frame")) { //$NON-NLS-1$

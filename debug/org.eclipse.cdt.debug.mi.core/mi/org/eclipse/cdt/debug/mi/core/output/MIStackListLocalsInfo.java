@@ -17,6 +17,9 @@ package org.eclipse.cdt.debug.mi.core.output;
  * GDB/MI stack list locals parsing.
  * -stack-list-locals 1
  * ^done,locals=[{name="p",value="0x8048600 \"ghislaine\""},{name="buf",value="\"'\", 'x' <repeats 24 times>, \"i,xxxxxxxxx\", 'a' <repeats 24 times>"},{name="buf2",value="\"\\\"?'\\\\()~\""},{name="buf3",value="\"alain\""},{name="buf4",value="\"\\t\\t\\n\\f\\r\""},{name="i",value="0"}]
+ *
+ * On MacOS X 10.4 this returns a tuple:
+ * ^done,locals={{name="p",value="0x8048600 \"ghislaine\""},{name="buf",value="\"'\", 'x' <repeats 24 times>, \"i,xxxxxxxxx\", 'a' <repeats 24 times>"},{name="buf2",value="\"\\\"?'\\\\()~\""},{name="buf3",value="\"alain\""},{name="buf4",value="\"\\t\\t\\n\\f\\r\""},{name="i",value="0"}}
  */
 public class MIStackListLocalsInfo extends MIInfo {
 
@@ -46,6 +49,8 @@ public class MIStackListLocalsInfo extends MIInfo {
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIList) {
 							locals = MIArg.getMIArgs((MIList)value);
+						} else if (value instanceof MITuple) {
+							locals = MIArg.getMIArgs((MITuple)value);
 						}
 					}
 				}

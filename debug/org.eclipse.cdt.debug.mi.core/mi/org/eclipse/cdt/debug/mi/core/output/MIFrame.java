@@ -125,6 +125,8 @@ public class MIFrame {
 			} else if (var.equals("args")) { //$NON-NLS-1$
 				if (value instanceof MIList) {
 					args = MIArg.getMIArgs((MIList)value);
+				} else if (value instanceof MITuple) {
+					args = MIArg.getMIArgs((MITuple)value);
 				}
 			}
 		}

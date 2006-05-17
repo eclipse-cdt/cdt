@@ -27,9 +27,7 @@
 		<property name="buildingOSGi" value="true"/>
 		<property name="messagefile" value="message.in"/>
 		<property name="mailto" value="cdt-test-dev@eclipse.org"/>
-		<property name="cdtuser" value="nobody"/>
-		<property name="cdtpasswd" value="home"/>
-		<property name="remotedir" value="${cdtuser}@download1.eclipse.org:cdt/builds/${branchVersion}"/>
+		<property name="remotedir" value="dschaefer@dev.eclipse.org:cdt/builds/${branchVersion}"/>
 		<property name="eclipseRoot" value=":pserver:anonymous@dev.eclipse.org:/home/eclipse"/>
 		<property name="baseos" value="${osgi.os}"/>
 		<property name="basews" value="${osgi.ws}"/>
@@ -121,8 +119,8 @@
 	</target>
 	
 	<target name="upload" depends="init" unless="hasErrors">
-		<exec dir="${buildDirectory}" executable="expect">
-			<arg line="${basedir}/myscp ${cdtpasswd} ${remotedir}/index.html index.html"/>
+		<exec dir="${buildDirectory}" executable="scp">
+			<arg line="${remotedir}/index.html index.html"/>
 		</exec>
 		<replace file="${buildDirectory}/index.html">
 			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
@@ -133,11 +131,11 @@
 			<replacefilter token="@buildType@" value="${buildType}"/>
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
-		<exec dir="${buildDirectory}" executable="expect">
-			<arg line="${basedir}/myscp ${cdtpasswd} index.html ${remotedir}/index.html"/>
+		<exec dir="${buildDirectory}" executable="scp">
+			<arg line="index.html ${remotedir}/index.html"/>
 		</exec>
-		<exec dir="${buildDirectory}" executable="expect">
-			<arg line="${basedir}/myscp ${cdtpasswd} -r ${buildType}.${buildId} ${remotedir}"/>
+		<exec dir="${buildDirectory}" executable="scp">
+			<arg line="-r ${buildType}.${buildId} ${remotedir}"/>
 		</exec>
 	</target>
 	

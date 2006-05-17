@@ -50,6 +50,14 @@
          id="org.eclipse.rse.local.source"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.rse.ssh"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rse.ssh.source"
+         version="0.0.0"/>
+
    <plugin
          id="org.eclipse.rse.sdk"
          download-size="0"

@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Ssh Plug-in
+Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.eclipse.rse.connectorservice.ssh; singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.connectorservice.ssh.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -17,3 +17,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.services.ssh
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.connectorservice.ssh
+Bundle-Vendor: Eclipse.org

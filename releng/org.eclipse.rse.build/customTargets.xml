@@ -23,6 +23,10 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.ssh" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.dstore" />
 		</ant>
 	</target>
@@ -47,6 +51,10 @@
 	</target>
 
 	<target name="assemble.org.eclipse.rse.ftp">
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+	</target>
+
+	<target name="assemble.org.eclipse.rse.ssh">
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 	</target>
 

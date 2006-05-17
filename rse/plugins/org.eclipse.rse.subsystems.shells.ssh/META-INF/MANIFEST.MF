@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Ssh Plug-in
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.shells.ssh; singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.subsystems.shells.ssh.Activator
@@ -11,9 +11,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.connectorservice.ssh,
  org.eclipse.rse.services.ssh,
  org.eclipse.rse.ui,
- org.eclipse.rse.core,
- org.eclipse.rse.subsystems.shells.core,
- com.jcraft.jsch
+ org.eclipse.rse.subsystems.shells.core
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.subsystems.shells.ssh
 Bundle-Vendor: Eclipse.org

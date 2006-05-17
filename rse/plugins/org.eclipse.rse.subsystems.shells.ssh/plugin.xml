@@ -21,7 +21,7 @@ Martin Oberhuber - initial API and implementation
 			icon="icons/full/obj16/systemcommands_obj.gif"
 			category="shells"
 			class="org.eclipse.rse.subsystems.shells.ssh.SshShellSubSystemConfiguration"
-			vendor="Wind River Systems, Inc."
+			vendor="%providerName"
 			id="ssh.shells">
 		</configuration>
 	</extension>

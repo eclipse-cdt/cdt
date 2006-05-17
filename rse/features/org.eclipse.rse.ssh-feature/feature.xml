@@ -28,7 +28,6 @@
       <import plugin="org.eclipse.team.cvs.ssh2"/>
       <import plugin="org.eclipse.rse.core"/>
       <import plugin="org.eclipse.rse.ui"/>
-      <import plugin="org.eclipse.team.cvs.ssh"/>
       <import plugin="org.eclipse.rse.subsystems.files.core"/>
       <import plugin="org.eclipse.rse.subsystems.shells.core"/>
    </requires>

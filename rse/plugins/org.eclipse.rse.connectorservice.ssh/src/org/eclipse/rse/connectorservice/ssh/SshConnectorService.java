@@ -17,15 +17,15 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.services.files.IFileService;
+import org.eclipse.rse.services.ssh.ISshSessionProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ccvs.ssh2.CVSSSH2Plugin;
 import org.eclipse.team.internal.ccvs.ssh2.ISSHContants;
 import org.eclipse.team.internal.ccvs.ui.UserValidationDialog;
+
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
-import org.eclipse.rse.services.ssh.ISshSessionProvider;
 
 /** 
  * Create SSH connections.

@@ -1,3 +1,8 @@
+2006-05-17 Mikhail Khodjaiants
+	Moved the new static methods from AbstractCLaunchDelegate to the new utility class.
+	* AbstractCLaunchDelegate.java
+	+ LaunchUtils.java
+
 2006-04-03 Mikhail Khodjaiants
 	Fix for bug 134581: Unable to set advanced debugger options.
 	* CDebuggerTab.java

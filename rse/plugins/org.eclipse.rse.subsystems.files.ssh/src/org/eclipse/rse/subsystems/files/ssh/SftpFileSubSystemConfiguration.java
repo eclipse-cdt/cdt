@@ -30,8 +30,6 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 
-import com.jcraft.jsch.Session;
-
 public class SftpFileSubSystemConfiguration extends FileServiceSubSystemConfiguration {
 
 	protected IHostFileToRemoteFileAdapter _hostFileAdapter;

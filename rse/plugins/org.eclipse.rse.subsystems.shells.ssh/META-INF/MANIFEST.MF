@@ -4,14 +4,14 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.shells.ssh; singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.subsystems.shells.ssh.Activator
+Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.rse.services,
  org.eclipse.rse.connectorservice.ssh,
  org.eclipse.rse.services.ssh,
- org.eclipse.rse.ui,
- org.eclipse.rse.subsystems.shells.core
+ org.eclipse.rse.subsystems.shells.core,
+ org.eclipse.rse.ui
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.subsystems.shells.ssh
-Bundle-Vendor: Eclipse.org

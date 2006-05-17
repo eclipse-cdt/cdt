@@ -21,7 +21,7 @@ Martin Oberhuber - initial API and implementation
 			icon="icons/full/obj16/systemfiles_obj.gif"
 			category="files"
 			class="org.eclipse.rse.subsystems.files.ssh.SftpFileSubSystemConfiguration"
-			vendor="Wind River Systems, Inc."
+			vendor="%providerName"
 			id="ssh.files">
 		</configuration>
 	</extension>

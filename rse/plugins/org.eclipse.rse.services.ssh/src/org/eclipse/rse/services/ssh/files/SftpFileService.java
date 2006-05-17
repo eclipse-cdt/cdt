@@ -134,7 +134,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	}
 
 	private SftpHostFile makeHostFile(String parentPath, String fileName, SftpATTRS attrs) {
-		SftpHostFile node = new SftpHostFile(parentPath, fileName, attrs.isDir(), false, attrs.isLink(), attrs.getMTime(), attrs.getSize());
+		SftpHostFile node = new SftpHostFile(parentPath, fileName, attrs.isDir(), false, attrs.isLink(), 1000L * attrs.getMTime(), attrs.getSize());
 		if (attrs.getExtended()!=null) {
 			node.setExtendedData(attrs.getExtended());
 		}

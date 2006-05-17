@@ -23,8 +23,6 @@ import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.services.ssh.ISshService;
 import org.eclipse.rse.services.ssh.ISshSessionProvider;
 
-import com.jcraft.jsch.Session;
-
 /**
  * A Shell Services for ssh.
  * Adapted from LocalShellService.

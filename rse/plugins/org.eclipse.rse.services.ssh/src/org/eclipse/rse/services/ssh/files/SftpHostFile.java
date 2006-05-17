@@ -32,6 +32,7 @@ public class SftpHostFile implements IHostFile {
 	private long fLastModified = 0;
 	private long fSize = 0;
 	private boolean fIsLink = false;
+	private String fLinkTarget;
 	private String[] fExtended = null;
 	
 	//TODO just re-use or extend FTPHostFile instead of copying here?
@@ -126,6 +127,14 @@ public class SftpHostFile implements IHostFile {
 		return fIsLink;
 	}
 	
+	public void setLinkTarget(String linkTarget) {
+		fLinkTarget = linkTarget;
+	}
+	
+	public String getLinkTarget() {
+		return fLinkTarget;
+	}
+	
 	/** Extended data: name:value pairs */
 	public void setExtendedData(String[] extended) {
 		fExtended = extended;
@@ -141,6 +150,9 @@ public class SftpHostFile implements IHostFile {
 		if (isLink()) {
 			//TODO: read symbolic link target and its type to provide e.g. "symbolic link(directory):/export4/opt
 			result = "symbolic link"; //$NON-NLS-1$
+			if (fLinkTarget!=null) {
+				result += "(unknown):" +  fLinkTarget; //$NON-NLS-1$
+			}
 		} else if (isFile()) {
 			result = "file"; //$NON-NLS-1$
 		} else if (isDirectory()) {

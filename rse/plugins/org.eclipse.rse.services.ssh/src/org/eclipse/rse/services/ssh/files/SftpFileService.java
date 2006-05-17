@@ -133,11 +133,21 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
 	}
 
-	private static SftpHostFile makeHostFile(String parentPath, String fileName, SftpATTRS attrs) {
+	private SftpHostFile makeHostFile(String parentPath, String fileName, SftpATTRS attrs) {
 		SftpHostFile node = new SftpHostFile(parentPath, fileName, attrs.isDir(), false, attrs.isLink(), attrs.getMTime(), attrs.getSize());
 		if (attrs.getExtended()!=null) {
 			node.setExtendedData(attrs.getExtended());
 		}
+		//TODO remove comments as soon as jsch-0.1.29 is available 
+		//if (node.isLink()) {
+		//	try {
+		//		//Note: readlink() is supported only with jsch-0.1.29 or higher.
+		//		//By catching the exception we remain backward compatible.
+		//		String linkTarget=fChannelSftp.readlink(node.getAbsolutePath());
+		//		node.setLinkTarget(linkTarget);
+		//		//TODO: Classify the type of resource linked to as file, folder or broken link
+		//	} catch(Exception e) {}
+		//}
 		return node;
 	}
 	

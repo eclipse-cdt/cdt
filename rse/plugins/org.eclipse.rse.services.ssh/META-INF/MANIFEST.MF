@@ -1,17 +1,14 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %plugin.name
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.services.ssh;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.services.ssh.Activator
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.services,
- com.jcraft.jsch,
- org.eclipse.team.cvs.ui,
- org.eclipse.team.cvs.ssh2
+ com.jcraft.jsch;bundle-version="[0.1.28,2.0.0)"
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.services.ssh,
  org.eclipse.rse.services.ssh.files,

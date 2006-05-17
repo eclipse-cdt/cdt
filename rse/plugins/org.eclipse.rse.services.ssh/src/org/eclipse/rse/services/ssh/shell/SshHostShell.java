@@ -20,13 +20,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
-
 import org.eclipse.rse.services.shells.AbstractHostShell;
 import org.eclipse.rse.services.shells.IHostShellOutputReader;
 import org.eclipse.rse.services.ssh.ISshSessionProvider;
 
 import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.Session;
 
 /**
  * A Shell subsystem for SSH.

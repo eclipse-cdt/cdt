@@ -64,7 +64,7 @@ public class SystemClearAllPasswordsAction extends SystemBaseAction {
 	            ISubSystem subsystem = subsystems[i];
 	            IConnectorService system = subsystem.getConnectorService();
 	            
-	            anyOk = !system.isConnected() && system.isPasswordCached();
+	            anyOk = !system.isConnected() && system.isPasswordCached(true);
 	            
 	            if (anyOk) 
 	            {
@@ -92,7 +92,7 @@ public class SystemClearAllPasswordsAction extends SystemBaseAction {
         	{
     			IConnectorService system = ss.getConnectorService();
     		
-    			if (system.isPasswordCached())
+    			if (system.isPasswordCached() || system.isPasswordCached(true))
     			{
 	    			// get the user id
 	    			String userId = system.getUserId();

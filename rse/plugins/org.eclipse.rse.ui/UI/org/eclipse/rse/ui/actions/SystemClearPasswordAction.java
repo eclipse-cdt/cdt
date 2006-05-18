@@ -57,7 +57,7 @@ public class SystemClearPasswordAction extends SystemBaseAction
 	{
 		if (!(obj instanceof ISubSystem) ||
 				((ISubSystem)obj).getConnectorService().isConnected() ||
-				!(((ISubSystem)obj).getConnectorService().isPasswordCached())) {
+				!(((ISubSystem)obj).getConnectorService().isPasswordCached(true))) {
 			return false;
 		}
 		else {

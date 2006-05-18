@@ -362,8 +362,10 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 		      
 		      // ----------------------
 		      // "Home" filter...
-		      // ----------------------		  
-		      String name = null;
+		      // ----------------------
+		      // Bug 142070: Get rid of the default "Home" filter because it is an invalid
+		      // path in many cases
+/*		      String name = null;
 		      String path = null;
 		      if (mgr.getName().equals("Team"))
 		      {
@@ -379,7 +381,7 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 		      RemoteFileFilterString homeFilterString = new RemoteFileFilterString(this);
 		      homeFilterString.setPath(path);
 		      filterStrings.add(homeFilterString.toString());
-	          mgr.createSystemFilter(pool, name, filterStrings);	
+	          mgr.createSystemFilter(pool, name, filterStrings);*/	
 	          	          	          
 	        
 		      // ----------------------

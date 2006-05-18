@@ -82,7 +82,7 @@ public interface ISystemPreferencesConstants
 	public static final int FILETRANSFERMODE_TEXT 				= 1;
 
 	public static final boolean DEFAULT_DAEMON_AUTOSTART		= false;
-	public static final int     DEFAULT_DAEMON_PORT				= 4300;   
+	public static final int     DEFAULT_DAEMON_PORT				= 4035;   
 	
 	public static final boolean DEFAULT_LIMIT_CACHE             = false;
 	public static final String  DEFAULT_MAX_CACHE_SIZE          = "512";

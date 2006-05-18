@@ -574,7 +574,9 @@ public class SystemFileFilterStringEditPane
 			errorMessage = validateFolderInput();	
 		}
 		// otherwise, simply fire change event
+		// Bug 142185: fire an event with null to erase any previously shown and saved error message
 		else {
+			fireChangeEvent(null);
 			fireChangeEvent(errorMessage);
 		}
 		

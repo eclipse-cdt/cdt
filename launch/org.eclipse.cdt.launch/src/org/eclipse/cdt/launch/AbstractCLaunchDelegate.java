@@ -242,7 +242,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * 
 	 * @return the program arguments as a String
 	 */
-	public static String getProgramArguments(ILaunchConfiguration config) throws CoreException {
+	public String getProgramArguments(ILaunchConfiguration config) throws CoreException {
 		return LaunchUtils.getProgramArguments(config);
 	}
 

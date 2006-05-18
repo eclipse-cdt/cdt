@@ -1894,7 +1894,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			IInputType primaryInputType = tool.getPrimaryInputType();
 			IInputType inputType = tool.getInputType(ext);
 			if ((primaryInputType != null && !primaryInputType.getMultipleOfType()) ||
-				(inputType == null && !(tool == info.getToolFromOutputExtension(buildTargetExt))))	{
+				(inputType == null && tool != config.calculateTargetTool()))	{
 				
 				// Try to add the rule for the file
 				Vector generatedOutputs = new Vector();		//  IPath's - build directory relative

@@ -566,7 +566,7 @@ public class BuildDescription implements IBuildDescription {
 			//  Generate the step to build this source file
 			IInputType primaryInputType = tool.getPrimaryInputType();
 			if ((primaryInputType != null && !primaryInputType.getMultipleOfType()) ||
-				(inputType == null && tool != fCfg.getToolFromOutputExtension(fCfg.getArtifactExtension()))){
+				(inputType == null && tool != fCfg.calculateTargetTool())){
 					
 				BuildStep action = null;
 				BuildIOType argument = null;

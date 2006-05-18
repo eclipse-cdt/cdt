@@ -259,7 +259,16 @@ public interface IConfiguration extends IBuildObject {
 	public ITool[] getTools();
 
 	/**
-	 * Returns the tool in this configuration that creates the build artifact.  
+	 * Returns the tool in this configuration specified with 
+	 * the toolChain#targetTool attribute that creates the build artifact
+	 * 
+	 * NOTE: This method returns null in case the toolChain definition 
+	 * does not have the targetTool attribute or if the attribute does not
+	 * refer to the appropriate tool.
+	 * For the target tool calculation the IConfiguration#calculateTargetTool()
+	 * method should be used
+	 * 
+	 * @see IConfiguration#calculateTargetTool()
 	 * 
 	 * @return ITool
 	 */
@@ -508,4 +517,34 @@ public interface IConfiguration extends IBuildObject {
 	 */
 	public boolean needsFullRebuild();
 
+	/**
+	 * Calculates the configuration target tool.
+	 * 
+	 * @return ITool or null if not found
+	 * 
+	 * @since 3.1
+	 */
+	public ITool calculateTargetTool();
+	
+	/**
+	 * Returns a <code>ITool</code> for the tool associated with the 
+	 * output extension.
+	 * 
+	 * @param extension the file extension of the output file
+	 * @return ITool
+	 * 
+	 * @since 3.1
+	 */
+	public ITool getToolFromOutputExtension(String extension);
+	
+	/**
+	 * Returns a <code>ITool</code> for the tool associated with the 
+	 * input extension.
+	 * 
+	 * @param extension the file extension of the input file
+	 * @return ITool
+	 * 
+	 * @since 3.1
+	 */
+	public ITool getToolFromInputExtension(String sourceExtension);
 }

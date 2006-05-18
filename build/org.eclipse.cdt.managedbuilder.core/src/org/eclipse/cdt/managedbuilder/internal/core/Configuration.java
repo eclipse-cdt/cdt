@@ -1641,28 +1641,48 @@ public class Configuration extends BuildObject implements IConfiguration {
 		ITool tool = getTargetTool();
 		
 		if(tool == null){
+			tool = getToolFromOutputExtension(getArtifactExtension());
+		}
+		
+		if(tool == null){
 			IConfiguration extCfg;
 			for(extCfg = this; 
 			extCfg != null && !extCfg.isExtensionElement(); 
 			extCfg = extCfg.getParent()){
-				
 			}
 
-			String ext = extCfg != null ? extCfg.getArtifactExtension() :
-				getArtifactExtension();
-			
-			// Get all the tools for the current config
-			ITool[] tools = getFilteredTools();
-			for (int index = 0; index < tools.length; index++) {
-				ITool t = tools[index];
-				if (t.producesFileType(ext)) {
-					tool = t;
-					break;
-				}
+			if(extCfg != null){
+				tool = getToolFromOutputExtension(extCfg.getArtifactExtension());
 			}
 		}
 		
 		return tool;
+	}
+	
+	public ITool getToolFromOutputExtension(String extension) {
+		// Treat a null argument as an empty string
+		String ext = extension == null ? EMPTY_STRING : extension;
+		// Get all the tools for the current config
+		ITool[] tools = getFilteredTools();
+		for (int index = 0; index < tools.length; index++) {
+			ITool tool = tools[index];
+			if (tool.producesFileType(ext)) {
+				return tool;
+			}
+		}
+		return null;		
+	}
+	
+	public ITool getToolFromInputExtension(String sourceExtension) {
+		// Get all the tools for the current config
+		ITool[] tools = getFilteredTools();
+		for (int index = 0; index < tools.length; index++) {
+			ITool tool = tools[index];
+			if (tool.buildsFileType(sourceExtension)) {
+				return tool;
+			}
+		}
+		return null;		
 	}
 
 	/*

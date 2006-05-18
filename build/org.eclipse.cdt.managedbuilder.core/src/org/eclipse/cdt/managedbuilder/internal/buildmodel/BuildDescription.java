@@ -566,7 +566,7 @@ public class BuildDescription implements IBuildDescription {
 			//  Generate the step to build this source file
 			IInputType primaryInputType = tool.getPrimaryInputType();
 			if ((primaryInputType != null && !primaryInputType.getMultipleOfType()) ||
-				(inputType == null && tool != fInfo.getToolFromOutputExtension(fCfg.getArtifactExtension()))){
+				(inputType == null && tool != fCfg.getToolFromOutputExtension(fCfg.getArtifactExtension()))){
 					
 				BuildStep action = null;
 				BuildIOType argument = null;
@@ -1423,7 +1423,7 @@ public class BuildDescription implements IBuildDescription {
 												}
 												//TODO
 											} else if (VAR_LIBS.equals(var)){
-												ITool libTool = fCfg.getTargetTool();
+												ITool libTool = fCfg.calculateTargetTool();
 												if(libTool == null)
 													libTool = step.getTool();
 
@@ -1515,7 +1515,7 @@ public class BuildDescription implements IBuildDescription {
 
 	public String[] getUserObjs(BuildStep step) {
 		Vector objs = new Vector();
-		ITool tool = fCfg.getTargetTool();
+		ITool tool = fCfg.calculateTargetTool();
 		if(tool == null)
 			tool = step.getTool();
 			

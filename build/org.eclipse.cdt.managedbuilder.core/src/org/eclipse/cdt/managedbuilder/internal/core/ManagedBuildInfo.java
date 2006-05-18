@@ -405,7 +405,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	public String[] getLibsForConfiguration(String extension) {
 		Vector libs = new Vector();
-		ITool tool = getDefaultConfiguration().getTargetTool();
+		ITool tool = getDefaultConfiguration().calculateTargetTool();
 		if(tool == null)
 			tool = getToolFromOutputExtension(extension);
 			
@@ -668,32 +668,16 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolFromInputExtension(java.lang.String)
 	 */
 	public ITool getToolFromInputExtension(String sourceExtension) {
-		// Get all the tools for the current config
-		ITool[] tools = getFilteredTools();
-		for (int index = 0; index < tools.length; index++) {
-			ITool tool = tools[index];
-			if (tool.buildsFileType(sourceExtension)) {
-				return tool;
-			}
-		}
-		return null;		
+		IConfiguration config = getDefaultConfiguration();
+		return config.getToolFromInputExtension(sourceExtension);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolFromOutputExtension(java.lang.String)
 	 */
 	public ITool getToolFromOutputExtension(String extension) {
-		// Treat a null argument as an empty string
-		String ext = extension == null ? new String() : extension;
-		// Get all the tools for the current config
-		ITool[] tools = getFilteredTools();
-		for (int index = 0; index < tools.length; index++) {
-			ITool tool = tools[index];
-			if (tool.producesFileType(ext)) {
-				return tool;
-			}
-		}
-		return null;		
+		IConfiguration config = getDefaultConfiguration();
+		return config.getToolFromOutputExtension(extension);
 	}
 	
 	/* (non-Javadoc)
@@ -766,7 +750,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	public String[] getUserObjectsForConfiguration(String extension) {
 		Vector objs = new Vector();
-		ITool tool = getDefaultConfiguration().getTargetTool();
+		ITool tool = getDefaultConfiguration().calculateTargetTool();
 		if(tool == null)
 			tool = getToolFromOutputExtension(extension);
 			

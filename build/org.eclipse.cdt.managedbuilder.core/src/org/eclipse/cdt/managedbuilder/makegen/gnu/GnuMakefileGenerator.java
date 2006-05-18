@@ -1175,10 +1175,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		String postannouncebuildStep = info.getPostannouncebuildStep();
 		String targets = rebuild ? "clean all" : "all"; //$NON-NLS-1$ //$NON-NLS-2$
 
-		ITool targetTool = config.getTargetTool();
-		if (targetTool == null) {
-			targetTool = info.getToolFromOutputExtension(buildTargetExt);
-		}
+		ITool targetTool = config.calculateTargetTool();
+//		if (targetTool == null) {
+//			targetTool = info.getToolFromOutputExtension(buildTargetExt);
+//		}
 
 		// Get all the projects the build target depends on
 		IProject[] refdProjects = null;
@@ -3687,10 +3687,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		int[] doneState = new int[buildTools.length];
 		
 		// Identify the target tool 
-		ITool targetTool = config.getTargetTool();
-		if (targetTool == null) {
-			targetTool = info.getToolFromOutputExtension(buildTargetExt);
-		}
+		ITool targetTool = config.calculateTargetTool();
+//		if (targetTool == null) {
+//			targetTool = info.getToolFromOutputExtension(buildTargetExt);
+//		}
 		
 		//  Initialize the tool info array and the done state
 		for (int i=0; i<buildTools.length; i++) {

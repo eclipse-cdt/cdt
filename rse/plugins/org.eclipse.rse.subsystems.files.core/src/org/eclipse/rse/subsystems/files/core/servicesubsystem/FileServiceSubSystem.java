@@ -450,6 +450,12 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			String remoteParentPath = remotePath.substring(0, slashIndex);
 			String remoteFileName = remotePath.substring(slashIndex + 1, remotePath.length());
 			boolean isBinary = isBinary(srcEncoding, rmtEncoding, remotePath);
+			if (ArchiveHandlerManager.isVirtual(remotePath))
+			{
+				AbsoluteVirtualPath avp = new AbsoluteVirtualPath(remotePath);
+				remoteParentPath = avp.getPath();
+				remoteFileName = avp.getName();
+			}
 			try
 			{
 				getFileService().upload(monitor, new File(source), remoteParentPath, remoteFileName, isBinary, srcEncoding, rmtEncoding);

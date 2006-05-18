@@ -446,12 +446,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		File target = new File(remoteParent, remoteFile);
 		boolean sourceIsVirtual = ArchiveHandlerManager.isVirtual(localFile.getAbsolutePath());
 		boolean targetIsVirtual = ArchiveHandlerManager.isVirtual(target.getAbsolutePath());
-		boolean targetIsArchive = ArchiveHandlerManager.getInstance().isArchive(target);
 		if (sourceIsVirtual)
 		{
 			return copyFromArchive(localFile, target, remoteFile, monitor, srcEncoding, hostEncoding, !isBinary);
 		}
-		if (targetIsVirtual || targetIsArchive)
+		if (targetIsVirtual)
 		{
 			return copyToArchive(localFile, target, remoteFile, monitor, srcEncoding, hostEncoding, !isBinary);
 		}

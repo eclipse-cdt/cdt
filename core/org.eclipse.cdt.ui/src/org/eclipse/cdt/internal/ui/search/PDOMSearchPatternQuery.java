@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -62,16 +61,15 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 	
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 		try {
-			for (int i = 0; i < projects.length; ++i)
-				searchProject(projects[i], monitor);
+			searchIndex(monitor);
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
 	}
 	
-	private void searchProject(ICProject project, IProgressMonitor monitor) throws CoreException {
-		IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
+	private void searchIndex(IProgressMonitor monitor) throws CoreException {
+		IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM();
 
 		try {
 			pdom.acquireReadLock();

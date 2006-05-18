@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -126,6 +127,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil.ArrayWrapper;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author aniefer
@@ -747,10 +749,15 @@ public class CPPSemantics {
 		}
 		if( binding == null ){
 			// Let's try the pdom
-			IPDOM pdom = name.getTranslationUnit().getIndex();
-			if (pdom != null)
-				binding = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).resolveBinding(name);
-
+			if (name.getTranslationUnit().useIndex()) {
+				IPDOM pdom = null;
+				try {
+					pdom = CCorePlugin.getPDOMManager().getPDOM();
+					binding = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).resolveBinding(name);
+				} catch (CoreException e) {
+				}
+			}
+			
 			// If we're still null...
 			if (binding == null) {
 			    if( name instanceof ICPPASTQualifiedName && data.forDefinition() )

@@ -21,20 +21,12 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.IPDOMWriter;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -47,12 +39,9 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile.Comparator;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile.Finder;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * The PDOM Database.
@@ -62,8 +51,7 @@ import org.eclipse.core.runtime.QualifiedName;
 public class PDOM extends PlatformObject
 		implements IPDOM, IPDOMResolver, IPDOMWriter {
 
-	private final ICProject project;
-	private IPDOMIndexer indexer;
+	private static final String dbName = "pdom"; //$NON-NLS-1$
 	
 	private final IPath dbPath;
 	private Database db;
@@ -84,29 +72,15 @@ public class PDOM extends PlatformObject
 	private BTree fileIndex;
 	private Map linkageCache = new HashMap();
 
-	private static final QualifiedName dbNameProperty
-		= new QualifiedName(CCorePlugin.PLUGIN_ID, "dbName"); //$NON-NLS-1$
-
-	public PDOM(ICProject project, IPDOMIndexer indexer) throws CoreException {
-		this.project = project;
-		this.indexer = indexer;
-		indexer.setPDOM(this);
-		
+	public PDOM() throws CoreException {
 		// Load up the database
-		IProject rproject = project.getProject();
-		String dbName = rproject.getPersistentProperty(dbNameProperty);
-		if (dbName == null) {
-			dbName = project.getElementName() + "_"
-					+ System.currentTimeMillis() + ".pdom";
-			rproject.setPersistentProperty(dbNameProperty, dbName);
-		}
 		dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
 		db = new Database(dbPath.toOSString());
 		
 		// Check the version and force a rebuild if needed.
 		// TODO Conversion might be a nicer story down the road
 		if (db.getVersion() != VERSION) {
-			indexer.reindex();
+			CCorePlugin.getPDOMManager().reindex();
 		} else {
 			// populate the linkage cache
 			PDOMLinkage linkage = getFirstLinkage();
@@ -129,24 +103,6 @@ public class PDOM extends PlatformObject
 			return this;
 		else
 			return super.getAdapter(adapter);
-	}
-	
-	public ICProject getProject() {
-		return project;
-	}
-	
-	public IPDOMIndexer getIndexer() {
-		return indexer;
-	}
-	
-	public void setIndexer(IPDOMIndexer indexer) throws CoreException {
-		// Force a reindex if indexer changes 
-		boolean reindex = indexer != null && this.indexer != indexer;
-		this.indexer = indexer;
-		indexer.setPDOM(this);
-		
-		if (reindex)
-			indexer.reindex();
 	}
 	
 	public void accept(IPDOMVisitor visitor) throws CoreException {
@@ -208,76 +164,6 @@ public class PDOM extends PlatformObject
 			getFileIndex().insert(file.getRecord(), new Comparator(db));
 		}
 		return file;		
-	}
-	
-	public void addSymbolsXXX(ILanguage language, IASTTranslationUnit ast) throws CoreException {
-		final PDOMLinkage linkage = getLinkage(language);
-		if (linkage == null)
-			return;
-		
-		// Add in the includes
-		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
-		for (int i = 0; i < includes.length; ++i) {
-			IASTPreprocessorIncludeStatement include = includes[i];
-			
-			IASTFileLocation sourceLoc = include.getFileLocation();
-			String sourcePath
-				= sourceLoc != null
-				? sourceLoc.getFileName()
-				: ast.getFilePath(); // command-line includes
-				
-			PDOMFile sourceFile = addFile(sourcePath);
-			String destPath = include.getPath();
-			PDOMFile destFile = addFile(destPath);
-			sourceFile.addIncludeTo(destFile);
-		}
-	
-		// Add in the macros
-		IASTPreprocessorMacroDefinition[] macros = ast.getMacroDefinitions();
-		for (int i = 0; i < macros.length; ++i) {
-			IASTPreprocessorMacroDefinition macro = macros[i];
-			
-			IASTFileLocation sourceLoc = macro.getFileLocation();
-			if (sourceLoc == null)
-				continue; // skip built-ins and command line macros
-			
-			PDOMFile sourceFile = getFile(sourceLoc.getFileName());
-			if (sourceFile != null) // not sure why this would be null
-				sourceFile.addMacro(macro);
-		}
-		
-		// Add in the names
-		ast.accept(new ASTVisitor() {
-			{
-				shouldVisitNames = true;
-				shouldVisitDeclarations = true;
-			}
-
-			public int visit(IASTName name) {
-				try {
-					IASTFileLocation fileloc = name.getFileLocation();
-					if (fileloc != null) {
-						PDOMFile file = addFile(fileloc.getFileName());
-						linkage.addName(name, file);
-					}
-					return PROCESS_CONTINUE;
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-					return PROCESS_ABORT;
-				}
-			};
-		});;
-	
-		// Tell the world
-		fireChange();
-	}
-	
-	public void removeSymbols(ITranslationUnit tu) throws CoreException {
-		String filename = ((IFile)tu.getResource()).getLocation().toOSString();
-		PDOMFile file = getFile(filename);
-		if (file == null)
-			return;
-		file.clear();
 	}
 	
 	public void clear() throws CoreException {
@@ -397,6 +283,7 @@ public class PDOM extends PlatformObject
 		Collection values = linkageCache.values();
 		return (PDOMLinkage[])values.toArray(new PDOMLinkage[values.size()]);
 	}
+	
 	public void insertLinkage(PDOMLinkage linkage) throws CoreException {
 		linkage.setNext(db.getInt(LINKAGES));
 		db.putInt(LINKAGES, linkage.getRecord());

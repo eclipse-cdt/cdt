@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -95,6 +96,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Created on Nov 5, 2004
@@ -1301,11 +1303,15 @@ public class CVisitor {
 		if( blockItem != null) {
 			// We're at the end of our rope, check the PDOM if we can
 			IASTTranslationUnit tu = (IASTTranslationUnit)blockItem;
-			IPDOM pdom = tu.getIndex();
-			binding = null;
-			if (pdom != null)
-				binding = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).resolveBinding(name);
-
+			if (tu.useIndex()) {
+				IPDOM pdom = null;
+				try {
+					pdom = CCorePlugin.getPDOMManager().getPDOM();
+					binding = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).resolveBinding(name);
+				} catch (CoreException e) {
+				}
+			}
+			
 			if (binding == null)
 				return externalBinding( (IASTTranslationUnit) blockItem, name );
 			else

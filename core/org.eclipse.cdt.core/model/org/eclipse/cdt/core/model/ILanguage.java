@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
@@ -67,7 +68,7 @@ public interface ILanguage extends IAdaptable {
 	 */
 	public IASTTranslationUnit getASTTranslationUnit(
 			ITranslationUnit file,
-			int style);
+			int style) throws CoreException;
 
 	/**
 	 * Create the AST for the given file with the given style with a given
@@ -80,7 +81,7 @@ public interface ILanguage extends IAdaptable {
 	public IASTTranslationUnit getASTTranslationUnit(
 			ITranslationUnit file,
 			ICodeReaderFactory codeReaderFactory,
-			int style);
+			int style) throws CoreException;
 
 	/**
 	 * Return the AST Completion Node for the given working copy at the given
@@ -90,7 +91,7 @@ public interface ILanguage extends IAdaptable {
 	 * @param offset
 	 * @return
 	 */
-	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy, int offset);
+	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy, int offset) throws CoreException;
 
 	/**
 	 * Gather the list of IASTNames that appear the selection with the given start offset

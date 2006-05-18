@@ -22,4 +22,5 @@ public interface IMacro {
     //for function-like macros, the signature includes the parameters
     public char[] getSignature();
     public char[] getName();
+    public char[] getExpansion();
 }

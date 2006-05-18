@@ -26,14 +26,6 @@
             name="DOM AST"
             id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST">
       </view>
-      <view
-            allowMultiple="true"
-            category="org.eclipse.cdt.ui.views"
-            class="org.eclipse.cdt.ui.tests.IndexerView.IndexerView"
-            fastViewWidthRatio="0.35"
-            icon="icons/used/output_obj.gif"
-            id="org.eclipse.cdt.ui.tests.IndexerView"
-            name="Indexer View"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -77,20 +69,6 @@
 				<objectState name="extension" value="cxx"/>
 				<objectState name="extension" value="CXX"/>
          	</or>
-         </visibility>
-      </viewerContribution>
-      <viewerContribution
-            id="org.eclipse.cdt.ui.CView2"
-            targetID="org.eclipse.cdt.ui.CView">
-         <action
-               class="org.eclipse.cdt.ui.tests.IndexerView.OpenIndexerViewAction"
-               id="org.eclipse.cdt.ui.tests.IndexerView.OpenIndexerViewAction"
-               label="Show in Indexer View"
-               menubarPath="additions"/>
-         <visibility>
-            <or>
-               <objectClass name="org.eclipse.cdt.internal.core.model.CProject"/>
-            </or>
          </visibility>
       </viewerContribution>
    </extension>

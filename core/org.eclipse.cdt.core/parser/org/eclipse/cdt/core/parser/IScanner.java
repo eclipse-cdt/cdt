@@ -31,6 +31,7 @@ public interface IScanner  {
 	
 	public IMacro addDefinition(char[] key, char[] value); 
 	public IMacro addDefinition(char[] name, char[][] params, char[] expansion);
+	public void addDefinition(IMacro macro);
 	
 	public Map 				getDefinitions();
 	public String[] getIncludePaths();

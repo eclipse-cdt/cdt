@@ -1,7 +1,7 @@
 package org.eclipse.cdt.internal.ui.actions;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -35,9 +35,9 @@ public class PDOMUpdateProjectAction implements IObjectActionDelegate {
 				continue;
 			
 			ICProject project = (ICProject)objs[i];
-			IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
+			IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getIndexer(project);
 			try {
-				pdom.getIndexer().reindex();
+				indexer.indexAll();
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
 			}

@@ -38,10 +38,10 @@ public abstract class CtagsIndexerJob extends Job {
 	protected final CtagsIndexer indexer;
 	protected final PDOM pdom;
 	
-	public CtagsIndexerJob(CtagsIndexer indexer) {
-		super("ctags Indexer: " + ((PDOM)indexer.getPDOM()).getProject().getElementName());
+	public CtagsIndexerJob(CtagsIndexer indexer) throws CoreException {
+		super("ctags Indexer: " + indexer.getProject().getElementName());
 		this.indexer = indexer;
-		this.pdom = (PDOM)indexer.getPDOM();
+		this.pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM();
 		setRule(CCorePlugin.getPDOMManager().getIndexerSchedulingRule());
 	}
 

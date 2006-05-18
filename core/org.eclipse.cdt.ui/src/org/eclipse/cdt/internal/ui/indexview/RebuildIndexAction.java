@@ -12,12 +12,7 @@
 package org.eclipse.cdt.internal.ui.indexview;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
 /**
@@ -31,34 +26,11 @@ public class RebuildIndexAction extends IndexAction {
 	}
 	
 	public void run() {
-		ISelection selection = viewer.getSelection();
-		if (!(selection instanceof IStructuredSelection))
-			return;
-		
-		Object[] objs = ((IStructuredSelection)selection).toArray();
-		for (int i = 0; i < objs.length; ++i) {
-			if (!(objs[i] instanceof ICProject))
-				continue;
-			
-			ICProject project = (ICProject)objs[i];
-			IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
-			try {
-				pdom.getIndexer().reindex();
-			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
-			}
-		}
+		CCorePlugin.getPDOMManager().reindex();
 	}
 	
 	public boolean valid() {
-		ISelection selection = viewer.getSelection();
-		if (!(selection instanceof IStructuredSelection))
-			return false;
-		Object[] objs = ((IStructuredSelection)selection).toArray();
-		for (int i = 0; i < objs.length; ++i)
-			if (objs[i] instanceof ICProject)
-				return true;
-		return false;
+		return true;
 	}
 
 }

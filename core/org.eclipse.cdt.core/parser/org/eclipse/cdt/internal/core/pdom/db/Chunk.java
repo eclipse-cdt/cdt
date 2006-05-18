@@ -46,6 +46,18 @@ public class Chunk {
 		return buffer.get(offset % Database.CHUNK_SIZE);
 	}
 	
+	public byte[] getBytes(int offset, int length) {
+		byte[] bytes = new byte[length];
+		buffer.position(offset % Database.CHUNK_SIZE);
+		buffer.get(bytes, 0, length);
+		return bytes;
+	}
+	
+	public void putBytes(int offset, byte[] bytes) {
+		buffer.position(offset % Database.CHUNK_SIZE);
+		buffer.put(bytes, 0, bytes.length);
+	}
+	
 	public void putInt(int offset, int value) {
 		buffer.putInt(offset % Database.CHUNK_SIZE, value);
 	}

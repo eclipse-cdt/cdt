@@ -11,10 +11,9 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.nulli;
 
-import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -24,17 +23,20 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMNullIndexer implements IPDOMIndexer {
 
-	private IPDOM pdom;
+	private ICProject project;
 	
-	public void setPDOM(IPDOM pdom) {
-		this.pdom = pdom;
+	public ICProject getProject() {
+		return project;
 	}
-
+	
+	public void setProject(ICProject project) {
+		this.project = project;
+	}
+	
 	public void handleDelta(ICElementDelta delta) {
 	}
 	
-	public void reindex() throws CoreException {
-		new PDOMNullReindex((PDOM)pdom).schedule();
+	public void indexAll() throws CoreException {
 	}
 
 }

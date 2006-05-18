@@ -11,9 +11,16 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.parser.IMacro;
+import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
@@ -103,4 +110,45 @@ public class PDOMMacro {
 		return rec != 0 ? new PDOMMacroParameter(pdom, rec) : null;
 	}
 	
+	private class ObjectStylePDOMMacro extends ObjectStyleMacro {
+		public ObjectStylePDOMMacro(char[] name) {
+			super(name, null);
+		}
+		public char[] getExpansion() {
+			return getMacroExpansion();
+		}
+	}
+	
+	private class FunctionStylePDOMMacro extends FunctionStyleMacro {
+		public FunctionStylePDOMMacro(char[] name, char[][] arglist) {
+			super(name, null, arglist);
+		}
+		public char[] getExpansion() {
+			return getMacroExpansion();
+		}
+	}
+	
+	private char[] getMacroExpansion() {
+		try {
+			return PDOMMacro.this.getExpansion().getChars();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new char[] { ' ' };
+		}
+	}
+
+	public IMacro getMacro() throws CoreException {
+		char[] name = getName().getChars();
+		PDOMMacroParameter param = getFirstParameter();
+		if (param != null) {
+			List paramList = new ArrayList();
+			while (param != null) {
+				paramList.add(param.getName().getChars());
+				param = param.getNextParameter();
+			}
+			char[][] params = (char[][])paramList.toArray(new char[paramList.size()][]);
+			return new FunctionStylePDOMMacro(name, params);
+		} else
+			return new ObjectStylePDOMMacro(name);
+	}
 }

@@ -12,10 +12,10 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 
-import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -24,18 +24,30 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMFastIndexer implements IPDOMIndexer {
 
-	private IPDOM pdom;
+	// Must match extension id
+	public static final String ID = "org.eclipse.cdt.core.fastIndexer";
+	
+	protected ICProject project;
+	
+	public PDOMFastIndexer() {
+	}
 
-	public void setPDOM(IPDOM pdom) {
-		this.pdom = pdom;
+	public ICProject getProject() {
+		return project;
 	}
 	
-	public void handleDelta(ICElementDelta delta) {
-		new PDOMFastHandleDelta((PDOM)pdom, delta).schedule();
+	public void setProject(ICProject project) {
+		this.project = project;
 	}
 	
-	public void reindex() throws CoreException {
-		new PDOMFastReindex((PDOM)pdom).schedule();
+	public void handleDelta(ICElementDelta delta) throws CoreException {
+		CCorePlugin.getPDOMManager().enqueue(
+				new PDOMFastHandleDelta(this, delta));
+	}
+	
+	public void indexAll() throws CoreException {
+		CCorePlugin.getPDOMManager().enqueue(
+				new PDOMFastReindex(this));
 	}
 	
 }

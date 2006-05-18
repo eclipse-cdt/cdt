@@ -11,10 +11,8 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -28,49 +26,41 @@ import org.eclipse.cdt.internal.core.pdom.PDOMCodeReaderFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @author Doug Schaefer
  *
  */
-public abstract class PDOMFastIndexerJob extends Job {
+public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 
-	protected final Map fileMap = new HashMap();
+	protected final PDOMFastIndexer indexer;
 	protected final PDOM pdom;
+	protected final PDOMCodeReaderFactory codeReaderFactory;
 	
 	// Error counter. If we too many errors we bail
 	protected int errorCount;
 	protected final int MAX_ERRORS = 10;
 
-	public PDOMFastIndexerJob(PDOM pdom) {
-		super("Fast Indexer: " + pdom.getProject().getElementName());
-		this.pdom = pdom;
-		setRule(CCorePlugin.getPDOMManager().getIndexerSchedulingRule());
+	public PDOMFastIndexerJob(PDOMFastIndexer indexer) throws CoreException {
+		this.indexer = indexer;
+		this.pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM();
+		this.codeReaderFactory = new PDOMCodeReaderFactory(pdom);
 	}
 
-	protected PDOMFile getCachedFile(String filename) throws CoreException {
-		PDOMFile file = (PDOMFile)fileMap.get(filename);
-		if (file == null) {
-			file = pdom.addFile(filename);
-			fileMap.put(filename, file);
-		}
-		return file;
-	}
-	
 	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
 		ILanguage language = tu.getLanguage();
 		if (language == null)
 			return;
 	
-		PDOMCodeReaderFactory codeReaderFactory = new PDOMCodeReaderFactory(pdom);
-		
 		// get the AST in a "Fast" way
 		IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
 				codeReaderFactory,
 				ILanguage.AST_USE_INDEX	| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
 		if (ast == null)
 			return;
+		
+		// Clear the macros
+		codeReaderFactory.clearMacros();
 
 		pdom.acquireWriteLock();
 		try {
@@ -78,7 +68,7 @@ public abstract class PDOMFastIndexerJob extends Job {
 		} finally {
 			pdom.releaseWriteLock();
 		}
-			
+		
 		// Tell the world
 		pdom.fireChange();
 	}
@@ -99,9 +89,9 @@ public abstract class PDOMFastIndexerJob extends Job {
 				? sourceLoc.getFileName()
 				: ast.getFilePath(); // command-line includes
 				
-			PDOMFile sourceFile = getCachedFile(sourcePath);
+			PDOMFile sourceFile = codeReaderFactory.getCachedFile(sourcePath);
 			String destPath = include.getPath();
-			PDOMFile destFile = getCachedFile(destPath);
+			PDOMFile destFile = codeReaderFactory.getCachedFile(destPath);
 			sourceFile.addIncludeTo(destFile);
 		}
 	
@@ -115,7 +105,7 @@ public abstract class PDOMFastIndexerJob extends Job {
 				continue; // skip built-ins and command line macros
 				
 			String filename = sourceLoc.getFileName();
-			PDOMFile sourceFile = getCachedFile(filename);
+			PDOMFile sourceFile = codeReaderFactory.getCachedFile(filename);
 			sourceFile.addMacro(macro);
 		}
 			
@@ -129,7 +119,7 @@ public abstract class PDOMFastIndexerJob extends Job {
 				try {
 					IASTFileLocation nameLoc = name.getFileLocation();
 					if (nameLoc != null)
-						linkage.addName(name, getCachedFile(nameLoc.getFileName()));
+						linkage.addName(name, codeReaderFactory.getCachedFile(nameLoc.getFileName()));
 					return PROCESS_CONTINUE;
 				} catch (Throwable e) {
 					CCorePlugin.log(e);

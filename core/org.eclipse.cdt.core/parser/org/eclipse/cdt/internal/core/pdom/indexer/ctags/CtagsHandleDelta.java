@@ -40,7 +40,7 @@ public class CtagsHandleDelta extends CtagsIndexerJob {
 	private List changed = new ArrayList();
 	private List removed = new ArrayList();
 	
-	public CtagsHandleDelta(CtagsIndexer indexer, ICElementDelta delta) {
+	public CtagsHandleDelta(CtagsIndexer indexer, ICElementDelta delta) throws CoreException {
 		super(indexer);
 		this.delta = delta;
 	}

@@ -32,15 +32,17 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public abstract class PDOMFullIndexerJob extends Job {
 
+	protected final PDOMFullIndexer indexer;
 	protected final PDOM pdom;
 	
 	// Error count, bail when it gets too high
 	protected int errorCount;
 	protected final int MAX_ERRORS = 10;
 	
-	public PDOMFullIndexerJob(PDOM pdom) {
-		super("Full Indexer: " + pdom.getProject().getElementName());
-		this.pdom = pdom;
+	public PDOMFullIndexerJob(PDOMFullIndexer indexer) throws CoreException {
+		super("Full Indexer: " + indexer.getProject().getElementName());
+		this.indexer = indexer;
+		this.pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM();
 		setRule(CCorePlugin.getPDOMManager().getIndexerSchedulingRule());
 	}
 

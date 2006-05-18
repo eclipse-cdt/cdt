@@ -12,6 +12,7 @@
 package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
 
 
@@ -21,10 +22,11 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IPDOMIndexer {
 
-	public void setPDOM(IPDOM pdom);
+	public void setProject(ICProject project);
+	public ICProject getProject();
 
-	public void handleDelta(ICElementDelta delta);
+	public void handleDelta(ICElementDelta delta) throws CoreException;
 	
-	public void reindex() throws CoreException;
+	public void indexAll() throws CoreException;
 	
 }

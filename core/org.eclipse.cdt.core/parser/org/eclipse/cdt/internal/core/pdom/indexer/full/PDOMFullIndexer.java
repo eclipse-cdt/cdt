@@ -11,10 +11,9 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
-import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -26,18 +25,22 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMFullIndexer implements IPDOMIndexer {
 
-	private IPDOM pdom;
+	private ICProject project;
 	
-	public void handleDelta(ICElementDelta delta) {
-		new PDOMFullHandleDelta((PDOM)pdom, delta).schedule();
+	public ICProject getProject() {
+		return project;
+	}
+	
+	public void setProject(ICProject project) {
+		this.project = project;
+	}
+	
+	public void handleDelta(ICElementDelta delta) throws CoreException {
+		new PDOMFullHandleDelta(this, delta).schedule();
 	}
 
-	public void reindex() throws CoreException {
-		new PDOMFullReindex((PDOM)pdom).schedule();
-	}
-
-	public void setPDOM(IPDOM pdom) {
-		this.pdom = pdom;
+	public void indexAll() throws CoreException {
+		new PDOMFullReindex(this).schedule();
 	}
 
 }

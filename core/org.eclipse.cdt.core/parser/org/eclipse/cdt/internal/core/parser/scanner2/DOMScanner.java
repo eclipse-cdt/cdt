@@ -101,18 +101,9 @@ public class DOMScanner extends BaseScanner {
         }
     }
 
-    public IMacro addDefinition(char[] key, char[] value) {
-    	IMacro macro = super.addDefinition(key, value);
-    	if (locationMap != null)
-    		registerMacro(macro);
-    	return macro;
-    }
-    
-    public IMacro addDefinition(char[] name, char[][] params, char[] expansion) {
-    	IMacro macro = super.addDefinition(name, params, expansion);
-    	if (locationMap != null)
-    		registerMacro(macro);
-    	return macro;
+    public void addDefinition(IMacro macro) {
+    	super.addDefinition(macro);
+    	registerMacro(macro);
     }
     
     public ILocationResolver getLocationResolver() {

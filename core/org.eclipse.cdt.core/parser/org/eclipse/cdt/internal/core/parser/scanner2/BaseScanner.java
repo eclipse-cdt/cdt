@@ -659,7 +659,7 @@ abstract class BaseScanner implements IScanner {
                             handleFunctionStyleMacro((FunctionStyleMacro) expObject);
                         } else if (expObject instanceof ObjectStyleMacro) {
                             ObjectStyleMacro expMacro = (ObjectStyleMacro) expObject;
-                            char[] expText = expMacro.expansion;
+                            char[] expText = expMacro.getExpansion();
                             if (expText.length > 0)
                                 pushContext(expText, expMacro);
                         } else if (expObject instanceof char[]) {
@@ -944,7 +944,7 @@ abstract class BaseScanner implements IScanner {
                     break;
             }
 
-            char[] expText = macro.expansion;
+            char[] expText = macro.getExpansion();
             if (expText.length > 0)
                 pushContext(expText, exp);
         }
@@ -1438,6 +1438,10 @@ abstract class BaseScanner implements IScanner {
     	IMacro macro = new FunctionStyleMacro(name, expansion, params);
         definitions.put(name, macro);
         return macro;
+    }
+    
+    public void addDefinition(IMacro macro) {
+    	definitions.put(macro.getName(), macro);
     }
     
     public int getCount() {
@@ -2086,7 +2090,7 @@ abstract class BaseScanner implements IScanner {
                     expanding = false;
             } else if (expObject instanceof ObjectStyleMacro) {
                 ObjectStyleMacro expMacro = (ObjectStyleMacro) expObject;
-                char[] expText = expMacro.expansion;
+                char[] expText = expMacro.getExpansion();
                 if (expText.length > 0)
                     pushContext(expText, new MacroData(
                             bufferPos[bufferStackPos] - expMacro.name.length + 1, 
@@ -2799,7 +2803,7 @@ abstract class BaseScanner implements IScanner {
                     t = handleFunctionStyleMacro(
                             (FunctionStyleMacro) expObject, false);
                 } else if (expObject instanceof ObjectStyleMacro) {
-                    t = ((ObjectStyleMacro) expObject).expansion;
+                    t = ((ObjectStyleMacro) expObject).getExpansion();
                 }
                 if (t != null) {
                     t = replaceArgumentMacros(t);
@@ -4085,10 +4089,10 @@ abstract class BaseScanner implements IScanner {
         } else {
             CharArrayObjectMap replacedArgs = new CharArrayObjectMap(argmap
                     .size());
-            int size = expandFunctionStyleMacro(macro.expansion, argmap,
+            int size = expandFunctionStyleMacro(macro.getExpansion(), argmap,
                     replacedArgs, null);
             result = new char[size];
-            expandFunctionStyleMacro(macro.expansion, argmap, replacedArgs,
+            expandFunctionStyleMacro(macro.getExpansion(), argmap, replacedArgs,
                     result);
         }
         if (pushContext)
@@ -4152,7 +4156,7 @@ abstract class BaseScanner implements IScanner {
             popContext();
         } else if (expObject instanceof ObjectStyleMacro) {
             ObjectStyleMacro expMacro = (ObjectStyleMacro) expObject;
-            expansion = expMacro.expansion;
+            expansion = expMacro.getExpansion();
         } else if (expObject instanceof char[]) {
             expansion = (char[]) expObject;
         } else if (expObject instanceof DynamicStyleMacro) {

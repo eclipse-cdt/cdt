@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
@@ -21,9 +22,11 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  */
 public interface IPDOMManager {
 
-	// Getting and deleting a PDOM for a project
-	public IPDOM getPDOM(ICProject project);
-	public void deletePDOM(ICProject project) throws CoreException;
+	// Getting the PDOM
+	public IPDOM getPDOM() throws CoreException;
+	
+	// Get the indexer for a given project
+	public IPDOMIndexer getIndexer(ICProject project);
 
 	// Getting and setting indexer Ids
 	public String getDefaultIndexerId();
@@ -32,8 +35,16 @@ public interface IPDOMManager {
 	public String getIndexerId(ICProject project) throws CoreException;
 	public void setIndexerId(ICProject project, String indexerId) throws CoreException;
 
+	// Enqueue and indexer sub job
+	public void enqueue(IPDOMIndexerTask subjob);
+
+	// Reindex the workspace
+	public void reindex();
+	
 	// Scheduling rule used by indexers to make sure we don't get
 	// Too much indexing going on.
 	public ISchedulingRule getIndexerSchedulingRule();
+	
+	public IProgressMonitor getProgressGroup();
 	
 }

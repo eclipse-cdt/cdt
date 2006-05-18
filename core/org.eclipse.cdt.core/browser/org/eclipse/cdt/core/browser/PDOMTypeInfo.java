@@ -27,12 +27,10 @@ public class PDOMTypeInfo implements ITypeInfo {
 
 	private final PDOMBinding binding;
 	private final int elementType;
-	private final ICProject project;
 
-	public PDOMTypeInfo(PDOMBinding binding, int elementType, ICProject project) {
+	public PDOMTypeInfo(PDOMBinding binding, int elementType) {
 		this.binding = binding;
 		this.elementType = elementType;
-		this.project = project;
 	}
 	
 	public void addDerivedReference(ITypeReference location) {
@@ -76,7 +74,7 @@ public class PDOMTypeInfo implements ITypeInfo {
 	}
 
 	public ICProject getEnclosingProject() {
-		return project;
+		throw new PDOMNotImplementedError();
 	}
 
 	public ITypeInfo getEnclosingType() {
@@ -105,7 +103,7 @@ public class PDOMTypeInfo implements ITypeInfo {
 	public ITypeReference getResolvedReference() {
 		try {
 			PDOMName name = binding.getFirstDefinition();
-			return name != null ? new PDOMTypeReference(name, project) : null;
+			return name != null ? new PDOMTypeReference(name) : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

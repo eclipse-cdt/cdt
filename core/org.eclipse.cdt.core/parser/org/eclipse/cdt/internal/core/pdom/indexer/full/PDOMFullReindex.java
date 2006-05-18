@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,8 +28,8 @@ import org.eclipse.core.runtime.Status;
  */
 public class PDOMFullReindex extends PDOMFullIndexerJob {
 
-	public PDOMFullReindex(PDOM pdom) {
-		super(pdom);
+	public PDOMFullReindex(PDOMFullIndexer indexer) throws CoreException {
+		super(indexer);
 	}
 
 	protected IStatus run(final IProgressMonitor monitor) {
@@ -42,7 +41,7 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 			
 			// Get a count of all the elements that we'll be visiting for the monitor
 			final int[] count = { 0 };
-			pdom.getProject().accept(new ICElementVisitor() {
+			indexer.getProject().accept(new ICElementVisitor() {
 				public boolean visit(ICElement element) throws CoreException {
 					if (monitor.isCanceled())
 						throw new CoreException(Status.CANCEL_STATUS);
@@ -61,7 +60,7 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 			monitor.beginTask("Indexing", count[0]);
 			
 			// First index all the source files (i.e. not headers)
-			pdom.getProject().accept(new ICElementVisitor() {
+			indexer.getProject().accept(new ICElementVisitor() {
 				public boolean visit(ICElement element) throws CoreException {
 					if (monitor.isCanceled())
 						throw new CoreException(Status.CANCEL_STATUS);
@@ -89,7 +88,7 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 			});
 			
 			// Now add in the header files but only if they aren't already indexed
-			pdom.getProject().accept(new ICElementVisitor() {
+			indexer.getProject().accept(new ICElementVisitor() {
 				public boolean visit(ICElement element) throws CoreException {
 					if (monitor.isCanceled())
 						throw new CoreException(Status.CANCEL_STATUS);

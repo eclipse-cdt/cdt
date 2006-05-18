@@ -16,10 +16,10 @@ import org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog.IMa
 /**
  * @author Doug Schaefer
  */
-public class ObjectStyleMacro implements IMacro{
+public class ObjectStyleMacro implements IMacro {
 
 	public char[] name;
-	public char[] expansion;
+	protected char[] expansion;
     public IMacroDefinition attachment;
 	
 	public ObjectStyleMacro(char[] name, char[] expansion) {
@@ -38,4 +38,9 @@ public class ObjectStyleMacro implements IMacro{
     public String toString() {
         return new String( name );
     }
+    
+    public char[] getExpansion() {
+		return expansion;
+	}
+    
 }

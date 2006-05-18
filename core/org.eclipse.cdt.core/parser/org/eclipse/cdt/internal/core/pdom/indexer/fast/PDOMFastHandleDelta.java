@@ -21,16 +21,13 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.PDOMCodeReaderFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 
 class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 
@@ -40,69 +37,55 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 	private List changed = new ArrayList();
 	private List removed = new ArrayList();
 
-	public PDOMFastHandleDelta(PDOM pdom, ICElementDelta delta) {
-		super(pdom);
+	public PDOMFastHandleDelta(PDOMFastIndexer indexer, ICElementDelta delta) throws CoreException {
+		super(indexer);
 		this.delta = delta;
 	}
 
-	protected IStatus run(IProgressMonitor monitor) {
+	public void run(IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
-		
-			processDelta(delta);
 			
-			int count = changed.size() + added.size() + removed.size();
-
-			if (count > 0) {
-				monitor.beginTask("Indexing", count);
-					
-				Iterator i = changed.iterator();
-				while (i.hasNext()) {
-					ITranslationUnit tu = (ITranslationUnit)i.next();
-					monitor.subTask(tu.getElementName());
-					try {
-						changeTU(tu);
-					} catch (Throwable e) {
-						CCorePlugin.log(e);
-						if (++errorCount > MAX_ERRORS)
-							return Status.CANCEL_STATUS;
-					}
-					monitor.worked(1);
-				}
-				
-				i = added.iterator();
-				while (i.hasNext()) {
-					ITranslationUnit tu = (ITranslationUnit)i.next();
-					monitor.subTask(tu.getElementName());
-					try {
-						addTU(tu);
-					} catch (Throwable e) {
-						CCorePlugin.log(e);
-						if (++errorCount > MAX_ERRORS)
-							return Status.CANCEL_STATUS;
-					}
-					monitor.worked(1);
-				}
-				
-				i = removed.iterator();
-				while (i.hasNext()) {
-					ITranslationUnit tu = (ITranslationUnit)i.next();
-					monitor.subTask(tu.getElementName());
-					removeTU(tu);
-					monitor.worked(1);
-				}
-				
-				String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
-						+ "/debug/pdomtimings"); //$NON-NLS-1$
-				if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
-					System.out.println("PDOM Full Delta Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
-			}
+			processDelta(delta);
 		
-			return Status.OK_STATUS;
+			Iterator i = changed.iterator();
+			while (i.hasNext()) {
+				ITranslationUnit tu = (ITranslationUnit)i.next();
+				try {
+					changeTU(tu);
+				} catch (Throwable e) {
+					CCorePlugin.log(e);
+					if (++errorCount > MAX_ERRORS)
+						return;
+				}
+			}
+			
+			i = added.iterator();
+			while (i.hasNext()) {
+				ITranslationUnit tu = (ITranslationUnit)i.next();
+				try {
+					addTU(tu);
+				} catch (Throwable e) {
+					CCorePlugin.log(e);
+					if (++errorCount > MAX_ERRORS)
+						return;
+				}
+			}
+			
+			i = removed.iterator();
+			while (i.hasNext()) {
+				ITranslationUnit tu = (ITranslationUnit)i.next();
+				removeTU(tu);
+			}
+			
+			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
+					+ "/debug/pdomtimings"); //$NON-NLS-1$
+			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
+				System.out.println("PDOM Full Delta Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
+
 		} catch (CoreException e) {
-			return e.getStatus();
+			CCorePlugin.log(e);
 		} catch (InterruptedException e) {
-			return Status.CANCEL_STATUS;
 		}
 	}
 
@@ -151,6 +134,9 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 				ILanguage.AST_USE_INDEX	| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
 		if (ast == null)
 			return;
+
+		// Clear the macros
+		codeReaderFactory.clearMacros();
 
 		pdom.acquireWriteLock();
 		try {

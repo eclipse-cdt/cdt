@@ -1067,33 +1067,6 @@
             sizeHint="460, 160"/>
    </extension>
    <extension
-         point="org.eclipse.search.searchResultSorters">
-      <sorter
-            pageId="org.eclipse.cdt.ui.CSearchPage"
-            label="%ElementNameSorter.label"
-            icon="icons/obj16/search_sortmatch.gif"
-            class="org.eclipse.cdt.internal.ui.search.ElementNameSorter"
-            tooltip="%ElementNameSorter.tooltip"
-            id="org.eclipse.cdt.search.internal.ui.ElementNameSorter">
-      </sorter>
-      <sorter
-            pageId="org.eclipse.cdt.ui.CSearchPage"
-            label="%ParentNameSorter.label"
-            icon="icons/obj16/search_sortmatch.gif"
-            class="org.eclipse.cdt.internal.ui.search.ParentNameSorter"
-            tooltip="%ParentNameSorter.tooltip"
-            id="org.eclipse.cdt.search.internal.ui.ParentNameSorter">
-      </sorter>
-      <sorter
-            pageId="org.eclipse.cdt.ui.CSearchPage"
-            label="%PathNameSorter.label"
-            icon="icons/obj16/search_sortmatch.gif"
-            class="org.eclipse.cdt.internal.ui.search.PathNameSorter"
-            tooltip="%PathNameSorter.tooltip"
-            id="org.eclipse.cdt.search.internal.ui.PathNameSorter">
-      </sorter>
-   </extension>
-   <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
             label="%CSearchActionSet.label"
@@ -1226,11 +1199,6 @@
    </extension>
    <extension
          point="org.eclipse.search.searchResultViewPages">
-      <viewPage
-            class="org.eclipse.cdt.internal.ui.search.CSearchResultPage"
-            searchResultClass="org.eclipse.cdt.internal.ui.search.CSearchResult"
-            id="org.eclipse.cdt.ui.CSearchResultPage">
-      </viewPage>
       <viewPage
             class="org.eclipse.cdt.internal.ui.search.PDOMSearchViewPage"
             id="org.eclipse.cdt.ui.pdomSearchViewPage"

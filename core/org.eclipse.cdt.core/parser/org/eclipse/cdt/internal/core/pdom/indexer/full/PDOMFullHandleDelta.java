@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -50,8 +49,8 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 	private List added = new ArrayList();
 	private List removed = new ArrayList();
 	
-	public PDOMFullHandleDelta(PDOM pdom, ICElementDelta delta) {
-		super(pdom);
+	public PDOMFullHandleDelta(PDOMFullIndexer indexer, ICElementDelta delta) throws CoreException {
+		super(indexer);
 		this.delta = delta;
 	}
 

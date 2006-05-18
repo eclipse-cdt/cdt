@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
-import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
@@ -696,8 +695,4 @@ public class CProject extends Openable implements ICProject {
 		}
 	}
 
-	public IPDOM getIndex() {
-		return CCorePlugin.getPDOMManager().getPDOM(this);
-	}
-	
 }

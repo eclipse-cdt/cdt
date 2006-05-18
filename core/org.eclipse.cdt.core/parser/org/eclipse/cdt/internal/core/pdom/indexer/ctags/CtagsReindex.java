@@ -25,14 +25,14 @@ import org.eclipse.core.runtime.Status;
  */
 public class CtagsReindex extends CtagsIndexerJob {
 
-	public CtagsReindex(CtagsIndexer indexer) {
+	public CtagsReindex(CtagsIndexer indexer) throws CoreException {
 		super(indexer);
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			// What do we need to index
-			final ICProject project = pdom.getProject();
+			final ICProject project = indexer.getProject();
 //			final IIncludeReference[] pincludes = project.getIncludeReferences();
 //			IIncludeReference[] includes = new IIncludeReference[pincludes.length];
 //			System.arraycopy(pincludes, 0, includes, 0, pincludes.length);

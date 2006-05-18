@@ -49,6 +49,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -77,10 +78,10 @@ public class GPPLanguage extends PlatformObject implements ILanguage {
 			return super.getAdapter(adapter);
 	}
 	
-	public IASTTranslationUnit getASTTranslationUnit(ITranslationUnit file, int style) {
+	public IASTTranslationUnit getASTTranslationUnit(ITranslationUnit file, int style) throws CoreException {
 		ICodeReaderFactory fileCreator;
 		if ((style & (ILanguage.AST_SKIP_INDEXED_HEADERS | ILanguage.AST_SKIP_ALL_HEADERS)) != 0) {
-			PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(file.getCProject()).getAdapter(PDOM.class);
+			PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM().getAdapter(PDOM.class);
 			fileCreator = new PDOMCodeReaderFactory(pdom);
 		} else
 			fileCreator = SavedCodeReaderFactory.getInstance();
@@ -91,7 +92,7 @@ public class GPPLanguage extends PlatformObject implements ILanguage {
 	public IASTTranslationUnit getASTTranslationUnit(
 			ITranslationUnit file,
 			ICodeReaderFactory codeReaderFactory,
-			int style) {
+			int style) throws CoreException {
 		IResource resource = file.getResource();
 		ICProject project = file.getCProject();
 		IProject rproject = project.getProject();
@@ -109,8 +110,6 @@ public class GPPLanguage extends PlatformObject implements ILanguage {
 				scanInfo = new ScannerInfo();
 		}
 		
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project).getAdapter(PDOM.class);
-
 		CodeReader reader;
 		IFile rfile = (IFile)file.getResource();
 		String path	= rfile != null	? rfile.getLocation().toOSString() : file.getPath().toOSString();
@@ -134,14 +133,11 @@ public class GPPLanguage extends PlatformObject implements ILanguage {
 
 	    // Parse
 		IASTTranslationUnit ast = parser.parse();
-
-		if ((style & AST_USE_INDEX) != 0) 
-			ast.setIndex(pdom);
-
+		ast.useIndex((style & AST_USE_INDEX) != 0); 
 		return ast;
 	}
 
-	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy, int offset) {
+	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy, int offset) throws CoreException {
 		IResource resource = workingCopy.getResource();
 		ICProject project = workingCopy.getCProject();
 		IProject rproject = project.getProject();
@@ -157,7 +153,7 @@ public class GPPLanguage extends PlatformObject implements ILanguage {
 				scanInfo = new ScannerInfo();
 		}
 		
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project).getAdapter(PDOM.class);
+		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM().getAdapter(PDOM.class);
 		ICodeReaderFactory fileCreator = new PDOMCodeReaderFactory(pdom);
 
 		CodeReader reader = new CodeReader(resource.getLocation().toOSString(), workingCopy.getContents());

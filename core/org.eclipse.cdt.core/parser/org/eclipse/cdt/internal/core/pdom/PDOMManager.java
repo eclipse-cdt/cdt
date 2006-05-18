@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.util.LinkedList;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
+import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -49,9 +52,12 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class PDOMManager implements IPDOMManager, IElementChangedListener {
 
-	private static final QualifiedName pdomProperty
-		= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdom"); //$NON-NLS-1$
+	private static final QualifiedName indexerProperty
+		= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomIndexer"); //$NON-NLS-1$
 
+	private IProgressMonitor group;
+	private IPDOM pdom;
+	
 	private final ISchedulingRule indexerSchedulingRule = new ISchedulingRule() {
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
@@ -61,33 +67,42 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 		}
 	};
 	
-	public synchronized IPDOM getPDOM(ICProject project) {
+	public synchronized IPDOM getPDOM() throws CoreException {
+		if (pdom == null)
+			pdom = new PDOM();
+		return pdom;
+	}
+
+	public IPDOMIndexer getIndexer(ICProject project) {
 		try {
 			IProject rproject = project.getProject();
-			IPDOM pdom = (IPDOM)rproject.getSessionProperty(pdomProperty);
+			IPDOMIndexer indexer = (IPDOMIndexer)rproject.getSessionProperty(indexerProperty);
 			
-			if (pdom == null) {
-				pdom = new PDOM(project, createIndexer(getIndexerId(project)));
-				rproject.setSessionProperty(pdomProperty, pdom);
+			if (indexer == null) {
+				indexer = createIndexer(getIndexerId(project), project);
 			}
 			
-			return pdom;
+			return indexer;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;
 		}
 	}
-
+	
 	public synchronized void elementChanged(ElementChangedEvent event) {
 		// Only respond to post change events
 		if (event.getType() != ElementChangedEvent.POST_CHANGE)
 			return;
 		
 		// Walk the delta sending the subtrees to the appropriate indexers
-		processDelta(event.getDelta());
+		try { 
+			processDelta(event.getDelta());
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 	}
 	
-	private void processDelta(ICElementDelta delta) {
+	private void processDelta(ICElementDelta delta) throws CoreException {
 		int type = delta.getElement().getElementType();
 		switch (type) {
 		case ICElement.C_MODEL:
@@ -101,23 +116,16 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 			ICProject project = (ICProject)delta.getElement();
 			if (delta.getKind() != ICElementDelta.REMOVED) {
 				if (project.getProject().exists()) {
-					IPDOM pdom = getPDOM(project);
-					if (pdom != null)
+					IPDOMIndexer indexer = getIndexer(project);
+					if (indexer != null)
 						// TODO project delete, should do something fancier here.
-						pdom.getIndexer().handleDelta(delta);
+						indexer.handleDelta(delta);
 				}
 			}
 			// TODO handle delete too.
 		}
 	}
 	
-	public void deletePDOM(ICProject project) throws CoreException {
-		IProject rproject = project.getProject();
-		IPDOM pdom = (IPDOM)rproject.getSessionProperty(pdomProperty); 
-		rproject.setSessionProperty(pdomProperty, null);
-		pdom.clear();
-	}
-
 	public IElementChangedListener getElementChangedListener() {
 		return this;
 	}
@@ -187,6 +195,7 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     		super("Set Indexer Id");
     		this.project = project;
     		this.indexerId = indexerId;
+    		setSystem(true);
     	}
     	protected IStatus run(IProgressMonitor monitor) {
     		try {
@@ -212,11 +221,12 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     
     public void setIndexerId(ICProject project, String indexerId) throws CoreException {
     	setId(project, indexerId);
-    	IPDOM pdom = getPDOM(project);
-    	pdom.setIndexer(createIndexer(indexerId));
+		if (project.getProject().getSessionProperty(indexerProperty) != null)
+			createIndexer(indexerId, project);    	
     }
     
-    private IPDOMIndexer createIndexer(String indexerId) throws CoreException {
+    private IPDOMIndexer createIndexer(String indexerId, ICProject project) throws CoreException {
+    	IPDOMIndexer indexer = null;
     	// Look up in extension point
     	IExtension indexerExt = Platform.getExtensionRegistry()
     		.getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);
@@ -224,16 +234,91 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 	    	IConfigurationElement[] elements = indexerExt.getConfigurationElements();
 	    	for (int i = 0; i < elements.length; ++i) {
 	    		IConfigurationElement element = elements[i];
-	    		if ("run".equals(element.getName())) //$NON-NLS-1$
-	    			return (IPDOMIndexer)element.createExecutableExtension("class"); //$NON-NLS-1$
+	    		if ("run".equals(element.getName())) { //$NON-NLS-1$
+	    			indexer = (IPDOMIndexer)element.createExecutableExtension("class"); //$NON-NLS-1$
+	    			break;
+	    		}
 	    	}
     	}
-   		// Unknown index, default to the null one
-    	return new PDOMNullIndexer();
+    	if (indexer == null) 
+    		// Unknown index, default to the null one
+    		indexer = new PDOMNullIndexer();
+    
+    	indexer.setProject(project);
+		project.getProject().setSessionProperty(indexerProperty, indexer);
+
+    	return indexer;
     }
 
+    // Indexer manager
+    private PDOMIndexerJob indexerJob;
+	private LinkedList indexerJobQueue = new LinkedList();
+    private Object indexerJobMutex = new Object();
+    
+    public void enqueue(IPDOMIndexerTask subjob) {
+    	synchronized (indexerJobMutex) {
+    		indexerJobQueue.addLast(subjob);
+			if (indexerJob == null) {
+				indexerJob = new PDOMIndexerJob(this);
+				indexerJob.schedule();
+			}
+		}
+    }
+    
+    IPDOMIndexerTask getNextTask() {
+    	synchronized (indexerJobMutex) {
+    		return indexerJobQueue.isEmpty()
+    			? null
+    			: (IPDOMIndexerTask)indexerJobQueue.removeFirst();
+		}
+    }
+    
+    boolean finishIndexerJob() {
+    	synchronized (indexerJobMutex) {
+			if (indexerJobQueue.isEmpty()) {
+				indexerJob = null;
+				return true;
+			} else
+				// No way, there's more work to do
+				return false;
+		}
+    }
+    
     public ISchedulingRule getIndexerSchedulingRule() {
     	return indexerSchedulingRule;
+    }
+    
+    public IProgressMonitor getProgressGroup() {
+    	if (group == null)
+    		group = Platform.getJobManager().createProgressGroup();
+    	return group;
+    }
+    
+    private class Reindex extends Job {
+    	public Reindex() {
+    		super("Reindex"); //$NON-NLS-1$
+    		setSystem(true);
+    	}
+    	protected IStatus run(IProgressMonitor monitor) {
+    		try {
+    			pdom.acquireWriteLock();
+    			pdom.clear();
+    			pdom.releaseWriteLock();
+    			
+    			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
+    			for (int i = 0; i < projects.length; ++i)
+    				getIndexer(projects[i]).indexAll();
+    			
+    			return Status.OK_STATUS;
+    		} catch (Exception e) {
+    			CCorePlugin.log(e);
+    			return Status.CANCEL_STATUS;
+    		}
+    	}
+    }
+    
+    public void reindex() {
+    	new Reindex().schedule();
     }
     
 	/**

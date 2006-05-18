@@ -12,14 +12,11 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementVisitor;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
@@ -29,105 +26,48 @@ import org.eclipse.core.runtime.Status;
  */
 public class PDOMFastReindex extends PDOMFastIndexerJob {
 
-	public PDOMFastReindex(PDOM pdom) {
-		super(pdom);
+	public PDOMFastReindex(PDOMFastIndexer indexer) throws CoreException {
+		super(indexer);
 	}
 	
-	protected IStatus run(final IProgressMonitor monitor) {
+	private void addSources(ICContainer container, IProgressMonitor monitor) throws CoreException {
+		ITranslationUnit[] tus = container.getTranslationUnits();
+		for (int i = 0; i < tus.length; ++i) {
+			if (monitor.isCanceled())
+				throw new CoreException(Status.CANCEL_STATUS);
+			ITranslationUnit tu = tus[i];
+			if (tu.isSourceUnit()) {
+				try {
+					addTU(tu);
+				} catch (Throwable e) {
+					CCorePlugin.log(e);
+					if (++errorCount > MAX_ERRORS)
+						throw new CoreException(Status.CANCEL_STATUS);
+				}
+			}
+		}
+		
+		ICContainer[] childContainers = container.getCContainers();
+		for (int i = 0; i < childContainers.length; ++i)
+			addSources(childContainers[i], monitor);
+	}
+	
+	public void run(final IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
 			
-			// First clear out the DB
-			pdom.clear();
-			
-			// Get a count of all the elements that we'll be visiting for the monitor
-			final int[] count = { 0 };
-			pdom.getProject().accept(new ICElementVisitor() {
-				public boolean visit(ICElement element) throws CoreException {
-					if (monitor.isCanceled())
-						throw new CoreException(Status.CANCEL_STATUS);
-					switch (element.getElementType()) {
-					case ICElement.C_UNIT:
-						++count[0];
-						return false;
-					case ICElement.C_CCONTAINER:
-					case ICElement.C_PROJECT:
-						return true;
-					}
-					return false;
-				}
-			});
-			
-			monitor.beginTask("Indexing", count[0]);
-			
-			// First index all the source files (i.e. not headers)
-			pdom.getProject().accept(new ICElementVisitor() {
-				public boolean visit(ICElement element) throws CoreException {
-					if (monitor.isCanceled())
-						throw new CoreException(Status.CANCEL_STATUS);
-					switch (element.getElementType()) {
-					case ICElement.C_UNIT:
-						ITranslationUnit tu = (ITranslationUnit)element;
-						if (tu.isSourceUnit()) {
-							monitor.subTask(tu.getElementName());
-							try {
-								addTU(tu);
-							} catch (Throwable e) {
-								CCorePlugin.log(e);
-								if (++errorCount > MAX_ERRORS)
-									throw new CoreException(Status.CANCEL_STATUS);
-							}
-							monitor.worked(1);
-						}
-						return false;
-					case ICElement.C_CCONTAINER:
-					case ICElement.C_PROJECT:
-						return true;
-					}
-					return false;
-				}
-			});
-			
-			// Now add in the header files but only if they aren't already indexed
-			pdom.getProject().accept(new ICElementVisitor() {
-				public boolean visit(ICElement element) throws CoreException {
-					if (monitor.isCanceled())
-						throw new CoreException(Status.CANCEL_STATUS);
-					switch (element.getElementType()) {
-					case ICElement.C_UNIT:
-						ITranslationUnit tu = (ITranslationUnit)element;
-						if (tu.isHeaderUnit()) {
-							IFile rfile = (IFile)tu.getUnderlyingResource();
-							String filename = rfile.getLocation().toOSString();
-							if (pdom.getFile(filename) == null) {
-								monitor.subTask(tu.getElementName());
-								try {
-									addTU(tu);
-								} catch (Throwable e) {
-									CCorePlugin.log(e);
-									if (++errorCount > MAX_ERRORS)
-										throw new CoreException(Status.CANCEL_STATUS);
-								}
-							}
-							monitor.worked(1);
-						}
-						return false;
-					case ICElement.C_CCONTAINER:
-					case ICElement.C_PROJECT:
-						return true;
-					}
-					return false;
-				}
-			});
-			
+			ISourceRoot[] roots = indexer.getProject().getAllSourceRoots();
+			for (int i = 0; i < roots.length; ++i)
+				addSources(roots[i], monitor);
+
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 					+ "/debug/pdomtimings"); //$NON-NLS-1$
 			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
-				System.out.println("PDOM Fast Reindex Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
+				System.out.println("PDOM Fast Reindex Time: " + (System.currentTimeMillis() - start)
+						+ " " + indexer.getProject().getElementName()); //$NON-NLS-1$
 
-			return Status.OK_STATUS;
 		} catch (CoreException e) {
-			return e.getStatus();
+			CCorePlugin.log(e);
 		}
 	}
 

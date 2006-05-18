@@ -59,9 +59,6 @@ public interface IPDOM extends IAdaptable {
 	
 	public ICodeReaderFactory getCodeReaderFactory(IWorkingCopy root);
 	
-	public IPDOMIndexer getIndexer();
-	public void setIndexer(IPDOMIndexer indexer) throws CoreException;
-	
 	public void acquireReadLock() throws InterruptedException;
 	public void releaseReadLock();
 	public void acquireWriteLock() throws InterruptedException;

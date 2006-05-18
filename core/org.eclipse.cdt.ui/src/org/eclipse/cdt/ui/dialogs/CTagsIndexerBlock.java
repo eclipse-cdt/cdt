@@ -206,7 +206,7 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
     }
     
 	public void loadPersistedValues(ICProject project) throws CoreException {
-		IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getPDOM(project).getIndexer();
+		IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getIndexer(project);
 		if (!(indexer instanceof CtagsIndexer))
 			throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "Wrong indexer", null));
 		ctagsIndexer = (CtagsIndexer)indexer;

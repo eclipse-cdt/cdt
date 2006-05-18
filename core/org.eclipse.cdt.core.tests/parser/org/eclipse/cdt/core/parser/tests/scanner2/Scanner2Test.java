@@ -2113,18 +2113,18 @@ public class Scanner2Test extends BaseScanner2Test
     	assertTrue(new String(debug.arglist[0]).equals("__VA_ARGS__")); //$NON-NLS-1$
     	assertTrue(debug.hasVarArgs());
     	assertFalse(debug.hasGCCVarArgs());
-    	assertTrue(new String(debug.expansion).equals("fprintf(stderr, __VA_ARGS__)") ); //$NON-NLS-1$
+    	assertTrue(new String(debug.getExpansion()).equals("fprintf(stderr, __VA_ARGS__)") ); //$NON-NLS-1$
     	FunctionStyleMacro showlist = (FunctionStyleMacro)defs.get("showlist"); //$NON-NLS-1$
     	assertTrue(new String(showlist.arglist[0]).equals("__VA_ARGS__")); //$NON-NLS-1$
     	assertTrue(showlist.hasVarArgs());
     	assertFalse(showlist.hasGCCVarArgs());
-    	assertTrue(new String(showlist.expansion).equals("puts(#__VA_ARGS__)")); //$NON-NLS-1$
+    	assertTrue(new String(showlist.getExpansion()).equals("puts(#__VA_ARGS__)")); //$NON-NLS-1$
     	FunctionStyleMacro report = (FunctionStyleMacro)defs.get("report"); //$NON-NLS-1$
     	assertTrue(new String(report.arglist[0]).equals("test")); //$NON-NLS-1$
     	assertTrue(new String(report.arglist[1]).equals("__VA_ARGS__")); //$NON-NLS-1$
     	assertTrue(report.hasVarArgs());
     	assertFalse(report.hasGCCVarArgs());
-    	assertTrue(new String(report.expansion).equals("((test)?puts(#test):   printf(__VA_ARGS__))")); //$NON-NLS-1$
+    	assertTrue(new String(report.getExpansion()).equals("((test)?puts(#test):   printf(__VA_ARGS__))")); //$NON-NLS-1$
 
     	validate39688Common(writer, callback);
     }
@@ -2155,18 +2155,18 @@ public class Scanner2Test extends BaseScanner2Test
     	assertTrue(new String(debug.arglist[0]).equals("vars")); //$NON-NLS-1$
     	assertFalse(debug.hasVarArgs());
     	assertTrue(debug.hasGCCVarArgs());
-    	assertTrue(new String(debug.expansion).equals("fprintf(stderr, vars)") ); //$NON-NLS-1$
+    	assertTrue(new String(debug.getExpansion()).equals("fprintf(stderr, vars)") ); //$NON-NLS-1$
     	FunctionStyleMacro showlist = (FunctionStyleMacro)defs.get("showlist"); //$NON-NLS-1$
     	assertTrue(new String(showlist.arglist[0]).equals("vars")); //$NON-NLS-1$
     	assertFalse(showlist.hasVarArgs());
     	assertTrue(showlist.hasGCCVarArgs());
-    	assertTrue(new String(showlist.expansion).equals("puts(#vars)")); //$NON-NLS-1$
+    	assertTrue(new String(showlist.getExpansion()).equals("puts(#vars)")); //$NON-NLS-1$
     	FunctionStyleMacro report = (FunctionStyleMacro)defs.get("report"); //$NON-NLS-1$
     	assertTrue(new String(report.arglist[0]).equals("test")); //$NON-NLS-1$
     	assertTrue(new String(report.arglist[1]).equals("vars")); //$NON-NLS-1$
     	assertFalse(report.hasVarArgs());
     	assertTrue(report.hasGCCVarArgs());
-    	assertTrue(new String(report.expansion).equals("((test)?puts(#test):   printf(vars))")); //$NON-NLS-1$
+    	assertTrue(new String(report.getExpansion()).equals("((test)?puts(#test):   printf(vars))")); //$NON-NLS-1$
     	
     	validate39688Common(writer, callback);
     }

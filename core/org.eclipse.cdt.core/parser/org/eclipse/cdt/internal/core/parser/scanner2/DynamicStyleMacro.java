@@ -36,4 +36,7 @@ public abstract class DynamicStyleMacro implements IMacro{
 	{
 	    return name;
 	}
+	public char[] getExpansion() {
+		return execute();
+	}
 }

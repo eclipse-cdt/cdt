@@ -21,13 +21,11 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCStructure;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPClassType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespace;
@@ -52,12 +50,10 @@ public class AllTypesCache {
 	private abstract static class TypesCollector implements IPDOMVisitor {
 		private final int[] kinds;
 		protected final List types;
-		protected final ICProject project;
 		
-		protected TypesCollector(int[] kinds, List types, ICProject project) {
+		protected TypesCollector(int[] kinds, List types) {
 			this.kinds = kinds;
 			this.types = types;
-			this.project = project;
 		}
 		
 		protected abstract void visitKind(IPDOMNode node, int kind);
@@ -74,8 +70,8 @@ public class AllTypesCache {
 	}
 	
 	private static class CTypesCollector extends TypesCollector {
-		public CTypesCollector(int[] kinds, List types, ICProject project) {
-			super(kinds, types, project);
+		public CTypesCollector(int[] kinds, List types) {
+			super(kinds, types);
 		}
 		
 		protected void visitKind(IPDOMNode node, int kind) {
@@ -86,7 +82,7 @@ public class AllTypesCache {
 				return;
 			case ICElement.C_STRUCT:
 				if (node instanceof PDOMCStructure)
-					types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
+					types.add(new PDOMTypeInfo((PDOMBinding)node, kind));
 				return;
 			case ICElement.C_UNION:
 				return;
@@ -99,8 +95,8 @@ public class AllTypesCache {
 	}
 	
 	private static class CPPTypesCollector extends TypesCollector {
-		public CPPTypesCollector(int[] kinds, List types, ICProject project) {
-			super(kinds, types, project);
+		public CPPTypesCollector(int[] kinds, List types) {
+			super(kinds, types);
 		}
 		
 		protected void visitKind(IPDOMNode node, int kind) {
@@ -108,22 +104,22 @@ public class AllTypesCache {
 				switch (kind) {
 				case ICElement.C_NAMESPACE:
 					if (node instanceof PDOMCPPNamespace || node instanceof PDOMCPPNamespaceAlias)
-						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
+						types.add(new PDOMTypeInfo((PDOMBinding)node, kind));
 					return;
 				case ICElement.C_CLASS:
 					if (node instanceof PDOMCPPClassType
 							&& ((PDOMCPPClassType)node).getKey() == ICPPClassType.k_class)
-						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
+						types.add(new PDOMTypeInfo((PDOMBinding)node, kind));
 					return;
 				case ICElement.C_STRUCT:
 					if (node instanceof PDOMCPPClassType
 							&& ((PDOMCPPClassType)node).getKey() == ICPPClassType.k_struct)
-						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
+						types.add(new PDOMTypeInfo((PDOMBinding)node, kind));
 					return;
 				case ICElement.C_UNION:
 					if (node instanceof PDOMCPPClassType
 							&& ((PDOMCPPClassType)node).getKey() == ICPPClassType.k_union)
-						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
+						types.add(new PDOMTypeInfo((PDOMBinding)node, kind));
 					return;
 				case ICElement.C_ENUMERATION:
 					return;
@@ -140,17 +136,14 @@ public class AllTypesCache {
 		List types = new ArrayList();
 		IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
 		
-		for (int i = 0; i < projects.length; ++i) {
-			ICProject project = projects[i];
-			CTypesCollector cCollector = new CTypesCollector(kinds, types, project);
-			CPPTypesCollector cppCollector = new CPPTypesCollector(kinds, types, project);
+		CTypesCollector cCollector = new CTypesCollector(kinds, types);
+		CPPTypesCollector cppCollector = new CPPTypesCollector(kinds, types);
 				
-			PDOM pdom = (PDOM)pdomManager.getPDOM(project);
-			PDOMLinkage cLinkage = pdom.getLinkage(GCCLanguage.getDefault());
-			cLinkage.accept(cCollector);
-			PDOMLinkage cppLinkage = pdom.getLinkage(GPPLanguage.getDefault());
-			cppLinkage.accept(cppCollector);
-		}
+		PDOM pdom = (PDOM)pdomManager.getPDOM();
+		PDOMLinkage cLinkage = pdom.getLinkage(GCCLanguage.getDefault());
+		cLinkage.accept(cCollector);
+		PDOMLinkage cppLinkage = pdom.getLinkage(GPPLanguage.getDefault());
+		cppLinkage.accept(cppCollector);
 			
 		return (ITypeInfo[])types.toArray(new ITypeInfo[types.size()]);
 	}
@@ -160,8 +153,20 @@ public class AllTypesCache {
 	 */
 	public static ITypeInfo[] getAllTypes() {
 		try {
-			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
-			return getTypes(projects, ITypeInfo.KNOWN_TYPES);
+			List types = new ArrayList();
+			IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
+			
+			int[] kinds = ITypeInfo.KNOWN_TYPES;
+			CTypesCollector cCollector = new CTypesCollector(kinds, types);
+			CPPTypesCollector cppCollector = new CPPTypesCollector(kinds, types);
+					
+			PDOM pdom = (PDOM)pdomManager.getPDOM();
+			PDOMLinkage cLinkage = pdom.getLinkage(GCCLanguage.getDefault());
+			cLinkage.accept(cCollector);
+			PDOMLinkage cppLinkage = pdom.getLinkage(GPPLanguage.getDefault());
+			cppLinkage.accept(cppCollector);
+				
+			return (ITypeInfo[])types.toArray(new ITypeInfo[types.size()]);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return new ITypeInfo[0];

@@ -14,11 +14,9 @@ package org.eclipse.cdt.internal.core.pdom.indexer.ctags;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
-import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -32,30 +30,29 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class CtagsIndexer implements IPDOMIndexer {
 
-	private PDOM pdom;
+	private ICProject project;
 	
 	private boolean useCtagsOnPath = true;
 	private String ctagsCommand = ""; //$NON-NLS-1$
 	private boolean useInternalCtagsFile = true;
 	private String ctagsFileName = ""; //$NON-NLS-1$
 	
-	public void handleDelta(ICElementDelta delta) {
+	public void handleDelta(ICElementDelta delta) throws CoreException {
 		new CtagsHandleDelta(this,delta).schedule();
 	}
 
-	public void reindex() throws CoreException {
+	public void indexAll() throws CoreException {
 		new CtagsReindex(this).schedule();
 	}
 
-	public void setPDOM(IPDOM pdom) {
-		this.pdom = (PDOM)pdom;
-		loadPreferences();
-	}
-
-	public IPDOM getPDOM() {
-		return pdom;
+	public ICProject getProject() {
+		return project;
 	}
 	
+	public void setProject(ICProject project) {
+		this.project = project;
+	}
+
 	// Preference Management
 	private static final String useCtagsOnPathId = "useCtagsOnPath"; //$NON-NLS-1$
 	private static final String ctagsCommandId = "ctagsCommand"; //$NON-NLS-1$
@@ -64,7 +61,6 @@ public class CtagsIndexer implements IPDOMIndexer {
 
 	// project preferences
 	private void loadPreferences() {
-		IProject project = pdom.getProject().getProject();
     	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
 		if (prefs == null)
 			return;
@@ -77,7 +73,7 @@ public class CtagsIndexer implements IPDOMIndexer {
 		} else {
 			// Not defined yet check in cdescriptor
 			try {
-				ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+				ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project.getProject(), false);
 				if (desc != null) {
 					ICExtensionReference[] cext = desc.get(CCorePlugin.INDEXER_UNIQ_ID);
 					if (cext.length > 0) {
@@ -119,7 +115,6 @@ public class CtagsIndexer implements IPDOMIndexer {
 			boolean useInternalCtagsFile,
 			String ctagsFileName) throws CoreException {
 		
-		IProject project = pdom.getProject().getProject();
     	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
 		if (prefs == null)
 			return;
@@ -155,7 +150,7 @@ public class CtagsIndexer implements IPDOMIndexer {
 			} catch (BackingStoreException e) {
 	    		CCorePlugin.log(e);
 			}
-			reindex();
+			indexAll();
 		}
 		
 	}
@@ -182,7 +177,7 @@ public class CtagsIndexer implements IPDOMIndexer {
 
 	public String getResolvedCtagsFileName() {
 		if (useInternalCtagsFile)
-			return CCorePlugin.getDefault().getStateLocation().append(pdom.getProject().getElementName() + ".ctags").toOSString(); //$NON-NLS-1$
+			return CCorePlugin.getDefault().getStateLocation().append(project.getElementName() + ".ctags").toOSString(); //$NON-NLS-1$
 		else
 			return ctagsFileName;
 	}

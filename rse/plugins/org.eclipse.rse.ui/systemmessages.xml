@@ -109,7 +109,7 @@ Contributors:
                           <LevelTwo>The connection name is not syntactically valid. The name must be a valid folder name within the workbench and the underlying file system.</LevelTwo>
                     </Message>
                     <Message ID="1024" Indicator="E">
-                          <LevelOne>Enter host name or ip address</LevelOne>
+                          <LevelOne>Enter host name or IP address</LevelOne>
                           <LevelTwo>You must specify a host name or TCP/IP address for the remote system.</LevelTwo>
                     </Message>
                     <Message ID="1025" Indicator="E">

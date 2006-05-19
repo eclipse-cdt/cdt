@@ -65,10 +65,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
     protected ISystemFilterString[]               filterStringObjectArray = null;    
     protected Vector                             filterStringVector = null;
     
-    // persistence
-    protected boolean 							_isDirty = true;
-    protected boolean 							_wasRestored = false;
-    
     //protected static String SAVEFILE_PREFIX = DEFAULT_FILENAME_PREFIX_FILTER;
     //protected static String SAVEFILE_SUFFIX = ".xmi";    
     protected static boolean debug = true;    
@@ -1368,32 +1364,9 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 		return singleFilterStringOnly;
 	}
 	
-	/**
-	 * Inidcates whether this filter needs to be saved
-	 */
-	public boolean isDirty()
-	{
-		return _isDirty;
-	}
-	
-	public void setDirty(boolean dirtyFlag)
-	{
-		_isDirty = dirtyFlag;
-	}
-	
 	public boolean commit()
 	{
 		return RSEUIPlugin.getThePersistenceManager().commit(this);
 	}
 	
-	public boolean wasRestored() 
-	{
-		return _wasRestored;
-	}
-	
-	public void setWasRestored(boolean flag) 
-	{
-		_wasRestored = flag;
-	}
-
 }

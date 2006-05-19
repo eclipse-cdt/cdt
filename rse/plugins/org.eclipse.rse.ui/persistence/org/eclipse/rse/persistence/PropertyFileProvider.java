@@ -235,7 +235,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		for (Iterator z = keys.iterator(); z.hasNext();) {
 			String key = (String) z.next();
 			String value = (String)map.get(key);
-			out.println(key + "=" + value);
+			out.println(key + "=" + escapeValue(value));
 		}
 		out.close();
 		ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
@@ -281,13 +281,49 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 
 	/**
 	 * "Fixes" a value. Values in Properties objects may not be null. Changes all
-	 * null values to the string "null" and returns other values unaltered.
-	 * @param value the value to check.
+	 * null values to the string "null" and escapes the characters in other values.
+	 * @param value The value to check.
 	 * @return The fixed value
 	 */
 	private String fixValue(String value) {
 		if (value == null) return NULL_VALUE_STRING;
 		return value;
+	}
+
+	/**
+	 * Escapes the characters in the supplied string according to the rules
+	 * for properties files.
+	 * @param value The value to examine.
+	 * @return The equivalent value with escapes.
+	 */
+	private String escapeValue(String value) {
+		StringBuffer buffer = new StringBuffer(value.length() + 20);
+		char[] characters = value.toCharArray();
+		for (int i = 0; i < characters.length; i++) {
+			char c = characters[i];
+			if (c == '\\') {
+				buffer.append("\\\\");
+			} else if (c == '\t') {
+				buffer.append("\\t");
+			} else if (c == '\f') {
+				buffer.append("\\f");
+			} else if (c == '\n') {
+				buffer.append("\\n");
+			} else if (c == '\r') {
+				buffer.append("\\r");
+			} else if ((c < '\u0020' && c > '\u007E')) {
+				String cString = "0000" + Integer.toHexString(c);
+				cString = cString.substring(cString.length() - 4);
+				cString = "\\u" + cString;
+				buffer.append(cString);
+			} else if ("=!#:".indexOf(c) >= 0) {
+				buffer.append('\\');
+				buffer.append(c);
+			} else {
+				buffer.append(c);
+			}
+		}
+		return buffer.toString();
 	}
 
 	/**
@@ -304,8 +340,8 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 */
 	private Properties getProperties(RSEDOMNode node, boolean force, IProgressMonitor monitor) {
 		Properties properties = new Properties();
-		properties.put(MT_NODE_NAME, fixValue(node.getName()));
-		properties.put(MT_NODE_TYPE, fixValue(node.getType()));
+		properties.put(MT_NODE_NAME, node.getName());
+		properties.put(MT_NODE_TYPE, node.getType());
 		properties.putAll(getAttributes(node));
 		RSEDOMNode[] children = node.getChildren();
 		for (int i = 0; i < children.length; i++) {
@@ -452,6 +488,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 				InputStream inStream = attributeFile.getContents();
 				try {
 					properties.load(inStream);
+					inStream.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

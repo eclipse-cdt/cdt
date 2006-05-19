@@ -487,26 +487,25 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		Map childPropertiesMap = new HashMap();
 		for (Iterator z = keys.iterator(); z.hasNext();) {
 			String key = (String) z.next();
-			String[] words = split(key, 3);
+			String[] words = split(key, 2);
 			String metatype = words[0];
 			if (metatype.equals(MT_ATTRIBUTE)) {
 				String value = properties.getProperty(key);
-				String name = words[1];
-				attributes.put(name, value);
+				attributes.put(words[1], value);
 			} else if (metatype.equals(MT_ATTRIBUTE_TYPE)) {
 				String type = properties.getProperty(key);
-				String name = words[1];
-				attributeTypes.put(name, type);
+				attributeTypes.put(words[1], type);
 			} else if (metatype.equals(MT_REFERENCE)) {
 				int n = Integer.parseInt(words[1]) + 1;
 				if (nReferences < n) nReferences = n;
 			} else if (metatype.equals(MT_CHILD)) {
 				String value = properties.getProperty(key);
-				String indexString = words[1];
+				words = split(words[1], 2);
+				String indexString = words[0];
+				String newKey = words[1]; 
 				int n = Integer.parseInt(indexString) + 1;
 				if (nChildren < n) nChildren = n;
 				Properties p = getProperties(childPropertiesMap, indexString);
-				String newKey = words[2]; 
 				p.put(newKey, value);
 			}
 		}

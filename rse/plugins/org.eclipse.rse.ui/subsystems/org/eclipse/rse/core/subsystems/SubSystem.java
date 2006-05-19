@@ -52,7 +52,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.GenericMessages;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Composite;
@@ -63,8 +62,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
-
-
 
 /**
  * This class is designed to be subclassed. Its role is three-fold:
@@ -671,17 +668,23 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	public String getConnectionOwnedFilterPoolName(String profileName, String connectionName)
 	{
 		// Similar to SubSystemFactoryImpl#getDefaultFilterPoolName(String)...
-		//System.out.println("ProfileName: " + profileName);
-		//System.out.println("ConnectionName: " + connectionName);
+		// System.out.println("ProfileName: " + profileName);
+		// System.out.println("ConnectionName: " + connectionName);
 				
 		// RESID_PERCONNECTION_FILTERPOOL = com.ibm.etools.systems.ui.perConnection.filterpool=Filter Pool for connection %1
-		String name = SystemResources.RESID_PERCONNECTION_FILTERPOOL;
-
-		StringBuffer profileNameBuffer = new StringBuffer(profileName.toLowerCase());
-		profileNameBuffer.setCharAt(0, Character.toUpperCase(profileNameBuffer.charAt(0)));
-		
-		name = SystemMessage.sub(name, "%1", profileNameBuffer.toString());
-		name = SystemMessage.sub(name, "%2", connectionName);
+//		String name = SystemResources.RESID_PERCONNECTION_FILTERPOOL;
+//
+//		StringBuffer profileNameBuffer = new StringBuffer(profileName.toLowerCase());
+//		profileNameBuffer.setCharAt(0, Character.toUpperCase(profileNameBuffer.charAt(0)));
+//		
+//		name = SystemMessage.sub(name, "%1", profileNameBuffer.toString());
+//		name = SystemMessage.sub(name, "%2", connectionName);
+		/*
+		 * DWD - Need to keep this name short and not translatable 
+		 * since it names a team sharable resource. Not qualified by the profile
+		 * name since that is implicit by being in a profile.
+		 */
+		String name = "CN-" + connectionName;
 		return name;
 	}
 
@@ -2515,56 +2518,41 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * @param forcePrompt Forces the signon prompt to be displayed even if a valid password in cached in memory
      * or saved on disk.
 	 */
-    public void connect(Shell shell, boolean forcePrompt) throws Exception
-    {
+    public void connect(Shell shell, boolean forcePrompt) throws Exception {
 		// yantzi: artemis60, (defect 53082) check that the connection has not been deleted before continuing,
 		// this is a defenisve measure to protect against code that stores a handle to subsystems but does 
 		// not do this check
-		if (RSEUIPlugin.getTheSystemRegistry().getHost(getSystemProfile(), getHost().getAliasName()) == null)
-		{
-			// connection no longer exists
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		IHost host = getHost();
+		String hostName = host.getAliasName();
+		ISystemProfile profile = getSystemProfile();
+		if (registry.getHost(profile, hostName) == null) { // connection no longer exists
 			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECTION_DELETED);
-			msg.makeSubstitution(getHost().getAliasName());
+			msg.makeSubstitution(hostName);
 			throw new SystemMessageException(msg);
 		}
-		
-    	this.shell = shell; //FIXME remove this
-    	
-    	// yantzi: artemis 6.0, offline support
-    	if (isOffline())
-    	{
-			SystemMessage sMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OFFLINE_CANT_CONNECT);
-			sMsg.makeSubstitution(getHost().getAliasName());
-			throw new SystemMessageException(sMsg);
-    	}
-    	
-    	//DY operation = OPERATION_CONNECT;
-    	if (isConnected() || !supportsConnecting)
-    		return;
-    	
-    	IRunnableContext runnableContext = getRunnableContext(shell);
-    	if (runnableContext instanceof ProgressMonitorDialog)
-    	  ((ProgressMonitorDialog)runnableContext).setCancelable(true);
-    	
-    	try
-    	{
-    		getConnectorService().promptForPassword(shell, forcePrompt); // prompt for password    
-    		ConnectJob job = new ConnectJob();
-    		scheduleJob(job, null, shell != null);
-	    
-    		IStatus status = job.getResult();
-    		if (status != null && status.isOK())
-    		{
-    			ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();	
-    			sr.connectedStatusChange(this, true, false);
-    			return;
-    		}
-    	}
-    	catch (InterruptedException exc)
-    	{
-    		throw exc;
-    	}
-    }
+		this.shell = shell; //FIXME remove this
+		// yantzi: artemis 6.0, offline support
+		if (isOffline()) {
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OFFLINE_CANT_CONNECT);
+			msg.makeSubstitution(hostName);
+			throw new SystemMessageException(msg);
+		}
+		//DY operation = OPERATION_CONNECT;
+		if (!isConnected() && supportsConnecting) {
+			IRunnableContext runnableContext = getRunnableContext(shell);
+			if (runnableContext instanceof ProgressMonitorDialog) {
+				((ProgressMonitorDialog) runnableContext).setCancelable(true);
+			}
+			getConnectorService().promptForPassword(shell, forcePrompt); // prompt for userid and password    
+			ConnectJob job = new ConnectJob();
+			scheduleJob(job, null, shell != null);
+			IStatus status = job.getResult();
+			if (status != null && status.isOK()) {
+				registry.connectedStatusChange(this, true, false);
+			}
+		}
+	}
     
  
 

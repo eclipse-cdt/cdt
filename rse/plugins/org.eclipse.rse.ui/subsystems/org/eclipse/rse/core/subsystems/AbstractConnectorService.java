@@ -390,20 +390,21 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     }
     
     /**
-     * <i>Method used internally, and available externally. Fully implemented, do not override.</i><br>
-     * Return the password for this system's subsystem we are associated with.
+     * <i>Do not override.</i>
+     * <p>Returns the password for this connector service.
      * <p>
      * The search order for the password is as follows:</p>
      * <ol>
-     *   <li>First check if the password is in transient memory and that it is still valid.
-     *   <li>If password not found in transient memory then check password on disk and
-     *        verify that it is still valid.
-     *   <li>If a valid password is not found in transient memory or on disk then prompt
-	 *        the user.
+     * <li>First check if the password is in transient memory and that it is still valid.
+     * <li>If password not found in transient memory then check password on disk and
+     * verify that it is still valid.
+     * <li>If a valid password is not found in transient memory or on disk then prompt
+	 * the user.
      * </ol>
      * Throws InterruptedException if user is prompted and user cancels that prompt.
-     * 
-     * @param shell parent for the prompt dialog if needed. Can be null if know password exists.
+     * @param shell parent for the prompt dialog if needed. 
+     * @param forcePrompt if true then present the prompt even if the password is stored.
+     * Can be null if the password is known to exist.
      */
     public void promptForPassword(Shell shell, boolean forcePrompt)
            throws InterruptedException
@@ -416,23 +417,22 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 			throw new InterruptedException();
 		}
     	
+		// Get the password information associated with this connector service.
 		SystemSignonInformation passwordInformation =  getPasswordInformation();
-    	// 1a.  Check the transient in memory password ...
-    	// Test if userId has been changed... d43274
+
+		// Check the transient in memory password ...
+		// Test if userId has been changed... d43274
 		String oldUserId = getUserId();
-		if (passwordInformation != null && !forcePrompt)
-    	{
-          boolean same = getPrimarySubSystem().getHost().compareUserIds(oldUserId, passwordInformation.getUserid());
-          String hostName = getHostName();//RSEUIPlugin.getQualifiedHostName(getHostName());
-          same = same && hostName.equalsIgnoreCase(passwordInformation.getHostname());
-          if (!same)
-          {
-            clearPasswordCache();		
-            passwordInformation = null;
-          }
-    	} 
-		
-		
+		if (passwordInformation != null && !forcePrompt) {
+			boolean same = getPrimarySubSystem().getHost().compareUserIds(oldUserId, passwordInformation.getUserid());
+			//RSEUIPlugin.getQualifiedHostName(getHostName());
+			String hostName = getHostName();
+			same = same && hostName.equalsIgnoreCase(passwordInformation.getHostname());
+			if (!same) {
+				clearPasswordCache();
+				passwordInformation = null;
+			}
+		} 
 		
 		// 1b.  If a transient in memory password was found, test if it is still valid ...
 		// but don't issue a message yet, just set a flag
@@ -528,7 +528,6 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     	  	else
        	    	throw new InterruptedException();    	    
     	}
-    	//return password;
     }        
     
     

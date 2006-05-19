@@ -474,7 +474,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					while (display.readAndDispatch()) 
 					{
 					}
-					Thread.sleep(200);
+
 
 
 					isCancelled = monitor.isCanceled();

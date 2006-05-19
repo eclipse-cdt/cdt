@@ -338,14 +338,15 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
     	}
     }    
     /**
-	 * We return the default user Id. Note that we don't store it directly in
-	 * the mof-modelled attribute, as we don't want the team to share it. Rather,
-	 * we store the actual user Id in the preference store keyed by this connection's
-	 * unique name (profile.connName) and store that key in this attribute.
+	 * Returns the default UserId for this Host.
+	 * Note that we don't store it directly in
+	 * the model, since we don't want the team to share it. Rather,
+	 * we store the actual it in the preference store keyed by 
+	 * (profileName.connectionName).
 	 * <p>
-	 * Further, it is possible that there is no default user id. If so, this 
-	 * method will go to the preference store and will try to get the default user
-	 * Id per this connection's system type.
+	 * Further, it is possible that there is no default UserId. If so, this 
+	 * method will go to the preference store and will try to get the default
+	 * UserId for this connection's system type.
 	 * <p>
 	 * This is all transparent to the caller though.
 	 * <p>

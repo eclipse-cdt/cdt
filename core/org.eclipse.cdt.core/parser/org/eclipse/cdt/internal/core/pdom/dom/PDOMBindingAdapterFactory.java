@@ -35,7 +35,7 @@ public class PDOMBindingAdapterFactory implements IAdapterFactory {
 			IBinding binding = (IBinding)adaptableObject;
 			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
 			for (int i = 0; i < projects.length; ++i) {
-				IPDOM ipdom = CCorePlugin.getPDOMManager().getPDOM();
+				IPDOM ipdom = CCorePlugin.getPDOMManager().getPDOM(projects[i]);
 				if (ipdom == null || !(ipdom instanceof PDOM))
 					continue;
 				PDOM pdom = (PDOM)ipdom;

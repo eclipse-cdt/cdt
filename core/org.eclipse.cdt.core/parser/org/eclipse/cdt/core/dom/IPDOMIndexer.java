@@ -24,9 +24,9 @@ public interface IPDOMIndexer {
 
 	public void setProject(ICProject project);
 	public ICProject getProject();
-
+	
 	public void handleDelta(ICElementDelta delta) throws CoreException;
 	
-	public void indexAll() throws CoreException;
+	public void reindex() throws CoreException;
 	
 }

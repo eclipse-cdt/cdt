@@ -41,7 +41,7 @@ public class CtagsIndexer implements IPDOMIndexer {
 		new CtagsHandleDelta(this,delta).schedule();
 	}
 
-	public void indexAll() throws CoreException {
+	public void reindex() throws CoreException {
 		new CtagsReindex(this).schedule();
 	}
 
@@ -150,7 +150,7 @@ public class CtagsIndexer implements IPDOMIndexer {
 			} catch (BackingStoreException e) {
 	    		CCorePlugin.log(e);
 			}
-			indexAll();
+			reindex();
 		}
 		
 	}

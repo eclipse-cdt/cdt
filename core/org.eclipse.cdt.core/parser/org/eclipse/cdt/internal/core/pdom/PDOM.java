@@ -51,9 +51,6 @@ import org.eclipse.core.runtime.PlatformObject;
 public class PDOM extends PlatformObject
 		implements IPDOM, IPDOMResolver, IPDOMWriter {
 
-	private static final String dbName = "pdom"; //$NON-NLS-1$
-	
-	private final IPath dbPath;
 	private Database db;
 	
 	public static final int VERSION = 6;
@@ -71,17 +68,12 @@ public class PDOM extends PlatformObject
 	// Local caches
 	private BTree fileIndex;
 	private Map linkageCache = new HashMap();
-
-	public PDOM() throws CoreException {
+	
+	public PDOM(IPath dbPath) throws CoreException {
 		// Load up the database
-		dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
 		db = new Database(dbPath.toOSString());
 		
-		// Check the version and force a rebuild if needed.
-		// TODO Conversion might be a nicer story down the road
-		if (db.getVersion() != VERSION) {
-			CCorePlugin.getPDOMManager().reindex();
-		} else {
+		if (db.getVersion() == VERSION) {
 			// populate the linkage cache
 			PDOMLinkage linkage = getFirstLinkage();
 			while (linkage != null) {
@@ -89,6 +81,10 @@ public class PDOM extends PlatformObject
 				linkage = linkage.getNextLinkage();
 			}
 		}
+	}
+	
+	public boolean versionMismatch() {
+		return db.getVersion() != VERSION;
 	}
 
 	public Object getAdapter(Class adapter) {

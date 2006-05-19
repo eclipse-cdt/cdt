@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -65,7 +66,7 @@ public class CASTTranslationUnit extends CASTNode implements
 
 	private ILocationResolver resolver;
 	
-	private boolean useIndex;
+	private IPDOM pdom;
 
 	private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
 
@@ -129,10 +130,9 @@ public class CASTTranslationUnit extends CASTNode implements
         }
 		IASTName[] names = CVisitor.getDeclarations(this, binding);
 		
-        if (names.length == 0 && useIndex) {
+        if (names.length == 0 && pdom != null) {
         	try {
-        		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM();
-        		binding = pdom.getLinkage(getLanguage()).adaptBinding(binding);
+        		binding = ((PDOM)pdom).getLinkage(getLanguage()).adaptBinding(binding);
         		if (binding != null)
         			names = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).getDeclarations(binding);
         	} catch (CoreException e) {
@@ -163,10 +163,9 @@ public class CASTTranslationUnit extends CASTNode implements
         }
         names = (IASTName[])ArrayUtil.removeNulls(IASTName.class, names);
         
-        if (names.length == 0 && useIndex) {
+        if (names.length == 0 && pdom != null) {
         	try {
-        		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM();
-        		binding = pdom.getLinkage(getLanguage()).adaptBinding(binding);
+        		binding = ((PDOM)pdom).getLinkage(getLanguage()).adaptBinding(binding);
         		if (binding != null)
         			names = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).getDefinitions(binding);
         	} catch (CoreException e) {
@@ -560,12 +559,12 @@ public class CASTTranslationUnit extends CASTNode implements
     	return new GCCLanguage();
     }
     
-    public boolean useIndex() {
-    	return useIndex;
+    public IPDOM getIndex() {
+    	return pdom;
     }
     
-    public void useIndex(boolean value) {
-    	this.useIndex = value;
+    public void setIndex(IPDOM pdom) {
+    	this.pdom = pdom;
     }
     
 }

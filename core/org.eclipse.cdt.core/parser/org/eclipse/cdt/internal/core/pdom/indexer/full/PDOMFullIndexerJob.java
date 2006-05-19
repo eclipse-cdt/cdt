@@ -42,7 +42,7 @@ public abstract class PDOMFullIndexerJob extends Job {
 	public PDOMFullIndexerJob(PDOMFullIndexer indexer) throws CoreException {
 		super("Full Indexer: " + indexer.getProject().getElementName());
 		this.indexer = indexer;
-		this.pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM();
+		this.pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(indexer.getProject());
 		setRule(CCorePlugin.getPDOMManager().getIndexerSchedulingRule());
 	}
 

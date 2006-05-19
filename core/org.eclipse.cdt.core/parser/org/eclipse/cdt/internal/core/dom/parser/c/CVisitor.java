@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -1306,13 +1305,9 @@ public class CVisitor {
 		if( blockItem != null) {
 			// We're at the end of our rope, check the PDOM if we can
 			IASTTranslationUnit tu = (IASTTranslationUnit)blockItem;
-			if (tu.useIndex()) {
-				IPDOM pdom = null;
-				try {
-					pdom = CCorePlugin.getPDOMManager().getPDOM();
-					binding = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).resolveBinding(name);
-				} catch (CoreException e) {
-				}
+			IPDOM pdom = tu.getIndex();
+			if (pdom != null) {
+				binding = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).resolveBinding(name);
 			}
 			
 			if (binding == null)

@@ -45,7 +45,7 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 				new PDOMFastHandleDelta(this, delta));
 	}
 	
-	public void indexAll() throws CoreException {
+	public void reindex() throws CoreException {
 		CCorePlugin.getPDOMManager().enqueue(
 				new PDOMFastReindex(this));
 	}

@@ -29,7 +29,7 @@ public class Database {
 	
 	// public for tests only, you shouldn't need these
 	public static final int VERSION_OFFSET = 0;
-	public static final int CHUNK_SIZE = 4096;
+	public static final int CHUNK_SIZE = 1024 * 16;
 	public static final int MIN_SIZE = 16;
 	public static final int INT_SIZE = 4;
 	public static final int CHAR_SIZE = 2;

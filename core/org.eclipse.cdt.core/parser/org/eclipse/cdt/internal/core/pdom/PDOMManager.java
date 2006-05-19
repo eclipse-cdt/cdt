@@ -31,6 +31,7 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -54,9 +55,12 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 
 	private static final QualifiedName indexerProperty
 		= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomIndexer"); //$NON-NLS-1$
+	private static final QualifiedName dbNameProperty
+	= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName"); //$NON-NLS-1$
+	private static final QualifiedName pdomProperty
+	= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdom"); //$NON-NLS-1$
 
 	private IProgressMonitor group;
-	private IPDOM pdom;
 	
 	private final ISchedulingRule indexerSchedulingRule = new ISchedulingRule() {
 		public boolean contains(ISchedulingRule rule) {
@@ -67,9 +71,22 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 		}
 	};
 	
-	public synchronized IPDOM getPDOM() throws CoreException {
-		if (pdom == null)
-			pdom = new PDOM();
+	public synchronized IPDOM getPDOM(ICProject project) throws CoreException {
+		IProject rproject = project.getProject();
+		PDOM pdom = (PDOM)rproject.getSessionProperty(pdomProperty);
+		if (pdom == null) {
+			String dbName = rproject.getPersistentProperty(dbNameProperty);
+			if (dbName == null) {
+				dbName = project.getElementName() + "."
+					+ System.currentTimeMillis() + ".pdom";
+				rproject.setPersistentProperty(dbNameProperty, dbName);
+			}
+			IPath dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
+			pdom = new PDOM(dbPath);
+			rproject.setSessionProperty(pdomProperty, pdom);
+			if (pdom.versionMismatch())
+				getIndexer(project).reindex();
+		}
 		return pdom;
 	}
 
@@ -292,33 +309,6 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     	if (group == null)
     		group = Platform.getJobManager().createProgressGroup();
     	return group;
-    }
-    
-    private class Reindex extends Job {
-    	public Reindex() {
-    		super("Reindex"); //$NON-NLS-1$
-    		setSystem(true);
-    	}
-    	protected IStatus run(IProgressMonitor monitor) {
-    		try {
-    			pdom.acquireWriteLock();
-    			pdom.clear();
-    			pdom.releaseWriteLock();
-    			
-    			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
-    			for (int i = 0; i < projects.length; ++i)
-    				getIndexer(projects[i]).indexAll();
-    			
-    			return Status.OK_STATUS;
-    		} catch (Exception e) {
-    			CCorePlugin.log(e);
-    			return Status.CANCEL_STATUS;
-    		}
-    	}
-    }
-    
-    public void reindex() {
-    	new Reindex().schedule();
     }
     
 	/**

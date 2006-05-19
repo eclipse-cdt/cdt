@@ -36,7 +36,7 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 	public void handleDelta(ICElementDelta delta) {
 	}
 	
-	public void indexAll() throws CoreException {
+	public void reindex() throws CoreException {
 	}
 
 }

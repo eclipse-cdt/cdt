@@ -56,6 +56,9 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 		try {
 			long start = System.currentTimeMillis();
 			
+			// First clear the pdom
+			pdom.clear();
+			
 			ISourceRoot[] roots = indexer.getProject().getAllSourceRoots();
 			for (int i = 0; i < roots.length; ++i)
 				addSources(roots[i], monitor);

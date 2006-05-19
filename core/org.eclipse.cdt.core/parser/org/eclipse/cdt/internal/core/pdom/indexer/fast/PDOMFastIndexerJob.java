@@ -43,7 +43,7 @@ public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 
 	public PDOMFastIndexerJob(PDOMFastIndexer indexer) throws CoreException {
 		this.indexer = indexer;
-		this.pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM();
+		this.pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(indexer.getProject());
 		this.codeReaderFactory = new PDOMCodeReaderFactory(pdom);
 	}
 

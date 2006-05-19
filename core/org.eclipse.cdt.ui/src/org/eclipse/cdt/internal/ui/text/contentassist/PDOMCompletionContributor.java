@@ -55,7 +55,7 @@ public class PDOMCompletionContributor extends DOMCompletionContributor implemen
 			return;
 		
 		try {
-			IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM();
+			IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
 			IASTName[] names = completionNode.getNames();
 			for (int i = 0; i < names.length; ++i) {
 				IASTName name = names[i];

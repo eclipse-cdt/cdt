@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.browser;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
@@ -29,16 +30,13 @@ import org.eclipse.core.runtime.Path;
 public class PDOMTypeReference implements ITypeReference {
 	
 	private final PDOMName name;
-	private final IPath path;
-	private ITranslationUnit tu;
+	private final ICProject project;
+	private final IPath path; 
 	
-	public PDOMTypeReference(PDOMName name) {
+	public PDOMTypeReference(PDOMName name, ICProject project) {
 		this.name = name;
+		this.project = project;
 		this.path = new Path(name.getFileLocation().getFileName());
-		
-		ICElement element = CoreModel.getDefault().create(path);
-		if (element instanceof ITranslationUnit)
-			tu = (ITranslationUnit)element;
 	}
 
 	public ICElement[] getCElements() {
@@ -62,7 +60,7 @@ public class PDOMTypeReference implements ITypeReference {
 	}
 
 	public IProject getProject() {
-		return tu != null ? tu.getUnderlyingResource().getProject() : null;
+		throw new PDOMNotImplementedError();
 	}
 
 	public IPath getRelativeIncludePath(IProject project) {
@@ -78,7 +76,7 @@ public class PDOMTypeReference implements ITypeReference {
 	}
 
 	public ITranslationUnit getTranslationUnit() {
-		return tu;
+		return CoreModel.getDefault().createTranslationUnitFrom(project, path);
 	}
 
 	public IWorkingCopy getWorkingCopy() {

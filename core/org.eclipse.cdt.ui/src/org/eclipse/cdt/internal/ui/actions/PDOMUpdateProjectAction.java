@@ -37,7 +37,7 @@ public class PDOMUpdateProjectAction implements IObjectActionDelegate {
 			ICProject project = (ICProject)objs[i];
 			IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getIndexer(project);
 			try {
-				indexer.indexAll();
+				indexer.reindex();
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
 			}

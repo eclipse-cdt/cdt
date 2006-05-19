@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
@@ -190,23 +191,24 @@ public interface IASTTranslationUnit extends IASTNode {
     public ParserLanguage getParserLanguage();
     
     /**
+     * Return the Index associated with this translation unit.
+     * 
+     * @return the Index for this translation unit
+     */
+    public IPDOM getIndex();
+    
+    /**
+     * Set the Index to be used for this translation unit.
+     * 
+     * @param index
+     */
+    public void setIndex(IPDOM index);
+
+    /**
      * Returns the language for this translation unit.
      * 
      * @return language for this translation unit
      */
     public ILanguage getLanguage();
-    
-    /**
-     * Set whether to use the index when resolving bindings in this TU.
-     * 
-     * @param value
-     */
-    public void useIndex(boolean value);
-
-    /**
-     * Is the index used to resolve bindings in this TU.
-     * @return
-     */
-    public boolean useIndex();
     
 }

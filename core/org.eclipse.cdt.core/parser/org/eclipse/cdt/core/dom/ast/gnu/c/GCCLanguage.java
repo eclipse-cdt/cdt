@@ -82,7 +82,7 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 	public IASTTranslationUnit getASTTranslationUnit(ITranslationUnit file, int style) throws CoreException {
 		ICodeReaderFactory fileCreator;
 		if ((style & (ILanguage.AST_SKIP_INDEXED_HEADERS | ILanguage.AST_SKIP_ALL_HEADERS)) != 0) {
-			PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM().getAdapter(PDOM.class);
+			PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(file.getCProject()).getAdapter(PDOM.class);
 			fileCreator = new PDOMCodeReaderFactory(pdom);
 		} else
 			fileCreator = SavedCodeReaderFactory.getInstance();
@@ -134,7 +134,8 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 
 	    // Parse
 		IASTTranslationUnit ast = parser.parse();
-		ast.useIndex((style & AST_USE_INDEX) != 0); 
+		if ((style & AST_USE_INDEX) != 0) 
+			ast.setIndex(CCorePlugin.getPDOMManager().getPDOM(file.getCProject()));
 		return ast;
 	}
 	
@@ -154,7 +155,7 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 				scanInfo = new ScannerInfo();
 		}
 		
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM().getAdapter(PDOM.class);
+		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject()).getAdapter(PDOM.class);
 		ICodeReaderFactory fileCreator = new PDOMCodeReaderFactory(pdom);
 
 		String path

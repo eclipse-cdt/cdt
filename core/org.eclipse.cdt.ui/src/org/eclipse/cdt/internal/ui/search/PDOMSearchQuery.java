@@ -117,17 +117,19 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 
 	protected void createMatches(ILanguage language, IBinding binding) throws CoreException {
 		IPDOMManager manager = CCorePlugin.getPDOMManager();
-		PDOM pdom = (PDOM)manager.getPDOM();
-		PDOMBinding pdomBinding = (PDOMBinding)pdom.getLinkage(language).adaptBinding(binding);
-		if (pdomBinding != null) {
-			if ((flags & FIND_DECLARATIONS) != 0) {
-				collectNames(pdomBinding.getFirstDeclaration());
-			}
-			if ((flags & FIND_DECLARATIONS) != 0) {
-				collectNames(pdomBinding.getFirstDefinition());
-			}
-			if ((flags & FIND_REFERENCES) != 0) {
-				collectNames(pdomBinding.getFirstReference());
+		for (int i = 0; i < projects.length; ++i) {
+			PDOM pdom = (PDOM)manager.getPDOM(projects[i]);
+			PDOMBinding pdomBinding = (PDOMBinding)pdom.getLinkage(language).adaptBinding(binding);
+			if (pdomBinding != null) {
+				if ((flags & FIND_DECLARATIONS) != 0) {
+					collectNames(pdomBinding.getFirstDeclaration());
+				}
+				if ((flags & FIND_DECLARATIONS) != 0) {
+					collectNames(pdomBinding.getFirstDefinition());
+				}
+				if ((flags & FIND_REFERENCES) != 0) {
+					collectNames(pdomBinding.getFirstReference());
+				}
 			}
 		}		
 	}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -108,14 +109,14 @@ public class PDOMTranslationUnit implements IASTTranslationUnit {
 		throw new PDOMNotImplementedError();
 	}
 
-	public boolean useIndex() {
+	public IPDOM getIndex() {
 		throw new PDOMNotImplementedError();
 	}
-	
-	public void useIndex(boolean value) {
+
+	public void setIndex(IPDOM pdom) {
 		throw new PDOMNotImplementedError();
 	}
-	
+
 	public IASTTranslationUnit getTranslationUnit() {
 		throw new PDOMNotImplementedError();
 	}

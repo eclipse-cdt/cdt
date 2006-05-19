@@ -39,7 +39,7 @@ public class PDOMFullIndexer implements IPDOMIndexer {
 		new PDOMFullHandleDelta(this, delta).schedule();
 	}
 
-	public void indexAll() throws CoreException {
+	public void reindex() throws CoreException {
 		new PDOMFullReindex(this).schedule();
 	}
 

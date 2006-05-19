@@ -21,6 +21,9 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -71,7 +74,6 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 	private ToggleLinkingAction toggleLinkingAction;
 	private IndexAction rebuildAction;
 	private IndexAction countSymbolsAction;
-	private IndexAction setFastIndexAction;
 	private IndexAction discardExternalDefsAction;
 	private IndexAction openDefinitionAction;
 	private IndexAction findDeclarationsAction;
@@ -180,7 +182,22 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 	private class IndexContentProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parentElement) {
 			try {
-				if (parentElement instanceof IPDOMNode) {
+				if (parentElement instanceof ICProject) {
+					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM((ICProject)parentElement);
+					int n = 0;
+					PDOMLinkage firstLinkage = pdom.getFirstLinkage();
+					for (PDOMLinkage linkage = firstLinkage; linkage != null; linkage = linkage.getNextLinkage())
+						++n;
+					if (n == 1) {
+						// Skip linkages in hierarchy if there is only one
+						return getChildren(firstLinkage);
+					}
+					PDOMLinkage[] linkages = new PDOMLinkage[n];
+					int i = 0;
+					for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
+						linkages[i++] = linkage;
+					return linkages;
+				} else if (parentElement instanceof IPDOMNode) {
 					IPDOMNode node = (IPDOMNode)parentElement;
 					Counter counter = new Counter();
 					node.accept(counter);
@@ -202,8 +219,8 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 
 		public boolean hasChildren(Object element) {
 			try {
-				if (element instanceof PDOM) {
-					PDOM pdom = (PDOM)element;
+				if (element instanceof ICProject) {
+					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM((ICProject)element);
 					PDOMLinkage[] linkages = pdom.getLinkages();
 					if (linkages.length == 0)
 						return false;
@@ -229,11 +246,16 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 		}
 
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof PDOM) {
-				PDOM pdom = (PDOM)inputElement;
-				return pdom.getLinkages();
-			} else
-				return new Object[0];
+			try {
+				if (inputElement instanceof ICModel) {
+					ICModel model = (ICModel)inputElement;
+					return model.getCProjects();
+				}
+			} catch (CModelException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+			
+			return new Object[0];
 		}
 
 		public void dispose() {
@@ -300,10 +322,15 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 		viewer.setContentProvider(new IndexContentProvider());
 		viewer.setLabelProvider(new IndexLabelProvider());
 		
+		ICModel model = CoreModel.getDefault().getCModel();
+		viewer.setInput(model);
 		try {
-			PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(); 
-			pdom.addListener(this);
-			viewer.setInput(pdom);
+			ICProject[] projects = model.getCProjects();
+			for (int i = 0; i < projects.length; ++i) {
+				PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(projects[i]); 
+					pdom.addListener(this);
+			}
+			viewer.setChildCount(model, projects.length);
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
 		}
@@ -340,7 +367,6 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 	private void makeActions() {
 		rebuildAction = new RebuildIndexAction(viewer);
 		countSymbolsAction = new CountNodeAction(viewer);
-		setFastIndexAction = new SetFastIndexerAction(viewer);
 		discardExternalDefsAction = new DiscardExternalDefsAction(viewer, this);
 		toggleLinkingAction = new ToggleLinkingAction(this);
 		openDefinitionAction = new OpenDefinitionAction(viewer);
@@ -366,8 +392,6 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 			manager.add(rebuildAction);
 		if (countSymbolsAction.valid())
 			manager.add(countSymbolsAction);
-		if (setFastIndexAction.valid())
-			manager.add(setFastIndexAction);
 		if (discardExternalDefsAction.valid())
 			manager.add(discardExternalDefsAction);
 		if (openDefinitionAction.valid())

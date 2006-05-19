@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 public interface IPDOMManager {
 
 	// Getting the PDOM
-	public IPDOM getPDOM() throws CoreException;
+	public IPDOM getPDOM(ICProject project) throws CoreException;
 	
 	// Get the indexer for a given project
 	public IPDOMIndexer getIndexer(ICProject project);
@@ -38,9 +38,6 @@ public interface IPDOMManager {
 	// Enqueue and indexer sub job
 	public void enqueue(IPDOMIndexerTask subjob);
 
-	// Reindex the workspace
-	public void reindex();
-	
 	// Scheduling rule used by indexers to make sure we don't get
 	// Too much indexing going on.
 	public ISchedulingRule getIndexerSchedulingRule();

@@ -233,8 +233,6 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream(500);
 		PrintWriter out = new PrintWriter(outStream);
 		out.println("# " + header);
-		Date now = Calendar.getInstance().getTime();
-		out.println("# " + DateFormat.getDateTimeInstance().format(now));
 		Map map = new TreeMap(properties);
 		Set keys = map.keySet();
 		for (Iterator z = keys.iterator(); z.hasNext();) {

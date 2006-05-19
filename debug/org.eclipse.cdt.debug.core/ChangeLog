@@ -1,3 +1,7 @@
+2006-05-19 Mikhail Khodjaiants
+	Warning cleanup.
+	* CBreakpointManager.java
+
 2006-05-12 Mikhail Khodjaiants
 	Bug 118274: Condition is not shown in the tooltip of conditional breakpoint.
 	* CDebugUtils.java

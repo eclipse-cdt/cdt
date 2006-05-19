@@ -77,7 +77,7 @@ import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 
 public class CBreakpointManager implements IBreakpointsListener, IBreakpointManagerListener, ICDIEventListener, IAdaptable {
 
-	static private class BreakpointInProgess {
+	static class BreakpointInProgess {
 		
 		private ICDIBreakpoint fCDIBreakpoint;
 
@@ -90,7 +90,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		}
 	}
 
-	private class BreakpointMap {
+	class BreakpointMap {
 
 		/**
 		 * Maps CBreakpoints to CDI breakpoints.
@@ -102,7 +102,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		 */
 		private HashMap fCDIBreakpoints;
 
-		private BreakpointMap() {
+		protected BreakpointMap() {
 			fCBreakpoints = new HashMap( 10 );
 			fCDIBreakpoints = new HashMap( 10 );
 		}

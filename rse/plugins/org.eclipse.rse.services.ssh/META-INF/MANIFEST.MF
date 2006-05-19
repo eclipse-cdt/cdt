@@ -8,7 +8,8 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.services,
- com.jcraft.jsch;bundle-version="[0.1.28,2.0.0)"
+ com.jcraft.jsch;bundle-version="[0.1.28,2.0.0)",
+ org.eclipse.swt
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.services.ssh,
  org.eclipse.rse.services.ssh.files,

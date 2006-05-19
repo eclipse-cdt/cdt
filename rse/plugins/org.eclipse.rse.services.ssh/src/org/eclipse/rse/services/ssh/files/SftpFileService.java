@@ -30,6 +30,7 @@ import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.ssh.Activator;
 import org.eclipse.rse.services.ssh.ISshService;
 import org.eclipse.rse.services.ssh.ISshSessionProvider;
+import org.eclipse.swt.widgets.Display;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -217,6 +218,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		  }
 		  public boolean count(long count){
 		      fMonitor.worked((int)count);
+		      while (Display.getCurrent().readAndDispatch());
 		      return !(fMonitor.isCanceled());
 		  }
 		  public void end(){

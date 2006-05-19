@@ -11,7 +11,14 @@
 
 package org.eclipse.rse.connectorservice.ssh;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -19,12 +26,19 @@ import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.ssh.ISshSessionProvider;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ssh2.CVSSSH2Plugin;
 import org.eclipse.team.internal.ccvs.ssh2.ISSHContants;
 import org.eclipse.team.internal.ccvs.ui.UserValidationDialog;
 
 import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Proxy;
+import com.jcraft.jsch.ProxyHTTP;
+import com.jcraft.jsch.ProxySOCKS5;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SocketFactory;
 import com.jcraft.jsch.UserInfo;
 
 /** 
@@ -35,7 +49,6 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 	private static final int SSH_DEFAULT_PORT = 22;
 	private static JSch jsch=new JSch();
     private Session session;
-//	protected SftpFileService _sftpFileService;
 
 	public SshConnectorService(IHost host) {
 		//TODO the port parameter doesnt really make sense here since
@@ -43,7 +56,6 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		//setPort() on our base class -- I assume the port is meant to 
 		//be a local port.
 		super("SSH Connector Service", "SSH Connector Service Description", host, 0);
-	//	_sftpFileService = new SftpFileService(this);
 	}
 
 	//----------------------------------------------------------------------
@@ -51,6 +63,13 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 	//----------------------------------------------------------------------
 	private static String current_ssh_home = null;
 	private static String current_pkeys = ""; //$NON-NLS-1$
+    protected static int getSshTimeoutInMillis() {
+        //return CVSProviderPlugin.getPlugin().getTimeout() * 1000;
+    	// TODO Hard-code the timeout for now since Jsch doesn't respect CVS timeout
+    	// See bug 92887
+    	return 60000;
+    }
+    
 
 	static String SSH_HOME_DEFAULT = null;
 	static {
@@ -66,6 +85,8 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		}
 	}
 
+	// Load ssh prefs from Team/CVS for now.
+	// TODO do our own preference page.
 	static void loadSshPrefs()
 	{
 		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
@@ -122,6 +143,79 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		} catch (Exception e) {
 		}
 	}
+    
+    static Proxy loadSshProxyPrefs() {
+		boolean useProxy = CVSProviderPlugin.getPlugin().isUseProxy();
+        Proxy proxy = null;
+		if (useProxy) {
+			String _type = CVSProviderPlugin.getPlugin().getProxyType();
+			String _host = CVSProviderPlugin.getPlugin().getProxyHost();
+			String _port = CVSProviderPlugin.getPlugin().getProxyPort();
+
+			boolean useAuth = CVSProviderPlugin.getPlugin().isUseProxyAuth();
+			String _user = ""; //$NON-NLS-1$
+			String _pass = ""; //$NON-NLS-1$
+			
+			// Retrieve username and password from keyring.
+			if(useAuth){
+				_user=CVSProviderPlugin.getPlugin().getProxyUser();
+				_pass=CVSProviderPlugin.getPlugin().getProxyPassword();
+			}
+
+			String proxyhost = _host + ":" + _port; //$NON-NLS-1$
+			if (_type.equals(CVSProviderPlugin.PROXY_TYPE_HTTP)) {
+				proxy = new ProxyHTTP(proxyhost);
+				if (useAuth) {
+					((ProxyHTTP) proxy).setUserPasswd(_user, _pass);
+				}
+			} else if (_type.equals(CVSProviderPlugin.PROXY_TYPE_SOCKS5)) {
+				proxy = new ProxySOCKS5(proxyhost);
+				if (useAuth) {
+					((ProxySOCKS5) proxy).setUserPasswd(_user, _pass);
+				}
+			} else {
+				proxy = null;
+			}
+		}
+		return proxy;
+    }
+
+	public static class SimpleSocketFactory implements SocketFactory {
+		InputStream in = null;
+		OutputStream out = null;
+		public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+			Socket socket = null;
+			socket = new Socket(host, port);
+			return socket;
+		}
+		public InputStream getInputStream(Socket socket) throws IOException {
+			if (in == null)
+				in = socket.getInputStream();
+			return in;
+		}
+		public OutputStream getOutputStream(Socket socket) throws IOException {
+			if (out == null)
+				out = socket.getOutputStream();
+			return out;
+		}
+	}
+	
+	public static class ResponsiveSocketFacory extends SimpleSocketFactory {
+		private IProgressMonitor monitor;
+		public ResponsiveSocketFacory(IProgressMonitor monitor) {
+			this.monitor = monitor;
+		}
+		public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+			Socket socket = null;
+			socket = Util.createSocket(host, port, monitor);
+			// Null out the monitor so we don't hold onto anything
+			// (i.e. the SSH2 session will keep a handle to the socket factory around
+			monitor = new NullProgressMonitor();
+			// Set the socket timeout
+			socket.setSoTimeout(getSshTimeoutInMillis());
+			return socket;
+		}
+	}
 
 	//----------------------------------------------------------------------
 	// </copied from org.eclipse.team.cvs.ssh2>
@@ -138,32 +232,29 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
         String host = getHostName();
         String user = getUserId();
 
+        Proxy proxy = loadSshProxyPrefs();
         session=jsch.getSession(user, host, SSH_DEFAULT_PORT);
+        if (proxy != null) {
+            session.setProxy(proxy);
+        }
+        session.setTimeout(getSshTimeoutInMillis());
         session.setPassword(getPasswordInformation().getPassword());
-        //session.setPassword("your password");
-
-        // username and password will be given via UserInfo interface.
-        UserInfo ui=new MyUserInfo(user);
-        session.setUserInfo(ui);
+        session.setUserInfo(new MyUserInfo(user));
+        session.setSocketFactory(new ResponsiveSocketFacory(monitor));
 
         //java.util.Hashtable config=new java.util.Hashtable();
         //config.put("StrictHostKeyChecking", "no");
         //session.setConfig(config);
-        session.connect(3000);   // making connection with timeout.
-        
-        //now also connect the sftpFileService. It's not very nice to force
-        //the connector service know about the file service, and connect it
-        //so early -- lazy connect inside the sftpFileService would be better.
-        //But the FileServiceSubsystem only calls internalConnect() on the
-        //connector service, and doesn't try to connect the file service
-        //individually.
-        //TODO: From the API point of view, it might be better if the file
-        //service had a connect() method and could decide itself if and how
-        //it wants to use the connector service.
-        //Or could we ensure that the FileService is instanciated only once
-        //it needs to be connected? - Currently this is not the case (it is 
-        //instanciated very early by the subsystem).
-    //    _sftpFileService.connect();
+        try {
+        	Activator.trace("connecting..."); //$NON-NLS-1$
+            session.connect();
+        	Activator.trace("connected"); //$NON-NLS-1$
+        } catch (JSchException e) {
+        	Activator.trace("connect failed: "+e.toString()); //$NON-NLS-1$
+            if (session.isConnected())
+                session.disconnect();
+            throw e;
+        }
     }
 
 	public void internalDisconnect(IProgressMonitor monitor)
@@ -171,7 +262,8 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		//TODO: Check, Is disconnect being called because the network (connection) went down?
 		//TODO: Fire communication event (aboutToDisconnect) -- see DStoreConnectorService.internalDisconnect()
 		//TODO: Wrap exception in an InvocationTargetException -- see DStoreConnectorService.internalDisconnect()
-	//	_sftpFileService.disconnect();
+		//Will services like the sftp service be disconnected too? Or notified?
+    	Activator.trace("disconnect"); //$NON-NLS-1$
 		session.disconnect();
 	}
 
@@ -182,11 +274,6 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
     public Session getSession() {
     	return session;
     }
-    /*
-    public IFileService getFileService() {
-    	return _sftpFileService;
-    }
-    */
 
     private static Display getStandardDisplay() {
     	Display display = Display.getCurrent();

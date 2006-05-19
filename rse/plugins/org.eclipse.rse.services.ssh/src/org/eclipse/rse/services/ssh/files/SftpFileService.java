@@ -71,7 +71,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			fUserHome = fChannelSftp.pwd();
 			Activator.trace("SftpFileService.connected"); //$NON-NLS-1$
 		} catch(Exception e) {
-			Activator.trace("SftpFileService.connecting failed: "+e.toString());
+			Activator.trace("SftpFileService.connecting failed: "+e.toString()); //$NON-NLS-1$
 			throw e;
 		}
 	}
@@ -79,7 +79,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	protected ChannelSftp getChannel(String task) {
 		Activator.trace(task);
 		if (fChannelSftp==null || !fChannelSftp.isConnected()) {
-			Activator.trace(task + ": channel not connected: "+fChannelSftp);
+			Activator.trace(task + ": channel not connected: "+fChannelSftp); //$NON-NLS-1$
 		}
 		return fChannelSftp;
 	}
@@ -98,9 +98,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		SftpATTRS attrs = null;
 		try {
 			attrs = getChannel("SftpFileService.getFile").stat(remoteParent+'/'+fileName); //$NON-NLS-1$
-			Activator.trace("SftpFileService.getFile done");
+			Activator.trace("SftpFileService.getFile done"); //$NON-NLS-1$
 		} catch(Exception e) {
-			Activator.trace("SftpFileService.getFile failed: "+e.toString());
+			Activator.trace("SftpFileService.getFile failed: "+e.toString()); //$NON-NLS-1$
 		}
 		if (attrs!=null) {
 			node = makeHostFile(remoteParent, fileName, attrs);
@@ -141,13 +141,14 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		    		}
 		    	}
 		    }
+			Activator.trace("SftpFileService.internalFetch ok"); //$NON-NLS-1$
 		} catch(Exception e) {
 			//TODO throw new SystemMessageException.
 			//We get a "2: No such file" exception when we try to get contents
 			//of a symbolic link that turns out to point to a file rather than
 			//a directory. In this case, the result is probably expected.
 			//We should try to classify symbolic links as "file" or "dir" correctly.
-			Activator.trace("SftpFileService.internalFetch failed: "+e.toString());
+			Activator.trace("SftpFileService.internalFetch failed: "+e.toString()); //$NON-NLS-1$
 			e.printStackTrace();
 		}
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);

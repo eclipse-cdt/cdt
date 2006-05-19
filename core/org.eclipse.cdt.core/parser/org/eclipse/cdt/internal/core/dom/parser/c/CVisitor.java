@@ -531,7 +531,9 @@ public class CVisitor {
 	        IASTName name = ((IASTLabelStatement)statement).getName();
 	        IBinding binding = new CLabel( name );
 	        try {
-                ((ICFunctionScope) binding.getScope()).addName( name );
+	        	IScope scope = binding.getScope();
+	        	if (scope instanceof ICFunctionScope)
+	        		((ICFunctionScope) binding.getScope()).addName( name );
             } catch ( DOMException e ) {
             }
 	        return binding;
@@ -1128,6 +1130,7 @@ public class CVisitor {
                     scope = scope.getParent();
                 } catch ( DOMException e ) {
                     scope = e.getProblem();
+                    break;
                 }
 		    }
 		}

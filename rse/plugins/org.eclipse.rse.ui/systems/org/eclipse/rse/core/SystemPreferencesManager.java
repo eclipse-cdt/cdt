@@ -15,9 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core;
+import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Vector;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
@@ -112,15 +114,15 @@ public class SystemPreferencesManager
 		  RemoteSystemsPreferencePage.setActiveProfiles(names);    	
     }
     /**
-     * Add a name to the active profile list
+     * Add a name to the active profile list. A name already in the list is not added again.
+     * The list remains sorted in the natural order.
      */
     public void addActiveProfile(String newName)
     {
-		String[] names = getActiveProfileNames();
-        String[] newNames = new String[names.length+1];		
-        for (int idx=0; idx<names.length; idx++)
-          newNames[idx] = names[idx];
-        newNames[names.length] = newName;
+		SortedSet names = new TreeSet(Arrays.asList(getActiveProfileNames()));
+		names.add(newName);
+		String[] newNames = new String[names.size()];
+		names.toArray(newNames);
 		RemoteSystemsPreferencePage.setActiveProfiles(newNames);    	        
     }
 

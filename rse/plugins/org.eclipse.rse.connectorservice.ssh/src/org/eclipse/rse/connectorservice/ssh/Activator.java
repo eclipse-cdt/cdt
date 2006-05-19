@@ -81,6 +81,7 @@ public class Activator extends AbstractUIPlugin {
 		if (isTracingOn()) {
 			String fullMsg = getTimestamp() + " | " + Thread.currentThread().getName() + " | " + msg;
 			System.out.println(fullMsg);
+			System.out.flush();
 		}
 	}
 

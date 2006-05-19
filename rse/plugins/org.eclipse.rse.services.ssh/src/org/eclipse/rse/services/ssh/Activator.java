@@ -90,6 +90,7 @@ public class Activator extends Plugin {
 		if (isTracingOn()) {
 			String fullMsg = getTimestamp() + " | " + Thread.currentThread().getName() + " | " + msg;
 			System.out.println(fullMsg);
+			System.out.flush();
 		}
 	}
 	

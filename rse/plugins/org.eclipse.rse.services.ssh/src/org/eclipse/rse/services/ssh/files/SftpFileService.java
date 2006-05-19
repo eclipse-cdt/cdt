@@ -189,14 +189,14 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				}
 				dst += remoteFile;
 			}
-			getChannel("SftpFileService.upload").put(localFile.getAbsolutePath(), dst, sftpMonitor, mode); //$NON-NLS-1$ 
-			Activator.trace("SftpFileService.upload ok"); //$NON-NLS-1$
+			getChannel("SftpFileService.upload "+remoteFile).put(localFile.getAbsolutePath(), dst, sftpMonitor, mode); //$NON-NLS-1$ 
+			Activator.trace("SftpFileService.upload "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-1$
 		}
 		catch (Exception e) {
 			//TODO See download
 			//e.printStackTrace();
 			//throw new RemoteFileIOException(e);
-			Activator.trace("SftpFileService.upload failed: "+e.toString());
+			Activator.trace("SftpFileService.upload "+remoteFile+" failed: "+e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 		return true;
@@ -266,8 +266,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			String remotePath = remoteParent+'/'+remoteFile;
 			int mode=ChannelSftp.OVERWRITE;
 			MyProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
-			getChannel("SftpFileService.download").get(remotePath, localFile.getAbsolutePath(), sftpMonitor, mode); //$NON-NLS-1$
-			Activator.trace("SftpFileService.download ok"); //$NON-NLS-1$
+			getChannel("SftpFileService.download "+remoteFile).get(remotePath, localFile.getAbsolutePath(), sftpMonitor, mode); //$NON-NLS-1$
+			Activator.trace("SftpFileService.download "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		catch (Exception e) {
 			//TODO handle exception properly: happens e.g. when trying to download a symlink.
@@ -275,7 +275,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			//<=3 (e.g. "4: Failure"). therefore it is better for now to just return false.
 			//e.printStackTrace();
 			//throw new RemoteFileIOException(e);
-			Activator.trace("SftpFileService.download failed: "+e.toString()); //$NON-NLS-1$
+			Activator.trace("SftpFileService.download "+remoteFile+" failed: "+e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 		return true;

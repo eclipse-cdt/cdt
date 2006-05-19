@@ -96,7 +96,7 @@ public interface IUniversalDataStoreConstants extends IServiceConstants
 	public static final int KB_IN_BYTES = 1024;
 	
 	// Number of kilobytes we want
-	public static final int NUM_OF_KB = 40;
+	public static final int NUM_OF_KB = 10;
 	
 	// The size of file segments to read and send across connection (in bytes)
 	public static final int BUFFER_SIZE = NUM_OF_KB * KB_IN_BYTES;

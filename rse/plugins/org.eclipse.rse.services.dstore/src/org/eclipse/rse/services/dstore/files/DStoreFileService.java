@@ -23,11 +23,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
@@ -42,6 +44,7 @@ import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
 import org.eclipse.rse.services.dstore.ServiceResources;
@@ -63,6 +66,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	private int _bufferDownloadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
 	protected ISystemFileTypes _fileTypeRegistry;
 	
+	private static String _percentMsg = SystemMessage.sub(SystemMessage.sub(SystemMessage.sub(ServiceResources.DStore_Service_Percent_Complete_Message, "&0", "{0}"), "&1", "{1}"), "&2", "{2}");	
+
 	private static String[] _filterAttributes =  {
 		"attributes", 
 		"filter",
@@ -360,6 +365,14 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				IHostFile created = createFile(monitor, remoteParent, remoteFile);
 				return created.exists();
 			}
+			/*
+			SubProgressMonitor subMonitor = null;
+			if (monitor != null)
+			{
+				monitor.subTask(file.getName());
+				subMonitor = new SubProgressMonitor(monitor, (int)totalBytes);
+			}
+			*/
 			
 			DataElement uploadLog = findUploadLog();
 //			listener = new FileTransferStatusListener(remotePath, shell, monitor, getConnectorService(), ds, uploadLog);
@@ -454,13 +467,15 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					percentBuf.append("%");
 								
 					monitor.worked(bytesRead);
-					/*
-					progressMsg.makeSubstitution(totalSentBuf.toString(), totalBuf, percentBuf);
-					monitor.subTask(progressMsg.getLevelOneText());					
-					*/	
+					
+					String str = MessageFormat.format(_percentMsg, new Object[] {totalSentBuf, totalBuf, percentBuf});
+					monitor.subTask(str);					
+						
 					while (display.readAndDispatch()) 
 					{
 					}
+					Thread.sleep(200);
+
 
 					isCancelled = monitor.isCanceled();
 					if (isCancelled) 

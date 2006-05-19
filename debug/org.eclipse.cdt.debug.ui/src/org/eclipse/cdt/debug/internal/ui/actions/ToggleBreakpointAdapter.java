@@ -31,6 +31,7 @@ import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -50,6 +51,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -303,13 +305,21 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	}
 
 	protected static IResource getResource( IWorkbenchPart part ) {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		if ( part instanceof IEditorPart ) {
 			IEditorInput editorInput = ((IEditorPart)part).getEditorInput();
 			if ( editorInput instanceof IFileEditorInput ) {
 				return ((IFileEditorInput)editorInput).getFile();
 			}
+			ILocationProvider provider = (ILocationProvider)editorInput.getAdapter( ILocationProvider.class );
+			if ( provider != null ) {
+				IPath location = provider.getPath( editorInput );
+				IFile[] files = root.findFilesForLocation( location );
+				if ( files.length > 0 )
+					return files[0];
+			}
 		}
-		return ResourcesPlugin.getWorkspace().getRoot();
+		return root;
 	}
 
 	private String getSourceHandle( IEditorInput input ) throws CoreException {

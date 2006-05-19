@@ -1,3 +1,9 @@
+2006-05-19 Mikhail Khodjaiants
+	Bug 142860: Breakpoint marker is not shown in the editor's ruler.
+	* ToggleBreakpointAdapter.java
+	* plugin.properties
+	* plugin.xml
+
 2006-05-12 Mikhail Khodjaiants
 	Bug 118274: Condition is not shown in the tooltip of conditional breakpoint.
 	Moved the "getBreakpointText" method and related methods to CDebugUtils.

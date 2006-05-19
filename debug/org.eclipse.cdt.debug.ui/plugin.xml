@@ -1066,8 +1066,18 @@
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
             annotationImageProvider="org.eclipse.cdt.debug.internal.ui.BreakpointImageProvider"
+            annotationType="org.eclipse.cdt.debug.core.breakpoint"
+            colorPreferenceKey="breakpointIndicationColor"
+            colorPreferenceValue="0,0,255"
             icon="icons/obj16/brkp_obj.gif"
-            annotationType="org.eclipse.cdt.debug.core.breakpoint">
+            label="%BreakpointMarkerPreference.label"
+            overviewRulerPreferenceKey="breakpointIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="false"
+            presentationLayer="3"
+            textPreferenceKey="breakpointIndication"
+            textPreferenceValue="false"
+            verticalRulerPreferenceKey="breakpointVerticalRuler"
+            verticalRulerPreferenceValue="true">
       </specification>
       <specification
             colorPreferenceValue="217,255,226"

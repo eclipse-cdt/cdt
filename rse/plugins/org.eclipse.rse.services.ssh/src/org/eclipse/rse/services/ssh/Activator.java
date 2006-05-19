@@ -11,6 +11,11 @@
 
 package org.eclipse.rse.services.ssh;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
@@ -56,4 +61,36 @@ public class Activator extends Plugin {
 	public static Activator getDefault() {
 		return plugin;
 	}
+	
+	private static Boolean fTracingOn = null;
+	public static boolean isTracingOn() {
+		if (fTracingOn==null) {
+			String id = plugin.getBundle().getSymbolicName();
+			String val = Platform.getDebugOption(id + "/debug"); //$NON-NLS-1$
+			if ("true".equals(val)) {
+				fTracingOn = Boolean.TRUE;
+			} else {
+				fTracingOn = Boolean.FALSE;
+			}
+		}
+		return fTracingOn.booleanValue();
+	}
+	public static String getTimestamp() {
+		try {
+			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
+			return formatter.format(new Date());
+		} catch (Exception e) {
+			// If there were problems writing out the date, ignore and
+			// continue since that shouldn't stop us from logging the rest
+			// of the information
+		}
+		return Long.toString(System.currentTimeMillis());
+	}
+	public static void trace(String msg) {
+		if (isTracingOn()) {
+			String fullMsg = getTimestamp() + " | " + Thread.currentThread().getName() + " | " + msg;
+			System.out.println(fullMsg);
+		}
+	}
+	
 }

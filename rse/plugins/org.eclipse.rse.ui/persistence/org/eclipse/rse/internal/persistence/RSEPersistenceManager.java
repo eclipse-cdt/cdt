@@ -18,8 +18,6 @@ package org.eclipse.rse.internal.persistence;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -113,7 +111,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	 */
 	public IRSEPersistenceProvider getRSEPersistenceProvider()
 	{
-		IRSEPersistenceProvider provider = getRSEPersistenceProvider("org.eclipse.rse.persistence.SerializingProvider");
+		IRSEPersistenceProvider provider = getRSEPersistenceProvider("org.eclipse.rse.persistence.PropertyFileProvider");
 		return provider;
 	}
 	
@@ -353,43 +351,26 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
     	{
     		_currentState = STATE_IMPORTING;
 			IProject project = SystemResourceManager.getRemoteSystemsProject();
-	
 			try
 			{
 				if (!project.isSynchronized(IResource.DEPTH_ONE))
 					project.refreshLocal(IResource.DEPTH_ONE, null);
-				IResource[] folders = project.members();
-				for (int f = 0; f < folders.length; f++)
-				{
-					
-					if (folders[f] instanceof IFolder)
+				IRSEPersistenceProvider persistenceProvider = getRSEPersistenceProvider();
+				String profileNames[] = persistenceProvider.getSavedProfileNames();
+				for (int i = 0; i < profileNames.length; i++) {
+					String profileName = profileNames[i];
+					RSEDOM dom = importRSEDOM(profileName);
+					if (dom != null)
 					{
-						IFolder folder = (IFolder)folders[f];
-						IResource[] members = folder.members();
-						for (int i = 0; i < members.length; i++)
+						ISystemProfile restoredProfile = _importer.restoreProfile(profileManager, dom);
+						if (restoredProfile == null)
 						{
-							IResource member = members[i];
-							
-							if (member instanceof IFile && member.getFileExtension().equals("rsedom"))
-							{
-								String name = member.getName();
-								String domName = member.getName().substring(0, name.length() - 7);
-								// read and restore dom
-								RSEDOM dom = importRSEDOM(profileManager, domName);
-								if (dom != null)
-								{
-									ISystemProfile restoredProfile = _importer.restoreProfile(profileManager, dom);
-									if (restoredProfile == null)
-									{
-										successful = false;
-									}
-								}
-								else
-								{
-									successful = false;
-								}
-							}
+							successful = false;
 						}
+					}
+					else
+					{
+						successful = false;
 					}
 				}
 			}
@@ -455,12 +436,12 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 		return dom;
 	}
 	
-	public RSEDOM importRSEDOM(ISystemProfileManager profileManager, String domName)
+	public RSEDOM importRSEDOM(String domName)
 	{
 		RSEDOM dom = null;
 		IRSEPersistenceProvider provider = getRSEPersistenceProvider();
 		if (provider != null) {
-			dom = provider.loadRSEDOM(profileManager, domName, null);
+			dom = provider.loadRSEDOM(domName, null);
 		} else {
 			RSEUIPlugin.logError("Persistence provider is not available."); // TODO: dwd NLS
 		}

@@ -21,6 +21,7 @@ import java.io.Serializable;
 
 public class RSEDOMNodeAttribute implements Serializable
 {
+	private static final long serialVersionUID = 1L;
 	private String _key;
 	private String _value;
 	private String _type;

@@ -22,14 +22,16 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.SystemResourceManager;
-import org.eclipse.rse.model.ISystemProfileManager;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
 
@@ -41,6 +43,45 @@ import org.eclipse.rse.persistence.dom.RSEDOM;
 public class SerializingProvider implements IRSEPersistenceProvider 
 {
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#getSavedProfileNames()
+	 */
+	public String[] getSavedProfileNames() {
+		/*
+		 * We look for folders inside the RemoteSystemsConnections folder that contain
+		 * a single file named folderName.rsedom. We return the array of folder names.
+		 */
+		List names = new Vector(10);
+		try {
+			IProject project = SystemResourceManager.getRemoteSystemsProject();
+			IResource[] candidates = project.members();
+			for (int i = 0; i < candidates.length; i++) {
+				IResource candidate = candidates[i];
+				if (candidate.getType() == IResource.FOLDER) {
+					IFolder candidateFolder = (IFolder) candidate;
+					IResource[] children = candidateFolder.members();
+					if (children.length == 1) {
+						IResource child = children[0];
+						if (child.getType() == IResource.FILE) {
+							String profileName = candidateFolder.getName();
+							String domFileName = profileName + ".rsedom";
+							String childName = child.getName();
+							if (childName.equals(domFileName)) {
+								names.add(profileName);
+							}
+						}
+					}
+				}
+			}
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String[] result = new String[names.size()];
+		names.toArray(result);
+		return result;
+	}
+	
 	/**
 	 * Restores a system profile in RSE.  This API will likely change.
 	 * 
@@ -48,10 +89,10 @@ public class SerializingProvider implements IRSEPersistenceProvider
 	 * @param profileFile the file representing the profile
 	 * @return
 	 */
-	public RSEDOM loadRSEDOM(ISystemProfileManager profileManager, String domName, IProgressMonitor monitor)
+	public RSEDOM loadRSEDOM(String profileName, IProgressMonitor monitor)
 	{
 		RSEDOM dom = null;
-		IFile profileFile = getProfileFile(domName, monitor);
+		IFile profileFile = getProfileFile(profileName, monitor);
 		if (profileFile.exists())
 		{
 			System.out.println("loading "+ profileFile.getLocation().toOSString() + "..."); // TODO: dwd debugging
@@ -80,7 +121,7 @@ public class SerializingProvider implements IRSEPersistenceProvider
 		return dom;
 	}
 	
-	protected IFile getProfileFile(String domName, IProgressMonitor monitor)
+	private IFile getProfileFile(String domName, IProgressMonitor monitor)
 	{
 		IProject project = SystemResourceManager.getRemoteSystemsProject();
 		

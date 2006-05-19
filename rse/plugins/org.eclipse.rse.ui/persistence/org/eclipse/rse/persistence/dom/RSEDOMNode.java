@@ -35,6 +35,7 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	
 	protected boolean _needsSave = false;
 	protected boolean _isDirty = true;
+	protected boolean restoring = false;
 	
 	public RSEDOMNode(RSEDOMNode parent, String type, String name)
 	{
@@ -69,7 +70,7 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	 */
 	public void markForSave()
 	{
-		if (!_needsSave)
+		if (!restoring && !_needsSave)
 		{
 			_needsSave = true;
 			_parent.markForSave();
@@ -255,6 +256,10 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	public void setDirty(boolean isDirty)
 	{
 		_isDirty = isDirty;
+	}
+	
+	public void setRestoring(boolean restoring) {
+		this.restoring = restoring;
 	}
 	
 }

@@ -17,7 +17,6 @@
 package org.eclipse.rse.persistence;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.rse.model.ISystemProfileManager;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
 
@@ -34,14 +33,12 @@ public interface IRSEPersistenceProvider
 	/**
 	 * Restores an RSE DOM given a profileName. 
 	 * 
-	 * @param profileManager
 	 * @param profileName name of the Profile to load
 	 * @param monitor 
 	 * @return the RSE DOM for the specified profile
 	 */
-	public RSEDOM loadRSEDOM(ISystemProfileManager profileManager, String profileName, IProgressMonitor monitor);
+	public RSEDOM loadRSEDOM(String profileName, IProgressMonitor monitor);
 
-	
 	/**
 	 * Persists an RSE DOM.
 	 *  
@@ -50,4 +47,9 @@ public interface IRSEPersistenceProvider
 	 * @return true if succcessful
 	 */
 	public boolean saveRSEDOM(RSEDOM dom, IProgressMonitor monitor);
+	
+	/**
+	 * @return The names of the profiles that have been saved by this persistence provider.
+	 */
+	public String[] getSavedProfileNames();
 }

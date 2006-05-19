@@ -38,17 +38,23 @@ public class RSEDOM extends RSEDOMNode
 		_profile = profile;
 	}
 	
+	public RSEDOM(String profileName)
+	{
+		super(null, TYPE_PROFILE, profileName);
+		_profile = null;
+	}
+	
 	public ISystemProfile getProfile()
 	{
 		return _profile;
 	}
 	
 	/**
-	 * Indicate tath this DOM needs to be saved
+	 * Indicate that this DOM needs to be saved
 	 */
 	public void markForSave()
 	{
-		if (!_needsSave)
+		if (!restoring && !_needsSave)
 		{
 			System.out.println("RSEDOM "+getName() + " needs saving");
 			_needsSave = true;

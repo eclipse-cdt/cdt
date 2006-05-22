@@ -23,8 +23,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -67,7 +71,7 @@ import org.eclipse.ui.part.ViewPart;
  * @author Doug Schaefer
  *
  */
-public class IndexView extends ViewPart implements PDOM.IListener {
+public class IndexView extends ViewPart implements PDOM.IListener, IElementChangedListener {
 
 	private TreeViewer viewer;
 //	private DrillDownAdapter drillDownAdapter;
@@ -249,7 +253,13 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 			try {
 				if (inputElement instanceof ICModel) {
 					ICModel model = (ICModel)inputElement;
-					return model.getCProjects();
+					ICProject[] projects = model.getCProjects();
+					for (int i = 0; i < projects.length; ++i) {
+						ICProject project = projects[i];
+						if (project.getUnderlyingResource().isPhantom())
+							System.out.println(project.getElementName() + " is phantom");
+					}
+					return projects;
 				}
 			} catch (CModelException e) {
 				CUIPlugin.getDefault().log(e);
@@ -334,6 +344,7 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
 		}
+		CoreModel.getDefault().addElementChangedListener(this);
 		
 		makeActions();
 		hookContextMenu();
@@ -357,11 +368,26 @@ public class IndexView extends ViewPart implements PDOM.IListener {
         getSite().registerContextMenu(menuMgr, viewer);
         
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSelectionChanged(event);
 			}
 		});
+	}
+	
+	public void dispose() {
+		super.dispose();
+		ICModel model = CoreModel.getDefault().getCModel();
+		try {
+			ICProject[] projects = model.getCProjects();
+			for (int i = 0; i < projects.length; ++i) {
+				PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(projects[i]); 
+					pdom.removeListener(this);
+			}
+			viewer.setChildCount(model, projects.length);
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+		CoreModel.getDefault().removeElementChangedListener(this);
 	}
 	
 	private void makeActions() {
@@ -449,6 +475,41 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 //				}
 			}
 		});
+	}
+
+	public void elementChanged(ElementChangedEvent event) {
+		// Only respond to post change events
+		if (event.getType() != ElementChangedEvent.POST_CHANGE)
+			return;
+
+		// TODO we'll get fancier when we do a virtual tree.
+		processDelta(event.getDelta());
+	}
+	
+	private void processDelta(ICElementDelta delta) {
+		int type = delta.getElement().getElementType();
+		switch (type) {
+		case ICElement.C_MODEL:
+			// Loop through the children
+			ICElementDelta[] children = delta.getAffectedChildren();
+			for (int i = 0; i < children.length; ++i)
+				processDelta(children[i]);
+			break;
+		case ICElement.C_PROJECT:
+			switch (delta.getKind()) {
+			case ICElementDelta.ADDED:
+				try {
+					PDOM pdom = ((PDOM)CCorePlugin.getPDOMManager().getPDOM((ICProject)delta.getElement()));
+					pdom.addListener(this);
+					handleChange(pdom);
+				} catch (CoreException e) {
+				}
+				break;
+			case ICElementDelta.REMOVED:
+				handleChange(null);
+				break;
+			}
+		}
 	}
 	
 }

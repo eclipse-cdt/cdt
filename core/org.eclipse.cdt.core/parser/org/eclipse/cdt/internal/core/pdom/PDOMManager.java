@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.internal.core.pdom.indexer.ctags.CtagsIndexer;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -96,7 +97,7 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 			IPDOMIndexer indexer = (IPDOMIndexer)rproject.getSessionProperty(indexerProperty);
 			
 			if (indexer == null) {
-				indexer = createIndexer(getIndexerId(project), project);
+				indexer = createIndexer(project, getIndexerId(project));
 			}
 			
 			return indexer;
@@ -195,20 +196,29 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     		} catch (CoreException e) {
     		}
     		
-    		if (indexerId == null)
-    			// make it the default
+    		if (indexerId == null || indexerId.equals(CtagsIndexer.ID))
+    			// make it the default, ctags is gone
     			indexerId = getDefaultIndexerId();
     		
     		// Start a job to set the id.
-    		new SetId(project, indexerId).schedule();
+    		new SetIndexerId(project, indexerId).schedule();
+    	} else if (indexerId.equals(CtagsIndexer.ID)) {
+			// make it the default, ctags is gone
+			indexerId = getDefaultIndexerId();
+			
+    		// Start a job to set the id.
+    		new SetIndexerId(project, indexerId).schedule();
     	}
+    	
   	    return indexerId;
     }
 
-    private static class SetId extends Job {
+    // This job is only used when setting during a get. Sometimes the get is being
+    // done in an unfriendly environment, e.g. startup.
+    private class SetIndexerId extends Job {
     	private final ICProject project;
     	private final String indexerId;
-    	public SetId(ICProject project, String indexerId) {
+    	public SetIndexerId(ICProject project, String indexerId) {
     		super("Set Indexer Id");
     		this.project = project;
     		this.indexerId = indexerId;
@@ -216,7 +226,7 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     	}
     	protected IStatus run(IProgressMonitor monitor) {
     		try {
-    			setId(project, indexerId);
+    			setIndexerId(project, indexerId);
         		return Status.OK_STATUS;
     		} catch (CoreException e) {
     			return e.getStatus();
@@ -224,25 +234,24 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     	}
     }
     
-    private static void setId(ICProject project, String indexerId) throws CoreException {
+    public void setIndexerId(ICProject project, String indexerId) throws CoreException {
     	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
     	if (prefs == null)
     		return; // TODO why would this be null?
-    	
-    	prefs.put(INDEXER_ID_KEY, indexerId);
-    	try {
-    		prefs.flush();
-    	} catch (BackingStoreException e) {
+
+    	String oldId = prefs.get(INDEXER_ID_KEY, null);
+    	if (!indexerId.equals(oldId)) {
+	    	prefs.put(INDEXER_ID_KEY, indexerId);
+	    	try {
+	    		prefs.flush();
+	    	} catch (BackingStoreException e) {
+	    	}
+	    	
+	    	createIndexer(project, indexerId).reindex();
     	}
     }
     
-    public void setIndexerId(ICProject project, String indexerId) throws CoreException {
-    	setId(project, indexerId);
-		if (project.getProject().getSessionProperty(indexerProperty) != null)
-			createIndexer(indexerId, project);    	
-    }
-    
-    private IPDOMIndexer createIndexer(String indexerId, ICProject project) throws CoreException {
+    private IPDOMIndexer createIndexer(ICProject project, String indexerId) throws CoreException {
     	IPDOMIndexer indexer = null;
     	// Look up in extension point
     	IExtension indexerExt = Platform.getExtensionRegistry()

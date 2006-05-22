@@ -271,7 +271,7 @@ public class IndexerBlock extends AbstractCOptionPage {
      * @param indexerPageName 
      * @return String 
      */
-    protected String getIndexerPageId(String indexerPageName) {
+    public String getIndexerPageId(String indexerPageName) {
         for (Iterator I = indexerPageMap.keySet().iterator(); I.hasNext();) {
             String indexerPageId = (String) I.next();
             String tempPageName = getIndexerPageName(indexerPageId);

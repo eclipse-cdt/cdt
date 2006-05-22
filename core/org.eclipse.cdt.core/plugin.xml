@@ -532,28 +532,6 @@
       <initializer class="org.eclipse.cdt.internal.core.CCorePreferenceInitializer"/>
    </extension>
    <extension
-         name="%CDTIndexer.domsourceindexer"
-         id="domsourceindexer"
-         point="org.eclipse.cdt.core.CIndexer">
-      <cextension>
-         <run 
-            	class="org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer">
-         </run>
-      </cextension>
-      <run class="org.eclipse.cdt.internal.core.pdom.indexer.full.PDOMFullIndexer"/>
-   </extension>
-   <extension
-         id="ctagsindexer"
-         name="%CDTIndexer.ctagsindexer"
-         point="org.eclipse.cdt.core.CIndexer">
-      <cextension>
-         <run 
-          class="org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexer">
-         </run>
-      </cextension>
-      <run class="org.eclipse.cdt.internal.core.pdom.indexer.ctags.CtagsIndexer"/>
-   </extension>
-   <extension
    		 id="nullindexer"
          name="%CDTIndexer.nullindexer"
          point="org.eclipse.cdt.core.CIndexer">
@@ -574,6 +552,17 @@
             class="org.eclipse.cdt.internal.core.index.nullindexer.NullIndexer">
          </run>
       </cextension>
+   </extension>
+   <extension
+         name="%CDTIndexer.domsourceindexer"
+         id="domsourceindexer"
+         point="org.eclipse.cdt.core.CIndexer">
+      <cextension>
+         <run 
+            	class="org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer">
+         </run>
+      </cextension>
+      <run class="org.eclipse.cdt.internal.core.pdom.indexer.full.PDOMFullIndexer"/>
    </extension>
    <extension
          point="org.eclipse.core.variables.dynamicVariables">

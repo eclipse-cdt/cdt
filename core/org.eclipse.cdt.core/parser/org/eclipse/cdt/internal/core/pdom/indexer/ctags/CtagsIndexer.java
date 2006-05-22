@@ -30,6 +30,8 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class CtagsIndexer implements IPDOMIndexer {
 
+	public static final String ID = "org.eclipse.cdt.core.ctagsindexer"; //$NON-NLS-1$
+	
 	private ICProject project;
 	
 	private boolean useCtagsOnPath = true;

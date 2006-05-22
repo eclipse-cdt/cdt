@@ -11,6 +11,9 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
@@ -254,11 +257,13 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 				if (inputElement instanceof ICModel) {
 					ICModel model = (ICModel)inputElement;
 					ICProject[] projects = model.getCProjects();
-					for (int i = 0; i < projects.length; ++i) {
-						ICProject project = projects[i];
-						if (project.getUnderlyingResource().isPhantom())
-							System.out.println(project.getElementName() + " is phantom");
-					}
+					Arrays.sort(projects, new Comparator() {
+						public int compare(Object arg0, Object arg1) {
+							String name0 = ((ICProject)arg0).getElementName();
+							String name1 = ((ICProject)arg1).getElementName();
+							return name0.compareToIgnoreCase(name1);
+						}
+					});
 					return projects;
 				}
 			} catch (CModelException e) {

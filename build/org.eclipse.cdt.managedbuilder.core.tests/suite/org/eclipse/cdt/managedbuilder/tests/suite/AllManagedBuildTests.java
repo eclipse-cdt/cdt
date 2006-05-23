@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.cdt.managedbuilder.core.tests.BuildDescriptionModelTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests20;
@@ -39,7 +40,7 @@ public class AllManagedBuildTests {
 	}
 	public static Test suite() {
 		//  May/2005 Turning off all indexing for now because the "original" indexer causes hangs... 
-		CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, CCorePlugin.NULL_INDEXER_UNIQUE_ID);
+		CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, PDOMNullIndexer.ID);
 		//  We could enable this later...
 		//CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, "org.eclipse.cdt.core.domsourceindexer");
 

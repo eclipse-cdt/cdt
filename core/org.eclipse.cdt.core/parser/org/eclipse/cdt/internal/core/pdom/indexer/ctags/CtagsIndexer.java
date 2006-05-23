@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -40,11 +41,15 @@ public class CtagsIndexer implements IPDOMIndexer {
 	private String ctagsFileName = ""; //$NON-NLS-1$
 	
 	public void handleDelta(ICElementDelta delta) throws CoreException {
-		new CtagsHandleDelta(this,delta).schedule();
+		// Don't use me, I'm broken
+		CCorePlugin.getPDOMManager().setIndexerId(project, PDOMNullIndexer.ID);
+//		new CtagsHandleDelta(this,delta).schedule();
 	}
 
 	public void reindex() throws CoreException {
-		new CtagsReindex(this).schedule();
+		// Don't use me, I'm broken
+		CCorePlugin.getPDOMManager().setIndexerId(project, PDOMNullIndexer.ID);
+//		new CtagsReindex(this).schedule();
 	}
 
 	public ICProject getProject() {

@@ -29,6 +29,8 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class PDOMNullIndexer implements IPDOMIndexer {
 
+	public static final String ID = "org.eclipse.cdt.core.nullindexer";
+	
 	private ICProject project;
 	
 	public ICProject getProject() {

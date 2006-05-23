@@ -166,7 +166,7 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     public String getDefaultIndexerId() {
     	IPreferencesService prefService = Platform.getPreferencesService();
     	return prefService.getString(CCorePlugin.PLUGIN_ID, INDEXER_ID_KEY,
-    			CCorePlugin.DEFAULT_INDEXER_UNIQ_ID, null);
+    			PDOMNullIndexer.ID, null);
     }
     
     public void setDefaultIndexerId(String indexerId) {

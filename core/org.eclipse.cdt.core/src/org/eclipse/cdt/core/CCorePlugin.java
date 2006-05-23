@@ -83,12 +83,6 @@ public class CCorePlugin extends Plugin {
 	public static final String INDEXER_SIMPLE_ID = "CIndexer"; //$NON-NLS-1$
 	public static final String INDEXER_UNIQ_ID = PLUGIN_ID + "." + INDEXER_SIMPLE_ID; //$NON-NLS-1$
 	public final static String PREF_INDEXER = "indexer"; //$NON-NLS-1$
-	public final static String USE_PDOM_PREF = "usePDOM"; //$NON-NLS-1$
-	public final static String NULL_INDEXER_SIMPLE_ID = "nullindexer"; //$NON-NLS-1$
-//	public final static String DEFAULT_INDEXER_SIMPLE_ID = "domsourceindexer"; //$NON-NLS-1$
-	public final static String DEFAULT_INDEXER_SIMPLE_ID = NULL_INDEXER_SIMPLE_ID; //$NON-NLS-1$
-	public final static String NULL_INDEXER_UNIQUE_ID = PLUGIN_ID + "." + NULL_INDEXER_SIMPLE_ID ; //$NON-NLS-1$
-	public final static String DEFAULT_INDEXER_UNIQ_ID =  PLUGIN_ID + "." + DEFAULT_INDEXER_SIMPLE_ID; //$NON-NLS-1$
 	
 	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
 
@@ -901,11 +895,6 @@ public class CCorePlugin extends Plugin {
 
 
 	private static final String MODEL = CCorePlugin.PLUGIN_ID + "/debug/model" ; //$NON-NLS-1$
-	private static final String INDEXER = CCorePlugin.PLUGIN_ID + "/debug/indexer"; //$NON-NLS-1$
-	private static final String INDEX_MANAGER = CCorePlugin.PLUGIN_ID + "/debug/indexmanager"; //$NON-NLS-1$
-	private static final String INDEXER_TIMES = CCorePlugin.PLUGIN_ID + "/debug/indextimes"; //$NON-NLS-1$
-	private static final String SEARCH  = CCorePlugin.PLUGIN_ID + "/debug/search" ; //$NON-NLS-1$
-	private static final String MATCH_LOCATOR  = CCorePlugin.PLUGIN_ID + "/debug/matchlocator" ; //$NON-NLS-1$
 	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/debug/parser" ; //$NON-NLS-1$
 	private static final String SCANNER = CCorePlugin.PLUGIN_ID + "/debug/scanner"; //$NON-NLS-1$
 	private static final String DELTA = CCorePlugin.PLUGIN_ID + "/debug/deltaprocessor" ; //$NON-NLS-1$

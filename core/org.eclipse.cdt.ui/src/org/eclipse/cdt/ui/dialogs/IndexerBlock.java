@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.index.AbstractIndexerPage;
@@ -415,8 +416,8 @@ public class IndexerBlock extends AbstractCOptionPage {
 		initialSelected = indexerID;
 		
 		if (selectedIndexerId == null){
-			CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, CCorePlugin.DEFAULT_INDEXER_UNIQ_ID);
-			selectedIndexerId = CCorePlugin.DEFAULT_INDEXER_UNIQ_ID;
+			CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, PDOMNullIndexer.ID);
+			selectedIndexerId = PDOMNullIndexer.ID;
 		}
 		
 		//Set the appropriate indexer in the combo box

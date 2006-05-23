@@ -81,7 +81,7 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 					+ "/debug/pdomtimings"); //$NON-NLS-1$
 			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
-				System.out.println("PDOM Full Delta Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
+				System.out.println("PDOM Fast Delta Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
 
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

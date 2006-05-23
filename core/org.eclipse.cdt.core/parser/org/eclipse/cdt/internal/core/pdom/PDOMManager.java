@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.osgi.service.prefs.BackingStoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 
 /**
  * The PDOM Provider. This is likely temporary since I hope
@@ -131,14 +131,27 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 			break;
 		case ICElement.C_PROJECT:
 			// Find the appropriate indexer and pass the delta on
-			ICProject project = (ICProject)delta.getElement();
-			if (delta.getKind() != ICElementDelta.REMOVED) {
-				if (project.getProject().exists()) {
-					IPDOMIndexer indexer = getIndexer(project);
-					if (indexer != null)
-						// TODO project delete, should do something fancier here.
-						indexer.handleDelta(delta);
-				}
+			final ICProject project = (ICProject)delta.getElement();
+			switch (delta.getKind()) {
+			case ICElementDelta.ADDED:
+		    	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
+		    	prefs.addNodeChangeListener(new IEclipsePreferences.INodeChangeListener() {
+		    		public void added(NodeChangeEvent event) {
+		    			String indexerId = event.getParent().get(INDEXER_ID_KEY, null);
+		    			try {
+		    				createIndexer(project, indexerId);
+		    			} catch (CoreException e) {
+		    				CCorePlugin.log(e);
+		    			}
+		    		}
+		    		public void removed(NodeChangeEvent event) {
+		    		}
+		    	});
+		    	break;
+			case ICElementDelta.CHANGED:
+				IPDOMIndexer indexer = getIndexer(project);
+				if (indexer != null)
+					indexer.handleDelta(delta);
 			}
 			// TODO handle delete too.
 		}
@@ -162,10 +175,6 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     		return; // TODO why would this be null?
     	
     	prefs.put(INDEXER_ID_KEY, indexerId);
-    	try {
-    		prefs.flush();
-    	} catch (BackingStoreException e) {
-    	}
     }
     
     public String getIndexerId(ICProject project) throws CoreException {
@@ -196,17 +205,12 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     		} catch (CoreException e) {
     		}
     		
-    		if (indexerId == null || indexerId.equals(CtagsIndexer.ID))
-    			// make it the default, ctags is gone
-    			indexerId = getDefaultIndexerId();
-    		
-    		// Start a job to set the id.
-    		new SetIndexerId(project, indexerId).schedule();
-    	} else if (indexerId.equals(CtagsIndexer.ID)) {
-			// make it the default, ctags is gone
-			indexerId = getDefaultIndexerId();
-			
-    		// Start a job to set the id.
+        	// if Indexer still null schedule a job to get it
+       		if (indexerId == null || indexerId.equals(CtagsIndexer.ID))
+       			// make it the default, ctags is gone
+       			indexerId = getDefaultIndexerId();
+       		
+       		// Start a job to set the id.
     		new SetIndexerId(project, indexerId).schedule();
     	}
     	
@@ -223,10 +227,13 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     		this.project = project;
     		this.indexerId = indexerId;
     		setSystem(true);
+    		setRule(project.getProject());
     	}
     	protected IStatus run(IProgressMonitor monitor) {
     		try {
-    			setIndexerId(project, indexerId);
+    	    	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
+    	    	if (prefs == null || prefs.get(INDEXER_ID_KEY, null) == null)
+    	    		setIndexerId(project, indexerId);
         		return Status.OK_STATUS;
     		} catch (CoreException e) {
     			return e.getStatus();
@@ -242,11 +249,6 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     	String oldId = prefs.get(INDEXER_ID_KEY, null);
     	if (!indexerId.equals(oldId)) {
 	    	prefs.put(INDEXER_ID_KEY, indexerId);
-	    	try {
-	    		prefs.flush();
-	    	} catch (BackingStoreException e) {
-	    	}
-	    	
 	    	createIndexer(project, indexerId).reindex();
     	}
     }

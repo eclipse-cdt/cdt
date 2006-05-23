@@ -125,6 +125,12 @@ public class SystemComboBoxCellEditor extends CellEditor
 
 		comboBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
+				
+				// DKM - only process this when there is a selection change
+				//   fix for defect 138324
+				if (selection == comboBox.getSelectionIndex())
+					return; // no change
+				
 				// must set the selection before getting value
 				selection = comboBox.getSelectionIndex();	
 				System.out.println("Inside widgetSelected. selection = " + selection);											

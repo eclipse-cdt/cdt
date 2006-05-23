@@ -31,10 +31,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
@@ -54,7 +52,7 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 		this.delta = delta;
 	}
 
-	protected IStatus run(IProgressMonitor monitor) {
+	public void run(IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
 		
@@ -63,42 +61,40 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 			int count = changed.size() + added.size() + removed.size();
 
 			if (count > 0) {
-				monitor.beginTask("Indexing", count);
-					
 				Iterator i = changed.values().iterator();
 				while (i.hasNext()) {
+					if (monitor.isCanceled())
+						return;
 					ITranslationUnit tu = (ITranslationUnit)i.next();
-					monitor.subTask(tu.getElementName());
 					try {
 						changeTU(tu);
 					} catch (Throwable e) {
 						CCorePlugin.log(e);
 						if (++errorCount > MAX_ERRORS)
-							return Status.CANCEL_STATUS;
+							return;
 					}
-					monitor.worked(1);
 				}
 				
 				i = added.iterator();
 				while (i.hasNext()) {
+					if (monitor.isCanceled())
+						return;
 					ITranslationUnit tu = (ITranslationUnit)i.next();
-					monitor.subTask(tu.getElementName());
 					try {
 						addTU(tu);
 					} catch (Throwable e) {
 						CCorePlugin.log(e);
 						if (++errorCount > MAX_ERRORS)
-							return Status.CANCEL_STATUS;
+							return;
 					}
-					monitor.worked(1);
 				}
 				
 				i = removed.iterator();
 				while (i.hasNext()) {
+					if (monitor.isCanceled())
+						return;
 					ITranslationUnit tu = (ITranslationUnit)i.next();
-					monitor.subTask(tu.getElementName());
 					removeTU(tu);
-					monitor.worked(1);
 				}
 				
 				String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
@@ -106,12 +102,9 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 				if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
 					System.out.println("PDOM Full Delta Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
 			}
-		
-			return Status.OK_STATUS;
 		} catch (CoreException e) {
-			return e.getStatus();
+			CCorePlugin.log(e);
 		} catch (InterruptedException e) {
-			return Status.CANCEL_STATUS;
 		}
 	}
 

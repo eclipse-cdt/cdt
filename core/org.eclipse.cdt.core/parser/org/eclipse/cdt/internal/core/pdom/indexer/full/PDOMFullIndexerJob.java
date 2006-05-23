@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -24,13 +25,12 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @author Doug Schaefer
  *
  */
-public abstract class PDOMFullIndexerJob extends Job {
+public abstract class PDOMFullIndexerJob implements IPDOMIndexerTask {
 
 	protected final PDOMFullIndexer indexer;
 	protected final PDOM pdom;
@@ -40,10 +40,8 @@ public abstract class PDOMFullIndexerJob extends Job {
 	protected final int MAX_ERRORS = 10;
 	
 	public PDOMFullIndexerJob(PDOMFullIndexer indexer) throws CoreException {
-		super("Full Indexer: " + indexer.getProject().getElementName());
 		this.indexer = indexer;
 		this.pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(indexer.getProject());
-		setRule(CCorePlugin.getPDOMManager().getIndexerSchedulingRule());
 	}
 
 	protected IASTTranslationUnit parse(ITranslationUnit tu) throws CoreException {

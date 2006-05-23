@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
@@ -32,32 +31,12 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 		super(indexer);
 	}
 
-	protected IStatus run(final IProgressMonitor monitor) {
+	public void run(final IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
 			
 			// First clear out the PDOM
 			pdom.clear();
-			
-			// Get a count of all the elements that we'll be visiting for the monitor
-			final int[] count = { 0 };
-			indexer.getProject().accept(new ICElementVisitor() {
-				public boolean visit(ICElement element) throws CoreException {
-					if (monitor.isCanceled())
-						throw new CoreException(Status.CANCEL_STATUS);
-					switch (element.getElementType()) {
-					case ICElement.C_UNIT:
-						++count[0];
-						return false;
-					case ICElement.C_CCONTAINER:
-					case ICElement.C_PROJECT:
-						return true;
-					}
-					return false;
-				}
-			});
-			
-			monitor.beginTask("Indexing", count[0]);
 			
 			// First index all the source files (i.e. not headers)
 			indexer.getProject().accept(new ICElementVisitor() {
@@ -68,7 +47,6 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 					case ICElement.C_UNIT:
 						ITranslationUnit tu = (ITranslationUnit)element;
 						if (tu.isSourceUnit()) {
-							monitor.subTask(tu.getElementName());
 							try {
 								addTU(tu);
 							} catch (Throwable e) {
@@ -76,7 +54,6 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 								if (++errorCount > MAX_ERRORS)
 									throw new CoreException(Status.CANCEL_STATUS);
 							}
-							monitor.worked(1);
 						}
 						return false;
 					case ICElement.C_CCONTAINER:
@@ -99,7 +76,6 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 							IFile rfile = (IFile)tu.getUnderlyingResource();
 							String filename = rfile.getLocation().toOSString();
 							if (pdom.getFile(filename) == null) {
-								monitor.subTask(tu.getElementName());
 								try {
 									addTU(tu);
 								} catch (InterruptedException e) {
@@ -108,7 +84,6 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 										throw new CoreException(Status.CANCEL_STATUS);
 								}
 							}
-							monitor.worked(1);
 						}
 						return false;
 					case ICElement.C_CCONTAINER:
@@ -122,11 +97,11 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 					+ "/debug/pdomtimings"); //$NON-NLS-1$
 			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
-				System.out.println("PDOM Full Reindex Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
-
-			return Status.OK_STATUS;
+				System.out.println("PDOM Full Reindex Time: " + (System.currentTimeMillis() - start) //$NON-NLS-1$
+						+ " " + indexer.getProject().getElementName()); //$NON-NLS-1$
 		} catch (CoreException e) {
-			return e.getStatus();
+			if (e.getStatus() != Status.CANCEL_STATUS)
+				CCorePlugin.log(e);
 		}
 	}
 

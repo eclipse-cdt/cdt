@@ -13,8 +13,6 @@ package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * @author Doug Schaefer
@@ -38,10 +36,4 @@ public interface IPDOMManager {
 	// Enqueue and indexer sub job
 	public void enqueue(IPDOMIndexerTask subjob);
 
-	// Scheduling rule used by indexers to make sure we don't get
-	// Too much indexing going on.
-	public ISchedulingRule getIndexerSchedulingRule();
-	
-	public IProgressMonitor getProgressGroup();
-	
 }

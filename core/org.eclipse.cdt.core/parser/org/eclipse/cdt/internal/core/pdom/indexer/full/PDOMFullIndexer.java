@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
@@ -36,11 +37,12 @@ public class PDOMFullIndexer implements IPDOMIndexer {
 	}
 	
 	public void handleDelta(ICElementDelta delta) throws CoreException {
-		new PDOMFullHandleDelta(this, delta).schedule();
+		CCorePlugin.getPDOMManager().enqueue(
+				new PDOMFullHandleDelta(this, delta));
 	}
 
 	public void reindex() throws CoreException {
-		new PDOMFullReindex(this).schedule();
+		CCorePlugin.getPDOMManager().enqueue(new PDOMFullReindex(this));
 	}
 
 }

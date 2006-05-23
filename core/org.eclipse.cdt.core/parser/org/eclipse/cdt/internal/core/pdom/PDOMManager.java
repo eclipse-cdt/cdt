@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -62,17 +61,6 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 	private static final QualifiedName pdomProperty
 	= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdom"); //$NON-NLS-1$
 
-	private IProgressMonitor group;
-	
-	private final ISchedulingRule indexerSchedulingRule = new ISchedulingRule() {
-		public boolean contains(ISchedulingRule rule) {
-			return rule == this;
-		}
-		public boolean isConflicting(ISchedulingRule rule) {
-			return rule == this;
-		}
-	};
-	
 	public synchronized IPDOM getPDOM(ICProject project) throws CoreException {
 		IProject rproject = project.getProject();
 		PDOM pdom = (PDOM)rproject.getSessionProperty(pdomProperty);
@@ -314,16 +302,6 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 				// No way, there's more work to do
 				return false;
 		}
-    }
-    
-    public ISchedulingRule getIndexerSchedulingRule() {
-    	return indexerSchedulingRule;
-    }
-    
-    public IProgressMonitor getProgressGroup() {
-    	if (group == null)
-    		group = Platform.getJobManager().createProgressGroup();
-    	return group;
     }
     
 	/**

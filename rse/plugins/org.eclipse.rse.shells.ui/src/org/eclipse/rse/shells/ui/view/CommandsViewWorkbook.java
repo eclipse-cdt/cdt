@@ -132,7 +132,7 @@ public class CommandsViewWorkbook extends Composite
 	    CommandsViewPage page = getCurrentTabItem();
 		if (page != null)
 		{
-		    page.setFocus();
+		   // page.setFocus();
 			return page.getInput();
 		}
 
@@ -167,10 +167,14 @@ public class CommandsViewWorkbook extends Composite
 
 					page.updateOutput();
 
+					/* DKM - changing focus can get annoying 
+					 * see defect 142978
+					 * 
 					if (_folder.getSelectionIndex() != i)
 					{
 						_folder.setSelection(item);
 					}
+					*/
 					updateActionStates();
 					//page.setFocus();
 					return;

@@ -25,8 +25,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
 import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
+import org.eclipse.rse.filters.ISystemFilterReference;
+import org.eclipse.rse.filters.SystemFilterReference;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -133,6 +136,9 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		String newName = oldName;
 		
 		try {
+			
+			
+			
 			targetFolder   = (IRemoteFile)targetContainer;
 			ss = targetFolder.getParentRemoteFileSubSystem();
 			targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName);
@@ -368,7 +374,18 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		SystemRemoteFolderDialog cpyDlg = (SystemRemoteFolderDialog)dlg;		
 		Object targetContainer = null;
 		if (!cpyDlg.wasCancelled())
+		{
 		   targetContainer = cpyDlg.getSelectedObject();
+		   if (targetContainer instanceof ISystemFilterReference)
+		   {
+			   ISubSystem targetSubSystem = ((ISystemFilterReference)targetContainer).getSubSystem();
+			   ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
+			   if (factory.supportsDropInFilters())
+			   {											        
+				   targetContainer = targetSubSystem.getTargetForFilter((ISystemFilterReference)targetContainer);										            
+			   }
+		   }
+		}
 	    return targetContainer;
 	}
 

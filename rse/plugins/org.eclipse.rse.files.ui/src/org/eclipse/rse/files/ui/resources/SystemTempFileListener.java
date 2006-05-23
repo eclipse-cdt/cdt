@@ -48,6 +48,7 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 
@@ -140,11 +141,11 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 						refreshRemoteResourcesOnMainThread(changes);
 					}
 				}
-			}
+			} 
 		}
 	}
 	
-	public class RefreshResourcesJob extends Job
+	public class RefreshResourcesJob extends UIJob
 	{
 		private List _resources;
 		public RefreshResourcesJob(List resources)
@@ -153,7 +154,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 			_resources = resources;
 		}
 		
-		public IStatus run(IProgressMonitor monitor)
+		public IStatus runInUIThread(IProgressMonitor monitor)
 		{
 			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_SYNCHRONIZE_PROGRESS);
 			monitor.beginTask(msg.getLevelOneText(), _resources.size());

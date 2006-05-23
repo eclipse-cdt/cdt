@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.rse.core.internal.subsystems.IBMServerLauncherConstants;
@@ -130,7 +131,10 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 		{
 			// for persistence
 			_serverLauncherEnumType = new PropertyType(IPropertyType.TYPE_ENUM);
-			List values = ServerLaunchType.VALUES;
+			List values = Arrays.asList(getSupportedLauncherEnumTypes());
+				// DKM - only need supported types 
+				/// ServerLaunchType.VALUES;
+			
 			String[] enumValues = new String[values.size()];
 			for (int i = 0; i < values.size(); i++)
 			{
@@ -142,6 +146,15 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 		return _serverLauncherEnumType;
 	}
 	
+	protected ServerLaunchType[] getSupportedLauncherEnumTypes()
+	{
+		return new ServerLaunchType[]
+		                  {
+		ServerLaunchType.DAEMON_LITERAL,
+		ServerLaunchType.REXEC_LITERAL,
+		ServerLaunchType.RUNNING_LITERAL
+		                  };
+	}
 	
 	public void restoreFromProperties()
 	{

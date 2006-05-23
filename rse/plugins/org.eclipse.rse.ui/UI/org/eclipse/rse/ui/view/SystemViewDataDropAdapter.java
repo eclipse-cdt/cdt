@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -219,7 +220,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter implements  ISy
 			
 			if (target instanceof SystemScratchpad)
 			{
-				runnable.run(null);
+				runnable.run(new NullProgressMonitor());
 			}
 			else
 			{				

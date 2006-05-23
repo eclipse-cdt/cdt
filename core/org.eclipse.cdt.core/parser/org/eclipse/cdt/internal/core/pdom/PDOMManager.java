@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * The PDOM Provider. This is likely temporary since I hope
@@ -175,6 +176,10 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     		return; // TODO why would this be null?
     	
     	prefs.put(INDEXER_ID_KEY, indexerId);
+    	try {
+    		prefs.flush();
+    	} catch (BackingStoreException e) {
+    	}
     }
     
     public String getIndexerId(ICProject project) throws CoreException {
@@ -211,7 +216,7 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
        			indexerId = getDefaultIndexerId();
        		
        		// Start a job to set the id.
-    		new SetIndexerId(project, indexerId).schedule();
+    		setIndexerId(project, indexerId);
     	}
     	
   	    return indexerId;
@@ -219,25 +224,23 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 
     // This job is only used when setting during a get. Sometimes the get is being
     // done in an unfriendly environment, e.g. startup.
-    private class SetIndexerId extends Job {
+    private class SavePrefs extends Job {
     	private final ICProject project;
-    	private final String indexerId;
-    	public SetIndexerId(ICProject project, String indexerId) {
-    		super("Set Indexer Id");
+    	public SavePrefs(ICProject project) {
+    		super("Save Project Preferences"); //$NON-NLS-1$
     		this.project = project;
-    		this.indexerId = indexerId;
     		setSystem(true);
     		setRule(project.getProject());
     	}
     	protected IStatus run(IProgressMonitor monitor) {
-    		try {
-    	    	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
-    	    	if (prefs == null || prefs.get(INDEXER_ID_KEY, null) == null)
-    	    		setIndexerId(project, indexerId);
-        		return Status.OK_STATUS;
-    		} catch (CoreException e) {
-    			return e.getStatus();
-    		}
+   	    	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
+   	    	if (prefs != null) {
+   	    		try {
+   	    			prefs.flush();
+   	    		} catch (BackingStoreException e) {
+   	    		}
+   	    	}
+   	    	return Status.OK_STATUS;
     	}
     }
     
@@ -250,6 +253,7 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     	if (!indexerId.equals(oldId)) {
 	    	prefs.put(INDEXER_ID_KEY, indexerId);
 	    	createIndexer(project, indexerId).reindex();
+	    	new SavePrefs(project).schedule(2000);
     	}
     }
     

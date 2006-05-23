@@ -141,11 +141,35 @@ public class LocalShellThread extends Thread
 				String[] envVars = getEnvironmentVariables(false);
 				if (theShell == null)
 				{
+
+					String property = "SHELL=";
+					
+					for (int i = 0; i < envVars.length; i++)
+					{
+						String var = envVars[i];
+						if (var.startsWith(property))
+						{
+							theShell = var.substring(property.length(), var.length());
+							
+							if (theShell.endsWith("bash"))
+							{
+								theShell = "sh";
+							}
+							
+						}
+					}
+			
+					if (theShell == null)
+					{
+						theShell = "sh";
+					}
+				
+					
 				    if (_isTTY)
 				    {
 				        if (_invocation.equals(">"))
 						{
-							_invocation = "sh";
+							_invocation = theShell;
 							_isShell = true;
 						}
 				     
@@ -159,11 +183,12 @@ public class LocalShellThread extends Thread
 				    {
 						if (_invocation.equals(">"))
 						{
-							_invocation = "sh";
+							_invocation = theShell;
 							_isShell = true;
 						}
 						String args[] = new String[1];
 						args[0] = _invocation;
+						//args[1] = "-i";
 					    			
 						_theProcess = Runtime.getRuntime().exec(args[0], envVars, theDirectory);
 				    }
@@ -269,6 +294,30 @@ public class LocalShellThread extends Thread
 		}
 
 
+		if (_isShell && !_isWindows && !_isTTY)
+		{
+			OutputStream output = _theProcess.getOutputStream();
+
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
+			createPrompt(writer);
+			//createObject("prompt", _cwdStr + ">");
+		}
+	}
+	
+	private void createPrompt(BufferedWriter writer)
+	{
+	
+		try
+		{
+			writer.write("echo $PWD'>'");
+			writer.write('\n');
+			writer.flush();
+		}
+		catch (Exception e)
+		{
+			
+		}
+		
 	}
 	
 	public BufferedReader getOutputStream()
@@ -323,12 +372,14 @@ public class LocalShellThread extends Thread
 					// special case for pattern interpretting
 					// if cwd is not set, then files aren't resolved
 					// create mock prompt to ensure that they do get resolved
-					if (input.startsWith("cd ") || input.equals("cd"))
+					//if (input.startsWith("cd ") || input.equals("cd"))
 					{
+						createPrompt(writer);
+						/*
 						writer.write("echo $PWD'>'");
 						writer.write('\n');
 						writer.flush();
-
+*/
 						// sleep to allow reader to interpret before going on
 						try
 						{

@@ -182,9 +182,16 @@ FocusListener
 	public Composite createTabFolderPage(CTabFolder tabFolder, CellEditorActionHandler editorActionHandler)
 	{ 
 		_tabFolderPage = new Group(tabFolder, SWT.NULL);
+	
+		 Font font = tabFolder.getFont();		
+		 _tabFolderPage.setFont(font);
+		 // dummy title so that sizings work
+		 // fix for 138311
+		 String dummyTitle = ShellResources.RESID_SHELLS_COMMAND_SHELL_LABEL;
+		 
+		 _tabFolderPage.setText(dummyTitle);
 		GridLayout gridLayout = new GridLayout();
 		_tabFolderPage.setLayout(gridLayout);
-
 		createControl(_tabFolderPage);
 		
 		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();

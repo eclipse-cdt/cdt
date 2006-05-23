@@ -3,9 +3,12 @@ package org.eclipse.rse.eclipse.filesystem;
 import java.net.URI;
 
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
 import org.eclipse.rse.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog;
+import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
@@ -53,7 +56,17 @@ public class RSEFileSystemContributor extends FileSystemContributor {
 		*/
 		if (dlg.open() == dlg.OK)
 		{
-			IRemoteFile file = (IRemoteFile)dlg.getSelectedObject();
+			Object selected = dlg.getSelectedObject();
+			if (selected instanceof ISystemFilterReference)
+			{
+				ISubSystem targetSubSystem = ((ISystemFilterReference)selected).getSubSystem();
+				ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
+				if (factory.supportsDropInFilters())
+				{											        
+					selected = targetSubSystem.getTargetForFilter((ISystemFilterReference)selected);										            
+				}
+			}
+			IRemoteFile file = (IRemoteFile)selected;
 			String path = file.getAbsolutePath();
 			IHost host = dlg.getSelectedConnection();
 			String hostName = host.getHostName();

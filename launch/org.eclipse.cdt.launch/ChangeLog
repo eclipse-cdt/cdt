@@ -1,3 +1,7 @@
+2006-05-23 Mikhail Khodjaiants
+	Bug 133964: getBinary() method in CDebuggerTab always returns null.
+	* CDebuggerTab.java
+
 2006-05-17 Mikhail Khodjaiants
 	Moved the new static methods from AbstractCLaunchDelegate to the new utility class.
 	* AbstractCLaunchDelegate.java

@@ -295,6 +295,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			IPath exePath = new Path(programName);
 			if (projectName != null && !projectName.equals("")) { //$NON-NLS-1$
 				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+				if (!exePath.isAbsolute()) {
+					exePath = project.getLocation().append(exePath);
+				}
 				ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project);
 				for (int i = 0; i < parserRef.length; i++) {
 					try {

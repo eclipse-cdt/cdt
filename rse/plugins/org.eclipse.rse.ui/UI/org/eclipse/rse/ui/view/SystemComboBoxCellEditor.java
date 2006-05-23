@@ -128,13 +128,15 @@ public class SystemComboBoxCellEditor extends CellEditor
 				
 				// DKM - only process this when there is a selection change
 				//   fix for defect 138324
-				if (selection == comboBox.getSelectionIndex())
+				if (selection == comboBox.getSelectionIndex() && comboBox.getText().equals(comboBox.getItem(comboBox.getSelectionIndex())))
 					return; // no change
 				
 				// must set the selection before getting value
 				selection = comboBox.getSelectionIndex();	
 				System.out.println("Inside widgetSelected. selection = " + selection);											
 				Object newValue = doGetValue();
+				
+				
 				boolean newValidState = isCorrect(newValue);
 				System.out.println("Inside widgetSelected. selection = " + selection + ", " + newValidState);							
 				if (newValidState) {
@@ -193,9 +195,18 @@ public class SystemComboBoxCellEditor extends CellEditor
 		{
 		  return;
 		}
+		
 		//Assert.isTrue(comboBox != null && (value instanceof Integer));
-		selection = ((Integer) value).intValue();
-		comboBox.select(selection);
+		int newselection = ((Integer) value).intValue();
+		if (newselection != selection)
+		{
+			selection = newselection;
+		}
+		String curText = comboBox.getText();
+		if (!comboBox.getItem(selection).equals(curText))
+		{
+			comboBox.select(selection);
+		}
 	}
 	/**
 	 * Add the items to the combo box.

@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Javier Montalvo Orús (Symbian) - 138619: Fix codepage on Win2K
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.shells;

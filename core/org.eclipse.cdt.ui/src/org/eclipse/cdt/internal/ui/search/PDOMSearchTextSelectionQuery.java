@@ -41,6 +41,7 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 		try {
+			result.removeAll();
 			ILanguage language = tu.getLanguage();
 			IASTTranslationUnit ast = language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
 			IASTName[] names = language.getSelectedNames(ast, selection.getOffset(), selection.getLength());

@@ -100,6 +100,16 @@ public class PDOMFile {
 		return record;
 	}
 	
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj instanceof PDOMFile) {
+			PDOMFile other = (PDOMFile)obj;
+			return pdom.equals(other.pdom) && record == other.record;
+		}
+		return false;
+	}
+	
 	public IString getFileName() throws CoreException {
 		Database db = pdom.getDB();
 		return db.getString(db.getInt(record + FILE_NAME));

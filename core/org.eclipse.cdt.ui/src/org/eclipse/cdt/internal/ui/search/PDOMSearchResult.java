@@ -17,8 +17,10 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -66,14 +68,17 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 	}
 	
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
-		String filename = getFileName(editor);
-		if (filename != null && match instanceof PDOMSearchMatch) {
-			return filename.equals(((PDOMSearchMatch)match).getFileName());
-		} else
-			return false;
+		try {
+			String filename = getFileName(editor);
+			if (filename != null && match instanceof PDOMSearchMatch)
+				return filename.equals(((PDOMSearchMatch)match).getFileName());
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+		return false;
 	}
 	
-	private Match[] computeContainedMatches(AbstractTextSearchResult result, String filename) {
+	private Match[] computeContainedMatches(AbstractTextSearchResult result, String filename) throws CoreException {
 		List list = new ArrayList(); 
 		Object[] elements = result.getElements();
 		for (int i = 0; i < elements.length; ++i) {
@@ -90,17 +95,24 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 	}
 	
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
-		String filename = getFileName(editor);
-		if (filename != null) {
-			return computeContainedMatches(result, filename);
-		} else {
-			return new Match[0];
+		try {
+			String filename = getFileName(editor);
+			if (filename != null)
+				return computeContainedMatches(result, filename);
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
 		}
+		return new Match[0];
 	}
 
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IFile file) {
-		String filename = file.getLocation().toOSString();
-		return computeContainedMatches(result, filename);
+		try {
+			String filename = file.getLocation().toOSString();
+			return computeContainedMatches(result, filename);
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+		return new Match[0];
 	}
 
 	public IFile getFile(Object element) {

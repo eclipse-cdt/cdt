@@ -11,21 +11,14 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.search.ui.text.Match;
-
 /**
  * @author Doug Schaefer
  *
  */
-public class PDOMSearchMatch extends Match {
+public interface IPDOMSearchContentProvider {
 
-	public PDOMSearchMatch(PDOMName name, int offset, int length) throws CoreException {
-		super(new PDOMSearchElement(name), offset, length);
-	}
+	public void elementsChanged(Object[] elements);
 
-	public String getFileName() throws CoreException {
-		return ((PDOMSearchElement)getElement()).getFile().getFileName().getString();
-	}
+	public void clear();
+
 }

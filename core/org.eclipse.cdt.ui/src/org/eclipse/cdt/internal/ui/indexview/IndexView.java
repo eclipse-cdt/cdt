@@ -18,12 +18,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -36,9 +30,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.IndexLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -54,20 +46,15 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -277,55 +264,6 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-		
-	}
-	
-	private class IndexLabelProvider extends LabelProvider {
-		public String getText(Object element) {
-			if (element == null) {
-				return "null :(";
-			} else if (element instanceof PDOMNode) {
-				try {
-					return ((PDOMNamedNode)element).getDBName().getString();
-				} catch (CoreException e) {
-					return e.getMessage();
-				}
-			} else if (element instanceof LinkageCache) {
-				try {
-					return ((LinkageCache)element).getName().getString();
-				} catch (CoreException e) {
-					return e.getMessage();
-				}
-			} else
-				return super.getText(element);
-		}
-		
-		public Image getImage(Object element) {
-			if (element instanceof IVariable)
-				return CUIPlugin.getImageDescriptorRegistry().get(
-						CElementImageProvider.getVariableImageDescriptor());
-			else if (element instanceof IFunction)
-				return CUIPlugin.getImageDescriptorRegistry().get(
-						CElementImageProvider.getFunctionImageDescriptor());
-			else if (element instanceof ICPPClassType)
-				return CUIPlugin.getImageDescriptorRegistry().get(
-						CElementImageProvider.getClassImageDescriptor());
-			else if (element instanceof ICompositeType)
-				return CUIPlugin.getImageDescriptorRegistry().get(
-						CElementImageProvider.getStructImageDescriptor());
-			else if (element instanceof ICPPNamespace)
-				return CUIPlugin.getImageDescriptorRegistry().get(
-						CElementImageProvider.getNamespaceImageDescriptor());
-			else if (element instanceof IBinding)
-				return PlatformUI.getWorkbench().getSharedImages().getImage(
-						ISharedImages.IMG_OBJ_ELEMENT);
-			else if (element instanceof ICProject)
-				return PlatformUI.getWorkbench().getSharedImages().getImage(
-						IDE.SharedImages.IMG_OBJ_PROJECT);
-			else
-				return PlatformUI.getWorkbench().getSharedImages().getImage(
-						ISharedImages.IMG_OBJ_ELEMENT);
 		}
 		
 	}

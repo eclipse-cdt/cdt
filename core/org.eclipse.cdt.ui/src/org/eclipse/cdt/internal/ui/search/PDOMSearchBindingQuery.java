@@ -36,6 +36,7 @@ public class PDOMSearchBindingQuery extends PDOMSearchQuery {
 	
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 		try {
+			result.removeAll();
 			createMatches(binding.getLinkage().getLanguage(), binding);
 			return Status.OK_STATUS;
 		} catch (CoreException e) {

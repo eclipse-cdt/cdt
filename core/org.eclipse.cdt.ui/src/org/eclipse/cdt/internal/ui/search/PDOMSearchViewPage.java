@@ -38,7 +38,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 
-	private PDOMSearchTreeContentProvider contentProvider;
+	private IPDOMSearchContentProvider contentProvider;
 	
 	public PDOMSearchViewPage(int supportedLayouts) {
 		super(supportedLayouts);
@@ -60,38 +60,45 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 
 	protected void configureTreeViewer(TreeViewer viewer) {
 		contentProvider = new PDOMSearchTreeContentProvider();
-		viewer.setContentProvider(contentProvider);
-		viewer.setLabelProvider(new PDOMSearchLabelProvider());
+		viewer.setContentProvider((PDOMSearchTreeContentProvider)contentProvider);
+		viewer.setLabelProvider(new PDOMSearchTreeLabelProvider(this));
 	}
 
 	protected void configureTableViewer(TableViewer viewer) {
+		contentProvider = new PDOMSearchListContentProvider();
+		viewer.setContentProvider((PDOMSearchListContentProvider)contentProvider);
+		viewer.setLabelProvider(new PDOMSearchListLabelProvider(this));
 	}
 
 	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
 		if (!(match instanceof PDOMSearchMatch))
 			return;
 		
-		IPath path = new Path(((PDOMSearchMatch)match).getFileName());
-		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
-		if (files.length > 0) {
-			IEditorPart editor = IDE.openEditor(CUIPlugin.getActivePage(), files[0]);
-			try {
-				IMarker marker = files[0].createMarker(NewSearchUI.SEARCH_MARKER);
-				marker.setAttribute(IMarker.CHAR_START, currentOffset);
-				marker.setAttribute(IMarker.CHAR_END, currentOffset + currentLength);
-				IDE.gotoMarker(editor, marker);
-				marker.delete();
-			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
+		try {
+			IPath path = new Path(((PDOMSearchMatch)match).getFileName());
+			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+			if (files.length > 0) {
+				IEditorPart editor = IDE.openEditor(CUIPlugin.getActivePage(), files[0]);
+				try {
+					IMarker marker = files[0].createMarker(NewSearchUI.SEARCH_MARKER);
+					marker.setAttribute(IMarker.CHAR_START, currentOffset);
+					marker.setAttribute(IMarker.CHAR_END, currentOffset + currentLength);
+					IDE.gotoMarker(editor, marker);
+					marker.delete();
+				} catch (CoreException e) {
+					CUIPlugin.getDefault().log(e);
+				}
+			} else {
+				// external file
+				IEditorInput input = new ExternalEditorInput(new FileStorage(path));
+				IEditorPart editor = CUIPlugin.getActivePage().openEditor(input, ExternalSearchEditor.EDITOR_ID);
+				if (editor instanceof ITextEditor) {
+					ITextEditor textEditor = (ITextEditor)editor;
+					textEditor.selectAndReveal(currentOffset, currentLength);
+				}
 			}
-		} else {
-			// external file
-			IEditorInput input = new ExternalEditorInput(new FileStorage(path));
-			IEditorPart editor = CUIPlugin.getActivePage().openEditor(input, ExternalSearchEditor.EDITOR_ID);
-			if (editor instanceof ITextEditor) {
-				ITextEditor textEditor = (ITextEditor)editor;
-				textEditor.selectAndReveal(currentOffset, currentLength);
-			}
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
 		}
 	}
 	

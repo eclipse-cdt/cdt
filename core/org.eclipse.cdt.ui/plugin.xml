@@ -1344,5 +1344,18 @@
             id="PDOM"
             priority="3"/>
    	</extension>
+ <extension
+       point="org.eclipse.ui.popupMenus">
+    <objectContribution
+          adaptable="true"
+          id="org.eclipse.cdt.ui.rebuildIndexContribution"
+          objectClass="org.eclipse.cdt.core.model.ICProject">
+       <action
+             class="org.eclipse.cdt.internal.ui.indexview.RebuildIndexActionDelegate"
+             id="org.eclipse.cdt.ui.rebuildIndexAction"
+             label="%RebuildIndex.name"
+             menubarPath="buildGroup"/>
+    </objectContribution>
+ </extension>
 
 </plugin>

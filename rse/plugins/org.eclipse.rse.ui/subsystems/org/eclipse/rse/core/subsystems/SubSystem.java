@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (WindRiver) - 141803: Fix cpu usage 100% while connecting
+ * 
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;

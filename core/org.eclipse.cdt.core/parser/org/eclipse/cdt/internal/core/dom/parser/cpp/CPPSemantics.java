@@ -695,7 +695,8 @@ public class CPPSemantics {
         	if( data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPInternalTemplate ){
         		ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
         		IType [] args = CPPTemplates.createTypeArray( id.getTemplateArguments() );
-        		cls = (ICPPClassType) ((ICPPInternalTemplate)cls).instantiate( args );
+        		IBinding inst = ((ICPPInternalTemplate)cls).instantiate( args ); 
+        		cls = inst instanceof ICPPClassType ? (ICPPClassType)inst : cls; 
         	}
 		    if( cls != null ){
 			    try {

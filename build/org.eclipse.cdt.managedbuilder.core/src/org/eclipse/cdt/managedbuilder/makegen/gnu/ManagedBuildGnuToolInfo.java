@@ -819,8 +819,10 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 					IManagedDependencyGenerator2 depGen2 = (IManagedDependencyGenerator2)depGen;
 					IManagedDependencyInfo depInfo = null;
 					for (int i=0; i<inputs.size(); i++) {
+						
 						depInfo = depGen2.getDependencySourceInfo(
 								Path.fromOSString((String)inputs.get(i)), config, tool, makeGen.getBuildWorkingDir());
+						
 						if (depInfo instanceof IManagedDependencyCalculator) {
 							IManagedDependencyCalculator depCalc = (IManagedDependencyCalculator)depInfo;
 							IPath[] depPaths = depCalc.getDependencies();

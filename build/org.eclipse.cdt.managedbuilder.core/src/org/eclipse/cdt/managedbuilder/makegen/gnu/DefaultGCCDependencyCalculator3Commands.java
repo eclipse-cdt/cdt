@@ -25,7 +25,8 @@ import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.resources.IProject;;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 
 /**
  * This dependency calculator uses the same dependency management technique as the
@@ -50,6 +51,7 @@ public class DefaultGCCDependencyCalculator3Commands implements
 
 	//  Member variables set by the constructor
 	IPath source;
+	IResource resource;
 	IBuildObject buildContext;
 	ITool tool; 
 	IPath topBuildDirectory;
@@ -74,8 +76,9 @@ public class DefaultGCCDependencyCalculator3Commands implements
      * @param topBuildDirectory  The top build directory of the configuration.  This is
      *   the working directory for the tool.  This IPath is relative to the project directory.
 	 */
-	public DefaultGCCDependencyCalculator3Commands(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
+	public DefaultGCCDependencyCalculator3Commands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
 		this.source = source;
+		this.resource = resource;
 		this.buildContext = buildContext;
 		this.tool = tool;
 		this.topBuildDirectory = topBuildDirectory;
@@ -96,7 +99,24 @@ public class DefaultGCCDependencyCalculator3Commands implements
 
 		// A separate rule is needed for the resource in the case where explicit file-specific macros
 		// are referenced, or if the resource contains special characters in its path (e.g., whitespace)
-		needExplicitRuleForFile = GnuMakefileGenerator.containsSpecialCharacters(sourceLocation.toString()) || 
+		
+		/* fix for 137674
+		 * 
+		 * We only need an explicit rule if one of the following is true:
+		 * - The resource is linked, and its full path to its real location contains special characters
+		 * - The resource is not linked, but its project relative path contains special characters
+		*/ 
+		boolean resourceNameRequiresExplicitRule = true;
+		
+		if(resource != null)
+		{
+			resourceNameRequiresExplicitRule = (resource.isLinked() && GnuMakefileGenerator
+						.containsSpecialCharacters(sourceLocation.toString()))
+				|| (!resource.isLinked() && GnuMakefileGenerator
+						.containsSpecialCharacters(resource.getProjectRelativePath().toString()));
+		}
+		
+		needExplicitRuleForFile = resourceNameRequiresExplicitRule || 
 				MacroResolver.getReferencedExplitFileMacros(tool).length > 0
 				|| MacroResolver.getReferencedExplitFileMacros(
 						tool.getToolCommand(), 
@@ -106,6 +126,35 @@ public class DefaultGCCDependencyCalculator3Commands implements
 		
 		if (buildContext instanceof IResourceConfiguration || needExplicitRuleForFile) 
 			genericCommands = false;
+	}
+	
+	/**
+	 * Constructor. This constructor calls
+	 * DefaultGCCDependencyCalculator3Commands(IPath source, IResource resource,
+	 * IBuildObject buildContext, ITool tool, IPath topBuildDirectory) with a
+	 * null resource. The net result of this is that dependency rules will
+	 * always be explicit and will never use pattern rules, as it is impossible
+	 * for the calculator to know whether the resource is linked or not.
+	 * 
+	 * @param source
+	 *            The source file for which dependencies should be calculated
+	 *            The IPath can be either relative to the project directory, or
+	 *            absolute in the file system.
+	 * @param buildContext
+	 *            The IConfiguration or IResourceConfiguration that contains the
+	 *            context in which the source file will be built
+	 * @param tool
+	 *            The tool associated with the source file
+	 * @param topBuildDirectory
+	 *            The top build directory of the configuration. This is the
+	 *            working directory for the tool. This IPath is relative to the
+	 *            project directory.
+	 *            
+	 * @see DefaultGCCDependencyCalculator3Commands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
+	 */
+	public DefaultGCCDependencyCalculator3Commands(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
+	{
+		this(source, (IResource) null, buildContext, tool, topBuildDirectory); 
 	}
 	
 	/*

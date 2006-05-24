@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.makegen;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 
@@ -47,6 +48,32 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
  */
 
 public interface IManagedDependencyGenerator2 extends IManagedDependencyGeneratorType {
+	
+	/**
+	 * Returns an instance of IManagedDependencyInfo for this source file.
+	 * IManagedDependencyCalculator, IManagedDependencyCommands
+	 * and IManagedDependencyPreBuild are all derived from
+	 * IManagedDependencyInfo, and any one of the three can be returned.
+	 * This is called when getCalculatorType returns TYPE_BUILD_COMMANDS, 
+	 * TYPE_CUSTOM or TYPE_PREBUILD_COMMANDS.
+     *
+     * @param source  The source file for which dependencies should be calculated
+     *    The IPath can be either relative to the project directory, or absolute in the file system.
+     * @param resource The IResource corresponding to the source file, or null if the file
+     * is not a workspace resource.
+     * @param buildContext  The IConfiguration or IResourceConfiguration that
+     *   contains the context in which the source file will be built
+     * @param tool  The tool associated with the source file
+     * @param topBuildDirectory  The top build directory of the configuration.  This is
+     *   the working directory for the tool.  This IPath is relative to the project directory.
+	 * @return IManagedDependencyInfo    
+	 */
+	public IManagedDependencyInfo getDependencySourceInfo(
+		IPath source,
+		IResource resource,
+		IBuildObject buildContext,
+		ITool tool,
+		IPath topBuildDirectory);
 	
 	/**
 	 * Returns an instance of IManagedDependencyInfo for this source file.

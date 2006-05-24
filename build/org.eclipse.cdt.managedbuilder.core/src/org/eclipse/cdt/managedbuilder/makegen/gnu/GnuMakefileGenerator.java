@@ -2100,7 +2100,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					depGen = (IManagedDependencyGenerator2)t; 
 					doDepGen = (calcType == IManagedDependencyGeneratorType.TYPE_BUILD_COMMANDS);
 					IBuildObject buildContext = (resConfig != null) ? (IBuildObject)resConfig : (IBuildObject)config;
-					depInfo = depGen.getDependencySourceInfo(resource.getProjectRelativePath(), buildContext, tool, getBuildWorkingDir());
+				
+					depInfo = depGen.getDependencySourceInfo(resource.getProjectRelativePath(), resource, buildContext, tool, getBuildWorkingDir());
+					
 					if (calcType == IManagedDependencyGeneratorType.TYPE_BUILD_COMMANDS) {
 						depCommands = (IManagedDependencyCommands)depInfo;
 						depFiles = depCommands.getDependencyFiles();
@@ -2158,7 +2160,20 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		
 		// A separate rule is needed for the resource in the case where explicit file-specific macros
 		// are referenced, or if the resource contains special characters in its path (e.g., whitespace)
-		boolean needExplicitRuleForFile = containsSpecialCharacters(sourceLocation.toString()) ||
+		
+		/* fix for 137674
+		 * 
+		 * We only need an explicit rule if one of the following is true:
+		 * - The resource is linked, and its full path to its real location contains special characters
+		 * - The resource is not linked, but its project relative path contains special characters
+		*/ 
+		
+		boolean resourceNameRequiresExplicitRule = (resource.isLinked() && containsSpecialCharacters(sourceLocation
+				.toString()))
+				|| (!resource.isLinked() && containsSpecialCharacters(resource
+						.getProjectRelativePath().toString()));
+				
+		boolean needExplicitRuleForFile = resourceNameRequiresExplicitRule ||
 				MacroResolver.getReferencedExplitFileMacros(tool).length > 0
 				|| MacroResolver.getReferencedExplitFileMacros(tool
 						.getToolCommand(), IBuildMacroProvider.CONTEXT_FILE,
@@ -4143,7 +4158,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					   calcType == IManagedDependencyGeneratorType.TYPE_PREBUILD_COMMANDS) {
 				IManagedDependencyGenerator2 depGen = (IManagedDependencyGenerator2)depType;
 				IManagedDependencyInfo depInfo = depGen.getDependencySourceInfo(
-						deletedFile.getProjectRelativePath(), config, tool, getBuildWorkingDir());
+						deletedFile.getProjectRelativePath(), deletedFile, config, tool, getBuildWorkingDir());
 				if (depInfo != null) {
 					if (calcType == IManagedDependencyGeneratorType.TYPE_BUILD_COMMANDS) {
 						IManagedDependencyCommands depCommands = (IManagedDependencyCommands)depInfo;

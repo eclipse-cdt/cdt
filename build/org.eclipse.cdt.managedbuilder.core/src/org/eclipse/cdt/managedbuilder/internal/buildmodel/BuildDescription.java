@@ -1218,30 +1218,46 @@ public class BuildDescription implements IBuildDescription {
 				if(ext == null)
 					ext = buildRc.getLocation().getFileExtension();
 				
-				if(ext != null){
-					IManagedDependencyGeneratorType depGenType = tool.getDependencyGeneratorForExtension(ext);
-					if(depGenType != null){
+				if (ext != null) {
+					IManagedDependencyGeneratorType depGenType = tool
+							.getDependencyGeneratorForExtension(ext);
+					if (depGenType != null) {
 						IPath depFiles[] = null;
-						if(depGenType instanceof IManagedDependencyGenerator2){
+						if (depGenType instanceof IManagedDependencyGenerator2) {
 							IBuildObject context = tool.getParent();
-							if(context instanceof IToolChain){
-								context = ((IToolChain)context).getParent();
+							if (context instanceof IToolChain) {
+								context = ((IToolChain) context).getParent();
 							}
-							IPath path = buildRc.isProjectResource() ?
-									buildRc.getFullPath().removeFirstSegments(1) :
-										buildRc.getLocation();
-							IManagedDependencyInfo info = ((IManagedDependencyGenerator2)depGenType).getDependencySourceInfo(path, context, tool, getDefaultBuildDirLocation());
-							if(info instanceof IManagedDependencyCommands){
-								depFiles = ((IManagedDependencyCommands)info).getDependencyFiles();
+							IPath path = buildRc.isProjectResource() ? buildRc
+									.getFullPath().removeFirstSegments(1)
+									: buildRc.getLocation();
+
+							IResource resource = buildRc.isProjectResource() ? fProject
+									.findMember(buildRc.getLocation())
+									: null;
+
+							IManagedDependencyInfo info = ((IManagedDependencyGenerator2) depGenType)
+									.getDependencySourceInfo(path, resource,
+											context, tool,
+											getDefaultBuildDirLocation());
+							if (info instanceof IManagedDependencyCommands) {
+								depFiles = ((IManagedDependencyCommands) info)
+										.getDependencyFiles();
 							}
 						} else if (depGenType.getCalculatorType() == IManagedDependencyGeneratorType.TYPE_COMMAND
 								&& depGenType instanceof IManagedDependencyGenerator) {
 							depFiles = new IPath[1];
-							depFiles[0] = new Path(buildRc.getLocation().segment(buildRc.getLocation().segmentCount() -1 )).removeFileExtension().addFileExtension("d");  //$NON-NLS-1$
+							depFiles[0] = new Path(buildRc.getLocation()
+									.segment(
+											buildRc.getLocation()
+													.segmentCount() - 1))
+									.removeFileExtension()
+									.addFileExtension("d"); //$NON-NLS-1$
 						}
-						
-						if(depFiles != null){
-							BuildIOType depType = action.createIOType(false, false, null);
+
+						if (depFiles != null) {
+							BuildIOType depType = action.createIOType(false,
+									false, null);
 							addOutputs(depFiles, depType, outDirPath);
 						}
 					}

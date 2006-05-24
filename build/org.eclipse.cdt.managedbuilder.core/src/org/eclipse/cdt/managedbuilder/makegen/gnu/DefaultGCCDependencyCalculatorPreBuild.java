@@ -16,6 +16,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 
@@ -48,6 +49,14 @@ public class DefaultGCCDependencyCalculatorPreBuild implements
 		return IManagedBuilderMakefileGenerator.DEP_EXT;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2#getDependencySourceInfo(org.eclipse.core.runtime.IPath, org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.ITool, org.eclipse.core.runtime.IPath)
+	 */
+	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
+		return new DefaultGCCDependencyCalculatorPreBuildCommands(source, resource, buildContext, tool, topBuildDirectory);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2#getDependencySourceInfo(org.eclipse.core.runtime.IPath, org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.ITool, org.eclipse.core.runtime.IPath)

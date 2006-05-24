@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.ui;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
@@ -272,6 +273,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		CDebugElementAdapterFactory elementAdapterFactory = new CDebugElementAdapterFactory();
 		manager.registerAdapters( elementAdapterFactory, IModuleRetrieval.class );
 		manager.registerAdapters( elementAdapterFactory, ICModule.class );
+		manager.registerAdapters( elementAdapterFactory, ICElement.class );
 	}
 
 	/*

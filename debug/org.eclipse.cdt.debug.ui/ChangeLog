@@ -1,3 +1,8 @@
+2006-05-24 Mikhail Khodjaiants
+	Bug 143593: Module's children are not expandable.
+	* CDebugElementAdapterFactory.java
+	* CDebugUIPlugin.java
+
 2006-05-19 Mikhail Khodjaiants
 	Bug 142860: Breakpoint marker is not shown in the editor's ruler.
 	* ToggleBreakpointAdapter.java

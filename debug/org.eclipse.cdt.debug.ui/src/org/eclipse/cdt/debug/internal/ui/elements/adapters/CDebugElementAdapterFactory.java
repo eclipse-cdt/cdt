@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.elements.adapters; 
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleContentAdapter;
@@ -41,6 +42,9 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 				return fgModuleContentAdapter;
 			}
 			if ( adaptableObject instanceof ICModule ) {
+				return fgModuleContentAdapter;
+			}
+			if ( adaptableObject instanceof ICElement ) {
 				return fgModuleContentAdapter;
 			}
 		}

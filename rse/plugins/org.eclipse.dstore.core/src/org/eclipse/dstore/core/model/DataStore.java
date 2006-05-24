@@ -3662,7 +3662,7 @@ public final class DataStore
 				newObject = (DataElement) _recycled.remove((_recycled.size() - 1));
 			}
 		}
-		else
+		if (newObject == null)
 		{
 			newObject = new DataElement(this);
 		}

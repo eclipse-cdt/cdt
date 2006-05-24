@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %plugin.name
+Bundle-SymbolicName: org.eclipse.rse.examples.daytime;singleton:=true
+Bundle-Version: 0.0.2
+Bundle-Activator: org.eclipse.rse.examples.daytime.Activator
+Bundle-Vendor: Eclipse.org
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.rse.subsystems.files.ftp,
+ org.eclipse.rse.ui,
+ org.eclipse.rse.services,
+ org.eclipse.rse.core,
+ org.eclipse.ui,
+ org.eclipse.ui.views,
+ org.eclipse.core.runtime
+Eclipse-LazyStart: true
+Export-Package: org.eclipse.rse.examples.daytime

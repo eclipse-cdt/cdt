@@ -31,6 +31,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -259,6 +260,18 @@ public class BuildFilesAction extends ActionDelegate implements
 	}
 
 	private boolean shouldBeEnabled() {
+		
+		// fix for Bugzilla 139663
+		// if build automatically is turned on, then this menu should be turned off as
+		// it will trigger the auto build
+		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
+		
+		if(preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING))
+		{
+			// auto building is on... do not enable the menu
+			return false;
+		}
+		
 		ISelectionService selectionService = workbenchWindow
 				.getSelectionService();
 		ISelection selection = selectionService.getSelection();

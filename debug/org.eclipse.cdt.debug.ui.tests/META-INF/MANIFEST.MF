@@ -19,3 +19,4 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.core.runtime.compatibility
 Eclipse-LazyStart: true
 Plugin-Class: org.eclipse.cdt.debug.testplugin.CTestPlugin
+Bundle-Vendor: Eclipse.org

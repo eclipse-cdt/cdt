@@ -6,3 +6,4 @@ Bundle-Version: 3.1.0.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.help
 Eclipse-LazyStart: true
+Bundle-Vendor: Eclipse.org

@@ -34,3 +34,4 @@ Require-Bundle: org.eclipse.jface.text,
  org.eclipse.core.expressions,
  org.eclipse.cdt.make.core
 Eclipse-LazyStart: true
+Bundle-Vendor: Eclipse.org

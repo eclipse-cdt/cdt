@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.ui.tests; singleton:=true
 Bundle-Version: 3.1.0.qualifier
 Bundle-ClassPath: tests.jar
 Bundle-Activator: org.eclipse.cdt.managedbuilder.ui.tests.testplugin.TestsPlugin
-Bundle-Vendor: eclipse.org
+Bundle-Vendor: Eclipse.org
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

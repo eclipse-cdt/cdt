@@ -351,7 +351,7 @@ public final class DataElement implements IDataElement
 	 * @param nestedData a set of elements to add to this element 
 	 * @param checkUnique whether to prevent duplicates from being added
 	 */
-	public void addNestedData(List nestedData, boolean checkUnique)
+	public synchronized void addNestedData(List nestedData, boolean checkUnique)
 	{
 		if (nestedData != null)
 		{
@@ -377,7 +377,7 @@ public final class DataElement implements IDataElement
 	 * @param obj the element to add 
 	 * @param checkUnique whether to prevent duplicates from being added
 	 */
-	public void addNestedData(DataElement obj, boolean checkUnique)
+	public synchronized void addNestedData(DataElement obj, boolean checkUnique)
 	{
 		if (_nestedData == null)
 		{
@@ -421,7 +421,7 @@ public final class DataElement implements IDataElement
 	{
 		if (_nestedData != null)
 		{
-			// synchronized(_nestedData)
+			synchronized(_nestedData)
 			{
 				_nestedData.remove(object);				
 			}
@@ -437,10 +437,13 @@ public final class DataElement implements IDataElement
 	{
 		if (_nestedData != null)
 		{
-			while (_nestedData.size() > 0)
+			synchronized (_nestedData)
 			{
-				DataElement nestedObject = (DataElement) _nestedData.get(0);
-				_nestedData.remove(nestedObject);
+				while (_nestedData.size() > 0)
+				{
+					DataElement nestedObject = (DataElement) _nestedData.get(0);
+					_nestedData.remove(nestedObject);
+				}
 			}
 		}
 

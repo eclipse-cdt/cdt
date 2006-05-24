@@ -437,7 +437,8 @@ public class ServerUpdateHandler extends UpdateHandler
 		document.setAttribute(DE.A_NAME, "request");
 		document.setAttribute(DE.A_VALUE, "request");
 		document.setParent(null);
-		_pendingKeepAliveRequest = document;		
+		_pendingKeepAliveRequest = document;
+		notifyInput();
 	}
 
 	public void sendKeepAliveConfirmation() 
@@ -448,6 +449,14 @@ public class ServerUpdateHandler extends UpdateHandler
 		document.setAttribute(DE.A_VALUE, "confirm");
 		document.setParent(null);
 		_pendingKeepAliveConfirmation = document;
+		notifyInput();
 	}
 
+	public synchronized void waitForInput()
+	{
+		if (_dataObjects.size() == 0 && _classesToSend.size() == 0 && _pendingKeepAliveConfirmation == null && _pendingKeepAliveRequest == null)
+		{
+			super.waitForInput();
+		}
+	}
 }

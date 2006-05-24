@@ -50,7 +50,8 @@ public class XMLparser
 	
 	public static final int IO_SOCKET_READ_TIMEOUT = 3600000;
 	public static final long KEEPALIVE_RESPONSE_TIMEOUT = 60000;
-
+	public static final boolean VERBOSE_KEEPALIVE = false;
+	
 	private DataStore _dataStore;
 	private DataElement _rootDataElement;
 	private Stack _tagStack;
@@ -301,6 +302,7 @@ public class XMLparser
 				{
 					_initialKart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT, _dataStore);
 					_firstTime = false;
+					if (VERBOSE_KEEPALIVE) System.out.println("Starting initial KeepAlive thread.");
 					_initialKart.start();
 					continue;
 				}
@@ -309,11 +311,13 @@ public class XMLparser
 					if (!_initialKart.failed())
 					{
 						_isKeepAliveCompatible = true;
+						if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive compatible.");
 						_initialKart = null;
 					}			
 					else
 					{
 						_isKeepAliveCompatible = false;
+						if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive incompatible.");
 						_initialKart = null;
 					}
 				}
@@ -332,12 +336,14 @@ public class XMLparser
 						if ((_kart != null) && _kart.failed())
 						{
 							done = true;
-							handlePanic(new Exception("KeepAlive request to client wasnt answered in time."));
+							if (_dataStore.isVirtual()) handlePanic(new Exception("KeepAlive request to server wasnt answered in time."));
+							else handlePanic(new Exception("KeepAlive request to client wasnt answered in time."));
 							continue;
 						}
 						else
 						{
 							_kart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT, _dataStore);
+							if (VERBOSE_KEEPALIVE) System.out.println("No activity on socket. KeepAlive thread started.");
 							_kart.start();
 							continue;
 						}
@@ -610,11 +616,13 @@ public class XMLparser
 								}
 								else if (_isKeepAlive && (result != null))
 								{
+									if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive request received, sending confirmation.");
 									result.getDataStore().sendKeepAliveConfirmation();
 									_isKeepAlive = false;
 								}
 								else if (_isKeepAliveConfirm && (result != null))
 								{
+									if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive confirmation received.");
 									if (_initialKart != null) _initialKart.interrupt();
 									_isKeepAliveConfirm = false;
 								}
@@ -1004,8 +1012,10 @@ public class XMLparser
 			}
 			catch (InterruptedException e)
 			{
+				if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive thread interrupted.");
 				return;
 			}
+			if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive thread failed to be interrupted.");
 			_failed = true;			
 		}
 		

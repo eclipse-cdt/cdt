@@ -39,7 +39,7 @@ public class ClientCommandHandler extends CommandHandler
 	protected DataElement _confirmKeepAliveDocumentElement;
 	protected DataElement _pendingKeepAliveRequest;
 	protected DataElement _pendingKeepAliveConfirmation;
-	
+
 	private static String[] _docAttributes =  { 
 		DataStoreResources.DOCUMENT_TYPE, 
 		"client.doc.root.id",
@@ -357,6 +357,7 @@ public class ClientCommandHandler extends CommandHandler
 		document.setAttribute(DE.A_VALUE, "confirm");
 		document.setParent(null);
 		_pendingKeepAliveConfirmation = document;
+		notifyInput();
 	}
 	
 	public void sendKeepAliveRequest() 
@@ -366,6 +367,15 @@ public class ClientCommandHandler extends CommandHandler
 		document.setAttribute(DE.A_NAME, "request");
 		document.setAttribute(DE.A_VALUE, "request");
 		document.setParent(null);
-		_pendingKeepAliveRequest = document;		
+		_pendingKeepAliveRequest = document;
+		notifyInput();
+	}
+	
+	public synchronized void waitForInput() 
+	{
+		if (_commands.size() == 0 && _classesToSend.size() == 0 && _pendingKeepAliveConfirmation == null && _pendingKeepAliveRequest == null)
+		{
+			super.waitForInput();
+		}
 	}
 }

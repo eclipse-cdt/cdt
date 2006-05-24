@@ -629,10 +629,15 @@ public class SystemProfileManager implements ISystemProfileManager
 	{
 		if (_profiles == null)
 		{
-			// FIXME
 			ISystemProfile profile = new SystemProfile();
-			//profile.setName("Private");
-			profile.setName(RSEUIPlugin.getLocalMachineName());
+			String initProfileName = RSEUIPlugin.getLocalMachineName();
+      		int dotIndex = initProfileName.indexOf('.');
+      		
+      		if (dotIndex != -1)
+      		{
+      			initProfileName = initProfileName.substring(0, dotIndex);
+      		}
+			profile.setName(initProfileName);
 			profile.setDefaultPrivate(true);
 			_profiles = new ArrayList();
 			_profiles.add(profile);

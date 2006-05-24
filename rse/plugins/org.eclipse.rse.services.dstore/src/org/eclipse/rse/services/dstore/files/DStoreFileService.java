@@ -850,8 +850,15 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement de = getElementFor(remotePath);
 		DataElement status = dsStatusCommand(monitor, de, C_DELETE);
 		if (status == null) return false;
-		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) return true;
-		else throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));	
+		if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR))
+		{
+			if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) return true;
+			else throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));	
+		}
+		else
+		{
+			return true;
+		}
 
 	}
 	

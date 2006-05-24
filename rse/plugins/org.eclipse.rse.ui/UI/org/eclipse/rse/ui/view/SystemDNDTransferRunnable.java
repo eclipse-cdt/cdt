@@ -72,7 +72,7 @@ public class SystemDNDTransferRunnable extends UIJob
 
 	public SystemDNDTransferRunnable(Object target, ArrayList srcObjects, Viewer originatingViewer, int sourceType)
 	{
-		super(GenericMessages.DragAndDropOperation_message);
+		super(GenericMessages.TransferOperation_message);
 		_srcObjects = srcObjects;
 		_currentTarget = target;
 		_sourceType = sourceType;

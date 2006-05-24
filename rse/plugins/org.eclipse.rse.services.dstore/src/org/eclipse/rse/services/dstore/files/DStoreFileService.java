@@ -365,14 +365,13 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				IHostFile created = createFile(monitor, remoteParent, remoteFile);
 				return created.exists();
 			}
-			/*
-			SubProgressMonitor subMonitor = null;
+		
 			if (monitor != null)
 			{
-				monitor.subTask(file.getName());
-				subMonitor = new SubProgressMonitor(monitor, (int)totalBytes);
+				monitor.setTaskName(file.getName());
+				//subMonitor = new SubProgressMonitor(monitor, (int)totalBytes);
 			}
-			*/
+
 			
 			DataElement uploadLog = findUploadLog();
 //			listener = new FileTransferStatusListener(remotePath, shell, monitor, getConnectorService(), ds, uploadLog);

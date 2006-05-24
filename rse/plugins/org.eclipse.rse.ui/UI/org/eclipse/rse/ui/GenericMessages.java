@@ -32,7 +32,7 @@ public class GenericMessages extends NLS
 	public static String RefreshAction_locationDeletedMessage;
 	public static String RefreshAction_dialogTitle;
 
-	public static String DragAndDropOperation_message;
+	public static String TransferOperation_message;
 	public static String RSESubSystemOperation_message;
 	public static String RSESubSystemOperation_Connect_message;
 	public static String RSESubSystemOperation_Disconnect_message;

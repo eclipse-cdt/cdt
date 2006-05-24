@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -155,8 +156,11 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 				scanInfo = new ScannerInfo();
 		}
 		
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject()).getAdapter(PDOM.class);
-		ICodeReaderFactory fileCreator = new PDOMCodeReaderFactory(pdom);
+		// TODO use the pdom once we get enough info into it
+//		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject()).getAdapter(PDOM.class);
+//		ICodeReaderFactory fileCreator = new PDOMCodeReaderFactory(pdom);
+	
+		ICodeReaderFactory fileCreator = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE);
 
 		String path
 			= resource != null

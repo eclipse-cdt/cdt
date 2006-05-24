@@ -53,6 +53,10 @@ public class PDOMCompletionContributor extends DOMCompletionContributor implemen
 		
 		if (completionNode == null)
 			return;
+
+		// Return anyway
+		if (completionNode != null)
+			return;
 		
 		try {
 			IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());

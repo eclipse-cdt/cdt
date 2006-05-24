@@ -76,15 +76,16 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 							});
 						} else if (binding instanceof PDOMBinding) {
 							final IASTName name = ((PDOMBinding)binding).getFirstDeclaration();
-							Display.getDefault().asyncExec(new Runnable() {
-								public void run() {
-									try {
-										open(name);
-									} catch (CoreException e) {
-										CUIPlugin.getDefault().log(e);
+							if (name != null)
+								Display.getDefault().asyncExec(new Runnable() {
+									public void run() {
+										try {
+											open(name);
+										} catch (CoreException e) {
+											CUIPlugin.getDefault().log(e);
+										}
 									}
-								}
-							});
+								});
 						}
 					}
 				}

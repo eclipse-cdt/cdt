@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IScanner;
 
 /**
  * @author jcamelon
@@ -38,7 +39,7 @@ public class WorkingCopyCodeReaderFactory extends
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
      */
-    public CodeReader createCodeReaderForInclusion(String path) {
+    public CodeReader createCodeReaderForInclusion(IScanner scanner, String path) {
         return checkWorkingCopyThenCache(path);
     }
 

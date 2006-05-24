@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui;
 
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -96,7 +97,11 @@ public class CElementAdapterFactory implements IAdapterFactory {
 	}
 
 	private IProject getProject(ICElement celement) {
-		return celement.getCProject().getProject();
+		ICProject cProject = celement.getCProject();
+		if (cProject != null) {
+			return cProject.getProject();
+		}
+		return null;
 	}
 
 	private IResource getResource(ICElement celement) {

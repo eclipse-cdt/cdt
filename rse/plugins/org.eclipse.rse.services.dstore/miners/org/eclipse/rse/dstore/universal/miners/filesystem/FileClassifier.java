@@ -107,6 +107,8 @@ public class FileClassifier extends Thread
     private List _fileMap;
 
     private boolean _classifyChildren = true;
+    
+    private boolean _classifyFilter = false;
 
     private boolean _canResolveLinks = false;
 
@@ -159,6 +161,8 @@ public class FileClassifier extends Thread
         {
             _classifyVirtual = false;
         }
+        
+        _classifyFilter = objType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
 
         // if the subject is a file or a virtual file (i.e. not a directory or
         // an archive), then
@@ -251,10 +255,19 @@ public class FileClassifier extends Thread
             return;
 
         // get full path
-    	StringBuffer fPathBuf = new StringBuffer(_subject.getValue());
-    	fPathBuf.append(File.separatorChar);
-    	fPathBuf.append(_subject.getName());
-        String filePath = fPathBuf.toString();
+        String filePath = null;
+    	if (!_classifyFilter)
+    	{
+    		StringBuffer fPathBuf = new StringBuffer(_subject.getValue());
+    		fPathBuf.append(File.separatorChar);
+    		fPathBuf.append(_subject.getName());
+    		filePath = fPathBuf.toString();
+    	}
+    	else
+    	{
+    		filePath = _subject.getValue();
+    	}
+        
         
         // if we have to classify children
         if (_classifyChildren)

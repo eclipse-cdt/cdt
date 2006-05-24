@@ -797,7 +797,8 @@ public class UniversalFileSystemMiner extends Miner implements
 			{
 				createDataElement(_dataStore, subject, list, queryType, filter,inclusion);
 				String folderProperties = setProperties(fileobj);
-				subject.setAttribute(DE.A_SOURCE, folderProperties);
+				if (subject.getSource() == null || subject.getSource().equals(""))
+					subject.setAttribute(DE.A_SOURCE, folderProperties);
 		
 				FileClassifier clsfy = getFileClassifier(subject);
 				clsfy.start();

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.rse.core.systemTypes">
+      <systemType id="org.eclipse.rse.remotecdt.sshgdbserver"
+            name="Ssh/Gdbserver"
+			description="Place holder for host information used by the Remote C++ Application launch configuration.">
+			<property name="icon" value="icons/full/obj16/systemlocal_obj.gif"/>
+			<property name="iconLive" value="icons/full/obj16/systemlocallive_obj.gif"/>
+      </systemType>
+   </extension>  
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            delegate="org.eclipse.rse.remotecdt.RemoteRunLaunchDelegate"
+            public="true"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
+            name="C/C++ Remote Application"
+            id="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
+            modes="debug,run">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/full/obj16/c_app.gif"
+            configTypeID="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
+            id="org.eclipse.cdt.launch.localRunLaunchImagefff">
+      </launchConfigurationTypeImage>
+   </extension>    
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
+            class="org.eclipse.rse.remotecdt.RemoteLaunchConfigurationTabGroup"
+            id="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup">
+      </launchConfigurationTabGroup>
+   </extension>
+
+</plugin>

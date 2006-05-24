@@ -1,0 +1,39 @@
+Introduction
+--------------
+The attached plugin (org.eclipse.rse.remotecdt) builds on top of CDT and integrates with RSE to introduce a "Remote C++ Application" launch configuration (see screenshot1 attached).   This launch configuration shows RSE connections of type "Ssh\Gdbserver" in a pulldown. The "Ssh\Gdbserver" connection type is introduced to RSE with this plugin (screenshot2). The host details from that selected connection are used to establish an ssh/sftp connection to the target.  For a debug configuration, the binary is downloaded to the remote (using sftp), gdbserver is automatically started on the remote (using ssh) and a gdb debug connection is establised. For a run configuration, the binary is downloaded to the remote (using sftp) and then it is invoked (using ssh.)
+
+
+
+The extent of the current RSE integration with this launch configuration is the pulldown of connections. An important thing to note is that ssh and sftp are invoked directly by the plugin, without going through RSE. These are prime candidates for further integration.  Also an RSE file service could be used in the future to select where the remote download should take place.
+
+
+System Prerequisites
+------------------
+Local Host
+  A. ssh, sftp, gdb are on the path.
+  B. ssh and sftp are setup to connect to the desired remote without prompting.
+
+Remote Host
+  A. gdbserver is on the path.
+  B. port 2345 is available to use. gdbserver will use this port.
+
+
+Installation of Necessary Eclipse Components
+---------------------------------
+
+1. Install Eclipse Platform M6.
+2. Install CDT Runtime compatible with Eclipse M6.
+ From: http://cdt.eclipse.org/builds/3.1.0/index.html
+ I used the following build: I200604141755
+
+3. Install RSE.  This is the procedure I followed.
+ A. Checkout RSE from the repository using anonymous username.
+ B. Import the plugin directory and build all the RSE plugins.
+
+4. Import the Remote CDT plugin attached to this bugzilla and build that as well.
+
+
+Using
+----------
+
+A "Remote C++ Application" launch configuration will be available.  After building a binary which will run on your remote, try using this configuration to run or debug it.

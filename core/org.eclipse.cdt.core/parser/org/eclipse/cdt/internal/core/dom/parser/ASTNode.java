@@ -98,7 +98,9 @@ public abstract class ASTNode implements IASTNode {
     public IASTFileLocation getFileLocation() {
         if( fileLocation != null )
             return fileLocation;
-        fileLocation = getTranslationUnit().flattenLocationsToFile( getNodeLocations() );
+        IASTTranslationUnit ast = getTranslationUnit();
+        if (ast != null)
+        	fileLocation = ast.flattenLocationsToFile( getNodeLocations() );
         return fileLocation;
     }
     

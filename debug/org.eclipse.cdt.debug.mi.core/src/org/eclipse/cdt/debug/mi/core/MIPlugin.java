@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.core.ICDebugConfiguration;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CLITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
@@ -532,6 +535,10 @@ public class MIPlugin extends Plugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDefaultDebugConfiguration();
+		if (dc == null) {
+			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault(ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE, "org.eclipse.cdt.debug.mi.core.CDebuggerNew"); //$NON-NLS-1$
+		}
 	}
 
 	/* (non-Javadoc)

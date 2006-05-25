@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Hewlett-Packard Development Company - fix for bug 109733
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core;
 
@@ -52,7 +53,7 @@ public class MIInferior extends Process {
 
 	int inferiorPID;
 
-	MIInferior(MISession mi, IMITTY p) {
+	public MIInferior(MISession mi, IMITTY p) {
 		session = mi;
 		tty = p;
 		if (tty != null) {

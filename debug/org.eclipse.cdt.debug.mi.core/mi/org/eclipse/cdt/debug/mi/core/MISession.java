@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Hewlett-Packard Development Company - fix for bug 109733
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core;
 
@@ -610,6 +611,13 @@ public class MISession extends Observable {
 	 */
 	public MIInferior getMIInferior() {
 		return inferior;
+	}
+
+	/**
+	 * Set the inferior "Process".
+	 */
+	public void setMIInferior(MIInferior inferior) {
+		this.inferior = inferior;
 	}
 
 	/**

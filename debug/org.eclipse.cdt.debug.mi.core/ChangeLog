@@ -1,4 +1,9 @@
 2006-05-25 Mikhail Khodjaiants
+	Bug 109733: Request to make certain methods as public (MISession and MIInferior).
+	* MIInferior.java
+	* MISession.java
+
+2006-05-25 Mikhail Khodjaiants
 	Bug 109733: Request to make certain methods as public (null check for setPrompt).
 	* RxThread.java
 

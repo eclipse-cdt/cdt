@@ -1,3 +1,7 @@
+2006-05-25 Mikhail Khodjaiants
+	Bug 109733: Request to make certain methods as public (null check for setPrompt).
+	* RxThread.java
+
 2006-04-21 Mikhail Khodjaiants
 	Don't create pty when using gdbserver.
 	* AbstractGDBCDIDebugger.java

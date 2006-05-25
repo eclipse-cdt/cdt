@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Norbert Ploett, Siemens AG - fix for bug 119370
+ *     Hewlett-Packard Development Company - fix for bug 109733 (null check in setPrompt)
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core;
 
@@ -129,14 +130,16 @@ public class RxThread extends Thread {
 	}
 
 	void setPrompt(String line) {
-		line = line.trim();
 		MIParser parser = session.getMIParser();
+		prompt = 0;
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=109733
+		if (line == null || parser == null)
+			return;
+		line = line.trim();
 		if (line.equals(parser.primaryPrompt)) {
 			prompt = 1;
 		} else if (line.equals(parser.secondaryPrompt)) {
 			prompt = 2;
-		} else {
-			prompt = 0;
 		}
 	}
 

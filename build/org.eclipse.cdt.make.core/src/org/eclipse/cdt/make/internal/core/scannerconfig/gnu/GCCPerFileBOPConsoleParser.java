@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -146,13 +147,14 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
 			}
             
             CCommandDSC cmd = fUtil.getNewCCommandDSC(genericLine.toString(), extensionsIndex > 0);
-            if (getProject().getLocation().isPrefixOf(pFilePath)) {
+            IPath buildDirectory = fUtil.getWorkingDirectory();
+            if (buildDirectory.isPrefixOf(pFilePath)) {
 	            List cmdList = new ArrayList();
 	            cmdList.add(cmd);
 	            Map sc = new HashMap(1);
 	            sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);
 
-				IPath relPath = pFilePath.removeFirstSegments(getProject().getLocation().segmentCount());
+				IPath relPath = pFilePath.removeFirstSegments(buildDirectory.segmentCount());
                 IFile file = getProject().getFile(relPath);
                 getCollector().contributeToScannerConfig(file, sc);
             }

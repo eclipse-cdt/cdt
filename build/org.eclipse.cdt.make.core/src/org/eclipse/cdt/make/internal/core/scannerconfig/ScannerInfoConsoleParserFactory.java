@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig;
 
@@ -14,6 +15,8 @@ import java.io.OutputStream;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
+import org.eclipse.cdt.make.core.MakeBuilderUtil;
+import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
@@ -58,7 +61,8 @@ public class ScannerInfoConsoleParserFactory {
             SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
                     getSCProfileInstance(currentProject, scBuildInfo.getSelectedProfileId());
             IScannerInfoConsoleParser clParser = profileInstance.createExternalScannerInfoParser(providerId);
-            clParser.startup(currentProject, currentProject.getLocation(), collector, markerGenerator);
+            IPath buildDirectory = MakeBuilderUtil.getBuildDirectory(currentProject, MakeBuilder.BUILDER_ID);
+            clParser.startup(currentProject, buildDirectory, collector, markerGenerator);
             // create an output stream sniffer
             return new ConsoleOutputSniffer(outputStream, errorStream, new 
                 IScannerInfoConsoleParser[] {clParser});

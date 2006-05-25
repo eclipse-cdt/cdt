@@ -70,9 +70,10 @@ public class SymbolEntry {
 	public void replace(String value, boolean active) {
 		values.put(value, Boolean.valueOf(active));
 	}
-	private void addAll(SymbolEntry se) {
-		values.putAll(se.values);
-	}
+
+//	private void addAll(SymbolEntry se) {
+//		values.putAll(se.values);
+//	}
 	
 	public void remove(String value) {
 		values.remove(value);

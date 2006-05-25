@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2005, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -121,6 +120,8 @@ public class MakeBuilder extends ACBuilder {
 		}
 	}
 	
+
+	
 	protected boolean invokeMake(int kind, IMakeBuilderInfo info, IProgressMonitor monitor) {
 		boolean isClean = false;
 		IProject currProject = getProject();
@@ -141,15 +142,7 @@ public class MakeBuilder extends ACBuilder {
 				// remove all markers for this project
 				removeAllMarkers(currProject);
 
-				IPath workingDirectory = info.getBuildLocation();
-				if (!workingDirectory.isEmpty()) {
-					IResource res = currProject.getParent().findMember(workingDirectory);
-					if (res instanceof IContainer && res.exists()) {
-						workingDirectory = res.getLocation();
-					}
-				} else {
-					workingDirectory = currProject.getLocation();
-				}
+				IPath workingDirectory = MakeBuilderUtil.getBuildDirectory(currProject, info);
 
 				String[] targets = getTargets(kind, info);
 				if (targets.length != 0 && targets[targets.length - 1].equals(info.getCleanBuildTarget())) //$NON-NLS-1$

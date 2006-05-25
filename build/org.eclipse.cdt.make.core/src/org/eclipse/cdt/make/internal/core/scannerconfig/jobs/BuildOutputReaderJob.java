@@ -28,11 +28,8 @@ import org.eclipse.core.runtime.jobs.Job;
 public class BuildOutputReaderJob extends Job {
 	private static final String JOB_NAME = "Build Output Reader"; //$NON-NLS-1$
 	
-	private String inputFileName;
-
     private IResource resource;
     private IScannerConfigBuilderInfo2 buildInfo;
-    private boolean rc;
 
 	/**
      * @param project

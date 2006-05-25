@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2005, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core;
 
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.make.core.MakeBuilderUtil;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.IMakeTarget;
@@ -171,7 +173,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	}
 
 	public IPath getBuildLocation() {
-		return container.getLocation();
+		return MakeBuilderUtil.getBuildDirectory(container.getProject(), container.getProjectRelativePath(), manager.getBuilderID(targetBuilderID));
 	}
 
 	public void setBuildLocation(IPath location) throws CoreException {
@@ -292,7 +294,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		info.setEnvironment(getExpandedEnvironment());
 		info.setAppendEnvironment(appendEnvironment());
 		if (container != null) {
-			info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, container.getFullPath().toString());
+			info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, getBuildLocation().toString());
 		}
 		IMakeBuilderInfo projectInfo = MakeCorePlugin.createBuildInfo(getProject(), builderID);
 		info.setErrorParsers(projectInfo.getErrorParsers());

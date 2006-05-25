@@ -41,7 +41,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 	 */
 	protected IProject [] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		// If auto discovery is disabled, do nothing
-		boolean autodiscoveryEnabled;
+//		boolean autodiscoveryEnabled;
 		boolean autodiscoveryEnabled2;
 		IScannerConfigBuilderInfo2 buildInfo2 = null;
 		try {
@@ -72,7 +72,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 		} 
 		catch (CoreException e) {
 			// builder not installed or disabled
-			autodiscoveryEnabled = false;
+//			autodiscoveryEnabled = false;
 			autodiscoveryEnabled2 = false;
             MakeCorePlugin.log(e);
 		}

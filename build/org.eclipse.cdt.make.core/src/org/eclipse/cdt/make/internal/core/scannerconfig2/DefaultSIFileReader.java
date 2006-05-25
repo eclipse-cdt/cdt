@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
@@ -21,14 +22,13 @@ import java.io.OutputStream;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
-import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.MakeBuilder;
+import org.eclipse.cdt.make.core.MakeBuilderUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -64,7 +64,7 @@ public class DefaultSIFileReader implements IExternalScannerInfoProvider {
         // output
         IConsole console = CCorePlugin.getDefault().getConsole(EXTERNAL_SI_PROVIDER_CONSOLE_ID);
         console.start(project);
-        OutputStream ostream, cos;
+        OutputStream ostream;
         try {
             ostream = console.getOutputStream();
         }
@@ -73,22 +73,7 @@ public class DefaultSIFileReader implements IExternalScannerInfoProvider {
         }
         
         // get build location
-        IPath buildDirectory = null;
-        try {
-            IMakeBuilderInfo makeInfo = MakeCorePlugin.createBuildInfo(project, MakeBuilder.BUILDER_ID);
-            if (!makeInfo.getBuildLocation().isEmpty()) {
-                IResource res = project.getParent().findMember(makeInfo.getBuildLocation());
-                if (res instanceof IContainer && res.exists()) {
-                    buildDirectory = res.getLocation();
-                }
-            }
-            if (buildDirectory == null) {
-                buildDirectory = project.getLocation();
-            }
-        }
-        catch (CoreException e) {
-            MakeCorePlugin.log(e);
-        }
+        IPath buildDirectory = MakeBuilderUtil.getBuildDirectory(project, MakeBuilder.BUILDER_ID);
         
 		ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.
                 getMakeBuilderOutputSniffer(ostream, null, project, buildDirectory, buildInfo, markerGenerator, collector);

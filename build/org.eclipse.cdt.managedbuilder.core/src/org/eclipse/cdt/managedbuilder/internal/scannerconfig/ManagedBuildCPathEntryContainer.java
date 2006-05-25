@@ -189,9 +189,9 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
             mCollector.setProject(project);
 			ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries collected dynamically");	//$NON-NLS-1$
 			calculateEntriesDynamically((IProject)info.getOwner(), profileInstance, collector);
+			addEntries(info.getManagedBuildValues());
 			addIncludePaths(mCollector.getIncludePaths());
 			addDefinedSymbols(mCollector.getDefinedSymbols());
-			addEntries(info.getManagedBuildValues());
 		} else {
 			// If none supplied, use the built-ins
 			if (defaultConfig != null) {

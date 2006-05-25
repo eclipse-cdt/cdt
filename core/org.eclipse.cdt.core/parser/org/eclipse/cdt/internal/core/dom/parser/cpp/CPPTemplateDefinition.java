@@ -199,18 +199,20 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
     	else 
     		binding = new CPPTemplateTemplateParameter( name );
     	
-    	ICPPASTTemplateParameter temp = null;
-    	ICPPASTTemplateDeclaration template = null;
     	int length = ( declarations != null ) ? declarations.length : 0;
 		int j = ( definition != null ) ? -1 : 0;
 		for( ; j < length; j++ ){
-			template = ( j == -1 ) ? CPPTemplates.getTemplateDeclaration( definition )
-								   : CPPTemplates.getTemplateDeclaration( declarations[j] );
+	    	ICPPASTTemplateDeclaration template	= ( j == -1 )
+	    		? CPPTemplates.getTemplateDeclaration( definition )
+				: CPPTemplates.getTemplateDeclaration( declarations[j] );
 			if( template == null )
 				continue;
-			temp = template.getTemplateParameters()[i];
+			
+			ICPPASTTemplateParameter[] temp = template.getTemplateParameters();
+			if (temp.length <= i)
+				continue;
 
-    		IASTName n = CPPTemplates.getTemplateParameterName( temp );
+    		IASTName n = CPPTemplates.getTemplateParameterName(temp[i]);
     		if( n != null && n != name && n.getBinding() == null ) {
     		    n.setBinding( binding );
     		    if( binding instanceof ICPPInternalBinding )

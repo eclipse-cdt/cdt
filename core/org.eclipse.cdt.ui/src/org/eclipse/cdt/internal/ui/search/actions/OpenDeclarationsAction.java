@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -43,7 +45,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 
 	private class Runner extends Job {
 		Runner() {
-			super(CEditorMessages.getString("OpenDeclarations.label")); //$NON-NLS-1$
+			super(CEditorMessages.getString("OpenDeclarations.dialog.title")); //$NON-NLS-1$
 		}
 
 		protected IStatus run(IProgressMonitor monitor) {
@@ -54,8 +56,12 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 				IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
 				if (workingCopy == null)
 					return Status.CANCEL_STATUS;
-					
-				IASTTranslationUnit ast = workingCopy.getLanguage().getASTTranslationUnit(workingCopy, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
+
+				int style = 0;
+				IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
+				if (!pdom.isEmpty())
+					style |= ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX;
+				IASTTranslationUnit ast = workingCopy.getLanguage().getASTTranslationUnit(workingCopy, style);
 				IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
 					
 				if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
@@ -75,17 +81,22 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 								};
 							});
 						} else if (binding instanceof PDOMBinding) {
-							final IASTName name = ((PDOMBinding)binding).getFirstDeclaration();
-							if (name != null)
+							PDOMBinding pdomBinding = (PDOMBinding)binding;
+							IASTName name = pdomBinding.getFirstDefinition();
+							if (name == null)
+								name = pdomBinding.getFirstDeclaration();
+							if (name != null) {
+								final IASTName dname = name;
 								Display.getDefault().asyncExec(new Runnable() {
 									public void run() {
 										try {
-											open(name);
+											open(dname);
 										} catch (CoreException e) {
 											CUIPlugin.getDefault().log(e);
 										}
 									}
 								});
+							}
 						}
 					}
 				}

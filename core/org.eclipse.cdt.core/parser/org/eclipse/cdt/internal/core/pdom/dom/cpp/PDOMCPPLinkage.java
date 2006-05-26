@@ -159,8 +159,11 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	
 	private static final class FindBinding extends PDOMNamedNode.NodeFinder {
 		PDOMBinding pdomBinding;
-		final int desiredType;
+		final int[] desiredType;
 		public FindBinding(PDOM pdom, char[] name, int desiredType) {
+			this(pdom, name, new int[] { desiredType });
+		}
+		public FindBinding(PDOM pdom, char[] name, int[] desiredType) {
 			super(pdom, name);
 			this.desiredType = desiredType;
 		}
@@ -171,13 +174,16 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			if (!tBinding.hasName(name))
 				// no more bindings with our desired name
 				return false;
-			if (tBinding.getNodeType() != desiredType)
-				// wrong type, try again
-				return true;
+			int nodeType = tBinding.getNodeType();
+			for (int i = 0; i < desiredType.length; ++i)
+				if (nodeType == desiredType[i]) {
+					// got it
+					pdomBinding = tBinding;
+					return false;
+				}
 			
-			// got it
-			pdomBinding = tBinding;
-			return false;
+			// wrong type, try again
+			return true;
 		}
 	}
 
@@ -231,8 +237,18 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			return lastName != null ? resolveBinding(lastName) : null;
 		}
 		IASTNode parent = name.getParent();
-		if (parent instanceof ICPPASTQualifiedName)
-			parent = parent.getParent();
+		if (parent instanceof ICPPASTQualifiedName) {
+			ICPPASTQualifiedName qualName = (ICPPASTQualifiedName)parent;
+			IASTName lastName = qualName.getLastName();
+			if (name != lastName) {
+				return resolveInQualifiedName(name);
+			} else {
+				// Drop down to the rest of the resolution procedure
+				// with the parent of the qualified name
+				parent = parent.getParent();
+			}
+		}
+		
 		if (parent instanceof IASTIdExpression) {
 			// reference
 			IASTNode eParent = parent.getParent();
@@ -259,6 +275,34 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		}
 		
 		return null;
+	}
+	
+	private PDOMBinding resolveInQualifiedName(IASTName name) throws CoreException {
+		ICPPASTQualifiedName qualName = (ICPPASTQualifiedName)name.getParent();
+		
+		// Must be a namespace or a class
+		IASTName[] names = qualName.getNames();
+		IASTName nsName = null;
+		for (int i = 0; i < names.length; ++i) {
+			if (names[i] == name)
+				break;
+			else
+				nsName = names[i];
+		}
+		if (nsName == names[names.length - 1])
+			// didn't find our name here, weird...
+			return null;
+		
+		if (nsName == null) {
+			// we are at the root
+			FindBinding visitor = new FindBinding(pdom, name.toCharArray(),
+					new int[] { CPPNAMESPACE, CPPCLASSTYPE });
+			getIndex().accept(visitor);
+			return visitor.pdomBinding;
+		} else {
+			// TODO we are in another namespace
+			return null;
+		}
 	}
 	
 	public void findBindings(String pattern, List bindings) throws CoreException {

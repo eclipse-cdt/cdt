@@ -147,7 +147,8 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 	}
 
 	public void addName(IASTName name) throws DOMException {
-		throw new PDOMNotImplementedError();
+		// TODO - this might be a better way of adding names to scopes
+		// but for now do nothing.
 	}
 
 	public IBinding[] find(String name) throws DOMException {
@@ -178,7 +179,15 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 	}
 
 	public IASTName getScopeName() throws DOMException {
-		throw new PDOMNotImplementedError();
+		try {
+			IASTName name = getFirstDefinition();
+			if (name == null)
+				name = getFirstDefinition();
+			return name;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
 	}
 
 	public boolean isFullyCached() throws DOMException {

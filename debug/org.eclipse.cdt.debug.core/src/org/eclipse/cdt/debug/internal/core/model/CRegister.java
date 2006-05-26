@@ -292,7 +292,7 @@ public class CRegister extends CVariable implements IRegister {
 
 		public boolean isEditable() throws DebugException {
 			ICDIRegister reg = getCDIRegister();
-			if ( reg != null ) {
+			if ( reg != null && reg.getTarget().getConfiguration().supportsRegisterModification() ) {
 				try {
 					return reg.isEditable();
 				}

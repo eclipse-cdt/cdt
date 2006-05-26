@@ -1,3 +1,9 @@
+2006-05-26 Mikhail Khodjaiants
+	Bug 122010: Registers View is displayed even if supportsRegisters and 
+	supportsRegisterModification are disabled.
+	Fix for supportsRegisterModification.
+	* CRegister.java
+
 2006-05-19 Mikhail Khodjaiants
 	Warning cleanup.
 	* CBreakpointManager.java

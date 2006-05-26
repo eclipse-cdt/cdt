@@ -1,4 +1,9 @@
 2006-05-26 Mikhail Khodjaiants
+	Bug 137138: Common source containers get disposed.
+	* CSourceLookupParticipant.java
+	* CSourcePathComputerDelegate.java
+
+2006-05-26 Mikhail Khodjaiants
 	Bug 122010: Registers View is displayed even if supportsRegisters and 
 	supportsRegisterModification are disabled.
 	Fix for supportsRegisterModification.

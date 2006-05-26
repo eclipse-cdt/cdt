@@ -28,7 +28,7 @@ import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
  */
 public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 
-	static private class NoSourceElement {
+	static class NoSourceElement {
 	}
 
 	private static final NoSourceElement gfNoSource = new NoSourceElement();

@@ -36,7 +36,8 @@ public class FileBasedErrorParserTests extends GenericErrorParserTests {
 		File dir = CTestPlugin.getDefault().getFileInPlugin(new Path("resources/errortests/"));
 		File[] testsfiles = dir.listFiles();
 		for (int i = 0; i < testsfiles.length; i++) {
-			suite.addTest(new FileBasedErrorParserTests(testsfiles[i]));
+			if (testsfiles[i].isFile())
+				suite.addTest(new FileBasedErrorParserTests(testsfiles[i]));
 		}
 		return suite;
 	}

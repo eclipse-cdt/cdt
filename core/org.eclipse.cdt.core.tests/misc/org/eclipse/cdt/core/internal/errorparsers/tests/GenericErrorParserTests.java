@@ -102,7 +102,7 @@ public class GenericErrorParserTests extends TestCase {
 	}
 
 	protected void runParserTest(InputStream inputStream, int expectedErrorCount, int expectedWarningCount,
-			String[] expectedFileNames, String[] expectedDescriptions, String[] parserID) {
+			String[] expectedFileNames, String[] expectedDescriptions, String[] parserID) throws IOException {
 
 		assertNotNull(inputStream);
 
@@ -114,17 +114,8 @@ public class GenericErrorParserTests extends TestCase {
 		ErrorParserManager manager;
 		manager = new ImaginaryFilesErrorParserManager(project, markerGenerator, parserID);
 
-		try {
-			transferInputStreamToOutputStream(inputStream, manager.getOutputStream(), 1024);
-		} catch (Exception ex) {
-			assertTrue(false);
-		} finally {
-			try {
-				manager.close();
-			} catch (Exception ex) {
-				/* Ignore */
-			}
-		}
+		transferInputStreamToOutputStream(inputStream, manager.getOutputStream(), 1024);
+		manager.close();
 		manager.reportProblems();
 
 		if (expectedErrorCount >= 0) {
@@ -150,7 +141,7 @@ public class GenericErrorParserTests extends TestCase {
 	}
 
 	protected void runParserTest(String[] dataStream, int expectedErrorCount, int expectedWarningCount, String[] expectedFileNames,
-			String[] expectedDescriptions, String[] parserID) {
+			String[] expectedDescriptions, String[] parserID) throws IOException {
 		String errorStream = makeStringFromArray(dataStream, "\n");
 
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(errorStream.getBytes());

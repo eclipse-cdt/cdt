@@ -11,6 +11,8 @@
 package org.eclipse.cdt.core.internal.errorparsers.tests;
 
 
+import java.io.IOException;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -73,22 +75,22 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 		return suite;
 	}
 
-	public void testMultipleIncludesError() {
+	public void testMultipleIncludesError() throws IOException {
 		runParserTest(GCC_ERROR_STREAM1, GCC_ERROR_STREAM1_ERRORS, GCC_ERROR_STREAM1_WARNINGS, GCC_ERROR_STREAM1_FILENAMES, null,
 				new String[]{GCC_ERROR_PARSER_ID});
 	}
 
-	public void testMultiLineDescriptionError() {
+	public void testMultiLineDescriptionError() throws IOException {
 		runParserTest(GCC_ERROR_STREAM2, GCC_ERROR_STREAM2_ERRORS, GCC_ERROR_STREAM2_WARNINGS, GCC_ERROR_STREAM2_FILENAMES,
 				GCC_ERROR_STREAM2_DESCRIPTIONS, new String[]{GCC_ERROR_PARSER_ID});
 	}
 
-	public void testLongMultiLineDescriptionError() {
+	public void testLongMultiLineDescriptionError() throws IOException {
 		runParserTest(GCC_ERROR_STREAM3, GCC_ERROR_STREAM3_ERRORS, GCC_ERROR_STREAM3_WARNINGS, GCC_ERROR_STREAM3_FILENAMES,
 				GCC_ERROR_STREAM3_DESCRIPTIONS, new String[]{GCC_ERROR_PARSER_ID});
 	}
 
-	public void testMultiFileMultiLineSingleError() {
+	public void testMultiFileMultiLineSingleError() throws IOException {
 		runParserTest(GCC_ERROR_STREAM4, GCC_ERROR_STREAM4_ERRORS, GCC_ERROR_STREAM4_WARNINGS, GCC_ERROR_STREAM4_FILENAMES,
 				GCC_ERROR_STREAM4_DESCRIPTIONS, new String[]{GCC_ERROR_PARSER_ID});
 	}

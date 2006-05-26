@@ -187,6 +187,11 @@ public class ErrorParserManager extends OutputStream {
 		if (fErrorParsers.size() == 0)
 			return;
 
+		// If the line is too long, it is most likely a command line and not an error message
+		// Don't process it since it'll probably be really slow and won't find an error anyway
+		if (line.length() > 1000)
+			return;
+		
 		String[] parserIDs = new String[fErrorParsers.size()];
 		Iterator items = fErrorParsers.keySet().iterator();
 		for (int i = 0; items.hasNext(); i++) {

@@ -30,8 +30,9 @@ public class GCCErrorParser extends AbstractErrorParser {
 		new ErrorPattern("\\(Each undeclared identifier is reported only once"),
 		new ErrorPattern("for each function it appears in.\\)"),
 		new ErrorPattern(": note:"),
+		new ErrorPattern("instantiated from here"),
 		// The following are not...
-		new ErrorPattern("((.:)?[^:]*):([0-9]*):([0-9]*:)? ((warning: )?.*)", 1, 3, 5, 0, 0) {
+		new ErrorPattern("(.*?):([0-9]+):([0-9]+:)? ((warning: )?.*)", 1, 2, 4, 0, 0) {
 			public String getVarName(Matcher matcher) {
 				String desc = getDesc(matcher);
 				Matcher varMatcher = null;
@@ -46,7 +47,7 @@ public class GCCErrorParser extends AbstractErrorParser {
 				return varMatcher != null ? varMatcher.group(1) : null;
 			}
 			public int getSeverity(Matcher matcher) {
-				String warningGroup = matcher.group(6);
+				String warningGroup = matcher.group(5);
 				if (warningGroup != null)
 					return IMarkerGenerator.SEVERITY_WARNING;
 				else

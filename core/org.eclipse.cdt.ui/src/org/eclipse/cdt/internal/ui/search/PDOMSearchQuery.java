@@ -124,7 +124,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				if ((flags & FIND_DECLARATIONS) != 0) {
 					collectNames(pdomBinding.getFirstDeclaration());
 				}
-				if ((flags & FIND_DECLARATIONS) != 0) {
+				if ((flags & FIND_DEFINITIONS) != 0) {
 					collectNames(pdomBinding.getFirstDefinition());
 				}
 				if ((flags & FIND_REFERENCES) != 0) {

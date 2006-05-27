@@ -231,10 +231,16 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		return null;
 	}
 	
-	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
+	public IBinding resolveBinding(IASTName name) throws CoreException {
 		if (name instanceof ICPPASTQualifiedName) {
-			IASTName lastName = ((ICPPASTQualifiedName)name).getLastName();
-			return lastName != null ? resolveBinding(lastName) : null;
+			IASTName[] names = ((ICPPASTQualifiedName)name).getNames();
+			if (names.length == 1)
+				return resolveBinding(names[0]);
+			IASTName lastName = names[names.length - 1];
+			PDOMBinding nsBinding = adaptBinding(names[names.length - 2].resolveBinding());
+			if (nsBinding instanceof IScope) {
+				return ((IScope)nsBinding).getBinding(lastName, true);
+			}
 		}
 		IASTNode parent = name.getParent();
 		if (parent instanceof ICPPASTQualifiedName) {

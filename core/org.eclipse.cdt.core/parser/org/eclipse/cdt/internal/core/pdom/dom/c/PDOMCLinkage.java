@@ -206,7 +206,7 @@ public class PDOMCLinkage extends PDOMLinkage {
 		return super.getNode(record);
 	}
 
-	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
+	public IBinding resolveBinding(IASTName name) throws CoreException {
 		IASTNode parent = name.getParent();
 		if (parent instanceof IASTIdExpression) {
 			// reference

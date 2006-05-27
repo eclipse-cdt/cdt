@@ -170,7 +170,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode {
 	
 	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
 	
-	public abstract PDOMBinding resolveBinding(IASTName name) throws CoreException;
+	public abstract IBinding resolveBinding(IASTName name) throws CoreException;
 
 	public abstract void findBindings(String pattern, List bindings) throws CoreException;
 	

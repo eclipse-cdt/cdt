@@ -94,7 +94,6 @@ public class CtagsReindex extends CtagsIndexerJob {
 			return e.getStatus();
 		} finally {
 		    monitor.done();
-		    pdom.fireChange();
 		}
 		return Status.OK_STATUS;
 	}

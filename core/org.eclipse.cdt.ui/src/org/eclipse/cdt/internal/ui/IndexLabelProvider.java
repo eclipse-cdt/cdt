@@ -57,8 +57,23 @@ public class IndexLabelProvider extends LabelProvider {
 			desc = CElementImageProvider.getVariableImageDescriptor();
 		else if (element instanceof IFunction)
 			desc = CElementImageProvider.getFunctionImageDescriptor();
-		else if (element instanceof ICPPClassType)
-			desc = CElementImageProvider.getClassImageDescriptor();
+		else if (element instanceof ICPPClassType) {
+			try {
+				switch (((ICPPClassType)element).getKey()) {
+				case ICPPClassType.k_class:
+					desc = CElementImageProvider.getClassImageDescriptor();
+					break;
+				case ICPPClassType.k_struct:
+					desc = CElementImageProvider.getStructImageDescriptor();
+					break;
+				case ICPPClassType.k_union:
+					desc = CElementImageProvider.getUnionImageDescriptor();
+					break;
+				}
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+		}
 		else if (element instanceof ICompositeType)
 			desc = CElementImageProvider.getStructImageDescriptor();
 		else if (element instanceof ICPPNamespace)

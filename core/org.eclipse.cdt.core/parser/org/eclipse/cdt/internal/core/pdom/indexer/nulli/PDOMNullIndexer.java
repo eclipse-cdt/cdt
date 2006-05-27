@@ -52,9 +52,17 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
 				PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
-				pdom.clear();
-				pdom.fireChange();
-				return Status.OK_STATUS;
+				try {
+					pdom.acquireWriteLock();
+					pdom.clear();
+					return Status.OK_STATUS;
+				} catch (CoreException e) {
+					return e.getStatus();
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				} finally {
+					pdom.releaseWriteLock();
+				}
 			} catch (CoreException e) {
 				return e.getStatus();
 			}

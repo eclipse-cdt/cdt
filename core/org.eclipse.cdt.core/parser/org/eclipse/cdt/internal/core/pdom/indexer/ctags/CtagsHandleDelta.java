@@ -91,8 +91,6 @@ public class CtagsHandleDelta extends CtagsIndexerJob {
 			return e.getStatus();
 		} catch (InterruptedException e) {
 			return Status.CANCEL_STATUS;
-		} finally {
-			pdom.fireChange();
 		}
 	}
 

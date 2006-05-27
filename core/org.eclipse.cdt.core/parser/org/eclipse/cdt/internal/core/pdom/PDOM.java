@@ -53,7 +53,7 @@ public class PDOM extends PlatformObject
 
 	private Database db;
 	
-	public static final int VERSION = 6;
+	public static final int VERSION = 7;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
@@ -61,6 +61,7 @@ public class PDOM extends PlatformObject
 	// 4 - added parameters in C++
 	// 5 - added types and restructured nodes a bit
 	// 6 - function style macros.
+	// 7 - class key
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
@@ -124,7 +125,7 @@ public class PDOM extends PlatformObject
 		listeners.remove(listener);
 	}
 	
-	public void fireChange() {
+	private void fireChange() {
 		if (listeners == null)
 			return;
 		Iterator i = listeners.iterator();
@@ -334,6 +335,7 @@ public class PDOM extends PlatformObject
 				++lockCount;
 			mutex.notifyAll();
 		}
+		fireChange();
 	}
 	
 }

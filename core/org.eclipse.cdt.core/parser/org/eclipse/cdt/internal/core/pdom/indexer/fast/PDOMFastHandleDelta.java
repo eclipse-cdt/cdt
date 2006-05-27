@@ -151,8 +151,6 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 		} finally {
 			pdom.releaseWriteLock();
 		}
-		
-		pdom.fireChange();
 	}
 
 	protected void removeTU(ITranslationUnit tu) throws CoreException, InterruptedException {

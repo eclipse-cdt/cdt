@@ -402,20 +402,6 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				viewer.refresh();
-//				ICModel model = CoreModel.getDefault().getCModel();
-//				viewer.setInput(model);
-//				try {
-//					ICProject[] cprojects = model.getCProjects();
-//					int n = 0;
-//					for (int i = 0; i < cprojects.length; ++i) {
-//						PDOMDatabase pdom = (PDOMDatabase)PDOM.getPDOM(cprojects[i].getProject()); 
-//						if (pdom != null)
-//							++n;
-//					}
-//					viewer.setChildCount(model, n);
-//				} catch (CModelException e) {
-//					CUIPlugin.getDefault().log(e);
-//				}
 			}
 		});
 	}

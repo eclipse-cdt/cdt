@@ -123,10 +123,6 @@ public abstract class PDOMFullIndexerJob implements IPDOMIndexerTask {
 				}
 			};
 		});;
-	
-		// Tell the world
-		pdom.fireChange();
 	}
-	
 
 }

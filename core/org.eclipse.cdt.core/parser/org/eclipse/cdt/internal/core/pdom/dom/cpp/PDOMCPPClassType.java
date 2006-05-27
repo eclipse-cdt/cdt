@@ -35,14 +35,24 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
- *
+ * 
  */
-public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, ICPPClassScope {
+public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
+		ICPPClassScope {
 
-	protected static final int RECORD_SIZE = PDOMMemberOwner.RECORD_SIZE + 0;
-	
-	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
+	private static final int KEY = PDOMMemberOwner.RECORD_SIZE + 0; // byte
+
+	protected static final int RECORD_SIZE = PDOMMemberOwner.RECORD_SIZE + 1;
+
+	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, IASTName name)
+			throws CoreException {
 		super(pdom, parent, name);
+
+		IBinding binding = name.resolveBinding();
+		int key = 0;
+		if (binding instanceof ICPPClassType) // not sure why it wouldn't
+			key = ((ICPPClassType) binding).getKey();
+		pdom.getDB().putByte(record + KEY, (byte) key);
 	}
 
 	public PDOMCPPClassType(PDOM pdom, int bindingRecord) {
@@ -56,7 +66,7 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 	public int getNodeType() {
 		return PDOMCPPLinkage.CPPCLASSTYPE;
 	}
-	
+
 	public boolean isSameType(IType type) {
 		if (type instanceof PDOMBinding)
 			return record == ((PDOMBinding)type).getRecord();
@@ -116,8 +126,12 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 	}
 
 	public int getKey() throws DOMException {
-		// TODO 
-		return ICPPClassType.k_class;
+		try {
+			return pdom.getDB().getByte(record + KEY);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return ICPPClassType.k_class; // or something
+		}
 	}
 
 	public String[] getQualifiedName() throws DOMException {
@@ -135,7 +149,7 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 	public ICPPClassType getClassType() {
 		return null;
 		// TODO - do we need the real type?
-		//throw new PDOMNotImplementedError();
+		// throw new PDOMNotImplementedError();
 	}
 
 	public ICPPMethod[] getImplicitMethods() {
@@ -201,5 +215,5 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 	public void setFullyCached(boolean b) throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
-	
+
 }

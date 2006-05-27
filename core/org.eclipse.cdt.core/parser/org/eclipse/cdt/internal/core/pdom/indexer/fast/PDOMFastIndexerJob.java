@@ -68,9 +68,6 @@ public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 		} finally {
 			pdom.releaseWriteLock();
 		}
-		
-		// Tell the world
-		pdom.fireChange();
 	}
 
 	protected void addSymbols(ILanguage language, IASTTranslationUnit ast) throws InterruptedException, CoreException {

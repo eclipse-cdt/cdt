@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.runtime.CoreException;
 
@@ -24,15 +23,17 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMSearchElement {
 
 	private final PDOMBinding binding;
-	private final PDOMFile file;
+	private final String name;
+	private final String filename;
 	
 	public PDOMSearchElement(PDOMName name) throws CoreException {
 		binding = name.getPDOMBinding();
-		file = name.getFile();
+		this.name = binding.getName();
+		filename = name.getFile().getFileName().getString();
 	}
 	
 	public int hashCode() {
-		return binding.getRecord() + file.getRecord();
+		return name.hashCode() + filename.hashCode();
 	}
 	
 	public boolean equals(Object obj) {
@@ -41,14 +42,14 @@ public class PDOMSearchElement {
 		if (this == obj)
 			return true;
 		PDOMSearchElement other = (PDOMSearchElement)obj;
-		return binding.equals(other.binding)
-			&& file.equals(other.file);
+		return name.equals(other.name)
+			&& filename.equals(other.filename);
 	}
 
-	public PDOMFile getFile() {
-		return file;
+	public String getFileName() {
+		return filename;
 	}
-	
+
 	public PDOMBinding getBinding() {
 		return binding;
 	}

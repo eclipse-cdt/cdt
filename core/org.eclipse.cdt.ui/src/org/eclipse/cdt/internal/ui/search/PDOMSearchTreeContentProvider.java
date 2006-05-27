@@ -21,11 +21,9 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -94,22 +92,18 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 	}
 	
 	private void insertSearchElement(PDOMSearchElement element) {
-		try {
-			IPath path = new Path(element.getFile().getFileName().getString());
-			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
-			if (files.length > 0) {
-				for (int j = 0; j < files.length; ++j) {
-					ICElement celement = CoreModel.getDefault().create(files[j]);
-					insertChild(celement, element);
-					insertCElement(celement);
-				}
-			} else {
-				String pathName = path.toOSString(); 
-				insertChild(pathName, element);
-				insertChild(result, pathName);
+		IPath path = new Path(element.getFileName());
+		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+		if (files.length > 0) {
+			for (int j = 0; j < files.length; ++j) {
+				ICElement celement = CoreModel.getDefault().create(files[j]);
+				insertChild(celement, element);
+				insertCElement(celement);
 			}
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
+		} else {
+			String pathName = path.toOSString(); 
+			insertChild(pathName, element);
+			insertChild(result, pathName);
 		}
 	}
 	

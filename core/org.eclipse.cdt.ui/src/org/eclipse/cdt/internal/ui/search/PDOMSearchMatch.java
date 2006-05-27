@@ -26,6 +26,18 @@ public class PDOMSearchMatch extends Match {
 	}
 
 	public String getFileName() throws CoreException {
-		return ((PDOMSearchElement)getElement()).getFile().getFileName().getString();
+		return ((PDOMSearchElement)getElement()).getFileName();
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (!(obj instanceof PDOMSearchMatch))
+			return false;
+		PDOMSearchMatch other = (PDOMSearchMatch)obj;
+		return getElement().equals(other.getElement())
+			&& getOffset() == other.getOffset()
+			&& getLength() == other.getLength();
+	}
+	
 }

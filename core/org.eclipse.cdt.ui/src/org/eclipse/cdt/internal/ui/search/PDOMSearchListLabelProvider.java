@@ -12,8 +12,6 @@
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.cdt.internal.ui.IndexLabelProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.swt.graphics.Image;
 
@@ -39,13 +37,7 @@ public class PDOMSearchListLabelProvider extends IndexLabelProvider {
 	public String getText(Object element) {
 		if (element instanceof PDOMSearchElement) {
 			PDOMSearchElement searchElement = (PDOMSearchElement)element;
-			String filename = null;
-			try {
-				filename = " - " + searchElement.getFile().getFileName().getString(); //$NON-NLS-1$ 
-			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
-				filename = ""; //$NON-NLS-1$
-			}
+			String filename = " - " + searchElement.getFileName(); //$NON-NLS-1$ 
 			int count = page.getInput().getMatchCount(element);
 			return getText(searchElement.getBinding()) + filename + " " //$NON-NLS-1$
 				+ CSearchMessages.getFormattedString("CSearchResultCollector.matches", new Integer(count)); //$NON-NLS-1$

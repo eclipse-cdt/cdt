@@ -48,6 +48,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IEditorInput;
@@ -185,7 +186,7 @@ public class SelectionParseAction extends Action {
 	}
 
 	//TODO: Change this to work with qualified identifiers
-	public SelSearchNode getSelection( int fPos ) {
+	public ITextSelection getSelection( int fPos ) {
  		IDocumentProvider prov = ( fEditor != null ) ? fEditor.getDocumentProvider() : null;
  		IDocument doc = ( prov != null ) ? prov.getDocument(fEditor.getEditorInput()) : null;
  		
@@ -233,8 +234,6 @@ public class SelectionParseAction extends Action {
         catch(BadLocationException e){
         }
         
-        SelSearchNode sel = new SelSearchNode();
-
         boolean selectedOperator=false;
         if (selectedWord != null && selectedWord.indexOf(OPERATOR) >= 0 && fPos >= fStartPos + selectedWord.indexOf(OPERATOR) && fPos < fStartPos + selectedWord.indexOf(OPERATOR) + OPERATOR.length()) {
             selectedOperator=true;
@@ -248,11 +247,7 @@ public class SelectionParseAction extends Action {
             
             actualEnd=(actualEnd>0?actualEnd:fEndPos);
             
-            try {
-                sel.selText = doc.get(actualStart, actualEnd - actualStart);
-            } catch (BadLocationException e) {}
-            sel.selStart = actualStart;
-            sel.selEnd = actualEnd;
+            return new TextSelection(doc, actualStart, actualEnd - actualStart);
         // TODO Devin this only works for definitions of destructors right now
         // if there is a destructor and the cursor is in the destructor name's segment then get the entire destructor
         } else if (selectedWord != null && selectedWord.indexOf('~') >= 0 && fPos - 2 >= fStartPos + selectedWord.lastIndexOf(new String(Keywords.cpCOLONCOLON))) {
@@ -271,28 +266,14 @@ public class SelectionParseAction extends Action {
             
             // if the cursor is after the destructor name then use the regular boundaries 
             if (fPos >= actualStart + length) {
-                try {
-                    sel.selText = doc.get(nonJavaStart, (nonJavaEnd - nonJavaStart));
-                } catch (BadLocationException e) {}
-                sel.selStart = nonJavaStart;
-                sel.selEnd = nonJavaEnd;
+            	return new TextSelection(doc, nonJavaStart, length);
             } else {
-                try {
-                    sel.selText = doc.get(actualStart, length);
-                } catch (BadLocationException e) {}
-                sel.selStart = actualStart;
-                sel.selEnd = actualStart + length;                
+            	return new TextSelection(doc, actualStart, length);
             }
         } else {
             // otherwise use the non-java identifier parts as boundaries for the selection
-            try {
-                sel.selText = doc.get(nonJavaStart, (nonJavaEnd - nonJavaStart));
-            } catch (BadLocationException e) {}
-            sel.selStart = nonJavaStart;
-            sel.selEnd = nonJavaEnd;
+        	return new TextSelection(doc, nonJavaStart, nonJavaEnd - nonJavaStart);
         }
-    
-        return sel;     
 	}
     
     private int getOperatorActualEnd(IDocument doc, int index) {
@@ -507,22 +488,15 @@ public class SelectionParseAction extends Action {
 	  * Return the selected string from the editor
 	  * @return The string currently selected, or null if there is no valid selection
 	  */
-	protected SelSearchNode getSelection( ITextSelection textSelection ) {
+	protected ITextSelection getSelection( ITextSelection textSelection ) {
 		if( textSelection == null )
 			return null;
 		
-		 String seltext = textSelection.getText();
-		 SelSearchNode sel = null;
-		 if ( seltext == null || seltext.length() == 0 ) {
-	 		 int selStart =  textSelection.getOffset();
-	 		 sel = getSelection(selStart);
+		 if (textSelection.getLength() == 0) {
+	 		 return getSelection(textSelection.getOffset());
 		 } else {
-		 	sel = new SelSearchNode();
-		 	sel.selText= seltext;
-		 	sel.selStart = textSelection.getOffset();
-		 	sel.selEnd = textSelection.getOffset() + textSelection.getLength();
+			 return textSelection;
 		 }
-		 return sel;
 	}
 	
 	protected ISelection getSelection() {
@@ -534,13 +508,7 @@ public class SelectionParseAction extends Action {
 		return sel;
 	}
 	
-	protected class SelSearchNode{
-	 	public String selText;
-        public int selStart;
-        public int selEnd;
-	}
-
-    protected SelSearchNode getSelectedStringFromEditor() {
+    protected ITextSelection getSelectedStringFromEditor() {
         ISelection selection = getSelection();
         if( selection == null || !(selection instanceof ITextSelection) ) 
              return null;

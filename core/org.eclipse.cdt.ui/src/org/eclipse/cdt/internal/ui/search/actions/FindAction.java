@@ -43,6 +43,7 @@ public abstract class FindAction extends SelectionParseAction {
 	 		if (object instanceof ISourceReference)
 	 			searchJob = new PDOMSearchElementQuery(getScope(), (ISourceReference)object, getLimitTo());
 		} else if (selection instanceof ITextSelection) {
+			ITextSelection selNode = getSelection((ITextSelection)selection);
 			ICElement element = fEditor.getInputCElement();
 			while (element != null && !(element instanceof ITranslationUnit))
 				element = element.getParent();
@@ -50,7 +51,7 @@ public abstract class FindAction extends SelectionParseAction {
 				searchJob = new PDOMSearchTextSelectionQuery(
 						getScope(),
 						(ITranslationUnit)element,
-						(ITextSelection)selection,
+						selNode,
 						getLimitTo());
 			}
 		} 

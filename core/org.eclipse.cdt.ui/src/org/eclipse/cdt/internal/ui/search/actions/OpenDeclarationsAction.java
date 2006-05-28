@@ -27,11 +27,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.swt.widgets.Display;
 
 public class OpenDeclarationsAction extends SelectionParseAction {
 	public static final IASTName[] BLANK_NAME_ARRAY = new IASTName[0];
-	SelSearchNode selNode;
+	ITextSelection selNode;
 
 	/**
 	 * Creates a new action with the given editor
@@ -50,8 +51,8 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
-				int selectionStart = selNode.selStart;
-				int selectionLength = selNode.selEnd - selNode.selStart;
+				int selectionStart = selNode.getOffset();
+				int selectionLength = selNode.getLength();
 					
 				IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
 				if (workingCopy == null)

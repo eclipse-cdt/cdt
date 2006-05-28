@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -44,6 +45,10 @@ public abstract class PDOMFullIndexerJob implements IPDOMIndexerTask {
 		this.pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(indexer.getProject());
 	}
 
+	public IPDOMIndexer getIndexer() {
+		return indexer;
+	}
+	
 	protected IASTTranslationUnit parse(ITranslationUnit tu) throws CoreException {
 		ILanguage language = tu.getLanguage();
 		if (language == null)

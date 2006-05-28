@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -1136,6 +1137,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	public void deleting(IProject project) {
 		// stop the binary runner for this project
 		removeBinaryRunner(project);
+		// stop indexing jobs for this project
+		CCorePlugin.getPDOMManager().deleting(create(project));
 	}
 
 }

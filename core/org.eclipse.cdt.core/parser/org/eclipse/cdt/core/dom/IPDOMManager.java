@@ -36,4 +36,7 @@ public interface IPDOMManager {
 	// Enqueue and indexer sub job
 	public void enqueue(IPDOMIndexerTask subjob);
 
+	// Project being deleted
+	public void deleting(ICProject project);
+	
 }

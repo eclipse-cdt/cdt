@@ -3,9 +3,11 @@
  */
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -22,7 +24,12 @@ public class PDOMIndexerJob extends Job {
 	private final PDOMManager manager;
 	
 	private LinkedList queue = new LinkedList();
+	private IPDOMIndexerTask currentTask;
+	private boolean isCancelling = false;
+	private Object taskMutex = new Object();
 	
+	private IProgressMonitor monitor;
+
 	public PDOMIndexerJob(PDOMManager manager) {
 		super(CCorePlugin.getResourceString("pdom.indexer.name")); //$NON-NLS-1$
 		this.manager = manager;
@@ -30,6 +37,8 @@ public class PDOMIndexerJob extends Job {
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
+		this.monitor = monitor;
+
 		long start = System.currentTimeMillis();
 		
 		String taskName = CCorePlugin.getResourceString("pdom.indexer.task"); //$NON-NLS-1$
@@ -38,10 +47,20 @@ public class PDOMIndexerJob extends Job {
 		fillQueue();
 		while (true) {
 			while (!queue.isEmpty()) {
-				if (monitor.isCanceled())
-					return Status.CANCEL_STATUS;
-				IPDOMIndexerTask task = (IPDOMIndexerTask)queue.removeFirst();
-				task.run(monitor);
+				synchronized (taskMutex) {
+					currentTask = (IPDOMIndexerTask)queue.removeFirst();
+				}
+				currentTask.run(monitor);
+				synchronized (taskMutex) {
+					if (isCancelling) {
+						// TODO chance for confusion here is user cancels
+						// while project is getting deletes.
+						monitor.setCanceled(false);
+						isCancelling = false;
+						taskMutex.notify();
+					} else if (monitor.isCanceled())
+						return Status.CANCEL_STATUS;
+				}
 			}
 			if (manager.finishIndexerJob())
 				break;
@@ -58,10 +77,30 @@ public class PDOMIndexerJob extends Job {
 	}
 	
 	private void fillQueue() {
-		IPDOMIndexerTask task = manager.getNextTask();
-		while (task != null) {
-			queue.addLast(task);
-			task = manager.getNextTask();
+		synchronized (taskMutex) {
+			IPDOMIndexerTask task = manager.getNextTask();
+			while (task != null) {
+				queue.addLast(task);
+				task = manager.getNextTask();
+			}
+		}
+	}
+	
+	public void cancelJobs(IPDOMIndexer indexer) {
+		synchronized (taskMutex) {
+			for (Iterator i = queue.iterator(); i.hasNext();) {
+				IPDOMIndexerTask task = (IPDOMIndexerTask)i.next();
+				if (task.getIndexer().equals(indexer))
+					i.remove();
+			}
+			if (currentTask != null && currentTask.getIndexer().equals(indexer)) {
+				monitor.setCanceled(true);
+				isCancelling = true;
+				try {
+					taskMutex.wait();
+				} catch (InterruptedException e) {
+				}
+			}
 		}
 	}
 }

@@ -19,4 +19,6 @@ public interface IPDOMIndexerTask {
 	 */
 	public void run(IProgressMonitor monitor);
 	
+	public IPDOMIndexer getIndexer();
+	
 }

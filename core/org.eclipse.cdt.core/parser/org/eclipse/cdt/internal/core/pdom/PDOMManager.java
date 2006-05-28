@@ -304,6 +304,16 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 		}
     }
     
+    public void deleting(ICProject project) {
+    	// Project is about to be deleted. Stop all indexing tasks for it
+    	IPDOMIndexer indexer = getIndexer(project);
+    	synchronized (indexerJobMutex) {
+			if (indexerJob != null) {
+				indexerJob.cancelJobs(indexer);
+			}
+		}
+    }
+    
 	/**
 	 * Startup the PDOM. This mainly sets us up to handle model
 	 * change events.

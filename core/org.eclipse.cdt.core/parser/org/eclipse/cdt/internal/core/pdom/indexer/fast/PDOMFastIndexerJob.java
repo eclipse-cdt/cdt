@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -47,6 +48,10 @@ public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 		this.codeReaderFactory = new PDOMCodeReaderFactory(pdom);
 	}
 
+	public IPDOMIndexer getIndexer() {
+		return indexer;
+	}
+	
 	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
 		ILanguage language = tu.getLanguage();
 		if (language == null)

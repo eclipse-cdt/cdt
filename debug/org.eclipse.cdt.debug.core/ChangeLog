@@ -1,3 +1,9 @@
+2006-05-29 Mikhail Khodjaiants
+	Bug 108472: Debug continues to fail.
+	* DebugCoreMessages.properties
+	* CDebugTarget.java
+	* CoreModelMessages.properties
+
 2006-05-26 Mikhail Khodjaiants
 	Bug 137138: Common source containers get disposed.
 	* CSourceLookupParticipant.java

@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
-import org.eclipse.cdt.debug.core.DebugCoreMessages;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.ICGlobalVariableManager;
@@ -1731,10 +1730,16 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			setInternalTemporaryBreakpoint( location );
 		}
 		catch( CoreException e ) {
-			String message = MessageFormat.format( DebugCoreMessages.getString( "CDebugModel.0" ), new String[]{ e.getStatus().getMessage() } ); //$NON-NLS-1$
+			boolean isTerminated = getCDITarget().isTerminated();
+			if ( isTerminated ) {
+				String message = MessageFormat.format( CoreModelMessages.getString( "CDebugTarget.0" ), new String[]{ stopSymbol } ); //$NON-NLS-1$
+				MultiStatus status = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(), IStatus.OK, message, null );
+				status.add( e.getStatus() );
+				throw new DebugException( status );
+			}
+			String message = MessageFormat.format( CoreModelMessages.getString( "CDebugTarget.2" ), new String[]{ stopSymbol, e.getStatus().getMessage() } ); //$NON-NLS-1$
 			IStatus newStatus = new Status( IStatus.WARNING, e.getStatus().getPlugin(), ICDebugInternalConstants.STATUS_CODE_QUESTION, message, null );
 			if ( !CDebugUtils.question( newStatus, this ) ) {
-				terminate();
 				throw new DebugException( new Status( IStatus.OK, e.getStatus().getPlugin(), e.getStatus().getCode(), e.getStatus().getMessage(), null ) );
 			}
 		}
@@ -1748,7 +1753,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			setInternalTemporaryBreakpoint( location );
 		}
 		catch( CoreException e ) {
-			String message = MessageFormat.format( DebugCoreMessages.getString( "CDebugModel.0" ), new String[]{ e.getStatus().getMessage() } ); //$NON-NLS-1$
+			String message = MessageFormat.format( CoreModelMessages.getString( "CDebugTarget.2" ), new String[]{ mainSymbol, e.getStatus().getMessage() } ); //$NON-NLS-1$
 			IStatus newStatus = new Status( IStatus.WARNING, e.getStatus().getPlugin(), ICDebugInternalConstants.STATUS_CODE_QUESTION, message, null );
 			if ( !CDebugUtils.question( newStatus, this ) ) {
 				terminate();

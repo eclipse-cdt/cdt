@@ -1,3 +1,7 @@
+2006-05-29 Mikhail Khodjaiants
+	Bug 144277: No images for source containers types (temporary fix).
+	* SourceContainerLabelProvider.java
+
 2006-05-24 Mikhail Khodjaiants
 	Bug 143593: Module's children are not expandable.
 	* CDebugElementAdapterFactory.java

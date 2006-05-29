@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -29,6 +30,8 @@ public class SourceContainerLabelProvider extends LabelProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
+		// Temporary fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=144277
+		DebugUIPlugin.getDefault().getImageRegistry();
 		// first allow workbench adapter to provide image
 		Image image = getWorkbenchLabelProvider().getImage(element);
 		if (image == null) {

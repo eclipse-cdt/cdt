@@ -1,0 +1,19 @@
+<?eclipse version="3.0"?>
+<plugin>
+
+<extension point="org.eclipse.debug.ui.memoryRenderings">
+    <renderingType 
+        name="Traditional"
+        id="org.eclipse.dsdp.debug.memory.renderings.MemoryRenderingTraditional"
+        class="org.eclipse.dsdp.debug.memory.renderings.MemoryRenderingTypeDelegate">
+    </renderingType>
+    <renderingBindings
+        renderingIds="org.eclipse.dsdp.debug.memory.renderings.MemoryRenderingTraditional"
+        defaultIds="org.eclipse.dsdp.debug.memory.renderings.MemoryRenderingTraditional">
+        <enablement>
+            <instanceof value="org.eclipse.debug.core.model.IMemoryBlockExtension"/>
+        </enablement>    
+    </renderingBindings>          
+</extension>
+
+</plugin>

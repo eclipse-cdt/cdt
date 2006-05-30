@@ -1,2 +1,0 @@
-[pde.convertSchemaToHTML] /Users/david/eclipse/OpenRSE/doc/documentation/org.eclipse.rse.doc.isv/../org.eclipse.rse.core/plugin.xml (No such file or directory)
-[pde.convertSchemaToHTML] /Users/david/eclipse/OpenRSE/doc/documentation/org.eclipse.rse.doc.isv/../org.eclipse.rse.ui/plugin.xml (No such file or directory)

@@ -1,7 +1,7 @@
 -charset "iso-8859-1"
--sourcepath "../../../ws/org.eclipse.dstore.core/src@sep@../../../ws/org.eclipse.dstore.extra/src"
+-sourcepath "../org.eclipse.dstore.core/src@sep@../org.eclipse.dstore.extra/src"
 -d reference/api
--classpath @rt@@sep@../org.apache.ant/lib/ant.jar@sep@../org.eclipse.ui.console/console.jar@sep@../org.eclipse.osgi/@dot@sep@../org.eclipse.osgi.services/services.jar@sep@../org.eclipse.osgi.util/util.jar@sep@../org.eclipse.core.runtime.compatibility/compatibility.jar@sep@../org.eclipse.ui.ide/@dot@sep@../org.eclipse.ui.views/@dot@sep@../org.eclipse.ui.workbench/@dot@sep@../org.apache.lucene/lucene-1.4.3.jar@sep@../org.eclipse.help.appserver/@dot
+-classpath @rt@
 -breakiterator
 -use
 -splitIndex

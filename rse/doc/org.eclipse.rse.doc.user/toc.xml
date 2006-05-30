@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="Remote System Explorer User Guide (old)">
+   <topic label="Universal Systems" href="concepts/cuniversal.html"/>
+   <topic label="Remote System Explorer Connections" href="concepts/cbegin.html">
+      <topic label="Connecting to a remote Linux or UNIX server" href="tasks/tbeginlinux.html"/>
+      <topic label="Connecting to a remote Windows server" href="tasks/tbeginwindows.html"/>
+      <topic label="Disconnecting from a remote server" href="tasks/tbegindiscon.html"/>
+      <topic label="Creating a second connection to a remote server" href="tasks/tbeginsecond.html"/>
+      <topic label="Deleting a connection" href="tasks/tbegindelete.html"/>
+      <topic label="Configuring environment variable support for connections" href="tasks/tbeginenv.html"/>
+   </topic>
+   <topic label="Remote System Explorer filters, filter pools, and filter pool references" href="concepts/cfilters.html">
+      <topic label="Creating filters" href="tasks/tmanagemem.html"/>
+      <topic label="Changing filters" href="tasks/tmanageedit.html"/>
+      <topic label="Deleting filters" href="tasks/tmanagedel.html"/>
+      <topic label="Configuring filter pools" href="tasks/tmanagepools.html"/>
+      <topic label="Configuring filter pool references" href="tasks/tmanagepoolsref.html"/>
+   </topic>
+   <topic label="Remote System Explorer Profiles" href="concepts/cprofile.html">
+     <topic label="Creating a second profile" href="tasks/tbeginsecprofile.html"/>
+     <topic label="Deleting a profile" href="tasks/tbegindeleteprofile.html"/>
+   </topic>
+   <topic label="Team support" href="concepts/cteam.html">
+      <topic label="Using team support" href="tasks/tteamsup.html"/>
+      <topic label="Working with profiles and team support" href="tasks/tteamsup1.html"/>
+   </topic>
+   <topic label="Shells and commands in the Remote Systems view" href="concepts/crunremcmds.html">
+      <topic label="Running and viewing commands and shells using the Remote Commands view" href="tasks/truncmdsview.html"/>
+      <topic label="Working with command shells" href="tasks/twrkcmdshl.html"/>
+   </topic>
+   <topic label="User actions" href="concepts/cuseractions.html">
+      <topic label="Managing user actions" href="tasks/tworkuseract.html"/>
+      <topic label="Editing an existing type" href="tasks/tedittype.html"/>
+      <topic label="Removing an existing type" href="tasks/tremtype.html"/>
+   </topic>
+   <topic label="Search for text and files on remote servers" href="tasks/tmanagesearch.html">
+      <topic label="Using search parameters with special characters" href="ref/rsearch.html"/>
+   </topic>
+   <topic label="Compiling programs" href="concepts/cremcompile.html"/>
+   <topic label="Managing archived files" href="tasks/tarchive.html"/>
+   <topic label="Importing resources from a remote file system" href="tasks/tremoimp.html" /> 
+   <topic label="Exporting resources to a remote file system" href="tasks/tremoexp.html" />
+   <topic label="Building programs on a remote system" href="tasks/tbuild.html" />
+   <topic label="Accessing Remote System Explorer preferences" href="ref/rrsepref.html"/>
+   <topic label="Saving User IDs and passwords" href="tasks/tbeginpass.html"/>
+<topic label="Legal" href="notices.html"/>
+</toc>

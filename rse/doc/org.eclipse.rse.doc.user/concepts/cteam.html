@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css"/>
+<title>Team support</title>
+</head>
+<body id="cteam">
+<a name="cteam"><!-- --></a>
+<h1 class="topictitle1">Team support</h1>
+<div>
+<p>The team support model works with shared repositories that store
+version-managed resources on servers that are accessible to the entire team. Usually
+you would share the folders and files of an Eclipse project.&nbsp; Each
+team member sends their changes to the repository, and receives changes
+that
+were made by a team member from the repository. While the Remote System
+Explorer
+is not project-based, (it is designed for direct access to remote
+resources),
+there is a single project created for all the non-remote resources that
+the
+Remote System Explorer manages. Profiles are stored in that project and
+so everything that belongs to a profile can be
+shared with your teammates.</p>
+<div class="p" id="cteam__profilelist"><a name="cteam__profilelist"><!-- --></a>Profiles
+contain:
+<ul>
+  <li>Connections -- including various subsystem properties. User IDs
+and passwords are not shared.</li>
+  <li>Filters, filter pools, and filters pool references</li>
+  <li>User-defined actions</li>
+  <li>Compile commands</li>
+</ul>
+</div>
+<p> Use the Team view of the Remote System Explorer perspective to
+associate
+and synchronize the project named RemoteSystemsConnection that contains
+these profiles with a repository. After
+synchronizing with the repository, you will receive all the shared
+Remote System
+Explorer resources from your team, including their profiles. You then
+use the <b>Reload Remote System Explorer</b> action, located on the
+pop-up menu, to make the Remote Systems Explorer know about these
+changes.&nbsp; You can also, of course, quit and restart the
+workbench.&nbsp; See the related tasks for more information.</p>
+<p>Any resources received that are in a profile that you have already
+active, such
+as Team, will immediately be available and accessible to you. However,
+resources
+in other profiles will not be available unless you choose to make those
+profiles
+active. If you use multiple workstations, team support can also be used
+to
+make your own private configurations of filters, filter pools, and
+connections available on all the workstations by making
+your profile active on each workstation.</p>
+</div>
+<div>
+<p><b class="relconceptshd">Related concepts</b><br/>
+<a href="cprofile.html" title="">Remote System Explorer Profiles</a><br/>
+</p>
+<p><b class="reltaskshd">Related tasks</b><br/>
+<a href="../tasks/tteamsup.html" title="">Using team support</a><br/>
+<a href="../tasks/tteamsup1.html" title="">Working with profiles and team support</a><br/>
+</p>
+</div>
+</body>
+</html>

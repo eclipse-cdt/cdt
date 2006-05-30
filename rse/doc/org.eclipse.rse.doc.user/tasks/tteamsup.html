@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css"/>
+<title>Using team support</title>
+</head>
+
+<body id="tteamsup">
+<a name="tteamsup"><!-- --></a>
+<h1 class="topictitle1">Using team support</h1>
+<div>
+<div class="p">You can use any Eclipse-enabled repository from any
+vendor. The following
+information describes project-sharing using Concurrent Versions System
+(CVS) support that comes with Eclipse. Steps and user interface
+elements will differ depending on the repository
+support that you have installed.
+<div class="note"><span class="notetitle">Note: </span>When you
+synchronize your RemoteSystemsConnection project with the repository
+the first time, you will see many files in conflict.
+This is because it takes one synchronization to properly align
+the server's encoded version information with your local files. This
+happens only once and you can just receive all of the incoming changes
+and your local workspace will then be synchronized with the server. You
+might also find inactive profiles that belong to other teammates in the Team
+view after you synchronize with the central server. You can choose whether
+or not to activate these profiles in the Team view if you want to see the
+profile's contents in the Remote System Explorer on your local workstation.</div>
+<p>In a team programming environment, team members do work in their own workbench,
+isolated from others. Eventually they will want to share their work with
+their teammates.&nbsp; The Remote System Explorer allows them to share
+their connections, filter pools, and filters. To share these resources:</p>
+</div>
+<ol>
+<li class="skipspace">In the Remote System Explorer perspective, select the Team tab which by
+  default is located in the same pane as the Remote Systems view.&nbsp; This
+  will bring the Team view to the front of the Remote System Explorer.&nbsp;
+  You can also use the&nbsp;<img src="../images/gsarrow.gif" title="" alt="menu" style="width: 24px; height: 23px;"/>
+button on the Remote Systems view and select the <span style="font-weight: bold;">Work
+With Profiles</span> action.<span> </span></li>
+<li class="skipspace"><span>Expand <b>RemoteSystemsConnections</b>. The profiles that you have defined, as well as the Team profile, are displayed. The Team profile is created by the Remote System Explorer to use for sharing connections, filter pools, and filters if you do not want to share them in a profile that you create and manage.</span></li>
+<li class="skipspace"><span>Right-click on <b>RemoteSystemsConnections</b>
+and select <span><b>Team</b> &gt; <b>Share Project</b></span> . </span></li>
+<li class="skipspace"><span>Select <b>CVS</b> and click <b>Next</b>.</span></li>
+<li class="skipspace"><span>Select <b>Use existing repository
+location </b> if you have already defined a CVS repository. Select <b>Create a new
+repository</b> location if you need to define a CVS repository (this
+information should be available from the person who configured the CVS
+repository on the server). To create a CVS repository definition:</span>
+    <ol type="a">
+      <li class="skipspace"><span>In the <b>Host</b> field, type the
+address of the server, for example mymachine.com. </span></li>
+      <li class="skipspace"><span>In the <b>Repository path</b> field,
+type the path to the repository on the server, for example /home/test, d:/test. </span></li>
+      <li class="skipspace"><span>In the <b>User</b> field, type the
+user name to use to connect to the repository. </span></li>
+      <li class="skipspace"><span>In the <b>Password</b> field, type
+the password for the user name. </span></li>
+      <li class="skipspace"><span>From the <b>Connection Type</b>
+list, select the authentication protocol of the CVS server. There are three
+connection methods that come with the Eclipse CVS client: </span>
+        <ul>
+          <li><b>pserver</b>: A CVS specific connection method. </li>
+          <li><b>extssh</b> : An SSH 1.0 client included with the workbench. </li>
+          <li><b>ext</b>: The CVS ext connection method that uses an
+external tool such as SSH to connect to the repository. The tool used
+by ext is configured in the<span><b>Team</b> &gt; <b>CVS</b> &gt; <b>EXT
+Connection Method</b></span> preference page. </li>
+        </ul>
+      </li>
+      <li class="skipspace"><span>If the server uses a custom port,
+enable <b>Use Port</b> and
+enter the port number. </span></li>
+    </ol>
+  </li>
+  <li class="skipspace"><span>Click <b>Finish</b>. The repository
+location is
+created. The <span style="font-weight: bold;">RemoteSystemsConnections</span> project will be created remotely and the Synchronize view will open and
+  allow you to commit its resources to the server. If the project already
+  exists remotely, the Synchronize view will show conflicts on any files
+  that exist both locally and remotely. If the </span><span><span
+ style="font-weight: bold;">RemoteSystemsConnections</span> </span><span>project
+already exists in the repository when you first share it, there may be
+many conflicts. Generally, these are not real conflicts, but simply considered
+conflicts on the first synchronize because there is no local CVS information for the
+resources in your workspace.
+If you have not created any resources in your Team profile, you can
+safely send or receive all of the conflicting files. If you have created
+resources in your Team profile, you should check each conflicting file to ensure
+there really are no differences, and if there are, resolve them by merging.</span></li>
+  <li class="skipspace"><span>To synchronize your resources with those
+in the associated repository, right-click on the <span style="font-weight: bold;">RemoteSystemsConnection
+    </span>project, and select <span><b>Team</b> &gt; <b>Synchronize
+with Repository</b></span>.</span></li>
+  <li class="skipspace"><span>After sharing or synchronizing, and
+receiving incoming resources from the repository, right-click on the <span
+ style="font-weight: bold;">RemoteSystemsConnection </span>project,
+and select <b>Reload Remote System Explorer</b>. This refreshes
+the Remote System Explorer and Team view to reflect the new or changed
+resources.</span></li>
+</ol>
+</div>
+<div class="nested1" id="tviewproject"><a name="tviewproject"><!-- --></a>
+<h2 class="topictitle2">Viewing the project resources in the Navigator
+view</h2>
+<div>
+<div class="p">The Navigator view provides a hierarchical view of all
+the resources in the workspace. From here, you can view the contents of the projects
+that are shared, including the <span style="font-weight: bold;">RemoteSystemsConnection
+</span>project, and select team-related actions on particular
+resources. By default, the Navigator view is included in the Resources perspective.
+To add it to the current perspective,
+<ol>
+  <li>Select <span><b>Window</b> &gt; <b>Show View</b> &gt; <b>Other</b></span>.</li>
+  <li>Expand <b>Basic.</b> </li>
+  <li>Select <b>Navigator.</b></li>
+</ol>
+</div>
+<div class="p"><img src="../images/navigator.jpg" alt=""/></div>
+</div>
+<div>
+<p><b class="relconceptshd">Related concepts</b><br/>
+<a href="../concepts/cteam.html" title="">Team support</a><br/>
+<a href="../concepts/cprofile.html" title="">Remote System Explorer
+Profiles</a><br/>
+</p>
+<p><b class="reltaskshd">Related tasks</b><br/>
+<a href="tteamsup1.html" title="">Working with profiles and team support</a><br/>
+</p>
+</div>
+</div>
+</body>
+</html>

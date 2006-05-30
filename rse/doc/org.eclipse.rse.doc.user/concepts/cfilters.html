@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css"/>
+<title>Remote System Explorer filters, filter pools, and filter pool references</title>
+</head>
+
+<body id="cfilters">
+<a name="cfilters"><!-- --></a>
+<h1 class="topictitle1">Remote System Explorer filters, filter pools,
+and filter pool references</h1>
+<div>
+<p>The Remote System Explorer is a set of local client tools you use to
+organize
+how you want to work with the resources such as folders and files on
+your
+remote server. The following graphic serves as an introduction to
+some of the main components of the Remote System Explorer:<br/>
+<img src="../images/ModelRSE.gif" alt=""/><br/>
+</p>
+<div class="p">In the Remote System Explorer perspective, you query
+your server
+to list and perform actions upon remote resources such as folders and
+files. You perform
+these tasks on these remote resources by using <i>filters</i> that
+show these resources at your workstation.<br/>
+</div>
+<p>The Remote System Explorer perspective is designed to allow you to
+manipulate the resources directly on the remote system.&nbsp; The
+actions that are available depend on the type of system you are
+connecting to and the way the resource is recognized.&nbsp; For
+example, your selections can define
+a filter string to find all files that match *.c in a partcular
+directory. </p>
+<div class="p">When you access the list by expanding the filter, you
+can see all the files that match that filter and you can perform
+actions (such as editing, compiling, running, and debugging) against
+these files.
+<div class="note"><span class="notetitle">Note: </span>You can drag
+and drop filters from one subsystem or filter
+pool to another. However, if you drag a filter into another filter, the
+filter strings from the source filter are added to the ones already in
+the target
+filter.</div>
+</div>
+<p id="cfilters__poolsdesc"><a name="cfilters__poolsdesc"><!-- --></a>If
+you have been using the Remote System Explorer for some
+time, your workspace might contain too many filters to navigate easily.
+Or,
+you might just want to keep groups of filters separate if, for example,
+you
+need to represent two distinct environments in the Remote System
+Explorer,
+regardless of how many filters you have. In either case, you can group
+filters
+into <i>filter pools</i>. </p>
+<p>For example, one filter pool could contain filters for an accounts
+receivable
+program while another contains filters for a payroll program. Or, if
+you
+have two different environments on your server: a production
+environment and a test environment, you can define a distinct
+environment and set of filters for each. </p>
+<p id="cfilters__poolsdesc2"><a name="cfilters__poolsdesc2"><!-- --></a>Without
+filter pools, all of your filters appear together
+in all connections. When you create filter pools, however, any filter
+you
+create within that filter pool is distinct to that connection, and will
+not
+appear in any other connections. (See the related links for more
+information
+about filter pools.)</p>
+<p id="cfilters__filterstrings"><a name="cfilters__filterstrings"><!-- --></a>You
+can share filter pools among many connections through
+the use of a <i>filter pool reference</i>. A filter pool reference is
+a mechanism
+that displays a filter pool from one connection in any other
+connection, so
+that when you make a change to the original filter pool, your change is
+reflected
+your filter pool reference.</p>
+<p>All connections, filters, filter pools, and so on, belong to a
+Remote System Explorer <i>profile</i>, that you define during your
+first connection
+to a server. You might wonder what happens to your filters or filter
+pools if you delete a connection, especially if you have filters shared
+among
+two or more connections. Rest assured that the filters are not deleted,
+since
+filters actually belong to profiles, and not connections.<br/>
+</p>
+<p>Keep in mind that if you need to have an entirely new configuration
+of filter pools, filters and connection in the Remote System Explorer,
+you can always create a new profile. See
+the related links for more information.</p>
+</div>
+<div>
+<p><b class="relconceptshd">Related concepts</b><br/>
+<a href="cuseractions.html" title="">User actions (user options)</a><br/>
+<a href="cremcompile.html" title="">Compiling</a><br/>
+</p>
+<p><b>Related Tasks</b><br/>
+<a href="../tasks/tmanagepools.html" title="">Configuring filter pools</a><br/>
+<a href="../tasks/tmanageedit.html"
+ title="You can change the properties for any filter by opening the filter's properties sheet. You can also add new filter strings to a filter from this sheet. For example, if you have a filter that lists all *.rpgle source members, you can add an additional filter string that will display all *.cblle source members as well.">Changing
+filters</a><br/>
+<a href="../tasks/tmanagedel.html" title="">Deleting filters</a><br/>
+<a href="../tasks/tbeginsecprofile.html" title="">Creating a second
+profile</a><br/>
+</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css"/>
+<title>Compiling</title>
+</head>
+
+<body id="cremcompile">
+<a name="cremcompile"><!-- --></a>
+<h1 class="topictitle1">Compiling Programs</h1>
+<div>
+<p>You can run a compile command on a server from the Remote System
+Explorer perspective.&nbsp; When you compile, the workbench determines
+the source type of the file, and then runs
+the last used compile command for that type. However, you can always
+change
+this behavior through Remote Systems preferences (see the related
+links).</p>
+<p>You can also compile multiple resources listed in a filter by
+holding down the CTRL key and clicking on all the members
+you want to compile, right-click to access the compile menu, and then
+select the compile command you wish to run. The workbench determines
+what order to compile these resources according to the preferences you
+specify for that workspace.</p>
+<div class="p">Note that multiple file compilation is disabled if:
+<ul>
+  <li>One or more of the selected source types are not compatible.</li>
+  <li>The selected resources are not from the same connection.</li>
+</ul>
+</div>
+<p>A compile command is always associated with a particular source
+type. It consists of an identifier and a command string that will be
+run on the
+server.&nbsp; Each profile in the Remote System Explorer has a set of
+source member types,
+and each source type has a set of compile commands associated with
+them. You
+can add source types to a profile and add compile commands to a source
+type.</p>
+<p>IBM supplies a number
+of default compile commands for common file types and you can also add
+your own.&nbsp; Since compile commands are owned by a profile they can
+be shared using team support.</p>
+<p>See the related topics below for more information.</p>
+</div>
+<div>
+<p><b class="reltaskshd">Related concepts</b><br/>
+<a href="cprofile.html"><span style="text-decoration: underline;">Profiles</span></a><br/>
+<a href="crunremcmds.html">Commands and Shells</a><br/>
+</p>
+<p><b class="relrefhd">Related reference</b><br/>
+<a href="../ref/rrsepref.html" title="">Preferences</a><br/>
+</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css"/>
+<title>Connecting to a remote Windows server</title>
+</head>
+
+<body id="tbeginlinux">
+<a name="tbeginlinux"></a>
+<h1 class="topictitle1">Connecting to a remote Windows server</h1>
+<div>
+<div class="p">
+<p><b>Installing the server code:</b></p>
+<div class="p">
+<ol>
+<li>Create a directory where you want to install the server code. The
+remainder of these instructions will assume the directory name and location is
+C:\rseserver, but you are free to use any directory you choose. </li>
+<li>Find the <span style="font-style: italic;">x</span>\eclipse\plugins\com.ibm.etools.systems.universal_<i>version_number</i>\serverruntime\rseserver.jar
+file on your local workstation, where <i>x</i> is the directory where you
+installed the product.</li>
+<li>Copy the rseserver.jar to the C:\rseserver directory (this can be
+on a different machine).</li>
+<li>Open a command prompt, and run the following command in the
+C:\rseserver directory to extract the server code:
+<pre>jar xf rseserver.jar</pre>
+<div class="note">If
+you receive an error, ensure that you have an entry for the /bin JDK
+directory in your Path environment variable. JDK version 1.4 is required.</div>
+</li>
+</ol>
+</div>
+<p><b>Starting the server:</b></p>
+<p>You can start the RSE communications
+server with the server manually, or with a daemon.</p>
+<div class="p">To start the server
+manually:
+<ol>
+<li>First, you need to configure your CLASSPATH and then start the
+communications server. In a command prompt, enter:
+<pre>
+c:<br/>
+cd:\rseserver<br/>
+win.env.bat<br/>
+run.win.bat [port]
+</pre>
+The port parameter to the run.win.bat program is optional. If
+you do not specify a port, the server will pick the first port
+available and print the port number to standard out. By default, it is usually 4033.
+You will then have to enter this port number in the port property for the
+Files subsystem for your connection in the Remote System Explorer (see
+Connecting below).
+</li>
+</ol>
+</div>
+<div class="p">To start the server with a the server daemon:
+<ol>
+<li>First, you need to configure your CLASSPATH and then start the
+server daemon. In a command prompt, enter:
+<pre>
+c:<br/>
+cd:\rseserver<br/>
+win.env.bat<br/>
+daemon.win.bat
+</pre>
+Note that the server daemon <b>does not</b> enforce any user
+authentication. If you run the server daemon, any user can connect to the machine, work
+with the file system and run commands. <span style="font-weight: bold;">Use
+of the server daemon on Windows systems is not recommended</span>.</li>
+</ol>
+</div>
+</div>
+<div class="p">To connect to a remote Windows server:</div>
+<ol>
+<li><span>Switch to the Remote System Explorer perspective.</span></li>
+<li><span>In the Remote Systems view, <b>New Connection</b> is
+automatically be expanded to show the various remote systems you can connect to
+through the Remote System Explorer. Expand <b>Windows</b> to invoke a dialog
+and configure a connection.</span></li>
+<li><span>Enter a name for your first profile and click <b>Next</b>.
+(This step only occurs if you have never defined a connection before.)</span></li>
+<li><span>Enter a connection name. This name displays in your tree
+view and must be unique to the profile.</span></li>
+<li><span>Enter the name or TCP/IP address of your Windows server in
+the <b>Host Name</b> field, for example, jsandler.</span></li>
+<li><span>Enter a <b>Description</b>(optional); the description
+appears in the Properties view after the connection is created.</span></li>
+<li><span>Click <b>Finish</b> to define your system. </span></li>
+</ol>
+<div class="p">
+<div class="note"><span class="notetitle">Note: </span>To check your
+port number, right-click your connection or subsystem
+from the Remote Systems view and select <b>Properties</b>. Click <b>Subsystem</b>
+to see the relevant information. If your port is "0," then your Remote
+System Explorer communications server will pick any free port on the Windows
+server.  If you specified a port number when starting the server, you need to
+enter it here, for example, to work with a firewall.</div>
+</div>
+</div>
+<div>
+<p><b class="reltaskshd">Related tasks</b><br/>
+<a href="tbeginlinux.html" title="">Connecting to a remote Linux or UNIX server</a><br/>
+</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css"/>
+<title>Configuring environment variable support for connections</title>
+</head>
+
+<body id="tbeginenv">
+<a name="tbeginenv"></a>
+<h1 class="topictitle1">Configuring environment variable support for connections</h1>
+<div>
+<p>Environment variables are set for the remote job process
+when you first connect to a remote system. This means that the results
+of setting the variables are shown in the Commands view.
+If the system type you are using is case sensitive (UNIX for example),
+then the environment variables will also be case sensitive. Spaces and
+equals signs (=) are only allowed in the value for the environment
+variable, not in
+its name.</p>
+<p>You can define environment variables for all Remote System Explorer
+connection types that support them (Windows, Linux, UNIX, and other
+system types that are installed).</p>
+<p>If you change an environment variable while the Remote System
+Explorer is connected to a
+remote server, the change does not take affect until you disconnect and
+reconnect.</p>
+<p>Although environment variables are set in subsystem properties
+pages, the Remote System Explorer stores
+them globally by connection.</p>
+<p>If you need to specify different environment variables or user IDs
+for a particular remote system, you can do so by defining multiple
+connections to that
+remote system and then defining the environment variables on the file
+subsystem for each
+connection.</p>
+<p>To configure environment variables:
+</p>
+<ol>
+  <li><span>Create a connection to a server if necessary.</span></li>
+  <li><span>Expand your connection name in the Remote Systems view.</span></li>
+  <li><span>Right-click on a file subsystem and select <b>Properties</b>.</span></li>
+  <li><span>Click <b>Environment Variables</b> and configure the variables as needed.</span>
+    <ul>
+      <li>To add an environment variable, click <b>Add</b>. Enter a
+name and value for this variable, and click<b>OK</b>.</li>
+      <li>To change an environment variable, select the variable in the
+table and modify the name or value directly. To use a dialog box,
+select the variable and click <b>Change</b>. The name and value of the
+current variable
+are pre-filled in the dialog box. Overwrite whichever field you want to
+change and click <b>OK</b>.</li>
+      <li>To remove a variable, click the variable to select it and
+click <b>Remove</b>.</li>
+      <li>To move a variable up in the list, click the variable to
+select it and click <b>Move up</b>.</li>
+      <li>To move a variable down in the list, click the variable to
+select it and click <b>Move down</b>.</li>
+    </ul>
+  </li>
+</ol>
+</div>
+</body>
+</html>

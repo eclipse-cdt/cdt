@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css" />
+<title>Using search parameters with special characters</title>
+</head>
+
+<body id="rtablesub"><a name="rtablesub"><!-- --></a>
+<h1 class="topictitle1">Using search parameters with special characters</h1>
+<div>
+<div class="p">You can use special characters such as ?, *, and \, when searching
+for files and strings, based on the following rules.
+</div>
+<div class="p">
+<div class="skipspace">
+<table cellpadding="4" cellspacing="0" summary="" frame="border" border="1" rules="all">
+<tbody>
+<tr>
+<td valign="top"><b>Option</b></td>
+<td valign="top"><b>Description</b></td>
+</tr>
+<tr>
+<td valign="top">*</td>
+<td valign="top">Searches all items. </td>
+</tr>
+<tr>
+<td valign="top">abc*</td>
+<td valign="top">Searches for items that begin with the characters abc,
+for example, abcd or abctest.</td>
+</tr>
+<tr>
+<td valign="top">*abc</td>
+<td valign="top">Searches for items ending with the characters abc, for example, dabc or testabc.</td>
+</tr>
+<tr>
+<td valign="top">*b*</td>
+<td valign="top">Searches for items that have the character b anywhere in the name.</td>
+</tr>
+<tr>
+<td valign="top">a*c</td>
+<td valign="top">Searches for items that begin with the character a and end with the character c.</td>
+</tr>
+<tr>
+<td valign="top">"a*"</td>
+<td valign="top">Searches for items within quotation marks that start
+with the character a, for example, "a," "ab," or "ad." Note that when you
+use quotation marks, the specification becomes case sensitive.</td>
+</tr>
+<tr>
+<td valign="top">abc?</td>
+<td valign="top">Searches for four-character items that begin with the
+characters abc and have a single fourth character, for example, abcd.</td>
+</tr>
+<tr>
+<td valign="top">?abc</td><td valign="top">Searches for four-character items that begin with a
+single character and end in abc, for example, dabc.</td>
+</tr>
+<tr>
+<td valign="top">?b?</td>
+<td valign="top">Searches for three-character items that have a b in the middle, for example, abc.</td>
+</tr>
+<tr>
+<td valign="top">a?c</td>
+<td valign="top">Searches for three-character items that have the character a and c with a single character in between.</td>
+</tr>
+<tr>
+<td valign="top">ab?</td>
+<td valign="top">Searches for three-character items that start with ab and end in a third single character, for example, abc.</td>
+</tr>
+<tr>
+<td valign="top">a\* or a\?</td>
+<td valign="top">Searches for characters where the * and ? are interpreted
+literally, for example, a* or a?. The slash represents an escape character.
+To use a slash literally, enter \\.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</body>
+</html>

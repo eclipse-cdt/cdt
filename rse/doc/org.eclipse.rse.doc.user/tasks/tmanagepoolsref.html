@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css" />
+<title>Configuring filter pool references</title>
+</head>
+
+<body id="tmanagepools"><a name="tmanagepools"><!-- --></a>
+<h1 class="topictitle1">Configuring filter pool references</h1>
+<div>
+<div class="p">
+<p>You can share filter pools among many connections through
+the use of a <i>filter pool reference</i>. A filter pool reference is a mechanism
+that displays a filter pool from one connection in any other connection, so
+that when you make a change to the original filter pool, your change is reflected
+your filter pool reference.</p>
+<div class="p">Before
+you create a filter pool reference, ensure that you have already completed
+the following (see related tasks for more information):
+<ul>
+<li>You have defined more than one connection to the same server</li>
+<li>You have defined more than one filter pool</li>
+<li>You have enabled <b>Show Filter Pools</b> from the Remote Systems view toolbar</li>
+</ul>
+</div>
+<p>To use filter pools references:</p>
+<ol>
+<li><span>In the Remote Systems view, expand the connection where you want
+to display a filter pool that exists in another connection.</span></li>
+<li><span>Right-click on a file subsystem and select <b>New &gt; Filter Pool
+Reference &gt; <i>your profile</i> &gt; <i>name of pool</i></b>.</span></li>
+<li><span>Look under that subsystem again and you will see the filter
+pool reference.</span></li>
+</ol>
+<div class="p">To delete a filter pool reference, right-click it and select <b>Remove
+reference</b>. You can also move your filter pools up and down with the
+right-click menu.
+</div>
+</div>
+<div>
+<p>
+<b class="relconceptshd">Related concepts</b><br />
+<a href="../concepts/cfilters.html" title="">Remote System Explorer filters, filter pools, and filter pool references</a><br />
+</p>
+<p>
+<b class="reltaskshd">Related tasks</b><br />
+<a href="tmanagepools.html" title="">Configuring filter pools</a><br />
+<a href="tbeginsecond.html" title="">Creating a second connection to a remote server</a><br />
+</p>
+</div>
+</div>
+</body>
+</html>

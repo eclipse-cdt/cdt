@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css"/>
+<title>Connecting to a remote Linux or UNIX server</title>
+</head>
+
+<body id="tbeginlinux">
+<a name="tbeginlinux"><!-- --></a>
+<h1 class="topictitle1">Connecting to a remote Linux or UNIX server</h1>
+<p>The following documentation explains how to install the Linux or UNIX server
+code, start the server daemon, and make a connection to a remote Linux
+or UNIX server.</p>
+<div>
+<div class="p">
+<p><b>Prerequisites</b></p>
+<p>To use the Remote System Explorer communications server daemon you need
+to install Perl. Using the daemon helps eliminate some of the manual steps
+when you connect to the server.Also note that Java Development Kit (JDK)
+version 1.4 or higher is required.</p>
+<p><b>Installing the server code</b></p>
+<div class="p">
+<ol>
+  <li>Ensure that Perl is installed.</li>
+  <li>Ensure that JDK version 1.4 or higher is installed.</li>
+  <li>Create a directory where you want to install the server code. The remainder
+of these instructions will assume the directory /opt/rseserver (suitable for
+team sharing), but you are free to use any directory.</li>
+  <li>Find the <i>x:\product directory</i>\eclipse\plugins\com.ibm.etools.systems.universal_<i>version_number</i>\serverruntime\rseserver.jar
+file on your local workstation, where <i>x:\product directory</i> is the directory
+where you installed the product, for example, c:\WSWB.</li>
+  <li>FTP the file rseserver.jar to the /opt/rseserver directory.</li>
+  <li>Switch to the /opt/rseserver directory by typing:
+  <pre>cd /opt/rseserver</pre>
+  </li>
+  <li>Run the following command in the /opt/rseserver directory to extract the
+server code:<pre>jar -xf rseserver.jar</pre>
+  <b><span class="attentiontitle">Attention</span></b><span class="attentiontitle">: </span>The
+jar command is shipped with the JDK and might not be in your path.  If you
+receive a "command not found" error when running the jar command then try
+to qualify the jar command with the installation directory for the JDK.  For
+example: <samp class="codeph">/opt/IBMJava2-131/bin/jar -xf rseserver.jar</samp>
+<br>
+</br>
+  </li>
+  <li>Still in the /opt/rseserver directory, run the following configuration
+commands:<pre>dos2unix daemon.linux
+dos2unix server.linux
+chmod 755 server.linux
+chmod 755 daemon.linux
+chmod 755 auth.pl</pre>
+  </li>
+</ol>
+</div>
+
+<p><b>Starting the server</b></p>
+<div class="p">You can start the RSE communications
+server with the server daemon, or manually. Before starting the server, make
+sure the Java command is in your path, you can do this by running the following
+command:<pre>java -version</pre>
+</div>
+<div class="p">You should see something
+similar to the following:<pre>java version "1.4.1"
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.4.1)
+Classic VM (build 1.4.1, J2RE 1.4.1 IBM build cxppc321411-20040301 (JIT enabled: jitc))</pre>
+</div>
+<div class="p">If
+you receive a "command not found" error, then try creating a symbolic link
+to the java command in /usr/bin by running the following command:<pre>ln -s  /opt/IBMJava2-131/jre/bin/java /usr/bin/java</pre>
+</div>
+<div class="p"><b>To start the server with the server daemon</b>
+<ol>
+  <li>Ensure that you are running using the root user ID. (If the daemon is
+not run under root, it will be unable to authenticate connecting users.) Run
+the following commands:<pre>su -l root
+cd /opt/rseserver
+perl ./daemon.linux</pre>
+</li>
+</ol>
+Note that the server daemon runs on port 4035. You can also start the
+daemon.unix in the same way.<br></br>
+<p><b>To start the Linux server manually</b></p>
+<div class="p">Run
+the following commands:<pre>cd /opt/rseserver
+perl ./server.linux [port]</pre>
+These commands run the server.linux
+script located in the /opt/rseserver directory. If this does not work, try
+changing the permission attributes on server.linux (for example, enter <samp class="codeph">chmod
+755 server.linux</samp>. The port parameter to the server.linux script is
+optional. If you do not specify a port, then the server will pick the first
+one available and print the port number to standard out. By default, it is
+usually 4033. If you would like to use a different port, you will then have
+to enter this port number in port property for the Files subsystem for your
+connection in the Remote System Explorer (see <span class="uicontrol">Connecting to the
+Remote Server</span>, below). Otherwise, you do not need to change this
+property.</div>
+<p><b>To start the UNIX server manually</b></p>
+<div class="p">To run the unix.server
+script, enter the following commands:<pre>cd /opt/rseserver
+perl ./server.unix [port]</pre>
+These commands run the server.linux
+script located in the /opt/rseserver directory. If this does not work, try
+changing the permission attributes on server.unix (for example, enter <samp class="codeph">chmod
+755 server.unix</samp>. The port parameter to the server.unix script is
+optional. If you do not specify a port, then the server will pick the first
+one available and print the port number to standard out. By default, it is
+usually 4033. If you would like to use a different port, you will then have
+to enter this port number in port property for the Files subsystem for your
+connection in the Remote System Explorer (see <span class="uicontrol">Connecting to the
+Remote Server</span>, below). Otherwise, you do not need to change this
+property.</div>
+<p><b>Running the daemon at startup</b></p>
+<div class="p">You might instead want
+to configure the daemon to run at start up for Linux. To do so, you need to
+append a call to the daemon to your startup script.  Add the following lines
+to the bottom of the /etc/rc.d/rc.local file:<pre>cd /opt/rseserver
+perl ./daemon.linux &amp;</pre>
+You can also add <samp class="codeph">perl ./daemon.unix</samp> if
+you want to run the UNIX daemon at startup.</div>
+</div>
+</div><br></br>
+<p><b>Connecting to the Remote Server</b></p>
+<div class="p">To make a connection
+to your remote server:</div>
+<ol>
+  <li><span>Switch to the Remote System Explorer perspective. From the workbench
+menu, click <span class="menucascade"><span class="uicontrol">Window </span> &gt; <span class="uicontrol">Open Perspective </span> &gt; <span class="uicontrol">Remote System Explorer</span></span>.</span></li>
+  <li><span>In the Remote Systems view, <b>New Connection</b> is automatically
+expanded to show the various remote systems you can connect to through the
+Remote System Explorer. Expand <b>Linux</b> or <b>Unix</b> to
+invoke the new connection dialog box and configure a connection.</span></li>
+  <li><span>Enter a name for your first profile and click <b>Next</b>. (This
+step only occurs if you have never defined a connection before.)</span></li>
+  <li><span>Enter a connection name. This name displays in your tree view and
+must be unique to the profile.</span></li>
+  <li><span>Enter the name or TCP/IP address of your Linux server in the <b>Host
+name</b> field, for example, LINUX_A.</span></li>
+  <li><span>(Optional) Enter a <b>Description</b>. The description appears
+in the Properties view after the connection is created.</span></li>
+  <li><span>Click <b>Finish</b> to define your system. </span></li>
+</ol>
+<div class="skipspace">
+<div class="attention"><span class="attentiontitle">Attention: </span>To check your port number, right-click your
+connection or subsystem from the Remote Systems view and select <b>Properties</b>.
+Click <b>Subsystem</b> to view the relevant information. If your port is "0,"
+then your Remote System Explorer communications server will pick any free
+port on the server. If you specified a port number when starting the server,
+you need to enter it here, for example, to work with a firewall.</div>
+</div>
+<div class="p">
+<div class="note"></div>
+</div>
+</div>
+<div>
+<p><b class="reltaskshd">Related tasks</b>
+<a href="tbeginwindows.html" title="">Connecting to a remote Windows
+server</a>
+</p>
+</div>
+</body>
+</html>

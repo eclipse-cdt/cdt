@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css" />
+<title>Search for text and files on remote servers</title>
+</head>
+
+<body id="tmanagesearch"><a name="tmanagesearch"><!-- --></a>
+<h1 class="topictitle1">Search for text and files on remote servers</h1>
+<div>
+<p>You can search for text strings and files on any remote server
+or file system, including Linux, UNIX, and Windows systems.</p>
+<div class="p">There are three main ways you can search for files and text strings
+on remote servers, depending on your goal:
+<ul>
+<li>Search for text strings within a file</li>
+<li>Search for text strings and/or files within a folder</li>
+<li>Search for text strings, files, and/or folders within a remote file system</li>
+</ul>
+To search for files, text strings, and folders:
+<ol>
+<li>In the Remote Systems view, expand your iSeries, Linux, UNIX, or Windows
+connection until you reach the folder, file, or file system that you want
+to search. Select the containing item by clicking on the item.</li>
+<li>Right-click and select <b>Search</b>. Or, click <b>Search &gt; Remote</b> from
+the workbench menu. Or, for the keyboard shortcut, enter CTRL+H. All of these
+actions will invoke the Search window. </li>
+<li>In the Remote Search window, click the Remote Search tab if it is not
+already in focus. You can now search for text strings, files, and/or folders,
+with the option to use powerful Regular Expressions, in addition normal and
+variable expressions, such as a*b. See <a href="../ref/rsearch.html">Using
+search parameters with special characters</a> for more information. Regular
+Expressions might be most familiar to Linux and Unix users.
+For more information on Regular Expressions, see
+<a href="http://www.english.uga.edu/humcomp/perl/regex2a.html" target="_blank">http://www.english.uga.edu/humcomp/perl/regex2a.html.</a>
+<ul>
+<li>To search for strings, in the <b>Search string</b> field, enter the string
+that you want to search for, whether it be from a file, a folder, or an entire
+file system. Select the <b>Case sensitive</b> or <b>Regular expression</b> check
+boxes if they apply. Leave this field as an asterisk (*) if you do not want
+to search for strings. You can use commas to specify more than one type of
+string to search for. For example, you could enter "*.c, *.java, b?a.txt,
+" and so on.</li>
+<li>To search for files, in the <b>File name patterns</b> field, enter the
+name of the file you are looking for. Check the <b>Regular expression</b> check
+box if this option applies. Leave this field as an asterisk (*) if you do
+not want to search for files. You can use commas to specify more than one
+type of folder to search for. You can also click <b>Browse</b> to select file
+extensions to search for.</li>
+</ul>
+<div class="note"><span class="notetitle">Note: </span>
+You cannot edit the contents of the <b>Folder</b> field; however,
+you can click the <b>Browse</b> button to browse to and specify another folder.
+If the <b>Folder</b> field is empty, you need to browse to a particular folder
+before you can launch the search.
+</div>
+</li>
+<li>Click <b>Search</b>.</li>
+</ol>
+The matching strings and/or files display in the Remote Search view.
+The view updates itself as more matches are found and you can click the <b>Stop</b> button
+if you want to stop the search process. The view shows the strings and/or
+files that you searched for, with the matches listed beneath in a tree-view
+structure. For example, if you searched the file "README.txt" for the following
+string, "*bin*", then the Remote Search results view might look like this:
+<p><br /><img src="../images/search.gif" alt="" /><br /></p>
+<div class="p">To manipulate the set
+of search results:
+<ul>
+<li>Right-click the parent items of the tree, in this example, "README.txt",
+and you can select any of the regular Remote Systems options, for example, <b>Open
+With</b>, <b>Rename</b>, <b>Properties</b>, and so on.</li>
+<li>Right-click any line beneath the parent search item in the tree, in this
+example, "bin/rmid and jre/bin/rmid":
+<ul>
+<li>Select <b>Copy</b> to copy the path as you see it to your clipboard.</li>
+<li>Select <b>Go to</b> to open the file in an editor, which highlights the matching text. You can double-click on any line to perform the same action.</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div>
+<p><b class="relrefhd">Related reference</b><br />
+<a href="../ref/rsearch.html" title="">Using search parameters with special characters</a><br />
+</p>
+</div>
+</body>
+</html>

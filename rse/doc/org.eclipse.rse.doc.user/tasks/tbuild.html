@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css" />
+<title>Exporting resources to a remote file system</title>
+</head>
+
+<body id="tremoexp"><a name="tremoexp"><!-- --></a>
+<h1 class="topictitle1">Building programs on a remote system</h1>
+<div>
+<p>A configuration in the External Tools dialog lets you build programs on remote systems.</p>
+<div class="p">To build programs on a remote system:</div>
+<ol>
+<li><span>Select <span><b>Run</b> &gt; <b>External Tools</b> &gt; <b>External Tools</b></span> from the workbench menu bar. The External Tools dialog opens.</span></li>
+<li><span>Right click on <b>Remote Build</b> and select <b>New</b>. A remote build configuration is created.</span></li>
+<li><span>Choose the connection for the remote system or create a new one.</span></li>
+<li><span>Type the build command or browse the file system to find the build command</span></li>
+<li><span>Type or select the working directory. This is the directory where the command will be run.</span></li>
+<li><span>Enter the arguments to the build command.</span></li>
+<li><strong>Optional: </strong><span>Select the checkbox to specify that there is an associated project with this
+build command. If the command operates on a set of remote files (for example, a command such as 'make'), the Remote System
+Explorer will interpret any errors or other messages and allow you to double click on them to open the source.
+Specifying this option means the Remote System Explorer will open the source from a local project (that is, it will
+not open the remote source). This is useful if you are developing a program from a local project.</span></li>
+<li><strong>Optional: </strong><span>Select the checkbox to specify that local files should be exported before the
+build command is executed. This is useful if you are developing your remote application from a local project. In such
+cases, you would export the files from the workspace to the remote system using the <b>Remote file system</b> export wizard.
+That wizard lets you save the settings of the export to a file. The settings file contains information about which
+files were exported and various export options. You can specify this settings file here. This configuration will use
+the settings file to do the export and when the export is completed it will execute the build command. This ensures
+that the local source you are working on is always sent to the remote system before the build takes place.</span></li>
+<li><span>Click on <b>Apply</b> to save the configuration. Click on <b>Run</b> to execute it.</span></li>
+</ol>
+</div>
+</body>
+</html>

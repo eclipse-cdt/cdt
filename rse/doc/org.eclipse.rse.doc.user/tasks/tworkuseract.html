@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css"/>
+<title>Managing user actions (user options)</title>
+</head>
+
+<body id="tworkuseract">
+<a name="tworkuseract"></a>
+<h1 class="topictitle1">Managing user actions (user options)</h1>
+<div>
+<div class="p">To create a new action or change an existing action:</div>
+<ol>
+<li><span>In the Remote Systems view, expand the connection
+containing the kinds of resources you want to act on,
+navigate to the subsystem that would contain those resources, and
+select <b>Work with &gt; User actions</b>.
+You can also right-click on a file in one of your filters, and select <b>User
+Actions</b>.</span></li>
+<li><span>Type the text to display in the <b>Action Name</b> field.
+This is a brief label for the action.</span></li>
+<li><span>Type a longer, more descriptive text for the action in the <b>Comment</b>
+field.</span></li>
+<li><span>Type the actual command string to run when
+a user selects this action. This command can use action substitution
+variables when your action is run. These variables are used when defining the
+command string to run for a particular action. Substitution variables keep you
+from having to explicitly code command parameter values. Click <b>Insert
+variable</b> to see and select valid variables.</span></li>
+</ol>
+<div class="p"><b>Additional parameters</b>
+<ul>
+<li>Select <b>Browse</b> to search for and select command
+files (for example, .exe, .bat or .cmd files). The file name you select
+is reflected in the Command field when you return. </li>
+<li>Select <b>Prompt</b> to prompt the command currently entered
+in the Command area.</li>
+<li>Select <b>Prompt first</b> to indicate that Remote System
+Explorer should prompt the command when it is run.</li>
+<li>Select <b>Refresh after</b> to have Remote System Explorer
+refresh the selected files after the action's command is run. This is
+useful if your command affects the information displayed in the file list
+window for the selected files, for example, if your command changes the type
+of a file.</li>
+<li>Select <b>Show action</b>.</li>
+<li>Select <b>Single selection only</b> if you want to show
+this action only when a single object is selected.</li>
+<li>Select <b>Invoke once </b> to collect the full names of
+all selected resources into the file name parameter and run the command
+only once for all resources that are selected..</li>
+<li>Select any currently defined named types from the <b>Defined
+Types</b> list
+and click <b>Add</b> to include them in the <b>Selected
+Types</b> list. The action will only appear if a file matching one
+of these types is selected.</li>
+</ul>
+<p>You can choose to view user actions by active profile for remote
+objects
+on the <b>User Actions</b> cascade menu. You can see both
+team-shared and private user actions. To enable this, select <b>Cascade
+user actions by profile</b> on the <b>Remote Systems Preferences</b>
+page.</p>
+</div>
+</div>
+<div>
+<p><b class="relconceptshd">Related concepts</b><br/>
+<a href="../concepts/cuseractions.html" title="">User actions (user options)</a><br/>
+</p>
+</div>
+</body>
+</html>

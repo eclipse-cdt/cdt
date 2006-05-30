@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css" />
+<title>Managing archived files</title>
+</head>
+
+<body id="tarchive"><a name="tarchive"><!-- --></a>
+<h1 class="topictitle1">Managing archived files</h1>
+<div class="p">
+<p>You can work with archived files and folders in the Remote System Explorer.</p>
+<p>Use the Remote Systems view perform the following actions with archived files:
+<ul>
+<li><a href="#tarchive__browse">Browse files in an archive</a></li>
+<li><a href="#tarchive__copy">Copy, paste, and move archives</a></li>
+<li><a href="#tarchive__drag">Drag and drop files between archives</a></li>
+<li><a href="#tarchive__create">Create files and folders within an archive</a></li>
+<li><a href="#tarchive__delete">Delete archives</a></li>
+<li><a href="#tarchive__extract">Extract files from an archive</a></li>
+<li><a href="#tarchive__add">Add files to an archive</a></li>
+<li><a href="#tarchive__search">Search for content within an archive</a></li>
+<li><a href="#tarchive__convert">Convert archives of a different types into one type</a></li>
+</ul>
+</p>
+</div>
+<div class="p">
+<p>Pick from the following:
+<table border="1" frame="hsides" rules="rows" cellpadding="4" cellspacing="0" summary="" class="skipspace">
+<tbody>
+<tr>
+<th align="left" valign="bottom" id="d0e45">Task</th>
+<th align="left" valign="bottom" id="d0e47">Description</th>
+</tr>
+<tr id="tarchive__browse">
+<td align="left" valign="top" id="d0e50" headers="d0e45"><b>Browsing:</b></td>
+<td align="left" valign="top" headers="d0e47 d0e50">To browse and open
+files in an archive, click the plus sign beside the archive to display the
+contents. Continue to expand folders within the archive or double-click any
+file to open it in the default editor. Save files as you normally would and
+they are saved in the archive. In the properties view, note the addition of
+"#archive#" to the path of the file, to indicate how the file exists inside
+the archive.</td>
+</tr>
+<tr id="tarchive__copy">
+<td align="left" valign="top" id="d0e55" headers="d0e45"><b>Copying and pasting:</b></td>
+<td align="left" valign="top" headers="d0e47 d0e55">To copy
+and paste files, or move them from one location to another, right-click a
+file or folder inside an archive and select <b>Copy</b> or <b>Move</b>. (When
+you select <b>Move</b> instead of <b>Copy</b>, you delete the file in the
+original location, to move it to a new one.) Using the window that opens,
+you can paste the item to any archived, or unarchived location by expanding
+the tree-view to any specific location, and clicking <b>OK</b>. Note that
+you can perform this action across different connections as well.</td>
+</tr>
+<tr id="tarchive__drag">
+<td align="left" valign="top" id="d0e75" headers="d0e45"><b>Dragging and dropping:</b></td>
+<td align="left" valign="top" headers="d0e47 d0e75">You can
+drag and drop files between archives, from an archive to an unarchived location,
+or from an unarchived location into an archive. Expand both the original and
+destination locations in the Remote Systems view, click the item you want
+to move, and drag it with your cursor to the new location. Note that you can
+perform this action across different connections as well.</td>
+</tr>
+<tr id="tarchive__create">
+<td align="left" valign="top" id="d0e80" headers="d0e45"><b>Creating:</b></td>
+<td align="left" valign="top" headers="d0e47 d0e80">To create files and
+folders inside an archive, or to create a new archive, right-click any folder
+in the archive, or the root level archive itself, and select:
+<ul>
+<li><b>New &gt; File</b> to create a normal file within the archive. You can
+also select the file type to be an archive, whereby you can create an archive
+inside of an archive.</li>
+<li><b>New &gt; Folder</b> to create a normal folder within the archive. Then
+right-click your virtual folder to create more folders or files.</li>
+</ul>
+</td>
+</tr>
+<tr id="tarchive__delete">
+<td align="left" valign="top" id="d0e94" headers="d0e45"><b>Deleting:</b></td>
+<td align="left" valign="top" headers="d0e47 d0e94">To delete a file
+or folder from inside an archive, simply right-click the item and select <b>Delete</b>,
+or hit the Delete key. </td>
+</tr>
+<tr id="tarchive__extract">
+<td align="left" valign="top" id="d0e102" headers="d0e45"><b>Extracting:</b></td>
+<td align="left" valign="top" headers="d0e47 d0e102">You have two options
+when extracting files. You can either extract to a new folder within your
+current directory (by selecting <a href="#tarchive__extract1"><b>Extract
+to <i>xyz</i></b></a> where <i>xyz</i> is your current directory) or browse
+to a specific extraction directory (by selecting <a href="#tarchive__extract2"><b>Extract
+To . . .</b></a>). You can also select multiple archives and perform the
+same actions.
+<ul>
+<li id="tarchive__extract1"><a name="tarchive__extract1"><!-- --></a>
+To extract the contents of an archive to a new folder within
+your current directory, right-click your archive and select <b>Extract to <i>xyz</i></b> where <i>xyz</i> is
+the name of your current directory. If your archive was named "MyArchive.zip"
+then the extraction will create a new folder within your current directory
+called "MyArchive" and all of the files will be placed in the new folder in
+their proper structure. Click <b>OK</b>. If you want, use the right-click
+menu to rename the new folder.</li>
+<li id="tarchive__extract2"><a name="tarchive__extract2"><!-- --></a>
+To extract the contents of an archive to a location other
+than the current directory, right-click your archive and select <b>Extract
+To</b>.
+<ol>
+<li>A dialog box displays, presenting a tree view of all drives, files, and
+folders defined in the Remote Systems view. Expand any location in the tree
+view to define the directory location where you want to extract the contents
+of your archive. </li>
+<li>(Optional) You can select a directory, and press the <b>Details</b> button
+to see a list of properties for that location. </li>
+<li>(Optional) You can expand <b>New Connection</b> to define a new connection
+to a location where you want to extract the files.</li>
+<li>(Optional) When you extract the contents of an archive to a destination
+directory, the files and directories in the archive are copied directly to
+that destination. You are prompted to overwrite or rename duplicate files
+in the target directory.</li>
+<li>Click <b>OK</b>.</li>
+</ol>
+</li>
+</ul>
+</td></tr><tr id="tarchive__add"><td align="left" valign="top" id="d0e159" headers="d0e45">
+<b>Adding files to an archive:</b></td>
+<td align="left" valign="top" headers="d0e47 d0e159">To
+add files and folder to an archive, select one or more files/folders, right-click,
+and select <b>Add to Archive</b>.
+<ol>
+<li>A dialog box displays, presenting a tree view of all drives, files, and
+folders defined in the Remote Systems view.</li>
+<li>To create a new archive for the selected files and folders
+<ol type="a">
+<li>Expand any location in the tree view to define the location for the new
+archive.</li>
+<li>Specify a name for the archive in the <b>File name</b> field.</li>
+<li>Specify an <b>Archive type</b> from the drop-down list.</li>
+</ol>
+To add files and folders to an <i>existing</i> archive:
+<ol type="a">
+<li>Select the existing archive's parent folder in the tree view.</li>
+<li>Specify a name for the archive in the <b>File name</b> field.</li>
+<li>Specify an <b>Archive type</b> from the drop-down list.</li>
+</ol>
+</li>
+<li>Click <b>OK</b>.</li>
+</ol>
+The selected files/folders are copied to the root directory in the new
+archive location</td>
+</tr>
+<tr id="tarchive__search">
+<td align="left" valign="top" id="d0e208" headers="d0e45">
+<b>Searching for content inside an archive:</b></td>
+<td align="left" valign="top" headers="d0e47 d0e208">
+To search for files within an archive, right-click the archive, select <b>Search</b>,
+and complete the dialog box to specify what kinds of files and folder you
+want to find. Note that if you begin your search on a normal, unarchived directory
+that contains an archive, the default behaviour is <i>not</i> to search the
+archive. You need to explicitly start from the archive itself to search for
+contents within that archive.</td>
+</tr>
+<tr id="tarchive__convert">
+<td align="left" valign="top" id="d0e219" headers="d0e45">
+<b>Converting archives:</b></td>
+<td align="left" valign="top" headers="d0e47 d0e219">To convert
+archives from one type (.zip, .jar, or .tar) to another, select one or more
+archives, right-click, and select <b>Convert</b>. A Convert Archive dialog
+box opens for each archive you selected. In the dialog box, select a new archive
+type from the <b>Archive Type</b> drop-down list to convert the selected archive.
+You can also, optionally, specify a new location and new name for your archive,
+by selecting a location in the tree view and entering a new name in the <b>File
+name</b> field. Click <b>OK</b>.</td>
+</tr>
+</tbody>
+</table>
+</p>
+</div>
+</body>
+</html>

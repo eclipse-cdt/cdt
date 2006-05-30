@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" href="../book.css"/>
+<title>Remote System Explorer Profiles</title>
+</head>
+<body id="cprofile">
+<a name="cprofile"><!-- --></a>
+<h1 class="topictitle1">Remote System Explorer Profiles</h1>
+<div>
+<p>When you define your first connection to your remote server, you
+will also define
+your first profile. All Remote System Explorer resources such as
+connections,
+filters, and filter pools are owned by a profile. Profiles help you
+manage these resources when you have a lot of connections. The Remote
+System Explorer creates
+a unique profile per team member (that person's <span
+ style="font-style: italic;">private profile</span>), plus a common
+profile called <i>Team</i>.
+You can also create your own profiles. </p>
+<div class="p">Profiles contain:
+<ul>
+  <li>Connections -- including subsystem properties. User IDs and
+passwords are not shared.</li>
+  <li>Filters, filter pools, and filters pool references</li>
+  <li>User-defined actions</li>
+  <li>Compile commands</li>
+</ul>
+</div>
+<p>Profiles can be active, or inactive. By default, only your private
+profile
+and the Team profile are active. The Remote System Explorer displays
+all connections
+from all active profiles and, within a connection, allows filter pools
+to
+be referenced from any active profile. Further, the user actions and
+compile
+commands shown in the right-click menu for a remote resource are from
+all
+active profiles.</p>
+<p>Your first profile will be for your local workstation. When you
+complete
+the steps for your first connection, you can decide whether to use your
+personal
+profile or the Team profile so that you can share resources and
+information
+with other people.</p>
+<div class="p">Placing all connection and filter data in a profile
+shared by the team
+assists in team support, since all connections, filter pools, and team
+profiles
+can be shared among team members. You can use the Team view to control
+which
+profiles display in your workspace by making the profiles active.
+<div class="note"><span class="notetitle">Note: </span>Making
+a profile active or inactive does not affect your teammates. For
+example,
+you can choose not to display one of your own profiles in your
+workspace,
+but a teammate can make that profile active in his or her workspace.
+You will
+see the profiles you or your teammates have made inactive in the Team
+view when you perform a synchronization with the repository in which
+the profiles are stored.&nbsp; See topics in the help contents and
+links
+below about team support for more information on profiles and shared
+data.</div>
+</div>
+<p>To reduce collisions when you synchronize the user IDs and the
+ordering of
+resources in a profile are stored locally on your workstation. To
+participate
+in team support, you need to synchronize with, and upload your profiles
+to a central repository. Use the <a href="../tasks/tteamsup.html">Team
+view</a> to
+share source and profile information with other team members, and to
+synchronize
+that information with the repository. Everything except your user ID
+will
+then be stored on the server, and any developer can obtain profile
+resources
+from the central server. </p>
+</div>
+<div>
+<p><b class="relconceptshd">Related concepts</b><br/>
+<a href="cfilters.html" title="">Remote System Explorer filters, filter
+pools, and filter pool references</a><br/>
+<a href="cbegin.html" title="">Remote System Explorer Connections</a><br/>
+<a href="cteam.html" title="">Team support</a><br/>
+</p>
+<p><b class="reltaskshd">Related tasks</b><br/>
+<a href="../tasks/tteamsup.html" title="">Using team support</a><br/>
+<a href="../tasks/tteamsup1.html" title="">Working with profiles and
+team support</a><br/>
+<a href="../tasks/tbeginsecprofile.html" title="">Creating a second
+profile</a><br/>
+</p>
+</div>
+</body>
+</html>

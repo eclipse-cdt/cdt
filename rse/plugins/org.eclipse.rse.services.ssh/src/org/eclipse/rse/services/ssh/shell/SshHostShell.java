@@ -25,6 +25,7 @@ import org.eclipse.rse.services.shells.IHostShellOutputReader;
 import org.eclipse.rse.services.ssh.ISshSessionProvider;
 
 import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.Session;
 
 /**
  * A Shell subsystem for SSH.
@@ -62,12 +63,22 @@ public class SshHostShell extends AbstractHostShell {
 	}
 
 	public boolean isActive() {
-		return !fChannel.isEOF();
+		if (fChannel!=null && !fChannel.isEOF()) {
+			return true;
+		}
+		// shell is not active: check for session lost
+		Session session = fSessionProvider.getSession();
+		if (session!=null && !session.isConnected()) {
+			fSessionProvider.handleSessionLost();
+		}
+		return false;
 	}
 
 	public void writeToShell(String command) {
-		fStdinHandler.println(command);
-		fStdinHandler.flush();
+		if (isActive()) {
+			fStdinHandler.println(command);
+			fStdinHandler.flush();
+		}
 	}
 
 	public IHostShellOutputReader getStandardOutputReader() {

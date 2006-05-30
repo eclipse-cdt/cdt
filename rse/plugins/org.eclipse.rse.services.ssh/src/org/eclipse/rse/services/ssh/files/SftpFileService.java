@@ -62,6 +62,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return "Access a remote file system via Ssh / Sftp protocol";
 	}
 	
+	//TODO specify Exception more clearly
 	public void connect() throws Exception {
 		Activator.trace("SftpFileService.connecting..."); //$NON-NLS-1$
 		try {
@@ -77,16 +78,35 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 	}
 	
-	protected ChannelSftp getChannel(String task) {
+	//TODO specify Exception more clearly
+	protected ChannelSftp getChannel(String task) throws Exception
+	{
 		Activator.trace(task);
 		if (fChannelSftp==null || !fChannelSftp.isConnected()) {
 			Activator.trace(task + ": channel not connected: "+fChannelSftp); //$NON-NLS-1$
+			Session session = fSessionProvider.getSession();
+			if (session!=null) {
+				if (!session.isConnected()) {
+					//notify of lost session. May reconnect asynchronously later.
+					fSessionProvider.handleSessionLost();
+					//dont throw an exception here, expect jsch to throw something useful 
+				} else {
+					//session connected but channel not: try to reconnect
+					//(may throw Exception)
+					connect();
+				}
+			}
+			//TODO might throw NPE if session has been disconnected
 		}
 		return fChannelSftp;
 	}
 	
 	public void disconnect() {
-		getChannel("SftpFileService.disconnect").disconnect(); //$NON-NLS-1$
+		try {
+			getChannel("SftpFileService.disconnect").disconnect(); //$NON-NLS-1$
+		} catch(Exception e) {
+			/*nothing to do*/
+		}
 		fChannelSftp = null;
 	}
 	
@@ -113,7 +133,12 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	}
 	
 	public boolean isConnected() {
-		return getChannel("SftpFileService.isConnected()").isConnected(); //$NON-NLS-1$
+		try {
+			return getChannel("SftpFileService.isConnected()").isConnected(); //$NON-NLS-1$
+		} catch(Exception e) {
+			/*cannot be connected when we cannot get a channel*/
+		}
+		return false;
 	}
 	
 	protected IHostFile[] internalFetch(IProgressMonitor monitor, String parentPath, String fileFilter, int fileType)

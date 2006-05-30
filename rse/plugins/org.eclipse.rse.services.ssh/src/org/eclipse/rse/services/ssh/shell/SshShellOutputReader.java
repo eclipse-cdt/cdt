@@ -40,6 +40,12 @@ public class SshShellOutputReader extends AbstractHostShellOutputReader
 		fReader = reader;
 	}
 
+	public void dispose() {
+		super.dispose();
+		//check for active session and notify lost session if necessary
+		getHostShell().isActive();
+	}
+
 	protected Object internalReadLine() {
 		if (fReader == null) {
 			//Our workaround sets the stderr reader to null, so we never give any stderr output.

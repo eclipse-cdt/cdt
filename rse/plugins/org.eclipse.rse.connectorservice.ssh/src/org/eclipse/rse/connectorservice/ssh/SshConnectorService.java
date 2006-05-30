@@ -19,6 +19,7 @@ import java.net.UnknownHostException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -30,6 +31,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ssh2.CVSSSH2Plugin;
 import org.eclipse.team.internal.ccvs.ssh2.ISSHContants;
+import org.eclipse.team.internal.ccvs.ui.KeyboardInteractiveDialog;
 import org.eclipse.team.internal.ccvs.ui.UserValidationDialog;
 
 import com.jcraft.jsch.JSch;
@@ -39,6 +41,7 @@ import com.jcraft.jsch.ProxyHTTP;
 import com.jcraft.jsch.ProxySOCKS5;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SocketFactory;
+import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 
 /** 
@@ -238,13 +241,16 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
             session.setProxy(proxy);
         }
         session.setTimeout(getSshTimeoutInMillis());
-        session.setPassword(getPasswordInformation().getPassword());
-        session.setUserInfo(new MyUserInfo(user));
+        String password = getPasswordInformation().getPassword();
+        session.setPassword(password);
+        MyUserInfo ui = new MyUserInfo(user, password);
+        session.setUserInfo(ui);
         session.setSocketFactory(new ResponsiveSocketFacory(monitor));
 
         //java.util.Hashtable config=new java.util.Hashtable();
         //config.put("StrictHostKeyChecking", "no");
         //session.setConfig(config);
+        ui.aboutToConnect();
         try {
         	Activator.trace("connecting..."); //$NON-NLS-1$
             session.connect();
@@ -255,6 +261,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
                 session.disconnect();
             throw e;
         }
+        ui.connectionMade();
     }
 
 	public void internalDisconnect(IProgressMonitor monitor)
@@ -283,13 +290,15 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
     	return display;
     }
     
-    private static class MyUserInfo implements UserInfo {
-    	String fPassphrase;
-		String fPassword;
-		final String fUser;
+    private static class MyUserInfo implements UserInfo, UIKeyboardInteractive {
+    	private String fPassphrase;
+    	private String fPassword;
+    	private int fAttemptCount;
+    	private final String fUser;
 
-		public MyUserInfo(String user) {
+		public MyUserInfo(String user, String password) {
 			fUser = user;
+			fPassword = password;
 		}
 		public String getPassword() {
 			return fPassword;
@@ -304,7 +313,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 			});
 			return retval[0]; 
 		}
-		private String promptString(final String message) {
+		private String promptSecret(final String message) {
 			final String[] retval = new String[1];
 			getStandardDisplay().syncExec(new Runnable() {
 				public void run() {
@@ -325,12 +334,16 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 			return fPassphrase;
 		}
 		public boolean promptPassphrase(String message) {
-			fPassphrase = promptString(message);
+			fPassphrase = promptSecret(message);
 			return (fPassphrase!=null);
 		}
 		public boolean promptPassword(final String message) {
-			fPassword = promptString(message);
-			return (fPassphrase!=null);
+			String _password = promptSecret(message);
+			if (_password!=null) {
+				fPassword=_password;
+				return true;
+			}
+			return false;
 		}
 		public void showMessage(final String message) {
 			getStandardDisplay().syncExec(new Runnable() {
@@ -339,6 +352,55 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 				}
 			});
 		}
+		public String[] promptKeyboardInteractive(final String destination, 
+				final String name, final String instruction,
+				final String[] prompt, final boolean[] echo)
+		{
+		    if (prompt.length == 0) {
+		        // No need to prompt, just return an empty String array
+		        return new String[0];
+		    }
+			try{
+			    if (fAttemptCount == 0 && fPassword != null && prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
+			        // Return the provided password the first time but always prompt on subsequent tries
+			        fAttemptCount++;
+			        return new String[] { fPassword };
+			    }
+			    final String[][] finResult = new String[1][];
+			    getStandardDisplay().syncExec(new Runnable() {
+			    	public void run() {
+			    		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(null, 
+			    			null, destination, name, instruction, prompt, echo);
+			    		dialog.open();
+			    		finResult[0]=dialog.getResult();
+		    		}
+			    });
+			    String[] result=finResult[0];
+                if (result == null) 
+                    return null; // canceled
+			    if (result.length == 1 && prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
+			        fPassword = result[0];
+			    }
+			    fAttemptCount++;
+				return result;
+			}
+			catch(OperationCanceledException e){
+				return null;
+			}
+		}
+        /**
+         * Callback to indicate that a connection is about to be attempted
+         */
+        public void aboutToConnect() {
+            fAttemptCount = 0;
+        }
+        /**
+         * Callback to indicate that a connection was made
+         */
+        public void connectionMade() {
+            fAttemptCount = 0;
+        }
+		
 	}
     
 	public boolean isConnected() {

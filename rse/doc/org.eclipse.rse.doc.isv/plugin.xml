@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!-- ===================================================== -->
+<!-- Declare the documentation for the RSE ISV Guide       -->
+<!-- We will declare only one infoset (book)               -->
+<!-- ===================================================== -->
+
+<plugin>
+
+
+<!-- ============================================================================= -->
+<!-- Define primary TOC                                                            -->
+<!-- ============================================================================= -->
+
+   <extension point="org.eclipse.help.toc"> 
+       <toc file="toc.xml" primary="true" />
+       <index path="index" />
+   </extension>
+
+<!-- ============================================================================= -->
+<!-- Define TOCs                                                                   -->
+<!-- ============================================================================= -->
+
+   <extension point="org.eclipse.help.toc"> 
+       <toc file="topics_Guide.xml" />   
+       <toc file="topics_Reference.xml" />   
+       <toc file="topics_Questions.xml" />   
+       <toc file="topics_Samples.xml" />   
+   </extension>
+   
+<!-- ============================================================================= -->
+<!-- Define Javadoc locations                                                      -->
+<!-- ============================================================================= -->
+   <extension point="org.eclipse.pde.core.javadoc">
+       <javadoc path="reference/api">
+           <plugin id="org.eclipse.rse.core" />
+           <plugin id="org.eclipse.rse.services" />
+           <plugin id="org.eclipse.rse.ui" />
+       </javadoc>
+   </extension>
+   
+</plugin>

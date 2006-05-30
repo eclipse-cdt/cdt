@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../../book.css" TYPE="text/css">
+<title>RSE Logger API</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>RSE Logger API</h1>
+<p>To use the RSE logging framework, you must first decide if you want your own log file,
+or want to use the common RSE log file. 
+</p>
+
+<h2>Using Your Own Log File</h2>
+<p>
+The log file support is encapsulated in a separate plugin, <b><samp>com.ibm.etools.systems.logging</samp></b>, which
+defines the primary <samp><A href="../../../com/ibm/etools/systems/logging/Logger.html">com.ibm.etools.systems.logging.Logger</a></samp> class that manages the log file.
+This log file support offers the ability to log the following types of log messages:</p>
+<ul>
+<li><b>Error</b>. These are serious errors detected by your programming logic.
+<li><b>Warning</b>. These are warning situations detected by your programming logic.
+<li><b>Information</b>. These are informational messages you want to capture to help with problem determination.
+<li><b>Debug</b>. These are trace statements typically only enabled in development drivers.
+</ul>
+
+<p>To define your own logging file, in your plugin class:</p>
+<ol>
+<li>Define a static variable to hold the Logger instance, as in:<br>
+<code>protected static Logger log = null;</code>
+<li>Instantiate the Logger object, in your plugin class constructor, as in:<br>
+<code>if (log == null) log = LoggerFactory.getInst(this);</code>
+<li>For convenience, offer fastpaths to the logXXX methods in your Logger instance:
+<pre>
+    public static void <b>logInfo</b>(String message) 
+    {
+    	log.logInfo(message);
+    }
+    public static void <b>logWarning</b>(String message) 
+    {
+    	log.logWarning(message);
+    }
+    public static void <b>logError</b>(String message) 
+    {
+    	log.logError(message, null);
+    }
+    public static void <b>logError</b>(String message, Throwable exception) 
+    {
+    	log.logError(message, exception);
+    }
+    public static void <b>logDebugMessage</b>(String prefix, String message) 
+    {		
+        if (Logger.DEBUG) 
+        {
+           log.logDebugMessage(prefix, message);
+        }
+    }		         
+</pre>
+<li>In the <samp>shutdown</samp> method of your plugin class, close the log file:
+<code>
+    LoggerFactory.freeInst(this);
+</code>
+</ol>
+<p>Typically your code will write a healthy number of messages to the log file, to help you determine
+what went wrong in an error situation in production. However, since this can result in a large number of
+messages in the log file, it is recommended that you offer the user's a preference page in which they
+can specify the types of messages to record in the log file, which should default to error messages only.
+In the event of a problem, they can then turn on a more verbose logging option and re-produce the problem,
+sending the log file to you for additional information. For example, for the Remote System Explorer, this
+preference page is supplied:</p>
+<P><IMG border="0" src="logPreferences.gif"></P>
+
+<h2>Using The Common RSE Log File</h2>
+<p>To log your messages to the common RSE log file in <samp>.metadata\plugins\com.ibm.etools.systems.core</samp>,
+either base your plugin class on the <samp>com.ibm.etools.systems.core.SystemBasePlugin</samp> class and use
+the inherited logging methods, or instead of instantiating your own <samp>Logging</samp> object, re-use the 
+RSE-supplied logging object by calling <samp>getDefault().getLog()</samp> in the <samp>com.ibm.etools.systems.core.SystemBasePlugin</samp>
+class.
+</p>
+
+
+<P><BR></P>
+</body>
+</html>

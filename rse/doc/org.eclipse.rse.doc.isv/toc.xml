@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<!-- ============================================================================= -->
+<!-- Define the top level topics                                                   -->
+<!-- ============================================================================= -->
+
+<toc label="Remote Systems Explorer Developer Guide">
+	<topic label="Overview (old)" href="guide/overview.html"/>
+	<topic label="Artifacts (old)" href="guide/Artifacts.html"/>
+	<topic label="Extensions (old)" href="guide/Extensions.html"/>
+	<topic label="APIs (old)" href="guide/usingAPIs.html"/>
+	<topic label="Tutorials (old)" href="guide/tutorials.html"/>
+
+	<topic label="Model (in progress)" href="guide/Model.html"/>
+
+	<topic label="Programmer&apos;s Guide (in progress)" href="guide/rse_int.html">
+		<link toc="topics_Guide.xml" />
+		<anchor id="guide_additions"/>
+	</topic>
+	<topic label="Reference (in progress)">
+		<link toc="topics_Reference.xml" />
+		<anchor id="reference_additions"/>
+	</topic>
+	<topic label="Questions Index (in progress)" href="questions/index.html">
+		<link toc="topics_Questions.xml" />
+		<anchor id="questions_additions"/>
+	</topic>
+	<topic label="Legal" href="notices.html"/>
+</toc>

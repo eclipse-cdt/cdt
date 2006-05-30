@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../../book.css" TYPE="text/css">
+<title>RSE Properties API</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>RSE Properties API</h1>
+<p>You can supply your own property pages to any node in the Remote Systems tree or table views. 
+As you author your property page classes, you may find the RSE-supplied base class for property pages
+of value.
+
+<h2>RSE-Supplied Base Class for Property Pages</h2>
+<p>The RSE supplies a base class for property pages, 
+<samp><A href="../../../com/ibm/etools/systems/core/ui/propertypages/SystemBasePropertyPage.html">com.ibm.etools.systems.core.ui.propertypages.SystemBasePropertyPage</A></samp>,
+that extends the base eclipse property page <samp>org.eclipse.ui.dialogs.PropertyPage</samp>. The advantages
+of using this RSE-supplied class are:
+</p>
+<ul>
+<li>Supports <samp><a href="../messages/uiMessageAPI.html">SystemMessage</A></samp> error messages, allowing the user to click on a message to see its details.
+<li>Supports automatic assignment of mnemonics for input-capable fields.
+<li>Supports automatic management of the "isValid" property based on current error message status in the message line. This
+property is important to set correct, so eclipse knows when to prevent the user from switching focus to other property pages.
+</ul>
+
+
+<h2>Property Pages for RSE Non-Remote Resources</h2>
+<p>You can simply use the eclipse-supplied extension point <samp>org.eclipse.ui.propertyPages</samp> to 
+contribute property pages to any of the non-remote artifacts from the RSE model. To use this extension
+point, you need to know the class or, preferably, interface that the objects implement, which we describe here:
+</p>
+
+<TABLE border="1" width="100%">
+	<TBODY>
+		<TR>
+			<TH>RSE Resource</TH>
+			<TH>Implements Interface</TH>
+		</TR>
+		<TR>
+			<TD>Profile</TD>
+			<TD><samp><A href="../../../com/ibm/etools/systems/model/SystemProfile.html">com.ibm.etools.systems.model.SystemProfile</A></samp></TD>
+		</TR>
+		<TR>
+			<TD>Connection</TD>
+			<TD><samp><A href="../../../com/ibm/etools/systems/model/SystemConnection.html">com.ibm.etools.systems.model.SystemConnection</A></samp></TD>
+		</TR>
+		<TR>
+			<TD>Subsystem</TD>
+			<TD><samp><A href="../../../com/ibm/etools/systems/subsystems/SubSystem.html">com.ibm.etools.systems.subsystems.SubSystem</A></samp></TD>
+		</TR>
+		<TR>
+			<TD>Filter pool reference</TD>
+			<TD><samp><A href="../../../com/ibm/etools/systems/filters/SystemFilterPoolReference.html">com.ibm.etools.systems.filters.SystemFilterPoolReference</A></samp></TD>
+		</TR>
+		<TR>
+			<TD>Filter reference</TD>
+			<TD><samp><A href="../../../com/ibm/etools/systems/filters/SystemFilterReference.html">com.ibm.etools.systems.filters.SystemFilterReference</A></samp></TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<h2>Property Pages for RSE Remote Resources</h2>
+<p>Remote resources have no underlying eclipse resource, and typically all are instances of the same class,
+meaning insufficient fidelity in scoping property pages to a remote resource of a particular type. Because of this,
+the RSE supplies its <a href="../../../doc/org_eclipse_rse_ui_propertyPages.html">propertyPages extension point</a>, for remote resources, which allows for
+very explicit scoping of the property page to very specific types of remote resources.
+</p>
+
+
+
+<P><BR></P>
+</body>
+</html>

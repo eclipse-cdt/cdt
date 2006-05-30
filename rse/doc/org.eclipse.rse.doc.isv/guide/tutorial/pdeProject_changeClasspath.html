@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>Changes to Plug-in Project Classpath</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>Changes to Plug-in Project Classpath</h1>
+<h2>NutShell</h2>
+To make sure you can compile your code successfully, you must add the following lines to the project's classpath, 
+where <samp>RSE_HOME</samp> is the folder where you installed the product:</P>
+<ul>
+<li><samp>RSE_HOME/com.ibm.etools.systems.core_5.0.0/runtime/clientserver.jar</samp>
+<li><samp>RSE_HOME/com.ibm.etools.systems.core_5.0.0/runtime/systems.jar</samp>
+<li><samp>RSE_HOME/com.ibm.etools.systems.core_5.0.0/runtime/mofrt.jar</samp>
+<li><samp>RSE_HOME/com.ibm.etools.systems.logging_5.0.0/runtime/systemslogging.jar</samp>
+</ul>
+
+<h2>Step-By-Step Details</h2>
+<p>Right-click on your project.Select <B>Properties</B>, and then select the 
+<B><A href="pdeProj_props1.gif">Libraries</A></B> tab. You will now add the RSE jar files you 
+need to reference, in order to compile  the code successfully:
+</p>
+<ol>
+    <LI type="i">
+    Press the <B>Add Variable</B> button on the right of the list, to open the 
+    <A href="pdeProj_props_addvar1.gif">New Variable Classpath Entry</A> dialog.</LI> 
+    <LI type="i">
+    Press the <B>New</B> button to open the <A href="pdeProj_props_addvar2.gif">New Variable Entry</A> dialog. 
+    Specify <B>&quot;RSE_HOME&quot;</B> for the <B>Name</B> and <B>&quot;c:/WDSC/iSeries/eclipse/plugins&quot;</B> 
+    for the <B>Path</B>, where &quot;c:/WDSC&quot; is the folder where you installed the Eclipse-based product you are running. 
+    Press<B> OK</B> to return to the New Variable Classpath Entry dialog.</LI>
+	<LI type="i">Press the <B>Extend</B> button to get the <A href="pdeProj_props_addvar4.gif">Variable Extension</A> dialog. 
+	Find the folder <B><samp>com.ibm.etools.systems.core_5.0.0/runtime</samp></B>, expand it, and select <B><samp>system.jar</samp></B>.   
+	Press<B> OK</B> to return to the <A href="pdeProj_props2.gif">Libraries</A> tab, and select <B>No</B> on the<A
+			href="pdeProj_props_addvar5.gif"> warning message</A>.</LI>
+	<LI type="i">Press the <b>Add Variable</b> button to get the New Variable Classpath Entry dialog again, and select the <A
+			href="pdeProj_props2_addvar1.gif">RSE_HOME</A> variable. 
+	Press <B>Extend</B> and select the <b><samp><A href="pdeProj_props2_addvar2.gif">mofrt.jar</A></samp></B> file in the same 
+	<b><samp>com.ibm.etools.systems.core_5.0.0/runtime</samp></B> folder. 
+	Press <b>OK</b> to return to the <A href="pdeProj_props3.gif">Libraries</A> tab.</LI>
+	<LI type="i">Repeat the previous step, for <b><samp>systems.jar</samp></b> and <b><samp>clientserver.jar</samp></b>.
+
+	<LI type="i">Repeat the previous step, but this time select folder <B>com.ibm.etools.systems.logging_5.0.0/runtime</B>, 
+	and file <B><A href="pdeProj_props3.gif">systemslogging.jar</A></B>. 
+	Press <B>OK</B> to return to the <A href="pdeProj_props4.gif">Libraries</A> tab.</LI>
+	<LI type="i">Press <B>OK</B> to close the <B><A	href="pdeProj_props4.gif">Properties for 
+	RSESamples</A></B> dialog.
+	</LI>
+</ol>
+</body>
+</html>

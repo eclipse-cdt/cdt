@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>TeamResource Class After Editing</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>TeamResource Class After Editing</h1>
+<p>
+<pre><samp>
+package samples.model;
+
+import com.ibm.etools.systems.subsystems.<b>SubSystem</b>;
+import com.ibm.etools.systems.subsystems.impl.AbstractResource;
+
+/**
+ * This models a remote resource representing a team defined on a particular system.
+ */
+public class TeamResource extends AbstractResource
+{
+	<b>private String name;</b>
+	<b>private DeveloperResource[] developers;</b>
+	
+	/**
+	 * Default constructor
+	 */
+	public TeamResource()
+	{
+		super();
+	}
+	/**
+	 * Constructor for TeamResource when given a parent subsystem.
+	 */
+	public TeamResource(SubSystem subsystem)
+	{
+		super(subsystem);
+	}
+	
+	/**
+	 * Returns the name.
+	 * @return String
+	 */
+	<b>public String getName()
+	{
+		return name;
+	}</b>
+
+	/**
+	 * Sets the name.
+	 * @param name The name to set
+	 */
+	<b>public void setName(String name)
+	{
+		this.name = name;
+	}</b>
+
+	/**
+	 * Returns the developers.
+	 * @return DeveloperResource[]
+	 */
+	<b>public DeveloperResource[] getDevelopers()
+	{
+		return developers;
+	}</b>
+
+	/**
+	 * Sets the developers.
+	 * @param developers The developers to set
+	 */
+	<b>public void setDevelopers(DeveloperResource[] developers)
+	{
+		this.developers = developers;
+	}</b>
+
+}
+
+
+</samp></pre>
+</p>
+</body>
+</html>

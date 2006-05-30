@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>Other Relevant Extension Points</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>Other Relevant Extension Points</h1>
+<p>There are some Eclipse extension points that are relevant as-is to the Remote System Explorer, 
+which we list here. We do not describe how to use these extension points here, except to document 
+the information needed to enable them to in Remote System Explorer.
+</p>
+
+<TABLE border="1">
+	<TBODY>
+		<TR>
+			<TH>Extension Point</TH>
+			<TH>Description</TH>
+		</TR>
+		<TR>
+			<TD><samp>org.eclipse.ui.viewActions</samp></TD>
+			<TD>For adding actions to the pulldown menu in any view's local toolbar, or to the toolbar itself. 
+			To use this you need to know the ID of the RSE views, for the <samp>targetID</samp> attribute: There are:
+			<ul>
+			<li><samp>com.ibm.etools.systems.core.ui.view.systemView</samp> for the primary 
+			  <A href="view_RS.gif">Remote Systems</A> view.
+			<li><samp>com.ibm.etools.systems.core.ui.view.teamView</samp> for the 
+			  <A href="view_Team.gif">Team</A> view in the RSE perspective.
+			<li><samp>com.ibm.etools.systems.core.ui.view.systemTableView</samp> for the 
+			  <A href="view_Table.gif">Remote System Details</A> view in the RSE perspective.
+			<li><samp>com.ibm.etools.systems.core.ui.view.commandsView</samp> for the 
+			  <A href="view_Cmds.gif">Remote Commands</A> view in the RSE perspective.
+			</ul>
+			</TD>
+		</TR>
+		<TR>
+			<TD><samp>org.eclipse.ui.propertyPages</samp></TD>
+			<TD>For adding property pages for non-remote objects within the 
+			Remote System Explorer. To use this you need to know the class type 
+			of these objects for the <samp>objectClass</samp> attribute of the <samp>&lt;page&gt;</samp> element:
+			<ul>
+            <li>Connections: <samp><A href="../../com/ibm/etools/systems/model/SystemConnection.html">com.ibm.etools.systems.model.SystemConnection</A></samp>
+            <li>SubSystems: <samp><A href="../../com/ibm/etools/systems/subsystems/SubSystem.html">com.ibm.etools.systems.subsystems.SubSystem</A></samp>
+            <li>Filter Pools: <samp><A href="../../com/ibm/etools/systems/filters/SystemFilterPoolReference.html">com.ibm.etools.systems.filters.SystemFilterPoolReference</A></samp>
+            <li>Filters: <samp><A href="../../com/ibm/etools/systems/filters/SystemFilterReference.html">com.ibm.etools.systems.filters.SystemFilterReference</A></samp>
+			</ul>
+            It is possible to scope your property pages to only appear for certain system types or subsystems, using
+             the <samp>&lt;filter&gt;</samp> element. For example:<br>
+            <pre><code>
+               &lt;extension point=&quot;org.eclipse.ui.propertyPages&quot;&gt;
+                   &lt;page name=&quot;Team Info&quot;
+                         class=&quot;samples.ui.propertypages.TeamFilterPropertyPage&quot;
+                         id=&quot;samples.ui.pp.filter.team&quot;
+                         objectClass=&quot;com.ibm.etools.systems.filters.SystemFilterReference&quot; &gt;
+                    <b>&lt;filter name=&quot;subsystemFactoryId&quot; value=&quot;samples.subsystems.factory&quot;/&gt;</b>
+                   &lt;/page&gt;
+               &lt;/extension&gt;                
+            </code></pre>
+            See <a href="#scoping">Scoping</a> for all the filter <samp>names</samp> supported by RSE objects.
+            </TD>
+		</TR>
+		<TR>
+			<TD><samp>org.eclipse.ui.popupMenus</samp></TD>
+			<TD>For adding pop-up menu actions for non-remote objects within the Remote System Explorer. 
+			To use this you need to know the class type of these objects for the <samp>objectClass</samp> attribute 
+			of the &lt;objectContribution&gt; element:
+			<ul>
+            <li>Connections: <samp><A href="../../com/ibm/etools/systems/model/SystemConnection.html">com.ibm.etools.systems.model.SystemConnection</A></samp>
+            <li>SubSystems: <samp><A href="../../com/ibm/etools/systems/subsystems/SubSystem.html">com.ibm.etools.systems.subsystems.SubSystem</A></samp>
+            <li>Filter Pools: <samp><A href="../../com/ibm/etools/systems/filters/SystemFilterPoolReference.html">com.ibm.etools.systems.filters.SystemFilterPoolReference</A></samp>
+            <li>Filters: <samp><A href="../../com/ibm/etools/systems/filters/SystemFilterReference.html">com.ibm.etools.systems.filters.SystemFilterReference</A></samp>
+			</ul>
+            It is possible to scope your actions to only appear for certain system types or subsystems, using
+             the <samp>&lt;filter&gt;</samp> element. For example:<br>
+            <pre><code>
+               &lt;extension point=&quot;org.eclipse.ui.popupMenus&quot;&gt;
+                   &lt;objectContribution 
+                         id =&quot;samples.ui.actions.TeamFilterActions&quot;
+                         objectClass=&quot;com.ibm.etools.systems.filters.SystemFilterReference&quot;&gt; 
+                         <b>&lt;filter name=&quot;subsystemFactoryId&quot; value=&quot;samples.subsystems.factory&quot;/&gt;</b>
+                         &lt;action id=&quot;samples.ui.actions.TeamFilterAction1&quot; 
+                                 label=&quot;Sample Team Filter Action&quot; 
+                                 class=&quot;samples.ui.actions.ShowJarContents&quot;&gt;
+                         &lt;/action&gt;         
+                   &lt;/objectContribution&gt;
+               &lt;/extension&gt;                
+             </code></pre>
+            See <a href="#scoping">Scoping</a> for all the filter <samp>names</samp> supported by RSE objects.
+            </TD>
+		</TR>
+	</TBODY>
+</TABLE>
+
+<a name="scoping"></a><h2>Scoping</h2>
+<p>For the <samp>org.eclipse.ui.propertyPages</samp> and <samp>org.eclipse.ui.popupMenus</samp> extension points, it is
+possible to scope your property pages and actions to only filters in a particular subsystem, or connections of a 
+particular system type, say. These extension points support the <samp>&lt;filter&gt;</samp> element, which
+allows you to specify a property name, and a property value, such that the page or action will only show if
+that property's value is the one given:<br>
+<pre><code>
+  &lt;filter name="<i>name</i>" value="<i>value</i>"/&gt;
+</code></pre>
+It is up to the selected object's adapter to perform this test, in its
+<code>testAttribute(Object target,String <i>name</i>,String <i>value</i>)</code> method. This method is implemented for the adapters for every object shown in the
+Remote Systems view, and what follows is a list of the tests it will do on the given <samp><i>value</i></samp>, 
+for the given <samp><i>name</i></samp>:</p>
+<ul>
+<li><b><samp>"name"</samp></b>. Will test the <i>value</i> for an exact match on an object's name,
+or beginning-of-name match if ends with an asterisk.
+<li><b><samp>"type"</samp></b>. Will test the <i>value</i> for an exact match on an object's type.
+<li><b><samp>"offline"</samp></b>.Will test the <i>value</i> against "true" if the user is working
+in "offline" mode or "false" if not. Currently only supported for iSeries connections.
+<li><b><samp>"connected"</samp></b>. Will test the <i>value</i> against "true" if the connection
+containing the selected object is active or "false" if not.
+<li><b><samp>"hasChildren"</samp></b>. Will test the <i>value</i> against "true" if this object's
+adapter reports that it has children or "false" if it doesn't have children.
+<li><b><samp>"systemType"</samp></b>. Will test the <i>value</i> for an exact match on the system type of
+this object's parent SystemConnection object. 
+You can specify multiple values if you comma-separate them. 
+<li><b><samp>"subsystemFactoryId"</samp></b>. Will test the <i>value</i> for an exact match on the 
+<samp>ID</samp> of the subsystem factory that created this object's subsystem. Returns false for SystemConnection objects.
+You can specify multiple values if you comma-separate them. 
+<li><b><samp>"subsystemFactoryCategory"</samp></b>. Will test the <i>value</i> for an exact match
+on the <samp>category</samp> of the subsystem factory that created this object's subsystem.
+You can specify multiple values if you comma-separate them. 
+</ul>
+
+<p>For system filter objects of type <samp>com.ibm.etools.systems.filters.SystemFilterReference</samp>, 
+the following names are also supported:
+<ul>
+<li><b><samp>"filterType"</samp></b>. Will test the <i>value</i> for an exact match on the selected filter's
+untranslated type, as set internally. The only IBM-supplied subsystem to support multiple filter types is
+the iSeries Objects subsystem for iSeries connections. It contains these types:
+  <ul>
+       <li><samp>"Library"</samp>.
+       <li><samp>"LibraryList"</samp>.
+       <li><samp>"Object"</samp>.
+       <li><samp>"Member"</samp>.
+  </ul>
+</ul>
+
+<p>For the <samp>org.eclipse.ui.popupMenus</samp> extension point, you can also use the above names
+in the &lt;visibility&gt; and &lt;enablement&gt; elements, for extreme flexibility in when
+the action is shown, and when it is enabled or disabled. These map to the <samp>objectState</samp>
+attribute. For example:
+<pre><code>
+   &lt;enablement&gt;
+       &lt;objectState name="hasChildren" value="true"/&gt;
+   &lt;/enablement&gt;
+</code></pre>
+
+
+<p>Be aware the <samp>&lt;visibility&gt;</samp> element is available at the
+<samp>&lt;objectContribution&gt;</samp> level, while the <samp>&lt;enablement&gt;</samp>
+element is available at the <samp>&lt;Action&gt;</samp> level.
+</body>
+</html>

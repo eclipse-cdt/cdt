@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>Creating a Subsystem Factory</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>Creating a Subsystem Factory</h1>
+<p>In this tutorial, you will use the RSE <A href="../plugin/subsystem.html">subsystemfactory
+extension point</A> to show new subsystems within connections, when they are expanded. Effectively,
+you will add a new <i>remote-accessing tool</i> to the Remote System Explorer.</p>
+<p>
+A full-blown tutorial to illustrate this extension point is a bit difficult without inventing
+server-side code and a communication layer for that server-side code to communication with the
+client-side subsystem. Rather than becoming bogged down in these details, this tutorial will not
+write server-side code or a communications-layer, but instead will hard-code the remote resources
+on the client-side so as to focus discussion on the client-side code. The extension point assumes
+you already have server-side code and a communication layer you now want to exploit within
+Eclipse.
+</p>
+<h2>Scenario</h2>
+<p>This tutorial pretends that you  have server-side code, which manages user profiles for developers, and
+<i>teams</i> of developers. There is a master list of developers identified for development access 
+to this server, and there is a grouping mechanism that allows developers to be assigned to named
+teams. Developers may exist on multiple teams. Each developer can have one or more <i>roles</i>, which 
+may affect what they are allowed to access.</p>
+<p>In this tutorial you will define a subsystem for working with these resources in the remote system
+identified by the parent connection object. This will first list teams, then developers within teams.
+Roles will be accessible via an action. 
+</p>
+<p><i>Do not worry about how useful or realistic the example is. The point of the exercise is
+show the code necessary to fully enable new subsystems. It is up to the subsystem developer to
+decide what resources to expose and what actions on those resources.</i></p>
+
+<br>
+<hr>
+
+
+<h2>Step By Step: Creating a Subsystem Factory</h2>
+<p>If you have not already, first <a href="pdeProject.html">create or prepare a plugin project</a>
+We will follow the steps listed in the <A href="../plugin/subsystem.html#steps">Overview of Steps</A> section in the description of the plugin.</p>. 
+
+<ol>
+<li>Create a package named <samp><b>samples.subsystems</b></samp>, by right-clicking on the <samp>src</samp> folder 
+and using the <b>New-&gt;Package</b> wizard. In the new package, create an empty interface 
+named <A href="IDeveloperSubSystem.html">IDeveloperSubSystem</A>, 
+by right-clicking on the package and selecting <b>New-&gt;Interface</b>. 
+</li>
+<li>Also in package <samp>samples.subsystems</samp>, use <b>New-&gt;Class</b> to
+create a class named <samp><b>DeveloperSystem</b></samp> that extends <b>superclass</b> 
+<samp><A href="../../com/ibm/etools/systems/subsystems/impl/AbstractSystem.html">AbstractSystem</A></samp>,
+selecting the option to include <b>Constructors from superclass</b>. Edit the result to add
+a <samp>connected</samp> instance variable that is used in the methods, as shown in bold <a href="DeveloperSystem.html">here</a>.
+</li>
+<li>Again in package <samp>samples.subsystems</samp>, use <b>New-&gt;Class</b> to
+create a class named <samp><b>DeveloperSystemManager</b></samp> that extends <b>superclass</b> 
+<samp><A href="../../com/ibm/etools/systems/subsystems/impl/AbstractSystemManager.html">AbstractSystemManager</A></samp>,
+selecting the option to include <b>Constructors from superclass</b>. Edit the result to add
+a factory method, and flesh out the methods, as highlighted <a href="DeveloperSystemManager.html">here</a>.
+</li>
+<li>Create a package named <samp><b>samples.model</b></samp>. Create two classes in it: 
+<b><samp>TeamResource</samp></b> and <b><samp>DeveloperResource</samp></b>, each of which extend
+<A href="../../org/eclipse/rse/ui/subsystems/impl/AbstractResource.html">AbstractResource</A>.
+  <ol>
+    <li type="i">Edit <samp>DeveloperResource</samp> to add <samp>name</samp>, <samp>id</samp>, and <samp>deptNbr</samp> properties,
+    as shown in bold <a href="DeveloperResource.html"><samp>here</samp></a>.
+    <li type="i">Edit <samp>TeamResource</samp> to add <samp>name</samp> and <samp>developers</samp> (array) properties, 
+    as shown in bold <a href="TeamResource.html"><samp>here</samp></a>.
+  </ol>
+<li>You need to think about  filter support. For now, you can keep it simple: users can only create filters that list teams,
+by specifying a single string that is either a scalar or a generic team name. If scalar, one team will be shown when the filter is expanded.
+If generic, all teams matching the generic pattern will be listed. Given the simplicity, you will not need to create a filter string class to perform 
+parsing. As a result, you have nothing to do for this step.</li>
+<li>Return to package <samp>samples.subsystems</samp>, and create class <b><samp>DeveloperSubSystem</samp></b>
+that extends <samp><A href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemImpl.html">DefaultSubSystemImpl</A></samp>.
+Edit the generated class to add code highlighted <a href="DeveloperSubSystem.html">here</a>.</li>
+<li>Again in package <samp>samples.subsystems</samp>, create class <b><samp>DeveloperSubSystemFactory</samp></b>
+that extends <samp><A href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemFactoryImpl.html">DefaultSubSystemFactoryImpl</A></samp>.
+Edit the generated class to add code highlighted <a href="DeveloperSubSystemFactory.html">here</a>.
+</li>
+<li>In the project's root folder, find and edit file <samp>rseSamplesResources.properties</samp> and 
+add the line highlighted <a href="rseSamplesResources3.html">here</a>.
+</li>
+<li>Update your <samp>plugin.xml</samp> file to include the following lines:
+<pre><samp>
+   &lt;!-- ======================================= --&gt;
+   &lt;!-- SubSystem Factory                       --&gt;
+   &lt;!-- ======================================= --&gt;
+   &lt;extension point=&quot;com.ibm.etools.systems.core.subsystemfactory&quot;&gt;
+        &lt;factory
+             id=&quot;samples.subsystems.factory&quot;
+             systemtypes=&quot;Linux;Unix;Windows&quot;
+             name=&quot;Teams&quot;
+             class=&quot;samples.subsystems.DeveloperSubSystemFactory&quot;
+             category=&quot;users&quot;
+             vendor=&quot;ACME&quot;
+        &gt;
+        &lt;/factory&gt;
+   &lt;/extension&gt;            
+</samp></pre>
+<b>Note:</b> You would normal use the <samp>icon</samp> and <samp>iconLive</samp> attributes to specify 
+a unique icon for your subsystem, but to keep it simple here, just use the default icon.
+</li>
+</ol>
+<p>Now you are far enough along that you can try our what you have, before proceeding. Select
+<b>Run-&gt;Run As-&gt;Run-time workbench</b>. Create a new Linux connection in the RSE, and 
+expand it. You'll now see your <A href="runIt1.gif">new subsystem</A>, which you can expand
+to see its default filter, which in turn you can expand to see your hardcoded list of teams:<br>
+<IMG border="0" src="runIt1.gif" width="800" height="514">
+<br>
+You will be prompted for a user ID and password, but since the system class does not really 
+connect, enter anything you like!
+<p>Eventually, you will be able to expand a team to see its developers.</p>
+<p>Now it is time to work on the appearance and functions of those remote resources. You will do this
+by creating adapters for the resources:</p>
+<ol start="10">
+ <li>Select the <samp>samples.model</samp> package, and:
+   <ol>
+   <li type="i">Create a new class named <b><samp>TeamResourceAdapter</samp></b>
+       that extends <a href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter</samp></A> and implements
+       <a href="../../org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter</samp></A>. 
+       Edit the generated class and add the code highlighted <a href="TeamResourceAdapter.html"><b>here</b></a>.
+   </li>
+   <li type="i">Create a new class named <b><samp>DeveloperResourceAdapter</samp></b>
+       that extends <a href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter</samp></A> and implements
+       <a href="../../org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter</samp></A>. 
+       Edit the generated class and add the code highlighted <a href="DeveloperResourceAdapter.html"><b>here</b></a>.
+   </li>
+   <li type="i">Next, you need the icons for your remote resources, which you referred to in your adapters. Edit the <samp>RSESamplesPlugin</samp> file and edit the <samp>initializeImageRegistry</samp>
+       to add the lines of code highlighted <a href="InitializeImageRegistry.html"><b>here</b></a>. Now, you need the icons. Select the RSESamplesPlugin project,
+       right-click and select <b>New-&gt;Folder</b> and create a folder named <b>icons</b>. Select the new folder, and use <b>File-&gt;Import</b> to 
+       import the <samp>team.gif</samp> and <samp>developer.gif</samp> files from the <samp>plugins\com.ibm.etools.systems.doc.isv\icons</samp> folder, 
+       typically found <samp>c:\wdsc\iseries</samp> where c:\wdsc is where you installed this product.
+   </li>
+   </ol>
+ </li>
+ <li>Creating the adapters does nothing until you register them with the platform. To do that, you need
+ an adapter factory class and you need to register it with the platform:
+   <ol>
+     <li type="i">Select the <samp>samples.model</samp> package and in it create a class named
+     <b>DeveloperAdapterFactory</b> that extends <samp><a href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemRemoteAdapterFactory.html">AbstracSystemRemoteAdapterFactory</a></samp> 
+     and implements interface <samp><b>org.eclipse.core.runtime.IAdapterFactory</b></samp>.
+     Edit the generate class as per the highlighted code <a href="DeveloperAdapterFactory.html"><b>here</b></a>.
+     </li>
+     <li type="i">Back in the <samp>RSESamplesPlugin</samp> class, add the highlighted code 
+     <b><a href="startup.html">here</a></b> to your <samp>startup</samp> method.
+     </li>
+   </ol>
+</li>
+</ol>
+
+<p>Once again, run the workbench to see your new subsystem:<br>
+<IMG border="0" src="runIt2.gif" width="886" height="594"><br>
+It is looking better now! There are icons and labels, and the team resources are expandable. Try the following things with
+your new subsystem resources:</p>
+<ul>
+<li>Right-click on <samp>Team 1</samp> and select the <a href="renameAction.gif">rename action</A>. The rename action is enabled because you
+overwrote <a href="TeamResourceAdapter.html#canRename">canRename</a> in the team resource adapter class. Try renaming it to a name already in use.
+The <a href="renameDialog.gif">rename dialog</a> can catch this error because we returned the list of names in use in 
+the <a href="TeamResourceAdapter.html#getNames">getRemoteParentNamesInUse</a>
+method in our team resource adapter class. Rename to a new name. The rename in fact happens because we implemented
+the <a href="TeamResourceAdapter.html#doRename">doRename</a> method.
+<li>The default filter <samp>All teams</samp> exists because we wrote code to create it in 
+our <a href="DeveloperSubSystemFactory.html#createDefaultFilterPool">createDefaultFilterPool</a> 
+subsystem factory method. Try creating a new filter: right-click on <samp>Teams</samp> subsystem and select 
+<a href="newFilterAction.gif">New-&gt;Filter</a> to get the
+<a href="NewFilterWizard.gif">New Filter wizard</a>. Enter <samp>*2</samp>, press <b>Next</b>, and 
+enter <samp>Test filter</samp> for the filter name. Press <b>Finish</b>
+to create the filter. Expand it, and you will see that only teams whose name ends with "2" are shown:<br>
+<IMG border="0" src="testFilter.gif">
+<br>
+Filter support is free in the RSE,
+but you do have to write our own code to apply that filter pattern as you see fit. In this case, we did this in our 
+<a href="DeveloperSubSystem.html#resolveFilterString">internalResolveFilterString</a> subsystem method. 
+<li>Notice how a resource like team can display multiple times, by different filters that resolve to it.
+Rename <samp>Team 2</samp> shown under the new expanded <samp>Test filter</samp>, and notice how it is successfully
+renamed under both filters. This ability to refresh the name in all occurrences of the same resource is made
+possible by the adapter methods <a href="TeamResourceAdapter.html#getAbsoluteName">getAbsoluteName</a>, which helps
+RSE find redundant copies of the same object, and <a href="TeamResourceAdapter.html#refreshRemoteObject">refreshRemoteObject</a>,
+which the RSE calls, on each redundant copy, on a rename operation.
+<IMG border="0" src="testRename.gif"></ul>
+<p>
+<br><br><br>
+<p>There are no steps to perform here, but for your reference here is some information on how to further 
+evolve the functions via your adapter, should you want to:</p>
+<ul>
+<li>To not show the rename and delete actions at all, or to enable them, 
+override appropriate methods in the adapter class. For details see the methods 
+<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#showRename(java.lang.Object)">showRename</A>, 
+<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#showDelete(java.lang.Object)">showDelete</A>, 
+<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#doRename(org.eclipse.swt.widgets.Shell, java.lang.Object, java.lang.String)">doRename</A>
+ and 
+<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#doDelete(org.eclipse.swt.widgets.Shell, java.lang.Object)">doDelete</A> in the parent 
+<samp><A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html">AbstractSystemViewAdapter</A></samp> class.
+<li>To supply your own validator for syntax checking of new names on the rename dialogs,
+override <A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#getNameValidator(java.lang.Object)">getNameValidator</A>.
+<li>To add additional actions to the pop-up menus, implement the <A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#addActions(com.ibm.etools.systems.core.ui.SystemMenuManager, org.eclipse.jface.viewers.IStructuredSelection, org.eclipse.swt.widgets.Shell, java.lang.String)">addActions</a> 
+method in your adapter class.
+<li>To support dragging and dropping, override the 
+<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#canDrag(java.lang.Object)">canDrag</a> and 
+<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#canDrop(java.lang.Object)">canDrop</a> parent methods in your adapter class.
+<li>To add additional properties to the property sheet, implement the 
+<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#internalGetPropertyDescriptors()">internalGetPropertyDescriptors</a> and
+<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#internalGetPropertyValue()">internalGetPropertyValue</a> methods
+in your adapter class.
+<li>To add property pages to your remote objects (the Properties popup menu item will then appear) use
+the RSE <A href="../plugin/propertypage.html">propertyPages</a> extension point. 
+</ul>
+
+<br><br><br>
+<p>Now you will continue with the tutorial by enhancing the running example to supply its own actions for creating and changing
+filters. You will support two types of filters in our subsystems: team filters and developer filters. You have seen team filter already,
+but developer filters will be new. They will contain a team name and a developer name-pattern, and when expanded, they will list all the
+matching developers in the given team. The filter string syntax for developer filters will be "team-name/developer-generic-name". Because
+you have more than one type of filter, our filter wizards will set the type attribute for the filters, so the change action will know
+which dialog to present to the user. This will also allow you to have different icons for each filter. 
+<ol start="11"> 
+  <li>Follow these steps to enable support for our own filter-support:
+      <ol>
+         <li type="i">First,  create the new GUI pane for your developer filter prompts. Select the <samp>samples.subsystems</samp>
+         package and in it create a new class named <samp><b>DeveloperFilterStringEditPane</b></samp> that extends the
+         class <samp><b>SystemFilterStringEditPane</b></samp> in package <samp>com.ibm.etools.systems.filters.ui</samp>. 
+         Edit the new class, adding the code highlighted <a href="DeveloperFilterStringEditPane.html">here</a>.
+         </li>
+         
+         <li type="i">Edit the <samp>DeveloperSubSystemFactory</samp> class, and add the code highlighted 
+         <a href="DeveloperSubSystemFactory2.html">here</a>.
+         </li>
+         
+         <li type="i">Next, you need the unique icons for your own filters, which you referred to in your subsystem factory. Edit the <samp>RSESamplesPlugin</samp> file and edit the <samp>initializeImageRegistry</samp>
+         to add the lines of code highlighted <a href="InitializeImageRegistry2.html">here</a>. Now you need these icons. 
+         Select the folder named <b>icons</b> and use <b>File-&gt;Import</b> to 
+         import the <samp>teamFilter.gif</samp> and <samp>developerFilter.gif</samp> files from the 
+         <samp>plugins\com.ibm.etools.systems.doc.isv\icons</samp> folder, 
+         typically found in <samp>c:\wdsc\iseries</samp> where c:\wdsc is where you installed this product.
+         </li>
+         
+         <li type="i">Now you need to edit your subsystem so it will parse the two types of filters you now
+         have. Edit <samp>DeveloperSubSystem</samp> and edit it as highlighted <a href="DeveloperSubSystem2.html#resolve">here</a>.
+         </li>
+
+         <li type="i">In the project's root folder, find and edit file <samp>rseSamplesResources.properties</samp> and 
+         add the line highlighted <a href="rseSamplesResources4.html">here</a>.
+         </li>
+         
+         <li type="i">Now you can run again. Right click on the <samp>Teams</samp> subsystem, to see the new actions for 
+         creating filters:<br>
+         <IMG border="0" src="NewFilterActions.gif">
+         <IMG border="0" src="TeamFilterWizard.gif"><br><br>
+         <IMG border="0" src="DeveloperFilterWizard.gif"><br><br>
+         
+         Create a team filter and a developer filter, and notice the new icons:<br>
+         <IMG border="0" src="NewFilterIcons.gif"><br><br>
+         
+         Now right-click on a team filter and select Change, and then do the same for a developer filter:<br>
+         <IMG border="0" src="TeamFilterDialog.gif">
+         <IMG border="0" src="DeveloperFilterDialog.gif"><br>
+         </li>
+         
+      </ol>
+  </li>
+</ol>
+
+
+<br><br><br>
+</body>
+</html>

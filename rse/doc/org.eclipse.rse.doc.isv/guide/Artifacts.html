@@ -1,0 +1,288 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" HREF="../book.css">
+<title>RSE Artifacts</title>
+</head>
+
+<body>
+<h1>Remote System Explorer Artifacts</h1>
+<p>With the RSE, you can create and manipulate the following artifacts, which we introduce here:</p>
+<ul>
+<li><A href="#Hosts">Hosts</A></li>
+<li><A href="#profiles">Profiles</A></li>
+<li><A href="#subsystems">Subsystems, created from subsystem configurations</A></li>
+<li><A href="#connectorservices">Connector Services, managed by connector service managers</A></li>
+<li><A href="#filters">Filters and filter strings</A></li>
+<li><A href="#filterpools">Filter pools</A></li>
+<li><A href="#Preferences">Preferences</A></li>
+<li><A href="#Registry">System Registry</A></li>
+</ul>
+<p>All the classes and interfaces mentioned here are defined in the <samp>org.eclipse.rse.core</samp> plugin.
+
+<h2><A name="Hosts">Hosts</A></h2>
+<p>
+The RSE's <A href="view_RS.gif">Remote Systems view</A> shows all existing <b>Hosts</b> to remote systems.
+Hosts are objects that are persisted, containing the information needed to access a particular remote host.
+The view contains a prompt to create new Hosts, and pop-up menu actions to rename, copy, delete, and reorder existing Hosts.
+</p>
+<p>Hosts contain attributes, or data, that is saved between sessions of the workbench. These attributes are
+the host name, the remote system's host name and system type, an optional description, and a user Id that is
+used by default by each subordinate subsystem, at host time.
+Underneath, all Hosts are stored via RSE persistence in an Eclipse project named <CODE>RemoteSystemshosts</CODE></A>, which
+the user can enable for team support, allowing Hosts to be shared by a team.
+</p>
+
+<h2><A name="profiles">Profiles</A></h2>
+<p>
+To facilitate team-shared and user-unique Hosts,
+Hosts are owned by <b>profiles</b>. These are simply <A href="file_profiles.gif">folders in the RemoteSystemshosts
+project</A>, as it turns out, within which all other data including Hosts are scoped. Internally profiles are realized as
+SystemProfile objects, managed by the SystemProfileManager.
+For each profile there is also a SystemhostPool object
+created to manage the Hosts within that profile. There are menu actions for the
+user to create and manage profiles. The collective of all Hosts of all <b><I>active</I> profiles</b> are shown in the Remote Systems view,
+and the user can easily decide which profiles are active using the <A href="preference_activeProfiles.gif">local pulldown menu</A> of the Remote Systems view.
+The list of profiles currently active is stored locally on each user's workstation, and not shared by the team.
+By default, there exists a profile named <code>Team</code>, and a profile with a name unique to this user. When the first
+host is created the user is asked to supply this unique name, which defaults to the hostname of their
+workstation. Whenever a new host is created, the user is prompted for an active profile to contain the new
+host. Both default profiles are active initially, so all Hosts from each are shown. There is a preferences
+setting to show the host names qualified by their profile name. After synchronizing the RemoteSystemshost
+project with a team repository, using the RSE <A href="plugin/view_Team.gif">team view</A>, all profiles of all members of
+the team will exist in the user's workspace, and hence
+all the Hosts created by all the team members. However, only the two default profiles are active, so the Hosts
+in the other profiles are not seen unless the user explicitly makes another profile active. This design allows
+for:
+</p>
+<ol>
+<li>Team-shared Hosts (created in the team profile or any profile all team members make active)<li>User-private Hosts (created in their own profile or any profile not active by default)<li>User-roaming, whereby a user uses a different workstation than usual, and then synchronizes with the
+team repository and sets their profile to be active.
+</ol>
+<p>
+As an aside, user IDs and passwords are not shared with the team repository, but rather stored only locally per
+workstation.
+Each subsystem can have a unique user ID, which if not set is inherited from its host, which in turn if not set is inherited from the
+user ID preferences setting for the appropriate system type.
+</p>
+
+<h2><A name="subsystems">Subsystems and subsystem configurations</A></h2>
+<p>
+When you expand a host, any tools registered with the Remote System Explorer are shown under the host.
+These tools are referred to as <b>subsystems</b>. The tool provider registers a <b>subsystem configuration</b>
+class via an RSE <A href="plugin/subsystem.html">extension point</A>, and whenever a new host is created, the configuration
+is asked to create a new subsystem object for that host. This subsystem is responsible for communicating with the remote host, and
+exposing artifacts and actions for working with remote resources. The subsystem configuration can elect not to
+supply a subsystem for a given host if it does not support the system type of that host
+</p>
+<p>
+IBM supplies two subsystem configurations that supply common subsystems for all Hosts:
+<ol>
+<li>Files. The subsystems created by this factory access the folders and files of the remote system,
+and allow users to explore and manipulate those folders and files. Editing support for remote source files is also included. For programmers, the subsystems also supply common APIs and user interface actions, wizards,
+dialogs, and widgets for easy access to the remote file system for a given host. These APIs are
+typically used when coding actions that appear in the pop-up menu for selected remote objects, but might
+also be of value when writing any view, editor, or action that needs access to a remote file system.
+<li>Commands. The subsystems created by this factory access the command shell of the remote system and
+allow users to predefine commands, and subsequently run them remotely. The commands subsystems are hidden
+subsystems, not shown when you expand the host. However, they are used by any code needing to run
+remote commands. There is also a Remote Commands view supplied that logs all commands and allows users to
+randomly enter a command to be run remotely. The commands all execute within the same shell, and users
+can launch additional shells for the same host.
+</ol>
+For iSeries Hosts, these subsystems work with the folders and files in the Integrated File System,
+and run commands in the QSHELL Unix-like environment. When using a WebSphere Studio configuration that
+supports it, there is also additional subsystem configurations that supply three more subsystems for each
+iSeries host:
+<ol>
+<li>iSeries Objects. This accesses the libraries, objects, and members in the native QSYS file system, allowing
+users to explore  and manipulate them via IBM-supplied actions. For programmers, this also supplies
+common APIs for listing remote libraries, objects, members, records, and fields, with various filtering
+capabilities, as well as editing remote source members. Furthermore, there are a number of iSeries-specific
+user interface actions, wizards, dialogs, and widgets that programmers can easily re-use.
+<li>iSeries Commands. This accesses the QSYS command shell and allows remote execution of any CL command. Users
+can pre-defined commands or use the Commands view to randomly enter and run a command. For programmers, there
+are APIs supplied to execute a remote CL command, with message retrieval.
+<li>iSeries Jobs. This accesses the iSeries jobs the user has access to, allowing limited exploration
+and manipulation of those jobs. For programmers, this also supplies APIs for listing jobs, with various
+filtering capabilities.
+</ol>
+From any of these iSeries-specific subsystems, programmers can access the Toolbox for Java <code>AS400</code> object
+for the current session, thus avoiding redundant signon requests for the user, and inheritence of existing
+job attributes. There is also a method for returning a JDBC host object for accessing DB2/400 databases
+on that iSeries host. Both of these getter methods are available in the
+<A href="../../com.ibm.etools.iseries.core/com/ibm/etools/iseries/core/ISeriesSystemDataStore.html">ISeries system</A> object all iSeries
+subsystems share. System objects are described next.</p>
+
+<h2><A name="systems">Systems and System Managers</A></h2>
+<p>While not seen by the user, subsystem objects are required to return a <b>system</b> object via the
+<A href="../com/ibm/etools/systems/subsystems/SubSystem.html#getSystem()">getSystem()</A> method.
+A system object is an object implementing the <A href="../com/ibm/etools/systems/subsystems/ISystem.html">ISystem</A> interface.
+A system object manages the live host to the remote system, and supports
+lifecycle methods for that host such as
+<A href="../com/ibm/etools/systems/subsystems/ISystem.html#connect(org.eclipse.core.runtime.IProgressMonitor)">connect</A>,
+<A href="../com/ibm/etools/systems/subsystems/ISystem.html#disconnect()">disconnect</A>, and
+<A href="../com/ibm/etools/systems/subsystems/ISystem.html#isConnected()">isConnected</A>.
+The communication layer for that host is entirely the programmer's responsibility, and might use sockets, JDBC, HTTP or
+SOAP. It is up the provider of the subsystem factory to author their own communication layer; the framework
+only dictates the handful of methods in ISystem, that the RSE UI depends upon. The framework supplies a base
+system class that is easily extended.
+</p>
+<p>It may be the case that multiple subsystems, each from a different subsystem factory, share the same live
+host for a given host object. To enable this, the framework supplies a base
+<b>system manager</b> <A href="../com/ibm/etools/systems/subsystems/impl/AbstractSystemManager.html">class</A>
+that can be used to manage a single shared system object across multiple subsystems. It uses a hashtable to store and
+return the system objects, keyed by a subsystem interface that all subsystems sharing the same system object
+are to implement. The subclass of the base system manager class supplies that interface. Further, the subclass
+must also implement the method for instantiating new instances of the system class, when no instance is found
+in the hashtable.
+</p>
+<p>
+It is possible to author a subsystem factory whose subsystems simply use the same system object as that used by
+the IBM-supplied subsystems. You might do this if the subsystem factory uses only the IBM-supplied APIs for
+accessing remote objects, in which case there is no need for a unique communication layer. By sharing the
+same system object, it prevents the user from being prompted to signon multiple times. To do this, simply access
+any IBM-supplied subsystem for a given host, and ask for its
+<A href="../com/ibm/etools/systems/subsystems/SubSystem.html#getSystemManager()">system manager</A>
+in your own subsystem's <A href="../com/ibm/etools/systems/subsystems/impl/AbstractSystem.html#getSystemManager()">getSystemManager</A> method.
+</p>
+
+<h2><A name="filters">Filters</A></h2>
+<p>
+When a subsystem is expanded, users usually see <b>filters</b>. Since subsystems typically list remote artifacts,
+it is typical that a mechanism is needed to allow users to define which artifacts they wish to see, with some
+form of filtering criteria. Filters are this mechanism. The filter support is fully supplied by the RSE framework.
+A filter is simply a <A href="../com/ibm/etools/systems/filters/SystemFilter.html">SystemFilter</A>
+object containing a name and a collection of <b>filter strings</b>. Filter strings are just strings, which
+the subsystem is required to interpret. When a user expands a filter, the owning subsystem is asked to resolve
+the filter strings within the filter. The subsystem typically interprets each filter string as some form of
+filtering pattern, and returns a list of remote artifacts matching one or more of the filter string patterns in
+the filter. For example, file subsystems expect each filter string to represent a folder, and a file name pattern. Then, all files in the folder, matching the name pattern, are returned. The subsystem supplies the user interface the
+you use to create and change filter strings, so it is responsible for defining what the filter strings
+look like and for subsequently resolving those filter strings on a filter expansion. A default user interface for
+the filter string prompt is supplied, but it is a simple entry field.
+</p>
+<p>
+It is possible to author a subsystem that does not support filters, if this is desired.
+</p>
+
+<h2><A name="filterpools">Filter Pools</A></h2>
+<p>
+Subsystems do not actually "own" filters. Since each host has unique subsystems, if each subsystem owned its
+own filters then filters could not be shared across Hosts, which is sometimes desirable. Instead, filters are
+actually contained within <b>filter pools</b>. Filter pools are simply
+<A href="../com/ibm/etools/systems/filters/SystemFilterPool.html">SystemFilterPool</A>
+objects which have a name and a collection of filters.
+Filter pools are owned by subsystem configurations, per profile. That is, each subsystem factory will contain filter pools
+scoped by profile. Each such factory plus profile grouping is known internally as a
+<A href="../com/ibm/etools/systems/filters/SystemFilterPoolManager.html">filter pool manager</A>.
+Subsystems contain <A href="../com/ibm/etools/systems/filters/SystemFilterPoolReference.html">references</A>
+to filter pools. By default, each subsystem factory automatically creates one filter pool
+for each profile, named the "xxx Filter Pool", where "xxx" is the name of the profile. Subsystems contain references to
+filter pools, so that as the filters in the pool are created, changed, deleted or re-ordered, those changes are automatically
+reflected in every subsystem (and hence host) that references that filter pool. By default, subsystems are given a
+reference to the default filter pool in their host's profile (for their parent subsystem factory, so file filters
+are not used in command subsystems, for example).
+</p>
+<p>
+By default, users do not see filter pools. Instead, filters are created in the default filter pool referenced by this subsystem.
+As a result, users will see the same list of filters for every host. However, users can use a preference setting to see
+filter pools. In this case, when a subsystem is expanded, the users see the filter pools referenced by this subsystem.
+Only then when a filter pool is expanded will the user see the filters within that filter pool. In this mode, users also
+see new actions to create filter pools and to add and remove references to filter pools within a subsystem. Whenever filters
+are changed by the user, this change is reflected in all subsystems that reference the parent filter pool. This design
+of filter pools owned by profiles, and subsystems that reference filter pools, facilitates filter sharing:
+<ol>
+<li>Users can share filters across Hosts, by adding references to their parent filter pool in various subsystems.<li>Users can have filters unique to a host, by placing them in a filter pool not referenced by other subsystems.
+<li>Users can have both shared and host-unique filters in a single host, by having both shared and private references
+to filter pools.<li>Teams can share filters by asking each user to add a reference to the same filter pool in their Hosts. For example,
+this is the default case for the default filter pool.
+<li>Users can create filters that are not shared by the team, by creating their own filter pools and not asking others to
+reference it.
+</ol>
+</p>
+
+<h2><A name="useractions">User Actions and Named Types</A></h2>
+<p>
+If the subsystem factory returns true to the
+<A href="../com/ibm/etools/systems/subsystems/SubSystemFactory.html#supportsUserDefinedActions()">supportsUserDefinedActions</A>
+method, users can create their own <b>actions</b>
+that appear in the pop-up menu for remote objects, using the Work With User Actions <A href="useractions_ww_action.gif">action</A> and
+<A href="useractions_ww_dialog.gif">dialog</A>. User actions use substitution variables that are resolved at
+runtime to various attributes of the selected remote objects. The actions themselves are <I>run
+on the remote system</I>
+of the host where the objects are listed from. User actions are instances of the
+<A href="../com/ibm/etools/systems/core/ui/uda/SystemUDActionElement.html">SystemUDAActionElement</A>
+class from the <A href="../com/ibm/etools/systems/core/ui/uda/package-summary.html">org.eclipse.rse.core.ui.uda</A> package.
+<BR>
+<BR>
+User actions can be scoped to only appear for objects of a
+particular type. To facilitate this, users can create <b>named types</b> which are names that represent
+one or more types of remote objects. Internally, they are
+<A href="../com/ibm/etools/systems/core/ui/uda/SystemUDTypeElement.html">SystemUDTypeElement</A> objects.
+This is done using the Work With Named Types <A	href="namedtypes_ww_action.gif">action</A> and
+<A href="namedtypes_ww_dialog.gif">dialog</A>.</p>
+<p>
+User actions are contained by each subsystem factory, scoped by profile. You can programmatically access them by calling
+<A href="../com/ibm/etools/systems/subsystems/SubSystemFactory.html#getActionSubSystem(org.eclipse.rse.subsystems.SubSystem)">getActionSubSystem</A>
+in a subsystem factory object. They are scoped to the factory, not the subsystem,
+so the same list of actions is available for every host. The <A href="useractions_menu.gif">User Actions cascading menu </A>
+for remote objects lists <i>all</i> the actions defined for <i>all active profiles</i>, whose file type scoping criteria matches the
+types of the currently selected remote objects. When users define new actions, they specify the profile to contain them.
+This design allows for:
+<ol>
+<li>Team actions. This is done by defining actions in the team profile or any profile all team members
+have been instructed to make active. This is useful for common actions shared by all team members.
+<li>Private actions. This is done by defining actions in the user's profile or any profile that other team members
+do not make active.
+</ol>
+<p>Named types, however, are not scoped by profile. Rather, there is only one master list, per subsystem factory.
+It is assumed there will be fewer of these, and they are not likely to be different per user.
+</p>
+
+<h2><A name="compilecmds">Compile Commands</A></h2>
+<p>
+If the subsystem factory returns true to the
+<A href="../com/ibm/etools/systems/subsystems/SubSystemFactory.html#supportsCompileActions()">supportsCompileActions</A>
+method, users will see a <b>Compile</b> <A href="compile_action.gif">action</A> in
+the pop-up menu for compilable source files. Clearly, this support usually only makes sense for subsystems that
+list remote source files. Whether a selected file is compilable or not is decided by the subsystem factory. It
+actually defers this request to a compile manager, which must be programmed by subclassing the supplied base
+class for this. The compile manager is also responsible for pre-supplying default compile commands.
+</p>
+<p>
+The framework also supplies a Work With Compile Commands <A href="compile_ww_action.gif">action</A> and <A href="compile_ww_dialog.gif">dialog</A>,
+by which users can create their own compile commands,
+per source type. Compile commands internally are <A href="../com/ibm/etools/systems/core/ui/compile/SystemCompileCommand.html">SystemCompileCommand</A> objects.
+These compile commands are stored per subsystem factory, such that they are usable across all Hosts.
+They are also scoped by profile, and the cascading compile action will list all compile commands from all active profiles,
+for the selected file's source type. This scoping by profile, as with user actions, enables team support such that
+users can see and can easily access their own compile commands and any shared compile commands.
+</p>
+
+<h2><A name="preferences">Preferences</A></h2>
+<p>
+Many of the default characterics of the Remote System Explorer view and perspective are configurable by each user
+by way of the <A href="preferences.gif">Remote Systems node</A> of the <b>Preferences</b> window, accessible from the Window pull-down of the main menu.
+Furthermore, many of these preferences are directly accessible from the <A
+	href="view_pulldown.gif">pull-down menu of the title bar for the Remote
+Systems view</A>. These preferences, like all preferences, are unique to each user and not shared by the team, although they can
+be exported and imported.
+</p>
+
+<h2><A name="Registry">System Registry</A></h2>
+<p>The programmatic front door to all the artifacts in the RSE is the
+<b>System Registry</b>, which is an object implementing
+<A href="../com/ibm/etools/systems/model/SystemRegistry.html">SystemRegistry</A>.
+This is a singleton object that you
+can access by calling the static method
+<A href="../com/ibm/etools/systems/core/SystemPlugin.html#getTheSystemRegistry()">getTheSystemRegistry()</A> in the
+<A href="../com/ibm/etools/systems/core/SystemPlugin.html">SystemPlugin</A>
+class in the <samp>org.eclipse.rse.core</samp> plugin.
+</p>
+</body>
+</html>

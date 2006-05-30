@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../../book.css" TYPE="text/css">
+<title>RSE Wizards API</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>RSE Wizards API</h1>
+<p>Typically in eclipse GUI design we use a wizard to create new things, and a dialog
+to prompt for secondary information, or update existing things. The Remote System Explorer
+can offer help in creating wizards, just as it does in creating dialogs.
+</p>
+
+<h2>RSE-Supplied Base Classes for Wizards</h2>
+<p>The RSE offers the following classes, in package 
+<samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/package-summary.html">com.ibm.etools.systems.core.ui.wizards</A></samp> to simplify the creation of wizards.</p>
+
+<h3>The <samp>AbstractSystemWizardPage</samp> class</h3>
+<p>The <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizardPage.html">AbstractSystemWizardPage</A></samp> abstract base class extends the 
+JFace <samp>WizardPage</samp> class to offer the following benefits to subclasses:</p>
+<ol>
+ <li>Designed to work in conjunction with <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizard.html">AbstractSystemWizard</A></samp>,
+     propogating settings from the wizard to the individual wizard pages.
+ <li>Supports using the overall wizard page title as set 
+     by <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizard.html#setWizardPageTitle(java.lang.String)">setWizardPageTitle(String)</A></samp> 
+     in <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizard.html">AbstractSystemWizard</A></samp>, 
+     if no title specified in the constructor.
+ <li>Supports a <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizardPage.html#setHelp(java.lang.String)">setHelp(String)</A></samp> method to set the wizard page's overall contextual help
+ <li>Implements <samp><A
+		href="../messages/uiMessageAPI.html#ISystemMessageLine">ISystemMessageLine</A></samp> so supports setting error messages as
+      either strings or, preferably, <samp><A
+		href="../messages/uiMessageAPI.html#SystemMessage">SystemMessage</A></samp> objects.
+ <li>Supports automatic assignment of unique mnemonics for all input-capable controls on the page, to aid in accessibility.
+ <li>Supports setting a default-focus control, which gets initial focus when the page is shown.
+ <li>Supports helper methods to aid in population of the client area: 
+     <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizardPage.html#addSeparatorLine(org.eclipse.swt.widgets.Composite, int)">addSeparatorLine(Composite,int)</A></samp>, 
+     <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizardPage.html#addFillerLine(org.eclipse.swt.widgets.Composite, int)">addFillerLine(Composite,int)</A></samp> and 
+     <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizardPage.html#addGrowableFillerLine(org.eclipse.swt.widgets.Composite, int)">addGrowableFillerLine(Composite,int)</A></samp>.
+</ol>
+
+
+<h3><A name="AbstractSystemWizard"></A>The <samp>AbstractSystemWizard</samp> class</h3>
+<p>The <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizard.html">AbstractSystemWizard</A></samp> abstract base class extends the JFace <samp>Wizard</samp>
+class to offer the following benefits to subclasses:</p>
+<ol>
+ <li>Designed to work in conjunction with the <samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseWizardAction.html">SystemBaseWizardAction</A></samp>,
+     and <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemWizardDialog.html">SystemWizardDialog</A></samp> classes, propogating settings 
+     from these to the wizard, and further propogating those to the individual wizard pages.
+ <li>The overall wizard title and image can be set via the constructor or setter methods.
+ <li>Supports setting an input object, and getting an output object. This is exploited by the 
+     <samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseWizardAction.html">SystemBaseWizardAction</A></samp> class, when this wizard is launched from a subclass of that action class.
+ <li>Supports setting a wizard page title via <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizard.html#setWizardPageTitle(java.lang.String)">setWizardPageTitle(String)</A></samp>, that all 
+     <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizardPage.html">AbstractSystemWizardPage</A></samp> pages will use by default for 
+     their title, if the non-title constructor is used for that page.
+ <li>If being hosted by a <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemWizardDialog.html">SystemWizardDialog</A></samp>, supports dynamically
+     updating the wizard size via <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizard.html#updateSize()">updateSize()</A></samp>, 
+     if dynamic content is added to a wizard page, causing the page to grow beyond its initial size.
+ <li>Supports a <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizard.html#setHelp(java.lang.String)">setHelp(String)</A></samp> method to set the overall wizard's contextual help. This is propogated to each
+     <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizardPage.html">AbstractSystemWizardPage</A></samp> as it is added.
+ <li>Supports setting the viewer that launched this wizard, as wizards often need to know this so they can update the UI upon Finish.
+ <li>Supports a <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizard.html#wasCancelled()">wasCancelled()</A></samp> method so callers can easily test if the wizard was cancelled by the user. 
+ <li>Supports a <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizard.html#setMinimumPageSize(int, int)">setMinimumPageSize(int,int)</A></samp> method to set the minimum width and height of the wizard.
+ <li>Supports a <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizard.html#setPageError(org.eclipse.jface.wizard.IWizardPage)">setPageError(IWizardPage)</A></samp> method that can be called in performFinish when an error is detected on a 
+     non-current page. This issues a message telling the user there is an error on another page.
+</ol>
+
+<P><BR></P>
+</body>
+</html>

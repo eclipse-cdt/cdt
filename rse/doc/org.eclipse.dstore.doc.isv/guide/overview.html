@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<title>Remote System Explorer Overview</title>
+<link rel="stylesheet" type="text/css" HREF="../book.css">
+</head>
+
+<body bgcolor="#ffffff">
+<h1>DataStore Overview</h1>
+<p>
+The RSE uses the concept of <b>subsystems</b> as a common abstraction for remote tooling.  Subsystems provide
+public interfaces that are called when some remote tool or resource needs to be communicated with.  As long as
+the appropriate public interfaces are implemented, the means of communicating with these remote tools and resources
+is up to the developer of the subsystem.  Whatever that means might be, some kind of communication layer is required
+to access tools on the host.  One such means that is used by existing RSE Subsystems and can be reused is the
+DataStore framework.   
+</p>
+<p>
+The <b>DataStore</b> communications framework is used to provide remote access and tooling for the Remote Systems Explorer.  
+It is a communications layer, in-memory data repository and a pluggable tooling framework.  While Eclipse provides
+the ability for local tools to plug into the Eclipse workbench, DataStore provides the ability to integrate
+remote tools into the Remote Systems Explorer.  When implementing subsystem APIs, a particular implementation
+may provide remote function by leveraging DataStore.
+</p>
+
+<img src="images/arch.jpg" alt="DataStore and it's relationship to RSE and Eclipse" border="0">
+
+<p>
+In an RSE subsystem, the goal of the DataStore is to provide the bridge to tools and resources on the host.  
+To interact with a remote tool, a DataStore client communicates over a network with a DataStore server.  Data and
+commands are transferred between the client and server via the DataStore communication layer.  Information
+that is communicated between each side is kept in memory with the DataStore repository. Both the client and server DataStores 
+have this repository and it is the responsability of the DataStore communication layer to keep the contents
+of each of these repositories in synch.  All the DataStore data on the server side is replicated to the client and
+and vice versa.  
+</p>
+<p>
+The DataStore framework is generic in the sense that it can be used to facilitate any kind of remote tooling.  There are
+no specialized APIs or artifacts that are geered towards a particular use.  How DataStore is used is determined by the
+tool extensions, <a href="Miners.html">Miners</a>.  <a href="Miners.html">Miners</a> are typically either adapters to 
+tools on the host or are tools themselves.  These extensions determine the meaning of data used to represent objects, 
+relationships and the commands that can be issued on the represented objects.  <a href="Miners.html">Miners</a> shape the 
+DataStore by contributing <a href="Schemas.html">schemas</a> to the pool of information in a DataStore repository.  
+Because the client and server DataStore repositories are synchronized, the DataStore clients 
+have access to the miner <a href="Schemas.html">schemas</a> and, using that information, they are able to communicate with the tools on the host.  
+Because the server has access to those miner <a href="Schemas.html">schemas</a>, each <a href="Miners.html">Miners</a> may also communicate with 
+other <a href="Miners.html">Miners</a> on the host in the same way a client can.
+</p>
+<p>
+A Filesystem miner can shape the DataStore by contributing a <a href="Schemas.html">schema</a> that 
+describes file systems and how they should be interacted with.  The <a href="Schemas.html">schema</a> could describe 
+files, folders, properties of files and relationships between them as well as commands for querying folders or renaming files.  
+An RSE subsystem, can then provide browsing capabilities to a remote file system by sending commands 
+via the DataStore client to the Filesystem Miner on the host.  Another <a href="Miners.html">miner</a> can 
+contribute it's own <a href="Schemas.html">schema</a> or extend the existing Filesystem Miner <a href="Schemas.html">schema</a>
+to leverage or contribute to the existing file  system tool.
+</p>
+<p>
+This guide explains all underlying 
+artifacts and model of the DataStore, it's relationship to RSE, and highlights the 
+important APIs available for your use.
+</p>
+</body>
+</html>

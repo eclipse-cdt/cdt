@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>DeveloperSubSystem Class After Editing</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>DeveloperSubSystem Class After Editing</h1>
+<p>
+<pre><samp>
+package samples.subsystems;
+
+import com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemImpl;
+<b>import samples.model.*;
+import com.ibm.etools.systems.subsystems.impl.*;
+import com.ibm.etools.systems.subsystems.*;
+
+import org.eclipse.core.runtime.*; // <i>for IProgressMonitor</i>
+import com.ibm.etools.systems.core.clientserver.NamePatternMatcher;
+import java.util.*;</b>
+
+/**
+ * <i>This is our subsystem, which manages the remote connection and resources for</i>
+ *  <i>a particular system connection object.</i>
+ */
+public class DeveloperSubSystem extends DefaultSubSystemImpl
+{
+	<b>private TeamResource[] teams; // <i>faked-out master list of teams</i></b>
+	<b>private Vector devVector = new Vector(); // <i>faked-out master list of developers</i></b>
+	<b>private static int employeeId = 123456; // <i>employee Id factory</i></b>	
+	
+	/**
+	 * <i>Constructor for DeveloperSubSystem.</i>
+	 */
+	public DeveloperSubSystem()
+	{
+		super();
+	}
+
+	/**
+	 * <i>Return a singleton instance of an AbstractSystemManager subclass that manages 
+	 *  a pool of ISystem objects, one per system connection. By default, getSystem()
+	 *  calls this, unless you override getSystem(). 
+	 * 
+	 * @return DeveloperSystemManager.getTheDeveloperSystemManager()</i>
+	 */
+	public AbstractSystemManager getSystemManager()
+	{
+		return DeveloperSystemManager.getTheDeveloperSystemManager();
+	}	
+
+	/**
+	 * <i>For drag and drop, and clipboard support of remote objects.
+	 *   
+	 * Return the remote object within the subsystem that corresponds to
+	 * the specified unique ID.  Because each subsystem maintains it's own
+	 * objects, it's the responsability of the subsystem to determine
+	 * how an ID (or key) for a given object maps to the real object.
+	 * By default this returns null. </i>
+	 */
+	<b>public Object getObjectWithAbsoluteName(String key)
+	{
+		// <i> Functional opposite of getAbsoluteName(Object) in our resource adapters</i>
+		if (key.startsWith(&quot;Team_&quot;))
+		{
+			String teamName = key.substring(5);
+			TeamResource[] allTeams = getAllTeams();
+			for (int idx=0; idx&lt;allTeams.length; idx++)
+			   if (allTeams[idx].getName().equals(teamName))
+			     return allTeams[idx];
+		}
+		else if (key.startsWith(&quot;Devr_&quot;))
+		{
+			String devrId = key.substring(5);
+			DeveloperResource[] devrs = getAllDevelopers();
+			for (int idx=0; idx&lt;devrs.length; idx++)
+			  if (devrs[idx].getId().equals(devrId))
+			    return devrs[idx];            	
+		}
+		return null; 
+	}</b>
+
+	/**
+	 * <i>When a filter is expanded, this is called for each filter string in the filter.
+	 * Using the criteria of the filter string, it must return objects representing remote resources.
+	 * For us, this will be an array of TeamResource objects.
+	 * 
+	 * @param monitor - the progress monitor in effect while this operation performs
+	 * @param filterString - one of the filter strings from the expanded filter.</i>
+	 */
+	<A name="resolveFilterString"></A><b>protected Object[] internalResolveFilterString(IProgressMonitor monitor, String filterString)
+         throws java.lang.reflect.InvocationTargetException,
+                java.lang.InterruptedException                
+	{
+		// <i>Fake it out for now and return dummy list. </i>
+		// <i>In reality, this would communicate with remote server-side code/data.</i>
+		TeamResource[] allTeams = getAllTeams();
+
+		// <i>Now, subset master list, based on filter string...</i>
+		NamePatternMatcher subsetter = new NamePatternMatcher(filterString);
+		Vector v = new Vector();
+		for (int idx=0; idx&lt;allTeams.length; idx++)
+		{
+			if (subsetter.matches(allTeams[idx].getName()))
+			  v.addElement(allTeams[idx]);
+		}		
+		TeamResource[] teams = new TeamResource[v.size()];
+		for (int idx=0; idx&lt;v.size(); idx++)
+		   teams[idx] = (TeamResource)v.elementAt(idx);
+		return teams;
+	}</b>    
+
+	/**
+	 * <i>When a remote resource is expanded, this is called to return the children of the resource, if
+	 * the resource's adapter states the resource object is expandable. &lt;br&gt;
+	 * For us, it is a Team resource that was expanded, and an array of Developer resources will be returned.
+	 * 
+	 * @param monitor - the progress monitor in effect while this operation performs
+	 * @param parent - the parent resource object being expanded
+	 * @param filterString - typically defaults to &quot;*&quot;. In future additional user-specific quick-filters may be supported.</i>
+	 */
+	<b>protected Object[] internalResolveFilterString(IProgressMonitor monitor, Object parent, String filterString)
+         throws java.lang.reflect.InvocationTargetException,
+                java.lang.InterruptedException
+	{
+		// <i>typically we ignore the filter string as it is always &quot;*&quot; 
+		//  until support is added for &quot;quick filters&quot; the user can specify/select
+		//  at the time they expand a remote resource.</i>
+		
+		TeamResource team = (TeamResource)parent;
+		return team.getDevelopers();
+	}</b>
+
+	// ------------------	
+	// Our own methods...
+	// ------------------
+	/**
+	 * <i>Get the list of all teams. Normally this would involve a trip the server, but we 
+	 *  fake it out and return a hard-coded local list. </i>
+	 */
+	<b>public TeamResource[] getAllTeams()
+	{
+		if (teams == null) 
+		  teams = createTeams(&quot;Team &quot;, 4);
+		return teams;		
+	}</b>
+	/**
+	 * <i>Get the list of all developers. Normally this would involve a trip the server, but we 
+	 *  fake it out and return a hard-coded local list. </i>
+	 */
+	<b>public DeveloperResource[] getAllDevelopers()
+	{
+		DeveloperResource[] allDevrs = new DeveloperResource[devVector.size()];
+		for (int idx=0; idx&lt;allDevrs.length; idx++)
+		  allDevrs[idx] = (DeveloperResource)devVector.elementAt(idx);
+		return allDevrs;		
+	}</b>
+	/*
+	 * <i>Create and return a dummy set of teams</i>
+	 */
+	<b>private TeamResource[] createTeams(String prefix, int howMany)
+	{
+		TeamResource[] teams = new TeamResource[howMany];
+		for (int idx=0; idx&lt;teams.length; idx++)
+		{
+			teams[idx] = new TeamResource(this);
+			teams[idx].setName(prefix + (idx+1));
+			teams[idx].setDevelopers(createDevelopers(teams[idx].getName()+&quot; developer&quot;,idx+1));
+		}
+		return teams;
+	}</b>
+
+	/*
+	 * <i>Create and return a dummy set of developers</i>
+	 */
+	<b>private DeveloperResource[] createDevelopers(String prefix, int nbr)
+	{
+		DeveloperResource[] devrs = new DeveloperResource[nbr];
+		for (int idx=0; idx&lt;devrs.length; idx++)
+		{
+			devrs[idx] = new DeveloperResource(this);
+			devrs[idx].setName(prefix + (idx+1));
+			devrs[idx].setId(Integer.toString(employeeId++));
+			devrs[idx].setDeptNbr(Integer.toString((idx+1)*100));
+			devVector.add(devrs[idx]); // update master list
+		}
+		return devrs;
+	}</b>
+}
+</samp></pre>
+</p>
+</body>
+</html>

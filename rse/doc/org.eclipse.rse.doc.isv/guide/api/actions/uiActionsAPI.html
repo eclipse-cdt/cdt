@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../../book.css" TYPE="text/css">
+<title>RSE Actions API</title>
+<STYLE type="text/css">
+<!--
+TH {
+	background-color: #e5e5e5
+}
+-->
+</STYLE>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>RSE Actions API</h1>
+<p>In Eclipse, we typically launch our dialogs and wizards and menu items from an action, which is
+a class that implements the JFace <samp>IAction</samp> interface. The Remote System Explorer offers classes to
+help simplify the creation of action classes, especially when used together with the RSE classes for
+<a href="../dialogs/uiDialogsAPI.html">dialogs</a> and <a href="../wizards/uiWizardsAPI.html">wizards</a>. 
+</p>
+<p>There are two ways the Remote System Explorer API set can help you when it comes to actions:
+<ol>
+<li>A set of base action classes from which to base your own action classes.
+<li>A set of re-usable actions for specific requirements.
+</ol>
+</p>
+
+<h2>RSE-Supplied Base Classes for Actions</h2>
+<p>Here are the primary base classes the RSE supplies for actions, all of which are found in the
+package <samp><A href="../../../com/ibm/etools/systems/core/ui/actions/package-summary.html">com.ibm.etools.systems.core.ui.actions</A></samp> 
+in the plugin <samp>com.ibm.etools.systems.core</samp>:</p>
+<TABLE border="1">
+	<TBODY>
+		<TR>
+			<TH>Class</TH>
+			<TH>Description</TH>
+		</TR>
+		<TR>
+			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseAction.html">SystemBaseAction</A></samp></TD>
+			<TD>This is the base action class for the other classes, and is only used directly for actions that do not 
+			result in a dialog or wizard being presented to the user. It extends the JFace <samp>Action</samp> class, 
+			adding to it support for properties such as the current shell and viewer and selection, as well as 
+			overridable methods for easily enabling/disabling the action based on the selection, and a method for 
+			setting the context help for the action. There are many other useful methods, such 
+			as <samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseAction.html#allowOnMultipleSelection(boolean)">allowOnMultipleSelection(boolean)</A></samp> 
+			and <samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseAction.html#setContextMenuGroup(java.lang.String)">setContextMenuGroup(String)</A></samp>, to 
+			simplify when the action is enabled and where it appears in a popup menu.
+            </TD>
+		</TR>
+		<TR>
+			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseSubMenuAction.html">SystemBaseSubMenuAction</A></samp></TD>
+			<TD>This base action class extends <samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseAction.html">SystemBaseAction</A></samp>, and is used as the parent class when
+			for popup menu actions that are to cascade. A cascading menu is itself another menu, really, containing actions just like the primary
+			menu does. So, to create a cascading menu action, you simply subclass this class and override the method
+			<samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseSubMenuAction.html#populateSubMenu(org.eclipse.jface.action.IMenuManager)">populateSubMenu</A></samp>, where
+			you add all the actions to show in this cascading menu. And yes, one or more of those can themselves be cascading. The RSE views will
+			automatically call the method <samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseSubMenuAction.html#getSubMenu()">getSubMenu</A></samp> when populating the initial popup menu, but your own views will need to do this.</TD>
+		</TR>
+		<TR>
+			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseDialogAction.html">SystemBaseDialogAction</A></samp></TD>
+			<TD>This base action class extends <samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseAction.html">SystemBaseAction</A></samp>, and is used when the action presents the 
+			user with a dialog, preferably a dialog that extends the RSE 
+			<samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html">SystemPromptDialog</A></samp> class. To use this class, subclass it and override the methods </TD>
+		</TR>
+		<TR>
+			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseWizardAction.html">SystemBaseWizardAction</A></samp></TD>
+			<TD>This base action class extends <samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseAction.html">SystemBaseAction</A></samp>, and is used when the action presents the 
+			user with a wizard, preferably a wizard that extends the RSE <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizard.html">AbstractSystemWizard</A></samp> class.</TD>
+		</TR>
+
+	</TBODY>
+</TABLE>
+
+<h2>Actions Pre-Supplied by RSE</h2>
+<p>You may find some of the actions supplied by the RSE to be immediately re-usable in your own code, saving some
+development and test effort. 
+All these actions can be found in package 
+<samp><A href="../../../com/ibm/etools/systems/core/ui/actions/package-summary.html">com.ibm.etools.systems.core.ui.actions</A></samp>.
+Further, you can find many useful actions related to the selection of remote files or folders, in package
+<samp><A href="../../../com/ibm/etools/systems/files/ui/actions/package-summary.html">com.ibm.etools.systems.files.ui.actions</A></samp>.
+</p>
+
+<P><BR></P>
+</body>
+</html>

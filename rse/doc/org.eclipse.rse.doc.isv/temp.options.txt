@@ -1,0 +1,43 @@
+-charset "iso-8859-1"
+-sourcepath "../org.eclipse.rse.core/antadapter:../org.eclipse.rse.core/batch:../org.eclipse.rse.core/codeassist:../org.eclipse.rse.core/compiler:../org.eclipse.rse.core/dom:../org.eclipse.rse.core/eval:../org.eclipse.rse.core/formatter:../org.eclipse.rse.core/model:../org.eclipse.rse.core/search:../org.eclipse.rse.debug/model:../org.eclipse.rse.debug/jdi:../org.eclipse.rse.debug/eval:../org.eclipse.rse.debug.ui/ui:../org.eclipse.rse.junit/src:../org.eclipse.rse.junit.runtime/src:../org.eclipse.rse.launching/launching:../org.eclipse.rse.ui/ui:../org.eclipse.rse.ui/core refactoring:../org.eclipse.rse.ui/ui refactoring:../org.eclipse.rse.ui/core extension:../org.eclipse.rse.core.manipulation/refactoring:../org.eclipse.rse.core.manipulation/common"
+-d reference/api
+-classpath /System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar;/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/ui.jar;/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/laf.jar;/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/jsse.jar;/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/jce.jar;/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/charsets.jar;/Library/Java/Extensions/mysql-connector-java-3.0.11-stable-bin.jar;/Library/Java/Extensions/OpenBaseJDBC.jar;/System/Library/Java/Extensions/CoreAudio.jar;/System/Library/Java/Extensions/dns_sd.jar;/System/Library/Java/Extensions/j3daudio.jar;/System/Library/Java/Extensions/j3dcore.jar;/System/Library/Java/Extensions/j3dutils.jar;/System/Library/Java/Extensions/jai_codec.jar;/System/Library/Java/Extensions/jai_core.jar;/System/Library/Java/Extensions/mlibwrapper_jai.jar;/System/Library/Java/Extensions/MRJToolkit.jar;/System/Library/Java/Extensions/QTJava.zip;/System/Library/Java/Extensions/QTJSupport.jar;/System/Library/Java/Extensions/vecmath.jar;/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home/lib/ext/apple_provider.jar;/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home/lib/ext/dnsns.jar;/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home/lib/ext/localedata.jar;/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home/lib/ext/sunjce_provider.jar;/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home/lib/ext/sunpkcs11.jar:../org.apache.ant/lib/ant.jar:../org.eclipse.debug.core/@dot:../org.eclipse.compare/@dot:../org.eclipse.help/@dot:../org.eclipse.help.ui/@dot:../org.eclipse.core.resources/@dot:../org.eclipse.core.runtime/@dot:../org.eclipse.core.filebuffers/@dot:../org.eclipse.core.expressions/@dot:../org.eclipse.swt.win32.win32.x86/@dot:../org.eclipse.ui/@dot:../org.eclipse.rse.debug/jdi.jar:../org.eclipse.debug.ui/@dot:../org.eclipse.search/@dot:../org.eclipse.jface/@dot:../org.eclipse.jface.text/@dot:../org.eclipse.text/@dot:../org.eclipse.ui.editors/@dot:../org.eclipse.ui.views/@dot:../org.eclipse.ui.workbench/@dot:../org.eclipse.ui.workbench.texteditor/@dot:../org.eclipse.core.variables/@dot:../org.eclipse.ui.ide/@dot:../org.eclipse.rse.junit/@dot:../org.eclipse.osgi/@dot:../org.eclipse.osgi.services/@dot:../org.eclipse.osgi.util/@dot:../org.eclipse.ui.forms/@dot:../org.eclipse.core.commands/@dot:../org.eclipse.ltk.core.refactoring/@dot:../org.eclipse.ltk.ui.refactoring/@dot:../org.eclipse.core.filesystem/@dot:../org.eclipse.core.jobs/@dot:../org.eclipse.equinox.registry/@dot:../org.eclipse.equinox.common/@dot:../org.eclipse.core.contenttype/@dot:../org.eclipse.equinox.preferences/@dot:../org.eclipse.equinox.supplement/@dot:../org.eclipse.core.runtime.content/@dot:../org.eclipse.core.runtime.jobs/@dot:../org.eclipse.core.runtime.preferences/@dot:../org.eclipse.rse.core.manipulation/@dot
+-breakiterator
+-use
+-splitIndex
+-windowtitle "RSE API Specification"
+-doctitle "RSE API Specification"
+-header "<b>RSE</b><br>Release 1.0"
+-bottom "Copyright (c) IBM Corporation and others 2000, 2006.  All Rights Reserved."
+-group "RSE Core Plug-in Packages" "org.eclipse.rse.core;org.eclipse.rse.core.*"
+-group "RSE UI Plug-in Packages" "org.eclipse.rse.ui;org.eclipse.rse.ui.*"
+-link http://java.sun.com/j2se/1.4/docs/api
+-linkoffline ./../../../org.eclipse.platform.doc.isv/reference/api ../org.eclipse.platform.doc.isv/reference/api
+-linkoffline ./../../../org.eclipse.platform.doc.isv/reference/osgi ../org.eclipse.platform.doc.isv/reference/osgi
+
+org.eclipse.rse.core
+org.eclipse.rse.logging
+org.eclipse.rse.connectorservice.dstore
+org.eclipse.rse.connectorservice.local
+org.eclipse.rse.connectorservice.ssh
+org.eclipse.rse.services
+org.eclipse.rse.services.dstore
+org.eclipse.rse.services.files.ftp
+org.eclipse.rse.services.local
+org.eclipse.rse.services.ssh
+org.eclipse.rse.subsystems.files.core
+org.eclipse.rse.subsystems.files.dstore
+org.eclipse.rse.subsystems.files.ftp
+org.eclipse.rse.subsystems.files.local
+org.eclipse.rse.subsystems.files.ssh
+org.eclipse.rse.subsystems.shells.core
+org.eclipse.rse.subsystems.shells.dstore
+org.eclipse.rse.subsystems.shells.local
+org.eclipse.rse.subsystems.shells.ssh
+org.eclipse.rse.subsystems.processes.core
+org.eclipse.rse.subsystems.processes.dstore
+org.eclipse.rse.subsystems.processes.local
+org.eclipse.rse.ui
+org.eclipse.rse.files.ui
+org.eclipse.rse.shells.ui
+org.eclipse.rse.processes.ui

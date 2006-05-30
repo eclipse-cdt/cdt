@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>DeveloperSystemManager Class After Editing</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>DeveloperSystemManager Class After Editing</h1>
+<p>
+<pre><samp>
+package samples.subsystems;
+
+import com.ibm.etools.systems.subsystems.ISystem;
+import com.ibm.etools.systems.subsystems.SubSystem;
+import com.ibm.etools.systems.subsystems.impl.AbstractSystemManager;
+
+/**
+ * <i>This class manages our DeveloperSystem objects, so that if we ever have multiple</i>
+ *  <i>subsystem factories, different subsystems can share the same system object if they</i>
+ *  <i>share the communication layer.</i>
+ */
+public class DeveloperSystemManager extends AbstractSystemManager
+{
+	private static DeveloperSystemManager inst;
+
+	/**
+	 * Constructor for DeveloperSystemManager.
+	 */
+	protected DeveloperSystemManager()
+	{
+		super();
+	}
+	
+	<b>/**
+	 * Return singleton instance
+	 */
+	public static DeveloperSystemManager getTheDeveloperSystemManager()
+	{
+		if (inst == null)
+		  inst = new DeveloperSystemManager();
+		return inst;
+	}</b>
+
+	/**
+	 * @see com.ibm.etools.systems.subsystems.impl.AbstractSystemManager#createSystemObject(SubSystem)
+	 */
+	public ISystem createSystemObject(SubSystem subsystem)
+	{
+		<b>return new DeveloperSystem(subsystem);</b>
+	}
+
+	/**
+	 * @see com.ibm.etools.systems.subsystems.impl.AbstractSystemManager#sharesSystem(SubSystem)
+	 */
+	public boolean sharesSystem(SubSystem otherSubSystem)
+	{
+		<b>return (otherSubSystem instanceof IDeveloperSubSystem);</b>
+	}
+
+	/**
+	 * @see com.ibm.etools.systems.subsystems.impl.AbstractSystemManager#getSubSystemCommonInterface(SubSystem)
+	 */
+	public Class getSubSystemCommonInterface(SubSystem subsystem)
+	{
+		<b>return IDeveloperSubSystem.class;</b>
+	}
+
+}
+
+
+b
+</samp></pre>
+</p>
+</body>
+</html>

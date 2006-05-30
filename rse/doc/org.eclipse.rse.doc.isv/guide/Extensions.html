@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<link rel="stylesheet" type="text/css" HREF="../book.css">
+<title>Remote System Explorer Extension Points</title>
+</head>
+
+<body>
+<h1>Remote System Explorer Extension Points</h1>
+
+<p>
+This product is built on the Eclipse platform 
+(<A href="http://www.eclipse.org">www.eclipse.org</A>)
+ and so it offers all the
+capabilities of Eclipse. This includes the ability to create new Eclipse plug-ins to contribute
+additional functions to Eclipse. You can write plug-ins using Java, using Eclipse itself (or this product),
+with the Plug-in Development Environment (PDE) perspective. Plug-ins contain a file named <code>plugin.xml</code> that
+registers their functions. All such functions are created by use of <b>extension points</b>.
+These are either supplied by Eclipse or by other plug-ins. The plugin.xml file describes which extension
+points are being exploited by each plug-in, and for each identifies the Java class that supplies the
+additional functions. Each extension point identifies a Java interface (or base class) that
+classes exploiting the extension point must implement (or extend).
+</p>
+<p>
+There are many Eclipse-supplied extension points, as described in
+this product's online help. In addition to the Eclipse extension points, there
+are unique Remote System Explorer extension points that enable you to contribute property pages and
+pop-up menu actions to remote objects within the Remote Systems view, among other things. The base Eclipse extension
+points are not sufficient for these, as they do not allow scoping of those property pages and
+actions such that they only appear for certain remote objects meeting specific filtering criteria.
+</p>
+
+<p>
+Here we will introduce the unique extension points defined by the Remote System Explorer. They are
+further described in the reference section. These extension points are specifically designed to make
+it easy to contribute functions to the pop-up menus of remote objects displayed in the Remote
+Systems view. These extension points are defined in the plugin.xml file of the
+<code>org.eclipse.rse.core</code> plugin, which you will find in the plugins sub-folder of your
+installation directory. This file has comment blocks that offer further information about the
+extension points defined in it.
+
+Here are the extension points that are defined by the RSE:
+</P>
+<TABLE border="1">
+	<TBODY>
+		<TR>
+			<TH>Extension Point</TH>
+			<TH>Description</TH>
+		</TR>
+		<TR>
+			<TD><A href="plugin/popup.html">org.eclipse.rse.core.<B>popupMenus</B></A></TD>
+			<TD>For	defining actions, which appear in the pop-up menu of remote objects
+			listed in the Remote Systems view.</TD>
+		</TR>
+		<TR>
+			<TD><A href="plugin/propertypage.html">org.eclipse.rse.core.<b>propertyPages</b></A></TD>
+			<TD>For defining property pages, which appear in the Properties dialog when
+			users select the Properties action from the pop-up menu of remote
+			objects listed in the Remote Systems view.</TD>
+		</TR>
+		<TR>
+			<TD><A href="plugin/subsystem.html">org.eclipse.rse.core.<b>subsystemfactory</b></A></TD>
+			<TD>For defining new subsystems that appear when a connection is expanded.</TD>
+		</TR>
+		<TR>
+			<TD><A href="plugin/systemtype.html">org.eclipse.rse.core.<b>systemtype</b></A></TD>
+			<TD>For defining new system types that show up in the New Connection wizard.</TD>
+		</TR>
+		<TR>
+			<TD><A href="../doc/org_eclipse_rse_ui_remoteSystemsViewPreferencesAction.html">org.eclipse.rse.core.<b>remoteSystemsViewPreferencesAction</b></A></TD>
+			<TD>For contributing a fastpath action to jump to your preferences page, from the local pulldown menu of the Remote Systems view.</TD>
+		</TR>
+		<TR>
+			<TD><A href="../doc/org_eclipse_rse_ui_compile.html">org.eclipse.rse.core.<b>compile</b></A></TD>
+			<TD>For contributing compile commands to the Compile menus and Work With Compile Commands dialog.</TD>
+		</TR>
+		<TR>
+			<TD><A href="../doc/org_eclipse_rse_ui_archivehandlers.html">org.eclipse.rse.core.<b>archivehandlers</b></A></TD>
+			<TD>For supporting additional archive file types, such as is done today for zip, jar and tar files. This adds support for expanding the archives and supporting all the usual actions on the contents.</TD>
+		</TR>
+		<TR>
+			<TD><A href="../doc/org_eclipse_rse_ui_setPreferenceDefaults.html">org.eclipse.rse.core.<b>setPreferenceDefaults</b></A></TD>
+			<TD>For solution providers that are building a product that includes RSE, this extension point allows you to
+			    pre-set some out-of-box preference values. For example, whether the New Connection tree item is shown in Remote Systems view.</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Using Datastore for Remote Communications">
+ 	<topic label="Programmer's Guide" link_to="../org/eclipse.rse.doc.isv/toc.xml#guide_additions">
+		<topic label="DataStore Overview"  href="guide/overview.html">
+			<topic label="DataStore Artifacts" href="guide/Artifacts.html" />
+			<topic label="DataStore Communications" href="guide/Communications.html" />
+			<topic label="DataElements and the DataStore Model" href="guide/DataElements.html" />
+			<topic label="Miners" href="guide/Miners.html" />
+		</topic>
+		<topic label="Extending and Using the DataStore" href="guide/Extending.html">
+			<topic label="Extending the Server-side" href="guide/ServerSide.html" />
+			<topic label="Communicating with the Server-side" href="guide/ClientSide.html" />
+		</topic>
+		<anchor id="guide_additions"/>
+	</topic>
+	<topic label="Reference" link_to="../org/eclipse.rse.doc.isv/toc.xml#reference_additions">
+		<topic label="DataStore API Reference">
+		     <topic label="org.eclipse.dstore.core.model" href="reference/api/org/eclipse/dstore/core/model/package-summary.html" />
+		     <topic label="org.eclipse.dstore.core.client" href="reference/api/org/eclipse/dstore/core/client/package-summary.html" />
+		     <topic label="org.eclipse.dstore.core.server" href="reference/api/org/eclipse/dstore/core/server/package-summary.html" />
+		     <topic label="org.eclipse.dstore.core.util" href="reference/api/org/eclipse/dstore/core/util/package-summary.html" />
+		     <topic label="org.eclipse.dstore.core.miners.miner" href="reference/api/org/eclipse/dstore/core/miners/miner/package-summary.html" />
+	    </topic>
+	    <anchor id="reference_additions"/>
+	</topic>
+	<topic label="Legal" href="notices.html"/>
+</toc>

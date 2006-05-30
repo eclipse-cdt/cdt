@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../../book.css" TYPE="text/css">
+<title>RSE Message API</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>RSE Message API</h1>
+<p>To work with messages, which are defined in an xml <a href="uiMessageFile.html">message file</a>,
+you use:
+</p>
+<ul>
+<li>Static methods in the 
+<samp><A href="../../../com/ibm/etools/systems/core/SystemBasePlugin.html">com.ibm.etools.systems.core.SystemBasePlugin</A></samp>
+class to load the message file and extract messages from it.
+<li>Classes in the 
+<samp><A href="../../../com/ibm/etools/systems/core/ui/messages/package-summary.html">com.ibm.etools.systems.core.ui.messages</A></samp>
+package to do variable substitution, and display the messages to the user.
+</ul>
+
+<h2>Methods for Parsing the Message File</h2>
+<p>Once you have defined your message file, you must update your plugin class to load it at startup time.
+To do this, simply call the static method 
+<samp><A href="../../../com/ibm/etools/systems/core/SystemBasePlugin.html#loadMessageFile(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadMessageFile</a></samp> 
+in the RSE-supplied <samp><a href="../plugin/uiPluginAPI.html">SystemBasePlugin</a></samp> class.
+<BR>
+<BR>
+After the message file is loaded into memory, you can extract messages from it by calling the static method 
+<samp><A href="../../../com/ibm/etools/systems/core/SystemBasePlugin.html#getMessage(com.ibm.etools.systems.core.ui.messages.SystemMessageFile, java.lang.String)">getMessage</a></samp>
+from the same <samp><a href="../plugin/uiPluginAPI.html">SystemBasePlugin</a></samp> class. 
+</p>
+
+<h2>Classes for Displaying Messages</h2>
+<p>The following classes are all defined in the <samp><A href="../../../com/ibm/etools/systems/core/ui/messages/package-summary.html">com.ibm.etools.systems.core.ui.messages</a></samp> package. </p>
+
+<h3><A name="SystemMessageFile"></A>The <samp>SystemMessageFile</samp> Class</h3>
+<p>The <samp><A href="../../../com/ibm/etools/systems/core/SystemBasePlugin.html#loadMessageFile(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadMessageFile</a></samp> method in <samp>SystemBasePlugin</samp>, returns an instance of 
+<samp><A href="../../../com/ibm/etools/systems/core/ui/messages/SystemMessageFile.html">SystemMessageFile</a></samp>,
+representing the parsed message file. It is methods in this which return individual messages.
+<h3><A name="SystemMessage"></A>The <samp>SystemMessage</samp> Class</h3>
+The <samp><A href="../../../com/ibm/etools/systems/core/SystemBasePlugin.html#getMessage(com.ibm.etools.systems.core.ui.messages.SystemMessageFile, java.lang.String)">getMessage</a></samp> method in <samp>SystemBasePlugin</samp> returns an instance of 
+<samp><A href="../../../com/ibm/etools/systems/core/ui/messages/SystemMessage.html">SystemMessage</a></samp>,
+representing an individual message from the message file.
+</p>
+<p>To do message <i>variable substitution</i>, call the appropriate overload of the <samp>makeSubstitution</samp> method in 
+the <A href="../../../com/ibm/etools/systems/core/ui/messages/SystemMessage.html">message</A> object, passing as many parameters as there are unique substitution variables in the message.
+</p>
+<p>To get the first level message text, call <samp><A href="../../../com/ibm/etools/systems/core/ui/messages/SystemMessage.html#getLevelOneText()">getLevelOneText</a></samp> on the message object. To get
+the second level help, call <samp><A href="../../../com/ibm/etools/systems/core/ui/messages/SystemMessage.html#getLevelTwoText()">getLevelTwoText</a></samp>.
+</p>
+
+<h3><A name="SystemMessageDialog"></A>The <samp>SystemMessageDialog</samp> Class</h3>
+<p>To display a message in a dialog, instantiate <samp><A href="../../../com/ibm/etools/systems/core/ui/messages/SystemMessageDialog.html">SystemMessageDialog</a></samp>, passing
+in a parent shell and the message object, and then call the appropriate <samp><A href="../../../com/ibm/etools/systems/core/ui/messages/SystemMessageDialog.html#open()">open</a></samp> method in the dialog object. Here is what the message
+dialog looks like, for a message of type Error (the type dictates the error icon): 
+</p>
+<P><IMG border="0" src="msgDialog.gif" width="457" height="190"></P>
+
+<h3><A name="ISystemMessageLine"></A>The <samp>ISystemMessageLine</samp> Interface</h3>
+<p>If you are extending the RSE class <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html">SystemPromptDialog</a></samp> for dialogs, 
+or <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizardPage.html">AbstractSystemWizardPage</a></samp> for wizard pages 
+or <samp><A href="../../../com/ibm/etools/systems/core/ui/propertypages/SystemBasePropertyPage.html">SystemBasePropertyPage</a></samp> for property pages, you can display the message to the
+user by calling the <samp><A href="../../../org/eclipse/rse/ui/messages/ISystemMessageLine.html#setErrorMessage(com.ibm.etools.systems.core.ui.messages.SystemMessage)">setErrorMessage</a></samp> method all these classes support. These classes all implement
+the interface <b><samp><A href="../../../org/eclipse/rse/ui/messages/ISystemMessageLine.html">ISystemMessageLine</a></samp></b>, which also includes the method <samp>clearErrorMessage</samp>. For non-error
+messages, use <samp><A href="../../../org/eclipse/rse/ui/messages/ISystemMessageLine.html#setMessage(com.ibm.etools.systems.core.ui.messages.SystemMessage)">setMessage</a></samp> 
+and <samp><A href="../../../org/eclipse/rse/ui/messages/ISystemMessageLine.html#clearMessage()">clearMessage</a></samp>.</p>
+<p>
+Here is what a system message issued in a <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html">SystemPromptDialog</a></samp> dialog looks like:</p>
+<P><IMG border="0" src="msgLine_dialog.gif" width="264" height="125"></P>
+<p>The user can select the question mark icon on the right to see the full message dialog, and hence access the second level help for the message.
+<p>Here is what a system message issued in an <samp><A href="../../../com/ibm/etools/systems/core/ui/wizards/AbstractSystemWizardPage.html">AbstractSystemWizardPage</a></samp> looks like:</p>
+<P><IMG border="0" src="msgLine_wizard.gif" width="439" height="98"></P>
+<p>If the user clicks the mouse on the message or icon, they will see the full message dialog for the message.</p>
+
+<p>Here is what a system message issued in a <samp><A href="../../../com/ibm/etools/systems/core/ui/propertypages/SystemBasePropertyPage.html">SystemBasePropertyPage</a></samp> looks like:</p>
+<P><IMG border="0" src="msgLine_properties.gif" width="491" height="75"></P>
+<p>Again, if the user clicks the mouse on the message or icon, they will see the full message dialog for the message.</p>
+
+<h2>Classes for Displaying Message Exceptions</h2>
+<p>The following class is defined in the <samp><A href="../../../com/ibm/etools/systems/model/package-summary.html">com.ibm.etools.systems.model</a></samp> package.
+
+<h3>The <samp>SystemMessageDialog</samp> Class</h3>
+<p>Many of the RSE APIs throw <samp><A href="../../../com/ibm/etools/systems/model/SystemMessageException.html">com.ibm.etools.systems.model.SystemMessageException</a></samp>, which 
+encapsulates a system message object. To get the encapsulated message, call <samp><A href="../../../com/ibm/etools/systems/model/SystemMessageException.html#getSystemMessage()">getSystemMessage()</a></samp>. 
+To display the message in an RSE message dialog box, simply call <samp><A href="../../../com/ibm/etools/systems/model/SystemMessageException.html#displayMessage()">displayMessage()</a></samp> on the exception object.
+To get the first-level text, call <samp>getMessage()</samp>, or <samp>getSystemMessage().getLevelOneText()</samp>
+</p>
+
+<h1>Message Example</h1>
+<h2>Declaring the Messages</h2>
+<p>Declare the messages via the <samp>Message</samp> tag in a <a href="uiMessageFile.html">message file</a>, such as <samp>sampleMessages.xml</samp>
+<pre>&lt;?xml version=&quot;1.0&quot; encoding='UTF-8'?&gt;
+&lt;!DOCTYPE MessageFile SYSTEM &quot;../com.ibm.etools.systems.core/messageFile.dtd&quot;&gt;
+&lt;!-- This is an exammple of a message file used by SystemMessage and SystemMessageDialog --&gt;
+&lt;MessageFile Version=&quot;1.0&quot;&gt;
+     &lt;Component Name=&quot;Samples Plugin&quot; Abbr=&quot;<B>SPP</B>&quot;&gt;
+          &lt;Subcomponent Name=&quot;Dialogs&quot; Abbr=&quot;<B>D</B>&quot;&gt;
+                &lt;!-- Component 'D' for dialog sample messages --&gt;
+                &lt;MessageList&gt;
+                    &lt;Message ID=&quot;<B>1003</B>&quot; Indicator=&quot;E&quot;&gt;
+                          &lt;LevelOne&gt;%1 is not a valid year&lt;/LevelOne&gt;		
+                          &lt;LevelTwo&gt;The birth year specified is not within the valid range of %2 to %3.&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+                    &lt;!-- <I>repeat Message elements as needed</I> --&gt;
+                &lt;/MessageList&gt;
+          &lt;/Subcomponent&gt;
+     &lt;/Component&gt;
+&lt;/MessageFile&gt;
+</pre>
+
+<h2>Processing the Message File</h2>
+In your plugin class, declare a message file static variable, load the message file in the constructor, and
+supply a static method for retrieving a message from the file.
+<pre>import com.ibm.etools.systems.core.ui.messages.*; // <I>for message file classes</I>
+import com.ibm.etools.systems.core.*; // <I>for SystemBasePlugin</I>
+<B>...</B>
+private static SystemMessageFile messageFile = null;
+<B>...</B>
+messageFile = SystemBasePlugin.loadMessageFile(descriptor, &quot;sampleMessages.xml&quot;); // <I>in constructor</I>
+<B>...</B>
+    
+/**
+ * <I>Retrieve a message from this plugin's message file</I>
+ * <I>@param msgId - the ID of the message to retrieve. This is the concatenation of the</I> 
+ *   <I>message's component abbreviation, subcomponent abbreviation, and message ID as declared</I>
+ *   <I>in the message xml file.</I>
+ */
+<A name="getPluginMessage"></A>public static SystemMessage <B>getPluginMessage</B>(String msgId)
+{
+    return SystemBasePlugin.getMessage(messageFile, msgId);
+}</pre>
+
+<h2>Retrieving the Message</h2>
+<pre>SystemMessage errorMessage = SamplesPlugin.getPluginMessage("SPPD1003");
+errorMessage.makeSubstitution(input, &quot;1900&quot;, &quot;2003&quot;);</pre>
+
+<h2>Displaying the Message</h2>
+<h3>On a Message Line</h3>
+<pre>setErrorMessage(errorMessage);</pre>
+
+<P><IMG border="0" src="msgSample_msgline.gif" width="227" height="208"></P>
+<h3>In a Message Dialog</h3>
+<pre>SystemMessageDialog msgDlg = new SystemMessageDialog(shell, errorMessage);</br>msgDlg.open(); // <I>to open with details not showing</I> 
+//msgDlg.openWithDetails(); // <I>to open with details already showing</I> </pre>
+
+<P><IMG border="0" src="msgSample_msgDlg.gif" width="457" height="190"></P>
+<P><BR>
+</P>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="RSE DStore ISV Doc Build" default="all" basedir=".">
+
+	<target name="init">
+		<available file="${basedir}/index" property="index.present" />
+	</target>
+
+	<target name="all" depends="init" unless="index.present">
+		<antcall target="convertSchemaToHtml" />
+		<antcall target="generateJavadoc" />
+		<antcall target="build.index" />
+	</target>
+
+	<target name="build.index" description="Builds search index for the plug-in: org.eclipse.dstore.doc.isv" if="eclipse.running">
+		<help.buildHelpIndex manifest="${basedir}/plugin.xml" destination="${basedir}" />
+	</target>
+
+	<target name="convertSchemaToHtml" if="eclipse.running">
+		<property name="dest" value="reference/extension-points" />
+		<record name="${basedir}/temp.convert.txt" action="start" />
+		<!-- pde.convertSchemaToHTML manifest="../org.eclipse.dstore.core/plugin.xml" destination="${dest}" / -->
+		<record name="${basedir}/temp.convert.txt" action="stop" />
+	</target>
+
+	<target name="getJavadocPath">
+		<available file="${java.home}/../bin/javadoc.exe" property="javadoc" value="${java.home}/../bin/javadoc.exe" />
+		<available file="${java.home}/../bin/javadoc" property="javadoc" value="${java.home}/../bin/javadoc" />
+		<available file="/usr/bin/javadoc/" property="javadoc" value="/usr/bin/javadoc" />
+	</target>
+
+	<target name="generateJavadoc" depends="getJavadocPath" if="javadoc">
+		<!--scrub isv plugin directories of any preexisting api doc content-->
+		<delete dir="reference/api" />
+		<mkdir dir="reference/api" />
+
+		<condition property="sep" value=":">
+			<os family="unix" />
+		</condition>
+		<condition property="sep" value=";">
+			<os family="windows" />
+		</condition>
+
+		<copy file="options.txt" tofile="temp.options.txt" />
+		<replace file="${basedir}/temp.options.txt" token="@sep@" value="${sep}" />
+		<replace file="${basedir}/temp.options.txt" token="@rt@" value="${bootclasspath}" />
+
+		<exec dir="." executable="${javadoc}" output="temp.bin.log">
+			<arg line="@${basedir}/temp.options.txt -J-Xmx1000M" />
+		</exec>
+	</target>
+
+</project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

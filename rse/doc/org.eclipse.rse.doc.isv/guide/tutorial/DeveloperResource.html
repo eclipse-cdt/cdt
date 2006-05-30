@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>DeveloperResource Class After Editing</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>DeveloperResource Class After Editing</h1>
+<p>
+<pre><samp>
+package samples.model;
+
+import com.ibm.etools.systems.subsystems.SubSystem;
+import com.ibm.etools.systems.subsystems.impl.AbstractResource;
+
+/**
+ * <i>This models a remote resource representing a developer defined on a particular system.</i>
+ */
+public class DeveloperResource extends AbstractResource
+{
+	<b>private String name;</b>
+	<b>private String id;</b>
+	<b>private String deptNbr;</b>	
+		
+	/**
+	 * Default constructor for DeveloperResource.
+	 */
+	public DeveloperResource()
+	{
+		super();
+	}
+	/**
+	 * Constructor for DeveloperResource when given parent subsystem.
+	 */
+	public DeveloperResource(SubSystem subsystem)
+	{
+		super(subsystem);
+	}
+	
+	/**
+	 * Returns the name.
+	 * @return String
+	 */
+	<b>public String getName()
+	{
+		return name;
+	}</b>
+
+	/**
+	 * Sets the name.
+	 * @param name The name to set
+	 */
+	<b>public void setName(String name)
+	{
+		this.name = name;
+	}</b>
+	
+	/**
+	 * Returns the id.
+	 * @return String
+	 */
+	<b>public String getId()
+	{
+		return id;
+	}</b>
+
+	/**
+	 * Sets the id.
+	 * @param id The id to set
+	 */
+	<b>public void setId(String id)
+	{
+		this.id = id;
+	}</b>
+	/**
+	 * Returns the deptNbr.
+	 * @return String
+	 */
+	public String getDeptNbr()
+	{
+		return deptNbr;
+	}
+
+	/**
+	 * Sets the deptNbr.
+	 * @param deptNbr The deptNbr to set
+	 */
+	<b>public void setDeptNbr(String deptNbr)
+	{
+		this.deptNbr = deptNbr;
+	}</b>
+}
+
+</samp></pre>
+</p>
+</body>
+</html>

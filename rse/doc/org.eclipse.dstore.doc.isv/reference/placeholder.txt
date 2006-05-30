@@ -1,0 +1,1 @@
+A nearly empty file used to force the creation of the containing folder.

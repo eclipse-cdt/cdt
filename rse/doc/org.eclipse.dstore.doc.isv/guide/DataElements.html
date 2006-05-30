@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<title>RSE Model</title>
+<link rel="stylesheet" type="text/css" HREF="../book.css">
+</head>
+
+<body>
+<h1><a name="dataelements">DataElements</a></h1>
+<p>
+All information in the DataStore repository is stored in the form of <b>DataElements</b>.  DataElements are objects
+that have attributes and may contain other DataElements.  The attributes of a DataElement are stored as an array of
+strings.  A particular attribute is retrieved by calling <code>getAttribute(</code><i>attribute index</i><code>)</code>.
+A particular attribute is set by calling <code>setAttribute(</code><i>attribute index</i><code>, </code><i>attribute value</i><code>)</code>.
+The attribute indices that can be used are as follows:
+<table>
+<tr><td><b>Attribute</b></td><td><b>Description</b></td></tr>
+<tr><td><code>A_TYPE</code></td><td>Attribute indicating the type of object.  The type can be used to indicate the type of an instance of data, a descriptor, a relationship or a commnad.</td></tr>
+<tr><td><code>A_NAME</code></td><td>Attribute indicating the name of object.</td></tr>
+<tr><td><code>A_VALUE</code></td><td>Attribute indicating the more information about that object</td></tr>
+<tr><td><code>A_SOURCE</code></td><td>Attribute indicating source information about an object, if applicable</td></tr>
+<tr><td><code>A_ISREF</code></td><td>Attribute indicating whether a the object is a reference or not.  In the DataStore, a reference to another DataElement is represented with a DataElement</td></tr>
+<tr><td><code>A_ID</code></td><td>The unique ID of a DataElement.</td></tr>.
+</table>
+</p>
+<p>
+Rather than representing different types of objects as different classes, the type attribute of a DataElement
+indicates it's type.  There are two general categories of DataElements.  There are schema elements, <A href="#descriptors">descriptors</a>, and instances of 
+those schema elements, <a href="#instances">instances</a>.
+</p>
+
+<h2><a name="descriptors">Descriptors</a></h2>
+<p>
+A descriptor is a DataElement that describes some type of object.  The <code>A_TYPE</code> attribute of a descriptor indicates what type of
+descriptor it is.  The <code>A_NAME</code> attribute of a descriptor identifies the type that the descriptor describes.  
+</p>
+<p>
+A descriptor may be of one of the following types:
+</p>
+<table>
+<tr><td><code>T_OBJECT_DESCRIPTOR</code></td><td>Describes a type of object</td></tr>
+<tr><td><code>T_RELATION_DESCRIPTOR</code></td><td>Describes a type of relationship that may exist between two DataElements.</td></tr>
+<tr><td><code>T_COMMAND_DESCRIPTOR</code></td><td>Describes a type of command</td></tr>
+</table>
+
+<h3><a name="objectdescriptors">Object Descriptors</a></h3>
+<p>
+<b>Object descriptors</b> describe the different types of data that can be represented in the DataStore repository.  Object descriptors
+can describe types of object instances as well as other types of object descriptors.  Each object descriptor is related to other object, 
+relationship and command descriptors.  
+</p>
+
+<h3><a name="relationdescriptors">Relation Descriptors</a></h3>
+<p>
+<b>Relation descriptors</b> describe the different types of relationships that can be represented in the DataStore repository.  Relation
+descriptors describe types of relationships between object instances, object descriptors, command instances and command descriptors.
+</p>
+ 
+<h3><a name="commanddescriptors">Command Descriptors</a></h3>
+<p>
+<b>Command descriptors</b> describe the different types of commands that can be executed on an object in the DataStore repository.
+In the DataStore schema, object descriptors are related to command descriptors to indicate that an object instance of a certain type can
+have the described command run on it.  Command descriptors are always contained by the object descriptors they are associated with.  The
+<code>A_SOURCE</code> attribute of a command descriptor indicates which miner(s) may execute an instance of such a command.
+</p>
+
+<p>
+These three types of objects are used to define the DataStore schema.  Instances of relation descriptors are used to define
+relationships between descriptors in the schema.
+</p>
+
+
+<h2><a name="instances">Instances</a></h2>
+<p>
+An instance object is a DataElement that is an instance of a descriptor.  An instance may either by an object, a
+relation or a command.  An instance uses it's descriptor's <code>A_NAME</code> attribute as it's <code>A_TYPE</code> attribute.
+</p>
+
+<h3><a name="objects">Objects</a></h3>
+<p>
+<b>Objects</b> are instances of <b>object descriptors</b>.  Objects are used to the represent the external or internal 
+entities that are being interacted with.  An instance object can be related in a certain way to another type of 
+instance object if it's object descriptor has the same kind of relationship to the other object's object descriptor.  
+An instance object may be associated with a particular command if it's object descriptor is associated with the command descriptor
+for that command.
+</p>
+
+<h3><a name="relations">Relations</a></h3>
+<p>
+<b>Relations</b> are instances of <b>relation descriptors</b>.  A relation is really a typed reference to another object.  Relations
+may exist from one object to another if the schema indicates that the object descriptor for the first object may have a relationship
+of that type to the other object's descriptor.  Relations are used to describe the relationship between two instances, the 
+relationship between two descriptors and the relationship between an instance and a descriptor.  A relation is able to reference 
+another element by storing the other element's <code>A_ID</code> attribute in it's <code>A_SOURCE</code> attribute.  If a relation object
+needs to be dereferenced, it uses this attribute to query the DataStore for the object being referenced.  
+</p>
+<p>
+A relation is typically represented by having an instance object DataElement contain a relation DataElement. 
+There are two types of relationships between elements that are implicit.  These are the <i>contains</i> and 
+the <i>parent of</i> relationships.  If an element is directly contained within another element, the 
+relationship between those two elements is implied to be <i>contains/parent of</i> relationships.
+</p>
+
+<h3><a name="commands">Commands</a></h3>
+<p>
+<b>Commands</b> are instances of <b>command descriptors</b>.  A command is always associated with a instance object such that
+the command is to be performed on that object.  The object associated with a command is referred to as the <i>subject</i> of 
+the command.  Only a command that has a command descriptor that is related to the object descriptor of the subject may be
+constructed.  A command object is constructed when the DataStore method <code>command()</code> is called.  The command is
+created with a reference to the subject, an optional set of arguments, also instance objects, and a status object instance, used
+to indicate the state of the command.  The tree of elements for a command is communicated, via the DataStore comm layer, to
+the appropriate miner(s), where it is interpretted and executed.
+</p>
+<p>
+The structure of a command looks like the following:
+</p>
+<ul>
+<li>Command
+	<ul>
+	<li>subject - a reference to the instance that this command applies to</li>
+	<li>arg 1 - an optional argument represented as a DataElement</li>
+	<li>...</li>
+	<li>arg n - an optional argument represented as a DataElement</li>
+	<li>status - element that represents the current status of a command</li>
+	</ul>
+</li>
+</ul>
+
+<p>
+As an example, suppose the DataStore is being used for browsing a filesystem.  The filesystem entities and how to interact 
+with the filesystem needs to be defined in the schema.  The following descriptors could be used to describe this.
+</p>
+
+<ul>
+<li>Object Descriptors
+	<ul>
+	<li>"generic file object" - describes a generic file system object</li>
+	<li>"file" - describes a file object</li>
+	<li>"folder" - describes a folder object</li>
+	</ul>
+</li>	
+<li>Relation Descriptors
+	<ul>
+	<li>"contains" - represents the containment relationship between two objects</li>
+	<li>"abstracts" - represents a derives relationship between two object descriptors</li>
+	<li>"abstracted by" - represents an inherits relationship between two object descriptors</li>
+	</ul>
+</li>
+<li>Command Descriptors
+	<ul>
+	<li>"query" - a command to list the contents of a folder</li>
+	<li>"rename" - a command to rename a file or folder</li>
+	<li>"delete" - a command to delete a file or folder</li>
+	<li>"create" - a command to create a new file or folder from an existing folder</li>
+	</ul>
+</li>
+</ul>
+
+<p>
+Now that all the required descriptors are defined, relations between descriptors are needed.  Note that the
+symbol "-&gt;" implies a "contains" relationship and "IO()" implies an instance of a specified descriptor.
+</p>
+
+<ul>
+<li>"generic file object"
+	<ul>
+	<li>-&gt;"rename"</li> 
+	<li>-&gt;"delete"</li>
+	<li>-&gt;IO("abstracts")-&gt;"folder"</li>
+	<li>-&gt;IO("abstracts")-&gt;"file"</li>	
+	</ul>
+</li>
+<li>"folder"
+	<ul>
+	<li>-&gt;"create"</li> 
+	<li>-&gt;"query"</li>
+	<li>-&gt;IO("abstracted by")-&gt;"generic file object"</li>
+	<li>-&gt;IO("contains")-&gt;"generic file object"</li>
+	</ul>
+</li>
+<li>"file"
+	<ul>
+	<li>-&gt;IO("abstracted by")-&gt;"generic file object"</li>
+	</ul>
+</li>
+</ul>
+
+<p>
+DataStore schemas are created by the DataStore <b>miners</b>.  Each tool contributes it's
+own schema or to the DataStore schema, referencing descriptors of other schemas, such
+that one tool can contribute to another tool.  All the command descriptors that are
+contributed by a miner are expected to be handled by the contributing miner.  Whenever
+a miner creates a new command descriptor, the <code>A_SOURCE</code> attribute indicates
+to the DataStore that an instance of that command should be routed to that miner when
+it's issued.
+<p>
+
+<p>
+See the section, <a href="Miners.html">Miners</a> to find out how miners contribute schemas
+and execute commands.
+</p>
+</body>
+</html>

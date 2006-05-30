@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../../book.css" TYPE="text/css">
+<title>RSE Validator Sample One</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>RSE Validator Sample One</h1>
+<p>This is an example of a validator written from scratch, that just validates a customer name field is not empty.
+Note that while that is all is does today, the power of encapsulation is that we can easily add additional error
+checking in the future, and all dialogs or wizards that use the validator will pick up that change.
+<pre>
+
+package com.ibm.etools.systems.samples.ui.frameworks.dialogs;
+import com.ibm.etools.systems.samples.*;
+import com.ibm.etools.systems.core.ui.messages.SystemMessage;
+import com.ibm.etools.systems.core.ui.validators.ISystemValidator;
+
+/**
+ * <I>A validator for a customer name. We simply ensure it is not empty, but this could easily be expanded.</I>
+ */
+public class <B>SampleNameValidator</B> implements ISystemValidator 
+{
+	private SystemMessage currentMsg;
+	private SystemMessage emptyMsg;
+
+	/**
+	 * <I>Constructor for SampleNameValidator.</I>
+	 */
+	public <B>SampleNameValidator</B>() 
+	{
+		super();
+		emptyMsg = SamplesPlugin.<A
+	href="../messages/uiMessageAPI.html#getPluginMessage">getPluginMessage</A>(<A
+	href="../messages/sampleMessageFile.html#SPPD1000">&quot;SPPD1000&quot;</A>);
+	}
+
+	/**
+	 * <I>Required ISystemValidator interface method.</I> 
+	 * <I>Return the maximum length for customer names. We return 100.</I>
+	 */
+	public int <B>getMaximumNameLength</B>() 
+	{
+		return 100;
+	}
+
+	/**
+	 * <I>Required ISystemValidator interface method.</I> 
+	 * <I>@see com.ibm.etools.systems.core.ui.validators.ISystemValidator#getSystemMessage()</I>
+	 */
+	public SystemMessage <B>getSystemMessage</B>() 
+	{
+		return currentMsg;
+	}
+
+	/**
+	 * <I>Required ISystemValidator interface method.</I> 
+	 * <I>@see com.ibm.etools.systems.core.ui.validators.ISystemValidator#validate(String)</I>
+	 */
+	public SystemMessage <B>validate</B>(String text) 
+	{
+		isValid(text);
+		return currentMsg;
+	}
+	/**
+	 * <I>@see org.eclipse.jface.dialogs.IInputValidator#isValid(String)</I>
+	 */
+	public String <B>isValid</B>(String newText) 
+	{
+		if ((newText==null) || (newText.length()==0))
+		  currentMsg = emptyMsg;
+		// todo: more error checking
+		
+		if (currentMsg != null)
+		  return currentMsg.getLevelOneText();
+		else
+		  return null;
+	}
+	/**
+	 * <I>@see org.eclipse.jface.viewers.ICellEditorValidator#isValid(Object)</I>
+	 */
+	public String <B>isValid</B>(Object value) 
+	{
+		if (value instanceof String)
+		  return isValid((String)value);
+		return null;
+	}
+}
+</pre>
+
+<P><BR></P>
+</body>
+</html>

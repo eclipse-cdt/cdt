@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../../book.css" TYPE="text/css">
+<title>Sample Message File</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>Sample Message File</h1>
+<p>This is an example of a simple message file, say in <samp>sampleMessages.xml</samp>, which has defined messages for only a single component.
+<pre>
+
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE MessageFile SYSTEM "../com.ibm.etools.systems.core/messageFile.dtd"&gt;
+&lt;!-- <I>This is an exammple of a message file used by SystemMessage and SystemMessageDialog</I> --&gt;
+&lt;MessageFile Version="1.0"&gt;
+     &lt;Component Name="Samples Plugin" Abbr="<B>SPP</B>"&gt;
+          &lt;Subcomponent Name="Dialogs" Abbr="<B>D</B>"&gt;
+                &lt;!-- Component 'D' for dialog sample messages --&gt;
+                &lt;MessageList&gt;
+<A name="SPPD1000"></A>                    &lt;Message ID="<B>1000</B>" Indicator="E"&gt;
+                          &lt;LevelOne&gt;You must enter a name&lt;/LevelOne&gt;		
+                          &lt;LevelTwo&gt;You have left the customer name empty. Specify a name.&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+<A name="SPPD1001"></A>                    &lt;Message ID="<B>1001</B>" Indicator="E"&gt;
+                          &lt;LevelOne&gt;You must enter a birth year&lt;/LevelOne&gt;		
+                          &lt;LevelTwo&gt;You have left the birth year empty. Specify a year.&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+<A name="SPPD1002"></A>                    &lt;Message ID="<B>1002</B>" Indicator="E"&gt;
+                          &lt;LevelOne&gt;%1 is not a valid year&lt;/LevelOne&gt;		
+                          &lt;LevelTwo&gt;The birth year specified is not within the valid range of %2 to %3.&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+<A name="SPPD1003"></A>                    &lt;Message ID="<B>1003</B>" Indicator="E"&gt;
+                          &lt;LevelOne&gt;Year %1 is out of range&lt;/LevelOne&gt;		
+                          &lt;LevelTwo&gt;The value you specified for the birth year is not a valid number.&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+<A name="SPPD1004"></A>                    &lt;Message ID="<B>1004</B>" Indicator="E"&gt;
+                          &lt;LevelOne&gt;You must enter a birth month&lt;/LevelOne&gt;		
+                          &lt;LevelTwo&gt;You have left the birth month empty. Specify a month.&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+<A name="SPPD1005"></A>                    &lt;Message ID="<B>1005</B>" Indicator="E"&gt;
+                          &lt;LevelOne&gt;%1 is not a valid month&lt;/LevelOne&gt;		
+                          &lt;LevelTwo&gt;The value you specified for the birth month is not a valid number.&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+<A name="SPPD1006"></A>                    &lt;Message ID="<B>1006</B>" Indicator="E"&gt;
+                          &lt;LevelOne&gt;Month %1 is out of range&lt;/LevelOne&gt;		
+                          &lt;LevelTwo&gt;The birth month specified is not within the valid range of %2 to %3.&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+<A name="SPPD1007"></A>                    &lt;Message ID="<B>1007</B>" Indicator="E"&gt;
+                          &lt;LevelOne&gt;You must enter a birth day&lt;/LevelOne&gt;		
+                          &lt;LevelTwo&gt;You have left the birth day empty. Specify a day.&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+<A name="SPPD1008"></A>                    &lt;Message ID="<B>1008</B>" Indicator="E"&gt;
+                          &lt;LevelOne&gt;%1 is not a valid day&lt;/LevelOne&gt;		
+                          &lt;LevelTwo&gt;The value you specified for the birth day is not a valid number.&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+<A name="SPPD1009"></A>                    &lt;Message ID="<B>1009</B>" Indicator="E"&gt;
+                          &lt;LevelOne&gt;Day %1 is out of range&lt;/LevelOne&gt;		
+                          &lt;LevelTwo&gt;The birth day specified is not within the valid range of %2 to %3.&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+<A name="SPPD1010"></A>                    &lt;Message ID="<B>1010</B>" Indicator="I"&gt;
+                          &lt;LevelOne&gt;Customer %1 created successfully. Re-run to see update mode.&lt;/LevelOne&gt;		
+                          &lt;LevelTwo&gt;The customer was created. Re-running the same sample action will show the dialog in update mode.&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+<A name="SPPD1011"></A>                    &lt;Message ID="<B>1011</B>" Indicator="I"&gt;
+                          &lt;LevelOne&gt;Customer %1 updated successfully.&lt;/LevelOne&gt;		
+                          &lt;LevelTwo&gt;Congratulations!&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+                &lt;/MessageList&gt;
+          &lt;/Subcomponent&gt;
+     &lt;/Component&gt;
+&lt;/MessageFile&gt;
+</pre>
+
+
+<P><BR></P>
+</body>
+</html>

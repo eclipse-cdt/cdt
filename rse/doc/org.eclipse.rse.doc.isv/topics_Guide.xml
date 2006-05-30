@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<!-- ============================================================================= -->
+<!-- Define topics for the main guide                                              -->
+<!-- ============================================================================= -->
+<toc label="Guide">
+	<topic label="RSE Architecture" href="guide/rse_int_architecture.html">
+		<topic label="Overview" href="guide/rse_int_overview.html">
+		</topic>
+		<topic label="Services" href="guide/rse_int_services.html">
+		<!--
+			<topic label="RSE Core options" href="guide/rse_api_options.htm" />
+			-->
+		
+		</topic>
+		<topic label="Subsystems" href="guide/rse_int_subsystems.html">
+		<!--
+			<topic label="RSE Core options" href="guide/rse_api_options.html" />
+			-->
+		</topic>
+		<topic label="Connector Services" href="guide/rse_int_connectorservices.html">
+		  <!--
+			<topic label="RSE Core options" href="guide/rse_api_options.htm" />
+			-->
+		</topic>	
+		<topic label="Hosts" href="guide/rse_int_hosts.html">
+		  <!--
+			<topic label="RSE Core options" href="guide/rse_api_options.htm" />
+			-->
+		</topic>
+		<topic label="UI" href="guide/rse_int_ui.html">
+		<!--
+			<topic label="RSE Core options" href="guide/rse_api_options.htm" />
+			-->
+		</topic>		
+	</topic>
+	</topic>
+		<topic label="Using the RSE API" href="guide/usingAPIs.html">
+		<topic label="RSE User Interface API" href="guide/api/uiAPI.html" />
+		<topic label="RSE Remote Resource API" href="guide/api/resourceAPI.html" />
+		<topic label="RSE Model API" href="guide/api/modelAPI.html" />
+	</topic>
+	<topic label="Plugging into the RSE" href="guide/plugin.html">
+		<topic label="Plugging in a Popup Menu" href="guide/plugin/popup.html" />
+		<topic label="Plugging in a Property Page" href="guide/plugin/propertypage.html" />
+		<topic label="Plugging in a System Type" href="guide/plugin/systemtype.html" />
+		<topic label="Plugging in a Subsystem" href="guide/plugin/subsystem.html" />
+		<topic label="Relevant Eclipse Extension Points" href="guide/plugin/other.html" />
+	</topic>
+	<topic label="Tutorials" href="guide/tutorials.html">
+		<topic label="Creating a Remote Resource Popup Menu Action" href="guide/tutorial/popup.html" />
+		<topic label="Creating a Remote Resource Property Page"     href="guide/tutorial/propertypage.html" />
+		<topic label="Creating a Subsystem Factory" href="guide/tutorial/subsystem.html" />
+	</topic>
+</toc>

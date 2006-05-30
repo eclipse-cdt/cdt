@@ -1,0 +1,265 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../../book.css" CHARSET="UTF-8" TYPE="text/css">
+<title>RSE Validator Sample One</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>RSE Dialog Sample</h1>
+<p>This is an example of a sample<A href="sampleDlg.gif"> dialog</A> written on top of the RSE base dialog class, and with
+typical full error checking.
+<pre>
+
+package com.ibm.etools.systems.samples.ui.frameworks.dialogs;
+
+import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.*;
+
+import com.ibm.etools.systems.samples.*;
+
+import com.ibm.etools.systems.core.ui.dialogs.SystemPromptDialog;
+import com.ibm.etools.systems.core.ui.*;
+import com.ibm.etools.systems.core.ui.widgets.*;
+import com.ibm.etools.systems.core.ui.messages.*;
+import com.ibm.etools.systems.core.ui.validators.*;
+
+/**
+ * <I>A simple example of using the SystemPromptDialog class as the basis for a new dialog</I>.
+ */
+public class <B>SampleDialog</B> extends SystemPromptDialog 
+{
+	// <I>gui widgets</I>
+	private SystemHistoryCombo namePrompt;
+	private Text yearPrompt, monthPrompt, dayPrompt;
+	// <I>input</I>
+	private SampleCustomer inpCust;
+	// <I>validators</I>
+	private ISystemValidator nameValidator, yearValidator, monthValidator, dayValidator;
+	// <I>message</I>
+	private SystemMessage errorMessage;
+
+	/**
+	 * <I>Constructor for SampleDialog</I>.
+	 */
+	public <B>SampleDialog</B>(Shell shell) 
+	{
+		super(shell, SamplesPlugin.getString(&quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.title&quot;));
+		setHelp(SamplesPlugin.HELPPREFIX + &quot;dlg11000&quot;);
+		nameValidator = new <A href="../validators/validatorSample1.html">SampleNameValidator</A>();
+		yearValidator = new <A href="../validators/validatorSample2.html">SampleBirthYearValidator</A>();
+		monthValidator = new <A href="../validators/validatorSample3.html">SampleBirthMonthValidator</A>();
+		dayValidator = new <A href="../validators/validatorSample4.html">SampleBirthDayValidator</A>();
+	}
+
+	/**
+	 * <I>Required parent override.</I>
+	 * <I>This is where we populate the client area</I>
+	 */
+	protected Control <B>createInner</B>(Composite parent) 
+	{
+		int nbrColumns = 2;
+		Composite parentComposite = SystemWidgetHelpers.createComposite(parent, nbrColumns);
+
+		// <I>add gui widgets</I>...				
+		SystemWidgetHelpers.createLabel(parentComposite, SamplesPlugin.getResourceBundle(), &quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.name.&quot;);
+		boolean readonly = false;
+		namePrompt = SystemWidgetHelpers.createHistoryCombo(parentComposite, null, &quot;name.history.key&quot;, readonly,
+		                 SamplesPlugin.getResourceBundle(), &quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.name.tooltip&quot;);
+		
+		addSeparatorLine(parentComposite, nbrColumns);
+		boolean wantBorder = false;
+		SystemWidgetHelpers.createLabel(parentComposite, SamplesPlugin.getResourceBundle(), 
+		      &quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.birthday.verbage.&quot;, nbrColumns, wantBorder);
+		      
+		yearPrompt = SystemWidgetHelpers.createLabeledTextField(parentComposite, null, 
+		                 SamplesPlugin.getResourceBundle(), &quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.birthday.year.&quot;);
+		monthPrompt = SystemWidgetHelpers.createLabeledTextField(parentComposite, null, 
+		                 SamplesPlugin.getResourceBundle(), &quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.birthday.month.&quot;);
+		dayPrompt = SystemWidgetHelpers.createLabeledTextField(parentComposite, null, 
+		                 SamplesPlugin.getResourceBundle(), &quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.birthday.day.&quot;);
+		
+		// <I>if given an existing object, prefill it</I>...
+		inpCust = (SampleCustomer)getInputObject();
+		if (inpCust != null)
+		{
+			namePrompt.setText(inpCust.getName());
+			yearPrompt.setText(inpCust.getYear());
+			monthPrompt.setText(inpCust.getMonth());
+			dayPrompt.setText(inpCust.getDay());
+		}
+		
+		                 
+		// <I>add modify listeners</I>...	
+	        namePrompt.addModifyListener( new ModifyListener() 
+	        {
+	      	   public void modifyText(ModifyEvent event)
+	      	   {
+	      	 	if (validateName())
+	      	 	  validate(namePrompt.getCombo());
+	      	   }
+	        } );
+	        yearPrompt.addModifyListener( new ModifyListener() 
+	        {
+	      	   public void modifyText(ModifyEvent event)
+	      	   {
+	      	 	if (validateYear())
+	      	 	  validate(yearPrompt);
+	      	   }
+	        } );
+	        monthPrompt.addModifyListener( new ModifyListener() 
+	        {
+	      	   public void modifyText(ModifyEvent event)
+	      	   {
+	      	 	if (validateMonth())
+	      	 	  validate(monthPrompt);
+	      	   }
+	        } );
+	        dayPrompt.addModifyListener( new ModifyListener() 
+	        {
+	      	   public void modifyText(ModifyEvent event)
+	      	   {
+	      	 	if (validateDay())
+	      	 	  validate(monthPrompt);
+	      	   }
+	        } );
+	    		
+		// <I>initialize enabled state</I>...
+		setPageComplete(isPageComplete());
+			
+		return parentComposite;
+	}
+
+	/**
+	 * <I>Required parent override</I>.
+	 * <I>This is where we return the first input control, to give it focus when the dialog appears</I>.
+	 */
+	protected Control <B>getInitialFocusControl</B>() 
+	{
+		return namePrompt.getCombo();
+	}
+
+	/**
+	 * <I>Typical parent override</I>.
+	 * <I>This is where we get control when the user presses OK</I>.
+	 */
+	protected boolean <B>processOK</B>()
+	{
+		errorMessage = null;
+		Control controlInError = validate(null);		  
+		if (controlInError != null)
+		  controlInError.setFocus();
+		else
+		{
+			SampleCustomer newCust = inpCust;
+			if (newCust == null)
+			  newCust = new SampleCustomer();
+			newCust.setName(namePrompt.getText().trim());
+			newCust.setYear(yearPrompt.getText().trim());
+			newCust.setMonth(monthPrompt.getText().trim());
+			newCust.setDay(dayPrompt.getText().trim());
+			setOutputObject(newCust);
+			
+			SystemMessage completionMsg = null;
+			if (inpCust == null)
+				completionMsg = SamplesPlugin.getPluginMessage(&quot;SPPD1010&quot;);
+		    else
+				completionMsg = SamplesPlugin.getPluginMessage(&quot;SPPD1011&quot;);
+			completionMsg.makeSubstitution(newCust.getName());
+		    SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), completionMsg);
+		    msgDlg.open();
+		}		
+		return isPageComplete();
+	}
+
+	// ---------------------	
+	// <I>Validation methods</I>...
+	// ---------------------
+	/**
+	 * <I>Do full validation of all entry fields, optionally skipping a given one</I>.
+	 * <I>@return first control that is found to contain errors. Can be used to set focus</I>.
+	 */
+	protected Control <B>validate</B>(Control controlToSkip)
+	{
+		Control controlInError = null;
+		
+		if ((controlToSkip != namePrompt.getCombo()) &amp;&amp; !validateName())
+		  controlInError = namePrompt.getCombo();
+		if ((controlInError==null) &amp;&amp; (controlToSkip != yearPrompt) &amp;&amp; !validateYear())
+		  controlInError = yearPrompt;
+		if ((controlInError==null) &amp;&amp; (controlToSkip != monthPrompt) &amp;&amp; !validateMonth())
+		  controlInError = monthPrompt;
+		if ((controlInError==null) &amp;&amp; (controlToSkip != dayPrompt) &amp;&amp; !validateDay())
+		  controlInError = dayPrompt;
+		  
+		return controlInError;		
+	}
+	/**
+	 * <I>Validate the customer name prompt. We only ensure it is not-empty.</I>
+	 */
+	protected boolean <B>validateName</B>()
+	{
+		String input = namePrompt.getText().trim();
+		setErrorMessageAndPageCompletionStatus(nameValidator.validate(input));
+		return (errorMessage==null);
+	}
+	/**
+	 * <I>Validate the customer birth year prompt</I>. 
+	 */
+	protected boolean <B>validateYear</B>()
+	{
+		String input = yearPrompt.getText().trim();
+		setErrorMessageAndPageCompletionStatus(yearValidator.validate(input));
+		return (errorMessage==null);
+	}
+	/**
+	 * <I>Validate the customer birth month prompt</I>. 
+	 */
+	protected boolean <B>validateMonth</B>()
+	{
+		String input = monthPrompt.getText().trim();
+		setErrorMessageAndPageCompletionStatus(monthValidator.validate(input));
+		return (errorMessage==null);
+	}
+	/**
+	 * <I>Validate the customer birth day prompt</I>. 
+	 */
+	protected boolean <B>validateDay</B>()
+	{
+		String input = dayPrompt.getText().trim();
+		setErrorMessageAndPageCompletionStatus(dayValidator.validate(input));
+		return (errorMessage==null);
+	}
+	
+	/**
+	 * <I>A convenience method that issues or clears the error message on the message line</I>,
+	 *  <I>and sets the page completion status</I>
+	 */
+	protected void <B>setErrorMessageAndPageCompletionStatus</B>(SystemMessage errorMessage)
+	{
+		this.errorMessage = errorMessage;
+		if (errorMessage == null)
+		  clearErrorMessage();
+		else
+		  setErrorMessage(errorMessage);
+		setPageComplete(isPageComplete());
+	}
+	/**
+	 * <I>Return true if the OK button can be enabled</I>.
+	 */
+	protected boolean <B>isPageComplete</B>()
+	{
+		return ((errorMessage == null) &amp;&amp; 
+		        (namePrompt.getText().trim().length()&gt;0) &amp;&amp;
+		        (yearPrompt.getText().trim().length()&gt;0) &amp;&amp;
+		        (monthPrompt.getText().trim().length()&gt;0) &amp;&amp;
+		        (dayPrompt.getText().trim().length()&gt;0));
+	}	
+}</pre>
+
+<P><BR></P>
+</body>
+</html>

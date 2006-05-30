@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>DeveloperSubSystemFactory Class After Editing For Filter Support</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>DeveloperSubSystemFactory Class After Editing For Filter Support</h1>
+<p>
+<pre><samp>
+package samples.subsystems;
+
+import RSESamples.*;
+import com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemFactoryImpl;
+import com.ibm.etools.systems.subsystems.impl.*;
+import com.ibm.etools.systems.subsystems.*;
+import com.ibm.etools.systems.model.*;
+import com.ibm.etools.systems.filters.*;
+<b>import com.ibm.etools.systems.filters.ui.actions.*;
+
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.swt.widgets.Shell;</b>
+
+import java.util.*;
+
+/**
+ * This is our subsystem factory, which creates instances of our subsystems,
+ *  and supplies the subsystem and filter actions to their popup menus.
+ */
+public class DeveloperSubSystemFactory extends DefaultSubSystemFactoryImpl
+{
+
+	/**
+	 * Constructor for DeveloperSubSystemFactory.
+	 */
+	public DeveloperSubSystemFactory()
+	{
+		super();
+	}
+	
+	/**
+	 * Create an instance of our subsystem.
+	 */
+	protected SubSystem createSubSystemInternal(SystemConnection conn)
+	{
+	   	return new DeveloperSubSystem();
+	}
+	
+	/**
+	 * Intercept of parent method that creates an initial default filter pool.
+	 * We intercept so that we can create an initial filter in that pool, which will
+	 *  list all teams.
+	 */
+	protected SystemFilterPool createDefaultFilterPool(SystemFilterPoolManager mgr)
+	{
+		SystemFilterPool defaultPool = super.createDefaultFilterPool(mgr);
+		Vector strings = new Vector();
+		strings.add(&quot;*&quot;);
+		try {
+		  <b>SystemFilter filter = </b>mgr.createSystemFilter(defaultPool, &quot;All teams&quot;, strings);
+		  <b>filter.setType("team");</b>
+		} catch (Exception exc) {}
+		return defaultPool;
+	}
+	
+	/**
+	 * Intercept of parent method so we can supply our own value shown in the property
+	 *  sheet for the &quot;type&quot; property when a filter is selected within our subsystem.
+	 *
+	 * Requires this line in rseSamplesResources.properties: property.type.teamfilter=Team filter
+	 */
+	public String getTranslatedFilterTypeProperty(SystemFilter selectedFilter)
+	{
+	   	<b>String type = selectedFilter.getType();
+	   	if (type == null)
+	   	  type = &quot;team&quot;;
+	   	if (type.equals(&quot;team&quot;))
+	   	  return RSESamplesPlugin.getResourceString(&quot;property.type.teamfilter&quot;); 
+	   	else
+	   	  return RSESamplesPlugin.getResourceString(&quot;property.type.devrfilter&quot;); </b>
+	}
+	
+	/**
+	 * Override of parent method, to affect what is returned for the New Filter-&gt; actions.
+	 * We intercept here, versus getNewFilterPoolFilterAction, so that we can return multiple
+	 *  actions versus just one.
+	 */
+	<b>protected IAction[] getNewFilterPoolFilterActions(SystemFilterPool selectedPool, Shell shell)
+	{
+	  	SystemNewFilterAction teamAction = (SystemNewFilterAction)super.getNewFilterPoolFilterAction(selectedPool, shell);
+	  	teamAction.setWizardPageTitle(RSESamplesPlugin.getResourceString(&quot;filter.team.pagetitle&quot;));
+	  	teamAction.setPage1Description(RSESamplesPlugin.getResourceString(&quot;filter.team.pagetext&quot;));
+	  	teamAction.setType(&quot;team&quot;);
+	  	teamAction.setText(RSESamplesPlugin.getResourceString(&quot;filter.team.pagetitle&quot;) + &quot;...&quot;);
+	  	
+	  	SystemNewFilterAction devrAction = (SystemNewFilterAction)super.getNewFilterPoolFilterAction(selectedPool, shell);    	
+	  	devrAction.setWizardPageTitle(RSESamplesPlugin.getResourceString(&quot;filter.devr.pagetitle&quot;));
+	  	devrAction.setPage1Description(RSESamplesPlugin.getResourceString(&quot;filter.devr.pagetext&quot;));
+	  	devrAction.setType(&quot;devr&quot;);
+	  	devrAction.setText(RSESamplesPlugin.getResourceString(&quot;filter.devr.pagetitle&quot;) + &quot;...&quot;);
+	  	devrAction.setFilterStringEditPane(new DeveloperFilterStringEditPane(shell));    	
+	  	
+	  	IAction[] actions = new IAction[2];
+	  	actions[0] = teamAction;
+	  	actions[1] = devrAction;
+	  	return actions;
+	 }</b>
+	  
+	/**
+	 * Override of parent method for returning the change-filter action, so we can affect it.
+	 */
+	<b>protected IAction getChangeFilterAction(SystemFilter selectedFilter, Shell shell)
+	{
+	  	SystemChangeFilterAction action = (SystemChangeFilterAction)super.getChangeFilterAction(selectedFilter, shell);
+	  	String type = selectedFilter.getType();
+	  	if (type == null)
+	  	  type = &quot;team&quot;;
+	  	if (type.equals(&quot;team&quot;))
+	  	{
+	  		action.setDialogTitle(RSESamplesPlugin.getResourceString(&quot;filter.team.dlgtitle&quot;));
+	  	}
+	  	else
+	  	{
+	  		action.setDialogTitle(RSESamplesPlugin.getResourceString(&quot;filter.devr.dlgtitle&quot;));
+	  		action.setFilterStringEditPane(new DeveloperFilterStringEditPane(shell));
+	  	}    
+	  	return action;
+	}</b>    	
+
+	/**
+	 * Override of parent method for returning the image for filters in our subsystem.
+	 */
+	<b>public ImageDescriptor getSystemFilterImage(SystemFilter filter)
+	{
+	  	String type = filter.getType();
+	  	if (type == null)
+	  	  type = &quot;team&quot;;
+	  	if (type.equals(&quot;team&quot;))
+	   	  return RSESamplesPlugin.getDefault().getImageDescriptor(&quot;ICON_ID_TEAMFILTER&quot;);
+	   	else
+	   	  return RSESamplesPlugin.getDefault().getImageDescriptor(&quot;ICON_ID_DEVELOPERFILTER&quot;);
+	}</b>
+}
+
+
+</samp></pre>
+</p>
+</body>
+</html>

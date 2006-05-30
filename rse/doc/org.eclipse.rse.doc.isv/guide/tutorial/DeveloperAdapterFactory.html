@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>DeveloperAdapterFactory Class After Editing</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>DeveloperAdapterFactory Class After Editing</h1>
+<p>
+<pre><samp>
+package samples.model;
+
+import org.eclipse.core.runtime.IAdapterFactory;
+import <b>com.ibm.etools.systems.core.ui.view.*;</b>
+<b>import org.eclipse.ui.views.properties.IPropertySource;</b>
+
+/**
+ * <i>This factory maps requests for an adapter object from a given remote object.</i>
+ */
+public class DeveloperAdapterFactory
+	extends AbstractSystemRemoteAdapterFactory
+	implements IAdapterFactory
+{
+	<b>private TeamResourceAdapter teamAdapter = new TeamResourceAdapter();
+	private DeveloperResourceAdapter developerAdapter = new DeveloperResourceAdapter();</b>
+	
+	/**
+	 * Constructor for DeveloperAdapterFactory.
+	 */
+	public DeveloperAdapterFactory()
+	{
+		super();
+	}
+
+	/**
+	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(Object, Class)
+	 */
+	public Object getAdapter(Object adaptableObject, Class adapterType)
+	{
+		<b>ISystemViewElementAdapter adapter = null;
+		if (adaptableObject instanceof TeamResource)
+		  adapter = teamAdapter;
+		else if (adaptableObject instanceof DeveloperResource)
+		  adapter = developerAdapter;</b>
+		// <i>these lines are very important! </i>
+		<b>if ((adapter != null) &amp;&amp; (adapterType == IPropertySource.class))
+		  adapter.setPropertySourceInput(adaptableObject);
+		return adapter;</b>
+	}
+}
+</samp></pre>
+</p>
+</body>
+</html>

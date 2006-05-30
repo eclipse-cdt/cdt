@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>RSE Remote Resource API</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>RSE Remote Resource API</h1>
+<p>IBM supplies subsystems for accessing the file system and for executing commands, for
+all system types ("universally"). 
+</p>
+<p>
+To programmatically access the files in a remote system
+identified by a particular system connection, use the 
+<A href="../../com/ibm/etools/systems/model/SystemRegistry.html">system registry</A> to get to the 
+<A href="../../com/ibm/etools/systems/model/SystemRegistry.html#getFileSubSystem(com.ibm.etools.systems.model.SystemConnection)">file subsystem</A> 
+for that connection. This <A href="../../com/ibm/etools/systems/subsystems/RemoteFileSubSystem.html">file subsystem</A> offers methods for accessing the remote files.
+</p>
+<p>
+Similarly, to programmatically run commands in a remote system
+identified by a particular system connection, use the 
+<A href="../../com/ibm/etools/systems/model/SystemRegistry.html">system registry</A> to get to the 
+<A href="../../com/ibm/etools/systems/model/SystemRegistry.html#getCmdSubSystem(com.ibm.etools.systems.model.SystemConnection)">command subsystem</A> 
+for that connection. This <A href="../../com/ibm/etools/systems/subsystems/RemoteCmdSubSystem.html">command subsystem</A> offers methods for running remote commands,
+either in a new command shell or an existing command shell. You can also set environment variables
+using this subsytem object.
+</p>
+</body>
+</html>

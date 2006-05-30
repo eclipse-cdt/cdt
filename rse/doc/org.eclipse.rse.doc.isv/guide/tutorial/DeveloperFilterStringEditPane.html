@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>DeveloperFilterStringEditPane Class After Editing</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>DeveloperFilterStringEditPane Class After Editing</h1>
+<p>
+<pre><samp>
+package samples.subsystems;
+
+import <b>org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.events.*;</b>
+
+import com.ibm.etools.systems.filters.ui.SystemFilterStringEditPane;
+<b>import RSESamples.RSESamplesPlugin;
+import com.ibm.etools.systems.core.ui.*;
+import com.ibm.etools.systems.core.ui.messages.SystemMessage;
+
+import java.util.*;</b>
+
+/**
+ * <i>Our specialized filter string edit pane for developer filters.</i>
+ */
+public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane
+{
+	// <i>gui widgets</i>
+	<b>private Text textTeam, textDevr;</b>
+
+	/**
+	 * Constructor for DeveloperFilterStringEditPane.
+	 * @param shell - parent window
+	 */
+	public DeveloperFilterStringEditPane(Shell shell)
+	{
+		super(shell);
+	}
+	
+	/**
+	 * Override of parent method.
+	 * This is where we populate the client area.
+	 * @param parent - the composite that will be the parent of the returned client area composite
+	 * @return Control - a client-area composite populated with widgets.
+	 * 
+	 * @see com.ibm.etools.systems.core.ui.SystemWidgetHelpers
+	 */
+	<b>public Control createContents(Composite parent) 
+	{		
+		ResourceBundle rb = RSESamplesPlugin.getDefault().getResourceBundle();
+		
+		// Inner composite
+		int nbrColumns = 1;
+		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);	
+		((GridLayout)composite_prompts.getLayout()).marginWidth = 0;
+		
+		// CREATE TEAM-PARENT PROMPT
+		textTeam = SystemWidgetHelpers.createLabeledTextField(composite_prompts,null,rb,&quot;filter.devr.teamprompt.&quot;); 
+
+		// CREATE DEVELOPER PROMPT
+		textDevr = SystemWidgetHelpers.createLabeledTextField(composite_prompts,null,rb,&quot;filter.devr.devrprompt.&quot;); 
+		
+		resetFields();
+		doInitializeFields();
+		  		  
+		// add keystroke listeners...
+		textTeam.addModifyListener(
+			new ModifyListener() 
+			{
+				public void modifyText(ModifyEvent e) 
+				{
+					validateStringInput();
+				}
+			}
+		);		
+		textDevr.addModifyListener(
+			new ModifyListener() 
+			{
+				public void modifyText(ModifyEvent e) 
+				{
+					validateStringInput();
+				}
+			}
+		);		
+		return composite_prompts;
+	}</b>
+	/**
+	 * Override of parent method.
+	 * Return the control to recieve initial focus. 
+	 */
+	<b>public Control getInitialFocusControl()
+	{
+		return textTeam;
+	}	</b>
+
+	/**
+	 * Override of parent method.
+	 * Initialize the input fields based on the inputFilterString, and perhaps refProvider.
+	 * This can be called before createContents, so test for null widgets first!
+	 * Prior to this being called, resetFields is called to set the initial default state prior to input
+	 */		
+	<b>protected void doInitializeFields()
+	{
+		if (textTeam == null)
+		  return; // do nothing
+		if (inputFilterString != null)
+		{
+			int idx = inputFilterString.indexOf('/');
+			if (idx &lt; 0)
+		      textTeam.setText(inputFilterString);
+		    else
+		    {
+		    	textTeam.setText(inputFilterString.substring(0,idx));
+		    	textDevr.setText(inputFilterString.substring(idx+1));
+		    }
+		}
+	}	</b>
+	/**
+	 * Override of parent method.
+	 * This is called in the change filter dialog when the user selects &quot;new&quot;, or selects another string.
+	 */
+	<b>protected void resetFields()
+	{
+	    textTeam.setText(&quot;&quot;);		
+	    textDevr.setText(&quot;*&quot;);
+	}</b>
+	/**
+	 * Override of parent method.
+	 * Called by parent to decide if information is complete enough to enable finish. 
+	 */
+	<b>protected boolean areFieldsComplete()
+	{
+		if ((textTeam == null) || (textDevr == null))
+		  return false;
+		else
+		  return (textTeam.getText().trim().length()&gt;0) &amp;&amp; (textDevr.getText().trim().length()&gt;0);
+	}</b>
+	
+	/**
+	 * Override of parent method.
+	 * Get the filter string in its current form. 
+	 * Functional opposite of doInitializeFields, which tears apart the input string in update mode,
+	 *  to populate the GUIs. This method creates the filter string from the information in the GUI.
+	 */
+	<b>public String getFilterString()
+	{
+		if ((textTeam == null) || (textDevr == null))
+		  return inputFilterString; // return what we were given.
+		else
+		{
+			String teamName = textTeam.getText().trim();
+			String devrName = textDevr.getText().trim();
+			return teamName + &quot;/&quot; + devrName;
+		}
+	}</b>	
+
+	/**
+	 * Override of parent method.
+	 * Does complete verification of input fields. If this 
+	 * method returns null, there are no errors and the dialog or wizard can close.
+	 *
+	 * @return error message if there is one, else null if ok
+	 */
+	<b>public SystemMessage verify() 
+	{
+		errorMessage = null;
+		Control controlInError = null;
+		
+		/*
+		errorMessage = validateTeamInput(); // todo: implement if we want to syntax check input
+		if (errorMessage != null)
+		  controlInError = textTeam;
+		else
+		{
+		   errorMessage = validateDevrInput(); // todo: implement to syntax check input
+		   if (errorMessage != null)
+		     controlInError = textDevr;
+		}
+		*/
+		
+		if (errorMessage != null)
+		{
+			if (controlInError != null)
+		      controlInError.setFocus();
+		}
+		return errorMessage;		
+	}	</b>
+}
+
+
+</samp></pre>
+</p>
+</body>
+</html>

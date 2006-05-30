@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../../book.css" TYPE="text/css">
+<title>RSE Massagers API</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>RSE Massagers API</h1>
+<p>In addition to <a href="../validators/uiValidatorsAPI.html">validating</a> what a user types, we often need
+to transform it prior to saving. For example, we may need to fold it to uppercase or lowercase. The RSE abstracts
+and encapsulates this concept into massagers which can be re-used. A few are pre-supplied by RSE.
+</p>
+
+<h2>RSE Massager Interfaces</h2>
+<p>The <samp><A href="../../../com/ibm/etools/systems/core/ui/ISystemMassager.html">ISystemMassager</A></samp> interface is in package 
+<samp><A href="../../../com/ibm/etools/systems/core/ui/package-summary.html">com.ibm.etools.systems.core.ui</A></samp>. 
+It is a very simple interface with one method: 
+<samp><A href="../../../com/ibm/etools/systems/core/ui/ISystemMassager.html#massage(java.lang.String)">public String massage(String text)</A></samp>. 
+Given input text, return the massaged text. While simple, by encapsulating this operation into an interface, 
+you will be able to write re-usable dialogs that take a massager as input. Further, tricky massaging can be
+built as a re-usable object.
+</p>
+
+<h2>RSE-Supplied Massagers</h2>
+<p>The RSE supplies the following massagers in package <samp><A href="../../../com/ibm/etools/systems/core/ui/package-summary.html">com.ibm.etools.systems.core.ui</A></samp>:
+</p>
+<BR>
+<TABLE border="1">
+	<TBODY>
+		<TR>
+			<TH>Massager Class</TH>
+			<TH>Description</TH>
+		</TR>
+		<TR>
+			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/MassagerFoldCase.html">MassagerFoldCase</A></samp></TD>
+			<TD>Simply folds the text to uppercase or lowercase</TD>
+		</TR>
+		<TR>
+			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/MassagerFoldCaseOutsideQuotes.html">MassagerFoldCaseOutsideQuotes</A></samp></TD>
+			<TD>Folds the text to uppercase or lowercase, except parts of the text that are surrounded by quotes or any given delimiter characters</TD>
+		</TR>
+		<TR>
+			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/MassagerFoldCaseUnlessQuoted.html">MassagerFoldCaseUnlessQuoted</A></samp></TD>
+			<TD>Folds the text to uppercase or lowercase, unless the whole text is surrounded by quotes or any given delimiter character</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P><BR></P>
+</body>
+</html>

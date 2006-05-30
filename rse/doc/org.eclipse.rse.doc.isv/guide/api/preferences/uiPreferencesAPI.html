@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../../book.css" TYPE="text/css">
+<title>RSE Preferences API</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>RSE Preferences API</h1>
+
+<h2>RSE Preference Pages Category</h2>
+<p>All Remote System Explorer preference pages are rooted within the
+preferences category <samp>com.ibm.etools.systems.core.ui.preferences.RemoteSystemsPreferencePage</samp>,
+as shown here:</p>
+<P><IMG border="0" src="rsePreferences.gif"></P>
+
+<h2>RSE Preference Pages Classes</h2>
+<p>There is no RSE-supplied base class for preference pages, but we recommend
+you extend <samp>FieldEditorPreferencePage</samp> in package <samp>org.eclipse.jface.preference</samp>. 
+This JFace class allows you to create a preferences page as a sequence of "field 
+editors" which know how to initialize, load and store their values from their preferences store.
+</p>
+<p>We also suggest the following when designing your preference pages:
+<ol>
+<li>A interface for your preferences constants. It should store two constants per preference: the preference store key, and its default value.
+<li>Static getter and setter methods in your preference page classes, one per preference, to query or update the preference value in the preferences store.
+<li>An <samp>initDefaults(IPreferenceStore store)</samp> method per preferences class, that initializes the preference store value of each preference on that page. 
+<li>In your plugin class, an override of the <samp>initializeDefaultPreferences(IPreferenceStore store)</samp> method, so it calls your
+<samp>initDefaults(store)</samp> method for each preference page class.
+</ol>
+<p>Should you need to query, or update, any RSE preferences you can do so via
+the getters and setters in <samp>com.ibm.etools.systems.core.SystemPreferencesManager</samp>.
+</p>
+<p>The RSE supplies a few field editors, complementing what JFace supplies
+in <samp>org.eclipse.jface.preference</samp>. The RSE-supplied field editors, and the
+RSE-supplied preferences pages, are all found in package <samp><A href="../../../com/ibm/etools/systems/core/ui/propertypages/package-summary.html">com.ibm.etools.systems.core.ui.propertypages</A></samp>:
+</p>
+<ul>
+<li><b><samp><A href="../../../com/ibm/etools/systems/core/ui/propertypages/SystemBooleanFieldEditor.html">SystemBooleanFieldEditor</A></samp></b>. Extends <samp>BooleanFieldEditor</samp> to add support for tooltip text.
+<p><IMG border="0" src="fldEditor_checkBox.gif"></p>
+<li><b><samp><A href="../../../com/ibm/etools/systems/core/ui/propertypages/SystemComboBoxFieldEditor.html">SystemComboBoxFieldEditor</A></samp></b>. Shows a combo box allowing the user to choose from a finite list of discrete possibilities.
+<p><IMG border="0" src="fldEditor_comboBox.gif"></p>
+<li><b><samp><A href="../../../com/ibm/etools/systems/core/ui/propertypages/SystemKeyValueFieldEditor.html">SystemKeyValueFieldEditor</A></samp></b>. Shows a list of hard-coded keys, each of which supports a user-specifiable value. 
+<p><IMG border="0" src="fldEditor_keyValue.gif"></p>
+<li><b><samp><A href="../../../com/ibm/etools/systems/core/ui/propertypages/SystemStringFieldEditor.html">SystemStringFieldEditor</A></samp></b>. For simple string preferences. Unlike the JFace string editor, this supports tooltip text and RSE validators and massagers on the typed text.
+<p><IMG border="0" src="fldEditor_string.gif"></p>
+</ul>
+<P><BR></P>
+</body>
+</html>

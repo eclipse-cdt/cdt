@@ -1,0 +1,21 @@
+-charset "iso-8859-1"
+-sourcepath "../../../ws/org.eclipse.dstore.core/src@sep@../../../ws/org.eclipse.dstore.extra/src"
+-d reference/api
+-classpath @rt@@sep@../org.apache.ant/lib/ant.jar@sep@../org.eclipse.ui.console/console.jar@sep@../org.eclipse.osgi/@dot@sep@../org.eclipse.osgi.services/services.jar@sep@../org.eclipse.osgi.util/util.jar@sep@../org.eclipse.core.runtime.compatibility/compatibility.jar@sep@../org.eclipse.ui.ide/@dot@sep@../org.eclipse.ui.views/@dot@sep@../org.eclipse.ui.workbench/@dot@sep@../org.apache.lucene/lucene-1.4.3.jar@sep@../org.eclipse.help.appserver/@dot
+-breakiterator
+-use
+-splitIndex
+-windowtitle "Remote System Explorer DataStore API Specification"
+-doctitle "Remote System Explorer DataStore API Specification"
+-header "<b>Remote System Explorer DataStore</b><br>Release 1.0"
+-bottom '<font size="-1"><p><a href="{@docRoot}/../misc/api-usage-rules.html">Guidelines for using DataStore APIs</a>.</p></font>'
+-link http://java.sun.com/j2se/1.4.2/docs/api
+-linkoffline ../org.eclipse.rse.doc.isv/reference/api ..
+
+org.eclipse.dstore.core.model
+org.eclipse.dstore.core.client
+org.eclipse.dstore.core.server
+org.eclipse.dstore.core.util
+org.eclipse.dstore.core.util.ssl
+org.eclipse.dstore.core.java
+org.eclipse.dstore.core.miners.miner

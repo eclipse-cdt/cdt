@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>Plugging In System Types</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>Plugging In System Types</h1>
+<p>The <samp><A href="../../doc/org_eclipse_rse_ui_systemtype.html">com.ibm.etools.systems.core.systemtype</a></samp> extension point is defined in the
+plugin <samp>com.ibm.etools.systems.core</samp>. It enables new system types to be
+defined in the Remote System Explorer's <A href="NewConnection.gif">New
+Connection wizard</A>, such that users can define connections to systems of that type. For example,
+you might define a new system type of "Solaris" or "RedHat" or some other specific type
+of operating system. The reason to define a system type is to enable tools to be created,
+via the <A href="subsystem.html">subsystem extension point</A>, that are scoped so as to
+only appear for connections to systems of that type.
+</p>
+<p>
+Defining a new system type is easy. You merely need to supply the name of the system
+type, and two icons - one icon for connections to that systems of that type, and another
+adorned icon that is used when there is a live connection to that particular system.
+</p>
+<p>
+When youcreates a new connection, the Remote System Explorer framework will consult
+each registered <A href="subsystem.html">subsystem extension point</A> to see if it supports
+that connection's system type, and if so the extension point's subsystem factory class
+will be used to create a new subsystem within the new connection. Thus, when the user
+expands a connection in the Remote Systems view, only subsystems supported for that 
+connection's system type are available.
+</p>
+</body>
+</html>

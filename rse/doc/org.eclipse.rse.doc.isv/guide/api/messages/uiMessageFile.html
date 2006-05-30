@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../../book.css" TYPE="text/css">
+<title>RSE Message File</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>RSE Message File</h1>
+<p>To exploit the message framework in RSE, you start by create an message file, named
+say <samp>mymessages.xml</samp>, which looks something like this:
+<pre>
+&lt;?xml version="1.0" encoding='UTF-8'?&gt;
+&lt;!-- This is a sample message file --&gt;
+&lt;MessageFile Version="1.0"&gt;
+     &lt;Component Name="ACME Tools" Abbr="ACME"&gt;
+          &lt;Subcomponent Name="General" Abbr="G"&gt;
+                &lt;MessageList&gt;
+                    &lt;Message ID="1001" Indicator="E"&gt;
+                          &lt;LevelOne&gt;You made a mistake&lt;/LevelOne&gt;
+                          &lt;LevelTwo&gt;Fix your mistake, then re-attempt the operation.&lt;/LevelTwo&gt;
+                    &lt;/Message&gt;
+                &lt;/MessageList&gt;
+          &lt;/Subcomponent&gt;
+     &lt;/Component&gt;
+&lt;/MessageFile&gt;
+</pre>
+
+<h2>RSE Message File Elements</h2>
+<p>Typically, this file is created in plugin project's root folder.</p>
+<p>The important elements in this file are:
+</p><TABLE border="1">
+	<TBODY>
+		<TR>
+			<TH>Element</TH>
+			<TH>Description</TH>
+		</TR>
+		<TR>
+			<TD>MessageFile</TD>
+			<TD>The overall element for the file. There is only one of these tags.</TD>
+		</TR>
+		<TR>
+			<TD>Component</TD>
+			<TD>Identifies a course-grained component within your plugin. You can specify multiple component tags. It is up to you to decide<BR>how many components to divide your plugin into. The abbreviation (Abbr) of the component constitutes the first part of the message ID for messages defined in this component, aiding in servicing when an error message is reported.
+			</TD>
+		</TR>
+		<TR>
+			<TD>Subcomponent</TD>
+			<TD>Identifies a fine-grained subcomponent within a component. The abbreviation (Abbr) of the subcomponent is appended to the component's abbreviation when the message ID is created for messages in this subcomponent. It is up to you to decide how many subcomponents to divide your component into, and what to name them.</TD>
+		</TR>
+		<TR>
+			<TD>MessageList</TD>
+			<TD>Simply encapsulates the list of Message elements for this subcomponent.</TD>
+		</TR>
+		<TR>
+			<TD>Message</TD>
+			<TD>Defines a message. <BR>
+			The <b>ID</b> attribute can be anything you like, but following a naming or numbering convention is a good idea. The ID is appended to the component and subcomponent abbreviations to form the message ID the user will see. 
+			<BR>The <b>Indicator</b> attribute identifies the severity of the message: <b>I</b> for Information, <b>E</b> for Error, <b>W</b> for Warning, <b>U</b> for Unexpected, and <b>Q</b> for Question. This affects the icon that will be used for this message, and the buttons allowed on the message dialog.
+			</TD>
+		</TR>
+		<TR>
+			<TD>LevelOne</TD>
+			<TD>The first-level message the user will initially see. Use %n for substitution variables, where n is a positive integer incrementing up from 1.</TD>
+		</TR>
+		<TR>
+			<TD>LevelTwo</TD>
+			<TD>The second-level help for the message, the user will only see if they ask to see it. Use %n for substitution variables. Any variable used here and in the LevelOne text will be consistently substituted with the same value.</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+
+<h2>RSE Message File Sample</h2>
+<p>This is a bigger <A href="sampleMessageFile.html">sample</A>.</p>
+</body>
+</html>

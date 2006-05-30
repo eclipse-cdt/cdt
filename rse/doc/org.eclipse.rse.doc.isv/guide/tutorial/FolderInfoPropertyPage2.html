@@ -1,0 +1,243 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>FolderInfoPropertyPage Class After Editing</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>FolderInfoPropertyPage Class After Editing</h1>
+<p>
+<pre><samp>
+package samples.ui.propertypages;
+
+import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.*;
+
+import RSESamples.*;
+import com.ibm.etools.systems.core.ui.propertypages.SystemAbstractRemoteFilePropertyPageExtensionAction;
+import com.ibm.etools.systems.subsystems.*;
+import com.ibm.etools.systems.core.ui.*;
+
+import java.util.*;
+
+/**
+ * A sample property page for a remote object, which in this case is scoped via the
+ *  extension point xml to only apply to folder objects.
+ */
+public class <b>FolderInfoPropertyPage</b>
+	extends SystemAbstractRemoteFilePropertyPageExtensionAction 
+	implements SelectionListener
+{
+	// gui widgets...
+	private Label sizeLabel, filesLabel, foldersLabel;
+	private Button stopButton;
+	// state...
+	private int totalSize = 0;
+	private int totalFolders = 0;
+	private int totalFiles = 0;
+	private boolean stopped = false;
+	private Thread workerThread;
+	private Runnable guiUpdater;
+
+	/**
+	 * Constructor for FolderInfoPropertyPage.
+	 */
+	public <b>FolderInfoPropertyPage</b>()
+	{
+		super();
+	}
+
+	// --------------------------
+	// <i>Parent method overrides...</i>
+	// --------------------------
+	
+	/**
+	 * @see com.ibm.etools.systems.core.ui.propertypages.SystemBasePropertyPage#createContentArea(Composite)
+	 */
+	protected Control <b>createContentArea</b>(Composite parent)
+	{
+		Composite composite = SystemWidgetHelpers.createComposite(parent, 2);
+		ResourceBundle rb = RSESamplesPlugin.getDefault().getResourceBundle();
+		// draw the gui		
+		sizeLabel = SystemWidgetHelpers.createLabeledLabel(composite, rb, &quot;pp.size.&quot;, false);
+		filesLabel = SystemWidgetHelpers.createLabeledLabel(composite, rb, &quot;pp.files.&quot;, false);
+		foldersLabel = SystemWidgetHelpers.createLabeledLabel(composite, rb, &quot;pp.folders.&quot;, false);
+		stopButton = SystemWidgetHelpers.createPushButton(composite, null, rb, &quot;pp.stopButton.&quot;);
+		stopButton.addSelectionListener(this);
+		
+		setValid(false); // Disable OK button until thread is done
+		
+		// show &quot;Processing...&quot; message
+		setMessage(RSESamplesPlugin.getPluginMessage(&quot;RSSG1002&quot;));
+		
+		// create instance of Runnable to allow asynchronous GUI updates from background thread	   
+		guiUpdater = new RunnableGUIClass();
+		// spawn a thread to calculate the information
+		workerThread = new RunnableClass(getRemoteFile());
+		workerThread.start();
+		
+		return composite;
+	}
+	
+	/**
+	 * Intercept from PreferencePage. Called when user presses Cancel button.
+	 * We stop the background thread.
+	 */
+	public boolean <b>performCancel</b>() 
+	{
+		killThread();
+		return true;
+	}			
+	
+	/**
+	 * Intercept from DialogPage. Called when dialog going away.
+	 * If the user presses the X to close this dialog, we 
+	 *  need to stop that background thread.
+	 */
+	public void <b>dispose</b>()
+	{
+		killThread();
+		super.dispose();
+	}
+	
+	/**
+	 * Private method to kill our background thread.
+	 * Control doesn't return until it ends.
+	 */
+	private void <b>killThread</b>()
+	{
+		if (!stopped &amp;&amp; workerThread.isAlive())
+		{
+		    stopped = true;
+		    try {
+		      workerThread.join(); // wait for thread to end
+		    } catch (InterruptedException exc) {}
+		}		
+	}
+
+	// -------------------------------------------
+	// <i>Methods from SelectionListener interface...</i>
+	// -------------------------------------------
+	
+	/**
+	 * From SelectionListener
+	 */
+	public void <b>widgetSelected</b>(SelectionEvent event) 
+	{
+		if (event.getSource() == stopButton)
+		{
+			stopped = true;
+			stopButton.setEnabled(false);
+		}
+	}
+	/**
+	 * From SelectionListener
+	 */
+	public void <b>widgetDefaultSelected</b>(SelectionEvent event) {}
+	
+
+	// ----------------
+	// <i>Inner classes...</i>
+	// ----------------
+	/**
+	 * Inner class encapsulating the background work to be done, so it may be executed
+	 *  in background thread.
+	 */
+	private class <b>RunnableClass</b> extends Thread
+	{
+		IRemoteFile inputFolder;
+		
+		<b>RunnableClass</b>(IRemoteFile inputFolder)
+		{
+			this.inputFolder = inputFolder;
+		}
+		
+		public void <b>run</b>()
+		{
+			if (stopped)
+			  return;
+			walkFolder(inputFolder);						
+			updateGUI();
+			if (!stopped)
+			{
+				stopped = true;
+				updateGUI();
+			}
+		}
+		
+		/**
+		 * Recursively walk a folder, updating the running tallies. 
+		 * Update the GUI after processing each subfolder.
+		 */
+		private void <b>walkFolder</b>(IRemoteFile currFolder)
+		{
+			IRemoteFile[] folders = currFolder.getParentRemoteFileSubSystem().listFoldersAndFiles(currFolder);
+			if ((folders != null) &amp;&amp; (folders.length&gt;0))
+			{
+				for (int idx=0; !stopped &amp;&amp; (idx&lt;folders.length); idx++)
+				{
+					// is this a folder? 
+					if (folders[idx].isDirectory())
+					{
+						++totalFolders;
+						walkFolder(folders[idx]);
+						updateGUI();
+					}
+					// is this a file?
+					else
+					{
+						++totalFiles;
+						totalSize += folders[idx].getLength();
+					}
+				}
+			}
+		} // <i>end of walkFolder method</i>
+
+	} // <i>end of inner class</i>
+	
+	/**
+	 * Inner class encapsulating the GUI work to be done from the
+	 *  background thread.
+	 */
+	private class <b>RunnableGUIClass</b> implements Runnable
+	{
+		public void <b>run</b>()
+		{
+			if (stopButton.isDisposed())
+			  return; 
+			if (!stopped)
+			{
+				sizeLabel.setText(Integer.toString(totalSize));		
+				filesLabel.setText(Integer.toString(totalFiles));
+				foldersLabel.setText(Integer.toString(totalFolders));
+			}
+			else if (stopped)
+			{				
+				setValid(true); // re-enable OK button								
+				stopButton.setEnabled(false); // disable Stop button				
+				clearMessage(); // clear &quot;Processing...&quot; message
+			}			  
+		}
+	}	
+
+	
+	/**
+	 * Update the GUI with the current status
+	 */
+	private void <b>updateGUI</b>()
+	{
+		Display.getDefault().asyncExec(guiUpdater);
+	}
+
+}
+
+
+</samp></pre>
+</p>
+</body>
+</html>

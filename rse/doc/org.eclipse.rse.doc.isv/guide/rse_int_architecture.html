@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<head>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2005, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="STYLESHEET" href="../book.css" charset="ISO-8859-1" type="text/css">
+<title>RSE Architecture</title>
+<link rel="stylesheet" type="text/css" href="../book.css">
+</head>
+<body>
+<h1>RSE Architecture</h1>
+
+
+<p> The Remote System Explorer is structured into three major layors:</p>
+<ul>
+  <li><A href="#Services">Service Layer</A></li>
+  <li><A href="#Subsystems">Subsystem Layer</A></li>
+  <li><A href="#UIs">UI Layer</A></li>
+</ul>
+
+
+<h2><A name="Services">RSE Service Layer</A></h2>
+<p>
+This is the headless, barebones API layer that is used to interact with different protocols to
+provide remote services that can be integrated into RSE.  By default, RSE defines the following
+types of services:
+<ul>
+  <li>File Service - for listing, modifying, copying, and transfering remote file and folders</li>
+  <li>Shell Service - for launching remote shells and interacting with the associated IO</li>
+  <li>Process Services - for listing remote processes</li>
+</ul>
+</p>
+<p>
+New service types can be added as needed, either in core RSE, or extensions to the base.  The service
+interfaces are defined loosely so that different implementations of the same service can be made using
+different protocols.  For example, the IFileService could be implemented locally with java.io, FTP, DataStore or some
+other protocol.  Similarly, the IShellService could be implemented locally via DataStore, telnet, SSH or something
+else.
+</p>
+
+
+<h2><A name="SubSystems">RSE Subsystem Layer</A></h2>
+<p>
+RSE subsystems integrate the services of the service layer with connection information, model artifacts and persistence.
+Each subsystem is associated with a single service type.  For example, the file service subsystem is associated with the
+file service.  Each <a href="rse_int_subsystems.html">subsystem</a> is associated with one or more services from the service layer,
+a <a href="rse_int_connectorservices.html">connector service</a> and, in some cases, a model adapter, which is used to
+convert artifacts from the service layer into a form that is suitable for the subsystem layer.
+</p>
+<p>
+Subsystems are contributed via the subsystem configuration extension point.  A subsystem configuration is registered with
+one or more system type (i.e. Local, Linux, Windows, etc.).  When there is an RSE <a href="rse_int_hosts.html">host</a>
+of a particular system type, the subsystem configurations that are registered with that system type are used to instantiate
+and configure the subsystems for that host.  Each subsystem configuration determines the subsystem to instantiate, the service
+implementation, the connector service and anything else that requires customization for it's service.
+</p>
+<p>
+Multiple subsystem configurations can exist for the same type of subsystem.  This will be the case when there are more than
+one protocols that can be used to implement the same service.  For example, there are both FTP and DataStore implementations of
+the IFileService.  Subsystem configurations are contributed for both the FTP implementation and the DataStore one.  In
+such cases, only one subsystem is instantiated for each host, however that subsystem can have its configuration changed from FTP
+to DataStore and vice versa.
+</p>
+<p>
+Subsystems are RSE objects that are persistable and maintain higher level functionality from the service layer.  Subsystems that
+are used to query information on a host often have <a href="rse_int_filters.html">filters</a>.  Filters provide the user the means to
+specify a criteria for which to query a set of data.  In addition to filters, there are more arbitrary properties that can be
+associated with a subsystem, each of which can be saved and restored across sessions.
+</p>
+
+<h2><A name="UI">RSE UI Layer</A></h2>
+<p>
+The Remote System Explorer perspective provides views that render the subsystems and associated artifacts.  Users can create
+new connections, which can be expanded to reveal subsystems and the information the subsystems reveal about a system.
+</p>
+
+</body>
+</html>
+

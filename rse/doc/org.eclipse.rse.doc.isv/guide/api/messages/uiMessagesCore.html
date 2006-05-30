@@ -1,0 +1,1010 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML> 
+<HEAD> 
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../../book.css" TYPE="text/css">
+<TITLE> Message File systemmessages.xml </TITLE>
+<style type="text/css">
+h2 { background-color: #CCCCFF }
+</style>
+</HEAD> 
+<BODY>
+<H1>Remote Systems Explorer Messages</H1>
+<br>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#CCCCFF">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Sub-Component Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%">
+<A href=#General>General</A></TD>
+<TD><b>Message prefix</b>=RSEG</TD></TR>
+<TR BGCOLOR="white">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%">
+<A href=#Other>Other</A></TD>
+<TD><b>Message prefix</b>=RSEO</TD></TR>
+<TR BGCOLOR="white">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%">
+<A href=#Files>Files</A></TD>
+<TD><b>Message prefix</b>=RSEF</TD></TR>
+<TR BGCOLOR="white">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%">
+<A href=#Communications>Communications</A></TD>
+<TD><b>Message prefix</b>=RSEC</TD></TR>
+</TABLE>
+<A NAME="General"><!-- --></A><H2>General Messages</H2>
+<H3>RSEG1001</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>Under construction<br>
+<b>LevelTwo: </b>This function is not yet available.<br>
+<H3>RSEG1002</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>This will reload the Remote System Explorer. Are you sure?<br>
+<b>LevelTwo: </b>This action should only be used after receiving files from a team repository. It reloads the RSE from the workspace, incorporating the new files.<br>
+<H3>RSEG1003</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>An unexpected exception has occurred<br>
+<b>LevelTwo: </b>%1<br>
+<H3>RSEG1006</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter name<br>
+<b>LevelTwo: </b>You must enter a name in the field where the cursor is positioned.<br>
+<H3>RSEG1007</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Name in use<br>
+<b>LevelTwo: </b>This name is already used by another resource. Enter a unique name.<br>
+<H3>RSEG1008</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Name not valid<br>
+<b>LevelTwo: </b>The name entered does not have valid syntax<br>
+<H3>RSEG1009</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>You must rename %1<br>
+<b>LevelTwo: </b>You have left the new name the same as the old name. Enter a new name that is different from the old name.<br>
+<H3>RSEG1010</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Name %1 is specified more than once<br>
+<b>LevelTwo: </b>Two or more resources have been renamed to the same new name. Each resource must have a unique name.<br>
+<H3>RSEG1011</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Name %1 not valid<br>
+<b>LevelTwo: </b>The name %1 does not have valid syntax<br>
+<H3>RSEG1012</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter new name<br>
+<b>LevelTwo: </b>You have the new name entry field empty. You must enter a unique new name.<br>
+<H3>RSEG1013</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Expand failed or canceled. Try again.<br>
+<b>LevelTwo: </b>When expanding a node in the tree, and retrieving the resources, either an error occurred or you cancelled the operation. The expand is cancelled.<br>
+<H3>RSEG1014</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter profile name<br>
+<b>LevelTwo: </b>You must enter a name for the profile. Profiles contain all connections, filters and user defined actions. They are shared by the team, but each team member sees only those profiles which are active. Each profile can be private to you, or used by the whole team if all team members make the profile active. The name should reflect this. That is, if the profile is to be private to you, pick a name that is least likely to collide with a name chosen by other team members.<br>
+<H3>RSEG1015</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Profile of that name already exists<br>
+<b>LevelTwo: </b>There is already a profile of that name. Choose a unique name for the profile.<br>
+<H3>RSEG1016</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Not a valid profile name<br>
+<b>LevelTwo: </b>Profiles ultimate are folders in the file system, so profile names must be valid folder names for the workbench. Further, they must not contain pound signs (#) or exceed 100 characters in length. Profile names are not case sensitive, but are case tolerant.<br>
+<H3>RSEG1017</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter number<br>
+<b>LevelTwo: </b>The value %1 you entered is not numeric. Enter only numeric input.<br>
+<H3>RSEG1018</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Name not valid as folder name<br>
+<b>LevelTwo: </b>The name must be a valid folder name within the workbench and the underlying file system.<br>
+<H3>RSEG1019</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Name not valid as file name<br>
+<b>LevelTwo: </b>The name must be a valid file name within the workbench and the underlying file system.<br>
+<H3>RSEG1020</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter system type<br>
+<b>LevelTwo: </b>You must select a system type. The system type is the type of the operating system of the remote sytem.<br>
+<H3>RSEG1021</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter connection name<br>
+<b>LevelTwo: </b>You must enter a connection name. This name is arbitrary, but must be unique to the selected profile.<br>
+<H3>RSEG1022</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Connection name is not unique for its profile<br>
+<b>LevelTwo: </b>Connection names must be unique to the profile that contains the connection. Specify a name not already in use.<br>
+<H3>RSEG1023</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Not a valid connection name<br>
+<b>LevelTwo: </b>The connection name is not syntactically valid. The name must be a valid folder name within the workbench and the underlying file system.<br>
+<H3>RSEG1024</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter host name or ip address<br>
+<b>LevelTwo: </b>You must specify a host name or TCP/IP address for the remote system.<br>
+<H3>RSEG1025</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter user ID<br>
+<b>LevelTwo: </b>You must specify a user ID to be used to connect to the system.<br>
+<H3>RSEG1026</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Not a valid user ID<br>
+<b>LevelTwo: </b>The user ID entered is not syntactically valid. The only restriction for a user ID is that it not use the characters '=' or ';'.<br>
+<H3>RSEG1027</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter port number<br>
+<b>LevelTwo: </b>You must specify a port number that is used to connect with the server-side communication layer.<br>
+<H3>RSEG1028</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Not a valid port number<br>
+<b>LevelTwo: </b>The value you entered is not a valid port number. It must be a positive integer.<br>
+<H3>RSEG1029</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter value<br>
+<b>LevelTwo: </b>You must enter a value in the field where the cursor is.<br>
+<H3>RSEG1030</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Entry is not unique<br>
+<b>LevelTwo: </b>The value you entered is already in use. Specify a value that is not already in use.<br>
+<H3>RSEG1031</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Syntax is not valid<br>
+<b>LevelTwo: </b>The syntax of the value at the cursor position is not valid.<br>
+<H3>RSEG1032</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter path<br>
+<b>LevelTwo: </b>You must specify a file system path.<br>
+<H3>RSEG1033</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Path is not unique<br>
+<b>LevelTwo: </b>The path you specified is already in use.<br>
+<H3>RSEG1034</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Path syntax is not valid<br>
+<b>LevelTwo: </b>The syntax of the path you specified is not valid. Enter a file system path that is valid for the remote operating system.<br>
+<H3>RSEG1035</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter password<br>
+<b>LevelTwo: </b>You must specify your password.<br>
+<H3>RSEG1036</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Password has expired<br>
+<b>LevelTwo: </b>Your password has expired, and must be reset before continuing.<br>
+<H3>RSEG1037</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter filter pool name<br>
+<b>LevelTwo: </b>You must specify a name for your filter pool. Filter pool names are arbitrary, but typically reflect the contents of the filters, such as "Release 1" or "Accounts Payable".<br>
+<H3>RSEG1038</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Filter pool name already exists in this profile<br>
+<b>LevelTwo: </b>A filter pool with this name already exists in the profile.<br>
+<H3>RSEG1039</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Filter pool name not valid<br>
+<b>LevelTwo: </b>The filter pool name you specified is not a valid name. The name must be a valid folder name in the workbench, and must not contain the pound sign '#'. It must also not exceed 50 characters in length.<br>
+<H3>RSEG1040</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Profile name %1 is reserved<br>
+<b>LevelTwo: </b>The given profile name is reserved by IBM. Specify another name for the profile.<br>
+<H3>RSEG1042</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter filter name<br>
+<b>LevelTwo: </b>You must specify a name for your filter. You can specify any name you like. Choose a name that tells others the contents of this filter. For example, "Source Files for Release 1".<br>
+<H3>RSEG1043</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Filter name already exists in this filter pool<br>
+<b>LevelTwo: </b>The filter name you specified is in use. You must specify a name unique for the parent filter pool.<br>
+<H3>RSEG1044</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Filter name not valid<br>
+<b>LevelTwo: </b>The filter name you specified is not a valid name. The name must be a valid file name in the workbench, and must not contain the pound sign '#'. It must also not exceed 100 characters in length.<br>
+<H3>RSEG1045</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter filtering information<br>
+<b>LevelTwo: </b>You must specify filtering information<br>
+<H3>RSEG1046</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Filter string already exists<br>
+<b>LevelTwo: </b>You specified a filter string which already exists in this filter. Having duplicate filter strings will result in duplicate resources in the expanded filter. Specify unique filter strings, preferably which result in unique resources. For example, don't specify both ABC* and A*.<br>
+<H3>RSEG1047</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Filter string not valid<br>
+<b>LevelTwo: </b>The filter string you specified is not syntactically correct.<br>
+<H3>RSEG1048</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Duplicate filter string '%1'.<br>
+<b>LevelTwo: </b>You have defined the same filter string twice or more. This will result in multiple copies of the same resource, when this filter is expanded. Delete the redundant filter strings.<br>
+<H3>RSEG1049</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Filter string '%1' already exists in filter %2<br>
+<b>LevelTwo: </b>This filter string cannot be copied or moved to the target filter. The same filter string already exists there<br>
+<H3>RSEG1050</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>Save to disk failed with an unexpected exception<br>
+<b>LevelTwo: </b>%1<br>
+<H3>RSEG1051</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>Restore of data failed with unexpected exception<br>
+<b>LevelTwo: </b>%1<br>
+<H3>RSEG1052</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>Delete selected resources?<br>
+<b>LevelTwo: </b>This is a permanent deletion of the selected resources and cannot be undone<br>
+<H3>RSEG1053</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>Delete profile '%1'?<br>
+<b>LevelTwo: </b>Do you want to delete this profile, including all of its connections, filters and user actions? Select Yes to delete, or No to cancel the delete request<br>
+<H3>RSEG1054</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Connecting to %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1055</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Connecting to %1 at port %2<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1056</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>Connect to %1 failed with an unexpected exception<br>
+<b>LevelTwo: </b>%2<br>
+<H3>RSEG1057</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Connect failed. Host %1 not found or not responding<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1058</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Connect to %1 was cancelled<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1059</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Disconnecting from %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1060</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Disconnecting from %1 at port %2<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1061</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>Disconnect from %1 failed with exception<br>
+<b>LevelTwo: </b>%2<br>
+<H3>RSEG1062</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Disconnect from %1 was cancelled<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1063</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>Unexpected error deleting %1<br>
+<b>LevelTwo: </b>%2<br>
+<H3>RSEG1064</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>Unexpected error renaming %1<br>
+<b>LevelTwo: </b>%2<br>
+<H3>RSEG1065</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Unexpected error moving %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1066</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>Operation failed with exception '%1'<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1067</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Operation cancelled.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1068</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>Warning. Profile '%1' should be made active. Active connection '%2' contains a reference to it.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1069</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>Warning. Profile '%1' should be active. Active connection '%2' contains a reference to it.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1070</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Resolving %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1071</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Running %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1072</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Copying '%1' to '%2'<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1073</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Copying connection %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1074</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Copying connections<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1075</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Copying filter pools<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1076</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Copying filter pool %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1077</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Copying filters<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1078</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Copying filter %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1079</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Copying filter strings<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1080</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Copying filter string %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1081</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Copying subsystems<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1082</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Filter pool(s) successfully copied to '%1'. You must create a new filter pool reference to see it (them).<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1083</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Moving '%1' to '%2'<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1084</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Moving connection %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1085</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Moving connections<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1086</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Moving filter pools<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1087</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Moving filter pool %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1088</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Moving filters<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1089</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Moving filter %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1090</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Moving filter strings<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1091</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Moving filter string %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1092</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Filter pool(s) successfully moved to '%1'. You must create a new filter pool reference to see it (them).<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1093</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Setting %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1094</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Setting properties<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1095</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Querying %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1096</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Querying properties<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1097</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Running %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1098</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Expand failed. Try again<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1099</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Expand cancelled. Try again<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1100</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Empty list<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1101</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>List cancelled<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1102</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Filter created successfully. Expand this again to create another<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1103</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Connection %1 not found<br>
+<b>LevelTwo: </b>No connection named %1 currently exists<br>
+<H3>RSEG1104</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Profile %1 not found<br>
+<b>LevelTwo: </b>No profile named %1 currently exists<br>
+<H3>RSEG1105</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Folder %1 not found on host %2<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1106</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>File %1 not found on host %2<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1107</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>File or folder %1 not found on host %2<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1108</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Connection created successfully. Expand this again to create another<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1109</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>Connection busy<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1110</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Command interrupted<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1111</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Unable to run command<br>
+<b>LevelTwo: </b>Possible causes: connection has been deleted, connection has been renamed, or connection has been disconnected<br>
+<H3>RSEG1112</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>Command cancelled<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1115</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Copying...<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1116</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Moving...<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1117</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Copying %1...<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1118</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Moving %1...<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1130</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>Permanently delete selected remote resource(s)?<br>
+<b>LevelTwo: </b>This is a permanent deletion of the selected remote resources from disk. This action cannot be undone<br>
+<H3>RSEG1140</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>Error occurred while loading the user-defined action information from file: %1<br>
+<b>LevelTwo: </b>%2<br>
+<H3>RSEG1141</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>The xml file '%1' appears to be corrupted. It has been replaced<br>
+<b>LevelTwo: </b>Expected root tag to be named '%2'. The corrupted file has been renamed to '%3' and a new file created for you<br>
+<H3>RSEG1150</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Unable to perform action as the underlying file system folder is in use<br>
+<b>LevelTwo: </b>The file system folder %1 is in use by another task and cannot be removed or modified<br>
+<H3>RSEG1151</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Unable to perform action as the underlying file system file is in use<br>
+<b>LevelTwo: </b>The file system file %1 is in use by another task and cannot be removed or modified<br>
+<H3>RSEG1160</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>Filter pool %1 created. Create a reference to it in the selected subsystem?<br>
+<b>LevelTwo: </b>New filter pools are not accessible until a reference is added to them in a subsystem. Select Yes to add a reference to the new filter pool in selected subsystem %2<br>
+<H3>RSEG1161</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Filter update failed: %1<br>
+<b>LevelTwo: </b>%2<br>
+<H3>RSEG1162</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Filter rename failed: %1<br>
+<b>LevelTwo: </b>%2<br>
+<H3>RSEG1170</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter numeric value<br>
+<b>LevelTwo: </b>You must enter a numeric value<br>
+<H3>RSEG1171</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Value %1 not numeric<br>
+<b>LevelTwo: </b>The value specified is not a valid number<br>
+<H3>RSEG1172</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Value %1 not in range<br>
+<b>LevelTwo: </b>The value specified is not within the valid range of %2 to %3<br>
+<H3>RSEG1180</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter action name<br>
+<b>LevelTwo: </b>You must enter a name for this action<br>
+<H3>RSEG1181</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Action name is not unique<br>
+<b>LevelTwo: </b>There is already an action with the given name in the selected profile. Specify a name that is not already in use<br>
+<H3>RSEG1182</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Action name is not valid<br>
+<b>LevelTwo: </b>The given name is not a valid action name<br>
+<H3>RSEG1183</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter comment<br>
+<b>LevelTwo: </b>You must enter a comment for this action<br>
+<H3>RSEG1184</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Action comment is not valid<br>
+<b>LevelTwo: </b>The given comment has syntactical errors<br>
+<H3>RSEG1185</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter command<br>
+<b>LevelTwo: </b>You must enter a command for this action<br>
+<H3>RSEG1186</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Action command is not valid<br>
+<b>LevelTwo: </b>The given command has syntactical errors<br>
+<H3>RSEG1187</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter type name<br>
+<b>LevelTwo: </b>You must enter a name for this collection of resource types<br>
+<H3>RSEG1188</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Type name %1 in use<br>
+<b>LevelTwo: </b>There is already a named type with the given name. Specify a name that is not already in use<br>
+<H3>RSEG1189</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Type name %1 is not valid<br>
+<b>LevelTwo: </b>The given name is not valid for a named type. It must not contain blanks<br>
+<H3>RSEG1190</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Specify one or more resource types<br>
+<b>LevelTwo: </b>You must specify one or more simple or generic resource types to constitute this named type<br>
+<H3>RSEG1191</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Types not valid<br>
+<b>LevelTwo: </b>Syntactical errors were found in the list of resource types<br>
+<H3>RSEG1192</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter source type<br>
+<b>LevelTwo: </b>You must enter a source type<br>
+<H3>RSEG1193</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Source type "%1" not valid<br>
+<b>LevelTwo: </b>The source type you entered is not valid.<br>
+<H3>RSEG1194</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Source type "%1" already exists<br>
+<b>LevelTwo: </b>The source type you entered has already been specified. Specify a unique source type.<br>
+<H3>RSEG1195</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter a label for this compile command<br>
+<b>LevelTwo: </b>You must enter a label for this compile command, that will be shown in menus and lists<br>
+<H3>RSEG1196</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Compile command label "%1" is in use<br>
+<b>LevelTwo: </b>There is already a compile command with the given label. Specify a label that is not already in use<br>
+<H3>RSEG1197</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Compile command label "%1" is not valid<br>
+<b>LevelTwo: </b>The given label is not a valid compile label<br>
+<H3>RSEG1198</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter command string for this compile command<br>
+<b>LevelTwo: </b>You must enter a command string for this compile command. This is what is run when this compile command is selected.<br>
+<H3>RSEG1199</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Compile command string "%1" is not valid<br>
+<b>LevelTwo: </b>The given string is not a valid command.<br>
+<H3>RSEG1201</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>Changes pending. Save changes?<br>
+<b>LevelTwo: </b>You have changes pending. Select Yes to save those changes. Select No to discard those changes<br>
+<H3>RSEG1202</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>Changes pending. Continue?<br>
+<b>LevelTwo: </b>You have changes pending. Select Yes to discard those changes. Select No to cancel the operation so you can first save your changes<br>
+<H3>RSEG1220</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Host name '%1' not found or valid<br>
+<b>LevelTwo: </b>A remote system of host name '%1' was found. If you are working disconnected, de-select the checkbox to verify the host name<br>
+<H3>RSEG1221</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Verifying host name...<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1230</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>Delete selected user actions?<br>
+<b>LevelTwo: </b>This is a permanent deletion of the selected actions and cannot be undone.Select Yes to delete and No to cancel the delete action<br>
+<H3>RSEG1231</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>Delete selected types?<br>
+<b>LevelTwo: </b>This is a permanent deletion of the selected types and cannot be undone.Select Yes to delete and No to cancel the delete action<br>
+<H3>RSEG1240</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>There is an error on another page<br>
+<b>LevelTwo: </b>Another page of the wizard has an error that must be corrected before the wizard can be finished<br>
+<H3>RSEG1250</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The pattern may not be blank<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1251</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Invalid regular expression<br>
+<b>LevelTwo: </b>The value %1 you entered is not a valid regular expression<br>
+<H3>RSEG1255</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>%1 - Running<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1256</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>%1 - Finished<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1260</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The invocation may not be blank<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1270</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Invalid drag and drop operation<br>
+<b>LevelTwo: </b>The source %1 cannot be transferred into the target %2<br>
+<H3>RSEG1300</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The FTP service is unavailable on the remote system.<br>
+<b>LevelTwo: </b>The RSE server needs to be installed manually.<br>
+<H3>RSEG1301</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The Telnet service is unavailable on the remote system.<br>
+<b>LevelTwo: </b>The RSE server needs to be started manually or a system administrator needs to install the RSE daemon.<br>
+<H3>RSEG1302</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Unable to start the RSE server.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1303</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Unable to install the RSE server.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1400</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>This action will take a few minutes. Proceed?<br>
+<b>LevelTwo: </b>This action uncompresses a large number of HTML files from a zip file. It will take awhile, and require sufficient disk space. Press Yes to continue, No to cancel.<br>
+<H3>RSEG1401</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Classic help already enabled.<br>
+<b>LevelTwo: </b>The HTML files for the CODE and VisualAge RPG help have already been uncompressed.<br>
+<br>
+<hr>
+<A NAME="Other"><!-- --></A><H2>Other Messages</H2>
+<H3>RSEO1000</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>%1<br>
+<b>LevelTwo: </b>%2<br>
+<H3>RSEO1001</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>%1<br>
+<b>LevelTwo: </b>%2<br>
+<H3>RSEO1002</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>%1<br>
+<b>LevelTwo: </b>%2<br>
+<H3>RSEO1003</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>%1<br>
+<b>LevelTwo: </b>%2<br>
+<H3>RSEO1004</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>%1<br>
+<b>LevelTwo: </b>%2<br>
+<H3>RSEO1005</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>%1: %2<br>
+<b>LevelTwo: </b>%3<br>
+<H3>RSEO1006</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>%1: %2<br>
+<b>LevelTwo: </b>%3<br>
+<H3>RSEO1007</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>%1: %2<br>
+<b>LevelTwo: </b>%3<br>
+<H3>RSEO1008</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>%1: %2<br>
+<b>LevelTwo: </b>%3<br>
+<H3>RSEO1009</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>%1: %2<br>
+<b>LevelTwo: </b>%3<br>
+<H3>RSEO1010</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>%1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEO1011</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>%1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEO1012</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>%1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEO1013</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>%1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEO1014</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>%1<br>
+<b>LevelTwo: </b><br>
+<br>
+<hr>
+<A NAME="Files"><!-- --></A><H2>Files Messages</H2>
+<H3>RSEF1001</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Operation failed. Security violation<br>
+<b>LevelTwo: </b>Message reported from file system: %1<br>
+<H3>RSEF1002</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Operation failed. File system input or output error<br>
+<b>LevelTwo: </b>Message reported from file system: %1<br>
+<H3>RSEF1003</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Folder is not empty. Cannot delete<br>
+<b>LevelTwo: </b>The operation failed. One possible reason is that the folder is not empty<br>
+<H3>RSEF1004</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Folder '%1' not found<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF1005</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>Folder '%1' not found. Would you like to create it?<br>
+<b>LevelTwo: </b>The folder you specified does not exist. Select Yes to create it, No to cancel the operation<br>
+<H3>RSEF1006</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>File '%' not found<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF1011</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter file name pattern<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF1007</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Filter string '%1' already exists in this filter<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF1008</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Filter string name pattern not valid<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF1009</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>You must include files or folders or both<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF1010</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>No file types specified<br>
+<b>LevelTwo: </b>Either specify one or more file types, or select to subset by file name<br>
+<H3>RSEF1200</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Create a new File<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF1201</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Create a new Folder<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF1202</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Enter folder name<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF1203</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Names cannot begin or end with whitespace.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF1204</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>%1 is an invalid character in a name.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF1205</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Enter file name<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF1300</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Deletion of the object %1 failed<br>
+<b>LevelTwo: </b>Either the object does not exist or you do not have enough authority to delete the object. If this is a folder, the folder may not be empty<br>
+<H3>RSEF1301</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Renaming of the object %1 failed<br>
+<b>LevelTwo: </b>Rename operation failed because, the object to rename does not exist, or the object with new object name already exists, or the user does not have enough authority to rename  the object<br>
+<H3>RSEF1302</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>No authority or file name not valid<br>
+<b>LevelTwo: </b>The file could not be created because of one of the following reasons:
+                        - the user does not have enough authority to create the file
+                        - the file name is not valid<br>
+<H3>RSEF1303</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>File already exists<br>
+<b>LevelTwo: </b>The new file %1 already exists<br>
+<H3>RSEF1304</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Creation of the folder failed<br>
+<b>LevelTwo: </b>The folder %1 could not be created because of one of the following reasons:
+                        - the user does not have enough authority to create the folder
+                        - the folder name is not valid<br>
+<H3>RSEF1305</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The operation did not complete successfully. See additional messages in the Commands view<br>
+<b>LevelTwo: </b>The operation requested failed. Look in the Commands view to see additional messages indicating the cause of the failure<br>
+<H3>RSEF1306</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Copy of the file or folder %1 failed<br>
+<b>LevelTwo: </b>The file system reported the copy operation failed. You may not have authority to the target folder, or it may be in use<br>
+<H3>RSEF1307</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Move of the file or folder %1 failed<br>
+<b>LevelTwo: </b>The file system reported the move operation failed. You may not have authority to the source folder or file, or you may not have authority to the target folder, or it may be in use<br>
+<H3>RSEF1308</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Target folder cannot equal source folder<br>
+<b>LevelTwo: </b>Attempting to move a file or folder to the same folder as it exists in is equivalent to a rename operation. Use the rename action for this<br>
+<H3>RSEF1309</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Folder already exists<br>
+<b>LevelTwo: </b>The new folder %1 already exists<br>
+<H3>RSEF1310</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>New resource will not be visible due to subsetting. Create it anyway?<br>
+<b>LevelTwo: </b>The name of the resource you are creating does not match the current filter criteria. If you select Yes to create the resource, it will not be visible within the current filter.<br>
+<H3>RSEF1311</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>Resource will not be visible due to subsetting. Rename it anyway?<br>
+<b>LevelTwo: </b>The new name of the resource does not match the current filter criteria. If you select Yes to rename the resource, it will not be visible within the current filter.<br>
+<H3>RSEF5001</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>File %1 on %2 can not be opened. You do not have read access to the file.<br>
+<b>LevelTwo: </b>Change file permissions to ensure you have read access to the file.<br>
+<H3>RSEF5002</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>You do not have write access to file %1 on %2. Do you want to open the file in browse mode?<br>
+<b>LevelTwo: </b>You do not have write permission to the file %1 on %2. You can open the file in browse (read-only) mode. If you want to edit the file, change file permissions to allow write access to the file.<br>
+<H3>RSEF5003</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>File %1 can not be saved on %2. You do not have read access to the file.<br>
+<b>LevelTwo: </b>Change file permissions to ensure you have read access to the file.<br>
+<H3>RSEF5004</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>File %1 can not be saved on %2. You do not have write access to the file.<br>
+<b>LevelTwo: </b>Change file permissions to ensure you have write access to the file.<br>
+<H3>RSEF5005</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>File %1 on %2 was modified since you opened this file or saved the file on the server. Do you want to replace the current contents of the file on the server?<br>
+<b>LevelTwo: </b>The file %1 was changed on the server after it was retrieved from %2 or since the last time the file was saved on the server. Choose Yes to replace the contents of the file. Choose No to leave the file on the server with its current contents.<br>
+<H3>RSEF5006</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>File %1 was not completely saved on %2. The file was saved in the local file system.<br>
+<b>LevelTwo: </b>An error occurred while saving the file on the server. A possible cause is the connection to the server was terminated. The file may only have been saved partially on the server. However, it was saved locally to help you recover. You will be asked to save the local copy to the server the next time you connect.<br>
+<H3>RSEF5007</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>File %1 on %2 may not have been saved completely during an earlier edit session. The file was saved on the local file system. Do you want to replace the file with the local copy now?<br>
+<b>LevelTwo: </b>An error occurred during an earlier attempt to save the file. But a local copy of the file was saved for recovery. Choose Yes to save the local copy on the server. Choose No if recovery is not required.<br>
+<H3>RSEF5008</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>File %1 does not exist on %2. Do you want to create the file?<br>
+<b>LevelTwo: </b>Choose Yes to create the file on the server and save the contents to the file. Choose No if you do not want the file to be created.<br>
+<H3>RSEF5009</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>You are currently editing file %1 on %2. Do you want to open the file in browse mode?<br>
+<b>LevelTwo: </b>You are allowed to edit a file in one editor only. You can, however, open the file in another editor for browsing. Browsing lets you view the file but does not allow you to edit its contents.<br>
+<H3>RSEF5010</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Profile named %1 does not exist.<br>
+<b>LevelTwo: </b>Profile may have been renamed or deleted.<br>
+<H3>RSEF5011</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Connection named %1 does not exist.<br>
+<b>LevelTwo: </b>Connection may have been renamed or deleted.<br>
+<H3>RSEF5012</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>File %1 already exists. Do you want to overwrite it?<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF6001</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>File type extension can not be empty.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF6002</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>File type extension must not contain '*' or '.'<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF7001</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Enter CCSID<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF7002</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>CCSID must be a number between 0 and 65535<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF8001</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>An unknown error occurred.<br>
+<b>LevelTwo: </b>%1<br>
+<H3>RSEF8002</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>An unexpected error occurred.<br>
+<b>LevelTwo: </b>%1<br>
+<H3>RSEF8003</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Value is not valid<br>
+<b>LevelTwo: </b>%1<br>
+<H3>RSEF8004</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Input %1 is not valid<br>
+<b>LevelTwo: </b>%1<br>
+<br>
+<hr>
+<A NAME="Communications"><!-- --></A><H2>Communications Messages</H2>
+<H3>RSEC1001</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Connection to %1 could not be established.<br>
+<b>LevelTwo: </b>A socket connection to %1 could not be established.  If you are connecting via the communications daemon make sure the daemon is running on the remote system.  If you are connecting directly to the communications server make sure the server is started on the remote system.<br>
+<H3>RSEC1002</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Invalid password or user ID<br>
+<b>LevelTwo: </b>Authentication with %1 failed because the password or user ID is not correct.<br>
+<H3>RSEC1003</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The user ID %1 is not valid<br>
+<b>LevelTwo: </b>The user ID %1 on host %2 is not valid.  Change the user ID and try again.<br>
+<H3>RSEC1004</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The saved password is not correct.<br>
+<b>LevelTwo: </b>The saved password for user ID %1 on host %2 is not correct.  Please enter the password and try again.<br>
+<H3>RSEC2001</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Environment variable %1 is already defined<br>
+<b>LevelTwo: </b>An environment variable %1 has already been defined.  Change the new environment variable's name and press the Add button.<br>
+<H3>RSEC2002</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>Environment variable must have a name.<br>
+<b>LevelTwo: </b>An attempt was made to define an environment variable with a blank name.  Type a value for the environment variable name.<br>
+<H3>RSEC2003</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>Environment variable must have a name.<br>
+<b>LevelTwo: </b>An attempt was made to clear the name of an environment variable.  To remove an environment variable, select the variable in the list add press the Remove button.<br>
+<H3>RSEC2004</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Environment variable name contains an invalid character.<br>
+<b>LevelTwo: </b>The environment variable name cannot contain a space or the '=' character.<br>
+<H3>RSEC2101</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Saved password for %1 on %2 already exists.<br>
+<b>LevelTwo: </b>The password for user ID %1 on host %2 is already saved.  Enter a different user ID or host name or change the existing saved password.<br>
+<H3>RSEC2102</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>New and verify passwords do not match.<br>
+<b>LevelTwo: </b>The new and verify passwords must match (case sensitive) in order to save the new password.  Retype the new and verify passwords and try again.<br>
+<H3>RSEC2103</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Entry field cannot be blank.<br>
+<b>LevelTwo: </b>The hostname, user ID, system type and password entry fields cannot be blank.  Type a value and press the Enter key to save the changes.<br>
+<H3>RSEC2104</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>There are no tools installed which support saving password information.<br>
+<b>LevelTwo: </b>The password information preference page is a centralized place for Workbench tools to save password information.  Each tool registers and provides its own encryption algorithm.  There are no tools installed that have registered with the password information preference page.<br>
+<br>
+</BODY>
+</HTML>

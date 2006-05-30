@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../../book.css" TYPE="text/css">
+<title>RSE Validator Sample Two</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>RSE Validator Sample Two</h1>
+<p>This is an example of a validator written by extending an existing RSE-supplied validator, and 
+simply supplying unique messages. 
+<pre>
+
+package com.ibm.etools.systems.samples.ui.frameworks.dialogs;
+import com.ibm.etools.systems.core.ui.validators.ValidatorIntegerRangeInput;
+import com.ibm.etools.systems.samples.*;
+
+/**
+ * <I>An example of a customized validator, that prompts for a birth year.</I>
+ */
+public class <B>SampleBirthYearValidator</B> extends ValidatorIntegerRangeInput 
+{
+	/**
+	 * <I>Constructor. Specifies the valid range, and unique error messages.</I>
+	 */
+	public SampleBirthYearValidator() 
+	{
+		super(1900, 2003);
+		super.setErrorMessages(SamplesPlugin.<A
+	href="../messages/uiMessageAPI.html#getPluginMessage">getPluginMessage</A>(&quot;<A
+	href="../messages/sampleMessageFile.html#SPPD1001">SPPD1001</A>&quot;),  // <I>empty</I>
+		                       SamplesPlugin.getPluginMessage(&quot;<A
+	href="../messages/sampleMessageFile.html#SPPD1002">SPPD1002</A>&quot;),  // <I>non-numeric</I>
+                                       SamplesPlugin.getPluginMessage(&quot;<A
+	href="../messages/sampleMessageFile.html#SPPD1003">SPPD1003</A>&quot;)); // <I>out of range</I>
+	}
+
+}</pre>
+
+<P><BR></P>
+</body>
+</html>

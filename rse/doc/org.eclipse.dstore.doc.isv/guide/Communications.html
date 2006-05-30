@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<title>RSE Model</title>
+<link rel="stylesheet" type="text/css" HREF="../book.css">
+</head>
+
+<body>
+<h1>DataStore Communications</h1>
+<p>
+Communication in the DataStore is asynchronous and symmetric.  Commands sent and results received are all represented in the same form, 
+<a href="DataElements.html">DataElements</a> and the underlying means of transmitting this information is basically the same for each.  
+When a command is issued, it gets queued and then later routed to the appropriate <b>miner</b> where it gets executed.  
+A miner returns results by updating the DataStore repository with information.  Like commands, these 
+results are queued and then later notifications are sent out to any listener that requires the results.
+</p>
+<p>
+The asynchronous routing of data and commands between a client and the tools is made possible by threads, called <i>handlers</i>.   There are two 
+types of handlers - a <a href="#commandhandlers">Command Handler</a> and an <a href="#updatehandlers">Update Handler</a>.  Each handler thread contains a queue
+of data that needs to be transmitted and each periodically communicates the data contained in it's queue.   
+</p>
+
+<h2><a name="commandhandlers">Command Handlers</a></h2>
+<p>
+The job of the Command Handler is to route commands to the miners.  There are two types of command handlers.
+</p>
+
+<h3><a name="clientcommandhandler">Client Command Handler</a></h3>
+<p>
+The <b>Client Command Handler</b> is a command handler responsible for transmitting it's queue of DataStore commands across a network to 
+the server DataStore.  This handler encapsulates the communication of DataStore client data to a DataStore server.  The Client Command Handler
+interfaces the DataStore communication layer, where it's queue of commands gets serialized into XML before being sent over a TCP/IP socket 
+to the server.
+</p>
+
+<h3><a name="servercommandhandler">Server Command Handler</a></h3>
+The <b>Server Command Handler</b> is a command handler responsible for directly routing the DataStore commands in it's queue to the appropriate 
+miner(s) depending on the command. 
+
+<h2><a name="updatehandlers">Update Handlers</a></h2>
+<p>
+The job of the Update Handler is to notify the client that some results have been received or changed.  There are two types of
+update handlers.  
+</p>
+
+<h3><a name="clientupdatehandler">Client Update Handler</a></h3>
+<p>
+The <b>Client Update Handler</b> is an update handler responsible for sending out domain notifications for each unit of data
+contained in it's queue.
+</p>
+
+<h3><a name="serverupdatehandler">Server Update Handler</a></h3>
+<p>
+The <b>Server Update Handler</b> is an update handler responsible for transmitting it's queue of DataStore objects across a network to
+the client DataStore.  This handler encapsulates the communication of DataStore server data to a DataStore client.  The Server Update Handler
+interfaces the DataStore communication layer, where it's queue of data gets serialized into XML before being sent over a TCP/IP socket 
+to the client.
+</p>
+
+<p>
+Communication between a client and tools may either occur locally and remotely depending on how the
+user chooses to connect to the DataStore.  The client interface and the server tooling are the same regardless of
+whether the DataStore is standalone or client/server based.  The communication differences are encapsulated by
+the DataStore handlers. 
+</p>
+
+<h2>Standalone Local DataStore</h2>
+<p>
+Locally, the DataStore may be used standalone such that all communication through the DataStore goes directly to between the <b>miners</b>
+and the client, all running within the same process.  In this case, there is only a single DataStore and no communication goes
+over the network.  For it's handlers, the local DataStore uses a <b>Client Update Handler</b> and a <b>Server Command Handler</b>.
+</p>
+
+<img src="images/local.jpg" alt="Local DataStore Eclipse" border="0">
+
+<p>
+In the above dialog, the path of commands to the tools is shown with solid lines, while the path of data to client is shown with dotted lines. 
+
+<ol>
+<li>
+In RSE, a subsystem calls a DataStore command API to issue a command.
+</li>
+<li>
+The command is then queued in the <b>Server Command Handler</b>.  
+</li>
+<li>
+The Server Command Handler gets the command from the queue, determines which miner should run it, and passes the command into that miner.
+</li>
+<li>The miner then executes the command and produces results by calling DataStore object creation methods.  When the resulting objects are created, 
+the DataStore queues them in the <b>Client Update Handler</b>.
+</li>
+<li>
+The Client Update Handler gets the data from the queue and sends out a domain notification for each data object in the queue.  
+</li>
+<li>
+A domain listener for the RSE subsystem receives the notification and then uses the result data to update the UI.
+</li>
+</ol>
+</p>
+
+<h2>Client/Server DataStore</h2>
+<p>
+In the remote case, a DataStore client is part of the Eclipse process, while the DataStore server is run
+in a separate process on a remote host.  Information is transferred between the two DataStore repositories over
+a TCP/IP socket.  Any data that is created or changed on either the client or the server is asynchronously 
+propagated over to the other side via serialization/deserialization of the delta.  
+
+Like in the standalone case, the client DataStore uses a <b>Client Update Handler</b>, but instead of using 
+a Server Command Handler it uses a <b>Client Command Handler</b>.  The server DataStore uses a <b>Server Update Handler</b>
+and a <b>Server Command Handler</b>.
+</p>
+
+<img src="images/remote.jpg" alt="Remote DataStore Eclipse" border="0">
+
+<ol>
+<li>
+In RSE, a subsystem calls a DataStore command API to issue a command.
+</li>
+<li>
+The command is then queued in the <b>Client Comamnd Handler</b>.
+</li>
+<li>
+The Client Command Handler gets the command from the queue and, via the communication layer, transmits it to the server DataStore.  
+The communication layer on the client serializes the DataStore respository objects that make up the command and sends that 
+serialization over a socket to the server.
+</li>
+<li>
+The communication layer on the server deserializes the socket data and creates DataStore objects in the DataStore repository.  
+Those command objects are added it to the <b>Server Command Handler</b> queue.
+</li>
+<li>
+The Server Command Handler gets the command from the queue, determines which miner should run it, and passes the command into that miner.
+</li>
+<li>
+The miner then executes the command and produces results by calling DataStore object creation methods.  When the resulting objects are created, 
+the DataStore queues them in the <b>Server Update Handler</b>.
+</li>
+<li>
+The Server Update Handler gets the results from the queue and transmits them, via the DataStore communicate layer, to the client DataStore.
+The communication layer on the server serializes the DataStore objects from the queue and sends that serialization over a socket
+to the client.
+</li>
+<li>
+The communication layer on the client deserializes the socket data and creates DataStore objects in the DataStore respository.
+Those results are added to the <b>Client Update Handler</b> queue.
+</li>
+<li>
+The Client Update Handler gets the data from the queue and sends out a domain notification for each data object in the queue.  
+</li>
+<li>
+A domain listener for the RSE subsystem receives the notification and then uses the result data to update the UI.
+</li>
+</ol>
+</p>
+</body>
+</html>

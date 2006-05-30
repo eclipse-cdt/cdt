@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %plugin.name
+Bundle-SymbolicName: org.eclipse.rse.doc.isv; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Localization: plugin
+Eclipse-LazyStart: false
+Bundle-Vendor: %provider.name

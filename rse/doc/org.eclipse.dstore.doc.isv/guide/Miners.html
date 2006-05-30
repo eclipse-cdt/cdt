@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<title>RSE Model</title>
+<link rel="stylesheet" type="text/css" HREF="../book.css">
+</head>
+
+<body>
+<h1>Miners</h1>
+<p>
+<b>Miners</b> are remote tooling extensions to the DataStore.  Each miner describes the model
+that it works with as well as the commands associated with the model that it implements.  Each
+miner is responsible for extending the DataStore schema and providing implementations for
+commands that it defines. 
+</p>
+<p>
+All miners are derived from the abstract class <code>Miner</code>.  To write a miner, the
+following APIs need to be implemented:
+</p>
+<pre>
+    public abstract void extendSchema(DataElement schemaRoot);
+	public abstract DataElement handleCommand(DataElement theCommand);
+</pre>
+<p>
+The first method, <code>extendSchema</code>, is implemented by a miner to contribute the types of objects, relationships and commands that
+it deals with.  The second method, <code>handleCommand</code>, is implemented by a miner so that it can execute the commands it defines.
+</p>
+
+<h2>Extending the Schema</h2>
+<p>
+A miner extends the DataStore schema by populating the <i>schemaRoot</i> with <a href="DataElements.html#descriptors">descriptors</a>.  
+The DataStore repository tree is structured so that there is a single node where schema descriptors reside.  All 
+<a href="DataElements.html#objectdescriptors">object descriptors</a> and <a href="DataElements.html#relationdescriptors">relation descriptors</a>
+are created under this schema root.  <a href="DataElements.html#commanddescriptors">Command descriptors</a> are created under the
+object descriptors that they apply to.  Each miner contributes to this global DataStore schema, so each may also extend or leverage the
+information from another miner's schema.
+</p>
+<p>
+A miner implements <code>extendSchema(DataElement)</code> to add new descriptors to the DataStore schema.  If a miner creates representations 
+of objects that are not already represented by some other miner's schema, then it needs to define descriptors for those new types of objects.  
+Sometimes new relationship types also need to be defined by a miner for it's particular model.  In order for a miner to be interacted with, 
+via <code>handleCommand</code>, it needs to define command descriptors for object descriptors in the schema.  The code below illustrates the
+typical structure of an <code>extendSchema</code> implementation:
+</p>
+
+<font color='#4444CC'>
+<pre>
+	public void extendSchema(DataElement schemaRoot)
+	{
+		// create object descriptors
+		DataElement myObjectType1 = createObjectDescriptor(schemaRoot, "my object type 1");
+		DataElmeent myObjectType2 = createObjectDescriptor(schemaRoot, "my object type 2");
+		DataElement myObjectContainerType = createObjectDescriptor(schemaRoot, "my object container");
+				
+		// create relation descriptors		
+		DataElement myRelationType = createRelationDescriptor(schemaRoot, "my relation type");
+		
+		// create command descriptors
+		createCommandDescriptor(myObjectType1, "My Command 1", MY_COMMAND_1);
+		createCommandDescriptor(myObjectType2, "My Command 2", MY_COMMAND_2);
+		createCommandDescriptor(myObjectContainerType, "Query", MY_QUERY);	
+		
+		// establish relationships between object types		
+		createReference(myObjectType1, myObjectType2, myRelationType); 	// myObjectType1 instances can be associated with myObjectType2 instances by myRelationType
+		createReference(myObjectContainerType, myObjectType1);			// myObjectContainerType instances can contain myObjectType1 instances
+		createReference(myObjectContainerType, myObjectType2);			// myObjectContainerType instances can contain myObjectType2 instances
+	
+		...
+	}	
+</pre>
+</font>
+
+<p>
+The DataStore does not enforce that instance element trees are structured in the manner that the schema describes so the
+establishing of relationships between object types, as done in this example, is unnecessary as a miner knows it's own
+model, since it defined it.  But by convention, it is a good thing to describe a model with those relationships explicitly stated
+because other miners or client tools may want to leverage or extend the model for their own purposes.
+</p>
+
+
+<h2>Handling Commands</h2>
+<p>
+The <code>handleCommand</code> method is called by the <a href="Communications.html#servercommandhandler">Server Command Handler</a> 
+if the descriptor for a command instance is associated with a particular miner.  When this is called, it is up to the miner implementation
+to interpret and execute the command.
+</p>
+<p>
+A <a href="DataElements.html#commands">Command instance</a> is a tree of <a href="DataElements.html">DataElements</a> representing the
+command, the subject of the command, additional arguments to the command and the status of the command.  The way this is normally interpretted
+by a miner to mean <i>perform the specified command on the subject using the specified arguments.  Change the status to be "done" when the
+operation is complete.</i>.  
+</p>
+<p>
+The base miner class provides APIs to assist a miner implementation in extracting information from
+a command tree.  The method <code>getCommandName(DataElement)</code> is used to extract the
+name of the command, <code>getCommandStatus(DataElement)</code> returns the status element of
+the command, and <code>getCommandArgument(DataElement, int)</code> returns an argument at the
+specified index.  The first argument is always the subject.  The code below illustrates
+the typical structure of a <code>handleCommand</code> implementation.
+</p>
+
+<font color='#4444CC'>
+<pre>
+	public DataElement handleCommand(DataElement theElement)
+	{
+		String name = getCommandName(theElement);
+		DataElement status = getCommandStatus(theElement);
+		DataElement subject = getCommandArgument(theElement, 0);
+		
+		if (name.equals(MY_COMMAND_1))
+		{
+			handleMyCommand1(subject, arg1,...,argn, status);
+		}
+		...
+		status.setAttribute(DE.A_NAME, "done");
+		_dataStore.refresh(status);
+	}
+</pre>
+</font>
+<p>	
+The results of a command may be returned in a variety of ways, depending one it's
+purpose.  One thing that is always returned is the status object.
+</p>  
+<p>
+Think of the status object as the return value of a method.  The status object needs to be set to "done"
+whenever a command is complete but it may also optionally contain results in the form
+of DataElements. If a command is requesting transient information about something, then
+the status object could be populated with the results.  
+</p>
+<p>
+Each miner has read and write access to the entire DataStore tree.  If desired a miner
+can modify that tree as a result of a command.  For example, a miner used for browsing
+a file system might populate the subject, a folder object, with other folder and file
+objects, rather than transiently via the status object.  In this way, a miner caches
+data and expands the data available to the DataStore repository in response to user
+requests.
+</p>
+</body>
+</html>

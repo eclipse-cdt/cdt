@@ -1,0 +1,23 @@
+Last revised May 31, 2006
+(This file is for information only; it is not included in the release.)
+
+To add new plug-ins you need to make changes in several places in
+this doc plug-in:
+
+1) options.txt
+- the plug-in's source folder(s) must be included on the -sourcepath
+- code of required plug-ins must be added on the -classpath (the JAR(s)for non-JARed plug-ins and <plugin>/@dot for JARed plug-ins
+- the API package names must be included in the (alphabetical) package list at the end of the file
+- note that the @sep@ token is replaced during build by the appropriate separator character for the build platform.
+
+2) buildDoc.xml
+- add a line in convertSchemaToHtml target to handle a new plug-ins extension point schemas
+
+Adding new extension points:
+
+1) reference/extension-points/index.html
+- add a line for each extension point
+
+2) topics_Reference.xml
+- add a line for each extension point
+- add a line for each API package

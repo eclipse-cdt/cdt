@@ -1,0 +1,43 @@
+-charset "iso-8859-1"
+-sourcepath "../org.eclipse.rse.core/antadapter@sep@../org.eclipse.rse.core/batch@sep@../org.eclipse.rse.core/codeassist@sep@../org.eclipse.rse.core/compiler@sep@../org.eclipse.rse.core/dom@sep@../org.eclipse.rse.core/eval@sep@../org.eclipse.rse.core/formatter@sep@../org.eclipse.rse.core/model@sep@../org.eclipse.rse.core/search@sep@../org.eclipse.rse.debug/model@sep@../org.eclipse.rse.debug/jdi@sep@../org.eclipse.rse.debug/eval@sep@../org.eclipse.rse.debug.ui/ui@sep@../org.eclipse.rse.junit/src@sep@../org.eclipse.rse.junit.runtime/src@sep@../org.eclipse.rse.launching/launching@sep@../org.eclipse.rse.ui/ui@sep@../org.eclipse.rse.ui/core refactoring@sep@../org.eclipse.rse.ui/ui refactoring@sep@../org.eclipse.rse.ui/core extension@sep@../org.eclipse.rse.core.manipulation/refactoring@sep@../org.eclipse.rse.core.manipulation/common"
+-d reference/api
+-classpath @rt@@sep@../org.apache.ant/lib/ant.jar@sep@../org.eclipse.debug.core/@dot@sep@../org.eclipse.compare/@dot@sep@../org.eclipse.help/@dot@sep@../org.eclipse.help.ui/@dot@sep@../org.eclipse.core.resources/@dot@sep@../org.eclipse.core.runtime/@dot@sep@../org.eclipse.core.filebuffers/@dot@sep@../org.eclipse.core.expressions/@dot@sep@../org.eclipse.swt.win32.win32.x86/@dot@sep@../org.eclipse.ui/@dot@sep@../org.eclipse.rse.debug/jdi.jar@sep@../org.eclipse.debug.ui/@dot@sep@../org.eclipse.search/@dot@sep@../org.eclipse.jface/@dot@sep@../org.eclipse.jface.text/@dot@sep@../org.eclipse.text/@dot@sep@../org.eclipse.ui.editors/@dot@sep@../org.eclipse.ui.views/@dot@sep@../org.eclipse.ui.workbench/@dot@sep@../org.eclipse.ui.workbench.texteditor/@dot@sep@../org.eclipse.core.variables/@dot@sep@../org.eclipse.ui.ide/@dot@sep@../org.eclipse.rse.junit/@dot@sep@../org.eclipse.osgi/@dot@sep@../org.eclipse.osgi.services/@dot@sep@../org.eclipse.osgi.util/@dot@sep@../org.eclipse.ui.forms/@dot@sep@../org.eclipse.core.commands/@dot@sep@../org.eclipse.ltk.core.refactoring/@dot@sep@../org.eclipse.ltk.ui.refactoring/@dot@sep@../org.eclipse.core.filesystem/@dot@sep@../org.eclipse.core.jobs/@dot@sep@../org.eclipse.equinox.registry/@dot@sep@../org.eclipse.equinox.common/@dot@sep@../org.eclipse.core.contenttype/@dot@sep@../org.eclipse.equinox.preferences/@dot@sep@../org.eclipse.equinox.supplement/@dot@sep@../org.eclipse.core.runtime.content/@dot@sep@../org.eclipse.core.runtime.jobs/@dot@sep@../org.eclipse.core.runtime.preferences/@dot@sep@../org.eclipse.rse.core.manipulation/@dot
+-breakiterator
+-use
+-splitIndex
+-windowtitle "RSE API Specification"
+-doctitle "RSE API Specification"
+-header "<b>RSE</b><br>Release 1.0"
+-bottom "Copyright (c) IBM Corporation and others 2000, 2006.  All Rights Reserved."
+-group "RSE Core Plug-in Packages" "org.eclipse.rse.core;org.eclipse.rse.core.*"
+-group "RSE UI Plug-in Packages" "org.eclipse.rse.ui;org.eclipse.rse.ui.*"
+-link http://java.sun.com/j2se/1.4/docs/api
+-linkoffline ./../../../org.eclipse.platform.doc.isv/reference/api ../org.eclipse.platform.doc.isv/reference/api
+-linkoffline ./../../../org.eclipse.platform.doc.isv/reference/osgi ../org.eclipse.platform.doc.isv/reference/osgi
+
+org.eclipse.rse.core
+org.eclipse.rse.logging
+org.eclipse.rse.connectorservice.dstore
+org.eclipse.rse.connectorservice.local
+org.eclipse.rse.connectorservice.ssh
+org.eclipse.rse.services
+org.eclipse.rse.services.dstore
+org.eclipse.rse.services.files.ftp
+org.eclipse.rse.services.local
+org.eclipse.rse.services.ssh
+org.eclipse.rse.subsystems.files.core
+org.eclipse.rse.subsystems.files.dstore
+org.eclipse.rse.subsystems.files.ftp
+org.eclipse.rse.subsystems.files.local
+org.eclipse.rse.subsystems.files.ssh
+org.eclipse.rse.subsystems.shells.core
+org.eclipse.rse.subsystems.shells.dstore
+org.eclipse.rse.subsystems.shells.local
+org.eclipse.rse.subsystems.shells.ssh
+org.eclipse.rse.subsystems.processes.core
+org.eclipse.rse.subsystems.processes.dstore
+org.eclipse.rse.subsystems.processes.local
+org.eclipse.rse.ui
+org.eclipse.rse.files.ui
+org.eclipse.rse.shells.ui
+org.eclipse.rse.processes.ui

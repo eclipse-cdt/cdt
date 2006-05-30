@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>Changes to Plug-in Class</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>Changes to Plug-in Class</h1>
+<p>Here are the steps to change the wizard-generated plug-in class to 
+extend the <A href="../api/plugin/uiPluginAPI.html">RSE plug-in class</A>.
+<ol>
+    <LI type="i">Add the following import statements to the top of <samp>RSESamplesPlugin.java</samp>: 
+        <pre><code>
+        import com.ibm.etools.systems.core.*;
+        import com.ibm.etools.systems.core.ui.messages.*;
+        import org.eclipse.swt.graphics.Image;
+        import org.eclipse.jface.preference.*;
+        </code></pre>
+    </LI>
+    <li type="i">Change the <b>extends</b> clause in the class declaration to extend <samp><b>SystemBasePlugin</b></samp> instead of 
+    <samp>AbstractUIPlugin</samp>:
+        <pre><code>
+        public class RSESamplesPlugin extends <b>SystemBasePlugin</b> {
+        </code></pre>
+    </li>
+    <li type="i">Add the following class field declaration:
+        <pre><code>
+	    private static SystemMessageFile messageFile = null;
+        </code></pre>
+    </li>
+    <li type="i">Change the constructor as highlighted here:
+        <pre><code>
+	/**
+	 * The constructor.
+	 */
+	public RSESamplesPlugin(IPluginDescriptor descriptor) {
+		super(descriptor, <b>"RSESamples"</b>);
+		plugin = this;
+		<i>//try {</i>
+		<i>//	resourceBundle= ResourceBundle.getBundle("RSESamples.RSESamplesPluginResources");</i>
+		<i>//} catch (MissingResourceException x) {</i>
+		<i>//	resourceBundle = null;</i>
+		<i>//}		</i>
+		<b>resourceBundle = loadResourceBundle(descriptor,"rseSamplesResources");</b>
+		<b>messageFile = loadMessageFile(descriptor,"rseSamplesMessages.xml");</b>
+	}
+        </code></pre>
+    </li>    
+    <li type="i">Change the <b><samp>getResourceString</samp></b> method as highlighted here:
+        <pre><code>
+	/**
+	 * Returns the string from the plugin's resource bundle,
+	 * or 'key' if not found.
+	 */
+	public static String getResourceString(String key) {
+		ResourceBundle bundle= RSESamplesPlugin.getDefault().getResourceBundle();
+		<b>return getString(bundle, key); // <i>inherited method.</i></b>
+		<i>//try {</i>
+		<i>//	return bundle.getString(key);</i>
+		<i>//} catch (MissingResourceException e) {</i>
+		<i>//	return key;</i>
+		<i>//}</i>
+	}
+        </code></pre>
+    </li>    
+    <li type="i">Add the following methods to the end of the class:
+        <pre><code>
+    /**
+     * @see AbstractUIPlugin#initializeDefaultPreferences
+     */
+	protected void <b>initializeDefaultPreferences</b>(IPreferenceStore store) 
+    {
+        super.initializeDefaultPreferences(store);
+        <i>//RSESamplesPreferencePage.initDefaults(store);</i>
+    }
+    /**
+     *	Initialize the image registry by declaring all of the required graphics.
+     */
+    protected void <b>initializeImageRegistry</b>()
+    {
+    	String path = getIconPath();
+    	<i>//putImageInRegistry(ISamplesConstants.ICON_XXX_ID,</i>
+    	<i>//  			       path+ISamplesConstants.ICON_XXX);</i>
+    	<i>// TO RETRIEVE AN ICON, CALL GETIMAGE OR GETIMAGEDESCRIPTOR WITH ITS XXX_ID ID</i>
+    }
+    /**
+     * Starts up this plug-in and returns whether startup was successful.
+     */
+    public void <b>startup</b>() throws CoreException 
+    {
+    	super.startup();
+    }    
+    /**
+     * Return our message file
+     */
+    public static SystemMessageFile <b>getPluginMessageFile</b>()
+    {
+    	return messageFile;
+    }    
+    /**
+     * Retrieve a message from this plugin's message file
+     */
+    public static SystemMessage <b>getPluginMessage</b>(String msgId)
+    {
+    	return getMessage(messageFile, msgId);
+    }
+        </code></pre>
+    </li>
+    <li type="i">Click <A href="RSESamplesPlugin.html">here</A> to see the full finished class.
+    </li>
+</ol>
+</p>
+</body>
+</html>

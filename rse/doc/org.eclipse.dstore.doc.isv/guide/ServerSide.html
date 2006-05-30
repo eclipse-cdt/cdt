@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<title>Tutorials</title>
+<link rel="stylesheet" type="text/css" HREF="../book.css">
+</head>
+
+<body bgcolor="#ffffff">
+<h1>Extending the Server-side</h1>
+<p>
+This section describes the basic steps needed to extend the server side tooling using <b>Miners</b>.
+</p>
+<ol>
+<li>
+Write a new <a href="Miners.html">DataStore miner</a> by extending the <b>Miner</b> class.
+</li>
+<li>
+Put the compiled miner class on the host, preferabled in jar form
+</li>
+<li>
+Register the new miner so that it get's loaded when the server DataStore is connected to.  This may be done
+by adding the miner's qualified classname to the file <i>minerFile.dat</i>.  Alternatively, an additional <i>minerFile.dat</i>
+file can be used to supply the classname.
+</li>
+<li>
+Update the classpaths for the server side so that the new miner class can be loaded by the
+DataStore.  This will vary depending on how the DataStore server is started up.  If a startup
+script is used, then you could update the classpath specified in the script or the system classpath
+could be updated.
+</li>
+</ol> 
+</body>
+</html>

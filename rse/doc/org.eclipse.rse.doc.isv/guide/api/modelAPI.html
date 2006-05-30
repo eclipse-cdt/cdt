@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>RSE Model API</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>RSE Model API</h1>
+<p>The front door to accessing the elements of the RSE model is the 
+<A href="../../com/ibm/etools/systems/model/SystemRegistry.html">SystemRegistry</A>, which is a 
+singleton object accessible via <A href="../../com/ibm/etools/systems/core/SystemPlugin.html#getTheSystemRegistry()">SystemPlugin.getTheSystemRegistry()</A>. 
+</p>
+<p>The system registry will get you access to profiles, connections and subsystem factories. 
+From a <A href="../../com/ibm/etools/systems/subsystems/SubSystemFactory.html">subsystem factory</A> you can access subsystems, filter pools, 
+user actions and compile commands. 
+From <A href="../../com/ibm/etools/systems/subsystems/SubSystem.html">subsystems</A> you can access remote resources, as well 
+as filter pools referenced by the subsystem.
+</p>
+</body>
+</html>

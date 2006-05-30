@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<title>Tutorials</title>
+<link rel="stylesheet" type="text/css" HREF="../book.css">
+</head>
+
+<body bgcolor="#ffffff">
+<h1>Communicating with the Server-side</h1>
+
+<h2>Connecting to a Local DataStore</h2>
+<p>
+If you're writing an RSE subsystem to connect to a local standalone DataStore, the following needs
+to be done during the connect:
+</p> 
+
+<font color='#4444CC'>
+<pre>
+	...
+	ClientConnection clientConnection = new ClientConnection(connectionName);
+
+	// initialize the local datastore	
+	clientConnection.localConnect();
+	
+	DataStore dataStore = clientConnection.getDataStore();
+
+	// specify miners to load
+	dataStore.addMinersLocation("."); // initializes the default miners
+	
+	// initialize miners
+	dataStore.getSchema();
+	dataStore.initMiners();	
+	...
+			
+</pre>
+</font>
+
+<h2>Connecting to a Remote DataStore</h2>
+<p>
+If you're writing an RSE subsystem to connect to a remote DataStore, the only difference
+from the local scenario is that <code>connect</code> is called rather than <code>localConnect</code>.
+</p>
+
+<font color='#4444CC'>
+<pre>
+	...
+	ClientConnection clientConnection = new ClientConnection(connectionName);
+	
+	// prepare connection
+	clientConnection.setHost(hostName);
+	clientConnection.setPort(port);
+	
+	// connect	
+	clientConnection.connect(ticket);
+	
+	DataStore dataStore = clientConnection.getDataStore();
+
+	// specify miners to load
+	dataStore.addMinersLocation("."); // initializes the default miners
+	
+	// initialize miners
+	dataStore.getSchema();
+	dataStore.initMiners();	
+	...
+			
+</pre>
+</font>
+
+<h2>Loading an Additional DataStore Miner</h2>
+<p>
+If the new miner has been registered via the default minerFile.dat file, then
+no further steps are required to load it.  Otherwise, after the subsystem is
+connected to the remote DataStore, you need to tell the DataStore to load the
+miner as follows.
+</p>
+
+<font color='#4444CC'>
+<pre>
+	...
+	dataStore.addMinersLocation(location);
+	dataStore.getSchema();
+	...
+</pre>
+</font>
+
+<p>
+This tells the host DataStore to instantiate and initialize all miners listed in 
+the specified minerFile.dat file.
+</p>
+
+
+<h2>Sending Commands to a Miner</h2>
+<p>
+To send a command to a miner, the required <a href="DataElements.html#commanddescriptor">command descriptor</a> must first be optained
+using the method <code>DataStore.localDescriptorQuery</code>.  The method <code>DataStore.command</code> is then called with command
+descriptor and the subject of the command.  For example, a query might need to be called on the miner as shown in the following code segment.
+</p>
+
+<font color='#4444CC'>
+<pre>
+		...
+		// the UI model object
+		MyRemoteObject obj = getMyRemoteObject();
+		
+		// get the corresponding DataElement for this object
+		DataElement deObj = obj.getDataElement();
+		
+		// get the DataStore from the DataElement
+		DataStore ds = deObj.getDataStore();
+		
+		// get the query command descriptor for the subject
+		DataElement queryCmd = ds.localDescriptorQuery(deObj.getDescriptor(), "MY_QUERY_COMMAND");
+ 		
+ 		// send the command
+ 		DataElement status = ds.command(queryCmd, deObj, true);
+ 		...
+</pre>
+</font>
+
+<h2>Receiving Data from a Miner</h2>
+<p>
+After a command is sent to a miner, you might want to receive information that the miner produced in response to the command.
+DataStore commands and responses are sent asynchronously, much like events.  On the server, the 
+<a href="Communications.html#servercommandhandler">Server Command Handler</a> reacts to incoming commands by calling the <code>handleCommand</code>
+method on the appropriate miner.  For the client, the <a href="Communications.html#clientcommandhandler">Client Command Handler</a>
+reacts to incoming responses by firing domain notifications.  In order to receive miner responses, asynchronously,
+you need to implement a DataStore domain listener.
+</p>
+<p>
+A domain listener implements the IDomainListener interface.  An instance of an IDomainListener needs to be added to the DataStore domain listener
+list.  The following is what a simple domain listener looks like:
+</p>
+
+<font color='#4444CC'>
+<pre>
+	public class MyDomainListener implements IDomainListener
+	{
+	    public boolean listeningTo(DomainEvent e)
+	    {
+	    	// check if we care about this event
+	    	...
+	    }
+	    
+	    public void domainChanged(DomainEvent e)
+	    {
+	    	// get the data from this event
+	    	...
+	    }
+	}
+</pre>
+</font>
+
+<p>
+A domain listener may either listen for the duration of a DataStore session or may be transient, to be used for
+a receiving data from a particular command.  For example, after calling <code>DataStore.command</code>, which returns
+the status of the command instance, a listener can be added as follows:  
+</p>
+<font color='#4444CC'>
+<pre>
+		...
+       	MyDomainListener listener = new MyDomainListener(shell);
+       `ds.getDomainNotifier().addDomainListener(listener);            
+       	listener.setStatus(status);
+		...
+</pre>
+</font>
+</body>
+</html>

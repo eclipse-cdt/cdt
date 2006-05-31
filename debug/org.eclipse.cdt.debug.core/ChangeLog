@@ -1,3 +1,7 @@
+2006-05-31 Mikhail Khodjaiants
+	Bug 144719: [Modules view] Modules from from different sessions are mixed up.
+	* CDebugElement.java
+
 2006-05-29 Mikhail Khodjaiants
 	Bug 108472: Debug continues to fail.
 	* DebugCoreMessages.properties

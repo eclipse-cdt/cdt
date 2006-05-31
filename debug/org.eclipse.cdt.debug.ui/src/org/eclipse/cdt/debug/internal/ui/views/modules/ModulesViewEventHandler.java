@@ -58,11 +58,15 @@ public class ModulesViewEventHandler extends DebugEventHandler {
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handleCreate(org.eclipse.debug.core.DebugEvent)
 	 */
 	protected void handleCreate( DebugEvent event ) {
-		if ( event.getSource() instanceof IDebugTarget ) {
+		Object source = event.getSource();
+		if ( source instanceof IDebugTarget ) {
 			refreshRoot( event );
 		}
-		else if ( event.getSource() instanceof ICModule ) {
-			fireDelta( (ICModule)event.getSource(), IModelDelta.ADDED );
+		else if ( source instanceof ICModule ) {
+			if ( accept( (ICModule)source ) ) {
+				ICModule module = (ICModule)source;
+				fireDelta( module, IModelDelta.ADDED );
+			}
 		}
 	}
 
@@ -70,11 +74,12 @@ public class ModulesViewEventHandler extends DebugEventHandler {
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handleTerminate(org.eclipse.debug.core.DebugEvent)
 	 */
 	protected void handleTerminate( DebugEvent event ) {
-		if ( event.getSource() instanceof IDebugTarget ) {
+		Object source = event.getSource();
+		if ( source instanceof IDebugTarget ) {
 			refreshRoot( event );
 		}
-		else if ( event.getSource() instanceof ICModule ) {
-			fireDelta( (ICModule)event.getSource(), IModelDelta.REMOVED );
+		else if ( source instanceof ICModule ) {
+			fireDelta( (ICModule)source, IModelDelta.REMOVED );
 		}
 	}
 
@@ -90,5 +95,9 @@ public class ModulesViewEventHandler extends DebugEventHandler {
 	public synchronized void dispose() {
 		super.dispose();
 		fModuleRetrieval = null;
+	}
+
+	private boolean accept( ICModule module ) {
+		return fModuleRetrieval.equals( module.getAdapter( IModuleRetrieval.class ) );
 	}
 }

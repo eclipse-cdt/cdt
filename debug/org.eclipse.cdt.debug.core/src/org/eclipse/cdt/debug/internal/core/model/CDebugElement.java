@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -306,6 +307,8 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 			return getDebugTarget();
 		// See bug #100261
 		if ( adapter.equals( IMemoryBlockRetrieval.class ) )
+			return getDebugTarget().getAdapter( adapter );
+		if ( adapter.equals( IModuleRetrieval.class ) )
 			return getDebugTarget().getAdapter( adapter );
 		if ( adapter.equals( ILaunch.class ) )
 			return getDebugTarget().getLaunch();

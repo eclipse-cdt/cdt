@@ -1,4 +1,8 @@
 2006-05-31 Mikhail Khodjaiants
+	Bug 144719: [Modules view] Modules from from different sessions are mixed up.
+	* ModulesViewEventHandler.java
+
+2006-05-31 Mikhail Khodjaiants
 	Bug 144684: [Modules view] Collapse all action doesn't work.
 	* CollapseAllModulesAction.java
 	* ModulesViewer.java

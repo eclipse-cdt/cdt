@@ -100,10 +100,12 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	}
 	
 	public void disconnect() {
-		try {
-			getChannel("SftpFileService.disconnect").disconnect(); //$NON-NLS-1$
-		} catch(Exception e) {
-			/*nothing to do*/
+		//disconnect-service may be called after the session is already
+		//disconnected (due to event handling). Therefore, don't try to
+		//check the session and notify.
+		Activator.trace("SftpFileService.disconnect"); //$NON-NLS-1$
+		if (fChannelSftp!=null && fChannelSftp.isConnected()) {
+			fChannelSftp.disconnect();
 		}
 		fChannelSftp = null;
 	}
@@ -522,6 +524,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		// TODO check if newer versions of sftp support move directly
 		// TODO Interpret some error messages like "command not found" (use ren instead of mv on windows)
 		// TODO mimic by copy if the remote does not support copying between file systems?
+		Activator.trace("SftpFileService.move "+srcName); //$NON-NLS-1$
 		String fullPathOld = enQuote(srcParent + '/' + srcName);
 		String fullPathNew = enQuote(tgtParent + '/' + tgtName);
 		int rv = runCommand(monitor, "mv "+fullPathOld+' '+fullPathNew); //$NON-NLS-1$
@@ -532,6 +535,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		// move is not supported by sftp directly. Use the ssh shell instead.
 		// TODO check if newer versions of sftp support move directly
 		// TODO Interpret some error messages like "command not found" (use (x)copy instead of cp on windows)
+		Activator.trace("SftpFileService.copy "+srcName); //$NON-NLS-1$
 		String fullPathOld = enQuote(srcParent + '/' + srcName); //$NON-NLS-1$
 		String fullPathNew = enQuote(tgtParent + '/' + tgtName); //$NON-NLS-1$
 		int rv = runCommand(monitor, "cp "+fullPathOld+' '+fullPathNew); //$NON-NLS-1$
@@ -540,6 +544,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	
 	public boolean copyBatch(IProgressMonitor monitor, String[] srcParents, String[] srcNames, String tgtParent) throws SystemMessageException 
 	{
+		Activator.trace("SftpFileService.copyBatch "+srcNames); //$NON-NLS-1$
 		boolean ok = true;
 		for (int i = 0; i < srcParents.length; i++)
 		{
@@ -549,6 +554,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	}
 
 	public void initService(IProgressMonitor monitor) {
+		Activator.trace("SftpFileService.initService"); //$NON-NLS-1$
 		try
 		{
 			connect();
@@ -559,6 +565,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	}
 	
 	public void uninitService(IProgressMonitor monitor) {
+		Activator.trace("SftpFileService.uninitService"); //$NON-NLS-1$
 		disconnect();
 	}
 

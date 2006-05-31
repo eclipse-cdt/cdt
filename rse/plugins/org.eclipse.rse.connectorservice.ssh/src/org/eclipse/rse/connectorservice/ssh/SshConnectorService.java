@@ -292,7 +292,11 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		{
 			if (session != null) {
 				// Is disconnect being called because the network (connection) went down?
-				if (fSessionLostHandler != null && fSessionLostHandler.isSessionLost()) {
+				boolean sessionLost = (fSessionLostHandler!=null && fSessionLostHandler.isSessionLost());
+				// no more interested in handling session-lost, since we are disconnecting anyway
+				fSessionLostHandler = null;
+				// handle events
+				if (sessionLost) {
 					notifyError();
 				} 
 				else {
@@ -300,13 +304,14 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 					fireCommunicationsEvent(CommunicationsEvent.BEFORE_DISCONNECT);
 				}
 
-				session.disconnect();
+				if (session.isConnected()) {
+					session.disconnect();
+				}
 				
 				// Fire comm event to signal state changed
 				notifyDisconnection();
 				//TODO MOB - keep the session to avoid NPEs in services (disables gc for the session!)
 				// session = null;
-				fSessionLostHandler = null;
 				// DKM - no need to clear uid cache
 				clearPasswordCache(false); // clear in-memory password
 				//clearUserIdCache(); // Clear any cached local user IDs
@@ -651,6 +656,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 			if (session.isConnected()) {
 				return true;
 			} else if (fSessionLostHandler!=null) {
+				Activator.trace("SshConnectorService.isConnected: false -> sessionLost"); //$NON-NLS-1$
 				fSessionLostHandler.sessionLost();
 			}
 		}

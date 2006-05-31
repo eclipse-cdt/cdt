@@ -62,6 +62,7 @@ import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
+import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility.RenameRunnable;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.filters.SystemFilterReference;
 import org.eclipse.rse.model.IHost;
@@ -1601,6 +1602,31 @@ public class SystemViewRemoteFileAdapter
 	
 	
 	
+	public static class RenameRunnable implements Runnable
+	{
+		private IRemoteFile _targetFileOrFolder;
+		private String _newName;
+		public RenameRunnable(IRemoteFile targetFileOrFolder)
+		{
+			_targetFileOrFolder = targetFileOrFolder;
+		}
+		
+		public void run() {
+			ValidatorFileUniqueName validator = null; 				
+			SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(null, true, _targetFileOrFolder, validator); // true => copy-collision-mode
+			
+			dlg.open();
+			if (!dlg.wasCancelled())
+				_newName = dlg.getNewName();
+			else
+				_newName = null;
+		}
+		
+		public String getNewName()
+		{
+			return _newName;
+		}
+	}
 	
 	/**
 	 *  Perform drop from the "fromSet" of objects to the "to" object
@@ -1656,15 +1682,6 @@ public class SystemViewRemoteFileAdapter
 			{
 				if (fromSet instanceof SystemWorkspaceResourceSet)
 				{		
-					Shell shell = null;
-					try
-					{
-						shell = getShell();
-					}
-					catch (Exception e)
-					{
-						
-					}
 					boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
 					if (!doSuperTransferProperty)
 					{
@@ -1677,11 +1694,11 @@ public class SystemViewRemoteFileAdapter
 						    monitor.beginTask(_uploadMessage.getLevelOneText(), size);
 						}  
 						// back to hierarchy
-						return UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, shell, true);
+						return UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, true);
 					}
 					else
 					{
-						return UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, shell, true);
+						return UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, true);
 					}
 				}
 				else if (fromSet instanceof SystemRemoteResourceSet)
@@ -1780,13 +1797,10 @@ public class SystemViewRemoteFileAdapter
 										IRemoteFile existingFileOrFolder = ((IRemoteFileSubSystem)srcSubSystem).getRemoteFileObject(targetFolder, name);
 										if (existingFileOrFolder.exists())
 										{
-											ValidatorFileUniqueName validator = null;
-											SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(getShell(), true, existingFileOrFolder, validator);									
-											dlg.open();
-											if (!dlg.wasCancelled())
-												name = dlg.getNewName();
-											else
-												name = null;
+											RenameRunnable rr = new RenameRunnable(existingFileOrFolder);
+											Display.getDefault().syncExec(rr);
+											name = rr.getNewName();
+	
 											if (name != null)
 											{
 												toCopy.add(srcFileOrFolder);
@@ -2027,14 +2041,9 @@ public class SystemViewRemoteFileAdapter
 
 								if (existingFileOrFolder.exists())
 								{
-
-									ValidatorFileUniqueName validator = null;
-									SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(getShell(), true, existingFileOrFolder, validator);
-									dlg.open();
-									if (!dlg.wasCancelled())
-										name = dlg.getNewName();
-									else
-										name = null;
+									RenameRunnable rr = new RenameRunnable(existingFileOrFolder);
+									Display.getDefault().syncExec(rr);
+									name = rr.getNewName();
 								}
 
 								if (name != null)
@@ -2175,19 +2184,9 @@ public class SystemViewRemoteFileAdapter
 			//RSEUIPlugin.logInfo("...target.exists()? "+tgtFileOrFolder.exists());
 			if (targetFileOrFolder.exists())
 			{
-				//monitor.setVisible(false); wish we could!
-
-				// we no longer have to set the validator here... the common rename dialog we all now use queries the input
-				// object's system view adaptor for its name validator. See getNameValidator in SystemViewRemoteFileAdapter. phil
-				ValidatorFileUniqueName validator = null; // new ValidatorFileUniqueName(shell, targetFolder, srcFileOrFolder.isDirectory());
-				//SystemCollisionRenameDialog dlg = new SystemCollisionRenameDialog(shell, validator, oldName);
-				SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(shell, true, targetFileOrFolder, validator); // true => copy-collision-mode
-
-				dlg.open();
-				if (!dlg.wasCancelled())
-					newName = dlg.getNewName();
-				else
-					newName = null;
+				RenameRunnable rr = new RenameRunnable(targetFileOrFolder);
+				Display.getDefault().syncExec(rr);
+				newName = rr.getNewName();
 			}
 		}
 		catch (SystemMessageException e)

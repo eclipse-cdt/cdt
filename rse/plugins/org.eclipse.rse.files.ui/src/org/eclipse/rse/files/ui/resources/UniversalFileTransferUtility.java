@@ -556,11 +556,11 @@ public class UniversalFileTransferUtility
 	 * @param indicates whether to check for colllisions or not
 	 * @return the resulting remote objects
 	 */
-	public static SystemRemoteResourceSet copyWorkspaceResourcesToRemote(SystemWorkspaceResourceSet workspaceSet, IRemoteFile targetFolder, IProgressMonitor monitor, Shell shell, boolean checkForCollisions)
+	public static SystemRemoteResourceSet copyWorkspaceResourcesToRemote(SystemWorkspaceResourceSet workspaceSet, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
 	{	
 		boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER)
 											&& targetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement();
-
+ 
 		IRemoteFileSubSystem targetFS = targetFolder.getParentRemoteFileSubSystem();
 		SystemRemoteResourceSet resultSet = new SystemRemoteResourceSet(targetFS);
 		
@@ -641,7 +641,7 @@ public class UniversalFileTransferUtility
 				String oldPath = newPathBuf.toString() + name;
 				if (checkForCollisions)
 				{
-					name = checkForCollision(shell, existingFiles, targetFolder, name, oldPath);
+					name = checkForCollision(existingFiles, targetFolder, name, oldPath);
 					if (name == null)
 					{
 						continue;
@@ -730,7 +730,7 @@ public class UniversalFileTransferUtility
 					{
 						IResource[] children = directory.members();
 						SystemWorkspaceResourceSet childSet = new SystemWorkspaceResourceSet(directory.members());			
-						SystemRemoteResourceSet childResults = copyWorkspaceResourcesToRemote(childSet, newTargetFolder, monitor, shell, checkForCollisions);																	
+						SystemRemoteResourceSet childResults = copyWorkspaceResourcesToRemote(childSet, newTargetFolder, monitor, checkForCollisions);																	
 						if (childResults == null)
 						{
 							return null;
@@ -1484,7 +1484,7 @@ public class UniversalFileTransferUtility
 			return remotePath;
 		}
 
-	protected static String checkForCollision(Shell shell, SystemRemoteResourceSet existingFiles, IRemoteFile targetFolder, String oldName, String oldPath)
+	protected static String checkForCollision(SystemRemoteResourceSet existingFiles, IRemoteFile targetFolder, String oldName, String oldPath)
 	{
 		String newName = oldName;
 

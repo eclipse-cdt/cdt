@@ -26,7 +26,12 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.SubSystem;
+import org.eclipse.rse.core.subsystems.SubSystem.ConnectJob;
+import org.eclipse.rse.core.subsystems.SubSystem.ConnectJobNoShell;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
@@ -101,6 +106,29 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		//handleErrors((IStatus[]) errors.toArray(new IStatus[errors.size()]));
 	}
 	
+	
+	public class PromptForPassword implements Runnable
+	{
+		public SubSystem _ss;
+		public PromptForPassword(SubSystem ss)
+		{
+			_ss = ss;
+		}
+		
+		public void run()
+		{
+			Shell shell = Display.getCurrent().getActiveShell();
+			try
+			{
+				_ss.promptForPassword(shell);
+			}
+			catch (Exception e)
+			{
+				
+			}
+		}
+	}
+	
 	/**
 	 * Subclasses must override this method to perform the operation.
 	 * Clients should never call this method directly.
@@ -111,6 +139,22 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	 */
 	protected void execute(IProgressMonitor monitor) throws Exception, InterruptedException
 	{
+		SubSystem ss = (SubSystem)_adapter.getSubSystem(_remoteObject);
+		synchronized (ss)
+		{
+		if (!ss.isConnected())
+		{
+			
+			Display dis = Display.getDefault();
+			dis.syncExec(new PromptForPassword(ss));
+			
+			//ss.connect(monitor);
+			//ConnectJob conjob = ss.new ConnectJob();
+			//conjob.run(monitor);
+			ss.getConnectorService().connect(monitor);
+	
+		}
+		}
 	    Object[] children = _adapter.getChildren(monitor, _remoteObject);
 	    _collector.add(children, monitor);
 	    monitor.done();

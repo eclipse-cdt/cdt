@@ -243,7 +243,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	            ISubSystem ss = adapter.getSubSystem(element);
 	            if (ss != null)
 	            {
-	                if (ss.isConnected())
+	               // if (ss.isConnected())
 	                {
 			            
 						Object[] children = manager.getChildren(element);

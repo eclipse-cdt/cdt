@@ -1347,6 +1347,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
             }						
             catch(InvocationTargetException exc)
             {
+            	exc.printStackTrace();
             	monitor.done();
           	  	String excMsg = exc.getTargetException().getMessage();
           	  	if ((excMsg == null) || (excMsg.length()==0))
@@ -1599,7 +1600,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     /**
      * Represents the subsystem operation of connecting the subsystem to the remote machine.
      */
-    protected class ConnectJob extends SubSystemOperationJob
+    public class ConnectJob extends SubSystemOperationJob
     {
     	public ConnectJob()
     	{
@@ -2564,7 +2565,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  monitor.
      * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      */
-    protected boolean promptForPassword(Shell shell) throws Exception
+    public boolean promptForPassword(Shell shell) throws Exception
     {
     	boolean ok = false;
     	if (!supportsConnecting)

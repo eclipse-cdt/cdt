@@ -228,12 +228,16 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		}
 		public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
 			Socket socket = null;
+			//Allows to cancel the socket creation operation if necessary.
+			//Waits for the timeout specified in CVS Preferences, maximum.
 			socket = Util.createSocket(host, port, monitor);
 			// Null out the monitor so we don't hold onto anything
 			// (i.e. the SSH2 session will keep a handle to the socket factory around
 			monitor = new NullProgressMonitor();
 			// Set the socket timeout
-			socket.setSoTimeout(getSshTimeoutInMillis());
+			//socket.setSoTimeout(getSshTimeoutInMillis());
+			// We want blocking read() calls in ssh to never terminate
+			socket.setSoTimeout(0);
 			return socket;
 		}
 	}
@@ -258,7 +262,8 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
         if (proxy != null) {
             session.setProxy(proxy);
         }
-        session.setTimeout(getSshTimeoutInMillis());
+        //session.setTimeout(getSshTimeoutInMillis());
+        session.setTimeout(0); //never time out on the session
         String password = getPasswordInformation().getPassword();
         session.setPassword(password);
         MyUserInfo userInfo = new MyUserInfo(user, password);
@@ -271,7 +276,8 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
         userInfo.aboutToConnect();
         try {
         	Activator.trace("SshConnectorService.connecting..."); //$NON-NLS-1$
-            session.connect();
+        	//wait for 60 sec maximum during connect
+            session.connect(60000);
         	Activator.trace("SshConnectorService.connected"); //$NON-NLS-1$
         } catch (JSchException e) {
         	Activator.trace("SshConnectorService.connect failed: "+e.toString()); //$NON-NLS-1$

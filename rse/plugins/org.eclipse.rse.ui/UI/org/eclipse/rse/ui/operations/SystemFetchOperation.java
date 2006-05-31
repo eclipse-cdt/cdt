@@ -30,6 +30,8 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.core.subsystems.SubSystem.ConnectJob;
 import org.eclipse.rse.core.subsystems.SubSystem.ConnectJobNoShell;
+import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -129,6 +131,21 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		}
 	}
 	
+	public class UpdateRegistry implements Runnable
+	{
+		private SubSystem _ss;
+		public UpdateRegistry(SubSystem ss)
+		{
+			_ss = ss;
+		}
+		
+		public void run()
+		{
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			registry.connectedStatusChange(_ss, true, false);
+		}
+	}
+	
 	/**
 	 * Subclasses must override this method to perform the operation.
 	 * Clients should never call this method directly.
@@ -152,7 +169,9 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			//ConnectJob conjob = ss.new ConnectJob();
 			//conjob.run(monitor);
 			ss.getConnectorService().connect(monitor);
-	
+			
+			dis.asyncExec(new UpdateRegistry(ss));
+			
 		}
 		}
 	    Object[] children = _adapter.getChildren(monitor, _remoteObject);

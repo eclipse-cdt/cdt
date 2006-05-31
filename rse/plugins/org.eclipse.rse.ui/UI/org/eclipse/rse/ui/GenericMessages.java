@@ -65,6 +65,8 @@ public class GenericMessages extends NLS
 	public static String FileExtension_extensionEmptyMessage;
 	public static String FileExtension_fileNameInvalidMessage;
 	public static String FilteredPreferenceDialog_PreferenceSaveFailed;
+	
+	public static String RSEQuery_task;
 		
 	static {
 		// load message values from bundle file

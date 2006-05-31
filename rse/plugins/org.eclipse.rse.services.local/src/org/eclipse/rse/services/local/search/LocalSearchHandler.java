@@ -110,6 +110,7 @@ public class LocalSearchHandler implements ISearchHandler
 		_fs = fileService;
 
 		_searchString = searchConfig.getSearchString();
+		
 
 		boolean includeSubfolders = _searchString.isIncludeSubfolders();
 
@@ -187,7 +188,7 @@ public class LocalSearchHandler implements ISearchHandler
 		boolean isDirectory = theFile.isDirectory();
 
 		// is it an archive?
-		boolean isArchive = ArchiveHandlerManager.getInstance().isArchive(theFile);
+		boolean isArchive = ArchiveHandlerManager.getInstance().isArchive(theFile) && _searchString.isIncludeArchives();
 
 		String absPath = theFile.getAbsolutePath();
 		String compareStr = theFile.getName();
@@ -299,7 +300,7 @@ public class LocalSearchHandler implements ISearchHandler
 			// if it is a directory, or an archive, or a virtual directory, then
 			// we need to get the
 			// children and search those
-			if (isDirectory || isArchive || isVirtualDirectory)
+			if (isDirectory || (_searchString.isIncludeArchives() && (isArchive || isVirtualDirectory)))
 			{
 
 				if (!hasSearchedDirectory(theFile))

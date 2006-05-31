@@ -1501,13 +1501,16 @@ public class SystemViewRemoteFileAdapter
 						return totalByteSize;
 					}
 					Display display = Display.getCurrent();
-					while (display.readAndDispatch());
-					try
+					if (display != null)
 					{
-						Thread.sleep(100);
-					}
-					catch (Exception e)
-					{						
+						while (display.readAndDispatch());
+						try
+						{
+							Thread.sleep(100);
+						}
+						catch (Exception e)
+						{						
+						}
 					}
 				}
 				else

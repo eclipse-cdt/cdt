@@ -31,6 +31,7 @@ import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.core.subsystems.SubSystem.ConnectJob;
 import org.eclipse.rse.core.subsystems.SubSystem.ConnectJobNoShell;
 import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.ui.GenericMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Display;
@@ -165,9 +166,6 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			Display dis = Display.getDefault();
 			dis.syncExec(new PromptForPassword(ss));
 			
-			//ss.connect(monitor);
-			//ConnectJob conjob = ss.new ConnectJob();
-			//conjob.run(monitor);
 			ss.getConnectorService().connect(monitor);
 			
 			dis.asyncExec(new UpdateRegistry(ss));
@@ -181,7 +179,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 
 	protected String getTaskName()
 	{
-	    return "RSE test task!";
+	    return GenericMessages.RSEQuery_task;
 	}
 	
 	/**

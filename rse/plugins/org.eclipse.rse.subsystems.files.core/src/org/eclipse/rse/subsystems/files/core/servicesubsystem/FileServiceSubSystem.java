@@ -56,6 +56,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	protected IFileService _hostFileService;
 	protected ISearchService _hostSearchService;
 	protected IHostFileToRemoteFileAdapter _hostFileToRemoteFileAdapter;
+	protected IRemoteFile _userHome;
 	
 	public FileServiceSubSystem(IHost host, IConnectorService connectorService, IFileService hostFileService, IHostFileToRemoteFileAdapter fileAdapter, ISearchService searchService)
 	{
@@ -240,6 +241,10 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 */
 	protected IRemoteFile getUserHome() 
 	{
+		if (_userHome != null)
+		{
+			return _userHome;
+		}
 		IRemoteFile root = getCachedRemoteFile(".");
 		if (root != null && !root.isStale()) {
 			return root;
@@ -258,6 +263,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		root = getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), parent, userHome);
 		cacheRemoteFile(root, ".");
+		_userHome = root;
 		return root;
 	}
 	
@@ -792,6 +798,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	{
 		super.uninitializeSubSystem(monitor);
 		getFileService().uninitService(monitor);
+		_userHome = null;
 	}
 	
 } 

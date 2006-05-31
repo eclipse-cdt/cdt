@@ -126,6 +126,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil.ArrayWrapper;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 
 /**
  * @author aniefer
@@ -746,7 +747,7 @@ public class CPPSemantics {
 		        addDefinition( binding, data.astName );
 		    } 
 		}
-		if( binding == null ){
+		if( binding == null || binding instanceof IProblemBinding ){
 			// Let's try the pdom
 			IPDOM pdom = name.getTranslationUnit().getIndex();
 			if (pdom != null) {
@@ -1025,7 +1026,9 @@ public class CPPSemantics {
 				} else {
 					if (!data.prefixLookup && data.astName != null ) {
 						IBinding b = scope.getBinding( data.astName, false );
-						if (b instanceof CPPImplicitFunction || b instanceof CPPImplicitTypedef)
+						if (b instanceof CPPImplicitFunction || b instanceof CPPImplicitTypedef
+								|| b instanceof PDOMBinding)
+							// TODO the PDOMBinding thing is a kludge
 							mergeResults( data, b, true );
 					}
 				    mergeResults( data, lookupInScope( data, scope, blockItem ), true );

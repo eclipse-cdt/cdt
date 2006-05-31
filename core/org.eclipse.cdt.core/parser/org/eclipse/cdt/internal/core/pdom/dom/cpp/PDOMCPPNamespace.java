@@ -132,8 +132,11 @@ public class PDOMCPPNamespace extends PDOMBinding
 
 	private static final class FindBinding extends PDOMNamedNode.NodeFinder {
 		PDOMBinding pdomBinding;
-		final int desiredType;
+		final int[] desiredType;
 		public FindBinding(PDOM pdom, char[] name, int desiredType) {
+			this(pdom, name, new int[] { desiredType });
+		}
+		public FindBinding(PDOM pdom, char[] name, int[] desiredType) {
 			super(pdom, name);
 			this.desiredType = desiredType;
 		}
@@ -144,13 +147,16 @@ public class PDOMCPPNamespace extends PDOMBinding
 			if (!tBinding.hasName(name))
 				// no more bindings with our desired name
 				return false;
-			if (tBinding.getNodeType() != desiredType)
-				// wrong type, try again
-				return true;
+			int nodeType = tBinding.getNodeType();
+			for (int i = 0; i < desiredType.length; ++i)
+				if (nodeType == desiredType[i]) {
+					// got it
+					pdomBinding = tBinding;
+					return false;
+				}
 			
-			// got it
-			pdomBinding = tBinding;
-			return false;
+			// wrong type, try again
+			return true;
 		}
 	}
 
@@ -161,8 +167,32 @@ public class PDOMCPPNamespace extends PDOMBinding
 				return lastName != null ? lastName.resolveBinding() : null;
 			}
 			IASTNode parent = name.getParent();
-			if (parent instanceof ICPPASTQualifiedName)
-				parent = parent.getParent();
+			if (parent instanceof ICPPASTQualifiedName) {
+				IASTName[] names = ((ICPPASTQualifiedName)parent).getNames();
+				if (name == names[names.length - 1]) {
+					parent = parent.getParent();
+				} else {
+					IASTName nsname = null;
+					for (int i = 0; i < names.length - 2; ++i) {
+						if (name != names[i])
+							nsname = names[i];
+					}
+					// make sure we're the namespace they're talking about
+					if (nsname != null && !equals(pdom.resolveBinding(nsname)))
+						return null;
+					
+					// Look up the name
+					FindBinding visitor = new FindBinding(pdom, name.toCharArray(),
+							new int[] {
+								PDOMCPPLinkage.CPPCLASSTYPE,
+								PDOMCPPLinkage.CPPNAMESPACE,
+								PDOMCPPLinkage.CPPFUNCTION,
+								PDOMCPPLinkage.CPPVARIABLE
+							});
+					getIndex().accept(visitor);
+					return visitor.pdomBinding;
+				}
+			}
 			if (parent instanceof IASTIdExpression) {
 				// reference
 				IASTNode eParent = parent.getParent();

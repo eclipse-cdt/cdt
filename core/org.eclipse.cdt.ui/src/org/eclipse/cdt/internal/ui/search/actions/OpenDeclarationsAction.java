@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -69,7 +70,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 					IASTName searchName = selectedNames[0];
 		
 					IBinding binding = searchName.resolveBinding();
-					if (binding != null) {
+					if (binding != null && !(binding instanceof IProblemBinding)) {
 						final IASTName[] declNames = ast.getDeclarations(binding);
 						if (declNames.length > 0) {
 							Display.getDefault().asyncExec(new Runnable() {

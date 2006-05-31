@@ -13,11 +13,13 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -25,6 +27,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 
 /**
  * @author aniefer
@@ -80,10 +83,10 @@ abstract public class CPPScope implements ICPPScope{
 	public IBinding getBinding(IASTName name, boolean forceResolve) throws DOMException {
 	    char [] c = name.toCharArray();
 	    //can't look up bindings that don't have a name
-	    if( c.length == 0 || bindings == null )
+	    if( c.length == 0 )
 	        return null;
 	    
-	    Object obj = bindings.get( c );
+	    Object obj = bindings != null ? bindings.get( c ) : null;
 	    if( obj != null ){
 	        if( obj instanceof ObjectSet ) {
 	        	ObjectSet os = (ObjectSet) obj;
@@ -121,6 +124,18 @@ abstract public class CPPScope implements ICPPScope{
 	        	return binding;
 	        }
 	        return (IBinding) obj;
+	    } else {
+	    	IPDOM pdom = name.getTranslationUnit().getIndex();
+	    	if (pdom != null) {
+	    		// Try looking this up in the PDOM
+	    		if (physicalNode instanceof ICPPASTNamespaceDefinition) {
+	    			ICPPASTNamespaceDefinition nsdef = (ICPPASTNamespaceDefinition)physicalNode;
+	    			IASTName nsname = nsdef.getName();
+	    			IBinding nsbinding = ((PDOM)pdom).resolveBinding(nsname);
+		    		if (nsbinding instanceof ICPPScope)
+		    			return ((ICPPScope)nsbinding).getBinding(name, forceResolve);
+	    		}
+	    	}
 	    }
 		return null;
 	}

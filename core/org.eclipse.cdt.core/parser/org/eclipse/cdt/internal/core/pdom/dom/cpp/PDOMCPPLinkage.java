@@ -232,6 +232,9 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	}
 	
 	public IBinding resolveBinding(IASTName name) throws CoreException {
+		IBinding origBinding = name.getBinding();
+		if (origBinding != null)
+			return adaptBinding(origBinding);
 		if (name instanceof ICPPASTQualifiedName) {
 			IASTName[] names = ((ICPPASTQualifiedName)name).getNames();
 			if (names.length == 1)

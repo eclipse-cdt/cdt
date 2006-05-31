@@ -1,3 +1,8 @@
+2006-05-31 Mikhail Khodjaiants
+	Bug 144684: [Modules view] Collapse all action doesn't work.
+	* CollapseAllModulesAction.java
+	* ModulesViewer.java
+
 2006-05-29 Mikhail Khodjaiants
 	Bug 144277: No images for source containers types (temporary fix).
 	* SourceContainerLabelProvider.java

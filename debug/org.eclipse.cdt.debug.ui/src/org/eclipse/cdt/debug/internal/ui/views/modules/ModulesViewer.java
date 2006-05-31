@@ -58,4 +58,11 @@ public class ModulesViewer extends AsynchronousTreeViewer {
 	protected void handlePresentationFailure( IAsynchronousRequestMonitor update, IStatus status ) {
 		fView.showMessage( status.getMessage() );
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer#collapseAll()
+	 */
+	public void collapseAll() {
+		super.collapseAll();
+	}
 }

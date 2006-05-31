@@ -158,7 +158,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	protected void execute(IProgressMonitor monitor) throws Exception, InterruptedException
 	{
 		SubSystem ss = (SubSystem)_adapter.getSubSystem(_remoteObject);
-		synchronized (ss)
+		synchronized (ss.getConnectorService())
 		{
 		if (!ss.isConnected())
 		{

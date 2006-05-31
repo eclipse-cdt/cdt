@@ -61,6 +61,7 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.RenameResourceAction;
 
 
 /**
@@ -1492,20 +1493,41 @@ public class UniversalFileTransferUtility
 
 			if (targetFileOrFolder != null && targetFileOrFolder.exists())
 			{
-				ValidatorFileUniqueName validator = null; 				
-				SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(shell, true, targetFileOrFolder, validator); // true => copy-collision-mode
-
-				dlg.open();
-				if (!dlg.wasCancelled())
-					newName = dlg.getNewName();
-				else
-					newName = null;
+				RenameRunnable rr = new RenameRunnable(targetFileOrFolder);
+				Display.getDefault().syncExec(rr);
+				newName = rr.getNewName();
 			}
 
 
 		return newName;
 	}
 
+	public static class RenameRunnable implements Runnable
+	{
+		private IRemoteFile _targetFileOrFolder;
+		private String _newName;
+		public RenameRunnable(IRemoteFile targetFileOrFolder)
+		{
+			_targetFileOrFolder = targetFileOrFolder;
+		}
+		
+		public void run() {
+			ValidatorFileUniqueName validator = null; 				
+			SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(null, true, _targetFileOrFolder, validator); // true => copy-collision-mode
+			
+			dlg.open();
+			if (!dlg.wasCancelled())
+				_newName = dlg.getNewName();
+			else
+				_newName = null;
+		}
+		
+		public String getNewName()
+		{
+			return _newName;
+		}
+	}
+	
 	protected static String checkForCollision(IRemoteFile targetFolder, String oldName)
 	{
 		String newName = oldName;

@@ -62,7 +62,6 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return "Access a remote file system via Ssh / Sftp protocol";
 	}
 	
-	//TODO specify Exception more clearly
 	public void connect() throws Exception {
 		Activator.trace("SftpFileService.connecting..."); //$NON-NLS-1$
 		try {
@@ -78,7 +77,6 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 	}
 	
-	//TODO specify Exception more clearly
 	protected ChannelSftp getChannel(String task) throws Exception
 	{
 		Activator.trace(task);
@@ -243,7 +241,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		  }
 		  public boolean count(long count){
 		      fMonitor.worked((int)count);
-		      while (Display.getCurrent().readAndDispatch());
+		      
 		      return !(fMonitor.isCanceled());
 		  }
 		  public void end(){

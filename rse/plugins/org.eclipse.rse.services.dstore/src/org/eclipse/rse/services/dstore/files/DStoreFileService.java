@@ -448,7 +448,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				}			
 		
 				
-				if (display != null && monitor != null)
+				if (/*display != null &&*/ monitor != null)
 				{
 					long percent = (totalSent * 100) / totalBytes;
 
@@ -469,15 +469,17 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					
 					String str = MessageFormat.format(_percentMsg, new Object[] {totalSentBuf, totalBuf, percentBuf});
 					monitor.subTask(str);					
-						
-					while (display.readAndDispatch()) 
+					if (display != null)
 					{
+						while (display.readAndDispatch()) 
+						{
+						}
 					}
 
 
 
 					isCancelled = monitor.isCanceled();
-					if (isCancelled) 
+					if (isCancelled && display != null) 
 					{						
 						while (display.readAndDispatch()) 
 						{

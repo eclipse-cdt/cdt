@@ -1656,7 +1656,15 @@ public class SystemViewRemoteFileAdapter
 			{
 				if (fromSet instanceof SystemWorkspaceResourceSet)
 				{		
-
+					Shell shell = null;
+					try
+					{
+						shell = getShell();
+					}
+					catch (Exception e)
+					{
+						
+					}
 					boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
 					if (!doSuperTransferProperty)
 					{
@@ -1669,11 +1677,11 @@ public class SystemViewRemoteFileAdapter
 						    monitor.beginTask(_uploadMessage.getLevelOneText(), size);
 						}  
 						// back to hierarchy
-						return UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, getShell(), true);
+						return UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, shell, true);
 					}
 					else
 					{
-						return UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, getShell(), true);
+						return UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, shell, true);
 					}
 				}
 				else if (fromSet instanceof SystemRemoteResourceSet)

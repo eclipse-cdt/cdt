@@ -24,11 +24,14 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemContainer;
@@ -50,7 +53,7 @@ import org.eclipse.ui.progress.UIJob;
   *  Runnable to perform actual transfer operation.
   * 
   */
-public class SystemDNDTransferRunnable extends UIJob
+public class SystemDNDTransferRunnable extends Job
 {
 
 	public static final int SRC_TYPE_RSE_RESOURCE = 0;
@@ -492,7 +495,7 @@ public class SystemDNDTransferRunnable extends UIJob
 		return true;
 	}
 
-	public IStatus runInUIThread(IProgressMonitor monitor)
+	public IStatus run(IProgressMonitor monitor)
 	{
 
 		_ok = true;
@@ -541,45 +544,70 @@ public class SystemDNDTransferRunnable extends UIJob
 		{
 			monitor.done();
 		}
-		// always refresh
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+
 		
 		if (target != null && target instanceof ISystemContainer)
 		{
 			((ISystemContainer)target).markStale(true);
 		}
 	
-		if (_resultTgtObjects.size() > 0)
+		RefreshJob refresh = new RefreshJob(target, targetSubSystem);
+		refresh.schedule();
+		return Status.OK_STATUS;
+	}
+	
+	public class RefreshJob extends UIJob
+	{
+		private Object _target;
+		private ISubSystem _targetSubSystem;
+		public RefreshJob(Object target, ISubSystem targetSubSystem)
 		{
-			boolean doRefresh = _ok;
-			for (int t = 0; t < _resultTgtObjects.size() && t < _resultSrcObjects.size(); t++)
-			{
-			    Object tgt = _resultTgtObjects.get(t);
-			    Object src = _resultSrcObjects.get(t);
-			    if (tgt == src || tgt == null)
-			    {
-			        doRefresh = false;
-			    }
-			    else
-			    {
-			        doRefresh = true;
-			    }
-			}
-			
-			if (_originatingViewer instanceof TreeViewer)
-			{
-				TreeViewer viewer = (TreeViewer) _originatingViewer;
-				viewer.setExpandedState(target, true);
-			}
-			
-			if (doRefresh)
-			{
-			    registry.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, _resultTgtObjects, target, targetSubSystem, null, _originatingViewer);
-			}
+			super("Refresh");
+			_target = target;
+			_targetSubSystem = targetSubSystem;
 		}
 		
-		registry.fireEvent(new SystemResourceChangeEvent(target, ISystemResourceChangeEvents.EVENT_REFRESH, target));
-		return Status.OK_STATUS;
+		public IStatus runInUIThread(IProgressMonitor monitor)
+		{
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			if (_resultTgtObjects.size() > 0)
+			{
+				boolean doRefresh = _ok;
+				for (int t = 0; t < _resultTgtObjects.size() && t < _resultSrcObjects.size(); t++)
+				{
+				    Object tgt = _resultTgtObjects.get(t);
+				    Object src = _resultSrcObjects.get(t);
+				    if (tgt == src || tgt == null)
+				    {
+				        doRefresh = false;
+				    }
+				    else
+				    {
+				        doRefresh = true;
+				    }
+				}
+				
+				if (_originatingViewer instanceof TreeViewer)
+				{
+					try
+					{
+						TreeViewer viewer = (TreeViewer) _originatingViewer;
+						viewer.setExpandedState(_target, true);
+					}
+					catch (Exception e)
+					{
+						
+					}
+				}
+				
+				if (doRefresh)
+				{
+				    registry.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, _resultTgtObjects, _target, _targetSubSystem, null, _originatingViewer);
+				}
+			}
+			registry.fireEvent(new SystemResourceChangeEvent(_target, ISystemResourceChangeEvents.EVENT_REFRESH, _target));
+			return Status.OK_STATUS;
+		}
 	}
 
 	private void operationFailed(IProgressMonitor monitor)

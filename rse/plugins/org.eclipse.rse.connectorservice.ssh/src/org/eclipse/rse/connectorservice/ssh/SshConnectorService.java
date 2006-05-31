@@ -367,6 +367,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 				}
 			}
 			if (showSessionLostDlg) {
+				//invokes this.run() on dispatch thread
 				Display.getDefault().asyncExec(this);
 			}
 		}
@@ -387,9 +388,12 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 			dialog.open();
 			try
 			{
+				//TODO I think we should better use a Job for disconnecting?
+				//But what about error messages?
 				IRunnableContext runnableContext = getRunnableContext(getShell());
 				// will do this.run(IProgressMonitor mon)
-		    	runnableContext.run(false,true,this); // inthread, cancellable, IRunnableWithProgress
+		    	//runnableContext.run(false,true,this); // inthread, cancellable, IRunnableWithProgress
+		    	runnableContext.run(true,true,this); // fork, cancellable, IRunnableWithProgress
 		    	_connection.reset();
 				ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();    	    
 	            sr.connectedStatusChange(_connection.getPrimarySubSystem(), false, true, true);

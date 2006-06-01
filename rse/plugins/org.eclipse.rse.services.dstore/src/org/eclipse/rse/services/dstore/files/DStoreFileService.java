@@ -52,7 +52,7 @@ import org.eclipse.rse.services.dstore.util.DownloadListener;
 import org.eclipse.rse.services.dstore.util.FileSystemMessageUtil;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
-import org.eclipse.swt.widgets.Display;
+
 
 
 
@@ -183,7 +183,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	
 		boolean isCancelled = false;
-		Display display = Display.getCurrent();
+
 	
 	
 		try
@@ -210,10 +210,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			// upload bytes while available
 			while (available > 0 && !isCancelled)
 			{
-				if (display != null && !display.isDisposed())
-				{
-					while (display.readAndDispatch()) {}
-				}
+	
 				
 				numToRead = (available < buffer_size) ? available : buffer_size;
 
@@ -263,16 +260,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				}			
 		
 				
-				if (display != null && monitor != null)
+				if (monitor != null)
 				{
 
 					isCancelled = monitor.isCanceled();
-					if (isCancelled) 
-					{						
-						while (display.readAndDispatch()) 
-						{
-						}
-					}
+
 				}
 
 				available = bufInputStream.available();
@@ -335,12 +327,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 		}
 		
-		if (display != null && monitor != null)
-		{
-		//	monitor.done();
-			while (display.readAndDispatch()) {
-			}
-		}
 		return true;
 	}
 
@@ -353,8 +339,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	
 		boolean isCancelled = false;
 		boolean transferSuccessful = false;
-		Display display = Display.getCurrent();
-	
+
 		long totalBytes = file.length();
 	
 		try
@@ -395,10 +380,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			// upload bytes while available
 			while (available > 0 && !isCancelled)
 			{
-				if (display != null && !display.isDisposed())
-				{
-					while (display.readAndDispatch()) {}
-				}
 				
 				numToRead = (available < buffer_size) ? available : buffer_size;
 
@@ -469,22 +450,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					
 					String str = MessageFormat.format(_percentMsg, new Object[] {totalSentBuf, totalBuf, percentBuf});
 					monitor.subTask(str);					
-					if (display != null)
-					{
-						while (display.readAndDispatch()) 
-						{
-						}
-					}
+	
 
 
 
 					isCancelled = monitor.isCanceled();
-					if (isCancelled && display != null) 
-					{						
-						while (display.readAndDispatch()) 
-						{
-						}
-					}
 				}
 
 				available = bufInputStream.available();
@@ -572,12 +542,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			}
 		}
 		
-		if (display != null && monitor != null)
-		{
-		//	monitor.done();
-			while (display.readAndDispatch()) {
-			}
-		}
 		return true;
 	}
 

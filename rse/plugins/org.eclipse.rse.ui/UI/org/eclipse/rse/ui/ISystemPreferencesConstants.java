@@ -75,6 +75,7 @@ public interface ISystemPreferencesConstants
 	public static final boolean DEFAULT_RESTORE_STATE_FROM_CACHE = true; // yantzi: artemis 6.0      
     public static final boolean DEFAULT_CASCADE_UDAS_BYPROFILE   = false;
     public static final int     DEFAULT_FILETRANSFERMODE         = 0;
+    public static final boolean DEFAULT_USE_DEFERRED_QUERIES     = true;
     
     public static final String DEFAULT_TEAMPROFILE    = "Team";
 

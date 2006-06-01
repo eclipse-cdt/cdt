@@ -599,6 +599,8 @@ public class RemoteSystemsPreferencePage
 		store.setDefault(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE, ISystemPreferencesConstants.DEFAULT_RESTORE_STATE_FROM_CACHE);
 		store.setDefault(ISystemPreferencesConstants.SHOWNEWCONNECTIONPROMPT,  showNewConnectionPromptDefault);
 		store.setDefault(ISystemPreferencesConstants.CASCADE_UDAS_BYPROFILE,   ISystemPreferencesConstants.DEFAULT_CASCADE_UDAS_BYPROFILE);
+		
+		store.setDefault(ISystemPreferencesConstants.USE_DEFERRED_QUERIES, ISystemPreferencesConstants.DEFAULT_USE_DEFERRED_QUERIES);
 	}
 	
 	/**

@@ -66,7 +66,6 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 	private TreeViewer viewer;
 //	private DrillDownAdapter drillDownAdapter;
 	private ToggleLinkingAction toggleLinkingAction;
-	private IndexAction rebuildAction;
 	private IndexAction countSymbolsAction;
 	private IndexAction discardExternalDefsAction;
 	private IndexAction openDefinitionAction;
@@ -310,6 +309,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
         viewer.getControl().setMenu(menu);
         getSite().registerContextMenu(menuMgr, viewer);
         
+        getSite().setSelectionProvider(viewer);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSelectionChanged(event);
@@ -334,7 +334,6 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 	}
 	
 	private void makeActions() {
-		rebuildAction = new RebuildIndexAction(viewer);
 		countSymbolsAction = new CountNodeAction(viewer);
 		discardExternalDefsAction = new DiscardExternalDefsAction(viewer, this);
 		toggleLinkingAction = new ToggleLinkingAction(this);
@@ -357,8 +356,6 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 	}
 	
 	private void fillContextMenu(IMenuManager manager) {
-		if (rebuildAction.valid())
-			manager.add(rebuildAction);
 		if (countSymbolsAction.valid())
 			manager.add(countSymbolsAction);
 		if (discardExternalDefsAction.valid())

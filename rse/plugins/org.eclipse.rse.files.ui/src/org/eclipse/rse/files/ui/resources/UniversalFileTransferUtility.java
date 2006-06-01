@@ -116,8 +116,10 @@ public class UniversalFileTransferUtility
 			{
 				// ;if they're the same, just use temp file							
 				long remoteModifiedStamp = srcFileOrFolder.getLastModified();
-				
-				if (storedModifiedStamp == remoteModifiedStamp)
+
+				boolean usedBin = properties.getUsedBinaryTransfer();
+				boolean shouldUseBin = srcFileOrFolder.isBinary();
+				if (storedModifiedStamp == remoteModifiedStamp && (usedBin == shouldUseBin))
 				{
 					return tempFile;
 				}

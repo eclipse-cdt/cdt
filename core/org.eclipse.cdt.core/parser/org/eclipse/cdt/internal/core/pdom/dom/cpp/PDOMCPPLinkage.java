@@ -137,8 +137,11 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 					pdomBinding = new PDOMCPPVariable(pdom, parent, name);
 			} else if (binding instanceof CPPMethod && parent instanceof PDOMCPPClassType) {
 				pdomBinding = new PDOMCPPMethod(pdom, (PDOMCPPClassType)parent, name);
-			} else if (binding instanceof CPPImplicitMethod) {
-				// skip these for now
+			} else if (binding instanceof CPPImplicitMethod && parent instanceof PDOMCPPClassType) {
+				if(!name.isReference()) {
+					//because we got the implicit method off of an IASTName that is not a reference, it is no longer completly implicit and it should be treated as a normal method.
+					pdomBinding = new PDOMCPPMethod(pdom, (PDOMCPPClassType)parent, name);
+				}
 			} else if (binding instanceof CPPFunction) {
 				pdomBinding = new PDOMCPPFunction(pdom, parent, name);
 			} else if (binding instanceof CPPClassType) {

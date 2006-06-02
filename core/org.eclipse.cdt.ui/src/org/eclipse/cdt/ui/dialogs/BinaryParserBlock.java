@@ -63,8 +63,8 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	private static final String ATTR_VALUE_PRIVATE = "private"; //$NON-NLS-1$
 
 	protected CheckedListDialogField binaryList;
-	Map configMap;
-	List initialSelected;
+	protected Map configMap;
+	protected List initialSelected;
 
 	protected class BinaryParserConfiguration {
 

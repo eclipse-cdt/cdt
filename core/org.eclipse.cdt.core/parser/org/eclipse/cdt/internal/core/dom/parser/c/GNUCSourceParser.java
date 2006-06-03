@@ -554,6 +554,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
     protected CASTTranslationUnit translationUnit;
 
+    private boolean knr = false;
+
     private static final int DEFAULT_POINTEROPS_LIST_SIZE = 4;
 
     private static final int DEFAULT_PARAMETERS_LIST_SIZE = 4;
@@ -1941,7 +1943,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
                     // count the number of K&R C parameters (0 K&R C parameters
                     // essentially means it's not K&R C)
-                    numKnRCParms = countKnRCParms();
+                    if( !knr )
+                        numKnRCParms = countKnRCParms();
 					
                     if (supportKnRC && numKnRCParms > 0) { // KnR C parameters were found so
                         // handle the declarator accordingly
@@ -2646,6 +2649,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         boolean previousWasIdentifier = false;
 
         try {
+            knr = true;
             mark = mark();
 
             // starts at the beginning of the parameter list
@@ -2712,6 +2716,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 backup(mark);
 
             return 0;
+        }
+        finally
+        {
+            knr = false;
         }
     }
 

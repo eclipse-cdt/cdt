@@ -3424,4 +3424,50 @@ public class AST2Tests extends AST2BaseTest {
     	tu = parse(buffer.toString(), ParserLanguage.CPP);
     	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
     }
+    
+    public void testBug143502() throws ParserException {
+        StringBuffer buffer = new StringBuffer("NWindow NewWindowDuplicate(NWindow theWindow, bool insert)\n");
+        buffer.append("{\n");
+        buffer.append("    NWindow newWindow;\n");
+        buffer.append("            newWindow = new GenericWindow();\n");
+        buffer.append("if (newWindow == NULL)\n");
+        buffer.append("return NULL;\n");
+        buffer.append("TwinWindowOF(theWindow) = newWindow;\n");
+        buffer.append("TwinWindowOF(newWindow) = NULL;\n");
+        buffer.append("ParentWindowOF(newWindow) = ParentWindowOF(theWindow);\n");
+        buffer.append("DGlobalsOF(newWindow) = DGlobalsOF(theWindow);\n");
+        buffer.append("HashMapOF(newWindow) = HashMapOF(theWindow);\n");
+        buffer.append("OwnerWindowOF(newWindow) = OwnerWindowOF(theWindow);\n");
+        buffer.append("ChildOF(newWindow) = ChildOF(theWindow);\n");
+        buffer.append("    MakeNameOF(newWindow, NameOF(theWindow));\n");
+        buffer.append("KindOF(newWindow) = KindOF(theWindow);\n");
+        buffer.append("IsVisibleOF(newWindow) = IsVisibleOF(theWindow);\n");
+        buffer.append("FocusOF(newWindow) = FocusOF(theWindow);\n");
+        buffer.append("IsFloating(newWindow) = IsFloating(theWindow);\n");
+        buffer.append("HasCloseBox(newWindow) = HasCloseBox(theWindow);\n");
+        buffer.append("IsSearchNB(newWindow) = IsSearchNB(theWindow);\n");
+        buffer.append("IsFBWindow(newWindow) = FALSE;\n");
+        buffer.append("ShellOF(newWindow) = ShellOF(theWindow);\n");
+        buffer.append("DrawOnOF(newWindow) = DrawOnOF(theWindow);\n");
+        buffer.append("IsBusyOF(newWindow) = IsBusyOF(theWindow);\n");
+        buffer.append("InvalRgnOF(newWindow) = XCreateRegion();\n");
+        buffer.append("IdleOF(newWindow) = IdleOF(theWindow);\n");
+        buffer.append("ShellPainterOF(newWindow)  = ShellPainterOF(theWindow);\n");
+        buffer.append("CanvasPainterOF(newWindow) = CanvasPainterOF(theWindow);\n");
+        buffer.append("StatusPainterOF(newWindow) = StatusPainterOF(theWindow);\n");
+        buffer.append("NotebookOF(newWindow) = NotebookOF(theWindow);\n");
+        buffer.append("PopupWindowOF(newWindow) = PopupWindowOF(theWindow);\n");
+        buffer.append("IC_IsFromIM(theWindow) = FALSE;\n");
+        buffer.append("IsDestroyPendingOF(newWindow) = FALSE;\n");
+        buffer.append("if (IsNotebookWindow(newWindow))\n");
+        buffer.append("        DockedWindowOF(newWindow) = NewDockedWindow(newWindow, false);\n");
+        buffer.append("else\n");
+        buffer.append("DockedWindowOF(newWindow) = NULL;\n");
+        buffer.append("if (insert)\n");
+        buffer.append("_addToListHead(newWindow);\n");
+        buffer.append("return newWindow;\n");
+        buffer.append("}\n");
+
+        parse(buffer.toString(), ParserLanguage.C, true, false);
+    }
 }

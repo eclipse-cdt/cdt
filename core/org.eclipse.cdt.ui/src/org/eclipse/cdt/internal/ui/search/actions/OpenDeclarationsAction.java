@@ -11,13 +11,10 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -60,9 +57,9 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 					return Status.CANCEL_STATUS;
 
 				int style = 0;
-				IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
-				if (!pdom.isEmpty())
-					style |= ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX;
+//				IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
+//				if (!pdom.isEmpty())
+//					style |= ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX;
 				IASTTranslationUnit ast = workingCopy.getLanguage().getASTTranslationUnit(workingCopy, style);
 				IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
 					

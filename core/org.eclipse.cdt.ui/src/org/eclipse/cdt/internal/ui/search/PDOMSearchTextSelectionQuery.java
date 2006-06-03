@@ -48,7 +48,8 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 			
 			for (int i = 0; i < names.length; ++i) {
 				IBinding binding = names[i].resolveBinding();
-				createMatches(language, binding);
+				if (binding != null)
+					createMatches(language, binding);
 			}
 			return Status.OK_STATUS;
 		} catch (CoreException e) {

@@ -216,9 +216,6 @@ public class DOMCompletionContributor implements ICompletionContributor {
         int repLength = completionNode.getLength();
         int repOffset = offset - repLength;
         CCompletionProposal proposal = new CCompletionProposal(repString, repOffset, repLength, null, dispString, idString, 1, viewer);
-
-		proposal.setCursorPosition(repString.length() - 1);
-		
 		proposals.add(proposal);
 	}
 	

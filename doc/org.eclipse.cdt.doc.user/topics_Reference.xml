@@ -83,6 +83,7 @@
 			<topic label="C/C++ File Types" href="reference/cdt_u_mprop_file_types.htm"/>
 			<topic label="C/C++ Indexer" href="reference/cdt_u_mprop_indexer.htm"/>
 			<topic label="Project References" href="reference/cdt_u_mprop_ref.htm"/>
+			<topic label="Refactoring History" href="reference/cdt_u_mprop_refactoring_history.htm"/>
 		</topic>
 		<topic label="Managed Make File Properties" href="reference/cdt_o_mmake_file.htm">
 			<topic label="Info" href="reference/cdt_u_mfile_info.htm"/>

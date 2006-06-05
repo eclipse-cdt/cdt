@@ -224,7 +224,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				String byteStreamHandlerId = getByteStreamHandlerId();
 				String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
 				
-				if (!isBinary) 
+				if (!isBinary && hostEncoding != null) 
 				{
 					String tempStr = new String(buffer, 0, bytesRead);
 
@@ -393,7 +393,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				String byteStreamHandlerId = getByteStreamHandlerId();
 				String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
 				
-				if (!isBinary) 
+				if (!isBinary && srcEncoding != null && hostEncoding != null) 
 				{
 					String tempStr = new String(buffer, 0, bytesRead, srcEncoding);
 

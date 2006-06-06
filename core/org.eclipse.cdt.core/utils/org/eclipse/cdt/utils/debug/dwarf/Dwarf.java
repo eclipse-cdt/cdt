@@ -348,7 +348,8 @@ public class Dwarf {
 					}
 
 					// read the abbrev section.
-					InputStream in = new ByteArrayInputStream(data, offset + 11, length);
+					// Note "length+4" is the total size in bytes of the CU data.
+					InputStream in = new ByteArrayInputStream(data, offset + 11, length+4-11);
 					Map abbrevs = parseDebugAbbreviation(header);
 					parseDebugInfoEntry(requestor, in, abbrevs, header);
 

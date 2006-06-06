@@ -171,7 +171,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 
 	private void addSourceFile(String dir, String name)
 	{
-		if (name == null)
+		if (name == null || name.length() == 0)
 			return;
 		if (name.charAt(0) == '<')	//  don't count the entry "<internal>" from GCCE compiler
 			return;
@@ -237,16 +237,13 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 
 	// Override parent: only handle TAG_Compile_Unit.
 	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List list) {
-		int len = list.size();
 		int tag = (int) entry.tag;
-		for (int i = 0; i < len; i++) {
-			switch (tag) {
-				case DwarfConstants.DW_TAG_compile_unit :
-					processCompileUnit(requestor, list);
-					break;
-				default:
-					break;
-			}
+		switch (tag) {
+			case DwarfConstants.DW_TAG_compile_unit :
+				processCompileUnit(requestor, list);
+				break;
+			default:
+				break;
 		}
 	}
 

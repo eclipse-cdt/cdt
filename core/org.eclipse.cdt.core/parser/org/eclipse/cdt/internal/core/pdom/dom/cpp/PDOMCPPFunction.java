@@ -54,6 +54,8 @@ public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction, ICPPFu
 				ICPPASTParameterDeclaration param = (ICPPASTParameterDeclaration)params[i];
 				IASTName paramName = param.getDeclarator().getName();
 				IBinding binding = paramName.resolveBinding();
+				if (!(binding instanceof ICPPParameter))
+					continue;
 				ICPPParameter paramBinding = (ICPPParameter)binding;
 				setFirstParameter(new PDOMCPPParameter(pdom, this, paramName, paramBinding));
 			}

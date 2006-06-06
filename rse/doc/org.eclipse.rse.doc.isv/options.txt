@@ -1,43 +1,160 @@
 -charset "iso-8859-1"
--sourcepath "../org.eclipse.rse.core/antadapter@sep@../org.eclipse.rse.core/batch@sep@../org.eclipse.rse.core/codeassist@sep@../org.eclipse.rse.core/compiler@sep@../org.eclipse.rse.core/dom@sep@../org.eclipse.rse.core/eval@sep@../org.eclipse.rse.core/formatter@sep@../org.eclipse.rse.core/model@sep@../org.eclipse.rse.core/search@sep@../org.eclipse.rse.debug/model@sep@../org.eclipse.rse.debug/jdi@sep@../org.eclipse.rse.debug/eval@sep@../org.eclipse.rse.debug.ui/ui@sep@../org.eclipse.rse.junit/src@sep@../org.eclipse.rse.junit.runtime/src@sep@../org.eclipse.rse.launching/launching@sep@../org.eclipse.rse.ui/ui@sep@../org.eclipse.rse.ui/core refactoring@sep@../org.eclipse.rse.ui/ui refactoring@sep@../org.eclipse.rse.ui/core extension@sep@../org.eclipse.rse.core.manipulation/refactoring@sep@../org.eclipse.rse.core.manipulation/common"
+-sourcepath "
+../org.eclipse.rse.connectorservice.dstore/src@sep@
+../org.eclipse.rse.connectorservice.local/src@sep@
+../org.eclipse.rse.connectorservice.ssh/src@sep@
+../org.eclipse.rse.core/src@sep@
+../org.eclipse.rse.dstore.security/src@sep@
+../org.eclipse.rse.eclipse.filesystem/src@sep@
+../org.eclipse.rse.files.ui/src@sep@
+../org.eclipse.rse.logging/src@sep@
+../org.eclipse.rse.processes.ui/src@sep@
+../org.eclipse.rse.services/src@sep@
+../org.eclipse.rse.services.dstore/src@sep@
+../org.eclipse.rse.services.files.ftp/src@sep@
+../org.eclipse.rse.services.local/src@sep@
+../org.eclipse.rse.services.ssh/src@sep@
+../org.eclipse.rse.shells.ui/src@sep@
+../org.eclipse.rse.subsystems.files.core/src@sep@
+../org.eclipse.rse.subsystems.files.dstore/src@sep@
+../org.eclipse.rse.subsystems.files.ftp/src@sep@
+../org.eclipse.rse.subsystems.files.local/src@sep@
+../org.eclipse.rse.subsystems.files.ssh/src@sep@
+../org.eclipse.rse.subsystems.processes.core/src@sep@
+../org.eclipse.rse.subsystems.processes.dstore/src@sep@
+../org.eclipse.rse.subsystems.processes.local/src@sep@
+../org.eclipse.rse.subsystems.shells.core/src@sep@
+../org.eclipse.rse.subsystems.shells.dstore/src@sep@
+../org.eclipse.rse.subsystems.shells.local/src@sep@
+../org.eclipse.rse.subsystems.shells.ssh/src@sep@
+../org.eclipse.rse.ui/filters@sep@
+../org.eclipse.rse.ui/persistence@sep@
+../org.eclipse.rse.ui/references@sep@
+../org.eclipse.rse.ui/model@sep@
+../org.eclipse.rse.ui/UI@sep@
+../org.eclipse.rse.ui/subsystems@sep@
+../org.eclipse.rse.ui/systems@sep@"
 -d reference/api
--classpath @rt@@sep@../org.apache.ant/lib/ant.jar@sep@../org.eclipse.debug.core/@dot@sep@../org.eclipse.compare/@dot@sep@../org.eclipse.help/@dot@sep@../org.eclipse.help.ui/@dot@sep@../org.eclipse.core.resources/@dot@sep@../org.eclipse.core.runtime/@dot@sep@../org.eclipse.core.filebuffers/@dot@sep@../org.eclipse.core.expressions/@dot@sep@../org.eclipse.swt.win32.win32.x86/@dot@sep@../org.eclipse.ui/@dot@sep@../org.eclipse.rse.debug/jdi.jar@sep@../org.eclipse.debug.ui/@dot@sep@../org.eclipse.search/@dot@sep@../org.eclipse.jface/@dot@sep@../org.eclipse.jface.text/@dot@sep@../org.eclipse.text/@dot@sep@../org.eclipse.ui.editors/@dot@sep@../org.eclipse.ui.views/@dot@sep@../org.eclipse.ui.workbench/@dot@sep@../org.eclipse.ui.workbench.texteditor/@dot@sep@../org.eclipse.core.variables/@dot@sep@../org.eclipse.ui.ide/@dot@sep@../org.eclipse.rse.junit/@dot@sep@../org.eclipse.osgi/@dot@sep@../org.eclipse.osgi.services/@dot@sep@../org.eclipse.osgi.util/@dot@sep@../org.eclipse.ui.forms/@dot@sep@../org.eclipse.core.commands/@dot@sep@../org.eclipse.ltk.core.refactoring/@dot@sep@../org.eclipse.ltk.ui.refactoring/@dot@sep@../org.eclipse.core.filesystem/@dot@sep@../org.eclipse.core.jobs/@dot@sep@../org.eclipse.equinox.registry/@dot@sep@../org.eclipse.equinox.common/@dot@sep@../org.eclipse.core.contenttype/@dot@sep@../org.eclipse.equinox.preferences/@dot@sep@../org.eclipse.equinox.supplement/@dot@sep@../org.eclipse.core.runtime.content/@dot@sep@../org.eclipse.core.runtime.jobs/@dot@sep@../org.eclipse.core.runtime.preferences/@dot@sep@../org.eclipse.rse.core.manipulation/@dot
+-classpath @rt@
 -breakiterator
 -use
 -splitIndex
 -windowtitle "RSE API Specification"
 -doctitle "RSE API Specification"
 -header "<b>RSE</b><br>Release 1.0"
--bottom "Copyright (c) IBM Corporation and others 2000, 2006.  All Rights Reserved."
+-bottom "Copyright (c) IBM Corporation and others 2000, 2006. All Rights Reserved."
 -group "RSE Core Plug-in Packages" "org.eclipse.rse.core;org.eclipse.rse.core.*"
 -group "RSE UI Plug-in Packages" "org.eclipse.rse.ui;org.eclipse.rse.ui.*"
--link http://java.sun.com/j2se/1.4/docs/api
+-link http://java.sun.com/j2se/1.5/docs/api
 -linkoffline ./../../../org.eclipse.platform.doc.isv/reference/api ../org.eclipse.platform.doc.isv/reference/api
--linkoffline ./../../../org.eclipse.platform.doc.isv/reference/osgi ../org.eclipse.platform.doc.isv/reference/osgi
 
-org.eclipse.rse.core
-org.eclipse.rse.logging
 org.eclipse.rse.connectorservice.dstore
+org.eclipse.rse.connectorservice.dstore.util
 org.eclipse.rse.connectorservice.local
 org.eclipse.rse.connectorservice.ssh
+org.eclipse.rse.core
+org.eclipse.rse.dstore.security
+org.eclipse.rse.dstore.security.preference
+org.eclipse.rse.dstore.security.util
+org.eclipse.rse.dstore.security.widgets
+org.eclipse.rse.dstore.security.wizards
+org.eclipse.rse.eclipse.filesystem
+org.eclipse.rse.eclipse.filesystem.ui.actions
+org.eclipse.rse.files.ui
+org.eclipse.rse.files.ui.actions
+org.eclipse.rse.files.ui.compare
+org.eclipse.rse.files.ui.dialogs
+org.eclipse.rse.files.ui.propertypages
+org.eclipse.rse.files.ui.resources
+org.eclipse.rse.files.ui.search
+org.eclipse.rse.files.ui.view
+org.eclipse.rse.files.ui.widgets
+org.eclipse.rse.files.ui.wizards
+org.eclipse.rse.logging
+org.eclipse.rse.logging.performance
+org.eclipse.rse.processes.ui
+org.eclipse.rse.processes.ui.actions
+org.eclipse.rse.processes.ui.dialogs
+org.eclipse.rse.processes.ui.propertypages
+org.eclipse.rse.processes.ui.view
 org.eclipse.rse.services
+org.eclipse.rse.services.files
+org.eclipse.rse.services.processes
+org.eclipse.rse.services.search
+org.eclipse.rse.services.shells
 org.eclipse.rse.services.dstore
+org.eclipse.rse.services.dstore.files
+org.eclipse.rse.services.dstore.processes
+org.eclipse.rse.services.dstore.rmtservice
+org.eclipse.rse.services.dstore.search
+org.eclipse.rse.services.dstore.shells
+org.eclipse.rse.services.dstore.util
 org.eclipse.rse.services.files.ftp
 org.eclipse.rse.services.local
+org.eclipse.rse.services.local.files
+org.eclipse.rse.services.local.processes
+org.eclipse.rse.services.local.search
+org.eclipse.rse.services.local.shells
 org.eclipse.rse.services.ssh
+org.eclipse.rse.shells.ui
+org.eclipse.rse.shells.ui.actions
+org.eclipse.rse.shells.ui.propertypages
+org.eclipse.rse.shells.ui.view
 org.eclipse.rse.subsystems.files.core
+org.eclipse.rse.subsystems.files.core.model
+org.eclipse.rse.subsystems.files.core.servicesubsystem
+org.eclipse.rse.subsystems.files.core.subsystems
+org.eclipse.rse.subsystems.files.core.util
 org.eclipse.rse.subsystems.files.dstore
+org.eclipse.rse.subsystems.files.dstore.model
+org.eclipse.rse.subsystems.files.dstore.old
+org.eclipse.rse.subsystems.files.dstore.subsystem
 org.eclipse.rse.subsystems.files.ftp
+org.eclipse.rse.subsystems.files.ftp.connectorservice
+org.eclipse.rse.subsystems.files.ftp.model
 org.eclipse.rse.subsystems.files.local
+org.eclipse.rse.subsystems.files.local.model
 org.eclipse.rse.subsystems.files.ssh
-org.eclipse.rse.subsystems.shells.core
-org.eclipse.rse.subsystems.shells.dstore
-org.eclipse.rse.subsystems.shells.local
-org.eclipse.rse.subsystems.shells.ssh
 org.eclipse.rse.subsystems.processes.core
+org.eclipse.rse.subsystems.processes.core.subsystem
+org.eclipse.rse.subsystems.processes.core.subsystem.impl
+org.eclipse.rse.subsystems.processes.servicesubsystem
 org.eclipse.rse.subsystems.processes.dstore
 org.eclipse.rse.subsystems.processes.local
+org.eclipse.rse.subsystems.shells.core
+org.eclipse.rse.subsystems.shells.core.model
+org.eclipse.rse.subsystems.shells.core.subsystems
+org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem
+org.eclipse.rse.subsystems.shells.dstore
+org.eclipse.rse.subsystems.shells.dstore.model
+org.eclipse.rse.subsystems.shells.local
+org.eclipse.rse.subsystems.shells.local.model
+org.eclipse.rse.subsystems.shells.ssh
+org.eclipse.rse.filters
+org.eclipse.rse.persistence
+org.eclipse.rse.persistence.dom
+org.eclipse.rse.references
+org.eclipse.rse.model
 org.eclipse.rse.ui
-org.eclipse.rse.files.ui
-org.eclipse.rse.shells.ui
-org.eclipse.rse.processes.ui
+org.eclipse.rse.ui.actions
+org.eclipse.rse.ui.dialogs
+org.eclipse.rse.ui.filters
+org.eclipse.rse.ui.filters.actions
+org.eclipse.rse.ui.filters.dialogs
+org.eclipse.rse.ui.messages
+org.eclipse.rse.ui.open
+org.eclipse.rse.ui.operations
+org.eclipse.rse.ui.validators
+org.eclipse.rse.ui.view
+org.eclipse.rse.ui.view.monitor
+org.eclipse.rse.ui.view.scratchpad
+org.eclipse.rse.ui.view.search
+org.eclipse.rse.ui.view.team
+org.eclipse.rse.ui.widgets
+org.eclipse.rse.ui.widgets.services
+org.eclipse.rse.ui.wizards
+org.eclipse.rse.core.servicesubsystem
+org.eclipse.rse.core.subsystems
+org.eclipse.rse.core.subsystems.util
+org.eclipse.rse.core
+org.eclipse.rse.core.comm

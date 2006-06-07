@@ -18,6 +18,17 @@ sub ask($$) {
 	return $ans;
 }
 
+sub makeAbsolute($) {
+	my $path = File::Spec->canonpath($_[0]);
+	if (!File::Spec->file_name_is_absolute($path)) {
+		$current = `pwd`;
+		chomp($current);
+		$path = File::Spec->catdir($current, $path);
+		$path = File::Spec->canonpath($path);
+	}
+	return $path;
+}
+
 # $eclipse is the location of the basic PDE and plugins to compile against
 # This should include the org.eclipse.pde.build project
 $eclipse = "../eclipse"; 
@@ -29,6 +40,10 @@ $builder = ".";
 # $working is where the build is actually done, does not need to exist
 $working = "../working";
 
+# make these absolute paths
+$eclipse = makeAbsolute($eclipse);
+$builder = makeAbsolute($builder);
+$working = makeAbsolute($working);
 $plugins = File::Spec->catdir($eclipse, "plugins");
 $baseBuilderGlob = File::Spec->catdir($plugins, "org.eclipse.pde.build*");
 

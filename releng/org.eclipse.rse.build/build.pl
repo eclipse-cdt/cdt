@@ -68,4 +68,4 @@ $incantation .= "-DmapVersionTag=${tag} ";
 
 print($incantation);
 
-#system($incantation);
+system($incantation);

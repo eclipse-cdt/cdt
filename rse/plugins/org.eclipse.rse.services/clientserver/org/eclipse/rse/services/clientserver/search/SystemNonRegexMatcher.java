@@ -233,8 +233,8 @@ public class SystemNonRegexMatcher {
 		fBound= fLength;
 	}
 	/**
-	 * Parses the given pattern into segments seperated by wildcard '*' characters.
-	 * @param p, a String object that is a simple regular expression with ‘*’ and/or ‘?’
+	 * Parses the given pattern into segments separated by wildcard '*' characters.
+	 * @param p, a String object that is a simple regular expression with '*' and/or '?'
 	 */
 	private void parseWildCards() {
 		if(fPattern.startsWith("*"))//$NON-NLS-1$

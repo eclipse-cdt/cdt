@@ -989,11 +989,11 @@ Contributors:
  <extension
        point="org.eclipse.rse.ui.persistenceProviders">
     <persistenceProvider
-          class="org.eclipse.rse.persistence.SerializingProvider"
+          class="org.eclipse.rse.internal.persistence.SerializingProvider"
           id="org.eclipse.rse.persistence.SerializingProvider"
           name="Serializing Persistence Provider"/>
     <persistenceProvider
-          class="org.eclipse.rse.persistence.PropertyFileProvider"
+          class="org.eclipse.rse.internal.persistence.PropertyFileProvider"
           id="org.eclipse.rse.persistence.PropertyFileProvider"
           name="Property File Persistence Provider"/>
  </extension>

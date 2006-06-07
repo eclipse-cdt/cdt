@@ -166,13 +166,11 @@ public class RSEDOMImporter implements IRSEDOMImporter
 		IConnectorService service = null;
 		
 		// get attributes of the service
-		String name = connectorServiceNode.getName();
-		String type = connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
-		String group = connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_GROUP).getValue();
+//		String name = connectorServiceNode.getName();
+//		String type = connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
+//		String group = connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_GROUP).getValue();
 		boolean useSSL = getBooleanValue(connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_USE_SSL).getValue());
 		
-       
-				
 		// first restore subsystems (since right now we need subsystem to get at service
 		RSEDOMNode[] ssChildren = connectorServiceNode.getChildren(IRSEDOMConstants.TYPE_SUBSYSTEM);
 		for (int s = 0; s < ssChildren.length; s++)

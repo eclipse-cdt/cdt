@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.persistence;
+package org.eclipse.rse.internal.persistence;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,6 +32,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.SystemResourceManager;
+import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
 

@@ -65,6 +65,15 @@ public abstract class PDOMFullIndexerJob implements IPDOMIndexerTask {
 		
 		pdom.acquireWriteLock();
 		try {
+			// First clear out the symbols in the includes
+			IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
+			for (int i = 0; i < includes.length; ++i) {
+				String incname = includes[i].getPath();
+				PDOMFile incfile = pdom.getFile(incname);
+				if (incfile != null)
+					incfile.clear();
+			}
+			
 			addSymbols(tu.getLanguage(), ast);
 		} finally {
 			pdom.releaseWriteLock();

@@ -186,7 +186,7 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 	
 			IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
 			for (int i = 0; i < includes.length; ++i) {
-				String incname = includes[i].getFileLocation().getFileName();
+				String incname = includes[i].getPath();
 				PDOMFile incfile = pdom.getFile(incname);
 				if (incfile != null)
 					incfile.clear();

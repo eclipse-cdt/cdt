@@ -81,6 +81,6 @@ $incantation .= "-DbuildType=${buildType} ";
 $incantation .= "-DbuildId=${buildId} ";
 $incantation .= "-DmapVersionTag=${tag} ";
 
-print($incantation);
+print("${incantation}\n");
 
 system($incantation);

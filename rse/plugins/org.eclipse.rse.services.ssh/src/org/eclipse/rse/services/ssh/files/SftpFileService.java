@@ -15,6 +15,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -30,7 +31,6 @@ import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.ssh.Activator;
 import org.eclipse.rse.services.ssh.ISshService;
 import org.eclipse.rse.services.ssh.ISshSessionProvider;
-import org.eclipse.swt.widgets.Display;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -77,24 +77,43 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 	}
 	
+	/**
+	 * Check if the main ssh session is still connected.
+	 * Notify ConnectorService of lost session if necessary.
+	 * @return <code>true</code> if the session is still healthy.
+	 */
+	protected boolean checkSessionConnected() {
+		Session session = fSessionProvider.getSession();
+		if (session==null) {
+			// ConnectorService has disconnected already. Nothing to do.
+			return false;
+		} else if (session.isConnected()) {
+			// Session still healthy.
+			return true;
+		} else {
+			// Session was lost, but ConnectorService doesn't know yet.
+			// notify of lost session. May reconnect asynchronously later.
+			fSessionProvider.handleSessionLost();
+			return false;
+		}
+	}
+	
 	protected ChannelSftp getChannel(String task) throws Exception
 	{
 		Activator.trace(task);
 		if (fChannelSftp==null || !fChannelSftp.isConnected()) {
 			Activator.trace(task + ": channel not connected: "+fChannelSftp); //$NON-NLS-1$
-			Session session = fSessionProvider.getSession();
-			if (session!=null) {
-				if (!session.isConnected()) {
-					//notify of lost session. May reconnect asynchronously later.
-					fSessionProvider.handleSessionLost();
-					//dont throw an exception here, expect jsch to throw something useful 
-				} else {
-					//session connected but channel not: try to reconnect
-					//(may throw Exception)
-					connect();
-				}
+			if (checkSessionConnected()) {
+				//session connected but channel not: try to reconnect
+				//(may throw Exception)
+				connect();
+			} else {
+				//session was lost: returned channelSftp will be invalid.
+				//This will lead to jsch exceptions (NPE, or disconnected)
+				//which are ignored for now since the connection is about
+				//to be disconnected anyways.
+				throw new IOException("jsch session lost");
 			}
-			//TODO might throw NPE if session has been disconnected
 		}
 		return fChannelSftp;
 	}
@@ -174,8 +193,14 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			//of a symbolic link that turns out to point to a file rather than
 			//a directory. In this case, the result is probably expected.
 			//We should try to classify symbolic links as "file" or "dir" correctly.
-			Activator.trace("SftpFileService.internalFetch failed: "+e.toString()); //$NON-NLS-1$
-			e.printStackTrace();
+			if (checkSessionConnected()) {
+				//TODO not quite sure who should really check for session conneced,
+				//perhaps this should be done in the caller? - If we eventually
+				//want to support re-connect and re-doing the failed operation 
+				//after reconnect this might be necessary.
+				Activator.trace("SftpFileService.internalFetch failed: "+e.toString()); //$NON-NLS-1$
+				e.printStackTrace();
+			}
 		}
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
 	}

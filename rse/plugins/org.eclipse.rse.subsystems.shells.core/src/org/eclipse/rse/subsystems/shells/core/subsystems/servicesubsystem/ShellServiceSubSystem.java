@@ -33,6 +33,7 @@ import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
+import org.eclipse.swt.widgets.Shell;
 
 
 
@@ -40,6 +41,8 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 {
 	protected String _userHome = null;
 	protected IShellService _hostService;
+
+
 	public ShellServiceSubSystem(IHost host, IConnectorService connectorService, IShellService hostService)
 	{
 		super(host, connectorService);
@@ -103,7 +106,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 
 
 		IShellService service = getShellService();	
-		IHostShell hostShell = service.launchShell(monitor, cwd, getUserAndHostEnvVarsAsStringArray());
+		IHostShell hostShell = service.runCommand(monitor, cwd, cmd, getUserAndHostEnvVarsAsStringArray());
 		IServiceCommandShell cmdShell = createRemoteCommandShell(this, hostShell);
 		hostShell.addOutputListener(cmdShell);
 	
@@ -176,7 +179,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 			IServiceCommandShell cmdWrapper = (IServiceCommandShell)command;
 			cmdWrapper.writeToShell(cmd);
 			cmdWrapper.updateHistory(cmd);
-		}
+		}			
 	}
 	
 	protected IServiceCommandShell createRemoteCommandShell(IRemoteCmdSubSystem cmdSS, IHostShell hostShell)

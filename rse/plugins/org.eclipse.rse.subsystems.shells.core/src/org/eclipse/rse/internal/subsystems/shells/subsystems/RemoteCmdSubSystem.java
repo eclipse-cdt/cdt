@@ -488,7 +488,15 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 */
 	public IRemoteCommandShell getDefaultShell(Shell shell) throws Exception
 	{
-		return null;
+		IRemoteCommandShell[] shells = getShells();
+		if (shells == null || shells.length == 0)
+		{
+			return runShell(shell, null);
+		}
+		else
+		{
+			return shells[0];
+		}
 	}
 
 	/**

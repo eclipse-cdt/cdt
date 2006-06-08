@@ -85,6 +85,16 @@ Contributors:
                enablesFor="1"
                id="org.eclipse.rse.shells.ui.actions.LaunchShellActionDelegate">
          </action>
+         <!--
+                  <action
+               label="test command"
+               icon="./icons/full/obj16/systemshell.gif"
+               tooltip="%Launch_Shell_Tooltip"
+               class="org.eclipse.rse.shells.ui.actions.LaunchCommandActionDelegate"
+               enablesFor="1"
+               id="org.eclipse.rse.shells.ui.actions.LaunchCommandActionDelegate">
+         </action>
+         -->
        </objectContribution>    
    </extension>
    

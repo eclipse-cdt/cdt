@@ -229,7 +229,7 @@ public class ClientCommandHandler extends CommandHandler
 
 			commandRoot.addNestedData(command, false);
 		}
-
+		
 		_sender.sendDocument(commandRoot, 3);
 		
 		if (_pendingKeepAliveConfirmation != null)
@@ -254,7 +254,7 @@ public class ClientCommandHandler extends CommandHandler
 			}
 			_sender.sendClass(document);
 		}
-		
+
 
 	}
 	

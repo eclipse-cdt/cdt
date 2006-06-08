@@ -79,7 +79,7 @@ managed build system and how to extend it.</font></td>
 </table>
 <table border="1">
  <tr>
-    <td width="50%" rowspan="3">Authors</td>
+    <td width="50%" rowspan="4">Authors</td>
     <td width="50%"> <a href="mailto:sevoy@ca.ibm.com">Sean Evoy</a></td>
   </tr>
   <tr>
@@ -88,6 +88,9 @@ managed build system and how to extend it.</font></td>
   <tr>
     <td width="50%"><a href="mailto:mikhail.sennikovsky@intel.com">Mikhail 
 	Sennikovsky</a></td>
+  </tr>
+  <tr>
+  <td width="50%"><a href="mailto:recoskie@ca.ibm.com">Chris Recoskie</a></td>
   </tr>
   <tr>
     <td width="50%" rowspan="6">Revision Date</td>
@@ -133,8 +136,8 @@ managed build system and how to extend it.</font></td>
 <div class="section">Table of Contents</div>
 <br>
 <div class="indent"><a href="#_TocSectionIntro">1 Introduction</a>
-<div class="indent"><a href="#_TocSectionIntro_1">1.1 Who Needs This Information</a></div>
-<div class="indent"><a href="#_TocSectionIntro_2">1.2 Managed Build System Overview</a></div>
+<A href="#_TocSectionIntro_1"><DIV class="indent">1.1 Who Needs This Information</DIV></A>
+<A href="#_TocSectionIntro_2"><DIV class="indent">1.2 Managed Build System Overview</DIV></A>
 <div class="indent"><a href="#_TocSectionIntro_3">1.3 The Standard Build System</a></div>
 </div>
 <div class="indent"><a href="#_TocSectionUIModel">2 User Model</a>
@@ -6948,11 +6951,565 @@ public boolean isOptionEnabled(<br>
 extension point.&nbsp; To specify a dynamic element provider, your build 
 definitions must define a dynamicElementProvider element as described in § 3.19. </p>
 <p class="subsection"><a name="_TocSectionDynamic_14">7.14 Adding Custom Pages to the New Project Wizard</a></p>
-<p>This section will be provided in a future version of the document.&nbsp; For 
-now, refer to the Custom Project Wizard Pages design document in bugzilla 
-#90334.</p>
+
+
+
+
+
 </a>
-  <p class="subsection"><a name="_TocSectionStartup_15"></a><a name="_TocSectionTutorial_18"> 7.15 Defining Startup Behavior for Configuration Loading</a></p>
+<P class="MsoNormal">One aspect that toolchain developers have requested
+more flexibility in is the ability to customize the new project wizard.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>Developers wish to be able to
+add custom pages to the wizard to facilitate such things as
+automatically setting launch properties for the project, generating
+configuration files for the project, and other various custom settings
+and behaviour.<BR>
+<BR>
+Developers might wish that such customizations be
+toolchain specific, or possibly be global to all toolchains.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>At the same time or separately,
+they may wish their pages to appear only when a project is of a certain
+nature (e.g. C vs. C++) or for certain project types (e.g. executable
+vs. library).<BR>
+<BR>External interfaces are provided by a single
+extension point:<BR>
+<BR>7.14.1 org.eclipse.cdt.managedbuilder.ui.newWizardPages</P>
+<P class="MsoNormal">This extension point allows for the specification
+of pages to the New Managed C/C++ wizards.<SPAN style="mso-spacerun:yes">&nbsp;
+</SPAN>Via this extension point, the developer may specify one or more
+wizard pages to add to the wizard, and optionally only add these pages
+if certain conditions on the project type, project toolchain, and
+project nature are met.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>The
+developer may also specify a Java class which performs any operations
+pursuant to the state of the wizard when the user clicks Finish.</P>
+<P>7.14.1.1 Schema</P>
+<P>7.14.1.1.1 wizardPage Element</P>
+<P class="MsoNormal">One or more instances of this element are required.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>Each instance of this element
+defines an additional page which is added to the New Project wizard.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>Pages are added after the
+default pages provided by MBS.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>Pages
+are added in the order they are discovered.</P>
+<P class="MsoNormal">Note that the IWizardPage interface allows a page
+to specify programmatically and dynamically at runtime what its previous
+and next pages are.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>This
+element does not trump that behaviour, but rather just specifies the
+order in which the pages are added to the wizard (and hence the order in
+which the pages appear if they do not override the previous and next
+page methods).</P>
+<P class="MsoNormal">For convenience, here is a UML class diagram of the
+IWizardPage interface.<BR>
+<BR>
+<IMG border="0" src="IWizardPage.jpeg" width="176" height="196">
+<BR>
+<BR><A name="OLE_LINK10"></A><A name="OLE_LINK9"><SPAN
+	style="mso-bookmark:OLE_LINK10">Wizard pages as GUI elements by
+themselves are really not all that useful.<SPAN style="mso-spacerun:yes">&nbsp;
+</SPAN>More than likely if someone is defining their own wizard pages
+it?s because they need some additional operations to happen upon project
+creation in addition to the stock behaviour of creating a basic project,
+and they want to use their new wizard pages to provide a front end to
+these operations.</SPAN></A></P>
+<P class="MsoNormal"><SPAN style="mso-bookmark:OLE_LINK9"><SPAN
+	style="mso-bookmark:
+OLE_LINK10">As such, along with a specification
+of the GUI wizard page, ISVs may specify a runnable operation that will
+be executed in the wizard?s doRunEpilogue() method.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>These contributions will all be
+executed in the order that the wizard pages were added to the wizard.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>Not all pages need have such a
+contribution however, as ISVs may need to perform all the operations
+associated with their pages as a group.<SPAN style="mso-spacerun:yes">&nbsp;
+</SPAN>In cases such as this the ISV can define an operation for one of
+the pages and it can pull data from any of the other pages as required.</SPAN></SPAN>
+
+</P>
+<P>wizardPage
+Element Schema:</P>
+<TABLE class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0"
+	style="border-collapse:collapse;mso-table-layout-alt:fixed;border:none;
+ mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:480;mso-padding-alt:
+ 0cm 5.4pt 0cm 5.4pt;mso-border-insideh:.5pt solid windowtext;mso-border-insidev:
+ .5pt solid windowtext">
+	<TR style="mso-yfti-irow:0">
+		<TD width="151" valign="top"
+			style="width:4.0cm;border:solid windowtext 1.0pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Attribute</P>
+		</TD>
+		<TD width="363" valign="top"
+			style="width:272.4pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Description</P>
+		</TD>
+		<TD width="81" valign="top"
+			style="width:60.6pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Required?</P>
+		</TD>
+	</TR>
+	<TR style="mso-yfti-irow:1">
+		<TD width="151" valign="top"
+			style="width:4.0cm;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Id</P>
+		</TD>
+		<TD width="363" valign="top"
+			style="width:272.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">A unique identifier for
+		the page which will be used to reference the page</P>
+		</TD>
+		<TD width="81" valign="top"
+			style="width:60.6pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Yes</P>
+		</TD>
+	</TR>
+	<TR style="mso-yfti-irow:2">
+		<TD width="151" valign="top"
+			style="width:4.0cm;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">pageClass</P>
+		</TD>
+		<TD width="363" valign="top"
+			style="width:272.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Specifies the Java class
+		which implements the added page.<SPAN style="mso-spacerun:yes">&nbsp;
+		</SPAN>This class must implement the <A
+			name="OLE_LINK7"><SPAN style="mso-bookmark:OLE_LINK8"><FONT
+			face="Courier New" size="3">org.eclipse.jface.wizard.IWizardPage</FONT>
+		</SPAN></A>interface</P>
+		</TD>
+		<TD width="81" valign="top"
+			style="width:60.6pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Yes</P>
+		</TD>
+	</TR>
+	<TR style="mso-yfti-irow:3;mso-yfti-lastrow:yes">
+		<TD width="151" valign="top"
+			style="width:4.0cm;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">operationClass</P>
+		</TD>
+		<TD width="363" valign="top"
+			style="width:272.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Specifies the Java class
+		which implements the operations associated with this page.<SPAN
+			style="mso-spacerun:yes">&nbsp; </SPAN>The class must implement the
+		
+		<FONT face="Courier New">java.lang.Runnable</FONT> interface</P>
+		</TD>
+		<TD width="81" valign="top"
+			style="width:60.6pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><A name="_Ref99249701">7.14.1.1.2 projectType element</A></P>
+<P class="MsoNormal">This is an optional child element of wizardPage
+which specifies a projectType for which the additional pages should
+apply.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>One instance of this
+element is provided per toolchain supported by the page.</P>
+<P class="MsoNormal">If no projectType elements are specified, then it
+is assumed that the page potentially applies to all projectTypes,
+although it may still be excluded based on <A
+	name="OLE_LINK5"><SPAN style="mso-bookmark:OLE_LINK6">toolchain (§<SPAN
+	style='mso-field-code:" REF _Ref98746447 \\r \\h "'>7.14.1.1.3</SPAN>) </SPAN></A>or project nature (§<SPAN
+	style='mso-field-code:" REF _Ref98746447 \\r \\h "'>4.1.1.1.4</SPAN>).</P>
+<P>projectType Element Schema:</P>
+<TABLE class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0"
+	style="border-collapse:collapse;mso-table-layout-alt:fixed;border:none;
+ mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:480;mso-padding-alt:
+ 0cm 5.4pt 0cm 5.4pt;mso-border-insideh:.5pt solid windowtext;mso-border-insidev:
+ .5pt solid windowtext">
+	<TR style="mso-yfti-irow:0">
+		<TD width="151" valign="top"
+			style="width:4.0cm;border:solid windowtext 1.0pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Attribute</P>
+		</TD>
+		<TD width="363" valign="top"
+			style="width:272.4pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Description</P>
+		</TD>
+		<TD width="81" valign="top"
+			style="width:60.6pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Required?</P>
+		</TD>
+	</TR>
+	<TR style="mso-yfti-irow:1;mso-yfti-lastrow:yes">
+		<TD width="151" valign="top"
+			style="width:4.0cm;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">projectTypeID</P>
+		</TD>
+		<TD width="363" valign="top"
+			style="width:272.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">The unique ID of a
+		projectType for which this page should appear.</P>
+		</TD>
+		<TD width="81" valign="top"
+			style="width:60.6pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Yes</P>
+		</TD>
+	</TR>
+</TABLE>
+<P>7.14.1.1.3 toolchain Element</P>
+<P class="MsoNormal">This is an optional child element of wizardPage
+which specifies a toolchain for which the additional pages should apply.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>One instance of this element is
+provided per toolchain supported by the page.</P>
+<P class="MsoNormal"><A name="OLE_LINK1"><SPAN
+	style="mso-bookmark:OLE_LINK2">If no toolchain elements are specified,
+then it is assumed that the page potentially applies to all toolchains,
+although it may still be excluded based on project type (§<SPAN
+	style='mso-field-code:" REF _Ref99249701 \\r \\h "'>7.14.1.1.2</SPAN>) or project nature (§<SPAN
+	style='mso-field-code:
+" REF _Ref98746447 \\r \\h "'>7.14.1.1.4</SPAN>)</SPAN></A></P>
+<P class="MsoNormal">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<SPAN style="mso-bookmark:OLE_LINK2"></SPAN>toolchain
+Element Schema</P>
+<TABLE class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0"
+	style="border-collapse:collapse;mso-table-layout-alt:fixed;border:none;
+ mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:480;mso-padding-alt:
+ 0cm 5.4pt 0cm 5.4pt;mso-border-insideh:.5pt solid windowtext;mso-border-insidev:
+ .5pt solid windowtext">
+	<TR style="mso-yfti-irow:0">
+		<TD width="151" valign="top"
+			style="width:4.0cm;border:solid windowtext 1.0pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Attribute</P>
+		</TD>
+		<TD width="363" valign="top"
+			style="width:272.4pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Description</P>
+		</TD>
+		<TD width="81" valign="top"
+			style="width:60.6pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Required?</P>
+		</TD>
+	</TR>
+	<TR style="mso-yfti-irow:1">
+		<TD width="151" valign="top"
+			style="width:4.0cm;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">toolchainID</P>
+		</TD>
+		<TD width="363" valign="top"
+			style="width:272.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">The unique ID of a
+		toolchain for which this page should appear.</P>
+		</TD>
+		<TD width="81" valign="top"
+			style="width:60.6pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Yes</P>
+		</TD>
+	</TR>
+	<TR style="mso-yfti-irow:2;mso-yfti-lastrow:yes">
+		<TD width="151" valign="top"
+			style="width:4.0cm;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">versionsSupported</P>
+		</TD>
+		<TD width="363" valign="top"
+			style="width:272.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">A comma separated list of
+		specific versions of the toolchain that are supported by the page.<SPAN
+			style="mso-spacerun:yes">&nbsp; </SPAN>If not specified, it is
+		assumed that this page supports the toolchain regardless of version.</P>
+		</TD>
+		<TD width="81" valign="top"
+			style="width:60.6pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">No</P>
+		</TD>
+	</TR>
+
+
+</TABLE>
+<P><A name="_Ref98746447">7.14.1.1.4 nature Element</A></P>
+<P class="MsoNormal">This optional child element of wizardPage specifies
+the project nature(s) for which the additional pages should apply. <SPAN
+	style="mso-spacerun:yes">&nbsp;</SPAN><SPAN style="mso-spacerun:yes">&nbsp;</SPAN>One
+instance of this element is provided per nature supported.</P>
+<P class="MsoNormal"><SPAN style="mso-spacerun:yes">&nbsp;</SPAN>This
+would for example allow one to add pages to the New Managed C Project
+wizard but not the New Managed C++ project wizard, or other hypothetical
+natures that might be supported by MBS in the future (e.g. someday there
+might be a Fortran nature).</P>
+<P class="MsoNormal">If no natureID elements are specified, then it is
+assumed that the page potentially applies to all project natures,
+although it may still be excluded based on project type (§<SPAN
+	style='mso-field-code:" REF _Ref99249701 \\r \\h "'>7.14.1.1.2</SPAN>) or toolchain (§<SPAN
+	style='mso-field-code:" REF _Ref98746447 \\r \\h "'>4.1.1.1.3</SPAN>)</P>
+<P>natureID element Schema:</P>
+<TABLE class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0"
+	style="border-collapse:collapse;mso-table-layout-alt:fixed;border:none;
+ mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:480;mso-padding-alt:
+ 0cm 5.4pt 0cm 5.4pt;mso-border-insideh:.5pt solid windowtext;mso-border-insidev:
+ .5pt solid windowtext">
+	<TR style="mso-yfti-irow:0">
+		<TD width="151" valign="top"
+			style="width:4.0cm;border:solid windowtext 1.0pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Attribute</P>
+		</TD>
+		<TD width="363" valign="top"
+			style="width:272.4pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Description</P>
+		</TD>
+		<TD width="81" valign="top"
+			style="width:60.6pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Required?</P>
+		</TD>
+	</TR>
+	<TR style="mso-yfti-irow:1;mso-yfti-lastrow:yes">
+		<TD width="151" valign="top"
+			style="width:4.0cm;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">natureID</P>
+		</TD>
+		<TD width="363" valign="top"
+			style="width:272.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">The unique ID of a nature
+		(org.eclipse.core.resources.natures) for which this page should
+		appear.</P>
+		</TD>
+		<TD width="81" valign="top"
+			style="width:60.6pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+		<P class="MsoNormal" style="margin-left:0cm">Yes</P>
+		</TD>
+	</TR>
+
+
+</TABLE>
+<P class="MsoNormal"><BR>
+<BR>7.14.2 High-Level Architecture<BR>
+<BR>7.14.2.1 System Overview<BR>
+<BR>The custom wizard pages subsystem in MBS is responsible for managing:</P>
+<UL>
+	<LI>Which pages exist in the system, and their associated attributes</LI>
+	<LI>
+
+	Whether pages should be shown in a given
+	wizard based upon what options the user has selected in previous pages
+	(i.e. project nature, toolchain, project type).</LI>
+	<LI>What order pages are shown in as the user navigates the wizard</LI>
+	<LI>
+
+	What operations should be executed in
+	association to the page during the wizard?s doRunEpilogue() method.</LI>
+	
+</UL>
+<P><BR>The main entry point to the system is a central manager class calledl MBSCustomPageManager.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>This
+class is responsible for managing classes which handle the
+aggregation of page data (MBSCustomPageData).</P>
+<P class="MsoNormal">For convenience sake, an abstract base class for wizard pages exists (MBSCustomPage) which ISVs can subclass to implement the default behaviour of
+allowing the page manager to completely control the ordering of pages.</P>
+<P class="MsoNormal">The following class diagram shows how these
+new classes fit into the existing wizard system in MBS in terms of class
+hierarchies and associations.<BR><BR>
+<IMG border="0" src="classdiagram.jpeg" width="1454" height="1711">
+</P>
+<H5>Figure 12: High level view of MBS wizard system</H5>
+<P><BR>
+As you can see in Figure 12, there are two MBS wizards, one for C projects and one for C++. These
+wizards ultimately inherit some of their behaviour from the generic
+wizards provided by the CDT's core UI. There are several wizard pages that always appear in the MBS wizard, which allow the user to select the project name, project location, and MBS project type for their project. The wizards defer to the MBSCustomPageManager to handle any custom pages that might be present in the system.</P>
+<P><BR>7.14.3 Low-Level Architecture
+</P>
+<P><BR>Drilling down into the custom wizard page system itself, we see the following:<BR>
+<BR>
+<IMG border="0" src="classdiagram2.jpeg" width="776" height="1052">
+</P>
+<H5>Figure 12: High level view of custom wizard system</H5>
+<P><BR>The MBSCustomPageManager class is the main entry point to the system. It is responsible for loading all of the extensions which provide custom wizard pages, and storing that data for later use by the wizard. It keeps a list of records of these pages (MBSCustomPageData) which act as a repository for everything that needs to be known about the page, including what circumstances it should be shown under, and what actual IWizardPage should be shown when the page is displayed.<BR>
+<BR>For convenience, there is an abstract base class (MBSCustomPage) which ISVs can subclass to get the most commonly desired behaviour from their pages. Most notably, the provided implementation contained in this class consults the MBSCustomPageManager to determine what wizard pages appear before and after the page, which is necessary to ensure that all custom pages in the system are displayed when they should be.<BR>
+<BR>7.14.3.1 <SPAN style="mso-list:Ignore">M</SPAN>BSCustomPageManager</P>
+<P class="MsoNormal">This class is responsible
+for:</P>
+<UL>
+	<LI>Maintaining the set of custom pages as
+discovered by the wizard and allowing them to be referenced by string ID</LI>
+	<LI>Managing the published data which pages wish to
+make available to other pages</LI>
+	<LI>
+	Managing 
+	the visibility and ordering of custom pages within the wizard as the
+	user navigates between pages.</LI>
+</UL>
+<P><BR>This class is a singleton.
+All non-constructor methods are static.</P>
+<P class="MsoNormal">When the wizard is initialized, it
+makes a call to MBSCustomPageManager.loadExtensions(). This method looks contributions to the org.eclipse.cdt.managedbuilder.ui.newWizardPages
+extension point.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>The loaded data is used to
+instantiate and populate an MBSCustomPageData object for each page
+discovered.</P>
+<P class="MsoNormal">As the user manipulates the wizard, each page can
+publish data they wish to export for use by other pages.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>This is done via the
+addPageProperty() method, which allows for the storage of string data by
+string key, using the string ID of the page as a sort of namespace.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>The data can be
+retrieved by other pages via the getPageProperty() method, and this is the standard way for pages to interface to eachother.</P>
+<P class="MsoNormal">Individual pages are expected to somehow consult
+the getNextPage() and getPreviousPage() methods of the manager when
+their own getNextPage() and getPreviousPage() methods are called by the
+wizard.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>This allows the
+pages to properly navigate amongst eachother while taking into account
+user choices such as project nature, toolchain, and project type.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>It should be noted that the
+manager can only do so much as it fills the role of an advisor.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>Custom pages are still
+theoretically free to ignore its existence, although this is strongly
+discouraged.<BR>
+<BR>
+<IMG border="0" src="MBSCustomPageManager.jpeg" width="243" height="585">
+<BR>
+<BR>
+
+
+</P>
+<P><SPAN style="mso-bookmark:
+OLE_LINK12">7.14.3.2 MBSCustomPageData</SPAN>
+<SPAN style="mso-bookmark:OLE_LINK12"></SPAN><SPAN
+	style="mso-bookmark:OLE_LINK11"></SPAN></P>
+<P class="MsoNormal">This class provides data aggregation capabilities
+for the page manager to store information on a custom wizard page.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>On startup, the page manager
+loads all contributions to the newWizardPages extension point, and
+stores the loaded data in these records for later use. There is a nested class, ToochainData, which is used to maintain information on each individual toolchain a given custom page supports. The MBSCustomPage manager calls various methods on this class (e.g. MBSCustomPageData.shouldBeVisibleForNature()) to determine when a given page should be visible in the wizard.<BR>
+<BR>
+<IMG border="0" src="MBSCustomPageData.jpeg" width="238" height="604">
+</P>
+<P><BR>
+<SPAN style="mso-bookmark:
+OLE_LINK12">7.14.3.3 
+
+</SPAN>MBSCustomPage
+
+</P>
+<P class="MsoNormal">This abstract class provides a convenient, partial
+implementation of the IWizardPage interface.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>This class provides
+implementations of the getNextPage() and getPreviousPage() methods which
+consult with the page manager to determine which pages are to be
+displayed.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>If an ISV?s
+custom pages do not subclass MBSCustomPage then their page
+implementation must be carefully coded to function properly while still
+respecting the rules laid out by the page manager.<BR>
+<BR>
+<IMG border="0" src="MBSCustomPage.jpeg" width="199" height="234">
+<BR>
+<BR>7.14.4 Limitations<BR>
+<BR>
+
+
+<A name="_Toc526070826">Currently there is no way for ISVs to
+intermingle their wizard pages amidst the ones defined in MBS, or amidst
+the ones created by other plugins in general.<SPAN
+	style="mso-spacerun:yes">&nbsp; </SPAN>In the future it might be
+possible to provide an extension point which would allow an ISV to
+customize this ordering for their product.</A></P>
+<P class="MsoNormal"><SPAN style="mso-bookmark:_Toc526070826">This would
+be problematic though as it would be possible for multiple ISVs to
+attempt to specify such an ordering within the same installation of
+Eclipse/CDT.</SPAN></P>
+<P class="MsoNormal"><SPAN style="mso-bookmark:_Toc526070826">It would
+also be problematic as certain custom pages would rely on the selected
+project type or toolchain, and with a reordering mechanism, ISVs would
+have to be careful to not try to put such pages ahead of the page on
+which that data is selected.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>If
+a developer were reordering pages that they themselves did not create,
+they would have to tread extremely carefully to properly manage these
+and other ordering constraints.</SPAN></P>
+<p class="subsection"><a name="_TocSectionStartup_15"></a><a name="_TocSectionTutorial_18"> 7.15 Defining Startup Behavior for Configuration Loading</a></p>
   <p>Tool integrators may require that a plugin contain all the build configurations before projects are loaded. Use of this interface insures that a plugin will have access to build configurations before project inforamation is loaded in the workbench. Two methods can be used to access configuration information just after build definitions have been loaded and then again after the build definitions have been resolved. Added as enhancement to <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=123275">bug 123275</a>. </p>
   <blockquote>
     <p class="style1">	public interface IManagedBuildDefinitionsStartup {</p>

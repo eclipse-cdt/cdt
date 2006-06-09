@@ -32,4 +32,5 @@ public interface IString {
 	public char[] getChars() throws CoreException;
 	public String getString() throws CoreException;
 	
+	public void delete() throws CoreException;
 }

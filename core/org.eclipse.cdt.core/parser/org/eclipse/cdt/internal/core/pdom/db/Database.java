@@ -27,6 +27,9 @@ public class Database {
 	private final RandomAccessFile file;
 	Chunk[] toc;
 	
+	private long malloced;
+	private long freed;
+	
 	// public for tests only, you shouldn't need these
 	public static final int VERSION_OFFSET = 0;
 	public static final int CHUNK_SIZE = 1024 * 16;
@@ -46,29 +49,16 @@ public class Database {
 			// Allocate chunk table, make sure we have at least one
 			long nChunks = file.length() / CHUNK_SIZE;
 			if (nChunks == 0) {
-				create();
+				file.seek(0);
+				file.write(new byte[CHUNK_SIZE]); // the header chunk
 				++nChunks;
 			}
 			
 			toc = new Chunk[(int)nChunks];
-			init();
+			toc[0] = new Chunk(file, 0);
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
-	}
-	
-	private void create() throws CoreException {
-		try {
-			file.seek(0);
-			file.write(new byte[CHUNK_SIZE]); // the header chunk
-		} catch (IOException e) {
-			throw new CoreException(new DBStatus(e));
-		}
-	}
-
-	private void init() throws CoreException {
-		// Load in the magic chunk zero
-		toc[0] = new Chunk(file, 0);
 	}
 	
 	public int getVersion() {
@@ -84,11 +74,13 @@ public class Database {
 	 * @throws CoreException
 	 */
 	public void clear() throws CoreException {
-		int version = toc[0].getInt(0);
-		create();
-		toc = new Chunk[1];
-		init();
-		setVersion(version);
+		// Clear out the memory headers
+		toc[0].clear(4, DATA_AREA - 4);
+		// Add the remainder of the chunks backwards
+		for (int block = (toc.length - 1) * CHUNK_SIZE; block > 0; block -= CHUNK_SIZE) {
+			addBlock(getChunk(block), CHUNK_SIZE, block); 
+		}
+		malloced = freed = 0;
 	}
 	
 	/**
@@ -153,8 +145,12 @@ public class Database {
 		
 		// Make our size negative to show in use
 		chunk.putInt(freeblock, - matchsize);
-		
-		return freeblock + INT_SIZE;
+
+		// Clear out the block, lots of people are expecting this
+		chunk.clear(freeblock + 4, size);
+
+		malloced += matchsize;
+		return freeblock + 4;
 	}
 	
 	private int createChunk() throws CoreException {
@@ -219,8 +215,8 @@ public class Database {
 		if (blocksize < 0)
 			// already freed
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "Already Freed", new Exception()));
-		chunk.clear(offset, blocksize - 4);
 		addBlock(chunk, blocksize, block);
+		freed += blocksize;
 	}
 
 	public void putByte(int offset, byte value) throws CoreException {
@@ -279,4 +275,21 @@ public class Database {
 		return toc.length;
 	}
 
+	public void reportFreeBlocks() throws CoreException {
+		System.out.println("Allocated size: " + toc.length * CHUNK_SIZE);
+		System.out.println("malloc'ed: " + malloced);
+		System.out.println("free'd: " + freed);
+		System.out.println("wasted: " + (toc.length * CHUNK_SIZE - (malloced - freed)));
+		System.out.println("Free blocks");
+		for (int bs = MIN_SIZE; bs <= CHUNK_SIZE; bs += MIN_SIZE) {
+			int count = 0;
+			int block = getFirstBlock(bs);
+			while (block != 0) {
+				++count;
+				block = getInt(block + NEXT_OFFSET);
+			}
+			if (count != 0)
+				System.out.println("Block size: " + bs + "=" + count);
+		}
+	}
 }

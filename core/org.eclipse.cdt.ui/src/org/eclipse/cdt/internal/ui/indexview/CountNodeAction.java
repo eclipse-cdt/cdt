@@ -63,6 +63,7 @@ public class CountNodeAction extends IndexAction {
 
 				ICProject project = (ICProject)objs[i];
 				final PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+				//pdom.getDB().reportFreeBlocks();
 
 				pdom.getFileIndex().accept(new IBTreeVisitor() {
 					public int compare(int record) throws CoreException {

@@ -49,6 +49,14 @@ public class PDOMMacroParameter {
 		return record;
 	}
 	
+	public void delete() throws CoreException {
+		PDOMMacroParameter next = getNextParameter();
+		if (next != null)
+			next.delete();
+		getName().delete();
+		pdom.getDB().free(record);
+	}
+	
 	public void setNextParameter(PDOMMacroParameter next) throws CoreException {
 		int rec = next != null ? next.getRecord() : 0;
 		pdom.getDB().putInt(record + NEXT, rec);

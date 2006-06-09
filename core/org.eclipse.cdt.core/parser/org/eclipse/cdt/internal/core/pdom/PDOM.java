@@ -165,9 +165,14 @@ public class PDOM extends PlatformObject
 	
 	public void clear() throws CoreException {
 		Database db = getDB();
+		// Clear out the database
 		db.clear();
-		db.setVersion(VERSION);
+		
+		// Zero out the File Index and Linkages
+		db.putInt(FILE_INDEX, 0);
 		fileIndex = null;
+		
+		db.putInt(LINKAGES, 0);
 		linkageCache.clear();
 	}
 

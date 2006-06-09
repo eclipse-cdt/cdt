@@ -173,7 +173,7 @@ public class BTree {
 	}
 	
 	private int allocateNode() throws CoreException {
-		return db.malloc((2 * NUM_RECORDS - 1) * Database.INT_SIZE);
+		return db.malloc((2 * NUM_RECORDS + 1) * Database.INT_SIZE);
 	}
 	
 	/**

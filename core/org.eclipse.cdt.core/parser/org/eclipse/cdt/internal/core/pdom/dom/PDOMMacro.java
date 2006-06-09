@@ -77,6 +77,11 @@ public class PDOMMacro {
 	}
 	
 	public void delete() throws CoreException {
+		getName().delete();
+		getExpansion().delete();
+		PDOMMacroParameter param = getFirstParameter();
+		if (param != null)
+			param.delete();
 		pdom.getDB().free(record);
 	}
 	

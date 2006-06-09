@@ -103,6 +103,23 @@ public class LongString implements IString {
 		return record1;
 	}
 
+	public void delete() throws CoreException {
+		int length = db.getInt(record1 + LENGTH) - NUM_CHARS1;
+		int nextRecord = db.getInt(record1 + NEXT1);
+		db.free(record1);
+		
+		// Middle records
+		while (length > NUM_CHARSN) {
+			length -= NUM_CHARSN;
+			int nextnext = db.getInt(nextRecord + NEXTN);
+			db.free(nextRecord);
+			nextRecord = nextnext;
+		}
+		
+		// Last record
+		db.free(nextRecord);
+	}
+	
 	public boolean equals(Object obj) {
 		throw new PDOMNotImplementedError();
 	}

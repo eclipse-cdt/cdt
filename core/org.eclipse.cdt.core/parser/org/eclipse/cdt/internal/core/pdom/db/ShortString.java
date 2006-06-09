@@ -53,7 +53,7 @@ public class ShortString implements IString {
 		this.record = db.malloc(CHARS + string.length() * 2);
 		
 		Chunk chunk = db.getChunk(record);
-		chunk.putInt(record + LENGTH, (char)string.length());
+		chunk.putInt(record + LENGTH, string.length());
 		int n = string.length();
 		int p = record + CHARS;
 		for (int i = 0; i < n; ++i) {
@@ -64,6 +64,10 @@ public class ShortString implements IString {
 	
 	public int getRecord() {
 		return record;
+	}
+	
+	public void delete() throws CoreException {
+		db.free(record);
 	}
 	
 	public char[] getChars() throws CoreException {

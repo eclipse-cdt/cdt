@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -317,7 +318,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		}
 	}
 	
-	public void findBindings(String pattern, List bindings) throws CoreException {
+	public void findBindings(Pattern pattern, List bindings) throws CoreException {
 		MatchBinding visitor = new MatchBinding(pdom, pattern, bindings);
 		getIndex().accept(visitor);
 	}

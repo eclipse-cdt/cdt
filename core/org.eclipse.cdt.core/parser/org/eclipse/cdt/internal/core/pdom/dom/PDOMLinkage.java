@@ -42,10 +42,10 @@ public abstract class PDOMLinkage extends PDOMNamedNode {
 			private final List bindings;
 			private final Pattern pattern;
 			
-			public MatchBinding(PDOM pdom, String pattern, List bindings) {
+			public MatchBinding(PDOM pdom, Pattern pattern, List bindings) {
 				this.pdom = pdom;
 				this.bindings = bindings;
-				this.pattern = Pattern.compile(pattern);
+				this.pattern = pattern;
 			}
 			
 			public boolean visit(int record) throws CoreException {
@@ -172,6 +172,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode {
 	
 	public abstract IBinding resolveBinding(IASTName name) throws CoreException;
 
-	public abstract void findBindings(String pattern, List bindings) throws CoreException;
+	public abstract void findBindings(Pattern pattern, List bindings) throws CoreException;
 	
 }

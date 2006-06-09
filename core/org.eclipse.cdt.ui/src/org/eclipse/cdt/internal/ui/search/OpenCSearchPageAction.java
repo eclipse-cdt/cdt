@@ -42,7 +42,7 @@ public class OpenCSearchPageAction implements IWorkbenchWindowActionDelegate {
 			beep();
 			return;
 		}
-		NewSearchUI.openSearchDialog(fWindow, PDOMSearchPage.EXTENSION_POINT_ID);
+		NewSearchUI.openSearchDialog(fWindow, PDOMSearchPage.EXTENSION_ID);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

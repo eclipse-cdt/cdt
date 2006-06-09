@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -47,17 +49,20 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 		| FIND_ENUMERATOR | FIND_NAMESPACE | FIND_TYPEDEF | FIND_MACRO;
 	
 	private String scopeDesc;
-	private String pattern;
+	private String patternStr;
+	private Pattern pattern;
 	
 	public PDOMSearchPatternQuery(
 			ICElement[] scope,
 			String scopeDesc,
-			String pattern,
+			Pattern pattern,
+			String patternStr,
 			boolean isCaseSensitive,
 			int flags) {
 		super(scope, flags);
 		this.scopeDesc = scopeDesc;
 		this.pattern = pattern;
+		this.patternStr = patternStr;
 	}
 	
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
@@ -91,7 +96,7 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 	}
 	
 	public String getLabel() {
-		return super.getLabel() + " " + pattern + " in " + scopeDesc;
+		return super.getLabel() + " " + patternStr + " in " + scopeDesc;
 	}
 	
 }

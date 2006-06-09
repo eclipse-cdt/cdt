@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.runtime.CoreException;
@@ -30,7 +32,7 @@ public interface IPDOM extends IAdaptable {
 	 * @return
 	 * @throws CoreException
 	 */
-	public IBinding[] findBindings(String pattern) throws CoreException;
+	public IBinding[] findBindings(Pattern pattern) throws CoreException;
 	
 	/**
 	 * Recursively visit the nodes in this PDOM using the given visitor.

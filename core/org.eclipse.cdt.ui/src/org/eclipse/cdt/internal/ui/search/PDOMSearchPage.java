@@ -14,6 +14,8 @@ package org.eclipse.cdt.internal.ui.search;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -60,7 +62,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class PDOMSearchPage extends DialogPage implements ISearchPage {
 	
-	public static final String EXTENSION_POINT_ID = CUIPlugin.PLUGIN_ID + "pdomSearchPage"; //$NON-NLS-1$
+	public static final String EXTENSION_ID = CUIPlugin.PLUGIN_ID + ".pdomSearchPage"; //$NON-NLS-1$
 	
 	//Dialog store id constants
 	private final static String PAGE_NAME = "PDOMSearchPage"; //$NON-NLS-1$
@@ -155,8 +157,33 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 
 	    boolean isCaseSensitive = caseSensitiveButton.getSelection();
 
-	    // get the pattern
-	    String pattern = patternCombo.getText();
+	    // get the pattern and turn it into a regular expression
+	    String patternStr = patternCombo.getText();
+	    String realStr = patternStr;
+	    if (realStr.indexOf('*') >= 0 || realStr.indexOf('?') >= 0) {
+	    	StringBuffer buff = new StringBuffer(patternStr.length() + 1);
+	    	for (int i = 0; i < patternStr.length(); ++i) {
+	    		char c = patternStr.charAt(i);
+	    		switch (c) {
+	    		case '*':
+	    			buff.append(".*"); //$NON-NLS-1$
+	    			break;
+	    		case '?':
+	    			buff.append('.');
+	    			break;
+    			default:
+	    			buff.append(c);
+	    		}
+	    	}
+	    	realStr = buff.toString();
+	    }
+	    
+	    Pattern pattern;
+	    try {
+	    	pattern = Pattern.compile(realStr);
+	    } catch (PatternSyntaxException e) {
+	    	return false;
+	    }
 
 	    // Get search flags
 	    int searchFlags = 0;
@@ -223,7 +250,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 			? null
 			: (ICElement[])elements.toArray(new ICElement[elements.size()]);
 		
-		PDOMSearchPatternQuery job = new PDOMSearchPatternQuery(scope, scopeDescription, pattern, 
+		PDOMSearchPatternQuery job = new PDOMSearchPatternQuery(scope, scopeDescription, pattern, patternStr, 
 				isCaseSensitive, searchFlags);
 
 		NewSearchUI.activateSearchResultView();
@@ -235,7 +262,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		settings.put(STORE_CASE_SENSITIVE, isCaseSensitive);
 		
 		if (previousPatterns == null)
-			previousPatterns = new String[] { pattern };
+			previousPatterns = new String[] { patternStr };
 		else {
 			// Add only if we don't have it already
 			boolean addit = true;
@@ -249,7 +276,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 				// Insert it into the beginning of the list
 				String[] newPatterns = new String[previousPatterns.length + 1];
 				System.arraycopy(previousPatterns, 0, newPatterns, 1, previousPatterns.length);
-				newPatterns[0] = pattern;
+				newPatterns[0] = patternStr;
 				previousPatterns = newPatterns;
 			}
 		}

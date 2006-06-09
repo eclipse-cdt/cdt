@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
@@ -234,7 +235,7 @@ public class PDOM extends PlatformObject
 		return null;
 	}
 
-	public IBinding[] findBindings(String pattern) throws CoreException {
+	public IBinding[] findBindings(Pattern pattern) throws CoreException {
 		List bindings = new ArrayList();
 		PDOMLinkage linkage = getFirstLinkage();
 		while (linkage != null) {

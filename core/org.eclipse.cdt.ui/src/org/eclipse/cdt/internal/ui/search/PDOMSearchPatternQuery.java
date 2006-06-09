@@ -62,7 +62,6 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 	
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 		try {
-			result.removeAll();
 			for (int i = 0; i < projects.length; ++i)
 				searchProject(projects[i], monitor);
 			return Status.OK_STATUS;

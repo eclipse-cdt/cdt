@@ -40,7 +40,6 @@ public class PDOMSearchElementQuery extends PDOMSearchQuery {
 
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 		try {
-			result.removeAll();
 			ISourceRange range = element.getSourceRange();
 			ITranslationUnit tu = element.getTranslationUnit();
 			ILanguage language = tu.getLanguage();

@@ -255,9 +255,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         			Object obj = set.keyAt( i );
         			if( obj instanceof IASTName ){
         				IASTName n = (IASTName) obj;
-        				binding = n.getBinding();
-        				if( binding != null || forceResolve ){
-        					binding = n.resolveBinding();
+        				binding = forceResolve ? n.resolveBinding() : n.getBinding();
+        				if( binding != null ) {
         					set.remove( n );
         					set.put( binding );
         					i--;

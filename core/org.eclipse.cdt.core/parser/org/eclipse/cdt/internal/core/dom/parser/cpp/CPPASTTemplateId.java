@@ -65,13 +65,18 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, I
     
     private IASTNode [] templateArguments = null;
     private IBinding binding = null;
+    private boolean resolving = false;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
      */
     public IBinding resolveBinding() {
-    	if( binding == null )
-    		binding = CPPTemplates.createBinding( this ); 
+    	if (binding == null && !resolving) {
+    		// protect for infinite recursion
+   			resolving = true;
+       		binding = CPPTemplates.createBinding( this ); 
+   			resolving = false;
+    	}
     	
         return binding;    
     }

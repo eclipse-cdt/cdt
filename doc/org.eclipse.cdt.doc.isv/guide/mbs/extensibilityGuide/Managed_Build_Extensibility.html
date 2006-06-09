@@ -7006,16 +7006,26 @@ IWizardPage interface.<BR>
 	style="mso-bookmark:OLE_LINK10">Wizard pages as GUI elements by
 themselves are really not all that useful.<SPAN style="mso-spacerun:yes">&nbsp;
 </SPAN>More than likely if someone is defining their own wizard pages
-it?s because they need some additional operations to happen upon project
+it's because they need some additional operations to happen upon project
 creation in addition to the stock behaviour of creating a basic project,
 and they want to use their new wizard pages to provide a front end to
 these operations.</SPAN></A></P>
-<P class="MsoNormal"><SPAN style="mso-bookmark:OLE_LINK9"><SPAN
-	style="mso-bookmark:
-OLE_LINK10">As such, along with a specification
+
+<p>Note that during the display of the wizard page, and the user possibly
+entering information, no permanent changes should be executed, since the user
+can abort the creation of the new project at any time.  For this reason,
+the actual changes indicated on the wizard pages should be executed
+once the user has completed the new project wizard: after the "Finish" button
+has been selected. User data can be saved in a storage area for any of these
+pages, and retrieved later when needed.
+
+<P><SPAN style="mso-bookmark:OLE_LINK9"><SPAN style="mso-bookmark:OLE_LINK10">
+As such, along with a specification
 of the GUI wizard page, ISVs may specify a runnable operation that will
-be executed in the wizard?s doRunEpilogue() method.<SPAN
-	style="mso-spacerun:yes">&nbsp; </SPAN>These contributions will all be
+be executed in the wizard's doRunEpilogue() method,
+after the new project creation is committed.
+
+These contributions will all be
 executed in the order that the wizard pages were added to the wizard.<SPAN
 	style="mso-spacerun:yes">&nbsp; </SPAN>Not all pages need have such a
 contribution however, as ISVs may need to perform all the operations
@@ -7089,7 +7099,7 @@ Element Schema:</P>
 		which implements the added page.<SPAN style="mso-spacerun:yes">&nbsp;
 		</SPAN>This class must implement the <A
 			name="OLE_LINK7"><SPAN style="mso-bookmark:OLE_LINK8"><FONT
-			face="Courier New" size="3">org.eclipse.jface.wizard.IWizardPage</FONT>
+			face="Courier New">org.eclipse.jface.wizard.IWizardPage</FONT>
 		</SPAN></A>interface</P>
 		</TD>
 		<TD width="81" valign="top"
@@ -7137,7 +7147,7 @@ is assumed that the page potentially applies to all projectTypes,
 although it may still be excluded based on <A
 	name="OLE_LINK5"><SPAN style="mso-bookmark:OLE_LINK6">toolchain (§<SPAN
 	style='mso-field-code:" REF _Ref98746447 \\r \\h "'>7.14.1.1.3</SPAN>) </SPAN></A>or project nature (§<SPAN
-	style='mso-field-code:" REF _Ref98746447 \\r \\h "'>4.1.1.1.4</SPAN>).</P>
+	style='mso-field-code:" REF _Ref98746447 \\r \\h "'>7.14.1.1.4</SPAN>).</P>
 <P>projectType Element Schema:</P>
 <TABLE class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0"
 	style="border-collapse:collapse;mso-table-layout-alt:fixed;border:none;
@@ -7307,7 +7317,7 @@ Element Schema</P>
 the project nature(s) for which the additional pages should apply. <SPAN
 	style="mso-spacerun:yes">&nbsp;</SPAN><SPAN style="mso-spacerun:yes">&nbsp;</SPAN>One
 instance of this element is provided per nature supported.</P>
-<P class="MsoNormal"><SPAN style="mso-spacerun:yes">&nbsp;</SPAN>This
+<P class="MsoNormal"><SPAN style="mso-spacerun:yes"></SPAN>This
 would for example allow one to add pages to the New Managed C Project
 wizard but not the New Managed C++ project wizard, or other hypothetical
 natures that might be supported by MBS in the future (e.g. someday there
@@ -7316,7 +7326,7 @@ might be a Fortran nature).</P>
 assumed that the page potentially applies to all project natures,
 although it may still be excluded based on project type (§<SPAN
 	style='mso-field-code:" REF _Ref99249701 \\r \\h "'>7.14.1.1.2</SPAN>) or toolchain (§<SPAN
-	style='mso-field-code:" REF _Ref98746447 \\r \\h "'>4.1.1.1.3</SPAN>)</P>
+	style='mso-field-code:" REF _Ref98746447 \\r \\h "'>7.14.1.1.3</SPAN>)</P>
 <P>natureID element Schema:</P>
 <TABLE class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0"
 	style="border-collapse:collapse;mso-table-layout-alt:fixed;border:none;
@@ -7384,10 +7394,10 @@ although it may still be excluded based on project type (§<SPAN
 	<LI>
 
 	What operations should be executed in
-	association to the page during the wizard?s doRunEpilogue() method.</LI>
+	association to the page during the wizard's doRunEpilogue() method.</LI>
 	
 </UL>
-<P><BR>The main entry point to the system is a central manager class calledl MBSCustomPageManager.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>This
+<P><BR>The main entry point to the system is a central manager class called MBSCustomPageManager.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>This
 class is responsible for managing classes which handle the
 aggregation of page data (MBSCustomPageData).</P>
 <P class="MsoNormal">For convenience sake, an abstract base class for wizard pages exists (MBSCustomPage) which ISVs can subclass to implement the default behaviour of
@@ -7427,22 +7437,23 @@ make available to other pages</LI>
 <P><BR>This class is a singleton.
 All non-constructor methods are static.</P>
 <P class="MsoNormal">When the wizard is initialized, it
-makes a call to MBSCustomPageManager.loadExtensions(). This method looks contributions to the org.eclipse.cdt.managedbuilder.ui.newWizardPages
+makes a call to MBSCustomPageManager.loadExtensions(). This method looks for contributions to the org.eclipse.cdt.managedbuilder.ui.newWizardPages
 extension point.<SPAN
 	style="mso-spacerun:yes">&nbsp; </SPAN>The loaded data is used to
 instantiate and populate an MBSCustomPageData object for each page
 discovered.</P>
 <P class="MsoNormal">As the user manipulates the wizard, each page can
-publish data they wish to export for use by other pages.<SPAN
-	style="mso-spacerun:yes">&nbsp; </SPAN>This is done via the
+publish data they wish to export for use by other pages, or for use by the optional Runnable operation that
+may execute when the wizard pages are completed. 
+<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>This is done via the
 addPageProperty() method, which allows for the storage of string data by
 string key, using the string ID of the page as a sort of namespace.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>The data can be
-retrieved by other pages via the getPageProperty() method, and this is the standard way for pages to interface to eachother.</P>
+retrieved by other pages via the getPageProperty() method, and this is the standard way for pages to interface to each other.</P>
 <P class="MsoNormal">Individual pages are expected to somehow consult
 the getNextPage() and getPreviousPage() methods of the manager when
 their own getNextPage() and getPreviousPage() methods are called by the
 wizard.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>This allows the
-pages to properly navigate amongst eachother while taking into account
+pages to properly navigate amongst each other while taking into account
 user choices such as project nature, toolchain, and project type.<SPAN
 	style="mso-spacerun:yes">&nbsp; </SPAN>It should be noted that the
 manager can only do so much as it fills the role of an advisor.<SPAN
@@ -7464,7 +7475,7 @@ OLE_LINK12">7.14.3.2 MBSCustomPageData</SPAN>
 for the page manager to store information on a custom wizard page.<SPAN
 	style="mso-spacerun:yes">&nbsp; </SPAN>On startup, the page manager
 loads all contributions to the newWizardPages extension point, and
-stores the loaded data in these records for later use. There is a nested class, ToochainData, which is used to maintain information on each individual toolchain a given custom page supports. The MBSCustomPage manager calls various methods on this class (e.g. MBSCustomPageData.shouldBeVisibleForNature()) to determine when a given page should be visible in the wizard.<BR>
+stores the loaded data in these records for later use. There is a nested class, ToolchainData, which is used to maintain information on each individual toolchain that a given custom page supports. The MBSCustomPage manager calls various methods on this class (e.g. MBSCustomPageData.shouldBeVisibleForNature()) to determine when a given page should be visible in the wizard.<BR>
 <BR>
 <IMG border="0" src="MBSCustomPageData.jpeg" width="238" height="604">
 </P>
@@ -7480,7 +7491,7 @@ implementation of the IWizardPage interface.<SPAN
 	style="mso-spacerun:yes">&nbsp; </SPAN>This class provides
 implementations of the getNextPage() and getPreviousPage() methods which
 consult with the page manager to determine which pages are to be
-displayed.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>If an ISV?s
+displayed.<SPAN style="mso-spacerun:yes">&nbsp; </SPAN>If an ISV's
 custom pages do not subclass MBSCustomPage then their page
 implementation must be carefully coded to function properly while still
 respecting the rules laid out by the page manager.<BR>

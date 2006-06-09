@@ -85,7 +85,11 @@ public class PDOM extends PlatformObject
 	}
 	
 	public boolean versionMismatch() {
-		return db.getVersion() != VERSION;
+		if (db.getVersion() != VERSION) {
+			db.setVersion(VERSION);
+			return true;
+		} else
+			return false;
 	}
 
 	public Object getAdapter(Class adapter) {

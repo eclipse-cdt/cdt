@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Texas Instruments Incorporated and others.
+ * Copyright (c) 2005, 2006 Texas Instruments Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Texas Instruments - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.ui.wizards;
@@ -26,6 +27,24 @@ public abstract class MBSCustomPage implements IWizardPage
 
 	protected String pageID = null;
 	protected IWizard wizard = null;
+	
+	/**
+	 * Preferred constructor which sets the (required) pageID
+	 * @param pageID identifies this page including for accessing the page data.
+	 */
+	public MBSCustomPage(String pageID) {
+		this.pageID=pageID;
+	}
+	
+	/**
+	 * Default constructor is not recommended; pageID must be set
+	 * so the other constructor, with pageID parameter, is preferred.
+	 * 
+	 * @deprecated
+	 *
+	 */
+	public MBSCustomPage() {
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#isCustomPageComplete()

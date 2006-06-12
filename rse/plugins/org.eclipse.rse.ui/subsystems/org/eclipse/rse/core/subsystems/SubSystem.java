@@ -3319,7 +3319,10 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	
 	public void setDirty(boolean flag)
 	{
-		_isDirty = flag;		
+		if (_isDirty != flag)
+		{
+			_isDirty = flag;		
+		}
 	}
 	
 	public boolean commit()

@@ -8,6 +8,7 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation
  * ARM Ltd. - Minor changes to echo commands
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 

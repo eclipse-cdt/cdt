@@ -355,7 +355,7 @@ public class Scanner2Test extends BaseScanner2Test
 				"#else\n" + //$NON-NLS-1$
 				"bar\n" + //$NON-NLS-1$
 				"#endif\n"  //$NON-NLS-1$
-				); //$NON-NLS-1$
+				); 
 		validateIdentifier("foo"); //$NON-NLS-1$
 		validateEOF();
 		initializeScanner(
@@ -364,7 +364,7 @@ public class Scanner2Test extends BaseScanner2Test
 				"#else\n" + //$NON-NLS-1$
 				"bar\n" + //$NON-NLS-1$
 				"#endif\n"  //$NON-NLS-1$
-				); //$NON-NLS-1$
+				); 
 		validateIdentifier("foo"); //$NON-NLS-1$
 		validateEOF();
 	}
@@ -2380,7 +2380,7 @@ public class Scanner2Test extends BaseScanner2Test
 	   validateToken( IToken.tRPAREN );
 	   validateToken( IToken.tLBRACE );
 	   validateToken( IToken.t_return );
-	   validateInteger( "0" );
+	   validateInteger( "0" ); //$NON-NLS-1$
 	   validateToken( IToken.tSEMI );
 	   validateToken( IToken.tRBRACE );
 	   validateEOF();
@@ -2400,10 +2400,18 @@ public class Scanner2Test extends BaseScanner2Test
 	   validateToken( IToken.tRPAREN );
 	   validateToken( IToken.tLBRACE );
 	   validateToken( IToken.t_return );
-	   validateInteger( "0" );
+	   validateInteger( "0" ); //$NON-NLS-1$
 	   validateToken( IToken.tSEMI );
 	   validateToken( IToken.tRBRACE );
 	   validateEOF();
    }
    
+   public void testBug126136() throws Exception {
+       StringBuffer buffer = new StringBuffer("#define C C\n"); //$NON-NLS-1$
+       buffer.append("#if !C\n"); //$NON-NLS-1$
+       buffer.append("true\n"); //$NON-NLS-1$
+       buffer.append("#endif\n"); //$NON-NLS-1$
+       initializeScanner(buffer.toString(), ParserLanguage.CPP);
+       fullyTokenize();
+   }
 }

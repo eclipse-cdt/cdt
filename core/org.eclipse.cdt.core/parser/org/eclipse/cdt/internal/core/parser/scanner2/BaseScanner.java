@@ -660,8 +660,24 @@ abstract class BaseScanner implements IScanner {
                         } else if (expObject instanceof ObjectStyleMacro) {
                             ObjectStyleMacro expMacro = (ObjectStyleMacro) expObject;
                             char[] expText = expMacro.getExpansion();
-                            if (expText.length > 0)
-                                pushContext(expText, expMacro);
+                            if (expText.length > 0 )
+                            {
+                                if (shouldExpandMacro(expMacro, bufferStackPos, bufferData, -1, bufferPos, bufferStack ))
+                                    pushContext(expText, new MacroData(start, start + len, expMacro));
+                                else
+                                {
+                                    if (len == 1) { // is a character
+                                        tokenType = tCHAR;
+                                        return;
+                                    }
+                                    // undefined macro, assume 0
+                                    tokenValue = 0;
+                                    tokenType = tNUMBER;
+                                    return;
+
+                                }
+                                    
+                            }
                         } else if (expObject instanceof char[]) {
                             char[] expText = (char[]) expObject;
                             if (expText.length > 0)
@@ -2135,9 +2151,14 @@ abstract class BaseScanner implements IScanner {
      * @return
      */
     protected boolean shouldExpandMacro(IMacro macro) {
+        return shouldExpandMacro(macro, bufferStackPos, bufferData, offsetBoundary, bufferPos, bufferStack);
+    }
+    
+    protected static boolean shouldExpandMacro(IMacro macro, int bufferStackPos, Object [] bufferData, int offsetBoundary, int [] bufferPos, char [][]bufferStack )
+    {
         // but not if it has been expanded on the stack already
         // i.e. recursion avoidance
-        if (macro != null && !isLimitReached())
+        if (macro != null && !isLimitReached(offsetBoundary, bufferStackPos, bufferPos, bufferStack ))
             for (int stackPos = bufferStackPos; stackPos >= 0; --stackPos)
                 if (bufferData[stackPos] != null
                         && bufferData[stackPos] instanceof MacroData
@@ -2146,13 +2167,24 @@ abstract class BaseScanner implements IScanner {
                                         .getName())) {
                     return false;
                 }
-        return true;
+        return true;        
     }
 
     /**
      * @return
      */
     protected final boolean isLimitReached() {
+        return isLimitReached(offsetBoundary, bufferStackPos, bufferPos, bufferStack);
+    }
+    
+    /**
+     * @param offsetBoundary
+     * @param bufferStackPos
+     * @param bufferPos
+     * @param bufferStack
+     * @return
+     */
+    protected final static boolean isLimitReached(int offsetBoundary, int bufferStackPos, int [] bufferPos, char [][]bufferStack ) {
         if (offsetBoundary == -1 || bufferStackPos != 0)
             return false;
         if (bufferPos[bufferStackPos] == offsetBoundary - 1)
@@ -2164,6 +2196,7 @@ abstract class BaseScanner implements IScanner {
         }
         return false;
     }
+
 
     protected IToken scanString() {
         char[] buffer = bufferStack[bufferStackPos];

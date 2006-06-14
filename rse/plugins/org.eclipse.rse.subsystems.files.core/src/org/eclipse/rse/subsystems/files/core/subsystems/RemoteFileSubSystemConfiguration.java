@@ -20,7 +20,6 @@ import java.util.Vector;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.IFileConstants;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
@@ -43,7 +42,7 @@ import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
  * @see RemoteFileSubSystem
  */
 
-public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfiguration implements IRemoteFileSubSystemConfiguration,ISubSystemConfiguration
+public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfiguration implements IRemoteFileSubSystemConfiguration
 {
 	
 	protected boolean unixStyle = false;

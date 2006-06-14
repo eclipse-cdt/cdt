@@ -19,7 +19,6 @@ package org.eclipse.rse.subsystems.processes.core.subsystem.impl;
 import java.util.Vector;
 
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
@@ -37,8 +36,7 @@ import org.eclipse.rse.ui.validators.ValidatorServerPortInput;
  *
  */
 public abstract class RemoteProcessSubSystemConfiguration extends
-		SubSystemConfiguration implements IRemoteProcessSubSystemConfiguration,
-		ISubSystemConfiguration
+		SubSystemConfiguration implements IRemoteProcessSubSystemConfiguration
 {
 	
 	public RemoteProcessSubSystemConfiguration()

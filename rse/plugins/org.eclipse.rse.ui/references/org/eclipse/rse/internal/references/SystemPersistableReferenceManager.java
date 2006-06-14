@@ -122,6 +122,14 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 		  list.add(objects[idx]);
 	}
 	
+/*
+ * DWD this should probably operate on ISystemPersistableReferencingObject
+ * instead and call setParentManager. This involves recasting this class to 
+ * implement a new type or changing ISystemBasePersistableReferenceManager to
+ * deal with parent references - probably changing its name in the process.
+ * We could collapse ISystemBasePersistableReferencingObject and its subinterface
+ * into one interface.
+ */
 	/**
 	 * Add a referencing object to the managed list.
 	 * @return new count of referenced objects being managed.

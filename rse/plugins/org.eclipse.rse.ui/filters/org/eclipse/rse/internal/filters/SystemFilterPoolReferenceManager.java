@@ -33,7 +33,6 @@ import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.internal.references.SystemPersistableReferenceManager;
-import org.eclipse.rse.references.ISystemBasePersistableReferenceManager;
 import org.eclipse.rse.references.ISystemBasePersistableReferencingObject;
 import org.eclipse.rse.references.ISystemPersistableReferencedObject;
 
@@ -47,7 +46,7 @@ import org.eclipse.rse.references.ISystemPersistableReferencedObject;
 /** 
  * @lastgen class SystemFilterPoolReferenceManagerImpl extends SystemPersistableReferenceManagerImpl implements SystemFilterPoolReferenceManager, SystemPersistableReferenceManager {}
  */
-public class SystemFilterPoolReferenceManager extends SystemPersistableReferenceManager implements ISystemFilterPoolReferenceManager, ISystemBasePersistableReferenceManager
+public class SystemFilterPoolReferenceManager extends SystemPersistableReferenceManager implements ISystemFilterPoolReferenceManager
 {
 	//private SystemFilterPoolManager[]                poolMgrs = null;
     private ISystemFilterPoolManagerProvider	         poolMgrProvider = null;
@@ -440,6 +439,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	public int addSystemFilterPoolReference(ISystemFilterPoolReference filterPoolReference)
 	{
 		int count = addReferencingObject(filterPoolReference);
+		filterPoolReference.setParentReferenceManager(this); // DWD - should be done in the addReferencingObject method
         invalidateFilterPoolReferencesCache();
 		quietSave();
 		return count;
@@ -470,6 +470,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 		  count = super.removeReferencingObject(filterPoolReference);
 	    else
 		  count = super.removeAndDeReferenceReferencingObject(filterPoolReference);
+		filterPoolReference.setParentReferenceManager(null); // DWD should be done in remove
         invalidateFilterPoolReferencesCache();
 		// callback to provider so they can fire events in their GUI
 		if (fireEvents && (caller != null))
@@ -583,7 +584,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	public ISystemFilterPoolReference addReferenceToSystemFilterPool(ISystemFilterPool filterPool)
 	{
 		ISystemFilterPoolReference filterPoolReference = createSystemFilterPoolReference(filterPool);
-		addReferencingObject(filterPoolReference);
+		addReferencingObject(filterPoolReference); // DWD - should be done in addReferencingObject
 		filterPoolReference.setParentReferenceManager(this);
         invalidateFilterPoolReferencesCache();
 		quietSave();
@@ -606,6 +607,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 		{
 		  filterPoolReference.removeReference(); // getReferencedFilterPool().removeReference(this)
 		  newCount = removeReferencingObject(filterPoolReference);
+		  filterPoolReference.setParentReferenceManager(null); // DWD should be done in removeReferencingObject
           invalidateFilterPoolReferencesCache();
 		  quietSave();
 		  // callback to provider so they can fire events in their GUI
@@ -660,6 +662,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
     	  	//addReferenceToSystemFilterPool(filterPools[idx]);
 		    ISystemFilterPoolReference filterPoolReference = createSystemFilterPoolReference(filterPools[idx]);
 		    addReferencingObject(filterPoolReference);
+		    filterPoolReference.setParentReferenceManager(this); // DWD should be done in addReferencingObject
     	  }
           invalidateFilterPoolReferencesCache();
 		  quietSave();    	  
@@ -771,6 +774,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
     public void save()
         throws Exception
     {
+    	System.out.println("Saving filter pool " + this.getName() + "?"); // DWD - debugging
         switch(savePolicy)
         {
           // ONE FILE PER FILTER POOL REFERENCE MANAGER

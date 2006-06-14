@@ -33,23 +33,23 @@ public abstract class RSEModelObject extends PropertySetContainer implements IRS
 	protected boolean _wasRestored = false;
 	
 	
-	public boolean isDirty()
+	public final boolean isDirty()
 	{
 		return _isDirty;
 	}
 
-	public void setDirty(boolean flag)
+	public final void setDirty(boolean flag)
 	{
 		_isDirty = flag;
 	}
 
 
-	public boolean wasRestored() 
+	public final boolean wasRestored() 
 	{
 		return _wasRestored;
 	}
 
-	public void setWasRestored(boolean flag) 
+	public final void setWasRestored(boolean flag) 
 	{
 		_wasRestored = flag;
 	}

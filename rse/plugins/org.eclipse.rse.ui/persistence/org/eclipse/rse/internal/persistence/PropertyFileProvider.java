@@ -112,7 +112,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	public boolean saveRSEDOM(RSEDOM dom, IProgressMonitor monitor) {
 		String profileName = dom.getName();
 		IFolder providerFolder = getProviderFolder();
-		System.out.println("saving profile " + profileName + " to " + providerFolder.getFullPath().toString() + "..."); // TODO: dwd debugging
+		System.out.println("saving profile " + profileName + " to " + providerFolder.getFullPath().toString() + "..."); // DWD debugging
 		try {
 			int n = countNodes(dom);
 			if (monitor != null) monitor.beginTask("Saving DOM", n);
@@ -183,12 +183,14 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		}
 	}
 
+	private static final String VALID = "abcdefghijklmnopqrstuvwxyz0123456789-._";
+	private static final String UPPER = "ABCDEFGHIJKLMNOPQRTSUVWXYZ";
 	/**
 	 * Returns the name of a folder that can be used to store a node of a particular 
 	 * type. Since this is a folder, its name must conform to the rules of the file
 	 * system. The names are derived from the name and type of the node. Note that the 
 	 * actual name of the node is also stored as a property so we need not attempt
-	 * to recover the node name from this name.
+	 * to recover the node name from the folder name.
 	 * @param node The node that will eventually be stored in this folder.
 	 * @return The name of the folder to store this node.
 	 */
@@ -196,10 +198,31 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		String type = node.getType();
 		type = (String) typeQualifiers.get(type);
 		String name = node.getName();
-		int i = name.indexOf(':');
-		if (i >= 0) {
-			name = name.substring(i + 1);
+		int p = name.indexOf(':');
+		if (p >= 0) {
+			name = name.substring(p + 1);
 		}
+		StringBuffer buf = new StringBuffer(name.length());
+		char[] chars = name.toCharArray();
+		long suffix = 0;
+		for (int i = 0; i < chars.length; i++) {
+			char c = chars[i];
+			suffix *= 2;
+			if (VALID.indexOf(c) >= 0) {
+				buf.append(c);
+			} else if (UPPER.indexOf(c) >= 0) { // if uppercase
+				buf.append(Character.toLowerCase(c));
+				suffix += 1;
+			} else if (c == ' ') { // if space
+				buf.append('_');
+				suffix += 1;
+			} else { // if out of range
+				buf.append('#');
+				buf.append(Integer.toHexString(c));
+				buf.append('#');
+			}			
+		}
+		name = buf.toString() + "_" + Long.toString(suffix);
 		String result = combine(type, name);
 		return result;
 	}
@@ -412,7 +435,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		RSEDOM dom = null;
 		IFolder profileFolder = getProfileFolder(profileName);
 		if (profileFolder.exists()) {
-			System.out.println("loading from " + profileFolder.getFullPath().toString() + "..."); // TODO: dwd debugging
+			System.out.println("loading from " + profileFolder.getFullPath().toString() + "..."); // DWD debugging
 			int n = countPropertiesFiles(profileFolder);
 			if (monitor != null) monitor.beginTask("Loading DOM", n);
 			dom = (RSEDOM) loadNode(null, profileFolder, monitor);

@@ -96,7 +96,7 @@ public class SerializingProvider implements IRSEPersistenceProvider
 		IFile profileFile = getProfileFile(profileName, monitor);
 		if (profileFile.exists())
 		{
-			System.out.println("loading "+ profileFile.getLocation().toOSString() + "..."); // TODO: dwd debugging
+			System.out.println("loading "+ profileFile.getLocation().toOSString() + "..."); // DWD debugging
 			try
 			{
 				InputStream iStream = profileFile.getContents();
@@ -160,7 +160,7 @@ public class SerializingProvider implements IRSEPersistenceProvider
 		
 		IFile profileFile = getProfileFile(dom.getName(), monitor);
 		File osFile = profileFile.getLocation().toFile();
-		System.out.println("saving "+ osFile.getAbsolutePath() + "..."); // TODO: dwd debugging
+		System.out.println("saving "+ osFile.getAbsolutePath() + "..."); // DWD debugging
 		try
 		{
 			OutputStream oStream = new FileOutputStream(osFile);

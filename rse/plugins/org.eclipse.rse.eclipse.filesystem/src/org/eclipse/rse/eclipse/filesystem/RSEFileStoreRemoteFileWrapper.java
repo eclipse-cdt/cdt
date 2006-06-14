@@ -19,6 +19,7 @@ package org.eclipse.rse.eclipse.filesystem;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -170,7 +171,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		}
 	}
 	
-	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException 
+	public synchronized InputStream  openInputStream(int options, IProgressMonitor monitor) throws CoreException 
 	{
 		if (_remoteFile.exists())
 		{
@@ -216,7 +217,16 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 					file = (IFile)UniversalFileTransferUtility.copyRemoteResourceToWorkspace(_remoteFile, monitor);
 					if (file != null && !file.isSynchronized(IResource.DEPTH_ZERO))
 					{
-						//file.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+						/*
+						try
+						{
+							file.refreshLocal(IFile.DEPTH_ZERO, monitor);
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+						*/
 					}
 				}
 			}
@@ -224,11 +234,29 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			{
 				file = (IFile)UniversalFileTransferUtility.getTempFileFor(_remoteFile);
 			}
-//			if (!file.isSynchronized(IFile.DEPTH_ZERO))
-	//			file.refreshLocal(IFile.DEPTH_ZERO, monitor);
+			if (!file.isSynchronized(IFile.DEPTH_ZERO) && !_remoteFile.getName().equals(".project"))
+			{
+				file.refreshLocal(IFile.DEPTH_ONE, monitor);
+			}
 			if (file != null)
 			{
-				return file.getContents();
+				if (file.isSynchronized(IFile.DEPTH_ZERO))
+				{
+					return file.getContents();
+				}
+				else
+				{
+					File osFile = file.getLocation().toFile();
+					try
+					{
+						FileInputStream instream = new FileInputStream(osFile);
+						return instream;
+					}
+					catch (Exception e)
+					{
+						
+					}
+				}
 			}
 		}
 		return null;

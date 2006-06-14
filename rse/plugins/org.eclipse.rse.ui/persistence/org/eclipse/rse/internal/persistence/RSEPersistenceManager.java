@@ -87,18 +87,18 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 							try {
 								provider = (IRSEPersistenceProvider) providerCandidate.createExecutableExtension("class");
 							} catch (CoreException e) {
-								RSEUIPlugin.logError("Exception loading persistence provider", e); // TODO: dwd nls
+								RSEUIPlugin.logError("Exception loading persistence provider", e); // DWD nls
 							}
 						}
 					} else {
-						RSEUIPlugin.logError("Missing id attribute in persistenceProvider element"); // TODO: dwd nls
+						RSEUIPlugin.logError("Missing id attribute in persistenceProvider element"); // DWD nls
 					}
 				} else {
-					RSEUIPlugin.logError("Invalid element in persistenceProviders extension point"); // TODO: dwd nls
+					RSEUIPlugin.logError("Invalid element in persistenceProviders extension point"); // DWD nls
 				}
 			}
 			if (provider == null) {
-				RSEUIPlugin.logError("Persistence provider not found."); // TODO: dwd nls
+				RSEUIPlugin.logError("Persistence provider not found."); // DWD nls
 			}
 			loadedProviders.put(id, provider); // even if provider is null
 		}
@@ -241,7 +241,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	public boolean restore(ISystemFilterPool filterPool)
 	{
 		System.out.println("restore filterpool");
-		// TODO: dwd function
+		// DWD function Is this method really needed?
 		return false;
 	}
 
@@ -249,7 +249,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	 public boolean commit(ISystemFilter filter)
    {
 		 System.out.println("commit filter");
-		 // TODO: dwd function
+		 // DWD function Is this method really needed?
 		 /*
 		 if (filter.isDirty())
 		 {
@@ -269,7 +269,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	public ISystemFilterPool restoreFilterPool(String name)
 	{
 		System.out.println("restore filter pool "+name);
-		// TODO: dwd function
+		// DWD function is this method really needed?
 		return null;
 	}
 
@@ -443,7 +443,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 		if (provider != null) {
 			dom = provider.loadRSEDOM(domName, null);
 		} else {
-			RSEUIPlugin.logError("Persistence provider is not available."); // TODO: dwd NLS
+			RSEUIPlugin.logError("Persistence provider is not available."); // DWD NLS
 		}
 		return dom;
 	}

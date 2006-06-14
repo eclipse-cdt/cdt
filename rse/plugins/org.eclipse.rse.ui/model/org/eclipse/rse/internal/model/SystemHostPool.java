@@ -32,7 +32,12 @@ import org.eclipse.rse.ui.SystemResources;
 /**
  * A pool of host objects.
  * There is one pool per profile.
- * 
+ * It is named the same as its owning profile. 
+ */
+/*
+ * DWD this may be a candidate for elimination. It is not persisted but derived
+ * when Host objects come into existance. Not sure it provides much value. Code
+ * could be implemented directly in the profile.
  */
 public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 {
@@ -452,7 +457,12 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      */
     private void moveConnection(IHost conn, int newPos)
     {
-        java.util.List connList = getHostList();
+    	/*
+    	 * DWD revisit, make sure that connections can be "moved", whatever that means.
+    	 * It appears that connections can be moved up and down in the list which
+    	 * probably provides for some rational for keeping this around.
+    	 */
+//        java.util.List connList = getHostList(); DWD temporarily(?) removed.
        //FIXME connList.move(newPos, conn);
         invalidateCache();
     }

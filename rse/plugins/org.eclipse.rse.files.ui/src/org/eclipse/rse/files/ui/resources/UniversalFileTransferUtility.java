@@ -399,10 +399,15 @@ public class UniversalFileTransferUtility
 				{
 					if (PlatformUI.isWorkbenchRunning())
 					{
-						tempFile.refreshLocal(IResource.DEPTH_ONE, monitor);
+						if (!tempFile.isSynchronized(IResource.DEPTH_ZERO))
+							tempFile.refreshLocal(IResource.DEPTH_ZERO, monitor);
 					}
 				}
 				catch (CoreException e)
+				{
+					e.printStackTrace();
+				}
+				catch (Exception e)
 				{
 					e.printStackTrace();
 				}

@@ -41,6 +41,7 @@ public class DStoreShellThread
 	private String[] _envVars;
 	private DataStore _dataStore;
 	private DataElement _status;
+	private String _invocation;
 	
 	/**
 	 * @param cwd initial working directory
@@ -56,6 +57,7 @@ public class DStoreShellThread
 		_encoding = encoding;
 		_cwd = cwd;
 		_envVars = envVars;
+		_invocation = invocation;
 		init();
 	}
 	
@@ -65,8 +67,15 @@ public class DStoreShellThread
 		DataElement contextDir = _dataStore.createObject(null, "directory", (new File(_cwd)).getName(), _cwd);
 		_dataStore.setObject(contextDir);
 		setRemoteEnvironment(contextDir);
-
-		sendShellToMiner(contextDir);
+		if (_invocation== null || _invocation.equals(">"))
+		{
+			sendShellToMiner(contextDir);
+		}
+		else
+		{
+			sendCommandToMiner(contextDir, _invocation);
+			
+		}
 	}
 	
 	public DataElement getStatus()
@@ -93,6 +102,24 @@ public class DStoreShellThread
 		}
 	}
 	
+	protected void sendCommandToMiner(DataElement contextDir, String invocation)
+	{
+		DataElement cmdD = getRunCommandDescriptor(contextDir);
+
+		if (cmdD != null)
+		{
+
+			if (invocation != null && invocation.length() > 0)
+			{			
+				DataElement arg = _dataStore.createObject(null, "command", invocation);
+				_status = _dataStore.command(cmdD, arg, contextDir);
+			}
+			else
+			{
+				_status = _dataStore.command(cmdD, contextDir);
+			}
+		}
+	}
 	/**
 	 * Set the environment variables for this connection.  For universal this sets them in the
 	 * DataStore tree.  When a new shell is launched the environment variables are passed to the

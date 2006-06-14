@@ -776,45 +776,46 @@ public class UniversalPreferencePage
 	public boolean performOk() {
 		
 		super.performOk();
-		
-		// first save the transfer mode registry
-		Object[] array1 = modeMappings.toArray();
-		SystemFileTransferModeMapping[] mappingArray1 = new SystemFileTransferModeMapping[array1.length];
-		
-		for (int i = 0; i < array1.length; i++) {
-			mappingArray1[i] = (SystemFileTransferModeMapping)(array1[i]);
-		}
+		if (modeMappings != null)
+		{
+			// first save the transfer mode registry
+			Object[] array1 = modeMappings.toArray();
+			SystemFileTransferModeMapping[] mappingArray1 = new SystemFileTransferModeMapping[array1.length];
 			
-		modeRegistry.setModeMappings(mappingArray1);
-		modeRegistry.saveAssociations();
-		
-		// then save the editor registry
-		Object[] array2 = editorMappings.toArray();
-		FileEditorMapping[] mappingArray2 = new FileEditorMapping[array2.length];
-		
-		for (int j = 0; j < array2.length; j++) {
-			mappingArray2[j] = (FileEditorMapping)(array2[j]);
+			for (int i = 0; i < array1.length; i++) {
+				mappingArray1[i] = (SystemFileTransferModeMapping)(array1[i]);
+			}
+				
+			modeRegistry.setModeMappings(mappingArray1);
+			modeRegistry.saveAssociations();
+			
+			// then save the editor registry
+			Object[] array2 = editorMappings.toArray();
+			FileEditorMapping[] mappingArray2 = new FileEditorMapping[array2.length];
+			
+			for (int j = 0; j < array2.length; j++) {
+				mappingArray2[j] = (FileEditorMapping)(array2[j]);
+			}
+			
+			((EditorRegistry)editorRegistry).setFileEditorMappings(mappingArray2);
+			((EditorRegistry)editorRegistry).saveAssociations();
+			
+			// editorRegistry.removePropertyListener(this);
+			int defaultFileTransferMode = ISystemPreferencesConstants.FILETRANSFERMODE_BINARY;
+			if (defaultBinaryButton.getSelection())
+			{
+				defaultFileTransferMode = ISystemPreferencesConstants.FILETRANSFERMODE_BINARY;
+			}
+			else
+			{
+				defaultFileTransferMode = ISystemPreferencesConstants.FILETRANSFERMODE_TEXT;			
+			}
+			setFileTransferModeDefaultPreference(defaultFileTransferMode);
+			setDoSuperTransfer(doSuperTransferButton.getSelection());
+			setSuperTransferTypePreference(archiveTypeCombo.getText());
+			setDownloadBufferSize(downloadBufferSize.getText());
+			setUploadBufferSize(uploadBufferSize.getText());
 		}
-		
-		((EditorRegistry)editorRegistry).setFileEditorMappings(mappingArray2);
-		((EditorRegistry)editorRegistry).saveAssociations();
-		
-		// editorRegistry.removePropertyListener(this);
-		int defaultFileTransferMode = ISystemPreferencesConstants.FILETRANSFERMODE_BINARY;
-		if (defaultBinaryButton.getSelection())
-		{
-			defaultFileTransferMode = ISystemPreferencesConstants.FILETRANSFERMODE_BINARY;
-		}
-		else
-		{
-			defaultFileTransferMode = ISystemPreferencesConstants.FILETRANSFERMODE_TEXT;			
-		}
-		setFileTransferModeDefaultPreference(defaultFileTransferMode);
-		setDoSuperTransfer(doSuperTransferButton.getSelection());
-		setSuperTransferTypePreference(archiveTypeCombo.getText());
-		setDownloadBufferSize(downloadBufferSize.getText());
-		setUploadBufferSize(uploadBufferSize.getText());
-
 		return true;
 	}
 	

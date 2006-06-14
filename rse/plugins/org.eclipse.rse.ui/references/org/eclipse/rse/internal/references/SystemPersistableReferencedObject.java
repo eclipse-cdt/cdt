@@ -13,83 +13,30 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  ********************************************************************************/
-
 package org.eclipse.rse.internal.references;
-// import org.eclipse.rse.references.ISystemBaseReferencingObject;
+
 import org.eclipse.rse.references.ISystemPersistableReferencedObject;
 
-
 /**
- * YOUR SUBCLASS MUST OVERRIDE getReferenceName()!
  * @see org.eclipse.rse.references.ISystemBasePersistableReferenceManager
- * @lastgen class SystemPersistableReferencedObjectImpl extends SystemReferencedObjectImpl implements SystemPersistableReferencedObject, SystemReferencedObject {}
  */
 public abstract class SystemPersistableReferencedObject extends SystemReferencedObject implements ISystemPersistableReferencedObject {
-
-	
-//    private SystemReferencedObjectHelper helper = null;	DWD - testing removal, this overrides the one in the superclass
-	
 	/**
-	 * Constructor. Typically called by EMF framework via factory create method.
+	 * Constructor.
 	 */
-	public SystemPersistableReferencedObject() 
-	{
+	public SystemPersistableReferencedObject() {
 		super();
-//		helper = new SystemReferencedObjectHelper();
 	}
+
 	/**
 	 * Return the unique reference name of this object.
 	 * <p>
-	 * As required by the {@link org.eclipse.rse.references.ISystemBasePersistableReferencedObject ISystemPersistableReferencedObject} 
+	 * As required by the {@link org.eclipse.rse.references.ISystemPersistableReferencedObject} 
 	 * interface.
 	 * <p>
-	 * YOUR SUBCLASS MUST OVERRIDE THIS!!
+	 * YOUR SUBCLASS MUST OVERRIDE THIS!
 	 */
-	public String getReferenceName()
-	{
+	public String getReferenceName() {
 		return null;
 	}
-	
-//	// ----------------------------------
-//	// ISystemReferencedObject methods...
-//	// ----------------------------------
-//	/**
-//	 * Add a reference, increment reference count, return new count
-//	 * @return new count of how many referencing objects reference this object.
-//	 */
-//	public int addReference(ISystemBaseReferencingObject ref)
-//	{
-//		return helper.addReference(ref);
-//	}
-//	/**
-//	 * Remove a reference, decrement reference count, return new count
-//	 * @return new count of how many referencing objects reference this object.
-//	 */
-//	public int removeReference(ISystemBaseReferencingObject ref)
-//	{
-//		return helper.removeReference(ref);
-//	}
-//	/**
-//	 * Return a count of how many referencing objects reference this object.
-//	 */
-//	public int getReferenceCount()
-//	{
-//		return helper.getReferenceCount();
-//	}
-//	/**
-//	 * Clear the list of referenced objects.
-//	 */
-//	public void removeAllReferences()
-//	{
-//		helper.removeAllReferences();		
-//	}
-//	/**
-//	 * Return a list of all referencing objects of this object
-//	 */
-//	public ISystemBaseReferencingObject[] getReferencingObjects()
-//	{
-//		return helper.getReferencingObjects();
-//	}
-	
-	
 }

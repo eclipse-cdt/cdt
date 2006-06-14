@@ -31,6 +31,10 @@ import org.eclipse.rse.references.ISystemBaseReferencedObject;
 /**
  * A reference to a system filter string.
  */
+/*
+ * DWD What is a filter string REFERENCE? Where would this be used?
+ */
+
 public class SystemFilterStringReference
 	implements ISystemFilterStringReference, IAdaptable
 {
@@ -73,7 +77,6 @@ public class SystemFilterStringReference
 	 */
 	public ISystemFilterPoolReferenceManager getFilterPoolReferenceManager()
 	{
-		ISystemFilterReference filter = getParent();
 		if (parent != null)
 		  return parent.getFilterPoolReferenceManager();
 		return null;

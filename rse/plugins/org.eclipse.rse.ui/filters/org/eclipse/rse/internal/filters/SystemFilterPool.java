@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
@@ -88,8 +87,8 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	protected static final String DELIMITER = SystemFilterPoolReference.DELIMITER;        	
 	
 	// persistence
-	protected boolean _isDirty = true;
-	protected boolean _wasRestored = false;
+//	protected boolean _isDirty = true; FIXME
+//	protected boolean _wasRestored = false; FIXME
 	
 	/**
 	 * @generated This field/method will be replaced during code generation.
@@ -715,7 +714,8 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
         {
           for (int idx=0; idx<filters.length; idx++)
           {
-    		ISystemFilter newFilter = copySystemFilter(targetPool, filters[idx], filters[idx].getName());
+//    		ISystemFilter newFilter = copySystemFilter(targetPool, filters[idx], filters[idx].getName()); DWD - useless assignment.
+    		copySystemFilter(targetPool, filters[idx], filters[idx].getName());
           }
         }
     }
@@ -927,11 +927,11 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      * Return the save file that will be written for the given filter pool.
      * Will depend on this manager's save policy.
      */
-    public IFile getSaveFile()
-    {
-        String fileName = getRootSaveFileName(this);
-        return null;//FIXME SystemMOFHelpers.getSaveFile(getFolder(),fileName);
-    }
+//    public IFile getSaveFile() DWD - useless, not called since persistence model has changed.
+//    {
+//        String fileName = getRootSaveFileName(this);
+//        return null;//FIXME SystemMOFHelpers.getSaveFile(getFolder(),fileName);
+//    }
     
    
 
@@ -1020,14 +1020,14 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     /**
      * Do restore when all filters in this pool are stored in a single file.
      */
-    protected static ISystemFilterPool restoreFromOneFile(IFolder folder, String name, 
-                                                         ISystemFilterNamingPolicy namingPolicy,
-                                                         boolean restoreFilters)
-     throws Exception
-    {
-    	
-        String fileName = getRootSaveFileName(namingPolicy, name);
-        ISystemFilterPool pool = null;
+//    protected static ISystemFilterPool restoreFromOneFile(IFolder folder, String name, 
+//                                                         ISystemFilterNamingPolicy namingPolicy,
+//                                                         boolean restoreFilters) DWD - useless, not called since persistence model has changed
+//     throws Exception
+//    {
+//    	
+//    	String fileName = getRootSaveFileName(namingPolicy, name);
+//        ISystemFilterPool pool = null;
         /*FIXME
         if (!restoreFilters && !SystemResourceHelpers.getResourceHelpers().getFile(folder, fileName+".xmi").exists())
         {
@@ -1055,8 +1055,8 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
         else
           RSEUIPlugin.logInfo("Hmmm, pool is still null after restore: " + fileName+".xmi");
           */
-        return pool;	        
-    }
+//        return pool;	        
+//    }
 
     /**
      * Internal use method
@@ -1367,31 +1367,31 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 		}
 	}
 	
-	public boolean isDirty()
-	{
-		return _isDirty;
-	}
+//	public boolean isDirty() DWD - useless and dangerous code, overrides default with same
+//	{
+//		return _isDirty;
+//	}
 	
-	public void setDirty(boolean flag)
-	{
-		if (_isDirty != flag)
-		{
-			_isDirty= flag;
-		}
-	}
+//	public void setDirty(boolean flag) DWD - useless and dangerous code, overrides default with same
+//	{
+//		if (_isDirty != flag)
+//		{
+//			_isDirty= flag;
+//		}
+//	}
 	
 	public boolean commit()
 	{
 		return RSEUIPlugin.getThePersistenceManager().commit(this);
 	}
 
-	public boolean wasRestored() 
-	{
-		return _wasRestored;
-	}
+//	public boolean wasRestored() DWD - useless and dangerous code, overrides default with same
+//	{
+//		return _wasRestored;
+//	}
 	
-	public void setWasRestored(boolean flag) 
-	{
-		_wasRestored = flag;
-	}
+//	public void setWasRestored(boolean flag) DWD - useless and dangerous code, overrides default with same
+//	{
+//		_wasRestored = flag;
+//	}
 }

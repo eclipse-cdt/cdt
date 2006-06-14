@@ -663,7 +663,8 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     	  	 }
     	  }
     	}    	
-    	String poolName = pool.getName();
+//    	String poolName = pool.getName(); DWD - useless code
+    	// DWD removing a pool should mark its parent profile as dirty and cause a save to be "scheduled"
    
     	// remove from model
     	java.util.List pools = getPools();
@@ -734,7 +735,13 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     public boolean preTestRenameFilterPool(ISystemFilterPool pool) throws Exception
     {
     	boolean ok = true;
-    	String oldName = pool.getName();
+//    	String oldName = pool.getName(); DWD temporarily removed.
+    	/*
+    	 * DWD this looks like it needs to be modified so that it queries the persistence
+    	 * manager to see if the pool can be renamed. The provider is in charge of determining
+    	 * pool names in the persistent form. The Manager will have to construct a DOM 
+    	 * object for this pool and query the appropriate provider.
+    	 */
     	/* FIXME
     	if ( (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL) ||
     	     (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILE_PER_FILTER) )
@@ -803,9 +810,14 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     public void renameSystemFilterPool(ISystemFilterPool pool, String newName)
       throws Exception
     {
+    	/*
+    	 *  DWD Renaming a filter pool should mark its parent profile as dirty and
+    	 *  the pool itself as dirty. A rewrite of the profile should be scheduled.
+    	 */
+    	
     	String oldName = pool.getName();
-    	int oldLen = oldName.length();
-    	int newLen = newName.length();
+//    	int oldLen = oldName.length(); DWD temporarily(?) removed
+//    	int newLen = newName.length(); DWD temporarily(?) removed
         // rename on disk
         /* FIXME
     	if ( (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL) ||
@@ -1353,7 +1365,10 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     public void moveSystemFilters(ISystemFilter filters[], int delta)
         throws Exception
     {
-    	ISystemFilterContainer container = filters[0].getParentFilterContainer();
+    	/*
+    	 * DWD revisit this. Make sure that the pool is scheduled to be saved.
+    	 */
+//    	ISystemFilterContainer container = filters[0].getParentFilterContainer(); DWD temporarily(?) removed.
     	int[] oldPositions = new int[filters.length];
     	for (int idx=0; idx<filters.length; idx++)
     	   oldPositions[idx] = getSystemFilterPosition(filters[idx]);
@@ -1550,10 +1565,13 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     public ISystemFilterString copySystemFilterString(ISystemFilter targetFilter, ISystemFilterString oldFilterString)
            throws Exception
     {
+    	/*
+    	 * DWD revisit this. make sure that pool is persisted.
+    	 */
         ISystemFilterPool       targetPool = targetFilter.getParentFilterPool();
     	ISystemFilterPoolManager targetMgr = targetPool.getSystemFilterPoolManager();
         ISystemFilter     oldFilter = oldFilterString.getParentSystemFilter();
-        ISystemFilterPool oldPool = oldFilter.getParentFilterPool();
+//        ISystemFilterPool oldPool = oldFilter.getParentFilterPool(); DWD temporarily(?) removed.
 
         targetMgr.suspendCallbacks(true);         
 

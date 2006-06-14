@@ -142,9 +142,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	protected boolean _connectionError = false;
 	protected boolean _disconnecting = false;
 
-	protected boolean _isDirty = true;
-	protected boolean _wasRestored = false;
-	
 	protected IHost   _host;
 		
 
@@ -685,6 +682,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		 * since it names a team sharable resource. Not qualified by the profile
 		 * name since that is implicit by being in a profile.
 		 */
+		// DWD - does not appear to be used.
 		String name = "CN-" + connectionName;
 		return name;
 	}
@@ -3312,35 +3310,9 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		else return false;
 	}
 	
-	public boolean isDirty()
-	{
-		return _isDirty;
-	}
-	
-	public void setDirty(boolean flag)
-	{
-		if (_isDirty != flag)
-		{
-			_isDirty = flag;		
-		}
-	}
-	
 	public boolean commit()
 	{
 		return RSEUIPlugin.getThePersistenceManager().commit(this);
 	}
 	
-	
-	
-	public boolean wasRestored() 
-	{
-		return _wasRestored;
-	}
-	
-	public void setWasRestored(boolean flag) 
-	{
-		_wasRestored = flag;		
-	}
-
-
 }

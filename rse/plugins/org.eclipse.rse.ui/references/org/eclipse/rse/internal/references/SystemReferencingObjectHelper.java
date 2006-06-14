@@ -24,7 +24,7 @@ import org.eclipse.rse.references.ISystemBaseReferencingObject;
  * The easiest use of this class is to subclass it, but since that is not
  * always possible, it is not abstract and hence can be leveraged via containment.
  */
-public class SystemReferencingObjectHelper //implements ISystemReferencingObject 
+public class SystemReferencingObjectHelper 
 {
     private ISystemBaseReferencedObject masterObject = null;
     private ISystemBaseReferencingObject caller = null;

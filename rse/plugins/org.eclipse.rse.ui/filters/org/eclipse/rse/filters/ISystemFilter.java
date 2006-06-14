@@ -56,13 +56,6 @@ import org.eclipse.rse.references.ISystemReferencedObject;
 public interface ISystemFilter extends ISystemReferencedObject, ISystemFilterContainer, IRSEModelObject
 {
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	String copyright = "(c) Copyright IBM Corporation 2002, 2004.";
-
-	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>

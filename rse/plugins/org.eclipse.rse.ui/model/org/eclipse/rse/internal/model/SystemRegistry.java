@@ -2319,7 +2319,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	public void updateHost(Shell shell, IHost conn, String systemType, String connectionName, String hostName, String description, String defaultUserId, int defaultUserIdLocation)
 	{
 		lastException = null;
-		String orgUserId = conn.getDefaultUserId();
+//		String orgUserId = conn.getDefaultUserId(); DWD temporaily(?) removed.
 		boolean connectionNameChanged = !connectionName.equalsIgnoreCase(conn.getAliasName());
 		boolean hostNameChanged = !hostName.equalsIgnoreCase(conn.getHostName());
 		String orgDefaultUserId = conn.getDefaultUserId();
@@ -2487,16 +2487,17 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		boolean failed = false;
 		String msg = null;
 		String oldName = conn.getAliasName();
-		ISystemProfile oldProfile = conn.getSystemProfile();
+//		ISystemProfile oldProfile = conn.getSystemProfile(); DWD temporarily(?) removed
 		ISystemHostPool oldPool = conn.getHostPool();
 		ISystemHostPool targetPool = getHostPool(targetProfile);
 		IHost newConn = null;
-		boolean sameName = (newName.equals(conn.getAliasName()));
+//		boolean sameName = (newName.equals(conn.getAliasName())); DWD temporarily(?) removed.
 
 		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Start of system connection copy. From: " + oldName + " to: " + newName);
 
 		// STEP 0: BRING ALL IMPACTED SUBSYSTEM FACTORIES TO LIFE NOW, BEFORE DOING THE CLONE.
-		Vector factories = getSubSystemFactories(conn);
+//		Vector factories = getSubSystemFactories(conn); DWD temporarily(?) removed.
+		getSubSystemFactories(conn); // DWD touched remove comment after testing
 		if (errorLoadingFactory)
 			return null;
 
@@ -2809,6 +2810,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	{
 		listenerManager.postNotify(event);
 	}
+	
 	/**
 	 * Notify a specific listener of a change to a system resource such as a connection.
 	 * <p>
@@ -2817,7 +2819,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	 */
 	public void postEvent(ISystemResourceChangeListener listener, ISystemResourceChangeEvent event)
 	{
-		SystemPostableEventNotifier runnable = new SystemPostableEventNotifier(listener, event);
+		new SystemPostableEventNotifier(listener, event); // create and run the notifier
 	}
 
 	// ----------------------------

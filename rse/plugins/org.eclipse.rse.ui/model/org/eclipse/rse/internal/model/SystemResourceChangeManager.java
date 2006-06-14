@@ -83,7 +83,7 @@ public class SystemResourceChangeManager
     	for (int idx=0; idx<listeners.size(); idx++)
     	{
     	   ISystemResourceChangeListener listener = (ISystemResourceChangeListener)listeners.elementAt(idx);
-    	   SystemPostableEventNotifier runnable = new SystemPostableEventNotifier(listener, event);    	   
+    	   new SystemPostableEventNotifier(listener, event); // create and run the notifier
     	   //l.systemResourceChanged(event);
     	}
     }

@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.rse.references.ISystemBasePersistableReferenceManager;
@@ -58,7 +59,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	/**
 	 * @generated This field/method will be replaced during code generation.
 	 */
-	protected java.util.List referencingObjectList = null;
+	protected List referencingObjectList = null;
 	/**
 	 * Constructor. Typically called by EMF framework via factory create method.
 	 */
@@ -67,9 +68,9 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 		super();
 	}
 	/**
-     * Internal method to get the mof java.util.List that is the current list.
+     * Internal method to get the mof List that is the current list.
      */
-    protected java.util.List internalGetList()
+    protected List internalGetList()
     {
     	return getReferencingObjectList();
     }
@@ -91,7 +92,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	{
         if ((listAsArray == null) || (listAsArray.length!=internalGetList().size()))
         {
-          java.util.List list = internalGetList();
+          List list = internalGetList();
           listAsArray = new ISystemBasePersistableReferencingObject[list.size()];
           Iterator i = list.iterator();
           int idx=0;
@@ -116,7 +117,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 		  removeAndDeReferenceAllReferencingObjects();
 		else
 		  removeAllReferencingObjects();
-		java.util.List list = internalGetList();		
+		List list = internalGetList();		
 		for (int idx=0; idx<objects.length; idx++)
 		  list.add(objects[idx]);
 	}
@@ -127,7 +128,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 */
 	public int addReferencingObject(ISystemBasePersistableReferencingObject object)
 	{
-      	java.util.List list = internalGetList();
+      	List list = internalGetList();
       	list.add(object);
       	invalidateCache();
       	return getReferencingObjectCount();
@@ -140,7 +141,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 */
 	public int removeReferencingObject(ISystemBasePersistableReferencingObject object)
 	{
-      	java.util.List list = internalGetList();
+      	List list = internalGetList();
       	list.remove(object);
       	invalidateCache();
       	return getReferencingObjectCount();		
@@ -197,7 +198,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 */
 	public int getReferencingObjectPosition(ISystemBasePersistableReferencingObject object)
 	{
-        java.util.List list = internalGetList();
+        List list = internalGetList();
     	int position = -1;
     	boolean match = false;    	
     	
@@ -225,7 +226,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 */
 	public void moveReferencingObjectPosition(int newPosition, ISystemBasePersistableReferencingObject object)
 	{
-    	java.util.List list = internalGetList();
+//    	List list = internalGetList(); DWD temporarily(?) removed
     //FIXME	list.move(newPosition, object);		
 	}
 
@@ -250,7 +251,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 */
 	public ISystemBasePersistableReferencingObject getReferencedObject(ISystemBasePersistableReferencedObject object)
 	{
-        java.util.List list = internalGetList();
+        List list = internalGetList();
     	ISystemBasePersistableReferencingObject match = null;
     	Iterator i = list.iterator();
     	int idx = 0;
@@ -453,7 +454,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	/**
 	 * @generated This field/method will be replaced during code generation 
 	 */
-	public java.util.List getReferencingObjectList()
+	public List getReferencingObjectList()
 	{
 		if (referencingObjectList == null)
 		{

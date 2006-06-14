@@ -41,8 +41,6 @@ public abstract class SystemPersistableReferencingObject extends SystemReferenci
 	 */
 	protected static final String REFERENCED_OBJECT_NAME_EDEFAULT = null;
 
-//    private SystemReferencingObjectHelper helper = null; DWD dangerous, overriding and covering superclass
-
 	/**
 	 * @generated This field/method will be replaced during code generation.
 	 */

@@ -852,7 +852,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public ISystemValidator getUserIdValidator()
 	{
-//		RSEUIPlugin sp = RSEUIPlugin.getDefault(); DWD - to be removed. Appears to be useless.
 		ISystemValidator userIdValidator =
 			new ValidatorSpecialChar(
 				"=;",
@@ -1106,8 +1105,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		java.util.List mofList = getSubSystemList();
 		Iterator i = mofList.iterator();
 		Vector v = new Vector();
-//		String connProfileName = conn.getSystemProfile().getName(); DWD - to be removed, appears to be useless.
-//		String connAliasName = conn.getAliasName(); DWD - to be removed.
 		while (i.hasNext())
 		{
 			ISubSystem subsys = (ISubSystem) i.next();
@@ -1125,7 +1122,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public ISubSystem[] getSubSystems(ISystemProfile profile)
 	{
-//		String profileName = profile.getName(); DWD - to be removed.
 		ISubSystem[] allSubSystems = getSubSystems(true);
 		Vector v = new Vector();
 		for (int idx = 0; idx < allSubSystems.length; idx++)

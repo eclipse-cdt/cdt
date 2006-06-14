@@ -226,7 +226,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 */
 	public void moveReferencingObjectPosition(int newPosition, ISystemBasePersistableReferencingObject object)
 	{
-//    	List list = internalGetList(); DWD temporarily(?) removed
+//    	List list = internalGetList(); 
     //FIXME	list.move(newPosition, object);		
 	}
 

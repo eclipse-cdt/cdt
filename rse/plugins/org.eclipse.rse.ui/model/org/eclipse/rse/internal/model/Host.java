@@ -267,7 +267,6 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
      */
 	public void setAliasName(String newName)
     {
-//    	String oldName = getAliasName();  DWD temporarily(?) removed
     	String userIdValue = null;
     	if (previousUserIdKey != null)
    	       userIdValue = getLocalDefaultUserId(previousUserIdKey);     	  

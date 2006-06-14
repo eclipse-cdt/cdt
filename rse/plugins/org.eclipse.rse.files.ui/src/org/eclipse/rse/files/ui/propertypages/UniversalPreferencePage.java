@@ -631,10 +631,6 @@ public class UniversalPreferencePage
 			Shell shell = getControl().getShell();
 			SystemMessage message = mf.getMessage(ISystemMessages.MSG_ERROR_EXTENSION_EMPTY);
 			SystemMessageDialog.displayErrorMessage(shell, message);
-// Removed by DWD - 2004-07-28 - these two messages don't exist
-//			MessageDialog.openInformation(getControl().getShell(),
-//				GenericMessages.getString("FileEditorPreference.extensionEmptyTitle"),
-//				GenericMessages.getString("FileEditorPreference.extensionEmptyMessage"));
 			return;
 		}
 
@@ -653,10 +649,6 @@ public class UniversalPreferencePage
 					Shell shell = getControl().getShell();
 					SystemMessage message = mf.getMessage(ISystemMessages.MSG_ERROR_FILENAME_INVALID);
 					SystemMessageDialog.displayErrorMessage(shell, message);
-// removed by DWD - 2004-07-28 - these two messages don't exist
-//					MessageDialog.openInformation(getControl().getShell(),
-//						GenericMessages.getString("FileEditorPreference.fileNameInvalidTitle"),
-//						GenericMessages.getString("FileEditorPreference.fileNameInvalidMessage"));
 					return;
 				}
 			}

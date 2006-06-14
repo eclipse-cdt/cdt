@@ -381,10 +381,8 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 		  targetFilter.setStringsCaseSensitive(isStringsCaseSensitive());
     	// clone filter strings
     	ISystemFilterString[] strings = getSystemFilterStrings();
-//    	ISystemFilterString newString = null; DWD - useless code, remove this after testing.
     	if (strings != null) {
     	  for (int idx=0; idx<strings.length; idx++) {
-//    	     newString = copySystemFilterString(targetFilter, strings[idx]); DWD useless code, remove after testing
     	     copySystemFilterString(targetFilter, strings[idx]);
     	  }
     	}
@@ -652,7 +650,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
     	if (filterStringVector == null)
     	{
     	  java.util.List el = internalGetFilterStrings();
-//    	  ISystemFilterString[] strings = new ISystemFilterString[el.size()]; DWD - useless code.
     	  Iterator i = el.iterator();
     	  filterStringVector = new Vector();
     	  while (i.hasNext())

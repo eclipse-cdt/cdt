@@ -30,7 +30,7 @@ public class SystemResourceChangeEvent
 	   extends EventObject
 	   implements ISystemResourceChangeEvent
 {
-	private static final long serialVersionUID = 1; // DWD needed for EventObjects remove comment after testing
+	private static final long serialVersionUID = 1;
 	private Object parent,grandparent, prevObj;
 	private Object[] multiSource;
 	private Viewer   originatingViewer;

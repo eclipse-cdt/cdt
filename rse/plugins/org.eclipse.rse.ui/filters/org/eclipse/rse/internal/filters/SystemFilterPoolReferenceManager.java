@@ -352,7 +352,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
     	/*
     	 * DWD Setting a name should schedule a save. Is this the same as a rename?
     	 */
-//    	String oldName = getName(); DWD temporarily(?) removed.
+//    	String oldName = getName();
     	if (savePolicy == ISystemFilterSavePolicies.SAVE_POLICY_ONE_FILE_PER_MANAGER)
     	{
     	  IFile file = getResourceHelpers().getFile(getFolder(), getSaveFileName());

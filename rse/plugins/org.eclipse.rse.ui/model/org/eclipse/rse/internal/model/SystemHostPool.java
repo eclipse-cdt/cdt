@@ -462,7 +462,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     	 * It appears that connections can be moved up and down in the list which
     	 * probably provides for some rational for keeping this around.
     	 */
-//        java.util.List connList = getHostList(); DWD temporarily(?) removed.
+//        java.util.List connList = getHostList();
        //FIXME connList.move(newPos, conn);
         invalidateCache();
     }

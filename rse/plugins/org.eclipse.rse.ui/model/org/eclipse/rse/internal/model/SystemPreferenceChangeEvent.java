@@ -29,7 +29,7 @@ public class SystemPreferenceChangeEvent
 	   extends EventObject
 	   implements ISystemPreferenceChangeEvent
 {
-	private static final long serialVersionUID = 1; // DWD added for warning suppression remove this comment when tested.
+	private static final long serialVersionUID = 1;
 	private int type;
     private Object oldValue, newValue;
 	

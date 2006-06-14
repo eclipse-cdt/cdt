@@ -663,7 +663,6 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     	  	 }
     	  }
     	}    	
-//    	String poolName = pool.getName(); DWD - useless code
     	// DWD removing a pool should mark its parent profile as dirty and cause a save to be "scheduled"
    
     	// remove from model
@@ -735,7 +734,6 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     public boolean preTestRenameFilterPool(ISystemFilterPool pool) throws Exception
     {
     	boolean ok = true;
-//    	String oldName = pool.getName(); DWD temporarily removed.
     	/*
     	 * DWD this looks like it needs to be modified so that it queries the persistence
     	 * manager to see if the pool can be renamed. The provider is in charge of determining
@@ -816,10 +814,10 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     	 */
     	
     	String oldName = pool.getName();
-//    	int oldLen = oldName.length(); DWD temporarily(?) removed
-//    	int newLen = newName.length(); DWD temporarily(?) removed
         // rename on disk
         /* FIXME
+    	int oldLen = oldName.length();
+    	int newLen = newName.length();
     	if ( (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL) ||
     	     (savePolicy == SystemFilterConstants.SAVE_POLICY_ONE_FILE_PER_FILTER) )
     	{
@@ -1368,7 +1366,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     	/*
     	 * DWD revisit this. Make sure that the pool is scheduled to be saved.
     	 */
-//    	ISystemFilterContainer container = filters[0].getParentFilterContainer(); DWD temporarily(?) removed.
+//    	ISystemFilterContainer container = filters[0].getParentFilterContainer(); 
     	int[] oldPositions = new int[filters.length];
     	for (int idx=0; idx<filters.length; idx++)
     	   oldPositions[idx] = getSystemFilterPosition(filters[idx]);
@@ -1571,7 +1569,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
         ISystemFilterPool       targetPool = targetFilter.getParentFilterPool();
     	ISystemFilterPoolManager targetMgr = targetPool.getSystemFilterPoolManager();
         ISystemFilter     oldFilter = oldFilterString.getParentSystemFilter();
-//        ISystemFilterPool oldPool = oldFilter.getParentFilterPool(); DWD temporarily(?) removed.
+//        ISystemFilterPool oldPool = oldFilter.getParentFilterPool(); 
 
         targetMgr.suspendCallbacks(true);         
 

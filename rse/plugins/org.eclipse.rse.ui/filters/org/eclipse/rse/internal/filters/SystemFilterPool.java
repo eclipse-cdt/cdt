@@ -714,7 +714,6 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
         {
           for (int idx=0; idx<filters.length; idx++)
           {
-//    		ISystemFilter newFilter = copySystemFilter(targetPool, filters[idx], filters[idx].getName()); DWD - useless assignment.
     		copySystemFilter(targetPool, filters[idx], filters[idx].getName());
           }
         }
@@ -923,20 +922,6 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     // -----------------------
     // SAVE/RESTORE METHODS...
     // -----------------------
-    /**
-     * Return the save file that will be written for the given filter pool.
-     * Will depend on this manager's save policy.
-     */
-//    public IFile getSaveFile() DWD - useless, not called since persistence model has changed.
-//    {
-//        String fileName = getRootSaveFileName(this);
-//        return null;//FIXME SystemMOFHelpers.getSaveFile(getFolder(),fileName);
-//    }
-    
-   
-
- 
-
 
     /**
      * Restore specific filter pool. You should not call this directly, as it is possible
@@ -1017,46 +1002,6 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
         return pool;
     }
     
-    /**
-     * Do restore when all filters in this pool are stored in a single file.
-     */
-//    protected static ISystemFilterPool restoreFromOneFile(IFolder folder, String name, 
-//                                                         ISystemFilterNamingPolicy namingPolicy,
-//                                                         boolean restoreFilters) DWD - useless, not called since persistence model has changed
-//     throws Exception
-//    {
-//    	
-//    	String fileName = getRootSaveFileName(namingPolicy, name);
-//        ISystemFilterPool pool = null;
-        /*FIXME
-        if (!restoreFilters && !SystemResourceHelpers.getResourceHelpers().getFile(folder, fileName+".xmi").exists())
-        {
-          // special case: data file might not exist, as only started saving it recently.
-          pool = createPool();
-          ((SystemFilterPoolImpl)pool).specialCaseNoDataRestored = true;
-          RSEUIPlugin.logInfo("Created filter pool file " + fileName+".xmi during restore");
-        }
-        else
-        {
-			//Extent java.util.List = mofHelpers.restore(folder,fileName); MOF way
-			java.util.List = mofHelpers.restore(folder,fileName);
-			// should be exactly one system filter pool...
-			Iterator iList = java.util.List.iterator();
-			pool = (SystemFilterPool)iList.next();
-        }
-        if (pool != null)
-        {
-          pool.setName(name);
-          if (restoreFilters)
-          {
-          	((SystemFilterPoolImpl)pool).initializeFilterStrings();
-          }
-        }
-        else
-          RSEUIPlugin.logInfo("Hmmm, pool is still null after restore: " + fileName+".xmi");
-          */
-//        return pool;	        
-//    }
 
     /**
      * Internal use method
@@ -1367,31 +1312,9 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 		}
 	}
 	
-//	public boolean isDirty() DWD - useless and dangerous code, overrides default with same
-//	{
-//		return _isDirty;
-//	}
-	
-//	public void setDirty(boolean flag) DWD - useless and dangerous code, overrides default with same
-//	{
-//		if (_isDirty != flag)
-//		{
-//			_isDirty= flag;
-//		}
-//	}
-	
 	public boolean commit()
 	{
 		return RSEUIPlugin.getThePersistenceManager().commit(this);
 	}
 
-//	public boolean wasRestored() DWD - useless and dangerous code, overrides default with same
-//	{
-//		return _wasRestored;
-//	}
-	
-//	public void setWasRestored(boolean flag) DWD - useless and dangerous code, overrides default with same
-//	{
-//		_wasRestored = flag;
-//	}
 }

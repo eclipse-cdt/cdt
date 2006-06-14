@@ -26,15 +26,9 @@ import org.eclipse.rse.filters.ISystemFilterStringReference;
 import org.eclipse.rse.internal.references.SystemReferencingObjectHelper;
 import org.eclipse.rse.references.ISystemBaseReferencedObject;
 
-
-
 /**
  * A reference to a system filter string.
  */
-/*
- * DWD What is a filter string REFERENCE? Where would this be used?
- */
-
 public class SystemFilterStringReference
 	implements ISystemFilterStringReference, IAdaptable
 {

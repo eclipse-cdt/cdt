@@ -239,6 +239,9 @@ public class SystemViewResources extends NLS {
 	public static String	RESID_PROPERTY_COMMAND_TOOLTIP;
 	public static String	RESID_PROPERTY_COMMENT_LABEL;
 	public static String	RESID_PROPERTY_COMMENT_TOOLTIP;
+	
+	public static String	RESID_PROPERTY_LINKINGACTION_TEXT;
+	public static String	RESID_PROPERTY_LINKINGACTION_TOOLTIP;
 
 	public static String    RESID_SCRATCHPAD;
 	public static String    RESID_REMOTE_SCRATCHPAD;

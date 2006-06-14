@@ -203,7 +203,6 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		    
 		  // add our unique property descriptors...
 		  //idx = defaultProperties.length; assertion
-	      RSEUIPlugin plugin = RSEUIPlugin.getDefault();
 	      
 	      // user id	      
 	      //propertyDescriptorArray[idx] = new TextPropertyDescriptor(ISystemPropertyConstants.P_USERID, 
@@ -428,7 +427,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	    {
           propertyPortDescriptor.setValidator((ICellEditorValidator)ssFactory.getPortValidator());
 	    }
-        int iPort = ss.getConnectorService().getPort();
+        ss.getConnectorService().getPort();
 	    port_editable = ssFactory.isPortEditable();
 	}
 	
@@ -517,7 +516,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
     {
     	String property = (String)propertyObject;
 	    ISubSystem ss = (ISubSystem)propertySourceInput;
-        ISubSystemConfiguration ssFactory = ss.getSubSystemConfiguration();	    
+        ss.getSubSystemConfiguration();	    
 	    if (property.equals(P_USERID))
 	    {
 		  updateUserId(ss, original_userIdData);	      
@@ -537,7 +536,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
     {
 		String name = (String)property;    	
 	    ISubSystem ss = (ISubSystem)propertySourceInput;
-        ISubSystemConfiguration ssFactory = ss.getSubSystemConfiguration();
+        ss.getSubSystemConfiguration();
 	    //System.out.println("inside setPropVal: " + property + ", value: " + value);
 	    if (name.equals(P_USERID))
 	    {

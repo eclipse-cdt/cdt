@@ -22,7 +22,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
@@ -259,8 +258,9 @@ public class SystemViewPart
 		if (input instanceof IFileEditorInput)
 		{
 			IFileEditorInput fileInput = (IFileEditorInput) input;
-			IFile file = fileInput.getFile();
+			fileInput.getFile();
 			/* FIXME - can't couple this view to files ui
+			IFile file = fileInput.getFile();
 			SystemIFileProperties properties = new SystemIFileProperties(file);
 			Object rmtEditable = properties.getRemoteFileObject();
 			Object remoteObj = null;
@@ -558,8 +558,9 @@ public class SystemViewPart
 							IEditorInput input = editor.getEditorInput();
 							if (input instanceof FileEditorInput)
 							{
-								IFile file = ((FileEditorInput)input).getFile();				
+								((FileEditorInput)input).getFile();				
 								/** FIXME - can't couple this view to files ui
+								IFile file = ((FileEditorInput)input).getFile();				
 								if (file.getProject().getName().equals(SystemRemoteEditManager.REMOTE_EDIT_PROJECT_NAME))
 								{
 									SystemIFileProperties properties = new SystemIFileProperties(file);
@@ -621,9 +622,8 @@ public class SystemViewPart
 		
 		toolBarMgr.add(collapseAllAction);
 
-		toggleLinkingAction = new ToggleLinkingAction(this, org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages.ToggleLinkingAction_text); 
-		
-		toggleLinkingAction.setToolTipText(org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages.ToggleLinkingAction_toolTip); 
+		toggleLinkingAction = new ToggleLinkingAction(this, SystemViewResources.RESID_PROPERTY_LINKINGACTION_TEXT); 
+		toggleLinkingAction.setToolTipText(SystemViewResources.RESID_PROPERTY_LINKINGACTION_TOOLTIP); 
 		toggleLinkingAction.setImageDescriptor(getNavigatorImageDescriptor(ISystemIconConstants.ICON_IDE_LINKTOEDITOR_ID)); 
 		toggleLinkingAction.setHoverImageDescriptor(getNavigatorImageDescriptor(ISystemIconConstants.ICON_IDE_LINKTOEDITOR_ID)); 
 		toolBarMgr.add(toggleLinkingAction);
@@ -1376,7 +1376,7 @@ public class SystemViewPart
 					{
 						index = token.indexOf('=');
 						String filterName = token.substring(index + 1);
-						String poolName = token.substring(0, index);
+//						String poolName = token.substring(0, index);
 						// TODO: handle nested filters. in this case they are separated by ';'. See SystemFilterReferenceAdapter's getMementoHandle()
 						if (fpRef != null) // should have already been parsed in case 3
 						{

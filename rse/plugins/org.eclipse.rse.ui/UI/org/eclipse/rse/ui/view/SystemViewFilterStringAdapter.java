@@ -171,14 +171,12 @@ public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter imp
 		if (propertyDescriptorArray == null)
 		{
 			propertyDescriptorArray = new PropertyDescriptor[3];
-			RSEUIPlugin plugin = RSEUIPlugin.getDefault();
-			int idx = 0;
 			// parent filter pool
-			propertyDescriptorArray[idx] = createSimplePropertyDescriptor(P_PARENT_FILTERPOOL,SystemViewResources.RESID_PROPERTY_FILTERPARENTPOOL_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPARENTPOOL_TOOLTIP);
+			propertyDescriptorArray[0] = createSimplePropertyDescriptor(P_PARENT_FILTERPOOL,SystemViewResources.RESID_PROPERTY_FILTERPARENTPOOL_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPARENTPOOL_TOOLTIP);
 			// parent filter
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_PARENT_FILTER,SystemViewResources.RESID_PROPERTY_FILTERPARENTFILTER_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPARENTFILTER_TOOLTIP);	      
+			propertyDescriptorArray[1] = createSimplePropertyDescriptor(P_PARENT_FILTER,SystemViewResources.RESID_PROPERTY_FILTERPARENTFILTER_LABEL, SystemViewResources.RESID_PROPERTY_FILTERPARENTFILTER_TOOLTIP);	      
 			// filter string
-			propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(P_FILTERSTRING,SystemViewResources.RESID_PROPERTY_FILTERSTRING_LABEL, SystemViewResources.RESID_PROPERTY_FILTERSTRING_TOOLTIP);
+			propertyDescriptorArray[2] = createSimplePropertyDescriptor(P_FILTERSTRING,SystemViewResources.RESID_PROPERTY_FILTERSTRING_LABEL, SystemViewResources.RESID_PROPERTY_FILTERSTRING_TOOLTIP);
 		}		
 		return propertyDescriptorArray;
 	}

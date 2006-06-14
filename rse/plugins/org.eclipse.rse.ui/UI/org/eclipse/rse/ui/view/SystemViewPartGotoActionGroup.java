@@ -18,7 +18,6 @@ package org.eclipse.rse.ui.view;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.ui.GenericMessages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
@@ -102,8 +101,6 @@ public class SystemViewPartGotoActionGroup extends ActionGroup
 	
 	public void updateActionBars() 
 	{
-		IStructuredSelection selection =
-			(IStructuredSelection) getContext().getSelection();
-		//goIntoAction.setEnabled(selection.size() == 1);
+		getContext().getSelection();
 	}
 }

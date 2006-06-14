@@ -783,15 +783,8 @@ public class SystemViewFilterReferenceAdapter
 	public static boolean isCommandFilter(ISystemFilter filter)
 	{
 		ISubSystemConfiguration ssf = (ISubSystemConfiguration) filter.getProvider();
-		/** TODO - this was originally for iseries..but
-		 *  with new model, another approach should be used (maybe via factory api)
-		if ((ssf != null) && (ssf instanceof IRemoteCmdSubSystemFactory))
-			return true;
-		else
-		**/
-			return false;
+		return ssf.supportsCommands();
 	}
-
 
 	// ------------------------------------------
 	// METHODS TO SUPPORT COMMON DRAG AND DROP FUNCTION...

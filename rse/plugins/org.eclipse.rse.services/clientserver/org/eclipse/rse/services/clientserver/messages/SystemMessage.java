@@ -36,7 +36,7 @@ public class SystemMessage
    // start of the new stuff!!!  Violaine Batthish
    // Indicators
 	/**
-	 * Completion message indicator (added by DWD)
+	 * Completion message indicator
 	 */
 	public static final char COMPLETION='C';
 	/**

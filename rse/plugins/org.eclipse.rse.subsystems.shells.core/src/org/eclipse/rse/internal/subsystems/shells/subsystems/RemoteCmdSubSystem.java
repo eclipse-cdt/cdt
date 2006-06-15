@@ -103,6 +103,8 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			set = createPropertySet("IBM", getDescription());
 		}
 		set.addProperty("shell.encoding", encoding);
+		setDirty(true);
+		commit();
 	}
 
 	/**

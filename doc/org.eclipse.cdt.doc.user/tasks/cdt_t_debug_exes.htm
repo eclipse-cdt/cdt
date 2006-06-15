@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="LASTUPDATED" content="06/17/05 11:09:43" />
+<title>Debugging Existing Executables</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+
+<body>
+
+<h1>Debugging an Existing Executable </h1>
+<p>Use the import feature to import and debug an executable you have already built. This feature will automatically create a project and debug configuration for you. This is helpful if you have an executable built with debug symbols but may not have the project used to build the executable. </p>
+
+  <h4>Importing Executables for Debugging </h4>
+  <ol>
+    <li>Select the File &gt; Import... menu item
+      to open the Import wizard dialog:
+      <p align="center"><img src="../images/cdt_debug_exes01.png" width="476" height="430" hspace="12" vspace="12" /></p>
+    </li>
+   <li>Select C/C++ Executable, then click Next to open the Import Executable wizard.</li>
+   <li>Enter the executable path in the Select Executable field or click Browse to locate the executable.</li>
+    <p>Use Select Executable to choose a single executable or Search Directory to select one or more  executables to import from the specified directory.</p>
+    <p align="center"><img src="../images/cdt_debug_exes02.png" width="518" height="434" hspace="12" vspace="12" /></p>
+   <p class="figure"><b>NOTE</b> You can import any executable, but only those built with debug symbols will be let you step through source code and see variable values. </p>
+   <li>Click Next to see the Choose Project page</li>
+    <p>Use the Choose Project page to create a new project (you can use the default name assigned) and debug configuration. You can import executables into a new project or an existing one. The new project is configured to hold the executable, but not to build anything. </p>
+    <p align="center"><img src="../images/cdt_debug_exes03.png" width="518" height="434" hspace="12" vspace="12" /></p>
+  <p class="figure">Select from the menu of launch configuration types to select one for debugging. This launch configuration will be created for you with default settings for debugging your executable. </p>
+  <li>Click Finish</li>
+  <p>The executable is added to the C/C++ Projects view and the Launch configuration window appears..</p>
+  <p align="center"><img src="../images/cdt_debug_exes04.png" width="814" height="450" hspace="12" vspace="12" /></p>
+  <li>Click Debug</li>
+  <p>The  debugger launches and you can begin debugging the executable. </p>
+  <li>Setting breakpoints </li>
+  <p>Expand the executable in the C++ Projects view to see the list of source files. Only executables built with debug symbols will show a list of source files. The source files can be opened in the editor so you can set breakpoints. Use these files only for debugging, you can not change them and rebuild the executable with this project. </p>
+  <p><img src="../images/cdt_debug_exes05.png" alt="C++ Projects View" width="210" height="275" hspace="12" vspace="12" /></p>
+  </ol>
+</div>
+<p><img border="0" src="../images/ngconcepts.gif" alt="Related concepts" width="143" height="21" /> <br />
+    <a href="../concepts/cdt_c_over_dbg.htm">Debug overview</a><br />
+  <a href="../concepts/cdt_c_dbg_info.htm">Debug information</a></p>
+<p><img border="0" src="../images/ngtasks.gif" alt="Related tasks" width="143" height="21" /> <br />
+  <a href="cdt_o_debug.htm">Debugging</a></p>
+<p><img border="0" src="../images/ngref.gif" alt="Related reference" width="143" height="21" /> <br />
+  <a href="../reference/cdt_o_run_dbg_pages.htm">Run and Debug dialog box</a></p>
+<h5>&nbsp;</h5>
+  <div id="footer">Copyright Nokia Corporation and others 2006. </div>
+</body>
+</html>

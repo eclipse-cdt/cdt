@@ -62,6 +62,7 @@
 			</topic>
 			<topic label="Debugging" href="tasks/cdt_o_debug.htm">
 				<topic label="Debugging a program" href="tasks/cdt_t_debug_prog.htm"/>
+				<topic label="Debugging an existing executable" href="tasks/cdt_t_debug_exes.htm"/>
 				<topic label="Working with breakpoints and watchpoints" href="tasks/cdt_o_brkpnts_watch.htm">
 					<topic label="Adding breakpoints" href="tasks/cdt_t_add_brkpnts.htm"/>
 					<topic label="Adding watchpoints" href="tasks/cdt_t_add_watch.htm"/>

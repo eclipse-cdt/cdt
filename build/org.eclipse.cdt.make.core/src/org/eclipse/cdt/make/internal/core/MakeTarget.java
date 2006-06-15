@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.cdt.make.core.MakeBuilderUtil;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.IMakeTarget;
@@ -173,7 +172,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	}
 
 	public IPath getBuildLocation() {
-		return MakeBuilderUtil.getBuildDirectory(container.getProject(), container.getProjectRelativePath(), manager.getBuilderID(targetBuilderID));
+		return container.getLocation();
 	}
 
 	public void setBuildLocation(IPath location) throws CoreException {
@@ -294,7 +293,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		info.setEnvironment(getExpandedEnvironment());
 		info.setAppendEnvironment(appendEnvironment());
 		if (container != null) {
-			info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, getBuildLocation().toString());
+			info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, container.getFullPath().toString());
 		}
 		IMakeBuilderInfo projectInfo = MakeCorePlugin.createBuildInfo(getProject(), builderID);
 		info.setErrorParsers(projectInfo.getErrorParsers());

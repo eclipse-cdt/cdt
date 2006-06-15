@@ -27,13 +27,13 @@ import org.eclipse.core.runtime.Path;
  */
 public class DwarfReader extends Dwarf implements ISymbolReader {
 
-	// These are sections that must be parsed to get the source file list.
+	// These are sections that need be parsed to get the source file list.
 	final static String[] DWARF_SectionsToParse =
 		{
 			DWARF_DEBUG_INFO,
 			DWARF_DEBUG_LINE,
 			DWARF_DEBUG_ABBREV,
-			DWARF_DEBUG_STR
+			DWARF_DEBUG_STR		// this is optional. Some compilers don't generate it.
 		};
 
 	ArrayList		 	fileList;
@@ -68,9 +68,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 			}
 		}
 		
-		if (dwarfSections.size() < DWARF_SectionsToParse.length)
-			throw new IOException("No enough Dwarf data.");
-
 		// Don't print during parsing.
 		printEnabled = false;
 

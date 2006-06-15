@@ -341,6 +341,9 @@ public class PropertyManager {
 	}
 
 	public void clearProperties(IManagedProject mProject){
+		if(mProject == null)
+			return;
+		
 		IConfiguration cfgs[] = mProject.getConfigurations();
 		for(int i = 0; i < cfgs.length; i++)
 			clearLoaddedData(cfgs[i]);

@@ -3865,6 +3865,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						path = path.removeFirstSegments(dirLocation.segmentCount()).setDevice(null);
 					}
 				}
+				if ( fileList == null ) {
+					fileList = new Vector();
+				}
 				fileList.add(path.toString());
 			}
 		}

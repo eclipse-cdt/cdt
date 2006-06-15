@@ -20,9 +20,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
 import java.util.Stack;
 
 import org.eclipse.core.resources.IWorkspace;
@@ -67,8 +64,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	protected static Logger log = null;		
     
 	// instance variables
-    private Hashtable imageDescriptorRegistry = new Hashtable();	
-    private ImageRegistry imageRegistry = null;
+    private Hashtable imageDescriptorRegistry = null;	
     private boolean headless;
     private boolean headlessSet;
 
@@ -152,10 +148,9 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	}
 
 	/**
-	 * Helper to get the typical icons path ... usually just "icons/".
+	 * @return the prefix of the path for icons, i.e. "icons/".
 	 */
-	public static String getIconPath()
-	{
+	public static String getIconPath() {
 		return ICON_PATH;
 	}
 
@@ -778,97 +773,103 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		return wb;
 	}
 
-	// ----------------------------------
-	// ICON METHODS...
-	// ----------------------------------
-	        
     /**
- 	 *	Initialize the image registry by declaring all of the required
-	 *	graphics. Typically this is a series of calls to putImageInRegistry.
-	 *  Use getIconPath() to qualify the file name of the icon with its 
-	 *  relative path.
+	 * Initialize the image registry by declaring all of the required graphics.
+	 * Typically this is a series of calls to putImageInRegistry. Use
+	 * getIconPath() to qualify the file name of the icons with their relative
+	 * path.
 	 */
-    protected abstract void initializeImageRegistry();
+	protected abstract void initializeImageRegistry();
 
 	/**
-     * Helper method to put an image into the registry
+     * Construct an image descriptor from a file name and place it in the 
+     * image descriptor registry. Actual image construction is delayed until first use.
      * @param id - an arbitrary ID to assign to this image. Used later when retrieving it.
      * @param fileName - the name of the icon file, with extension, relative to this plugin's folder.
+     * @return the image descriptor for this particular id.
+     * @see SystemBasePlugin#getImage(String);
      */
     protected ImageDescriptor putImageInRegistry(String id, String fileName)
     {
 	   ImageDescriptor fid = getPluginImage(fileName);
-	   imageRegistry.put(id, fid);
-	   
-	   // Because ImageRegistry only allows you to get an image, and not an ImageDescriptor,
-	   //  we have to redundantly save the image descriptors for cases when they are needed,
-	   //  such as in WizardPage....
-	   imageDescriptorRegistry.put(id, fid);
-	   
-	   if (imageRegistry.get(id) == null)
-		  logError("Error loading image: " + fileName);
-	   
+	   Hashtable t = getImageDescriptorRegistry();
+	   t.put(id, fid);
 	   return fid;
     }
     
     /**
-     * Retrieve image in this plugin's directory tree, given its file name.
-     * The file name should be qualified relative to this plugin's bundle. Eg "icons/myicon.gif"
-     */
-    public ImageDescriptor getPluginImage(String fileName)
-    {
-       return getPluginImage(getBundle(), fileName);
-    }
+	 * Retrieve an image descriptor in this plugin's directory tree given its file name. The
+	 * file name should be qualified relative to this plugin's bundle. 
+	 * For example "icons/myicon.gif"
+	 * @parm imagePath the path name to the image relative to this bundle
+	 * @return the image descriptor
+	 */
+	public ImageDescriptor getPluginImage(String imagePath) {
+		return getPluginImage(getBundle(), imagePath);
+	}
 
     /**
-	 * Easy retrieval of image by id
+	 * Retrieves or creates an image based on its id. The image is then stored
+	 * in the image registry if it is created so that it may be retrieved again.
+	 * Thus, image resources retrieved in this way need not be disposed by the
+	 * caller.
+	 * 
+	 * @parm key the id of the image to retrieve.
+	 * @return the Image resource for this id.
 	 */
     public Image getImage(String key)
     {
-        if (imageRegistry == null) {
-            imageRegistry = new ImageRegistry();
-            initializeImageRegistry();
-        }
-
-        Image image = null;
-
-        try
-        {
-          image = imageRegistry.get(key);
-        }
-        catch (Throwable t)
-        {
-          logError("...error retrieving image for key: " + key);
-        }
-	    return image;
+    	// First check the image registry
+    	ImageRegistry imageRegistry = getImageRegistry();
+		Image image = imageRegistry.get(key);
+		if (image == null) { // check the image descriptor registry
+			ImageDescriptor descriptor = getImageDescriptor(key);
+			if (descriptor != null) {
+				imageRegistry.put(key, descriptor);
+				image = imageRegistry.get(key);
+			} else {
+				logError("...error retrieving image for key: " + key);
+			}
+		}
+		return image;
     }
     
     /**
-	 * Easy retrieval of image descriptor by id
+	 * Returns the image descriptor that has been registered to this id.
+	 * @parm key the id of the image descriptor to retrieve
+	 * @return an ImageDescriptor
 	 */
-    public ImageDescriptor getImageDescriptor(String key)
-    {
-        if (imageRegistry == null)
-        {
-          imageRegistry = new ImageRegistry();
-          initializeImageRegistry();
-        }
-
-        ImageDescriptor image = (ImageDescriptor)imageDescriptorRegistry.get(key);
-
-	    return image;
-    }  
+	public ImageDescriptor getImageDescriptor(String key) {
+		Hashtable t = getImageDescriptorRegistry();
+		ImageDescriptor descriptor = (ImageDescriptor) t.get(key);
+		return descriptor;
+	}  
+	
+	/**
+	 * Gets the hashtable that is the image descriptor registry. Creates and populates
+	 * it if necessary.
+	 * @return The image descriptor registry hashtable.
+	 */
+	private Hashtable getImageDescriptorRegistry() {
+		if (imageDescriptorRegistry == null) {
+			imageDescriptorRegistry = new Hashtable();
+			initializeImageRegistry();
+		}
+		return imageDescriptorRegistry;
+	}
 
 	/**
 	 * Returns an image descriptor from the base IDE.
-	 * @see org.eclipse.ui.views.navigator.ResourceNavigatorActionGroup#getImageDescriptor(java.lang.String) 
+	 * 
+	 * @see org.eclipse.ui.views.navigator.ResourceNavigatorActionGroup#getImageDescriptor(java.lang.String)
 	 */
 	public ImageDescriptor getImageDescriptorFromIDE(String relativePath) 
 	{
-		String iconPath = "icons/full/"; //$NON-NLS-1$
-		String key = iconPath + relativePath;
-		ImageDescriptor descriptor = (ImageDescriptor)imageDescriptorRegistry.get(key);
+		Hashtable registry = getImageDescriptorRegistry();
+		ImageDescriptor descriptor = (ImageDescriptor)registry.get(relativePath);
 		if (descriptor == null) {
+			String iconPath = "icons/full/"; //$NON-NLS-1$
+			String key = iconPath + relativePath;
 			String[] bundleNames = new String[] {"org.eclipse.ui", "org.eclipse.ui.ide"};
 			for (int i = 0; (i < bundleNames.length) && (descriptor == null); i++) {
 				String bundleName = bundleNames[i];
@@ -881,20 +882,9 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 			if (descriptor == null) {
 				descriptor = ImageDescriptor.getMissingImageDescriptor();
 			}
-			imageDescriptorRegistry.put(key, descriptor);
+			registry.put(relativePath, descriptor);
 		}
 		return descriptor;
-//		try {
-//		    Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-//		    URL installURL = bundle.getEntry("/");
-//			URL url = new URL(installURL, key);
-//			image = ImageDescriptor.createFromURL(url);
-//			imageDescriptorRegistry.put(key, image);
-//			return image;
-//		} catch (MalformedURLException e) {
-//			// should not happen
-//			return ImageDescriptor.getMissingImageDescriptor();
-//		}
 	}    
             
     // ----------------------------------------

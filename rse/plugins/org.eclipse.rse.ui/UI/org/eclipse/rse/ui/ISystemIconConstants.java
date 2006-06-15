@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Michael Berger (IBM) - 146339 Added refresh action graphic.
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -22,7 +22,7 @@ package org.eclipse.rse.ui;
 public interface ISystemIconConstants 
 {
 	public static final String PLUGIN_ID ="org.eclipse.rse.ui";
-	public static final String PREFIX = PLUGIN_ID+".";
+	public static final String PREFIX = PLUGIN_ID + ".";
 	public static final String SEP = "/";
 	
 	// Icons
@@ -341,6 +341,10 @@ public interface ISystemIconConstants
 	public static final String ICON_SYSTEM_EXPORT_SHELL_HISTORY_ROOT 	= "exportshellhistory";
 	public static final String ICON_SYSTEM_EXPORT_SHELL_HISTORY      	= ICON_ACTIONS_DIR + ICON_SYSTEM_EXPORT_SHELL_HISTORY_ROOT + ICON_EXT;
 	public static final String ICON_SYSTEM_EXPORT_SHELL_HISTORY_ID  	= PREFIX + ICON_SYSTEM_EXPORT_SHELL_HISTORY_ROOT + ICON_SUFFIX;
+
+	public static final String ICON_SYSTEM_REFRESH_ROOT = "refresh_nav";
+	public static final String ICON_SYSTEM_REFRESH = ICON_ACTIONS_DIR + ICON_SYSTEM_REFRESH_ROOT + ICON_EXT;
+	public static final String ICON_SYSTEM_REFRESH_ID = PREFIX + ICON_SYSTEM_REFRESH_ROOT + ICON_SUFFIX;
 
     // SPECIAL MODEL OBJECT ICONS...
     public static final String ICON_OBJS_DIR = SEP + "full" + SEP + "obj16" + SEP;	

@@ -197,10 +197,9 @@ public class RSEUIPlugin extends SystemBasePlugin
 		return !dontShowProfilePageInitially;
 	}
 	
-    /**
- 	 *	Initialize the image registry by declaring all of the required
-	 *	graphics.
-	 */
+    /* (non-Javadoc)
+     * @see org.eclipse.rse.core.SystemBasePlugin#initializeImageRegistry()
+     */
     protected void initializeImageRegistry()    
     {
     	//SystemElapsedTimer timer = new SystemElapsedTimer();
@@ -376,8 +375,8 @@ public class RSEUIPlugin extends SystemBasePlugin
 	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_WORKWITHCOMPILECMDS_ID,
 						   path+ISystemIconConstants.ICON_SYSTEM_WORKWITHCOMPILECMDS);
 
-	    // putImageInRegistry(ISystemConstants.ICON_SYSTEM_REFRESH_ID,
-		//				   path+ISystemConstants.ICON_SYSTEM_REFRESH); D54577
+	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_REFRESH_ID,
+						   path+ISystemIconConstants.ICON_SYSTEM_REFRESH);
 		
         putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_NEWFILE_ID,
 						   path+ISystemIconConstants.ICON_SYSTEM_NEWFILE);

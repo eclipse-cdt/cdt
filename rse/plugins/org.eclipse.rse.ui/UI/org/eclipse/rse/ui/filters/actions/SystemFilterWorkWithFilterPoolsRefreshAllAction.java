@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Michael Berger (IBM) - 146339 Added refresh action graphic.
  ********************************************************************************/
 
 package org.eclipse.rse.ui.filters.actions;
@@ -43,7 +43,7 @@ public class SystemFilterWorkWithFilterPoolsRefreshAllAction extends SystemBaseA
 	public SystemFilterWorkWithFilterPoolsRefreshAllAction(TreeViewer viewer, Shell parent) 
 	{
 		super(SystemResources.ACTION_REFRESH_ALL_LABEL,SystemResources.ACTION_REFRESH_ALL_TOOLTIP,
-		      RSEUIPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_REFRESH_ID),
+		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_REFRESH_ID),
 		      parent);
 		this.viewer = viewer;
         allowOnMultipleSelection(true);

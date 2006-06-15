@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Michael Berger (IBM) - 146339 Added refresh action graphic.
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -318,7 +318,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		{
 			super(SystemResources.ACTION_REFRESH_LABEL, 
 					//RSEUIPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_REFRESH_ID));
-					RSEUIPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_REFRESH_ID));
+					RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_REFRESH_ID));
 		}
 
 		public void run()

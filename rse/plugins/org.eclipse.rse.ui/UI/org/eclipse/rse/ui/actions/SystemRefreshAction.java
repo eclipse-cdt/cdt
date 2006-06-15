@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Michael Berger (IBM) - 146339 Added refresh action graphic.
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -44,7 +44,7 @@ public class SystemRefreshAction extends SystemBaseAction
 	public SystemRefreshAction(Shell parent) 
 	{
 		super(SystemResources.ACTION_REFRESH_LABEL, SystemResources.ACTION_REFRESH_TOOLTIP,
-				RSEUIPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_REFRESH_ID), // D54577
+				RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_REFRESH_ID), // D54577
 		      	parent);
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_BUILD);

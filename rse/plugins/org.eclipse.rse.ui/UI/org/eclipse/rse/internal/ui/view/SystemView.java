@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Michael Berber (IBM) - Patch to remove non-standard expand/collapse from menu.
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -53,7 +52,6 @@ import org.eclipse.rse.core.SystemElapsedTimer;
 import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterContainer;
 import org.eclipse.rse.filters.ISystemFilterContainerReference;
@@ -75,9 +73,7 @@ import org.eclipse.rse.model.ISystemRemoteChangeListener;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.model.ISystemResourceSet;
 import org.eclipse.rse.model.SystemRemoteElementResourceSet;
-import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.references.ISystemBaseReferencingObject;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
@@ -874,8 +870,10 @@ public class SystemView extends TreeViewer implements  ISystemTree,
    	      if (showRefresh())
    	      {
 		    menu.appendToGroup(ISystemContextMenuConstants.GROUP_BUILD, getRefreshAction());
-		    menu.appendToGroup(ISystemContextMenuConstants.GROUP_BUILD, getExpandAction());  // defect 41203
-		    menu.appendToGroup(ISystemContextMenuConstants.GROUP_BUILD, getCollapseAction());  // defect 41203
+		    
+		    // MJB: Removed as per bugzilla entry # 145843
+		    //menu.appendToGroup(ISystemContextMenuConstants.GROUP_BUILD, getExpandAction());  // defect 41203
+		    //menu.appendToGroup(ISystemContextMenuConstants.GROUP_BUILD, getCollapseAction());  // defect 41203
    	      }
 		  
    	      // COMMON RENAME ACTION...
@@ -2386,7 +2384,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     		remoteResourceNames = (Vector)remoteResource;
     		remoteResource = remoteResourceNames.elementAt(0);
     	}
-    	String remoteResourceParentName = getRemoteResourceAbsoluteName(remoteResourceParent);
+    	getRemoteResourceAbsoluteName(remoteResourceParent); // DWD may not be necessary
     	String remoteResourceName = getRemoteResourceAbsoluteName(remoteResource);
     	if (remoteResourceName == null)
     	  return;
@@ -2859,7 +2857,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     		// a reference to this remote object
     		if ((match instanceof TreeItem) && !((TreeItem)match).isDisposed())
     		{    	
-    		  TreeItem pItem = ((TreeItem)match).getParentItem();
+    		  ((TreeItem)match).getParentItem(); // DWD may not be necessary
     		  Object data = match.getData();
     	      if (!wasSelected)
     	      {
@@ -2940,7 +2938,6 @@ public class SystemView extends TreeViewer implements  ISystemTree,
         if (matches == null)
           return;
 
-        boolean binaryRefreshed = false;
     	// STEP 3: process all references to the old name object
     	for (int idx=0; idx<matches.size(); idx++)
     	{
@@ -2956,10 +2953,9 @@ public class SystemView extends TreeViewer implements  ISystemTree,
               	  rmtAdapter = getRemoteAdapter(data);
                 refresh = rmtAdapter.refreshRemoteObject(data, renameObject); // old, new
               }
-              else //if (!binaryRefreshed) 
+              else 
               {
               	refresh = true;
-              	binaryRefreshed = true; // presumably we should only have to refresh the first occurrence. Turns out not to be true!
               }
 	          update(data, properties); // for refreshing non-structural properties in viewer when model changes
               //System.out.println("Match found. refresh required? " + refresh);
@@ -5147,8 +5143,6 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry(); 
 		IStructuredSelection selection= (IStructuredSelection)getSelection();		
 		Iterator elements= selection.iterator();
-		int selectedCount = selection.size();
-		int idx = 0;
 		Object element = null;
 		Object parentElement = getSelectedParent();
 		ISystemViewElementAdapter adapter = null;

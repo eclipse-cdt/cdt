@@ -289,13 +289,18 @@ public class Binary extends Openable implements IBinary {
 				// class.
 				// So make sure the path is canonical, otherwise breakpoints
 				// won't be resolved, etc..
+				// Also check for relative path names and attempt to resolve
+				// them relative to the executable.
 
-				File file = new File(filename);
-				if (file.exists()) {
-					try {
+				try {
+					File file = new File(filename);
+					if (file.exists()) {
 						filename = file.getCanonicalPath();
-					} catch (IOException e) {
+					} else if (filename.startsWith(".")) {
+						file = new File(obj.getPath().removeLastSegments(1).toOSString(), filename);
+						filename = file.getCanonicalPath();
 					}
+				} catch (IOException e) { // Do nothing.
 				}
 
 				// See if this source file is already in the project.
@@ -323,13 +328,16 @@ public class Binary extends Openable implements IBinary {
 				String id = CoreModel.getRegistedContentTypeId(sourceFile
 						.getProject(), sourceFile.getName());
 
-				TranslationUnit tu;
-				if (wkspFile != null)
-					tu = new TranslationUnit(this, wkspFile, id);
-				else
-					tu = new ExternalTranslationUnit(this, path, id);
+				if (id != null)
+				{ // Don't add files we can't get an ID for.
+					TranslationUnit tu;
+					if (wkspFile != null)
+						tu = new TranslationUnit(this, wkspFile, id);
+					else
+						tu = new ExternalTranslationUnit(this, path, id);
 
-				info.addChild(tu);
+					info.addChild(tu);					
+				}
 			}
 			return true;
 		}

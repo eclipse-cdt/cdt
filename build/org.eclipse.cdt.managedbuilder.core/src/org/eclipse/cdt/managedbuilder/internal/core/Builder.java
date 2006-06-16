@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
@@ -830,8 +831,8 @@ public class Builder extends BuildObject implements IBuilder {
 			String version = ManagedBuildManager
 					.getVersionFromIdAndVersion(superClassId);
 
-			IBuilder[] builderElements = (IBuilder[]) subMap.values()
-					.toArray();
+			Collection c = subMap.values();
+			IBuilder[] builderElements = (IBuilder[])c.toArray(new IBuilder[c.size()]);
 			
 			for (int i = 0; i < builderElements.length; i++) {
 				IBuilder builderElement = builderElements[i];

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1582,7 +1583,8 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			String baseId = ManagedBuildManager.getIdFromIdAndVersion(superClassId);
 			String version = getVersionFromId().toString();
 
-			IToolChain[] toolChainElements = (IToolChain[]) subMap.values().toArray();
+			Collection c = subMap.values();
+			IToolChain[] toolChainElements = (IToolChain[]) c.toArray(new IToolChain[c.size()]);
 			
 			for (int i = 0; i < toolChainElements.length; i++) {
 				IToolChain toolChainElement = toolChainElements[i];

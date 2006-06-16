@@ -452,7 +452,8 @@ public class RexecDstoreServer implements IServerLauncher
 			// this should be stored in some resource bundle later 
 			//cmd = new String ("echo USSTEST;cd ~/dstore;start_anyport");
 			//cmd = new String("echo " + ASCII_TEST_STRING + ";cd ~/rseserver;start_anyport");
-			cmd = new String("echo " + ASCII_TEST_STRING + ";cd " + this.cwd + ";" + this.invocation + " " + System.getProperty("user.name"));
+			cmd = new String("echo " + ASCII_TEST_STRING + ";cd " + this.cwd + ";" + this.invocation);
+			//cmd = new String("echo " + ASCII_TEST_STRING + ";cd " + this.cwd + ";" + this.invocation + " " + System.getProperty("user.name"));
 			logMessage("The command is " + cmd);
 			SystemBasePlugin.logInfo("RexecDstoreServer :");
 

@@ -246,6 +246,10 @@
 			<param name="eol" value="lf"/>
 		</antcall>
 		<antcall target="rseserver-os">
+			<param name="os" value="macosx"/>
+			<param name="eol" value="lf"/>
+		</antcall>
+		<antcall target="rseserver-os">
 			<param name="os" value="linux"/>
 			<param name="eol" value="lf"/>
 		</antcall>

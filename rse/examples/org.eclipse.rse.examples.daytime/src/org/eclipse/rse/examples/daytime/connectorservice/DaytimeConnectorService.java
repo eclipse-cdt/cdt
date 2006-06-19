@@ -16,6 +16,9 @@
 
 package org.eclipse.rse.examples.daytime.connectorservice;
 
+import java.net.ConnectException;
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.examples.daytime.DaytimeResources;
@@ -48,7 +51,13 @@ public class DaytimeConnectorService extends AbstractConnectorService {
 	private void internalConnect() throws Exception
 	{
 		fDaytimeService.setHostName(getHostName());
-		fDaytimeService.getTimeOfDay();
+		try {
+			fDaytimeService.getTimeOfDay();
+		} catch (ConnectException e) {
+			String template = "Daytime service is not available on {0}.";
+			String message = MessageFormat.format(template, new Object[] {getHostName()});
+			throw new Exception(message);
+		}
 		//if no exception is thrown, we consider ourselves connected!
 		fIsConnected = true;
 		//TODO force a refresh of the Viewer in order to show the resource

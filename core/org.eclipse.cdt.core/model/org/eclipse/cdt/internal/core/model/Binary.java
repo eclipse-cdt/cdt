@@ -336,7 +336,8 @@ public class Binary extends Openable implements IBinary {
 					else
 						tu = new ExternalTranslationUnit(this, path, id);
 
-					info.addChild(tu);					
+					if (! info.includesChild(tu))
+						info.addChild(tu);					
 				}
 			}
 			return true;

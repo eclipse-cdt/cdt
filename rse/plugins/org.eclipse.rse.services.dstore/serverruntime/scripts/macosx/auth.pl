@@ -41,6 +41,6 @@ print "success\n";
 $classpath = $ENV{CLASSPATH};
 $server = "org.eclipse.dstore.core.server.Server";
 $inner_command = "$java -cp $classpath -DA_PLUGIN_PATH=$plugin_path -DDSTORE_SPIRIT_ON=true $server $port $timeout $ticket";
-$outer_command = "su $user -l -c '$inner_command'";
+$outer_command = "su $user -c '$inner_command'";
 system($outer_command);
 exit 1;

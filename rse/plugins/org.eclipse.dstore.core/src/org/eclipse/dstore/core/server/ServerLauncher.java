@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import javax.net.ssl.HandshakeCompletedEvent;
 import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 
@@ -292,13 +291,13 @@ public class ServerLauncher extends Thread
 					}
 					else
 					{
-						//read over stuff coming from the login shell invocation
+						// look for the server startup string, it needs to occur somewhere in the line.
 						String status = _errReader.readLine();
-						while (status!=null && !status.equals(ServerReturnCodes.RC_DSTORE_SERVER_MAGIC))
+						while (status!=null && (status.indexOf(ServerReturnCodes.RC_DSTORE_SERVER_MAGIC) < 0))
 						{
 							status = _errReader.readLine();
 						}
-						//now read the real server status
+						// now read the real server status
 						if (status != null)
 						{
 							status = _errReader.readLine();

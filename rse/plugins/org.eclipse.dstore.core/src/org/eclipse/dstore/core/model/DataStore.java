@@ -11,13 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Michael Berger (IBM) - 146326 fixed erroneously disconnected dstore elements.
  ********************************************************************************/
 
 package org.eclipse.dstore.core.model;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -1653,6 +1652,7 @@ public final class DataStore
 	 */
 	public void disconnectObjects(DataElement from)
 	{
+		if (!isDoSpirit()) return;
 		if (from != null)
 		{
 			for (int i = from.getNestedSize() - 1; i >= 0; i--)
@@ -1691,6 +1691,7 @@ public final class DataStore
 	 */
 	public void disconnectObject(DataElement toDisconnect)
 	{
+		if (!isDoSpirit()) return;
 		if (toDisconnect != null)
 		{
 			disconnectObjectHelper(toDisconnect, 5);
@@ -1794,6 +1795,36 @@ public final class DataStore
 			// update either client or ui
 			//element.setUpdated(false);	
 			_updateHandler.update(element, immediate);
+		}
+	}
+	
+	/**
+	 * Refresh a <code>DataElement</code> and its children to a certain depth - immediately if indicated
+	 *
+	 * @param element an element to refresh
+	 * @param depth The depth to refresh the elements descendants. A depth of 0 means only the element itself
+	 * is refreshed; 1 means the element and its children are refreshed, 2 - it, its children, and its grandchildren,
+	 * etc.
+	 * @param immediate indicates to do the refresh immediately. If true, the update handler will send updates
+	 * for each refreshed element in the subtree of depth <code>depth</code> below the element.
+	 */
+	public void refresh(DataElement element, int depth, boolean immediate)
+	{
+		if (depth < 0) return;
+		
+		if (depth == 0) refresh(element, immediate);
+		
+		if (depth > 0)
+		{
+			if (element.getNestedSize() > 0)
+			{
+				List children = element.getNestedData();
+				for (int i = 0; i < children.size(); i++)
+				{
+					refresh((DataElement)children.get(i), depth-1, immediate);
+				}
+			}
+			refresh(element, immediate);
 		}
 	}
 
@@ -1977,7 +2008,7 @@ public final class DataStore
 	{
 		DataElement cmd = findCommandDescriptor(DataStoreSchema.C_SET);
 		    //localDescriptorQuery(_root.getDescriptor(), DataStoreSchema.C_SET, 1);		
-		DataElement status = command(cmd, localObject, noRef);
+		command(cmd, localObject, noRef);
 	}
 
 	public void modifyObject(DataElement localObject)

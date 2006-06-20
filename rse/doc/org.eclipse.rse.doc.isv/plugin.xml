@@ -14,7 +14,7 @@
 <!-- ============================================================================= -->
 
    <extension point="org.eclipse.help.toc"> 
-       <toc file="toc.xml" primary="true" />
+       <toc file="toc.xml" primary="true"/>
        <index path="index" />
    </extension>
 
@@ -23,10 +23,10 @@
 <!-- ============================================================================= -->
 
    <extension point="org.eclipse.help.toc"> 
-       <toc file="topics_Guide.xml" />   
-       <toc file="topics_Reference.xml" />   
-       <toc file="topics_Questions.xml" />   
-       <toc file="topics_Samples.xml" />   
+       <toc file="topics_Guide.xml"/>   
+       <toc file="topics_Reference.xml"/>   
+       <toc file="topics_Questions.xml"/>   
+       <toc file="topics_Samples.xml"/>   
    </extension>
    
 <!-- ============================================================================= -->

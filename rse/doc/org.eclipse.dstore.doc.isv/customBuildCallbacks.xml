@@ -86,6 +86,16 @@
 	-->
 	
 	<!-- ===================================================================== -->
+	<!-- Steps to do before the target gather.bin.parts                         -->
+	<!-- Available parameters :                                                -->
+	<!--   base.dir - root of the project                                      -->
+	<!--   build.result.folder - folder containing the build results           -->
+	<!--   target.folder - destination folder                                  -->
+	<!-- ===================================================================== -->
+	<target name="pre.gather.bin.parts">
+	</target>
+	
+	<!-- ===================================================================== -->
 	<!-- Steps to do after the target gather.bin.parts                         -->
 	<!-- Available parameters :                                                -->
 	<!--   base.dir - root of the project                                      -->

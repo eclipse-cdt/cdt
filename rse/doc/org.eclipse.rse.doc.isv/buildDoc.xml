@@ -2,7 +2,7 @@
 <project name="RSE ISV Doc Build" default="all" basedir=".">
 
 	<target name="init">
-		<!-- available file="${basedir}/index" property="index.present" / -->
+		<available file="${basedir}/index" property="index.present" />
 	</target>
 
 	<target name="all" depends="init" unless="index.present">

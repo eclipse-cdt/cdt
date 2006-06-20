@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Michael Berger (IBM) - Fixing 140408 - FTP upload does not work
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -20,10 +20,13 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +54,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private transient String _hostname;
 	private transient String _userId;
 	private transient String _password;
+	private URLConnection _urlConnection;
 	
 	public FTPService()
 	{		
@@ -141,7 +145,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		{
 			return matches[0];
 		}
-		return null;
+		else
+		{
+			return new FTPHostFile(remoteParent, fileName, false, false, 0, 0, false);
+		}
 	}
 	public boolean isConnected()
 	{
@@ -208,55 +215,44 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
 	public boolean upload(IProgressMonitor monitor, File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding)
 	{
-		FtpClient ftp = getFTPClient();
 		try
 		{
-			ftp.cd(remoteParent);
-			if (isBinary) 
-				ftp.binary();
-			else 
-				ftp.ascii();
-			ftp.put(localFile.getAbsolutePath());
+			FileInputStream fis =  new FileInputStream(localFile);
+			return upload(monitor, fis, remoteParent, remoteFile, isBinary, hostEncoding);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			return false;
 		}
-		return true;
 	}
 	
+    private OutputStream getUploadStream(String remotePath, boolean isBinary) throws Exception 
+    {
+    	String typecode = isBinary ? "i" : "a";
+    	remotePath = "%2F" + remotePath;
+    	remotePath = remotePath.replaceAll(" ", "%20");
+    	URL url = new URL("ftp://" + _userId + ":" + _password + "@" + _hostname + "/" + remotePath + ";type=" + typecode);
+    	_urlConnection = url.openConnection();
+    	return _urlConnection.getOutputStream();
+    }
+    
 	public boolean upload(IProgressMonitor monitor, InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding)
 	{
-		// hack for now
 		try
 		{
 			BufferedInputStream bis = new BufferedInputStream(stream);
-			File tempFile = File.createTempFile("ftp", "temp");
-			FileOutputStream os = new FileOutputStream(tempFile);
-			BufferedOutputStream bos = new BufferedOutputStream(os);
-	
-			 byte[] buffer = new byte[1024];
-			 int readCount;
-			 while( (readCount = bis.read(buffer)) > 0) 
-			 {
-			      bos.write(buffer, 0, readCount);
-			 }
-			 bos.close();
-					
-			FtpClient ftp = getFTPClient();
-			try
-			{				
-				ftp.cd(remoteParent);				
-				if (isBinary) 
-					ftp.binary();
-				else 
-					ftp.ascii();
-				ftp.put(tempFile.getAbsolutePath());
-			}
-			catch (Exception e)
+			String remotePath = remoteParent + getSeparator() + remoteFile;
+			OutputStream os = getUploadStream(remotePath, isBinary);
+			byte[] buffer = new byte[1024];
+			int readCount;
+			while( (readCount = bis.read(buffer)) > 0) 
 			{
-				e.printStackTrace();
+			     os.write(buffer, 0, readCount);
 			}
+			os.close();
+			bis.close();
+			_urlConnection = null;
 		}
 		catch (Exception e)
 		{
@@ -323,7 +319,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 
 	public IHostFile[] getRoots(IProgressMonitor monitor) 
 	{
-		IHostFile root = new FTPHostFile("/", "/", true, true, 0, 0);
+		IHostFile root = new FTPHostFile("/", "/", true, true, 0, 0, true);
 		return new IHostFile[] { root };
 	}
 
@@ -341,33 +337,43 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		return null;
 	}
 
-	public IHostFile createFolder(IProgressMonitor monitor, String remoteParent, String folderName) {
-		// TODO Auto-generated method stub
-		return null;
+	public IHostFile createFolder(IProgressMonitor monitor, String remoteParent, String folderName) 
+	{
+		try
+		{
+			FTPClientService ftp = getFTPClient();
+			ftp.cd(remoteParent);
+			ftp.sendCommand("MKD " + folderName);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();			
+		}
+		return getFile(monitor, remoteParent, folderName);
 	}
 
-	public boolean delete(IProgressMonitor monitor, String remoteParent, String fileName) {
-		// TODO Auto-generated method stub
+	public boolean delete(IProgressMonitor monitor, String remoteParent, String fileName) 
+	{
 		return false;
 	}
 
-	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName) {
-		// TODO Auto-generated method stub
+	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName) 
+	{
 		return false;
 	}
 	
-	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) {
-		// TODO Auto-generated method stub
+	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) 
+	{
 		return false;
 	}
 
-	public boolean move(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) {
-		// TODO Auto-generated method stub
+	public boolean move(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) 
+	{
 		return false;
 	}
 
-	public boolean copy(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) {
-		// TODO Auto-generated method stub
+	public boolean copy(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) 
+	{
 		return false;
 	}
 	

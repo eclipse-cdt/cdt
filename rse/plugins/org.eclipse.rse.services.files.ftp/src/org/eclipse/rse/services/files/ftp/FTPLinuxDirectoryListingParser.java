@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Michael Berger (IBM) - Fixing 140408 - FTP upload does not work
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -74,7 +74,7 @@ public class FTPLinuxDirectoryListingParser implements IFTPDirectoryListingParse
 			}
 			catch (Exception e) {}
 		}
-		return new FTPHostFile(parentPath, name, isDirectory, false, lastMod, length);
+		return new FTPHostFile(parentPath, name, isDirectory, false, lastMod, length, true);
 	}
 
 }

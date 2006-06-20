@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Michael Berger (IBM) - Fixing 140408 - FTP upload does not work
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -30,8 +30,9 @@ public class FTPHostFile implements IHostFile
 	private boolean _isArchive = false;
 	private long _lastModified = 0;
 	private long _size = 0;
+	private boolean _exists = false;
 	
-	public FTPHostFile(String parentPath, String name, boolean isDirectory, boolean isRoot, long lastModified, long size)
+	public FTPHostFile(String parentPath, String name, boolean isDirectory, boolean isRoot, long lastModified, long size, boolean exists)
 	{
 		_parentPath = parentPath;
 		_name = name;
@@ -40,6 +41,7 @@ public class FTPHostFile implements IHostFile
 		_lastModified = lastModified;
 		_size = size;
 		_isArchive = internalIsArchive();
+		_exists = exists;
 	}
 
 	public String getName()
@@ -76,7 +78,7 @@ public class FTPHostFile implements IHostFile
 	
 	public boolean exists()
 	{
-		return true;
+		return _exists;
 	}
 
 	public String getAbsolutePath()

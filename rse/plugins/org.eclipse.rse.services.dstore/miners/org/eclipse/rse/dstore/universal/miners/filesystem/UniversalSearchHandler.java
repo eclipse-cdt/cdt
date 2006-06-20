@@ -145,8 +145,17 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 		_isCancelled = true;
 	}
 
-	protected boolean hasSearchedDirectory(File file) {
-		return _alreadySearched.contains(file);
+	protected boolean hasSearchedDirectory(File file) 
+	{
+		try
+		{
+			return _alreadySearched.contains(file.getCanonicalFile());
+		}
+		catch (IOException e)
+		{
+			_dataStore.trace(e);
+			return _alreadySearched.contains(file);
+		}
 	}
 
 	protected void internalSearch(File theFile, int depth) {
@@ -256,7 +265,15 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 				
 				if (!hasSearchedDirectory(theFile)) {
 					
-					_alreadySearched.add(theFile);
+					try
+					{
+						_alreadySearched.add(theFile.getCanonicalFile());
+					}
+					catch (IOException e)
+					{
+						_dataStore.trace(e);
+						_alreadySearched.add(theFile);
+					}
 
 					File[] children = null;
 						

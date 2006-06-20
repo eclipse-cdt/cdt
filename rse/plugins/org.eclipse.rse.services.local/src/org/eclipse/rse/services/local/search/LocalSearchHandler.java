@@ -174,7 +174,14 @@ public class LocalSearchHandler implements ISearchHandler
 
 	private boolean hasSearchedDirectory(File file)
 	{
-		return _alreadySearched.contains(file);
+		try
+		{
+			return _alreadySearched.contains(file.getCanonicalFile());
+		}
+		catch (IOException e)
+		{
+			return _alreadySearched.contains(file);
+		}
 	}
 
 	private boolean internalSearch(File theFile, int depth, IHostFile context)
@@ -306,7 +313,14 @@ public class LocalSearchHandler implements ISearchHandler
 				if (!hasSearchedDirectory(theFile))
 				{
 
-					_alreadySearched.add(theFile);
+					try
+					{
+						_alreadySearched.add(theFile.getCanonicalFile());
+					}
+					catch (IOException e)
+					{
+						_alreadySearched.add(theFile);
+					}
 
 					File[] children = null;
 

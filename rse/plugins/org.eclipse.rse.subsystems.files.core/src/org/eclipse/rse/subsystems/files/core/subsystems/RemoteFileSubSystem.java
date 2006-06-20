@@ -979,7 +979,8 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		for (int i = 0; i < folderOrFileNames.size(); i++)
 		{
 			String path = (String)folderOrFileNames.get(i);
-			results.addResource(getRemoteFileObject(path));
+			IRemoteFile nextFile = getRemoteFileObject(path);
+			if (nextFile != null) results.addResource(nextFile);
 		}
 		return results;
 	}

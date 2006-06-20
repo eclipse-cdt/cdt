@@ -40,6 +40,9 @@
 		<condition property="sep" value=";">
 			<os family="windows" />
 		</condition>
+		
+		<echo message="sep = ${sep}"/>
+		<echo message="javadoc = ${javadoc}"/>
 
 		<copy file="options.txt" tofile="temp.options.txt" />
 		<replace file="${basedir}/temp.options.txt" token="@sep@" value="${sep}" />

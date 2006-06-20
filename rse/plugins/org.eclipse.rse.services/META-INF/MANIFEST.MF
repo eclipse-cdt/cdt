@@ -6,8 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.services.Activator
 Bundle-Vendor: Eclipse.org
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.services,
  org.eclipse.rse.services.clientserver,

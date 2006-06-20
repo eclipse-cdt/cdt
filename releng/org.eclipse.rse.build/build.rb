@@ -17,14 +17,14 @@ end
 
 # "eclipse" is the location of the basic PDE and plugins to compile against
 # This should include the org.eclipse.pde.build project
-eclipse	= "c:/work/targets/OpenRSE-1.0/eclipse" 
+eclipse	= "../eclipse" 
 
 # "builder" is the location of the custom build scripts customTargets.xml and build.properties
 # (i.e. the contents of org.eclipse.rse.build)
 builder	= "."
 
 # "working" is where the build is actually done, does not need to exist
-working = "c:/temp/build"
+working = "../build"
 
 # make these absolute paths
 eclipse = File.expand_path(eclipse)

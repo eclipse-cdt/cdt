@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 QNX Software Systems and others.
+ * Copyright (c) 2002, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems) - Fixed bug 141484
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.cview;
@@ -19,7 +20,6 @@ import java.util.List;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.dnd.CDTViewerDropAdapter;
@@ -143,7 +143,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 		} catch (CModelException e){
 			ExceptionHandler.handle(e, CViewMessages.getString("SelectionTransferDropAdapter.error.title"), CViewMessages.getString("SelectionTransferDropAdapter.error.message")); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch(InvocationTargetException e) {
-			ExceptionHandler.handle(e, CViewMessages.getString("OpenRefactoringWizardAction.refactoring"), CViewMessages.getString("OpenRefactoringWizardAction.exception")); //$NON-NLS-1$ //$NON-NLS-2$
+			ExceptionHandler.handle(e, CViewMessages.getString("SelectionTransferDropAdapter.error.title"), CViewMessages.getString("SelectionTransferDropAdapter.error.exception")); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (InterruptedException e) {
 			//ok
 		} finally {
@@ -162,7 +162,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 	}
 	
 	private int handleValidateMove(Object target, DropTargetEvent event) throws CModelException {
-		if (target == null) {
+		if (target == null || fElements.contains(target)) {
 			return DND.DROP_NONE;
 		}
 		if (fMoveData == null) {
@@ -247,10 +247,12 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 	}
 
 	private int handleValidateCopy(Object target, DropTargetEvent event) throws CModelException{
+		if (target == null) {
+			return DND.DROP_NONE;
+		}
 
 		if (fCopyData == null) {
 			ICElement[] cElements= getCElements(fElements);
-			ICProject project= null;
 			if (cElements != null && cElements.length > 0) {
 				fCopyData= cElements;
 			}

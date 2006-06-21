@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 QNX Software Systems and others.
+ * Copyright (c) 2000, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems) - Fixed bug 141484
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -86,10 +87,10 @@ public class CopyElementsOperation extends MultiOperation {
 	 * Returns the nested operation to use for processing this element
 	 */
 	protected CModelOperation getNestedOperation(ICElement element) {
-		ITranslationUnit unit = getDestinationTranslationUnit(element);
+		ICElement parentElement = getDestinationParent(element);
 		String name = element.getElementName();
 		int type = element.getElementType();
-		return new CreateSourceReferenceOperation(unit, name, type, getSourceFor(element));
+		return new CreateSourceReferenceOperation(parentElement, name, type, getSourceFor(element));
 	}
 
 	protected ITranslationUnit getDestinationTranslationUnit(ICElement element) {

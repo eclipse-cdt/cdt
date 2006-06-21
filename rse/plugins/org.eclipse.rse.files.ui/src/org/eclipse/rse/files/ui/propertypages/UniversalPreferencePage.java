@@ -19,6 +19,7 @@ package org.eclipse.rse.files.ui.propertypages;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -66,6 +67,8 @@ import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.UIPlugin;
 import org.eclipse.ui.internal.dialogs.FileExtensionDialog;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
@@ -130,7 +133,7 @@ public class UniversalPreferencePage
 	protected void createFieldEditors() {
 		
 		modeRegistry = (SystemFileTransferModeRegistry)(SystemFileTransferModeRegistry.getDefault());
-		editorRegistry = (IEditorRegistry)(RSEUIPlugin.getDefault().getWorkbench().getEditorRegistry());
+		editorRegistry = (IEditorRegistry)(PlatformUI.getWorkbench().getEditorRegistry());
 		
 		modeMappings = new ArrayList();
 		editorMappings = new ArrayList();

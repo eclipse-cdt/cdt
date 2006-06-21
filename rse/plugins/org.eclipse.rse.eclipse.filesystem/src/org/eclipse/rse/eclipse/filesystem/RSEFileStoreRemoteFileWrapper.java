@@ -285,7 +285,12 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 	{
 		try 
 		{
-			return new URI("rse", _subSystem.getHost().getHostName(), _remoteFile.getAbsolutePath(), null); //$NON-NLS-1$
+			String path = _remoteFile.getAbsolutePath();
+			if (path.charAt(0) != '/')
+			{
+				path = "/" + path.replace('\\', '/');
+			}
+			return new URI("rse", _subSystem.getHost().getHostName(), path, null); //$NON-NLS-1$
 		} 
 		catch (URISyntaxException e) 
 		{

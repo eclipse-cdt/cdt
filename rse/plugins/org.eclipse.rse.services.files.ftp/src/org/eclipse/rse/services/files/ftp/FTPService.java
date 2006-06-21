@@ -14,6 +14,7 @@
  * Michael Berger (IBM) - Fixing 140408 - FTP upload does not work
  * Javier Montalvo Orus (Symbian) - Fixing 140323 - provided implementation for 
  *    delete, move and rename.
+ * Javier Montalvo Orus (Symbian) - Bug 140348 - FTP did not use port number
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -55,6 +56,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private transient String _hostname;
 	private transient String _userId;
 	private transient String _password;
+	private transient int _portNumber;
 	private URLConnection _urlConnection;
 	
 	public FTPService()
@@ -76,6 +78,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		_hostname = hostname;
 	}
 	
+	public void setPortNumber(int portNumber) {
+		_portNumber = portNumber;
+	}
+	
 	public void setUserId(String userId)
 	{
 		_userId = userId;
@@ -90,7 +96,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	public void connect() throws Exception
 	{
 		FtpClient ftp = getFTPClient(); 
-		ftp.openServer(_hostname);
+		if (_portNumber == 0) {
+			ftp.openServer(_hostname);
+		} else {
+			ftp.openServer(_hostname, _portNumber);
+		}
 		ftp.login(_userId, _password);
 		
 		_userHome = ftp.pwd();

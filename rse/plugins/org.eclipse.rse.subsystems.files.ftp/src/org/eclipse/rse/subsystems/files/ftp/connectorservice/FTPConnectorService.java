@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Javier Montalvo Orus (Symbian) - Bug 140348 - FTP did not use port number
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.ftp.connectorservice;
@@ -47,6 +47,7 @@ public class FTPConnectorService extends AbstractConnectorService
 		_ftpService.setHostName(info.getHostname());
 		_ftpService.setUserId(info.getUserid());
 		_ftpService.setPassword(info.getPassword());
+		_ftpService.setPortNumber(getPort());
 		_ftpService.connect();
 	}
 	

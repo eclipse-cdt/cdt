@@ -120,7 +120,7 @@ public abstract class ObjectTable extends HashTable implements Cloneable{
 				return i;
 			
 			// Follow the next chain
-			for (i = nextTable[i] - 1; i >= 0; i = nextTable[i] - 1)
+			for (i = nextTable[i] - 1; i >= 0 && nextTable[i] != i + 1; i = nextTable[i] - 1)
 				if ( buffer.equals( keyTable[i] ))
 					return i;
 				

@@ -12,6 +12,8 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - Fixing 140408 - FTP upload does not work
+ * Javier Montalvo Orus (Symbian) - Fixing 140323 - provided implementation for 
+ *    delete, move and rename.
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -22,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -48,8 +51,6 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private FTPClientService _ftpClient;
 	private String    _userHome;
 	private IFTPDirectoryListingParser _ftpPropertiesUtil;
-	
-
 	
 	private transient String _hostname;
 	private transient String _userId;
@@ -154,9 +155,6 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		return getFTPClient().serverIsOpen();
 	}
-	
-	
-
 	
 	protected IHostFile[] internalFetch(IProgressMonitor monitor, String parentPath, String fileFilter, int fileType)
 	{
@@ -323,20 +321,64 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		return new IHostFile[] { root };
 	}
 
-	
-	// TODO
-	/********************************************************
-	 * 
-	 *    The following APIs need to be implemented
-	 * 
-	 ********************************************************/
-	
-	public IHostFile createFile(IProgressMonitor monitor, String remoteParent, String fileName) 
-	{
-		// TODO Auto-generated method stub
-		return null;
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.IFileService#delete(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String)
+	 */
+	public boolean delete(IProgressMonitor monitor, String remoteParent, String fileName) {
+		boolean hasSucceeded = false;
+		try {
+			getFTPClient().cd(remoteParent);
+			int returnedValue = getFTPClient().sendCommand("DELE " + fileName);
+			hasSucceeded = (returnedValue > 0);
+		} catch (IOException e) {
+			// Changing folder raised an exception
+			hasSucceeded = false;
+		}
+		return hasSucceeded;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.IFileService#rename(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName) {
+		boolean hasSucceeded = false;
+		int returnedValue = getFTPClient().sendCommand("RNFR " + remoteParent + getSeparator() + oldName);
+		if (returnedValue > 0) {
+			returnedValue = getFTPClient().sendCommand("RNTO " + remoteParent + getSeparator() + newName);
+			hasSucceeded = (returnedValue > 0);
+		}
+		return hasSucceeded;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.IFileService#rename(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.lang.String, org.eclipse.rse.services.files.IHostFile)
+	 */
+	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) {
+		boolean hasSucceeded = false;
+		int returnedValue = getFTPClient().sendCommand("RNFR " + remoteParent + getSeparator() + oldName);
+		if (returnedValue > 0) {
+			returnedValue = getFTPClient().sendCommand("RNTO " + remoteParent + getSeparator() + newName);
+			hasSucceeded = (returnedValue > 0);
+		}
+		return hasSucceeded;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.IFileService#move(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public boolean move(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) {
+		boolean hasSucceeded = false;
+		int returnedValue = getFTPClient().sendCommand("RNFR " + srcParent + getSeparator() + srcName);
+		if (returnedValue > 0) {
+			returnedValue = getFTPClient().sendCommand("RNTO " + tgtParent + getSeparator() + tgtName);
+			hasSucceeded = (returnedValue > 0);
+		}
+		return hasSucceeded;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.IFileService#createFolder(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String)
+	 */
 	public IHostFile createFolder(IProgressMonitor monitor, String remoteParent, String folderName) 
 	{
 		try
@@ -352,24 +394,17 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		return getFile(monitor, remoteParent, folderName);
 	}
 
-	public boolean delete(IProgressMonitor monitor, String remoteParent, String fileName) 
-	{
-		return false;
-	}
-
-	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName) 
-	{
-		return false;
-	}
+	// TODO
+	/********************************************************
+	 * 
+	 *    The following APIs need to be implemented
+	 * 
+	 ********************************************************/
 	
-	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) 
+	public IHostFile createFile(IProgressMonitor monitor, String remoteParent, String fileName) 
 	{
-		return false;
-	}
-
-	public boolean move(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) 
-	{
-		return false;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public boolean copy(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) 
@@ -399,7 +434,5 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		return true;
 	}
-
-	
 	
 }

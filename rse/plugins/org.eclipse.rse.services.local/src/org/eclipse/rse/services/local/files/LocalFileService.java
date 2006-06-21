@@ -141,7 +141,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	public boolean upload(IProgressMonitor monitor, InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding) throws SystemMessageException 
 	{
 		boolean isCancelled = false;
-		FileInputStream inputStream = null;
+
 		BufferedInputStream bufInputStream = null;
 		FileOutputStream outputStream = null;
 		BufferedOutputStream bufOutputStream = null;
@@ -173,7 +173,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				destinationParent.mkdirs();
 			}
 
-			bufInputStream = new BufferedInputStream(inputStream);
+			bufInputStream = new BufferedInputStream(stream);
 			outputStream = new FileOutputStream(destinationFile);
 			
 			// if encoding conversion required, then we need a writer
@@ -187,9 +187,14 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			{
 				bufOutputStream = new BufferedOutputStream(outputStream);
 			}
+			
 
+			
 			byte[] buffer = new byte[512000];
 			int readCount = 0;
+			
+			int available = bufInputStream.available();
+			System.out.println("available = "+available);
 			 while( (readCount = bufInputStream.read(buffer)) > 0 && !isCancelled) 
 			 {
 			      if (isEncodingConversionRequired) 
@@ -217,6 +222,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		catch (IOException e)
 		{
+			e.printStackTrace();
 		}
 		finally
 		{

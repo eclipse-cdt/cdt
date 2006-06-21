@@ -29,13 +29,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.DataStoreResources;
-import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalByteStreamHandler;
@@ -52,10 +50,6 @@ import org.eclipse.rse.services.dstore.util.DownloadListener;
 import org.eclipse.rse.services.dstore.util.FileSystemMessageUtil;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
-
-
-
-
 
 public class DStoreFileService extends AbstractDStoreService implements IFileService, IUniversalDataStoreConstants
 {
@@ -189,7 +183,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		try
 		{	
 			
-			DataElement uploadLog = findUploadLog();
+//			DataElement uploadLog = findUploadLog();
+			findUploadLog();
 //			listener = new FileTransferStatusListener(remotePath, shell, monitor, getConnectorService(), ds, uploadLog);
 	//		ds.getDomainNotifier().addDomainListener(listener);
 
@@ -358,7 +353,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			}
 
 			
-			DataElement uploadLog = findUploadLog();
+//			DataElement uploadLog = findUploadLog();
+			findUploadLog();
 //			listener = new FileTransferStatusListener(remotePath, shell, monitor, getConnectorService(), ds, uploadLog);
 	//		ds.getDomainNotifier().addDomainListener(listener);
 
@@ -596,7 +592,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		
 		DataElement remoteElement = ds.createObject(universaltemp, de.getType(), remotePath, String.valueOf(mode));
 	
-		String tempRoot = getDataStoreRoot();
+//		String tempRoot = getDataStoreRoot();
+		getDataStoreRoot();
 				
 		String dataStoreLocalPath = prepareForDownload(localFile.getAbsolutePath());
 		
@@ -863,9 +860,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	public boolean move(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName)
 	{
-		String src = srcParent + getSeparator(srcParent) + srcName;
-		String tgt = tgtParent + getSeparator(tgtParent) + tgtName;
-		boolean isVirtual = ArchiveHandlerManager.isVirtual(src) || ArchiveHandlerManager.isVirtual(tgt);
+//		String src = srcParent + getSeparator(srcParent) + srcName;
+//		String tgt = tgtParent + getSeparator(tgtParent) + tgtName;
+//		boolean isVirtual = ArchiveHandlerManager.isVirtual(src) || ArchiveHandlerManager.isVirtual(tgt);
 		//if (isVirtual || isArchive)
 		{
 			if (copy(monitor, srcParent, srcName, tgtParent, tgtName))
@@ -1000,7 +997,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				
 				if (status.getAttribute(DE.A_SOURCE).equals(FAILED)) {
 					
-					String errMsg = status.getAttribute(DE.A_VALUE);
+//					String errMsg = status.getAttribute(DE.A_VALUE);
 					
 					/*
 					// for an unexpected error, we don't have an error message from the server
@@ -1050,7 +1047,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				
 				if (status.getAttribute(DE.A_SOURCE).equals(FAILED)) {
 					
-					String errMsg = status.getAttribute(DE.A_VALUE);
+//					String errMsg = status.getAttribute(DE.A_VALUE);
 					
 					/*
 					// for an unexpected error, we don't have an error message from the server

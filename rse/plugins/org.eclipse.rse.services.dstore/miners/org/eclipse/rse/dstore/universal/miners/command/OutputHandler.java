@@ -36,7 +36,7 @@ public class OutputHandler extends Handler
 
 	private CommandMinerThread _commandThread;
 	private boolean _isShell;
-	private static int MAX_OFFSET = 10000;
+//	private static int MAX_OFFSET = 10000;
 	private boolean _endOfStream = false;
 	
 	

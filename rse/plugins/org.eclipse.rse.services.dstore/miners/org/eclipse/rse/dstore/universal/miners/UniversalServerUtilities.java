@@ -22,8 +22,10 @@ public class UniversalServerUtilities {
 
 
 	private static String _userPreferencesDirectory = null;
-	private static ServerLogger log = new ServerLogger(getUserPreferencesDirectory());
 	
+	static {
+		new ServerLogger(getUserPreferencesDirectory());
+	}
 	
 	/** 
 	 * getUserPreferencesDirectory() - returns directory on IFS where to store user settings

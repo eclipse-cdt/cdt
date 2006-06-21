@@ -64,7 +64,8 @@ public class DStoreFileTransferStatusListener extends StatusChangeListener
 			
 			DataElement cmd = ds.findCommandDescriptor(DataStoreSchema.C_SET);
 			
-			DataElement setstatus = ds.command(cmd, _log, true);
+//			DataElement setstatus = ds.command(cmd, _log, true);
+			ds.command(cmd, _log, true);
 			/*
 			try
 			{

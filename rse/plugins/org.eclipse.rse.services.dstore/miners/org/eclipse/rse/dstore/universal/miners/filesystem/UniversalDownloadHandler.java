@@ -135,18 +135,20 @@ public class UniversalDownloadHandler extends Thread implements ICancellableHand
 				}
 
 				DataElement arg2 = _miner.getCommandArgument(theElement, 2);
-				DataElement arg3 = _miner.getCommandArgument(theElement, 3);
+//				DataElement arg3 = _miner.getCommandArgument(theElement, 3);
+				_miner.getCommandArgument(theElement, 3);
 
 				int mode = (Integer.valueOf(arg1.getSource())).intValue();
 				String localPath = arg2.getName();
 
 				boolean isText = (mode == IUniversalDataStoreConstants.TEXT_MODE);
 
-				String clientEncoding = null;
+//				String clientEncoding = null;
 
 				if (isText)
 				{
-					clientEncoding = arg2.getSource();
+//					clientEncoding = arg2.getSource();
+					arg2.getSource();
 				}
 
 				// Read in the file

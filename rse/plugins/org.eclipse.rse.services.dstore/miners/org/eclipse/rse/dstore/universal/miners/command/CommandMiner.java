@@ -134,8 +134,10 @@ public class CommandMiner extends Miner
 		DataElement shellD = createCommandDescriptor(fsD, "Shell", "C_SHELL", false);
 		_dataStore.createReference(cancellable, shellD, "abstracts", "abstracted by");
 
-		DataElement inputD = _dataStore.createObject(cmdD, "input", "Enter command");
-		DataElement outputD = _dataStore.createObject(cmdD, "output", "Command Output");
+//		DataElement inputD = _dataStore.createObject(cmdD, "input", "Enter command");
+		_dataStore.createObject(cmdD, "input", "Enter command");
+//		DataElement outputD = _dataStore.createObject(cmdD, "output", "Command Output");
+		_dataStore.createObject(cmdD, "output", "Command Output");
 		
 		_descriptors = new CommandMinerDescriptors();
 		_descriptors._stdout = _dataStore.createObjectDescriptor(schemaRoot, "stdout");
@@ -151,7 +153,8 @@ public class CommandMiner extends Miner
 		_descriptors._process =_dataStore.createObjectDescriptor(schemaRoot, "process");
 		
 
-		DataElement getPossibleCmds = createCommandDescriptor(fsD, "Get Commands", "C_GET_POSSIBLE_COMMANDS", false);
+//		DataElement getPossibleCmds = createCommandDescriptor(fsD, "Get Commands", "C_GET_POSSIBLE_COMMANDS", false);
+		createCommandDescriptor(fsD, "Get Commands", "C_GET_POSSIBLE_COMMANDS", false);
 		_dataStore.refresh(schemaRoot);
 	}
 
@@ -189,7 +192,8 @@ public class CommandMiner extends Miner
 		else if (name.equals("C_SEND_INPUT"))
 		{
 			DataElement input = getCommandArgument(theElement, 1);
-			DataElement de = (DataElement) subject.dereference().get(1);
+//			DataElement de = (DataElement) subject.dereference().get(1);
+			subject.dereference().get(1);
 			sendInputToCommand(input.getName(), getCommandStatus(subject));
 		}
 		else if (name.equals("C_CANCEL"))

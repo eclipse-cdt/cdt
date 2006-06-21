@@ -187,7 +187,8 @@ public class DataStoreSchema
 		// miner-specific descriptors are defined in the miners when they extend the schema
 
 		// these first elements are the most fundamental	  
-		DataElement uiCmdD = _dataStore.createObject(schemaRoot, DE.T_UI_COMMAND_DESCRIPTOR, DE.T_UI_COMMAND_DESCRIPTOR);
+//		DataElement uiCmdD = _dataStore.createObject(schemaRoot, DE.T_UI_COMMAND_DESCRIPTOR, DE.T_UI_COMMAND_DESCRIPTOR);
+		_dataStore.createObject(schemaRoot, DE.T_UI_COMMAND_DESCRIPTOR, DE.T_UI_COMMAND_DESCRIPTOR);
 
 		_commandDescriptor = _dataStore.createCommandDescriptor(schemaRoot, DE.T_COMMAND_DESCRIPTOR);
 		_objectDescriptor = _dataStore.createObjectDescriptor(schemaRoot, DE.T_OBJECT_DESCRIPTOR);
@@ -207,16 +208,21 @@ public class DataStoreSchema
 		DataElement logD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_log);
 		DataElement statusD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_status);
 
-		DataElement deletedD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_deleted);
+//		DataElement deletedD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_deleted);
+		_dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_deleted);
 
 		// misc
 		DataElement allD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_all);
 
-		DataElement invokeD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_invocation);
-		DataElement patternD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_pattern);
+//		DataElement invokeD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_invocation);
+		_dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_invocation);
+//		DataElement patternD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_pattern);
+		_dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_pattern);
 
-		DataElement inputD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_input);
-		DataElement outputD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_output);
+//		DataElement inputD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_input);
+		_dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_input);
+//		DataElement outputD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_output);
+		_dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_output);
 
 		// types of relationships
 		_contents = _dataStore.createRelationDescriptor(schemaRoot, DataStoreResources.model_contents);
@@ -291,8 +297,10 @@ public class DataStoreSchema
 		DataElement minersD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_miners);
 		DataElement minerD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_miner);
 		DataElement dataD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_data);
-		DataElement transientD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_transient);
-		DataElement stateD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_state);
+//		DataElement transientD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_transient);
+		_dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_transient);
+//		DataElement stateD = _dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_state);
+		_dataStore.createObjectDescriptor(schemaRoot, DataStoreResources.model_state);
 		// containers
 		_dataStore.createReference(_container, rootD, _abstracts, _abstractedBy);
 		_dataStore.createReference(_container, hostD, _abstracts, _abstractedBy);

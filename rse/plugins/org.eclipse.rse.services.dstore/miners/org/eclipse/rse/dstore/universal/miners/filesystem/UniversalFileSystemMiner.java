@@ -53,19 +53,19 @@ public class UniversalFileSystemMiner extends Miner implements
 	public static final String MINER_ID = UniversalFileSystemMiner.class.getName();
 
 
-	private DataElement deUFSfilters;
+//	private DataElement deUFSfilters;
 
 	private DataElement deUFSnode;
 
-	private DataElement deUFStemp;
+//	private DataElement deUFStemp;
 
 	private DataElement deUFSuploadlog;
 
-	private DataElement dePropertyQuery;
+//	private DataElement dePropertyQuery;
 
-	private DataElement deFileClassificationQuery;
+//	private DataElement deFileClassificationQuery;
 
-	private DataElement deFolderClassificationQuery;
+//	private DataElement deFolderClassificationQuery;
 	
 	private DataElement deUniversalFileObject;
 	private DataElement deUniversalFolderObject;
@@ -188,7 +188,8 @@ public class UniversalFileSystemMiner extends Miner implements
 						"C_SEARCH - subject is null", null);
 		} else if ("C_CANCEL".equals(name)) {
 			if (subject != null) {
-				String commandToCancel = subject.getName();
+//				String commandToCancel = subject.getName();
+				subject.getName();
 				return handleCancel(subject, status);
 			} else
 				UniversalServerUtilities.logError(CLASSNAME,
@@ -672,7 +673,8 @@ public class UniversalFileSystemMiner extends Miner implements
 			
 			boolean isIncludeArchives = Boolean.valueOf(arg3.getType()).booleanValue();
 			boolean isIncludeSubfolders = Boolean.valueOf(arg3.getName()).booleanValue();
-			boolean showHidden = Boolean.valueOf(arg3.getSource()).booleanValue();
+//			boolean showHidden = Boolean.valueOf(arg3.getSource()).booleanValue();
+			Boolean.valueOf(arg3.getSource()).booleanValue();
 			
 			SystemSearchString searchString = new SystemSearchString(
 					textString, isCaseSensitive, isTextRegex, fileNamesString,
@@ -1018,7 +1020,8 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	 * Method to list the roots.
 	 */
 	public DataElement handleQueryRoots(DataElement subject, DataElement status) {
-		File fileobj = new File(subject.getName());
+//		File fileobj = new File(subject.getName());
+		new File(subject.getName());
 		DataElement deObj = null;
 
 		if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
@@ -2423,14 +2426,12 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	 */
 	public void load() {
 		// Create datastore tree structure for UniversalFileSystemMiner
-		deUFSnode = _dataStore.createObject(_minerData,
-				UNIVERSAL_NODE_DESCRIPTOR, "universal.node");
-		deUFStemp = _dataStore.createObject(deUFSnode,
-				UNIVERSAL_NODE_DESCRIPTOR, "universal.temp");
-		deUFSfilters = _dataStore.createObject(deUFSnode,
-				UNIVERSAL_NODE_DESCRIPTOR, "universal.filters");
-		deUFSuploadlog = _dataStore.createObject(deUFSnode,
-				UNIVERSAL_NODE_DESCRIPTOR, "universal.uploadlog");
+		deUFSnode = _dataStore.createObject(_minerData, UNIVERSAL_NODE_DESCRIPTOR, "universal.node");
+//		deUFStemp = _dataStore.createObject(deUFSnode, UNIVERSAL_NODE_DESCRIPTOR, "universal.temp");
+		_dataStore.createObject(deUFSnode, UNIVERSAL_NODE_DESCRIPTOR, "universal.temp");
+//		deUFSfilters = _dataStore.createObject(deUFSnode, UNIVERSAL_NODE_DESCRIPTOR, "universal.filters");
+		_dataStore.createObject(deUFSnode, UNIVERSAL_NODE_DESCRIPTOR, "universal.filters");
+		deUFSuploadlog = _dataStore.createObject(deUFSnode, UNIVERSAL_NODE_DESCRIPTOR, "universal.uploadlog");
 
 		UniversalByteStreamHandler universalHandler = new UniversalByteStreamHandler(_dataStore, deUFSuploadlog);		
 		
@@ -2580,10 +2581,10 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	 * @see Miner#extendSchema(DataElement)
 	 */
 	public void extendSchema(DataElement schemaRoot) {
-		DataElement root = _dataStore.find(schemaRoot, DE.A_NAME,
-				DataStoreResources.model_root, 1);
-		DataElement snode = createObjectDescriptor(schemaRoot,
-				UNIVERSAL_NODE_DESCRIPTOR);
+//		DataElement root = _dataStore.find(schemaRoot, DE.A_NAME, DataStoreResources.model_root, 1);
+		_dataStore.find(schemaRoot, DE.A_NAME, DataStoreResources.model_root, 1);
+//		DataElement snode = createObjectDescriptor(schemaRoot, UNIVERSAL_NODE_DESCRIPTOR);
+		createObjectDescriptor(schemaRoot, UNIVERSAL_NODE_DESCRIPTOR);
 
 		DataElement tempnode = createObjectDescriptor(schemaRoot,
 				UNIVERSAL_TEMP_DESCRIPTOR);
@@ -2665,8 +2666,8 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				"C_SET_LASTMODIFIED");
 		createCommandDescriptor(deUniversalFileObject, "GetAdvanceProperty",
 				"C_QUERY_ADVANCE_PROPERTY");
-		dePropertyQuery = createCommandDescriptor(deUniversalFileObject,
-				"GetBasicProperty", "C_QUERY_BASIC_PROPERTY");
+//		dePropertyQuery = createCommandDescriptor(deUniversalFileObject, "GetBasicProperty", "C_QUERY_BASIC_PROPERTY");
+		createCommandDescriptor(deUniversalFileObject, "GetBasicProperty", "C_QUERY_BASIC_PROPERTY");
 
 		createCommandDescriptor(deUniversalFileObject, "GetcanWriteProperty",
 				"C_QUERY_CAN_WRITE_PROPERTY");
@@ -2688,12 +2689,10 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		createCommandDescriptor(deUniversalFolderObject, "GetcanWriteProperty",
 				"C_QUERY_CAN_WRITE_PROPERTY");
 
-		deFileClassificationQuery = createCommandDescriptor(
-				deUniversalFileObject, "GetFileClassifications",
-				"C_QUERY_FILE_CLASSIFICATIONS");
-		deFolderClassificationQuery = createCommandDescriptor(
-				deUniversalFolderObject, "GetFolderClassifications",
-				"C_QUERY_FILE_CLASSIFICATION");
+//		deFileClassificationQuery = createCommandDescriptor(deUniversalFileObject, "GetFileClassifications", "C_QUERY_FILE_CLASSIFICATIONS");
+		createCommandDescriptor(deUniversalFileObject, "GetFileClassifications", "C_QUERY_FILE_CLASSIFICATIONS");
+//		deFolderClassificationQuery = createCommandDescriptor(deUniversalFolderObject, "GetFolderClassifications", "C_QUERY_FILE_CLASSIFICATION");
+		createCommandDescriptor(deUniversalFolderObject, "GetFolderClassifications", "C_QUERY_FILE_CLASSIFICATION");
 		createCommandDescriptor(deUniversalFolderObject, "Exists",
 				"C_QUERY_EXISTS");
 		createCommandDescriptor(deUniversalFolderObject, "CreateNewFile",
@@ -2862,28 +2861,27 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		}
 	}
 
-	private DataElement findExistingVirtual(DataElement subject,
-			VirtualChild vchild) {
-		String name = vchild.name;
-		for (int i = 0; i < subject.getNestedSize(); i++) {
-			DataElement child = subject.get(i);
-			String deName = child.getName();
-			if (name.equals(deName)) {
-				if (vchild.isDirectory) {
-					if (child.getType().equals(
-							UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
-						return child;
-					}
-				} else {
-					if (child.getType().equals(
-							UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)) {
-						return child;
-					}
-				}
-			}
-		}
-		return null;
-	}
+//	private DataElement findExistingVirtual(DataElement subject, VirtualChild vchild) {
+//		String name = vchild.name;
+//		for (int i = 0; i < subject.getNestedSize(); i++) {
+//			DataElement child = subject.get(i);
+//			String deName = child.getName();
+//			if (name.equals(deName)) {
+//				if (vchild.isDirectory) {
+//					if (child.getType().equals(
+//							UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
+//						return child;
+//					}
+//				} else {
+//					if (child.getType().equals(
+//							UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)) {
+//						return child;
+//					}
+//				}
+//			}
+//		}
+//		return null;
+//	}
 
 	public ISystemArchiveHandler getArchiveHandlerFor(String archivePath) {
 		File file = new File(archivePath);
@@ -2905,7 +2903,8 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			status.setAttribute(DE.A_SOURCE, FAILED);
 			return statusDone(status);
 		}
-		VirtualChild child = handler.getVirtualFile(vpath.getVirtualPart());
+//		VirtualChild child = handler.getVirtualFile(vpath.getVirtualPart());
+		handler.getVirtualFile(vpath.getVirtualPart());
 		handler.createFile(vpath.getVirtualPart());
 
 		status.setAttribute(DE.A_SOURCE, SUCCESS);
@@ -2938,7 +2937,8 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			status.setAttribute(DE.A_SOURCE, FAILED);
 			return statusDone(status);
 		}
-		VirtualChild child = handler.getVirtualFile(vpath.getVirtualPart());
+//		VirtualChild child = handler.getVirtualFile(vpath.getVirtualPart());
+		handler.getVirtualFile(vpath.getVirtualPart());
 		handler.createFolder(vpath.getVirtualPart());
 
 		status.setAttribute(DE.A_SOURCE, SUCCESS);

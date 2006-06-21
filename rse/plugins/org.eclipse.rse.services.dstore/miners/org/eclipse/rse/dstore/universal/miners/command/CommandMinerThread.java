@@ -403,42 +403,42 @@ public class CommandMinerThread extends MinerThread
 	}
 	
 	
-	private String[] parseArgs(String full)
-	{
-		StringBuffer result = new StringBuffer();
-		char[] chars = full.toCharArray();
-		boolean inQuotes = false;
-		boolean escaping = false;
-		for (int i = 0; i < chars.length; i++)
-		{
-			char c = chars[i];
-			if (c == '\"')
-			{
-				inQuotes = !inQuotes;
-			}
-			else
-			{
-				if (c == '\\')
-				{
-					escaping = true;
-				}
-				else
-				{
-					if (c == ' ')
-					{
-						if (!inQuotes && !escaping)
-						{
-							c = ',';
-						}
-						escaping = false;
-					}
-				}
-				result.append(c);	
-			}
-			
-		}
-		return result.toString().split(",");
-	}
+//	private String[] parseArgs(String full)
+//	{
+//		StringBuffer result = new StringBuffer();
+//		char[] chars = full.toCharArray();
+//		boolean inQuotes = false;
+//		boolean escaping = false;
+//		for (int i = 0; i < chars.length; i++)
+//		{
+//			char c = chars[i];
+//			if (c == '\"')
+//			{
+//				inQuotes = !inQuotes;
+//			}
+//			else
+//			{
+//				if (c == '\\')
+//				{
+//					escaping = true;
+//				}
+//				else
+//				{
+//					if (c == ' ')
+//					{
+//						if (!inQuotes && !escaping)
+//						{
+//							c = ',';
+//						}
+//						escaping = false;
+//					}
+//				}
+//				result.append(c);	
+//			}
+//			
+//		}
+//		return result.toString().split(",");
+//	}
 	
 	public Process getProcess()
 	{
@@ -498,7 +498,8 @@ public class CommandMinerThread extends MinerThread
 		if (!_isDone)
 		{
 
-			byte[] intoout = input.getBytes();
+//			byte[] intoout = input.getBytes();
+			input.getBytes();
 
 			try
 			{
@@ -538,8 +539,8 @@ public class CommandMinerThread extends MinerThread
 					        
 						else
 						{
-						    String cwd = getCWD();
-						    String line = cwd + ">" + input;
+//						    String cwd = getCWD();
+//						    String line = cwd + ">" + input;
 						    //createObject("prompt", line);
 						    //createPrompt(line, cwd);
 						}
@@ -935,7 +936,7 @@ public class CommandMinerThread extends MinerThread
 			// special processing
 			String statement = line.substring(1);
 			String pair[] = statement.split("=");
-			String key = pair[0];
+//			String key = pair[0];
 			String value = pair[1];
 			_status.setAttribute(DE.A_SOURCE, value);
 		
@@ -976,7 +977,7 @@ public class CommandMinerThread extends MinerThread
 		    try
 			{	    			    
 				String fileName = parsedMsg.file;  
-				DataElement object = null;
+//				DataElement object = null;
 				if (parsedMsg.type.equals("prompt"))
 				{
 					File promptFile = new File(fileName);
@@ -991,11 +992,13 @@ public class CommandMinerThread extends MinerThread
 				}
 				else if (parsedMsg.type.equals("file"))
 				{
-					object = createObject(parsedMsg.type, line, fileName, null);				    
+//					object = createObject(parsedMsg.type, line, fileName, null);				    
+					createObject(parsedMsg.type, line, fileName, null);				    
 				}
 				else
 				{
-					object = createObject(parsedMsg.type, line, fileName, new Integer(parsedMsg.line));
+//					object = createObject(parsedMsg.type, line, fileName, new Integer(parsedMsg.line));
+					createObject(parsedMsg.type, line, fileName, new Integer(parsedMsg.line));
 				}
 
 			}

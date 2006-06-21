@@ -193,6 +193,15 @@ public class SystemComboBoxCellEditor extends CellEditor
 		System.out.println("in doSetValue: " + comboBox + ", " + value);
 		if (!(value instanceof Integer))
 		{
+			String[] items = comboBox.getItems();
+			for (int i = 0; i < items.length; i++)
+			{
+				String item = items[i];
+				if (item.equals(value))
+				{
+					selection = i;
+				}				
+			}
 		  return;
 		}
 		

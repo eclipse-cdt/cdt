@@ -82,7 +82,7 @@ public class NewClassWizardUtil {
     public static ICContainer getSourceFolder(IPath path) {
         if (path == null)
             return null;
-        while (!path.isEmpty()) {
+        while (path.segmentCount() > 0) {
             IResource res = getWorkspaceRoot().findMember(path);
             if (res != null && res.exists()) {
                 int resType = res.getType();

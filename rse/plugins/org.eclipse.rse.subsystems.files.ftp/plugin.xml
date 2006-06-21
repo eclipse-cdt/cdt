@@ -12,7 +12,7 @@ Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
 Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
-{Name} (company) - description of contribution.
+Javier Montalvo Orus (Symbian) - add Windows to list of valid FTP systems
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -22,7 +22,7 @@ Contributors:
    <extension
          point="org.eclipse.rse.ui.subsystemConfiguration">
       <configuration
-            systemTypes="Linux;Unix"
+            systemTypes="Linux;Unix;Windows"
             name="%Files"
             description="%FilesDescription"
             iconlive="icons/full/obj16/systemfileslive_obj.gif"

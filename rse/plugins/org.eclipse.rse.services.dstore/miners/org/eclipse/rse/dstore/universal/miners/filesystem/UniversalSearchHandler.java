@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Michael Berger (IBM) - Bug 147791 - symbolic links can cause circular search.
  ********************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners.filesystem;

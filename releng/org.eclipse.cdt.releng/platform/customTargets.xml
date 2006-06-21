@@ -70,10 +70,9 @@
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-win32.x86.zip"/>
 	</ant>
-	<exec executable="zip" dir="${basedir}">
+	<exec executable="zip" dir="${builder}/..">
 		<arg line="-r -q ${buildDirectory}/${buildLabel}/org.eclipse.cdt-${branchVersion}-${buildId}-win32.x86.zip"/>
-		<arg line="epl-v10.html"/>
-		<arg line="notice.html"/>
+		<arg line="eclipse"/>
 	</exec>
 </target>
 

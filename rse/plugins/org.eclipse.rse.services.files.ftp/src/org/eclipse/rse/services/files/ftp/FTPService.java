@@ -15,6 +15,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 140323 - provided implementation for 
  *    delete, move and rename.
  * Javier Montalvo Orus (Symbian) - Bug 140348 - FTP did not use port number
+ * Michael Berger (IBM) - Fixing 140404 - FTP new file creation does not work
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -404,6 +405,20 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		return getFile(monitor, remoteParent, folderName);
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.rse.services.files.IFileService#createFile(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String)
+     */
+    public IHostFile createFile(IProgressMonitor monitor, String remoteParent, String fileName) {
+		try {
+			File tempFile = File.createTempFile("ftp", "temp");
+			tempFile.deleteOnExit();
+			upload(monitor, tempFile, remoteParent, fileName, true, null, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return getFile(monitor, remoteParent, fileName);
+	}
+    
 	// TODO
 	/********************************************************
 	 * 
@@ -411,13 +426,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 * 
 	 ********************************************************/
 	
-	public IHostFile createFile(IProgressMonitor monitor, String remoteParent, String fileName) 
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public boolean copy(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) 
+    public boolean copy(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) 
 	{
 		return false;
 	}

@@ -275,7 +275,10 @@ public class RSEDOMImporter implements IRSEDOMImporter
 				subSystem = factory.createSubSystemInternal(host);			
 			}
 			subSystem.setHidden(isHidden);
-			subSystem.setName(name);
+			
+			// name should always be based on the one in plugin.xml
+			//  so commenting this out
+			//subSystem.setName(name);
 			subSystem.setHost(host);
 			subSystem.setSubSystemConfiguration(factory);
 			subSystem.setWasRestored(true);

@@ -64,7 +64,7 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 		
 		// after the kill command is executed, the process might have changed
 		// attributes, or might be gone, so requery
-		HostProcessFilterImpl rpfs = new HostProcessFilterImpl();
+		HostProcessFilterImpl rpfs = new HostProcessFilterImpl(true);
 		rpfs.setPid("" + process.getPid());
 		SortedSet results = lookupProcesses(rpfs);
 		if (results == null || results.size() == 0) return null;

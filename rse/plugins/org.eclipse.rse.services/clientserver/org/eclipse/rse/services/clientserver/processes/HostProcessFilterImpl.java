@@ -49,22 +49,24 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 	protected boolean anystatus;
 	protected String status;
 	protected HashMap states;
+	protected boolean _resolveVariables;
 	
 	/**
 	 * Constructor to use when there is no existing filter string.
 	 */
 	public HostProcessFilterImpl()
 	{
-		name = ALL;
-		username = ALL;
-		gid = ALL;
-		ppid = ALL;
-		pid = ALL;
-		minVM = 0;
-		maxVM = -1;
-		anystatus = true;
-		initStates();
-		status = "";
+		_resolveVariables = false;
+		init();
+	}
+	
+	/**
+	 * Constructor to use when there is no existing filter string.
+	 */
+	public HostProcessFilterImpl(boolean resolveVariables)
+	{
+		_resolveVariables = resolveVariables;
+		init();
 	}
 	
 	protected void initStates()
@@ -80,6 +82,35 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 	 * Constructor to use when filter string already exists.
 	 */
 	public HostProcessFilterImpl(String input)
+	{
+		_resolveVariables = false;
+		initInput(input);
+	}
+	
+	/**
+	 * Constructor to use when filter string already exists.
+	 */
+	public HostProcessFilterImpl(String input, boolean resolveVariables)
+	{
+		_resolveVariables = resolveVariables;
+		initInput(input);
+	}
+	
+	protected void init()
+	{
+		name = ALL;
+		username = ALL;
+		gid = ALL;
+		ppid = ALL;
+		pid = ALL;
+		minVM = 0;
+		maxVM = -1;
+		anystatus = true;
+		initStates();
+		status = "";
+	}
+	
+	protected void initInput(String input)
 	{
 		anystatus = true;
 		StringTokenizer tz = new StringTokenizer(input, "|");
@@ -178,7 +209,6 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 	    }
 	}
 	
-	
 	public HashMap getStates()
 	{
 		return states;
@@ -197,11 +227,11 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 	 */
 	public String getUsername()
 	{
-		if (username.equals("${user.id}"))
+		if (_resolveVariables && username.equals("${user.id}"))
 		{
 			return System.getProperty("user.name");
 		}
-		return username;
+		else return username;
 	}
 
 	/**
@@ -387,7 +417,10 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 		String state = tokens[PROCESS_ATTRIBUTES_INDEX_STATUS].trim();
 		if (!satisfiesState(state)) return false;
 		
-		matcher = new NamePatternMatcher(getUsername(), true, false);
+		if (getUsername().equals("${user.id}"))
+			matcher = new NamePatternMatcher(ALL, true, false);
+		else
+			matcher = new NamePatternMatcher(getUsername(), true, false);
 		if (!matcher.matches(tokens[PROCESS_ATTRIBUTES_INDEX_USERNAME])) return false;
 		matcher = new NamePatternMatcher(ppid, true, false);
 		if (!matcher.matches(tokens[PROCESS_ATTRIBUTES_INDEX_PPID])) return false;

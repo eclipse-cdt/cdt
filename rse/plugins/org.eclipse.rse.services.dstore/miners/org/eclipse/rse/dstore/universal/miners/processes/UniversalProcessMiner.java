@@ -197,7 +197,7 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 	{
 		try 
 		{
-			HostProcessFilterImpl pfs = new HostProcessFilterImpl(subject.getSource());
+			HostProcessFilterImpl pfs = new HostProcessFilterImpl(subject.getSource(), true);
 			lookupProcesses(pfs, subject);
 		} catch (Exception e) {
 			e.printStackTrace();

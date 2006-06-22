@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems) - Fix bug 148114
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
@@ -403,11 +404,9 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	private void initDrop() {
 		int ops= DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK | DND.DROP_DEFAULT;
 		Transfer[] transfers= new Transfer[] {
-			LocalSelectionTransfer.getInstance(),
 			ResourceTransfer.getInstance(),
 			FileTransfer.getInstance()};
 		TransferDropTargetListener[] dropListeners= new TransferDropTargetListener[] {
-			new SelectionTransferDropAdapter(viewer),
 			new ResourceTransferDropAdapter(viewer),
 			new FileTransferDropAdapter(viewer)
 		};

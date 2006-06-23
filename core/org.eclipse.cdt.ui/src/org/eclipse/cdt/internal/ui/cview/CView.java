@@ -404,9 +404,11 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	private void initDrop() {
 		int ops= DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK | DND.DROP_DEFAULT;
 		Transfer[] transfers= new Transfer[] {
+			LocalSelectionTransfer.getInstance(),
 			ResourceTransfer.getInstance(),
 			FileTransfer.getInstance()};
 		TransferDropTargetListener[] dropListeners= new TransferDropTargetListener[] {
+			new SelectionTransferDropAdapter(viewer),
 			new ResourceTransferDropAdapter(viewer),
 			new FileTransferDropAdapter(viewer)
 		};

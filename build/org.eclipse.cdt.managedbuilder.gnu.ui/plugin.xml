@@ -9,7 +9,7 @@
          name="Managed Build Tools Description"
          point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
       <managedBuildRevision
-            fileVersion="3.0.0">
+            fileVersion="3.1.0">
       </managedBuildRevision>
       <tool
             natureFilter="cnature"

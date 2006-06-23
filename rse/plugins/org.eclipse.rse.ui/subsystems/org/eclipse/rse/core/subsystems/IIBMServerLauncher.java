@@ -16,42 +16,31 @@
 
 package org.eclipse.rse.core.subsystems;
 /**
- * <!-- begin-user-doc -->
- * This is the IBM default implementation of {@link IServerLauncherProperties}. It basically allows for numerous types
+ * This is the implementation of {@link IServerLauncherProperties}. It basically allows for numerous types
  * of server connecting, as identified in {@link org.eclipse.rse.core.subsystems.ServerLaunchType}. It
  * also captures the attributes needed to support these.
  * <p> 
  * A server launcher is responsible for starting the server-side code needed for this client subsystem to 
- *  access remote resources on the remote system. It starts the server half of the client/server code needed
- *  for this subsystem. It is consulted in the default implementation of connect() in ISystem, and the
- *  manages the properties in the Remote Server Launcher property page.    
- * <!-- end-user-doc -->
- *
+ * access remote resources on the remote system. It starts the server half of the client/server code needed
+ * for this subsystem. It is consulted in the default implementation of connect() in ISystem, and the
+ * manages the properties in the Remote Server Launcher property page.    
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getServerLaunchType <em>Server Launch Type</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getPort <em>Port</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getRexecPort <em>Rexec Port</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getDaemonPort <em>Daemon Port</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getServerPath <em>Server Path</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getServerScript <em>Server Script</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getIbmAttributes <em>Ibm Attributes</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getRestrictedTypes <em>Restricted Types</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getServerLaunchType <em>Server Launch Type</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getPort <em>Port</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getRexecPort <em>Rexec Port</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getDaemonPort <em>Daemon Port</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getServerPath <em>Server Path</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getServerScript <em>Server Script</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getIbmAttributes <em>Ibm Attributes</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getRestrictedTypes <em>Restricted Types</em>}</li>
  * </ul>
  * </p>
  *
  * @see org.eclipse.rse.core.subsystems.SubsystemsPackage#getIBMServerLauncher()
- * @model 
- * @generated
  */
 public interface IIBMServerLauncher extends IServerLauncherProperties{
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	String copyright = "(c) Copyright IBM Corporation 2002, 2004.";
 	
 	/**
 	 * Returns the value of the '<em><b>Server Launch Type</b></em>' attribute.
@@ -103,8 +92,6 @@ public interface IIBMServerLauncher extends IServerLauncherProperties{
 	 * @generated
 	 */
 	int getRexecPort();
-
-	
 
 	/**
 	 * Set the REXEC port value, as an int

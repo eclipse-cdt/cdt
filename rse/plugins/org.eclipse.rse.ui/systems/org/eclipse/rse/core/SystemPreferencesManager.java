@@ -34,7 +34,6 @@ import org.eclipse.rse.ui.propertypages.RemoteSystemsPreferencePage;
  * These include:
  * <ul>
  *   <li>The list of profile names that are active
- *   <li>The global default user Id
  *   <li>The default user Id per system type
  *   <li>The global setting about whether to show filter pools
  *   <li>The global setting about whether to show filter strings
@@ -254,21 +253,6 @@ public class SystemPreferencesManager
    // ------------------
    
    /**
-    * Return overall global user id
-    */
-   //public String getDefaultUserId()
-   //{
-   	   //return RemoteSystemsPreferencePage.getUserIdPreference();
-   //}
-   /**
-    * Set overall global user id
-    */
-   //public void setDefaultUserId(String userId)
-   //{
-   	   //RemoteSystemsPreferencePage.setUserIdPreference(userId);
-   //}
-
-   /**
     * Return user Id per system type
     */
    public String getDefaultUserId(String systemType)
@@ -294,18 +278,22 @@ public class SystemPreferencesManager
    	  uid = (String)userIdsPerKey.get(key);
    	  return uid;
    }
+   
    /**
-    * Set the user Id per key
-    */
-   public void setUserId(String key, String userId)
-   {
-   	  if ((key != null) && (userId!=null))
-   	  {
-   	    userIdsPerKey = getUserIdsPerKey();
-        userIdsPerKey.put(key,userId);   
-        setUserIdsPerKey();
-   	  }
-   }
+	 * Set the user Id for this key. The key typically designates a scope for this userid so that a hierarchy
+	 * of user ids can be maintained for inheritance. For example, hosts have greater scope than subsystems.
+	 */
+	public void setUserId(String key, String userId) {
+		if ((key != null) && (userId != null)) {
+			userIdsPerKey = getUserIdsPerKey();
+			String storedUserId = (String) userIdsPerKey.get(key);
+			if (!storedUserId.equals(userId)) { // don't bother updating if its already there
+				userIdsPerKey.put(key, userId);
+				setUserIdsPerKey();
+			}
+		}
+	}
+   
    /**
     * Clear the user Id for the given key
     */
@@ -435,9 +423,9 @@ public class SystemPreferencesManager
     */
    public void setVerifyConnection(boolean verify)
    {
-   		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(ISystemPreferencesConstants.VERIFY_CONNECTION,verify);
-		RSEUIPlugin.getDefault().savePluginPreferences();   		
+   		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+		store.setValue(ISystemPreferencesConstants.VERIFY_CONNECTION, verify);
+		RSEUIPlugin.getDefault().savePluginPreferences(); // also saves the preference store
    }
    
    // ------------------

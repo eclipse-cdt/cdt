@@ -120,7 +120,6 @@ public class RSEDOMImporter implements IRSEDOMImporter
 		String description = hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_DESCRIPTION).getValue();
 		boolean isOffline = getBooleanValue(hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_OFFLINE).getValue());
 		boolean isPromptable = getBooleanValue(hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_PROMPTABLE).getValue());
-		String userId = hostNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_USER_ID).getValue();
 		
 		// create host and set it's attributes
 		try
@@ -130,7 +129,6 @@ public class RSEDOMImporter implements IRSEDOMImporter
 			host = profile.createHost(systemType, connectionName, hostName, description);
 			host.setOffline(isOffline);
 			host.setPromptable(isPromptable);
-			host.setDefaultUserId(userId);
 		}
 		catch (Exception e)
 		{
@@ -275,10 +273,6 @@ public class RSEDOMImporter implements IRSEDOMImporter
 				subSystem = factory.createSubSystemInternal(host);			
 			}
 			subSystem.setHidden(isHidden);
-			
-			// name should always be based on the one in plugin.xml
-			//  so commenting this out
-			//subSystem.setName(name);
 			subSystem.setHost(host);
 			subSystem.setSubSystemConfiguration(factory);
 			subSystem.setWasRestored(true);
@@ -480,10 +474,17 @@ public class RSEDOMImporter implements IRSEDOMImporter
 		{
 			ISystemFilterPoolManager filterPoolManager = factory.getFilterPoolManager(subSystem.getSystemProfile());
 			ISystemFilterPool filterPool = filterPoolManager.getSystemFilterPool(name);
-
-			// create reference to the filterpool
-			ISystemFilterPoolReferenceManager referenceManager = subSystem.getFilterPoolReferenceManager();
-			filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPool);
+			/*
+			 * DWD filterpool can be null when restoring since there can be forward references. 
+			 * A profile may be being restored that has references to a filter pool in a profile that doesn't yet exist. 
+			 * Need to create an "unresolved" reference instead of a null object and then patch them up 
+			 * at the end.
+			 */
+			if (filterPool != null) { // for the time being don't restore a reference if the pool isn't found.
+				// create reference to the filterpool
+				ISystemFilterPoolReferenceManager referenceManager = subSystem.getFilterPoolReferenceManager();
+				filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPool);
+			}
 
 		}		
 		return filterPoolReference;

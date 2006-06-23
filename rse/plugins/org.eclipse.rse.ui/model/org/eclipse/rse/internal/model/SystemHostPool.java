@@ -32,12 +32,9 @@ import org.eclipse.rse.ui.SystemResources;
 /**
  * A pool of host objects.
  * There is one pool per profile.
- * It is named the same as its owning profile. 
- */
-/*
- * DWD this may be a candidate for elimination. It is not persisted but derived
- * when Host objects come into existance. Not sure it provides much value. Code
- * could be implemented directly in the profile.
+ * It is named the same as its owning profile.
+ * It is not persisted but provides a means of manipulating lists of host objects.
+ * Hosts are created and destroyed by the host pool so that the the relationships between the two can be maintained. 
  */
 public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 {
@@ -50,13 +47,15 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 
 	protected String name = NAME_EDEFAULT;
     private java.util.List connections = null;
-	/**
-     * Default constructor. Typically called by MOF.
+
+    /**
+     * Default constructor.
      */
 	protected SystemHostPool()
     {
 	 	  super();
 	}
+
 	/**
 	 * Reset for a full refresh from disk, such as after a team synch
 	 */
@@ -209,6 +208,10 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
           addHost(conn); // only record internally if saved successfully
           conn.setHostPool(this);          
           conn.setAliasName(aliasName);
+          // DWD if default userID is null, and location is in the connection we should retrieve it and use it as the initial value.
+          if (defaultUserId == null && defaultUserIdLocation == ISystemUserIdConstants.USERID_LOCATION_CONNECTION) {
+              defaultUserId = conn.getDefaultUserId();
+          }
           updateHost(conn, systemType, aliasName, hostName, description, defaultUserId, defaultUserIdLocation);          
 
         } catch (Exception e)

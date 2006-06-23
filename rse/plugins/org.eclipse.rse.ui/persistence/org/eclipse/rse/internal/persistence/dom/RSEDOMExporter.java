@@ -313,7 +313,6 @@ public class RSEDOMExporter implements IRSEDOMExporter
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_PROMPTABLE, getBooleanString(host.isPromptable()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_HOSTNAME, host.getHostName());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_DESCRIPTION, host.getDescription());
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_USER_ID, host.getDefaultUserId());
 		}
 		
 	

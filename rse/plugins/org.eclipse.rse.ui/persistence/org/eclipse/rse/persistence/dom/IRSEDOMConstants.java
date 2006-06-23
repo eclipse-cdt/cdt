@@ -48,7 +48,6 @@ public interface IRSEDOMConstants
 	public static final String ATTRIBUTE_HOSTNAME = "hostname";
 	public static final String ATTRIBUTE_OFFLINE = "offline";
 	public static final String ATTRIBUTE_DESCRIPTION = "description";
-	public static final String ATTRIBUTE_USER_ID = "defaultUserId";
 	 
 	 // ConnectorService attributes
 	 public static final String ATTRIBUTE_GROUP="group";

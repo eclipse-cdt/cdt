@@ -132,7 +132,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	    tableViewer.setCellModifier(this);
 	    CellEditor editors[] = new CellEditor[columnHeaders.length];
 	    userIdCellEditor = new TextCellEditor(table);
-	    enabledCellEditor = new ComboBoxCellEditor(table, enabledStateStrings, SWT.READ_ONLY);
+	    enabledCellEditor = new ComboBoxCellEditor(table, enabledStateStrings, SWT.READ_ONLY); // DWD should consider a checkbox for this.
 	    editors[COLUMN_USERID] = userIdCellEditor;
 	    editors[COLUMN_ENABLED] = enabledCellEditor;
 	    tableViewer.setCellEditors(editors);

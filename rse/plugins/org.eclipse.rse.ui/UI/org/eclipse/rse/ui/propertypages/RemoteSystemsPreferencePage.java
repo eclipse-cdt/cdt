@@ -196,6 +196,7 @@ public class RemoteSystemsPreferencePage
 	// ---------------------------------------------------------
 	// GETTERS/SETTERS FOR EACH OF THE USER PREFERENCE VALUES...
 	// ---------------------------------------------------------
+	// DWD these preferences methods should be moved to SystemPreferencesManager since they are not a proper function of a preference page.
     /**
      * Return the names of the profiles the user has elected to make "active".
      */
@@ -566,10 +567,11 @@ public class RemoteSystemsPreferencePage
 	}
 	
 	/**
-	 * Save the preference store
+	 * Save the preference store.
 	 */
 	private static void savePreferenceStore()
 	{
+		/* plugin preferences and preference stores are actually the same store and are flushed to disk using this call */
 		RSEUIPlugin.getDefault().savePluginPreferences();
 	}
 

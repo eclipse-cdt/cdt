@@ -49,20 +49,20 @@ public class SystemClearPasswordAction extends SystemBaseAction
 	}
 	
 	/**
-	 * Override of parent. Called when testing if action should be enabled base on current
-	 *  selection. We check the selected object is one of our subsystems, and we are not
-	 *  already connected.
+	 * Override of parent. 
+	 * Called when testing if an action should be enabled based on the current selection.
+	 * The clear password action can be enabled if the selected object is a subsystem
+	 * that is not connected and has a password that is saved.
+	 * @return true if the clear password action can be enabled.
 	 */
-	public boolean checkObjectType(Object obj) 
-	{
-		if (!(obj instanceof ISubSystem) ||
-				((ISubSystem)obj).getConnectorService().isConnected() ||
-				!(((ISubSystem)obj).getConnectorService().isPasswordCached(true))) {
-			return false;
+	public boolean checkObjectType(Object obj) {
+		boolean result = false;
+		if (obj instanceof ISubSystem) {
+			ISubSystem subsystem = (ISubSystem) obj;
+			IConnectorService cs = subsystem.getConnectorService();
+			result = !cs.isConnected() && cs.isPasswordCached(true);
 		}
-		else {
-			return true;
-		}
+		return result;
 	}
 	
 	/**

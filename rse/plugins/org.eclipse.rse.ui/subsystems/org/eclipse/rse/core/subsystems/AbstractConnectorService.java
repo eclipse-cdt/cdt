@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.internal.model.RSEModelObject;
+import org.eclipse.rse.logging.Logger;
+import org.eclipse.rse.logging.LoggerFactory;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.SystemSignonInformation;
@@ -40,26 +42,24 @@ import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * This is a base class to make it easier to create system classes.
+ * This is a base class to make it easier to create connector service classes.
  * <p>
- * An {@link org.eclipse.rse.core.subsystems.IConnectorService} object is returned from a subsystem object via getSystem(), and
- *  it is used to represent the live connection to a particular subsystem.
- * <p>
- * All this could have been done in the subsystem object, but that would clutter it
- *  up too much.
+ * An {@link org.eclipse.rse.core.subsystems.IConnectorService} object
+ * is returned from a subsystem object via getSystem(), and
+ * it is used to represent the live connection to a particular subsystem.
  * <p>
  * You must override/implement
  * <ul>
- *  <li>isConnected
- *  <li>internalConnect
- *  <li>internalDisconnect
+ * <li>isConnected
+ * <li>internalConnect
+ * <li>internalDisconnect
  * </ul>
  * You should override:
  * <ul>
- *  <li>reset 
- *  <li>getVersionReleaseModification
- *  <li>getHomeDirectory
- *  <li>getTempDirectory
+ * <li>reset 
+ * <li>getVersionReleaseModification
+ * <li>getHomeDirectory
+ * <li>getTempDirectory
  * </ul>
  * 
  * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager
@@ -181,12 +181,15 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     // Utility methods...
     // ------------------
 
-    public ISubSystem[] getSubSystems()
+    final public ISubSystem[] getSubSystems()
     {
     	return (ISubSystem[])_registeredSubSystems.toArray(new ISubSystem[_registeredSubSystems.size()]);
     }
     
-    public ISubSystem getPrimarySubSystem()
+    /* (non-Javadoc)
+     * @see org.eclipse.rse.core.subsystems.IConnectorService#getPrimarySubSystem()
+     */
+    final public ISubSystem getPrimarySubSystem()
     {
     	if (_primarySubSystem == null)
     	{
@@ -196,7 +199,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     	return _primarySubSystem;
     }
     
-    public IHost getHost()
+    final public IHost getHost()
     {
     	return _host;
     }
@@ -205,7 +208,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      * <i>Useful utility method. Fully implemented, do not override.</i><br>
      * Returns the system type for this connection:<br> <code>getSubSystem().getSystemConnection().getSystemType()</code>
      */
-    public String getHostType()
+    final public String getHostType()
     {
     	return getHost().getSystemType();
     }
@@ -213,12 +216,12 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     /**
      * 
      */
-    public String getName()
+    final public String getName()
     {
     	return _name;
     }
     
-    public String getDescription()
+    final public String getDescription()
     {
     	return _description;
     }
@@ -228,141 +231,141 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      * Returns the host name for the connection this system's subsystem is associated with:</br>
      * <code>getSubSystem().getSystemConnection().getHostName()</code>
      */
-    public String getHostName()
+    final public String getHostName()
     {
     	return getHost().getHostName();
     }
     
   
     /**
-     * <i>Useful utility method. Fully implemented, do not override.</i><br>
-     * Returns the user Id for this system's subsystem we are associated with. 
-     * This is the same as {@link #getLocalUserId()}, but first clears the local 
-     *  user Id cache if we are not currently connected.
-     */
-    public String getUserId()
-    {
-    	if (_userId != null) 
-    	{
-    	  return _userId;
-    	}
-    	
-    	return getLocalUserId();	
-    }
+	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
+	 * Returns the active userId if we are connected.
+	 * If not it returns the userId for the primary subsystem ignoring the 
+	 * cached userId.
+	 */
+	final public String getUserId() {
+		String result = getSubsystemUserId();
+		ISubSystem ss = getPrimarySubSystem();
+		if (ss.isConnected()) {
+			result = getLocalUserId();
+		}
+		return result;
+	}
+
+	/**
+	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
+	 * Return the userId for this connector service. If there is none
+	 * set for this service then it is retrieved from the primary subsystem.
+	 */
+	final protected String getLocalUserId() {
+		if (_userId == null) {
+			_userId = getSubsystemUserId();
+		}
+		return _userId;
+	}
+	
+	/**
+	 * @return the userId from the primary subsystem.
+	 */
+	private String getSubsystemUserId() {
+		ISubSystem ss = getPrimarySubSystem();
+		String result = ss.getUserId();
+		return result;
+	}
     
-    public void setUserId(String newId)
-    {
-    	if (!_userId.equals(newId))
-    	{
-    		_userId = newId;
-    		setDirty(true);
-    	}
-    }
+    /* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setUserId(java.lang.String)
+	 */
+	final public void setUserId(String newId) {
+		if (!_userId.equals(newId)) {
+			_userId = newId;
+			setDirty(true);
+		}
+	}
     
-    public void setHost(IHost host)
-    {
-    	_host = host;
-    }
-    
-    /**
-     * <i>Useful utility method. Fully implemented, do not override.</i><br>
-     * Return the userId for this systems' subsystem we are associated with. If there
-     *  is no local user Id value here, then it is queried from the subsystem. However,
-     *  if we are connected then the user may have termporarily changed his userId on 
-     *  the userId/password prompt dialog, in which that temp value is stored here in 
-     *  a local cache and this method will return it, versus the persistent user Id stored
-     *  in the subsystem.
-     */
-    protected String getLocalUserId() 
-    {
-    	if (_userId == null)
-    	{
-    	  _userId = System.getProperty("user.name");
-    	}
-    	return _userId;
-    }    
-    
-    /**
-     * <i>Useful utility method. Fully implemented, do not override.</i><br>
-     * Clear internal userId cache. Called when user uses the property dialog to 
-     * change his userId. By default, sets internal userId value to null so that on
-     * the next call to getUserId() it is requeried from subsystem. 
-     * Also calls {@link #clearPasswordCache()}.
-     */
-    public void clearUserIdCache()
-    {
-    	_userId = null;
-    	clearPasswordCache();
-    }
+    /* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setHost(org.eclipse.rse.model.IHost)
+	 */
+	final public void setHost(IHost host) {
+		_host = host;
+	}
     
     /**
-     * <i>Useful utility method. Fully implemented, do not override.</i><br>
-     * Clear internal password cache. Called when user uses the property dialog to 
-     * change his userId.  This method does not remove the password from the disk
-     * cache - only the memory cache.
-     * 
-     * @see #clearUserIdCache()
-     */
-    public void clearPasswordCache()
-    {
-    	clearPasswordCache(false);
-    }
-    
-    /**
-     * <i>Useful utility method. Fully implemented, do not override.</i><br>
-     * Clear internal password cache. Called when user uses the property dialog to 
-     * change his userId.  
-     * 
-     * @param onDisk if this is true, clear the password from the disk cache as well
-     * @see #clearUserIdCache(boolean)
-     */
-    public void clearPasswordCache(boolean onDisk)
-    {
-    	setPasswordInformation(null);
-    	    	
-    	if (onDisk)
-    	{
-    		//  now get rid of userid/password from disk
-    		String systemType = getHostType();
-			String hostName   = getHostName();
+	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
+	 * Clear internal userId cache. Called when user uses the property dialog to 
+	 * change his userId. By default, sets internal userId value to null so that on
+	 * the next call to getUserId() it is requeried from subsystem. 
+	 * Also calls {@link #clearPasswordCache()}.
+	 */
+	final public void clearUserIdCache() {
+		_userId = null;
+		clearPasswordCache();
+	}
+
+	/**
+	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
+	 * Clear internal password cache. Called when user uses the property dialog to 
+	 * change his userId.  This method does not remove the password from the disk
+	 * cache - only the memory cache.
+	 * 
+	 * @see #clearUserIdCache()
+	 */
+	final public void clearPasswordCache() {
+		clearPasswordCache(false);
+	}
+
+	/**
+	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
+	 * Clear internal password cache. Called when user uses the property dialog to 
+	 * change his userId.  
+	 * 
+	 * @param onDisk if this is true, clear the password from the disk cache as well
+	 * @see #clearUserIdCache(boolean)
+	 */
+	final public void clearPasswordCache(boolean onDisk) {
+		setPasswordInformation(null);
+
+		if (onDisk) {
+			//  now get rid of userid/password from disk
+			String systemType = getHostType();
+			String hostName = getHostName();
 			if (_userId != null)
-				PasswordPersistenceManager.getInstance().remove(systemType, hostName, _userId);    	
-    	}
-    	
-    	if (shareUserPasswordWithConnection())
-    	{
-    	    // clear this uid/password with other ISystems in connection
-    	    clearPasswordForOtherSystemsInConnection(_userId, onDisk);
-    	}    	
-    }
-    
-    
+				PasswordPersistenceManager.getInstance().remove(systemType, hostName, _userId);
+		}
+
+		if (shareUserPasswordWithConnection()) {
+			// clear this uid/password with other ISystems in connection
+			clearPasswordForOtherSystemsInConnection(_userId, onDisk);
+		}
+	}
+
 	/**
-     * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Return true if password is currently cached.
+	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
+	 * Return true if password is currently saved either here or in its persisted
+	 * form.
+	 * @param onDisk true if the check should be made for a persisted form as well, 
+	 * false if the check should be made for a password in memory only.
+	 * @return true if the password is known, false otherwise.
 	 */
-    public boolean isPasswordCached(boolean onDisk)
-    {
-    	boolean cached = (getPasswordInformation() != null);
-    	if (!cached && onDisk)
-    	{
-    		//  now check if cached on disk
-    		String systemType = getHostType();
-			String hostName   = getHostName();
-			String userId     = getUserId();
-			if (userId != null)
-			{
-				return PasswordPersistenceManager.getInstance().passwordExists(systemType, hostName, getUserId());    	
+	final public boolean isPasswordCached(boolean onDisk) {
+		boolean cached = (getPasswordInformation() != null);
+		if (!cached && onDisk) {
+			//  now check if cached on disk
+			String systemType = getHostType();
+			String hostName = getHostName();
+			String userId = getUserId();
+			if (userId != null) {
+				return PasswordPersistenceManager.getInstance().passwordExists(systemType, hostName, getUserId());
 			}
-    	}
-    	return cached;
-    }
+		}
+		return cached;
+	}
     
 	/**
      * <i>Useful utility method. Fully implemented, do not override.</i><br>
 	 * Return true if password is currently cached.
 	 */
-    public boolean isPasswordCached()
+    final public boolean isPasswordCached() // DWD Can we make this final?
     {
         return isPasswordCached(false);
     }
@@ -373,12 +376,12 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      * 
      * @return true if it can inherit the user/password
      */
-    public boolean inheritConnectionUserPassword()
+    final public boolean inheritConnectionUserPassword()
     {
         return true;
     }
     
-    /*
+    /**
      * Return true if this system can share it's uid and password
      * with other ISystems in this connection
      * 
@@ -406,66 +409,61 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      * @param forcePrompt if true then present the prompt even if the password is stored.
      * Can be null if the password is known to exist.
      */
-    public void promptForPassword(Shell shell, boolean forcePrompt)
-           throws InterruptedException
-    {
+    public void promptForPassword(Shell shell, boolean forcePrompt) throws InterruptedException {
 		// dy:  March 24, 2003:  check if prompting is temporarily suppressed by a tool
 		// vendor, this should only be suppressed if the user cancelled a previous signon
 		// dialog (or some other good reason)
-		if (isSuppressSignonPrompt())
-		{
-			throw new InterruptedException();
-		}
+		if (isSuppressSignonPrompt()) throw new InterruptedException();
     	
-		// Get the password information associated with this connector service.
+		boolean passwordValid = true;
+		ISignonValidator validator = getSignonValidator();
 		SystemSignonInformation passwordInformation =  getPasswordInformation();
+		ISubSystem subsystem = getPrimarySubSystem();
+		IHost host = subsystem.getHost();
+		String hostName = host.getHostName();
+		String hostType = host.getSystemType();
+		String oldUserId = getLocalUserId();
+		PasswordPersistenceManager ppm = PasswordPersistenceManager.getInstance();
 
 		// Check the transient in memory password ...
 		// Test if userId has been changed... d43274
-		String oldUserId = getUserId();
 		if (passwordInformation != null && !forcePrompt) {
-			boolean same = getPrimarySubSystem().getHost().compareUserIds(oldUserId, passwordInformation.getUserid());
-			//RSEUIPlugin.getQualifiedHostName(getHostName());
-			String hostName = getHostName();
+			boolean same = host.compareUserIds(oldUserId, passwordInformation.getUserid());
 			same = same && hostName.equalsIgnoreCase(passwordInformation.getHostname());
 			if (!same) {
 				clearPasswordCache();
 				passwordInformation = null;
 			}
-		} 
+		}
 		
-		// 1b.  If a transient in memory password was found, test if it is still valid ...
+		// If a transient in memory password was found, test if it is still valid ...
 		// but don't issue a message yet, just set a flag
-		boolean pwdInvalidFlag = false;
-       	if (passwordInformation != null && 
-       	        getSignonValidator() != null && 
-       	        !getSignonValidator().isValid(shell, passwordInformation)) 
-       	{
-			pwdInvalidFlag = true;
+       	if (passwordInformation != null && validator != null && !validator.isValid(shell, passwordInformation)) {
+			passwordValid = false;
        		clearPasswordCache();
        	    passwordInformation = null;
        	}
 	
-   	  	// 2a.  Check the saved passwords if we still haven't found a good password.
-		if (passwordInformation == null && getLocalUserId() != null && !forcePrompt)
-		{
-    		setPasswordInformation(PasswordPersistenceManager.getInstance().find(getHostType(), getHostName(), getLocalUserId()));
-    		passwordInformation = getPasswordInformation();
-    		
-			// 2b.  Check if saved passwordInfo is still valid
-	       	if (passwordInformation != null 
-	       	        && getSignonValidator() != null 
-	       	        && !getSignonValidator().isValid(shell, passwordInformation)) 
-	       	{
-    	   		pwdInvalidFlag = true;
-       			clearPasswordCache();
-       			passwordInformation = null;
-       		}
+   	  	// Check the saved passwords if we still haven't found a good password.
+		if (passwordInformation == null && oldUserId != null && !forcePrompt) {
+			SystemSignonInformation savedPasswordInformation = ppm.find(hostType, hostName, oldUserId);
+			if (savedPasswordInformation != null) {
+				if (validator != null) {
+					if (!validator.isValid(shell, savedPasswordInformation)) {
+						passwordValid = false;
+						clearPasswordCache();
+						passwordInformation = null;
+					} else {
+						setPasswordInformation(savedPasswordInformation);
+						passwordInformation = getPasswordInformation();
+					}
+				}
+			}
 		}	
 
-		// If we had a saved password (in memory or on disk) that was invalid the tell the user
-		if ((passwordInformation == null) && (pwdInvalidFlag == true))
-		{
+		// If we ran into an invalid password we need to tell the user.
+		// DWD refactor - want to move this to a pluggable class so that this can be moved to core.
+		if (!passwordValid) {
        		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_INVALID);
        		msg.makeSubstitution(getLocalUserId(), getHostName());
        		SystemMessageDialog dialog = new SystemMessageDialog(shell, msg);
@@ -473,60 +471,41 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		}
     		
    	  	// Valid password not found so prompt, or force prompt
-    	if (forcePrompt || ((passwordInformation == null) && (shell != null)))
-    	{
+    	if ((forcePrompt || (passwordInformation == null)) && (shell != null)) {
     	  	ISystemPasswordPromptDialog dlg = getPasswordPromptDialog(shell);
     	  	dlg.setSystemInput(this);
-    	  	
-    	  	SystemSignonInformation passInfo = PasswordPersistenceManager.getInstance().find(getHostType(), getHostName(), getLocalUserId());
-    	  	if (passInfo != null)
-    	  	{
-    	  	    String password = passInfo.getPassword();
+    	  	passwordInformation = ppm.find(hostType, hostName, oldUserId);
+    	  	if (passwordInformation != null) {
+    	  	    String password = passwordInformation.getPassword();
     	  	    dlg.setPassword(password);
+    	  	    dlg.setSavePassword(true);
+    	  	} else {
+    	  		dlg.setPassword("");
+    	  		dlg.setSavePassword(false);
     	  	}
-    	  	
-    	  	// Check if password was saved, if so preselect the save checkbox
-			if (getLocalUserId() != null)
-			{
-				dlg.setSavePassword(PasswordPersistenceManager.getInstance().passwordExists(getHostType(), getHostName(), getLocalUserId()));
-			}
-    	  	
-    	  	try 
-    	  	{
+    	  	try {
   	        	dlg.open();
-    	  	} 
-    	  	catch (Exception e) 
-    	  	{
-    	   		e.printStackTrace();
+    	  	} catch (Exception e) {
+    	  		logException(e);
     	  	}
-  	      	if (!dlg.wasCancelled())
-  	      	{
-    	    	boolean userIdChanged = dlg.getIsUserIdChanged();
-    	    	if (userIdChanged)
-    	    	{
-              		String newUserId = dlg.getUserId();            	          	        
-    	      		boolean userIdChangePermanent = dlg.getIsUserIdChangePermanent();
-    	      		if (userIdChangePermanent)
-    	      		{
-                		updateDefaultUserId(getPrimarySubSystem(), newUserId);
-    	      		}
-    	      		else
-    	      		{
-    	      			setUserId(newUserId);
-    	        		_userId = newUserId;
-    	      		}
-    	    	}
-    	    	boolean persistPassword = dlg.getIsSavePassword();
-    	    	setPassword(dlg.getUserId(), dlg.getPassword(), persistPassword);
-
-    	    	if (shareUserPasswordWithConnection())
-    	    	{
-    	    	    // share this uid/password with other ISystems in connection
-    	    	    updatePasswordForOtherSystemsInConnection(dlg.getUserId(), dlg.getPassword(), persistPassword);
-    	    	}
-  	      	}
-    	  	else
-       	    	throw new InterruptedException();    	    
+    	  	if (dlg.wasCancelled()) throw new InterruptedException();
+	    	boolean userIdChanged = dlg.getIsUserIdChanged();
+	    	if (userIdChanged) {
+          		String newUserId = dlg.getUserId();            	          	        
+	      		boolean userIdChangePermanent = dlg.getIsUserIdChangePermanent();
+	      		if (userIdChangePermanent) {
+            		updateDefaultUserId(subsystem, newUserId);
+	      		} else {
+	      			setUserId(newUserId);
+	        		_userId = newUserId;
+	      		}
+	    	}
+	    	boolean persistPassword = dlg.getIsSavePassword();
+	    	setPassword(dlg.getUserId(), dlg.getPassword(), persistPassword);
+	    	if (shareUserPasswordWithConnection()) {
+	    	    // share this uid/password with other ISystems in connection
+	    	    updatePasswordForOtherSystemsInConnection(dlg.getUserId(), dlg.getPassword(), persistPassword);
+	    	}
     	}
     }        
     
@@ -600,50 +579,38 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
         }
     }
     
-    
-    
     /**
-     * Change the default user Id value in the SubSystem if it is non-null,
-     *  else update it in the Connection object
-     */
-    private void updateDefaultUserId(ISubSystem subsystem, String userId)
-    {
-    	if (subsystem.getLocalUserId() != null) // defect 42709
-    	{
-          subsystem.getSubSystemConfiguration().
-             updateSubSystem(shell, subsystem, true, userId, false, 0);    	
-    	}
-    	// it seems intuitive to update the connection object. defect 42709. Phil
-    	else
-    	{
-    	  int whereToUpdate = USERID_LOCATION_CONNECTION;
-    	  IHost conn = subsystem.getHost();
-	      ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();    	
-		  sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
-		                    conn.getHostName(), conn.getDescription(), userId, whereToUpdate);
-    	}
-    }
+	 * Change the default user Id value in the SubSystem if it is non-null, else
+	 * update it in the Connection object
+	 */
+	private void updateDefaultUserId(ISubSystem subsystem, String userId) {
+		String ssLocalUserId = subsystem.getLocalUserId(); 
+		if (ssLocalUserId != null) { // defect 42709
+			ISubSystemConfiguration ssc = subsystem.getSubSystemConfiguration(); 
+			ssc.updateSubSystem(shell, subsystem, true, userId, false, 0);
+		} else { // it seems intuitive to update the connection object. defect 42709. Phil
+			int whereToUpdate = USERID_LOCATION_CONNECTION;
+			IHost conn = subsystem.getHost();
+			ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+			sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(), conn.getHostName(), conn.getDescription(), userId, whereToUpdate);
+		}
+	}
 
     /**
-     * <i>A default implementation is supplied, but can be overridden if desired.</i><br>
-     * Instantiates and returns the dialog to prompt for the userId.
-     * <p>
-     * By default returns an instance of SystemPasswordPromptDialog.
-     * Calls forcePasswordToUpperCase() to decide whether the
-     * user Id and password should be folded to uppercase.
-     * <p>
-     * Calls {@link #getUserIdValidator()} and {@link #getPasswordValidator()}
-     * to set the validators. These return null by default by you can override them.
-     * <p>
-     * Before calling open() on the dialog, the getPassword(Shell) method that calls this will
-     * call setSystemInput(this). 
-     * <p>
-     * After return, it will call wasCancelled() and getUserId(), getIsUserIdChanged(), getIsUserIdChangePermanent()
-     * and getPassword().
-     * <p>
-     *
-     * @return An instance of a dialog class that implements the ISystemPasswordPromptDialog interface
-     */
+	 * <i>A default implementation is supplied, but can be overridden if desired.</i><br>
+	 * Instantiates and returns the dialog to prompt for the userId.
+	 * <p>
+	 * By default returns an instance of SystemPasswordPromptDialog. Calls forcePasswordToUpperCase() to decide whether the user Id and password should be folded to uppercase.
+	 * <p>
+	 * Calls {@link #getUserIdValidator()} and {@link #getPasswordValidator()} to set the validators. These return null by default by you can override them.
+	 * <p>
+	 * Before calling open() on the dialog, the getPassword(Shell) method that calls this will call setSystemInput(this).
+	 * <p>
+	 * After return, it will call wasCancelled() and getUserId(), getIsUserIdChanged(), getIsUserIdChangePermanent() and getPassword().
+	 * <p>
+	 * 
+	 * @return An instance of a dialog class that implements the ISystemPasswordPromptDialog interface
+	 */
     protected final ISystemPasswordPromptDialog getPasswordPromptDialog(Shell shell)
     {
     	  ISystemPasswordPromptDialog dlg = new SystemPasswordPromptDialog(shell);
@@ -657,9 +624,9 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 
     /**
      * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-     * Return the password information for this system's subsystem we are associated with.
-     * This is transient. Assumes it has been set already.  The password stored in
-     * SystemSignonInformation is encrypted.
+     * Return the password information for the primary subsystem of this
+     * connector service. Assumes it has been set by the subsystem at the 
+     * time the subsystem acquires the connector service.
      */
     protected SystemSignonInformation getPasswordInformation()
     {
@@ -766,10 +733,10 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
  
     
     /**
-     * This connection method wrappers the others (internal connect) so that registered subsystems can be notified and initialized after a connect
+     * This connection method wrappers the others (internal connect) so that registered subsystems 
+     * can be notified and initialized after a connect
      * Previous implementations that overrode this method should now change
      * their connect() method to internalConnect()
-     *  
      */
     public final void connect(IProgressMonitor monitor) throws Exception
     {
@@ -796,14 +763,15 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     }
      
     /**
-     * <i><b>Abstract</b> - you must override, </i>unless subsystem.getParentSubSystemFactory().supportsServerLaunchProperties 
-     * returns true
+     * <i>You must override</i>
+     * unless subsystem.getParentSubSystemFactory().supportsServerLaunchProperties 
+     * returns true.
      * <p>
      * Attempt to connect to the remote system.<br> 
      * If the subsystem supports server launch,
-     *  the default behaviour here is to get the remote server launcher via
-     *  {@link #getRemoteServerLauncher()}, and if {@link IServerLauncher#isLaunched()}
-     *  returns false, to call {@link IServerLauncher#launch(IProgressMonitor)}. 
+     * the default behavior is to get the remote server launcher by
+     * {@link #getRemoteServerLauncher()}, and if {@link IServerLauncher#isLaunched()}
+     * returns false, to call {@link IServerLauncher#launch(IProgressMonitor)}. 
 	 * <p>
 	 * This is called, by default, from the connect(...) methods of the subsystem.
      */    
@@ -1118,6 +1086,10 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		return RSEUIPlugin.getThePersistenceManager().commit(getHost());
 	}
 	
+	private void logException(Throwable t) {
+		Logger log = LoggerFactory.getInst(RSEUIPlugin.getDefault());
+		log.logError("Unexpected exception", t);
+	}
 	
 	protected NewPasswordInfo promptForNewPassword(SystemMessage prompt) throws InterruptedException
 	{

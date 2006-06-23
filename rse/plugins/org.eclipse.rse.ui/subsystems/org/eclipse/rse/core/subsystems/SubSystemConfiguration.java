@@ -1481,14 +1481,14 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * Updates user-editable attributes of an existing subsystem instance.
+	 * Updates userid and/or port of an existing subsystem instance.
 	 * These attributes typically affect the live connection, so the subsystem will be forced to
-	 *  disconnect.
+	 * disconnect.
 	 * <p>
 	 * If you have your own attributes and own GUI to prompt for these, then call your own
-	 * method to set your attributes, and call this method via super().xxx(...).
+	 * method to set your attributes, and call this method via super().
 	 * <p>
-	 * The subsystem will be saved to disk.
+	 * The changes to the subsystem configuration will be saved to disk.
 	 * Further, it will be asked to disconnect as this data affects the connection.
 	 * <p>
 	 * @param shell parent shell needed in case an error message is displayed
@@ -1563,7 +1563,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		
 	/**
 	 * Used by child classes that override updateSubSystem to establish if anything really 
-	 *  needs to be changed.
+	 * needs to be changed.
 	 */
 	protected boolean needsUpdate(ISubSystem subsystem, boolean updateUserId, String userId, boolean updatePort, int port)
 	{

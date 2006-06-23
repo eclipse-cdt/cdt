@@ -456,9 +456,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	 */
 	protected synchronized void internalConnect(IProgressMonitor monitor) throws Exception
 	{
-	    if (isConnected())
-	    {
-	        // could have been called b4
+	    if (isConnected()) {
 	        return;
 	    }
 	    
@@ -476,7 +474,8 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		clientConnection.setHost(getHostName());
 		clientConnection.setPort(Integer.toString(getPort()));
 
-		ISubSystem ss = getPrimarySubSystem();
+//		ISubSystem ss = getPrimarySubSystem();
+		getPrimarySubSystem();
 		IIBMServerLauncher serverLauncher = getIBMServerLauncher(); 
 		
 		ServerLaunchType serverLauncherType = null;
@@ -1239,19 +1238,19 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	/**
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#isPasswordCached()
 	 */
-	public boolean isPasswordCached()
-	{
-		// For Windows we never prompt for userid / password so we don't need 
-		// to clear the password cache
-		if (getPrimarySubSystem().getHost().getSystemType().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
-		{
-			return false;
-		}
-		else
-		{
-			return super.isPasswordCached();
-		}
-	}
+//	public boolean isPasswordCached() // DWD is this method needed?
+//	{
+//		// For Windows we never prompt for userid / password so we don't need 
+//		// to clear the password cache
+//		if (getPrimarySubSystem().getHost().getSystemType().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
+//		{
+//			return false;
+//		}
+//		else
+//		{
+//			return super.isPasswordCached();
+//		}
+//	}
 
 
 

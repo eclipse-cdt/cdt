@@ -109,7 +109,7 @@ abstract public class CPPScope implements ICPPScope{
 	        } else if( obj instanceof IASTName ){
 	        	IBinding binding = null;
 	        	if( forceResolve && obj != name && obj != name.getParent())
-	        		binding = ((IASTName)obj).resolveBinding();
+	        		binding = CPPSemantics.resolveAmbiguities(name, new Object[] { obj });
 	        	else {
 	        		IASTName n = (IASTName) obj;
     				if( n instanceof ICPPASTQualifiedName ){

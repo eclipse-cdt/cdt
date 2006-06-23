@@ -16,9 +16,8 @@
 
 package org.eclipse.rse.logging;
 
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.rse.internal.logging.LoggerController;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
 
 /**
  * Factory class for creating Logger instances.<br>
@@ -34,7 +33,7 @@ public class LoggerFactory {
 	 * a singelton instance of the Logger class per plugin. You are guarenteed the 
 	 * same instance if one has previously been created. 
 	 */
-	public static Logger getInst(AbstractUIPlugin plugin) {
+	public static Logger getInst(Plugin plugin) {
 
 		// get cached instance from controller if one exists.
 		Logger inst = LoggerController.getInst(plugin);
@@ -58,7 +57,7 @@ public class LoggerFactory {
 	* Frees resources used by the Logger instance for the given plugin.<br>
 	* This methods must be called as part of the the plugin shutdown life cycle.
 	*/
-	public static void freeInst(AbstractUIPlugin plugin) {
+	public static void freeInst(Plugin plugin) {
 		// delegate to controller	
 		LoggerController.freeInst(plugin);
 	}

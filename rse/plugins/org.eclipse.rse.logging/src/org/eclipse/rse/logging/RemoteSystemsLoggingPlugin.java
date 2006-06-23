@@ -20,17 +20,18 @@ import java.net.URL;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Preferences;
 import org.osgi.framework.BundleContext;
 
 
 /**
  * Remote Systems Logging plugin.
  */
-public class RemoteSystemsLoggingPlugin extends AbstractUIPlugin {
+public class RemoteSystemsLoggingPlugin extends Plugin {
 
 
 	//The shared instance.
@@ -83,7 +84,7 @@ public class RemoteSystemsLoggingPlugin extends AbstractUIPlugin {
 	    
 	        try {
 	            IPath path = new Path("$nl$/RemoteSystemsLogging.properties");
-	            URL url = Platform.find(getBundle(), path);
+	            URL url = FileLocator.find(getBundle(), path, null);
 	            resourceBundle = new PropertyResourceBundle(url.openStream());
 	        } catch (Exception x) {
 	            resourceBundle = null;
@@ -95,16 +96,12 @@ public class RemoteSystemsLoggingPlugin extends AbstractUIPlugin {
 	}
 
 	/** 
-	 * Sets default preference values. These values will be used
-	 * until some preferences are actually set using Preference dialog.
+	 * Sets default preference values.
 	 */
 	public void initializeDefaultPreferences() {
-		getPreferenceStore().setDefault(
-			IRemoteSystemsLogging.DEBUG_LEVEL,
-			IRemoteSystemsLogging.LOG_ERROR);
-		getPreferenceStore().setDefault(
-			IRemoteSystemsLogging.LOG_LOCATION,
-			IRemoteSystemsLogging.LOG_TO_FILE);
+		Preferences prefs = getPluginPreferences();
+		prefs.setDefault(IRemoteSystemsLogging.DEBUG_LEVEL, IRemoteSystemsLogging.LOG_ERROR);
+		prefs.setDefault(IRemoteSystemsLogging.LOG_LOCATION, IRemoteSystemsLogging.LOG_TO_FILE);
 	}
 
     /**

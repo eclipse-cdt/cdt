@@ -18,13 +18,10 @@ package org.eclipse.rse.internal.logging;
 
 import java.util.Hashtable;
 
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.rse.logging.Logger;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class LoggerController {
-
-	public static final String Copyright =
-		"(C) Copyright IBM Corp. 2002, 2003.  All Rights Reserved.";
 
 	private static Hashtable pluginTable = new Hashtable();
 
@@ -33,19 +30,19 @@ public class LoggerController {
 	 * It will return null if no Logger instance has been created
 	 * for this plugin before.
 	 */
-	public static Logger getInst(AbstractUIPlugin plugin) {
+	public static Logger getInst(Plugin plugin) {
 		if (pluginTable.containsKey(plugin))
 			return (Logger) pluginTable.get(plugin);
 		else
 			return null;
 	}
 
-	public static void registerInst(AbstractUIPlugin plugin, Logger logger) {
+	public static void registerInst(Plugin plugin, Logger logger) {
 		pluginTable.put(plugin, logger);
 		return;
 	}
 
-	public static void freeInst(AbstractUIPlugin plugin) {
+	public static void freeInst(Plugin plugin) {
 		// get cached instance if one exists.
 		Logger logger = getInst(plugin);
 		// no luck, this means we have an incorrect free, do nothing.

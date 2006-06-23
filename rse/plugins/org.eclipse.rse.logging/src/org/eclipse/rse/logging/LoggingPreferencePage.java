@@ -94,10 +94,10 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 		String bundleName = (String)(bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME));
 		String topLabel1 = RemoteSystemsLoggingPlugin.getResourceString("LoggingPreferencePage.topLabel1");
 		topLabel1 = MessageFormat.format(topLabel1, new Object[] {bundleName});
-		Label label1 = createLabel(composite_tab, topLabel1);
+		createLabel(composite_tab, topLabel1);
 		forceSpace(composite_tab);
 		String topLabel2 = RemoteSystemsLoggingPlugin.getResourceString("LoggingPreferencePage.topLabel2");
-		Label label2 = createLabel(composite_tab, topLabel2);
+		createLabel(composite_tab, topLabel2);
 		tabForward(composite_tab);
 		Composite composite1_radioButton = createComposite(composite_tab, 1);
 		String text = RemoteSystemsLoggingPlugin.getResourceString("LoggingPreferencePage.errors_only");
@@ -341,12 +341,10 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 	 * This is needed to get to the plugin id, and then plugin instance.
 	 */
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
-		// we are assuming here that only AbstractUIPlugins will be used. 
 		try {
-		    String nameSpace = config.getDeclaringExtension().getNamespace();
-			this.bundle = Platform.getBundle(nameSpace);
+		    String pluginName = config.getDeclaringExtension().getContributor().getName();
+			this.bundle = Platform.getBundle(pluginName);
 		} catch (Exception e) {
-			// log error. plugin remains null. 
 			RemoteSystemsLoggingPlugin.out.logError("Failed to create LoggingPreferencePage.", e);
 		}
 	}

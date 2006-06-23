@@ -20,12 +20,12 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.rse.internal.logging.RemoteSystemLogListener;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 
 
@@ -92,7 +92,7 @@ public class Logger implements IPropertyChangeListener {
 
 	// Cashed Plugin ID, and plugin 
 	private String pluginId = null;
-	AbstractUIPlugin systemPlugin = null;
+	Plugin systemPlugin = null;
 
 	// Controls logging level
 	private int debug_level = 0;
@@ -100,7 +100,7 @@ public class Logger implements IPropertyChangeListener {
 	// Captures initialization errors
 	private boolean init_ok = true;
 
-	protected Logger(AbstractUIPlugin systemPlugin) {
+	protected Logger(Plugin systemPlugin) {
 		this.systemPlugin = systemPlugin;
 		this.pluginId = systemPlugin.getBundle().getSymbolicName();
 		initialize();
@@ -116,11 +116,11 @@ public class Logger implements IPropertyChangeListener {
 
 			// get the debug level from plugin Preference store.
 			// note: logListener must be initialized before calling getPreference store!
-			IPreferenceStore store = systemPlugin.getPreferenceStore();
+			Preferences store = systemPlugin.getPluginPreferences();
 			debug_level = store.getInt(IRemoteSystemsLogging.DEBUG_LEVEL);
 
-			systemPlugin.getPreferenceStore().addPropertyChangeListener(this);
-			systemPlugin.getPreferenceStore().addPropertyChangeListener(logListener);
+			store.addPropertyChangeListener(this);
+			store.addPropertyChangeListener(logListener);
 
 		} catch (Exception e) {
 			// Errors occured during initialize, disable logging.
@@ -264,10 +264,8 @@ public class Logger implements IPropertyChangeListener {
 	 */
 	public synchronized void propertyChange(PropertyChangeEvent event) {
 		// refresh the debug level from plugin Preference store
-		debug_level =
-			systemPlugin.getPreferenceStore().getInt(
-				IRemoteSystemsLogging.DEBUG_LEVEL);
-
+		Preferences prefs = systemPlugin.getPluginPreferences();
+		debug_level = prefs.getInt(IRemoteSystemsLogging.DEBUG_LEVEL);
 	}
 
 }

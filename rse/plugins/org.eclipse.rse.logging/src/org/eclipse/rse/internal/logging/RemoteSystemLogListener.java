@@ -25,65 +25,59 @@ import java.util.Date;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.rse.logging.IRemoteSystemsLogging;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Log Listener is a sink for messages coming from Logger.
  */
-public class RemoteSystemLogListener
-	implements ILogListener, IPropertyChangeListener {
-
-	public static final String Copyright =
-		"(C) Copyright IBM Corp. 2002, 2003.  All Rights Reserved.";
+public class RemoteSystemLogListener implements ILogListener, IPropertyChangeListener {
 
 	private PrintWriter log = null;
 	private File outputFile = null;
 	private boolean log_to_stdout = false;
-	private AbstractUIPlugin plugin = null;
+	private Plugin plugin = null;
 
-	public RemoteSystemLogListener(AbstractUIPlugin plugin) {
+	/**
+	 * Create a new log listener for a plugin.
+	 * @param plugin The plugin for which to create a log listener.
+	 */
+	public RemoteSystemLogListener(Plugin plugin) {
 		this.plugin = plugin;
-		IPath path =
-			plugin.getStateLocation().addTrailingSeparator().append(".log");
-
+		IPath path = plugin.getStateLocation().addTrailingSeparator().append(".log");
 		outputFile = path.toFile();
-
-		// make sure to delete old log file.
 		if ((outputFile != null) && (outputFile.exists())) {
 			outputFile.delete();
 		}
-
 		initialize();
 	}
 
+	/**
+	 * Initialize the logger. Retrieves the logging location preference and sets up the logger
+	 * to log to that location.
+	 */
 	private void initialize() {
 		try {
-			// Initialize log file location here. Check to see
-			// if we need to log to file or View.
-			IPreferenceStore store = plugin.getPreferenceStore();
-			String log_location =
-				store.getString(
-					IRemoteSystemsLogging.LOG_LOCATION);
-
-			if ((log_location != null)
-				&& (log_location
-					.equalsIgnoreCase(IRemoteSystemsLogging.LOG_TO_STDOUT))) {
+			Preferences store = plugin.getPluginPreferences();
+			String log_location = store.getString(IRemoteSystemsLogging.LOG_LOCATION);
+			if ((log_location != null) && (log_location.equalsIgnoreCase(IRemoteSystemsLogging.LOG_TO_STDOUT))) {
 				doLogToView();
 			} else {
 				doLogToFile();
 			}
 		} catch (Exception e) {
-			//  can not log anything.
 			log = null;
-			System.err.println("Exception in RemoteSystemLogListener.initialize(): "+e.getMessage());
+			System.err.println("Exception in RemoteSystemLogListener.initialize(): " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Logs to standard output. 
+	 */
 	private void doLogToView() {
 		// make sure we free resources first
 		freeResources();
@@ -153,7 +147,6 @@ public class RemoteSystemLogListener
 		if (log == null)
 			return;
 		else {
-			int severity = status.getSeverity();
 			log.print("\t\t");
 			log.println(status.getMessage());
 			if (status.getException() != null)

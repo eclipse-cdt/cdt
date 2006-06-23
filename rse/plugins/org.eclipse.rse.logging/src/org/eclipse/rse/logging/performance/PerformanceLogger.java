@@ -94,6 +94,13 @@ public class PerformanceLogger
 		static boolean _initialized = false;
 		static HashMap perfLogRegistry = new HashMap();
 
+		/*
+		 * Static initializer to normalize this logger.
+		 */
+		static {
+			normalize();
+		}
+	
 		static class StartData 
 		{
 			long startTime = -1;
@@ -119,18 +126,7 @@ public class PerformanceLogger
 				component = comp_id;
 			}
 		}		
-	
-
-		/**
-		 * PerformanceLogger(): class constructor
-	 	 * @return
-	 	 *	- Normalization time generated
-	 	 *	- XML file for default component created 
-	 	 */
-		private PerformanceLogger() {
-			init();
-		}
-
+		
 		/**
 	 	* public static void enablePerformanceLogging(boolean enable) : enable performance logging
 	 	* @param
@@ -241,35 +237,28 @@ public class PerformanceLogger
 		}		
 
 		/**
-		 * private void init() : method for class instance initialization.
-		 * @return
-		 * 	Normalization value generated	
+		 * Set the normalization unit for this run.based on a standard method for class instance initialization.
+		 * @return a string containing the unit.
 		 */
-		private void init() {								 	
-			if (samplingTime == -1) {
-
-    	        /*Set normalization values*/
-				
-				long startTime = System.currentTimeMillis();
-
-				/*Trying to make sure it is not optimized by the compiler? */
-				/* Excute some standard instruction sets, such that a reasonably elapsed time can be obtained */
-				double val = 0;
-				Double q = null;
-				int i = 0;
-				int n = 1000000;			
-				for (  i = 0; i < n; i++) { /* increment operation for 1000 times  */
-					Double dd = new Double(n);
-					Double dr = new Double(n+i);
-					q = new Double(dd.doubleValue()/dr.doubleValue());
-				}
-				val = q.doubleValue()/i;				
-				 
-				long stopTime = System.currentTimeMillis();
-				samplingTime = stopTime-startTime;
-				System.out.println("SystemPerformanceLogger::Normalization Elapsed time = " + samplingTime);
+		public static String normalize() {								 	
+			/*
+			 * Execute some standard code and time it to generate our normalization interval.
+			 * Return the value to attempt to make it is not optimized by the compiler.
+			 */
+			long startTime = System.currentTimeMillis();
+			Double q = null;
+			int i = 0;
+			int n = 1000000;			
+			for (  i = 0; i < n; i++) {
+				Double dd = new Double(n);
+				Double dr = new Double(n+i);
+				q = new Double(dd.doubleValue() / dr.doubleValue());
 			}
-			
+			double val = q.doubleValue() / i;				
+			long stopTime = System.currentTimeMillis();
+			samplingTime = stopTime-startTime;
+			String result = "SystemPerformanceLogger::Normalization Elapsed time = " + samplingTime + " " + val;
+			return result;
 		}
 	
 		/**
@@ -495,7 +484,7 @@ public class PerformanceLogger
 										
 			try {
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(cd.XMLFile), "UTF8"));
-				Element root = cd.doc.getDocumentElement();
+				cd.doc.getDocumentElement();
 				Element task = td.node;
 
 				/* Construct Long class insatnce for string manipulation  */
@@ -658,19 +647,10 @@ public class PerformanceLogger
 		*	os.version
 		*/
 		public static void listSystemProfile() {
-			String java_version = System.getProperty("java.version");
 			System.out.println("java version : " + System.getProperty("java.version"));
-			String java_vm_version = System.getProperty("java.vm.version");
-			String java_class_version = System.getProperty("java.class.version");
-			String java_class_path = System.getProperty("java.class.path");
-			String java_library_path = System.getProperty("java.library.path");
-			String os_name = System.getProperty("os.name");
 			System.out.println("OS name : " + System.getProperty("os.name"));
-			String os_version = System.getProperty("os.version");
 			System.out.println("OS version : " + System.getProperty("os.version"));
-			String user_dir = System.getProperty("user.dir");
 			System.out.println("working dir : " + System.getProperty("user.dir"));
-			String home_dir = System.getProperty("home.dir");
 			System.out.println("home dir : " + System.getProperty("home.dir"));
 		}
 	
@@ -732,8 +712,6 @@ public class PerformanceLogger
 			key = PerformanceLogger.register(key); // Expect error: already registered
 			PerformanceLogger.deRegister(key);		
 			key = PerformanceLogger.register(key);
-			
-			String val = "i = " + i;
 		}
 		
 }		

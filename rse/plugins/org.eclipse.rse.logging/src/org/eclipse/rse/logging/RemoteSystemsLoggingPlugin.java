@@ -24,23 +24,15 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Preferences;
 import org.osgi.framework.BundleContext;
-
 
 /**
  * Remote Systems Logging plugin.
  */
 public class RemoteSystemsLoggingPlugin extends Plugin {
 
-
-	//The shared instance.
-	private static RemoteSystemsLoggingPlugin inst;
-
-	//Resource bundle.
+	private static RemoteSystemsLoggingPlugin singleton;
 	private ResourceBundle resourceBundle;
-
-	// The cached Logger inst.
 	public static Logger out = null;
 
 	/**
@@ -48,17 +40,14 @@ public class RemoteSystemsLoggingPlugin extends Plugin {
 	 */
 	public RemoteSystemsLoggingPlugin() {
 		super();
-		
-		if (inst == null) {
-		    inst = this;
-		}
+		singleton = this;
 	}
 
 	/**
 	 * Returns the shared plugin instance.
 	 */
 	public static RemoteSystemsLoggingPlugin getDefault() {
-		return inst;
+		return singleton;
 	}
 
 	/**
@@ -79,47 +68,33 @@ public class RemoteSystemsLoggingPlugin extends Plugin {
 	 * Returns the plugin's resource bundle.
 	 */
 	public ResourceBundle getResourceBundle() {
-	    
-	    if (resourceBundle == null) {
-	    
-	        try {
-	            IPath path = new Path("$nl$/RemoteSystemsLogging.properties");
-	            URL url = FileLocator.find(getBundle(), path, null);
-	            resourceBundle = new PropertyResourceBundle(url.openStream());
-	        } catch (Exception x) {
-	            resourceBundle = null;
-	            out.logInfo("RemoteSystemsLoggingPlugin - unable to log resourcebundle");
-	        }
-	    }
-		
+		if (resourceBundle == null) {
+			try {
+				IPath path = new Path("$nl$/RemoteSystemsLogging.properties");
+				URL url = FileLocator.find(getBundle(), path, null);
+				resourceBundle = new PropertyResourceBundle(url.openStream());
+			} catch (Exception x) {
+				resourceBundle = null;
+				out.logInfo("RemoteSystemsLoggingPlugin - unable to log resourcebundle");
+			}
+		}
 		return resourceBundle;
 	}
 
-	/** 
-	 * Sets default preference values.
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
-	public void initializeDefaultPreferences() {
-		Preferences prefs = getPluginPreferences();
-		prefs.setDefault(IRemoteSystemsLogging.DEBUG_LEVEL, IRemoteSystemsLogging.LOG_ERROR);
-		prefs.setDefault(IRemoteSystemsLogging.LOG_LOCATION, IRemoteSystemsLogging.LOG_TO_FILE);
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		out = LoggerFactory.getLogger(this);
+		out.logInfo("loading RemoteSystemsLoggingPlugin class.");
 	}
 
-    /**
-     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-     */
-    public void start(BundleContext context) throws Exception {
-        super.start(context);
-        
-		// don't need a preference page for this plugin.
-		out = LoggerFactory.getInst(this);
-		out.logInfo("loading RemoteSystemsLoggingPlugin class.");
-    }
-    
-    /**
-     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
-    public void stop(BundleContext context) throws Exception {
-		LoggerFactory.freeInst(this);
-        super.stop(context);
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		LoggerFactory.freeLogger(this);
+		super.stop(context);
+	}
 }

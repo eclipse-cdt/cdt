@@ -9,5 +9,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.logging,
- org.eclipse.rse.logging.performance
+ org.eclipse.rse.logging.performance,
+ org.eclipse.rse.logging.ui
 Bundle-Vendor: Eclipse.org

@@ -11,23 +11,20 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
+ * Michael Berger (IBM Canada) - 148434 Better F1 help.
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.logging;
-
+package org.eclipse.rse.logging.ui;
 
 import java.text.MessageFormat;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.PreferenceStore;
-import org.eclipse.rse.internal.logging.LabelUtil;
+import org.eclipse.rse.logging.IRemoteSystemsLogging;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,32 +34,21 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
-
 
 /**
  * An abstract preference page for all remote system logging.<br/>
  * Use a subclass of this page if you need a preference page to control
  * logging.
  */
-public abstract class LoggingPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IExecutableExtension {
-
+public abstract class LoggingPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private Button radioButton0;
 	private Button radioButton1;
 	private Button radioButton2;
 	private Button radioButton3;
-	private Button radioButtonLogFile;
-	private Button radioButtonLogView;
-
-	/** 
-	 * This is the plugin instance who's preference store will be used 
-	 * to control the settings on this page. Also, when this page is closed
-	 * the settings are restored in the preference store of the above plugin.
-	 */
-	private Bundle bundle = null;
 
 	/**
 	 * Creates composite control and sets the default layout data.
@@ -90,37 +76,28 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 	 * Method declared on PreferencePage
 	 */
 	protected Control createContents(Composite parent) {
+		Bundle bundle = getBundle();
 		Composite composite_tab = createComposite(parent, 2);
-		String bundleName = (String)(bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME));
-		String topLabel1 = RemoteSystemsLoggingPlugin.getResourceString("LoggingPreferencePage.topLabel1");
-		topLabel1 = MessageFormat.format(topLabel1, new Object[] {bundleName});
+		String bundleName = (String) (bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME));
+		String topLabel1 = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_TOPLABEL1;
+		topLabel1 = MessageFormat.format(topLabel1, new Object[] { bundleName });
 		createLabel(composite_tab, topLabel1);
 		forceSpace(composite_tab);
-		String topLabel2 = RemoteSystemsLoggingPlugin.getResourceString("LoggingPreferencePage.topLabel2");
+		String topLabel2 = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_TOPLABEL2;
 		createLabel(composite_tab, topLabel2);
 		tabForward(composite_tab);
 		Composite composite1_radioButton = createComposite(composite_tab, 1);
-		String text = RemoteSystemsLoggingPlugin.getResourceString("LoggingPreferencePage.errors_only");
+		String text = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_ERRORS_ONLY;
 		Set used = LabelUtil.usedFromString("ad"); // the mnemonics already used on preference page (in English)
 		radioButton0 = createRadioButton(composite1_radioButton, LabelUtil.assignMnemonic(text, used));
-		text = RemoteSystemsLoggingPlugin.getResourceString("LoggingPreferencePage.warnings_errors");
+		text = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_WARNINGS_ERRORS;
 		radioButton1 = createRadioButton(composite1_radioButton, LabelUtil.assignMnemonic(text, used));
-		text = RemoteSystemsLoggingPlugin.getResourceString("LoggingPreferencePage.info_debug");
+		text = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_INFO_DEBUG;
 		radioButton2 = createRadioButton(composite1_radioButton, LabelUtil.assignMnemonic(text, used));
-		// now add debug stuff, that only shows up in a debug build.
-		if (Logger.DEBUG) {
-			radioButton3 = createRadioButton(composite1_radioButton, RemoteSystemsLoggingPlugin.getResourceString("LoggingPreferencePage.full_debug"));
-			Composite composite_tab2 = createComposite(parent, 2);
-			Label label3 = createLabel(composite_tab2, RemoteSystemsLoggingPlugin.getResourceString("LoggingPreferencePage.logging_location"));
-			tabForward(composite_tab2);
-			Composite composite_radioButton2 = createComposite(composite_tab2, 1);
-			radioButtonLogFile = createRadioButton(composite_radioButton2, RemoteSystemsLoggingPlugin.getResourceString("LoggingPreferencePage.log_to_file"));
-			radioButtonLogView = createRadioButton(composite_radioButton2, RemoteSystemsLoggingPlugin.getResourceString("LoggingPreferencePage.log_to_stdout"));
-			WorkbenchHelp.setHelp(composite_tab2, "com.ibm.etools.systems.logging.pref0000");
-		}
+		text = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_FULL_DEBUG;
+		radioButton3 = createRadioButton(composite1_radioButton, LabelUtil.assignMnemonic(text, used));
 		initializeValues();
-		RemoteSystemsLoggingPlugin.out.logInfo("created LoggingPreferencePage");
-		WorkbenchHelp.setHelp(composite_tab, "com.ibm.etools.systems.logging.pref0000");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "com.ibm.etools.systems.logging.rsel0000");
 		return new Composite(parent, SWT.NULL);
 	}
 
@@ -162,24 +139,27 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 	 * 
 	 */
 	protected IPreferenceStore doGetPreferenceStore() {
-		
+		Bundle bundle = getBundle();
 		if (bundle != null) {
 			AbstractUIPlugin plugin = getPlugin();
-			
 			if (plugin != null) {
 				return plugin.getPreferenceStore();
-			}
-			else {
+			} else {
 				return new PreferenceStore();
 			}
-		}
-		else {
+		} else {
 			return new PreferenceStore();
 		}
 	}
-	
+
 	protected abstract AbstractUIPlugin getPlugin();
 
+	private Bundle getBundle() {
+		Plugin plugin = getPlugin();
+		Bundle bundle = plugin.getBundle();
+		return bundle;
+	}
+	
 	/** 
 	 * Method declared on IWorkbenchPreferencePage
 	 */
@@ -195,36 +175,24 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 		radioButton0.setSelection(false);
 		radioButton1.setSelection(false);
 		radioButton2.setSelection(false);
-		if (null != radioButton3)
-			radioButton3.setSelection(false);
-		if (Logger.DEBUG) {
-			radioButtonLogFile.setSelection(false);
-			radioButtonLogView.setSelection(false);
-		}
+		if (null != radioButton3) radioButton3.setSelection(false);
 		int choice = store.getInt(IRemoteSystemsLogging.DEBUG_LEVEL);
 		switch (choice) {
-			case 0 :
-				radioButton0.setSelection(true);
-				break;
-			case 1 :
-				radioButton1.setSelection(true);
-				break;
-			case 2 :
-				radioButton2.setSelection(true);
-				break;
-			case 3 :
-				if (null != radioButton3)
-					radioButton3.setSelection(true);
-				else
-					radioButton2.setSelection(true);
-				break;
-		}
-		if (Logger.DEBUG) {
-			String log_location = store.getString(IRemoteSystemsLogging.LOG_LOCATION);
-			if (log_location.equalsIgnoreCase(IRemoteSystemsLogging.LOG_TO_STDOUT))
-				radioButtonLogView.setSelection(true);
+		case 0:
+			radioButton0.setSelection(true);
+			break;
+		case 1:
+			radioButton1.setSelection(true);
+			break;
+		case 2:
+			radioButton2.setSelection(true);
+			break;
+		case 3:
+			if (null != radioButton3)
+				radioButton3.setSelection(true);
 			else
-				radioButtonLogFile.setSelection(true);
+				radioButton2.setSelection(true);
+			break;
 		}
 	}
 
@@ -237,36 +205,24 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 		radioButton0.setSelection(false);
 		radioButton1.setSelection(false);
 		radioButton2.setSelection(false);
-		if (null != radioButton3)
-			radioButton3.setSelection(false);
-		if (Logger.DEBUG) {
-			radioButtonLogFile.setSelection(false);
-			radioButtonLogView.setSelection(false);
-		}
+		if (null != radioButton3) radioButton3.setSelection(false);
 		int choice = store.getDefaultInt(IRemoteSystemsLogging.DEBUG_LEVEL);
 		switch (choice) {
-			case 0 :
-				radioButton0.setSelection(true);
-				break;
-			case 1 :
-				radioButton1.setSelection(true);
-				break;
-			case 2 :
-				radioButton2.setSelection(true);
-				break;
-			case 3 :
-				if (null != radioButton3)
-					radioButton3.setSelection(true);
-				else
-					radioButton2.setSelection(true);
-				break;
-		}
-		if (Logger.DEBUG) {
-			String log_location = store.getDefaultString(IRemoteSystemsLogging.LOG_LOCATION);
-			if (log_location.equalsIgnoreCase(IRemoteSystemsLogging.LOG_TO_STDOUT))
-				radioButtonLogView.setSelection(true);
+		case 0:
+			radioButton0.setSelection(true);
+			break;
+		case 1:
+			radioButton1.setSelection(true);
+			break;
+		case 2:
+			radioButton2.setSelection(true);
+			break;
+		case 3:
+			if (null != radioButton3)
+				radioButton3.setSelection(true);
 			else
-				radioButtonLogFile.setSelection(true);
+				radioButton2.setSelection(true);
+			break;
 		}
 	}
 
@@ -296,17 +252,8 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 			choice = 1;
 		else if (radioButton2.getSelection())
 			choice = 2;
-		else if (null != radioButton3 && radioButton3.getSelection())
-			choice = 3;
+		else if (null != radioButton3 && radioButton3.getSelection()) choice = 3;
 		store.setValue(IRemoteSystemsLogging.DEBUG_LEVEL, choice);
-		if (Logger.DEBUG) {
-			String log_location = "";
-			if (radioButtonLogFile.getSelection())
-				log_location = IRemoteSystemsLogging.LOG_TO_FILE;
-			else
-				log_location = IRemoteSystemsLogging.LOG_TO_STDOUT;
-			store.setValue(IRemoteSystemsLogging.LOG_LOCATION, log_location);
-		}
 	}
 
 	/**
@@ -336,17 +283,4 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
 	}
-
-	/**
-	 * This is needed to get to the plugin id, and then plugin instance.
-	 */
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
-		try {
-		    String pluginName = config.getDeclaringExtension().getContributor().getName();
-			this.bundle = Platform.getBundle(pluginName);
-		} catch (Exception e) {
-			RemoteSystemsLoggingPlugin.out.logError("Failed to create LoggingPreferencePage.", e);
-		}
-	}
-
 }

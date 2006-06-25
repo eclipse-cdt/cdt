@@ -31,7 +31,7 @@ Contributors:
 
 <!-- Preferences -->
 <extension point="org.eclipse.core.runtime.preferences">
-  <initializer class="org.eclipse.rse.logging.LoggingPreferenceInitializer"/>
+  <initializer class="org.eclipse.rse.internal.logging.LoggingPreferenceInitializer"/>
 </extension>
 
 </plugin>

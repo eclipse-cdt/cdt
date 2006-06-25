@@ -19,15 +19,11 @@ package org.eclipse.rse.logging;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
-import org.eclipse.rse.internal.logging.RemoteSystemLogListener;
-import org.osgi.framework.Bundle;
-
 
 /**
  * Generic Logger class for handling Remote Systems logging and tracing.<br>
@@ -59,10 +55,9 @@ import org.osgi.framework.Bundle;
  *             out.logInfo("loading myPlugin class.");<br>
  *             //out.logWarning("This is a warning message.");<br>
  *             //out.logError("This is an error.", new Exception());<br>
- *             //if (Logger.DEBUG)<br>
- *             //	out.logDebugMessage(<br>
- *             //		"myPlugin",<br>
- *             //		"this is a debug message from class myPlugin.");<br>
+ *             //out.logDebugMessage(<br>
+ *             //	"myPlugin",<br>
+ *             //	"this is a debug message from class myPlugin.");<br>
  *             ......<br>
  *             ......<br>
  *        }<br>
@@ -77,70 +72,42 @@ import org.osgi.framework.Bundle;
  */
 public class Logger implements IPropertyChangeListener {
 
-	public static final String Copyright =
-		"(C) Copyright IBM Corp. 2002, 2003.  All Rights Reserved.";
-
-	/**
-	 * This SHOULD be set to false in production.<br>
-	 * Used to compile out developement debug messages.<br>
-	 */
-	public final static boolean DEBUG = false;
-
-	// Cashed workbenchPlugin Log, LogListener instances
 	private ILog systemsPluginLog = null;
 	private RemoteSystemLogListener logListener = null;
-
-	// Cashed Plugin ID, and plugin 
 	private String pluginId = null;
-	Plugin systemPlugin = null;
+	private Plugin systemPlugin = null;
+	private int debug_level = IRemoteSystemsLogging.LOG_ERROR;
 
-	// Controls logging level
-	private int debug_level = 0;
-
-	// Captures initialization errors
-	private boolean init_ok = true;
-
-	protected Logger(Plugin systemPlugin) {
+	/**
+	 * Creates a new Logger. Invoked by the LoggerFactory.
+	 * @param systemPlugin The preferences for this plugin will determine the detail 
+	 * logged by this logger. This allows different levels of detail to be logged in the 
+	 * workbench.
+	 * @see LoggerFactory#getInst(Plugin);
+	 */
+	Logger(Plugin systemPlugin) {
 		this.systemPlugin = systemPlugin;
 		this.pluginId = systemPlugin.getBundle().getSymbolicName();
 		initialize();
 	}
 
+	/**
+	 * Initialize the Logger. The logger uses an ILog from the platform for this particular plugin, and
+	 * establishes a listener on that log to format the items placed in the log. 
+	 */
 	private void initialize() {
-		try {
-
-			systemsPluginLog = systemPlugin.getLog();
-			if (logListener == null)
-				logListener = new RemoteSystemLogListener(systemPlugin);
-			systemsPluginLog.addLogListener(logListener);
-
-			// get the debug level from plugin Preference store.
-			// note: logListener must be initialized before calling getPreference store!
-			Preferences store = systemPlugin.getPluginPreferences();
-			debug_level = store.getInt(IRemoteSystemsLogging.DEBUG_LEVEL);
-
-			store.addPropertyChangeListener(this);
-			store.addPropertyChangeListener(logListener);
-
-		} catch (Exception e) {
-			// Errors occured during initialize, disable logging.
-			// should never be here. Use Platform logger instead.
-		    Bundle bundle = Platform.getBundle(Platform.PI_RUNTIME);
-			Platform.getLog(bundle).log(
-				new Status(
-					IStatus.ERROR,
-					IRemoteSystemsLogging.PLUGIN_ID,
-					IStatus.OK,
-					"could not create Logger for " + pluginId,
-					e));
-			init_ok = false;
-		}
+		systemsPluginLog = systemPlugin.getLog();
+		logListener = new RemoteSystemLogListener(systemPlugin);
+		systemsPluginLog.addLogListener(logListener);
+		Preferences store = systemPlugin.getPluginPreferences();
+		debug_level = store.getInt(IRemoteSystemsLogging.DEBUG_LEVEL);
+		store.addPropertyChangeListener(this);
+		store.addPropertyChangeListener(logListener);
 	}
 
 	/**
-	 * Log a Debug message. This is intended to be wrapped as follows:<br>
-	 * if (Logger.DEBUG)<br>
-	 *      Logger.logDebugMessage("someClassName", "someMessage");<br>
+	 * Log a Debug message. This is intended to be used as follows:<br>
+	 * Logger.logDebugMessage("someClassName", "someMessage");<br>
 	 * <br>
 	 * and the output will be:<br>
 	 * <br>
@@ -153,16 +120,10 @@ public class Logger implements IPropertyChangeListener {
 	 * Note that since this message is only for developer debugging, it does not 
 	 * need to be localized to proper local.<br>
 	 */
-
-	public synchronized void logDebugMessage(
-		String className,
-		String message) {
-		if ((init_ok) && (debug_level >= IRemoteSystemsLogging.LOG_DEBUG)) {
-			// ie: print all INFO, WARNING and ERROR messages
-			MultiStatus debugStatus =
-				new MultiStatus(pluginId, IStatus.OK, className, null);
-			Status infoStatus =
-				new Status(IStatus.OK, pluginId, IStatus.OK, message, null);
+	public synchronized void logDebugMessage(String className, String message) {
+		if (debug_level >= IRemoteSystemsLogging.LOG_DEBUG) {
+			MultiStatus debugStatus = new MultiStatus(pluginId, IStatus.OK, className, null);
+			Status infoStatus = new Status(IStatus.OK, pluginId, IStatus.OK, message, null);
 			debugStatus.add(infoStatus);
 			systemsPluginLog.log(debugStatus);
 		}
@@ -173,16 +134,11 @@ public class Logger implements IPropertyChangeListener {
 	 * be localized to proper local.<br>
 	 * ie: Resource.getString() should already have been called
 	 */
-
 	public synchronized void logError(String message, Throwable ex) {
-		if ((init_ok) && (debug_level >= IRemoteSystemsLogging.LOG_ERROR)) {
-			// ie: print only ERROR messages
-			if (message == null)
-				message = "";
-			Status errorStatus =
-				new Status(IStatus.ERROR, pluginId, IStatus.OK, message, ex);
+		if (debug_level >= IRemoteSystemsLogging.LOG_ERROR) {
+			if (message == null) message = "";
+			Status errorStatus = new Status(IStatus.ERROR, pluginId, IStatus.OK, message, ex);
 			systemsPluginLog.log(errorStatus);
-
 		}
 	}
 
@@ -191,28 +147,21 @@ public class Logger implements IPropertyChangeListener {
 	 * be localized to proper local.<br>
 	 * ie: Resource.getString() should already have been called
 	 */
-	public synchronized void logInfo(String message) 
-	{
+	public synchronized void logInfo(String message) {
 		logInfo(message, null);
 	}
-	
+
 	/** 
 	 * Log an Information message. Note that the message should already 
 	 * be localized to proper local.<br>
 	 * ie: Resource.getString() should already have been called
 	 */
-
 	public synchronized void logInfo(String message, Throwable ex) {
-		if ((init_ok) && (debug_level >= IRemoteSystemsLogging.LOG_INFO)) {
-			if (message == null)
-				message = "";
-			// ie: print all INFO, WARNING and ERROR messages
-			Status infoStatus =
-				new Status(IStatus.INFO, pluginId, IStatus.OK, message, ex);
+		if (debug_level >= IRemoteSystemsLogging.LOG_INFO) {
+			if (message == null) message = "";
+			Status infoStatus = new Status(IStatus.INFO, pluginId, IStatus.OK, message, ex);
 			systemsPluginLog.log(infoStatus);
-
 		}
-
 	}
 
 	/** 
@@ -220,8 +169,7 @@ public class Logger implements IPropertyChangeListener {
 	 * be localized to proper local.<br>
 	 * ie: Resource.getString() should already have been called
 	 */
-	public synchronized void logWarning(String message) 
-	{
+	public synchronized void logWarning(String message) {
 		logWarning(message, null);
 	}
 
@@ -231,26 +179,17 @@ public class Logger implements IPropertyChangeListener {
 	 * ie: Resource.getString() should already have been called
 	 */
 	public synchronized void logWarning(String message, Throwable ex) {
-		if ((init_ok) && (debug_level >= IRemoteSystemsLogging.LOG_WARNING)) {
-			if (message == null)
-				message = "";
-			// ie: print all WARNING and ERROR messages
-			Status warningStatus =
-				new Status(
-					IStatus.WARNING,
-					pluginId,
-					IStatus.OK,
-					message,
-					ex);
+		if (debug_level >= IRemoteSystemsLogging.LOG_WARNING) {
+			if (message == null) message = "";
+			Status warningStatus = new Status(IStatus.WARNING, pluginId, IStatus.OK, message, ex);
 			systemsPluginLog.log(warningStatus);
 		}
-
 	}
 
 	public synchronized void setDebugLevel(int level) {
 		debug_level = level;
 	}
-	
+
 	public synchronized int getDebugLevel() {
 		return debug_level;
 	}
@@ -260,10 +199,9 @@ public class Logger implements IPropertyChangeListener {
 	}
 
 	/**
-	 * Handle changes from Preferences page.
+	 * Handle changes from a Preferences page.
 	 */
 	public synchronized void propertyChange(PropertyChangeEvent event) {
-		// refresh the debug level from plugin Preference store
 		Preferences prefs = systemPlugin.getPluginPreferences();
 		debug_level = prefs.getInt(IRemoteSystemsLogging.DEBUG_LEVEL);
 	}

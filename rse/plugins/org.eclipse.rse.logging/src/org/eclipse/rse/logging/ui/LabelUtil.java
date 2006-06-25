@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.logging;
+package org.eclipse.rse.logging.ui;
 
 import java.util.HashSet;
 import java.util.Set;

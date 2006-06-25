@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.logging;
 
+import java.util.Hashtable;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.rse.internal.logging.LoggerController;
 
 /**
  * Factory class for creating Logger instances.<br>
@@ -27,39 +27,31 @@ import org.eclipse.rse.internal.logging.LoggerController;
  */
 public class LoggerFactory {
 
+	private static Hashtable pluginTable = new Hashtable();
 
 	/**
-	 * Returns a Logger instance for the given plugin.<br> Note that there is only
-	 * a singelton instance of the Logger class per plugin. You are guarenteed the 
-	 * same instance if one has previously been created. 
+	 * Returns the Logger instance for a given plugin. There is only
+	 * one instance of the Logger class per plugin. 
 	 */
-	public static Logger getInst(Plugin plugin) {
-
-		// get cached instance from controller if one exists.
-		Logger inst = LoggerController.getInst(plugin);
-		// no luck, create it and register it with the controller, and create 
-		// preference page.
-		if (inst == null) {
-			inst = new Logger(plugin);
-			LoggerController.registerInst(plugin, inst);
-			// Check to see if the Logging plugin out instance has been created yet.
-			// If it has, use it to log
-			if (RemoteSystemsLoggingPlugin.out != null)
-				RemoteSystemsLoggingPlugin.out.logInfo(
-					"Created Logger instance for "
-						+ plugin.getBundle().getSymbolicName());
+	public static Logger getLogger(Plugin plugin) {
+		Logger logger = (Logger) pluginTable.get(plugin);
+		if (logger == null) {
+			logger = new Logger(plugin);
+			pluginTable.put(plugin, logger);
 		}
-
-		return inst;
+		return logger;
 	}
 
 	/**
-	* Frees resources used by the Logger instance for the given plugin.<br>
-	* This methods must be called as part of the the plugin shutdown life cycle.
-	*/
-	public static void freeInst(Plugin plugin) {
-		// delegate to controller	
-		LoggerController.freeInst(plugin);
+	 * Frees resources used by the Logger instance for the given plugin.<br>
+	 * This methods must be called as part of the the plugin shutdown life cycle.
+	 */
+	public static void freeLogger(Plugin plugin) {
+		Logger logger = (Logger) pluginTable.get(plugin);
+		if (logger != null) {
+			logger.freeResources();
+			pluginTable.remove(plugin);
+		}
 	}
 
 }

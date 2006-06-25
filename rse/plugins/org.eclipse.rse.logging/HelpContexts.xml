@@ -12,15 +12,18 @@ Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
 Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
-{Name} (company) - description of contribution.
+Michael Berger (IBM Canada) - 148434 Better user assistance for logging preference page.
 -->
 <?NLS TYPE="org.eclipse.help.contexts"?>
 
 <contexts>
-
-	<context id="pref0000">
-		<description>Settings for the logging of messages.</description>
-
-	</context>
+<!-- RSE logging -->
+<context id="rsel0000">
+<description>This is the RSE Logging preference page.
+You can specify what severity of messages you wish to log - from informational messages, to warnings, to errors.
+The debug setting provides the most detail.
+Messages are logged to the .log file in the .metadata folder of the workspace.
+</description>
+</context>
 	
 </contexts>

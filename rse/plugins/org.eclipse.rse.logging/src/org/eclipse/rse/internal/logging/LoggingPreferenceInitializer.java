@@ -14,46 +14,30 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.logging;
+package org.eclipse.rse.internal.logging;
 
-import org.eclipse.core.runtime.Plugin;
-import org.osgi.framework.BundleContext;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.rse.logging.IRemoteSystemsLogging;
+import org.eclipse.rse.logging.RemoteSystemsLoggingPlugin;
 
 /**
- * The main plugin class to be used in the desktop.
+ * This class initializes logging preferences.
  */
-public class Activator extends Plugin {
+public class LoggingPreferenceInitializer extends AbstractPreferenceInitializer {
 
-	//The shared instance.
-	private static Activator plugin;
-	
 	/**
-	 * The constructor.
+	 * Constructor.
 	 */
-	public Activator() {
-		plugin = this;
+	public LoggingPreferenceInitializer() {
+		super();
 	}
 
 	/**
-	 * This method is called upon plug-in activation
+	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
+	public void initializeDefaultPreferences() {
+		Preferences prefs = RemoteSystemsLoggingPlugin.getDefault().getPluginPreferences();
+		prefs.setDefault(IRemoteSystemsLogging.DEBUG_LEVEL, IRemoteSystemsLogging.LOG_ERROR);
 	}
-
-	/**
-	 * This method is called when the plug-in is stopped
-	 */
-	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-		plugin = null;
-	}
-
-	/**
-	 * Returns the shared instance.
-	 */
-	public static Activator getDefault() {
-		return plugin;
-	}
-
 }

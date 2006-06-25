@@ -448,15 +448,13 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		if (passwordInformation == null && oldUserId != null && !forcePrompt) {
 			SystemSignonInformation savedPasswordInformation = ppm.find(hostType, hostName, oldUserId);
 			if (savedPasswordInformation != null) {
-				if (validator != null) {
-					if (!validator.isValid(shell, savedPasswordInformation)) {
-						passwordValid = false;
-						clearPasswordCache();
-						passwordInformation = null;
-					} else {
-						setPasswordInformation(savedPasswordInformation);
-						passwordInformation = getPasswordInformation();
-					}
+				if (validator == null || validator.isValid(shell, savedPasswordInformation)) {
+					setPasswordInformation(savedPasswordInformation);
+					passwordInformation = getPasswordInformation();
+				} else {
+					passwordValid = false;
+					clearPasswordCache();
+					passwordInformation = null;
 				}
 			}
 		}	
@@ -1087,7 +1085,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	}
 	
 	private void logException(Throwable t) {
-		Logger log = LoggerFactory.getInst(RSEUIPlugin.getDefault());
+		Logger log = LoggerFactory.getLogger(RSEUIPlugin.getDefault());
 		log.logError("Unexpected exception", t);
 	}
 	

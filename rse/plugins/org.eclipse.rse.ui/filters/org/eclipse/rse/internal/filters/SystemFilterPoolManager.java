@@ -1810,7 +1810,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
      */
 	public void logDebugMessage(String prefix, String message) 
 	{		
-		if ((Logger.DEBUG)  && (logger!=null))
+		if ((logger!=null))
 		{
 			logger.logDebugMessage(prefix, message);
 		}

@@ -655,10 +655,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 */
 	public static void logDebugMessage(String prefix, String message) 
 	{		
-		if (Logger.DEBUG) 
-		{
-			log.logDebugMessage(prefix, message);
-		}
+		log.logDebugMessage(prefix, message);
 	}
 
 	/**
@@ -716,7 +713,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
         
 		// logger
 	    if (log == null) {
-	    	log = LoggerFactory.getInst(this);
+	    	log = LoggerFactory.getLogger(this);
 	    	log.logInfo("Loading " + this.getClass());
 	    }
     }
@@ -726,7 +723,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
      */
     public void stop(BundleContext context) throws Exception {
     	logDebugMessage(this.getClass().getName(), "SHUTDOWN");
-   	    LoggerFactory.freeInst(this);
+   	    LoggerFactory.freeLogger(this);
         super.stop(context);
     }
     

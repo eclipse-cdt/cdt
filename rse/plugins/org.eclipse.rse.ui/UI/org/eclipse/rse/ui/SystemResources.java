@@ -27,14 +27,14 @@ public class SystemResources extends NLS
 	private static String BUNDLE_NAME = "org.eclipse.rse.ui.SystemResources";//$NON-NLS-1$
 
 	/**
-	 * Current release as a number (multiplied by 10). E.g. 30 is for release
-	 * 3.0.
+	 * Current release as a number (multiplied by 10). E.g. 30 is for release 3.0.
 	 */
-	public static final int CURRENT_RELEASE = 700; // updated to new release
-/**
+	public static final int CURRENT_RELEASE = 100; // updated to new release
+
+	/**
 	 * Current release as a string.
 	 */
-	public static final String CURRENT_RELEASE_NAME = "7.0.0"; 
+	public static final String CURRENT_RELEASE_NAME = "1.0.0"; 
 
 
 	// Buttons

@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.filters;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -29,121 +30,115 @@ import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.internal.references.SystemPersistableReferencingObject;
 import org.eclipse.rse.references.ISystemPersistableReferencedObject;
 
-
 /**
  * A shadow object of a master filter pool
  */
 /** 
  * @lastgen class SystemFilterPoolReferenceImpl extends SystemPersistableReferencingObjectImpl implements SystemFilterPoolReference, SystemFilterContainerReference, IAdaptable {}
  */
-public class SystemFilterPoolReference extends SystemPersistableReferencingObject 
-		implements ISystemFilterPoolReference, ISystemFilterContainerReference, IAdaptable
-{
-	private SystemFilterContainerReferenceCommonMethods containerHelper = null;	
+public class SystemFilterPoolReference extends SystemPersistableReferencingObject implements ISystemFilterPoolReference, ISystemFilterContainerReference, IAdaptable {
+	private SystemFilterContainerReferenceCommonMethods containerHelper = null;
 	protected static final String DELIMITER = "___";
 	protected static final int DELIMITER_LENGTH = 3;
-	
-/**
-     * Default constructor. Typically called by MOF factory method.
-     */
-	protected SystemFilterPoolReference() 
-	{
+
+	/**
+	 * Default constructor. Typically called by MOF factory method.
+	 */
+	protected SystemFilterPoolReference() {
 		super();
-		containerHelper = new SystemFilterContainerReferenceCommonMethods(this);				
+		containerHelper = new SystemFilterContainerReferenceCommonMethods(this);
 	}
+
 	/**
 	 * Return the reference manager which is managing this filter reference
 	 * framework object.
 	 */
-	public ISystemFilterPoolReferenceManager getFilterPoolReferenceManager()
-	{
-		return (ISystemFilterPoolReferenceManager)getParentReferenceManager();
+	public ISystemFilterPoolReferenceManager getFilterPoolReferenceManager() {
+		return (ISystemFilterPoolReferenceManager) getParentReferenceManager();
 	}
-	
+
 	/**
 	 * Return the object which instantiated the pool reference manager object.
 	 * Makes it easy to get back to the point of origin, given any filter reference
 	 * framework object
 	 */
-    public ISystemFilterPoolReferenceManagerProvider getProvider()
-    {
-    	ISystemFilterPoolReferenceManager mgr = getFilterPoolReferenceManager();
-    	if (mgr != null)
-    	  return mgr.getProvider();
-    	else
-    	  return null;
-    }
+	public ISystemFilterPoolReferenceManagerProvider getProvider() {
+		ISystemFilterPoolReferenceManager mgr = getFilterPoolReferenceManager();
+		if (mgr != null)
+			return mgr.getProvider();
+		else
+			return null;
+	}
 
-    /**
+	/**
 	 * This is the method required by the IAdaptable interface.
 	 * Given an adapter class type, return an object castable to the type, or
 	 *  null if this is not possible.
 	 */
-    public Object getAdapter(Class adapterType)
-    {
-   	    return Platform.getAdapterManager().getAdapter(this, adapterType);	
-    }   	
-
-    /**
-     * Return name of the filter pool we reference
-     * The name is stored qualified by the manager name,
-     *  so we first have to strip that off.
-     */
-    public String getReferencedFilterPoolName()
-    {
-    	String savedName = super.getReferencedObjectName();
-    	String poolName = null;
-    	int idx = savedName.indexOf(DELIMITER);
-    	if (idx >= 0) 
-    	  poolName = savedName.substring(idx+DELIMITER_LENGTH);
-    	else
-    	  poolName = savedName;
-    	return poolName;
-    }
-    /**
-     * Return name of the filter pool manager containing the pool we reference.
-     * The pool name is stored qualified by the manager name,
-     *  so we get it from there.
-     */
-    public String getReferencedFilterPoolManagerName()
-    {
-    	String savedName = super.getReferencedObjectName();
-    	String mgrName = null;
-    	int idx = savedName.indexOf(DELIMITER);
-    	if (idx >= 0) 
-    	  mgrName = savedName.substring(0,idx);
-    	else
-    	  mgrName = savedName;
-    	return mgrName;
-    }
-
-
-    /**
-     * Reset the name of the filter pool we reference. 
-     * Called on filter pool rename operations
-     */
-    public void resetReferencedFilterPoolName(String newName)
-    {
-    	super.setReferencedObjectName(newName);
-    }
-    
-    /**
-     * Set the filter pool that we reference.
-     * This also calls addReference(this) on that pool!
-     */
-    public void setReferenceToFilterPool(ISystemFilterPool pool)
-    {
-    	super.setReferencedObject((ISystemPersistableReferencedObject)pool);
-    }    
-    
-	/**
-	 * Return referenced filter pool object
-	 */
-	public ISystemFilterPool getReferencedFilterPool()
-	{
-  	    return (ISystemFilterPool)getReferencedObject();
+	public Object getAdapter(Class adapterType) {
+		return Platform.getAdapterManager().getAdapter(this, adapterType);
 	}
-    
+
+	/**
+	 * Return name of the filter pool we reference
+	 * The name is stored qualified by the manager name,
+	 *  so we first have to strip that off.
+	 */
+	public String getReferencedFilterPoolName() {
+		String savedName = super.getReferencedObjectName();
+		String poolName = null;
+		int idx = savedName.indexOf(DELIMITER);
+		if (idx >= 0)
+			poolName = savedName.substring(idx + DELIMITER_LENGTH);
+		else
+			poolName = savedName;
+		return poolName;
+	}
+
+	/**
+	 * Return name of the filter pool manager containing the pool we reference.
+	 * The pool name is stored qualified by the manager name,
+	 *  so we get it from there.
+	 */
+	public String getReferencedFilterPoolManagerName() {
+		String savedName = super.getReferencedObjectName();
+		String mgrName = null;
+		int idx = savedName.indexOf(DELIMITER);
+		if (idx >= 0)
+			mgrName = savedName.substring(0, idx);
+		else
+			mgrName = savedName;
+		return mgrName;
+	}
+
+	/**
+	 * Reset the name of the filter pool we reference. 
+	 * Called on filter pool rename operations
+	 */
+	public void resetReferencedFilterPoolName(String newName) {
+		super.setReferencedObjectName(newName);
+	}
+
+	/**
+	 * Set the filter pool that we reference.
+	 * This also calls addReference(this) on that pool!
+	 */
+	public void setReferenceToFilterPool(ISystemFilterPool pool) {
+		super.setReferencedObject((ISystemPersistableReferencedObject) pool);
+	}
+
+	/**
+	 * Return referenced filter pool object. If the reference is unresolved it will
+	 * attempt to resolve it.
+	 */
+	public ISystemFilterPool getReferencedFilterPool() {
+		ISystemFilterPool filterPool = (ISystemFilterPool) getReferencedObject();
+		if (filterPool == null) {
+
+		}
+		return filterPool;
+	}
+
 	// -------------------------------------------------------------
 	// Methods common with SystemFilterPoolReferenceImpl, and hence
 	//  abstracted out into SystemFilterContainerReference...
@@ -157,10 +152,10 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	 * true that we only hold a SystemFilter. Hence, this is the same
 	 * as calling getReferenceFilter and casting the result.
 	 */
-	public ISystemFilterContainer getReferencedSystemFilterContainer()
-	{
+	public ISystemFilterContainer getReferencedSystemFilterContainer() {
 		return getReferencedFilterPool();
 	}
+
 	/**
 	 * Build and return an array of SystemFilterReference objects.
 	 * Each object is created new. There is one for each of the filters
@@ -169,67 +164,61 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	 * return a fresh one if something changes in the underlying 
 	 * filter list.
 	 */
-	public ISystemFilterReference[] getSystemFilterReferences(ISubSystem subSystem)
-	{
+	public ISystemFilterReference[] getSystemFilterReferences(ISubSystem subSystem) {
 		return containerHelper.getSystemFilterReferences(subSystem);
-	}	
-    /**
-     * Create a single filter refererence to a given filter. 
-     * If there already is a reference to this filter, it is returned.
-     * If not, a new reference is created and appended to the end of the existing filter reference array.
-     * @see #getExistingSystemFilterReference(ISystemFilter)
-     */
-    public ISystemFilterReference getSystemFilterReference(ISubSystem subSystem, ISystemFilter filter)
-    {
-    	//return containerHelper.generateFilterReference(filter);
-    	return containerHelper.generateAndRecordFilterReference(subSystem, filter);
-    }	
-    /**
-     * Return an existing reference to a given system filter. 
-     * If no reference currently exists to this filter, returns null.
-     * @see #getSystemFilterReference(ISystemFilter)
-     */
-    public ISystemFilterReference getExistingSystemFilterReference(ISubSystem subSystem, ISystemFilter filter)
-    {
-    	return containerHelper.getExistingSystemFilterReference(subSystem, filter);
-    }	
+	}
 
-    /**
-     * Return true if the referenced pool or filter has filters.
-     */
-    public boolean hasFilters()
-    {
-    	return containerHelper.hasFilters();
-    }    
+	/**
+	 * Create a single filter refererence to a given filter. 
+	 * If there already is a reference to this filter, it is returned.
+	 * If not, a new reference is created and appended to the end of the existing filter reference array.
+	 * @see #getExistingSystemFilterReference(ISystemFilter)
+	 */
+	public ISystemFilterReference getSystemFilterReference(ISubSystem subSystem, ISystemFilter filter) {
+		//return containerHelper.generateFilterReference(filter);
+		return containerHelper.generateAndRecordFilterReference(subSystem, filter);
+	}
 
-    /**
-     * Return count of the number of filters in the referenced pool or filter
-     */
-    public int getFilterCount()
-    {
-    	return containerHelper.getFilterCount();
-    }
+	/**
+	 * Return an existing reference to a given system filter. 
+	 * If no reference currently exists to this filter, returns null.
+	 * @see #getSystemFilterReference(ISystemFilter)
+	 */
+	public ISystemFilterReference getExistingSystemFilterReference(ISubSystem subSystem, ISystemFilter filter) {
+		return containerHelper.getExistingSystemFilterReference(subSystem, filter);
+	}
 
-    /**
-     * Return the name of the SystemFilter or SystemFilterPool that we reference.
-     * For such objects this is what we show in the GUI.
-     */	
-	public String getName()
-	{
+	/**
+	 * Return true if the referenced pool or filter has filters.
+	 */
+	public boolean hasFilters() {
+		return containerHelper.hasFilters();
+	}
+
+	/**
+	 * Return count of the number of filters in the referenced pool or filter
+	 */
+	public int getFilterCount() {
+		return containerHelper.getFilterCount();
+	}
+
+	/**
+	 * Return the name of the SystemFilter or SystemFilterPool that we reference.
+	 * For such objects this is what we show in the GUI.
+	 */
+	public String getName() {
 		return getReferencedFilterPoolName();
 	}
 
-    /**
-     * Return fully qualified name that includes the filter pool managers name
-     */
-    public String getFullName()
-    {
-    	return super.getReferencedObjectName();
-    }
-    
-	public boolean commit() 
-	{
+	/**
+	 * Return fully qualified name that includes the filter pool managers name
+	 */
+	public String getFullName() {
+		return super.getReferencedObjectName();
+	}
+
+	public boolean commit() {
 		return false;
-	//	return RSEUIPlugin.getThePersistenceManager().commit(getProvider().);
+		//	return RSEUIPlugin.getThePersistenceManager().commit(getProvider().);
 	}
 }

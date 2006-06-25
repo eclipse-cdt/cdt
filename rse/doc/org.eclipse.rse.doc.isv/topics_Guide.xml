@@ -12,7 +12,7 @@
 		<topic label="Hosts" href="guide/rse_int_hosts.html"/>
 		<topic label="UI" href="guide/rse_int_ui.html"/>
 	</topic>
-	<topic label="Using the RSE API" href="guide/usingAPIs.html"/>
+	<topic label="Using the RSE API" href="guide/usingAPIs.html">
 		<topic label="RSE User Interface API" href="guide/api/uiAPI.html" />
 		<topic label="RSE Remote Resource API" href="guide/api/resourceAPI.html" />
 		<topic label="RSE Model API" href="guide/api/modelAPI.html" />

@@ -303,7 +303,7 @@ public class CleanFilesAction extends ActionDelegate implements
 
 					// if we have no build info or we can't build the file, then
 					// disable the action
-					if ((buildInfo == null)
+					if ((buildInfo == null) || !buildInfo.isValid()
 							|| !buildInfo.buildsFileType(file
 									.getFileExtension())) {
 						return false;

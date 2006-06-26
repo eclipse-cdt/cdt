@@ -165,7 +165,7 @@ public class BuildFilesAction extends ActionDelegate implements
 					IManagedBuildInfo buildInfo = ManagedBuildManager
 							.getBuildInfo(file.getProject());
 
-					if ((buildInfo != null)
+					if ((buildInfo != null) && buildInfo.isValid()
 							&& buildInfo
 									.buildsFileType(file.getFileExtension())) {
 						files.add(file);
@@ -295,7 +295,7 @@ public class BuildFilesAction extends ActionDelegate implements
 					IManagedBuildInfo buildInfo = ManagedBuildManager
 							.getBuildInfo(file.getProject());
 
-					if (buildInfo == null) {
+					if (buildInfo == null || !buildInfo.isValid()) {
 						return false;
 					}
 

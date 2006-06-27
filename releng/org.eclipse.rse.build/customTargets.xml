@@ -182,19 +182,31 @@
 	<!-- ===================================================================== -->
 	<!-- Steps to do after the build is done. -->
 	<!-- ===================================================================== -->
-	<target name="postBuild">
-		<move todir="${buildDirectory}/${buildLabel}">
+	<target name="postBuild" depends="myInit">
+		<mkdir dir="${packageDirectory}/${dropDir}" />
+		<move todir="${packageDirectory}/${dropDir}">
 			<fileset dir="${buildDirectory}/${buildLabel}" includes="org.eclipse.rse.sdk-*"/>
 			<mapper type="glob" from="org.eclipse.rse.sdk-*" to="RSE-SDK-*"/>
 		</move>
-		<move todir="${buildDirectory}/${buildLabel}">
+		<move todir="${packageDirectory}/${dropDir}">
 			<fileset dir="${buildDirectory}/${buildLabel}" includes="org.eclipse.rse.*" excludes="org.eclipse.rse.sdk-*"/>
 			<mapper type="glob" from="org.eclipse.rse.*" to="RSE-runtime-*"/>
 		</move>
-		<copy todir="${buildDirectory}/${buildLabel}" file="${buildDirectory}/directory.txt"/>
+		<move todir="${packageDirectory}/${dropDir}">
+			<fileset dir="${buildDirectory}/${buildLabel}" includes="rseserver-*"/>
+		</move>
+		<copy todir="${packageDirectory}/${dropDir}" file="${buildDirectory}/directory.txt"/>
+		<!-- Create and analyze the compilelog.txt file -->
+		<concat destfile="${packageDirectory}/${dropDir}/compilelog.txt">
+			<fileset dir="${buildDirectory}/plugins" includes="**/*.bin.log"/>
+		</concat>
+		<loadfile property="compileLog" srcFile="${packageDirectory}/${dropDir}/compilelog.txt"/>
+		<condition property="hasErrors">
+			<contains string="${compileLog}" substring=" ERROR"/>
+		</condition>
 		<!-- Create the index.php file -->
-		<copy todir="${buildDirectory}/${buildLabel}">
-			<fileset dir="${builder}/template/"/>
+		<copy todir="${packageDirectory}/${dropDir}">
+			<fileset dir="${builder}/template/" includes="*.php,*.gif,package.count"/>
 		</copy>
 		<condition property="buildTypeLong" value="Private"><equals arg1="${buildType}" arg2="P"/></condition>
 		<condition property="buildTypeLong" value="Nightly"><equals arg1="${buildType}" arg2="N"/></condition>
@@ -203,19 +215,17 @@
 		<tstamp prefix="makeindex">
 			<format property="dateLong" pattern="MMM d, yyyy"/>
 		</tstamp>
-		<condition property="dropDir" value="S-${buildId}-${DSTAMP}${TSTAMP}" else="${buildId}">
-			<equals arg1="${buildType}" arg2="S"/>
-		</condition>
-		<replace file="${buildDirectory}/${buildLabel}/index.php">
+		<replace file="${packageDirectory}/${dropDir}/index.php">
 			<replacefilter token="@buildTypeLong@" value="${buildTypeLong}"/>
 			<replacefilter token="@dateLong@" value="${makeindex.dateLong}"/>
 			<replacefilter token="@dropDir@" value="${dropDir}"/>
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
-		<replace file="${buildDirectory}/${buildLabel}/buildNotes.php">
+		<replace file="${packageDirectory}/${dropDir}/buildNotes.php">
 			<replacefilter token="@dateLong@" value="${makeindex.dateLong}"/>
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
+		<antcall target="publish"/>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -228,10 +238,61 @@
 	<!-- Steps to do to publish the build results -->
 	<!-- ===================================================================== -->
 	<target name="publish" if="doPublish">
-		<mkdir dir="${publishDirectory}" />
-		<copy todir="${publishDirectory}">
-			<fileset dir="${packageDirectory}" includes="*.zip" />
+		<antcall target="publishCopy"/>
+		<antcall target="publishUpload"/>
+		<antcall target="mail"/>
+	</target>
+
+	<target name="myInit">
+		<property name="messagefile" value="message.in"/>
+		<property name="mailto" value="dsdp-tm-cvs-commit@eclipse.org"/>
+		<property name="xxmailto" value="martin.oberhuber@windriver.com"/>
+		<property name="remotedir" value="moberhuber@dev.eclipse.org:downloads-tm/downloads/drops"/>
+		<condition property="doUpload">
+			<equals arg1="${publishDirectory}" arg2=""/>
+		</condition>
+		<condition property="doCopy">
+			<not><equals arg1="${publishDirectory}" arg2=""/></not>
+		</condition>
+		<condition property="dropDir" value="S-${buildId}-${DSTAMP}${TSTAMP}" else="${buildId}">
+			<equals arg1="${buildType}" arg2="S"/>
+		</condition>
+	</target>
+
+	<target name="publishCopy" depends="myInit" if="doCopy" unless="hasErrors">
+		<mkdir dir="${publishDirectory}/${dropDir}" />
+		<copy todir="${publishDirectory}/${dropDir}">
+			<fileset dir="${packageDirectory}/${dropDir}" includes="*.zip,*.tar,*.php,*.txt,*.gif,package.count" />
 		</copy>
+	</target>
+
+	<target name="publishUpload" depends="myInit" if="doUpload" unless="hasErrors">
+		<exec dir="${packageDirectory}" executable="scp">
+			<arg line="-r ${dropDir} ${remotedir}"/>
+		</exec>
+	</target>
+
+	<target name="mail" depends="myInit">
+		<antcall target="mailPass"/>
+		<antcall target="mailFail"/>
+	</target>
+	
+	<target name="mailPass" unless="hasErrors">
+		<copy file="${builder}/${messagefile}" tofile="${buildDirectory}/message.txt" overwrite="true"/>
+		<replace file="${buildDirectory}/message.txt">
+			<replacefilter token="@buildId@" value="${buildId}"/>
+		</replace>
+		<mail subject="RSE Build ${buildId} completed"
+ 			tolist="${mailto}" from="martin.oberhuber@windriver.com">
+			<message src="${buildDirectory}/message.txt"/>
+		</mail>
+	</target>
+
+	<target name="mailFail" if="hasErrors">
+		<mail subject="RSE Build ${buildId} failed"
+			tolist="${mailto}" from="martin.oberhuber@windriver.com">
+			<message src="${packageDirectory}/${dropDir}/compilelog.txt"/>
+		</mail>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -357,26 +418,4 @@
 		</zip>
 	</target>
 	
-	<target name="oldpostbuild">
-		<mkdir dir="${packageDirectory}" />
-		
-		<property name="packageRuntimeDirectory" location="${packageDirectory}/runtime" />
-		<mkdir dir="${packageRuntimeDirectory}" />
-		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.core-${buildId}.zip" dest="${packageRuntimeDirectory}" />
-		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.dstore-${buildId}.zip" dest="${packageRuntimeDirectory}" />
-		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.ftp-${buildId}.zip" dest="${packageRuntimeDirectory}" />
-		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.local-${buildId}.zip" dest="${packageRuntimeDirectory}" />
-		<zip destfile="${packageDirectory}/RSE-runtime-${buildId}.zip" basedir="${packageRuntimeDirectory}" />
-		<tar destfile="${packageDirectory}/RSE-runtime-${buildId}.tar" basedir="${packageRuntimeDirectory}" />
-		<delete dir="$packageRuntimeDirectory}" />
-
-		<property name="packageSDKDirectory" location="${packageDirectory}/sdk" />
-		<mkdir dir="${packageSDKDirectory}" />
-		<unzip src="${buildDirectory}/${buildLabel}/org.eclipse.rse.sdk-${buildId}.zip" dest="${packageSDKDirectory}" />
-		<zip destfile="${packageDirectory}/RSE-SDK-${buildId}.zip" basedir="${packageSDKDirectory}" />
-		<tar destfile="${packageDirectory}/RSE-SDK-${buildId}.tar" basedir="${packageSDKDirectory}" />
-		<delete dir="$packageSDKDirectory}" />
-		
-	</target>
-
 </project>

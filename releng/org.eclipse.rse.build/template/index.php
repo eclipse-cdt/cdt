@@ -18,14 +18,14 @@
 		User Agreement</a>.</p>
 		<p>To get started, see the <a href="buildNotes.php">build notes</a>.<br>
 		To view the map file entries for this build, click
-		<a href="directory.txt">here</a>.</p>
+		<a href="directory.txt">here</a>.<br>
+		To view the compile logs for this build, click 
+		<a href="compilelog.txt">here</a>.</p>
 <!--
 		<p>To view the build notes for this build click <a
  href="buildNotes.php">here</a>.<br>
 		To view the test results for this build, click 
 		<a href="testResults.php">here</a>.<br>
-		To view the compile logs for this build, click 
-		<a href="testResults.php">here</a>.</p>
 -->
 		</td>
 <!--

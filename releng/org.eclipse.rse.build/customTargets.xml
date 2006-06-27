@@ -245,8 +245,8 @@
 
 	<target name="myInit">
 		<property name="messagefile" value="message.in"/>
-		<property name="mailto" value="dsdp-tm-cvs-commit@eclipse.org"/>
-		<property name="xxmailto" value="martin.oberhuber@windriver.com"/>
+		<property name="xxmailto" value="dsdp-tm-cvs-commit@eclipse.org"/>
+		<property name="mailto" value="martin.oberhuber@windriver.com"/>
 		<property name="remotedir" value="moberhuber@dev.eclipse.org:downloads-tm/downloads/drops"/>
 		<condition property="doUpload">
 			<equals arg1="${publishDirectory}" arg2=""/>

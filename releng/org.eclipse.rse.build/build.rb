@@ -47,7 +47,7 @@ publishDirectory = "#{working}/publish"
 
 tag = ask("Enter tag to fetch from CVS", "HEAD")
 buildType = ask("Enter build type (P=Personal, N=Nightly, I=Integration, S=Stable)", "P")
-buildId = ask("Enter the build id", buildType + Time.now.strftime("%Y%m%d%H%M"))
+buildId = ask("Enter the build id", buildType + Time.now.strftime("%Y%m%d-%H%M"))
 
 command = "java -cp #{eclipse}/startup.jar org.eclipse.core.launcher.Main "
 command += "-application org.eclipse.ant.core.antRunner "

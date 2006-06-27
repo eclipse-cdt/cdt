@@ -191,6 +191,31 @@
 			<fileset dir="${buildDirectory}/${buildLabel}" includes="org.eclipse.rse.*" excludes="org.eclipse.rse.sdk-*"/>
 			<mapper type="glob" from="org.eclipse.rse.*" to="RSE-runtime-*"/>
 		</move>
+		<copy todir="${buildDirectory}/${buildLabel}" file="${buildDirectory}/directory.txt"/>
+		<!-- Create the index.php file -->
+		<copy todir="${buildDirectory}/${buildLabel}">
+			<fileset dir="${builder}/template/"/>
+		</copy>
+		<condition property="buildTypeLong" value="Private"><equals arg1="${buildType}" arg2="P"/></condition>
+		<condition property="buildTypeLong" value="Nightly"><equals arg1="${buildType}" arg2="N"/></condition>
+		<condition property="buildTypeLong" value="Integration"><equals arg1="${buildType}" arg2="I"/></condition>
+		<condition property="buildTypeLong" value="Stable"><equals arg1="${buildType}" arg2="S"/></condition>
+		<tstamp prefix="makeindex">
+			<format property="dateLong" pattern="MMM d, yyyy"/>
+		</tstamp>
+		<condition property="dropDir" value="S-${buildId}-${DSTAMP}${TSTAMP}" else="${buildId}">
+			<equals arg1="${buildType}" arg2="S"/>
+		</condition>
+		<replace file="${buildDirectory}/${buildLabel}/index.php">
+			<replacefilter token="@buildTypeLong@" value="${buildTypeLong}"/>
+			<replacefilter token="@dateLong@" value="${makeindex.dateLong}"/>
+			<replacefilter token="@dropDir@" value="${dropDir}"/>
+			<replacefilter token="@buildId@" value="${buildId}"/>
+		</replace>
+		<replace file="${buildDirectory}/${buildLabel}/buildNotes.php">
+			<replacefilter token="@dateLong@" value="${makeindex.dateLong}"/>
+			<replacefilter token="@buildId@" value="${buildId}"/>
+		</replace>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -237,23 +262,23 @@
 			<fileset dir="${buildDirectory}/plugins/org.eclipse.rse.services.dstore" includes="dstore_miners.jar" />
 		</copy>
 
-		<antcall target="rseserver-os">
+		<antcall target="rseserver-os-tar">
 			<param name="os" value="aix"/>
 			<param name="eol" value="lf"/>
 		</antcall>
-		<antcall target="rseserver-os">
+		<antcall target="rseserver-os-tar">
 			<param name="os" value="unix"/>
 			<param name="eol" value="lf"/>
 		</antcall>
-		<antcall target="rseserver-os">
+		<antcall target="rseserver-os-tar">
 			<param name="os" value="macosx"/>
 			<param name="eol" value="lf"/>
 		</antcall>
-		<antcall target="rseserver-os">
+		<antcall target="rseserver-os-tar">
 			<param name="os" value="linux"/>
 			<param name="eol" value="lf"/>
 		</antcall>
-		<antcall target="rseserver-os">
+		<antcall target="rseserver-os-zip">
 			<param name="os" value="windows"/>
 			<param name="eol" value="crlf"/>
 		</antcall>
@@ -262,7 +287,16 @@
 
 	</target>
 
-	<target name="rseserver-os">
+	<target name="rseserver-os-tar" depends="rseserver-os-collect">
+		<tar destfile="${buildDirectory}/${buildLabel}/rseserver-${buildId}-${os}.tar" basedir="${working}/collector" includes="*"/>
+		<delete dir="${working}/collector" />
+	</target>
+	<target name="rseserver-os-zip" depends="rseserver-os-collect">
+		<zip destfile="${buildDirectory}/${buildLabel}/rseserver-${buildId}-${os}.zip" basedir="${working}/collector" includes="*"/>
+		<delete dir="${working}/collector" />
+	</target>
+
+	<target name="rseserver-os-collect">
 		<mkdir dir="${working}/collector" />
 		<copy todir="${working}/collector">
 			<fileset dir="${working}/scripts/${os}" includes="*"/>
@@ -284,9 +318,6 @@
 		<chmod perm="+x">
 			<fileset dir="${working}/collector" includes="*.jar"/>
 		</chmod>
-		<tar destfile="${buildDirectory}/${buildLabel}/rseserver-${buildId}-${os}.tar" basedir="${working}/collector" includes="*"/>
-		<zip destfile="${buildDirectory}/${buildLabel}/rseserver-${buildId}-${os}.zip" basedir="${working}/collector" includes="*"/>
-		<delete dir="${working}/collector" />
 	</target>
 
 	<!-- =====================================================================

@@ -73,7 +73,7 @@ public class DaytimeSubsystemConfiguration extends ServiceSubSystemConfiguration
 	 */
 	public ISubSystem createSubSystemInternal(IHost host) {
 		IConnectorService connectorService = getConnectorService(host);
-		ISubSystem subsys = new DaytimeSubSystem(host, connectorService, createDaytimeService(host));
+		ISubSystem subsys = new DaytimeSubSystem(host, connectorService, createDaytimeService(host)); // DWD need to provide the subsystem with a name and id too.
 		return subsys;
 	}
 

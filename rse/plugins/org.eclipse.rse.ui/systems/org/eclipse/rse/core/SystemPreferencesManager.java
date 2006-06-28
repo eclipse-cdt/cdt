@@ -16,10 +16,14 @@
 
 package org.eclipse.rse.core;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.SortedSet;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.Vector;
+
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
@@ -45,7 +49,7 @@ public class SystemPreferencesManager
 {
 	
     private static SystemPreferencesManager inst;
-    private Hashtable userIdsPerKey = null;
+//    private Hashtable userIdsPerKey = null;
     /**
      * 
      */
@@ -274,22 +278,24 @@ public class SystemPreferencesManager
    public String getUserId(String key)
    {
    	  String uid = null;
-      userIdsPerKey = getUserIdsPerKey();
-   	  uid = (String)userIdsPerKey.get(key);
+      Hashtable userIds = getUserIds();
+   	  uid = (String) userIds.get(key);
    	  return uid;
    }
    
    /**
 	 * Set the user Id for this key. The key typically designates a scope for this userid so that a hierarchy
 	 * of user ids can be maintained for inheritance. For example, hosts have greater scope than subsystems.
+	 * A key would typically be <profile-name>.<host-name>, or <profile-name>.<host-type>, or 
+	 * <profile-name>.<host-name>.<subsystem-name>.
 	 */
 	public void setUserId(String key, String userId) {
 		if ((key != null) && (userId != null)) {
-			userIdsPerKey = getUserIdsPerKey();
-			String storedUserId = (String) userIdsPerKey.get(key);
-			if (!storedUserId.equals(userId)) { // don't bother updating if its already there
-				userIdsPerKey.put(key, userId);
-				setUserIdsPerKey();
+			Hashtable userIds = getUserIds();
+			String storedUserId = (String) userIds.get(key);
+			if (storedUserId == null || !storedUserId.equals(userId)) { // don't bother updating if its already there
+				userIds.put(key, userId);
+				setUserIds(userIds);
 			}
 		}
 	}
@@ -299,31 +305,79 @@ public class SystemPreferencesManager
     */
    public void clearUserId(String key)
    {
-   	  userIdsPerKey = getUserIdsPerKey();
-   	  if (userIdsPerKey.containsKey(key))
+   	  Hashtable userIds = getUserIds();
+   	  if (userIds.containsKey(key))
    	  {
-        userIdsPerKey.remove(key);   
-        setUserIdsPerKey();
+        userIds.remove(key);   
+        setUserIds(userIds);
    	  }
    }
 
    /**
-    * Helper method to get the hashtable of userIds per key. Comes from preference store.
-    */
-   private Hashtable getUserIdsPerKey()
-   {
-   	  if (userIdsPerKey == null)
-   	    userIdsPerKey = RemoteSystemsPreferencePage.getUserIdsPerKey();
-      return userIdsPerKey;
-   }
-   /**
-    * Helper method to set the hashtable of userIds per subsystem. Sets it in the preference store.
-    */
-   private void setUserIdsPerKey()
-   {
-   	  RemoteSystemsPreferencePage.setUserIdsPerKey(userIdsPerKey);
-   }    
+	 * Return the hashtable where the key is a string identifying a particular object, and 
+	 *  the value is the user Id for that object.
+	 */
+	public static Hashtable getUserIds() {
+		Preferences store = RSECorePlugin.getDefault().getPluginPreferences();
+		Hashtable userIds = null;
+		String value = store.getString(ISystemPreferencesConstants.USERIDPERKEY);
+		if (value != null) {
+			userIds = parseString(value);
+		} else {
+			userIds = new Hashtable();
+		}
+		return userIds;
+	}
 
+	/**
+	 * Set/store the user ids that are saved keyed by some key.
+	 */
+	public static void setUserIds(Hashtable userIds) {
+		Preferences store = RSECorePlugin.getDefault().getPluginPreferences();
+		String userIdsString = makeString(userIds);
+		store.setValue(ISystemPreferencesConstants.USERIDPERKEY, userIdsString);
+		RSECorePlugin.getDefault().savePluginPreferences();
+	}
+
+	/**
+	 * Convert hashtable of key-value pairs into a single string
+	 */
+	protected static String makeString(Hashtable table) {
+		Enumeration keys = table.keys();
+		StringBuffer sb = new StringBuffer(20 * table.size());
+		while (keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			String value = (String) table.get(key);
+			if ((value != null) && (value.length() > 0)) {
+				sb.append(key);
+				sb.append('=');
+				sb.append(value);
+				sb.append(';');
+			}
+		}
+		return sb.toString();
+	}
+		
+	/**
+	 * Parse out list of key-value pairs into a hashtable
+	 */
+	protected static Hashtable parseString(String allvalues) {
+		StringTokenizer tokens = new StringTokenizer(allvalues, "=;");
+		Hashtable keyValues = new Hashtable(10);
+		int count = 0;
+		String token1 = null;
+		String token2 = null;
+		while (tokens.hasMoreTokens()) {
+			count++;
+			if ((count % 2) == 0) // even number
+			{
+				token2 = tokens.nextToken();
+				keyValues.put(token1, token2);
+			} else
+				token1 = tokens.nextToken();
+		}
+		return keyValues;
+	}
          
    // ----------------------
    // GETTER METHODS...

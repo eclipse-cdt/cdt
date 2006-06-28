@@ -244,10 +244,9 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * cached userId.
 	 */
 	final public String getUserId() {
-		String result = getSubsystemUserId();
-		ISubSystem ss = getPrimarySubSystem();
-		if (ss.isConnected()) {
-			result = getLocalUserId();
+		String result = getLocalUserId();
+		if (result == null) {
+			result = getSubsystemUserId();
 		}
 		return result;
 	}
@@ -258,9 +257,6 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * set for this service then it is retrieved from the primary subsystem.
 	 */
 	final protected String getLocalUserId() {
-		if (_userId == null) {
-			_userId = getSubsystemUserId();
-		}
 		return _userId;
 	}
 	
@@ -422,13 +418,13 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		IHost host = subsystem.getHost();
 		String hostName = host.getHostName();
 		String hostType = host.getSystemType();
-		String oldUserId = getLocalUserId();
+		String userId = getUserId();
 		PasswordPersistenceManager ppm = PasswordPersistenceManager.getInstance();
 
 		// Check the transient in memory password ...
 		// Test if userId has been changed... d43274
 		if (passwordInformation != null && !forcePrompt) {
-			boolean same = host.compareUserIds(oldUserId, passwordInformation.getUserid());
+			boolean same = host.compareUserIds(userId, passwordInformation.getUserid());
 			same = same && hostName.equalsIgnoreCase(passwordInformation.getHostname());
 			if (!same) {
 				clearPasswordCache();
@@ -445,8 +441,8 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
        	}
 	
    	  	// Check the saved passwords if we still haven't found a good password.
-		if (passwordInformation == null && oldUserId != null && !forcePrompt) {
-			SystemSignonInformation savedPasswordInformation = ppm.find(hostType, hostName, oldUserId);
+		if (passwordInformation == null && userId != null && !forcePrompt) {
+			SystemSignonInformation savedPasswordInformation = ppm.find(hostType, hostName, userId);
 			if (savedPasswordInformation != null) {
 				if (validator == null || validator.isValid(shell, savedPasswordInformation)) {
 					setPasswordInformation(savedPasswordInformation);
@@ -472,7 +468,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     	if ((forcePrompt || (passwordInformation == null)) && (shell != null)) {
     	  	ISystemPasswordPromptDialog dlg = getPasswordPromptDialog(shell);
     	  	dlg.setSystemInput(this);
-    	  	passwordInformation = ppm.find(hostType, hostName, oldUserId);
+    	  	passwordInformation = ppm.find(hostType, hostName, userId);
     	  	if (passwordInformation != null) {
     	  	    String password = passwordInformation.getPassword();
     	  	    dlg.setPassword(password);
@@ -828,6 +824,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     {
     	internalDisconnect(monitor);
 		unintializeSubSystems(monitor);
+		clearPasswordCache();
     }
     
     public void internalDisconnect(IProgressMonitor monitor) throws Exception 

@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.ui.propertypages;
 
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
@@ -63,7 +62,7 @@ public class RemoteSystemsPreferencePage
     private boolean lastShowFilterPoolsValue = false;
     private boolean lastQualifyConnectionNamesValue = false;
     private boolean lastRememberStateValue = true; // changed in R2 by Phil. Not sure about migration!
-	private boolean lastRestoreFromCacheValue = true; // yantzi: new in artemis 6.0
+//	private boolean lastRestoreFromCacheValue = true; // yantzi: new in artemis 6.0
     private boolean lastShowNewConnectionPromptValue = true;
     private boolean lastUseDeferredQueryValue = false;
 	
@@ -163,7 +162,7 @@ public class RemoteSystemsPreferencePage
 		restoreFromCache.setEnabled(lastRememberStateValue, innerComposite);
 		addField(restoreFromCache);
 		restoreFromCache.setToolTipText(SystemResources.RESID_PREF_RESTOREFROMCACHE_PREFIX_TOOLTIP);
-		lastRestoreFromCacheValue = getPreferenceStore().getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);
+//		lastRestoreFromCacheValue = getPreferenceStore().getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);
 
 		// USE DEFERRED QUERY
 		useDeferredQueryEditor = new SystemBooleanFieldEditor(
@@ -404,32 +403,32 @@ public class RemoteSystemsPreferencePage
 	}
 
 
-    /**
-     * Return the hashtable where the key is a string identifying a particular object, and 
-     *  the value is the user Id for that object.
-     */
-	public static Hashtable getUserIdsPerKey()
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		Hashtable keyValues = null;
-		String value = store.getString(ISystemPreferencesConstants.USERIDPERKEY);
-		if (value != null)
-		  keyValues = parseString(value);
-		else
-		{
-		  keyValues = new Hashtable();
-		}
-		return keyValues;
-	}
-	/**
-	 * Set/store the user ids that are saved keyed by some key.
-	 */
-	public static void setUserIdsPerKey(Hashtable uidsPerKey)
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();				
-		store.setValue(ISystemPreferencesConstants.USERIDPERKEY, makeString(uidsPerKey));		
-		savePreferenceStore();
-	}
+//    /**
+//     * Return the hashtable where the key is a string identifying a particular object, and 
+//     *  the value is the user Id for that object.
+//     */
+//	public static Hashtable getUserIdsPerKey() // DWD remove this later
+//	{
+//		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
+//		Hashtable keyValues = null;
+//		String value = store.getString(ISystemPreferencesConstants.USERIDPERKEY);
+//		if (value != null)
+//		  keyValues = parseString(value);
+//		else
+//		{
+//		  keyValues = new Hashtable();
+//		}
+//		return keyValues;
+//	}
+//	/**
+//	 * Set/store the user ids that are saved keyed by some key.
+//	 */
+//	public static void setUserIdsPerKey(Hashtable uidsPerKey) // DWD remove this later
+//	{
+//		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();				
+//		store.setValue(ISystemPreferencesConstants.USERIDPERKEY, makeString(uidsPerKey));		
+//		savePreferenceStore();
+//	}
 
     /**
      * Return the System type to default to on the Create Connection wizard.
@@ -505,24 +504,24 @@ public class RemoteSystemsPreferencePage
 	/**
 	 * Convert hashtable of key-value pairs into a single string
 	 */
-	protected static String makeString(Hashtable keyValues)
-	{
-		Enumeration keys = keyValues.keys();
-		StringBuffer sb = new StringBuffer();
-		while (keys.hasMoreElements())
-		{
-			String key = (String)keys.nextElement();
-			String value = (String)keyValues.get(key);
-			if ((value != null) && (value.length()>0))
-			{
-			  sb.append(key);
-			  sb.append('=');
-			  sb.append(value);
-			  sb.append(';');
-			}
-		}
-		return sb.toString();
-	}
+//	protected static String makeString(Hashtable keyValues) DWD remove this later
+//	{
+//		Enumeration keys = keyValues.keys();
+//		StringBuffer sb = new StringBuffer();
+//		while (keys.hasMoreElements())
+//		{
+//			String key = (String)keys.nextElement();
+//			String value = (String)keyValues.get(key);
+//			if ((value != null) && (value.length()>0))
+//			{
+//			  sb.append(key);
+//			  sb.append('=');
+//			  sb.append(value);
+//			  sb.append(';');
+//			}
+//		}
+//		return sb.toString();
+//	}
 		
 	/**
 	 * Parse out list of multiple values into a string array per value

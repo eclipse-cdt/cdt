@@ -116,7 +116,7 @@ public class SystemFileNewConnectionWizardPage extends AbstractSystemNewConnecti
 		int span = nbrColumns;
 		int widthHint = 200;
 		
-		SystemWidgetHelpers.createVerbage(composite_prompts, text, span, border, widthHint);		
+		SystemWidgetHelpers.createVerbiage(composite_prompts, text, span, border, widthHint);		
 		
 		SystemWidgetHelpers.createSpacerLine(composite_prompts, span, false);
 		
@@ -125,7 +125,7 @@ public class SystemFileNewConnectionWizardPage extends AbstractSystemNewConnecti
 		        // the following is default English text to use if the string is not found in the mri"
 		  //      "If you manually start the communications server, you will need to set the port number property for this connection. To do this, expand your newly created connection in the Remote Systems Explorer perspective. Right click on the Files subsystem and select Properties. You can specify the port to match the port you specified or were assigned for the server.");
 		
-		SystemWidgetHelpers.createVerbage(composite_prompts, text, span, border, widthHint);		
+		SystemWidgetHelpers.createVerbiage(composite_prompts, text, span, border, widthHint);		
         
 		
 		// Port prompt

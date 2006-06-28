@@ -20,7 +20,6 @@ import org.eclipse.rse.files.ui.widgets.SystemRemoteFolderCombo;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.swt.SWT;
@@ -74,17 +73,17 @@ public class SystemPromptForHomeFolderDialog
 		int gridColumns = 1;
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, gridColumns);	
 		
-		// verbage
+		// verbiage
 		boolean wantBorder = false;
 		int span = 1;
 		int widthHint = 200;
-		SystemWidgetHelpers.createVerbage(composite_prompts, SystemFileResources.RESID_HOMEPROMPT_TITLE, span, wantBorder, widthHint);
+		SystemWidgetHelpers.createVerbiage(composite_prompts, SystemFileResources.RESID_HOMEPROMPT_TITLE, span, wantBorder, widthHint);
 
         // connection\folder prompt
         boolean readOnly = false;
         folderCombo = new SystemRemoteFolderCombo(composite_prompts, SWT.BORDER, null, readOnly);        
         folderCombo.setSystemConnection(connection);
-        folderCombo.setText("/home/"+RSEUIPlugin.getLocalMachineName());
+        folderCombo.setText("/home/"+connection.getDefaultUserId());
 
         // listen for selections
         //folderCombo.addSelectionListener(this);

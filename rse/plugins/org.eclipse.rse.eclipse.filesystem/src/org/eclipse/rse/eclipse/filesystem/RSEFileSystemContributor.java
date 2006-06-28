@@ -3,6 +3,7 @@ package org.eclipse.rse.eclipse.filesystem;
 import java.net.URI;
 
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
@@ -54,7 +55,7 @@ public class RSEFileSystemContributor extends FileSystemContributor {
 		}
 		return new File(selectedDirectory).toURI();
 		*/
-		if (dlg.open() == dlg.OK)
+		if (dlg.open() == Window.OK)
 		{
 			Object selected = dlg.getSelectedObject();
 			if (selected instanceof ISystemFilterReference)

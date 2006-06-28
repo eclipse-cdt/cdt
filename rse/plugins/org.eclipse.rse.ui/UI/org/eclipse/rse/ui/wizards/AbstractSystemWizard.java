@@ -289,7 +289,7 @@ public abstract class      AbstractSystemWizard
 	 * For explicitly setting output object after wizard is dismissed. Called in the
 	 * wizard's processFinish method, typically.
 	 */
-	protected void setOutputObject(Object outputObject)
+	public void setOutputObject(Object outputObject)
 	{
 		output = outputObject;
 	}	
@@ -370,7 +370,7 @@ public abstract class      AbstractSystemWizard
      *  page's performFinish returned false. Pass the failing page. If it is not the current
      *  page, this code will issue msg RSEG1240 "Error on another page" to the user.
      */
-    protected void setPageError(IWizardPage pageInError)
+    public void setPageError(IWizardPage pageInError)
     {
     	IWizardPage currentPage = getContainer().getCurrentPage();
     	if (currentPage != pageInError)

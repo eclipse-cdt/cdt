@@ -43,7 +43,7 @@ import org.eclipse.rse.ui.validators.ValidatorConnectionName;
 import org.eclipse.rse.ui.validators.ValidatorUserId;
 import org.eclipse.rse.ui.widgets.InheritableEntryField;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizardPage;
-import org.eclipse.rse.ui.wizards.SystemNewConnectionWizard;
+import org.eclipse.rse.ui.wizards.RSENewConnectionWizard;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -892,9 +892,9 @@ public class SystemConnectionForm
 		    		    
 		    		    IWizardPage[] pages = null;
 		    		    
-		    		    if (wizard instanceof SystemNewConnectionWizard) {
-		    		        SystemNewConnectionWizard connWizard = (SystemNewConnectionWizard)wizard;
-		    		        AbstractSystemWizardPage mainPage = (AbstractSystemWizardPage)(connWizard.getMainPage());
+		    		    if (wizard instanceof RSENewConnectionWizard) {
+		    		        RSENewConnectionWizard connWizard = (RSENewConnectionWizard)wizard;
+		    		        AbstractSystemWizardPage mainPage = (AbstractSystemWizardPage)(connWizard.getStartingPage());
 		    		        
 		    		        Vector pageList = new Vector();
 		    		        

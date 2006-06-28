@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.rse.ui">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.rse.ui" id="newConnectionWizardDelegate" name="RSE New Connection Wizard Delegate"/>
+      </appInfo>
+      <documentation>
+         This extension point allows a New Connection wizard delegate to be provided for a certain system type. This is useful for those system types that need New Connection wizard pages which are different from the default pages supplied by RSE. 
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="newConnectionWizardDelegate">
+      <complexType>
+         <attribute name="systemType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The system type ID.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="default" value="org.eclipse.rse.ui.wizards.RSENewConnectionWizardDelegate">
+            <annotation>
+               <documentation>
+                  A class that implements 
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The provider of a new connection delegate for a certain system type must implement &lt;samp&gt;org.eclipse.rse.ui.wizards.IRSENewConnectionWizardDelegate&lt;/samp&gt;. Instead of extending the interface, it is recommended that the abstract class &lt;samp&gt;org.eclipse.rse.ui.wizards.RSENewConnectionWizardDelegate&lt;/samp&gt; be extended.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2006 IBM Corporation. All Rights Reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+IBM Corporation - initial API and implementation
+      </documentation>
+   </annotation>
+
+</schema>

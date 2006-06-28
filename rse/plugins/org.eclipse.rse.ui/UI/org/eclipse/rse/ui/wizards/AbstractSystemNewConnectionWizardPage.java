@@ -16,6 +16,9 @@
 
 package org.eclipse.rse.ui.wizards;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.ui.SystemConnectionForm;
 import org.eclipse.rse.ui.SystemResources;
@@ -98,9 +101,9 @@ public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSyst
     /**
      * Get the parent wizard typed as the SystemNewConnectionWizard
      */
-    public SystemNewConnectionWizard getNewConnectionWizard()
+    public RSENewConnectionWizard getNewConnectionWizard()
     {
-        return (SystemNewConnectionWizard)getWizard();
+        return (RSENewConnectionWizard)getWizard();
     }
 
     /**
@@ -108,11 +111,22 @@ public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSyst
      */
     public ISystemNewConnectionWizardMainPage getMainPage()
     {
-    	SystemNewConnectionWizard ourWizard = getNewConnectionWizard();
-    	if (ourWizard != null)
-    	  return ourWizard.getMainPage();
-        else
+    	RSENewConnectionWizard ourWizard = getNewConnectionWizard();
+    	if (ourWizard != null) {
+    	  String[] systemTypes = parentFactory.getSystemTypes();
+    	  IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
+    	  IWizardPage wizardPage = ourWizard.getDelegate(systemType).getMainPage();
+    	  
+    	  if (wizardPage instanceof ISystemNewConnectionWizardMainPage) {
+    		  return (ISystemNewConnectionWizardMainPage)wizardPage;
+    	  }
+    	  else {
+    		  return null;
+    	  }
+    	}
+        else {
           return null;
+        }
     }
 
     /**
@@ -121,11 +135,21 @@ public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSyst
      */
     public SystemConnectionForm getMainPageForm()
     {
-    	SystemNewConnectionWizard ourWizard = getNewConnectionWizard();
-    	if (ourWizard != null)
-    	  return ourWizard.getMainPageForm();
-        else
-          return null;
+    	RSENewConnectionWizard ourWizard = getNewConnectionWizard();
+    	if (ourWizard != null) {
+      	  String[] systemTypes = parentFactory.getSystemTypes();
+    	  IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
+    	  IWizardPage wizardPage = ourWizard.getDelegate(systemType).getMainPage();
+    	  
+    	  if (wizardPage instanceof RSENewConnectionWizardDefaultDelegateMainPage) {
+    		  return ((RSENewConnectionWizardDefaultDelegateMainPage)wizardPage).getForm();
+    	  }
+    	  else {
+    		  return null;
+    	  }
+        }
+    	else {
+    		return null;
+    	}
     }
-
 }

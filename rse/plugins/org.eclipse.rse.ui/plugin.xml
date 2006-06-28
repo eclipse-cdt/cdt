@@ -840,6 +840,7 @@ Contributors:
 <!-- 		Define Persistence Provider extension point -->
 <!-- ================================================================= -->
    <extension-point id="persistenceProviders" name="%extPoint.persistenceProviders" schema="schema/persistenceProviders.exsd"/>
+   <extension-point id="newConnectionWizardDelegate" name="RSE New Connection Wizard Delegate" schema="schema/newConnectionWizardDelegate.exsd"/>
 
 
 
@@ -1051,7 +1052,7 @@ Contributors:
 				name="%Creation.connection.name"
 				icon="icons/full/etool16/newconnection_wiz.gif"
 				category="org.eclipse.rse.ui.newWizards.rseCategory"
-				class="org.eclipse.rse.ui.wizards.SystemNewConnectionWizard"
+				class="org.eclipse.rse.ui.wizards.RSENewConnectionWizard"
 				preferredPerspectives="org.eclipse.rse.ui.view.SystemPerspective"
 				canFinishEarly="false"
 				hasPages="true">

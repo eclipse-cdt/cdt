@@ -27,7 +27,7 @@ import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
-import org.eclipse.rse.ui.wizards.SystemNewConnectionWizard;
+import org.eclipse.rse.ui.wizards.RSENewConnectionWizard;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -102,19 +102,19 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction
 	 */
 	protected IWizard createWizard()
 	{
-		SystemNewConnectionWizard newConnWizard = new SystemNewConnectionWizard();
+		RSENewConnectionWizard newConnWizard = new RSENewConnectionWizard();
 		if (!fromPopupMenu && (sp!=null))
 		{
 		  setSelection(sp.getSelection());
 		}		
 
-		newConnWizard.setCurrentlySelectedConnection(currConn);
-		if (restrictSystemTypesTo != null)
-		  newConnWizard.restrictSystemTypes(restrictSystemTypesTo);
-		if (defaultHostName != null)
-		  newConnWizard.setHostName(defaultHostName);
-		if (defaultConnectionName != null)
-		  newConnWizard.setConnectionName(defaultConnectionName);
+		// newConnWizard.setCurrentlySelectedConnection(currConn);
+		// if (restrictSystemTypesTo != null)
+		  // newConnWizard.restrictSystemTypes(restrictSystemTypesTo);
+		// if (defaultHostName != null)
+		  // newConnWizard.setHostName(defaultHostName);
+		// if (defaultConnectionName != null)
+		  // newConnWizard.setConnectionName(defaultConnectionName);
 		return newConnWizard;		
 	}
 

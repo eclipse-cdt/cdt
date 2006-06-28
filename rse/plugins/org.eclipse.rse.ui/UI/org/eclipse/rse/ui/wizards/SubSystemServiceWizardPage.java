@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystem;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -78,12 +80,16 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 
 			
 			IServiceSubSystemConfiguration currentFactory = (IServiceSubSystemConfiguration)getSubSystemFactory();
-			IServiceSubSystemConfiguration[] factories = getServiceSubSystemFactories(getMainPage().getSystemType(), currentFactory.getServiceType());
+			
+			String systemTypeStr = getMainPage().getSystemType();
+			IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr);
+			
+			IServiceSubSystemConfiguration[] factories = getServiceSubSystemFactories(systemTypeStr, currentFactory.getServiceType());
 			
 			IHost dummyHost = null;
-			if (getWizard() instanceof SystemNewConnectionWizard)
+			if (getWizard() instanceof RSENewConnectionWizard)
 			{
-				dummyHost = ((SystemNewConnectionWizard)getWizard()).getDummyHost();
+				dummyHost = ((RSENewConnectionWizard)getWizard()).getDelegate(systemType).getDummyHost();
 			}
 			
 			// create elements for each 

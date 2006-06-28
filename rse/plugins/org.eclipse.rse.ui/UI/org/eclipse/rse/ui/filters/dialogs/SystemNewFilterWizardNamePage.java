@@ -153,7 +153,7 @@ public class SystemNewFilterWizardNamePage
 		int nbrColumns = 2;
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 				
-		SystemWidgetHelpers.createVerbage(composite_prompts, configurator.getPage2NameVerbage(), nbrColumns, false, 200);
+		SystemWidgetHelpers.createVerbiage(composite_prompts, configurator.getPage2NameVerbage(), nbrColumns, false, 200);
 		nameText = SystemWidgetHelpers.createLabeledTextField(composite_prompts, null, configurator.getPage2NamePromptLabel(), configurator.getPage2NamePromptTooltip());
 		
         addSeparatorLine(composite_prompts, nbrColumns);
@@ -175,7 +175,7 @@ public class SystemNewFilterWizardNamePage
         
         if (poolsToSelectFrom != null)
         {
-		   	poolVerbage = (Label)SystemWidgetHelpers.createVerbage(composite_prompts, configurator.getPage2PoolVerbage(), nbrColumns, false, 200);
+		   	poolVerbage = (Label)SystemWidgetHelpers.createVerbiage(composite_prompts, configurator.getPage2PoolVerbage(), nbrColumns, false, 200);
 		   	poolVerbage.setToolTipText(configurator.getPage2PoolVerbageTip());
            	poolCombo = SystemWidgetHelpers.createLabeledReadonlyCombo(composite_prompts, null, configurator.getPage2PoolPromptLabel(), configurator.getPage2PoolPromptTooltip());
 			poolComboLabel = SystemWidgetHelpers.getLastLabel();
@@ -202,7 +202,7 @@ public class SystemNewFilterWizardNamePage
         }
         else if (poolWrapperInformation != null)
         {
-		 	poolVerbage = (Label)SystemWidgetHelpers.createVerbage(composite_prompts, poolWrapperInformation.getVerbageLabel(), nbrColumns, false, 200);
+		 	poolVerbage = (Label)SystemWidgetHelpers.createVerbiage(composite_prompts, poolWrapperInformation.getVerbageLabel(), nbrColumns, false, 200);
 		   	//poolWrapperCombo = SystemWidgetHelpers.createLabeledCombo(composite_prompts, null, poolWrapperInformation.getResourceBundle(), poolWrapperInformation.getPromptRBKey()); // d47323
 		   	poolWrapperCombo = SystemWidgetHelpers.createLabeledReadonlyCombo(composite_prompts, null, poolWrapperInformation.getPromptLabel(), poolWrapperInformation.getPromptTooltip());
 			poolComboLabel = SystemWidgetHelpers.getLastLabel();

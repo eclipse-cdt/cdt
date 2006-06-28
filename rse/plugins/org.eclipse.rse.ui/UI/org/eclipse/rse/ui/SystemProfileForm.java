@@ -120,7 +120,7 @@ public class SystemProfileForm
 		// VERBAGE LABEL
 		if (showVerbage)
 		{
-		  verbage = SystemWidgetHelpers.createVerbage(
+		  verbage = SystemWidgetHelpers.createVerbiage(
 			 composite_prompts, SystemResources.RESID_PROFILE_PROFILENAME_VERBAGE, nbrColumns, false, 200);
 	      SystemWidgetHelpers.createLabel(composite_prompts, "", nbrColumns); // dummy line for spacing
 		}

@@ -59,7 +59,7 @@ public class SystemNewFilterWizardInfoPage
 		
 		if (configurator.getPage3Tip1() != null)
 		{
-		  SystemWidgetHelpers.createVerbage(composite_prompts, configurator.getPage3Tip1(), nbrColumns, false, 200);		
+		  SystemWidgetHelpers.createVerbiage(composite_prompts, configurator.getPage3Tip1(), nbrColumns, false, 200);		
           addSeparatorLine(composite_prompts, nbrColumns);
           addFillerLine(composite_prompts, nbrColumns);
 		}
@@ -67,7 +67,7 @@ public class SystemNewFilterWizardInfoPage
         if (((SystemNewFilterWizard)getWizard()).isFromRSE())
         {
         	if (configurator.getPage3Tip2() != null)
-		      SystemWidgetHelpers.createVerbage(composite_prompts, configurator.getPage3Tip2(), nbrColumns, false, 200);		
+		      SystemWidgetHelpers.createVerbiage(composite_prompts, configurator.getPage3Tip2(), nbrColumns, false, 200);		
         }
 		        
 		return composite_prompts;

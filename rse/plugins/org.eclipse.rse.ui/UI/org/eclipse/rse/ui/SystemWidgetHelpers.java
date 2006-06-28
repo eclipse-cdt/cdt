@@ -320,16 +320,16 @@ public class SystemWidgetHelpers {
 	
 
 	/**
-	 * Creates a widget for displaying text verbage that spans multiple lines. Takes resolved text vs resource bundle id.
+	 * Creates a widget for displaying text verbiage that spans multiple lines. Takes resolved text vs resource bundle id.
 	 * The returned widget is not typed so we can easily change it in the future if we decide on a better widget.
 	 * @param parent Composite to put the field into.
-	 * @param text String is the verbage text to display
+	 * @param text String is the verbiage text to display
 	 * @param span Horizontal span
-	 * @param border true if you want a border around the verbage
+	 * @param border true if you want a border around the verbiage
 	 * @param widthHint number of pixels to limit width to before wrapping. 200 is a reasonable number
 	 * @return the Label widget, in case you want to tweak it
 	 */
-	public static Label createVerbage(Composite parent, String text, int span, boolean border, int widthHint) {
+	public static Label createVerbiage(Composite parent, String text, int span, boolean border, int widthHint) {
 		Label widget = new Label(parent, border ? (SWT.LEFT | SWT.WRAP | SWT.BORDER) : (SWT.LEFT | SWT.WRAP));
 		widget.setText(text);
 		GridData data = new GridData();
@@ -357,7 +357,7 @@ public class SystemWidgetHelpers {
 	 */
 	public static Label createLabeledVerbage(Composite parent, String labelText, String tooltip, int span, boolean border, int widthHint) {
 		previousLabel = createLabel(parent, appendColon(labelText));
-		Label verbage = createVerbage(parent, labelText, span, border, widthHint);
+		Label verbage = createVerbiage(parent, labelText, span, border, widthHint);
 		setToolTipText(previousLabel, tooltip);
 		setToolTipText(verbage, tooltip);
 		return verbage;

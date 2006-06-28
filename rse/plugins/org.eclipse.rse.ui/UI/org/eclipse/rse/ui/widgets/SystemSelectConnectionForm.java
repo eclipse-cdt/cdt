@@ -356,7 +356,7 @@ public class SystemSelectConnectionForm extends SystemBaseForm
 		}
 
         // MESSAGE/VERBAGE TEXT AT TOP
-        verbageLabel = (Label) SystemWidgetHelpers.createVerbage(composite_prompts, verbage, gridColumns, false, PROMPT_WIDTH);
+        verbageLabel = (Label) SystemWidgetHelpers.createVerbiage(composite_prompts, verbage, gridColumns, false, PROMPT_WIDTH);
         //verbageLabel = SystemWidgetHelpers.createLabel(composite_prompts, verbage, gridColumns);
 
         // SPACER LINE

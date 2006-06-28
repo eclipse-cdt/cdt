@@ -163,7 +163,7 @@ public class SystemDeleteDialog extends SystemPromptDialog
         	}
         }
 		else {
-			prompt = (Label)SystemWidgetHelpers.createVerbage(composite, promptLabel, nbrColumns, false, 200);
+			prompt = (Label)SystemWidgetHelpers.createVerbiage(composite, promptLabel, nbrColumns, false, 200);
 		}
 
         // WARNING

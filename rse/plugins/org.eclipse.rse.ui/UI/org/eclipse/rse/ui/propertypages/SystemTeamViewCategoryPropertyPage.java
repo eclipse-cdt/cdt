@@ -71,7 +71,7 @@ public class SystemTeamViewCategoryPropertyPage extends SystemBasePropertyPage
 		//key = ISystemConstants.RESID_PROPERTY_DESCRIPTION_ROOT;
 		//Label l = SystemWidgetHelpers.createLabel(composite_prompts, rb, key, nbrColumns, false);
 		//l.setText(l.getText() + ":");
-		labelDescription = (Label)SystemWidgetHelpers.createVerbage(composite_prompts, "", nbrColumns, false, 200);
+		labelDescription = (Label)SystemWidgetHelpers.createVerbiage(composite_prompts, "", nbrColumns, false, 200);
 
 	    if (!initDone)	
 	      doInitializeFields();		  

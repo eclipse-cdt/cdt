@@ -232,9 +232,9 @@ public class SystemRenameDialog extends SystemPromptDialog
 		Composite composite = SystemWidgetHelpers.createComposite(parent, nbrColumns);			
 		
 		if (verbage != null)
-			SystemWidgetHelpers.createVerbage(composite, verbage, nbrColumns, false, 200);
+			SystemWidgetHelpers.createVerbiage(composite, verbage, nbrColumns, false, 200);
 		else
-			SystemWidgetHelpers.createVerbage(composite, SystemResources.RESID_RENAME_VERBAGE, nbrColumns, false, 200);
+			SystemWidgetHelpers.createVerbiage(composite, SystemResources.RESID_RENAME_VERBAGE, nbrColumns, false, 200);
 
         table = createTable(composite);        
         tableViewer = new TableViewer(table);

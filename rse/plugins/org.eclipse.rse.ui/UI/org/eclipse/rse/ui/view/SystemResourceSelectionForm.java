@@ -146,7 +146,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 
 
         // MESSAGE/VERBAGE TEXT AT TOP
-        verbageLabel = (Label) SystemWidgetHelpers.createVerbage(composite_prompts, _verbage, gridColumns, false, PROMPT_WIDTH);
+        verbageLabel = (Label) SystemWidgetHelpers.createVerbiage(composite_prompts, _verbage, gridColumns, false, PROMPT_WIDTH);
   
     	
 		boolean allowMultipleConnnections = _inputProvider.allowMultipleConnections();

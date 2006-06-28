@@ -94,7 +94,7 @@ public class SystemNewProfileWizardMainPage
 		// Verbage
 		addGrowableFillerLine(composite_prompts, nbrColumns);
 		addSeparatorLine(composite_prompts, nbrColumns);
-		SystemWidgetHelpers.createVerbage(composite_prompts, SystemResources.RESID_NEWPROFILE_VERBAGE, nbrColumns, false, 200);
+		SystemWidgetHelpers.createVerbiage(composite_prompts, SystemResources.RESID_NEWPROFILE_VERBAGE, nbrColumns, false, 200);
 
 		textName.addModifyListener(
 			new ModifyListener() {

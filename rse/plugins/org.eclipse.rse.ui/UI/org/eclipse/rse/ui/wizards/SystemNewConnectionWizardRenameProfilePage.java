@@ -16,6 +16,8 @@
 
 package org.eclipse.rse.ui.wizards;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemProfileForm;
@@ -82,16 +84,8 @@ public class SystemNewConnectionWizardRenameProfilePage
 	{
 		Control c = form.createContents(parent);
 		form.getInitialFocusControl().setFocus();
-		
-  		String initProfileName = RSEUIPlugin.getLocalMachineName();
-  		int dotIndex = initProfileName.indexOf('.');
-  		
-  		if (dotIndex != -1) {
-  			initProfileName = initProfileName.substring(0, dotIndex);
-  		}
-  		
+  		String initProfileName = SystemProfileManager.getDefaultPrivateSystemProfileName();
 		form.setProfileName(initProfileName);
-		
 		return c;
 	}	
 	/**

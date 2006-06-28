@@ -27,6 +27,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
@@ -579,7 +580,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 					UserValidationDialog uvd = new UserValidationDialog(null, null,
 							fUser, message);
 					uvd.setUsernameMutable(false);
-					if (uvd.open() == uvd.OK) {
+					if (uvd.open() == Window.OK) {
 						retval[0] = uvd.getPassword();
 					} else {
 						retval[0] = null;

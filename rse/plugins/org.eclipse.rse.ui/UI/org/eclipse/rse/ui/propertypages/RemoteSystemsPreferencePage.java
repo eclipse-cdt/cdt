@@ -26,6 +26,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeEvent;
+import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.model.ISystemPreferenceChangeEvents;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.Mnemonics;
@@ -590,7 +591,7 @@ public class RemoteSystemsPreferencePage
 		store.setDefault(ISystemPreferencesConstants.SHOWFILTERPOOLS,          ISystemPreferencesConstants.DEFAULT_SHOWFILTERPOOLS);
 		
 		String defaultProfileNames = ISystemPreferencesConstants.DEFAULT_ACTIVEUSERPROFILES;
-		String userProfileName = RSEUIPlugin.getLocalMachineName();
+		String userProfileName = SystemProfileManager.getDefaultPrivateSystemProfileName();
 		defaultProfileNames += ";" + userProfileName;
 		
 		

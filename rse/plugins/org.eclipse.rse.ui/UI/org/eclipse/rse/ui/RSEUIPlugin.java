@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.ISystemViewSupplier;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPropertyPageExtension;
 import org.eclipse.rse.core.SystemResourceManager;
@@ -41,6 +42,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.internal.model.SystemRegistry;
 import org.eclipse.rse.internal.persistence.RSEPersistenceManager;
+import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemProfileManager;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
@@ -89,8 +91,6 @@ public class RSEUIPlugin extends SystemBasePlugin
 	private ISubSystemConfigurationProxy[]    subsystemFactories = null;
  
 
-    private static String machineName = null;		
-    private static String machineIP = null;
     private Vector viewSuppliers = new Vector();
     private SystemViewAdapterFactory svaf; // for fastpath access
     private SystemTeamViewResourceAdapterFactory svraf; // for fastpath
@@ -559,12 +559,13 @@ public class RSEUIPlugin extends SystemBasePlugin
 		registerKeystoreProviders();
 
 		 // if first time creating the remote systems project, add some default connections...
-	    if (SystemResourceManager.isFirstTime() 
-	    		&& !dontShowLocalConnection) // new support to allow products to not pre-create a local connection
-	    {	    
+//	    if (SystemResourceManager.isFirstTime() 
+//	    		&& !dontShowLocalConnection) // new support to allow products to not pre-create a local connection
+//	    {	    
 	      //try
 	      //{
-				registry.createLocalHost(null, SystemResources.TERM_LOCAL, getLocalMachineName()); // profile, name, userId
+	    	
+//				registry.createLocalHost(null, SystemResources.TERM_LOCAL, SystemProfileManager.getSystemProfileManager().getDefaultPrivateSystemProfileName()); // profile, name, userId 
 				/* replaced with re-usable method by Phil, in v5.1.2	      		
 	      	SystemConnection localConn = registry.createConnection(
 	      	    //SystemResourceConstants.RESOURCE_TEAMPROFILE_NAME, IRSESystemType.SYSTEMTYPE_LOCAL,
@@ -582,6 +583,13 @@ public class RSEUIPlugin extends SystemBasePlugin
 	      //{
 	      	//logError("Error creating default Local connection", exc);
 	      //}
+//	    }
+		 // new support to allow products to not pre-create a local connection
+		if (SystemResourceManager.isFirstTime() && !dontShowLocalConnection) {	
+			ISystemProfileManager profileManager = SystemProfileManager.getSystemProfileManager();
+			ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
+			String userName = System.getProperty("user.name");
+			registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
 	    }
     }
 
@@ -1428,45 +1436,6 @@ public class RSEUIPlugin extends SystemBasePlugin
 		}
 		return msg;
 	}
-
-    /**
-     * Return the local user's machine name
-     */
-    public static String getLocalMachineName()
-    {
-    	if (machineName == null)
-    	{
-  	      try
-	      { 
-	         //InetAddress ip = InetAddress.getByName("localhost");
-	         machineName = InetAddress.getLocalHost().getHostName();
-	      }catch(Exception exc)
-	      {
-	      	machineName = ""; // ? what else ? no point in trying again.
-	     	logWarning("Exception getting local hostname: " + exc.getClass().getName() + ": " + exc.getMessage());
-	      }
-    	}
-    	return machineName;
-    }
-    /**
-     * Return the local user's IP address
-     */
-    public static String getLocalMachineIPAddress()
-    {
-    	if (machineIP == null)
-    	{
-  	      try
-	      {
-	         //InetAddress ip = InetAddress.getByName("localhost");
-	         machineIP = InetAddress.getLocalHost().getHostAddress();
-	      }catch(Exception exc)
-	      {
-	      	machineIP = ""; // ? what else ? no point in trying again.
-	     	logWarning("Exception getting local hostname: " + exc.getClass().getName() + ": " + exc.getMessage());
-	      }
-    	}
-    	return machineIP;
-    }
 
     /**
      * Register a view supplier so we can ask them to participate in team synchs

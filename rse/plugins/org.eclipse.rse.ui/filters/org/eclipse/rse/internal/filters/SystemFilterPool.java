@@ -608,10 +608,6 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	 */
 	public boolean isDefault()
 	{
-		if (!default_)
-		{
-			default_ = (getType().equals(DEFAULT_TYPE));
-		}
 		return default_;
 	}
 

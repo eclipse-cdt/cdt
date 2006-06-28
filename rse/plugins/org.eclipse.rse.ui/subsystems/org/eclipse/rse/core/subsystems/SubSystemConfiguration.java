@@ -1891,7 +1891,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 							getFilterPoolManagerName(profile), // the filter pool manager name
 							supportsNestedFilters(), // whether or not nested filters are allowed
 							ISystemFilterSavePolicies.SAVE_POLICY_ONE_FILE_PER_FILTER, filterNamingPolicy);
-				mgr.setSingleFilterStringOnly(!supportsMultipleFilterStrings());
+				mgr.setSingleFilterStringOnly(!supportsMultipleFilterStrings()); // DWD was restored flag?
 			}
 			catch (Exception exc)
 			{

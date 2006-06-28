@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.SystemResourceManager;
@@ -30,23 +31,16 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorProfileName;
 
-//
-//
-
 /**
  * A class that manages a list of SystemProfile objects.
- * We use this as a singleton.
+ * This should be used as a singleton.
  */
-/**
- * @lastgen class SystemProfileManagerImpl Impl implements SystemProfileManager, EObject {}
- */
-
 public class SystemProfileManager implements ISystemProfileManager
 {
 	private List               _profiles = null;
 	private String[]            profileNames = null;
 	private Vector              profileNamesVector = null;
-	private static              ISystemProfileManager defaultInst = null;
+	private static              ISystemProfileManager singleton = null;
 	private static final String PROFILE_FILE_NAME = "profile";
 	
 /**
@@ -61,15 +55,29 @@ public class SystemProfileManager implements ISystemProfileManager
 	 */
 	public static ISystemProfileManager getSystemProfileManager()
 	{
-		if (defaultInst == null)
+		if (singleton == null)
 		{
-
-			defaultInst = new SystemProfileManager();
-			
-			// restores all of RSE
-			RSEUIPlugin.getThePersistenceManager().restore(defaultInst);
+			singleton = new SystemProfileManager();
+			RSEUIPlugin.getThePersistenceManager().restore(singleton); // restores all of RSE
 		}
-		return defaultInst;
+		return singleton;
+	}
+	
+	/**
+	 * @return the name of the default private system profile.
+	 */
+	public static String getDefaultPrivateSystemProfileName() {
+		String name = RSECorePlugin.getLocalMachineName();
+		if (name != null) {
+			int i = name.indexOf('.');
+			if (i > 0) {
+				name = name.substring(0, i);
+			}
+		}
+		if (name == null) {
+			name = System.getProperty("user.name");
+		}
+		return name;
 	}
 	
 	/**
@@ -77,7 +85,7 @@ public class SystemProfileManager implements ISystemProfileManager
 	 */
 	public static void clearDefault()
 	{
-		defaultInst = null;
+		singleton = null;
 	}
 	
 	/**
@@ -96,8 +104,7 @@ public class SystemProfileManager implements ISystemProfileManager
 		ISystemProfile existingProfile = getSystemProfile(name);
 		if (existingProfile != null)
 		{
-			// replace the existing one with a new profile
-			deleteSystemProfile(existingProfile);
+			deleteSystemProfile(existingProfile); // replace the existing one with a new profile
 		}
 		
 		ISystemProfile newProfile = internalCreateSystemProfileAndFolder(name);
@@ -132,7 +139,7 @@ public class SystemProfileManager implements ISystemProfileManager
         
         	// FIXME initMOF().createSystemProfile();                
         initialize(profile, name);
-		profile.setDefaultPrivate(name.equalsIgnoreCase("Private"));
+		profile.setDefaultPrivate(name.equalsIgnoreCase(getDefaultPrivateSystemProfileName()));
 		//System.out.println("initializing new profile " + name + ", is default private? " + profile.isDefaultPrivate());
         return profile;
 	}
@@ -143,7 +150,7 @@ public class SystemProfileManager implements ISystemProfileManager
 	private ISystemProfile internalCreateSystemProfileAndFolder(String name)
 	{
         ISystemProfile profile = internalCreateSystemProfile(name);        
-        SystemResourceManager.getProfileFolder(profile); // creates proj/profileName folder
+//        SystemResourceManager.getProfileFolder(profile); // creates proj/profileName folder DWD This is where those pesky folders get created
          return profile;
 	}
 	
@@ -183,14 +190,7 @@ public class SystemProfileManager implements ISystemProfileManager
 		  for (int idx=0; (!defaultProfileExist) && (idx<profiles.size()); idx++)
 		  {
 		  	ISystemProfile profile = (ISystemProfile)profiles.get(idx);
-      		String initProfileName = RSEUIPlugin.getLocalMachineName();
-      		int dotIndex = initProfileName.indexOf('.');
-      		
-      		if (dotIndex != -1)
-      		{
-      			initProfileName = initProfileName.substring(0, dotIndex);
-      		}
-      		
+      		String initProfileName = getDefaultPrivateSystemProfileName();
 		  	if (profile.getName().equalsIgnoreCase(initProfileName))
 		  	{
 		  	   profile.setDefaultPrivate(true);
@@ -395,15 +395,17 @@ public class SystemProfileManager implements ISystemProfileManager
 		boolean found_team = false;
 		boolean found_private = false;
 		boolean changed = false;
+		String defaultProfileName = getDefaultPrivateSystemProfileName();
 
 		for (int activeIdx = 0; activeIdx < activeProfileNames.length; activeIdx++)
 		{
 			// skip Team and Private profiles
-			if (RSEUIPlugin.getLocalMachineName().equals(activeProfileNames[activeIdx]))
+			String activeProfileName = activeProfileNames[activeIdx]; 
+			if (activeProfileName.equals(defaultProfileName))
 			{
 				found_private = true;
 			}
-			else if (ISystemPreferencesConstants.DEFAULT_TEAMPROFILE.equals(activeProfileNames[activeIdx]))
+			else if (activeProfileName.equals(ISystemPreferencesConstants.DEFAULT_TEAMPROFILE))
 			{
 				found_team = true;
 			}
@@ -446,7 +448,7 @@ public class SystemProfileManager implements ISystemProfileManager
 		        if (systemProfiles[systemIdx].isActive() || systemProfiles[systemIdx].isDefaultPrivate())
 		        {
 		            SystemPreferencesManager.getPreferencesManager().addActiveProfile(name);
-		            SystemPreferencesManager.getPreferencesManager().deleteActiveProfile(RSEUIPlugin.getLocalMachineName());
+		            SystemPreferencesManager.getPreferencesManager().deleteActiveProfile(RSECorePlugin.getLocalMachineName());
 		            activeProfileNames = SystemPreferencesManager.getPreferencesManager().getActiveProfileNames();		            
 		        }
 		    }
@@ -469,7 +471,7 @@ public class SystemProfileManager implements ISystemProfileManager
 				
 				if (!found_private)
 				{
-					SystemPreferencesManager.getPreferencesManager().addActiveProfile(RSEUIPlugin.getLocalMachineName());
+					SystemPreferencesManager.getPreferencesManager().addActiveProfile(RSECorePlugin.getLocalMachineName());
 					changed = true;
 				}				
 	      	}
@@ -517,13 +519,14 @@ public class SystemProfileManager implements ISystemProfileManager
 		}
 		return pos;
 	}
+
 	/**
 	 * Return the default private profile created at first touch.
 	 * Will return null if it has been renamed!
 	 */
 	public ISystemProfile getDefaultPrivateSystemProfile()
 	{
-		return getSystemProfile(RSEUIPlugin.getLocalMachineName());
+		return getSystemProfile(getDefaultPrivateSystemProfileName());
 	}
 	/**
 	 * Return the default team profile created at first touch.
@@ -630,13 +633,7 @@ public class SystemProfileManager implements ISystemProfileManager
 		if (_profiles == null)
 		{
 			ISystemProfile profile = new SystemProfile();
-			String initProfileName = RSEUIPlugin.getLocalMachineName();
-      		int dotIndex = initProfileName.indexOf('.');
-      		
-      		if (dotIndex != -1)
-      		{
-      			initProfileName = initProfileName.substring(0, dotIndex);
-      		}
+			String initProfileName = getDefaultPrivateSystemProfileName();
 			profile.setName(initProfileName);
 			profile.setDefaultPrivate(true);
 			_profiles = new ArrayList();

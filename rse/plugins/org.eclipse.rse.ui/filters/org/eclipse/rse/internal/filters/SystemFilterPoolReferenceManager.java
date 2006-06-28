@@ -49,19 +49,19 @@ import org.eclipse.rse.references.ISystemPersistableReferencedObject;
 public class SystemFilterPoolReferenceManager extends SystemPersistableReferenceManager implements ISystemFilterPoolReferenceManager
 {
 	//private SystemFilterPoolManager[]                poolMgrs = null;
-    private ISystemFilterPoolManagerProvider	         poolMgrProvider = null;
-	private ISystemFilterPoolManager                  defaultPoolMgr = null;
+    private ISystemFilterPoolManagerProvider poolMgrProvider = null;
+	private ISystemFilterPoolManager defaultPoolMgr = null;
 	private ISystemFilterPoolReferenceManagerProvider caller = null;
-	private ISystemFilterNamingPolicy                 namingPolicy = null;	
-	private int                                      savePolicy = ISystemFilterSavePolicies.SAVE_POLICY_NONE;	
-	private Object                                   mgrData = null;
-	private IFolder                                  mgrFolder = null;
-	private boolean                                  initialized = false;
-    private boolean                                  noSave;
-    private boolean                                  noEvents;
-    private boolean                                  fireEvents = true;
-    private ISystemFilterPoolReference[]              fpRefsArray = null;
-    private static final ISystemFilterPoolReference[] emptyFilterPoolRefArray = new ISystemFilterPoolReference[0];
+	private ISystemFilterNamingPolicy namingPolicy = null;
+	private int savePolicy = ISystemFilterSavePolicies.SAVE_POLICY_NONE;
+	private Object mgrData = null;
+	private IFolder mgrFolder = null;
+	private boolean initialized = false;
+	private boolean noSave;
+	private boolean noEvents;
+	private boolean fireEvents = true;
+	private ISystemFilterPoolReference[] fpRefsArray = null;
+	private static final ISystemFilterPoolReference[] emptyFilterPoolRefArray = new ISystemFilterPoolReference[0];
 
 /**
 	 * Default constructor. Typically called by MOF factory methods.
@@ -422,17 +422,28 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
     }
 
     /**
-     * Create a filter pool referencing object, but do NOT add it to the list, do NOT call back.
-     */
-    public ISystemFilterPoolReference createSystemFilterPoolReference(ISystemFilterPool filterPool)
-    {
-        ISystemFilterPoolReference filterPoolReference = new SystemFilterPoolReference();
-        	// FIXME SystemFilterImpl.initMOF().createSystemFilterPoolReference();
-        invalidateFilterPoolReferencesCache();
-        filterPoolReference.setReferencedObject((ISystemPersistableReferencedObject)filterPool);		
+	 * Create a filter pool reference. This creates a raw reference that must be added to the managed
+	 * lists by the caller.
+	 */
+	private ISystemFilterPoolReference createSystemFilterPoolReference(ISystemFilterPool filterPool) {
+		ISystemFilterPoolReference filterPoolReference = new SystemFilterPoolReference(filterPool);
+		invalidateFilterPoolReferencesCache();
 		return filterPoolReference;
-    }	
-	/**
+	}	
+
+    /**
+	 * Create a filter pool reference. This creates an unresolved raw reference that
+	 * must be added to the managed lists by the caller.
+	 * That will be attempted to be resolved on first use.
+	 */
+	// DWD working
+	private ISystemFilterPoolReference createSystemFilterPoolReference(ISystemFilterPoolManager filterPoolManager, String filterPoolName) {
+		ISystemFilterPoolReference filterPoolReference = new SystemFilterPoolReference(filterPoolManager, filterPoolName);
+		invalidateFilterPoolReferencesCache();
+		return filterPoolReference;
+	}	
+
+    /**
 	 * Add a filter pool referencing object to the list. 
 	 * @return the new count of referencing objects
 	 */
@@ -444,6 +455,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 		quietSave();
 		return count;
 	}
+
 	/**
 	 * Reset the filter pool a reference points to. Called on a move-filter-pool operation
 	 */
@@ -575,22 +587,32 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 		return (ISystemFilterPoolReference)super.getReferencedObject(filterPool);
 	}
 
-	/**
-	 * Given a filter pool, create a referencing object and add it to the list.
-	 * Also add that reference to the filterPool itself, and calls back to provider when done.
-	 * @param filterPool what to reference
-	 * @return the new reference object
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.filters.ISystemFilterPoolReferenceManager#addReferenceToSystemFilterPool(org.eclipse.rse.filters.ISystemFilterPool)
 	 */
-	public ISystemFilterPoolReference addReferenceToSystemFilterPool(ISystemFilterPool filterPool)
-	{
+	public ISystemFilterPoolReference addReferenceToSystemFilterPool(ISystemFilterPool filterPool) {
 		ISystemFilterPoolReference filterPoolReference = createSystemFilterPoolReference(filterPool);
-		addReferencingObject(filterPoolReference); // DWD - should be done in addReferencingObject
+		addReferencingObject(filterPoolReference); // DWD - should be done in addReferencingObject?
 		filterPoolReference.setParentReferenceManager(this);
-        invalidateFilterPoolReferencesCache();
+		invalidateFilterPoolReferencesCache();
 		quietSave();
 		// callback to provider so they can fire events in their GUI
-		if (fireEvents && (caller != null))
-		  caller.filterEventFilterPoolReferenceCreated(filterPoolReference);
+		if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferenceCreated(filterPoolReference);
+		return filterPoolReference;
+	}
+
+	// DWD Working
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.filters.ISystemFilterPoolReferenceManager#addReferenceToSystemFilterPool(org.eclipse.rse.filters.ISystemFilterPoolManager, java.lang.String)
+	 */
+	public ISystemFilterPoolReference addReferenceToSystemFilterPool(ISystemFilterPoolManager filterPoolManager, String filterPoolName) {
+		ISystemFilterPoolReference filterPoolReference = createSystemFilterPoolReference(filterPoolManager, filterPoolName);
+		addReferencingObject(filterPoolReference); // DWD - should be done in addReferencingObject?
+		filterPoolReference.setParentReferenceManager(this);
+		invalidateFilterPoolReferencesCache();
+		quietSave();
+		// callback to provider so they can fire events in their GUI
+		if (fireEvents && (caller != null)) caller.filterEventFilterPoolReferenceCreated(filterPoolReference);
 		return filterPoolReference;
 	}
 

@@ -37,7 +37,7 @@ import org.eclipse.rse.ui.SystemResources;
  */
 public abstract class SystemReferencingObject extends RSEModelObject implements ISystemReferencingObject 
 {
-    protected SystemReferencingObjectHelper helper = null;
+    private SystemReferencingObjectHelper helper = null;
     protected boolean referenceBroken = false;
 		
 	/**
@@ -90,5 +90,9 @@ public abstract class SystemReferencingObject extends RSEModelObject implements 
 	public String getDescription()
 	{
 		return SystemResources.RESID_MODELOBJECTS_REFERENCINGOBJECT_DESCRIPTION;
+	}
+	
+	protected final SystemReferencingObjectHelper getHelper() {
+		return helper;
 	}
 }

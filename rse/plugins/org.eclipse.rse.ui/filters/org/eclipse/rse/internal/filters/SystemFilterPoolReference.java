@@ -23,6 +23,7 @@ import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterContainer;
 import org.eclipse.rse.filters.ISystemFilterContainerReference;
 import org.eclipse.rse.filters.ISystemFilterPool;
+import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
@@ -31,22 +32,42 @@ import org.eclipse.rse.internal.references.SystemPersistableReferencingObject;
 import org.eclipse.rse.references.ISystemPersistableReferencedObject;
 
 /**
- * A shadow object of a master filter pool
- */
-/** 
- * @lastgen class SystemFilterPoolReferenceImpl extends SystemPersistableReferencingObjectImpl implements SystemFilterPoolReference, SystemFilterContainerReference, IAdaptable {}
+ * A reference to a filter pool. A reference may be "resolved" or "unresolved".
  */
 public class SystemFilterPoolReference extends SystemPersistableReferencingObject implements ISystemFilterPoolReference, ISystemFilterContainerReference, IAdaptable {
+	
 	private SystemFilterContainerReferenceCommonMethods containerHelper = null;
+	private ISystemFilterPoolManager filterPoolManager = null;
 	protected static final String DELIMITER = "___";
 	protected static final int DELIMITER_LENGTH = 3;
 
 	/**
-	 * Default constructor. Typically called by MOF factory method.
+	 * Default constructor.
 	 */
-	protected SystemFilterPoolReference() {
+	private SystemFilterPoolReference() {
 		super();
 		containerHelper = new SystemFilterContainerReferenceCommonMethods(this);
+	}
+	
+	/**
+	 * Constructs a new resolved filter pool reference.
+	 * @param filterPool The filter pool that this filter will refer to.
+	 */
+	public SystemFilterPoolReference(ISystemFilterPool filterPool) {
+		this();
+		setReferenceToFilterPool(filterPool);
+	}
+	
+	/**
+	 * Constructs a new filter pool reference. This is an unresolved reference.
+	 * It is resolved on first use by using the supplied filterPoolManager.
+	 * @param filterPoolManager the manager used to resolve the reference.
+	 * @param filterPoolName the name of the filter pool.
+	 */
+	public SystemFilterPoolReference(ISystemFilterPoolManager filterPoolManager, String filterPoolName) {
+		this();
+		this.filterPoolManager = filterPoolManager;
+		setReferencedObjectName(filterPoolName);
 	}
 
 	/**
@@ -82,7 +103,7 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	/**
 	 * Return name of the filter pool we reference
 	 * The name is stored qualified by the manager name,
-	 *  so we first have to strip that off.
+	 * so we first have to strip that off.
 	 */
 	public String getReferencedFilterPoolName() {
 		String savedName = super.getReferencedObjectName();
@@ -134,7 +155,9 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	public ISystemFilterPool getReferencedFilterPool() {
 		ISystemFilterPool filterPool = (ISystemFilterPool) getReferencedObject();
 		if (filterPool == null) {
-
+			String filterPoolName = getReferencedFilterPoolName();
+			filterPool = filterPoolManager.getSystemFilterPool(filterPoolName);
+			setReferenceToFilterPool(filterPool);
 		}
 		return filterPool;
 	}

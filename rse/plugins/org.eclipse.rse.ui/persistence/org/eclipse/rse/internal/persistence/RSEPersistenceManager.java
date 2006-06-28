@@ -319,7 +319,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
     
     	ISystemFilterPoolManager mgr = SystemFilterPoolManager.createManager(profile);
     	 ((SystemFilterPoolManager)mgr).initialize(logger,caller,name); // core data
-    	 
+    	 mgr.setWasRestored(false); // DWD let's try this
         return mgr;	
     }
     

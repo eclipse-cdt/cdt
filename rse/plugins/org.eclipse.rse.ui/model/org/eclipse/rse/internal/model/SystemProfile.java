@@ -29,61 +29,26 @@ import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
-
-//import java.lang.ClassCastException;
-
 /**
- * A profile represents a user or name which is used to key filter pools and
- * connections by.
+ * A profile contains hosts and filter pools. It is the unit of save/restore for RSE model 
+ * objects. All model objects are contained within a profile.
  */
-
-
 public class SystemProfile extends RSEModelObject implements ISystemProfile, IAdaptable
 {
-	/**
-	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String NAME_EDEFAULT = null;
-
-	
 
 	private ISystemProfileManager mgr;
 	private boolean active;
-
-	
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected String name = NAME_EDEFAULT;
-	/**
-	 * The default value of the '{@link #isDefaultPrivate() <em>Default Private</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isDefaultPrivate()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean DEFAULT_PRIVATE_EDEFAULT = false;
+	private String name = null;
+	private boolean defaultPrivate = false;
 
 	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected boolean defaultPrivate = DEFAULT_PRIVATE_EDEFAULT;
-    /**
 	 * Default constructor
 	 */
 	protected SystemProfile() 
 	{
 		super();
 	}
+
 	/**
      * Set the in-memory pointer back to the parent system profile manager
      */
@@ -91,6 +56,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
     {
     	this.mgr = mgr;
     }
+
     /**
      * Get the in-memory pointer back to the parent system profile manager
      */
@@ -115,6 +81,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	{
 		return RSEUIPlugin.getTheSystemRegistry().getHostsByProfile(this);
 	}
+
 	/**
 	 * Return all filter pools for this profile
 	 */
@@ -129,7 +96,6 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 			for (int ydx=0; ydx<pools.length; ydx++)
 			{
 				poolsVector.add(pools[ydx]);
-				//System.out.println("Filter pool: "+pools[ydx].getName()+", profile = "+pools[ydx].getProvider().get)
 			}
 		}
 		ISystemFilterPool[] allPools = new ISystemFilterPool[poolsVector.size()];
@@ -137,6 +103,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 			allPools[idx] = (ISystemFilterPool)poolsVector.elementAt(idx);
 		return allPools;
 	}
+
 	/**
 	 * Return all filter pools for this profile, scoped by a given subsystem factory
 	 */
@@ -145,17 +112,18 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 		ISystemFilterPoolManager poolMgr = ssf.getFilterPoolManager(this);
 		return poolMgr.getSystemFilterPools();
 	}
+
 	/**
-	 * Return true if this profile is currently active for this user
+	 * Return true if this profile is currently active.
 	 */
 	public boolean isActive()
 	{
 		return active;
 	}
 	/**
-	 * Reset whether this proifle is currently active for this user.
+	 * Reset whether this profile is currently active.
 	 */
-	protected void setActive(boolean active)
+	public void setActive(boolean active)
 	{
 		this.active = active;
 	}
@@ -171,14 +139,20 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
     }   
 
 
-	public String toString()
-    {
-    	String name = getName();
-    	if (name != null)
-    	  return name;
-    	else
-    	  return this.toStringGen();
-    }
+	public String toString() {
+		String result = getName();
+		if (result == null) {
+			StringBuffer buf = new StringBuffer(super.toString());
+			buf.append("Profile(name: ");
+			buf.append(name);
+			buf.append(", defaultPrivate: ");
+			buf.append(defaultPrivate);
+			buf.append(')');
+			result = buf.toString();
+		}
+		return result;
+	}
+
 	/**
 	 * @generated This field/method will be replaced during code generation 
 	 */
@@ -198,22 +172,6 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	public void setName(String newName)
 	{
 		name = newName;
-	}
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	public String toStringGen()
-	{
-		
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (name: ");
-		result.append(name);
-		result.append(", defaultPrivate: ");
-		result.append(defaultPrivate);
-		result.append(')');
-		return result.toString();
 	}
 
 	/**

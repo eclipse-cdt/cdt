@@ -22,9 +22,8 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.dstore.core.client.ClientConnection;
 import org.eclipse.dstore.core.client.ClientSSLProperties;
 import org.eclipse.dstore.core.client.ConnectionStatus;
@@ -36,13 +35,13 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.dstore.core.model.ISSLProperties;
-import org.eclipse.dstore.core.server.ServerLauncher;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.connectorservice.dstore.util.ConnectionStatusListener;
 import org.eclipse.rse.connectorservice.dstore.util.StatusMonitor;
 import org.eclipse.rse.connectorservice.dstore.util.StatusMonitorFactory;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
@@ -69,6 +68,7 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 /**
  * System class required by the remote systems framework.
  * This represents the live connection at tool runtime.
@@ -271,7 +271,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	    // fall back to getting local machine ip address
 	    // this may be incorrect for the server in certain cases
 	    // like over VPN
-	    return RSEUIPlugin.getLocalMachineIPAddress();
+	    return RSECorePlugin.getLocalMachineIPAddress();
 	}
 	
 	/**
@@ -355,12 +355,12 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	
 		try
 		{
-			String path = Platform.resolve(pluginsURL).getPath();
+			String path = FileLocator.resolve(pluginsURL).getPath();
 			File systemsPluginDir = new File(path);
 			path = systemsPluginDir.getParentFile().getAbsolutePath();
 			String version = (String)(bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
-			String versionString = (new PluginVersionIdentifier(version)).toString();
-			
+			Version v = new Version(version);
+			String versionString = v.toString();
 			String dstorePath = getDStorePath(path, versionString);
 			System.setProperty("A_PLUGIN_PATH", dstorePath);
 		}
@@ -759,7 +759,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			{
 				//dataStore.showTicket(launchStatus.getTicket()); // send security token to server, this must be done first
 				DataElement ticket = dataStore.createTicket(launchStatus.getTicket());
-				DataElement ticketStatus = dataStore.queryShowTicket(ticket);
+				dataStore.queryShowTicket(ticket);
 				//statusMonitor.waitForUpdate(ticketStatus);					
 			}
 			else
@@ -834,7 +834,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		    {
 		    	if (launchStatus.isSLLProblem())
 				{
-					Throwable exception = launchStatus.getException();
+					launchStatus.getException();
 					
 					List certs = launchStatus.getUntrustedCertificates();
 					if (certs.size() > 0)

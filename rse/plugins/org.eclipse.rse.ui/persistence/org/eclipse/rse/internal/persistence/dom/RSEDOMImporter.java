@@ -244,7 +244,7 @@ public class RSEDOMImporter implements IRSEDOMImporter
 		String type = subSystemNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
 		boolean isHidden = getBooleanValue(subSystemNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_HIDDEN).getValue());
 		ISubSystem subSystem = null;
-		ISubSystemConfiguration factory = getFactoryFor(type);
+		ISubSystemConfiguration factory = getSubsystemConfiguration(type);
 		if (factory != null)		
 		{
 			if (factory instanceof IServiceSubSystemConfiguration)
@@ -271,12 +271,13 @@ public class RSEDOMImporter implements IRSEDOMImporter
 			if (subSystem == null) 
 			{
 				subSystem = factory.createSubSystemInternal(host);			
-			}
+			} 
 			subSystem.setHidden(isHidden);
 			subSystem.setHost(host);
 			subSystem.setSubSystemConfiguration(factory);
+			subSystem.setName(factory.getName());
+			subSystem.setConfigurationId(factory.getId());
 			subSystem.setWasRestored(true);
-			
 			
 			if (factory.supportsFilters())
 			{
@@ -394,7 +395,7 @@ public class RSEDOMImporter implements IRSEDOMImporter
 		// create the filter pool and set it's attributes
 		try
 		{
-			ISubSystemConfiguration factory = getFactoryFor(id);
+			ISubSystemConfiguration factory = getSubsystemConfiguration(id);
 			if (factory != null)
 			{
 				ISystemFilterPoolManager mgr = factory.getFilterPoolManager(profile);
@@ -462,31 +463,29 @@ public class RSEDOMImporter implements IRSEDOMImporter
 	/**
 	 * Restore the filter pool reference that is represented by the node
 	 */
-	public ISystemFilterPoolReference restoreFilterPoolReference(ISubSystem subSystem, RSEDOMNode node)
-	{
+	public ISystemFilterPoolReference restoreFilterPoolReference(ISubSystem subsystem, RSEDOMNode node) {
 		ISystemFilterPoolReference filterPoolReference = null;
-		String refID = node.getAttribute(IRSEDOMConstants.ATTRIBUTE_REF_ID).getValue();
-		String name = node.getName();
-
-		// find referenced filter pool
-		ISubSystemConfiguration factory = getFactoryFor(refID);
-		if (factory != null)
-		{
-			ISystemFilterPoolManager filterPoolManager = factory.getFilterPoolManager(subSystem.getSystemProfile());
-			ISystemFilterPool filterPool = filterPoolManager.getSystemFilterPool(name);
+		String subsystemName = node.getAttribute(IRSEDOMConstants.ATTRIBUTE_REF_ID).getValue();
+		String filterPoolName = node.getName();
+		ISubSystemConfiguration configuration = getSubsystemConfiguration(subsystemName);
+		if (configuration != null) {
+			ISystemProfile profile = subsystem.getSystemProfile(); // DWD are there cases where this may be null?
+			ISystemFilterPoolManager filterPoolManager = configuration.getFilterPoolManager(profile);
+			ISystemFilterPool filterPool = filterPoolManager.getSystemFilterPool(filterPoolName);
+			ISystemFilterPoolReferenceManager referenceManager = subsystem.getFilterPoolReferenceManager();
 			/*
 			 * DWD filterpool can be null when restoring since there can be forward references. 
 			 * A profile may be being restored that has references to a filter pool in a profile that doesn't yet exist. 
 			 * Need to create an "unresolved" reference instead of a null object and then patch them up 
 			 * at the end.
 			 */
-			if (filterPool != null) { // for the time being don't restore a reference if the pool isn't found.
-				// create reference to the filterpool
-				ISystemFilterPoolReferenceManager referenceManager = subSystem.getFilterPoolReferenceManager();
+			// create reference to the filterpool
+			if (filterPool != null) {
 				filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPool);
+			} else {
+				filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPoolManager, filterPoolName);
 			}
-
-		}		
+		}
 		return filterPoolReference;
 	}
 
@@ -532,8 +531,13 @@ public class RSEDOMImporter implements IRSEDOMImporter
 		return Integer.parseInt(integerString);
 	}
 	
-	private ISubSystemConfiguration getFactoryFor(String id)
+	/**
+	 * Returns the subsystem configuration for a given subsystem name
+	 * @param subsystemName the name to look up
+	 * @return the subsystem configuration matching the name
+	 */
+	private ISubSystemConfiguration getSubsystemConfiguration(String subsystemName)
 	{
-		return RSEUIPlugin.getTheSystemRegistry().getSubSystemConfiguration(id);
+		return RSEUIPlugin.getTheSystemRegistry().getSubSystemConfiguration(subsystemName);
 	}
 }

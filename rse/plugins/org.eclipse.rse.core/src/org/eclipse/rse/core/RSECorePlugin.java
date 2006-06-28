@@ -15,7 +15,12 @@
  ********************************************************************************/
 package org.eclipse.rse.core;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.core.internal.RSECoreRegistry;
 import org.osgi.framework.BundleContext;
 
@@ -27,6 +32,32 @@ public class RSECorePlugin extends Plugin {
 	// the shared instance
 	private static RSECorePlugin plugin;
 
+	/**
+	 * @return the local machine name
+	 */
+	public static String getLocalMachineName() {
+		String machineName = null;
+		try {
+			machineName = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			getDefault().log(e);
+		}
+		return machineName;
+	}
+
+	/**
+	 * @return the local IP address
+	 */
+	public static String getLocalMachineIPAddress() {
+		String machineAddress = null;
+		try {
+			machineAddress = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			getDefault().log(e);
+		}
+		return machineAddress;
+	}
+	
 	/**
 	 * The constructor.
 	 */
@@ -64,5 +95,11 @@ public class RSECorePlugin extends Plugin {
 	 */
 	public IRSECoreRegistry getRegistry() {
 		return RSECoreRegistry.getDefault();
+	}
+
+	private void log(Throwable t) {
+		String pluginId = this.getBundle().getSymbolicName();
+		IStatus status = new Status(IStatus.ERROR, pluginId, 0, "Unexpected Exception", t);
+		getLog().log(status);
 	}
 }

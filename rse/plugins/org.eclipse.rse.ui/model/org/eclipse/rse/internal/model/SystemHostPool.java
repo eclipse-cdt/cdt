@@ -208,7 +208,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
           addHost(conn); // only record internally if saved successfully
           conn.setHostPool(this);          
           conn.setAliasName(aliasName);
-          // DWD if default userID is null, and location is in the connection we should retrieve it and use it as the initial value.
+          // if default userID is null, and location is in the connection we should retrieve it and use it as the initial value.
           if (defaultUserId == null && defaultUserIdLocation == ISystemUserIdConstants.USERID_LOCATION_CONNECTION) {
               defaultUserId = conn.getDefaultUserId();
           }

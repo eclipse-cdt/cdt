@@ -71,7 +71,7 @@ public class FTPConnectorServiceManager extends AbstractConnectorServiceManager
      */
     public IConnectorService createConnectorService(IHost host)
     {
-    	return new FTPConnectorService(host, 22);
+    	return new FTPConnectorService(host, 21);
     }    
 
     /**

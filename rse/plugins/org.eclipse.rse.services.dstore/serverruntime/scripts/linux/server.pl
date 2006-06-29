@@ -17,11 +17,11 @@ $ENV{A_PLUGIN_PATH}="$plugins_dir/";
 $oldClasspath = $ENV{CLASSPATH};
 
 
-if ($packaged_as == "jar")
+if ($packaged_as eq "jar")
 {
     $ENV{"CLASSPATH"}="$plugins_dir:$plugins_dir/dstore_extra_server.jar:$plugins_dir/dstore_core.jar:$plugins_dir/dstore_miners.jar:$plugins_dir/clientserver.jar:$oldClasspath";
 }
-if ($packaged_as == "src")
+if ($packaged_as eq "src")
 {
     $ENV{"CLASSPATH"}="$plugins_dir:$oldClasspath";
 }

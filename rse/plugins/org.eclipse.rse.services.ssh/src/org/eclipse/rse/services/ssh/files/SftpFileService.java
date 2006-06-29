@@ -200,6 +200,13 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				//after reconnect this might be necessary.
 				Activator.trace("SftpFileService.internalFetch failed: "+e.toString()); //$NON-NLS-1$
 				e.printStackTrace();
+				//TODO bug 149155: since channelSftp is totally single-threaded, multiple
+				//parallel access to the channel may break it, typically resulting in
+				//SftpException here. I'm not sure how to safely avoid this yet.
+				//So here's a little workaround to get the system into a "usable" state again:
+				//disconnect our channel, it will be reconnected on the next operation.
+				//Session handling needs to be re-thought...
+				fChannelSftp.disconnect();
 			}
 		}
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
@@ -229,7 +236,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	
 	public boolean upload(IProgressMonitor monitor, File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding)
 	{
-		//TODO what to do with isBinary? 
+		//TODO what to do with isBinary?
+		ChannelSftp channel = null;
 		try {
 			SftpProgressMonitor sftpMonitor=new MyProgressMonitor(monitor);
 			int mode=ChannelSftp.OVERWRITE;
@@ -240,7 +248,10 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				}
 				dst += remoteFile;
 			}
-			getChannel("SftpFileService.upload "+remoteFile).put(localFile.getAbsolutePath(), dst, sftpMonitor, mode); //$NON-NLS-1$ 
+			getChannel("SftpFileService.upload "+remoteFile); //check the session is healthy 
+			channel=(ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
+		    channel.connect();
+			channel.put(localFile.getAbsolutePath(), dst, sftpMonitor, mode); //$NON-NLS-1$
 			Activator.trace("SftpFileService.upload "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-1$
 		}
 		catch (Exception e) {
@@ -249,6 +260,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			//throw new RemoteFileIOException(e);
 			Activator.trace("SftpFileService.upload "+remoteFile+" failed: "+e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
+		}
+		finally {
+			if (channel!=null) channel.disconnect();
 		}
 		return true;
 	}
@@ -282,7 +296,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		try
 		{
 			BufferedInputStream bis = new BufferedInputStream(stream);
-			File tempFile = File.createTempFile("ftp", "temp"); //$NON-NLS-1$ //$NON-NLS-2$
+			File tempFile = File.createTempFile("sftp", "temp"); //$NON-NLS-1$ //$NON-NLS-2$
 			FileOutputStream os = new FileOutputStream(tempFile);
 			BufferedOutputStream bos = new BufferedOutputStream(os);
 	
@@ -306,6 +320,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	
 	public boolean download(IProgressMonitor monitor, String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding) throws SystemMessageException
 	{
+		ChannelSftp channel = null;
 		try {
 			if (!localFile.exists()) {
 				File localParentFile = localFile.getParentFile();
@@ -318,7 +333,10 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			String remotePath = remoteParent+'/'+remoteFile;
 			int mode=ChannelSftp.OVERWRITE;
 			MyProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
-			getChannel("SftpFileService.download "+remoteFile).get(remotePath, localFile.getAbsolutePath(), sftpMonitor, mode); //$NON-NLS-1$
+			getChannel("SftpFileService.download "+remoteFile); //check the session is healthy
+			channel=(ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
+		    channel.connect();
+			channel.get(remotePath, localFile.getAbsolutePath(), sftpMonitor, mode); //$NON-NLS-1$
 			Activator.trace("SftpFileService.download "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		catch (Exception e) {
@@ -329,6 +347,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			//throw new RemoteFileIOException(e);
 			Activator.trace("SftpFileService.download "+remoteFile+" failed: "+e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
+		}
+		finally {
+			if (channel!=null) channel.disconnect();
 		}
 		return true;
 	}

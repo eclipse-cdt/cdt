@@ -272,8 +272,10 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     /* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setUserId(java.lang.String)
 	 */
-	final public void setUserId(String newId) {
-		if (!_userId.equals(newId)) {
+	final public void setUserId(String newId) 
+	{
+		
+		if (_userId == null || !_userId.equals(newId)) {
 			_userId = newId;
 			setDirty(true);
 		}

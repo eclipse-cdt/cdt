@@ -30,10 +30,15 @@ import org.eclipse.rse.ui.SystemResources;
 /**
  *
  */
+/**
+ * @author kmunir
+ *
+ */
 public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSENewConnectionWizard {
 	
 	private HashMap map;
 	private IRSESystemType systemType;
+	private boolean initWithSystemType;
 	private IRSENewConnectionWizardDelegate delegate;
 	private RSENewConnectionWizardMainPage mainPage;
 
@@ -50,9 +55,10 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 	/**
 	 * @see org.eclipse.rse.ui.wizards.IRSENewConnectionWizard#setSystemType(org.eclipse.rse.core.IRSESystemType)
 	 */
-	public void setSystemType(IRSESystemType systemType) {
+	public void setSystemType(IRSESystemType systemType, boolean initWithSystemType) {
 		this.systemType = systemType;
-		getDelegate(systemType);
+		this.initWithSystemType = initWithSystemType;
+		setDelegate(systemType);
 	}
 
 	/**
@@ -67,7 +73,7 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 	 * Get the new connection wizard delegate for the system type.
 	 * @param systemType the system type for which we need the delegate.
 	 */
-	public IRSENewConnectionWizardDelegate getDelegate(IRSESystemType systemType) {
+	private IRSENewConnectionWizardDelegate setDelegate(IRSESystemType systemType) {
 		
 		if (map != null) {
 			delegate = (IRSENewConnectionWizardDelegate)(map.get(systemType.getId()));
@@ -80,6 +86,13 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 		// set the wizard
 		delegate.init(this, systemType);
 		
+		return delegate;
+	}
+
+	/**
+	 * @see org.eclipse.rse.ui.wizards.IRSENewConnectionWizard#getDelegate()
+	 */
+	public IRSENewConnectionWizardDelegate getDelegate() {
 		return delegate;
 	}
 

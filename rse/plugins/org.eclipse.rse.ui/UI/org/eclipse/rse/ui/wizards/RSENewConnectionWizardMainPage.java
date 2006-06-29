@@ -22,18 +22,22 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  *
  */
-public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage {
+public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage implements Listener {
 	
 	protected String parentHelpId;
 	protected Combo textSystemType;
+	protected IWizardPage nextPage;
 
 	/**
 	 * Constructor.
@@ -65,6 +69,8 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage {
 		textSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
 		SystemWidgetHelpers.setHelp(textSystemType, RSEUIPlugin.HELPPREFIX + "ccon0003");
 		
+		textSystemType.addListener(SWT.Selection, this);
+		
 		return composite_prompts;
 	}
 
@@ -93,18 +99,43 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage {
 	 */
 	public IWizardPage getNextPage() {
 		
-		IWizard wizard = getWizard();
+		if (nextPage == null) {
 		
-		// if the wizard is a new connection wizard, which should always be the case,
-		// get the new connection wizard delegate for the selected system type and
-		// ask for the main page
-		if (wizard instanceof IRSENewConnectionWizard) {
-			String systemTypeStr = textSystemType.getText();
-			IRSENewConnectionWizardDelegate delegate = ((IRSENewConnectionWizard)wizard).getDelegate(RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr));
-			return delegate.getMainPage();
+			IWizard wizard = getWizard();
+		
+			// if the wizard is a new connection wizard, which should always be the case,
+			// get the new connection wizard delegate for the selected system type and
+			// ask for the main page
+			if (wizard instanceof IRSENewConnectionWizard) {
+				String systemTypeStr = textSystemType.getText();
+				IRSENewConnectionWizard newConnWizard = (IRSENewConnectionWizard)wizard;
+				newConnWizard.setSystemType(RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr), false);
+				nextPage = newConnWizard.getDelegate().getMainPage();
+			}
+			else {
+				nextPage = super.getNextPage();
+			}
 		}
 		else {
-			return super.getNextPage();
+			
+		}
+		
+		return nextPage;
+	}
+
+	/**
+	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+	 */
+	public void handleEvent(Event event) {
+		
+		if (event.type == SWT.Selection && event.widget == textSystemType) {
+			IWizard wizard = getWizard();
+		
+			if (wizard instanceof IRSENewConnectionWizard) {
+				String systemTypeStr = textSystemType.getText();
+				IRSENewConnectionWizard newConnWizard = (IRSENewConnectionWizard)wizard;
+				newConnWizard.getDelegate().systemTypeChanged(RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr));
+			}
 		}
 	}
 }

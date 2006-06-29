@@ -89,7 +89,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 			IHost dummyHost = null;
 			if (getWizard() instanceof RSENewConnectionWizard)
 			{
-				dummyHost = ((RSENewConnectionWizard)getWizard()).getDelegate(systemType).getDummyHost();
+				dummyHost = ((RSENewConnectionWizard)getWizard()).getDelegate().getDummyHost();
 			}
 			
 			// create elements for each 

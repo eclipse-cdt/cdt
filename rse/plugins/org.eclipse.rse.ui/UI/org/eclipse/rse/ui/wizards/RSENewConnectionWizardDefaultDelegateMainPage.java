@@ -88,13 +88,22 @@ public class RSENewConnectionWizardDefaultDelegateMainPage
     /**
      * Return the main wizard typed 
      */
-    private RSEDefaultNewConnectionWizardDelegate getOurWizardDelegate()
-    {
+    private RSEDefaultNewConnectionWizardDelegate getOurWizardDelegate() {
     	IWizard wizard = getWizard();
-    	if (wizard instanceof RSEDefaultNewConnectionWizardDelegate)
-    	  return (RSEDefaultNewConnectionWizardDelegate)wizard;
-    	else
-    	  return null;
+    	
+    	if (wizard instanceof RSENewConnectionWizard) {
+    		IRSENewConnectionWizardDelegate delegate = ((RSENewConnectionWizard)wizard).getDelegate();
+    		
+    		if (delegate instanceof RSEDefaultNewConnectionWizardDelegate) {
+    			return (RSEDefaultNewConnectionWizardDelegate)delegate;
+    		}
+    		else {
+    			return null;
+    		}
+    	}
+    	else {
+    		return null;
+    	}
     }
 
 
@@ -219,10 +228,10 @@ public class RSENewConnectionWizardDefaultDelegateMainPage
 	 * Return user-entered System Type.
 	 * Call this after finish ends successfully.
 	 */
-	public String getSystemType()
+/*	public String getSystemType()
 	{
 		return form.getSystemType();
-	}    
+	} */   
 	/**
 	 * Return user-entered Connection Name.
 	 * Call this after finish ends successfully.
@@ -355,4 +364,11 @@ public class RSENewConnectionWizardDefaultDelegateMainPage
     	}
     }
 
+	/**
+	 * @see org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardMainPage#getSystemType()
+	 */
+	public String getSystemType() {
+    	RSEDefaultNewConnectionWizardDelegate newConnWizardDelegate = getOurWizardDelegate();
+    	return newConnWizardDelegate.getSystemType().getName();
+	}
 }

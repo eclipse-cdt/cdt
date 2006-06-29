@@ -23,7 +23,7 @@ public interface IRSENewConnectionWizard extends INewWizard {
 
 	public static final String NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_POINT_ID = "org.eclipse.rse.ui.newConnectionWizardDelegate";
 	
-	public IRSENewConnectionWizardDelegate getDelegate(IRSESystemType systemType);
+	public IRSENewConnectionWizardDelegate getDelegate();
 	
-	public void setSystemType(IRSESystemType systemType);
+	public void setSystemType(IRSESystemType systemType, boolean initWithSystemType);
 }

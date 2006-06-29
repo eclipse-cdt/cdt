@@ -31,7 +31,15 @@ public abstract class RSENewConnectionWizardDelegate implements IRSENewConnectio
 	 * @see org.eclipse.rse.ui.wizards.IRSENewConnectionWizardDelegate#init(org.eclipse.rse.ui.wizards.RSENewConnectionWizard, org.eclipse.rse.core.IRSESystemType)
 	 */
 	public void init(RSENewConnectionWizard wizard, IRSESystemType systemType) {
+		setWizard(wizard);
+		setSystemType(systemType);
+	}
+	
+	protected void setWizard(RSENewConnectionWizard wizard) {
 		this.wizard = wizard;
+	}
+	
+	protected void setSystemType(IRSESystemType systemType) {
 		this.systemType = systemType;
 	}
 
@@ -74,5 +82,12 @@ public abstract class RSENewConnectionWizardDelegate implements IRSENewConnectio
 	 */
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		return wizard.getStartingPage();
+	}
+
+	/**
+	 * @see org.eclipse.rse.ui.wizards.IRSENewConnectionWizardDelegate#systemTypeChanged(org.eclipse.rse.core.IRSESystemType)
+	 */
+	public void systemTypeChanged(IRSESystemType systemType) {
+		
 	}
 }

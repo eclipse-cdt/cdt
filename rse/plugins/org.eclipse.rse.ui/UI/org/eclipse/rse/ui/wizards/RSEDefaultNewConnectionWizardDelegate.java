@@ -75,6 +75,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
 		super.init(wizard, systemType);
 		restrictSystemType(systemType.getName());
     	activeProfileNames = SystemStartHere.getSystemProfileManager().getActiveSystemProfileNames();
+    	systemTypeSelected(systemType.getName(), true);
 	}
 
 	/**
@@ -206,26 +207,36 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
 	 */
 	protected RSENewConnectionWizardDefaultDelegateMainPage createMainPage(String[] restrictSystemTypesTo)
 	{
-		String pageTitle = null;
-		if ((restrictSystemTypesTo==null) || (restrictSystemTypesTo.length != 1))
-		  pageTitle = SystemResources.RESID_NEWCONN_PAGE1_TITLE;
-		else
-		{
-			String onlySystemType = restrictSystemTypesTo[0];
-			if (onlySystemType.equals(IRSESystemType.SYSTEMTYPE_LOCAL))
-			  pageTitle =SystemResources.RESID_NEWCONN_PAGE1_LOCAL_TITLE;
-			else
-			{
-			  pageTitle =SystemResources.RESID_NEWCONN_PAGE1_REMOTE_TITLE;				
-			  pageTitle = SystemMessage.sub(pageTitle, "&1", onlySystemType);
-			}
-		}
+		String pageTitle = getPageTitle();
 	    mainPage = new RSENewConnectionWizardDefaultDelegateMainPage(getWizard(),
 	            pageTitle,
 	           SystemResources.RESID_NEWCONN_PAGE1_DESCRIPTION);
 		getWizard().setOutputObject(null);
 	    return mainPage;
-	}    
+	}
+	
+	public String getPageTitle() {
+		
+		String pageTitle = null;
+		
+		if ((restrictSystemTypesTo == null) || (restrictSystemTypesTo.length != 1)) {
+			pageTitle = SystemResources.RESID_NEWCONN_PAGE1_TITLE;
+		}
+		else {
+			String onlySystemType = restrictSystemTypesTo[0];
+			
+			if (onlySystemType.equals(IRSESystemType.SYSTEMTYPE_LOCAL)) {
+				pageTitle = SystemResources.RESID_NEWCONN_PAGE1_LOCAL_TITLE;
+			}
+			else {
+				pageTitle = SystemResources.RESID_NEWCONN_PAGE1_REMOTE_TITLE;
+				pageTitle = SystemMessage.sub(pageTitle, "&1", onlySystemType);
+			}
+		}
+		
+		return pageTitle;
+	}
+	
     /**
      * Set the currently selected connection. Used to better default entry fields.
      */
@@ -391,7 +402,10 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
      */
     public IWizardPage getMainPage()
     {
-    	addPages();
+    	if (mainPage == null) {
+    		addPages();
+    	}
+    	
     	return mainPage;
     }
     
@@ -521,7 +535,8 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
      */
     public boolean canFinish() 
     {
-    	boolean ok = true;
+    	boolean ok = mainPage.isPageComplete();
+    	
     	if (ok && hasAdditionalPages())
     	{
     	  for (int idx=0; ok && (idx<subsystemFactorySuppliedWizardPages.length); idx++)
@@ -529,4 +544,14 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
     	}
     	return ok;
     }
+
+	/**
+	 * @see org.eclipse.rse.ui.wizards.RSENewConnectionWizardDelegate#systemTypeChanged(org.eclipse.rse.core.IRSESystemType)
+	 */
+	public void systemTypeChanged(IRSESystemType systemType) {
+		setSystemType(systemType);
+		restrictSystemType(systemType.getName());
+		mainPage.setTitle(getPageTitle());
+        subsystemFactorySuppliedWizardPages = getAdditionalWizardPages(systemType.getName());
+	}
 }

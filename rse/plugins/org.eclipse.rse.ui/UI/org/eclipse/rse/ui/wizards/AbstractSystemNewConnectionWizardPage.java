@@ -115,7 +115,7 @@ public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSyst
     	if (ourWizard != null) {
     	  String[] systemTypes = parentFactory.getSystemTypes();
     	  IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
-    	  IWizardPage wizardPage = ourWizard.getDelegate(systemType).getMainPage();
+    	  IWizardPage wizardPage = ourWizard.getDelegate().getMainPage();
     	  
     	  if (wizardPage instanceof ISystemNewConnectionWizardMainPage) {
     		  return (ISystemNewConnectionWizardMainPage)wizardPage;
@@ -139,7 +139,7 @@ public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSyst
     	if (ourWizard != null) {
       	  String[] systemTypes = parentFactory.getSystemTypes();
     	  IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
-    	  IWizardPage wizardPage = ourWizard.getDelegate(systemType).getMainPage();
+    	  IWizardPage wizardPage = ourWizard.getDelegate().getMainPage();
     	  
     	  if (wizardPage instanceof RSENewConnectionWizardDefaultDelegateMainPage) {
     		  return ((RSENewConnectionWizardDefaultDelegateMainPage)wizardPage).getForm();

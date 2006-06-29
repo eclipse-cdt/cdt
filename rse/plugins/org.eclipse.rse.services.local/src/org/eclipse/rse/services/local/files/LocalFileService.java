@@ -380,6 +380,15 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				{
 			//		throw new RemoteFileCancelledException();
 					return false;
+				} else if (destinationFile!=null && file.exists()) {
+					destinationFile.setLastModified(file.lastModified());
+					//TODO check if we want to preserve permissions
+					//if(!file.canWrite()) destinationFile.setReadOnly();
+					if (destinationFile.length() != file.length()) {
+						//	throw new RemoteFileCancelledException();
+						System.err.println("local.upload: size mismach on "+destinationFile.getAbsolutePath());
+						return false;
+					}
 				}
 			}
 			catch (IOException e)
@@ -448,6 +457,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		BufferedOutputStream bufOutputStream = null;
 		OutputStreamWriter outputWriter = null;
 		BufferedWriter bufWriter = null;
+		File destinationFile = null;
 		
 		File target = new File(remoteParent, remoteFile);
 		boolean sourceIsVirtual = ArchiveHandlerManager.isVirtual(localFile.getAbsolutePath());
@@ -463,7 +473,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 
 		try
 		{
-			File destinationFile = new File(remoteParent, remoteFile);
+			destinationFile = new File(remoteParent, remoteFile);
 			int totalSize = (int) localFile.length();
 
 			File destinationParent = destinationFile.getParentFile();
@@ -545,6 +555,15 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				{
 				//	throw new RemoteFileCancelledException();
 					return false;
+				} else if (destinationFile!=null) {
+					destinationFile.setLastModified(localFile.lastModified());
+					//TODO check if we want to preserve permissions
+					//if(!localFile.canWrite()) destinationFile.setReadOnly();
+					if (destinationFile.length() != localFile.length()) {
+						//	throw new RemoteFileCancelledException();
+						System.err.println("local.upload: size mismach on "+destinationFile.getAbsolutePath());
+						return false;
+					}
 				}
 			}
 			catch (IOException e)

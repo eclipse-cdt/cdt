@@ -775,7 +775,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			
 			oldConnectorService.commit();
 			newConnectorService.commit();
-			
+		
+			setName(factory.getName());
 			setFileService(factory.getFileService(host));	
 			setHostFileToRemoteFileAdapter(factory.getHostFileAdapter());
 			setSearchService(factory.getSearchService(host));

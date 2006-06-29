@@ -222,7 +222,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 			
 			IHost host = getHost();
 			setSubSystemConfiguration(factory);
-
+			setName(factory.getName());
 			IConnectorService oldConnectorService = getConnectorService();			
 			oldConnectorService.deregisterSubSystem(this);
 			

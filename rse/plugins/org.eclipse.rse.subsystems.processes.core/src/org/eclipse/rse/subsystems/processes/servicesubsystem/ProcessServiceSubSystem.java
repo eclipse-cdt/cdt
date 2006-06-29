@@ -163,7 +163,7 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 			
 			IHost host = getHost();
 			setSubSystemConfiguration(factory);
-			
+			setName(factory.getName());
 
 			IConnectorService oldConnectorService = getConnectorService();			
 			oldConnectorService.deregisterSubSystem(this);

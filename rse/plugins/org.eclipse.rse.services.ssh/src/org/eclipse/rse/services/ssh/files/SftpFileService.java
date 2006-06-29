@@ -252,20 +252,24 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			channel=(ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
 		    channel.connect();
 			channel.put(localFile.getAbsolutePath(), dst, sftpMonitor, mode); //$NON-NLS-1$
-			SftpATTRS attr = channel.stat(dst);
-			attr.setACMODTIME(attr.getATime(), (int)(localFile.lastModified()/1000));
-			////TODO check if we want to maintain permissions
-			//if (!localFile.canWrite()) {
-			//	attr.setPERMISSIONS( attr.getPermissions() & (~00400));
-			//}
-			channel.setStat(dst, attr);
-			if (attr.getSize() != localFile.length()) {
-				//Error: file truncated? - Inform the user!!
-				//TODO throw exception to show an error dialog!
-				System.err.println("ssh.upload: file size mismatch for "+dst);
-				return false;
-			}
 			Activator.trace("SftpFileService.upload "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-1$
+			if (monitor.isCanceled()) {
+				return false;
+			} else {
+				SftpATTRS attr = channel.stat(dst);
+				attr.setACMODTIME(attr.getATime(), (int)(localFile.lastModified()/1000));
+				////TODO check if we want to maintain permissions
+				//if (!localFile.canWrite()) {
+				//	attr.setPERMISSIONS( attr.getPermissions() & (~00400));
+				//}
+				channel.setStat(dst, attr);
+				if (attr.getSize() != localFile.length()) {
+					//Error: file truncated? - Inform the user!!
+					//TODO throw exception to show an error dialog!
+					System.err.println("ssh.upload: file size mismatch for "+dst);
+					return false;
+				}
+			}
 		}
 		catch (Exception e) {
 			//TODO See download
@@ -350,18 +354,21 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			channel=(ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
 		    channel.connect();
 			channel.get(remotePath, localFile.getAbsolutePath(), sftpMonitor, mode); //$NON-NLS-1$
-			SftpATTRS attr = channel.stat(remotePath);
-			localFile.setLastModified(1000L * attr.getMTime());
-			//TODO should we set the read-only status?
-			//if (0==(attrs.getPermissions() & 00400)) localFile.setReadOnly();
-			if (attr.getSize() != localFile.length()) {
-				//Error: file truncated? - Inform the user!!
-				//TODO throw exception to show an error dialog!
-				System.err.println("ssh.download: file size mismatch for "+remotePath);
-				return false;
-			}
-
 			Activator.trace("SftpFileService.download "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (monitor.isCanceled()) {
+				return false;
+			} else {
+				SftpATTRS attr = channel.stat(remotePath);
+				localFile.setLastModified(1000L * attr.getMTime());
+				//TODO should we set the read-only status?
+				//if (0==(attrs.getPermissions() & 00400)) localFile.setReadOnly();
+				if (attr.getSize() != localFile.length()) {
+					//Error: file truncated? - Inform the user!!
+					//TODO throw exception to show an error dialog!
+					System.err.println("ssh.download: file size mismatch for "+remotePath);
+					return false;
+				}
+			}
 		}
 		catch (Exception e) {
 			//TODO handle exception properly: happens e.g. when trying to download a symlink.

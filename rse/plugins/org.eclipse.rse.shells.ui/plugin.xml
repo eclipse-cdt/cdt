@@ -21,7 +21,7 @@ Contributors:
          point="org.eclipse.ui.views">
       <view
             name="%View.RemoteCommands"
-            icon="./icons/full/cview16/commands_view.gif"
+            icon="icons/full/cview16/commands_view.gif"
             category="org.eclipse.rse.ui.view"
             class="org.eclipse.rse.shells.ui.view.SystemCommandsViewPart"
             id="org.eclipse.rse.shells.ui.view.commandsView">

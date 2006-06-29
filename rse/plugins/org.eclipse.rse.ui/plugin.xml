@@ -743,21 +743,21 @@ Contributors:
       </category>
       <view
             name="%View.RemoteSystems"
-            icon="./icons/full/cview16/system_view.gif"
+            icon="icons/full/cview16/system_view.gif"
             category="org.eclipse.rse.ui.view"
             class="org.eclipse.rse.ui.view.SystemViewPart"
             id="org.eclipse.rse.ui.view.systemView">
       </view>
       <view
             name="%View.Team"
-            icon="./icons/full/cview16/team_view.gif"
+            icon="icons/full/cview16/team_view.gif"
             category="org.eclipse.rse.ui.view"
             class="org.eclipse.rse.ui.view.team.SystemTeamViewPart"
             id="org.eclipse.rse.ui.view.teamView">
       </view>
       <view
             name="%View.RemoteSystemsDetails"
-            icon="./icons/full/cview16/system_view.gif"
+            icon="icons/full/cview16/system_view.gif"
             category="org.eclipse.rse.ui.view"
             class="org.eclipse.rse.ui.view.SystemTableViewPart"
             id="org.eclipse.rse.ui.view.systemTableView">

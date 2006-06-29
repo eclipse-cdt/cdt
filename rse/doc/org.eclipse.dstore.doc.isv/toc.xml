@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="Using Datastore for Remote Communications">
- 	<topic label="Programmer's Guide" link_to="../org/eclipse.rse.doc.isv/toc.xml#guide_additions">
+<toc label="RSE DStore Developer Guide">
+ 	<topic label="Guide">
 		<topic label="DataStore Overview"  href="guide/overview.html">
 			<topic label="DataStore Artifacts" href="guide/Artifacts.html" />
 			<topic label="DataStore Communications" href="guide/Communications.html" />
@@ -15,7 +15,7 @@
 		</topic>
 		<anchor id="guide_additions"/>
 	</topic>
-	<topic label="Reference" link_to="../org/eclipse.rse.doc.isv/toc.xml#reference_additions">
+	<topic label="Reference">
 		<topic label="DataStore API Reference">
 		     <topic label="org.eclipse.dstore.core.model" href="reference/api/org/eclipse/dstore/core/model/package-summary.html" />
 		     <topic label="org.eclipse.dstore.core.client" href="reference/api/org/eclipse/dstore/core/client/package-summary.html" />

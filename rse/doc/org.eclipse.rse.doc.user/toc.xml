@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
-<toc label="Remote System Explorer User Guide (old)">
+<toc label="Remote System Explorer User Guide">
    <topic label="Universal Systems" href="concepts/cuniversal.html"/>
    <topic label="Remote System Explorer Connections" href="concepts/cbegin.html">
       <topic label="Connecting to a remote Linux or UNIX server" href="tasks/tbeginlinux.html"/>

@@ -4,7 +4,7 @@
 <!-- Define the top level topics                                                   -->
 <!-- ============================================================================= -->
 
-<toc label="Remote Systems Explorer Developer Guide">
+<toc label="RSE Developer Guide">
 	<topic label="Overview (old)" href="guide/overview.html"/>
 	<topic label="Artifacts (old)" href="guide/Artifacts.html"/>
 	<topic label="Extensions (old)" href="guide/Extensions.html"/>

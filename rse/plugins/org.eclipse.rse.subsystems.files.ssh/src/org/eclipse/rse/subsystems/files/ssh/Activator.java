@@ -28,6 +28,9 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		
+		// make sure files.ui is activated
+		org.eclipse.rse.files.ui.Activator.getDefault();
 	}
 
 	/*

@@ -2,7 +2,7 @@
 <plugin>
 
    <extension point="org.eclipse.help.toc">
-   	  <toc file="toc.xml" primary="true"/>
+   	  <toc file="toc.xml" primary="false"/>
    	  <index path="index/"/>
    </extension>
 

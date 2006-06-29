@@ -6,19 +6,19 @@
 <toc label="Reference">
 
 	<topic label="Extension Points Reference">
-		<topic label="org.eclipse.rse.core.systemTypes" href="reference/extension_points/org_eclipse_rse_core_systemTypes.html" />
-		<topic label="org.eclipse.rse.ui.archivehandlers" href="reference/extension_points/org_eclipse_rse_ui_archivehandlers.html" />
-		<topic label="org.eclipse.rse.ui.compile" href="reference/extension_points/org_eclipse_rse_ui_compile.html" />
-		<topic label="org.eclipse.rse.ui.dynamicPopupMenuExtensions" href="reference/extension_points/org_eclipse_rse_ui_dynamicPopupMenuExtensions.html" />
-		<topic label="org.eclipse.rse.ui.keystoreProviders" href="reference/extension_points/org_eclipse_rse_ui_keystoreProviders.html" />
-		<topic label="org.eclipse.rse.ui.mountPathMappers" href="reference/extension_points/org_eclipse_rse_ui_mountPathMappers.html" />
-		<topic label="org.eclipse.rse.ui.passwordPersistence" href="reference/extension_points/org_eclipse_rse_ui_passwordPersistence.html" />
-		<topic label="org.eclipse.rse.ui.persistenceProviders" href="reference/extension_points/org_eclipse_rse_ui_persistenceProviders.html" />
-		<topic label="org.eclipse.rse.ui.popupMenus" href="reference/extension_points/org_eclipse_rse_ui_popupMenus.html" />
-		<topic label="org.eclipse.rse.ui.propertyPages" href="reference/extension_points/org_eclipse_rse_ui_propertyPages.html" />
-		<topic label="org.eclipse.rse.ui.remoteSystemsViewPreferencesAction" href="reference/extension_points/org_eclipse_rse_ui_remoteSystemsViewPreferencesAction.html" />
-		<topic label="org.eclipse.rse.ui.rseConfigDefaults" href="reference/extension_points/org_eclipse_rse_ui_rseConfigDefaults.html" />
-		<topic label="org.eclipse.rse.ui.subsystemConfiguration" href="reference/extension_points/org_eclipse_rse_ui_subsystemConfiguration.html" />
+		<topic label="org.eclipse.rse.core.systemTypes" href="reference/extension-points/org_eclipse_rse_core_systemTypes.html" />
+		<topic label="org.eclipse.rse.ui.archivehandlers" href="reference/extension-points/org_eclipse_rse_ui_archivehandlers.html" />
+		<topic label="org.eclipse.rse.ui.compile" href="reference/extension-points/org_eclipse_rse_ui_compile.html" />
+		<topic label="org.eclipse.rse.ui.dynamicPopupMenuExtensions" href="reference/extension-points/org_eclipse_rse_ui_dynamicPopupMenuExtensions.html" />
+		<topic label="org.eclipse.rse.ui.keystoreProviders" href="reference/extension-points/org_eclipse_rse_ui_keystoreProviders.html" />
+		<topic label="org.eclipse.rse.ui.mountPathMappers" href="reference/extension-points/org_eclipse_rse_ui_mountPathMappers.html" />
+		<topic label="org.eclipse.rse.ui.passwordPersistence" href="reference/extension-points/org_eclipse_rse_ui_passwordPersistence.html" />
+		<topic label="org.eclipse.rse.ui.persistenceProviders" href="reference/extension-points/org_eclipse_rse_ui_persistenceProviders.html" />
+		<topic label="org.eclipse.rse.ui.popupMenus" href="reference/extension-points/org_eclipse_rse_ui_popupMenus.html" />
+		<topic label="org.eclipse.rse.ui.propertyPages" href="reference/extension-points/org_eclipse_rse_ui_propertyPages.html" />
+		<topic label="org.eclipse.rse.ui.remoteSystemsViewPreferencesAction" href="reference/extension-points/org_eclipse_rse_ui_remoteSystemsViewPreferencesAction.html" />
+		<topic label="org.eclipse.rse.ui.rseConfigDefaults" href="reference/extension-points/org_eclipse_rse_ui_rseConfigDefaults.html" />
+		<topic label="org.eclipse.rse.ui.subsystemConfiguration" href="reference/extension-points/org_eclipse_rse_ui_subsystemConfiguration.html" />
 		<anchor id="rse-extension-points-ref" />
 	</topic>
 

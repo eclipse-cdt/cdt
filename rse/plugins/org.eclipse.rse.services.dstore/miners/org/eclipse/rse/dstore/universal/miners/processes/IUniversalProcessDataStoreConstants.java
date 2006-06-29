@@ -30,6 +30,7 @@ public interface IUniversalProcessDataStoreConstants
 	public static final String UNIVERSAL_PROCESS_ROOT = "universal.process.root";
 	public static final String UNIVERSAL_PROCESS_FILTER = "universal.process.filter";
 	public static final String UNIVERSAL_PROCESS_DESCRIPTOR = "universal.process.descriptor";
+	public static final String UNIVERSAL_PROCESS_TEMP = "universal.process.temp";
 
 	//
 	// Universal Process Miner Commands
@@ -37,5 +38,6 @@ public interface IUniversalProcessDataStoreConstants
 	public static final String C_PROCESS_FILTER_QUERY_ALL  = "C_PROCESS_FILTER_QUERY_ALL";
 	public static final String C_PROCESS_KILL = "C_PROCESS_KILL";
 	public static final String C_PROCESS_QUERY_ALL_PROPERTIES = "C_PROCESS_QUERY_ALL_PROPERTIES";
+	public static final String C_PROCESS_QUERY_USERNAME  = "C_PROCESS_QUERY_USERNAME";
 	
 }

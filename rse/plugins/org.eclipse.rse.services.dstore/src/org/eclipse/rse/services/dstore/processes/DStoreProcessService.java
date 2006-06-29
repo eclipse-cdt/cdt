@@ -44,6 +44,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 	protected DStoreStatusMonitor _statusMonitor;
 	protected DataElement _procMinerStatus;
 	protected String[] _statusTypes;
+	protected String _userName;
 	
 	public DStoreProcessService(IDataStoreProvider provider)
 	{
@@ -106,6 +107,9 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 				}
 						
 				// convert objects to remote files
+				String userName = getRemoteUserName();
+				if (userName != null && filter.getUsername().equals("${user.id}"))
+					filter.setUsername(getRemoteUserName());
 				processes = convertObjsToHostProcesses(filter, results);
 			}
 		}
@@ -320,6 +324,33 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 			}
 		}
 		monitor.done();
+	}
+	
+	/**
+	 * Get the username used to connect to the remote machine
+	 */
+	public String getRemoteUserName()
+	{
+		if (_userName == null)
+		{		
+			DataStore ds = getDataStore();
+
+			DataElement encodingElement = ds.createObject(null, UNIVERSAL_PROCESS_TEMP, "");
+
+			DataElement queryCmd = ds.localDescriptorQuery(encodingElement.getDescriptor(), C_PROCESS_QUERY_USERNAME);
+			DStoreStatusMonitor monitor = getStatusMonitor(ds);
+			DataElement status = ds.command(queryCmd, encodingElement, true);
+			try
+			{
+				monitor.waitForUpdate(status);
+			}
+			catch (Exception e)
+			{				
+			}
+
+			_userName = encodingElement.getValue();
+		}
+		return _userName;
 	}
 	
 	protected String getMinerId()

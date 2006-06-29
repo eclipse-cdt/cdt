@@ -98,6 +98,11 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 		
 		String subjectType = (String) subject.getElementProperty(DE.P_TYPE);
 		
+		if (name.equals(C_PROCESS_QUERY_USERNAME))
+		{
+			return handleQueryUserName(subject, status);
+		}
+		
 		if (subjectType.equals(UNIVERSAL_PROCESS_FILTER)) 
 		{
 			if (name.equals(C_PROCESS_FILTER_QUERY_ALL)) 
@@ -134,6 +139,21 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 		
 		return status;
 	}
+	
+	/**
+	 * Get the username
+	 */
+	protected DataElement handleQueryUserName(DataElement subject, DataElement status) {
+
+		String encoding = System.getProperty("user.name");
+
+		subject.setAttribute(DE.A_VALUE, encoding);
+		_dataStore.refresh(subject);
+
+		status.setAttribute(DE.A_NAME, "done");
+		_dataStore.refresh(status);
+		return status;
+	}
 
 	public void extendSchema(DataElement schemaRoot) 
 	{
@@ -143,12 +163,14 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 				UNIVERSAL_PROCESS_FILTER);
 		deUniversalProcessObject = createObjectDescriptor(schemaRoot,
 				UNIVERSAL_PROCESS_DESCRIPTOR);
+		DataElement tempnode = createObjectDescriptor(schemaRoot, UNIVERSAL_PROCESS_TEMP);
 		
         // define command descriptors
 		createCommandDescriptor(deUniversalProcessFilter, "Filter", C_PROCESS_FILTER_QUERY_ALL);
 		createCommandDescriptor(deUniversalProcessObject, "Kill", C_PROCESS_KILL);
 		createCommandDescriptor(deUniversalProcessObject, "ProcessQueryAllProperties", C_PROCESS_QUERY_ALL_PROPERTIES);
-		
+		createCommandDescriptor(tempnode, "QueryUsername", C_PROCESS_QUERY_USERNAME);
+
 		_dataStore.refresh(schemaRoot);
 	}
 
@@ -221,8 +243,9 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 		// results coming back from the query
 		if (handler == null) throw new Exception(PROCESS_MINER_ERROR_NO_HANDLER);
 		SortedSet processes = handler.lookupProcesses(fsObj);
-		SortedSet sortedDEs = null;
+		
 		// sort the data elements
+		SortedSet sortedDEs = null;
 		List nested = subject.getNestedData();
 		if (nested != null)
 		{

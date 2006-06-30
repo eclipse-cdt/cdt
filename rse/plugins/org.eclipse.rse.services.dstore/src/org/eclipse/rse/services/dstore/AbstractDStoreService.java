@@ -85,8 +85,8 @@ public abstract class AbstractDStoreService implements IDStoreService
 				int resultSize = subject.getNestedSize();
 				if (resultSize == 0)
 				{
-					System.out.println("status="+status);
-					System.out.println("subject="+subject);
+					//System.out.println("status="+status);
+					//System.out.println("subject="+subject);
 				}
 				checkHostJVM();
 				// get results

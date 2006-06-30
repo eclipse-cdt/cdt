@@ -191,7 +191,7 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 			VirtualChild child = mgr.getVirtualObject(virtualFileName);
 			if (!child.exists())
 			{
-				System.out.println(virtualFileName + " does not exist.");
+				//System.out.println(virtualFileName + " does not exist.");
 				return;
 			}
 			ISystemArchiveHandler handler = child.getHandler();

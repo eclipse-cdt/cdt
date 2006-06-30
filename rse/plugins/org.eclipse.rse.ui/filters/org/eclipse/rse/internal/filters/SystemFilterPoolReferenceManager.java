@@ -796,7 +796,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
     public void save()
         throws Exception
     {
-    	System.out.println("Saving filter pool " + this.getName() + "?"); // DWD - debugging
+    	//System.out.println("Saving filter pool " + this.getName() + "?"); // DWD - debugging
         switch(savePolicy)
         {
           // ONE FILE PER FILTER POOL REFERENCE MANAGER

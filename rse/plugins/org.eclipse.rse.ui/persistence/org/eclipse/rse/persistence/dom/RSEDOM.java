@@ -56,7 +56,7 @@ public class RSEDOM extends RSEDOMNode
 	{
 		if (!restoring && !_needsSave)
 		{
-			System.out.println("RSEDOM "+getName() + " needs saving");
+			//System.out.println("RSEDOM "+getName() + " needs saving");
 			_needsSave = true;
 		}
 	}
@@ -69,7 +69,7 @@ public class RSEDOM extends RSEDOMNode
 	{
 		if (_needsSave)
 		{
-			System.out.println("RSEDOM "+getName() + " is up to date");
+			//System.out.println("RSEDOM "+getName() + " is up to date");
 
 			_needsSave = false;
 			_saveScheduled = false;

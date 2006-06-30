@@ -167,7 +167,7 @@ public class RemoteClassLoader extends ClassLoader
 	 */
 	protected Class findClass(String className) throws ClassNotFoundException
 	{
-		System.out.println("finding "+className);
+		//System.out.println("finding "+className);
 		
 		// first try using the datastore's local classloaders
 		
@@ -194,7 +194,7 @@ public class RemoteClassLoader extends ClassLoader
 			Class theClass = super.findClass(className);
 			if (theClass != null) 
 			{
-				System.out.println("Using super's: " + className);
+				//System.out.println("Using super's: " + className);
 				return theClass;
 			}
 		}
@@ -228,7 +228,7 @@ public class RemoteClassLoader extends ClassLoader
 					
 					Class theClass = _urlClassLoader.findCachedClass(className);
 			
-					System.out.println("Using cached: " + className);
+					//System.out.println("Using cached: " + className);
 					return theClass;
 				}
 				catch (Throwable e)

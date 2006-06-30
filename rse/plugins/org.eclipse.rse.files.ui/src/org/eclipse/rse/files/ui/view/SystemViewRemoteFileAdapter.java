@@ -1823,7 +1823,7 @@ public class SystemViewRemoteFileAdapter
 							}
 							else // why not same system? should we even get here?
 							{
-								System.out.println("HOW DID I GET HERE?!!");
+								//System.out.println("HOW DID I GET HERE?!!");
 							}
 						}
 						
@@ -2064,7 +2064,7 @@ public class SystemViewRemoteFileAdapter
 						else
 						{
 							
-							System.out.println("how do we get here!??");
+							//System.out.println("how do we get here!??");
 
 							if (srcFileOrFolder.isFile())
 							{

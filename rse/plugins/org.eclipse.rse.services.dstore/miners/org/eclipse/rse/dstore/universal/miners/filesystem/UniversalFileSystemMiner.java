@@ -1144,8 +1144,8 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		File filerename = new File(subject.getAttribute(DE.A_VALUE)
 				+ File.separatorChar + subject.getAttribute(DE.A_SOURCE));
 
-		System.out.println(ArchiveHandlerManager.isVirtual(fileoldname
-				.getAbsolutePath()));
+	//	System.out.println(ArchiveHandlerManager.isVirtual(fileoldname
+		//		.getAbsolutePath()));
 		if (ArchiveHandlerManager.isVirtual(fileoldname.getAbsolutePath())) {
 			AbsoluteVirtualPath oldAbsPath = new AbsoluteVirtualPath(
 					fileoldname.getAbsolutePath());

@@ -487,7 +487,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		}
 		else
 		{
-		    System.out.println("server launcher is null");
+		  //  System.out.println("server launcher is null");
 		}
 
 		long t1 = System.currentTimeMillis();
@@ -822,7 +822,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 
 			long t2 = System.currentTimeMillis();
 			
-			System.out.println("connect time = "+(t2 - t1));
+			//System.out.println("connect time = "+(t2 - t1));
 		
 			
 		

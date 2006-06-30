@@ -581,7 +581,7 @@ public class SystemRemoteEditManager
 		{
 			if (!inUse())
 			{
-				System.out.println("deleting " + _theFile.getName());
+				//System.out.println("deleting " + _theFile.getName());
 				_theFile.getLocation().toFile().delete();
 			}
 		}
@@ -613,7 +613,7 @@ public class SystemRemoteEditManager
 						IFile file = ((IFileEditorInput) editorInput).getFile();
 						if (file.equals(_theFile))
 						{
-							System.out.println(file.getName() + " is in use");
+							//System.out.println(file.getName() + " is in use");
 							return true;
 						}
 					}

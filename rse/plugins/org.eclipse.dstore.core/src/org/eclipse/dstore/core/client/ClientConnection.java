@@ -909,7 +909,7 @@ public class ClientConnection implements IDataStoreConstants
 				}
 				else
 				{
-					System.out.println("handshake=" + handshake);
+					//System.out.println("handshake=" + handshake);
 					return HANDSHAKE_INCORRECT;
 				}
 			}

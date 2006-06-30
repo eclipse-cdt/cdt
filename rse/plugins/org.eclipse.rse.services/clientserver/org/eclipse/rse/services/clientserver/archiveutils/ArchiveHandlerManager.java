@@ -209,7 +209,7 @@ public class ArchiveHandlerManager
 			String ext = getExtension(file);
 			if (!_handlerTypes.containsKey(ext))
 			{
-				System.out.println("Unknown archive file type: " + ext);
+				//System.out.println("Unknown archive file type: " + ext);
 				return null;
 			}
 			else

@@ -292,9 +292,9 @@ public class CommandMinerThread extends MinerThread
 					args[1] = "/C ";
 				}
 				args[2] = _invocation;
-				System.out.println("getting env...");
+		
 				String[] env = getEnvironment(_subject);
-				System.out.println("...got env");
+
 				if (_invocation.equals(theShell))
 				{
 					

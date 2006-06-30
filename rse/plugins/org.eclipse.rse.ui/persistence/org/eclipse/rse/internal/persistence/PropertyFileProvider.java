@@ -112,7 +112,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	public boolean saveRSEDOM(RSEDOM dom, IProgressMonitor monitor) {
 		String profileName = dom.getName();
 		IFolder providerFolder = getProviderFolder();
-		System.out.println("saving profile " + profileName + " to " + providerFolder.getFullPath().toString() + "..."); // DWD debugging
+		//System.out.println("saving profile " + profileName + " to " + providerFolder.getFullPath().toString() + "..."); // DWD debugging
 		try {
 			int n = countNodes(dom);
 			if (monitor != null) monitor.beginTask("Saving DOM", n);
@@ -435,13 +435,13 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		RSEDOM dom = null;
 		IFolder profileFolder = getProfileFolder(profileName);
 		if (profileFolder.exists()) {
-			System.out.println("loading from " + profileFolder.getFullPath().toString() + "..."); // DWD debugging
+			//System.out.println("loading from " + profileFolder.getFullPath().toString() + "..."); // DWD debugging
 			int n = countPropertiesFiles(profileFolder);
 			if (monitor != null) monitor.beginTask("Loading DOM", n);
 			dom = (RSEDOM) loadNode(null, profileFolder, monitor);
 			if (monitor != null) monitor.done();
 		} else {
-			System.out.println(profileFolder.getFullPath().toString() + " does not exist.");
+			//System.out.println(profileFolder.getFullPath().toString() + " does not exist.");
 		}
 		return dom;
 	}

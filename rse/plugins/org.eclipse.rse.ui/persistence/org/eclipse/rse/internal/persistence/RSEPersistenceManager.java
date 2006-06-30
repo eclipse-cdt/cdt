@@ -240,7 +240,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 
 	public boolean restore(ISystemFilterPool filterPool)
 	{
-		System.out.println("restore filterpool");
+		//System.out.println("restore filterpool");
 		// DWD function Is this method really needed?
 		return false;
 	}
@@ -248,7 +248,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 
 	 public boolean commit(ISystemFilter filter)
    {
-		 System.out.println("commit filter");
+		// System.out.println("commit filter");
 		 // DWD function Is this method really needed?
 		 /*
 		 if (filter.isDirty())
@@ -268,7 +268,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 
 	public ISystemFilterPool restoreFilterPool(String name)
 	{
-		System.out.println("restore filter pool "+name);
+		//System.out.println("restore filter pool "+name);
 		// DWD function is this method really needed?
 		return null;
 	}
@@ -405,7 +405,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 			}
 			else
 			{
-				System.out.println("no save required");
+				//System.out.println("no save required");
 				result = true;
 			}
 		}

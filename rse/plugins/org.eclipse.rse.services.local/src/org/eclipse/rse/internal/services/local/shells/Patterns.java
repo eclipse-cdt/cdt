@@ -98,13 +98,18 @@ public class Patterns {
 		CommandPattern curCommand;
 		ParsedOutput matchedOutput = null;
 		int commands = _theCommands.size();
-		if (_currentCommand != null) {
-			for (int i = 0; i < commands; i++) {
+		if (_currentCommand != null) 
+		{
+			
+			for (int i = 0; i < commands; i++) 
+			{
 				curCommand = (CommandPattern) _theCommands.get(i);
-				if (curCommand.matchCommand(_currentCommand)) {
+				if (curCommand.matchCommand(_currentCommand)) 
+				{
 					matchedOutput = curCommand.matchLine(theLine);
 				}
-				if (matchedOutput != null) {
+				if (matchedOutput != null) 
+				{
 					return matchedOutput;
 				}
 			}

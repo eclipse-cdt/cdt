@@ -82,6 +82,10 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 			{
 				type = parsedMsg.type;
 			}
+			else
+			{
+				System.out.println("parsedMsg = null");
+			}
 			if (event.isError())
 			{
 				output = new RemoteError(this, type);
@@ -124,8 +128,9 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 	
 	public void writeToShell(String cmd)
 	{
-		super.writeToShell(cmd);
 		_patterns.update(cmd);
+		super.writeToShell(cmd);
+
 	}
 	
 }

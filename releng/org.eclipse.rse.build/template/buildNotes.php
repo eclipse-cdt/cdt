@@ -26,13 +26,17 @@
 <li>RSE ssh feature now supports connections via Proxy.
   <ul>
     <li>Re-uses ssh Preferences from Team &gt; CVS &gt; SSH2 Connection Method, and Team &gt; CVS &gt; Proxy Settings.</li>
-    <li>Supports ssh command shell and sftp file transfer</li>
     <li>Ssh private key authentication is supported, but RSE requires entering a dummy password
-      (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142471">bug 142471</a>)</li>
+      (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142471">bug 142471</a>).
+      As an alternative, passwords can also be maintained by RSE.</li>
   </ul>
 </li> 
-<li>Documentation is now available. Note that this documentation still refers to the
-  older IBM RSE product and thus contains lots of outdated references.</li>
+<li>Documentation is now available. Note that this documentation partially still
+  refers to the older IBM RSE product and thus contains lots of outdated 
+  references.</li>
+<li>The New Connection Wizard is now completely replaceable for contributed
+  system types. As a side effect of this, the ordering of subsystems for a
+  connection may change (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=149280">bug 149280</a>).
 <li>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-05-19&chfieldto=2006-06-30&chfield=resolution">
   this query</a> to show the list of bugs fixed for this build.</li>
 <li>Look <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
@@ -79,8 +83,8 @@ For operations on an actual remote system, you can either
 <table><tbody><tr><td>
 <p>
 RSE is a framework that supports plugging in many different communication protocols.
-By default, the dstore and FTP protocol plug-ins are provided, with dstore being a
-lot richer in features.</p>
+By default, the dstore, FTP and ssh protocol plug-ins are provided, with dstore being 
+the most richest in features.</p>
 <p>
 Dstore requirs a server to run on the remote system. There are several methods to 
 get a server launched for a particular user, the most easy one to set up is the 
@@ -103,6 +107,24 @@ daemon method. To start a dstore launcher daemon,
 <b>Note:</b> In its default configuration for testing, the dstore daemon accepts <b>unencrypted 
 passwords</b> from the RSE client. For production use, SSL can be enabled in order to encrypt
 connections, or the RSE server can be launched differently (e.g. through ssh).</p>
+<p>
+When no root access is available on the remote system (typically UNIX), normal
+users can start a dstore server for themselves only, instead of a daemon:
+<ul>
+<li>On the remote system, run <b>perl server.pl [portname]</b></li>
+<li>On the RSE client, create the dstore connection</li>
+<li>After creating the connection, select it and choose Properties
+<ul><li>On <b>Server Launcher Settings</b>, choose <b>Connect to Running Server</b></li>
+    <li>On the <b>Subsystem</b> page, enter the port number you used for starting the server</li>
+</ul></li>
+<li>When connecting, enter just anything for username and password (these will be ignored).</li>
+<li>The server.pl script has more options, e.g. for using the first available
+  port instead of a well-known one, or for restricting access to a single 
+  user ID. Since all dstore communication will be on the single TCP port,
+  this port can also be forwarded through an ssh tunnel if desired.</li>
+</ul>
+
+</ul>
 
 </td></tr></tbody></table>
 
@@ -116,12 +138,16 @@ connections, or the RSE server can be launched differently (e.g. through ssh).</
 <ul>
   <li>In the RSE Perspective, Remote Systems View, press the <b>New Connection</b> button.<ul>
     <li>Note: In the Preferences, you can enable displaying available new connection types in the RSE tree.</li></ul></li>
-  <li>Enter a name, system type and IP address for a remote system running an ssh server or dstore server.<ul>
-    <li>Coose system type "SSH Only" for ssh servers, or any other for dstore.</li> 
-    <li>You can also run a dstore server on the local machine for testing. In this case, type "localhost" as address.</li>
-    <li>You can press Finish right away, the wizard defaults are fine for dstore connections.</li></ul></li>
+  <li>Select the desired system type<ul>
+    <li>Coose system type "SSH Only" for ssh servers, or any other for dstore.</li></ul></li>
+  <li>Enter an IP address for a remote system running an ssh server or dstore server.
+    A connection name will be suggested automatically, but can be changed.<ul>
+    <li>You can also run a dstore server on the local machine for testing. In this case,
+        type "localhost" as address.</li>
+    <li>You can press Finish right away, the wizard defaults are usually fine.</li></ul></li>
   <li>Fill in the username / password dialog.<ul>
-    <li>Note: For ssh, the password here is just a dummy. You can setup ssh private key authentication through
+    <li>Note: For ssh, if you have private keys, the password here is just a dummy.
+        Enter anything and save it. You can setup ssh private key authentication through
         the <b>Team &gt; CVS &gt; SSH2 Connection Method</b> Preference page.</li></ul></li>
   <li><b>Browse remote files</b>, or open remote shells.<ul>
     <li>You can <b>drag and drop</b> files between local and remote file systems, between editors and any view.
@@ -160,21 +186,26 @@ connections, or the RSE server can be launched differently (e.g. through ssh).</
 The following M3 <a href="http://www.eclipse.org/dsdp/tm/development/plan.php">original plan</a> deliverables did 
 not make it into this build:
 <ul>
-<li>The Wizard is not yet completely replacable.</li>
 <li>User Actions, and Import/Export were deferred. 
   A new <a href="http://www.eclipse.org/dsdp/tm/development/plan.php">plan</a> will be published.</li>
-<li>JUnit tests are not yet available.</li>
+<li>JUnit tests did not make it into the build due to pending IP review.
+  They are available from Bugzilla 
+  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=149080">bug 149080</a> instead.</li>
+<li>Examples are not yet available as downloadable package. A <b>CDT Launch Integration Example</b>
+  and a sample custom subsystem called <b>Daytime Example</b> are available from the
+  <a href="http://www.eclipse.org/dsdp/tm/development/index.php">RSE CVS Repository</a> instead.</li>
 </ul>
 The following critical or major bugs are currently known. Since
 the goal of this milestone was "functional complete" for soliciting 
 user and API feedback, we still gave a go for this milestone.
 We'll strive to fix these as soon as possible.
 <ul>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=149186">bug 149186</a> - maj - downloading in background can truncate the remote file<br/>
+      -- In order to avoid this bug, do not put any data transfer into background.</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143462">bug 143462</a> - maj - [updating] Dirty remote editors do not get notified</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143292">bug 143292</a> - maj - [mac] Move Resource dialog causes hang/crash</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142712">bug 142712</a> - maj - [team] Connection created in Team profile is not functional</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142710">bug 142710</a> - maj - [team] NPE when trying to copy or move a connection to a team profile</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=139207">bug 139207</a> - maj - Browsing into some remote tar archives fails, and may crash the dstore server</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=139207">bug 139207</a> - maj - Browsing into some remote tar archives fails, and may crash the dstore server<br/>
+      -- This problem was only observed with invalid tar archives.</li>
 </ul>
 Click 
 <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=RSE&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">here</a>

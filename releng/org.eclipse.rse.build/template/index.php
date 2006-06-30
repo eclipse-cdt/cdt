@@ -41,7 +41,7 @@
 </table>
 <table>
   <tbody>
-    <tr><td><b>RSE requires Eclipse-3.2.<b></td></tr>
+    <tr><td><b>RSE requires Eclipse-3.2.<b> (<a href="http://download.eclipse.org/eclipse/downloads/index.php">download page</a>)</td></tr>
     <tr><td>Eclipse 3.2RC2, 3.1 or lower will <b>not</b> work!</td></tr>
     <tr>
       <td>We've been testing with Eclipse-3.2 RC7, built 2-Jun-2006 (<a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.2RC7-200606021317/index.php">download page</a>)</td>
@@ -56,7 +56,7 @@
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">SDK (includes client runtime, documentation, and source)</font></b></td>
+		<font face="Arial,Helvetica" color="#FFFFFF">SDK (includes client runtime, user and ISV documentation, and source)</font></b></td>
 	</tr>
 </table>
 <table border="0" cellspacing="2" cellpadding="0" width="100%">
@@ -113,6 +113,10 @@
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
 		<font face="Arial,Helvetica" color="#FFFFFF">Client Runtime Binaries</font></b></td>
+	</tr>
+	<tr>
+	    <td>RSE-runtime-core is required, and includes the user documentation.<br/> 
+	    All other runtime packages are optional.</td>
 	</tr>
 </table>
 <table border="0" cellspacing="2" cellpadding="0" width="100%">

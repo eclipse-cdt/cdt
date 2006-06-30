@@ -194,7 +194,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			int readCount = 0;
 			
 			int available = bufInputStream.available();
-			System.out.println("available = "+available);
+	
 			 while( (readCount = bufInputStream.read(buffer)) > 0 && !isCancelled) 
 			 {
 			      if (isEncodingConversionRequired) 

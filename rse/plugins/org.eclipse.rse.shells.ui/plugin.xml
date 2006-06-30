@@ -79,7 +79,7 @@ Contributors:
             </visibility>
          <action
                label="%Launch_Shell"
-               icon="./icons/full/obj16/systemshell.gif"
+               icon="icons/full/obj16/systemshell.gif"
                tooltip="%Launch_Shell_Tooltip"
                class="org.eclipse.rse.shells.ui.actions.LaunchShellActionDelegate"
                enablesFor="1"
@@ -88,7 +88,7 @@ Contributors:
          <!--
                   <action
                label="test command"
-               icon="./icons/full/obj16/systemshell.gif"
+               icon="icons/full/obj16/systemshell.gif"
                tooltip="%Launch_Shell_Tooltip"
                class="org.eclipse.rse.shells.ui.actions.LaunchCommandActionDelegate"
                enablesFor="1"

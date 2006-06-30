@@ -767,7 +767,7 @@ Contributors:
 <!-- Remote Error List being commented out      
       <view
             name="%View.RemoteErrorList"
-            icon="./icons/full/cview16/errorlist_view.gif"
+            icon="icons/full/cview16/errorlist_view.gif"
             category="org.eclipse.rse.ui.view"
             class="org.eclipse.rse.ui.view.commands.SystemBuildErrorViewPart"
             id="org.eclipse.rse.ui.view.buildErrorView">
@@ -795,7 +795,7 @@ Contributors:
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%Perspective.Explorer"
-            icon="./icons/full/cview16/system_persp.gif"
+            icon="icons/full/cview16/system_persp.gif"
             class="org.eclipse.rse.ui.view.SystemPerspectiveLayout"
             id="org.eclipse.rse.ui.view.SystemPerspective">
       </perspective>

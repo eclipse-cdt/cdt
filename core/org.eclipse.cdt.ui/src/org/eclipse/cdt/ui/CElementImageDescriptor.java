@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -52,7 +53,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	public final static int RUNNABLE= 		0x010;
 	
 	/** Flag to render the waring adornment */
-	public final static int WARNING=			0x020;
+	public final static int WARNING=		0x020;
 	
 	/** Flag to render the error adornment */
 	public final static int ERROR=			0x040;
@@ -61,7 +62,19 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	public final static int OVERRIDES= 		0x080;
 	
 	/** Flag to render the 'implements' adornment */
-	public final static int IMPLEMENTS= 		0x100;		
+	public final static int IMPLEMENTS= 	0x100;		
+
+    /** Flag to render the 'relates to' adornment (for trees, an arrow down) */
+    public final static int RELATES_TO=     0x200;      
+
+    /** Flag to render the 'referenced by' adornment (for trees, an arrow up) */
+    public final static int REFERENCED_BY=  0x400;      
+
+    /** Flag to render the 'recursive relation' adornment (for trees, an arrow pointing back) */
+    public final static int RECURSIVE_RELATION= 0x800;
+    
+    /** Flag to render the 'system include' adornment */
+    public final static int SYSTEM_INCLUDE= 0x1000;      
 
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
@@ -188,12 +201,32 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 			x-= data.width;
 			drawImage(data, x, 0);
 		}
+        if ((fFlags & SYSTEM_INCLUDE) != 0) {
+            data= CPluginImages.DESC_OVR_SYSTEM_INCLUDE.getImageData();
+            x-= data.width;
+            drawImage(data, x, 0);
+        }
 	}		
 	
 	private void drawBottomRight() {
-		//Point size= getSize();
-		//int x= size.x;
-		//ImageData data= null;
+		Point size= getSize();
+		int x= size.x;
+		ImageData data= null;
+        if ((fFlags & RECURSIVE_RELATION) != 0) {
+            data= CPluginImages.DESC_OVR_REC_RELATESTO.getImageData();
+            x-= data.width;
+            drawImage(data, x, size.y-data.height);
+        }
+        else if ((fFlags & RELATES_TO) != 0) {
+            data= CPluginImages.DESC_OVR_RELATESTO.getImageData();
+            x-= data.width;
+            drawImage(data, x, size.y-data.height);
+        }
+        else if ((fFlags & REFERENCED_BY) != 0) {
+            data= CPluginImages.DESC_OVR_REFERENCEDBY.getImageData();
+            x-= data.width;
+            drawImage(data, x, size.y-data.height);
+        }
 		 /*if ((fFlags & SYNCHRONIZED) != 0) {
 			data= CPluginImages.DESC_OVR_SYNCH.getImageData();
 			x-= data.width;

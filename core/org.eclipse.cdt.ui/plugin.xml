@@ -15,9 +15,9 @@
 <!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
-   <extension-point id="IndexerPage" name="Indexer Page" schema="schema/IndexerPage.exsd"/>
+   <extension-point id="IndexerPage" name="%indexerPage.name" schema="schema/IndexerPage.exsd"/>
    <extension-point id="completionContributors" name="%completionContributors" schema="schema/completionContributors.exsd"/>
-   <extension-point id="ProposalFilter" name="Code Completion Proposal Filter" schema="schema/ProposalFilter.exsd"/>
+   <extension-point id="ProposalFilter" name="%proposalFilter.name" schema="schema/ProposalFilter.exsd"/>
 
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -211,6 +211,8 @@
          <actionSet
                id="org.eclipse.debug.ui.launchActionSet">
          </actionSet>
+         <showInPart id="org.eclipse.cdt.ui.includeBrowser"/>
+         <showInPart id="org.eclipse.cdt.ui.CView"/>
          <!--perspectiveShortcut
                id="org.eclipse.cdt.ui.CBrowsingPerspective">
          </perspectiveShortcut-->
@@ -241,6 +243,12 @@
             icon="icons/view16/types.gif"
             id="org.eclipse.cdt.ui.IndexView"
             name="%IndexView.name"/>
+      <view
+            category="org.eclipse.cdt.ui.views"
+            class="org.eclipse.cdt.internal.ui.includebrowser.IBViewPart"
+            icon="icons/view16/includeBrowser.gif"
+            id="org.eclipse.cdt.ui.includeBrowser"
+            name="%includeBrowser.name"/>
       <!--category
             name="%CBrowsing.viewCategoryName"
             id="org.eclipse.cdt.ui.c.browsing">
@@ -1054,7 +1062,7 @@
    </extension>
    <extension
          id="pdomSearchPage"
-         name="CSearchPage"
+         name="%cSearchPage.name"
          point="org.eclipse.search.searchPages">
       <page
             canSearchEnclosingProjects="true"

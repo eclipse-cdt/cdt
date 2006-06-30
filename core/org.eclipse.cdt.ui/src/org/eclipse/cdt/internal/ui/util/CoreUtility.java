@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
@@ -69,6 +70,26 @@ public class CoreUtility {
 		if (exc[0] != null)
 			throw exc[0];
 		return ret[0];
+	}
+
+	/**
+	 * Calls equals after checking for nulls
+	 */
+	public static boolean safeEquals(Object lhs, Object rhs) {
+	    if (lhs==rhs) {
+	        return true;
+	    }
+	    if (lhs == null || rhs == null) {
+	        return false;
+	    }
+	    return lhs.equals(rhs);
+	}
+
+	/**
+	 * Calls hashCode after checking for null
+	 */
+	public static int safeHashcode(Object o) {
+		return o == null ? 0 : o.hashCode();
 	}	
 
 }

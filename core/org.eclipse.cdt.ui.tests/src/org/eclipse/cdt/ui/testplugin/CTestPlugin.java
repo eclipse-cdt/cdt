@@ -17,10 +17,11 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.swt.widgets.Display;
+
 
 
 public class CTestPlugin extends Plugin {
@@ -51,7 +52,7 @@ public class CTestPlugin extends Plugin {
 	
 	public File getFileInPlugin(IPath path) {
 		try {
-			return new File(Platform.asLocalURL(find(path)).getFile());
+			return new File(FileLocator.toFileURL(FileLocator.find(getBundle(), path, null)).getFile());
 		} catch (IOException e) {
 			return null;
 		}

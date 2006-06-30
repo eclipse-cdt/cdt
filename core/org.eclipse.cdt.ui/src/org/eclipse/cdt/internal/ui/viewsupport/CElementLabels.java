@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,17 @@
  *
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Jun 24, 2003
  */
 package org.eclipse.cdt.internal.ui.viewsupport;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
@@ -20,12 +26,11 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
-import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.model.IWorkbenchAdapter;
+
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
+
+import org.eclipse.cdt.internal.ui.CUIMessages;
 
 /**
  * @author aniefer
@@ -353,7 +358,7 @@ public class CElementLabels {
 
 			for (int i= 0; i < nParams; i++) {
 				if (i > 0) {
-					buf.append( COMMA_STRING ); //$NON-NLS-1$
+					buf.append( COMMA_STRING );
 				}
 				
 				if (types != null) {
@@ -441,19 +446,31 @@ public class CElementLabels {
 	 * Appends the label for a translation unit to a StringBuffer. Considers the CU_* flags.
 	 */
 	public static void getTranslationUnitLabel(ITranslationUnit tu, int flags, StringBuffer buf) {
-		if (getFlag(flags, CU_QUALIFIED)) {
-			ISourceRoot root= CModelUtil.getSourceRoot(tu);
-//			if (!pack.isDefaultPackage()) {
-				buf.append(root.getElementName());
-				buf.append('.');
-//			}
+		IResource r= tu.getResource();
+		IPath path;
+		if (r != null) {
+			path= r.getFullPath().makeRelative();
 		}
-		buf.append(tu.getElementName());
+		else {
+			path= tu.getPath();
+		}
 		
-		if (getFlag(flags, CU_POST_QUALIFIED)) {
-			buf.append(CONCAT_STRING);
-			getSourceRootLabel((ISourceRoot) tu.getParent(), 0, buf);
-		}		
+		if (path == null) {
+			buf.append(tu.getElementName());
+		}
+		else {
+			if (getFlag(flags, CU_QUALIFIED)) {
+				buf.append(path.toString());
+			}
+			else if (getFlag(flags, CU_POST_QUALIFIED)) {
+				buf.append(path.lastSegment());
+				buf.append(CONCAT_STRING);
+				buf.append(path.removeLastSegments(1));
+			}
+			else {
+				buf.append(path.lastSegment());
+			}
+		}
 	}
 
 	/**

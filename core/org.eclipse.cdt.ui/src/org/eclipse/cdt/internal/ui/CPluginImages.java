@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
@@ -196,13 +197,27 @@ public class CPluginImages {
 	public static final String IMG_ACTION_SHOW_PUBLIC= NAME_PREFIX + "public_co.gif"; //$NON-NLS-1$
 	public static final String IMG_ACTION_SHOW_STATIC= NAME_PREFIX + "static_co.gif"; //$NON-NLS-1$
 
+    public static final String IMG_ACTION_SHOW_REF_BY = NAME_PREFIX + "ch_callers.gif"; //$NON-NLS-1$
+    public static final String IMG_ACTION_SHOW_RELATES_TO = NAME_PREFIX + "ch_callees.gif"; //$NON-NLS-1$
+    public static final String IMG_ACTION_HIDE_INACTIVE = NAME_PREFIX + "filterInactive.gif"; //$NON-NLS-1$
+    public static final String IMG_ACTION_HIDE_SYSTEM = NAME_PREFIX + "filterSystem.gif"; //$NON-NLS-1$
+    public static final String IMG_SHOW_NEXT= NAME_PREFIX + "search_next.gif"; //$NON-NLS-1$
+    public static final String IMG_SHOW_PREV= NAME_PREFIX + "search_prev.gif"; //$NON-NLS-1$
+    public static final String IMG_REFRESH= NAME_PREFIX + "refresh_nav.gif"; //$NON-NLS-1$
+    
+    
 	public static final ImageDescriptor DESC_OBJS_TEMPLATE= createManaged(T_OBJ, IMG_OBJS_TEMPLATE);
 	
 	public static final ImageDescriptor DESC_OVR_STATIC= create(T_OVR, "static_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_CONSTANT= create(T_OVR, "c_ovr.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_VOLATILE= create(T_OVR, "volatile_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_TEMPLATE= create(T_OVR, "template_co.gif"); //$NON-NLS-1$
-
+    public static final ImageDescriptor DESC_OVR_RELATESTO= create(T_OVR, "relatesto_co.gif"); //$NON-NLS-1$
+    public static final ImageDescriptor DESC_OVR_REFERENCEDBY= create(T_OVR, "referencedby_co.gif"); //$NON-NLS-1$
+    public static final ImageDescriptor DESC_OVR_REC_RELATESTO= create(T_OVR, "rec_relatesto_co.gif"); //$NON-NLS-1$
+    public static final ImageDescriptor DESC_OVR_REC_REFERENCEDBY= create(T_OVR, "rec_referencedby_co.gif"); //$NON-NLS-1$
+    public static final ImageDescriptor DESC_OVR_SYSTEM_INCLUDE= create(T_OVR, "systeminclude_co.gif"); //$NON-NLS-1$
+    
 	public static final ImageDescriptor DESC_OVR_WARNING= create(T_OVR, "warning_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_ERROR= create(T_OVR, "error_co.gif"); //$NON-NLS-1$
 
@@ -242,10 +257,10 @@ public class CPluginImages {
 	public static final String IMG_OBJS_REFACTORING_WARNING= NAME_PREFIX + "warning_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_REFACTORING_INFO= NAME_PREFIX + "info_obj.gif"; 	//$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_REFACTORING_FATAL= createManaged( T_OBJ, IMG_OBJS_REFACTORING_FATAL); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REFACTORING_ERROR= createManaged( T_OBJ, IMG_OBJS_REFACTORING_ERROR); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REFACTORING_WARNING= createManaged( T_OBJ, IMG_OBJS_REFACTORING_WARNING); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REFACTORING_INFO= createManaged ( T_OBJ, IMG_OBJS_REFACTORING_INFO); 	//$NON-NLS-1$
+	public static final ImageDescriptor DESC_REFACTORING_FATAL= createManaged( T_OBJ, IMG_OBJS_REFACTORING_FATAL); 
+	public static final ImageDescriptor DESC_REFACTORING_ERROR= createManaged( T_OBJ, IMG_OBJS_REFACTORING_ERROR); 
+	public static final ImageDescriptor DESC_REFACTORING_WARNING= createManaged( T_OBJ, IMG_OBJS_REFACTORING_WARNING); 
+	public static final ImageDescriptor DESC_REFACTORING_INFO= createManaged ( T_OBJ, IMG_OBJS_REFACTORING_INFO); 	
 		
 	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_FIELD= create(T_WIZBAN, "fieldrefact_wiz.gif");	//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_METHOD= create(T_WIZBAN, "methrefact_wiz.gif");	//$NON-NLS-1$
@@ -256,6 +271,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_CU_CHANGE= create(T_OBJ, "cu_change.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_FILE_CHANGE= create(T_OBJ, "file_change.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_TEXT_EDIT= create(T_OBJ, "text_edit.gif"); //$NON-NLS-1$
+
 	
 
 	private static ImageDescriptor createManaged(String prefix, String name) {

@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     IBM Corp. - Rational Software
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -20,31 +21,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.model.IWorkingCopyProvider;
-import org.eclipse.cdt.internal.core.model.IBufferFactory;
-import org.eclipse.cdt.internal.corext.template.c.CContextType;
-import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
-import org.eclipse.cdt.internal.ui.ICStatusConstants;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
-import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
-import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
-import org.eclipse.cdt.internal.ui.editor.CustomBufferFactory;
-import org.eclipse.cdt.internal.ui.editor.ExternalSearchDocumentProvider;
-import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
-import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
-import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.PreferencesAdapter;
-import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
-import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
-import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
-import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
-import org.eclipse.cdt.internal.ui.util.Util;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -78,6 +54,34 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
 import org.osgi.framework.BundleContext;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.model.IWorkingCopyProvider;
+
+import org.eclipse.cdt.internal.core.model.IBufferFactory;
+import org.eclipse.cdt.internal.corext.template.c.CContextType;
+
+import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
+import org.eclipse.cdt.internal.ui.ICStatusConstants;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
+import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
+import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
+import org.eclipse.cdt.internal.ui.editor.CustomBufferFactory;
+import org.eclipse.cdt.internal.ui.editor.ExternalSearchDocumentProvider;
+import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
+import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
+import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.PreferencesAdapter;
+import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
+import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
+import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
+import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
+import org.eclipse.cdt.internal.ui.util.Util;
+
 public class CUIPlugin extends AbstractUIPlugin {
 
 	private ISharedTextColors fSharedTextColors;
@@ -88,6 +92,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static final String CVIEW_ID = PLUGIN_ID + ".CView"; //$NON-NLS-1$
 	public static final String C_PROBLEMMARKER = PLUGIN_CORE_ID + ".problem"; //$NON-NLS-1$
 
+    public static final String ID_INCLUDE_BROWSER= PLUGIN_ID + ".includeBrowser"; //$NON-NLS-1$
+    
 	public static final String C_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCWizard"; //$NON-NLS-1$
 	public static final String CPP_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCCWizard"; //$NON-NLS-1$
 

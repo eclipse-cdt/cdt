@@ -63,9 +63,9 @@ $packageDirectory = "$working/package";
 $publishDirectory = "$working/publish";
 
 $tag = ask("Enter tag to fetch from CVS", "HEAD");
-$buildType = ask("Enter build type (P=Personal, N=Nightly, I=Integration)", "P");
-($sec, $minute, $hour, $mday, $mon, $year) = gmtime();
-$timeStamp = sprintf("%4.4d%2.2d%2.2d-%2.2d%2.2d", $year + 1900, ($mon + 1), ($mday + 1), $hour, $minute, $sec);
+$buildType = ask("Enter build type (P=Personal, N=Nightly, I=Integration, S=Stable)", "P");
+($sec, $minute, $hour, $mday, $mon, $year) = localtime();
+$timeStamp = sprintf("%4.4d%2.2d%2.2d-%2.2d%2.2d", $year + 1900, ($mon + 1), $mday, $hour, $minute, $sec);
 $buildId = $buildType . $timeStamp;
 $buildId = ask("Enter the build id", $buildType . $timeStamp);
 

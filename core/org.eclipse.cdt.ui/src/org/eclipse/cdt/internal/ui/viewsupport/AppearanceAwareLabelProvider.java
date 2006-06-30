@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -45,7 +45,7 @@ public class AppearanceAwareLabelProvider extends CUILabelProvider implements IP
 	}
 	
 	private void initMasks() {
-		IPreferenceStore store= PreferenceConstants.getPreferenceStore();
+//		IPreferenceStore store= PreferenceConstants.getPreferenceStore();
 		fTextFlagMask= -1;
 //		if (!store.getBoolean(PreferenceConstants.APPEARANCE_METHOD_RETURNTYPE)) {
 //			fTextFlagMask ^= CElementLabels.M_APP_RETURNTYPE;
@@ -61,7 +61,7 @@ public class AppearanceAwareLabelProvider extends CUILabelProvider implements IP
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		String property= event.getProperty();
+//		String property= event.getProperty();
 //		if (property.equals(PreferenceConstants.APPEARANCE_METHOD_RETURNTYPE)
 //				|| property.equals(PreferenceConstants.APPEARANCE_PKG_NAME_PATTERN_FOR_PKG_VIEW)
 //				|| property.equals(PreferenceConstants.APPEARANCE_COMPRESS_PACKAGE_NAMES)) {

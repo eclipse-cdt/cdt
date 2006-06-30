@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui;
@@ -39,7 +40,7 @@ import org.eclipse.ui.PlatformUI;
 public class IndexLabelProvider extends LabelProvider {
 	public String getText(Object element) {
 		if (element == null) {
-			return "null :(";
+			return "null :("; //$NON-NLS-1$
 		} else if (element instanceof PDOMNode) {
 			try {
 				return ((PDOMNamedNode)element).getDBName().getString();
@@ -63,10 +64,10 @@ public class IndexLabelProvider extends LabelProvider {
 				case ICPPClassType.k_class:
 					desc = CElementImageProvider.getClassImageDescriptor();
 					break;
-				case ICPPClassType.k_struct:
+				case ICompositeType.k_struct:
 					desc = CElementImageProvider.getStructImageDescriptor();
 					break;
-				case ICPPClassType.k_union:
+				case ICompositeType.k_union:
 					desc = CElementImageProvider.getUnionImageDescriptor();
 					break;
 				}

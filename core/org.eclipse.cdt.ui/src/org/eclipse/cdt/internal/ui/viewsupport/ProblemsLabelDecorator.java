@@ -10,26 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.util.IProblemChangedListener;
-import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
-import org.eclipse.cdt.ui.CElementImageDescriptor;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -39,9 +25,19 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CElementImageDescriptor;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.util.IProblemChangedListener;
+import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 
 /**
  * LabelDecorator that decorates an element's image with error and warning overlays that 
@@ -230,9 +226,9 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	}
 	
 	
-	private int getErrorTicksFromWorkingCopy(ITranslationUnit original, ISourceReference sourceElement) throws CoreException {
-		int info= 0;
-		FileEditorInput editorInput= new FileEditorInput((IFile) original.getResource());
+//	private int getErrorTicksFromWorkingCopy(ITranslationUnit original, ISourceReference sourceElement) throws CoreException {
+//		int info= 0;
+//		FileEditorInput editorInput= new FileEditorInput((IFile) original.getResource());
 //		IAnnotationModel model= CUIPlugin.getDefault().getTranslationUnitDocumentProvider().getAnnotationModel(editorInput);
 //		if (model != null) {
 //			Iterator iter= model.getAnnotationIterator();
@@ -249,21 +245,21 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 //				}
 //			}
 //		}
-		return info;
-	}
+//		return info;
+//	}
 			
-	private IMarker isAnnotationInRange(IAnnotationModel model, Annotation annot, ISourceReference sourceElement) throws CoreException {
-		if (annot instanceof MarkerAnnotation) {
-			IMarker marker= ((MarkerAnnotation) annot).getMarker();
-			if (marker.exists() && marker.isSubtypeOf(IMarker.PROBLEM)) {
-				Position pos= model.getPosition(annot);
-				if (pos != null && (sourceElement == null || isInside(pos.getOffset(), -1, sourceElement))) {
-					return marker;
-				}
-			}
-		}
-		return null;
-	}
+//	private IMarker isAnnotationInRange(IAnnotationModel model, Annotation annot, ISourceReference sourceElement) throws CoreException {
+//		if (annot instanceof MarkerAnnotation) {
+//			IMarker marker= ((MarkerAnnotation) annot).getMarker();
+//			if (marker.exists() && marker.isSubtypeOf(IMarker.PROBLEM)) {
+//				Position pos= model.getPosition(annot);
+//				if (pos != null && (sourceElement == null || isInside(pos.getOffset(), -1, sourceElement))) {
+//					return marker;
+//				}
+//			}
+//		}
+//		return null;
+//	}
 	
 	/**
 	 * Tests if a position is inside the source range of an element.

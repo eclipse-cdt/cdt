@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist;
 
-import org.eclipse.cdt.internal.ui.preferences.ProposalFilterPreferencesUtil;
-import org.eclipse.cdt.internal.ui.preferences.ProposalFilterPreferencesUtil.ComboState;
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
-import org.eclipse.cdt.ui.CUIPlugin;
+import junit.framework.TestCase;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import junit.framework.TestCase;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.preferences.ProposalFilterPreferencesUtil;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 /** 
  * This test covers the convenience methods 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -87,9 +88,9 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 		if (!basePath.isEmpty()) {
 			IPath loc = basePath;
 			if (!loc.isAbsolute()) {
-				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(loc);
+				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(loc.append(inc));
 				if (res != null) {
-					loc = res.getLocation();
+					return res.getLocation();
 				}
 			}
 			p = loc.append(inc);

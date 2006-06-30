@@ -1090,7 +1090,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			
 			//Process p = Runtime.getRuntime().exec(command);
 			rc = p.waitFor();
-			System.out.println("exit value = " + rc);
+
 			//rc = p.exitValue();
 		}
 		catch (Exception e)

@@ -28,6 +28,9 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+
+		// shells ui needs to be started for proper UI init
+		org.eclipse.rse.shells.ui.Activator.getDefault();
 	}
 
 	/*

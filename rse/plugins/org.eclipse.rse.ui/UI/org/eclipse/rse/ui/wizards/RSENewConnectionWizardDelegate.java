@@ -26,6 +26,7 @@ public abstract class RSENewConnectionWizardDelegate implements IRSENewConnectio
 	
 	private RSENewConnectionWizard wizard;
 	private IRSESystemType systemType;
+	private boolean isInitialized;
 
 	/**
 	 * @see org.eclipse.rse.ui.wizards.IRSENewConnectionWizardDelegate#init(org.eclipse.rse.ui.wizards.RSENewConnectionWizard, org.eclipse.rse.core.IRSESystemType)
@@ -33,6 +34,7 @@ public abstract class RSENewConnectionWizardDelegate implements IRSENewConnectio
 	public void init(RSENewConnectionWizard wizard, IRSESystemType systemType) {
 		setWizard(wizard);
 		setSystemType(systemType);
+		setInitialized(true);
 	}
 	
 	protected void setWizard(RSENewConnectionWizard wizard) {
@@ -41,6 +43,10 @@ public abstract class RSENewConnectionWizardDelegate implements IRSENewConnectio
 	
 	protected void setSystemType(IRSESystemType systemType) {
 		this.systemType = systemType;
+	}
+	
+	protected void setInitialized(boolean isInitialized) {
+		this.isInitialized = true;
 	}
 
 	/**
@@ -55,6 +61,13 @@ public abstract class RSENewConnectionWizardDelegate implements IRSENewConnectio
 	 */
 	public IRSESystemType getSystemType() {
 		return systemType;
+	}
+
+	/**
+	 * @see org.eclipse.rse.ui.wizards.IRSENewConnectionWizardDelegate#isInitialized()
+	 */
+	public boolean isInitialized() {
+		return isInitialized;
 	}
 
 	/**

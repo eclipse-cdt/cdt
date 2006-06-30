@@ -27,6 +27,8 @@ public interface IRSENewConnectionWizardDelegate {
 
 	public void init(RSENewConnectionWizard wizard, IRSESystemType systemType);
 	
+	public boolean isInitialized();
+	
 	public void systemTypeChanged(IRSESystemType systemType);
 	
 	public RSENewConnectionWizard getWizard();

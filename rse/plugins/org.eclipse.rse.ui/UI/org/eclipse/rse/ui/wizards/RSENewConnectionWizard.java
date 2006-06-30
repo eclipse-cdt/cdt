@@ -18,29 +18,30 @@ package org.eclipse.rse.ui.wizards;
 
 import java.util.HashMap;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
 /**
- *
- */
-/**
- * @author kmunir
- *
+ * The New Connection wizard. This wizard allows users to create new RSE connections.
  */
 public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSENewConnectionWizard {
 	
 	private HashMap map;
 	private IRSESystemType systemType;
-	private boolean initWithSystemType;
 	private IRSENewConnectionWizardDelegate delegate;
 	private RSENewConnectionWizardMainPage mainPage;
+	private IRSESystemType[] restrictedSystemTypes;
+	private boolean onlySystemType;
+	private IRSENewConnectionWizardDelegate defaultDelegate;
+	private boolean defaultDelegateCreated;
 
 	/**
 	 * Constructor.
@@ -51,13 +52,35 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 		setForcePreviousAndNextButtons(true);
 	    setNeedsProgressMonitor(true);
 	}
-	
+
 	/**
-	 * @see org.eclipse.rse.ui.wizards.IRSENewConnectionWizard#setSystemType(org.eclipse.rse.core.IRSESystemType)
+	 * @see org.eclipse.rse.ui.wizards.IRSENewConnectionWizard#restrictToSystemType(org.eclipse.rse.core.IRSESystemType)
 	 */
-	public void setSystemType(IRSESystemType systemType, boolean initWithSystemType) {
+	public void restrictToSystemType(IRSESystemType systemType) {
+		IRSESystemType[] types = new IRSESystemType[1];
+		types[0] = systemType;
+		restrictToSystemTypes(types);
+	}
+
+	/**
+	 * @see org.eclipse.rse.ui.wizards.IRSENewConnectionWizard#restrictToSystemTypes(org.eclipse.rse.core.IRSESystemType[])
+	 */
+	public void restrictToSystemTypes(IRSESystemType[] systemTypes) {
+		this.restrictedSystemTypes = systemTypes;
+		
+		if (systemTypes.length == 1) {
+			this.onlySystemType = true;
+		}
+		else {
+			this.onlySystemType = false;
+		}
+	}
+
+	/**
+	 * @see org.eclipse.rse.ui.wizards.IRSENewConnectionWizard#setSelectedSystemType(org.eclipse.rse.core.IRSESystemType)
+	 */
+	public void setSelectedSystemType(IRSESystemType systemType) {
 		this.systemType = systemType;
-		this.initWithSystemType = initWithSystemType;
 		setDelegate(systemType);
 	}
 
@@ -67,6 +90,37 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 	private void readWizardDelegateExtensions() {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_POINT_ID);
+		
+		for (int i = 0; i < elements.length; i++) {
+			IConfigurationElement element = elements[0];
+			
+			if (element.getName().equals(NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_CONFIG_NAME)) {
+				String systemTypeID = element.getAttribute(NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_CONFIG_ATTRIBUTE_SYSTEMTYPE);
+				Object obj = null;
+				
+				try {
+					obj = element.createExecutableExtension(NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_CONFIG_ATTRIBUTE_CLASS);
+					
+					if (obj instanceof IRSENewConnectionWizardDelegate) {
+						
+						if (map == null) {
+							map = new HashMap();
+						}
+						
+						if (!map.containsKey(systemTypeID)) {
+							map.put(systemTypeID, obj);
+						}
+					}
+					else {
+						continue;
+					}
+				}
+				catch (CoreException e) {
+					RSEUIPlugin.logError("Class " + obj + " is not executable extension", e);
+					continue;
+				}
+			}
+		}
 	}
 	
 	/**
@@ -80,11 +134,22 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 		}
 		
 		if (delegate == null) {
-			delegate = new RSEDefaultNewConnectionWizardDelegate();
+			
+			if (!defaultDelegateCreated) {
+				defaultDelegate = new RSEDefaultNewConnectionWizardDelegate();
+				defaultDelegateCreated = true;
+			}
+			
+			delegate = defaultDelegate;
 		}
 		
-		// set the wizard
-		delegate.init(this, systemType);
+		// initialize with wizard and system type if not initialized before
+		if (!delegate.isInitialized()) {
+			delegate.init(this, systemType);
+		}
+		else {
+			delegate.systemTypeChanged(systemType);
+		}
 		
 		return delegate;
 	}
@@ -100,8 +165,20 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		mainPage = new RSENewConnectionWizardMainPage(this, "Select System Type", "Select a system type");
-		addPage(mainPage);
+		
+		if (!onlySystemType) {
+			mainPage = new RSENewConnectionWizardMainPage(this, "Select System Type", "Select a system type");
+			
+			if (restrictedSystemTypes != null) {
+				mainPage.restrictToSystemTypes(restrictedSystemTypes);
+			}
+			
+			addPage(mainPage);
+		}
+		else {
+			setDelegate(restrictedSystemTypes[0]);
+			addPage(delegate.getMainPage());
+		}
 	}
 
 	/**
@@ -109,7 +186,11 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 	 */
 	public boolean canFinish() {
 		
-		boolean result = mainPage.isPageComplete();
+		boolean result = true;
+		
+		if (mainPage != null) {
+			result = mainPage.isPageComplete();
+		}
 		
 		if (result) {
 			
@@ -130,7 +211,7 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 	 */
 	public IWizardPage getNextPage(IWizardPage page) {
 		
-		if (page == mainPage) {
+		if (mainPage != null && page == mainPage) {
 			return super.getNextPage(page);
 		}
 		else {
@@ -157,7 +238,7 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 	 */
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		
-		if (page == mainPage) {
+		if (mainPage != null && page == mainPage) {
 			return super.getPreviousPage(page);
 		}
 		else {
@@ -183,7 +264,11 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 	 */
 	public boolean performFinish() {
 		
-		boolean result = mainPage.performFinish();
+		boolean result = true;
+		
+		if (mainPage != null) {
+			result = mainPage.performFinish();
+		}
 		
 		if (result) {
 			

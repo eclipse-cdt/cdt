@@ -18,6 +18,7 @@ package org.eclipse.rse.ui.wizards;
 
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
@@ -31,13 +32,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 /**
- *
+ * The New Connection Wizard main page that allows selection of system type.
  */
 public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage implements Listener {
 	
 	protected String parentHelpId;
 	protected Combo textSystemType;
 	protected IWizardPage nextPage;
+	protected IRSESystemType[] restrictedSystemTypes;
 
 	/**
 	 * Constructor.
@@ -65,13 +67,29 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 		Label labelSystemType = SystemWidgetHelpers.createLabel(composite_prompts, temp);
 		labelSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
 		
-		textSystemType = SystemWidgetHelpers.createSystemTypeCombo(parent, null);
+		if (restrictedSystemTypes == null) {
+			textSystemType = SystemWidgetHelpers.createSystemTypeCombo(parent, null);
+		}
+		else {
+			String[] systemTypeNames = new String[restrictedSystemTypes.length];
+			
+			for (int i = 0; i < restrictedSystemTypes.length; i++) {
+				systemTypeNames[i] = restrictedSystemTypes[i].getName();
+			}
+			
+			textSystemType = SystemWidgetHelpers.createSystemTypeCombo(parent, null, systemTypeNames);
+		}
+		
 		textSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
 		SystemWidgetHelpers.setHelp(textSystemType, RSEUIPlugin.HELPPREFIX + "ccon0003");
 		
 		textSystemType.addListener(SWT.Selection, this);
 		
 		return composite_prompts;
+	}
+	
+	public void restrictToSystemTypes(IRSESystemType[] systemTypes) {
+		this.restrictedSystemTypes = systemTypes;
 	}
 
 	/**
@@ -99,28 +117,20 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 	 */
 	public IWizardPage getNextPage() {
 		
-		if (nextPage == null) {
+		IWizard wizard = getWizard();
 		
-			IWizard wizard = getWizard();
-		
-			// if the wizard is a new connection wizard, which should always be the case,
-			// get the new connection wizard delegate for the selected system type and
-			// ask for the main page
-			if (wizard instanceof IRSENewConnectionWizard) {
-				String systemTypeStr = textSystemType.getText();
-				IRSENewConnectionWizard newConnWizard = (IRSENewConnectionWizard)wizard;
-				newConnWizard.setSystemType(RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr), false);
-				nextPage = newConnWizard.getDelegate().getMainPage();
-			}
-			else {
-				nextPage = super.getNextPage();
-			}
+		// if the wizard is a new connection wizard, which should always be the case,
+		// get the new connection wizard delegate for the selected system type and
+		// ask for the main page
+		if (wizard instanceof IRSENewConnectionWizard) {
+			String systemTypeStr = textSystemType.getText();
+			IRSENewConnectionWizard newConnWizard = (IRSENewConnectionWizard)wizard;
+			newConnWizard.setSelectedSystemType(RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr));
+			return newConnWizard.getDelegate().getMainPage();
 		}
 		else {
-			
+			return super.getNextPage();
 		}
-		
-		return nextPage;
 	}
 
 	/**
@@ -134,7 +144,7 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 			if (wizard instanceof IRSENewConnectionWizard) {
 				String systemTypeStr = textSystemType.getText();
 				IRSENewConnectionWizard newConnWizard = (IRSENewConnectionWizard)wizard;
-				newConnWizard.getDelegate().systemTypeChanged(RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr));
+				newConnWizard.setSelectedSystemType(RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr));
 			}
 		}
 	}

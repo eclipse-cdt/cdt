@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.rse.ui" id="newConnectionWizardDelegate" name="RSE New Connection Wizard Delegate"/>
       </appInfo>
       <documentation>
-         This extension point allows a New Connection wizard delegate to be provided for a certain system type. This is useful for those system types that need New Connection wizard pages which are different from the default pages supplied by RSE. 
+         This extension point allows a New Connection wizard delegate to be provided for a certain system type. This is useful for those system types that need New Connection wizard pages which are different from the default pages supplied by RSE.
       </documentation>
    </annotation>
 
@@ -48,10 +48,10 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string" use="default" value="org.eclipse.rse.ui.wizards.RSENewConnectionWizardDelegate">
+         <attribute name="class" type="string" use="default" value="org.eclipse.rse.ui.wizards.RSEDefaultNewConnectionWizardDelegate">
             <annotation>
                <documentation>
-                  A class that implements 
+                  A class that implements &lt;samp&gt;org.eclipse.rse.ui.wizards.IRSENewConnectionWizardDelegate&lt;/samp&gt;
                </documentation>
             </annotation>
          </attribute>

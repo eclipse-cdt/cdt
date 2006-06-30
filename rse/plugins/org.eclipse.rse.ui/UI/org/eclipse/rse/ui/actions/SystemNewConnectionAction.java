@@ -18,6 +18,8 @@ package org.eclipse.rse.ui.actions;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.filters.ISystemFilterReference;
@@ -109,8 +111,16 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction
 		}		
 
 		// newConnWizard.setCurrentlySelectedConnection(currConn);
-		// if (restrictSystemTypesTo != null)
-		  // newConnWizard.restrictSystemTypes(restrictSystemTypesTo);
+		if (restrictSystemTypesTo != null) {
+			
+			IRSESystemType[] systemTypes = new IRSESystemType[restrictSystemTypesTo.length];
+			for (int i = 0; i < restrictSystemTypesTo.length; i++) {
+				systemTypes[i] = RSECorePlugin.getDefault().getRegistry().getSystemType(restrictSystemTypesTo[i]);
+			}
+			
+			newConnWizard.restrictToSystemTypes(systemTypes);
+		}
+		
 		// if (defaultHostName != null)
 		  // newConnWizard.setHostName(defaultHostName);
 		// if (defaultConnectionName != null)

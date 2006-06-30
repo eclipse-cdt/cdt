@@ -77,7 +77,7 @@
 	<!-- ===================================================================== -->
 	<!-- Steps to do before setup -->
 	<!-- ===================================================================== -->
-	<target name="preSetup">
+	<target name="preSetup" depends="myInit">
 		<echo message="builder = ${builder}"/>
 		<echo message="builderDirectory = ${builderDirectory}"/>
 		<echo message="buildProperties = ${buildProperties}"/>
@@ -87,8 +87,28 @@
 		<echo message="buildName = ${buildName}"/>
 		<echo message="buildType = ${buildType}"/>
 		<echo message="buildLabel = ${buildLabel}"/>
+		<echo message="tstamp = ${DSTAMP}-${TSTAMP} of ${dateLong}"/>
 		<echo message="archivePrefix = ${archivePrefix}"/>
 		<echo message="collectingFolder = ${collectingFolder}"/>
+	</target>
+
+	<target name="myInit">
+		<tstamp>
+			<format property="dateLong" pattern="MMM d, yyyy"/>
+		</tstamp>
+		<property name="messagefile" value="message.in"/>
+		<property name="xxmailto" value="dsdp-tm-cvs-commit@eclipse.org"/>
+		<property name="mailto" value="martin.oberhuber@windriver.com"/>
+		<property name="remotedir" value="moberhuber@dev.eclipse.org:downloads-tm/downloads/drops"/>
+		<condition property="doUpload">
+			<equals arg1="${publishDirectory}" arg2=""/>
+		</condition>
+		<condition property="doCopy">
+			<not><equals arg1="${publishDirectory}" arg2=""/></not>
+		</condition>
+		<condition property="dropDir" value="S-${buildId}-${DSTAMP}${TSTAMP}" else="${buildId}">
+			<equals arg1="${buildType}" arg2="S"/>
+		</condition>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -212,17 +232,14 @@
 		<condition property="buildTypeLong" value="Nightly"><equals arg1="${buildType}" arg2="N"/></condition>
 		<condition property="buildTypeLong" value="Integration"><equals arg1="${buildType}" arg2="I"/></condition>
 		<condition property="buildTypeLong" value="Stable"><equals arg1="${buildType}" arg2="S"/></condition>
-		<tstamp prefix="makeindex">
-			<format property="dateLong" pattern="MMM d, yyyy"/>
-		</tstamp>
 		<replace file="${packageDirectory}/${dropDir}/index.php">
 			<replacefilter token="@buildTypeLong@" value="${buildTypeLong}"/>
-			<replacefilter token="@dateLong@" value="${makeindex.dateLong}"/>
+			<replacefilter token="@dateLong@" value="${dateLong}"/>
 			<replacefilter token="@dropDir@" value="${dropDir}"/>
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
 		<replace file="${packageDirectory}/${dropDir}/buildNotes.php">
-			<replacefilter token="@dateLong@" value="${makeindex.dateLong}"/>
+			<replacefilter token="@dateLong@" value="${dateLong}"/>
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
 		<antcall target="publish"/>
@@ -241,22 +258,6 @@
 		<antcall target="publishCopy"/>
 		<antcall target="publishUpload"/>
 		<antcall target="mail"/>
-	</target>
-
-	<target name="myInit">
-		<property name="messagefile" value="message.in"/>
-		<property name="xxmailto" value="dsdp-tm-cvs-commit@eclipse.org"/>
-		<property name="mailto" value="martin.oberhuber@windriver.com"/>
-		<property name="remotedir" value="moberhuber@dev.eclipse.org:downloads-tm/downloads/drops"/>
-		<condition property="doUpload">
-			<equals arg1="${publishDirectory}" arg2=""/>
-		</condition>
-		<condition property="doCopy">
-			<not><equals arg1="${publishDirectory}" arg2=""/></not>
-		</condition>
-		<condition property="dropDir" value="S-${buildId}-${DSTAMP}${TSTAMP}" else="${buildId}">
-			<equals arg1="${buildType}" arg2="S"/>
-		</condition>
 	</target>
 
 	<target name="publishCopy" depends="myInit" if="doCopy" unless="hasErrors">

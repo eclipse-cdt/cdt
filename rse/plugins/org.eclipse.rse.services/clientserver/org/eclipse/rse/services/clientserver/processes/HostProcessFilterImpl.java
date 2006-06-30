@@ -229,7 +229,7 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 	{
 		if (_resolveVariables && username.equals("${user.id}"))
 		{
-			return System.getProperty("user.name");
+			return ALL;
 		}
 		else return username;
 	}

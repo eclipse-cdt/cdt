@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
@@ -136,7 +137,7 @@ public class PathUtil {
 		IWorkspaceRoot root = getWorkspaceRoot();
 		if (root != null) {
 			IPath path = getWorkspaceRelativePath(fullPath);
-			while (!path.isEmpty()) {
+			while (path.segmentCount() > 0) {
 				IResource res = root.findMember(path);
 				if (res != null)
 				    return CoreModel.getDefault().create(res.getProject());
@@ -151,7 +152,7 @@ public class PathUtil {
 		IWorkspaceRoot root = getWorkspaceRoot();
 		if (root != null) {
 			IPath path = getWorkspaceRelativePath(fullPath);
-			while (!path.isEmpty()) {
+			while (path.segmentCount() > 0) {
 				IResource res = root.findMember(path);
 				if (res != null && res.exists() && (res.getType() == IResource.PROJECT || res.getType() == IResource.FOLDER))
 				    return path;

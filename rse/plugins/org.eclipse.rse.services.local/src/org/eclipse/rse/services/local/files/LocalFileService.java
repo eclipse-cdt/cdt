@@ -1029,12 +1029,24 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			return copyToArchive(srcFile, new File(tgtParent), tgtName, monitor, SystemEncodingUtil.ENCODING_UTF_8, SystemEncodingUtil.ENCODING_UTF_8, false);
 		}
 		
+		
+//		 handle special characters in source and target strings 
+		StringBuffer srcBuf = new StringBuffer(src);
+		StringBuffer tgtBuf = new StringBuffer(target);
+		handleSpecialChars(srcBuf);
+		handleSpecialChars(tgtBuf);
+		
+		src = "\"" + srcBuf.toString() + "\"";
+		target = "\"" + tgtBuf.toString() + "\"";
+		/*
 		// handle imbedded blanks of from or to name...
 		if (src.indexOf(' ') >= 0)
 			src = "\"" + src + "\"";
 		if (target.indexOf(' ') >= 0)
 			target = "\"" + target + "\"";
-		if (System.getProperty("os.name").toLowerCase().startsWith("win"))
+		*/
+		boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("win");
+		if (isWindows)
 		{
 			if (folderCopy)
 			{
@@ -1045,6 +1057,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		else
 		{
+			
 			if (folderCopy)
 			{
 				command = "cp  -r " + src + " " + target;
@@ -1057,8 +1070,27 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		int rc = -1;
 		try
 		{
-			Process p = Runtime.getRuntime().exec(command);
+			Process p = null;
+			Runtime runtime = Runtime.getRuntime();
+			if (isWindows)
+			{
+				String theShell = "cmd /C ";
+				p = runtime.exec(theShell + command);	
+			}
+			else
+			{
+				String theShell = "sh";
+				String args[] = new String[3];
+				args[0] = theShell;					
+				args[1] = "-c";
+				args[2] = command;
+												
+				p = runtime.exec(args);
+			}
+			
+			//Process p = Runtime.getRuntime().exec(command);
 			rc = p.waitFor();
+			System.out.println("exit value = " + rc);
 			//rc = p.exitValue();
 		}
 		catch (Exception e)
@@ -1066,6 +1098,39 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			
 		}
 		return (rc == 0);
+	}
+	
+	protected void handleSpecialChars(StringBuffer buf)
+	{
+		for (int i = 0; i < buf.length(); i++)
+		{
+			char c = buf.charAt(i);
+		
+			boolean isSpecialChar = isSpecialChar(c);
+		
+			if (isSpecialChar)
+			{
+				buf.insert(i, "\\");
+				i++;
+			}
+		}
+	}
+	
+	/**
+	 * Checks whether the given character is a special character in the shell. A special character is
+	 * '$', '`', '"' and '\'.
+	 * @param c the character to check.
+	 * @return <code>true</code> if the character is a special character, <code>false</code> otherwise.
+	 */
+	protected boolean isSpecialChar(char c)  {
+		   
+		if ((c == '$') || (c == '`') || (c == '"') || (c == '\\') ) {
+						
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	/**

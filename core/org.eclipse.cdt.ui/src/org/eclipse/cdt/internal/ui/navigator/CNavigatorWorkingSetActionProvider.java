@@ -19,6 +19,8 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
@@ -36,6 +38,8 @@ public class CNavigatorWorkingSetActionProvider extends CommonActionProvider {
 
 	private CNavigatorWorkingSetActionGroup fWorkingSetGroup;
 	private ResourceWorkingSetFilter fWorkingSetFilter;
+	private IPropertyChangeListener workingSetListener;
+
 	private boolean fContributed;
 
 	/*
@@ -90,6 +94,26 @@ public class CNavigatorWorkingSetActionProvider extends CommonActionProvider {
 		                }
 					}};
 				fWorkingSetGroup= new CNavigatorWorkingSetActionGroup(workbenchSite.getShell(), workingSetUpdater);
+				workingSetListener = new IPropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent ev) {
+						String property= ev.getProperty();
+						if (property == null) {
+							return;
+						}
+						Object newValue= ev.getNewValue();
+						Object oldValue= ev.getOldValue();
+						IWorkingSet filterWorkingSet= fWorkingSetFilter.getWorkingSet();
+						if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property) && oldValue == filterWorkingSet) {
+	                    	fWorkingSetFilter.setWorkingSet(null);
+						} else if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property) && newValue == filterWorkingSet) {
+//							updateTitle();
+						} else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property) && newValue == filterWorkingSet) {
+							viewer.refresh();
+						}
+					}
+				};
+				IWorkingSetManager wsManager = PlatformUI.getWorkbench().getWorkingSetManager();
+				wsManager.addPropertyChangeListener(workingSetListener);
 			}
 		}
 	}
@@ -128,6 +152,11 @@ public class CNavigatorWorkingSetActionProvider extends CommonActionProvider {
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
 	public void dispose() {
+		if (workingSetListener != null) {
+			IWorkingSetManager wsManager= PlatformUI.getWorkbench().getWorkingSetManager();
+			wsManager.addPropertyChangeListener(workingSetListener);
+			workingSetListener= null;
+		}
 		if (fWorkingSetGroup != null) {
 			fWorkingSetGroup.dispose();
 			fWorkingSetGroup= null;

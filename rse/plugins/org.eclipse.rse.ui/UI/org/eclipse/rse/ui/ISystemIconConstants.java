@@ -262,11 +262,11 @@ public interface ISystemIconConstants
 	public static final String ICON_IDE_LINKTOEDITOR_ID = "elcl16/synced.gif";
 	public static final String ICON_IDE_FILTER_ID = "elcl16/filter_ps.gif";
 
-	public static final String ICON_SYSTEM_MAKEPROFILEACTIVE_ROOT = "makeProfileActive";	
+	public static final String ICON_SYSTEM_MAKEPROFILEACTIVE_ROOT = "makeprofileactive";	
 	public static final String ICON_SYSTEM_MAKEPROFILEACTIVE      = ICON_ACTIONS_DIR + ICON_SYSTEM_MAKEPROFILEACTIVE_ROOT+ICON_EXT;
 	public static final String ICON_SYSTEM_MAKEPROFILEACTIVE_ID   = PREFIX+ICON_SYSTEM_MAKEPROFILEACTIVE_ROOT+ICON_SUFFIX; 	
 
-	public static final String ICON_SYSTEM_MAKEPROFILEINACTIVE_ROOT = "makeProfileInActive";	
+	public static final String ICON_SYSTEM_MAKEPROFILEINACTIVE_ROOT = "makeprofileinactive";	
 	public static final String ICON_SYSTEM_MAKEPROFILEINACTIVE      = ICON_ACTIONS_DIR + ICON_SYSTEM_MAKEPROFILEINACTIVE_ROOT+ICON_EXT;
 	public static final String ICON_SYSTEM_MAKEPROFILEINACTIVE_ID   = PREFIX+ICON_SYSTEM_MAKEPROFILEINACTIVE_ROOT+ICON_SUFFIX; 	
 

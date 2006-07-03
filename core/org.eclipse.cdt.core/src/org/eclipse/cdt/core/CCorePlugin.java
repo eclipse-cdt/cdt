@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core;
@@ -34,6 +35,7 @@ import org.eclipse.cdt.core.resources.ScannerProvider;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.cdt.internal.core.PathEntryVariableManager;
+import org.eclipse.cdt.internal.core.PositionTrackerManager;
 import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.DeltaProcessor;
@@ -213,6 +215,10 @@ public class CCorePlugin extends Plugin {
 		return fgResourceBundle;
 	}
 
+    public static IPositionTrackerManager getPositionTrackerManager() {
+        return PositionTrackerManager.getInstance();
+    }
+    
 	public static CCorePlugin getDefault() {
 		return fgCPlugin;
 	}
@@ -241,6 +247,8 @@ public class CCorePlugin extends Plugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		try {
+            PositionTrackerManager.getInstance().uninstall();
+            
 			if (fDescriptorManager != null) {
 				fDescriptorManager.shutdown();
 			}
@@ -291,6 +299,7 @@ public class CCorePlugin extends Plugin {
 		// Set the default for using the structual parse mode to build the CModel
 		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
 
+        PositionTrackerManager.getInstance().install();
 	}
     
     

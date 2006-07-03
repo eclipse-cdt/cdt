@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core;
@@ -26,8 +27,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.SafeRunner;
 
 
 
@@ -149,7 +150,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 					l.pathVariableChanged(pve);
 				}
 			};
-			Platform.run(job);
+			SafeRunner.run(job);
 		}
 	}
 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core;
@@ -15,16 +16,11 @@ package org.eclipse.cdt.core;
  * @author bgheorgh
  */
 public interface ICLogConstants {
-	public class LogConst{
-		private LogConst( int value )
-		{
-			this.value = value;
-		}
-		private final int value;
-	}
-	
-	
-   public static final LogConst PDE = new LogConst( 1 );
-   public static final LogConst CDT = new LogConst( 2 );
-   
+    public class LogConst {
+        private LogConst() {
+        }
+    }
+
+    public static final LogConst PDE = new LogConst();
+    public static final LogConst CDT = new LogConst();
 }

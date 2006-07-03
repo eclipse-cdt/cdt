@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 QNX Software Systems and others.
+ * Copyright (c) 2002, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems) - Fixed bug 141295
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -38,7 +39,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ILineTracker;
-import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
@@ -866,15 +866,6 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			extension.setIsActive(isHandlingTemporaryProblems());
 		}
 		return tuInfo;
-	}
-
-	private void setUpSynchronization(TranslationUnitInfo cuInfo) {
-		IDocument document = cuInfo.fTextFileBuffer.getDocument();
-		IAnnotationModel model = cuInfo.fModel;
-		if (document instanceof ISynchronizable && model instanceof ISynchronizable) {
-			Object lock = ((ISynchronizable) document).getLockObject();
-			((ISynchronizable) model).setLockObject(lock);
-		}
 	}
 
 	/*

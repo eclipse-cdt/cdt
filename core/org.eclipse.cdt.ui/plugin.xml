@@ -478,31 +478,6 @@
       </participant>
    </extension>
    <extension
-         id="org.eclipse.cdt.ui.CDocumentFactory"
-         name="%cDocumentFactory"
-         point="org.eclipse.core.filebuffers.documentCreation">
-      <factory
-            class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory"
-            contentTypeId="org.eclipse.cdt.core.cSource">
-      </factory>
-      <factory
-            class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory"
-            contentTypeId="org.eclipse.cdt.core.cHeader">
-      </factory>
-      <factory
-            class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory"
-            contentTypeId="org.eclipse.cdt.core.cxxSource">
-      </factory>
-      <factory
-            class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory"
-            contentTypeId="org.eclipse.cdt.core.cxxHeader">
-      </factory>
-      <factory
-            class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory"
-            contentTypeId="org.eclipse.cdt.core.asmSource">
-      </factory>
-   </extension>
-   <extension
          id="org.eclipse.cdt.ui.ceditor"
          point="org.eclipse.ui.editors">
       <editor

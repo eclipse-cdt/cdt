@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems) - Fixed bug 141295
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
@@ -17,8 +18,6 @@ import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
@@ -143,17 +142,6 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 		Iterator e= getConnectedElementsIterator();
 		while (e.hasNext())
 			disconnect(e.next());
-	}
-	
-
-	private void setUpSynchronization(MakefileFileInfo antInfo) {
-		IDocument document= antInfo.fTextFileBuffer.getDocument();
-		IAnnotationModel model= antInfo.fModel;
-		
-		if (document instanceof ISynchronizable && model instanceof ISynchronizable) {
-			Object lock= ((ISynchronizable) document).getLockObject();
-			((ISynchronizable) model).setLockObject(lock);
-		}
 	}
 	
 }

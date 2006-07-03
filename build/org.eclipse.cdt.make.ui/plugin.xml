@@ -353,15 +353,6 @@
       </editor>
    </extension>
    <extension
-         id="org.eclipse.cdt.make.ui.MakefileDocumentFactory"
-         name="%MakefileDocumentFactory.name"
-         point="org.eclipse.core.filebuffers.documentCreation">
-      <factory
-            contentTypeId="org.eclipse.cdt.make.core.makefile"
-            class="org.eclipse.cdt.make.internal.ui.editor.MakefileDocumentFactory">
-      </factory>
-   </extension>
-   <extension
          id="org.eclipse.cdt.make.ui.MakefileDocumentSetupParticipant"
          name="%MakefileDocumentSetupParticipant.name"
          point="org.eclipse.core.filebuffers.documentSetup">

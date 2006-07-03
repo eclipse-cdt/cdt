@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems) - Fixed bug 48339
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -24,6 +25,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
  */
 public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
+	private final static String MULTILINE_COMMENT_CLOSE = "*/"; //$NON-NLS-1$
 
 	public CAutoIndentStrategy() {
 	}
@@ -221,10 +223,41 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	 * @see IAutoIndentStrategy#customizeDocumentCommand
 	 */
 	public void customizeDocumentCommand(IDocument d, DocumentCommand c) {
-		if (c.length == 0 && c.text != null && endsWithDelimiter(d, c.text))
-			smartIndentAfterNewLine(d, c);
-		else if ("}".equals(c.text)) { //$NON-NLS-1$
+		if (c.length == 0 && c.text != null && endsWithDelimiter(d, c.text)) {
+			if (isAppendToOpenMultilineComment(d, c)) {
+				// special case: multi-line comment at end of document (bug 48339)
+				CCommentAutoIndentStrategy.commentIndentAfterNewLine(d, c);
+			} else {
+				smartIndentAfterNewLine(d, c);
+			}
+		} else if ("}".equals(c.text)) { //$NON-NLS-1$
 			smartInsertAfterBracket(d, c);
 		}
+		else if ("/".equals(c.text) && isAppendToOpenMultilineComment(d, c)) { //$NON-NLS-1$
+			// special case: multi-line comment at end of document (bug 48339)
+			CCommentAutoIndentStrategy.commentIndentForCommentEnd(d, c);
+		}
 	}
+	
+	/**
+	 * Check, if the command appends to an open multi-line comment.
+	 * @param d  the document
+	 * @param c  the document command
+	 * @return true, if the command appends to an open multi-line comment.
+	 */
+	static boolean isAppendToOpenMultilineComment(IDocument d, DocumentCommand c) {
+		if (d.getLength() >= 2 && c.offset == d.getLength()) {
+			try {
+				String partitioning = CUIPlugin.getDefault().getTextTools().getDocumentPartitioning();
+				String contentType = org.eclipse.jface.text.TextUtilities.getContentType(d, partitioning, c.offset - 1, false);
+				if (ICPartitions.C_MULTILINE_COMMENT.equals(contentType)) {
+					return !d.get(c.offset - 2, 2).equals(MULTILINE_COMMENT_CLOSE);
+				}
+			} catch (BadLocationException exc) {
+				// see below
+			}
+		}
+		return false;
+	}
+
 }

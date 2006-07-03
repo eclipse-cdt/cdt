@@ -17,5 +17,6 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.cdt.ui,
  org.eclipse.cdt.managedbuilder.core,
  org.eclipse.core.runtime,
- org.eclipse.core.variables
+ org.eclipse.core.variables,
+ org.eclipse.ui.navigator
 Eclipse-LazyStart: true

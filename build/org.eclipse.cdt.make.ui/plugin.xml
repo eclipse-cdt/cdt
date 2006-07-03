@@ -423,4 +423,38 @@
             class="org.eclipse.cdt.make.ui.dialogs.GCCPerFileSCDProfilePage"
             name="%GCCPerFileProfile.name"
             profileId="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <commonWizard
+            associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
+            menuGroupId="org.eclipse.cdt.ui.newCWizards"
+            type="new"
+            wizardId="org.eclipse.cdt.ui.wizards.NewMakeCProjectWizard">
+         <enablement/>
+      </commonWizard>
+      <commonWizard
+            associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
+            menuGroupId="org.eclipse.cdt.ui.newCWizards"
+            type="new"
+            wizardId="org.eclipse.cdt.make.ui.wizards.NewMakeCCProjectWizard">
+         <enablement/>
+      </commonWizard>
+      <commonWizard
+            associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
+            menuGroupId="org.eclipse.cdt.ui.newCWizards"
+            type="new"
+            wizardId="org.eclipse.cdt.ui.wizards.ConvertToMakeWizard">
+         <enablement>
+            <instanceof value="org.eclipse.core.resources.IProject"/>
+         </enablement>
+      </commonWizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewerContentBinding viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+         <includes>
+            <contentExtension pattern="org.eclipse.cdt.make.ui.wizards.*"/>
+         </includes>
+      </viewerContentBinding>
    </extension></plugin>

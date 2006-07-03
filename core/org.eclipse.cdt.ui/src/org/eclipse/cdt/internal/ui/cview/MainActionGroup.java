@@ -180,7 +180,7 @@ public class MainActionGroup extends CViewActionGroup {
 			//Can be added once support for manually adding external files to index is established
 			/*menu.add(new Separator());
 			menu.add(addToIndexAction);*/
-			menu.add(new Separator());
+			menu.add(new Separator(org.eclipse.search.ui.IContextMenuConstants.GROUP_SEARCH));
 			addSearchMenu(menu, celements);
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$

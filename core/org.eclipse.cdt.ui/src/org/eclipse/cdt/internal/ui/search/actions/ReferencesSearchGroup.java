@@ -73,13 +73,10 @@ public class ReferencesSearchGroup extends ActionGroup {
 		
 		if (fEditor != null){
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, refsMenu);	
+		} else {
+			incomingMenu.appendToGroup(IContextMenuConstants.GROUP_SEARCH, refsMenu);
 		}
 		
-	
-//		/setReferenceMenuEnabled();
-			
-	
-		incomingMenu.add(refsMenu);
 		incomingMenu = refsMenu;
 		
 		FindAction[] actions = getWorkingSetActions();

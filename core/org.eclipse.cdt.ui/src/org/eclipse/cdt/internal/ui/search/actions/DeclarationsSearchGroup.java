@@ -42,8 +42,6 @@ public class DeclarationsSearchGroup extends ActionGroup {
 	private FindDeclarationsProjectAction fFindDeclarationsProjectAction;
 	private FindDeclarationsInWorkingSetAction fFindDeclarationsInWorkingSetAction;
 	
-	private ArrayList actions;
-	
 	public DeclarationsSearchGroup(IWorkbenchSite site) {
 		fFindDeclarationsAction= new FindDeclarationsAction(site);
 		fFindDeclarationsProjectAction = new FindDeclarationsProjectAction(site);
@@ -81,9 +79,9 @@ public class DeclarationsSearchGroup extends ActionGroup {
 		
 		if (fEditor != null){
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, declarationsMenu);	
+		} else {
+			incomingMenu.appendToGroup(IContextMenuConstants.GROUP_SEARCH, declarationsMenu);
 		}
-		
-		incomingMenu.add(declarationsMenu);
 		incomingMenu = declarationsMenu;
 		
 		FindAction[] actions = getWorkingSetActions();

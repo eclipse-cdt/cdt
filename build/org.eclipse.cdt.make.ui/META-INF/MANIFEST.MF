@@ -31,5 +31,6 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.cdt.ui,
  org.eclipse.cdt.make.core,
  org.eclipse.core.runtime,
- org.eclipse.debug.ui
+ org.eclipse.debug.ui,
+ org.eclipse.ui.navigator
 Eclipse-LazyStart: true

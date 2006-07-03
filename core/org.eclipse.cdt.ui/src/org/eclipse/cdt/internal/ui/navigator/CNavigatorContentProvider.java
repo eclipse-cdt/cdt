@@ -98,11 +98,11 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		if (memento != null) {
 			String mementoValue= memento.getString(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
 			if (mementoValue != null) {
-				showCUChildren= Boolean.parseBoolean(mementoValue);
+				showCUChildren= Boolean.valueOf(mementoValue).booleanValue();
 			}
 			mementoValue= memento.getString(PreferenceConstants.CVIEW_GROUP_INCLUDES);
 			if (mementoValue != null) {
-				groupIncludes= Boolean.parseBoolean(mementoValue);
+				groupIncludes= Boolean.valueOf(mementoValue).booleanValue();
 			}
 		}
 		setProvideMembers(showCUChildren);

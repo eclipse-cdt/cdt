@@ -44,7 +44,7 @@ public class PDOMSearchBindingQuery extends PDOMSearchQuery {
 	}
 
 	public String getLabel() {
-		return super.getLabel() + " " + binding.getName();
+		return super.getLabel() + " " + binding.getName(); //$NON-NLS-1$
 	}
 
 }

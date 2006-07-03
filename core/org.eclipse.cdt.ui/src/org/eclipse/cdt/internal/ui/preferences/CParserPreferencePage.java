@@ -78,7 +78,7 @@ public class CParserPreferencePage extends PreferencePage implements
 		bufferGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		bufferGroup.setText(PreferencesMessages.getString("CBufferPreferences.CodeReaderBuffer.CodeReaderBufferGroup")); //$NON-NLS-1$
 	
-		bufferTextControl = (Text) addTextField( bufferGroup, PreferencesMessages.getString("CBufferPreferences.CodeReaderBuffer.Size"),6,0); //$NON-NLS-1$ //$NON-NLS-2$
+		bufferTextControl = (Text) addTextField( bufferGroup, PreferencesMessages.getString("CBufferPreferences.CodeReaderBuffer.Size"),6,0); //$NON-NLS-1$ 
 		
 		initialize(); 
 		

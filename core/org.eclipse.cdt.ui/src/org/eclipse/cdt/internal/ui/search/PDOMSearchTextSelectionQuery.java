@@ -57,7 +57,7 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 	}
 
 	public String getLabel() {
-		return super.getLabel() + " " + selection.getText();
+		return super.getLabel() + " " + selection.getText(); //$NON-NLS-1$
 	}
 
 }

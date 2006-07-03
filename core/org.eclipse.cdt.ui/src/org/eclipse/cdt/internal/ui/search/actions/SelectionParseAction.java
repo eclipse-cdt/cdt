@@ -160,7 +160,7 @@ public class SelectionParseAction extends Action {
 				 	statusManager = ((IEditorSite) fSite).getActionBars().getStatusLineManager();
 				 }	
 				 if( statusManager != null )
-				 	statusManager.setErrorMessage(CSearchMessages.getString(message));//$NON-NLS-1$
+				 	statusManager.setErrorMessage(CSearchMessages.getString(message));
 			}
 		});
 	}

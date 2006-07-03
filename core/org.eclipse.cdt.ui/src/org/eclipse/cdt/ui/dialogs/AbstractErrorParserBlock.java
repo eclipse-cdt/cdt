@@ -111,7 +111,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 			 */
 			public String getText(Object element) {
 				String name = (String)mapParsers.get(element.toString());
-				return name != null ? name : element.toString(); //$NON-NLS-1$
+				return name != null ? name : element.toString(); 
 			}
 		};
 	}

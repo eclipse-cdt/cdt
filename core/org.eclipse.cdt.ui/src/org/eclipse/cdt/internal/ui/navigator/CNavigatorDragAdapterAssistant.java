@@ -46,7 +46,7 @@ public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 	public boolean setDragData(DragSourceEvent event,
 			IStructuredSelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			for (Iterator iter= ((IStructuredSelection)selection).iterator(); iter.hasNext();) {
+			for (Iterator iter= (selection).iterator(); iter.hasNext();) {
 				Object element= iter.next();
 				if (element instanceof ICElement) {
 					if (!(element instanceof ISourceReference)) {

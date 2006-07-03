@@ -58,7 +58,7 @@ public class PDOMSearchElementQuery extends PDOMSearchQuery {
 
 	public String getLabel() {
 		if (element instanceof ICElement)
-			return super.getLabel() + " " + ((ICElement)element).getElementName();
+			return super.getLabel() + " " + ((ICElement)element).getElementName(); //$NON-NLS-1$
 		else
 			return super.getLabel() + " something.";
 	}

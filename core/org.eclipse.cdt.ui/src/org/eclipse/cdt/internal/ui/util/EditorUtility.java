@@ -188,7 +188,7 @@ public class EditorUtility {
 		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
 		errorMsg.setText(CUIPlugin.getResourceString("EditorUtility.closedproject")); //$NON-NLS-1$
 		String desc= CUIPlugin.getResourceString("Editorutility.closedproject.description"); //$NON-NLS-1$
-		errorMsg.setMessage (MessageFormat.format(desc, new Object[]{project.getName()})); //$NON-NLS-1$
+		errorMsg.setMessage (MessageFormat.format(desc, new Object[]{project.getName()})); 
 		errorMsg.open();
 		
 	}

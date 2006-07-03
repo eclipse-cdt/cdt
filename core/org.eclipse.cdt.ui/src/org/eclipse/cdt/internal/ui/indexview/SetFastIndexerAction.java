@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 public class SetFastIndexerAction extends IndexAction {
 
 	public SetFastIndexerAction(TreeViewer viewer) {
-		super(viewer, CUIPlugin.getResourceString("IndexView.setFastIndexer.name"));
+		super(viewer, CUIPlugin.getResourceString("IndexView.setFastIndexer.name")); //$NON-NLS-1$
 	}
 
 	public void run() {

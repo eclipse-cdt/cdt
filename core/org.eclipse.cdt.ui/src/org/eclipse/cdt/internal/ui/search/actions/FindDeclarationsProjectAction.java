@@ -25,8 +25,8 @@ public class FindDeclarationsProjectAction extends FindAction {
 
 	public FindDeclarationsProjectAction(CEditor editor, String label, String tooltip){
 		super(editor);
-		setText(label); //$NON-NLS-1$
-		setToolTipText(tooltip); //$NON-NLS-1$
+		setText(label); 
+		setToolTipText(tooltip); 
 	}
 	
 	public FindDeclarationsProjectAction(CEditor editor){

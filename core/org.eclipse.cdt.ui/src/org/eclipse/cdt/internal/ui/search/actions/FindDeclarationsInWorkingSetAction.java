@@ -47,14 +47,14 @@ public class FindDeclarationsInWorkingSetAction extends FindAction {
 
 	public FindDeclarationsInWorkingSetAction(CEditor editor, String label, String tooltip){
 		super(editor);
-		setText(label); //$NON-NLS-1$
-		setToolTipText(tooltip); //$NON-NLS-1$
+		setText(label); 
+		setToolTipText(tooltip); 
 	}
 
 	public FindDeclarationsInWorkingSetAction(IWorkbenchSite site,String label, String tooltip){
 		super(site);
-		setText(label); //$NON-NLS-1$
-		setToolTipText(tooltip); //$NON-NLS-1$
+		setText(label); 
+		setToolTipText(tooltip); 
 	}
 
 	protected String getScopeDescription() {

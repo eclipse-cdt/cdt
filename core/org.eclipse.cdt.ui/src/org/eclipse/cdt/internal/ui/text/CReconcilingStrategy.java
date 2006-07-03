@@ -81,7 +81,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 		IDocument doc = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 		
 		if ((doc != null) && (!CWordFinder.isGlobal(doc, dOff))) {
-			String s = "";
+			String s = ""; //$NON-NLS-1$
 			if (dirtyRegion.getType().charAt(2) == 'i') { // insert operation
 				s = dirtyRegion.getText();
 				if (!CWordFinder.hasCBraces(s)) {

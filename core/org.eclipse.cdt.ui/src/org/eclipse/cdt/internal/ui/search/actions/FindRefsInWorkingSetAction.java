@@ -48,13 +48,13 @@ public class FindRefsInWorkingSetAction extends FindAction {
 
 	public FindRefsInWorkingSetAction(CEditor editor, String label, String tooltip) {
 		super(editor);
-		setText(label); //$NON-NLS-1$
-		setToolTipText(tooltip); //$NON-NLS-1$
+		setText(label); 
+		setToolTipText(tooltip); 
 	}
 
 	public FindRefsInWorkingSetAction(IWorkbenchSite site, String label, String tooltip) {
 		super(site);
-		setText(label); //$NON-NLS-1$
+		setText(label); 
 		setToolTipText(tooltip); //$NON-NLS-1
 	}
 

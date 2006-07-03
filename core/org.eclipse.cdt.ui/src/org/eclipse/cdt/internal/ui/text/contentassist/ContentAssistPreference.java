@@ -64,7 +64,7 @@ public class ContentAssistPreference {
 	/** Preference key for completion search scope */
 	public final static String PROJECT_SEARCH_SCOPE= "content_assist_project_search_scope";	 //$NON-NLS-1$
 	/** Preference key for completion filtering */
-	public final static String PROPOSALS_FILTER= "content_assist_proposal_filter"; //$NON_NLS 1$
+	public final static String PROPOSALS_FILTER= "content_assist_proposal_filter"; //$NON-NLS-1$
 
 	private static Color getColor(IPreferenceStore store, String key, IColorManager manager) {
 		RGB rgb= PreferenceConverter.getColor(store, key);

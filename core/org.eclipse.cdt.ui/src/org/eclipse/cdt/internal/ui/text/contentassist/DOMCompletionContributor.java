@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -290,10 +291,10 @@ public class DOMCompletionContributor implements ICompletionContributor {
 				imageDescriptor = CElementImageProvider.getFunctionImageDescriptor();
 			} else if (binding instanceof ICPPField) {
 				switch (((ICPPField)binding).getVisibility()) {
-				case ICPPField.v_private:
+				case ICPPMember.v_private:
 					imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PRIVATE);
 					break;
-				case ICPPField.v_protected:
+				case ICPPMember.v_protected:
 					imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PROTECTED);
 					break;
 				default:

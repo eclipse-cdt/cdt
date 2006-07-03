@@ -840,7 +840,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 			initialValue.append('=');
 			initialValue.append((String)existing.getAttribute(CPElement.MACRO_VALUE));
 			dialog = new InputDialog(getShell(), CPathEntryMessages.getString("IncludeSymbolEntryPage.editSymbol.title"), //$NON-NLS-1$
-					CPathEntryMessages.getString("IncludeSymbolEntryPage.editSymbol.message"), initialValue.toString(), //$NON-NLS-1$ //$NON-NLS-2$
+					CPathEntryMessages.getString("IncludeSymbolEntryPage.editSymbol.message"), initialValue.toString(), //$NON-NLS-1$ 
 					null);
 		}
 

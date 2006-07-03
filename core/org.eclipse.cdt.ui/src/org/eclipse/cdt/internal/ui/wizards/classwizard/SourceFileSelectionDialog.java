@@ -318,7 +318,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 					}
 				    ICElement e = CoreModel.getDefault().create(res.getFullPath());
 				    if (e instanceof ITranslationUnit) {
-				        existingFile = (ITranslationUnit) e;
+				        existingFile = e;
 				    }
 					if (existingFile == null) {
 						status.setError(NewClassWizardMessages.getFormattedString("SourceFileSelectionDialog.error.NotASourceFile", str)); //$NON-NLS-1$

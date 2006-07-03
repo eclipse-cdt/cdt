@@ -17,7 +17,7 @@ import org.eclipse.jface.action.IMenuManager;
 
 public class ExternalSearchEditor extends CEditor {
 	
-	public static final String EDITOR_ID = "org.eclipse.cdt.ui.editor.ExternalSearchEditor";
+	public static final String EDITOR_ID = "org.eclipse.cdt.ui.editor.ExternalSearchEditor"; //$NON-NLS-1$
 	
 	public ExternalSearchEditor(){
 		super();

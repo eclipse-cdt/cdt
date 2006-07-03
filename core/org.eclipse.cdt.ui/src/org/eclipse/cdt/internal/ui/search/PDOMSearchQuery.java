@@ -119,7 +119,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		IPDOMManager manager = CCorePlugin.getPDOMManager();
 		for (int i = 0; i < projects.length; ++i) {
 			PDOM pdom = (PDOM)manager.getPDOM(projects[i]);
-			PDOMBinding pdomBinding = (PDOMBinding)pdom.getLinkage(language).adaptBinding(binding);
+			PDOMBinding pdomBinding = pdom.getLinkage(language).adaptBinding(binding);
 			if (pdomBinding != null) {
 				if ((flags & FIND_DECLARATIONS) != 0) {
 					collectNames(pdomBinding.getFirstDeclaration());

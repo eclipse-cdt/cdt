@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.ui.indexview;
 
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.ui.search.PDOMSearchBindingQuery;
+import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
+
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -26,7 +28,7 @@ import org.eclipse.search.ui.NewSearchUI;
 public class FindReferencesAction extends IndexAction {
 
 	public FindReferencesAction(TreeViewer viewer) {
-		super(viewer, CUIPlugin.getResourceString("IndexView.findReferences.name"));
+		super(viewer, CUIPlugin.getResourceString("IndexView.findReferences.name")); //$NON-NLS-1$
 	}
 
 	private PDOMBinding getBinding() {
@@ -42,7 +44,7 @@ public class FindReferencesAction extends IndexAction {
 		PDOMSearchBindingQuery query = new PDOMSearchBindingQuery(
 				null,
 				getBinding(),
-				PDOMSearchBindingQuery.FIND_REFERENCES);
+				PDOMSearchQuery.FIND_REFERENCES);
 		
 		NewSearchUI.activateSearchResultView();
 		

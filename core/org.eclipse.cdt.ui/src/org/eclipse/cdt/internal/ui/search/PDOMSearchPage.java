@@ -491,7 +491,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 				
 				IDialogSettings settings = getDialogSettings();
 				
-				int searchFlags = PDOMSearchPatternQuery.FIND_ALL_TYPES | PDOMSearchPatternQuery.FIND_ALL_OCCURANCES;
+				int searchFlags = PDOMSearchPatternQuery.FIND_ALL_TYPES | PDOMSearchQuery.FIND_ALL_OCCURANCES;
 				try {
 					searchFlags = settings.getInt(STORE_SEARCH_FLAGS);
 				} catch (NumberFormatException e) {
@@ -580,7 +580,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 					}
 				}
 				
-				if ((searchFlags & PDOMSearchPatternQuery.FIND_ALL_OCCURANCES) == PDOMSearchPatternQuery.FIND_ALL_OCCURANCES) {
+				if ((searchFlags & PDOMSearchQuery.FIND_ALL_OCCURANCES) == PDOMSearchQuery.FIND_ALL_OCCURANCES) {
 					limitToButtons[limitToAllButtonIndex].setSelection(true);
 				} else {
 					limitToButtons[limitToAllButtonIndex].setSelection(false);

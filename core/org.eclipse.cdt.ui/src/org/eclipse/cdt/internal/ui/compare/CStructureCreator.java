@@ -80,7 +80,7 @@ public class CStructureCreator implements IStructureCreator {
 			//are bugs while parsing C files, we might want to create a separate Structure
 			//compare for c files, but we'll never be completely right about .h files
 			IScanner scanner =
-				ParserFactory.createScanner(new CodeReader(s.toCharArray()), new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, builder, new NullLogService(), null); //$NON-NLS-1$
+				ParserFactory.createScanner(new CodeReader(s.toCharArray()), new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, builder, new NullLogService(), null); 
 			IParser parser = ParserFactory.createParser(scanner, builder, ParserMode.QUICK_PARSE, ParserLanguage.CPP, ParserUtil.getParserLogService() );
 			parser.parse();
 		} catch (Exception e) {

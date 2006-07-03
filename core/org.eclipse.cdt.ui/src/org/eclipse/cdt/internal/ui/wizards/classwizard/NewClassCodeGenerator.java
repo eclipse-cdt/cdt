@@ -65,11 +65,11 @@ public class NewClassCodeGenerator {
 		private static final long serialVersionUID = 1L;
 		
         public CodeGeneratorException(String message) {
-            super(new Status(Status.ERROR, CUIPlugin.getPluginId(), IStatus.OK, message, null));
+            super(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, message, null));
         }
         
         public CodeGeneratorException(Throwable e) {
-            super(new Status(Status.ERROR, CUIPlugin.getPluginId(), IStatus.OK, e.getMessage(), e));
+            super(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, e.getMessage(), e));
         }
 	}
 
@@ -832,14 +832,14 @@ public class NewClassCodeGenerator {
         StringBuffer buf = new StringBuffer();
         buf.append("#include "); //$NON-NLS-1$
         if (isSystemInclude)
-            buf.append('<'); //$NON-NLS-1$
+            buf.append('<'); 
         else
-            buf.append('\"'); //$NON-NLS-1$
+            buf.append('\"'); 
         buf.append(fileName);
         if (isSystemInclude)
-            buf.append('>'); //$NON-NLS-1$
+            buf.append('>'); 
         else
-            buf.append('\"'); //$NON-NLS-1$
+            buf.append('\"'); 
         return buf.toString();
     }
     

@@ -269,9 +269,9 @@ public class BuildConsolePage extends Page
 				ConsoleMessages.getString("BuildConsolePage.Select_All")); //$NON-NLS-1$
 		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		//XXX Still using "old" resource access
-		ResourceBundle bundle = ResourceBundle.getBundle(ConsoleMessages.BUNDLE_NAME); //$NON-NLS-1$
+		ResourceBundle bundle = ResourceBundle.getBundle(ConsoleMessages.BUNDLE_NAME); 
 		setGlobalAction(actionBars, ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action.", //$NON-NLS-1$
-				getConsoleView())); //$NON-NLS-1$
+				getConsoleView())); 
 		action = new TextViewerGotoLineAction(getViewer());
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);
 		actionBars.updateActionBars();

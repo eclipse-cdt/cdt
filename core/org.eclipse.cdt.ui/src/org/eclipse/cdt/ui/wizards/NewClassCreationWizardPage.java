@@ -1310,7 +1310,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                     }
                 }
                 ++count;
-                currName = className + separator + count; //$NON-NLS-1$
+                currName = className + separator + count; 
             }
         }
         
@@ -1564,7 +1564,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 
         IQualifiedTypeName typeName = new QualifiedTypeName(className);
-        if (typeName.isQualified()) { //$NON-NLS-1$
+        if (typeName.isQualified()) { 
             status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.QualifiedClassName")); //$NON-NLS-1$
             return status;
         }

@@ -45,7 +45,7 @@ public class OpenCElementAction extends OpenFileAction {
 			try {
 				part= EditorUtility.openInEditor(fOpenElement);
 				if (fOpenElement instanceof ISourceReference) {
-					EditorUtility.revealInEditor(part, (ICElement)fOpenElement);
+					EditorUtility.revealInEditor(part, fOpenElement);
 				}
 			} catch (CoreException exc) {
 				CUIPlugin.getDefault().log(exc.getStatus());

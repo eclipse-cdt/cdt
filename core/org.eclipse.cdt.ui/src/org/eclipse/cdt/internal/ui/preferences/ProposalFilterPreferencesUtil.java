@@ -53,7 +53,7 @@ public class ProposalFilterPreferencesUtil {
 					for (int j = 0; j < elements.length; ++j) {
 						IConfigurationElement element = elements[j];
 						if ("ProposalFilter".equals(element.getName())) { //$NON-NLS-1$
-							String filterName = element.getAttribute("name");
+							String filterName = element.getAttribute("name"); //$NON-NLS-1$
 							if (null != filterName) {
 								names.add(filterName);
 							}
@@ -79,12 +79,12 @@ public class ProposalFilterPreferencesUtil {
 	 * @return The list of filter names
 	 */
 	public static String getProposalFilternamesAsString() {
-		StringBuffer filterNames = new StringBuffer("0;");
-		filterNames.append("<Default Filter>"); // TODO: NP externalize this!
+		StringBuffer filterNames = new StringBuffer("0;"); //$NON-NLS-1$
+		filterNames.append("<Default Filter>"); // TODO: NP externalize this! //$NON-NLS-1$
 		String[] names = getProposalFilterNames();
 		for (int i = 0; i < names.length; i++) {
 			String name = names[i];
-			filterNames.append(";");
+			filterNames.append(";"); //$NON-NLS-1$
 			filterNames.append(name);
 		}
 		return filterNames.toString();
@@ -114,7 +114,7 @@ public class ProposalFilterPreferencesUtil {
 							IConfigurationElement testElement = elements[j];
 							if ("ProposalFilter".equals(testElement.getName())) { //$NON-NLS-1$
 								String testName = testElement
-										.getAttribute("name");
+										.getAttribute("name"); //$NON-NLS-1$
 								if ((null != testName)
 										&& (filterName.equals(testName))) {
 									element = testElement;
@@ -154,8 +154,8 @@ public class ProposalFilterPreferencesUtil {
 		text.append(selectionIndex);
 		String[] entries = combo.getItems();
 		for (int i = 0; i < entries.length; i++) {
-			text.append(";");
-			String entry = entries[i].replaceAll(";", ",");
+			text.append(";"); //$NON-NLS-1$
+			String entry = entries[i].replaceAll(";", ","); //$NON-NLS-1$ //$NON-NLS-2$
 			text.append(entry);
 		}
 		return text.toString();
@@ -172,12 +172,12 @@ public class ProposalFilterPreferencesUtil {
 	 */
 	public static void restoreComboFromString(Combo combo, String text) {
 		try {
-			int endFirstEntry = text.indexOf(";");
+			int endFirstEntry = text.indexOf(";"); //$NON-NLS-1$
 			if (endFirstEntry > 0) { // First entry must contain at least one character
 				String selectedString = text.substring(0, endFirstEntry);
 				int selectedIndex = Integer.parseInt(selectedString);
 				String[] entryList = text.substring(endFirstEntry + 1,
-						text.length()).split(";");
+						text.length()).split(";"); //$NON-NLS-1$
 				combo.setItems(entryList);
 				combo.select(selectedIndex);
 			}
@@ -204,13 +204,13 @@ public class ProposalFilterPreferencesUtil {
 	public static ComboState getComboState(String comboPreference) {
 		ComboState state = new ComboState();
 		try {
-			int endFirstEntry = comboPreference.indexOf(";");
+			int endFirstEntry = comboPreference.indexOf(";"); //$NON-NLS-1$
 			if (endFirstEntry > 0) { // First entry must contain at least one character
 				String selectedString = comboPreference.substring(0,
 						endFirstEntry);
 				state.selectedIndex = Integer.parseInt(selectedString);
 				state.items = comboPreference.substring(endFirstEntry + 1,
-						comboPreference.length()).split(";");
+						comboPreference.length()).split(";"); //$NON-NLS-1$
 			}
 		} catch (NumberFormatException e) {
 			// If this fails we return an empty ComboState

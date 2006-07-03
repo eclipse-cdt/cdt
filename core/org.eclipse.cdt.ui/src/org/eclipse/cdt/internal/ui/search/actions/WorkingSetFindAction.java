@@ -27,13 +27,13 @@ public class WorkingSetFindAction extends FindAction {
 	public WorkingSetFindAction(CEditor editor, FindAction action, String string) {
 		super ( editor );
 		this.findAction = action;
-		setText(string); //$NON-NLS-1$
+		setText(string); 
 	}
 
 	public WorkingSetFindAction(IWorkbenchSite site,FindAction action, String string) {
 		super(site);
 		this.findAction = action;
-		setText(string); //$NON-NLS-1$
+		setText(string); 
 	}
 
 	protected String getScopeDescription() {

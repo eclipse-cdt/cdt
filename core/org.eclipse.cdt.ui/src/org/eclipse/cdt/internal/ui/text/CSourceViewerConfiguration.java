@@ -280,7 +280,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 		// prefix[0] is either '\t' or ' ' x tabWidth, depending on useSpaces
 		int tabWidth= getTabWidth(sourceViewer);
-		boolean useSpaces= getPreferenceStore().getBoolean(CEditor.SPACES_FOR_TABS); //$NON-NLS-1$
+		boolean useSpaces= getPreferenceStore().getBoolean(CEditor.SPACES_FOR_TABS); 
 
 		for (int i= 0; i <= tabWidth; i++) {
 		    StringBuffer prefix= new StringBuffer();

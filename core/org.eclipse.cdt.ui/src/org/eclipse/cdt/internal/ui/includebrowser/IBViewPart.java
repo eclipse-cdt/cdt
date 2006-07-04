@@ -670,11 +670,15 @@ public class IBViewPart extends ViewPart
         if (node != null) {
             IWorkbenchPage page= getSite().getPage();
             IBFile ibf= node.getDirectiveFile();
+            long timestamp= node.getTimestamp();
             if (ibf != null) {
                 IEditorPart editor= null;
                 IPath filebufferKey= null;
                 IFile f= ibf.getResource();
                 if (f != null) {
+                    if (timestamp == 0) {
+                    	timestamp= f.getLocalTimeStamp();
+                    }
                 	fLastNavigationNode= node;
                 	try {
                 		editor= IDE.openEditor(page, f, false);
@@ -686,6 +690,9 @@ public class IBViewPart extends ViewPart
                 else {
                     IPath location= ibf.getLocation();
                     if (location != null) {
+                        if (timestamp == 0) {
+                        	timestamp= location.toFile().lastModified();
+                        }
                         fLastNavigationNode= node;
                     	ExternalEditorInput ei= new ExternalEditorInput(new FileStorage(null, location));
 						try {
@@ -702,7 +709,7 @@ public class IBViewPart extends ViewPart
                     Position pos= new Position(node.getDirectiveCharacterOffset(),
                     		node.getDirectiveName().length() + 2);
                     if (filebufferKey != null) {
-                    	IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(filebufferKey, node.getTimestamp());
+                    	IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(filebufferKey, timestamp);
                     	if (pc != null) {
                     		pos= pc.historicToActual(pos);
                     	}

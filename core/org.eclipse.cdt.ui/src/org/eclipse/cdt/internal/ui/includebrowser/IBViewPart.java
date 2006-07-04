@@ -672,16 +672,13 @@ public class IBViewPart extends ViewPart
             IBFile ibf= node.getDirectiveFile();
             if (ibf != null) {
                 IEditorPart editor= null;
-                Position pos= new Position(node.getDirectiveCharacterOffset(),
-                		node.getDirectiveName().length() + 2);
-                
+                IPath filebufferKey= null;
                 IFile f= ibf.getResource();
                 if (f != null) {
                 	fLastNavigationNode= node;
-                	IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(f, node.getTimestamp());
-                	pos= converter.historicToActual(pos);
                 	try {
                 		editor= IDE.openEditor(page, f, false);
+                		filebufferKey= f.getFullPath();
                 	} catch (PartInitException e) {
                 		CUIPlugin.getDefault().log(e);
                 	}
@@ -694,6 +691,7 @@ public class IBViewPart extends ViewPart
 						try {
                             IEditorDescriptor descriptor = IDE.getEditorDescriptor(location.lastSegment());
                             editor= IDE.openEditor(page, ei, descriptor.getId(), false);
+                            filebufferKey= location;
 						} catch (PartInitException e) {
                             CUIPlugin.getDefault().log(e);
 						}
@@ -701,6 +699,15 @@ public class IBViewPart extends ViewPart
                 }
                 if (editor instanceof ITextEditor) {
                     ITextEditor te= (ITextEditor) editor;
+                    Position pos= new Position(node.getDirectiveCharacterOffset(),
+                    		node.getDirectiveName().length() + 2);
+                    if (filebufferKey != null) {
+                    	IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(filebufferKey, node.getTimestamp());
+                    	if (pc != null) {
+                    		pos= pc.historicToActual(pos);
+                    	}
+                    }
+                    
                     te.selectAndReveal(pos.getOffset(), pos.getLength());
                 }
             }

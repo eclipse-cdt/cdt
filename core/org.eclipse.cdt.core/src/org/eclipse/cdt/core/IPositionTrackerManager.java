@@ -12,9 +12,10 @@
 package org.eclipse.cdt.core;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 
 /**
- * An interface to manage the position tracking that allows for mapping character 
+ * An interface to manage the position tracking. It allows for mapping character 
  * offsets from a file previously stored on disk to the current offset.
  */
 public interface IPositionTrackerManager {
@@ -24,7 +25,19 @@ public interface IPositionTrackerManager {
      * 
      * @param file a file for which the position adapter is requested.
      * @param timestamp identifies the version of the file stored on disk.
-     * @return the requested position adapter or <code>null</code>.
+     * @return the requested position converter or <code>null</code>.
      */
-    IPositionConverter findPositionConverter(IFile file, long timestamp);
+    public IPositionConverter findPositionConverter(IFile file, long timestamp);
+    
+    /**
+     * Returns the position tracker suitable for mapping character offsets of the
+     * given external file/timestamp to the current version of it. <p> 
+     * The method can be used for resources by supplying the <b>full path</b>. However,
+     * it does not work if you supply the location of a resource.
+     * 
+     * @param externalLocationOrFullPath an external location for which the position adapter is requested.
+     * @param timestamp identifies the version of the file stored on disk.
+     * @return the requested position converter or <code>null</code>.
+     */
+    public IPositionConverter findPositionConverter(IPath fullPathOrExternalLocation, long timestamp);
 }

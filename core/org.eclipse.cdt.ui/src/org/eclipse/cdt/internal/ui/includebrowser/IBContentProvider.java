@@ -49,7 +49,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 	public Object[] syncronouslyComputeChildren(Object parentElement) {
 		if (parentElement instanceof ITranslationUnit) {
 			ITranslationUnit tu = (ITranslationUnit) parentElement;
-			return new Object[] { new IBNode(null, new IBFile(tu), null, null, 0) };
+			return new Object[] { new IBNode(null, new IBFile(tu), null, null, 0, 0) };
 		}
 		if (parentElement instanceof IBNode) {
 			IBNode node = (IBNode) parentElement;
@@ -90,7 +90,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 							}
 								
 							IBNode newnode= new IBNode(node, targetFile, directiveFile, 
-									include.getName(), include.getOffset());
+									include.getName(), include.getOffset(), include.getTimestamp());
 							newnode.setIsActiveCode(include.isActiveCode());
 							newnode.setIsSystemInclude(include.isSystemInclude());
 							result[i]= newnode;

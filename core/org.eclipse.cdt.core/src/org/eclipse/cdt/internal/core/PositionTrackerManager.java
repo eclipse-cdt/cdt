@@ -168,7 +168,7 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
         }
     }
 
-    public synchronized IPositionConverter findPositionAdapter(IFile file, long timestamp) {
+    public synchronized IPositionConverter findPositionConverter(IFile file, long timestamp) {
         PositionTrackerChain chain= (PositionTrackerChain) fPositionTrackerMap.get(file.getFullPath());
         if (chain != null) {
             return chain.findTrackerAt(timestamp);

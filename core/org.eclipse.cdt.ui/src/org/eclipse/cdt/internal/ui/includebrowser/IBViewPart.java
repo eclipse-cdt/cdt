@@ -25,6 +25,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -72,6 +73,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -670,13 +672,14 @@ public class IBViewPart extends ViewPart
             IBFile ibf= node.getDirectiveFile();
             if (ibf != null) {
                 IEditorPart editor= null;
-                int offset= node.getDirectiveCharacterOffset();
-                int length= node.getDirectiveName().length() + 2;
+                Position pos= new Position(node.getDirectiveCharacterOffset(),
+                		node.getDirectiveName().length() + 2);
                 
                 IFile f= ibf.getResource();
                 if (f != null) {
                 	fLastNavigationNode= node;
-                    // mstodo position tracker
+                	IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(f, node.getTimestamp());
+                	pos= converter.historicToActual(pos);
                 	try {
                 		editor= IDE.openEditor(page, f, false);
                 	} catch (PartInitException e) {
@@ -698,7 +701,7 @@ public class IBViewPart extends ViewPart
                 }
                 if (editor instanceof ITextEditor) {
                     ITextEditor te= (ITextEditor) editor;
-                    te.selectAndReveal(offset, length);
+                    te.selectAndReveal(pos.getOffset(), pos.getLength());
                 }
             }
             else {

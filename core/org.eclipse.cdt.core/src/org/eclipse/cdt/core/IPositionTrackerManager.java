@@ -26,5 +26,5 @@ public interface IPositionTrackerManager {
      * @param timestamp identifies the version of the file stored on disk.
      * @return the requested position adapter or <code>null</code>.
      */
-    IPositionConverter findPositionAdapter(IFile file, long timestamp);
+    IPositionConverter findPositionConverter(IFile file, long timestamp);
 }

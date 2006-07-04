@@ -53,6 +53,9 @@ public class CIndexQueries {
 		public int getOffset() {
 			return 9;
 		}
+		public long getTimestamp() {
+			return 0;
+		}
 	}
 
 	private static final IPDOMInclude[] EMPTY_INCLUDES = new IPDOMInclude[0];

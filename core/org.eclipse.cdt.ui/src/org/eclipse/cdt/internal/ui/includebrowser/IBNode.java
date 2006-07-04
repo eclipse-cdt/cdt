@@ -35,12 +35,13 @@ public class IBNode implements IAdaptable {
     private boolean fIsSystemInclude= false;
     private boolean fIsActive= true;
     private boolean fIsRecursive;
+    private long fTimestamp;
 
     /**
      * Creates a new node for the include browser
      */
     public IBNode(IBNode parent, IBFile represents, IBFile fileOfDirective, String nameOfDirective,
-    		int charOffset) {
+    		int charOffset, long timestamp) {
         fParent= parent;
         fRepresentedFile= represents;
         fDirectiveFile= fileOfDirective;
@@ -48,6 +49,7 @@ public class IBNode implements IAdaptable {
         fDirectiveCharacterOffset= charOffset;
         fIsRecursive= computeIsRecursive(fParent, represents.getLocation());
         fHashCode= computeHashCode();
+        fTimestamp= timestamp;
     }
     
     private int computeHashCode() {
@@ -182,5 +184,9 @@ public class IBNode implements IAdaptable {
 			return file.getFullPath();
 		}
 		return fRepresentedFile.getLocation();
+	}
+
+	public long getTimestamp() {
+		return fTimestamp;
 	}
 }

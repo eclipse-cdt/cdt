@@ -16,11 +16,14 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * An interface to manage the position tracking. It allows for mapping character 
- * offsets from a file previously stored on disk to the current offset.
+ * offsets from a file previously stored on disk to the offset in the current document
+ * for the file.
+ * 
+ * <p> This interface is not intended to be implemented by clients. </p>
  */
 public interface IPositionTrackerManager {
     /**
-     * Returns the position tracker suitable for mapping character offsets of the
+     * Returns the position converter suitable for mapping character offsets of the
      * given file/timestamp to the current version of it.
      * 
      * @param file a file for which the position adapter is requested.

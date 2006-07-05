@@ -21,13 +21,15 @@ import org.eclipse.jface.text.Position;
  * 
  * As long as the underlying text of the character range has not been modified the
  * converted range will have the same underlying text. Insertions at the beginning
- * or the end of the text do not added to the converted range. 
+ * or the end of the text are not added to the converted range. 
  * 
  * An insertion inside the underlying text will increase the length of the converted
  * range, a deletion of one of the characters will decrease it.
  * 
  * An deletion followed by an insertion without saving the file inbetween, will cancel
- * the deletion as much as possible.
+ * the deletion as far as possible.
+ * 
+ * <p> This interface is not intended to be implemented by clients. </p>
  */
 
 public interface IPositionConverter {
@@ -46,7 +48,6 @@ public interface IPositionConverter {
      * @param historicPosition a range as found in the version of the file for which
      * the converter was obtained.
      * @return a range suitable for the current text buffer of the file.
-     * 
      */
     Position historicToActual(Position historicPosition);
 }

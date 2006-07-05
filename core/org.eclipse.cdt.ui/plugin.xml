@@ -40,6 +40,11 @@
          <adapter type="org.eclipse.ui.IActionFilter"/>
          <adapter type="org.eclipse.core.resources.IWorkspaceRoot"/>
       </factory>
+      <factory
+            adaptableType="org.eclipse.ui.texteditor.ITextEditor"
+            class="org.eclipse.cdt.internal.ui.dnd.TextEditorDropAdapter$Factory">
+         <adapter type="org.eclipse.ui.texteditor.ITextEditorDropTargetListener"/>
+      </factory>
    </extension>
 
 <!-- Implement our filters.  -->

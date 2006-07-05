@@ -29,6 +29,8 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -261,6 +263,24 @@ public class EditorUtility {
 		return null;
 	}
 
+	/**
+	 * Utility method to get an editor input for the given file system location.
+	 * If the location denotes a workspace file, a <code>FileEditorInput</code>
+	 * is returned, otherwise, the input is an <code>IStorageEditorInput</code>
+	 * assuming the location points to an existing file in the file system.
+	 * 
+	 * @param location a valid file system location
+	 * @return an editor input
+	 */
+	public static IEditorInput getEditorInputForLocation(IPath location) {
+		IFile resource= FileBuffers.getWorkspaceFileAtLocation(location);
+		if (resource != null) {
+			return new FileEditorInput(resource);
+		} else {
+			return new ExternalEditorInput(new FileStorage(location));
+		}
+	}
+
 
 	/**
 	 * If the current active editor edits a c element return it, else
@@ -282,7 +302,7 @@ public class EditorUtility {
         
 	/** 
 	 * Gets the working copy of an compilation unit opened in an editor
-	 * @param part the editor part
+	 * 
 	 * @param cu the original compilation unit (or another working copy)
 	 * @return the working copy of the compilation unit, or null if not found
 	*/     

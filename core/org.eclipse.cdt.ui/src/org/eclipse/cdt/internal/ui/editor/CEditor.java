@@ -32,6 +32,8 @@ import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.JoinLinesAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
+import org.eclipse.cdt.internal.ui.dnd.TextEditorDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDefinitionAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
@@ -87,9 +89,16 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.ui.actions.TextSearchGroup;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -113,6 +122,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.ITextEditorDropTargetListener;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextOperationAction;
@@ -837,6 +847,25 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		if (isTabConversionEnabled())
 			startTabConversion();
 			
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#initializeDragAndDrop(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	protected void initializeDragAndDrop(ISourceViewer viewer) {
+		Control control= viewer.getTextWidget();
+		int operations= DND.DROP_MOVE | DND.DROP_COPY;
+
+		DropTarget dropTarget= new DropTarget(control, operations);
+		ITextEditorDropTargetListener dropTargetListener= new TextEditorDropAdapter(viewer, this);
+		dropTarget.setTransfer(dropTargetListener.getTransfers());
+		dropTarget.addDropListener(dropTargetListener);
+
+		DragSource dragSource= new DragSource(control, operations);
+		Transfer[] dragTypes= new Transfer[] { TextTransfer.getInstance() };
+		dragSource.setTransfer(dragTypes);
+		DragSourceListener dragSourceListener= new TextViewerDragAdapter(viewer, this);
+		dragSource.addDragListener(dragSourceListener);
 	}
 
 	/* (non-Javadoc)

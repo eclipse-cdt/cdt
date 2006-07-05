@@ -262,8 +262,11 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 //	}
 	
 	/**
-	 * Tests if a position is inside the source range of an element.
-	 * @param pos Position to be tested.
+	 * Tests if a position is inside the source range of an element. Usually this is done
+	 * by looking at the offset. In case the offset equals <code>-1</code>, the line is 
+	 * tested.
+	 * @param offSet offset to be tested
+	 * @param line line to be tested
 	 * @param sourceElement Source element (must be a ICElement)
 	 * @return boolean Return <code>true</code> if position is located inside the source element.
 	 * @throws CoreException Exception thrown if element range could not be accessed.

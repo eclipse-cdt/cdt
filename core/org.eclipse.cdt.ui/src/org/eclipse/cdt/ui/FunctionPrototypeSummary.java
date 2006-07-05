@@ -21,7 +21,7 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 		
 	/**
 	 * Create a function prototype summary based on a prototype string.
-	 * @param The string describing the prototype which is properly 
+	 * @param proto The string describing the prototype which is properly 
 	 * formed with following format -- returntype function(arguments)
 	 * The following formats will be converted as follows:
 	 * function(arguments) --> function(arguments) //constructors!

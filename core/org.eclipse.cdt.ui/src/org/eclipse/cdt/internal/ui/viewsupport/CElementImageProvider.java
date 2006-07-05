@@ -127,11 +127,6 @@ public class CElementImageProvider {
 		return null;
 	}
 
-	/**
- 	 * 
-	 * @param type
-	 * @return
-	 */
 	public static ImageDescriptor getImageDescriptor(int type) {
 		switch (type) {
 			case ICElement.C_VCONTAINER:

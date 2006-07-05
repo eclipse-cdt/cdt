@@ -24,7 +24,7 @@ public class StandardCElementLabelProvider extends AppearanceAwareLabelProvider 
 
 	/**
 	 * Constructor for StandardCElementLabelProvider.
-	 * @see CElementLabelProvider#CElementLabelProvider
+	 * @see CElementLabelProvider#CElementLabelProvider()
 	 */
 	public StandardCElementLabelProvider(int textFlags, int imageFlags) {
 		super(textFlags, imageFlags);

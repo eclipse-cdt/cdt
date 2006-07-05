@@ -30,7 +30,7 @@ import org.eclipse.ui.IEditorInput;
  * This interface is not intended to be implemented by clients.
  * </p>
  *
- * @see JavaUI#getWorkingCopyManager
+ * @see CUIPlugin#getWorkingCopyManager
  */
 public interface IWorkingCopyManager {
 	

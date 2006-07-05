@@ -185,8 +185,6 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
-	 * @see #LINK_PACKAGES_TO_EDITOR
 	 */
 	public static final String BROWSING_LINK_VIEW_TO_EDITOR= "org.eclipse.cdt.ui.browsing.linktoeditor"; //$NON-NLS-1$
 
@@ -280,8 +278,6 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
-	 * @see #LINK_PACKAGES_TO_EDITOR
 	 */
 	public static final String OUTLINE_GROUP_INCLUDES= "org.eclipse.cdt.ui.outline.groupincludes"; //$NON-NLS-1$
 
@@ -290,8 +286,6 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
-	 * @see #LINK_PACKAGES_TO_EDITOR
 	 */
 	public static final String OUTLINE_GROUP_NAMESPACES= "org.eclipse.cdt.ui.outline.groupnamespaces"; //$NON-NLS-1$
 
@@ -300,8 +294,6 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
-	 * @see #LINK_PACKAGES_TO_EDITOR
 	 */
 	public static final String CVIEW_GROUP_INCLUDES= "org.eclipse.cdt.ui.cview.groupincludes"; //$NON-NLS-1$
 

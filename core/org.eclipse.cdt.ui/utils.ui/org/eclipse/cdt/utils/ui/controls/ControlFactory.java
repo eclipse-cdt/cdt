@@ -95,11 +95,11 @@ public class ControlFactory {
 	}
 
 	/**
-	 * Creates thick separator.
+	 * Creates a separator.
 	 *
 	 * @param parent  the parent of the new composite
-	 * @param color the separator color
-	 * @return preferedThickness - the  prefered thickness of separator (or 2 if SWT.DEFAULT)
+	 * @param nCols number of columns to span
+	 * @return a separator label
 	 */
 	public static Label createSeparator(Composite parent, int nCols) {
 		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -326,9 +326,9 @@ public class ControlFactory {
 	 * Create a List box
 	 *
 	 * @param parent  the parent of the new control
-	 * @param label  the group box label
-	 * @param nColumns - number of layout columns
-	 * @return the new group box
+	 * @param strdata  the data for the list, separated by commas
+	 * @param selData - the item that shall be selected
+	 * @return the new list box
 	 */
     public static List createList(Composite parent, String strdata, String selData) {
 		List list = new List(parent, SWT.SINGLE);
@@ -478,7 +478,8 @@ public class ControlFactory {
 	 * Create a selection combo
 	 *
 	 * @param parent  the parent of the new text field
-	 * @param string of comma separated tokens to fill selection list
+	 * @param strdata of comma separated tokens to fill selection list
+	 * @param selData the item that shall be selected
 	 * @return the new combo
 	 */
 	public static CCombo createSelectCCombo(Composite parent, String strdata, String selData) {
@@ -507,7 +508,8 @@ public class ControlFactory {
 	 * Create a selection combo
 	 *
 	 * @param parent  the parent of the new text field
-	 * @param array of elements + selected element
+	 * @param strdata array of elements 
+	 * @param selData selected element
 	 * @return the new combo
 	 */
 	public static CCombo createSelectCCombo(Composite parent, String[] strdata, String selData) {
@@ -548,7 +550,8 @@ public class ControlFactory {
 	 * Create a selection combo
 	 *
 	 * @param parent  the parent of the new text field
-	 * @param string of comma separated tokens to fill selection list
+	 * @param strdata of comma separated tokens to fill selection list
+	 * @param selData the item that shall be selected
 	 * @return the new combo
 	 */
 	public static Combo createSelectCombo(Composite parent, String strdata, String selData) {
@@ -577,7 +580,8 @@ public class ControlFactory {
 	 * Create a selection combo
 	 *
 	 * @param parent  the parent of the new text field
-	 * @param array of elements + selected element
+	 * @param strdata array of elements 
+	 * @param selData selected element
 	 * @return the new combo
 	 */
 	public static Combo createSelectCombo(Composite parent, String[] strdata, String selData) {

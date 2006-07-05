@@ -22,9 +22,6 @@ public class CContextType extends TranslationUnitContextType {
 
 	public final static String CCONTEXT_TYPE = "org.eclipse.cdt.ui.text.templates.c"; //$NON-NLS-1$
 
-	/**
-	 * @param name
-	 */
 	public CContextType() {
 		super();
 		// global

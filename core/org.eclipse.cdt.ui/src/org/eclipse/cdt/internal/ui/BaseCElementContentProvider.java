@@ -119,7 +119,6 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Can elements be group.
-	 * @return
 	 */
 	public boolean areIncludesGroup() {
 	    return fIncludesGrouping;
@@ -135,7 +134,6 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Can elements be group.
-	 * @return
 	 */
 	public boolean areNamespacesGroup() {
 	    return fNamespacesGrouping;

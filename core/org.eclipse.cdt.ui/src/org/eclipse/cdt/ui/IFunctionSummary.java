@@ -44,7 +44,6 @@ public interface IFunctionSummary {
 		 * which depends on the variable namefirst
 		 * namefirst == true: main(int argc, char **argv) int
 		 * namefirst == false: int main(int argc, char **argv);
-		 * @return
 		 */
 		public String getPrototypeString(boolean namefirst);
 	}

@@ -39,10 +39,11 @@ public class CContext extends TranslationUnitContext {
 	/**
 	 * Creates a javadoc template context.
 	 * 
-	 * @param type   the context type.
-	 * @param string the document string.
-	 * @param completionPosition the completion position within the document.
-	 * @param unit the compilation unit (may be <code>null</code>).
+	 * @param type the context type
+	 * @param document the document
+	 * @param completionOffset the completion position within the document
+	 * @param completionLength the length of the context
+	 * @param translationUnit the translation unit represented by the document
 	 */
 	public CContext(TemplateContextType type, IDocument document, int completionOffset, int completionLength,
 		ITranslationUnit translationUnit) {

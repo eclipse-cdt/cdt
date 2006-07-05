@@ -34,7 +34,7 @@ public class DocumentInputStream extends InputStream {
 	}
 		
 	/**
-	 * @see InputStream#read
+	 * {@inheritDoc}
 	 */
 	 public int read() throws IOException {
 	 	try {

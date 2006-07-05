@@ -104,8 +104,6 @@ public class RadioButtonsArea extends Composite {
 	
 	/**
 	 * Create control area
-	 *
-	 * @return nothing
 	 */
 	protected void createControl(Composite parent, String labelText) {
 		GridLayout gl = new GridLayout();

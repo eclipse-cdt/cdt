@@ -16,17 +16,17 @@ import org.eclipse.osgi.util.NLS;
 public class IBMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.includebrowser.IBMessages"; //$NON-NLS-1$
 
-	public static String HistoryDropDownAction_ClearHistory_label;
+	public static String IBHistoryDropDownAction_ClearHistory_label;
 
-	public static String HistoryDropDownAction_tooltip;
+	public static String IBHistoryDropDownAction_tooltip;
 
-	public static String HistoryListAction_HistoryDialog_title;
+	public static String IBHistoryListAction_HistoryDialog_title;
 
-	public static String HistoryListAction_HistoryList_label;
+	public static String IBHistoryListAction_HistoryList_label;
 
-	public static String HistoryListAction_label;
+	public static String IBHistoryListAction_label;
 
-	public static String HistoryListAction_Remove_label;
+	public static String IBHistoryListAction_Remove_label;
 
 	public static String IBViewPart_falseInputMessage;
 

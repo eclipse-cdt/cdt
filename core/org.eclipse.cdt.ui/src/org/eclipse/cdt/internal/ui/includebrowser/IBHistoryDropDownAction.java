@@ -30,7 +30,7 @@ public class IBHistoryDropDownAction extends Action implements IMenuCreator {
 		private IBViewPart fView;
 		
 		public ClearHistoryAction(IBViewPart view) {
-			super(IBMessages.HistoryDropDownAction_ClearHistory_label);
+			super(IBMessages.IBHistoryDropDownAction_ClearHistory_label);
 			fView= view;
 		}
 			
@@ -48,7 +48,7 @@ public class IBHistoryDropDownAction extends Action implements IMenuCreator {
 	public IBHistoryDropDownAction(IBViewPart view) {
 		fHierarchyView= view;
 		fMenu= null;
-		setToolTipText(IBMessages.HistoryDropDownAction_tooltip); 
+		setToolTipText(IBMessages.IBHistoryDropDownAction_tooltip); 
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "history_list.gif"); //$NON-NLS-1$
 		setMenuCreator(this);
 	}

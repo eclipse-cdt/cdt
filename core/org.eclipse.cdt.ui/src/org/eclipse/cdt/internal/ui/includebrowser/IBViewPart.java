@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorDescriptor;
@@ -86,6 +85,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.TreeNavigator;
 import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 /**
@@ -481,47 +481,24 @@ public class IBViewPart extends ViewPart
         mm.add(fFilterInactiveAction);
     }
     
-    private TreeItem getNextTreeItem(boolean forward) {
-        Tree tree= fTreeViewer.getTree();
-        TreeItem[] selectedNodes= tree.getSelection();
-        TreeItem selectedItem= null;
-        for (int i = 0; i < selectedNodes.length; i++) {
-            TreeItem item = selectedNodes[i];
-            if (item.getData() instanceof IBNode) {
-                selectedItem= item;
-                break;
-            }
+    private IBNode getNextNode(boolean forward) {
+    	TreeNavigator navigator= new TreeNavigator(fTreeViewer.getTree(), IBNode.class);
+    	TreeItem selectedItem= navigator.getSelectedItemOrFirstOnLevel(1, forward);
+    	if (selectedItem == null) {
+    		return null;
+    	}
+    	
+        if (selectedItem.getData().equals(fLastNavigationNode)) {
+        	selectedItem= navigator.getNextSibbling(selectedItem, forward);
         }
-        if (selectedItem == null) {
-            // try to obtain an include on level 1;
-            if (tree.getItemCount() > 0) {
-                selectedItem= tree.getItem(0);
-                int itemCount= selectedItem.getItemCount();
-                if (itemCount > 0) {
-                    return selectedItem.getItem(forward ? 0 : itemCount-1);
-                }
-            }
-            return null;
-        }
-        IBNode selectedNode= (IBNode) selectedItem.getData();
-        if (!selectedNode.equals(fLastNavigationNode)) {
-            return selectedItem;
-        }
-
-        TreeItem parentItem= selectedItem.getParentItem();
-        int itemCount = parentItem.getItemCount();
-        if (parentItem != null && itemCount > 1) {
-            int index= parentItem.indexOf(selectedItem);
-            index = (index + (forward ? 1 : itemCount-1)) % itemCount;
-            return parentItem.getItem(index);
-        }
-        return null;
+        
+        return selectedItem == null ? null : (IBNode) selectedItem.getData();
     }
         
     protected void onNextOrPrevious(boolean forward) {
-        TreeItem nextItem= getNextTreeItem(forward);
-        if (nextItem != null && nextItem.getData() instanceof IBNode) {
-            StructuredSelection sel= new StructuredSelection(nextItem.getData());
+    	IBNode nextItem= getNextNode(forward);
+        if (nextItem != null) {
+            StructuredSelection sel= new StructuredSelection(nextItem);
             fTreeViewer.setSelection(sel);
             onShowInclude(sel);
         }

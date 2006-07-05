@@ -120,7 +120,6 @@ public class IBNode implements IAdaptable {
     
     /**
      * Defines whether this is a system include (angle-brackets).
-     * @see FileInclusionNode#isSystemInclude().
      */
     public void setIsSystemInclude(boolean isSystemInclude) {
         fIsSystemInclude= isSystemInclude;
@@ -137,7 +136,6 @@ public class IBNode implements IAdaptable {
 
     /**
      * Defines whether the inclusion appears in active code.
-     * @see FileInclusionNode#isInActiveCode().
      */
     public void setIsActiveCode(boolean isActiveCode) {
         fIsActive= isActiveCode;

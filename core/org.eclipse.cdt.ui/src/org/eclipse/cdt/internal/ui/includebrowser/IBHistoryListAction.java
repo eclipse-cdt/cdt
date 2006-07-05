@@ -48,9 +48,9 @@ public class IBHistoryListAction extends Action {
 		private HistoryListDialog(Shell shell, ITranslationUnit[] elements) {
 			super(shell);
 			setHelpAvailable(false);			
-			setTitle(IBMessages.HistoryListAction_HistoryDialog_title); 
+			setTitle(IBMessages.IBHistoryListAction_HistoryDialog_title); 
 			String[] buttonLabels= new String[] { 
-				IBMessages.HistoryListAction_Remove_label, 
+				IBMessages.IBHistoryListAction_Remove_label, 
 			};
 					
 			IListAdapter adapter= new IListAdapter() {
@@ -69,7 +69,7 @@ public class IBHistoryListAction extends Action {
 			CUILabelProvider labelProvider= new CUILabelProvider(CElementLabels.APPEND_ROOT_PATH, CElementImageProvider.OVERLAY_ICONS);
 			
 			fHistoryList= new ListDialogField(adapter, buttonLabels, labelProvider);
-			fHistoryList.setLabelText(IBMessages.HistoryListAction_HistoryList_label); 
+			fHistoryList.setLabelText(IBMessages.IBHistoryListAction_HistoryList_label); 
 			fHistoryList.setElements(Arrays.asList(elements));
 			
 			ISelection sel;
@@ -163,7 +163,7 @@ public class IBHistoryListAction extends Action {
 	
 	public IBHistoryListAction(IBViewPart view) {
 		fView= view;
-		setText(IBMessages.HistoryListAction_label); 
+		setText(IBMessages.IBHistoryListAction_label); 
 	}
 		
 	/*

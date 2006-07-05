@@ -37,7 +37,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
-public class HistoryListAction extends Action {
+public class IBHistoryListAction extends Action {
 	
 	private class HistoryListDialog extends StatusDialog {
 		
@@ -161,7 +161,7 @@ public class HistoryListAction extends Action {
 	
 	private IBViewPart fView;
 	
-	public HistoryListAction(IBViewPart view) {
+	public IBHistoryListAction(IBViewPart view) {
 		fView= view;
 		setText(IBMessages.HistoryListAction_label); 
 	}

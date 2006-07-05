@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
-public class HistoryDropDownAction extends Action implements IMenuCreator {
+public class IBHistoryDropDownAction extends Action implements IMenuCreator {
 	
 	public static class ClearHistoryAction extends Action {
 
@@ -45,7 +45,7 @@ public class HistoryDropDownAction extends Action implements IMenuCreator {
 	private IBViewPart fHierarchyView;
 	private Menu fMenu;
 	
-	public HistoryDropDownAction(IBViewPart view) {
+	public IBHistoryDropDownAction(IBViewPart view) {
 		fHierarchyView= view;
 		fMenu= null;
 		setToolTipText(IBMessages.HistoryDropDownAction_tooltip); 
@@ -73,7 +73,7 @@ public class HistoryDropDownAction extends Action implements IMenuCreator {
 		ITranslationUnit[] elements= fHierarchyView.getHistoryEntries();
 		addEntries(fMenu, elements);
 		new MenuItem(fMenu, SWT.SEPARATOR);
-		addActionToMenu(fMenu, new HistoryListAction(fHierarchyView));
+		addActionToMenu(fMenu, new IBHistoryListAction(fHierarchyView));
 		addActionToMenu(fMenu, new ClearHistoryAction(fHierarchyView));
 		return fMenu;
 	}
@@ -83,7 +83,7 @@ public class HistoryDropDownAction extends Action implements IMenuCreator {
 		
 		int min= Math.min(elements.length, RESULTS_IN_DROP_DOWN);
 		for (int i= 0; i < min; i++) {
-			HistoryAction action= new HistoryAction(fHierarchyView, elements[i]);
+			IBHistoryAction action= new IBHistoryAction(fHierarchyView, elements[i]);
 			action.setChecked(elements[i].equals(fHierarchyView.getInput()));
 			checked= checked || action.isChecked();
 			addActionToMenu(menu, action);
@@ -100,6 +100,6 @@ public class HistoryDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public void run() {
-		(new HistoryListAction(fHierarchyView)).run();
+		(new IBHistoryListAction(fHierarchyView)).run();
 	}
 }

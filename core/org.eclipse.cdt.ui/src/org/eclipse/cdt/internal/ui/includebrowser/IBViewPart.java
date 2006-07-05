@@ -462,7 +462,7 @@ public class IBViewPart extends ViewPart
         tm.add(new Separator());
         tm.add(fIncludedByAction);
         tm.add(fIncludesToAction);
-        tm.add(new HistoryDropDownAction(this));
+        tm.add(new IBHistoryDropDownAction(this));
         tm.add(fRefresh);
 
         // local menu

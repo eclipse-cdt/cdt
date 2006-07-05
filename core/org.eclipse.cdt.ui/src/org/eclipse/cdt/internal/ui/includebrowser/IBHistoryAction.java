@@ -23,12 +23,12 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 /**
  * Action used for the include browser forward / backward buttons
  */
-public class HistoryAction extends Action {
+public class IBHistoryAction extends Action {
 
 	private IBViewPart fViewPart;
 	private ITranslationUnit fElement;
 	
-	public HistoryAction(IBViewPart viewPart, ITranslationUnit element) {
+	public IBHistoryAction(IBViewPart viewPart, ITranslationUnit element) {
         super("", AS_RADIO_BUTTON); //$NON-NLS-1$
 		fViewPart= viewPart;
 		fElement= element;		

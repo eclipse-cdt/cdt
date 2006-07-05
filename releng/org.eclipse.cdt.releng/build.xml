@@ -11,7 +11,7 @@
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
-		<property name="branchVersion" value="3.1.0"/>
+		<property name="branchVersion" value="3.1.1"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>
 		<property name="buildDirectory" value="${basedir}/results" />
@@ -32,7 +32,7 @@
 		<property name="baseos" value="${osgi.os}"/>
 		<property name="basews" value="${osgi.ws}"/>
 		<property name="basearch" value="${osgi.arch}"/>
-		<property name="tagbranch" value=""/>
+		<property name="tagbranch" value="-r cdt_3_1"/>
 		<property name="tagname" value="v${timestamp}"/>
 		<condition property="onWindows">
 			<os family="windows"/>

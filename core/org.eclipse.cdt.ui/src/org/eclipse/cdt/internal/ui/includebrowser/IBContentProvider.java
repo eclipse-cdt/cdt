@@ -100,12 +100,17 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 				}
 				catch (CoreException e) {
 					CUIPlugin.getDefault().log(e.getStatus());
+				} 
+				catch (InterruptedException e) {
+					CUIPlugin.getDefault().log(e);
 				}
 			}
 		}
 		return NO_CHILDREN;
 	}
 
+	
+	
 	public void setComputeIncludedBy(boolean value) {
 		fComputeIncludedBy = value;
 	}

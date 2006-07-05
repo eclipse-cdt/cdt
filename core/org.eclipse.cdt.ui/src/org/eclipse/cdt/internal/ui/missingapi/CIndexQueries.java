@@ -12,6 +12,11 @@
 package org.eclipse.cdt.internal.ui.missingapi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -20,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -29,7 +35,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
 
 public class CIndexQueries {
-	public static class IPDOMInclude {
+    public static class IPDOMInclude {
 		private PDOMInclude fInclude;
 		
 		public IPDOMInclude(PDOMInclude include) {
@@ -75,27 +81,40 @@ public class CIndexQueries {
 		return null;
 	}
 
-	private CIndexQueries() {
-	}
 
-	public IPDOMInclude[] findIncludedBy(ITranslationUnit tu, IProgressMonitor pm) throws CoreException {
+	public IPDOMInclude[] findIncludedBy(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException {
+		HashMap result= new HashMap();
+		LinkedList projects= new LinkedList(Arrays.asList(CoreModel.getDefault().getCModel().getCProjects()));
 		ICProject cproject= tu.getCProject();
 		if (cproject != null) {
+			projects.remove(cproject);
+			projects.addFirst(cproject);
+		}
+		
+		for (Iterator iter = projects.iterator(); iter.hasNext();) {
+			cproject = (ICProject) iter.next();
 			PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(cproject);
 			if (pdom != null) {
-				PDOMFile fileTarget= pdom.getFile(locationForTU(tu));
-				if (fileTarget != null) {
-					ArrayList result= new ArrayList();
-					PDOMInclude include= fileTarget.getFirstIncludedBy();
-					while (include != null) {
-						result.add(new IPDOMInclude(include));
-						include= include.getNextInIncludedBy();
+				pdom.acquireReadLock();
+				try {
+					PDOMFile fileTarget= pdom.getFile(locationForTU(tu));
+					if (fileTarget != null) {
+						PDOMInclude include= fileTarget.getFirstIncludedBy();
+						while (include != null) {
+							PDOMFile file= include.getIncludedBy();
+							String path= file.getFileName().getString();
+							result.put(path, new IPDOMInclude(include));
+							include= include.getNextInIncludedBy();
+						}
 					}
-					return (IPDOMInclude[]) result.toArray(new IPDOMInclude[result.size()]);
+				}
+				finally {
+					pdom.releaseReadLock();
 				}
 			}	
-		}		
-		return EMPTY_INCLUDES;
+		}
+		Collection includes= result.values();
+		return (IPDOMInclude[]) includes.toArray(new IPDOMInclude[includes.size()]);
 	}
 
 	private IPath locationForTU(ITranslationUnit tu) {
@@ -106,20 +125,26 @@ public class CIndexQueries {
 		return tu.getPath();
 	}
 	
-	public IPDOMInclude[] findIncludesTo(ITranslationUnit tu, IProgressMonitor pm) throws CoreException {
+	public IPDOMInclude[] findIncludesTo(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException {
 		ICProject cproject= tu.getCProject();
 		if (cproject != null) {
 			PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(cproject);
 			if (pdom != null) {
-				PDOMFile fileTarget= pdom.getFile(locationForTU(tu));
-				if (fileTarget != null) {
-					ArrayList result= new ArrayList();
-					PDOMInclude include= fileTarget.getFirstInclude();
-					while (include != null) {
-						result.add(new IPDOMInclude(include));
-						include= include.getNextInIncludes();
+				pdom.acquireReadLock();
+				try {
+					PDOMFile fileTarget= pdom.getFile(locationForTU(tu));
+					if (fileTarget != null) {
+						ArrayList result= new ArrayList();
+						PDOMInclude include= fileTarget.getFirstInclude();
+						while (include != null) {
+							result.add(new IPDOMInclude(include));
+							include= include.getNextInIncludes();
+						}
+						return (IPDOMInclude[]) result.toArray(new IPDOMInclude[result.size()]);
 					}
-					return (IPDOMInclude[]) result.toArray(new IPDOMInclude[result.size()]);
+				}
+				finally {
+					pdom.releaseReadLock();
 				}
 			}	
 		}		

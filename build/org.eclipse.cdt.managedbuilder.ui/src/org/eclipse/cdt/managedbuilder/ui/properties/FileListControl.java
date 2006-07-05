@@ -239,7 +239,8 @@ public class FileListControl {
 						String result;
 						switch (type) {
 							case IOption.BROWSE_DIR :
-								DirectoryDialog dialog = new DirectoryDialog(getParentShell(), SWT.OPEN);
+								DirectoryDialog dialog = new DirectoryDialog(getParentShell(), 
+										SWT.OPEN|SWT.APPLICATION_MODAL);
 								currentName = getText().getText();
 								if(currentName != null && currentName.trim().length() != 0) {
 									dialog.setFilterPath(currentName);

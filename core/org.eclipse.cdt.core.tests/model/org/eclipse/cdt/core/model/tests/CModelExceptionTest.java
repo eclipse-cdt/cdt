@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CModelExceptionTest extends TestCase {
     // Shared values setup and torn down
-    private Throwable throwableException;
+//    private Throwable throwableException;
     private CModelStatus cModelStatus;
     private CoreException coreException;
 

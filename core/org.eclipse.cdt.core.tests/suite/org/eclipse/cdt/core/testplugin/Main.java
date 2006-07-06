@@ -405,7 +405,7 @@ public static void endSplash() {
 public static void main(String argString) throws Exception {
 	Vector list = new Vector(5);
 	for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();)
-		list.addElement((String) tokens.nextElement());
+		list.addElement(tokens.nextElement());
 	main((String[]) list.toArray(new String[list.size()]));
 }
 

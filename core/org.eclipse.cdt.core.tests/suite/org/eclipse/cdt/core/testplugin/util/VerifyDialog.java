@@ -53,7 +53,6 @@ public class VerifyDialog extends TitleAreaDialog {
 	
 	private Label  _queryLabel;
 	Button _yesButton;
-	private Button _noButton;
 	private Button _checkList[];
 	private String _failureText;
 	
@@ -84,7 +83,7 @@ public class VerifyDialog extends TitleAreaDialog {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		_yesButton = createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
-		_noButton = createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, false);
+		createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, false);
 	}
 	/* (non-Javadoc)
 	 * Method declared on Dialog.

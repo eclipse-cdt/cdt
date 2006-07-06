@@ -113,7 +113,7 @@ public class ScannerParserLoopTest extends FileBasePluginTest {
 	private static class TimeoutCallback extends NullSourceElementRequestor
 			implements ISourceElementRequestor {
 		private IParser parser;
-		private boolean timerStarted = false;
+//		private boolean timerStarted = false;
 
 		public void setParser(IParser parser) {
 			this.parser = parser;

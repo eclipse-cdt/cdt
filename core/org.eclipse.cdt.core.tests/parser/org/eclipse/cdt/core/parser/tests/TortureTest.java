@@ -238,7 +238,7 @@ public class TortureTest extends FractionalAutomatedTest {
 		if (isExpectedToPass(testCode, file)) {
 			ParseThread thread = new ParseThread();
 
-			thread.quickParse = quickParse;
+			thread.quickParseFlag = quickParse;
 			thread.code = testCode;
 			thread.cppNature = nature.equalsIgnoreCase("cpp"); //$NON-NLS-1$
 			thread.file = filePath;
@@ -269,11 +269,11 @@ public class TortureTest extends FractionalAutomatedTest {
 		public String 		file;
 		public Throwable 	result = null;
 		public IParser 		parser = null;
-		public boolean 		quickParse = true;
+		public boolean 		quickParseFlag = true;
 	
 		public void run(){
 			try {           
-				ParserMode parserMode = quickParse ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE;
+				ParserMode parserMode = quickParseFlag ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE;
 				ParserLanguage language = cppNature ? ParserLanguage.CPP : ParserLanguage.C; 
 				parser = ParserFactory.createParser( 
 						ParserFactory.createScanner( new CodeReader( code.toCharArray() ), new ScannerInfo(), parserMode, language, nullCallback, new NullLogService(), null ), nullCallback, parserMode, language, null);

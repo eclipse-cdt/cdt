@@ -77,14 +77,14 @@ public abstract class AutomatedFramework extends TestCase {
 						filePath.endsWith(".C") || //$NON-NLS-1$
 						filePath.endsWith(".hxx") || filePath.endsWith(".hh") ) //$NON-NLS-1$ //$NON-NLS-2$
 					{
-						AutomatedTest.natures.put( filePath, "cpp" ); //$NON-NLS-1$
+						AutomatedFramework.natures.put( filePath, "cpp" ); //$NON-NLS-1$
 					} else if( filePath.endsWith(".c") ){  //$NON-NLS-1$
-						AutomatedTest.natures.put( filePath, "c" ); //$NON-NLS-1$
+						AutomatedFramework.natures.put( filePath, "c" ); //$NON-NLS-1$
 					} else {
-						AutomatedTest.natures.put( filePath, AutomatedTest.defaultNature );
+						AutomatedFramework.natures.put( filePath, AutomatedFramework.defaultNature );
 					}
 					
-					AutomatedTest.fileList.add( file );
+					AutomatedFramework.fileList.add( file );
 					suite.addTest( newTest( file.getName().replace(',', '_') ) );
 				}				
 				file = files[ i++ ];

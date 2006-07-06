@@ -916,7 +916,7 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		IASTTemplateDeclaration spec2 = (IASTTemplateDeclaration) i.next();
 		
 		IASTMethod f1 = (IASTMethod) spec1.getOwnedDeclaration();
-		IASTMethod f2 = (IASTMethod) spec2.getOwnedDeclaration();;
+		IASTMethod f2 = (IASTMethod) spec2.getOwnedDeclaration();
 		
 		IASTFunction main = (IASTFunction) i.next();
 		assertFalse( i.hasNext() );

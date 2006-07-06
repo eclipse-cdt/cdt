@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
-import org.eclipse.cdt.core.model.IMethodTemplate;
 import org.eclipse.cdt.core.model.IMethodTemplateDeclaration;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;

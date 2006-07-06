@@ -74,18 +74,18 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
         }
     }
     
-    protected CompilationUnitCallback callback;
+    protected CompilationUnitCallback localCallback;
     
     protected IASTScope parse(String code, boolean throwOnError, ParserLanguage language) throws ParserException, ParserFactoryError
     {
-    	callback = new CompilationUnitCallback(); 
+    	localCallback = new CompilationUnitCallback(); 
     	IParser parser = ParserFactory.createParser( 
     		ParserFactory.createScanner( new CodeReader(code.toCharArray()), new ScannerInfo(),
-    			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService(), null ), callback, ParserMode.COMPLETE_PARSE, language, null 	
+    			ParserMode.COMPLETE_PARSE, language, localCallback, new NullLogService(), null ), localCallback, ParserMode.COMPLETE_PARSE, language, null 	
     		);
     	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE"); //$NON-NLS-1$
     	
-        return callback.getCompilationUnit();
+        return localCallback.getCompilationUnit();
     }
     
     protected Iterator getDeclarations(IASTScope scope)

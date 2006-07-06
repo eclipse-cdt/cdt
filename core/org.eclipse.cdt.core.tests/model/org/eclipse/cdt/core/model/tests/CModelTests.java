@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -124,7 +125,7 @@ public class CModelTests extends TestCase {
         assertTrue("hasCCNature works", (CoreModel.hasCCNature(testProject.getProject())));
         
         CCProjectNature.removeCCNature(testProject.getProject(), monitor);
-        CCProjectNature.removeCNature(testProject.getProject(), monitor);                
+        CProjectNature.removeCNature(testProject.getProject(), monitor);                
         assertTrue("hasCNature works without cnature", !CoreModel.hasCNature(testProject.getProject()));
         assertTrue("hasCCNature works without ccnature or cnature", !(CoreModel.hasCCNature(testProject.getProject())));
 		try{

@@ -113,13 +113,13 @@ public class XMLDumper {
 				
 				Method method = null;
 				try {
-					method = cls.getMethod(methodName, null);
+					method = cls.getMethod(methodName, (Class []) null);
 				} catch (NoSuchMethodException e) {
 					continue;
 				}
 				
 				try {
-					value = method.invoke(obj, null);
+					value = method.invoke(obj, (Object []) null);
 				} catch (Exception e) {
 					value = e;
 				}

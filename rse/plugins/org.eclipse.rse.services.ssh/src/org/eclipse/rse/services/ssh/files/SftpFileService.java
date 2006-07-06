@@ -18,11 +18,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
@@ -199,6 +201,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				//want to support re-connect and re-doing the failed operation 
 				//after reconnect this might be necessary.
 				Activator.trace("SftpFileService.internalFetch failed: "+e.toString()); //$NON-NLS-1$
+				//TODO bug 149181: In case of errors like "4:permission denied", throw an
+				//exception to show an error dialog to the user.
 				e.printStackTrace();
 				//TODO bug 149155: since channelSftp is totally single-threaded, multiple
 				//parallel access to the channel may break it, typically resulting in
@@ -248,11 +252,11 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				}
 				dst += remoteFile;
 			}
-			getChannel("SftpFileService.upload "+remoteFile); //check the session is healthy 
+			getChannel("SftpFileService.upload "+remoteFile); //check the session is healthy //$NON-NLS-1$ 
 			channel=(ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
 		    channel.connect();
-			channel.put(localFile.getAbsolutePath(), dst, sftpMonitor, mode); //$NON-NLS-1$
-			Activator.trace("SftpFileService.upload "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-1$
+			channel.put(localFile.getAbsolutePath(), dst, sftpMonitor, mode); 
+			Activator.trace("SftpFileService.upload "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (monitor.isCanceled()) {
 				return false;
 			} else {
@@ -286,26 +290,41 @@ public class SftpFileService extends AbstractFileService implements IFileService
 
 	  public static class MyProgressMonitor implements SftpProgressMonitor
 	  {
-		  IProgressMonitor fMonitor;
+		  private IProgressMonitor fMonitor;
+		  private double fWorkPercentFactor;
+		  private Long fMaxWorkKB;
+		  private long fWorkToDate;
 		  
 		  public MyProgressMonitor(IProgressMonitor monitor) {
 			  fMonitor = monitor;
 		  }
 		  public void init(int op, String src, String dest, long max){
-			  String desc = ((op==SftpProgressMonitor.PUT)? 
-                      "put" : "get")+": "+src; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			  fWorkPercentFactor = 1.0 / max;
+			  fMaxWorkKB = new Long(max / 1024L);
+			  fWorkToDate = 0;
+			  String srcFile = new Path(src).lastSegment();
+			  //String desc = ((op==SftpProgressMonitor.PUT)? 
+              //        "Uploading " : "Downloading ")+srcFile; //$NON-NLS-1$ //$NON-NLS-2$
+			  String desc = srcFile;
 			  //TODO avoid cast from long to int
 			  fMonitor.beginTask(desc, (int)max);
 		  }
 		  public boolean count(long count){
+			  fWorkToDate += count;
+			  Long workToDateKB = new Long(fWorkToDate / 1024L);
+			  Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
+			  String pattern = "{0,number,integer} KB of {1,number,integer} KB complete ({2,number,percent})";
+			  String subDesc = MessageFormat.format(pattern, new Object[] {
+						workToDateKB, fMaxWorkKB, workPercent	  
+					  });
+			  fMonitor.subTask(subDesc);
 		      fMonitor.worked((int)count);
-		      
 		      return !(fMonitor.isCanceled());
 		  }
 		  public void end(){
 			  fMonitor.done();
 		  }
-	 };
+	}
 
 	public boolean upload(IProgressMonitor monitor, InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding) throws SystemMessageException
 	{
@@ -350,10 +369,10 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			String remotePath = remoteParent+'/'+remoteFile;
 			int mode=ChannelSftp.OVERWRITE;
 			MyProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
-			getChannel("SftpFileService.download "+remoteFile); //check the session is healthy
+			getChannel("SftpFileService.download "+remoteFile); //check the session is healthy //$NON-NLS-1$
 			channel=(ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
 		    channel.connect();
-			channel.get(remotePath, localFile.getAbsolutePath(), sftpMonitor, mode); //$NON-NLS-1$
+			channel.get(remotePath, localFile.getAbsolutePath(), sftpMonitor, mode);
 			Activator.trace("SftpFileService.download "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (monitor.isCanceled()) {
 				return false;
@@ -506,7 +525,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	
 	public int runCommand(IProgressMonitor monitor, String command) throws SystemMessageException
 	{
-		Activator.trace("SftpFileService.runCommand "+command); //$NON-NLS-1$ //$NON-NLS-2$
+		Activator.trace("SftpFileService.runCommand "+command); //$NON-NLS-1$
 		int result = -1;
 		if (monitor!=null) {
 			monitor.beginTask(command, 20);
@@ -535,12 +554,12 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				try{Thread.sleep(1000);}catch(Exception ee){}
 			}
 			result = channel.getExitStatus();
-			Activator.trace("SftpFileService.runCommand ok, result: "+result); //$NON-NLS-1$ //$NON-NLS-2$
+			Activator.trace("SftpFileService.runCommand ok, result: "+result); //$NON-NLS-1$
 		} catch(Exception e) {
 			// DKM
 			//  not visible to this plugin
 			// throw new RemoteFileIOException(e);
-			Activator.trace("SftpFileService.runCommand failed: "+e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			Activator.trace("SftpFileService.runCommand failed: "+e.toString()); //$NON-NLS-1$
 		} finally {
 			if (monitor!=null) {
 				monitor.done();
@@ -619,8 +638,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		// TODO check if newer versions of sftp support move directly
 		// TODO Interpret some error messages like "command not found" (use (x)copy instead of cp on windows)
 		Activator.trace("SftpFileService.copy "+srcName); //$NON-NLS-1$
-		String fullPathOld = enQuote(srcParent + '/' + srcName); //$NON-NLS-1$
-		String fullPathNew = enQuote(tgtParent + '/' + tgtName); //$NON-NLS-1$
+		String fullPathOld = enQuote(srcParent + '/' + srcName);
+		String fullPathNew = enQuote(tgtParent + '/' + tgtName);
 		int rv = runCommand(monitor, "cp "+fullPathOld+' '+fullPathNew); //$NON-NLS-1$
 		return (rv==0);
 	}

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Rational Software - Initial API and implementation
+ *     Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -18,8 +19,11 @@ import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
@@ -72,52 +76,86 @@ public class CommitWorkingCopyOperation extends CModelOperation {
 	protected void executeOperation() throws CModelException {
 		try {
 			beginTask("workingCopy.commit", 2); //$NON-NLS-1$
-			WorkingCopy copy = (WorkingCopy)getElementToProcess();
-			ITranslationUnit original = copy.getOriginalElement();
+			WorkingCopy wc = (WorkingCopy)getElementToProcess();
+			ITranslationUnit tu = wc.getOriginalElement();
 		
 			
 			// creates the delta builder (this remembers the content of the cu)	
-			if (!original.isOpen()) {
+			if (!tu.isOpen()) {
 				// force opening so that the delta builder can get the old info
-				original.open(null);
+				tu.open(null);
 			}
-			CElementDeltaBuilder deltaBuilder = new CElementDeltaBuilder(original);
+			CElementDeltaBuilder deltaBuilder = new CElementDeltaBuilder(tu);
 		
-			// save the cu
-			IBuffer originalBuffer = original.getBuffer();
-			if (originalBuffer == null) return;
-			char[] originalContents = originalBuffer.getCharacters();
-			boolean hasSaved = false;
-			try {
-				IBuffer copyBuffer = copy.getBuffer();
-				if (copyBuffer == null) return;
-				originalBuffer.setContents(copyBuffer.getCharacters());
-				original.save(fMonitor, fForce);
-				this.hasModifiedResource = true; 
-				hasSaved = true;
-			} finally {
-				if (!hasSaved){
-					// restore original buffer contents since something went wrong
-					originalBuffer.setContents(originalContents);
-				}
-			}
-			// make sure working copy is in sync
-			copy.updateTimeStamp((TranslationUnit)original);
-			copy.makeConsistent(this);
-			worked(1);
-		
-			if (deltaBuilder != null) {
-				// build the deltas
-				deltaBuilder.buildDeltas();
-			
-				// add the deltas to the list of deltas created during this operation
-				if (deltaBuilder.delta != null) {
-					addDelta(deltaBuilder.delta);
-				}
-			}
-			worked(1);
+			// save the translation unit
+            boolean hasSaved = false;
+            IBuffer tuBuffer = tu.getBuffer();
+            IBuffer wcBuffer = wc.getBuffer();
+            if (wcBuffer == null || tuBuffer == null) {
+                return;
+            }
+            ITextFileBuffer tuFileBuffer= null;
+            ITextFileBuffer wcFileBuffer= null;
+            if (tuBuffer instanceof IAdaptable) {
+                tuFileBuffer= (ITextFileBuffer) ((IAdaptable) tuBuffer).getAdapter(ITextFileBuffer.class);
+            }
+            if (wcBuffer instanceof IAdaptable) {
+                wcFileBuffer= (ITextFileBuffer) ((IAdaptable) wcBuffer).getAdapter(ITextFileBuffer.class);
+            }
+            
+            if (wcFileBuffer != null) {
+                if (wcFileBuffer.equals(tuFileBuffer)) {
+                    // working on the same buffer, saving the translation unit does the trick.
+                    tu.save(fMonitor, fForce);
+                    hasSaved= true;
+                }
+                else {
+                    if (wcFileBuffer.getLocation().equals(tu.getPath())) {
+                        char[] originalContents = tuBuffer.getCharacters();
+                        try {
+                            // save the file buffer of the working copy.
+                            wcFileBuffer.commit(fMonitor, fForce);
+                            // change the buffer of the translation unit.
+                            tuBuffer.setContents(wcBuffer.getCharacters());
+                            tu.makeConsistent(null);
+                            hasSaved= true;
+                        } catch (CoreException e) {
+                            tuBuffer.setContents(originalContents);
+                            throw new CModelException(e);
+                        }
+                    }
+                }
+            }
+                
+            if (!hasSaved) {
+                char[] originalContents = tuBuffer.getCharacters();
+                try {
+                    tuBuffer.setContents(wcBuffer.getCharacters());
+                    tu.save(fMonitor, fForce);
+                } catch (CModelException e) {
+                    tuBuffer.setContents(originalContents);
+                    throw e;
+                }
+            }
+            this.hasModifiedResource = true; 
+            // make sure working copy is in sync
+            wc.updateTimeStamp((TranslationUnit)tu);
+            wc.makeConsistent(this);
+
+            worked(1);
+
+            if (deltaBuilder != null) {
+                // build the deltas
+                deltaBuilder.buildDeltas();
+
+                // add the deltas to the list of deltas created during this operation
+                if (deltaBuilder.delta != null) {
+                    addDelta(deltaBuilder.delta);
+                }
+            }
+            worked(1);
 		} finally {	
-			done();
+		    done();
 		}		
 	}
 	/**

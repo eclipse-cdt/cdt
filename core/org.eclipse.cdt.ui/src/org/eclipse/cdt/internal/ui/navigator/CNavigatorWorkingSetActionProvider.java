@@ -32,7 +32,7 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
  * A Common Navigator action provider adding standard working set filter support.
  * 
  * @see CNavigatorWorkingSetActionGroup
- * @see org.eclipse.cdt.internal.ui.workingsets.WorkingSetFilter
+ * @see ResourceWorkingSetFilter
  */
 public class CNavigatorWorkingSetActionProvider extends CommonActionProvider {
 

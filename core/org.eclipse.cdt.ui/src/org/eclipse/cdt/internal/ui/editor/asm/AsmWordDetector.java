@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,8 +37,8 @@ public class AsmWordDetector implements IWordDetector {
 		fPrefix = prefix;
 		fExtra = extra;
 	}
-	/**
-	 * @see IWordDetector#isWordIdentifierStart
+	/*
+	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
 	 */
 	public boolean isWordStart(char c) {
 		if(fPrefix != 0) {
@@ -49,9 +49,8 @@ public class AsmWordDetector implements IWordDetector {
 		}
 		return (Character.isJavaIdentifierPart(c) || (c == fExtra));
 	}
-	
-	/**
-	 * @see IWordDetector#isWordIdentifierPart
+	/*
+	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
 	 */
 	public boolean isWordPart(char c) {
 		return Character.isJavaIdentifierPart(c);

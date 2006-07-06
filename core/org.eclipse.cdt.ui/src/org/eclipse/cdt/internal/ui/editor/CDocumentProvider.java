@@ -15,17 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IProblemRequestor;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.parser.IProblem;
-import org.eclipse.cdt.internal.core.model.IBufferFactory;
-import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -55,7 +44,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
@@ -64,6 +52,20 @@ import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
+
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IProblemRequestor;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
+import org.eclipse.cdt.internal.core.model.IBufferFactory;
+
+import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
 
 /**
  * CDocumentProvider2
@@ -162,7 +164,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		private void initializeImages() {
 			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=18936
 			if (!fQuickFixImagesInitialized) {
-				if (isProblem() && indicateQuixFixableProblems() /*&& JavaCorrectionProcessor.hasCorrections(this)*/) { // no light bulb for tasks
+				if (isProblem() && indicateQuixFixableProblems()) { // no light bulb for tasks
 					if (!fgQuickFixImagesInitialized) {
 						fgQuickFixImage= CPluginImages.get(CPluginImages.IMG_OBJS_FIXABLE_PROBLEM);
 						fgQuickFixErrorImage= CPluginImages.get(CPluginImages.IMG_OBJS_FIXABLE_ERROR);
@@ -180,23 +182,15 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		private boolean indicateQuixFixableProblems() {
 			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_CORRECTION_INDICATION);
 		}
-					
+
 		/*
-		 * @see Annotation#paint
+		 * @see org.eclipse.jface.text.source.IAnnotationPresentation#paint(org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
 		 */
 		public void paint(GC gc, Canvas canvas, Rectangle r) {
 			initializeImages();
 			if (fImage != null) {
 				ImageUtilities.drawImage(fImage, gc, canvas, r, SWT.CENTER, SWT.TOP);
 			}
-		}
-		
-		/*
-		 * @see ICAnnotation#getImage(Display)
-		 */
-		public Image getImage(Display display) {
-			initializeImages();
-			return fImage;
 		}
 		
 		/*
@@ -766,8 +760,6 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/** Preference key for temporary problems */
 	private final static String HANDLE_TEMPORARY_PROBLEMS= PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS;
 
-	/** Indicates whether the save has been initialized by this provider */
-	private boolean fIsAboutToSave = false;
 	/** Internal property changed listener */
 	private IPropertyChangeListener fPropertyListener;
 	/** Annotation model listener added to all created CU annotation models */
@@ -903,7 +895,6 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		//	fSavePolicy.preSave(info.fCopy);
 		
 		try {
-			fIsAboutToSave = true;
 			//info.fCopy.commit(overwrite, monitor);
 			commitFileBuffer(monitor, info, overwrite);
 		} catch (CoreException x) {
@@ -915,7 +906,6 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			fireElementStateChangeFailed(element);
 			throw x;
 		} finally {
-			fIsAboutToSave = false;
 		}
 
 		// If here, the dirty state of the editor will change to "not dirty".
@@ -1021,7 +1011,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/**
 	 * Returns the underlying resource for the given element.
 	 * 
-	 * @param the element
+	 * @param element  the element
 	 * @return the underlying resource of the given element
 	 */
 	public IResource getUnderlyingResource(Object element) {
@@ -1032,20 +1022,6 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.ICompilationUnitDocumentProvider#saveDocumentContent(org.eclipse.core.runtime.IProgressMonitor,
-	 *      java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
-	 */
-	public void saveDocumentContent(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite)
-			throws CoreException {
-		if (!fIsAboutToSave)
-			return;
-		super.saveDocument(monitor, element, document, overwrite);
-	}
-
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.ICompilationUnitDocumentProvider#createLineTracker(java.lang.Object)
-	 */
 	public ILineTracker createLineTracker(Object element) {
 		return new DefaultLineTracker();
 	}

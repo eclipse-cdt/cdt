@@ -30,14 +30,13 @@ import org.eclipse.ui.navigator.ICommonLabelProvider;
  * A label provider suitable for the Common Navigator providing also
  * status message text for the current selected item.
  * 
- * @see org.eclipse.cdt.internal.ui.cview.CView#getStatusLineMessage()
+ * @see org.eclipse.cdt.internal.ui.cview.CView#createLabelProvider
+ * @see org.eclipse.cdt.internal.ui.cview.CView#getStatusLineMessage
  */
 public class CNavigatorLabelProvider extends CViewLabelProvider implements ICommonLabelProvider {
 
 	/**
 	 * Create a default label provider.
-	 * 
-	 * @see org.eclipse.cdt.internal.ui.cview.CView#createLabelProvider()
 	 */
 	public CNavigatorLabelProvider() {
 		super(AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS,

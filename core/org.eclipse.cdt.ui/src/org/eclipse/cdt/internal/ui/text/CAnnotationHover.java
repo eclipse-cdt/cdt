@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -23,9 +22,9 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
+
+import org.eclipse.cdt.internal.ui.CUIMessages;
 
 public class CAnnotationHover implements IAnnotationHover {
 	
@@ -127,16 +126,6 @@ public class CAnnotationHover implements IAnnotationHover {
 		return null;
 	}
 		
-	
-	private int getHoverWidth(Display display) {
-		Rectangle displayBounds= display.getBounds();
-		int hoverWidth= displayBounds.width - (display.getCursorLocation().x - displayBounds.x);
-		hoverWidth-= 12; // XXX: Add some space to the border, Revisit
-		if (hoverWidth < 200) {
-			hoverWidth= 200;
-		}
-		return hoverWidth;
-	}	
 	
 	/*
 	 * Formats a message as HTML text.

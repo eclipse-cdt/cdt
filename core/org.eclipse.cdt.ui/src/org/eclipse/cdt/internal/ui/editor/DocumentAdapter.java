@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -242,14 +242,14 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#append(char)
+	 * @see org.eclipse.cdt.core.model.IBuffer#append(char[])
 	 */
 	public void append(char[] text) {
 		append(new String(text));		
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#append(java.lang.String)
+	 * @see org.eclipse.cdt.core.model.IBuffer#append(java.lang.String)
 	 */
 	public void append(String text) {
 		if (DEBUG_LINE_DELIMITERS) {
@@ -260,7 +260,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#close()
+	 * @see org.eclipse.cdt.core.model.IBuffer#close()
 	 */
 	public void close() {
 		
@@ -286,7 +286,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getChar(int)
+	 * @see org.eclipse.cdt.core.model.IBuffer#getChar(int)
 	 */
 	public char getChar(int position) {
 		try {
@@ -297,7 +297,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getCharacters()
+	 * @see org.eclipse.cdt.core.model.IBuffer#getCharacters()
 	 */
 	public char[] getCharacters() {
 		String content= getContents();
@@ -305,28 +305,28 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getContents()
+	 * @see org.eclipse.cdt.core.model.IBuffer#getContents()
 	 */
 	public String getContents() {
 		return fDocument.get();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getLength()
+	 * @see org.eclipse.cdt.core.model.IBuffer#getLength()
 	 */
 	public int getLength() {
 		return fDocument.getLength();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getOwner()
+	 * @see org.eclipse.cdt.core.model.IBuffer#getOwner()
 	 */
 	public IOpenable getOwner() {
 		return fOwner;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getText(int, int)
+	 * @see org.eclipse.cdt.core.model.IBuffer#getText(int, int)
 	 */
 	public String getText(int offset, int length) {
 		try {
@@ -337,28 +337,28 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getUnderlyingResource()
+	 * @see org.eclipse.cdt.core.model.IBuffer#getUnderlyingResource()
 	 */
 	public IResource getUnderlyingResource() {
 		return fFile;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#hasUnsavedChanges()
+	 * @see org.eclipse.cdt.core.model.IBuffer#hasUnsavedChanges()
 	 */
 	public boolean hasUnsavedChanges() {
 		return fTextFileBuffer != null ? fTextFileBuffer.isDirty() : false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#isClosed()
+	 * @see org.eclipse.cdt.core.model.IBuffer#isClosed()
 	 */
 	public boolean isClosed() {
 		return fDocument == null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#isReadOnly()
+	 * @see org.eclipse.cdt.core.model.IBuffer#isReadOnly()
 	 */
 	public boolean isReadOnly() {
 		IResource resource= getUnderlyingResource();
@@ -372,14 +372,14 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#replace(int, int, char)
+	 * @see org.eclipse.cdt.core.model.IBuffer#replace(int, int, char[])
 	 */
 	public void replace(int position, int length, char[] text) {
 		replace(position, length, new String(text));		
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#replace(int, int, java.lang.String)
+	 * @see org.eclipse.cdt.core.model.IBuffer#replace(int, int, java.lang.String)
 	 */
 	public void replace(int position, int length, String text) {
 		if (DEBUG_LINE_DELIMITERS) {
@@ -389,7 +389,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#save(org.eclipse.core.runtime.IProgressMonitor, boolean)
+	 * @see org.eclipse.cdt.core.model.IBuffer#save(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
 	public void save(IProgressMonitor progress, boolean force) throws CModelException {
 		try {
@@ -401,14 +401,14 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#setContents(char)
+	 * @see org.eclipse.cdt.core.model.IBuffer#setContents(char[])
 	 */
 	public void setContents(char[] contents) {
 		setContents(new String(contents));		
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IBuffer#setContents(java.lang.String)
+	 * @see org.eclipse.cdt.core.model.IBuffer#setContents(java.lang.String)
 	 */
 	public void setContents(String contents) {
 		int oldLength= fDocument.getLength();

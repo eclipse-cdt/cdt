@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,27 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.internal.ui.text.AbstractCScanner;
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
-import org.eclipse.cdt.internal.ui.text.IColorManager;
-import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordPatternRule;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.jface.util.PropertyChangeEvent;
+
+import org.eclipse.cdt.internal.ui.text.AbstractCScanner;
+import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.cdt.internal.ui.text.IColorManager;
+import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
 
 
 /**
@@ -79,17 +80,11 @@ public final class AsmCodeScanner extends AbstractCScanner {
 				
 		List rules= new ArrayList();		
 		
-		// Add rule for strings
 		Token token= getToken(ICColorConstants.C_SINGLE_LINE_COMMENT);
 		
 		// Add rule for single line comments.
 		rules.add(new EndOfLineRule("#", token)); //$NON-NLS-1$
 		
-		token= getToken(ICColorConstants.C_STRING);
-		// Add rule for strings and character constants.
-		rules.add(new SingleLineRule("'", "'", token, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
-		//rules.add(new SingleLineRule("\"", "\"", token, '\\'));
-				
 		Token other= getToken(ICColorConstants.C_DEFAULT);		
 		
 		// Add generic whitespace rule.

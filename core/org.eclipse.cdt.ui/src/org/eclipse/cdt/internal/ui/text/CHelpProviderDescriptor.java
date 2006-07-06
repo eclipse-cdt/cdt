@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,16 +15,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.ui.ICHelpBook;
-import org.eclipse.cdt.ui.ICHelpProvider;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import org.eclipse.cdt.ui.ICHelpBook;
+import org.eclipse.cdt.ui.ICHelpProvider;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 
 /**
  * This class represents the CHelpProvider settings
@@ -55,7 +56,6 @@ public class CHelpProviderDescriptor {
 		if(parentElement == null)
 			return;
 
-		NodeList nodes = parentElement.getElementsByTagName(ELEMENT_PROVIDER);
 		Element projectElement = getDescriptorElement(parentElement);
 			
 		if(projectElement == null)
@@ -108,7 +108,7 @@ public class CHelpProviderDescriptor {
 				public void handleException(Throwable exception) {
 				}
 			};
-			Platform.run(runnable);
+			SafeRunner.run(runnable);
 			}
 			return provider;
 		}

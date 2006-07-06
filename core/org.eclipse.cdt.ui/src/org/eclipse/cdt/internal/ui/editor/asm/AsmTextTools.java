@@ -12,19 +12,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
-import org.eclipse.cdt.internal.ui.text.CCommentScanner;
-import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
-import org.eclipse.cdt.internal.ui.text.util.CColorManager;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.rules.FastPartitioner;
-import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.text.CCommentScanner;
+import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
+import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 
 
 /**
@@ -46,8 +45,6 @@ public class AsmTextTools {
 	private CColorManager fColorManager;
 	/** The Asm source code scanner */
 	private AsmCodeScanner fCodeScanner;
-	/** The Asm partitions scanner */
-	private AsmPartitionScanner fPartitionScanner;
 	/** The ASM multiline comment scanner */
 	private CCommentScanner fMultilineCommentScanner;
 	/** The ASM singleline comment scanner */
@@ -83,7 +80,6 @@ public class AsmTextTools {
         
 		fColorManager= new CColorManager();
 		fCodeScanner= new AsmCodeScanner(fColorManager, store);
-		fPartitionScanner= new AsmPartitionScanner();
 				
         fMultilineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_MULTI_LINE_COMMENT);
         fSinglelineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
@@ -111,7 +107,6 @@ public class AsmTextTools {
 	public void dispose() {
 		
 		fCodeScanner= null;
-		fPartitionScanner= null;
 		
 		fMultilineCommentScanner= null;
 		fSinglelineCommentScanner= null;
@@ -148,30 +143,7 @@ public class AsmTextTools {
 	public RuleBasedScanner getCodeScanner() {
 		return fCodeScanner;
 	}
-	
-	/**
-	 * Gets the partition scanner used.
-	 */
-	public IPartitionTokenScanner getPartitionScanner() {
-		return fPartitionScanner;
-	}
-	
-	/**
-	 * Gets the document provider used.
-	 */
-	public IDocumentPartitioner createDocumentPartitioner() {
 		
-		String[] types= new String[] {
-			AsmPartitionScanner.ASM_MULTILINE_COMMENT,
-			AsmPartitionScanner.ASM_SINGLE_LINE_COMMENT,
-			AsmPartitionScanner.ASM_STRING
-		};
-		
-		//return new RuleBasedPartitioner(getPartitionScanner(), types);
-		//return new DefaultPartitioner(getPartitionScanner(), types);
-		return new FastPartitioner(getPartitionScanner(), types);
-	}
-	
 	/**
 	 * Returns a scanner which is configured to scan Java multiline comments.
 	 *

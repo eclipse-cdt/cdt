@@ -26,7 +26,6 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
  * <code>ISourceReference</code>s.
  * 
  * @see org.eclipse.cdt.internal.ui.cview.SelectionTransferDragAdapter
- * @see org.eclipse.cdt.internal.ui.cview.CView#initDrag()
  */
 public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 
@@ -45,7 +44,7 @@ public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 	 */
 	public boolean setDragData(DragSourceEvent event,
 			IStructuredSelection selection) {
-		if (selection instanceof IStructuredSelection) {
+		if (selection != null) {
 			for (Iterator iter= (selection).iterator(); iter.hasNext();) {
 				Object element= iter.next();
 				if (element instanceof ICElement) {

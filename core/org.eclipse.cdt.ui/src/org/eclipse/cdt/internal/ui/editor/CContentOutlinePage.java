@@ -155,9 +155,9 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	}
 	
 	/**
-    * Returns the CEditor corresponding to this CContentOutlinePage.
-    * @param return
-    */
+     * Provide access to the CEditor corresponding to this CContentOutlinePage.
+     * @returns the CEditor corresponding to this CContentOutlinePage.
+     */
 	public CEditor getEditor() {
 		return fEditor;
 	}
@@ -364,7 +364,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	/**
 	 * Fires a selection changed event.
 	 *
-	 * @param selction the new selection
+	 * @param selection the new selection
 	 */
 	protected void fireSelectionChanged(ISelection selection) {
 		// create an event

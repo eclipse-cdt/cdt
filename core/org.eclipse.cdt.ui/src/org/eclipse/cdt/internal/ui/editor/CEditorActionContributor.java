@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,9 +75,9 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 			boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
 			setEnabled(isEnabled);
 		}
-		
-		/**
-		 * @see Action#run()
+
+		/*
+		 * @see org.eclipse.jface.action.Action#run()
 		 */
 		public void run() {
 			if (fOperationCode != -1 && fOperationTarget != null)
@@ -134,9 +134,8 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	}	
 
 
-	
-	/**
-	 * @see IActionBarContributor#contributeToMenu(MenuManager)
+	/*
+	 * @see org.eclipse.ui.texteditor.BasicTextEditorActionContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void contributeToMenu(IMenuManager menu) {
 		
@@ -178,8 +177,8 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	}
 
 	
-	/**
-	 * @see IEditorActionBarContributor#setActiveEditor(IEditorPart)
+	/*
+	 * @see org.eclipse.ui.editors.text.TextEditorActionContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
 	 */
 	public void setActiveEditor(IEditorPart part) {
 		

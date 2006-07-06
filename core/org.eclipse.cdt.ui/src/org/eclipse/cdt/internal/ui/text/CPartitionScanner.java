@@ -61,7 +61,7 @@ public class CPartitionScanner extends RuleBasedPartitionScanner implements ICPa
 		private IToken fSuccessToken;
 		/**
 		 * Constructor for EmptyCommentRule.
-		 * @param defaultToken
+		 * @param successToken
 		 */
 		public EmptyCommentRule(IToken successToken) {
 			super(new EmptyCommentDetector());
@@ -94,12 +94,7 @@ public class CPartitionScanner extends RuleBasedPartitionScanner implements ICPa
 		IToken single_comment= new Token(C_SINGLE_LINE_COMMENT);
 		IToken string= new Token(C_STRING);
 		IToken character = new Token(C_CHARACTER);
-		IToken skip= new Token(SKIP);
-
-
-
 		List rules= new ArrayList();
-
 
 		// Minimize the number of rules, since we have duplicate rules 
 		// in the CCodeScanner...

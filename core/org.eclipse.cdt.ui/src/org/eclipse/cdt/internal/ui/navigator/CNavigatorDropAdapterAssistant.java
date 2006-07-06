@@ -41,7 +41,6 @@ import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
  * A Common Navigator drop adapter assistant handling dropping of <code>ICElement</code>s.
  * 
  * @see org.eclipse.cdt.internal.ui.cview.SelectionTransferDropAdapter
- * @see org.eclipse.cdt.internal.ui.cview.CView#initDrop()
  */
 public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 

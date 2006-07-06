@@ -93,7 +93,7 @@ public class CEditorTextHoverDescriptor implements Comparable {
 	}
 
 	/**
-	 * Creates a new Java Editor text hover descriptor from the given configuration element.
+	 * Creates a new C Editor text hover descriptor from the given configuration element.
 	 */
 	private CEditorTextHoverDescriptor(IConfigurationElement element) {
 		Assert.isNotNull(element);
@@ -101,10 +101,10 @@ public class CEditorTextHoverDescriptor implements Comparable {
 	}
 
 	/**
-	 * Creates the Java editor text hover.
+	 * Creates the C editor text hover.
 	 */
 	public ICEditorTextHover createTextHover() {
- 		String pluginId = fElement.getDeclaringExtension().getNamespace();
+ 		String pluginId = fElement.getDeclaringExtension().getContributor().getName();
 		boolean isHoversPlugInActivated= Platform.getBundle(pluginId).getState() == Bundle.ACTIVE;
 		if (isHoversPlugInActivated || canActivatePlugIn()) {
 			try {

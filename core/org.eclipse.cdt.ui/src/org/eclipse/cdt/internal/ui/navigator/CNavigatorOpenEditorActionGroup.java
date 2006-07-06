@@ -30,7 +30,7 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 
 /**
- * This is basically a clone of {@link org.eclipse.cdt.internal.ui.OpenFileGroup},
+ * This is basically a clone of {@link org.eclipse.cdt.internal.ui.cview.OpenFileGroup},
  * but without explicit dependency on CView. This opens it up for use in the
  * Common Navigator framework.
  * <p>

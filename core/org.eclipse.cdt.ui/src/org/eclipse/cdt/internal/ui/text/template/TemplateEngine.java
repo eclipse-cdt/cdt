@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,18 +14,6 @@ package org.eclipse.cdt.internal.ui.text.template;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.corext.template.c.CContextType;
-import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContext;
-import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -41,6 +29,20 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
+
+import org.eclipse.cdt.internal.corext.template.c.CContextType;
+import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContext;
+import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 
 public class TemplateEngine implements ICompletionContributor {
 
@@ -98,9 +100,6 @@ public class TemplateEngine implements ICompletionContributor {
 	
 	/**
 	 * Empties the collector.
-	 * 
-	 * @param viewer the text viewer  
-	 * @param unit   the compilation unit (may be <code>null</code>)
 	 */
 	public void reset() {
 		fProposals.clear();
@@ -119,7 +118,7 @@ public class TemplateEngine implements ICompletionContributor {
 	 * and feeds the collector with proposals.
 	 * @param viewer the text viewer
 	 * @param completionPosition the context position in the document of the text viewer
-	 * @param compilationUnit the compilation unit (may be <code>null</code>)
+	 * @param translationUnit the translation unit (may be <code>null</code>)
 	 */
 	public void complete(ITextViewer viewer, int completionPosition, ITranslationUnit translationUnit)
 	{
@@ -129,14 +128,6 @@ public class TemplateEngine implements ICompletionContributor {
 			return;
 
 		Point selection= viewer.getSelectedRange();
-
-		// remember selected text
-		String selectedText= null;
-		if (selection.y != 0) {
-			try {
-				selectedText= document.get(selection.x, selection.y);
-			} catch (BadLocationException e) {}
-		}
 
 		((TranslationUnitContextType) fContextType).setContextParameters(document.get(), completionPosition, translationUnit);		
 		TranslationUnitContext context= ((TranslationUnitContextType) fContextType).createContext(document, completionPosition, selection.y, translationUnit);

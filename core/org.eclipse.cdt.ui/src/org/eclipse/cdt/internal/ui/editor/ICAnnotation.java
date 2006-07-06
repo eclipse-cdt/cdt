@@ -14,8 +14,6 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * ICAnnotation
@@ -24,7 +22,7 @@ import org.eclipse.swt.widgets.Display;
  * and problems.
  * 
  * @see org.eclipse.core.resources.IMarker
- * @see org.eclipse.jdt.core.compiler.IProblem
+ * @see org.eclipse.cdt.core.parser.IProblem
  */
 public interface ICAnnotation {
 	
@@ -103,6 +101,4 @@ public interface ICAnnotation {
 	String[] getArguments();
 	
 	int getId();
-	
-	Image getImage(Display display);
 }

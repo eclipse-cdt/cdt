@@ -128,8 +128,6 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 	 * Extract the includes for the given selection.  This can be both used to perform
 	 * the work as well as being invoked when there is a change.  The actual results 
 	 * can and should be cached as the lookup process could be potentially costly.
-	 * 
-	 * @return IRequiredInclude [] An array of the required includes, or null if this action is invalid.
 	 */
 	private void extractIncludes(ITextEditor editor) {
 		if (editor == null) {

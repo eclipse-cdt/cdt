@@ -51,17 +51,17 @@ public final class CFoldingStructureProviderDescriptor {
 	 */
 	CFoldingStructureProviderDescriptor(IConfigurationElement element) {
 		fElement= element;
-		fId= element.getAttributeAsIs(ID);
+		fId= element.getAttribute(ID);
 		Assert.isLegal(fId != null);
 		
 		fName= element.getAttribute(NAME);
 		if (fName == null)
 			fName= fId;
 		
-		fClass= element.getAttributeAsIs(CLASS);
+		fClass= element.getAttribute(CLASS);
 		Assert.isLegal(fClass != null);
 		
-		if (element.getAttributeAsIs(PREFERENCES_CLASS) == null)
+		if (element.getAttribute(PREFERENCES_CLASS) == null)
 			fHasPreferences= false;
 		else
 			fHasPreferences= true;

@@ -209,25 +209,21 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 			if (fTextViewer != null && string != null) {
 				int index= string.indexOf("()"); //$NON-NLS-1$
 				if (index != -1 && index + 1 == fCursorPosition) {
-					IPreferenceStore preferenceStore= CUIPlugin.getDefault().getPreferenceStore();
-//					if (preferenceStore.getBoolean(PreferenceConstants.EDITOR_CLOSE_BRACKETS)) {
-					if(true){
-						int newOffset= fReplacementOffset + fCursorPosition;
-						
-						LinkedPositionGroup group= new LinkedPositionGroup();
-						group.addPosition(new LinkedPosition(document, newOffset, 0, LinkedPositionGroup.NO_STOP));
-						
-						LinkedModeModel model= new LinkedModeModel();
-						model.addGroup(group);
-						model.forceInstall();
-						
-						LinkedModeUI ui= new EditorLinkedModeUI(model, fTextViewer);
-						ui.setSimpleMode(true);
-						ui.setExitPolicy(new ExitPolicy(')'));
-						ui.setExitPosition(fTextViewer, newOffset + 1, 0, Integer.MAX_VALUE);
-						ui.setCyclingMode(LinkedModeUI.CYCLE_NEVER);
-						ui.enter();
-					}
+					int newOffset= fReplacementOffset + fCursorPosition;
+					
+					LinkedPositionGroup group= new LinkedPositionGroup();
+					group.addPosition(new LinkedPosition(document, newOffset, 0, LinkedPositionGroup.NO_STOP));
+					
+					LinkedModeModel model= new LinkedModeModel();
+					model.addGroup(group);
+					model.forceInstall();
+					
+					LinkedModeUI ui= new EditorLinkedModeUI(model, fTextViewer);
+					ui.setSimpleMode(true);
+					ui.setExitPolicy(new ExitPolicy(')'));
+					ui.setExitPosition(fTextViewer, newOffset + 1, 0, Integer.MAX_VALUE);
+					ui.setCyclingMode(LinkedModeUI.CYCLE_NEVER);
+					ui.enter();
 				}
 			}
 
@@ -663,19 +659,14 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public void updateReplacementOffset(int newOffset) {
 		setReplacementOffset(newOffset);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public void updateReplacementLength(int length) {
 		setReplacementLength(length);
 	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

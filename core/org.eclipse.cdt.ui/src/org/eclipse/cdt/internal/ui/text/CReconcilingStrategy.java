@@ -38,9 +38,9 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 		fEditor= editor;
 		fManager= CUIPlugin.getDefault().getWorkingCopyManager();
 	}
-	
-	/**
-	 * @see IReconcilingStrategy#reconcile(document)
+
+	/*
+	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public void setDocument(IDocument document) {
 	}	
@@ -53,16 +53,16 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 		fProgressMonitor= monitor;
 	}
 
-	/**
-	 * @see IReconcilingStrategy#reconcile(region)
+	/*
+	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
 	 */
 	public void reconcile(IRegion region) {
 		reconcile();
 	}
 
 
-	/**
-	 * @see IReconcilingStrategy#reconcile(dirtyRegion, reion)
+	/*
+	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
 	 */
 	public void reconcile(DirtyRegion dirtyRegion, IRegion region) {
 		// consistent data needs not further checks !  

@@ -215,10 +215,6 @@ public class CWordFinder {
 	 * @return 
 	 *      <code>true</code> if there is no function body around offset 
 	 *      <code>false</code> otherwise 
-	 * 
-	 * @param document
-	 * @param offset
-	 * @return
 	 */
 	public static boolean isGlobal(IDocument document, int offset) {
 		try {
@@ -237,7 +233,7 @@ public class CWordFinder {
 						do {
 							c = document.getChar(pos--);
 							if (c == BRACE_R) return false;
-						} while (Character.isSpace(c));
+						} while (Character.isWhitespace(c));
 						// container block seems to be not a function or statement body
 						pos++;             // step back one symbol
 						bracketcount = 0;  // let's search for upper block

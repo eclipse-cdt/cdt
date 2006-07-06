@@ -255,22 +255,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return new String[] { "//", "" }; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/**
-	 * @see SourceViewerConfiguration#getDefaultPrefix(ISourceViewer, String)
-	 */
-	public String getDefaultPrefix(ISourceViewer sourceViewer, String contentType) {
-		if(IDocument.DEFAULT_CONTENT_TYPE.equals(contentType))
-			return "//"; //$NON-NLS-1$
-		if(ICPartitions.C_SINGLE_LINE_COMMENT.equals(contentType)) {
-			return "//"; //$NON-NLS-1$
-		}
-		if(ICPartitions.C_MULTILINE_COMMENT.equals(contentType)) {
-			return "//"; //$NON-NLS-1$
-		}
-		return null;
-	}
-
-
 	/*
 	 * @see SourceViewerConfiguration#getIndentPrefixes(ISourceViewer, String)
 	 */

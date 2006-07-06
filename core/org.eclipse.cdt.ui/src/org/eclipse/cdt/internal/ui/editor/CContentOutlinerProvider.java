@@ -126,11 +126,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	 * Called after CEditor contents is changed.
 	 * Existing elements can change their offset and length.
 	 * 
-	 * @param offset
-	 * 		position where source was changed
-	 * @param size 
-	 * 		length of ins
-	 * ertion (negaive for deletion) 
+	 * @param sdata  delta information
 	 */
 	public void contentShift(CShiftData sdata) {
 		try {

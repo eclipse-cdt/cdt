@@ -48,7 +48,7 @@ public class ExternalSearchDocumentProvider extends FileDocumentProvider {
 	
 	/**
 	 * @param externalInput
-	 * @return
+	 * @return  a new annotation model for the editor input
 	 */
 	private IAnnotationModel createExternalSearchAnnotationModel(ExternalEditorInput externalInput) {
 	

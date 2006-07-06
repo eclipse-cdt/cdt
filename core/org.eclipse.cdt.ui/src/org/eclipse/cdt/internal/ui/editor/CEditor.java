@@ -8,50 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
- *     Anton Leherbauer, Wind River Systems, Inc.
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
-import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
-import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
-import org.eclipse.cdt.internal.ui.actions.JoinLinesAction;
-import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
-import org.eclipse.cdt.internal.ui.dnd.TextEditorDropAdapter;
-import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
-import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
-import org.eclipse.cdt.internal.ui.search.actions.OpenDefinitionAction;
-import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
-import org.eclipse.cdt.internal.ui.text.CPairMatcher;
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
-import org.eclipse.cdt.internal.ui.util.CUIHelp;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.actions.ShowInCViewAction;
-import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -86,7 +52,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.ui.actions.TextSearchGroup;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
@@ -104,29 +69,56 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.ITextEditorDropTargetListener;
-import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.actions.ShowInCViewAction;
+import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
+import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
+import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
+import org.eclipse.cdt.internal.ui.actions.JoinLinesAction;
+import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
+import org.eclipse.cdt.internal.ui.dnd.TextEditorDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDefinitionAction;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
+import org.eclipse.cdt.internal.ui.text.CPairMatcher;
+import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.util.CUIHelp;
 
 
 /**
@@ -206,20 +198,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 	/**
 	 * The action group for folding.
-	 *  
 	 */
 	private FoldingActionGroup fFoldingGroup;
-
-	/**
-	 * Indicates whether this editor is about to update any annotation views.
-	 * @since 3.0
-	 */
-	private boolean fIsUpdatingAnnotationViews= false;
-	/**
-	 * The marker that served as last target for a goto marker request.
-	 * @since 3.0
-	 */
-	private IMarker fLastMarkerTarget= null;
 
 	/**
 	 * Default constructor.
@@ -868,43 +848,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		dragSource.addDragListener(dragSourceListener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#gotoMarker(org.eclipse.core.resources.IMarker)
-	 */
-	public void gotoMarker(IMarker marker) {
-		fLastMarkerTarget= marker;
-		if (!fIsUpdatingAnnotationViews) {
-		    super.gotoMarker(marker);
-		}
-	}
-	
-	/**
-	 * Jumps to the next enabled annotation according to the given direction.
-	 * An annotation type is enabled if it is configured to be in the
-	 * Next/Previous tool bar drop down menu and if it is checked.
-	 * 
-	 * @param forward <code>true</code> if search direction is forward, <code>false</code> if backward
-	 */
-	public Annotation gotoAnnotation(boolean forward) {
-		Annotation annotation = null;
-		ITextSelection selection= (ITextSelection) getSelectionProvider().getSelection();
-		Position position= new Position(0, 0);
-		if (false /* delayed - see bug 18316 */) {
-			getNextAnnotation(selection.getOffset(), selection.getLength(), forward, position);
-			selectAndReveal(position.getOffset(), position.getLength());
-		} else /* no delay - see bug 18316 */ {
-			annotation= getNextAnnotation(selection.getOffset(), selection.getLength(), forward, position);
-			setStatusLineErrorMessage(null);
-			setStatusLineMessage(null);
-			if (annotation != null) {
-				updateAnnotationViews(annotation);
-				selectAndReveal(position.getOffset(), position.getLength());
-				setStatusLineMessage(annotation.getText());
-			}
-		}
-		return annotation;
-	}
-
 	/**
 	 * Jumps to the matching bracket.
 	 */
@@ -969,159 +912,16 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		sourceViewer.revealRange(targetOffset, selection.getLength());
 	}
 
-
-	/**
-	 * Returns whether the given annotation is configured as a target for the
-	 * "Go to Next/Previous Annotation" actions
-	 * 
-	 * @param annotation the annotation
-	 * @return <code>true</code> if this is a target, <code>false</code>
-	 *         otherwise
-	 * @since 3.0
-	 */
-	protected boolean isNavigationTarget(Annotation annotation) {
-		Preferences preferences= EditorsUI.getPluginPreferences();
-		AnnotationPreference preference= getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
-//		See bug 41689
-//		String key= forward ? preference.getIsGoToNextNavigationTargetKey() : preference.getIsGoToPreviousNavigationTargetKey();
-		String key= preference == null ? null : preference.getIsGoToNextNavigationTargetKey();
-		return (key != null && preferences.getBoolean(key));
-	}
-	
-	/**
-	 * Returns the annotation closest to the given range respecting the given
-	 * direction. If an annotation is found, the annotations current position
-	 * is copied into the provided annotation position.
-	 * 
-	 * @param offset the region offset
-	 * @param length the region length
-	 * @param forward <code>true</code> for forwards, <code>false</code> for backward
-	 * @param annotationPosition the position of the found annotation
-	 * @return the found annotation
-	 */
-	private Annotation getNextAnnotation(final int offset, final int length, boolean forward, Position annotationPosition) {
-		
-		Annotation nextAnnotation= null;
-		Position nextAnnotationPosition= null;
-		Annotation containingAnnotation= null;
-		Position containingAnnotationPosition= null;
-		boolean currentAnnotation= false;
-		
-		IDocument document= getDocumentProvider().getDocument(getEditorInput());
-		int endOfDocument= document.getLength(); 
-		int distance= Integer.MAX_VALUE;
-		
-		IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
-		Iterator e= new CAnnotationIterator(model, true, true);
-		while (e.hasNext()) {
-			Annotation a= (Annotation) e.next();
-			if ((a instanceof ICAnnotation) && ((ICAnnotation)a).hasOverlay() || !isNavigationTarget(a))
-				continue;
-				
-			Position p= model.getPosition(a);
-			if (p == null)
-				continue;
-			
-			if (forward && p.offset == offset || !forward && p.offset + p.getLength() == offset + length) {// || p.includes(offset)) {
-				if (containingAnnotation == null || (forward && p.length >= containingAnnotationPosition.length || !forward && p.length >= containingAnnotationPosition.length)) { 
-					containingAnnotation= a;
-					containingAnnotationPosition= p;
-					currentAnnotation= (p.length == length) || (p.length - 1 == length);
-				}
-			} else {
-				int currentDistance= 0;
-				
-				if (forward) {
-					currentDistance= p.getOffset() - offset;
-					if (currentDistance < 0)
-						currentDistance= endOfDocument + currentDistance;
-					
-					if (currentDistance < distance || currentDistance == distance && p.length < nextAnnotationPosition.length) {
-						distance= currentDistance;
-						nextAnnotation= a;
-						nextAnnotationPosition= p;
-					}
-				} else {
-					currentDistance= offset + length - (p.getOffset() + p.length);
-					if (currentDistance < 0)
-						currentDistance= endOfDocument + currentDistance;
-					
-					if (currentDistance < distance || currentDistance == distance && p.length < nextAnnotationPosition.length) {
-						distance= currentDistance;
-						nextAnnotation= a;
-						nextAnnotationPosition= p;
-					}
-				}
-			}
-		}
-		if (containingAnnotationPosition != null && (!currentAnnotation || nextAnnotation == null)) {
-			annotationPosition.setOffset(containingAnnotationPosition.getOffset());
-			annotationPosition.setLength(containingAnnotationPosition.getLength());
-			return containingAnnotation;
-		}
-		if (nextAnnotationPosition != null) {
-			annotationPosition.setOffset(nextAnnotationPosition.getOffset());
-			annotationPosition.setLength(nextAnnotationPosition.getLength());
-		}
-		
-		return nextAnnotation;
-	}
-
 	protected void updateStatusLine() {
 		ITextSelection selection= (ITextSelection) getSelectionProvider().getSelection();
 		Annotation annotation= getAnnotation(selection.getOffset(), selection.getLength());
 		setStatusLineErrorMessage(null);
 		setStatusLineMessage(null);
 		if (annotation != null) {
-			try {
-				fIsUpdatingAnnotationViews= true;
-				updateAnnotationViews(annotation);
-			} finally {
-				fIsUpdatingAnnotationViews= false;
-			}
+			updateMarkerViews(annotation);
 			if (annotation instanceof ICAnnotation && ((ICAnnotation) annotation).isProblem())
 				setStatusLineMessage(annotation.getText());
 		}
-	}
-
-	/**
-	 * Updates the annotation views that show the given annotation.
-	 * 
-	 * @param annotation the annotation
-	 */
-	private void updateAnnotationViews(Annotation annotation) {
-		IMarker marker= null;
-		if (annotation instanceof MarkerAnnotation)
-			marker= ((MarkerAnnotation) annotation).getMarker();
-		else if (annotation instanceof ICAnnotation) {
-			Iterator e= ((ICAnnotation) annotation).getOverlaidIterator();
-			if (e != null) {
-				while (e.hasNext()) {
-					Object o= e.next();
-					if (o instanceof MarkerAnnotation) {
-						marker= ((MarkerAnnotation) o).getMarker();
-						break;
-					}
-				}
-			}
-		}
-			
-		if (marker != null && !marker.equals(fLastMarkerTarget)) {
-			try {
-				boolean isProblem= marker.isSubtypeOf(IMarker.PROBLEM);
-				IWorkbenchPage page= getSite().getPage();
-				IViewPart view= page.findView(isProblem ? IPageLayout.ID_PROBLEM_VIEW: IPageLayout.ID_TASK_LIST); 
-				if (view != null) {
-					Method method= view.getClass().getMethod("setSelection", new Class[] { IStructuredSelection.class, boolean.class}); //$NON-NLS-1$
-					method.invoke(view, new Object[] {new StructuredSelection(marker), Boolean.TRUE });
-				}
-			} catch (CoreException x) {
-			} catch (NoSuchMethodException x) {
-			} catch (IllegalAccessException x) {
-			} catch (InvocationTargetException x) {
-			}
-			// ignore exceptions, don't update any of the lists, just set status line
-		}			
 	}
 
 	/**
@@ -1151,7 +951,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
 	 *
 	 * This is required by the IShowInSource interface for the "ShowIn"
- 	* navigation menu generalized in Eclipse.
+ 	 * navigation menu generalized in Eclipse.
 	 */
 	public ShowInContext getShowInContext() {
 		return new ShowInContext( getEditorInput(), null );

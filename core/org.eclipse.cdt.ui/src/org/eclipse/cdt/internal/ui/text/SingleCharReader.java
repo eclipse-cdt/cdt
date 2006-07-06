@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import java.io.Reader;
 public abstract class SingleCharReader extends Reader {
 	
 	/**
-	 * @see Reader#read(char)
+	 * @see Reader#read()
 	 */
 	public abstract int read() throws IOException;
 

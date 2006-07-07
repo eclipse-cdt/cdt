@@ -54,7 +54,7 @@ public class DaytimeConnectorService extends AbstractConnectorService {
 		try {
 			fDaytimeService.getTimeOfDay();
 		} catch (ConnectException e) {
-			String template = "Daytime service is not available on {0}.";
+			String template = DaytimeResources.DaytimeConnectorService_NotAvailable;
 			String message = MessageFormat.format(template, new Object[] {getHostName()});
 			throw new Exception(message);
 		}

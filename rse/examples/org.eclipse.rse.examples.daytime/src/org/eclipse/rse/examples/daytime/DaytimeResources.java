@@ -24,6 +24,8 @@ public class DaytimeResources extends NLS {
 	public static String Daytime_Connector_Name;
 	public static String Daytime_Connector_Description;
 	public static String Daytime_Resource_Type;
+
+	public static String DaytimeConnectorService_NotAvailable;
 	
 	static {
 		// load message values from bundle file

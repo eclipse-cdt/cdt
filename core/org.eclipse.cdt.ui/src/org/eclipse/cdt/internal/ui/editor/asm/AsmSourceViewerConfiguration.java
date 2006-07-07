@@ -20,8 +20,6 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.ui.text.ICPartitions;
 
 
@@ -70,7 +68,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 */
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		// the ASM editor also uses the CDocumentPartitioner
-		return CUIPlugin.getDefault().getTextTools().getDocumentPartitioning();
+		return ICPartitions.C_PARTITIONING;
 	}
 
 	/*

@@ -28,18 +28,6 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
-import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.subsystems.AbstractConnectorService;
-import org.eclipse.rse.core.subsystems.CommunicationsEvent;
-import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemRegistry;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.services.ssh.ISshSessionProvider;
-import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -60,6 +48,19 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SocketFactory;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
+
+import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.subsystems.AbstractConnectorService;
+import org.eclipse.rse.core.subsystems.CommunicationsEvent;
+import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
+import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.ssh.ISshSessionProvider;
+import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 
 /** 
  * Create SSH connections.

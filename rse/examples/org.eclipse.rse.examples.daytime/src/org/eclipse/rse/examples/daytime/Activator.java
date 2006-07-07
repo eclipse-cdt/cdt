@@ -18,10 +18,11 @@ package org.eclipse.rse.examples.daytime;
 
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.BundleContext;
+
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.examples.daytime.model.DaytimeAdapterFactory;
 import org.eclipse.rse.examples.daytime.model.DaytimeResource;
-import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class to be used in the desktop.

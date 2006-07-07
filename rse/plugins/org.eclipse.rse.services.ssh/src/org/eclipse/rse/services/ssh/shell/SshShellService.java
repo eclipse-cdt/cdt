@@ -17,6 +17,7 @@
 package org.eclipse.rse.services.ssh.shell;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;

@@ -25,6 +25,14 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpATTRS;
+import com.jcraft.jsch.SftpProgressMonitor;
+
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
@@ -34,13 +42,6 @@ import org.eclipse.rse.services.ssh.Activator;
 import org.eclipse.rse.services.ssh.ISshService;
 import org.eclipse.rse.services.ssh.ISshSessionProvider;
 import org.eclipse.rse.services.ssh.SshServiceResources;
-
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpATTRS;
-import com.jcraft.jsch.SftpProgressMonitor;
 
 public class SftpFileService extends AbstractFileService implements IFileService, ISshService
 {

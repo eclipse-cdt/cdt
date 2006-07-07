@@ -17,9 +17,10 @@
 package org.eclipse.rse.examples.daytime.model;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.ui.views.properties.IPropertySource;
+
 import org.eclipse.rse.ui.view.AbstractSystemRemoteAdapterFactory;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
-import org.eclipse.ui.views.properties.IPropertySource;
 
 /**
  * This factory maps requests for an adapter object from a given remote object.

@@ -12,6 +12,7 @@
 package org.eclipse.rse.examples.daytime.subsystems;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.examples.daytime.model.DaytimeResource;

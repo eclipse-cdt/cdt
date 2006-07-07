@@ -18,6 +18,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.rse.examples.daytime.DaytimeResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 

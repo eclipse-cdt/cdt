@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
@@ -17,23 +18,30 @@ import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+
+import org.eclipse.cdt.internal.ui.text.ICPartitions;
 
 
 public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
-
-	private AsmTextEditor fEditor;
-	private AsmTextTools fTextTools;
+	private AsmTextTools fAsmTextTools;
 	
+	/**
+	 * Constructor for AsmSourceViewerConfiguration
+	 */
+	public AsmSourceViewerConfiguration(AsmTextTools tools) {
+		super();
+		fAsmTextTools = tools;
+	}
+
 	/**
 	 * Returns the ASM multiline comment scanner for this configuration.
 	 *
 	 * @return the ASM multiline comment scanner
 	 */
 	protected RuleBasedScanner getMultilineCommentScanner() {
-		return fTextTools.getMultilineCommentScanner();
+		return fAsmTextTools.getMultilineCommentScanner();
 	}
 	
 	/**
@@ -42,7 +50,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * @return the ASM singleline comment scanner
 	 */
 	protected RuleBasedScanner getSinglelineCommentScanner() {
-		return fTextTools.getSinglelineCommentScanner();
+		return fAsmTextTools.getSinglelineCommentScanner();
 	}
 	
 	/**
@@ -51,60 +59,59 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * @return the ASM string scanner
 	 */
 	protected RuleBasedScanner getStringScanner() {
-		return fTextTools.getStringScanner();
+		return fAsmTextTools.getStringScanner();
 	}
+
 	
-	/**
-	 * Constructor for AsmSourceViewerConfiguration
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
 	 */
-	public AsmSourceViewerConfiguration(AsmTextTools tools, AsmTextEditor editor) {
-		super();
-		fEditor = editor;
-		fTextTools = tools;
+	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+		// the ASM editor also uses the CDocumentPartitioner
+		return ICPartitions.C_PARTITIONING;
 	}
-	
-	/**
-	 * @see ISourceViewerConfiguration#getPresentationReconciler(ISourceViewer)
+
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 
-
-
-		// CColorManager manager= fTextTools.getColorManager();
 		PresentationReconciler reconciler= new PresentationReconciler();
 
-
-
-		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(fTextTools.getCodeScanner());
+		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(fAsmTextTools.getCodeScanner());
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
-
-
 		dr= new DefaultDamagerRepairer(getMultilineCommentScanner());		
-		reconciler.setDamager(dr, AsmPartitionScanner.ASM_MULTILINE_COMMENT);
-		reconciler.setRepairer(dr, AsmPartitionScanner.ASM_MULTILINE_COMMENT);
+		reconciler.setDamager(dr, ICPartitions.C_MULTILINE_COMMENT);
+		reconciler.setRepairer(dr, ICPartitions.C_MULTILINE_COMMENT);
 		
 		dr= new DefaultDamagerRepairer(getSinglelineCommentScanner());		
-		reconciler.setDamager(dr, AsmPartitionScanner.ASM_SINGLE_LINE_COMMENT);
-		reconciler.setRepairer(dr, AsmPartitionScanner.ASM_SINGLE_LINE_COMMENT);
+		reconciler.setDamager(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
+		reconciler.setRepairer(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
 
 		dr= new DefaultDamagerRepairer(getStringScanner());		
-		reconciler.setDamager(dr, AsmPartitionScanner.ASM_STRING);
-		reconciler.setRepairer(dr, AsmPartitionScanner.ASM_STRING);
+		reconciler.setDamager(dr, ICPartitions.C_STRING);
+		reconciler.setRepairer(dr, ICPartitions.C_STRING);
 
+		dr= new DefaultDamagerRepairer(getStringScanner());		
+		reconciler.setDamager(dr, ICPartitions.C_CHARACTER);
+		reconciler.setRepairer(dr, ICPartitions.C_CHARACTER);
 
+		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 		return reconciler;
 	}
 	
-	/**
-	 * @see SourceViewerConfiguration#getConfiguredContentTypes(ISourceViewer)
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredContentTypes(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-		return new String[] { 	IDocument.DEFAULT_CONTENT_TYPE, 
-								AsmPartitionScanner.ASM_MULTILINE_COMMENT,
-								AsmPartitionScanner.ASM_SINGLE_LINE_COMMENT,
-								AsmPartitionScanner.ASM_STRING };
+		return new String[] { 	
+				IDocument.DEFAULT_CONTENT_TYPE, 
+				ICPartitions.C_MULTILINE_COMMENT,
+				ICPartitions.C_SINGLE_LINE_COMMENT,
+				ICPartitions.C_STRING,
+				ICPartitions.C_CHARACTER };
 	}
 
 

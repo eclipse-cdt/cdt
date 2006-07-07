@@ -42,8 +42,6 @@ public class CTextTools {
         }
 	}
 
-	private static final String DEFAULT_PARTITIONING = "__c_partitioning"; //$NON-NLS-1$
-	
 	/** The color manager */
 	private CColorManager fColorManager;
 	/** The C source code scanner */
@@ -66,7 +64,7 @@ public class CTextTools {
 	/** The preference change listener */
 	private PreferenceListener fPreferenceListener= new PreferenceListener();
 	/** The document partitioning used for the C partitioner */
-	private String fDocumentPartitioning = DEFAULT_PARTITIONING;
+	private String fDocumentPartitioning = ICPartitions.C_PARTITIONING;
 	
 	/**
 	 * Creates a new C text tools collection and eagerly creates 

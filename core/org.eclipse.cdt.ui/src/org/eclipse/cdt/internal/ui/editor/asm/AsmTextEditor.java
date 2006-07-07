@@ -32,7 +32,7 @@ public class AsmTextEditor extends TextEditor {
 	 */
 	protected void initializeEditor() {
 		AsmTextTools textTools= CUIPlugin.getDefault().getAsmTextTools();
-		setSourceViewerConfiguration(new AsmSourceViewerConfiguration(textTools, this));
+		setSourceViewerConfiguration(new AsmSourceViewerConfiguration(textTools));
 		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
 		// FIXME: Should this editor have a different preference store ?
 		// For now we are sharing with the CEditor and any changes will in the

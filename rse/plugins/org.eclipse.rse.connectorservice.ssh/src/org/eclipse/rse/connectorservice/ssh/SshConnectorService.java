@@ -76,7 +76,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		//it will be overridden when the subsystem initializes (through
 		//setPort() on our base class -- I assume the port is meant to 
 		//be a local port.
-		super("SSH Connector Service", "SSH Connector Service Description", host, 0);
+		super(SshConnectorResources.SshConnectorService_Name, SshConnectorResources.SshConnectorService_Description, host, 0);
 		fSessionLostHandler = null;
 	}
 
@@ -418,7 +418,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 	    	}
 			catch (Exception e)
 			{
-				SystemBasePlugin.logError("ConnectionStatusListener:  Error disconnecting", e);
+				SystemBasePlugin.logError(SshConnectorResources.SshConnectorService_ErrorDisconnecting, e);
 			}
 		}
 
@@ -482,7 +482,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 				if (winShell != null && !winShell.isDisposed()
 						&& winShell.isVisible()) {
 					SystemBasePlugin
-							.logInfo("Using active workbench window as runnable context");
+							.logInfo("Using active workbench window as runnable context"); //$NON-NLS-1$
 					shell = winShell;
 					return win;
 				} else {
@@ -491,7 +491,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 			}
 			if (shell == null || shell.isDisposed() || !shell.isVisible()) {
 				SystemBasePlugin
-						.logInfo("Using progress monitor dialog with given shell as parent");
+						.logInfo("Using progress monitor dialog with given shell as parent"); //$NON-NLS-1$
 				shell = rshell;
 			}
 			IRunnableContext dlg = new ProgressMonitorDialog(rshell);
@@ -527,7 +527,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 	    	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DISCONNECT_CANCELLED).makeSubstitution(hostName));
 	    	 msgDlg.open();
 	    }
-	};
+	}
 
     /** 
      * Notification from sub-services that our session was lost.
@@ -567,7 +567,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 			final boolean[] retval = new boolean[1];
 			getStandardDisplay().syncExec(new Runnable() {
 				public void run() {
-					retval[0] = MessageDialog.openQuestion(null, "Warning", str); 
+					retval[0] = MessageDialog.openQuestion(null, SshConnectorResources.SshConnectorService_Warning, str); 
 				}
 			});
 			return retval[0]; 
@@ -607,7 +607,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		public void showMessage(final String message) {
 			getStandardDisplay().syncExec(new Runnable() {
 				public void run() {
-					MessageDialog.openInformation(null, "Info", message);
+					MessageDialog.openInformation(null, SshConnectorResources.SshConnectorService_Info, message);
 				}
 			});
 		}

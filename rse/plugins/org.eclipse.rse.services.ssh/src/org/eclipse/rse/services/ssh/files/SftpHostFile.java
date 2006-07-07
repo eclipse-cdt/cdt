@@ -85,7 +85,7 @@ public class SftpHostFile implements IHostFile {
 			return getName();
 		} else {
 			StringBuffer path = new StringBuffer(getParentPath());
-			if (!fParentPath.endsWith("/"))
+			if (!fParentPath.endsWith("/")) //$NON-NLS-1$
 			{
 				path.append('/');
 			}
@@ -103,7 +103,7 @@ public class SftpHostFile implements IHostFile {
 	}
 
 	public void renameTo(String newAbsolutePath) {
-		int i = newAbsolutePath.lastIndexOf("/");
+		int i = newAbsolutePath.lastIndexOf("/"); //$NON-NLS-1$
 		if (i == -1) {
 			fName = newAbsolutePath;
 		}

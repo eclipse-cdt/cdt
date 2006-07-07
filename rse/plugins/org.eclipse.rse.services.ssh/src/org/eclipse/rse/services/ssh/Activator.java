@@ -62,12 +62,14 @@ public class Activator extends Plugin {
 		return plugin;
 	}
 	
+	//<tracing code>----------------------------------------------------
+
 	private static Boolean fTracingOn = null;
 	public static boolean isTracingOn() {
 		if (fTracingOn==null) {
 			String id = plugin.getBundle().getSymbolicName();
 			String val = Platform.getDebugOption(id + "/debug"); //$NON-NLS-1$
-			if ("true".equals(val)) {
+			if ("true".equals(val)) { //$NON-NLS-1$
 				fTracingOn = Boolean.TRUE;
 			} else {
 				fTracingOn = Boolean.FALSE;
@@ -88,10 +90,12 @@ public class Activator extends Plugin {
 	}
 	public static void trace(String msg) {
 		if (isTracingOn()) {
-			String fullMsg = getTimestamp() + " | " + Thread.currentThread().getName() + " | " + msg;
+			String fullMsg = getTimestamp() + " | " + Thread.currentThread().getName() + " | " + msg; //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println(fullMsg);
 			System.out.flush();
 		}
 	}
-	
+
+	//</tracing code>---------------------------------------------------
+
 }

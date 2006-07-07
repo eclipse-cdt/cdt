@@ -15,7 +15,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.rse.connectorservice.ssh";
+	public static final String PLUGIN_ID = "org.eclipse.rse.connectorservice.ssh"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
@@ -53,12 +53,25 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
+	/**
+	 * Returns an image descriptor for the image file at the given
+	 * plug-in relative path.
+	 *
+	 * @param path the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	//<tracing code>----------------------------------------------------
+
 	private static Boolean fTracingOn = null;
 	public static boolean isTracingOn() {
 		if (fTracingOn==null) {
 			String id = plugin.getBundle().getSymbolicName();
 			String val = Platform.getDebugOption(id + "/debug"); //$NON-NLS-1$
-			if ("true".equals(val)) {
+			if ("true".equals(val)) { //$NON-NLS-1$
 				fTracingOn = Boolean.TRUE;
 			} else {
 				fTracingOn = Boolean.FALSE;
@@ -79,20 +92,12 @@ public class Activator extends AbstractUIPlugin {
 	}
 	public static void trace(String msg) {
 		if (isTracingOn()) {
-			String fullMsg = getTimestamp() + " | " + Thread.currentThread().getName() + " | " + msg;
+			String fullMsg = getTimestamp() + " | " + Thread.currentThread().getName() + " | " + msg; //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println(fullMsg);
 			System.out.flush();
 		}
 	}
 
-	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path.
-	 *
-	 * @param path the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
-	}
+	//</tracing code>---------------------------------------------------
+
 }

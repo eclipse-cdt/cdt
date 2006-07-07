@@ -56,7 +56,7 @@ public class SshHostShell extends AbstractHostShell {
 			fStdinHandler = new PrintWriter(fChannel.getOutputStream());
 
 		    fChannel.connect();
-		    writeToShell("cd "+initialWorkingDirectory);
+		    writeToShell("cd "+initialWorkingDirectory); //$NON-NLS-1$
 		} catch(Exception e) {
 			//TODO Forward exception to RSE properly
 			e.printStackTrace();

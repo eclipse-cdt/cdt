@@ -14,9 +14,7 @@ public interface IDebugLogConstants {
 	public class DebugLogConstant {
 		private DebugLogConstant( int value )
 		{
-			this.value = value;
 		}
-		private final int value;
 	}
 	
 	public static final DebugLogConstant CONTENTASSIST = new DebugLogConstant ( 1 );

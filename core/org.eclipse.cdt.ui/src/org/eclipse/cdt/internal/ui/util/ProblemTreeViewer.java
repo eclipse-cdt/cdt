@@ -164,7 +164,6 @@ public class ProblemTreeViewer extends TreeViewer {
     
     /**
      * This returns the editor corresponding to the opened CEditor that is listening to the selection changes on the Outline View.
-     * @return
      */
     public CEditor getEditor() {
     	return editor;

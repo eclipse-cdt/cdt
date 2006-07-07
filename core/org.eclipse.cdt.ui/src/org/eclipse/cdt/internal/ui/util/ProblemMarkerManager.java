@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.ui.util;
 
 import java.util.HashSet;
 
-import org.eclipse.cdt.internal.ui.editor.TranslationUnitAnnotationModelEvent;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
@@ -24,12 +22,16 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.editor.TranslationUnitAnnotationModelEvent;
 
 /**
  * Listens to resource deltas and filters for marker changes of type
@@ -95,7 +97,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 	ListenerList fListeners;
 
 	public ProblemMarkerManager() {
-		fListeners = new ListenerList(5);
+		fListeners = new ListenerList();
 	}
 
 	/*

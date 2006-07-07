@@ -84,6 +84,8 @@ public class SWTUtil {
 
 	/**
 	 * Returns a height hint for a button control.
+	 * @deprecated
+	 * @see IDialogConstants#BUTTON_HEIGHT
 	 */		
 	public static int getButtonHeigthHint(Button button) {
 		if (button.getFont().equals(JFaceResources.getDefaultFont()))
@@ -94,17 +96,16 @@ public class SWTUtil {
 
 	
 	/**
-	 * Sets width and height hint for the button control.
+	 * Sets width for the button control.
 	 * <b>Note:</b> This is a NOP if the button's layout data is not
 	 * an instance of <code>GridData</code>.
 	 * 
-	 * @param	the button for which to set the dimension hint
+	 * @param button a button for which to set the dimension hint
 	 */		
 	public static void setButtonDimensionHint(Button button) {
 		Assert.isNotNull(button);
 		Object gd= button.getLayoutData();
 		if (gd instanceof GridData) {
-			((GridData)gd).heightHint= getButtonHeigthHint(button);
 			((GridData)gd).widthHint= getButtonWidthHint(button);		 
 		}
 	}

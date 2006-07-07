@@ -51,7 +51,7 @@ public class CoreUtility {
 		// If plugin has been loaded create extension.
 		// Otherwise, show busy cursor then create extension.
 		
-		String id = element.getDeclaringExtension().getNamespace();
+		String id= element.getContributor().getName();
 		Bundle bundle = Platform.getBundle(id);
 		if(bundle.getState() == org.osgi.framework.Bundle.ACTIVE) {
 			return element.createExecutableExtension(classAttribute);
@@ -90,6 +90,19 @@ public class CoreUtility {
 	 */
 	public static int safeHashcode(Object o) {
 		return o == null ? 0 : o.hashCode();
-	}	
+	}
 
-}
+	/**
+	 * Comparse two integers.
+	 */
+	public static int compare(int lhs, int rhs) {
+		if (lhs < rhs) {
+			return -1;
+		}
+		if (lhs > rhs) {
+			return 1;
+		}
+		return 0;
+	}
+}	
+

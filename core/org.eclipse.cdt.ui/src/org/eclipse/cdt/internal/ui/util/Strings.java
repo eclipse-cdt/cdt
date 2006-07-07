@@ -374,7 +374,6 @@ public class Strings {
 	/**
 	 * Creates a string that consists of the given number of tab characters.
 	 * @param indentLevel
-	 * @return
 	 */
 	public static String createIndentString(int indentLevel) {
 		StringBuffer result = new StringBuffer();

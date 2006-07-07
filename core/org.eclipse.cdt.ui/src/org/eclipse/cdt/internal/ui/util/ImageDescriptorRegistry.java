@@ -40,7 +40,7 @@ public class ImageDescriptorRegistry {
 	 * Creates a new image descriptor registry for the given display. All images
 	 * managed by this registry will be disposed when the display gets disposed.
 	 * 
-	 * @param diaplay the display the images managed by this registry are allocated for 
+	 * @param display the display the images managed by this registry are allocated for 
 	 */
 	public ImageDescriptorRegistry(Display display) {
 		fDisplay= display;

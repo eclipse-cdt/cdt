@@ -11,14 +11,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.RGB;
-
+import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.RGB;
 
 /**
  * Preference constants used in the CDT-UI preference store. Clients should only read the
@@ -162,6 +160,8 @@ public class PreferenceConstants {
 	 */
 	public static final String EDITOR_TEXT_HOVER_MODIFIER_MASKS= "hoverModifierMasks"; //$NON-NLS-1$
 
+	
+	
 	/**
 	 * The id of the best match hover contributed for extension point
 	 * <code>javaEditorTextHovers</code>.
@@ -364,6 +364,15 @@ public class PreferenceConstants {
 	public static final String EDITOR_FOLDING_MACROS= "editor_folding_default_macros"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that defines whether the hint to make hover sticky should be shown.
+	 *
+	 * @see JavaUI
+	 * @since 3.1.1
+	 */
+	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= "PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE"; //$NON-NLS-1$
+
+	
+	/**
 	 * A named preference that controls if templates are formatted when applied.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -403,7 +412,7 @@ public class PreferenceConstants {
 		String mod1Name= Action.findModifierString(SWT.MOD1);	// SWT.COMMAND on Mac; SWT.CONTROL elsewhere
 		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + mod1Name); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + SWT.MOD1); //$NON-NLS-1$
-		//store.setDefault(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
+		store.setDefault(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
 
 		// folding
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED, false);

@@ -7,15 +7,17 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
@@ -28,9 +30,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.IKeySequenceBinding;
-import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.keys.IBindingService;
 
 /**
  * AbstractCEditorTextHover Abstract class for providing hover information for C
@@ -42,16 +43,14 @@ public class AbstractCEditorTextHover implements ICEditorTextHover,
 
 	private IEditorPart fEditor;
 
-	private ICommand fCommand;
-
-	// {
-	// ICommandManager commandManager=
-	// PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
-	// fCommand=
-	// commandManager.getCommand(ICEditorActionDefinitionIds.SHOW_JAVADOC);
-	// if (!fCommand.isDefined())
-	// fCommand= null;
-	// }
+	/* Mapping key to action */
+	private IBindingService fBindingService;
+	
+	// initialization block, called during constructor call
+	{
+		fBindingService = (IBindingService) PlatformUI.getWorkbench()
+				.getAdapter(IBindingService.class);
+	}
 
 	/*
 	 * @see IJavaEditorTextHover#setEditor(IEditorPart)
@@ -76,30 +75,14 @@ public class AbstractCEditorTextHover implements ICEditorTextHover,
 			Point selectedRange = textViewer.getSelectedRange();
 			if (selectedRange.x >= 0 && selectedRange.y > 0
 					&& offset >= selectedRange.x
-					&& offset <= selectedRange.x + selectedRange.y)
+					&& offset <= selectedRange.x + selectedRange.y) {
 				return new Region(selectedRange.x, selectedRange.y);
-			else {
+			} else {
 				return CWordFinder.findWord(textViewer.getDocument(), offset);
 			}
 		}
 		return null;
 	}
-
-	// protected ICodeAssist getCodeAssist() {
-	// if (fEditor != null) {
-	// IEditorInput input= fEditor.getEditorInput();
-	// if (input instanceof IClassFileEditorInput) {
-	// IClassFileEditorInput cfeInput= (IClassFileEditorInput) input;
-	// return cfeInput.getClassFile();
-	// }
-	//			
-	// IWorkingCopyManager manager=
-	// CUIPlugin.getDefault().getWorkingCopyManager();
-	// return manager.getWorkingCopy(input);
-	// }
-	//		
-	// return null;
-	// }
 
 	/*
 	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
@@ -165,42 +148,21 @@ public class AbstractCEditorTextHover implements ICEditorTextHover,
 	 * @since 3.0
 	 */
 	protected String getTooltipAffordanceString() {
-		// if
-		// (!CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE))
-		// return null;
-		//		
-		// KeySequence[] sequences= getKeySequences();
-		// if (sequences == null)
-		// return null;
-		//		
-		// String keySequence= sequences[0].format();
-		// return
-		// CHoverMessages.getFormattedString("JavaTextHover.makeStickyHint",
-		// keySequence); //$NON-NLS-1$
-		return null;
-	}
-
-	/**
-	 * Returns the array of valid key sequence bindings for the show tool tip
-	 * description command.
-	 * 
-	 * @return the array with the {@link KeySequence}s
-	 * 
-	 * @since 3.0
-	 */
-	private KeySequence[] getKeySequences() {
-		if (fCommand != null) {
-			List list = fCommand.getKeySequenceBindings();
-			if (!list.isEmpty()) {
-				KeySequence[] keySequences = new KeySequence[list.size()];
-				for (int i = 0; i < keySequences.length; i++) {
-					keySequences[i] = ((IKeySequenceBinding) list.get(i))
-							.getKeySequence();
-				}
-				return keySequences;
-			}
+		if (fBindingService == null
+				|| !CUIPlugin.getDefault().getPreferenceStore().getBoolean(
+						PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE)) {
+			return null;
 		}
-		return null;
+
+		String keySequence = fBindingService
+				.getBestActiveBindingFormattedFor(ICEditorActionDefinitionIds.SHOW_TOOLTIP);
+		if (keySequence == null) {
+			return null;
+		}
+
+		return CHoverMessages
+				.getFormattedString(
+						"CTextHover.makeStickyHint", keySequence == null ? "" : keySequence); //$NON-NLS-1$
 	}
 
 }

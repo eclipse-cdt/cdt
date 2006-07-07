@@ -906,6 +906,11 @@
            contextId="org.eclipse.cdt.ui.cEditorScope"
            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
            sequence="M1+M2+J"/>
+     <key
+            sequence="F2"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.show.tooltip"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -1025,6 +1030,12 @@
             description="%ActionDefinition.gotoMatchingBracket.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket">
+      </command>
+      <command
+            name="%ActionDefinition.showTooltip.name"
+            description="%ActionDefinition.showTooltip.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.show.tooltip">
       </command>
    </extension>
    <extension

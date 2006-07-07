@@ -36,7 +36,7 @@ public class IBDropTargetListener implements DropTargetListener {
     
     private IBViewPart fIncludeBrowser;
 	private ITranslationUnit fTranslationUnit;
-	private boolean fEnabled;
+	private boolean fEnabled= true;
 
     public IBDropTargetListener(IBViewPart view) {
         fIncludeBrowser= view;

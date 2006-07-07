@@ -17,19 +17,12 @@ public class IBMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.includebrowser.IBMessages"; //$NON-NLS-1$
 
 	public static String IBHistoryDropDownAction_ClearHistory_label;
-
 	public static String IBHistoryDropDownAction_tooltip;
-
 	public static String IBHistoryListAction_HistoryDialog_title;
-
 	public static String IBHistoryListAction_HistoryList_label;
-
 	public static String IBHistoryListAction_label;
-
 	public static String IBHistoryListAction_Remove_label;
-
 	public static String IBViewPart_falseInputMessage;
-
 	public static String IBViewPart_FocusOn_label;
 	public static String IBViewPart_hideInactive_label;
 	public static String IBViewPart_hideInactive_tooltip;

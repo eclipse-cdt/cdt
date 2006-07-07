@@ -419,7 +419,7 @@ public class IBViewPart extends ViewPart
                 onShowFolderInLabels(isChecked());
             }
         };
-        fShowFolderInLabelsAction.setDescription(IBMessages.IBViewPart_showFolders_tooltip);
+        fShowFolderInLabelsAction.setToolTipText(IBMessages.IBViewPart_showFolders_tooltip);
         fNext = new Action(IBMessages.IBViewPart_nextMatch_label) {
             public void run() {
                 onNextOrPrevious(true);

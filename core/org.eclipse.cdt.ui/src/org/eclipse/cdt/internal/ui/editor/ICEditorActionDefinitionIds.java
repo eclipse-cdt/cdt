@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
@@ -155,4 +156,11 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 */
 	public static final String GOTO_MATCHING_BRACKET= "org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket"; //$NON-NLS-1$
 
+	/**
+	 * Action definition ID of the edit -> show tooltip action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.show.tooltip"</code>).
+	 *
+	 * @since 3.1.1
+	 */
+	public static final String SHOW_TOOLTIP = "org.eclipse.cdt.ui.edit.text.c.show.tooltip"; //$NON-NLS-1$
 }

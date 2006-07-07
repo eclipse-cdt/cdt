@@ -43,7 +43,7 @@ public class TreeNavigator {
 	
 	private TreeItem getItemOfClass(TreeItem[] items, boolean fwd) {
         for (int i = 0; i < items.length; i++) {
-            TreeItem item = items[i];
+            TreeItem item = items[fwd ? i : items.length-1-i];
             if (fDataClass==null || fDataClass.isInstance(item.getData())) {
                 return item;
             }

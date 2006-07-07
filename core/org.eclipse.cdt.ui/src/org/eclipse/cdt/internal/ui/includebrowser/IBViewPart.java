@@ -130,9 +130,10 @@ public class IBViewPart extends ViewPart
     private Action fFilterInactiveAction;
     private Action fFilterSystemAction;
     private Action fShowFolderInLabelsAction;
-    private Action fNext;
-    private Action fPrevious;
-    private Action fRefresh;
+    private Action fNextAction;
+    private Action fPreviousAction;
+    private Action fRefreshAction;
+	private Action fHistoryAction;
 
     
     public void setFocus() {
@@ -143,10 +144,16 @@ public class IBViewPart extends ViewPart
         fInfoText.setText(msg);
         fPagebook.showPage(fInfoPage);
         fShowsMessage= true;
+        updateActionEnablement();
         updateDescription();
     }
     
     public void setInput(ITranslationUnit input) {
+    	if (input == null) {
+    		setMessage(IBMessages.IBViewPart_instructionMessage);
+    		return;
+    	}
+    	
         fShowsMessage= false;
         boolean isHeader= false;
         String contentType= input.getContentTypeId();
@@ -163,9 +170,18 @@ public class IBViewPart extends ViewPart
         }
         fTreeViewer.setInput(input);
         fPagebook.showPage(fViewerPage);
-        updateDescription();
         updateHistory(input);
+
+        updateActionEnablement();
+        updateDescription();
     }
+
+	private void updateActionEnablement() {
+		fHistoryAction.setEnabled(!fHistoryEntries.isEmpty());
+		fNextAction.setEnabled(!fShowsMessage);
+		fPreviousAction.setEnabled(!fShowsMessage);
+		fRefreshAction.setEnabled(!fShowsMessage);
+	}
 
 	public void createPartControl(Composite parent) {
         fPagebook = new PageBook(parent, SWT.NULL);
@@ -420,50 +436,52 @@ public class IBViewPart extends ViewPart
             }
         };
         fShowFolderInLabelsAction.setToolTipText(IBMessages.IBViewPart_showFolders_tooltip);
-        fNext = new Action(IBMessages.IBViewPart_nextMatch_label) {
+        fNextAction = new Action(IBMessages.IBViewPart_nextMatch_label) {
             public void run() {
                 onNextOrPrevious(true);
             }
         };
-        fNext.setToolTipText(IBMessages.IBViewPart_nextMatch_tooltip); 
-        CPluginImages.setImageDescriptors(fNext, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_NEXT);       
+        fNextAction.setToolTipText(IBMessages.IBViewPart_nextMatch_tooltip); 
+        CPluginImages.setImageDescriptors(fNextAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_NEXT);       
 
-        fPrevious = new Action(IBMessages.IBViewPart_previousMatch_label) {
+        fPreviousAction = new Action(IBMessages.IBViewPart_previousMatch_label) {
             public void run() {
                 onNextOrPrevious(false);
             }
         };
-        fPrevious.setToolTipText(IBMessages.IBViewPart_previousMatch_tooltip); 
-        CPluginImages.setImageDescriptors(fPrevious, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_PREV);       
+        fPreviousAction.setToolTipText(IBMessages.IBViewPart_previousMatch_tooltip); 
+        CPluginImages.setImageDescriptors(fPreviousAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_PREV);       
 
-        fRefresh = new Action(IBMessages.IBViewPart_refresh_label) {
+        fRefreshAction = new Action(IBMessages.IBViewPart_refresh_label) {
             public void run() {
                 onRefresh();
             }
         };
-        fRefresh.setToolTipText(IBMessages.IBViewPart_refresh_tooltip); 
-        CPluginImages.setImageDescriptors(fRefresh, CPluginImages.T_LCL, CPluginImages.IMG_REFRESH);       
+        fRefreshAction.setToolTipText(IBMessages.IBViewPart_refresh_tooltip); 
+        CPluginImages.setImageDescriptors(fRefreshAction, CPluginImages.T_LCL, CPluginImages.IMG_REFRESH);       
 
+        fHistoryAction= new IBHistoryDropDownAction(this);
+        
         // setup action bar
         // global action hooks
         IActionBars actionBars = getViewSite().getActionBars();
-        actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fNext);
-        actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fPrevious);
-        actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fRefresh);
+        actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fNextAction);
+        actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fPreviousAction);
+        actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fRefreshAction);
         actionBars.updateActionBars();
         
         // local toolbar
         IToolBarManager tm = actionBars.getToolBarManager();
-        tm.add(fNext);
-        tm.add(fPrevious);
+        tm.add(fNextAction);
+        tm.add(fPreviousAction);
         tm.add(new Separator());
         tm.add(fFilterSystemAction);
         tm.add(fFilterInactiveAction);
         tm.add(new Separator());
         tm.add(fIncludedByAction);
         tm.add(fIncludesToAction);
-        tm.add(new IBHistoryDropDownAction(this));
-        tm.add(fRefresh);
+        tm.add(fHistoryAction);
+        tm.add(fRefreshAction);
 
         // local menu
         IMenuManager mm = actionBars.getMenuManager();
@@ -513,7 +531,7 @@ public class IBViewPart extends ViewPart
         fTreeViewer.refresh();
     }
 
-    protected void updateHistory(ITranslationUnit input) {
+    private void updateHistory(ITranslationUnit input) {
     	if (input != null) {
     		fHistoryEntries.remove(input);
     		fHistoryEntries.add(0, input);
@@ -523,7 +541,7 @@ public class IBViewPart extends ViewPart
     	}
 	}
 
-    protected void updateSorter() {
+    private void updateSorter() {
         if (fIncludedByAction.isChecked()) {
             fTreeViewer.setComparator(fSorterAlphaNumeric);
         }
@@ -532,7 +550,7 @@ public class IBViewPart extends ViewPart
         }
     }
     
-    protected void updateDescription() {
+    private void updateDescription() {
         String message= ""; //$NON-NLS-1$
         if (!fShowsMessage) {
         	ITranslationUnit tu= getInput();
@@ -563,7 +581,7 @@ public class IBViewPart extends ViewPart
         setContentDescription(message);
     }
 
-    protected void updateWorkingSetFilter(WorkingSetFilterUI filterUI) {
+    private void updateWorkingSetFilter(WorkingSetFilterUI filterUI) {
         if (filterUI.getWorkingSet() == null) {
             if (fWorkingSetFilter != null) {
                 fTreeViewer.removeFilter(fWorkingSetFilter);

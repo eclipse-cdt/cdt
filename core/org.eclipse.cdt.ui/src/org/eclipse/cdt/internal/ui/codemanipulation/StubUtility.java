@@ -20,20 +20,20 @@ import org.eclipse.swt.SWT;
 public class StubUtility {
 	
 	/**
-	 * @see org.eclipse.jdt.ui.CodeGeneration#getTypeComment(ICompilationUnit, String, String)
+	 * Not implemented, returns <code>""</code>.
 	 */	
 	public static String getHeaderFileContent(ITranslationUnit cu, String typeComment, String typeContent, String lineDelimiter) throws CoreException {
 		return ""; //$NON-NLS-1$
 	}
 	/**
-	 * @see org.eclipse.jdt.ui.CodeGeneration#getTypeComment(ICompilationUnit, String, String)
+	 * Not implemented, returns <code>""</code>.
 	 */	
 	public static String getBodyFileContent(ITranslationUnit cu, String typeComment, String typeContent, String lineDelimiter) throws CoreException {
 		return ""; //$NON-NLS-1$
 	}
-	/*
-	 * @see org.eclipse.jdt.ui.CodeGeneration#getTypeComment(ICompilationUnit, String, String)
-	 */		
+	/**
+	 * Not implemented, returns <code>""</code>.
+	 */	
 	public static String getClassComment(ITranslationUnit cu, String typeQualifiedName, String lineDelim) throws CoreException {
 		return ""; //$NON-NLS-1$
 	}

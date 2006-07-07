@@ -204,7 +204,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 * Reveal and select the passed element selection in self's visual
 	 * component
 	 * 
-	 * @see ISetSelectionTarget#selectReveal()
+	 * @see ISetSelectionTarget#selectReveal(ISelection)
 	 */
 	public void selectReveal(ISelection selection) {
 		IStructuredSelection ssel = SelectionConverter.convertSelectionToCElements(selection);

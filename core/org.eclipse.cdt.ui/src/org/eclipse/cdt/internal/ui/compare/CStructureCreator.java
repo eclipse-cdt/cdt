@@ -47,16 +47,10 @@ public class CStructureCreator implements IStructureCreator {
 	public CStructureCreator() {
 	}
 
-	/**
-	 * @see IStructureCreator#getTitle
-	 */
 	public String getName() {
 		return CUIPlugin.getResourceString(NAME);
 	}
 
-	/**
-	 * @see IStructureCreator#getStructure
-	 */
 	public IStructureComparator getStructure(Object input) {
 
 		String s = null;
@@ -94,30 +88,18 @@ public class CStructureCreator implements IStructureCreator {
 		return root;
 	}
 
-	/**
-	 * @see IStructureCreator#canSave
-	 */
 	public boolean canSave() {
 		return true;
 	}
 
-	/**
-	 * @see IStructureCreator#locate
-	 */
 	public IStructureComparator locate(Object path, Object source) {
 		return null;
 	}
 
-	/**
-	 * @see IStructureCreator#canRewriteTree
-	 */
 	public boolean canRewriteTree() {
 		return false;
 	}
 
-	/**
-	 * @see IStructureCreator#rewriteTree
-	 */
 	public void rewriteTree(Differencer differencer, IDiffContainer root) {
 	}
 

@@ -336,7 +336,6 @@ public class BuildConsolePage extends Page
 
 	protected void setInitialSelection() {
 		// Use the selection, if any
-		Object input;
 		IWorkbenchPage page= getSite().getPage();
 		ISelection selection= null;
 		if (page != null)
@@ -446,7 +445,7 @@ public class BuildConsolePage extends Page
 	/**
 	 * Sets the tab width for this page.
 	 * 
-	 * @param int
+	 * @param tabs
 	 *            tab width
 	 */
 	protected void setTabs(int tabs) {

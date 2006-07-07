@@ -43,7 +43,6 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 	private ITranslationUnit fTranslationUnit;
 	private IRequiredInclude[] fIncludes;
 	private String[] fUsings;
-	private boolean fDoSave;
 
 	private String newLine = System.getProperty("line.separator", "\n");  //$NON-NLS-1$//$NON-NLS-2$
 
@@ -62,7 +61,6 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 		fIncludes= includes;
 		fUsings = using;
 		fTranslationUnit = tu;
-		fDoSave= save;
 	}
 	
 	public void executeInludes(IProgressMonitor monitor) throws CoreException {

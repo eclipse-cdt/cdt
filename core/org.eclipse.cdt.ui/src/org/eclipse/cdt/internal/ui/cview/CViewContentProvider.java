@@ -90,9 +90,6 @@ public class CViewContentProvider extends CElementContentProvider {
 		return ref.getChildren();
 	}
 	
-	/**
-	 * @return
-	 */
 	private Object[] getProjectChildren(ICProject cproject) throws CModelException {
 		Object[] extras = null;
 		IArchiveContainer archive = cproject.getArchiveContainer(); 

@@ -31,7 +31,6 @@ public class SelectionTransferDragAdapter extends BasicSelectionTransferDragAdap
 			for (Iterator iter= ((IStructuredSelection)selection).iterator(); iter.hasNext();) {
 				Object element= iter.next();
 				if (element instanceof ICElement) {
-					ICElement celement = (ICElement)element;
 					if (!(element instanceof ISourceReference)) {
 						return  false;
 					}

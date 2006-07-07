@@ -13,25 +13,19 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IBuildConsoleEvent;
-import org.eclipse.cdt.ui.IBuildConsoleListener;
-import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -45,9 +39,17 @@ import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
 
+import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IBuildConsoleEvent;
+import org.eclipse.cdt.ui.IBuildConsoleListener;
+import org.eclipse.cdt.ui.IBuildConsoleManager;
+
+import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
+
 public class BuildConsoleManager implements IBuildConsoleManager, IResourceChangeListener, IPropertyChangeListener {
 
-	ListenerList listeners = new ListenerList(1);
+	ListenerList listeners = new ListenerList();
 	BuildConsole fConsole;
 	private Map fConsoleMap = new HashMap();
 	Color infoColor, outputColor, errorColor;

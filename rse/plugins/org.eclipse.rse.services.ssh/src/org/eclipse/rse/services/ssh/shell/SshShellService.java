@@ -22,6 +22,7 @@ import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.services.ssh.ISshService;
 import org.eclipse.rse.services.ssh.ISshSessionProvider;
+import org.eclipse.rse.services.ssh.SshServiceResources;
 
 /**
  * A Shell Services for ssh.
@@ -29,7 +30,7 @@ import org.eclipse.rse.services.ssh.ISshSessionProvider;
  */
 public class SshShellService implements ISshService, IShellService {
 
-	private static final String SHELL_INVOCATION = ">";
+	private static final String SHELL_INVOCATION = ">"; //$NON-NLS-1$
 	private ISshSessionProvider fSessionProvider;
 	
 	public SshShellService(ISshSessionProvider sessionProvider) {
@@ -71,12 +72,11 @@ public class SshShellService implements ISshService, IShellService {
 	}
 
 	public String getName() {
-		//TODO Externalize Strings
-		return "SSH Shell Service";
+		return SshServiceResources.SshShellService_Name;
 	}
 
 	public String getDescription() {
-		return "SSH Shell Service Description";
+		return SshServiceResources.SshShellService_Description;
 	}
 
 	public void initService(IProgressMonitor monitor) {

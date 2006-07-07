@@ -33,6 +33,7 @@ import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.ssh.Activator;
 import org.eclipse.rse.services.ssh.ISshService;
 import org.eclipse.rse.services.ssh.ISshSessionProvider;
+import org.eclipse.rse.services.ssh.SshServiceResources;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -57,11 +58,11 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	}
 	
 	public String getName() {
-		return "Ssh / Sftp File Service";
+		return SshServiceResources.SftpFileService_Name;
 	}
 	
 	public String getDescription() {
-		return "Access a remote file system via Ssh / Sftp protocol";
+		return SshServiceResources.SftpFileService_Description;
 	}
 	
 	public void connect() throws Exception {
@@ -114,7 +115,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				//This will lead to jsch exceptions (NPE, or disconnected)
 				//which are ignored for now since the connection is about
 				//to be disconnected anyways.
-				throw new IOException("jsch session lost");
+				throw new IOException(SshServiceResources.SftpFileService_Error_JschSessionLost);
 			}
 		}
 		return fChannelSftp;
@@ -270,7 +271,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				if (attr.getSize() != localFile.length()) {
 					//Error: file truncated? - Inform the user!!
 					//TODO throw exception to show an error dialog!
-					System.err.println("ssh.upload: file size mismatch for "+dst);
+					System.err.println("ssh.upload: file size mismatch for "+dst); //$NON-NLS-1$
 					return false;
 				}
 			}
@@ -304,7 +305,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			  fWorkToDate = 0;
 			  String srcFile = new Path(src).lastSegment();
 			  //String desc = ((op==SftpProgressMonitor.PUT)? 
-              //        "Uploading " : "Downloading ")+srcFile; //$NON-NLS-1$ //$NON-NLS-2$
+              //        "Uploading " : "Downloading ")+srcFile;
 			  String desc = srcFile;
 			  //TODO avoid cast from long to int
 			  fMonitor.beginTask(desc, (int)max);
@@ -313,8 +314,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			  fWorkToDate += count;
 			  Long workToDateKB = new Long(fWorkToDate / 1024L);
 			  Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
-			  String pattern = "{0,number,integer} KB of {1,number,integer} KB complete ({2,number,percent})";
-			  String subDesc = MessageFormat.format(pattern, new Object[] {
+			  String subDesc = MessageFormat.format(
+					  SshServiceResources.SftpFileService_Msg_Progress,
+					  new Object[] {
 						workToDateKB, fMaxWorkKB, workPercent	  
 					  });
 			  fMonitor.subTask(subDesc);
@@ -384,7 +386,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				if (attr.getSize() != localFile.length()) {
 					//Error: file truncated? - Inform the user!!
 					//TODO throw exception to show an error dialog!
-					System.err.println("ssh.download: file size mismatch for "+remotePath);
+					System.err.println("ssh.download: file size mismatch for "+remotePath); //$NON-NLS-1$
 					return false;
 				}
 			}
@@ -422,13 +424,6 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		IHostFile root = new SftpHostFile("/", "/", true, true, false, 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
 		return new IHostFile[] { root };
 	}
-	
-	// TODO
-	/********************************************************
-	 * 
-	 *    The following APIs need to be implemented
-	 * 
-	 ********************************************************/
 	
 	public IHostFile createFile(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException 
 	{
@@ -571,7 +566,6 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return result;
 	}
 	
-	private static Pattern fValidShellPattern = Pattern.compile("[a-zA-Z0-9._/]*"); //$NON-NLS-1$
 	/**
 	 * Quotes a string such that it can be used in a remote UNIX shell.
 	 * On Windows, special characters likes quotes and dollar sign. and
@@ -619,6 +613,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			return buf.toString();
 		}
 	}
+	private static Pattern fValidShellPattern = Pattern.compile("[a-zA-Z0-9._/]*"); //$NON-NLS-1$
 	
 	public boolean move(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) throws SystemMessageException
 	{

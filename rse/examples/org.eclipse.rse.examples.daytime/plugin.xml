@@ -17,7 +17,7 @@ Martin Oberhuber (Wind River) - initial API and implementation
 			name="FTP-Daytime"
 			description="%FTPDaytimeSystemDescription">
 			<property name="icon" value="icons/full/obj16/daytime_obj.gif"/>
-			<property name="iconlive" value="icons/full/obj16/daytimelive_obj.gif"/>
+			<property name="iconLive" value="icons/full/obj16/daytimelive_obj.gif"/>
 		</systemType>
 	</extension>
 	<!-- Instantiate the FTP subsystem by referencing it from the external implementation -->

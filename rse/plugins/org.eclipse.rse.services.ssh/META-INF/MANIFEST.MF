@@ -13,3 +13,4 @@ Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.services.ssh,
  org.eclipse.rse.services.ssh.files,
  org.eclipse.rse.services.ssh.shell
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

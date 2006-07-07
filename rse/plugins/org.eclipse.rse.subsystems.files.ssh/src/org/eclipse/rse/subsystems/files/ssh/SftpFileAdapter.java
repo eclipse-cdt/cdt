@@ -55,9 +55,4 @@ public class SftpFileAdapter implements IHostFileToRemoteFileAdapter {
 		return file;
 	}
 
-	public IRemoteFile convertToRemoteFile(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, Object object) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

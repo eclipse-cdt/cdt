@@ -24,7 +24,6 @@ import org.eclipse.rse.internal.model.Host;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.services.ssh.ISshService;
-import org.eclipse.rse.services.ssh.ISshSessionProvider;
 import org.eclipse.rse.services.ssh.shell.SshShellService;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystemConfiguration;
@@ -63,7 +62,7 @@ public class SshShellSubSystemConfiguration extends
 
 	public IShellService createShellService(IHost host) {
 		SshConnectorService cserv = (SshConnectorService)getConnectorService(host);
-		return new SshShellService((ISshSessionProvider)cserv);
+		return new SshShellService(cserv);
 	}
 
 	public IConnectorService getConnectorService(IHost host) {

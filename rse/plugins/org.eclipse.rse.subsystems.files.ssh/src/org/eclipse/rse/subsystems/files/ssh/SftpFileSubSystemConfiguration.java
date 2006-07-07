@@ -23,7 +23,6 @@ import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.services.search.ISearchService;
 import org.eclipse.rse.services.ssh.ISshService;
-import org.eclipse.rse.services.ssh.ISshSessionProvider;
 import org.eclipse.rse.services.ssh.files.SftpFileService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystemConfiguration;
@@ -80,13 +79,7 @@ public class SftpFileSubSystemConfiguration extends FileServiceSubSystemConfigur
 	
 	public IFileService createFileService(IHost host) {
 		SshConnectorService connectorService = (SshConnectorService)getConnectorService(host);
-		//return connectorService.getFileService();
-		//TODO We have to get the file service from the connector service in order to make
-		//sure the connector service can connect it when required. It might be better to
-		//create a new instance here, and have it connect lazily on demand instead.
-		//In fact, due to ssh timeouts, it might be necessary that we can re-connect
-		//on demand on any operation anyway.
-		return new SftpFileService((ISshSessionProvider)connectorService);
+		return new SftpFileService(connectorService);
 	}
 	
 	public ISearchService createSearchService(IHost host) {

@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -52,6 +55,7 @@ import org.eclipse.rse.core.SystemElapsedTimer;
 import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.SubSystem.ConnectJobNoShell;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterContainer;
 import org.eclipse.rse.filters.ISystemFilterContainerReference;
@@ -112,6 +116,7 @@ import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -125,6 +130,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.PluginTransfer;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.framelist.GoIntoAction;
 
 
@@ -1726,643 +1732,677 @@ public class SystemView extends TreeViewer implements  ISystemTree,
      */
     public void systemResourceChanged(ISystemResourceChangeEvent event)
     {
-    	   int type = event.getType();    	   
-    	   Object src = event.getSource();
-    	   Object parent = event.getParent();
-           String[] properties = new String[1];
-    	   if (parent == RSEUIPlugin.getTheSystemRegistry())
-    	     parent = inputProvider;
-    	   ISubSystem ss = null;
-    	   Widget item = null;
-    	   Widget parentItem = null;
-           Object[] multiSource = null;
-           Object previous = null;
-           if (event.getViewerItem() instanceof TreeItem)
-             inputTreeItem = (TreeItem)event.getViewerItem();
-           else
-             inputTreeItem = null;
-    	   boolean wasSelected = false;
-    	   boolean originatedHere = (event.getOriginatingViewer() == null) || (event.getOriginatingViewer() == this);
-    	   
-    	   //logDebugMsg("INSIDE SYSRESCHGD: " + type + ", " + src + ", " + parent);
-    	   switch(type)
-    	   {
-   	    	  // SPECIAL CASES: ANYTHING TO DO WITH FILTERS!!
-    	   	  case EVENT_RENAME_FILTER_REFERENCE:
-    	   	  case EVENT_CHANGE_FILTER_REFERENCE:
-    	   	      findAndUpdateFilter(event, type);
-    	   	      break;
-    	   	  case EVENT_CHANGE_FILTERSTRING_REFERENCE:
-    	   	      findAndUpdateFilterString(event, type);
-    	   	      break;
+    	ResourceChangedJob job = new ResourceChangedJob(event, this);
+       	job.setPriority(Job.INTERACTIVE);
+	    //job.setUser(true);
+	    job.schedule();
+	    Display display = Display.getCurrent();
+    	   try {
+    	        while (job.getResult() == null) {
+    	            while (display!=null && display.readAndDispatch()) {}
+    	            if (job.getResult() == null) Thread.sleep(200);
+    	        }
+    	    } catch(InterruptedException e) {}
 
-    	   	  case EVENT_ADD_FILTERSTRING_REFERENCE:
-    	   	  case EVENT_DELETE_FILTERSTRING_REFERENCE:
-    	   	  case EVENT_MOVE_FILTERSTRING_REFERENCES:
-    	   	      //findAndUpdateFilterStringParent(event, type);
-    	   	      //break;
-    	   	  case EVENT_ADD_FILTER_REFERENCE:
-    	   	  case EVENT_DELETE_FILTER_REFERENCE:
-    	   	  case EVENT_MOVE_FILTER_REFERENCES:
-   	    	      // are we a secondary perspective, and our input or parent of our input was deleted?
-    	   	      if (((type == EVENT_DELETE_FILTERSTRING_REFERENCE) || 
-    	   	           (type == EVENT_DELETE_FILTER_REFERENCE)) &&
-    	   	          affectsInput(src))
-    	   	      {
-    	   	        close();
-    	   	        return; 
-    	   	      }
+    }	
+    
+	/**
+	 * Inner class which extends UIJob to connect this connection
+	 * on the UI Thread when no Shell is available from
+	 * the caller
+	 */
+	public class ResourceChangedJob extends UIJob {
+		
+		protected ISystemResourceChangeEvent _event;
+		protected SystemView _originatingViewer;
+		public ResourceChangedJob(ISystemResourceChangeEvent event, SystemView originatingViewer)
+		{
+			super("Resource Changed...");
+			_event = event;
+		}
 
-    	   	      findAndUpdateFilterParent(event, type);
-    	   	      break;
+		public IStatus runInUIThread(IProgressMonitor monitor)
+		{
+	    	   int type = _event.getType();    	   
+	    	   Object src = _event.getSource();
+	    	   Object parent = _event.getParent();
+	           String[] properties = new String[1];
+	    	   if (parent == RSEUIPlugin.getTheSystemRegistry())
+	    	     parent = inputProvider;
+	    	   ISubSystem ss = null;
+	    	   Widget item = null;
+	    	   Widget parentItem = null;
+	           Object[] multiSource = null;
+	           Object previous = null;
+	           if (_event.getViewerItem() instanceof TreeItem)
+	             inputTreeItem = (TreeItem)_event.getViewerItem();
+	           else
+	             inputTreeItem = null;
+	    	   boolean wasSelected = false;
+	    	   boolean originatedHere = (_event.getOriginatingViewer() == null) || (_event.getOriginatingViewer() == _originatingViewer);
+	    	   
+	    	   //logDebugMsg("INSIDE SYSRESCHGD: " + type + ", " + src + ", " + parent);
+	    	   switch(type)
+	    	   {
+	   	    	  // SPECIAL CASES: ANYTHING TO DO WITH FILTERS!!
+	    	   	  case EVENT_RENAME_FILTER_REFERENCE:
+	    	   	  case EVENT_CHANGE_FILTER_REFERENCE:
+	    	   	      findAndUpdateFilter(_event, type);
+	    	   	      break;
+	    	   	  case EVENT_CHANGE_FILTERSTRING_REFERENCE:
+	    	   	      findAndUpdateFilterString(_event, type);
+	    	   	      break;
 
-    	   	  case EVENT_ADD:
-    	   	  case EVENT_ADD_RELATIVE:
-    	   	      if (debug)
-    	   	      {
-    	   	        logDebugMsg("SV event: EVENT_ADD ");
-    	   	      }
-    	   	      clearSelection();
-    	   	      //refresh(parent);
-    	   	      parentItem = findItem(parent);
-    	   	      if (parentItem == null)
-    	   	        return;
-    	   	      if ((parentItem instanceof Item) && !getExpanded((Item)parentItem))
-    	   	      {
-    	   	        refresh(parent); // flush cached stuff so next call will show new item
-    	   	      }
-    	   	      else if ((parentItem instanceof Item) || // regular node
-    	   	               (parent == inputProvider))  // root node. Hmm, hope this is going to work in all cases
-    	   	      {
-                  	boolean addingConnection = (src instanceof IHost);
-                  	  //System.out.println("ADDING CONNECTIONS.........................: " + addingConnection);
-                  	  //System.out.println("event.getParent() instanceof SystemRegistry: " + (event.getParent() instanceof SystemRegistry));
-                  	  //System.out.println("inputProvider.showingConnections().........: " + (inputProvider.showingConnections()));
-                    if ((parent == inputProvider) && addingConnection && 
-                  	    (event.getParent() instanceof ISystemRegistry) && 
-                  	    !inputProvider.showingConnections())
-                      return; // only reflect new connections in main perspective. pc42742
-                  	int pos = -1;
-                  	if (type == EVENT_ADD_RELATIVE)
-                  	{
-                  		previous = event.getRelativePrevious();
-                  		if (previous != null)
-                  		  pos = getItemIndex(parentItem, previous);
-                  		if (pos >= 0)
-                  		  pos++; // want to add after previous
-                  	}
-                  	else
-                  	  pos = event.getPosition();
-                  	//logDebugMsg("ADDING CONN? "+ addingConnection + ", position="+pos);
-    	   	        createTreeItem(parentItem, src, pos);
-    	   	        setSelection(new StructuredSelection(src),true);
-    	   	      }
-   	    	      break;
-    	   	  case EVENT_ADD_MANY:
-    	   	      if (debug)
-    	   	      {
-    	   	        logDebugMsg("SV event: EVENT_ADD_MANY");
-    	   	      }
-   	    	      multiSource = event.getMultiSource();
-   	    	      clearSelection();
-   	    	      parentItem = findItem(parent);
-    	   	      if (parentItem == null)
-    	   	        return;
-    	   	      if ((parentItem instanceof Item) && !getExpanded((Item)parentItem))
-    	   	      {
-                    refresh(parent); // flush cached stuff so next call will show new items
-    	   	      }
-                  else if (multiSource.length > 0)
-                  {
-                  	  boolean addingConnections = (multiSource[0] instanceof IHost);
-                      // are we restoring connections previously removed due to making a profile inactive,
-                      // and is one of these connections the one we were opened with?
-                      if (addingConnections && (event.getParent() instanceof ISystemRegistry) &&
-                               (inputProvider instanceof SystemEmptyListAPIProviderImpl))
-                      {
-                      	 boolean done = false;
-   	    	             for (int idx=0; !done && (idx<multiSource.length); idx++)                      	
-   	    	             {
-   	    	                if (multiSource[idx] == previousInputConnection)
-   	    	                {
-   	    	                	done = true;
-   	    	                	setInputProvider(previousInputProvider);
-   	    	                	previousInput = null;
-   	    	                	previousInputProvider = null;
-   	    	                }
-   	    	             }
-   	    	             if (done)
-   	    	               return;
-                      }
-                      // are we adding connections and yet we are not a secondary perspective?
-                      // If so, this event does not apply to us.                      
-                  	  else if (addingConnections && (event.getParent() instanceof ISystemRegistry) && 
-                  	                                !inputProvider.showingConnections())
-                        return;
+	    	   	  case EVENT_ADD_FILTERSTRING_REFERENCE:
+	    	   	  case EVENT_DELETE_FILTERSTRING_REFERENCE:
+	    	   	  case EVENT_MOVE_FILTERSTRING_REFERENCES:
+	    	   	      //findAndUpdateFilterStringParent(event, type);
+	    	   	      //break;
+	    	   	  case EVENT_ADD_FILTER_REFERENCE:
+	    	   	  case EVENT_DELETE_FILTER_REFERENCE:
+	    	   	  case EVENT_MOVE_FILTER_REFERENCES:
+	   	    	      // are we a secondary perspective, and our input or parent of our input was deleted?
+	    	   	      if (((type == EVENT_DELETE_FILTERSTRING_REFERENCE) || 
+	    	   	           (type == EVENT_DELETE_FILTER_REFERENCE)) &&
+	    	   	          affectsInput(src))
+	    	   	      {
+	    	   	        close();
+	    	   	        return Status.OK_STATUS; 
+	    	   	      }
 
-   	    	          for (int idx=0; idx<multiSource.length; idx++)
-   	    	          {
-    	   	            if (debug && addingConnections)
-    	   	              logDebugMsg("... new connection " + ((IHost)multiSource[idx]).getAliasName());
-   	    	            createTreeItem(parentItem, multiSource[idx], -1);
-   	    	          }
-    	   	          setSelection(new StructuredSelection(multiSource),true);
-   	    	      }   	    	        
-   	    	      break;   	    	      
-    	   	  case EVENT_REPLACE_CHILDREN:
-    	   	      if (debug)
-    	   	      {
-    	   	        logDebugMsg("SV event: EVENT_REPLACE_CHILDREN");
-    	   	      }
-   	    	      multiSource = event.getMultiSource();
-   	    	        //logDebugMsg("MULTI-SRC LENGTH : " + multiSource.length);
-   	    	      clearSelection();
-   	    	      parentItem = findItem(parent);
-    	   	      if (parentItem == null)
-    	   	        return;
-                  if (multiSource.length > 0 && parentItem != null && parentItem instanceof Item )
-                  {
-		              getControl().setRedraw(false);    	   	        
-   	    	          collapseNode(parent, true); // collapse and flush gui widgets from memory    	   	        
-   	    	          //setExpandedState(parent, true); // expand the parent
-   	    	          setExpanded( (Item) parentItem, true);  // expand the parent without calling resolveFilterString
-   	    	          TreeItem[] kids = ((TreeItem)parentItem).getItems(); // any kids? Like a dummy node?
-   	    	          if (kids != null)
-   	    	          	for (int idx=0; idx<kids.length; idx++)
-   	    	          	   kids[idx].dispose();
-                  	  //boolean addingConnections = (multiSource[0] instanceof SystemConnection);
-   	    	          for (int idx=0; idx<multiSource.length; idx++)
-   	    	          {
-    	   	            //if (debug && addingConnections)
-    	   	            //  logDebugMsg("... new connection " + ((SystemConnection)multiSource[idx]).getAliasName());
-   	    	            createTreeItem(parentItem, multiSource[idx], -1);
-   	    	          }
-		              getControl().setRedraw(true);    	   	        	   	             	    	        
-    	   	          //setSelection(new StructuredSelection(multiSource),true);
-   	    	      }   	    	        
-   	    	      break;   	    	      
-    	   	  case EVENT_CHANGE_CHILDREN:
-    	   	      if (debug)
-    	   	      {
-    	   	        logDebugMsg("SV event: EVENT_CHANGE_CHILDREN. src="+src+", parent="+parent);
-    	   	        //Exception e = new Exception();
-    	   	        //e.fillInStackTrace();
-    	   	        //e.printStackTrace();
-    	   	      }
-    	   	      // I HAVE DECIDED TO CHANGE THE SELECTION ALGO TO ONLY RESELECT IF THE CURRENT
-    	   	      // SELECTION IS A CHILD OF THE PARENT... PHIL
-                  boolean wasSrcSelected = false;
-    	   	      if (src != null) 
-    	   	      {
-                    wasSrcSelected = isSelectedOrChildSelected(src);
-                    //System.out.println("WAS SELECTED? " + wasSrcSelected);
-    	   	      }
-    	          item = findItem(parent);
-    	          //logDebugMsg("  parent = " + parent);  
-    	          //logDebugMsg("  item = " + item);
-    	          // INTERESTING BUG HERE. GETEXPANDED WILL RETURN TRUE IF THE TREE ITEM HAS EVER BEEN
-    	          // EXPANDED BUT IS NOW COLLAPSED! I CANNOT FIND ANY API IN TreeItem or TreeViewer THAT
-    	          // WILL TELL ME IF A TREE ITEM IS SHOWING OR NOT!
-    	          if ((item != null) && (item instanceof TreeItem) && ((TreeItem)item).getExpanded())
-    	          {
-                    if (wasSrcSelected)
-                    {
-                      //System.out.println("...Clearing selection");
-    	   	          clearSelection();
-                    }
-    	   	        //refresh(parent);
-    	   	        if (debug)
-    	   	          System.out.println("Found item and it was expanded for "+parent);
-		            getControl().setRedraw(false);    	   	        
-   	    	        collapseNode(parent, true); // collapse and flush gui widgets from memory    	   	        
-   	    	        setExpandedState(parent, true); // expand the parent
-		            getControl().setRedraw(true);    	   	        	   	             	    	        
-    	   	        if (wasSrcSelected)
-    	   	        {
-    	   	          //System.out.println("Setting selection to " + src);
-    	   	          setSelection(new StructuredSelection(src),true);
-    	   	        }
-    	          }
-    	          else
-    	            collapseNode(parent,true);
-   	    	      break;   	    	      
-   	    	  case EVENT_DELETE:   	    	  
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_DELETE ");
-   	    	      // are we a secondary perspective, and our input or parent of our input was deleted?
-    	   	      if (affectsInput(src))
-    	   	      {
-    	   	        close();
-    	   	        return; 
-    	   	      }
-   	    	      parentItem = findItem(parent);
-    	   	      if (parentItem == null)
-    	   	        return;
-                  if ((parentItem instanceof Item) && !getExpanded((Item)parentItem))    	   	        
-                    refresh(parent); // flush memory
-                  else
-                  {
-   	    	        wasSelected = isSelectedOrChildSelected(src);
-   	    	        if (wasSelected)
-   	    	          clearSelection();
-   	    	        remove(src);
-   	    	        if (wasSelected)
-    	   	          setSelection(new StructuredSelection(parent),true);
-                  }
-   	    	      break;
+	    	   	      findAndUpdateFilterParent(_event, type);
+	    	   	      break;
 
-   	    	  case EVENT_DELETE_MANY:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_DELETE_MANY ");  
-   	    	      multiSource = event.getMultiSource(); 
-   	    	      // are we a secondary perspective, and our input or parent of our input was deleted?
-    	   	      if (affectsInput(multiSource))
-    	   	      {
-    	   	        close();
-    	   	        return; 
-    	   	      }
-   	    	      parentItem = findItem(parent);
-    	   	      if (parentItem == null)
-    	   	        return;
-                  if ((parentItem instanceof Item) && !getExpanded((Item)parentItem))    	   	        
-                    refresh(parent); // flush memory
-                  else
-                  {  
-   	    	        wasSelected = isSelectedOrChildSelected(multiSource);
-   	    	        if (wasSelected)
-   	    	          clearSelection();
-    	   	        remove(multiSource);   	    	        
-   	    	        if (wasSelected)
-    	   	          setSelection(new StructuredSelection(parent),true);
-                  }
-   	    	      break;   	    	      
-   	    	  /* Now done below in systemRemoteResourceChanged
-   	    	  case EVENT_DELETE_REMOTE:   	    	  
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_DELETE_REMOTE ");
-                  deleteRemoteObject(src);
-   	    	      break;
+	    	   	  case EVENT_ADD:
+	    	   	  case EVENT_ADD_RELATIVE:
+	    	   	      if (debug)
+	    	   	      {
+	    	   	        logDebugMsg("SV event: EVENT_ADD ");
+	    	   	      }
+	    	   	      clearSelection();
+	    	   	      //refresh(parent);
+	    	   	      parentItem = findItem(parent);
+	    	   	      if (parentItem == null)
+	    	   	        return Status.OK_STATUS;
+	    	   	      if ((parentItem instanceof Item) && !getExpanded((Item)parentItem))
+	    	   	      {
+	    	   	        refresh(parent); // flush cached stuff so next call will show new item
+	    	   	      }
+	    	   	      else if ((parentItem instanceof Item) || // regular node
+	    	   	               (parent == inputProvider))  // root node. Hmm, hope this is going to work in all cases
+	    	   	      {
+	                  	boolean addingConnection = (src instanceof IHost);
+	                  	  //System.out.println("ADDING CONNECTIONS.........................: " + addingConnection);
+	                  	  //System.out.println("event.getParent() instanceof SystemRegistry: " + (event.getParent() instanceof SystemRegistry));
+	                  	  //System.out.println("inputProvider.showingConnections().........: " + (inputProvider.showingConnections()));
+	                    if ((parent == inputProvider) && addingConnection && 
+	                  	    (_event.getParent() instanceof ISystemRegistry) && 
+	                  	    !inputProvider.showingConnections())
+	                      return Status.OK_STATUS; // only reflect new connections in main perspective. pc42742
+	                  	int pos = -1;
+	                  	if (type == EVENT_ADD_RELATIVE)
+	                  	{
+	                  		previous = _event.getRelativePrevious();
+	                  		if (previous != null)
+	                  		  pos = getItemIndex(parentItem, previous);
+	                  		if (pos >= 0)
+	                  		  pos++; // want to add after previous
+	                  	}
+	                  	else
+	                  	  pos = _event.getPosition();
+	                  	//logDebugMsg("ADDING CONN? "+ addingConnection + ", position="+pos);
+	    	   	        createTreeItem(parentItem, src, pos);
+	    	   	        setSelection(new StructuredSelection(src),true);
+	    	   	      }
+	   	    	      break;
+	    	   	  case EVENT_ADD_MANY:
+	    	   	      if (debug)
+	    	   	      {
+	    	   	        logDebugMsg("SV event: EVENT_ADD_MANY");
+	    	   	      }
+	   	    	      multiSource = _event.getMultiSource();
+	   	    	      clearSelection();
+	   	    	      parentItem = findItem(parent);
+	    	   	      if (parentItem == null)
+	    	   	        return Status.OK_STATUS;
+	    	   	      if ((parentItem instanceof Item) && !getExpanded((Item)parentItem))
+	    	   	      {
+	                    refresh(parent); // flush cached stuff so next call will show new items
+	    	   	      }
+	                  else if (multiSource.length > 0)
+	                  {
+	                  	  boolean addingConnections = (multiSource[0] instanceof IHost);
+	                      // are we restoring connections previously removed due to making a profile inactive,
+	                      // and is one of these connections the one we were opened with?
+	                      if (addingConnections && (_event.getParent() instanceof ISystemRegistry) &&
+	                               (inputProvider instanceof SystemEmptyListAPIProviderImpl))
+	                      {
+	                      	 boolean done = false;
+	   	    	             for (int idx=0; !done && (idx<multiSource.length); idx++)                      	
+	   	    	             {
+	   	    	                if (multiSource[idx] == previousInputConnection)
+	   	    	                {
+	   	    	                	done = true;
+	   	    	                	setInputProvider(previousInputProvider);
+	   	    	                	previousInput = null;
+	   	    	                	previousInputProvider = null;
+	   	    	                }
+	   	    	             }
+	   	    	             if (done)
+	   	    	               return Status.OK_STATUS;
+	                      }
+	                      // are we adding connections and yet we are not a secondary perspective?
+	                      // If so, this event does not apply to us.                      
+	                  	  else if (addingConnections && (_event.getParent() instanceof ISystemRegistry) && 
+	                  	                                !inputProvider.showingConnections())
+	                        return Status.OK_STATUS;
 
-   	    	  case EVENT_DELETE_REMOTE_MANY:
-   	    	  // multi-source: array of objects to delete
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_DELETE_REMOTE_MANY ");  
-    	   	      multiSource = event.getMultiSource();
-                  //remoteItemsToSkip = null; // reset
-    	   	      if ((multiSource == null) || (multiSource.length==0))
-    	   	        return;
-                  for (int idx=0; idx<multiSource.length; idx++)
-                    deleteRemoteObject(multiSource[idx]);
-   	    	      break;   	    	      
-   	    	  */
-   	    	  case EVENT_RENAME:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_RENAME ");
-	              properties[0] = IBasicPropertyConstants.P_TEXT;
-	              update(src, properties); // for refreshing non-structural properties in viewer when model changes   	   	      
-   	    	      updatePropertySheet();
-   	    	      break;
-   	    	  /* Now done below in systemRemoteResourceChanged
-   	    	  case EVENT_RENAME_REMOTE:
-   	    	  // SRC: the updated remote object, after the rename
-   	    	  // PARENT: the String from calling getAbsoluteName() on the remote adapter BEFORE updating the remote object's name
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_RENAME_REMOTE ");
-    	   	        
-   	   	          renameRemoteObject(src, (String)parent);
-   	    	      break;
-   	    	  */
-   	    	  case EVENT_ICON_CHANGE:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_ICON_CHANGE ");
-    	   	      
-    	   	      if (initViewerFilters != null && initViewerFilters.length > 0) 
-    	   	      {    	   	 
-    	   	    	  Widget w = findItem(src);
-    	   	    	  if (w == null)
-    	   	    	  {
-    	   	    		  refresh(parent);
-    	   	    	  }
-    	   	    	  else
-    	   	    	  {
-    	   	         	properties[0] = IBasicPropertyConstants.P_IMAGE;
-        	   	      	update(src, properties); // for refreshing non-structural properties in viewer when model changes
-        	  
-    	   	    	  }
-    	   	      }
-    	   	      else {
-    	   	      	properties[0] = IBasicPropertyConstants.P_IMAGE;
-    	   	      	update(src, properties); // for refreshing non-structural properties in viewer when model changes
-    	   	      }
-    	   	      
-   	    	      //updatePropertySheet();
-   	    	      break;
-   	    	  //case EVENT_CHANGE:
-    	   	      //if (debug)
-    	   	        //logDebugMsg("SV event: EVENT_CHANGE ");
-   	    	      //refresh(src); THIS IS AN EVIL OPERATION: CAUSES ALL EXPANDED NODES TO RE-REQUEST THEIR CHILDREN. OUCH!
-   	    	      //updatePropertySheet();
-   	    	      //break;
-   	    	  case EVENT_REFRESH:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_REFRESH ");
-    	   	      //if (src != null)
-   	    	      //  refresh(src); // ONLY VALID WHEN USER TRULY WANTS TO REQUERY CHILDREN FROM HOST
-   	    	      //else
-   	    	      //  refresh(); // refresh entire tree
-   	    	      if ((src == null) || (src == RSEUIPlugin.getTheSystemRegistry()))
-   	    	        refreshAll();
-   	    	      else
-   	    	      {
-   	    	        //smartRefresh(src, false);
-   	    	        smartRefresh(src, true);
-   	    	      }
-   	    	      updatePropertySheet();
-   	    	      break;
-   	    	  // refresh the parent of the currently selected items.
-   	    	  // todo: intelligently re-select previous selections
-   	    	  case EVENT_REFRESH_SELECTED_PARENT:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_REFRESH_SELECTED_PARENT ");
-    	   	      TreeItem[] items = getTree().getSelection();    	   	      
-    	   	      if ((items != null) && (items.length > 0) && (items[0] instanceof Item))
-    	   	      {
-    	   	      	//System.out.println("Selection not empty");
-    	   	      	parentItem = getParentItem(items[0]); // get parent of first selection. Only allowed to select items of same parent.
-    	   	      	if ((parentItem != null) && (parentItem instanceof Item))
-    	   	      	{
-    	   	      	  //System.out.println("parent of selection not empty: "+parentItem.getData());
-    	   	          smartRefresh(new TreeItem[] {(TreeItem)parentItem});
-    	   	      	}
-    	   	      	//else
-    	   	      	//System.out.println("parent of selection is empty");    	   	      	
-    	   	      }
-    	   	      //else
-    	   	      	//System.out.println("Selection is empty");    	   	      
-    	   	      break;
-   	    	  case EVENT_REFRESH_SELECTED:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_REFRESH_SELECTED ");
-    	   	      IStructuredSelection selected = (IStructuredSelection)getSelection();
-    	   	      Iterator i = selected.iterator();
-    	   	      // the following is a tweak. Refresh only re-queries the children. If the selected item has no
-    	   	      //  childen, then refresh does nothing. Instead of that outcome, we re-define it to mean refresh
-    	   	      //  the parent. The tricky part is to prevent multiple refreshes on multiple selections so we have
-    	   	      //  to pre-scan for this scenario.
-    	   	      // We also want to re-select any remote objects currently selected. They lose their selection as their
-    	   	      //  memory address changes.
-    	   	      Item  parentElementItem = null;
-    	   	      Vector  selectedRemoteObjects = new Vector();
-    	   	      ss = null;
-    	   	      items = getTree().getSelection();
-    	   	      int itemIdx = 0;
-    	   	      SystemElapsedTimer timer = null;
-    	   	      if (doTimings)
-    	   	         timer = new SystemElapsedTimer();
-                  //System.out.println("Inside EVENT_REFRESH_SELECTED. FIRST SELECTED OBJECT = " + items[0].handle);
-    	   	      while (i.hasNext())
-    	   	      {
+	   	    	          for (int idx=0; idx<multiSource.length; idx++)
+	   	    	          {
+	    	   	            if (debug && addingConnections)
+	    	   	              logDebugMsg("... new connection " + ((IHost)multiSource[idx]).getAliasName());
+	   	    	            createTreeItem(parentItem, multiSource[idx], -1);
+	   	    	          }
+	    	   	          setSelection(new StructuredSelection(multiSource),true);
+	   	    	      }   	    	        
+	   	    	      break;   	    	      
+	    	   	  case EVENT_REPLACE_CHILDREN:
+	    	   	      if (debug)
+	    	   	      {
+	    	   	        logDebugMsg("SV event: EVENT_REPLACE_CHILDREN");
+	    	   	      }
+	   	    	      multiSource = _event.getMultiSource();
+	   	    	        //logDebugMsg("MULTI-SRC LENGTH : " + multiSource.length);
+	   	    	      clearSelection();
+	   	    	      parentItem = findItem(parent);
+	    	   	      if (parentItem == null)
+	    	   	        return Status.OK_STATUS;
+	                  if (multiSource.length > 0 && parentItem != null && parentItem instanceof Item )
+	                  {
+			              getControl().setRedraw(false);    	   	        
+	   	    	          collapseNode(parent, true); // collapse and flush gui widgets from memory    	   	        
+	   	    	          //setExpandedState(parent, true); // expand the parent
+	   	    	          setExpanded( (Item) parentItem, true);  // expand the parent without calling resolveFilterString
+	   	    	          TreeItem[] kids = ((TreeItem)parentItem).getItems(); // any kids? Like a dummy node?
+	   	    	          if (kids != null)
+	   	    	          	for (int idx=0; idx<kids.length; idx++)
+	   	    	          	   kids[idx].dispose();
+	                  	  //boolean addingConnections = (multiSource[0] instanceof SystemConnection);
+	   	    	          for (int idx=0; idx<multiSource.length; idx++)
+	   	    	          {
+	    	   	            //if (debug && addingConnections)
+	    	   	            //  logDebugMsg("... new connection " + ((SystemConnection)multiSource[idx]).getAliasName());
+	   	    	            createTreeItem(parentItem, multiSource[idx], -1);
+	   	    	          }
+			              getControl().setRedraw(true);    	   	        	   	             	    	        
+	    	   	          //setSelection(new StructuredSelection(multiSource),true);
+	   	    	      }   	    	        
+	   	    	      break;   	    	      
+	    	   	  case EVENT_CHANGE_CHILDREN:
+	    	   	      if (debug)
+	    	   	      {
+	    	   	        logDebugMsg("SV event: EVENT_CHANGE_CHILDREN. src="+src+", parent="+parent);
+	    	   	        //Exception e = new Exception();
+	    	   	        //e.fillInStackTrace();
+	    	   	        //e.printStackTrace();
+	    	   	      }
+	    	   	      // I HAVE DECIDED TO CHANGE THE SELECTION ALGO TO ONLY RESELECT IF THE CURRENT
+	    	   	      // SELECTION IS A CHILD OF THE PARENT... PHIL
+	                  boolean wasSrcSelected = false;
+	    	   	      if (src != null) 
+	    	   	      {
+	                    wasSrcSelected = isSelectedOrChildSelected(src);
+	                    //System.out.println("WAS SELECTED? " + wasSrcSelected);
+	    	   	      }
+	    	          item = findItem(parent);
+	    	          //logDebugMsg("  parent = " + parent);  
+	    	          //logDebugMsg("  item = " + item);
+	    	          // INTERESTING BUG HERE. GETEXPANDED WILL RETURN TRUE IF THE TREE ITEM HAS EVER BEEN
+	    	          // EXPANDED BUT IS NOW COLLAPSED! I CANNOT FIND ANY API IN TreeItem or TreeViewer THAT
+	    	          // WILL TELL ME IF A TREE ITEM IS SHOWING OR NOT!
+	    	          if ((item != null) && (item instanceof TreeItem) && ((TreeItem)item).getExpanded())
+	    	          {
+	                    if (wasSrcSelected)
+	                    {
+	                      //System.out.println("...Clearing selection");
+	    	   	          clearSelection();
+	                    }
+	    	   	        //refresh(parent);
+	    	   	        if (debug)
+	    	   	          System.out.println("Found item and it was expanded for "+parent);
+			            getControl().setRedraw(false);    	   	        
+	   	    	        collapseNode(parent, true); // collapse and flush gui widgets from memory    	   	        
+	   	    	        setExpandedState(parent, true); // expand the parent
+			            getControl().setRedraw(true);    	   	        	   	             	    	        
+	    	   	        if (wasSrcSelected)
+	    	   	        {
+	    	   	          //System.out.println("Setting selection to " + src);
+	    	   	          setSelection(new StructuredSelection(src),true);
+	    	   	        }
+	    	          }
+	    	          else
+	    	            collapseNode(parent,true);
+	   	    	      break;   	    	      
+	   	    	  case EVENT_DELETE:   	    	  
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_DELETE ");
+	   	    	      // are we a secondary perspective, and our input or parent of our input was deleted?
+	    	   	      if (affectsInput(src))
+	    	   	      {
+	    	   	        close();
+	    	   	        return Status.OK_STATUS; 
+	    	   	      }
+	   	    	      parentItem = findItem(parent);
+	    	   	      if (parentItem == null)
+	    	   	        return Status.OK_STATUS;
+	                  if ((parentItem instanceof Item) && !getExpanded((Item)parentItem))    	   	        
+	                    refresh(parent); // flush memory
+	                  else
+	                  {
+	   	    	        wasSelected = isSelectedOrChildSelected(src);
+	   	    	        if (wasSelected)
+	   	    	          clearSelection();
+	   	    	        _originatingViewer.remove(src);
+	   	    	        if (wasSelected)
+	    	   	          setSelection(new StructuredSelection(parent),true);
+	                  }
+	   	    	      break;
 
-    	   	      	  Object element = i.next();
-    	   	      	  ISystemViewElementAdapter adapter = getAdapter(element);
-    	   	      	  if ((parentElementItem==null) && (adapter != null) && (!adapter.hasChildren(element)))
-    	   	      	  {    	   	      	  	
-    	   	      	    //parentItem = getParentItem((Item)findItem(element));
-    	   	      	    parentItem = getParentItem(items[itemIdx]);
-    	   	      	    if ((parentItem != null) && (parentItem instanceof Item))
-    	   	      	      parentElementItem = (Item)parentItem; //.getData();
-    	   	      	  }
-    	   	      	  if (getRemoteAdapter(element) != null)
-    	   	      	  {
-    	   	      	    selectedRemoteObjects.addElement(element);
-    	   	      	    if (ss==null)
-    	   	      	      ss=getRemoteAdapter(element).getSubSystem(element);
-    	   	      	  }
-    	   	      	  itemIdx++;
-    	   	      }
-    	   	      if (parentElementItem != null)
-    	   	      {
-    	   	        //refresh(parentElement);
-    	   	        smartRefresh(new TreeItem[] {(TreeItem)parentElementItem});
-    	   	        if (selectedRemoteObjects.size() > 0)
-    	   	        {
-    	   	            selectRemoteObjects(selectedRemoteObjects, ss, parentElementItem);
-    	   	        }
-    	   	      }
-    	   	      // the following is another tweak. If an expanded object is selected for refresh, which has remote children,
-    	   	      // and any of those children are expanded, then on refresh the resulting list may be in a different 
-    	   	      // order and the silly algorithm inside tree viewer will simply re-expand the children at the previous
-    	   	      // relative position. If that position has changed, the wrong children are re-expanded!
-    	   	      // How to fix this? Ugly code to get the query the list of expanded child elements prior to refresh, 
-    	   	      // collapse them, do the refresh, then re-expand them based on absolute name versus tree position.
-    	   	      // Actually, to do this right we need to test if the children of the selected item are remote objects
-    	   	      // versus just the selected items because they may have selected a filter!
-    	   	      // We go straight the TreeItem level for performance and ease of programming.
-                  else
-                  {                  	
-                     smartRefresh(getTree().getSelection());
-                  }
-    	   	      if (doTimings)
-    	   	      {
-    	   	         timer.setEndTime();
-    	   	         System.out.println("Time to refresh selected: " + timer);
-    	   	      }
-                  //else
-                  //{                  	
-    	   	        //i = selected.iterator();
-    	   	        //while (i.hasNext())
-    	   	          //refresh(i.next());
-                  //}
-                  
-   	    	      updatePropertySheet();
-   	    	      break;
-   	    	  case EVENT_REFRESH_SELECTED_FILTER:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_REFRESH_SELECTED_FILTER ");
-    	   	      IStructuredSelection selectedItems= (IStructuredSelection)getSelection();
-    	   	      Iterator j = selectedItems.iterator();
-    	   	      // We climb up the tree here until we find a SystemFilterReference data member in the tree.
-    	   	      // If we do find a reference of SystemFilterReference we refresh on it.
-    	   	      // If we do not find a reference of SystemFilterReference we.....TODO: WHAT DO WE DO???
-    	   	      // We also want to re-select any remote objects currently selected. They lose their selection as their
-    	   	      //  memory address changes.
-    	   	      Item  parentElemItem = null;
-    	   	      Vector  selRemoteObjects = new Vector();
-                  ss = null;
-    	   	      if (j.hasNext())
-    	   	      {
-    	   	      	  Object element = j.next();
-    	   	      	  ISystemViewElementAdapter adapter = getAdapter(element);
-    	   	      	  if ((parentElemItem==null) && (adapter != null))
-    	   	      	  {
-    	   	      	    Item parItem = getParentItem((Item)findItem(element));
+	   	    	  case EVENT_DELETE_MANY:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_DELETE_MANY ");  
+	   	    	      multiSource = _event.getMultiSource(); 
+	   	    	      // are we a secondary perspective, and our input or parent of our input was deleted?
+	    	   	      if (affectsInput(multiSource))
+	    	   	      {
+	    	   	        close();
+	    	   	        return Status.OK_STATUS; 
+	    	   	      }
+	   	    	      parentItem = findItem(parent);
+	    	   	      if (parentItem == null)
+	    	   	        return Status.OK_STATUS;
+	                  if ((parentItem instanceof Item) && !getExpanded((Item)parentItem))    	   	        
+	                    refresh(parent); // flush memory
+	                  else
+	                  {  
+	   	    	        wasSelected = isSelectedOrChildSelected(multiSource);
+	   	    	        if (wasSelected)
+	   	    	          clearSelection();
+	    	   	        _originatingViewer.remove(multiSource);   	    	        
+	   	    	        if (wasSelected)
+	    	   	          setSelection(new StructuredSelection(parent),true);
+	                  }
+	   	    	      break;   	    	      
+	   	    	  /* Now done below in systemRemoteResourceChanged
+	   	    	  case EVENT_DELETE_REMOTE:   	    	  
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_DELETE_REMOTE ");
+	                  deleteRemoteObject(src);
+	   	    	      break;
 
-    	   	      	    if ((parItem != null) && (parItem instanceof Item))
-    	   	      	    	parentElemItem = (Item)parItem; //.getData();    	   	      	    
-	   	   	      	    	
- 	  	   	      	    while (parItem!= null && !(parItem.getData() instanceof ISystemFilterReference))
-    	   	      	    {
-	    	   	      	    parItem = getParentItem((Item)parItem);	    	
+	   	    	  case EVENT_DELETE_REMOTE_MANY:
+	   	    	  // multi-source: array of objects to delete
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_DELETE_REMOTE_MANY ");  
+	    	   	      multiSource = event.getMultiSource();
+	                  //remoteItemsToSkip = null; // reset
+	    	   	      if ((multiSource == null) || (multiSource.length==0))
+	    	   	        return;
+	                  for (int idx=0; idx<multiSource.length; idx++)
+	                    deleteRemoteObject(multiSource[idx]);
+	   	    	      break;   	    	      
+	   	    	  */
+	   	    	  case EVENT_RENAME:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_RENAME ");
+		              properties[0] = IBasicPropertyConstants.P_TEXT;
+		              update(src, properties); // for refreshing non-structural properties in viewer when model changes   	   	      
+	   	    	      updatePropertySheet();
+	   	    	      break;
+	   	    	  /* Now done below in systemRemoteResourceChanged
+	   	    	  case EVENT_RENAME_REMOTE:
+	   	    	  // SRC: the updated remote object, after the rename
+	   	    	  // PARENT: the String from calling getAbsoluteName() on the remote adapter BEFORE updating the remote object's name
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_RENAME_REMOTE ");
+	    	   	        
+	   	   	          renameRemoteObject(src, (String)parent);
+	   	    	      break;
+	   	    	  */
+	   	    	  case EVENT_ICON_CHANGE:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_ICON_CHANGE ");
+	    	   	      
+	    	   	      if (initViewerFilters != null && initViewerFilters.length > 0) 
+	    	   	      {    	   	 
+	    	   	    	  Widget w = findItem(src);
+	    	   	    	  if (w == null)
+	    	   	    	  {
+	    	   	    		  refresh(parent);
+	    	   	    	  }
+	    	   	    	  else
+	    	   	    	  {
+	    	   	         	properties[0] = IBasicPropertyConstants.P_IMAGE;
+	        	   	      	update(src, properties); // for refreshing non-structural properties in viewer when model changes
+	        	  
+	    	   	    	  }
+	    	   	      }
+	    	   	      else {
+	    	   	      	properties[0] = IBasicPropertyConstants.P_IMAGE;
+	    	   	      	update(src, properties); // for refreshing non-structural properties in viewer when model changes
+	    	   	      }
+	    	   	      
+	   	    	      //updatePropertySheet();
+	   	    	      break;
+	   	    	  //case EVENT_CHANGE:
+	    	   	      //if (debug)
+	    	   	        //logDebugMsg("SV event: EVENT_CHANGE ");
+	   	    	      //refresh(src); THIS IS AN EVIL OPERATION: CAUSES ALL EXPANDED NODES TO RE-REQUEST THEIR CHILDREN. OUCH!
+	   	    	      //updatePropertySheet();
+	   	    	      //break;
+	   	    	  case EVENT_REFRESH:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_REFRESH ");
+	    	   	      //if (src != null)
+	   	    	      //  refresh(src); // ONLY VALID WHEN USER TRULY WANTS TO REQUERY CHILDREN FROM HOST
+	   	    	      //else
+	   	    	      //  refresh(); // refresh entire tree
+	   	    	      if ((src == null) || (src == RSEUIPlugin.getTheSystemRegistry()))
+	   	    	        refreshAll();
+	   	    	      else
+	   	    	      {
+	   	    	        //smartRefresh(src, false);
+	   	    	        smartRefresh(src, true);
+	   	    	      }
+	   	    	      updatePropertySheet();
+	   	    	      break;
+	   	    	  // refresh the parent of the currently selected items.
+	   	    	  // todo: intelligently re-select previous selections
+	   	    	  case EVENT_REFRESH_SELECTED_PARENT:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_REFRESH_SELECTED_PARENT ");
+	    	   	      TreeItem[] items = getTree().getSelection();    	   	      
+	    	   	      if ((items != null) && (items.length > 0) && (items[0] instanceof Item))
+	    	   	      {
+	    	   	      	//System.out.println("Selection not empty");
+	    	   	      	parentItem = getParentItem(items[0]); // get parent of first selection. Only allowed to select items of same parent.
+	    	   	      	if ((parentItem != null) && (parentItem instanceof Item))
+	    	   	      	{
+	    	   	      	  //System.out.println("parent of selection not empty: "+parentItem.getData());
+	    	   	          smartRefresh(new TreeItem[] {(TreeItem)parentItem});
+	    	   	      	}
+	    	   	      	//else
+	    	   	      	//System.out.println("parent of selection is empty");    	   	      	
+	    	   	      }
+	    	   	      //else
+	    	   	      	//System.out.println("Selection is empty");    	   	      
+	    	   	      break;
+	   	    	  case EVENT_REFRESH_SELECTED:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_REFRESH_SELECTED ");
+	    	   	      IStructuredSelection selected = (IStructuredSelection)getSelection();
+	    	   	      Iterator i = selected.iterator();
+	    	   	      // the following is a tweak. Refresh only re-queries the children. If the selected item has no
+	    	   	      //  childen, then refresh does nothing. Instead of that outcome, we re-define it to mean refresh
+	    	   	      //  the parent. The tricky part is to prevent multiple refreshes on multiple selections so we have
+	    	   	      //  to pre-scan for this scenario.
+	    	   	      // We also want to re-select any remote objects currently selected. They lose their selection as their
+	    	   	      //  memory address changes.
+	    	   	      Item  parentElementItem = null;
+	    	   	      Vector  selectedRemoteObjects = new Vector();
+	    	   	      ss = null;
+	    	   	      items = getTree().getSelection();
+	    	   	      int itemIdx = 0;
+	    	   	      SystemElapsedTimer timer = null;
+	    	   	      if (doTimings)
+	    	   	         timer = new SystemElapsedTimer();
+	                  //System.out.println("Inside EVENT_REFRESH_SELECTED. FIRST SELECTED OBJECT = " + items[0].handle);
+	    	   	      while (i.hasNext())
+	    	   	      {
+
+	    	   	      	  Object element = i.next();
+	    	   	      	  ISystemViewElementAdapter adapter = _originatingViewer.getAdapter(element);
+	    	   	      	  if ((parentElementItem==null) && (adapter != null) && (!adapter.hasChildren(element)))
+	    	   	      	  {    	   	      	  	
+	    	   	      	    //parentItem = getParentItem((Item)findItem(element));
+	    	   	      	    parentItem = getParentItem(items[itemIdx]);
+	    	   	      	    if ((parentItem != null) && (parentItem instanceof Item))
+	    	   	      	      parentElementItem = (Item)parentItem; //.getData();
+	    	   	      	  }
+	    	   	      	  if (getRemoteAdapter(element) != null)
+	    	   	      	  {
+	    	   	      	    selectedRemoteObjects.addElement(element);
+	    	   	      	    if (ss==null)
+	    	   	      	      ss=getRemoteAdapter(element).getSubSystem(element);
+	    	   	      	  }
+	    	   	      	  itemIdx++;
+	    	   	      }
+	    	   	      if (parentElementItem != null)
+	    	   	      {
+	    	   	        //refresh(parentElement);
+	    	   	        smartRefresh(new TreeItem[] {(TreeItem)parentElementItem});
+	    	   	        if (selectedRemoteObjects.size() > 0)
+	    	   	        {
+	    	   	            selectRemoteObjects(selectedRemoteObjects, ss, parentElementItem);
+	    	   	        }
+	    	   	      }
+	    	   	      // the following is another tweak. If an expanded object is selected for refresh, which has remote children,
+	    	   	      // and any of those children are expanded, then on refresh the resulting list may be in a different 
+	    	   	      // order and the silly algorithm inside tree viewer will simply re-expand the children at the previous
+	    	   	      // relative position. If that position has changed, the wrong children are re-expanded!
+	    	   	      // How to fix this? Ugly code to get the query the list of expanded child elements prior to refresh, 
+	    	   	      // collapse them, do the refresh, then re-expand them based on absolute name versus tree position.
+	    	   	      // Actually, to do this right we need to test if the children of the selected item are remote objects
+	    	   	      // versus just the selected items because they may have selected a filter!
+	    	   	      // We go straight the TreeItem level for performance and ease of programming.
+	                  else
+	                  {                  	
+	                     smartRefresh(getTree().getSelection());
+	                  }
+	    	   	      if (doTimings)
+	    	   	      {
+	    	   	         timer.setEndTime();
+	    	   	         System.out.println("Time to refresh selected: " + timer);
+	    	   	      }
+	                  //else
+	                  //{                  	
+	    	   	        //i = selected.iterator();
+	    	   	        //while (i.hasNext())
+	    	   	          //refresh(i.next());
+	                  //}
+	                  
+	   	    	      updatePropertySheet();
+	   	    	      break;
+	   	    	  case EVENT_REFRESH_SELECTED_FILTER:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_REFRESH_SELECTED_FILTER ");
+	    	   	      IStructuredSelection selectedItems= (IStructuredSelection)getSelection();
+	    	   	      Iterator j = selectedItems.iterator();
+	    	   	      // We climb up the tree here until we find a SystemFilterReference data member in the tree.
+	    	   	      // If we do find a reference of SystemFilterReference we refresh on it.
+	    	   	      // If we do not find a reference of SystemFilterReference we.....TODO: WHAT DO WE DO???
+	    	   	      // We also want to re-select any remote objects currently selected. They lose their selection as their
+	    	   	      //  memory address changes.
+	    	   	      Item  parentElemItem = null;
+	    	   	      Vector  selRemoteObjects = new Vector();
+	                  ss = null;
+	    	   	      if (j.hasNext())
+	    	   	      {
+	    	   	      	  Object element = j.next();
+	    	   	      	  ISystemViewElementAdapter adapter = _originatingViewer.getAdapter(element);
+	    	   	      	  if ((parentElemItem==null) && (adapter != null))
+	    	   	      	  {
+	    	   	      	    Item parItem = getParentItem((Item)findItem(element));
 
 	    	   	      	    if ((parItem != null) && (parItem instanceof Item))
-	    	   	      	    	parentElemItem = (Item)parItem; //.getData();
-    	   	      	    }
-    	   	      	  }
-    	   	      	  if (getRemoteAdapter(element) != null)
-    	   	      	  {
-    	   	      	    selRemoteObjects.addElement(element);
-    	   	      	    if (ss==null)
-    	   	      	      ss=getRemoteAdapter(element).getSubSystem(element);
-    	   	      	  }
-    	   	      }
-    	   	      
-				  if (parentElemItem != null && (parentElemItem.getData() instanceof ISystemFilterReference))
-    	   	      {
-    	   	        smartRefresh(new TreeItem[] {(TreeItem)parentElemItem});
-    	   	        if (selRemoteObjects.size() > 0)
-    	   	        {
-    	   	          	selectRemoteObjects(selRemoteObjects, ss, parentElemItem);
-    	   	        }
-    	   	        
-	   	    	    updatePropertySheet();    	   	        
-    	   	      }
-    	   	      else
-    	   	      {
-    	   	      	// if we cannot find a parent element that has a system filter reference then we refresh
-    	   	      	// everything since the explorer must be within a filter
-    	   	      	event.setType(ISystemResourceChangeEvents.EVENT_REFRESH);
-    	   	      	systemResourceChanged(event);
-    	   	      }
-   	    	      break;   	    	      
-   	    	  case EVENT_REFRESH_REMOTE:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_REFRESH_REMOTE: src = "+src);
-    	   	      refreshRemoteObject(src, parent, originatedHere);
-   	    	      break;
-   	    	  case EVENT_SELECT_REMOTE:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_SELECT_REMOTE: src = "+src);
-                  //remoteItemsToSkip = null; // reset
-                  selectRemoteObjects(src, (ISubSystem)null, parent);
-   	    	      break;
+	    	   	      	    	parentElemItem = (Item)parItem; //.getData();    	   	      	    
+		   	   	      	    	
+	 	  	   	      	    while (parItem!= null && !(parItem.getData() instanceof ISystemFilterReference))
+	    	   	      	    {
+		    	   	      	    parItem = getParentItem((Item)parItem);	    	
 
-   	    	  case EVENT_MOVE_MANY:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_MOVE_MANY ");   	    	  
-   	    	      multiSource = event.getMultiSource();
-   	    	      if ((multiSource == null) || (multiSource.length == 0))
-   	    	        return;
-   	    	      parentItem = findItem(parent);
-    	   	      if (parentItem == null)
-    	   	        return;
-                  if ((parentItem instanceof Item) && !getExpanded((Item)parentItem))    	   	        
-                    refresh(parent); // flush memory
-                  else
-                  {
-                  	clearSelection();
-                  	moveTreeItems(parentItem, multiSource, event.getPosition());
-   	    	        setSelection(new StructuredSelection(multiSource),true);                  	  
-                  }
-   	    	      break;   	    	      
-   	    	  case EVENT_PROPERTY_CHANGE:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_PROPERTY_CHANGE ");   	    	  
-    	   	      String[] allProps = {IBasicPropertyConstants.P_TEXT,IBasicPropertyConstants.P_IMAGE};
-                  ISystemRemoteElementAdapter ra = getRemoteAdapter(src);
-                  if (ra != null) 
-                  {
-                  	 updateRemoteObjectProperties(src);
-                  } 
-                  else  	   	      
-	                update(src, allProps); // for refreshing non-structural properties in viewer when model changes   	   	      
-   	    	      updatePropertySheet();
-   	    	      break;
-   	    	  case EVENT_PROPERTYSHEET_UPDATE:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_PROPERTYSHEET_UPDATE ");   	    	  
-   	    	      updatePropertySheet();
-   	    	      break;
-   	    	  case EVENT_MUST_COLLAPSE:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_MUST_COLLAPSE ");   	    	  
-   	    	      collapseNode(src, true); // collapse and flush gui widgets from memory
-   	    	      break;   	    	      
-   	    	  case EVENT_COLLAPSE_ALL:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_COLLAPSE_ALL ");   	    	  
-   	    	      collapseAll(); // collapse all
-   	    	      if ((src!=null) && (src instanceof String) && ((String)src).equals("false")) // defect 41203
-   	    	        {}
-   	    	      else
-   	    	        refresh(); // flush gui widgets from memory
-   	    	      break;   	    	      
-   	    	  case EVENT_COLLAPSE_SELECTED: // defect 41203
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_COLLAPSE_SELECTED ");   	    	  
-   	    	      collapseSelected(); 
-   	    	      break;   	    	      
-   	    	  case EVENT_EXPAND_SELECTED: // defect 41203
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_EXPAND_SELECTED ");   	    	  
-   	    	      expandSelected(); 
-   	    	      break;   	    	      
+		    	   	      	    if ((parItem != null) && (parItem instanceof Item))
+		    	   	      	    	parentElemItem = (Item)parItem; //.getData();
+	    	   	      	    }
+	    	   	      	  }
+	    	   	      	  if (getRemoteAdapter(element) != null)
+	    	   	      	  {
+	    	   	      	    selRemoteObjects.addElement(element);
+	    	   	      	    if (ss==null)
+	    	   	      	      ss=getRemoteAdapter(element).getSubSystem(element);
+	    	   	      	  }
+	    	   	      }
+	    	   	      
+					  if (parentElemItem != null && (parentElemItem.getData() instanceof ISystemFilterReference))
+	    	   	      {
+	    	   	        smartRefresh(new TreeItem[] {(TreeItem)parentElemItem});
+	    	   	        if (selRemoteObjects.size() > 0)
+	    	   	        {
+	    	   	          	selectRemoteObjects(selRemoteObjects, ss, parentElemItem);
+	    	   	        }
+	    	   	        
+		   	    	    updatePropertySheet();    	   	        
+	    	   	      }
+	    	   	      else
+	    	   	      {
+	    	   	      	// if we cannot find a parent element that has a system filter reference then we refresh
+	    	   	      	// everything since the explorer must be within a filter
+	    	   	      	_event.setType(ISystemResourceChangeEvents.EVENT_REFRESH);
+	    	   	      	systemResourceChanged(_event);
+	    	   	      }
+	   	    	      break;   	    	      
+	   	    	  case EVENT_REFRESH_REMOTE:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_REFRESH_REMOTE: src = "+src);
+	    	   	      refreshRemoteObject(src, parent, originatedHere);
+	   	    	      break;
+	   	    	  case EVENT_SELECT_REMOTE:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_SELECT_REMOTE: src = "+src);
+	                  //remoteItemsToSkip = null; // reset
+	                  selectRemoteObjects(src, (ISubSystem)null, parent);
+	   	    	      break;
+
+	   	    	  case EVENT_MOVE_MANY:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_MOVE_MANY ");   	    	  
+	   	    	      multiSource = _event.getMultiSource();
+	   	    	      if ((multiSource == null) || (multiSource.length == 0))
+	   	    	        return Status.OK_STATUS;
+	   	    	      parentItem = findItem(parent);
+	    	   	      if (parentItem == null)
+	    	   	        return Status.OK_STATUS;
+	                  if ((parentItem instanceof Item) && !getExpanded((Item)parentItem))    	   	        
+	                    refresh(parent); // flush memory
+	                  else
+	                  {
+	                  	clearSelection();
+	                  	moveTreeItems(parentItem, multiSource, _event.getPosition());
+	   	    	        setSelection(new StructuredSelection(multiSource),true);                  	  
+	                  }
+	   	    	      break;   	    	      
+	   	    	  case EVENT_PROPERTY_CHANGE:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_PROPERTY_CHANGE ");   	    	  
+	    	   	      String[] allProps = {IBasicPropertyConstants.P_TEXT,IBasicPropertyConstants.P_IMAGE};
+	                  ISystemRemoteElementAdapter ra = getRemoteAdapter(src);
+	                  if (ra != null) 
+	                  {
+	                  	 updateRemoteObjectProperties(src);
+	                  } 
+	                  else  	   	      
+		                update(src, allProps); // for refreshing non-structural properties in viewer when model changes   	   	      
+	   	    	      updatePropertySheet();
+	   	    	      break;
+	   	    	  case EVENT_PROPERTYSHEET_UPDATE:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_PROPERTYSHEET_UPDATE ");   	    	  
+	   	    	      updatePropertySheet();
+	   	    	      break;
+	   	    	  case EVENT_MUST_COLLAPSE:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_MUST_COLLAPSE ");   	    	  
+	   	    	      collapseNode(src, true); // collapse and flush gui widgets from memory
+	   	    	      break;   	    	      
+	   	    	  case EVENT_COLLAPSE_ALL:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_COLLAPSE_ALL ");   	    	  
+	   	    	      collapseAll(); // collapse all
+	   	    	      if ((src!=null) && (src instanceof String) && ((String)src).equals("false")) // defect 41203
+	   	    	        {}
+	   	    	      else
+	   	    	        refresh(); // flush gui widgets from memory
+	   	    	      break;   	    	      
+	   	    	  case EVENT_COLLAPSE_SELECTED: // defect 41203
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_COLLAPSE_SELECTED ");   	    	  
+	   	    	      collapseSelected(); 
+	   	    	      break;   	    	      
+	   	    	  case EVENT_EXPAND_SELECTED: // defect 41203
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_EXPAND_SELECTED ");   	    	  
+	   	    	      expandSelected(); 
+	   	    	      break;   	    	      
 
 
-              case EVENT_REVEAL_AND_SELECT:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_REVEAL_AND_SELECT "); 	  
-    	   	      parentItem = findItem(parent);
-    	   	      if (parentItem == null)
-    	   	        return;
-    	   	      if ((parentItem instanceof Item) && !getExpanded((Item)parentItem))
-    	   	      {
-    	   	        setExpandedState(parent, true);
-    	   	        Object toSelect = src;
-    	   	        //if (event.getMultiSource() != null)
-    	   	          //toSelect = event.getMultiSource();
-    	   	        //clearSelection();
-    	   	        if (toSelect != null)    	   	        
-    	   	        {
-    	   	          if (parent instanceof ISystemBaseReferencingObject) 
-    	   	          {
-                        TreeItem child = (TreeItem)internalFindReferencedItem((Item)parentItem, toSelect, 1);
-                        if (child != null)
-                          toSelect = child.getData();
-    	   	          }
-    	   	          else if ( (parent instanceof ISystemFilterPoolReferenceManagerProvider) &&
-    	   	                    !(src instanceof ISystemBaseReferencingObject) )
-    	   	          {
-    	   	          	// we are in "don't show filter pools" mode and a new filter was created
-    	   	          	//  (we get the actual filter, vs on pool ref creation when we get the pool ref)
-                        TreeItem child = (TreeItem)internalFindReferencedItem((Item)parentItem, toSelect, 1);
-                        if (child != null)
-                          toSelect = child.getData();    	   	          	
-    	   	          }
-    	   	          setSelection(new StructuredSelection(toSelect),true);
-    	   	        }
-    	   	      }
-   	    	      break;   	
-              case EVENT_SELECT:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_SELECT "); 	  
-    	   	      item = findItem(src);
-    	   	      if (item == null) // if not showing item, this is a no-op
-    	   	        return;
-    	   	      setSelection(new StructuredSelection(src), true);
-   	    	      break;   	
-              case EVENT_SELECT_EXPAND:
-    	   	      if (debug)
-    	   	        logDebugMsg("SV event: EVENT_SELECT_EXPAND "); 	  
-    	   	      item = findItem(src);
-    	   	      if (item == null) // if not showing item, this is a no-op
-    	   	        return;
-    	   	      if (!getExpanded((Item)item))
-    	   	        setExpandedState(src, true);
-    	   	      setSelection(new StructuredSelection(src), true);    	   	        
-   	    	      break;   	
+	              case EVENT_REVEAL_AND_SELECT:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_REVEAL_AND_SELECT "); 	  
+	    	   	      parentItem = findItem(parent);
+	    	   	      if (parentItem == null)
+	    	   	        return Status.OK_STATUS;
+	    	   	      if ((parentItem instanceof Item) && !getExpanded((Item)parentItem))
+	    	   	      {
+	    	   	        setExpandedState(parent, true);
+	    	   	        Object toSelect = src;
+	    	   	        //if (event.getMultiSource() != null)
+	    	   	          //toSelect = event.getMultiSource();
+	    	   	        //clearSelection();
+	    	   	        if (toSelect != null)    	   	        
+	    	   	        {
+	    	   	          if (parent instanceof ISystemBaseReferencingObject) 
+	    	   	          {
+	                        TreeItem child = (TreeItem)internalFindReferencedItem((Item)parentItem, toSelect, 1);
+	                        if (child != null)
+	                          toSelect = child.getData();
+	    	   	          }
+	    	   	          else if ( (parent instanceof ISystemFilterPoolReferenceManagerProvider) &&
+	    	   	                    !(src instanceof ISystemBaseReferencingObject) )
+	    	   	          {
+	    	   	          	// we are in "don't show filter pools" mode and a new filter was created
+	    	   	          	//  (we get the actual filter, vs on pool ref creation when we get the pool ref)
+	                        TreeItem child = (TreeItem)internalFindReferencedItem((Item)parentItem, toSelect, 1);
+	                        if (child != null)
+	                          toSelect = child.getData();    	   	          	
+	    	   	          }
+	    	   	          setSelection(new StructuredSelection(toSelect),true);
+	    	   	        }
+	    	   	      }
+	   	    	      break;   	
+	              case EVENT_SELECT:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_SELECT "); 	  
+	    	   	      item = findItem(src);
+	    	   	      if (item == null) // if not showing item, this is a no-op
+	    	   	        return Status.OK_STATUS;
+	    	   	      setSelection(new StructuredSelection(src), true);
+	   	    	      break;   	
+	              case EVENT_SELECT_EXPAND:
+	    	   	      if (debug)
+	    	   	        logDebugMsg("SV event: EVENT_SELECT_EXPAND "); 	  
+	    	   	      item = findItem(src);
+	    	   	      if (item == null) // if not showing item, this is a no-op
+	    	   	        return Status.OK_STATUS;
+	    	   	      if (!getExpanded((Item)item))
+	    	   	        setExpandedState(src, true);
+	    	   	      setSelection(new StructuredSelection(src), true);    	   	        
+	   	    	      break;   	
 
-   	    }
-    }	
+	   	    }
+	    		return Status.OK_STATUS;
+		}
+	}
+	
     // ------------------------------------
     // ISYSTEMREMOTEChangeListener METHOD
     // ------------------------------------

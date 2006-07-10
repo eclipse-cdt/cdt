@@ -1212,7 +1212,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		invalidateSubSystemCache(conn); // re-gen list of subsystems-by-connection on next call
 		if (creatingConnection)
+		{
+			if (subSystemsRestoredFlags == null)
+				reset();
 			subSystemsRestoredFlags.put(conn, Boolean.TRUE); // do not try to restore subsequently. Nothing to restore!
+		}
 		ISubSystem subsys = createSubSystemInternal(conn);
 		if (subsys != null)
 		{

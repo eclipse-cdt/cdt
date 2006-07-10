@@ -2157,6 +2157,10 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			if ((defaultUserId != null) && (defaultUserId.length() == 0))
 				defaultUserId = null;
 			conn = pool.createHost(systemType, connectionName, hostName, description, defaultUserId, defaultUserIdLocation);
+			if (conn == null) // conn already exists
+			{
+				conn = pool.getHost(connectionName);
+			}
 			if (promptable)
 				conn.setPromptable(true);
 		}

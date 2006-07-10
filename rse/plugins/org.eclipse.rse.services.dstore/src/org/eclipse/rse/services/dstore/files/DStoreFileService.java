@@ -79,6 +79,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		_fileTypeRegistry = fileTypeRegistry;
 	}
 	
+	public void uninitService(IProgressMonitor monitor)
+	{
+		super.uninitService(monitor);
+		_fileElementMap.clear();
+	}
+	
 	public String getName()
 	{
 		return ServiceResources.DStore_File_Service_Label;

@@ -218,6 +218,7 @@
          </actionSet>
          <showInPart id="org.eclipse.cdt.ui.includeBrowser"/>
          <showInPart id="org.eclipse.cdt.ui.CView"/>
+         <actionSet id="org.eclipse.cdt.ui.CEditorPresentationActionSet"/>
          <!--perspectiveShortcut
                id="org.eclipse.cdt.ui.CBrowsingPerspective">
          </perspectiveShortcut-->
@@ -801,6 +802,24 @@
                tooltip="%NewProjectDropDownAction.tooltip">
          </action>
       </actionSet>
+     <actionSet
+           description="%CEditorPresentationActionSet.description"
+           id="org.eclipse.cdt.ui.CEditorPresentationActionSet"
+           label="%CEditorPresentationActionSet.label">
+        <action
+              class="org.eclipse.cdt.internal.ui.actions.ShowInvisibleCharactersAction"
+              definitionId="org.eclipse.cdt.ui.edit.text.c.show.invisible.chars"
+              icon="icons/etool16/show_invisible_chars.gif"
+              id="org.eclipse.cdt.ui.ShowInvisibleCharactersAction"
+              label="%ShowInvisibleCharactersAction.label"
+              style="toggle"
+              toolbarPath="org.eclipse.ui.edit.text.actionSet.presentation/Presentation"
+              tooltip="%ShowInvisibleCharactersAction.tooltip">
+           <enablement>
+              <objectClass name="org.eclipse.jface.text.ITextSelection"/>
+           </enablement>
+        </action>
+     </actionSet>
    </extension>
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
@@ -1051,6 +1070,12 @@
             description="%ActionDefinition.showTooltip.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.show.tooltip">
+      </command>
+      <command
+            name="%ShowInvisibleCharactersAction.label"
+            description="%ShowInvisibleCharactersAction.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.show.invisible.chars">
       </command>
    </extension>
    <extension

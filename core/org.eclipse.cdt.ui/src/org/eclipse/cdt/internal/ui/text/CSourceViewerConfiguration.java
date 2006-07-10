@@ -135,11 +135,13 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
     {
         final IInformationControlCreator outlineControlCreator = getOutlineContolCreator(editor);
         final InformationPresenter presenter = new InformationPresenter(outlineControlCreator);
+        presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(null));
         final IInformationProvider provider = new CElementContentProvider(getEditor());
         presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
         presenter.setInformationProvider(provider, ICPartitions.C_MULTILINE_COMMENT);
         presenter.setInformationProvider(provider, ICPartitions.C_SINGLE_LINE_COMMENT);
         presenter.setInformationProvider(provider, ICPartitions.C_STRING);
+        presenter.setInformationProvider(provider, ICPartitions.C_CHARACTER);
         presenter.setSizeConstraints(20, 20, true, false);
         presenter.setRestoreInformationControlBounds(getSettings("outline_presenter_bounds"), true, true); //$NON-NLS-1$        
         return presenter;

@@ -173,7 +173,8 @@ public class NamePatternMatcher implements IMatcher
 	public NamePatternMatcher(String genericName, boolean advanced, boolean caseSensitive)    
 	{
 		  this.caseSensitive = caseSensitive;
-		  genericName = genericName.trim();
+		  if (genericName == null)
+			  genericName = "*";
 		  int len = 0;
 		  // determine if given a null name
 		  if ((genericName == null) || (genericName.length()==0))

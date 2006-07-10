@@ -125,7 +125,7 @@ public class SelectionButtonDialogFieldGroup extends DialogField {
 
 	/**
 	 * Returns the group widget. When called the first time, the widget will be created.
-	 * @param The parent composite when called the first time, or <code>null</code>
+	 * @param parent the parent composite when called the first time, or <code>null</code>
 	 * after.
 	 */
 	public Composite getSelectionButtonsGroup(Composite parent) {
@@ -197,7 +197,7 @@ public class SelectionButtonDialogFieldGroup extends DialogField {
 
 	/**
 	 * Returns the selection state of a button contained in the group.
-	 * @param The index of the button
+	 * @param index the index of the button
 	 */
 	public boolean isSelected(int index) {
 		if (index >= 0 && index < fButtonsSelected.length) {

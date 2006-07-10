@@ -70,9 +70,6 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	private final int IDX_REMOVE = 5;
 	private final int IDX_EXPORT = 7;
 
-	/**
-	 * @param title
-	 */
 	public CPathLibraryEntryPage(ListDialogField cPathList) {
 		super(CPathEntryMessages.getString("LibrariesEntryPage.title")); //$NON-NLS-1$
 		setDescription(CPathEntryMessages.getString("LibrariesEntryPage.description")); //$NON-NLS-1$

@@ -361,7 +361,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 		// loop through the includes and make sure that all of the nodes 
 		// that are children of the TU are in the proper include (based on offset)
 		DOMASTNodeLeaf child = null;
-		outerLoop: for (int i=treeIncludes.length - 1; i >= 0; i-- ) {
+		for (int i=treeIncludes.length - 1; i >= 0; i-- ) {
 			if (treeIncludes[i] == null) continue;
 
 			IASTNode node = null;

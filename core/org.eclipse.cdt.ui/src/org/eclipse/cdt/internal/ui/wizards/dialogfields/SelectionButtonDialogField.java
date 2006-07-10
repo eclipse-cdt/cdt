@@ -87,7 +87,6 @@ public class SelectionButtonDialogField extends DialogField {
 		gd.horizontalSpan= nColumns;
 		gd.horizontalAlignment= GridData.FILL;
 		if (fButtonStyle == SWT.PUSH) {
-			gd.heightHint = SWTUtil.getButtonHeigthHint(button);
 			gd.widthHint = SWTUtil.getButtonWidthHint(button);
 		}			
 		
@@ -107,7 +106,7 @@ public class SelectionButtonDialogField extends DialogField {
 
 	/**
 	 * Returns the selection button widget. When called the first time, the widget will be created.
-	 * @param The parent composite when called the first time, or <code>null</code>
+	 * @param group the parent composite when called the first time, or <code>null</code>
 	 * after.
 	 */		
 	public Button getSelectionButton(Composite group) {

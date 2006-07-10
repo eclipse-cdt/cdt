@@ -14,18 +14,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -50,6 +47,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+
+import org.eclipse.cdt.core.model.CoreModel;
+
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /*
  * Preference block that encapsulates the controls used
@@ -243,7 +245,6 @@ public class CFileTypesPreferenceBlock {
 		
 		gridData	= new GridData(GridData.FILL_HORIZONTAL);
 		gridData.widthHint	= SWTUtil.getButtonWidthHint(fBtnNew);
-		gridData.heightHint	= SWTUtil.getButtonHeigthHint(fBtnNew);
 		fBtnNew.setLayoutData(gridData);
 		
 		fBtnNew.addListener(SWT.Selection, new Listener() {
@@ -259,7 +260,6 @@ public class CFileTypesPreferenceBlock {
 		
 		gridData	= new GridData(GridData.FILL_HORIZONTAL);
 		gridData.widthHint	= SWTUtil.getButtonWidthHint(fBtnRemove);
-		gridData.heightHint	= SWTUtil.getButtonHeigthHint(fBtnRemove);
 		fBtnRemove.setLayoutData(gridData);
 		
 		fBtnRemove.addListener(SWT.Selection, new Listener() {
@@ -309,10 +309,6 @@ public class CFileTypesPreferenceBlock {
 		fDirty = dirty;
 	}
 	
-	private boolean isDirty() {
-		return fDirty;
-	}
-
 	public boolean performOk() {
 		boolean changed = fDirty;
 		

@@ -292,7 +292,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		
 		Button button= fNamespaceDialogField.getChangeControl(composite);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.heightHint = SWTUtil.getButtonHeigthHint(button);
 		gd.widthHint = SWTUtil.getButtonWidthHint(button);
 		button.setLayoutData(gd);
 	}	
@@ -372,7 +371,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		
 		Button button = fHeaderFileDialogField.getChangeControl(composite);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.heightHint = SWTUtil.getButtonHeigthHint(button);
 		gd.widthHint = SWTUtil.getButtonWidthHint(button);
 		button.setLayoutData(gd);
 
@@ -388,7 +386,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		
 		button = fSourceFileDialogField.getChangeControl(composite);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.heightHint = SWTUtil.getButtonHeigthHint(button);
 		gd.widthHint = SWTUtil.getButtonWidthHint(button);
 		button.setLayoutData(gd);
 	}	
@@ -667,7 +664,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     /**
      * Adds a method stub to the method stubs field.
      * @param methodStub the method stub to add
-     * @param checked <code>true</code> if the stub is initially selected (checked)
+     * @param selected <code>true</code> if the stub is initially selected (checked)
      */
     protected void addMethodStub(IMethodStub methodStub, boolean selected) {
         fMethodStubsDialogField.addMethodStub(methodStub, selected);

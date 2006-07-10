@@ -283,7 +283,7 @@ public class NewClassWizardUtil {
      * Returns all classes/structs which are accessible from the include
      * paths of the given project.
      * 
-     * @param project the given project
+     * @param cProject the given project
      * @return array of classes/structs
      */
     public static ITypeInfo[] getReachableClasses(ICProject cProject) {

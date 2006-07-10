@@ -125,7 +125,7 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover,
 
 		return CHoverMessages
 				.getFormattedString(
-						"CTextHover.makeStickyHint", keySequence == null ? "" : keySequence); //$NON-NLS-1$
+						"CTextHover.makeStickyHint", keySequence == null ? "" : keySequence); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

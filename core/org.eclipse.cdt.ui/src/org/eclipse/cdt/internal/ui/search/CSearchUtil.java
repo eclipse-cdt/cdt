@@ -29,17 +29,11 @@ public class CSearchUtil {
 	public static int LRU_WORKINGSET_LIST_SIZE= 3;
 	private static LRUWorkingSets workingSetsCache;
 	
-	/**
-	 * 
-	 */
 	public CSearchUtil() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @param sets
-	 */
 	public static void updateLRUWorkingSets(IWorkingSet[] workingSets) {
 		if (workingSets == null || workingSets.length < 1)
 			return;
@@ -54,18 +48,11 @@ public class CSearchUtil {
 		return CSearchUtil.workingSetsCache;
 	}
 	
-	/**
-	 * @param object
-	 * @param shell
-	 */
 	public static void warnIfBinaryConstant( ICElement element, Shell shell) {
 		// TODO Auto-generated method stub
 		
 	}
-	/**
-	 * @param workingSets
-	 * @return
-	 */
+
 	public static String toString(IWorkingSet[] workingSets) {
 		if( workingSets != null & workingSets.length > 0 ){
 			String string = new String();
@@ -81,11 +68,6 @@ public class CSearchUtil {
 		return null;
 	}
 
-
-	/**
-	 * @param marker
-	 * @return
-	 */
 	public static ICElement getCElement(IMarker marker) {
 		// TODO Auto-generated method stub
 		return null;

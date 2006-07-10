@@ -90,9 +90,6 @@ public class ReferencesSearchGroup extends ActionGroup {
 		
 	}	
 	
-	/**
-	 * @return
-	 */
 	private FindAction[] getWorkingSetActions() {
 		ArrayList actions= new ArrayList(CSearchUtil.LRU_WORKINGSET_LIST_SIZE);
 		

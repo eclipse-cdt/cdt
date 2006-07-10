@@ -281,7 +281,7 @@ public class ListDialogField extends DialogField {
 	
 	/**
 	 * Returns the list control. When called the first time, the control will be created.
-	 * @param The parent composite when called the first time, or <code>null</code>
+	 * @param parent the parent composite when called the first time, or <code>null</code>
 	 * after.
 	 */
 	public Control getListControl(Composite parent) {
@@ -372,7 +372,6 @@ public class ListDialogField extends DialogField {
 		gd.horizontalAlignment= GridData.FILL;
 		gd.grabExcessHorizontalSpace= true;
 		gd.verticalAlignment= GridData.BEGINNING;
-		gd.heightHint = SWTUtil.getButtonHeigthHint(button);
 		gd.widthHint = SWTUtil.getButtonWidthHint(button);
 	
 		button.setLayoutData(gd);
@@ -393,7 +392,7 @@ public class ListDialogField extends DialogField {
 	/**
 	 * Returns the composite containing the buttons. When called the first time, the control
 	 * will be created.
-	 * @param The parent composite when called the first time, or <code>null</code>
+	 * @param parent the parent composite when called the first time, or <code>null</code>
 	 * after.
 	 */	
 	public Composite getButtonBox(Composite parent) {

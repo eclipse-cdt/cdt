@@ -319,7 +319,6 @@ public abstract class ConvertProjectWizardPage
     private static GridData getButtonGridData(Button button) {
         GridData data= new GridData(GridData.FILL_HORIZONTAL);
         data.widthHint= SWTUtil.getButtonWidthHint(button);
-        data.heightHint= SWTUtil.getButtonHeigthHint(button);
     
         return data;
     }

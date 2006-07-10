@@ -375,7 +375,6 @@ public class PreferenceConstants {
 	/**
 	 * A named preference that defines whether the hint to make hover sticky should be shown.
 	 *
-	 * @see JavaUI
 	 * @since 3.1.1
 	 */
 	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= "PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE"; //$NON-NLS-1$

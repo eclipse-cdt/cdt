@@ -19,11 +19,6 @@ public class CFileTypeAssociation {
 	private int fType;
 	private IContentType fContentType;
 
-	/**
-	 * @param spec
-	 * @param type
-	 * @param settings
-	 */
 	public CFileTypeAssociation(String spec, int type, IContentType contentType) {
 		super();
 		fSpec = spec;
@@ -54,30 +49,18 @@ public class CFileTypeAssociation {
 		
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean isFileSpec() {
 		return (fType & IContentType.FILE_NAME_SPEC) != 0;
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean isExtSpec() {
 		return (fType & IContentType.FILE_EXTENSION_SPEC) != 0;
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean isPredefined() {
 		return (fType & IContentType.IGNORE_USER_DEFINED) != 0;
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean isUserDefined() {
 		return (fType & IContentType.IGNORE_PRE_DEFINED) != 0;
 	}

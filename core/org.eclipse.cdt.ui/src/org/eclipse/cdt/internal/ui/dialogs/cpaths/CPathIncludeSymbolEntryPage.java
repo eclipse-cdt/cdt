@@ -1096,9 +1096,6 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 	public void performDefaults() {
 	}
 
-	/**
-	 * @return
-	 */
 	public List getCPaths() {
 		List cPaths = new ArrayList();
 		List groups = fIncludeSymPathsList.getElements();

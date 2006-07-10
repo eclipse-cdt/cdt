@@ -77,7 +77,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 									} catch (CoreException e) {
 										CUIPlugin.getDefault().log(e);
 									}
-								};
+								}
 							});
 						} else if (binding instanceof PDOMBinding) {
 							PDOMBinding pdomBinding = (PDOMBinding)binding;

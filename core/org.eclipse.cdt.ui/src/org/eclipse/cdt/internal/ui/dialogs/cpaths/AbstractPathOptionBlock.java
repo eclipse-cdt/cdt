@@ -111,13 +111,8 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	 * allowed, but all existing settings will be cleared and replace by the
 	 * given or default paths.
 	 * 
-	 * @param cproject
+	 * @param element
 	 *        The C/C++ project to configure. Does not have to exist.
-	 * @param outputLocation
-	 *        The output location to be set in the page. If <code>null</code>
-	 *        is passed, jdt default settings are used, or - if the project is
-	 *        an existing Java project- the output location of the existing
-	 *        project
 	 * @param cpathEntries
 	 *        The path entries to be set in the page. If <code>null</code> is
 	 *        passed, jdt default settings are used, or - if the project is an

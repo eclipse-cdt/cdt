@@ -19,6 +19,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+
+import org.eclipse.cdt.internal.ui.util.Messages;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -96,7 +99,7 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 	}
 	
 	public String getLabel() {
-		return super.getLabel() + " " + patternStr + " in " + scopeDesc;
+		return Messages.format(CSearchMessages.getString("PDOMSearchPatternQuery.PatternQuery_labelPatternInScope"), getLabel(), patternStr, scopeDesc); //$NON-NLS-1$
 	}
 	
 }

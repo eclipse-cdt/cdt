@@ -60,6 +60,6 @@ public class PDOMSearchElementQuery extends PDOMSearchQuery {
 		if (element instanceof ICElement)
 			return super.getLabel() + " " + ((ICElement)element).getElementName(); //$NON-NLS-1$
 		else
-			return super.getLabel() + " something.";
+			return super.getLabel() + " something."; //$NON-NLS-1$
 	}
 }

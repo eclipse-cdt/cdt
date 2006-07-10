@@ -186,29 +186,18 @@ public class ExclusionPatternDialog extends StatusDialog {
 	// -------- ExclusionPatternAdapter --------
 
 	private class ExclusionPatternAdapter implements IListAdapter, IDialogFieldListener {
-		/**
-		 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter#customButtonPressed(org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField, int)
-		 */
 		public void customButtonPressed(ListDialogField field, int index) {
 			doCustomButtonPressed(field, index);
 		}
 
-		/**
-		 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter#selectionChanged(org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField)
-		 */
 		public void selectionChanged(ListDialogField field) {
 			doSelectionChanged(field);
 		}
-		/**
-		 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter#doubleClicked(org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField)
-		 */
+
 		public void doubleClicked(ListDialogField field) {
 			doDoubleClicked(field);
 		}
 
-		/**
-		 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IDialogFieldListener#dialogFieldChanged(org.eclipse.jdt.internal.ui.wizards.dialogfields.DialogField)
-		 */
 		public void dialogFieldChanged(DialogField field) {
 		}
 		

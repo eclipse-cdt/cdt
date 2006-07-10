@@ -14,13 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IContainerEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.internal.ui.util.CoreUtility;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.wizards.ICPathContainerPage;
-import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -37,6 +30,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.osgi.framework.Bundle;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
+
+import org.eclipse.cdt.internal.ui.util.CoreUtility;
+
 public class CPathContainerDescriptor implements IContainerDescriptor {
 
 
@@ -45,12 +46,17 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 	 * @author Dave
 	 * @deprecated
 	 */
-	public class PathEntryContainerPageAdapter implements IWizardPage, IPathEntryContainerPage {
-		private final ICPathContainerPage fPage;
-		/**
-		 * @param pageName
-		 */
-		protected PathEntryContainerPageAdapter(ICPathContainerPage page) {
+	public static class PathEntryContainerPageAdapter implements IWizardPage, IPathEntryContainerPage {
+		public static IPathEntryContainerPage createAdapter(Object elem) {
+			if (elem instanceof org.eclipse.cdt.ui.wizards.ICPathContainerPage) {
+				return new PathEntryContainerPageAdapter((org.eclipse.cdt.ui.wizards.ICPathContainerPage) elem);
+			}
+			return null;
+		}
+
+
+		private final org.eclipse.cdt.ui.wizards.ICPathContainerPage fPage;
+		protected PathEntryContainerPageAdapter(org.eclipse.cdt.ui.wizards.ICPathContainerPage page) {
 			fPage = page;
 		}
 
@@ -267,8 +273,10 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		Object elem = CoreUtility.createExtension(fConfigElement, ATT_PAGE_CLASS);
 		if (elem instanceof IPathEntryContainerPage) {
 			return (IPathEntryContainerPage) elem;
-		} else if (elem instanceof ICPathContainerPage) {
-			return new PathEntryContainerPageAdapter((ICPathContainerPage)elem);
+		} 
+		IPathEntryContainerPage result= PathEntryContainerPageAdapter.createAdapter(elem);
+		if (result != null) {
+			return result;
 		}
 		String id = fConfigElement.getAttribute(ATT_ID);
 		throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0,
@@ -284,7 +292,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 			String imageName = fConfigElement.getAttribute(ATT_ICON);
 			if (imageName != null) {
 				IExtension extension = fConfigElement.getDeclaringExtension();
-				String plugin = extension.getNamespace();
+				String plugin = extension.getContributor().getName();
 				Image image = getImageFromPlugin(plugin, imageName);
 				pageImage = image;
 			}

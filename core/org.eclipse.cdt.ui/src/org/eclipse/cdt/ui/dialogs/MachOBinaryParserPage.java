@@ -111,7 +111,6 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	public void performDefaults() {
-		String addr2line = null;
 		String cppfilt = null;
 		IProject proj = getContainer().getProject();
 		Preferences store = getContainer().getPreferences();

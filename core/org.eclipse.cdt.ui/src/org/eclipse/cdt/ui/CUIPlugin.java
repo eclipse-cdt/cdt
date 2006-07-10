@@ -93,6 +93,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static final String C_PROBLEMMARKER = PLUGIN_CORE_ID + ".problem"; //$NON-NLS-1$
 
     public static final String ID_INCLUDE_BROWSER= PLUGIN_ID + ".includeBrowser"; //$NON-NLS-1$
+    public static final String ID_CALL_HIERARCHY= PLUGIN_ID + ".callHierarchy"; //$NON-NLS-1$
     
 	public static final String C_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCWizard"; //$NON-NLS-1$
 	public static final String CPP_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCCWizard"; //$NON-NLS-1$
@@ -181,16 +182,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/** 
 	 * The view part id of the type hierarchy part
 	 * (value <code>"org.eclipse.cdt.ui.TypeHierarchy"</code>).
-	 * <p>
-	 * When this id is used to access
-	 * a view part with <code>IWorkbenchPage.findView</code> or 
-	 * <code>showView</code>, the returned <code>IViewPart</code>
-	 * can be safely cast to an <code>ITypeHierarchyViewPart</code>.
-	 * </p>
-	 *
-	 * @see ITypeHierarchyViewPart
-	 * @see org.eclipse.ui.IWorkbenchPage#findView(java.lang.String)
-	 * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String)
 	 */ 
 	public static final String ID_TYPE_HIERARCHY = "org.eclipse.cdt.ui.TypeHierarchyView"; //$NON-NLS-1$
 

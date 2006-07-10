@@ -45,7 +45,6 @@ import org.eclipse.swt.widgets.Text;
  * It handels the Link to file part 
  */
 public class LinkToFileGroup extends StringButtonDialogField {
-	private String fText;
 	protected Listener listener;
 	private String initialLinkTarget;
 	private int type;
@@ -134,7 +133,6 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	}
 	
 	public void setText(String text) {
-		fText= text;
 		if (isOkToUse(linkTargetField)) {
 			preventDialogFieldChanged = true;
 			linkTargetField.setText(text);

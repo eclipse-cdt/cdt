@@ -147,7 +147,6 @@ public class PathEntryVariableDialog extends TitleAreaDialog {
 	 * 	<code>EXISTING_VARIABLE</code>
 	 * @param variableType the type of variable that can be edited in 
 	 * 	this dialog. <code>IResource.FILE</code> or <code>IResource.FOLDER</code>
-	 * @param pathEntryVariableManager a reference to the path variable manager
 	 * @param namesInUse a set of variable names currently in use 
 	 */
 	public PathEntryVariableDialog(Shell parentShell, int type, int variableType, Set namesInUse) {

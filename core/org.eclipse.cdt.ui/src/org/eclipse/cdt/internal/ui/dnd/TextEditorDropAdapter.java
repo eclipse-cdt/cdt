@@ -143,8 +143,8 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 			}
 		} catch (CoreException exc) {
 			ExceptionHandler.handle(exc, 
-					CUIMessages.getString("TextEditorDropAdapter.error.title"),
-					CUIMessages.getString("TextEditorDropAdapter.error.message"));
+					CUIMessages.getString("TextEditorDropAdapter.error.title"), //$NON-NLS-1$
+					CUIMessages.getString("TextEditorDropAdapter.error.message")); //$NON-NLS-1$
 		}
 	}
 
@@ -354,7 +354,7 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 			if (!file.isFile()) {
 				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin
 						.getPluginId(), 0, CUIMessages.getFormattedString(
-						"TextEditorDropAdapter.noFile", fileNames[i]),
+						"TextEditorDropAdapter.noFile", fileNames[i]), //$NON-NLS-1$
 						null));
 			}
 			if (file.canRead()) {
@@ -365,7 +365,7 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 			} else {
 				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin
 						.getPluginId(), 0, CUIMessages.getFormattedString(
-						"TextEditorDropAdapter.unreadableFile", fileNames[i]),
+						"TextEditorDropAdapter.unreadableFile", fileNames[i]), //$NON-NLS-1$
 						null));
 			}
 		}

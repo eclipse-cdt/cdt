@@ -58,7 +58,7 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 	 * Creates the controls for the file name field. Expects a <code>GridLayout</code> with at 
 	 * least 3 columns.
 	 * 
-	 * @param composite the parent composite
+	 * @param parent the parent composite
 	 * @param nColumns number of columns to span
 	 */		
 	protected void createFileControls(Composite parent, int nColumns) {

@@ -12,7 +12,6 @@
 
 package org.eclipse.cdt.internal.ui.preferences;
 
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -25,6 +24,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 public class PathEntryVariablePreferencePage extends PreferencePage 
 implements IWorkbenchPreferencePage {
@@ -116,7 +117,6 @@ implements IWorkbenchPreferencePage {
 	 * confirmation.
 	 * 
 	 * @see PreferencePage#performOk()
-	 * @see PathVariablesGroup#performOk()
 	 */
 	public boolean performOk() {
 		return pathEntryVariablesGroup.performOk();

@@ -133,7 +133,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				viewer.refresh();
-			};
+			}
 		});
 	}
 	
@@ -142,7 +142,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				viewer.refresh();
-			};
+			}
 		});
 	}
 	

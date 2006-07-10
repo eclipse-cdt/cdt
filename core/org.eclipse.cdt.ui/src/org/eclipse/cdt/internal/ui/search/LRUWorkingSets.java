@@ -54,11 +54,6 @@ public class LRUWorkingSets {
 		workingSetsCache.add(0, workingSet);
 	}
 	
-	/**
-	 * @param workingSetsCache2
-	 * @param workingSet
-	 * @return
-	 */
 	private IWorkingSet[] find(ArrayList list, IWorkingSet[] workingSet) {
 		Set workingSetList= new HashSet(Arrays.asList(workingSet));
 		Iterator iter= list.iterator();
@@ -85,9 +80,6 @@ public class LRUWorkingSets {
 	 }
 	}
 
-	/**
-	 * @return
-	 */
 	public Iterator iterator() {
 		return workingSetsCache.iterator(); 
 	}

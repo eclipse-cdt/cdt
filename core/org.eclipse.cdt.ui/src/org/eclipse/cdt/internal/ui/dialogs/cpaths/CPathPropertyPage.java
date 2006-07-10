@@ -50,9 +50,6 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 	CPathTabBlock fCPathsBlock;
 	IPathEntryStore fStore;
 
-	/**
-	 * @see PropertyPage#createContents
-	 */
 	protected Control createContents(Composite parent) {
 		IProject project = getProject();
 		Control result;

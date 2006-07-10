@@ -162,10 +162,6 @@ public class CPElementGroup {
 		return (CPElement[])children.toArray(new CPElement[children.size()]);
 	}
 
-	/**
-	 * @param newPath
-	 * @return
-	 */
 	public boolean contains(CPElement element) {
 		List children = getChildrenList(element.getEntryKind(), false);
 		if (children == null) {

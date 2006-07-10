@@ -415,7 +415,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		}
 		monitor.beginTask(NewFolderWizardMessages.getString("NewSourceFolderWizardPage.operation"), 3); //$NON-NLS-1$
 		try {
-			IPath projPath= fCurrCProject.getProject().getFullPath();
+//			IPath projPath= fCurrCProject.getProject().getFullPath();
 			String relPath= fRootDialogField.getText();
 				
 			IFolder folder= fCurrCProject.getProject().getFolder(relPath);

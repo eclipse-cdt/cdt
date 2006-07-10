@@ -97,7 +97,7 @@ public class PDOMCompletionContributor extends DOMCompletionContributor implemen
 											handleBinding(binding, completionNode, offset, viewer, proposals);
 									}
 									return false;
-								};
+								}
 							});
 						}
 					}

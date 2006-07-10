@@ -230,9 +230,6 @@ public class CPElement {
 		return buf.append(';');
 	}
 
-	/**
-	 * @return
-	 */
 	public StringBuffer appendEncodedSettings(StringBuffer buf) {
 		buf.append(fEntryKind).append(';');
 		appendEncodePath(fPath, buf).append(';');

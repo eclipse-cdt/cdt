@@ -50,9 +50,6 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	NewIncludesSymbolsTabBlock fIncludesSymbolsBlock;
 	IPathEntryStore fStore;
 
-	/**
-	 * @see PropertyPage#createContents
-	 */
 	protected Control createContents(Composite parent) {
 		IProject project = getProject();
 		Control result;

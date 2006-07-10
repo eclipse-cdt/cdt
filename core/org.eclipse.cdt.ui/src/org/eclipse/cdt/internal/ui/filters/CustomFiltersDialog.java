@@ -72,12 +72,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 	/**
 	 * Creates a dialog to customize Java element filters.
 	 *
-	 * @param parentShell the parent shell
-	 * @param input the root element to populate this dialog with
-	 * @param contentProvider the content provider for navigating the model
-	 * @param labelProvider the label provider for displaying model elements
-	 * @param message the message to be displayed at the top of this dialog, or
-	 *    <code>null</code> to display a default message
+	 * @param shell the parent shell
 	 */
 	public CustomFiltersDialog(
 			Shell shell,

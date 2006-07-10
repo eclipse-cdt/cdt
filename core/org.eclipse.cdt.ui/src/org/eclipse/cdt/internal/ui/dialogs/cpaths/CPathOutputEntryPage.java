@@ -67,9 +67,6 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	private final int IDX_EDIT = 2;
 	private final int IDX_REMOVE = 3;
 
-	/**
-	 * @param title
-	 */
 	public CPathOutputEntryPage(ListDialogField cPathList) {
 		super(CPathEntryMessages.getString("OutputPathEntryPage.title")); //$NON-NLS-1$
 		setDescription(CPathEntryMessages.getString("OutputPathEntryPage.description")); //$NON-NLS-1$

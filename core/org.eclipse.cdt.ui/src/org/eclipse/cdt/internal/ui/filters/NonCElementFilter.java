@@ -29,7 +29,6 @@ public class NonCElementFilter  extends ViewerFilter {
 	 * Returns the result of this filter, when applied to the
 	 * given inputs.
 	 *
-	 * @param inputs the set of elements to 
 	 * @return Returns true if element should be included in filtered set
 	 */
 	public boolean select(Viewer viewer, Object parent, Object element) {

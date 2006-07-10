@@ -461,7 +461,7 @@ public class PathEntryVariablesGroup {
 	 * Commits the temporary state to the path variable manager in response to user
 	 * confirmation.
 	 *
-	 * @see IPathVariableManager#setValue(String, IPath)
+	 * @see IPathEntryVariableManager#setValue(String, IPath)
 	 */
 	public boolean performOk() {
 		try {

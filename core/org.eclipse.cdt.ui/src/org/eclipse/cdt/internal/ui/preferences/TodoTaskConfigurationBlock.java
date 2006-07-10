@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
-
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -23,23 +25,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.ICProject;
 
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 
 /**
   */
@@ -99,8 +96,6 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 
 	}
 	
-	private PixelConverter fPixelConverter;
-
 	private IStatus fTaskTagsStatus;
 	private ListDialogField fTodoTasksList;
 
@@ -168,7 +163,6 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 	}
 		
 	protected Control createContents(Composite parent) {
-		fPixelConverter= new PixelConverter(parent);
 		setShell(parent.getShell());
 		
 		Composite markersComposite= createMarkersTabContent(parent);

@@ -96,9 +96,9 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	private static final String CONTENT_TYPE_PREF_NODE = "content-types"; //$NON-NLS-1$
 	private static final String FULLPATH_CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + CONTENT_TYPE_PREF_NODE;
 	private static final String PREF_LOCAL_CONTENT_TYPE_SETTINGS = "enabled"; //$NON-NLS-1$
-	private final static String PREF_FILE_EXTENSIONS = "file-extensions"; //$NON-NLS-1$
-	private final static String PREF_FILE_NAMES = "file-names"; //$NON-NLS-1$
-	private final static String PREF_SEPARATOR = ","; //$NON-NLS-1$
+//	private final static String PREF_FILE_EXTENSIONS = "file-extensions"; //$NON-NLS-1$
+//	private final static String PREF_FILE_NAMES = "file-names"; //$NON-NLS-1$
+//	private final static String PREF_SEPARATOR = ","; //$NON-NLS-1$
 	private static final Preferences PROJECT_SCOPE = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
 	//private static final InstanceScope INSTANCE_SCOPE = new InstanceScope();
 

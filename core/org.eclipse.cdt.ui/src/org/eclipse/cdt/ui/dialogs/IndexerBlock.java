@@ -183,12 +183,8 @@ public class IndexerBlock extends AbstractCOptionPage {
 
         return selectedIndexPageId;
     }
-	/**
-     * @param scComp
-     * @param numberOfColumns
-     * @return
-     */
-    private boolean createIndexerControls(Composite parent) {
+
+	private boolean createIndexerControls(Composite parent) {
         Group group= ControlFactory.createGroup(parent,INDEXER_COMBO_LABEL,2);
        
        // Add discovered indexers combo box
@@ -256,8 +252,6 @@ public class IndexerBlock extends AbstractCOptionPage {
   
     /**
      * Returns the page name for the given id
-     * @param profileId 
-     * @return String 
      */
     protected String getIndexerPageName(String indexerPageId) {
         IndexerPageConfiguration configElement = 
@@ -297,8 +291,6 @@ public class IndexerBlock extends AbstractCOptionPage {
     
     /**
      * Returns the indexer id for the given name
-     * @param profileId 
-     * @return String 
      */
     protected String getIndexerIdName(String indexerPageId) {
         IndexerPageConfiguration configElement = 
@@ -397,18 +389,11 @@ public class IndexerBlock extends AbstractCOptionPage {
 		}
     }
 
-	/**
-	 * @return
-	 */
 	public boolean isIndexEnabled() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @param oldIndexerID
-	 * @param project
-	 */
 	public void setIndexerID(String indexerID, ICProject project) {
 		//Get the corresponding text for the given indexer id
 		selectedIndexerId = getIndexerPageName(indexerID);

@@ -27,7 +27,6 @@ import org.eclipse.ui.IWorkbench;
  * 
  * @author Judy N. Green
  * @since Aug 8, 2002
- * @see CtoCCConversionWizard#addPages
  */
 public abstract class ConversionWizard
     extends NewCProjectWizard {
@@ -114,8 +113,6 @@ public abstract class ConversionWizard
     /**
      * Method doRun calls the doRunPrologue and mainPage's  doRun method and the
      * doRunEpliogue. Subclasses may overwrite to add further actions
-     * 
-     * @see org.eclipse.cdt.ui.wizards.CProjectWizard#doRun(IProgressMonitor)
      */
     protected void doRun(IProgressMonitor monitor) throws CoreException {
         try{
@@ -144,7 +141,7 @@ public abstract class ConversionWizard
      *   addPage(mainPage);
      *</pre>
      * 
-     * @see Wizard#createPages
+     * @see NewCProjectWizard#addPages
      */
     public abstract void addPages();
 

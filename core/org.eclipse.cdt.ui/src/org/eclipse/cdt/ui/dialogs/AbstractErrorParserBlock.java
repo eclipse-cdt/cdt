@@ -53,7 +53,6 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 	protected HashMap mapParsers = new HashMap();
 	private CheckedListDialogField fErrorParserList;
 	protected boolean listDirty = false;
-	private boolean usingDeprecatedContructor = false;
 
 	class FieldListenerAdapter implements IDialogFieldListener {
 
@@ -78,7 +77,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 	 */
 	public AbstractErrorParserBlock(Preferences prefs) {
 		this();
-		usingDeprecatedContructor = true;
+//		usingDeprecatedContructor = true;
 		fPrefs = prefs;
 	}
 
@@ -164,9 +163,6 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 	/**
 	 * To be implemented. abstract method.
-	 * 
-	 * @param project
-	 * @param parsers
 	 */
 	protected abstract void saveErrorParsers(IProject project, String[] parserIDs) throws CoreException;
 

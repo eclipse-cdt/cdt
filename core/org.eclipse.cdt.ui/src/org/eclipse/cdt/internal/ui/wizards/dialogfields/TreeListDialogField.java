@@ -154,12 +154,6 @@ public class TreeListDialogField extends DialogField {
 		fViewerSorter = viewerSorter;
 	}
 
-	/**
-	 * Sets the viewerSorter.
-	 * 
-	 * @param viewerSorter
-	 *        The viewerSorter to set
-	 */
 	public void setTreeExpansionLevel(int level) {
 		fTreeExpandLevel = level;
 		if (fTree != null) {
@@ -255,7 +249,7 @@ public class TreeListDialogField extends DialogField {
 	 * Returns the tree control. When called the first time, the control will be
 	 * created.
 	 * 
-	 * @param The
+	 * @param parent 
 	 *        parent composite when called the first time, or <code>null</code>
 	 *        after.
 	 */
@@ -320,7 +314,6 @@ public class TreeListDialogField extends DialogField {
 		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		gd.verticalAlignment = GridData.BEGINNING;
-		gd.heightHint = SWTUtil.getButtonHeigthHint(button);
 		gd.widthHint = SWTUtil.getButtonWidthHint(button);
 
 		button.setLayoutData(gd);
@@ -342,7 +335,7 @@ public class TreeListDialogField extends DialogField {
 	 * Returns the composite containing the buttons. When called the first time,
 	 * the control will be created.
 	 * 
-	 * @param The
+	 * @param parent
 	 *        parent composite when called the first time, or <code>null</code>
 	 *        after.
 	 */

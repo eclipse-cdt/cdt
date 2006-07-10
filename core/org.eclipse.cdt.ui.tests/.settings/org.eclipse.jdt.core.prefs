@@ -1,8 +1,8 @@
-#Wed Jul 05 15:17:10 EDT 2006
+#Mon Jul 10 09:33:48 CEST 2006
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.problem.annotationSuperInterface=warning
 org.eclipse.jdt.core.compiler.problem.autoboxing=ignore
-org.eclipse.jdt.core.compiler.problem.deprecation=warning
+org.eclipse.jdt.core.compiler.problem.deprecation=ignore
 org.eclipse.jdt.core.compiler.problem.deprecationInDeprecatedCode=disabled
 org.eclipse.jdt.core.compiler.problem.deprecationWhenOverridingDeprecatedMethod=disabled
 org.eclipse.jdt.core.compiler.problem.discouragedReference=ignore

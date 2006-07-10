@@ -1151,9 +1151,6 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
     public void performDefaults() {
     }
 
-    /**
-     * @return
-     */
     public List getCPaths() {
         List cPaths = new ArrayList();
         List groups = fIncludeSymPathsList.getElements();

@@ -131,7 +131,7 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 		
 		cTagsExecutable = ControlFactory.createTextField(cTagsExecutableGroup);
 		((GridData)cTagsExecutable.getLayoutData()).horizontalSpan = 2;
-		((GridData)cTagsExecutable.getLayoutData()).grabExcessHorizontalSpace = true;;
+		((GridData)cTagsExecutable.getLayoutData()).grabExcessHorizontalSpace = true;
 		
 		browseButtonCTagsExec = ControlFactory.createPushButton(cTagsExecutableGroup,CUIMessages.getString("CTagsIndexerBlock.browseButton")); //$NON-NLS-1$
 		((GridData)browseButtonCTagsExec.getLayoutData()).widthHint = SWTUtil.getButtonWidthHint(browseButtonCTagsExec);
@@ -208,7 +208,7 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 	public void loadPersistedValues(ICProject project) throws CoreException {
 		IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getIndexer(project);
 		if (!(indexer instanceof CtagsIndexer))
-			throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "Wrong indexer", null));
+			throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "Wrong indexer", null)); //$NON-NLS-1$
 		ctagsIndexer = (CtagsIndexer)indexer;
 
 		useDefaultCTags = ctagsIndexer.useCtagsOnPath();

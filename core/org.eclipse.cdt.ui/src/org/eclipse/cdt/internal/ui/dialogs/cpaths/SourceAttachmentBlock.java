@@ -99,9 +99,6 @@ public class SourceAttachmentBlock {
 	 *            listeners for status updates
 	 * @param entry
 	 *            The entry to edit
-	 * @param containerPath
-	 *            Path of the container that contains the given entry or <code>null</code> if the entry does not belong to a
-	 *            container.
 	 * @param project
 	 *            Project to which the entry belongs. Can be <code>null</code> if <code>getRunnable</code> is not run and the
 	 *            entry does not belong to a container.
@@ -164,8 +161,6 @@ public class SourceAttachmentBlock {
 
 	/**
 	 * Null for now
-	 * 
-	 * @return
 	 */
 	public IPath getSourceAttachmentPrefixMapping() {
 		return null;

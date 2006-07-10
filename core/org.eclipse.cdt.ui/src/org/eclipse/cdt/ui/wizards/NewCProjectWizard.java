@@ -66,7 +66,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 
 	private String wz_title;
 	private String wz_desc;
-	private String op_error;
+//	private String op_error;
 
 	protected IConfigurationElement fConfigElement;
 	protected NewCProjectWizardPage fMainPage; 
@@ -89,7 +89,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 		setNeedsProgressMonitor(true);
 		wz_title = title;
 		wz_desc = description;
-		op_error = error;
+//		op_error = error;
 	}
 
 	/* (non-Javadoc)

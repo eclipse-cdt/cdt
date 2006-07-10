@@ -46,8 +46,6 @@ public class SourceAttachmentDialog extends StatusDialog {
 	 * <code>getSourceAttachmentRootPath</code>. 
 	 * @param parent Parent shell for the dialog
 	 * @param entry The entry to edit
-	 * @param containerPath Path of the container that contains the given entry or
-	 * <code>null</code> if the entry does not belong to a container.
 	 * @param project Project to which the entry belongs. Can be
 	 * <code>null</code> if <code>applyChanges</code> is false and the entry
 	 * does not belong to a container.

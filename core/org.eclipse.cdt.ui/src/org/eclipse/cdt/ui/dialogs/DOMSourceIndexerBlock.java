@@ -11,22 +11,23 @@
 
 package org.eclipse.cdt.ui.dialogs;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICExtensionReference;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.index.AbstractIndexerPage;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.index.AbstractIndexerPage;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+
+import org.eclipse.cdt.internal.ui.CUIMessages;
 
 
 public class DOMSourceIndexerBlock extends AbstractIndexerPage {
@@ -38,13 +39,7 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 	private static final String ENABLE_SYNTACTIC_PROBLEMS = CUIMessages.getString( "IndexerOptions.enableSyntactic" ); //$NON-NLS-1$
 
 	private static final String INDEXER_PROBLEMS = CUIMessages.getString("IndexerOptions.problemReporting" ); //$NON-NLS-1$
-	
-	private Button preprocessorProblemsEnabled;
-	private Button syntacticProblemsEnabled;
-	private Button semanticProblemsEnabled;
-	
-	private int oldIndexerProblemsValue = 0;
-	
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -71,8 +66,8 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 			ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
 			if (cext.length > 0) {
 				for (int i = 0; i < cext.length; i++) {
-					String id = cext[i].getID();
-					String orig = cext[i].getExtensionData("indexmarkers"); //$NON-NLS-1$
+//					String id = cext[i].getID();
+//					String orig = cext[i].getExtensionData("indexmarkers"); //$NON-NLS-1$
 //					String indexProblems = getIndexerProblemsValuesString();
 //					if (orig == null || !orig.equals(indexProblems)) {
 //						cext[i].setExtensionData("indexmarkers", indexProblems); //$NON-NLS-1$
@@ -111,9 +106,9 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
         gd2.horizontalAlignment = GridData.FILL;
         
 		
-		preprocessorProblemsEnabled = ControlFactory.createCheckBox( problemsGroup, ENABLE_PREPROCESSOR_PROBLEMS );
-		semanticProblemsEnabled = ControlFactory.createCheckBox( problemsGroup, ENABLE_SEMANTIC_PROBLEMS );
-		syntacticProblemsEnabled = ControlFactory.createCheckBox( problemsGroup, ENABLE_SYNTACTIC_PROBLEMS );
+		ControlFactory.createCheckBox( problemsGroup, ENABLE_PREPROCESSOR_PROBLEMS );
+		ControlFactory.createCheckBox( problemsGroup, ENABLE_SEMANTIC_PROBLEMS );
+		ControlFactory.createCheckBox( problemsGroup, ENABLE_SYNTACTIC_PROBLEMS );
 		
 		setControl(page);
 		
@@ -150,12 +145,12 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 		ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
 		if (cext.length > 0) {
 			for (int i = 0; i < cext.length; i++) {
-				String id = cext[i].getID();
+//				String id = cext[i].getID();
 				
 				String orig = cext[i].getExtensionData("indexmarkers"); //$NON-NLS-1$
 				if (orig != null){
-					Integer tempInt = new Integer(orig);
-					oldIndexerProblemsValue = tempInt.intValue();
+//					Integer tempInt = new Integer(orig);
+//					oldIndexerProblemsValue = tempInt.intValue();
 				}
 			}
 		}
@@ -172,7 +167,7 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 	public void loadPreferences() {
 		String indexerId=prefStore.getString(PREF_INDEX_MARKERS);
 		if (!indexerId.equals("")) { //$NON-NLS-1$
-		   oldIndexerProblemsValue = (new Integer(indexerId)).intValue();
+//		   oldIndexerProblemsValue = (new Integer(indexerId)).intValue();
 //		   setIndexerProblemValues(oldIndexerProblemsValue);
 		}
 	}

@@ -10,27 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
-import org.eclipse.cdt.internal.ui.wizards.NewElementWizardPage;
-import org.eclipse.cdt.internal.ui.wizards.SourceFolderSelectionDialog;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -58,6 +37,30 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.PathUtil;
+
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
+
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
+import org.eclipse.cdt.internal.ui.wizards.NewElementWizardPage;
+import org.eclipse.cdt.internal.ui.wizards.SourceFolderSelectionDialog;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 
 public abstract class AbstractFileCreationWizardPage extends NewElementWizardPage {
 
@@ -149,7 +152,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	 * Creates the controls for the file name field. Expects a <code>GridLayout</code> with at 
 	 * least 3 columns.
 	 * 
-	 * @param composite the parent composite
+	 * @param parent the parent composite
 	 * @param nColumns number of columns to span
 	 */		
 	protected abstract void createFileControls(Composite parent, int nColumns);
@@ -566,7 +569,6 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	 * 
 	 * @param monitor a progress monitor to report progress.
 	 * @throws CoreException Thrown when the creation failed.
-	 * @throws InterruptedException Thrown when the operation was cancelled.
 	 */
 	public abstract void createFile(IProgressMonitor monitor) throws CoreException;
 	

@@ -194,7 +194,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
 		StringBuffer repStringBuff = new StringBuffer();
 		repStringBuff.append(variable.getName());
 		
-		String returnTypeStr = "<unknown>";
+		String returnTypeStr = "<unknown>"; //$NON-NLS-1$
 		try {
 			IType varType = variable.getType();
 			if (varType != null)
@@ -204,7 +204,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
         
         StringBuffer dispStringBuff = new StringBuffer(repStringBuff.toString());
         if (returnTypeStr != null) {
-            dispStringBuff.append(" : ");
+            dispStringBuff.append(" : "); //$NON-NLS-1$
             dispStringBuff.append(returnTypeStr);
         }
         String dispString = dispStringBuff.toString();

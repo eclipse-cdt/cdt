@@ -119,7 +119,7 @@ public class FilterDescriptor implements Comparable {
 			}
 			
 		};
-		Platform.run(code);
+		SafeRunnable.run(code);
 		return result[0];
 	}
 	
@@ -247,7 +247,7 @@ public class FilterDescriptor implements Comparable {
 			if (FILTER_TAG.equals(element.getName())) {
 
 				final FilterDescriptor[] desc= new FilterDescriptor[1];
-				Platform.run(new SafeRunnable(FilterMessages.getString("FilterDescriptor.filterDescriptionCreationError.message")) { //$NON-NLS-1$
+				SafeRunnable.run(new SafeRunnable(FilterMessages.getString("FilterDescriptor.filterDescriptionCreationError.message")) { //$NON-NLS-1$
 					public void run() throws Exception {
 						desc[0]= new FilterDescriptor(element);
 					}

@@ -13,6 +13,11 @@ package org.eclipse.cdt.ui.tests.DOMAST;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -29,7 +34,6 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
@@ -47,11 +51,8 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 /**
  * @author dsteffle

@@ -12,16 +12,11 @@ package org.eclipse.cdt.ui.actions;
 
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchSite;
@@ -29,6 +24,11 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.Page;
+
+import org.eclipse.cdt.core.model.ICElement;
+
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 /**
  * Action group that adds actions to open a new JDT view part or an external 
@@ -171,7 +171,7 @@ public class OpenViewActionGroup extends ActionGroup {
 	 * @see ActionGroup#dispose()
 	 */
 	public void dispose() {
-		ISelectionProvider provider= fSite.getSelectionProvider();
+//		ISelectionProvider provider= fSite.getSelectionProvider();
 //		provider.removeSelectionChangedListener(fOpenSuperImplementation);
 //		provider.removeSelectionChangedListener(fOpenExternalJavadoc);
 //		provider.removeSelectionChangedListener(fOpenTypeHierarchy);
@@ -185,11 +185,6 @@ public class OpenViewActionGroup extends ActionGroup {
 //		actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_TYPE_HIERARCHY, fOpenTypeHierarchy);
 //        actionBars.setGlobalActionHandler(JdtActionConstants.OPEN_CALL_HIERARCHY, fOpenCallHierarchy);
 		actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), fOpenPropertiesDialog);		
-	}
-	
-	private void appendToGroup(IMenuManager menu, IAction action) {
-		if (action.isEnabled())
-			menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, action);
 	}
 	
 	private IStructuredSelection getStructuredSelection() {

@@ -16,10 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -44,6 +42,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.dialogs.NewFolderDialog;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
 import org.eclipse.ui.views.navigator.ResourceSorter;
+
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /**
  */
@@ -240,10 +241,8 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 			}
 		});
 		button.setFont(composite.getFont());
-
-		data = new GridData();
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		button.setLayoutData(data);
+		button.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(button);
 		fNewFolderButton = button;
 
 		treeViewer.addSelectionChangedListener(this);

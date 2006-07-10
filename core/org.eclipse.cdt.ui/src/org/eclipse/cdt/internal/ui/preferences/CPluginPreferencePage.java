@@ -37,9 +37,6 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 	}
 	
-	/**
-	 * @see PreferencePage#createControl(Composite)
-	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.C_PREF_PAGE);

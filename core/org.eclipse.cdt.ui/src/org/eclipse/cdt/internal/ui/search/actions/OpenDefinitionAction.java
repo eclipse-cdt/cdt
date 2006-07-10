@@ -77,7 +77,7 @@ public class OpenDefinitionAction extends SelectionParseAction {
 									} catch (CoreException e) {
 										CUIPlugin.getDefault().log(e);
 									}
-								};
+								}
 							});
 						}
 					}

@@ -59,9 +59,6 @@ public class ShowInCViewAction extends SelectionProviderAction {
 		//WorkbenchHelp.setHelp(this, ICHelpContextIds.SHOW_IN_CVIEW_ACTION);
 	}
 
-	/**
-	 * @see IAction#actionPerformed
-	 */
 	public void run() {
 		ISelection selection = getSelection();
 		if (selection instanceof ITextSelection) {

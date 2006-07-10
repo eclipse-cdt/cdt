@@ -105,9 +105,6 @@ public abstract class TabFolderOptionBlock {
 		return composite;
 	}
 
-	/**
-	 * @return
-	 */
 	protected ICOptionPage getStartPage() {
 		return (ICOptionPage)pages.get(0);
 	}
@@ -173,9 +170,6 @@ public abstract class TabFolderOptionBlock {
 		return true;
 	}
 
-	/**
-	 * @see DialogPage#setVisible(boolean)
-	 */
 	public void setVisible(boolean visible) {
 		if (initializingTabs)
 			return;

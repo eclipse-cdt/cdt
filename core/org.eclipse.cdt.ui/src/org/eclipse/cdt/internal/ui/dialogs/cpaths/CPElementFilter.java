@@ -29,10 +29,8 @@ public class CPElementFilter extends ViewerFilter {
 	protected boolean fShowInherited;
 
 	/**
-	 * @param excludedFiles
+	 * @param excludedElements
 	 *            Excluded paths will not pass the filter. <code>null</code> is allowed if no files should be excluded.
-	 * @param recusive
-	 *            Folders are only shown if, searched recursivly, contain an archive
 	 */
 	public CPElementFilter(Object[] excludedElements, int[] kind, boolean exportedOnly, boolean showInherited) {
 		if (excludedElements != null) {

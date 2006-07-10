@@ -179,10 +179,6 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
      * 
      * @param parent
      *            The parent shell for the dialog
-     * @param labelProvider
-     *            the label provider to render the entries
-     * @param contentProvider
-     *            the content provider to evaluate the tree structure
      */
     public SourceFileSelectionDialog(Shell parent) {
         super(parent);
@@ -504,9 +500,6 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
     
     /**
      * Sets the initial selection. Convenience method.
-     * 
-     * @param initialPath
-     *            the initial selection.
      */
     public void setInitialSelection(String folderName, String fileName) {
         fInitialFileName = (fileName != null && fileName.length() > 0) ? fileName : null;

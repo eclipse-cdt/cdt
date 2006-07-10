@@ -551,7 +551,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
 	public void systemTypeChanged(IRSESystemType systemType) {
 		setSystemType(systemType);
 		restrictSystemType(systemType.getName());
-		mainPage.setTitle(getPageTitle());
+		getMainPage().setTitle(getPageTitle());
         subsystemFactorySuppliedWizardPages = getAdditionalWizardPages(systemType.getName());
 	}
 }

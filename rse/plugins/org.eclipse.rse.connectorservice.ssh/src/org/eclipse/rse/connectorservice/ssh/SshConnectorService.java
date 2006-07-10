@@ -56,6 +56,7 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.model.SystemSignonInformation;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.ssh.ISshSessionProvider;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -266,7 +267,11 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
         }
         //session.setTimeout(getSshTimeoutInMillis());
         session.setTimeout(0); //never time out on the session
-        String password = getPasswordInformation().getPassword();
+        String password=""; //$NON-NLS-1$
+        SystemSignonInformation ssi = getPasswordInformation();
+        if (ssi!=null) {
+        	password = getPasswordInformation().getPassword();
+        }
         session.setPassword(password);
         MyUserInfo userInfo = new MyUserInfo(user, password);
         session.setUserInfo(userInfo);

@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Anton Leherbauer (Wind River Systems) - Fix bug 148114
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems) - Fix bug 150045
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
@@ -105,6 +105,7 @@ import org.eclipse.cdt.internal.ui.dnd.ResourceTransferDragAdapter;
 import org.eclipse.cdt.internal.ui.dnd.ResourceTransferDropAdapter;
 import org.eclipse.cdt.internal.ui.dnd.TransferDragSourceListener;
 import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
+import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
@@ -625,16 +626,25 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		}
 
 		IEditorInput input = editor.getEditorInput();
+		Object linkElement = null;
 		if (input instanceof IFileEditorInput) {
 			CoreModel factory = CoreModel.getDefault();
 			IFileEditorInput fileInput = (IFileEditorInput) input;
 			IFile file = fileInput.getFile();
 			ICElement celement = factory.create(file);
 			if (celement != null) {
-				ISelection newSelection = new StructuredSelection(celement);
-				if (!viewer.getSelection().equals(newSelection)) {
-					viewer.setSelection(newSelection);
-				}
+				linkElement = celement;
+			} else {
+				linkElement = file;
+			}
+		} else if (input instanceof ITranslationUnitEditorInput) {
+			ITranslationUnitEditorInput tuInput = (ITranslationUnitEditorInput) input;
+			linkElement = tuInput.getTranslationUnit();
+		}
+		if (linkElement != null) {
+			ISelection newSelection = new StructuredSelection(linkElement);
+			if (!viewer.getSelection().equals(newSelection)) {
+				viewer.setSelection(newSelection);
 			}
 		}
 	}

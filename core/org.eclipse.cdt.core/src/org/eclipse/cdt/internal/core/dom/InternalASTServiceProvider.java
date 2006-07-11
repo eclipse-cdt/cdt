@@ -254,7 +254,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
     		} else if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
     			return ParserLanguage.CPP;
     		} else if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)) {
-    			return ParserLanguage.CPP; 					// <============== is that right ? should not this be C ?
+    			return ParserLanguage.C; 					
     		} else if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)) {
     			return ParserLanguage.C;
     		} else if (CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)) {

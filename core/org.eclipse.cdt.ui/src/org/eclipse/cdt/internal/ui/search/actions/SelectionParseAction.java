@@ -7,38 +7,13 @@
  *
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
-import java.io.IOException;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserFactoryError;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.ExternalSearchEditor;
-import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -60,6 +35,18 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.ExternalSearchEditor;
+import org.eclipse.cdt.internal.ui.search.CSearchMessages;
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 /**
  * @author aniefer
@@ -89,60 +76,6 @@ public class SelectionParseAction extends Action {
 		super();
 		fSite=site;
 	}
-
-	protected IParser setupParser(IFile resourceFile) {
-		
-
-		//Get the scanner info
-		IProject currentProject = resourceFile.getProject();
-		IScannerInfo scanInfo = new ScannerInfo();
-		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(currentProject);
-		if (provider != null){
-		  IScannerInfo buildScanInfo = provider.getScannerInformation(resourceFile);
-		  if (buildScanInfo != null){
-			scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
-		  }
-		}
-		
-		//C or CPP?
-		ParserLanguage language = CoreModel.hasCCNature(currentProject) ? ParserLanguage.CPP : ParserLanguage.C;
-		
-		IWorkingCopy workingCopy = null;
-		if( fEditor.isDirty() ){
-			IWorkingCopy [] workingCopies = CUIPlugin.getSharedWorkingCopies();
-			if( workingCopies != null ){
-				for( int i = 0; i < workingCopies.length; i++ ){
-					if( workingCopies[i].getUnderlyingResource().equals( resourceFile ) ){
-						workingCopy = workingCopies[i];
-						break;
-					}
-				}
-			}
-		}
-		
-		IParser parser = null;
-		CodeReader reader = null;
-		try {
-			if( workingCopy == null )
-				reader = new CodeReader(resourceFile.getLocation().toOSString(), resourceFile.getCharset() );
-			else 
-				reader = new CodeReader(resourceFile.getLocation().toOSString(), workingCopy.getContents());
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch ( CoreException e ) {
-            e.printStackTrace();
-        }
-		
-		try
-		{
-			parser = ParserFactory.createParser( 
-							ParserFactory.createScanner( reader, scanInfo, ParserMode.SELECTION_PARSE, language, new NullSourceElementRequestor(), ParserUtil.getScannerLogService(), null ), 
-							new NullSourceElementRequestor(), ParserMode.SELECTION_PARSE, language, ParserUtil.getParserLogService() );
-			
-		} catch( ParserFactoryError pfe ){}
-		
-	   return parser;
-	 }
 
 	protected void operationNotAvailable(final String message) {
 		// run the code to update the status line on the Display thread

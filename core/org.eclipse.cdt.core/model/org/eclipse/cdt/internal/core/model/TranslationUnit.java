@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -17,7 +18,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
@@ -682,25 +682,30 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	public ILanguage getLanguage() throws CoreException {
 		if (language == null) {
-			// Look for the language extension registered against the
-			// content type string
-			IContentTypeManager manager = Platform.getContentTypeManager(); 
-			IContentType contentType = manager.getContentType(contentTypeId);
-			language = LanguageManager.getInstance().getLanguage(contentType);
+			language= computeLanguage(contentTypeId);
 			
 			// Special magic for C/C++ header files
 			if (language == null && isHeaderUnit()) {
-				IResource resource = getResource();
-				contentType = resource != null && CoreModel.hasCCNature(resource.getProject())
-					? manager.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE)
-					: manager.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
-				language = LanguageManager.getInstance().getLanguage(contentType);
+				if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER)) {
+					language= computeLanguage(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
+				}
+				else {
+					language= computeLanguage(CCorePlugin.CONTENT_TYPE_CSOURCE);
+				}
 			}
 		}
 		
 		return language;
 	}
 	
+	private ILanguage computeLanguage(String contentTypeId) throws CoreException {
+		// Look for the language extension registered against the
+		// content type string
+		IContentTypeManager manager = Platform.getContentTypeManager(); 
+		IContentType contentType = manager.getContentType(contentTypeId);
+		return LanguageManager.getInstance().getLanguage(contentType);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getContentTypeId()
 	 */
@@ -734,7 +739,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		try {
 			this.getElementInfo().setIsStructureKnown(wasSuccessful);
 		} catch (CModelException e) {
-			;
 		}
 	}
 }

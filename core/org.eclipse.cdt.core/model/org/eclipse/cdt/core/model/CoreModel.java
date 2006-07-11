@@ -7,11 +7,10 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
-import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -50,8 +49,8 @@ public class CoreModel {
 	private static CoreModel cmodel = null;
 	private static CModelManager manager = CModelManager.getDefault();
 	private static PathEntryManager pathEntryManager = PathEntryManager.getDefault();
-	private static String FILE_EXT_PATTERN = "*."; //$NON-NLS-1$
-	private static int FILE_EXT_PATTERN_LENGTH = FILE_EXT_PATTERN.length();
+//	private static String FILE_EXT_PATTERN = "*."; //$NON-NLS-1$
+//	private static int FILE_EXT_PATTERN_LENGTH = FILE_EXT_PATTERN.length();
 
 	public final static String CORE_MODEL_ID = CCorePlugin.PLUGIN_ID + ".coremodel"; //$NON-NLS-1$
 
@@ -187,10 +186,7 @@ public class CoreModel {
 	 * @return String[] ids
 	 */
 	public static String[] getRegistedContentTypeIds() {
-		ArrayList a = LanguageManager.getInstance().getAllContentTypes();
-		String[] result = new String[a.size()];
-		a.toArray(result);
-		return result;
+		return LanguageManager.getInstance().getRegisteredContentTypeIds();
 	}
 
 	/**

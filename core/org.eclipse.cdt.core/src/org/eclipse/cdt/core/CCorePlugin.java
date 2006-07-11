@@ -47,6 +47,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -62,8 +63,9 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.content.IContentTypeMatcher;
+import org.eclipse.core.runtime.content.IContentTypeSettings;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.framework.BundleContext;
 
 public class CCorePlugin extends Plugin {
@@ -880,26 +882,114 @@ public class CCorePlugin extends Plugin {
 	}
 	
 	/**
-	 * Helper function, returning the contenttype for a filename
-	 * @param project
-	 * @param name
-	 * @return
+	 * Returns the content type for a filename. The method respects project
+	 * project specific content type definitions. The lookup prefers case-
+	 * sensitive matches over the others.
+	 * @param project a project with possible project specific settings. Can be <code>null</code>
+	 * @param filename a filename to compute the content type for
+	 * @return the content type found or <code>null</code>
 	 */
 	public static IContentType getContentType(IProject project, String filename) {
-		// Always try in the workspace (for multi-language support)
-		// try with the project settings
+		IContentTypeMatcher matcher= null;
+		IScopeContext scopeCtx= null;
+		boolean preferCpp= true;
 		if (project != null) {
+			// try with the project settings
 			try {
-				IContentTypeMatcher matcher = project.getContentTypeMatcher();
-				IContentType ct = matcher.findContentTypeFor(filename);
-				if (ct != null) return ct;
+				matcher= project.getContentTypeMatcher();
+				scopeCtx= new ProjectScope(project);
+				preferCpp= CoreModel.hasCCNature(project);
 			} catch (CoreException e) {
-				// ignore. 
+				// fallback to workspace wide definitions.
+				matcher= Platform.getContentTypeManager();
 			}
 		}
-		// Try in the workspace.
-		IContentTypeManager manager = Platform.getContentTypeManager();
-		return manager.findContentTypeFor(filename);
+		else {
+			matcher= Platform.getContentTypeManager();
+		}
+
+		IContentType[] cts = matcher.findContentTypesFor(filename);
+		switch (cts.length) {
+		case 0:
+			return null;
+		case 1:
+			return cts[0];
+		}
+		
+		int maxPossiblePriority= scopeCtx == null ? 11 : 101;
+		int bestPriority= -1;
+		IContentType bestResult= null;
+		
+		for (int i = 0; i < cts.length; i++) {
+			IContentType candidate= cts[i];
+			int priority= 0;
+			try {
+				if (scopeCtx != null) {
+					IContentTypeSettings settings= candidate.getSettings(scopeCtx);
+					if (isStrictlyAssociatedWith(settings, filename)) {
+						priority= 100;
+					}
+				}
+				if (priority == 0 && bestPriority < 100) {
+					if (isStrictlyAssociatedWith(candidate, filename)) {
+						priority= 10;
+					}
+				}
+				if (isPreferredContentType(candidate, preferCpp)) {
+					priority+= 1;
+				}
+			}
+			catch (CoreException e) {
+				// skip it
+			}
+			if (priority > bestPriority) {
+				if (priority == maxPossiblePriority) {
+					return candidate;
+				}
+				bestPriority= priority;
+				bestResult= candidate;
+			}
+		}
+		return bestResult;
+	}
+
+	private static boolean isPreferredContentType(IContentType candidate, boolean preferCpp) {
+		while (candidate != null) {
+			String id= candidate.getId();
+			boolean isCpp= CONTENT_TYPE_CXXHEADER.equals(id) || CONTENT_TYPE_CXXSOURCE.equals(id);
+			if (isCpp) {
+				return preferCpp;
+			}
+			boolean isC= CONTENT_TYPE_CHEADER.equals(id) || CONTENT_TYPE_CSOURCE.equals(id); 
+			if (isC) {
+				return !preferCpp;
+			}
+			candidate= candidate.getBaseType();
+		}
+		return false;
+	}
+
+	private static boolean isStrictlyAssociatedWith(IContentTypeSettings settings, String filename) {
+		String[] namespecs= settings.getFileSpecs(IContentType.FILE_NAME_SPEC);
+		for (int i = 0; i < namespecs.length; i++) {
+			String name = namespecs[i];
+			if (name.equals(filename)) {
+				return true;
+			}
+		}
+		// check the file extensions only
+		int dotPosition = filename.lastIndexOf('.');
+		if (dotPosition >= 0 && dotPosition < filename.length()-1) {
+			String fileExtension= filename.substring(dotPosition + 1); 
+			String[] extensions= settings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+			for (int i = 0; i < extensions.length; i++) {
+				String ext = extensions[i];
+				if (ext.equals(fileExtension)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 

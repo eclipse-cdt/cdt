@@ -450,60 +450,35 @@
 <!-- =================================================================================== -->
 <!-- Define C/C++ files ContentTypes                                                     -->
 <!-- =================================================================================== -->
-  <extension point="org.eclipse.core.runtime.contentTypes">
+   <extension point="org.eclipse.core.runtime.contentTypes">
 	  <!-- declares a content type for C source files -->
-	  <content-type id="cSource" name="%cSourceName" 
-		  base-type="org.eclipse.core.runtime.text"
-		  priority="high"/>
+	  <content-type id="cSource" name="%cSourceName"
+         base-type="org.eclipse.core.runtime.text"
+         file-extensions="c"
+         priority="high"/>
 	  <!-- declares a content type for C header files -->
       <content-type id="cHeader" name="%cHeaderName" 
           base-type="org.eclipse.cdt.core.cSource"
+		  file-extensions="h"          
           priority="high"/>
 	  <!-- declares a content type for C++ source files -->
       <content-type id="cxxSource" name="%cxxSourceName" 
           base-type="org.eclipse.cdt.core.cSource"
+		  file-extensions="C,cpp,cxx,cc,c++"
           priority="high"/>
 	  <!-- declares a content type for C++ header files -->
       <content-type id="cxxHeader" name="%cxxHeaderName" 
           base-type="org.eclipse.cdt.core.cxxSource"
+		  file-extensions="h,hpp,hh,hxx"          
           priority="high"/>
 	  <!-- declares a content type for ASM Source files -->
       <content-type id="asmSource" name="%asmSourceName" 
           base-type="org.eclipse.core.runtime.text"
+          file-extensions="s,asm"
           priority="high"/>
-  </extension>
+   </extension>
 
-  <extension point="org.eclipse.core.runtime.contentTypes"> 
-      <file-association 
-       content-type="org.eclipse.cdt.core.cSource"
-       file-extensions="c"/>
-   </extension> 
-
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
-      <file-association 
-       content-type="org.eclipse.cdt.core.cxxSource"
-       file-extensions="C,cpp,cxx,cc,c++"/>
-   </extension> 
-
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
-      <file-association 
-       content-type="org.eclipse.cdt.core.asmSource"
-       file-extensions="s,asm"/>
-   </extension> 
-
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
-      <file-association 
-       content-type="org.eclipse.cdt.core.cHeader"
-       file-extensions="h"/>
-   </extension> 
-
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
-      <file-association 
-       content-type="org.eclipse.cdt.core.cxxHeader"
-       file-extensions="hpp,hh,hxx"/>
-   </extension> 
-
-	<!-- the reserved filenames by the C++ standard -->
+   <!-- the reserved filenames by the C++ standard -->
    <extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"

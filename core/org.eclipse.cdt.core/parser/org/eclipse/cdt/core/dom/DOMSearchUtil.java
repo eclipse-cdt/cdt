@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
 
@@ -40,7 +41,7 @@ import org.eclipse.core.runtime.content.IContentType;
  */
 public class DOMSearchUtil {
 	private static final IASTName[] BLANK_NAME_ARRAY = new IASTName[0];
-    private static final IASTName[] EMPTY_NAME_LIST = BLANK_NAME_ARRAY;
+//    private static final IASTName[] EMPTY_NAME_LIST = BLANK_NAME_ARRAY;
 
     public static final int DECLARATIONS = 1;
     public static final int DEFINITIONS = 2;
@@ -58,7 +59,8 @@ public class DOMSearchUtil {
         IContentType contentType = CCorePlugin.getContentType(project, file.getFullPath().lastSegment());
         if (contentType != null) {
         	String lid = contentType.getId();
-        	if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(lid)) {
+        	if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(lid) || 
+        			CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(lid)) {
         		return ParserLanguage.CPP;
         	}
         }        
@@ -131,7 +133,7 @@ public class DOMSearchUtil {
     		} else if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
     			return ParserLanguage.CPP;
     		} else if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)) {
-    			return ParserLanguage.CPP; 				// <============== is that right ? should not this be C ?
+    			return ParserLanguage.C; 				
     		} else if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)) {
     			return ParserLanguage.C;
     		} else if (CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)) {

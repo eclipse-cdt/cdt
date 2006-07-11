@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -15,9 +16,14 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IMacro;
@@ -57,15 +63,13 @@ import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.ui.CUIPlugin;
+
 import org.eclipse.cdt.internal.core.CharOperation;
+
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.util.IDebugLogConstants;
 import org.eclipse.cdt.internal.ui.util.Util;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  *
@@ -143,6 +147,7 @@ public class CompletionEngine implements RelevanceConstants {
 	}
 	private IASTCompletionNode parse(IWorkingCopy sourceUnit, int completionOffset){
 		// Get resource info
+		ITranslationUnit tu= sourceUnit.getOriginalElement();
 		IResource currentResource = sourceUnit.getResource();
 		IPath realPath = currentResource.getLocation(); 
 		IProject project = currentResource.getProject();
@@ -158,7 +163,7 @@ public class CompletionEngine implements RelevanceConstants {
 		} 			
 	
 		//C or CPP?
-		ParserLanguage language = CoreModel.hasCCNature(project) ? ParserLanguage.CPP : ParserLanguage.C;
+		ParserLanguage language = tu != null && tu.isCLanguage() ? ParserLanguage.C : ParserLanguage.CPP;
 	
 		IParser parser = null;
 		IScanner scanner = null;

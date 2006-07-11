@@ -151,16 +151,13 @@ public class IBViewPart extends ViewPart
     public void setInput(ITranslationUnit input) {
     	if (input == null) {
     		setMessage(IBMessages.IBViewPart_instructionMessage);
+    		fTreeViewer.setInput(null);
     		return;
     	}
     	
         fShowsMessage= false;
-        boolean isHeader= false;
-        String contentType= input.getContentTypeId();
-        if (contentType.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER) ||
-                contentType.equals(CCorePlugin.CONTENT_TYPE_CHEADER)) {
-            isHeader= true;
-        }
+        boolean isHeader= input.isHeaderUnit();
+        
         fTreeViewer.setInput(null);
         if (!isHeader) {
         	fContentProvider.setComputeIncludedBy(isHeader);

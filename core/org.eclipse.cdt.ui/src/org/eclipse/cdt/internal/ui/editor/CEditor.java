@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -17,7 +18,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.action.Action;
@@ -114,7 +114,6 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
@@ -1461,12 +1460,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		ITranslationUnit unit = mgr.getWorkingCopy(getEditorInput());
 		String fileType = LANGUAGE_CPP;
 		if (unit != null) {
-			// default is C++ unless the project as C Nature Only
-			// we can then be smarter.
-			IProject p = unit.getCProject().getProject();
-			if (!CoreModel.hasCCNature(p)) {
-				fileType = unit.isCXXLanguage() ? LANGUAGE_CPP : LANGUAGE_C;
-			}
+			fileType= unit.isCLanguage() ? LANGUAGE_C : LANGUAGE_CPP;
 		}
 
 		fAnnotationAccess = createAnnotationAccess();

@@ -11,7 +11,8 @@
 
 package org.eclipse.cdt.core;
 
-import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.IRegion;
+
 
 /**
  * Allows for converting character ranges of files previously stored on disk to the 
@@ -37,6 +38,8 @@ import org.eclipse.jface.text.Position;
  * work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
  * </p>
+ * 
+ * @since 4.0
  */
 
 public interface IPositionConverter {
@@ -47,7 +50,7 @@ public interface IPositionConverter {
      * @return a range suitable for the version of the file for which the converter
      * was obtained.
      */
-    Position actualToHistoric(Position actualPosition);
+    IRegion actualToHistoric(IRegion actualPosition);
 
     /** 
      * Converts a historic character range to the range where the underlying text 
@@ -56,5 +59,5 @@ public interface IPositionConverter {
      * the converter was obtained.
      * @return a range suitable for the current text buffer of the file.
      */
-    Position historicToActual(Position historicPosition);
+    IRegion historicToActual(IRegion historicPosition);
 }

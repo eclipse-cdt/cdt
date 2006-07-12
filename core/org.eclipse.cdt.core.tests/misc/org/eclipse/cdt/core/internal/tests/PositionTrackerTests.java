@@ -18,7 +18,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.internal.core.PositionTracker;
-import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 
 public class PositionTrackerTests extends TestCase {
     public static Test suite() {
@@ -260,13 +261,13 @@ public class PositionTrackerTests extends TestCase {
         doubleCheck(pt, 2, 3);
         
         // ranges
-        doubleRangeCheck(pt, new Position(0,2), new Position(0,3));
-        backwdRangeCheck(pt, new Position(0,1), new Position(0,2));
-        doubleRangeCheck(pt, new Position(0,1), new Position(0,1));
-        backwdRangeCheck(pt, new Position(1,0), new Position(1,1));
-        backwdRangeCheck(pt, new Position(1,0), new Position(1,0));
-        doubleRangeCheck(pt, new Position(1,1), new Position(2,1));
-        doubleRangeCheck(pt, new Position(1,0), new Position(2,0));
+        doubleRangeCheck(pt, new Region(0,2), new Region(0,3));
+        backwdRangeCheck(pt, new Region(0,1), new Region(0,2));
+        doubleRangeCheck(pt, new Region(0,1), new Region(0,1));
+        backwdRangeCheck(pt, new Region(1,0), new Region(1,1));
+        backwdRangeCheck(pt, new Region(1,0), new Region(1,0));
+        doubleRangeCheck(pt, new Region(1,1), new Region(2,1));
+        doubleRangeCheck(pt, new Region(1,0), new Region(2,0));
     }
 
     public void testDeletion() {
@@ -282,13 +283,13 @@ public class PositionTrackerTests extends TestCase {
         doubleCheck(pt, 3, 2);
 
         // ranges
-        doubleRangeCheck(pt, new Position(0,3), new Position(0,2));
-        fwdRangeCheck   (pt, new Position(0,2), new Position(0,1));
-        doubleRangeCheck(pt, new Position(0,1), new Position(0,1));
-        fwdRangeCheck   (pt, new Position(1,1), new Position(1,0));
-        fwdRangeCheck   (pt, new Position(1,0), new Position(1,0));
-        doubleRangeCheck(pt, new Position(2,1), new Position(1,1));
-        doubleRangeCheck(pt, new Position(2,0), new Position(1,0));
+        doubleRangeCheck(pt, new Region(0,3), new Region(0,2));
+        fwdRangeCheck   (pt, new Region(0,2), new Region(0,1));
+        doubleRangeCheck(pt, new Region(0,1), new Region(0,1));
+        fwdRangeCheck   (pt, new Region(1,1), new Region(1,0));
+        fwdRangeCheck   (pt, new Region(1,0), new Region(1,0));
+        doubleRangeCheck(pt, new Region(2,1), new Region(1,1));
+        doubleRangeCheck(pt, new Region(2,0), new Region(1,0));
     }
     
     public void testReplace() {
@@ -342,16 +343,16 @@ public class PositionTrackerTests extends TestCase {
         assertEquals(orig, pt.historicOffset(mapped));
     }
     
-    private void doubleRangeCheck(PositionTracker pt, Position orig, Position mapped) {
+    private void doubleRangeCheck(PositionTracker pt, IRegion orig, IRegion mapped) {
         fwdRangeCheck(pt, orig, mapped);
         backwdRangeCheck(pt, orig, mapped);         
     }
 
-    private void fwdRangeCheck(PositionTracker pt, Position orig, Position mapped) {
+    private void fwdRangeCheck(PositionTracker pt, IRegion orig, IRegion mapped) {
         assertEquals(mapped, pt.historicToActual(orig));
     }
 
-    private void backwdRangeCheck(PositionTracker pt, Position orig, Position mapped) {
+    private void backwdRangeCheck(PositionTracker pt, IRegion orig, IRegion mapped) {
         assertEquals(orig, pt.actualToHistoric(mapped));
     }
 }

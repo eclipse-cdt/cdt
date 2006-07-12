@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IPath;
  * work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
  * </p>
+ * @since 4.0
  */
 public interface IPositionTrackerManager {
     /**

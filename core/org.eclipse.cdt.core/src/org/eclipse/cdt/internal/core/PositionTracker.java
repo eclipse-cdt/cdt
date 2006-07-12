@@ -14,7 +14,8 @@ package org.eclipse.cdt.internal.core;
 import java.io.PrintStream;
 
 import org.eclipse.cdt.core.IPositionConverter;
-import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 
 /**
  * Tracks changes made to a text buffer, to afterwards recalculate positions.
@@ -165,7 +166,7 @@ public class PositionTracker implements IPositionConverter {
         return fAboveRoot.countNodes();
     }
 
-    public synchronized Position actualToHistoric(Position actualPosition) {
+    public synchronized IRegion actualToHistoric(IRegion actualPosition) {
         int actual= actualPosition.getOffset();
         int len= actualPosition.getLength();
         
@@ -174,10 +175,10 @@ public class PositionTracker implements IPositionConverter {
             len= historicOffset(actual+len-1, false) - historic + 1;
         }
         assert len >= 0;
-        return new Position(historic, len);
+        return new Region(historic, len);
     }
 
-    public synchronized Position historicToActual(Position historicPosition) {
+    public synchronized IRegion historicToActual(IRegion historicPosition) {
         int historic= historicPosition.getOffset();
         int len= historicPosition.getLength();
         
@@ -186,7 +187,7 @@ public class PositionTracker implements IPositionConverter {
             len= currentOffset(historic+len-1, false) - actual + 1;
         }
         assert len >= 0;
-        return new Position(actual, len);
+        return new Region(actual, len);
     }
     
     /**

@@ -25,7 +25,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -698,7 +699,7 @@ public class IBViewPart extends ViewPart
                 }
                 if (editor instanceof ITextEditor) {
                     ITextEditor te= (ITextEditor) editor;
-                    Position pos= new Position(node.getDirectiveCharacterOffset(),
+                    IRegion pos= new Region(node.getDirectiveCharacterOffset(),
                     		node.getDirectiveName().length() + 2);
                     if (filebufferKey != null) {
                     	IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(filebufferKey, timestamp);

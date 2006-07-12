@@ -187,6 +187,9 @@ public class CFileTypesPropertyPage extends PropertyPage {
 			CCorePlugin.setUseProjectSpecificContentTypes(project, useProjectContentTypes);
 			computeEvents(project);
 		}
+		if (useProjectContentTypes) {
+			fPrefsBlock.performOk();
+		}
 		return super.performOk();
 	}
 	

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,6 +24,8 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -50,6 +53,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.cdt.core.model.CoreModel;
 
+import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
@@ -345,11 +349,11 @@ public class CFileTypesPreferenceBlock {
 		if (fInput != null) {
 			context = new ProjectScope(fInput);
 		}
-		addAssociations(add, context);
 		removeAssociations(rem, context);
+		addAssociations(add, context);
 	}
 
-	protected void addAssociations(CFileTypeAssociation[] add, IScopeContext context) {
+	final protected void addAssociations(CFileTypeAssociation[] add, IScopeContext context) {
 		for (int i = 0; i < add.length; ++i) {
 			CFileTypeAssociation assoc = add[i];
 			String spec = assoc.getSpec();
@@ -447,7 +451,7 @@ public class CFileTypesPreferenceBlock {
 			pattern = pattern.substring(2);
 			type = IContentType.FILE_EXTENSION_SPEC;
 		}
-		return new CFileTypeAssociation(pattern, type, contentType);
+		return new CFileTypeAssociation(pattern, type | IContentType.IGNORE_PRE_DEFINED, contentType);
 	}
 
 	protected void handleSelectionChanged() {
@@ -466,32 +470,94 @@ public class CFileTypesPreferenceBlock {
 		}
 	}
 
-	protected void handleAdd() {
+	final protected void handleAdd() {
 		CFileTypeAssociation assoc = null;
 
 		CFileTypeDialog dlg = new CFileTypeDialog(fBtnNew.getParent().getShell());
 		
 		if (Window.OK == dlg.open()) {
 			assoc = createAssociation(dlg.getPattern(), dlg.getContentType());
-			if (null != assoc) {
+			if (handleAdd(assoc)) {
 				fAssocViewer.add(assoc);
-				fAddAssoc.add(assoc);
-				fRemoveAssoc.remove(assoc);
 				setDirty(true);
 			}
 		}
 	}
 	
-	protected void handleRemove() {
+	private boolean handleAdd(CFileTypeAssociation assoc) {
+		// assoc is marked to be added.
+		if (containsIgnoreCaseOfSpec(fAddAssoc, assoc)) {
+			reportDuplicateAssociation(assoc);
+			return false;
+		}			
+		// assoc exists, but is marked to be removed.
+		if (containsIgnoreCaseOfSpec(fRemoveAssoc, assoc)) {
+			if (!fRemoveAssoc.remove(assoc)) {
+				fAddAssoc.add(assoc);
+			}
+			return true;
+		}
+
+		// analyze current settings
+		IContentTypeSettings settings;
+		if (fInput == null) {
+			settings= assoc.getContentType();
+		}
+		else {
+			try {
+				settings= assoc.getContentType().getSettings(new ProjectScope(fInput));
+			} catch (CoreException e) {
+				ErrorDialog.openError(fBtnNew.getParent().getShell(),
+						PreferencesMessages.getString("CFileTypesPreferenceBlock.addAssociationError.title"), //$NON-NLS-1$
+						null, e.getStatus());
+				return false;
+			}
+		}
+		String newSpec= assoc.getSpec();
+		String[] specs= settings.getFileSpecs(assoc.getFileSpecType());
+		for (int i = 0; i < specs.length; i++) {
+			String spec = specs[i];
+			if (spec.equalsIgnoreCase(newSpec)) {
+				reportDuplicateAssociation(assoc);
+				return false;
+			}				
+		}
+		fAddAssoc.add(assoc);
+		return true;
+	}	
+	
+	private boolean containsIgnoreCaseOfSpec(Collection collection, CFileTypeAssociation assoc) {
+		for (Iterator iter = collection.iterator(); iter.hasNext(); ) {
+			CFileTypeAssociation existing = (CFileTypeAssociation) iter.next();
+			if (assoc.equalsIgnoreCaseOfSpec(existing)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void reportDuplicateAssociation(CFileTypeAssociation assoc) {
+		MessageDialog.openError(fBtnNew.getParent().getShell(),
+				PreferencesMessages.getString("CFileTypesPreferenceBlock.addAssociationError.title"), //$NON-NLS-1$
+				Messages.format(PreferencesMessages.getString("CFileTypesPreferenceBlock.addAssociationErrorMessage"),  //$NON-NLS-1$
+						assoc.getPattern(), assoc.getContentType().getName()));
+	}
+
+	final protected void handleRemove() {
 		IStructuredSelection sel = getSelection();
 		if ((null != sel) && (!sel.isEmpty())) {
 			for (Iterator iter = sel.iterator(); iter.hasNext();) {
 				CFileTypeAssociation assoc = (CFileTypeAssociation) iter.next();
+				handleRemove(assoc);
 				fAssocViewer.remove(assoc);
-				fAddAssoc.remove(assoc);
-				fRemoveAssoc.add(assoc);
 				setDirty(true);
 			}
+		}
+	}
+
+	private void handleRemove(CFileTypeAssociation assoc) {
+		if (!fAddAssoc.remove(assoc)) {
+			fRemoveAssoc.add(assoc);
 		}
 	}
 

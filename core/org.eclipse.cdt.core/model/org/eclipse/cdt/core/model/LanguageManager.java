@@ -47,6 +47,7 @@ public class LanguageManager {
 		ILanguage language = (ILanguage)cache.get(id);
 		if (language != null)
 			return language;
+
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ILanguage.KEY);
 		IExtension[] extensions = point.getExtensions();
 		for (int i = 0; i < extensions.length; ++i) {
@@ -67,15 +68,16 @@ public class LanguageManager {
 	}
 	
 	public ILanguage getLanguage(IContentType contentType) throws CoreException {
+		String contentTypeId= contentType.getId();
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ILanguage.KEY);
 		IExtension[] extensions = point.getExtensions();
 		for (int i = 0; i < extensions.length; ++i) {
 			IConfigurationElement[] languages = extensions[i].getConfigurationElements();
 			for (int j = 0; j < languages.length; ++j) {
 				IConfigurationElement language = languages[j];
-				IConfigurationElement[] contentTypes = language.getChildren("contentType"); //$NON-NLS-1$
-				for (int k = 0; k < contentTypes.length; ++k) {
-					if (contentType.equals(contentType.getId())) {
+				IConfigurationElement[] assocContentTypes = language.getChildren("contentType"); //$NON-NLS-1$
+				for (int k = 0; k < assocContentTypes.length; ++k) {
+					if (contentTypeId.equals(assocContentTypes[i].getAttribute("id"))) { //$NON-NLS-1$
 						return (ILanguage)language.createExecutableExtension("class"); //$NON-NLS-1$
 					}
 				}

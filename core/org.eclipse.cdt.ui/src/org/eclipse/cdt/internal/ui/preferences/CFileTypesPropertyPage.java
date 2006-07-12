@@ -7,20 +7,17 @@
  * 
  * Contributors: 
  *     TimeSys Corporation - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  **********************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -36,8 +33,13 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+
+import org.eclipse.cdt.internal.core.model.CModelManager;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 /*
  * The preference page used for displaying/editing CDT file
@@ -93,16 +95,6 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		
 	}
 
-	private static final String CONTENT_TYPE_PREF_NODE = "content-types"; //$NON-NLS-1$
-	private static final String FULLPATH_CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + CONTENT_TYPE_PREF_NODE;
-	private static final String PREF_LOCAL_CONTENT_TYPE_SETTINGS = "enabled"; //$NON-NLS-1$
-//	private final static String PREF_FILE_EXTENSIONS = "file-extensions"; //$NON-NLS-1$
-//	private final static String PREF_FILE_NAMES = "file-names"; //$NON-NLS-1$
-//	private final static String PREF_SEPARATOR = ","; //$NON-NLS-1$
-	private static final Preferences PROJECT_SCOPE = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
-	//private static final InstanceScope INSTANCE_SCOPE = new InstanceScope();
-
-
 	protected Button fUseWorkspace;
 	protected Button fUseProject;
 	protected FixCFileTypesPreferenceBlock fPrefsBlock;
@@ -140,7 +132,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		});
 
 		final IProject project = getProject(); 
-		boolean custom = isProjectSpecificContentType(project.getName());
+		boolean custom = CCorePlugin.usesProjectSpecificContentTypes(project);
 
 		fUseProject = new Button(radioPane, SWT.RADIO);
 		fUseProject.setText(PreferencesMessages.getString("CFileTypesPropertyPage.useProjectSettings")); //$NON-NLS-1$
@@ -189,37 +181,11 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		
-		if (fUseProject.getSelection()) {
-			IProject project = getProject();
-			ProjectScope projectScope = new ProjectScope(project);
-			Preferences contentTypePrefs = projectScope.getNode(FULLPATH_CONTENT_TYPE_PREF_NODE);
-			if (! isProjectSpecificContentType(project.getName())) {
-				// enable project-specific settings for this project
-				contentTypePrefs.putBoolean(PREF_LOCAL_CONTENT_TYPE_SETTINGS, true);
-				try {
-					contentTypePrefs.flush();
-				} catch (BackingStoreException e) {
-					// ignore ??
-				}
-				computeEvents(project);
-			}
-			fPrefsBlock.performOk();
-		} else if (fUseWorkspace.getSelection()) {
-			IProject project = getProject();
-			if (isProjectSpecificContentType(project.getName())) {
-				ProjectScope projectScope = new ProjectScope(project);
-				Preferences contentTypePrefs = projectScope.getNode(FULLPATH_CONTENT_TYPE_PREF_NODE);
-				// disable project-specific settings for this project
-				contentTypePrefs.putBoolean(PREF_LOCAL_CONTENT_TYPE_SETTINGS, false);
-				computeEvents(project);
-				try {
-					contentTypePrefs.flush();
-				} catch (BackingStoreException e) {
-					// ignore ??
-				}
-				computeEvents(project);
-			}
+		boolean useProjectContentTypes= fUseProject.getSelection();
+		IProject project = getProject();
+		if (CCorePlugin.usesProjectSpecificContentTypes(project) != useProjectContentTypes) {
+			CCorePlugin.setUseProjectSpecificContentTypes(project, useProjectContentTypes);
+			computeEvents(project);
 		}
 		return super.performOk();
 	}
@@ -234,28 +200,6 @@ public class CFileTypesPropertyPage extends PropertyPage {
 			project= (IProject) ((IAdaptable)element).getAdapter(IProject.class);
 		}
 		return project;
-	}
-
-	protected static boolean isProjectSpecificContentType(String projectName) {
-		try {
-			// be careful looking up for our node so not to create any nodes as side effect
-			Preferences node = PROJECT_SCOPE;
-			//TODO once bug 90500 is fixed, should be simpler
-			// for now, take the long way
-			if (!node.nodeExists(projectName))
-				return false;
-			node = node.node(projectName);
-			if (!node.nodeExists(Platform.PI_RUNTIME))
-				return false;
-			node = node.node(Platform.PI_RUNTIME);
-			if (!node.nodeExists(CONTENT_TYPE_PREF_NODE))
-				return false;
-			node = node.node(CONTENT_TYPE_PREF_NODE);
-			return node.getBoolean(PREF_LOCAL_CONTENT_TYPE_SETTINGS, false);
-		} catch (BackingStoreException e) {
-			// exception treated when retrieving the project preferences
-		}
-		return false;
 	}
 
 	public IContentType[] getRegistedContentTypes() {

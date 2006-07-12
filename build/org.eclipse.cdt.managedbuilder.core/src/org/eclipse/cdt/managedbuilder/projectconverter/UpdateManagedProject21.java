@@ -6,13 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *    Intel Corporation - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.projectconverter;
 
 
 import java.io.File;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -27,7 +29,6 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -38,14 +39,8 @@ import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
 
 class UpdateManagedProject21 {
-
-	private static final String CONTENT_TYPE_PREF_NODE = "content-types"; //$NON-NLS-1$
-	private static final String FULLPATH_CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + CONTENT_TYPE_PREF_NODE;
-	private static final String PREF_LOCAL_CONTENT_TYPE_SETTINGS = "enabled"; //$NON-NLS-1$
 	
 	/**
 	 * @param monitor the monitor to allow users to cancel the long-running operation
@@ -153,14 +148,8 @@ class UpdateManagedProject21 {
 					// Unfortunately there is no clear API in Eclipse-3.1 to do this.
 					// We should revisit this code when Eclipse-3.1.x and above is out
 					// with more complete API.
-					Preferences contentTypePrefs = projectScope.getNode(FULLPATH_CONTENT_TYPE_PREF_NODE);
 					// enable project-specific settings for this project
-					contentTypePrefs.putBoolean(PREF_LOCAL_CONTENT_TYPE_SETTINGS, true);
-					try {
-						contentTypePrefs.flush();
-					} catch (BackingStoreException e) {
-						// ignore ??
-					}
+					CCorePlugin.setUseProjectSpecificContentTypes(project, true);
 
 					// Now the project setting is on/enable.
 					// Add the new association in the project user setting.

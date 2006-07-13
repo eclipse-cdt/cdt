@@ -54,7 +54,7 @@ public class PDOM extends PlatformObject
 
 	private Database db;
 	
-	public static final int VERSION = 7;
+	public static final int VERSION = 8;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
@@ -63,6 +63,7 @@ public class PDOM extends PlatformObject
 	// 5 - added types and restructured nodes a bit
 	// 6 - function style macros.
 	// 7 - class key
+	// 8 - enumerators
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
@@ -193,33 +194,43 @@ public class PDOM extends PlatformObject
 		return new PDOMCodeReaderFactory(this, root);
 	}
 
-	public IASTName[] getDeclarations(IBinding binding) {
-		try {
-			if (binding instanceof PDOMBinding) {
-				List names = new ArrayList();
-				for (PDOMName name = ((PDOMBinding)binding).getFirstDeclaration(); name != null; name = name.getNextInBinding())
-					names.add(name);
-				// Add in definitions, too
-				for (PDOMName name = ((PDOMBinding)binding).getFirstDefinition(); name != null; name = name.getNextInBinding())
-					names.add(name);
-				return (IASTName[])names.toArray(new IASTName[names.size()]);
-			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
+	public IASTName[] getDeclarations(IBinding binding) throws CoreException {
+		if (binding instanceof PDOMBinding) {
+			List names = new ArrayList();
+			for (PDOMName name = ((PDOMBinding)binding).getFirstDeclaration();
+					name != null;
+					name = name.getNextInBinding())
+				names.add(name);
+			// Add in definitions, too
+			for (PDOMName name = ((PDOMBinding)binding).getFirstDefinition();
+					name != null;
+					name = name.getNextInBinding())
+				names.add(name);
+			return (IASTName[])names.toArray(new IASTName[names.size()]);
 		}
 		return new IASTName[0];
 	}
 
-	public IASTName[] getDefinitions(IBinding binding) {
-		try {
-			if (binding instanceof PDOMBinding) {
-				List names = new ArrayList();
-				for (PDOMName name = ((PDOMBinding)binding).getFirstDefinition(); name != null; name = name.getNextInBinding())
-					names.add(name);
-				return (IASTName[])names.toArray(new IASTName[names.size()]);
-			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
+	public IASTName[] getDefinitions(IBinding binding) throws CoreException {
+		if (binding instanceof PDOMBinding) {
+			List names = new ArrayList();
+			for (PDOMName name = ((PDOMBinding)binding).getFirstDefinition();
+					name != null;
+					name = name.getNextInBinding())
+				names.add(name);
+			return (IASTName[])names.toArray(new IASTName[names.size()]);
+		}
+		return new IASTName[0];
+	}
+	
+	public IASTName[] getReferences(IBinding binding) throws CoreException {
+		if (binding instanceof PDOMBinding) {
+			List names = new ArrayList();
+			for (PDOMName name = ((PDOMBinding)binding).getFirstReference();
+					name != null;
+					name = name.getNextInBinding())
+				names.add(name);
+		return (IASTName[])names.toArray(new IASTName[names.size()]);
 		}
 		return new IASTName[0];
 	}

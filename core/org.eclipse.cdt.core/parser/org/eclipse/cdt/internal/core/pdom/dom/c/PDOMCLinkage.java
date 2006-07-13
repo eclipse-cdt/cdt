@@ -22,6 +22,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -64,6 +66,8 @@ public class PDOMCLinkage extends PDOMLinkage {
 	public static final int CFUNCTION = PDOMLinkage.LAST_NODE_TYPE + 2;
 	public static final int CSTRUCTURE = PDOMLinkage.LAST_NODE_TYPE + 3;
 	public static final int CFIELD = PDOMLinkage.LAST_NODE_TYPE + 4;
+	public static final int CENUMERATION = PDOMLinkage.LAST_NODE_TYPE + 5;
+	public static final int CENUMERATOR = PDOMLinkage.LAST_NODE_TYPE + 6;
 
 	public ILanguage getLanguage() {
 		return new GCCLanguage();
@@ -126,6 +130,15 @@ public class PDOMCLinkage extends PDOMLinkage {
 				pdomBinding = new PDOMCFunction(pdom, parent, name);
 			else if (binding instanceof ICompositeType)
 				pdomBinding = new PDOMCStructure(pdom, parent, name);
+			else if (binding instanceof IEnumeration)
+				pdomBinding = new PDOMCEnumeration(pdom, parent, name);
+			else if (binding instanceof IEnumerator) {
+				IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
+				PDOMBinding pdomEnumeration = adaptBinding(enumeration);
+				if (pdomEnumeration instanceof PDOMCEnumeration)
+				pdomBinding = new PDOMCEnumerator(pdom, parent, name,
+						(PDOMCEnumeration)pdomEnumeration);
+			}
 		}
 		
 		if (pdomBinding != null)
@@ -167,6 +180,10 @@ public class PDOMCLinkage extends PDOMLinkage {
 			return CSTRUCTURE;
 		else if (binding instanceof IField)
 			return CFIELD;
+		else if (binding instanceof IEnumeration)
+			return CENUMERATION;
+		else if (binding instanceof IEnumerator)
+			return CENUMERATOR;
 		else
 			return 0;
 	}
@@ -202,6 +219,10 @@ public class PDOMCLinkage extends PDOMLinkage {
 			return new PDOMCStructure(pdom, record);
 		case CFIELD:
 			return new PDOMCField(pdom, record);
+		case CENUMERATION:
+			return new PDOMCEnumeration(pdom, record);
+		case CENUMERATOR:
+			return new PDOMCEnumerator(pdom, record);
 		}
 
 		return super.getNode(record);

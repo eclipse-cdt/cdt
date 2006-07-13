@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<!DOCTYPE MessageFile SYSTEM "../com.ibm.etools.systems.core/messageFile.dtd">
+<!-- This is a message file used by SystemMessage and SystemMessageDialog -->
+<MessageFile Version="1.0">
+     <Component Name="RSE Samples" Abbr="RSS">
+          <Subcomponent Name="General" Abbr="G">
+                <MessageList>
+                    <Message ID="1001" Indicator="E">
+                          <LevelOne>Sample message</LevelOne>		
+                          <LevelTwo>This is a sample with one substution variable: %1</LevelTwo>
+                    </Message>
+                </MessageList>
+          </Subcomponent>
+     </Component>
+</MessageFile>

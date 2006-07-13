@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2006 IBM Corporation. All rights reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Initial Contributors:
+The following IBM employees contributed to the Remote System Explorer
+component that contains this file: David McKnight, Kushal Munir, 
+Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+
+Contributors:
+Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
+-->
+<?eclipse version="3.1"?>
+<plugin>
+	<!-- ======================================= -->
+	<!-- SubSystem Configuration                 -->
+	<!-- ======================================= -->
+	<extension
+		point="org.eclipse.rse.ui.subsystemConfiguration">
+		<configuration
+			id="samples.subsystems.factory"
+			systemTypes="Linux;Unix;Windows"
+			name="Teams"
+			class="samples.subsystems.DeveloperSubSystemConfiguration"
+			category="users"
+			vendor="Eclipse.org"
+			description="Example Developer Subsystem"
+			iconlive="icons/systemconnectionlive.gif"
+			icon="icons/systemconnection.gif"
+			>
+		</configuration>
+	</extension>
+</plugin> 
+  

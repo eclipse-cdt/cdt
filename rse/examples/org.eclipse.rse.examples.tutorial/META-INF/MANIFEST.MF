@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: RSE Tutorial Examples
+Bundle-SymbolicName: org.eclipse.rse.examples.developer;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: samples.RSESamplesPlugin
+Bundle-Vendor: Eclipse.org
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.views,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.rse.ui,
+ org.eclipse.rse.core,
+ org.eclipse.rse.services
+Eclipse-LazyStart: true

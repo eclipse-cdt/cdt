@@ -106,7 +106,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	}
 
 	/**
-	 * @see com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter#internalGetPropertyDescriptors()
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#internalGetPropertyDescriptors()
 	 */
 	protected IPropertyDescriptor[] internalGetPropertyDescriptors()
 	{

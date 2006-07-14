@@ -8,7 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.pdom.tests.c;
+package org.eclipse.cdt.internal.pdom.tests;
 
 import java.util.regex.Pattern;
 
@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.pdom.tests.PDOMTestBase;
 
 /**
  * @author Doug Schaefer
@@ -28,21 +27,25 @@ import org.eclipse.cdt.internal.pdom.tests.PDOMTestBase;
  */
 public class EnumerationTests extends PDOMTestBase {
 
-	public void test1() throws Exception {
-		ICProject project = createProject("enumerationTests");
-		
+	protected ICProject project;
+	
+	protected void setUp() throws Exception {
+		project = createProject("enumerationTests");
+	}
+	
+	public void testC() throws Exception {
 		// Check bindings
 		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
-		Pattern pattern = Pattern.compile("TestEnum");
+		Pattern pattern = Pattern.compile("TestCEnum");
 		IBinding[] bindings = pdom.findBindings(pattern);
 		assertEquals(1, bindings.length);
 		IEnumeration enumeration = (IEnumeration)bindings[0];
-		assertEquals("TestEnum", enumeration.getName());
+		assertEquals("TestCEnum", enumeration.getName());
 		IEnumerator[] enumerators = enumeration.getEnumerators();
 		assertEquals(3, enumerators.length);
-		assertEquals("a", enumerators[0].getName());
-		assertEquals("b", enumerators[1].getName());
-		assertEquals("c", enumerators[2].getName());
+		assertEquals("ca", enumerators[0].getName());
+		assertEquals("cb", enumerators[1].getName());
+		assertEquals("cc", enumerators[2].getName());
 		
 		// Declaration of TestEnum 
 		IASTName[] enumDecls = pdom.getDeclarations(enumeration);
@@ -54,13 +57,46 @@ public class EnumerationTests extends PDOMTestBase {
 		IASTName[] enumRefs = pdom.getReferences(enumeration);
 		assertEquals(1, enumRefs.length);
 		loc = enumRefs[0].getFileLocation();
-		assertEquals(offset(44, 38), loc.getNodeOffset());
+		assertEquals(offset(46, 40), loc.getNodeOffset());
 		
 		// Reference to a
 		IASTName[] aRefs = pdom.getReferences(enumerators[0]);
 		assertEquals(1, aRefs.length);
 		loc = aRefs[0].getFileLocation();
-		assertEquals(offset(71, 64), loc.getNodeOffset());
+		assertEquals(offset(74, 67), loc.getNodeOffset());
 	}
 
+	public void testCPP() throws Exception {
+		// Check bindings
+		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+		Pattern pattern = Pattern.compile("TestCPPEnum");
+		IBinding[] bindings = pdom.findBindings(pattern);
+		assertEquals(1, bindings.length);
+		IEnumeration enumeration = (IEnumeration)bindings[0];
+		assertEquals("TestCPPEnum", enumeration.getName());
+		IEnumerator[] enumerators = enumeration.getEnumerators();
+		assertEquals(3, enumerators.length);
+		assertEquals("cppa", enumerators[0].getName());
+		assertEquals("cppb", enumerators[1].getName());
+		assertEquals("cppc", enumerators[2].getName());
+		
+		// Declaration of TestEnum 
+		IASTName[] enumDecls = pdom.getDeclarations(enumeration);
+		assertEquals(1, enumDecls.length);
+		IASTFileLocation loc = enumDecls[0].getFileLocation();
+		assertEquals(5, loc.getNodeOffset());
+		
+		// Reference to TestEnum
+		IASTName[] enumRefs = pdom.getReferences(enumeration);
+		assertEquals(1, enumRefs.length);
+		loc = enumRefs[0].getFileLocation();
+		assertEquals(offset(49, 42), loc.getNodeOffset());
+		
+		// Reference to a
+		IASTName[] aRefs = pdom.getReferences(enumerators[0]);
+		assertEquals(1, aRefs.length);
+		loc = aRefs[0].getFileLocation();
+		assertEquals(offset(79, 72), loc.getNodeOffset());
+	}
+	
 }

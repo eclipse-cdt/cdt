@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.parser.failedTests.ASTFailedTests;
 import org.eclipse.cdt.core.parser.failedTests.FailedCompleteParseASTTest;
 import org.eclipse.cdt.core.parser.failedTests.STLFailedTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
-import org.eclipse.cdt.internal.pdom.tests.c.CPDOMTests;
+import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
 
 /**
  * @author vhirsl
@@ -75,7 +75,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		// Last test to trigger report generation
 		
 		// Add in PDOM tests
-		suite.addTest(CPDOMTests.suite());
+		suite.addTest(PDOMTests.suite());
 		
 		// Add all failed tests
 		suite.addTestSuite(ASTFailedTests.class);

@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -89,6 +91,8 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	public static final int CPPNAMESPACEALIAS = PDOMLinkage.LAST_NODE_TYPE + 7;
 	public static final int CPPBASICTYPE = PDOMLinkage.LAST_NODE_TYPE + 8;
 	public static final int CPPPARAMETER = PDOMLinkage.LAST_NODE_TYPE + 9;
+	public static final int CPPENUMERATION = PDOMLinkage.LAST_NODE_TYPE + 10;
+	public static final int CPPENUMERATOR = PDOMLinkage.LAST_NODE_TYPE + 11;
 
 	public ILanguage getLanguage() {
 		return new GPPLanguage();
@@ -151,6 +155,14 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 				pdomBinding = new PDOMCPPNamespaceAlias(pdom, parent, name);
 			} else if (binding instanceof CPPNamespace) {
 				pdomBinding = new PDOMCPPNamespace(pdom, parent, name);
+			} else if (binding instanceof IEnumeration) {
+				pdomBinding = new PDOMCPPEnumeration(pdom, parent, name);
+			} else if (binding instanceof IEnumerator) {
+				IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
+				PDOMBinding pdomEnumeration = adaptBinding(enumeration);
+				if (pdomEnumeration instanceof PDOMCPPEnumeration)
+				pdomBinding = new PDOMCPPEnumerator(pdom, parent, name,
+						(PDOMCPPEnumeration)pdomEnumeration);
 			}
 		}
 		
@@ -206,6 +218,10 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			return CPPNAMESPACEALIAS;
 		else if (binding instanceof ICPPNamespace)
 			return CPPNAMESPACE;
+		else if (binding instanceof IEnumeration)
+			return CPPENUMERATION;
+		else if (binding instanceof IEnumerator)
+			return CPPENUMERATOR;
 		else
 			return 0;
 	}
@@ -351,9 +367,13 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			return new PDOMCPPNamespaceAlias(pdom, record);
 		case CPPBASICTYPE:
 			return new PDOMCPPBasicType(pdom, record);
+		case CPPENUMERATION:
+			return new PDOMCPPEnumeration(pdom, record);
+		case CPPENUMERATOR:
+			return new PDOMCPPEnumerator(pdom, record);
+		default:
+			return super.getNode(record);
 		}
-		
-		return super.getNode(record);
 	}
 	
 }

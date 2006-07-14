@@ -8,7 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.pdom.tests.c;
+package org.eclipse.cdt.internal.pdom.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
  * @author Doug Schaefer
  *
  */
-public class CPDOMTests extends TestSuite {
+public class PDOMTests extends TestSuite {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();

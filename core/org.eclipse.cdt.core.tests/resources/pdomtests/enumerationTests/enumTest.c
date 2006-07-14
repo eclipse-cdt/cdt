@@ -1,9 +1,9 @@
-enum TestEnum {
-	a,
-	b,
-	c
+enum TestCEnum {
+	ca,
+	cb,
+	cc
 };
 
-struct TestEnum test() {
-	return a;
+enum TestCEnum test() {
+	return ca;
 }

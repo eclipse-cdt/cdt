@@ -63,7 +63,7 @@ public class ImageRegistry {
 	/**
 	 * Insert the method's description here.
 	 * Creation date: (2/16/2001 4:57:29 PM)
-	 * @return com.ibm.jface.resource.ImageDescriptor
+	 * @return ImageDescriptor
 	 * @param name java.lang.String
 	 */
 	public static ImageDescriptor getImageDescriptor(String name) {

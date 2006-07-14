@@ -22,7 +22,7 @@ public interface IUniversalDStoreConstants
 {
 
 
-	public static final String PLUGIN_ID ="com.ibm.etools.systems.universal";
+	public static final String PLUGIN_ID ="org.eclipse.rse.connectorservice.dstore";
 	
 	public static final String PREFIX = PLUGIN_ID + ".";
 	

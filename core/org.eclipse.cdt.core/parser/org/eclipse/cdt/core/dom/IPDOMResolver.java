@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
@@ -25,8 +26,10 @@ public interface IPDOMResolver extends IAdaptable {
 
 	public IBinding resolveBinding(IASTName name);
 	
-	public IASTName[] getDeclarations(IBinding binding);
+	public IASTName[] getDeclarations(IBinding binding) throws CoreException;
 	
-	public IASTName[] getDefinitions(IBinding binding);
+	public IASTName[] getDefinitions(IBinding binding) throws CoreException;
+	
+	public IASTName[] getReferences(IBinding binding) throws CoreException;
 
 }

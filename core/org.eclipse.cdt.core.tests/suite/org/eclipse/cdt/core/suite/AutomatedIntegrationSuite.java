@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.parser.failedTests.ASTFailedTests;
 import org.eclipse.cdt.core.parser.failedTests.FailedCompleteParseASTTest;
 import org.eclipse.cdt.core.parser.failedTests.STLFailedTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
+import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
 
 /**
  * @author vhirsl
@@ -75,6 +76,9 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		//as the last test shuts down the indexing thread
 //		suite.addTest(DOMSourceIndexerTests.suite());
 		// Last test to trigger report generation
+		
+		// Add in PDOM tests
+		suite.addTest(PDOMTests.suite());
 		
 		// Add all failed tests
 		suite.addTestSuite(ASTFailedTests.class);

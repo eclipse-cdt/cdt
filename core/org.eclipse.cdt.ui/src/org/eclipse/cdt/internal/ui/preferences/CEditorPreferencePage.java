@@ -16,20 +16,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.RGB;
@@ -50,26 +43,36 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+
 /*
  * The page for setting the editor options.
  */
 public class CEditorPreferencePage extends AbstractPreferencePage implements IWorkbenchPreferencePage {
 
-	protected final String[][] fListModel = new String[][] { { PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.MultiLine"), ICColorConstants.C_MULTI_LINE_COMMENT }, { //$NON-NLS-1$
-		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.singleLine"), ICColorConstants.C_SINGLE_LINE_COMMENT }, { //$NON-NLS-1$
-		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.keywords"), ICColorConstants.C_KEYWORD }, { //$NON-NLS-1$
-		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.builtInTypes"), ICColorConstants.C_TYPE }, { //$NON-NLS-1$
-		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.strings"), ICColorConstants.C_STRING }, { //$NON-NLS-1$
-        PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.operators"), ICColorConstants.C_OPERATOR }, { //$NON-NLS-1$
-        PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.braces"), ICColorConstants.C_BRACES }, { //$NON-NLS-1$            
-        PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.numbers"), ICColorConstants.C_NUMBER }, { //$NON-NLS-1$            
-		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.others"), ICColorConstants.C_DEFAULT }, { //$NON-NLS-1$
-        PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags"), PreferenceConstants.EDITOR_TASK_TAG_COLOR } //$NON-NLS-1$
+	protected final String[][] fListModel = new String[][] { { PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.MultiLine"), ICColorConstants.C_MULTI_LINE_COMMENT }, { //$NON-NLS-1$
+		PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.singleLine"), ICColorConstants.C_SINGLE_LINE_COMMENT }, { //$NON-NLS-1$
+		PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.keywords"), ICColorConstants.C_KEYWORD }, { //$NON-NLS-1$
+		PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.builtInTypes"), ICColorConstants.C_TYPE }, { //$NON-NLS-1$
+		PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.strings"), ICColorConstants.C_STRING }, { //$NON-NLS-1$
+        PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.operators"), ICColorConstants.C_OPERATOR }, { //$NON-NLS-1$
+        PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.braces"), ICColorConstants.C_BRACES }, { //$NON-NLS-1$            
+        PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.numbers"), ICColorConstants.C_NUMBER }, { //$NON-NLS-1$            
+		PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.others"), ICColorConstants.C_DEFAULT }, { //$NON-NLS-1$
+        PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.cCommentTaskTags"), PreferenceConstants.EDITOR_TASK_TAG_COLOR } //$NON-NLS-1$
 	};
 
 	protected final String[][] fAppearanceColorListModel = new String[][] { 
 			{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.matchingBracketColor"), CEditor.MATCHING_BRACKETS_COLOR, null }, //$NON-NLS-1$
-			{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.linkedPositionColor"), CEditor.LINKED_POSITION_COLOR, null }, //$NON-NLS-1$
+			{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.inactiveCodeColor"), CEditor.INACTIVE_CODE_COLOR, null }, //$NON-NLS-1$
 	};
 
 	private CTextTools fCTextTools;
@@ -81,6 +84,12 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 	private CEditorHoverConfigurationBlock fCEditorHoverConfigurationBlock;
 	private FoldingConfigurationBlock fFoldingConfigurationBlock;
+
+	private List fAppearanceColorList;
+
+	private ColorEditor fAppearanceColorEditor;
+
+	private Button fAppearanceColorDefault;
 
 
 	public CEditorPreferencePage() {
@@ -111,9 +120,10 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_OPERATOR + "_bold")); //$NON-NLS-1$
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.MATCHING_BRACKETS_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.MATCHING_BRACKETS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.INACTIVE_CODE_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.INACTIVE_CODE_ENABLE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.SPACES_FOR_TABS));
 		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.LINKED_POSITION_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_TAG_COLOR));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_TAG_BOLD));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_INDICATION_COLOR));
@@ -139,6 +149,9 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 		store.setDefault(CEditor.MATCHING_BRACKETS, true);
 		PreferenceConverter.setDefault(store, CEditor.MATCHING_BRACKETS_COLOR, new RGB(170,170,170));
+
+		store.setDefault(CEditor.INACTIVE_CODE_ENABLE, true);
+		PreferenceConverter.setDefault(store, CEditor.INACTIVE_CODE_COLOR, new RGB(224, 224, 224));
 
 		store.setDefault(CEditor.SPACES_FOR_TABS, false);
 
@@ -168,8 +181,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
         PreferenceConverter.setDefault(store, ICColorConstants.C_NUMBER, new RGB(0, 0, 0));
         store.setDefault(ICColorConstants.C_DEFAULT + "_bold", false); //$NON-NLS-1$
-
-        PreferenceConverter.setDefault(store, CEditor.LINKED_POSITION_COLOR, new RGB(0, 200, 100));
 
 	}
 
@@ -328,9 +339,115 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		String label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.matchingBrackets"); //$NON-NLS-1$
 		addCheckBox(behaviorComposite, label, CEditor.MATCHING_BRACKETS, 0);
 
+		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.inactiveCode"); //$NON-NLS-1$
+		addCheckBox(behaviorComposite, label, CEditor.INACTIVE_CODE_ENABLE, 0);
+
 		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.tabSpace"); //$NON-NLS-1$
 		addCheckBox(behaviorComposite, label, CEditor.SPACES_FOR_TABS, 0);
+
+		Label l = new Label(behaviorComposite, SWT.LEFT);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		gd.heightHint = convertHeightInCharsToPixels(1) / 2;
+		l.setLayoutData(gd);
+
+		l = new Label(behaviorComposite, SWT.LEFT);
+		l.setText(PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.appearanceColorOptions")); //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		l.setLayoutData(gd);
+
+		Composite editorComposite = new Composite(behaviorComposite, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		editorComposite.setLayout(layout);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
+		gd.horizontalSpan = 2;
+		editorComposite.setLayoutData(gd);
+
+		fAppearanceColorList = new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+		gd.heightHint = convertHeightInCharsToPixels(8);
+		fAppearanceColorList.setLayoutData(gd);
+
+		Composite stylesComposite = new Composite(editorComposite, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 2;
+		stylesComposite.setLayout(layout);
+		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		l = new Label(stylesComposite, SWT.LEFT);
+		l.setText(PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.Color")); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalAlignment = GridData.BEGINNING;
+		l.setLayoutData(gd);
+
+		fAppearanceColorEditor = new ColorEditor(stylesComposite);
+		Button foregroundColorButton = fAppearanceColorEditor.getButton();
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment = GridData.BEGINNING;
+		foregroundColorButton.setLayoutData(gd);
+
+		SelectionListener colorDefaultSelectionListener= new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean systemDefault= fAppearanceColorDefault.getSelection();
+				fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
+				
+				int i= fAppearanceColorList.getSelectionIndex();
+				String key= fAppearanceColorListModel[i][2];
+				if (key != null)
+					fOverlayStore.setValue(key, systemDefault);
+			}
+		};
+		
+		fAppearanceColorDefault= new Button(stylesComposite, SWT.CHECK);
+		fAppearanceColorDefault.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.systemDefault")); //$NON-NLS-1$
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment= GridData.BEGINNING;
+		gd.horizontalSpan= 2;
+		fAppearanceColorDefault.setLayoutData(gd);
+		fAppearanceColorDefault.setVisible(false);
+		fAppearanceColorDefault.addSelectionListener(colorDefaultSelectionListener);
+
+		fAppearanceColorList.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleAppearanceColorListSelection();
+			}
+		});
+		foregroundColorButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int i = fAppearanceColorList.getSelectionIndex();
+				String key = fAppearanceColorListModel[i][1];
+
+				PreferenceConverter.setValue(fOverlayStore, key, fAppearanceColorEditor.getColorValue());
+			}
+		});
 		return behaviorComposite;
+	}
+
+	private void handleAppearanceColorListSelection() {
+		int i = fAppearanceColorList.getSelectionIndex();
+		String key = fAppearanceColorListModel[i][1];
+		RGB rgb = PreferenceConverter.getColor(fOverlayStore, key);
+		fAppearanceColorEditor.setColorValue(rgb);
+		updateAppearanceColorWidgets(fAppearanceColorListModel[i][2]);
+	}
+
+	private void updateAppearanceColorWidgets(String systemDefaultKey) {
+		if (systemDefaultKey == null) {
+			fAppearanceColorDefault.setSelection(false);
+			fAppearanceColorDefault.setVisible(false);
+			fAppearanceColorEditor.getButton().setEnabled(true);
+		} else {
+			boolean systemDefault= fOverlayStore.getBoolean(systemDefaultKey);
+			fAppearanceColorDefault.setSelection(systemDefault);
+			fAppearanceColorDefault.setVisible(true);
+			fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
+		}
 	}
 
 	private Control createHeader(Composite parent) {
@@ -391,6 +508,16 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	private void initialize() {
 
 		initializeFields();
+
+		for (int i = 0; i < fAppearanceColorListModel.length; i++) {
+			fAppearanceColorList.add(fAppearanceColorListModel[i][0]);
+		}
+		fAppearanceColorList.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				fAppearanceColorList.select(0);
+				handleAppearanceColorListSelection();
+			}
+		});
 
 		for (int i = 0; i < fListModel.length; i++) {
 			fList.add(fListModel[i][0]);

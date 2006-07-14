@@ -56,7 +56,6 @@ import org.eclipse.jface.text.source.IAnnotationHoverExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.ILineRange;
-import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension3;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -517,10 +516,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	public final static String MATCHING_BRACKETS = "matchingBrackets"; //$NON-NLS-1$
 	/** Preference key for matching brackets color */
 	public final static String MATCHING_BRACKETS_COLOR = "matchingBracketsColor"; //$NON-NLS-1$
+	/** Preference key for inactive code painter enablement */
+	public static final String INACTIVE_CODE_ENABLE = "inactiveCodeEnable"; //$NON-NLS-1$
+	/** Preference key for inactive code painter color */
+	public static final String INACTIVE_CODE_COLOR = "inactiveCodeColor"; //$NON-NLS-1$
 	/** Preference key for inserting spaces rather than tabs */
 	public final static String SPACES_FOR_TABS = "spacesForTabs"; //$NON-NLS-1$
-	/** Preference key for linked position color */
-	public final static String LINKED_POSITION_COLOR = "linkedPositionColor"; //$NON-NLS-1$
 
     /** Preference key for compiler task tags */
     private final static String TRANSLATION_TASK_TAGS= CCorePreferenceConstants.TRANSLATION_TASK_TAGS;
@@ -574,6 +575,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		}
 		if (fCEditorErrorTickUpdater != null) {
 			fCEditorErrorTickUpdater.updateEditorImage(getInputCElement());
+		}
+		
+		if (getSourceViewer() != null) {
+			CSourceViewerDecorationSupport decoSupport = (CSourceViewerDecorationSupport) getSourceViewerDecorationSupport(getSourceViewer());
+			decoSupport.editorInputChanged(input);
 		}
 	}
 
@@ -1211,6 +1217,29 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		dragSource.addDragListener(dragSourceListener);
 	}
 
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#getSourceViewerDecorationSupport(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	protected SourceViewerDecorationSupport getSourceViewerDecorationSupport(
+			ISourceViewer viewer) {
+		if (fSourceViewerDecorationSupport == null) {
+			fSourceViewerDecorationSupport= new CSourceViewerDecorationSupport(viewer, getOverviewRuler(), getAnnotationAccess(), getSharedColors());
+			configureSourceViewerDecorationSupport(fSourceViewerDecorationSupport);
+		}
+		return fSourceViewerDecorationSupport;
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#configureSourceViewerDecorationSupport(org.eclipse.ui.texteditor.SourceViewerDecorationSupport)
+	 */
+	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
+		super.configureSourceViewerDecorationSupport(support);
+		//Enhance the stock source viewer decorator with a bracket matcher
+		support.setCharacterPairMatcher(fBracketMatcher);
+		support.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR);
+		((CSourceViewerDecorationSupport)support).setInactiveCodePainterPreferenceKeys(INACTIVE_CODE_ENABLE, INACTIVE_CODE_COLOR);
+	}
+	
 	/**
 	 * Jumps to the matching bracket.
 	 */
@@ -1448,29 +1477,19 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	}
 
 	/*
-	 * @see AbstractTextEditor#createSourceViewer(Composite, IVerticalRuler, int)
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		fAnnotationAccess = createAnnotationAccess();
-		
-		ISharedTextColors sharedColors = CUIPlugin.getDefault().getSharedTextColors();
-		fOverviewRuler = createOverviewRuler(sharedColors);
-
 		ISourceViewer sourceViewer =
 			new CSourceViewer(
 				this, parent,
 				ruler,
 				styles,
-				fOverviewRuler,
+				getOverviewRuler(),
 				isOverviewRulerVisible());
-		fSourceViewerDecorationSupport =
-			new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
-		
-		configureSourceViewerDecorationSupport(fSourceViewerDecorationSupport);
 
-		//Enhance the stock source viewer decorator with a bracket matcher
-		fSourceViewerDecorationSupport.setCharacterPairMatcher(fBracketMatcher);
-		fSourceViewerDecorationSupport.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR);
+		CSourceViewerDecorationSupport decoSupport = (CSourceViewerDecorationSupport) getSourceViewerDecorationSupport(sourceViewer);
+		decoSupport.editorInputChanged(getEditorInput());
 
 		CUIHelp.setHelp(this, sourceViewer.getTextWidget(), ICHelpContextIds.CEDITOR_VIEW);
 
@@ -1620,6 +1639,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		// Do nothing the outliner is listener to the
 		// CoreModel WorkingCopy changes instead.
 		// It will allow more fined grained.
+		if (somethingHasChanged && getSourceViewer() != null) {
+			CSourceViewerDecorationSupport decoSupport = (CSourceViewerDecorationSupport) getSourceViewerDecorationSupport(getSourceViewer());
+			decoSupport.editorInputChanged(getEditorInput());
+		}
 	}
 	
 	public CSourceViewer getCSourceViewer()  {

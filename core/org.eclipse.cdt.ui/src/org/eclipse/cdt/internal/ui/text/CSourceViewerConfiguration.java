@@ -168,7 +168,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 				scanner = fTextTools.getCppCodeScanner();
 			} else if (language instanceof GCCLanguage) {
 				scanner = fTextTools.getCCodeScanner();
-			} else {
+			} else if (language != null) {
 				ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
 				if (languageUI != null)
 					scanner = languageUI.getCodeScanner();

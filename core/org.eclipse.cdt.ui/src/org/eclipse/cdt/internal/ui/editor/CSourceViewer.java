@@ -14,7 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -24,10 +27,16 @@ import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.editors.text.ILocationProvider;
+import org.eclipse.ui.ide.ResourceUtil;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor.ITextConverter;
@@ -79,6 +88,35 @@ public class CSourceViewer extends ProjectionViewer implements ITextViewerExtens
 				return ((ITranslationUnit)element).getLanguage();
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
+			}
+		} else {
+			// compute the language from the plain editor input
+			IContentType contentType = null;
+			IEditorInput input = editor.getEditorInput();
+			IFile file = ResourceUtil.getFile(input);
+			if (file != null) {
+				contentType = CCorePlugin.getContentType(file.getProject(), file.getName());
+				try {
+					return LanguageManager.getInstance().getLanguage(contentType);
+				} catch (CoreException exc) {
+					CUIPlugin.getDefault().log(exc.getStatus());
+				}
+			} else if (input instanceof IPathEditorInput) {
+				IPath path = ((IPathEditorInput)input).getPath();
+				contentType = CCorePlugin.getContentType(path.lastSegment());
+			} else {
+				ILocationProvider locationProvider = (ILocationProvider)input.getAdapter(ILocationProvider.class);
+				if (locationProvider != null) {
+					IPath path = locationProvider.getPath(input);
+					contentType = CCorePlugin.getContentType(path.lastSegment());
+				}
+			}
+			if (contentType != null) {
+				try {
+					return LanguageManager.getInstance().getLanguage(contentType);
+				} catch (CoreException exc) {
+					CUIPlugin.getDefault().log(exc.getStatus());
+				}
 			}
 		}
 		return null;

@@ -28,9 +28,6 @@ public class CompletionTest_TypeRef_Prefix  extends CompletionProposalsBaseTest{
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTCompilationUnit";
-	private final String expectedContextName = "null"; 
-	private final CompletionKind expectedKind = CompletionKind.TYPE_REFERENCE; 
 	private final String expectedPrefix = "a"; 
 	private final String[] expectedResults = {
 			"aNamespace"
@@ -62,27 +59,6 @@ Result: aVariable : int
 	 */
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf("using a ") + 7;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedScope()
-	 */
-	protected String getExpectedScopeClassName() {
-		return expectedScopeName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedContext()
-	 */
-	protected String getExpectedContextClassName() {
-		return expectedContextName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedKind()
-	 */
-	protected CompletionKind getExpectedKind() {
-		return expectedKind;
 	}
 
 	/* (non-Javadoc)

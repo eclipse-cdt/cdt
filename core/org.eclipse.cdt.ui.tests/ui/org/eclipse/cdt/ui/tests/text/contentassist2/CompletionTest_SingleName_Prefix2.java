@@ -25,9 +25,6 @@ public class CompletionTest_SingleName_Prefix2  extends CompletionProposalsBaseT
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTFunction";
-	private final String expectedContextName = "null";
-	private final CompletionKind expectedKind = CompletionKind.SINGLE_NAME_REFERENCE;
 	private final String expectedPrefix = "a";
 	private final String[] expectedResults = {
 			"aVariable : int",
@@ -61,27 +58,6 @@ public class CompletionTest_SingleName_Prefix2  extends CompletionProposalsBaseT
 	 */
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf(" a ") + 2;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedScope()
-	 */
-	protected String getExpectedScopeClassName() {
-		return expectedScopeName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedContext()
-	 */
-	protected String getExpectedContextClassName() {
-		return expectedContextName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedKind()
-	 */
-	protected CompletionKind getExpectedKind() {
-		return expectedKind;
 	}
 
 	/* (non-Javadoc)

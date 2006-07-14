@@ -28,9 +28,6 @@ public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBa
 	private final String fileFullPath ="resources/contentassist/" + fileName; //$NON-NLS-1$
 	private final String headerFileName = "CompletionTestStart.h"; //$NON-NLS-1$
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName; //$NON-NLS-1$
-	private final String expectedScopeName = "ASTClassSpecifier"; //$NON-NLS-1$
-	private final String expectedContextName = "null";  //$NON-NLS-1$
-	private final CompletionKind expectedKind = CompletionKind.CLASS_REFERENCE; 
 	private final String expectedPrefix = "a";  //$NON-NLS-1$
 	private final String[] expectedResults = {
 			"aClass", //$NON-NLS-1$
@@ -63,27 +60,6 @@ public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBa
 	 */
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf(" a ") + 2; //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedScope()
-	 */
-	protected String getExpectedScopeClassName() {
-		return expectedScopeName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedContext()
-	 */
-	protected String getExpectedContextClassName() {
-		return expectedContextName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedKind()
-	 */
-	protected CompletionKind getExpectedKind() {
-		return expectedKind;
 	}
 
 	/* (non-Javadoc)

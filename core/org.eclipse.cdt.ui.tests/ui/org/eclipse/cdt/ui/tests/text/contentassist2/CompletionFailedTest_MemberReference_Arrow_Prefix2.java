@@ -26,9 +26,6 @@ public class CompletionFailedTest_MemberReference_Arrow_Prefix2  extends Complet
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "ASTBinaryExpression";
-	private final CompletionKind expectedKind = CompletionKind.MEMBER_REFERENCE;
 	private final String expectedPrefix = "a";
 	private final String[] expectedResults = {
 			"aField : int",
@@ -53,27 +50,6 @@ Result: author - author name
 	 */
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf("->a ") + 3;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedScope()
-	 */
-	protected String getExpectedScopeClassName() {
-		return expectedScopeName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedContext()
-	 */
-	protected String getExpectedContextClassName() {
-		return expectedContextName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedKind()
-	 */
-	protected CompletionKind getExpectedKind() {
-		return expectedKind;
 	}
 
 	/* (non-Javadoc)

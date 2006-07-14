@@ -26,10 +26,7 @@ public class CompletionTest_MemberReference_Dot_NoPrefix  extends CompletionProp
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "ASTVariable";
-	private final CompletionKind expectedKind = CompletionKind.MEMBER_REFERENCE;
-	private final String expectedPrefix = "EOC" ; // "";  FIXME: Why does the completion node have this 'EOC' as prefix?
+	private final String expectedPrefix = "" ;
 	private final String[] expectedResults = {
 			"aField : int",
 			"xAClassField : float",
@@ -54,27 +51,6 @@ public class CompletionTest_MemberReference_Dot_NoPrefix  extends CompletionProp
 	 */
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf(" c. ") + 3;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedScope()
-	 */
-	protected String getExpectedScopeClassName() {
-		return expectedScopeName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedContext()
-	 */
-	protected String getExpectedContextClassName() {
-		return expectedContextName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedKind()
-	 */
-	protected CompletionKind getExpectedKind() {
-		return expectedKind;
 	}
 
 	/* (non-Javadoc)

@@ -28,9 +28,6 @@ public class CompletionTest_NewTypeReference_Prefix  extends CompletionProposals
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "null"; 
-	private final CompletionKind expectedKind = CompletionKind.NEW_TYPE_REFERENCE; 
 	private final String expectedPrefix = "a"; 
 	private final String[] expectedResults = {
 			"aClass",
@@ -65,27 +62,6 @@ Result: aVariable : int
 	 */
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf(" a ") + 2;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedScope()
-	 */
-	protected String getExpectedScopeClassName() {
-		return expectedScopeName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedContext()
-	 */
-	protected String getExpectedContextClassName() {
-		return expectedContextName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedKind()
-	 */
-	protected CompletionKind getExpectedKind() {
-		return expectedKind;
 	}
 
 	/* (non-Javadoc)

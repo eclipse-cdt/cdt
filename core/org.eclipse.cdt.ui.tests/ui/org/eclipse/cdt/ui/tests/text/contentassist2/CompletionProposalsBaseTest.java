@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -71,10 +72,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	protected abstract String getHeaderFileName();
 	protected abstract String getHeaderFileFullPath();
 	protected abstract int getCompletionPosition();
-	protected abstract String getExpectedScopeClassName();
-	protected abstract String getExpectedContextClassName();
 	protected abstract String getExpectedPrefix();
-	protected abstract IASTCompletionNode.CompletionKind getExpectedKind();
 	protected abstract String[] getExpectedResultsValues();
 	protected String getFunctionOrConstructorName()	{ return EMPTY_STRING; }
 	
@@ -118,10 +116,8 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	
 	public void testCompletionProposals() throws Exception {
 			// setup the translation unit, the buffer and the document
-			//ITranslationUnit header = (ITranslationUnit)CoreModel.getDefault().create(fHeaderFile);
 			ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(fCFile);
 			buffer = tu.getBuffer().getContents();
-//			document = new Document(buffer);
 			
 			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			FileEditorInput editorInput = new FileEditorInput(fCFile);
@@ -131,15 +127,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 			IAction completionAction = editor.getAction("ContentAssistProposal");
 			
 			CCompletionProcessor2 completionProcessor = new CCompletionProcessor2(editorPart);
-//			IWorkingCopy wc = null;
-//			try{
-//				wc = tu.getWorkingCopy();
-//			}catch (CModelException e){
-//				fail("Failed to get working copy"); //$NON-NLS-1$
-//			}
-		
 			// call the CompletionProcessor
-//			ICompletionProposal[] results = completionProcessor.evalProposals(document, pos, wc, null);
 			ICompletionProposal[] results = completionProcessor.computeCompletionProposals(editor.getCSourceViewer(), getCompletionPosition()); // (document, pos, wc, null);
 			assertTrue(results != null);
 			if (CTestPlugin.getDefault().isDebugging())  {
@@ -151,30 +139,12 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 			
 			// check the completion node
 			ASTCompletionNode currentCompletionNode = completionProcessor.getCurrentCompletionNode();
+			assertNotNull(currentCompletionNode);
 			IASTName[] names = currentCompletionNode.getNames();
 			IASTName currentName = names[0];
-//			IASTCompletionNode completionNode = (IASTCompletionNode) currentCompletionNode ;
-//			assertNotNull(completionNode);
-			assertNotNull(currentCompletionNode);
-			// scope
-//			IASTScope scope = completionNode.getCompletionScope();
-//			assertNotNull(scope);
-//			assertTrue(scope.getClass().getName().endsWith(getExpectedScopeClassName()));
-//			// context
-//			IASTNode context = completionNode.getCompletionContext();
-//			if(context == null)
-//				assertTrue(getExpectedContextClassName().equals("null")); //$NON-NLS-1$
-//			else
-//				assertTrue(context.getClass().getName().endsWith(getExpectedContextClassName()));
-//			// kind
-//			IASTCompletionNode.CompletionKind kind = completionNode.getCompletionKind();
-//			assertTrue(kind == getExpectedKind());
-			// prefix
-//			String prefix = completionNode.getCompletionPrefix();
+			IBinding binding = currentName.getBinding();
 			String prefix = currentCompletionNode.getPrefix();
-			assertEquals(prefix, getExpectedPrefix());
-			
-//			assertEquals( completionNode.getFunctionName(), getFunctionOrConstructorName() );
+			assertEquals(getExpectedPrefix(), prefix);
 			
 			String[] expected = getExpectedResultsValues();
 

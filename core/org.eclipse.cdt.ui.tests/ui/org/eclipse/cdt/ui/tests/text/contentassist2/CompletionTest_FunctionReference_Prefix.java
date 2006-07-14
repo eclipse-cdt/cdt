@@ -28,9 +28,6 @@ public class CompletionTest_FunctionReference_Prefix  extends CompletionProposal
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "null";
-	private final CompletionKind expectedKind = CompletionKind.FUNCTION_REFERENCE;
 	private final String expectedPrefix = "x";
 	private final String[] expectedResults = {
 			"xLocal : int",
@@ -63,27 +60,6 @@ public class CompletionTest_FunctionReference_Prefix  extends CompletionProposal
 	 */
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf(" x ") + 2;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedScope()
-	 */
-	protected String getExpectedScopeClassName() {
-		return expectedScopeName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedContext()
-	 */
-	protected String getExpectedContextClassName() {
-		return expectedContextName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedKind()
-	 */
-	protected CompletionKind getExpectedKind() {
-		return expectedKind;
 	}
 
 	/* (non-Javadoc)

@@ -27,10 +27,7 @@ public class CompletionTest_TypeRef_NoPrefix  extends CompletionProposalsBaseTes
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTCompilationUnit";
-	private final String expectedContextName = "null"; 
-	private final CompletionKind expectedKind = CompletionKind.TYPE_REFERENCE; 
-	private final String expectedPrefix = "EOC" ;  // "";  FIXME: Why does the CompletionNode have 'EOC' as expected prefix? 
+	private final String expectedPrefix = "" ; 
 	private final String[] expectedResults = {
 			"aNamespace",
 			"xNamespace"
@@ -71,27 +68,6 @@ Result: xVariable : int
 	 */
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf("using ") + 6;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedScope()
-	 */
-	protected String getExpectedScopeClassName() {
-		return expectedScopeName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedContext()
-	 */
-	protected String getExpectedContextClassName() {
-		return expectedContextName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedKind()
-	 */
-	protected CompletionKind getExpectedKind() {
-		return expectedKind;
 	}
 
 	/* (non-Javadoc)

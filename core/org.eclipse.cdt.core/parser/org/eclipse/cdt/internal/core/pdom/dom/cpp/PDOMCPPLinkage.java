@@ -39,14 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceAlias;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
@@ -135,25 +128,26 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		if (pdomBinding == null) {
 			PDOMNode parent = getParent(binding);
 
-			if (binding instanceof CPPField && parent instanceof PDOMCPPClassType)
+			if (binding instanceof ICPPField && parent instanceof PDOMCPPClassType)
 				pdomBinding = new PDOMCPPField(pdom, (PDOMCPPClassType)parent, name);
-			else if (binding instanceof CPPVariable) {
+			else if (binding instanceof ICPPVariable) {
 				if (!(binding.getScope() instanceof CPPBlockScope))
 					pdomBinding = new PDOMCPPVariable(pdom, parent, name);
-			} else if (binding instanceof CPPMethod && parent instanceof PDOMCPPClassType) {
+			} else if (binding instanceof ICPPMethod && parent instanceof PDOMCPPClassType) {
 				pdomBinding = new PDOMCPPMethod(pdom, (PDOMCPPClassType)parent, name);
 			} else if (binding instanceof CPPImplicitMethod && parent instanceof PDOMCPPClassType) {
 				if(!name.isReference()) {
-					//because we got the implicit method off of an IASTName that is not a reference, it is no longer completly implicit and it should be treated as a normal method.
+					//because we got the implicit method off of an IASTName that is not a reference,
+					//it is no longer completly implicit and it should be treated as a normal method.
 					pdomBinding = new PDOMCPPMethod(pdom, (PDOMCPPClassType)parent, name);
 				}
-			} else if (binding instanceof CPPFunction) {
+			} else if (binding instanceof ICPPFunction) {
 				pdomBinding = new PDOMCPPFunction(pdom, parent, name);
-			} else if (binding instanceof CPPClassType) {
+			} else if (binding instanceof ICPPClassType) {
 				pdomBinding = new PDOMCPPClassType(pdom, parent, name);
-			} else if (binding instanceof CPPNamespaceAlias) {
+			} else if (binding instanceof ICPPNamespaceAlias) {
 				pdomBinding = new PDOMCPPNamespaceAlias(pdom, parent, name);
-			} else if (binding instanceof CPPNamespace) {
+			} else if (binding instanceof ICPPNamespace) {
 				pdomBinding = new PDOMCPPNamespace(pdom, parent, name);
 			} else if (binding instanceof IEnumeration) {
 				pdomBinding = new PDOMCPPEnumeration(pdom, parent, name);

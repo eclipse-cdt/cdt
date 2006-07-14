@@ -1447,22 +1447,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 	}
 
-	/* Source code language to display */
-	public final static String LANGUAGE_CPP = "CEditor.language.cpp"; //$NON-NLS-1$
-	public final static String LANGUAGE_C = "CEditor.language.c"; //$NON-NLS-1$
-
 	/*
 	 * @see AbstractTextEditor#createSourceViewer(Composite, IVerticalRuler, int)
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		// Figure out if this is a C or C++ source file
-		IWorkingCopyManager mgr = CUIPlugin.getDefault().getWorkingCopyManager();
-		ITranslationUnit unit = mgr.getWorkingCopy(getEditorInput());
-		String fileType = LANGUAGE_CPP;
-		if (unit != null) {
-			fileType= unit.isCLanguage() ? LANGUAGE_C : LANGUAGE_CPP;
-		}
-
 		fAnnotationAccess = createAnnotationAccess();
 		
 		ISharedTextColors sharedColors = CUIPlugin.getDefault().getSharedTextColors();
@@ -1474,8 +1462,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 				ruler,
 				styles,
 				fOverviewRuler,
-				isOverviewRulerVisible(),
-				fileType);
+				isOverviewRulerVisible());
 		fSourceViewerDecorationSupport =
 			new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
 		

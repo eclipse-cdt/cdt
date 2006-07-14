@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.internal.ui.editor.CEditor.ITextConverter;
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -25,6 +24,14 @@ import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor.ITextConverter;
+import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 
 /**
  * Adapted source viewer for CEditor
@@ -40,10 +47,8 @@ public class CSourceViewer extends ProjectionViewer implements ITextViewerExtens
     /** Presents outline. */
     private IInformationPresenter fOutlinePresenter;
 
-    
     private List fTextConverters;
-	private String fDisplayLanguage;
-
+    
 	/**
      * Creates new source viewer. 
      * @param editor
@@ -52,23 +57,33 @@ public class CSourceViewer extends ProjectionViewer implements ITextViewerExtens
      * @param styles
      * @param fOverviewRuler
      * @param isOverviewRulerShowing
-     * @param language
 	 */
     public CSourceViewer(
-		CEditor editor, Composite parent,
-		IVerticalRuler ruler,
-		int styles,
-		IOverviewRuler fOverviewRuler,
-		boolean isOverviewRulerShowing,
-		String language) {
+    		CEditor editor, Composite parent,
+    		IVerticalRuler ruler,
+    		int styles,
+    		IOverviewRuler fOverviewRuler,
+    		boolean isOverviewRulerShowing) {
 		super(parent, ruler, fOverviewRuler, isOverviewRulerShowing, styles);
         this.editor = editor;
-		fDisplayLanguage = language;
 	}
+    
 	public IContentAssistant getContentAssistant() {
 		return fContentAssistant;
 	}
     
+	public ILanguage getLanguage() {
+		ICElement element = editor.getInputCElement();
+		if (element instanceof ITranslationUnit) {
+			try {
+				return ((ITranslationUnit)element).getLanguage();
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+		}
+		return null;
+	}
+	
     /**
      * @see org.eclipse.jface.text.source.SourceViewer#configure(org.eclipse.jface.text.source.SourceViewerConfiguration)
      */
@@ -161,13 +176,6 @@ public class CSourceViewer extends ProjectionViewer implements ITextViewerExtens
 		}
 	}
 
-	public void setDisplayLanguage(String language) {
-		fDisplayLanguage = language;
-	}
-
-	public String getDisplayLanguage() {
-		return fDisplayLanguage;
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.ISourceViewer#setRangeIndication(int, int, boolean)
 	 */

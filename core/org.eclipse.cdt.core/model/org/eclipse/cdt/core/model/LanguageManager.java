@@ -77,7 +77,7 @@ public class LanguageManager {
 				IConfigurationElement language = languages[j];
 				IConfigurationElement[] assocContentTypes = language.getChildren("contentType"); //$NON-NLS-1$
 				for (int k = 0; k < assocContentTypes.length; ++k) {
-					if (contentTypeId.equals(assocContentTypes[i].getAttribute("id"))) { //$NON-NLS-1$
+					if (contentTypeId.equals(assocContentTypes[k].getAttribute("id"))) { //$NON-NLS-1$
 						return (ILanguage)language.createExecutableExtension("class"); //$NON-NLS-1$
 					}
 				}

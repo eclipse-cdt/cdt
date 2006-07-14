@@ -13,15 +13,6 @@ package org.eclipse.cdt.internal.ui.text;
 
 import java.util.Vector;
 
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
-import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
-import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
-import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
-import org.eclipse.cdt.ui.CElementContentProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -56,6 +47,21 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.ui.CElementContentProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ILanguageUI;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
+import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
+import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 
 
@@ -155,16 +161,20 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		PresentationReconciler reconciler= new PresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 
-		RuleBasedScanner scanner;
-
+		RuleBasedScanner scanner = null;
 		if(sourceViewer instanceof CSourceViewer) {
-			String language = ((CSourceViewer)sourceViewer).getDisplayLanguage();
-			if(language != null && language.equals(CEditor.LANGUAGE_CPP)) {
-				scanner= fTextTools.getCppCodeScanner();
+			ILanguage language = ((CSourceViewer)sourceViewer).getLanguage();
+			if (language instanceof GPPLanguage) {
+				scanner = fTextTools.getCppCodeScanner();
+			} else if (language instanceof GCCLanguage) {
+				scanner = fTextTools.getCCodeScanner();
 			} else {
-				scanner= fTextTools.getCCodeScanner();
+				ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
+				if (languageUI != null)
+					scanner = languageUI.getCodeScanner();
 			}
-		} else {
+		}
+		if (scanner == null) {
 			scanner= fTextTools.getCCodeScanner();
 		}
 

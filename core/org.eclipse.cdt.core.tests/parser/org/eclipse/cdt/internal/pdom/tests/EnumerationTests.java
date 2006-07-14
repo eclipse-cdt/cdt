@@ -90,7 +90,7 @@ public class EnumerationTests extends PDOMTestBase {
 		IASTName[] enumRefs = pdom.getReferences(enumeration);
 		assertEquals(1, enumRefs.length);
 		loc = enumRefs[0].getFileLocation();
-		assertEquals(offset(49, 42), loc.getNodeOffset());
+		assertEquals(offset(49, 43), loc.getNodeOffset());
 		
 		// Reference to a
 		IASTName[] aRefs = pdom.getReferences(enumerators[0]);

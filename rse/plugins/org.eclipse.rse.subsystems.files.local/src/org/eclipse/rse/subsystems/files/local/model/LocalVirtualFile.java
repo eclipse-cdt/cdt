@@ -127,7 +127,7 @@ public class LocalVirtualFile extends LocalFile implements IVirtualRemoteFile
 	}	
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.subsystems.IRemoteFile#getComment()
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile#getComment()
 	 */
 	public String getComment() 
 	{
@@ -135,7 +135,7 @@ public class LocalVirtualFile extends LocalFile implements IVirtualRemoteFile
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.subsystems.IRemoteFile#getCompressedSize()
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile#getCompressedSize()
 	 */
 	public long getCompressedSize() 
 	{
@@ -143,7 +143,7 @@ public class LocalVirtualFile extends LocalFile implements IVirtualRemoteFile
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.subsystems.IRemoteFile#getCompressionMethod()
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile#getCompressionMethod()
 	 */
 	public String getCompressionMethod() 
 	{
@@ -151,7 +151,7 @@ public class LocalVirtualFile extends LocalFile implements IVirtualRemoteFile
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.subsystems.IRemoteFile#getCompressionRatio()
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile#getCompressionRatio()
 	 */
 	public double getCompressionRatio() 
 	{

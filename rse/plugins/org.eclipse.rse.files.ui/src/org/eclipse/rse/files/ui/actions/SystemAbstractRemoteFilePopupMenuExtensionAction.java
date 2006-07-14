@@ -26,7 +26,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 
 /**
  * This is a base class to simplify the creation of actions supplied via the
- * com.ibm.etools.systems.core.popupMenus extension point, targeting remote files
+ * org.eclipse.rse.ui.popupMenus extension point, targeting remote files
  * and/or remote folders.
  * <p>
  * The only method you must implement is {@link #run()}.

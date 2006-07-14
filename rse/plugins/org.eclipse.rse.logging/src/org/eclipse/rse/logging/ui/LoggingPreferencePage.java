@@ -97,7 +97,7 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 		text = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_FULL_DEBUG;
 		radioButton3 = createRadioButton(composite1_radioButton, LabelUtil.assignMnemonic(text, used));
 		initializeValues();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "com.ibm.etools.systems.logging.rsel0000");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.rse.logging.rsel0000");
 		return new Composite(parent, SWT.NULL);
 	}
 

@@ -112,7 +112,7 @@ public class Logger implements IPropertyChangeListener {
 	 * and the output will be:<br>
 	 * <br>
 	 * ---------------------------------------------------------------<br>
-	 * DEBUG  com.ibm.etools.systems.logging   someClassName<br>
+	 * DEBUG  org.eclipse.rse.logging   someClassName<br>
 	 *   someMessage<br>
 	 * ---------------------------------------------------------------<br>
 	 * <br>

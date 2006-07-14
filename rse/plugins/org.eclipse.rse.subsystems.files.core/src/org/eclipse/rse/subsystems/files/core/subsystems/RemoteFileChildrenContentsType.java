@@ -32,7 +32,7 @@ public class RemoteFileChildrenContentsType implements ISystemContentsType
     }
     
     /* (non-Javadoc)
-     * @see com.ibm.etools.systems.subsystems.IRemoteContentsType#getType()
+     * @see org.eclipse.rse.model.ISystemContentsType#getType()
      */
     public String getType()
     {
@@ -40,7 +40,7 @@ public class RemoteFileChildrenContentsType implements ISystemContentsType
     }
 
     /* (non-Javadoc)
-     * @see com.ibm.etools.systems.subsystems.IRemoteContentsType#isPersistent()
+     * @see org.eclipse.rse.model.ISystemContentsType#isPersistent()
      */
     public boolean isPersistent()
     {

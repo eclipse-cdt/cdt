@@ -17,7 +17,6 @@
 package org.eclipse.rse.subsystems.files.core.subsystems;
 // copy all the following imports to your child class...
 // remote system framework packages...
-//import com.ibm.etools.systems.subsystems.impl.*;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;

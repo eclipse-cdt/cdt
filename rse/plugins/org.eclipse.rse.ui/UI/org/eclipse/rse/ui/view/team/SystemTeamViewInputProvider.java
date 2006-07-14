@@ -93,7 +93,7 @@ public class SystemTeamViewInputProvider implements IAdaptable, ISystemViewInput
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getConnectionChildren(com.ibm.etools.systems.model.SystemConnection)
+	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getConnectionChildren(org.eclipse.rse.model.IHost)
 	 */
 	public Object[] getConnectionChildren(IHost selectedConnection)
 	{
@@ -102,7 +102,7 @@ public class SystemTeamViewInputProvider implements IAdaptable, ISystemViewInput
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#hasConnectionChildren(com.ibm.etools.systems.model.SystemConnection)
+	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#hasConnectionChildren(org.eclipse.rse.model.IHost)
 	 */
 	public boolean hasConnectionChildren(IHost selectedConnection)
 	{

@@ -23,7 +23,6 @@ package org.eclipse.rse.files.ui;
  */
 public interface ISystemFileConstants 
 {
-//	public static final String PLUGIN_ID ="com.ibm.etools.systems";
 	public static final String PLUGIN_ID ="org.eclipse.rse.files.ui";
 	public static final String PREFIX = PLUGIN_ID+".files.";
 	// Icons

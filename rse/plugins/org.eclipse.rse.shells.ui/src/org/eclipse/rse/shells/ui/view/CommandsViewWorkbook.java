@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * This is the desktop view wrapper of the System View viewer.
- * ViewPart is from com.ibm.itp.ui.support.parts
  */
 public class CommandsViewWorkbook extends Composite
 {

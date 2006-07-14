@@ -75,7 +75,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemSearchPage extends DialogPage implements ISearchPage {
 	
-	public static final String SYSTEM_SEARCH_PAGE_ID = "com.ibm.etools.systems.core.search.searchPage";
+	public static final String SYSTEM_SEARCH_PAGE_ID = "org.eclipse.rse.files.ui.search.searchPage";
 	
 	// search utility
 	private SystemSearchUtil util;

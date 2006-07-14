@@ -99,7 +99,7 @@ public class UniversalServerProcessImpl implements IRemoteServerProcess, IServic
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getLabel()
+	 * @see org.eclipse.rse.services.clientserver.processes.IRemoteProcess#getLabel()
 	 */
 	public String getLabel()
 	{

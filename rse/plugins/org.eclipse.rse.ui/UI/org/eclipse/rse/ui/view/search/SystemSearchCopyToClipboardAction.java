@@ -39,7 +39,7 @@ public class SystemSearchCopyToClipboardAction extends SystemCopyToClipboardActi
     /**
      * Returns the string "\t" if the object is a remote search result, otherwise returns the super class
      * implementation.
-     * @see com.ibm.etools.systems.files.ui.actions.SystemCopyToClipboardAction#getTextTransferPrepend(java.lang.Object, org.eclipse.rse.ui.view.ISystemViewElementAdapter)
+     * @see org.eclipse.rse.ui.actions.SystemCopyToClipboardAction#getTextTransferPrepend(java.lang.Object, org.eclipse.rse.ui.view.ISystemViewElementAdapter)
      */
     protected String getTextTransferPrepend(Object obj, ISystemViewElementAdapter adapter) {
         /** shouldn't be coupled with search (files ui)

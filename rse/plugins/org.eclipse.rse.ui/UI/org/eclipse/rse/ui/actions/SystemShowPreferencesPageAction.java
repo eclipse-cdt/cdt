@@ -15,8 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
-//import com.ibm.etools.systems.model.*; 
-//import com.ibm.etools.systems.model.impl.*; 
+
 import java.util.Iterator;
 import java.util.List;
 

@@ -289,11 +289,6 @@ public class PerformanceLogger {
 			register(DEFAULT_COMPONENT, "", "");
 		}
 		/*Use the class method name for CallerID*/
-		/*
-		 * Sample method name retruned by getMethodName():
-		 * " com.ibm.etools.iseries.core.resources.ISeriesEditableSrcPhysicalFileMember.doDownload(ISeriesEditableSrcPhysicalFileMember.java:558)"
-		 * 
-		 */
 		String methodPath = getMethodName(true);
 
 		return start(DEFAULT_COMPONENT, methodPath);
@@ -597,8 +592,8 @@ public class PerformanceLogger {
 		 * Here to parse the exception string to get the caller which is the current method location
 		 * to be obtained. The Exception stack should show the PerformanceLogger start() in the satck first:
 		 * 	-java.lang.Exception
-		 * 	-at com.ibm.etools.systems.logging.performance.PerformanceLogger.start(PerformanceLogger.java:151)
-		 *	-at com.ibm.etools.systems.logging.performance.PerformanceLogger.start(PerformanceLogger.java:135)
+		 * 	-at org.eclipse.rse.logging.performance.PerformanceLogger.start(PerformanceLogger.java:151)
+		 *	-at org.eclipse.rse.logging.performance.PerformanceLogger.start(PerformanceLogger.java:135)
 		 * Depending if the caller is using default task ID or not, so the caller is the 3rd or the 4th in the stack.
 		 */
 
@@ -609,16 +604,14 @@ public class PerformanceLogger {
 		methodPath = methodPath.substring(4);
 		if (parsed) {
 			try {
-				/* The method name obtained looks like this:
-				 * " com.ibm.etools.iseries.core.resources.ISeriesEditableSrcPhysicalFileMember.doDownload(ISeriesEditableSrcPhysicalFileMember.java:558)"
-				 */
+
 				int i = methodPath.indexOf('(');
 				if (i != -1) methodPath = methodPath.substring(0, i); //strip of the substring enclosed in ()
-				//Now we have "com.ibm.etools.systems.logging.performance.PerformanceLogger.start"						  
+				//Now we have "org.eclipse.rse.logging.performance.PerformanceLogger.start"						  
 				i = methodPath.lastIndexOf('.'); //Get the method name after the last period (.)			
 				String methodName = methodPath.substring(i + 1); //Now we have the method name "start"
 				String className = methodPath.substring(0, i); //remove method name from the string
-				//We are left with "com.ibm.etools.systems.logging.performance.PerformanceLogger"
+				//We are left with "org.eclipse.rse.logging.performance.PerformanceLogger"
 				i = className.lastIndexOf('.');
 				if (i != -1) className = className.substring(i + 1); //Now we have the class name "PerformanceLogger"
 				methodPath = className + "." + methodName;

@@ -15,8 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.filters.actions;
-//import com.ibm.etools.systems.model.*; 
-//import com.ibm.etools.systems.model.impl.*; 
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;

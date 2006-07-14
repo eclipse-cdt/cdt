@@ -29,8 +29,6 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 
-
-//import com.ibm.etools.systems.*;
 /**
  * This is the action for connecting all subsystems for a given connection.
  */

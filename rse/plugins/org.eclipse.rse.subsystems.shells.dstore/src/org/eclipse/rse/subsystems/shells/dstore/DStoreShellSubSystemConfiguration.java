@@ -46,7 +46,7 @@ public class DStoreShellSubSystemConfiguration extends ShellServiceSubSystemConf
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.subsystems.SubSystemFactory#isFactoryFor(java.lang.Class)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#isFactoryFor(java.lang.Class)
 	 */
 	public boolean isFactoryFor(Class subSystemType) {
 		boolean isFor = ShellServiceSubSystem.class.equals(subSystemType);
@@ -69,7 +69,7 @@ public class DStoreShellSubSystemConfiguration extends ShellServiceSubSystemConf
 
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.subsystems.SubSystemFactory#supportsFilters()
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsFilters()
 	 */
 	public boolean supportsFilters() {
 		return false;

@@ -65,7 +65,7 @@ public class LocalLanguageUtilityFactory extends AbstractLanguageUtilityFactory 
 	}
 
 	/**
-	 * @see com.ibm.etools.systems.subsystems.util.ILanguageUtilityFactory#getUtility(java.lang.String)
+	 * @see org.eclipse.rse.internal.subsystems.files.core.ILanguageUtilityFactory#getUtility(java.lang.String)
 	 */
 	public ILanguageUtility getUtility(String language) {
 		

@@ -49,7 +49,7 @@ public class UniversalAIXProcessHandler implements ProcessHandler, ISystemProces
 	}
 	
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.handlers.ProcessHandler#lookupProcesses(com.ibm.etools.systems.processes.clientserver.RemoteProcessFilterString)
+	 * @see org.eclipse.rse.services.clientserver.processes.handlers.ProcessHandler#lookupProcesses
 	 */
 	public SortedSet lookupProcesses(IHostProcessFilter rpfs)
 			throws Exception
@@ -167,7 +167,7 @@ public class UniversalAIXProcessHandler implements ProcessHandler, ISystemProces
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.handlers.ProcessHandler#kill(com.ibm.etools.systems.processes.clientserver.handlers.IRemoteServerProcess, java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.processes.ProcessHandler#kill
 	 */
 	public IHostProcess kill(IHostProcess process, String type)
 			throws Exception

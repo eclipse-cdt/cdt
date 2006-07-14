@@ -29,7 +29,7 @@ public class SystemFilterStringContentsType implements ISystemContentsType
     }
     
     /* (non-Javadoc)
-     * @see com.ibm.etools.systems.subsystems.IRemoteContentsType#getType()
+     * @see org.eclipse.rse.model.IRemoteContentsType#getType()
      */
     public String getType()
     {
@@ -37,7 +37,7 @@ public class SystemFilterStringContentsType implements ISystemContentsType
     }
 
     /* (non-Javadoc)
-     * @see com.ibm.etools.systems.subsystems.IRemoteContentsType#isPersistent()
+     * @see org.eclipse.rse.model.IRemoteContentsType#isPersistent()
      */
     public boolean isPersistent()
     {

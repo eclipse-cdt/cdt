@@ -45,7 +45,7 @@ public class UniversalZOSProcessHandler extends UniversalAIXProcessHandler
 	}
 	
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.handlers.ProcessHandler#lookupProcesses(com.ibm.etools.systems.processes.clientserver.RemoteProcessFilterString)
+	 * @see org.eclipse.rse.services.clientserver.processes.handlers.ProcessHandler#lookupProcesses
 	 */
 	public SortedSet lookupProcesses(HostProcessFilterImpl rpfs)
 	throws Exception

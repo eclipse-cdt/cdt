@@ -143,7 +143,7 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
    
    
    // constants			
-   public static final String ID = "com.ibm.etools.systems.core.ui.view.buildErrorView";
+   public static final String ID = "org.eclipse.rse.shells.ui.view.buildErrorView";
    // matches id in plugin.xml, view tag	
 	
 	private SystemBuildErrorView _viewer;

@@ -79,7 +79,6 @@ public class LocalShellThread extends Thread
 		// by the contributor of the pty exectuable
 		// on linux client this is a likely scenario
 		PSEUDO_TERMINAL = System.getProperty("rse.pty");
-		//PSEUDO_TERMINAL ="platform:/base/plugins/com.ibm.etools.power.universal.server/server.components/intellinux/pty/pty";
 		try
 		{
 			PSEUDO_TERMINAL = Platform.resolve(new URL(PSEUDO_TERMINAL)).getPath();

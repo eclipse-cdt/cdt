@@ -63,7 +63,7 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.subsystems.SubSystemFactory#isFactoryFor(java.lang.Class)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#isFactoryFor(java.lang.Class)
 	 */
 	public boolean isFactoryFor(Class subSystemType) {
 		boolean isFor = FileServiceSubSystem.class.equals(subSystemType);
@@ -71,7 +71,7 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.files.subsystems.RemoteFileSubSystemFactory#supportsArchiveManagement()
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystemConfiguration#supportsArchiveManagement()
 	 */
 	public boolean supportsArchiveManagement() {
 		return true;
@@ -166,21 +166,21 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.files.subsystems.RemoteFileSubSystemFactory#supportsSearch()
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystemConfiguration#supportsSearch()
 	 */
 	public boolean supportsSearch() {
 		return true;
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.files.subsystems.RemoteFileSubSystemFactory#supportsEnvironmentVariablesPropertyPage()
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystemConfiguration#supportsEnvironmentVariablesPropertyPage()
 	 */
 	public boolean supportsEnvironmentVariablesPropertyPage() {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.subsystems.SubSystemFactory#supportsFilters()
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsFilters()
 	 */
 	public boolean supportsFilters() {
 		return true;

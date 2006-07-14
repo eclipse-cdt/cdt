@@ -92,9 +92,9 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * filter related activity through a single point like this, we can ensure that
  * all changes are saved to disk, and events are fired properly.
  * <p>
- * The filter framework logs to a {@link com.ibm.etools.systems.logging.Logger Logger} file.
+ * The filter framework logs to a {@link org.eclipse.rse.logging.Logger Logger} file.
  * By default the log in the org.eclipse.rse.core plugin is used, but you can change this
- * by calling {@link #setLogger(com.ibm.etools.systems.logging.Logger)}.
+ * by calling {@link #setLogger(org.eclipse.rse.logging.Logger)}.
  */
 /** 
  * @lastgen class SystemFilterPoolManagerImpl Impl implements SystemFilterPoolManager {}

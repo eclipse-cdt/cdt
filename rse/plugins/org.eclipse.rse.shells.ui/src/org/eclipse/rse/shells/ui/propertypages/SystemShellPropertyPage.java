@@ -87,7 +87,7 @@ public class SystemShellPropertyPage extends SystemBasePropertyPage
 	
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.core.ui.propertypages.SystemBasePropertyPage#createContentArea(org.eclipse.swt.widgets.Composite)
+	 * @see org.eclipse.rse.ui.propertypages.SystemBasePropertyPage#createContentArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContentArea(Composite parent) 
 	{		
@@ -115,7 +115,7 @@ public class SystemShellPropertyPage extends SystemBasePropertyPage
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.core.ui.propertypages.SystemBasePropertyPage#verifyPageContents()
+	 * @see org.eclipse.rse.ui.propertypages.SystemBasePropertyPage#verifyPageContents()
 	 */
 	protected boolean verifyPageContents() 
 	{

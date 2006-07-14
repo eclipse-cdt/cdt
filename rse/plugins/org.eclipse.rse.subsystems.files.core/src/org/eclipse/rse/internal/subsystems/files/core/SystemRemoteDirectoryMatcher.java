@@ -34,7 +34,6 @@ import org.eclipse.rse.subsystems.files.core.model.ISystemFileRemoteTypes;
 public class SystemRemoteDirectoryMatcher extends SystemRemoteObjectMatcher
 {
 	public static SystemRemoteDirectoryMatcher inst = null;
-	//public static final String factoryId = com.ibm.etools.systems.as400filesubsys.FileSubSystemFactory.factoryId;
     public static final String category = ISystemFileRemoteTypes.TYPECATEGORY;
     public static final String type = ISystemFileRemoteTypes.TYPE_FOLDER;
         

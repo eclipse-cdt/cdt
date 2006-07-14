@@ -911,7 +911,6 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 	 */
 	public boolean doRename(Shell shell, Object element, String name) throws Exception
 	{
-		//com.ibm.etools.systems.core.ui.SystemMessage.displayErrorMessage("INSIDE DORENAME");
 		return false;
 	}
 

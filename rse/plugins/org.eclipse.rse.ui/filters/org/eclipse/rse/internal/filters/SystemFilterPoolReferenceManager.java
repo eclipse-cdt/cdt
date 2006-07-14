@@ -956,9 +956,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
     {
     	setSystemFilterPoolManagerProvider(relatedPoolMgrProvider); // sets poolMgrs = relatedManagers
     	setProvider(provider);
-    	//com.ibm.etools.systems.subsystems.SubSystem ss = (com.ibm.etools.systems.subsystems.SubSystem)provider;
-    	//System.out.println("Inside resolveReferencesAfterRestore for subsys " +getName() + " in conn " + ss.getSystemProfile() + "." + ss.getSystemConnection());
-    	ISystemFilterPoolManager[] relatedManagers = getSystemFilterPoolManagers();
+     	ISystemFilterPoolManager[] relatedManagers = getSystemFilterPoolManagers();
     	if (relatedManagers != null)
     	{
     		Vector badRefs = new Vector();

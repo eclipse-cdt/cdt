@@ -27,7 +27,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class SystemLoggingPreferencePage extends LoggingPreferencePage {
 
 	/**
-	 * @see com.ibm.etools.systems.logging.LoggingPreferencePage#getPlugin()
+	 * @see org.eclipse.rse.logging.LoggingPreferencePage#getPlugin()
 	 */
 	protected AbstractUIPlugin getPlugin() {
 		return RSEUIPlugin.getDefault();

@@ -59,8 +59,7 @@ public class SystemExportShellHistoryAction extends SystemBaseShellAction
 		    
 			FileDialog fdlg = new FileDialog(getShell(), SWT.SAVE);
 			fdlg.setText(SystemFileResources.RESID_ENTER_OR_SELECT_FILE_TITLE);
-			//fdlg.setText(RSEUIPlugin.getString("com.ibm.etools.systems.ui.RmtJarExport.selectOrEnterJarDialog.title"));
-			fdlg.setFileName(cmdShell.getId() + "-history.txt");
+				fdlg.setFileName(cmdShell.getId() + "-history.txt");
 			fdlg.setFilterExtensions(new String[] {"*.txt"});
 			String fileName = fdlg.open();
 			try

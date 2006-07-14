@@ -129,10 +129,6 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 		return EnvironmentMiner.MINER_ID;
 	}
 	
-	protected String getOldEnvSystemMinerId()
-	{
-		return "com.ibm.etools.systems.dstore.miners.environment.EnvironmentMiner";
-	}
 	
 	public boolean isInitialized()
 	{

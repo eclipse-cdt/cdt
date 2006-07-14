@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rmtjardesc>
+<jar path="mjberger.dmcknigh3:/opt/rseserver800/dstore_miners.jar"/>
+<options buildIfNeeded="true" compress="true" descriptionLocation="/org.eclipse.rse.services.dstore/dstore_miners.rmtjardesc" exportErrors="true" exportWarnings="true" overwrite="false" saveDescription="true" useSourceFolders="false"/>
+<manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+<sealing sealJar="false">
+<packagesToSeal/>
+<packagesToUnSeal/>
+</sealing>
+</manifest>
+<selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+<javaElement handleIdentifier="=org.eclipse.rse.services.dstore/miners"/>
+</selectedElements>
+</rmtjardesc>

@@ -68,7 +68,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * This class is designed to be subclassed. Its role is three-fold:
  * <ol>
  *   <li>Storing of tool-specific persistent properties per connection.
- *   <li>Accessing of an {@com.ibm.etools.systems.subsystems.ISystem ISystem} object to enable the subsystem's connect and disconnect actions.
+ *   <li>Accessing of an IConnectorService object to enable the subsystem's connect and disconnect actions.
  *   <li>Doing actual remote accessing. This usually just involves overriding the <code>internalResolveFilterString</code> methods to
  *         populate the remote resources shown when the subsystem's filters are expanded. It might also involve overriding the inherited
  *         <code>internalRunCommand</code> method if this subsystem supports running commands remotely... although typically such subsystems
@@ -669,7 +669,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		// System.out.println("ProfileName: " + profileName);
 		// System.out.println("ConnectionName: " + connectionName);
 				
-		// RESID_PERCONNECTION_FILTERPOOL = com.ibm.etools.systems.ui.perConnection.filterpool=Filter Pool for connection %1
 //		String name = SystemResources.RESID_PERCONNECTION_FILTERPOOL;
 //
 //		StringBuffer profileNameBuffer = new StringBuffer(profileName.toLowerCase());
@@ -3272,14 +3271,14 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         return null;
     }
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.subsystems.SubSystem#isConnectionError()
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#isConnectionError()
 	 */
 	public boolean isConnectionError()
 	{
 		return _connectionError;
 	}
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.subsystems.SubSystem#setConnectionError(boolean)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#setConnectionError(boolean)
 	 */
 	public void setConnectionError(boolean error)
 	{

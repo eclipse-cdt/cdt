@@ -168,7 +168,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		  	   {
 		  	   	 //System.out.println("Firing REFRESH_REMOTE");
 		         sr.fireEvent(
-                   new com.ibm.etools.systems.model.impl.SystemResourceChangeEvent(
+                   new org.eclipse.rse.model.impl.SystemResourceChangeEvent(
                       parent,ISystemResourceChangeEvent.EVENT_REFRESH_REMOTE, null) );
 		  	   }
 		  	   else  
@@ -176,11 +176,11 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		  	   	 //System.out.println("MOVE OPERATION: Firing REFRESH");
 		  	   	 // FIRST REFRESH EXPANDED FILTER
 		         sr.fireEvent(
-                   new com.ibm.etools.systems.model.impl.SystemResourceChangeEvent(
+                   new org.eclipse.rse.model.impl.SystemResourceChangeEvent(
                       parent,ISystemResourceChangeEvent.EVENT_REFRESH, null) );
                  // NEXT REFRESH ALL OTHER PLACES THAT MIGHT BE SHOWING THE SOURCE FOLDER
 		         sr.fireEvent(
-                   new com.ibm.etools.systems.model.impl.SystemResourceChangeEvent(
+                   new org.eclipse.rse.model.impl.SystemResourceChangeEvent(
                       firstSelectionParent,ISystemResourceChangeEvent.EVENT_REFRESH_REMOTE, null) );                 
 		  	   }
 		  	}

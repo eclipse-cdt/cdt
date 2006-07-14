@@ -396,8 +396,7 @@ public class Mnemonics
 		Control children[]  = parent.getChildren(); 
 		if (children != null)
 		{
-		  //com.ibm.etools.systems.SystemPlugin.getDefault().logMessage("setMnemonics: child count = " + children.length);
-		  Control currChild = null;
+			  Control currChild = null;
 		  boolean bSetText = false;
 		  for (int idx=0; idx < children.length; idx++)
 		  {

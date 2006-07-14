@@ -60,9 +60,7 @@ import org.eclipse.swt.widgets.Shell;
  *   <li>{@link #getSelectedConnection()}
  * </ul>
  * 
- * @see com.ibm.etools.systems.files.ui.actions.SystemSelectRemoteFileAction
- * @see com.ibm.etools.systems.files.ui.actions.SystemSelectRemoteFolderAction
- */
+  */
 public class SystemSelectConnectionDialog 
        extends SystemPromptDialog implements ISystemPageCompleteListener
 {  

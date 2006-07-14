@@ -48,7 +48,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
     /**
      * Constructor that takes a context object containing important information.
      * @param context An object holding contextual information about this object
-     * @see com.ibm.etools.systems.shells.subsystems.IRemoteProcessContext
+     * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext
      */ 
     public RemoteProcessImpl(IRemoteProcessContext context, IHostProcess process)
     {
@@ -159,7 +159,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getPid()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getPid()
 	 */
 	public long getPid()
 	{
@@ -167,7 +167,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getPPid()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getPPid()
 	 */
 	public long getPPid()
 	{
@@ -175,7 +175,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getName()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getName()
 	 */
 	public String getName()
 	{
@@ -183,7 +183,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getState()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getState()
 	 */
 	public String getState()
 	{
@@ -191,7 +191,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getTgid()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getTgid()
 	 */
 	public long getTgid()
 	{
@@ -199,7 +199,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getTracerPid()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getTracerPid()
 	 */
 	public long getTracerPid()
 	{
@@ -207,7 +207,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getUid()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getUid()
 	 */
 	public long getUid()
 	{
@@ -215,7 +215,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getUsername()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getUsername()
 	 */
 	public String getUsername()
 	{
@@ -223,7 +223,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getGid()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getGid()
 	 */
 	public long getGid()
 	{
@@ -231,7 +231,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#isRoot()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#isRoot()
 	 */
 	public boolean isRoot()
 	{
@@ -239,7 +239,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getAllProperties()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getAllProperties()
 	 */
 	public String getAllProperties()
 	{
@@ -247,7 +247,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getVmSizeInKB()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getVmSizeInKB()
 	 */
 	public long getVmSizeInKB()
 	{
@@ -255,7 +255,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 	
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getVmRSSInKB()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getVmRSSInKB()
 	 */
 	public long getVmRSSInKB()
 	{
@@ -263,7 +263,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.processes.clientserver.IRemoteProcess#getLabel()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getLabel()
 	 */
 	public String getLabel()
 	{

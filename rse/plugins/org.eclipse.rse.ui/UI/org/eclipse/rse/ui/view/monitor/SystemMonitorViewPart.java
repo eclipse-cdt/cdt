@@ -79,7 +79,6 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 /**
  * This is the desktop view wrapper of the System View viewer.
- * ViewPart is from com.ibm.itp.ui.support.parts
  */
 public class SystemMonitorViewPart
 	extends ViewPart

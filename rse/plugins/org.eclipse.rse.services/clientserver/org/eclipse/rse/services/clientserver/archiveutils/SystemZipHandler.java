@@ -1947,7 +1947,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.core.archiveutils.ISystemArchiveHandler#getCompressedSizeFor(java.lang.String)
+	 * @see org.eclipse.rse.core.archiveutils.ISystemArchiveHandler#getCompressedSizeFor(java.lang.String)
 	 */
 	public long getCompressedSizeFor(String fullVirtualName) 
 	{
@@ -1982,7 +1982,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.core.archiveutils.ISystemArchiveHandler#getCompressionMethodFor(java.lang.String)
+	 * @see org.eclipse.rse.core.archiveutils.ISystemArchiveHandler#getCompressionMethodFor(java.lang.String)
 	 */
 	public String getCompressionMethodFor(String fullVirtualName) 
 	{
@@ -2016,7 +2016,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		else return "";
 	}
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.core.archiveutils.ISystemArchiveHandler#getArchiveComment()
+	 * @see org.eclipse.rse.core.archiveutils.ISystemArchiveHandler#getArchiveComment()
 	 */
 	public String getArchiveComment() 
 	{

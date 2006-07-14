@@ -415,7 +415,7 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
 	}
 	
     /* (non-Javadoc)
-     * @see com.ibm.etools.systems.model.ISystemContainer#hasContents(com.ibm.etools.systems.model.ISystemContentsType)
+     * @see org.eclipse.rse.model.ISystemContainer#hasContents(org.eclipse.rse.model.ISystemContentsType)
      */
     public boolean hasContents(ISystemContentsType contentsType)
     {
@@ -426,7 +426,7 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
         return false;
     }
     /* (non-Javadoc)
-     * @see com.ibm.etools.systems.model.ISystemContainer#getContents(com.ibm.etools.systems.model.ISystemContentsType)
+     * @see org.eclipse.rse.model.ISystemContainer#getContents(org.eclipse.rse.model.ISystemContentsType)
      */
     public Object[] getContents(ISystemContentsType contentsType)
     {
@@ -441,7 +441,7 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
     }
     
     /* (non-Javadoc)
-     * @see com.ibm.etools.systems.model.ISystemContainer#isStale()
+     * @see org.eclipse.rse.model.ISystemContainer#isStale()
      */
     public boolean isStale()
     {
@@ -449,7 +449,7 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
     }
     
     /* (non-Javadoc)
-     * @see com.ibm.etools.systems.model.ISystemContainer#markStale(boolean)
+     * @see org.eclipse.rse.model.ISystemContainer#markStale(boolean)
      */
     public void markStale(boolean isStale)
     {
@@ -457,7 +457,7 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
     }
     
     /* (non-Javadoc)
-     * @see com.ibm.etools.systems.model.ISystemContainer#markStale(boolean)
+     * @see org.eclipse.rse.model.ISystemContainer#markStale(boolean)
      */
     public void markStale(boolean isStale, boolean clearCache)
     {

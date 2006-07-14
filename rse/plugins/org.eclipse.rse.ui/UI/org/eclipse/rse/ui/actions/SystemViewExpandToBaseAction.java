@@ -22,7 +22,6 @@ import org.eclipse.rse.ui.view.SystemView;
 import org.eclipse.swt.widgets.Shell;
 
 
-//import com.ibm.etools.systems.subsystems.*;
 
 /**
  * Base class for Expand To actions on a container

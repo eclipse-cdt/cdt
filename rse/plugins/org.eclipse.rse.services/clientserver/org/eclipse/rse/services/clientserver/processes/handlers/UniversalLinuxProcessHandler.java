@@ -52,7 +52,7 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 	}
 	
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.universal.processes.ProcessHandler#kill(com.ibm.etools.systems.universal.processes.IRemoteServerProcess, java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.processes.ProcessHandler#kill
 	 */
 	public IHostProcess kill(IHostProcess process, String type) throws Exception
 	{
@@ -72,7 +72,7 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.universal.processes.ProcessHandler#lookupProcesses(com.ibm.etools.systems.processes.clientserver.RemoteProcessFilterString, java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.processes.ProcessHandler#lookupProcesses
 	 */
 	public SortedSet lookupProcesses(IHostProcessFilter rpfs) throws Exception
 	{

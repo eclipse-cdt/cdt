@@ -315,7 +315,7 @@ public class SystemFilterStringPropertyPage extends SystemBasePropertyPage imple
 		return ok;
 	}
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.filters.ui.ISystemFilterStringEditPaneListener#filterStringChanged(org.eclipse.rse.core.ui.messages.SystemMessage)
+	 * @see org.eclipse.rse.ui.filters.ISystemFilterStringEditPaneListener#filterStringChanged(org.eclipse.rse.core.ui.messages.SystemMessage)
 	 */
 	public void filterStringChanged(SystemMessage message)
 	{		
@@ -325,13 +325,13 @@ public class SystemFilterStringPropertyPage extends SystemBasePropertyPage imple
 			setErrorMessage(message);
 	}
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.filters.ui.ISystemFilterStringEditPaneListener#backupChangedState()
+	 * @see org.eclipse.rse.ui.filters.ISystemFilterStringEditPaneListener#backupChangedState()
 	 */
 	public void backupChangedState()
 	{
 	}
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.filters.ui.ISystemFilterStringEditPaneListener#restoreChangedState()
+	 * @see org.eclipse.rse.ui.filters.ISystemFilterStringEditPaneListener#restoreChangedState()
 	 */
 	public void restoreChangedState()
 	{

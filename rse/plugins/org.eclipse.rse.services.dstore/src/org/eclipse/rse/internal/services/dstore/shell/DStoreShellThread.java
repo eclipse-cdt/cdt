@@ -193,10 +193,6 @@ public class DStoreShellThread
 	    if (_cmdMinerElement == null || _cmdMinerElement.getDataStore() != _dataStore)
 	    {
 	        _cmdMinerElement = _dataStore.findMinerInformation(getCmdSystemMinerId());
-	        if (_cmdMinerElement == null)
-	        {
-	        	_cmdMinerElement = _dataStore.findMinerInformation(getOldCmdSystemMinerId());
-	        }
 	    }
 	    return _cmdMinerElement;
 	}
@@ -208,10 +204,6 @@ public class DStoreShellThread
 	    {
 	        _envMinerElement = _dataStore.findMinerInformation(getEnvSystemMinerId());
 	        
-	        if (_envMinerElement == null)
-	        {
-	        	_envMinerElement = _dataStore.findMinerInformation(getOldEnvSystemMinerId());
-	        }
 	    }
 	    return _envMinerElement;
 	}
@@ -222,10 +214,6 @@ public class DStoreShellThread
 		return CommandMiner.MINER_ID;
 	}
 	
-	protected String getOldCmdSystemMinerId()
-	{
-		return "com.ibm.etools.systems.dstore.miners.command.CommandMiner";
-	}
 	
 	protected String getEnvSystemMinerId()
 	{
@@ -246,11 +234,7 @@ public class DStoreShellThread
 	{
 		return "C_SET_ENVIRONMENT_VARIABLES";
 	}
-	
-	protected String getOldEnvSystemMinerId()
-	{
-		return "com.ibm.etools.systems.dstore.miners.environment.EnvironmentMiner";
-	}
+
 	
 	public void writeToShell(String command)
 	{

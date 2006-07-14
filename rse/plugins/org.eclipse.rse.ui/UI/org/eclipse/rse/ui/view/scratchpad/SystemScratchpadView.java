@@ -110,8 +110,6 @@ import org.eclipse.ui.part.PluginTransfer;
  * This subclass of the standard JFace tabletree viewer is used to
  * show a generic tabletree view of the selected object 
  * <p>
- * 
- * TableViewer comes from com.ibm.jface.viewer
  */
 public class SystemScratchpadView
 // TODO change TreeViewer to ScratchpadViewer when Eclipse fixes SWT viewer 
@@ -895,7 +893,6 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			for (int idx = 0; idx < deleted.length; idx++)
 				deleted[idx] = deletedVector.elementAt(idx);
 			if (_selectionIsRemoteObject)
-				//sr.fireEvent(new com.ibm.etools.systems.model.impl.SystemResourceChangeEvent(deleted, ISystemResourceChangeEvent.EVENT_DELETE_REMOTE_MANY, null));
 				sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, deletedVector, null, null, null, this);
 			else
 				sr.fireEvent(new org.eclipse.rse.model.SystemResourceChangeEvent(deleted, ISystemResourceChangeEvents.EVENT_DELETE_MANY, getInput()));

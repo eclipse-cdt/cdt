@@ -29,7 +29,7 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 
 /**
  * This is a base class to simplify the creation of property pages supplied via the
- * com.ibm.etools.systems.core.propertyPages extension point, targeting remote files
+ * org.eclipse.rse.ui.propertyPages extension point, targeting remote files
  * and/or remote folders.
  * <p>
  * The only method you must implement is {@link #createContentArea(Composite)}.

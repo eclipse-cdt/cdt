@@ -619,22 +619,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			RSEUIPlugin.getTheSystemRegistry().fireEvent(new org.eclipse.rse.model.SystemResourceChangeEvent(ss, ISystemResourceChangeEvents.EVENT_CHANGE_CHILDREN, ss));
 		}
 	}
-	/*
-	 * If we support filters, should we show filter strings in the remote system explorer?
-	 * This is to set it after the user changes it in the user preferences. It may require
-	 *  refreshing the current view.
-	 *
-	public void setShowFilterStrings(boolean show)
-	{
-		SubSystem[] subsystems = getSubSystems(false); // false=> lazy get; don't restore from disk if not already
-		for (int idx=0; idx<subsystems.length; idx++)
-	    {
-	    	SubSystem ss = subsystems[idx];     	
-		    RSEUIPlugin.getTheSystemRegistry().fireEvent(
-		      new com.ibm.etools.systems.model.impl.SystemResourceChangeEvent(
-		           ss,ISystemResourceChangeEvent.EVENT_CHANGE_CHILDREN,ss));    	
-	    }    	
-	}*/
 
 	// ---------------------------------
 	// PROXY METHODS. USED INTERNALLY...

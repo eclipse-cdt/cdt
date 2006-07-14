@@ -446,7 +446,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	 * <p>
 	 * By default this returns Platform.getAdapterManager().getAdapter(this, adapterType);
 	 * This in turn results in the default subsystem adapter SystemViewSubSystemAdapter,
-	 * in package com.ibm.etools.systems.core.ui.view. 
+	 * in package org.eclipse.rse.ui.view. 
 	 */
     public Object getAdapter(Class adapterType)
     {

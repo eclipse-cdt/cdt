@@ -16,12 +16,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -41,6 +37,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
  * AbstractPreferencePage
@@ -97,7 +100,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 		public void widgetSelected(SelectionEvent e) {
-			ColorEditor editor = (ColorEditor) e.widget.getData();
+			ColorSelector editor = (ColorSelector) e.widget.getData();
 			PreferenceConverter.setValue(fOverlayStore, (String) fColorButtons.get(editor), editor.getColorValue());
 		}
 	};
@@ -273,7 +276,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		gd.horizontalIndent = indentation;
 		labelControl.setLayoutData(gd);
 
-		ColorEditor editor = new ColorEditor(composite);
+		ColorSelector editor = new ColorSelector(composite);
 		Button button = editor.getButton();
 		button.setData(editor);
 
@@ -302,7 +305,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 
 		Iterator e = fColorButtons.keySet().iterator();
 		while (e.hasNext()) {
-			ColorEditor c = (ColorEditor) e.next();
+			ColorSelector c = (ColorSelector) e.next();
 			String key = (String) fColorButtons.get(c);
 			RGB rgb = PreferenceConverter.getColor(fOverlayStore, key);
 			c.setColorValue(rgb);

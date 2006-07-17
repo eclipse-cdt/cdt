@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
@@ -78,7 +80,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	private CTextTools fCTextTools;
 
 	protected List fList;
-	protected ColorEditor fForegroundColorEditor;
+	protected ColorSelector fForegroundColorEditor;
 	protected Button fBoldCheckBox;
 	protected PreviewSourceViewer fPreviewViewer;
 
@@ -87,7 +89,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 	private List fAppearanceColorList;
 
-	private ColorEditor fAppearanceColorEditor;
+	private ColorSelector fAppearanceColorEditor;
 
 	private Button fAppearanceColorDefault;
 
@@ -237,7 +239,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		gd.horizontalAlignment = GridData.BEGINNING;
 		label.setLayoutData(gd);
 
-		fForegroundColorEditor = new ColorEditor(stylesComposite);
+		fForegroundColorEditor = new ColorSelector(stylesComposite);
 		Button foregroundColorButton = fForegroundColorEditor.getButton();
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment = GridData.BEGINNING;
@@ -386,7 +388,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		gd.horizontalAlignment = GridData.BEGINNING;
 		l.setLayoutData(gd);
 
-		fAppearanceColorEditor = new ColorEditor(stylesComposite);
+		fAppearanceColorEditor = new ColorSelector(stylesComposite);
 		Button foregroundColorButton = fAppearanceColorEditor.getButton();
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment = GridData.BEGINNING;
@@ -549,6 +551,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 		super.performDefaults();
 
+		handleAppearanceColorListSelection();
 		handleListSelection();
 
 		fCEditorHoverConfigurationBlock.performDefaults();

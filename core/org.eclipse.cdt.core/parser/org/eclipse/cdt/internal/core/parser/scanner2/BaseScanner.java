@@ -2640,12 +2640,12 @@ abstract class BaseScanner implements IScanner {
                             definitions,
                             getLineNumber(bufferPos[bufferStackPos]),
                             getCurrentFilename()) == 0) {
-                    	processIf(pos, bufferPos[bufferStackPos], true);
+                    	processIf(pos, bufferPos[bufferStackPos], false);
                         skipOverConditionalCode(true);
                         if (isLimitReached())
                             handleInvalidCompletion();
                     } else {
-                    	processIf(pos, bufferPos[bufferStackPos], false);
+                    	processIf(pos, bufferPos[bufferStackPos], true);
                     }
                     return;
                 case ppElse:

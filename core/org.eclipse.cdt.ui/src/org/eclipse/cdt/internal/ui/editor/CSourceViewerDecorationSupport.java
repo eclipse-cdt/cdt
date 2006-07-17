@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -103,7 +104,9 @@ public class CSourceViewerDecorationSupport
 						inactiveCodePositionsChanged(inactiveCodePositions);
 					}
 				};
-				fViewer.getTextWidget().getDisplay().asyncExec(updater);
+				if (fViewer != null && !monitor.isCanceled()) {
+					fViewer.getTextWidget().getDisplay().asyncExec(updater);
+				}
 			}
 			return result;
 		}
@@ -201,11 +204,12 @@ public class CSourceViewerDecorationSupport
 	 * @see org.eclipse.ui.texteditor.SourceViewerDecorationSupport#dispose()
 	 */
 	public void dispose() {
-		super.dispose();
-		fViewer = null;
 		if (fUpdateJob != null) {
 			fUpdateJob.cancel();
 		}
+		fTranslationUnit = null;
+		fASTTranslationUnit = null;
+		super.dispose();
 	}
 
 	/*
@@ -246,7 +250,7 @@ public class CSourceViewerDecorationSupport
 	}
 
 	/**
-	 * Update the color for the cursor line painter.
+	 * Update the color for the cursor line highlighting.
 	 */
 	private void updateCLPColor() {
 		if (fLineBackgroundPainter != null) {
@@ -258,12 +262,12 @@ public class CSourceViewerDecorationSupport
 	}
 
 	/**
-	 * Hide cursor line painter.
+	 * Hide cursor line highlighting.
 	 */
 	private void hideCLP() {
 		if (fLineBackgroundPainter != null) {
 			if (!isInactiveCodePositionsActive()) {
-				uninstallInactiveCodePainter();
+				uninstallLineBackgroundPainter();
 			} else {
 				fLineBackgroundPainter.enableCursorLine(false);
 				fLineBackgroundPainter.redraw();
@@ -272,10 +276,10 @@ public class CSourceViewerDecorationSupport
 	}
 
 	/**
-	 * Show cursor line painter.
+	 * Show cursor line highlighting.
 	 */
 	private void showCLP() {
-		installInactiveCodePainter();
+		installLineBackgroundPainter();
 		if (fLineBackgroundPainter != null) {
 			fLineBackgroundPainter.enableCursorLine(true);
 			fLineBackgroundPainter.redraw();
@@ -283,7 +287,7 @@ public class CSourceViewerDecorationSupport
 	}
 
 	/**
-	 * @return true if cursor line painter is active.
+	 * @return true if cursor line highlighting is active.
 	 */
 	private boolean isCLPActive() {
 		if (fPrefStore != null) {
@@ -293,7 +297,7 @@ public class CSourceViewerDecorationSupport
 	}
 
 	/**
-	 * @return true if inactive code painter is active.
+	 * @return true if inactive code highlighting is active.
 	 */
 	private boolean isInactiveCodePositionsActive() {
 		if (fPrefStore != null) {
@@ -344,14 +348,14 @@ public class CSourceViewerDecorationSupport
 	 * @see org.eclipse.ui.texteditor.SourceViewerDecorationSupport#uninstall()
 	 */
 	public void uninstall() {
-		uninstallInactiveCodePainter();
+		uninstallLineBackgroundPainter();
 		super.uninstall();
 	}
 
 	/**
-	 * Install inactive code/cursor line painter.
+	 * Install line background painter (inactive code/cursor line).
 	 */
-	private void installInactiveCodePainter() {
+	private void installLineBackgroundPainter() {
 		if (fLineBackgroundPainter == null) {
 			if (fViewer instanceof ITextViewerExtension2) {
 				fLineBackgroundPainter = new LineBackgroundPainter(fViewer);
@@ -364,14 +368,16 @@ public class CSourceViewerDecorationSupport
 	}
 
 	/**
-	 * Uninstall inactive code/cursor line painter.
+	 * Uninstall line background painter (inactive code/cursor line).
 	 */
-	private void uninstallInactiveCodePainter() {
+	private void uninstallLineBackgroundPainter() {
 		if (fLineBackgroundPainter != null) {
-			((ITextViewerExtension2)fViewer).removePainter(fLineBackgroundPainter);
-			fLineBackgroundPainter.deactivate(true);
-			fLineBackgroundPainter.dispose();
-			fLineBackgroundPainter = null;
+			if (fViewer instanceof ITextViewerExtension2) {
+				((ITextViewerExtension2)fViewer).removePainter(fLineBackgroundPainter);
+				fLineBackgroundPainter.deactivate(true);
+				fLineBackgroundPainter.dispose();
+				fLineBackgroundPainter = null;
+			}
 		}
 	}
 
@@ -379,7 +385,7 @@ public class CSourceViewerDecorationSupport
 	 * Show inactive code positions.
 	 */
 	private void showInactiveCodePositions() {
-		installInactiveCodePainter();
+		installLineBackgroundPainter();
 		updateInactiveCodePositions();
 	}
 
@@ -389,7 +395,7 @@ public class CSourceViewerDecorationSupport
 	private void hideInactiveCodePositions() {
 		if (fLineBackgroundPainter != null) {
 			if (!isCLPActive()) {
-				uninstallInactiveCodePainter();
+				uninstallLineBackgroundPainter();
 			} else {
 				fLineBackgroundPainter.setHighlightPositions(Collections.EMPTY_LIST);
 			}
@@ -422,52 +428,62 @@ public class CSourceViewerDecorationSupport
 	 * @return a {@link List} of {@link IRegion}s
 	 */
 	private static List collectInactiveCodePositions(IASTTranslationUnit translationUnit) {
-		List positions = new ArrayList();
 		if (translationUnit == null) {
-			return positions;
+			return Collections.EMPTY_LIST;
 		}
+		String fileName = translationUnit.getContainingFilename();
+		if (fileName == null) {
+			return Collections.EMPTY_LIST;
+		}
+		List positions = new ArrayList();
 		int inactiveCodeStart = -1;
 		boolean inInactiveCode = false;
+		Stack inactiveCodeStack = new Stack();
+		// TLETODO [performance] This does not look very efficient
 		IASTPreprocessorStatement[] preprocStmts = translationUnit.getAllPreprocessorStatements();
 		for (int i = 0; i < preprocStmts.length; i++) {
 			IASTPreprocessorStatement statement = preprocStmts[i];
+			if (!fileName.equals(statement.getContainingFilename())) {
+				// preprocessor directive is from a different file
+				continue;
+			}
 			if (statement instanceof IASTPreprocessorIfStatement) {
 				IASTPreprocessorIfStatement ifStmt = (IASTPreprocessorIfStatement)statement;
-				if (!inInactiveCode && !ifStmt.taken()) {
-					IASTNodeLocation nodeLocation = ifStmt.getNodeLocations()[0];
-					inactiveCodeStart = nodeLocation.getNodeOffset();
-					inInactiveCode = true;
-				} else if (inInactiveCode && ifStmt.taken()) {
-					// should not happen!
-					assert false;
+				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
+				if (!ifStmt.taken()) {
+					if (!inInactiveCode) {
+						IASTNodeLocation nodeLocation = ifStmt.getNodeLocations()[0];
+						inactiveCodeStart = nodeLocation.getNodeOffset();
+						inInactiveCode = true;
+					}
 				}
 			} else if (statement instanceof IASTPreprocessorIfdefStatement) {
 				IASTPreprocessorIfdefStatement ifdefStmt = (IASTPreprocessorIfdefStatement)statement;
-				if (!inInactiveCode && !ifdefStmt.taken()) {
-					IASTNodeLocation nodeLocation = ifdefStmt.getNodeLocations()[0];
-					inactiveCodeStart = nodeLocation.getNodeOffset();
-					inInactiveCode = true;
-				} else if (inInactiveCode && ifdefStmt.taken()) {
-					// should not happen!
-					assert false;
+				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
+				if (!ifdefStmt.taken()) {
+					if (!inInactiveCode) {
+						IASTNodeLocation nodeLocation = ifdefStmt.getNodeLocations()[0];
+						inactiveCodeStart = nodeLocation.getNodeOffset();
+						inInactiveCode = true;
+					}
 				}
 			} else if (statement instanceof IASTPreprocessorIfndefStatement) {
 				IASTPreprocessorIfndefStatement ifndefStmt = (IASTPreprocessorIfndefStatement)statement;
-				if (!inInactiveCode && !ifndefStmt.taken()) {
-					IASTNodeLocation nodeLocation = ifndefStmt.getNodeLocations()[0];
-					inactiveCodeStart = nodeLocation.getNodeOffset();
-					inInactiveCode = true;
-				} else if (inInactiveCode && ifndefStmt.taken()) {
-					// should not happen!
-					assert false;
+				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
+				if (!ifndefStmt.taken()) {
+					if (!inInactiveCode) {
+						IASTNodeLocation nodeLocation = ifndefStmt.getNodeLocations()[0];
+						inactiveCodeStart = nodeLocation.getNodeOffset();
+						inInactiveCode = true;
+					}
 				}
 			} else if (statement instanceof IASTPreprocessorElseStatement) {
 				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement)statement;
-				if (!inInactiveCode && !elseStmt.taken()) {
+				if (!elseStmt.taken() && !inInactiveCode) {
 					IASTNodeLocation nodeLocation = elseStmt.getNodeLocations()[0];
 					inactiveCodeStart = nodeLocation.getNodeOffset();
 					inInactiveCode = true;
-				} else if (inInactiveCode && elseStmt.taken()) {
+				} else if (elseStmt.taken() && inInactiveCode) {
 					IASTNodeLocation nodeLocation = elseStmt.getNodeLocations()[0];
 					int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 					positions.add(new ReusableRegion(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
@@ -475,11 +491,11 @@ public class CSourceViewerDecorationSupport
 				}
 			} else if (statement instanceof IASTPreprocessorElifStatement) {
 				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement)statement;
-				if (!inInactiveCode && !elifStmt.taken()) {
+				if (!elifStmt.taken() && !inInactiveCode) {
 					IASTNodeLocation nodeLocation = elifStmt.getNodeLocations()[0];
 					inactiveCodeStart = nodeLocation.getNodeOffset();
 					inInactiveCode = true;
-				} else if (inInactiveCode && elifStmt.taken()) {
+				} else if (elifStmt.taken() && inInactiveCode) {
 					IASTNodeLocation nodeLocation = elifStmt.getNodeLocations()[0];
 					int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 					positions.add(new ReusableRegion(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
@@ -487,20 +503,17 @@ public class CSourceViewerDecorationSupport
 				}
 			} else if (statement instanceof IASTPreprocessorEndifStatement) {
 				IASTPreprocessorEndifStatement endifStmt = (IASTPreprocessorEndifStatement)statement;
-				if (inInactiveCode) {
+				boolean wasInInactiveCode = ((Boolean)inactiveCodeStack.pop()).booleanValue();
+				if (inInactiveCode && !wasInInactiveCode) {
 					IASTNodeLocation nodeLocation = endifStmt.getNodeLocations()[0];
 					int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 					positions.add(new ReusableRegion(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
-					inInactiveCode = false;
 				}
+				inInactiveCode = wasInInactiveCode;
 			}
 		}
 		if (inInactiveCode) {
-			IASTNodeLocation[] nodeLocations = translationUnit.getNodeLocations();
-			IASTNodeLocation lastNode = nodeLocations[nodeLocations.length - 1];
-			int inactiveCodeEnd = lastNode.getNodeOffset() + lastNode.getNodeLength();
-			positions.add(new ReusableRegion(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
-			inInactiveCode = false;
+			// handle dangling #if?
 		}
 		return positions;
 	}

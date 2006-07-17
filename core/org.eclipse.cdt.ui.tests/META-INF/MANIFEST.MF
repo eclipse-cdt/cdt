@@ -32,6 +32,7 @@ Require-Bundle: org.eclipse.jface.text,
  org.eclipse.compare,
  org.eclipse.ui.console,
  org.eclipse.core.expressions,
- org.eclipse.cdt.make.core
+ org.eclipse.cdt.make.core,
+ com.ibm.icu
 Eclipse-LazyStart: true
 Bundle-Vendor: Eclipse.org

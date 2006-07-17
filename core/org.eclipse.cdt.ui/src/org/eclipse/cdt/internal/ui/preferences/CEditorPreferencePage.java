@@ -120,6 +120,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_NUMBER + "_bold")); //$NON-NLS-1$
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_OPERATOR));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_OPERATOR + "_bold")); //$NON-NLS-1$
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.SUB_WORD_NAVIGATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.MATCHING_BRACKETS_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.MATCHING_BRACKETS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.INACTIVE_CODE_COLOR));
@@ -149,6 +150,8 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		// JDT also enables this feature.
 		store.setDefault(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END, true);    
 
+		store.setDefault(CEditor.SUB_WORD_NAVIGATION, true);
+		
 		store.setDefault(CEditor.MATCHING_BRACKETS, true);
 		PreferenceConverter.setDefault(store, CEditor.MATCHING_BRACKETS_COLOR, new RGB(170,170,170));
 
@@ -338,7 +341,10 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		layout.numColumns = 2;
 		behaviorComposite.setLayout(layout);
 
-		String label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.matchingBrackets"); //$NON-NLS-1$
+		String label= PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.subWordNavigation"); //$NON-NLS-1$; 
+		addCheckBox(behaviorComposite, label, CEditor.SUB_WORD_NAVIGATION, 0);
+
+		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.matchingBrackets"); //$NON-NLS-1$
 		addCheckBox(behaviorComposite, label, CEditor.MATCHING_BRACKETS, 0);
 
 		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.inactiveCode"); //$NON-NLS-1$

@@ -15,6 +15,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.ui.tests.text.CAutoIndentTest;
+import org.eclipse.cdt.ui.tests.text.CBreakIteratorTest;
+import org.eclipse.cdt.ui.tests.text.CWordIteratorTest;
 import org.eclipse.cdt.ui.tests.text.NumberRuleTest;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionFailedTest_MemberReference_Arrow_Prefix2;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ArgumentType_NoPrefix;
@@ -136,6 +138,10 @@ public class AutomatedSuite extends TestSuite {
 		addTest( CSelectionTestsDOMIndexer.suite() );
 		addTest( CPPSelectionTestsCTagsIndexer.suite() );
 		addTest( CSelectionTestsCTagsIndexer.suite() );
+
+		// Break iterator tests.
+		addTest(CBreakIteratorTest.suite());
+		addTest(CWordIteratorTest.suite());
 	}
 	
 }

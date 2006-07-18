@@ -157,16 +157,19 @@ public class ConnectorServicesForm extends SystemBaseForm
 	protected String getCurrentVerbage()
 	{
 		if (_serviceViewer == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		else
 		{
 			IStructuredSelection serviceSelection = (IStructuredSelection)_serviceViewer.getSelection();
 			if (serviceSelection == null || serviceSelection.isEmpty())
 			{
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			else
-				return ((ServiceElement)serviceSelection.getFirstElement()).getDescription();
+			{
+				String description = ((ServiceElement)serviceSelection.getFirstElement()).getDescription(); 
+				return description!=null ? description : ""; //$NON-NLS-1$  
+			}
 		}
 	}
 }

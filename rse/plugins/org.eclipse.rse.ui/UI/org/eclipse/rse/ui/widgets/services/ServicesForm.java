@@ -288,26 +288,23 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
 	
 	protected String getCurrentVerbage()
 	{
-		if (_serviceViewer == null)
-			return "";
-		else
+		String description = null;
+		if (_serviceViewer != null)
 		{
 			IStructuredSelection serviceSelection = (IStructuredSelection)_serviceViewer.getSelection();
-			if (serviceSelection == null || serviceSelection.isEmpty())
+			if (serviceSelection != null && !serviceSelection.isEmpty())
 			{
-				if (_factoryViewer == null)
-					return "";
-				else
+				description = ((ServiceElement)serviceSelection.getFirstElement()).getDescription();
+			}
+			else if (_factoryViewer != null)
+			{
+				IStructuredSelection factorySelection = (IStructuredSelection) _factoryViewer.getSelection();
+				if (factorySelection != null && !factorySelection.isEmpty())
 				{
-					IStructuredSelection factorySelection = (IStructuredSelection) _factoryViewer.getSelection();
-					if (factorySelection == null || factorySelection.isEmpty())
-						return "";
-					else
-						return ((ServiceElement)factorySelection.getFirstElement()).getDescription();
+					description = ((ServiceElement)factorySelection.getFirstElement()).getDescription(); 
 				}
 			}
-			else
-				return ((ServiceElement)serviceSelection.getFirstElement()).getDescription();
 		}
+		return description != null ? description : ""; //$NON-NLS-1$
 	}
 }

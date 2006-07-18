@@ -33,7 +33,7 @@ public class CompletionTest_ArgumentType_Prefix2  extends CompletionProposalsBas
 			"anotherClass",
 			"aNamespace",
 			"anEnumeration",
-			// "AStruct"  FIXME: Result removed. DOM search is currently case sensitive
+			"AStruct"
 			/* FIXME: Additional results which should not be there. Run with trace enabled to reproduce:
 Result: aFirstEnum
 Result: aFunction(void) bool

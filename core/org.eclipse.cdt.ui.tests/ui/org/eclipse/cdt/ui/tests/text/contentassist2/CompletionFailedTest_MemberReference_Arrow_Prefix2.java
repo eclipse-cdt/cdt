@@ -28,10 +28,10 @@ public class CompletionFailedTest_MemberReference_Arrow_Prefix2  extends Complet
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "a";
 	private final String[] expectedResults = {
+			"aClass",
 			"aField : int",
 			"aMethod(void) int"
 			/* FIXME: Additional results which should not be found. Run with trace activated to reproduce: 
-Result: aClass
 Result: author - author name
 			 */
 	};

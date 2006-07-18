@@ -37,8 +37,7 @@ public class CompletionTest_SingleName_Prefix2  extends CompletionProposalsBaseT
 			"aFirstEnum",
 			"aSecondEnum",
 			"aThirdEnum",
-			// "AStruct", FIXME: Result removed. DOM search is currently casesensitive.
-			// "AMacro(x)" FIXME: Result removed. DOM search is currently casesensitive.
+			"AMacro(x)" 
 			/* FIXME: Additional results which should not be there. Run with tracing to reproduce:
 			 * Result: author - author name
 			 */

@@ -32,9 +32,7 @@ public class CompletionTest_NewTypeReference_Prefix  extends CompletionProposals
 	private final String[] expectedResults = {
 			"aClass",
 			"anotherClass",
-			"aNamespace",
-			"anEnumeration",
-			// "AStruct"  FIXME: Result removed. DOM search is currently case sensitive
+			"AStruct"
 			/* FIXME: Additional results which should not be there. Run with trace enabled to reproduce:
 Result: aFirstEnum
 Result: aFunction(void) bool

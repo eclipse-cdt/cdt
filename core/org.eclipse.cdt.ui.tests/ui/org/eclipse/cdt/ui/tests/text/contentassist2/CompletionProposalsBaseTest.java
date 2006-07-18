@@ -65,7 +65,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	}
 	
 	/*
-	 * Derived classes have to provide there abstract methods
+	 * Derived classes have to provide these test parameters
 	 */
 	protected abstract String getFileName();
 	protected abstract String getFileFullPath();
@@ -75,6 +75,13 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	protected abstract String getExpectedPrefix();
 	protected abstract String[] getExpectedResultsValues();
 	protected String getFunctionOrConstructorName()	{ return EMPTY_STRING; }
+	
+	/**
+	 * Override to relax checking of extra results
+	 */
+	protected boolean doCheckExtraResults()  {
+		return true ;
+	}
 	
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
@@ -115,6 +122,10 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	}	
 	
 	public void testCompletionProposals() throws Exception {
+		
+			if (CTestPlugin.getDefault().isDebugging())  {
+				System.out.println("\n\n\n\n\nTesting "+this.getClass().getName());
+			}
 			// setup the translation unit, the buffer and the document
 			ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(fCFile);
 			buffer = tu.getBuffer().getContents();
@@ -171,6 +182,9 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 				}
 			}	
 			assertTrue("Not enough results!", results.length >= expected.length);
+			if (doCheckExtraResults())  {
+				assertEquals("Extra results! Run with tracing to see details!", expected.length, results.length);
+			}
 			assertTrue("Some expected results were not found!", allFound);
 			
 	}	

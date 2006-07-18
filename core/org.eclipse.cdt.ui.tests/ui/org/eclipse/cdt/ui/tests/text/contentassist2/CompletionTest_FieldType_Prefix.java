@@ -32,7 +32,7 @@ public class CompletionTest_FieldType_Prefix  extends CompletionProposalsBaseTes
 			"aThirdClass",
 			"aNamespace",
 			"anEnumeration",
-			// "AStruct", FIXME: result removed: Lookup is currently case sensitive. "aStruct" would work!
+			"AStruct"
 			/* FIXME: Additional results which should not be returned. Run with tracing enabled to reproduce:
 Result: aFirstEnum
 Result: aFunction(void) bool

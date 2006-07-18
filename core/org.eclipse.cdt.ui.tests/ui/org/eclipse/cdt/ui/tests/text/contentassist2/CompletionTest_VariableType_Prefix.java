@@ -31,7 +31,7 @@ public class CompletionTest_VariableType_Prefix  extends CompletionProposalsBase
 			"anotherClass",
 			"aNamespace",
 			"anEnumeration",
-			// "AStruct" FIXME: Result removed. The DOM search is currently case sensitive
+			"AStruct"
 	};
 	
 	public CompletionTest_VariableType_Prefix(String name) {

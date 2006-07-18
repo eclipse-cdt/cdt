@@ -40,10 +40,20 @@ public class CompletionTest_SingleName_Method_Prefix	  extends CompletionProposa
 			"aFirstEnum",
 			"aSecondEnum",
 			"aThirdEnum",
-			// "AStruct", FIXME: result removed: Lookup is currently case sensitive. "aStruct" would work!
-			// "AMacro(x)" FIXME: result removed: Lookup is currently case sensitive. "aMacro" would work!
+			"AStruct",
+			"AMacro(x)"
 	};
 	
+	
+	
+	/* (non-Javadoc)
+	 * Relax result checking here because the "a" prefix also finds the template for "author"
+	 * @see org.eclipse.cdt.ui.tests.text.contentassist2.CompletionProposalsBaseTest#doCheckExtraResults()
+	 */
+	protected boolean doCheckExtraResults() {
+		return false ;
+	}
+
 	public CompletionTest_SingleName_Method_Prefix(String name) {
 		super(name);
 	}

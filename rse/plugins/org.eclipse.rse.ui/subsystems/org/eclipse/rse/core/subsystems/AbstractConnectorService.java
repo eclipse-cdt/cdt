@@ -443,7 +443,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
        	}
 	
    	  	// Check the saved passwords if we still haven't found a good password.
-		if (passwordInformation == null && userId != null && !forcePrompt) {
+		if (passwordInformation == null && userId != null) {
 			SystemSignonInformation savedPasswordInformation = ppm.find(hostType, hostName, userId);
 			if (savedPasswordInformation != null) {
 				if (validator == null || validator.isValid(shell, savedPasswordInformation)) {

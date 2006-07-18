@@ -32,14 +32,15 @@ AbstractSystemViewAdapter. The DaytimeService is rather simple, since
 queries are fast enough to use a connectionless service.
 
 __Known Issues:__
-* Entering Username and Password should not be required.
-* Manual Refresh after connect should not be required.
 * When something goes wrong during connect, the error message 
   does not give enough information about the cause of the error.
-* The example defines a Service for its task; there might be 
-  applications where this is not required or desired. A simpler 
-  example should be provided that only defines a Subsystem but
-  no Service, ConnectorService or ConnectorServiceManager.
+* Should define a second service, that uses UDP for getting the
+  daytime. This would show the advantages of ServiceSubsystem.
+  The Tutorial example (developer) is good for showing service-less
+  subsystems.
+* ConnectorService / ConnectorServiceManager should exist in a 
+  simpler default implementation such that not every new service
+  or subsystem implements the same over and over again (bug 150928).
 
 __Enabling the Daytime Service on a Remote Host:__
 In order for the example to work, the service on TCP port 13 must be 

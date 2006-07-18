@@ -55,8 +55,9 @@ public class DaytimeConnectorService extends AbstractConnectorService {
 		}
 		//if no exception is thrown, we consider ourselves connected!
 		fIsConnected = true;
-		//TODO force a refresh of the Viewer in order to show the resource
-		// Fire comm event to signal state changed
+		// Fire comm event to signal state changed -- 
+		// Not really necessary since SubSystem.connect(Shell, boolean) does
+		// SystemRegistry.connectedStatusChange(this, true, false) at the end
 		notifyConnection();
 	}
 

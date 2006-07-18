@@ -139,7 +139,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 			
 			// check the completion node
 			ASTCompletionNode currentCompletionNode = completionProcessor.getCurrentCompletionNode();
-			assertNotNull(currentCompletionNode);
+			assertNotNull("null completion node!", currentCompletionNode);
 			IASTName[] names = currentCompletionNode.getNames();
 			IASTName currentName = names[0];
 			IBinding binding = currentName.getBinding();

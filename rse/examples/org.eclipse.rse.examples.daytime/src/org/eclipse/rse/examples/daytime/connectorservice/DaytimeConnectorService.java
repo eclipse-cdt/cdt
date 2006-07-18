@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
+import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.examples.daytime.DaytimeResources;
 import org.eclipse.rse.examples.daytime.service.DaytimeService;
 import org.eclipse.rse.examples.daytime.service.IDaytimeService;
@@ -46,11 +47,6 @@ public class DaytimeConnectorService extends AbstractConnectorService {
 	}
 
 	protected void internalConnect(IProgressMonitor monitor) throws Exception {
-		internalConnect();
-	}
-
-	private void internalConnect() throws Exception
-	{
 		fDaytimeService.setHostName(getHostName());
 		try {
 			fDaytimeService.getTimeOfDay();
@@ -61,6 +57,8 @@ public class DaytimeConnectorService extends AbstractConnectorService {
 		//if no exception is thrown, we consider ourselves connected!
 		fIsConnected = true;
 		//TODO force a refresh of the Viewer in order to show the resource
+		// Fire comm event to signal state changed
+		notifyConnection();
 	}
 
 	public IDaytimeService getDaytimeService() {
@@ -71,11 +69,11 @@ public class DaytimeConnectorService extends AbstractConnectorService {
 		return fIsConnected;
 	}
 
-	public void disconnect() {
+	public void internalDisconnect(IProgressMonitor monitor) throws Exception {
 		fIsConnected = false;
-		//TODO force a refresh of the Viewer in order to hide the resource
+		super.internalDisconnect(monitor);
 	}
-	
+
 	public boolean hasRemoteServerLauncherProperties() {
 		return false;
 	}

@@ -70,7 +70,7 @@ public class Activator extends SystemBasePlugin {
 	
 	protected void initializeImageRegistry() {
 		String path = getIconPath();
-		putImageInRegistry(ICON_ID_DAYTIME, path+"full/obj16/daytime.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_ID_DAYTIME, path+"/full/obj16/daytime.gif"); //$NON-NLS-1$
 	}
 
 }

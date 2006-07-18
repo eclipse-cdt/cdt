@@ -58,9 +58,7 @@ public class DaytimeSubsystemConfiguration extends ServiceSubSystemConfiguration
 		return false;
 	}
 	public boolean supportsUserId() {
-		// TODO for now, we have to connect in order to pass the hostname to the service
-		// This should not be necessary in an ideal world
-		return true;
+		return false;
 	}
 	public boolean isFactoryFor(Class subSystemType) {
 		return DaytimeSubSystem.class.equals(subSystemType);

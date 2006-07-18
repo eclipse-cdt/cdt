@@ -238,7 +238,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     public void setSubSystemConfiguration(ISubSystemConfiguration ssf)
     {
     	parentSubSystemFactory = ssf;
-    	supportsConnecting = ssf.supportsUserId();
+    	supportsConnecting = ssf.supportsSubSystemConnect();
     	//System.out.println("subsystem supports connecting? " + supportsConnecting);
     }
     /**
@@ -1663,7 +1663,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     protected boolean implicitConnect(boolean isConnectOperation, IProgressMonitor mon, String msg, int totalWorkUnits) throws SystemMessageException, InvocationTargetException, InterruptedException
     {
 		boolean didConnection = false;
-        if (doConnection && !isConnected())// caller wants to do connection first as part operation
+        if ( doConnection && !isConnected())// caller wants to do connection first as part operation
         {
 			if (isOffline() || (supportsCaching() && getCacheManager().isRestoreFromMemento()))
 			{
@@ -2543,7 +2543,9 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			if (runnableContext instanceof ProgressMonitorDialog) {
 				((ProgressMonitorDialog) runnableContext).setCancelable(true);
 			}
-			getConnectorService().promptForPassword(shell, forcePrompt); // prompt for userid and password    
+			if (getSubSystemConfiguration().supportsUserId()) {
+				getConnectorService().promptForPassword(shell, forcePrompt); // prompt for userid and password    
+			}
 			ConnectJob job = new ConnectJob();
 			scheduleJob(job, null, shell != null);
 			IStatus status = job.getResult();
@@ -2567,7 +2569,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	boolean ok = false;
     	if (!supportsConnecting)
     	  return true;
-    	  
+    	
     	if (isOffline())
     	{
     		// offline so don't bother prompting
@@ -2579,6 +2581,13 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			doConnection = true;	// this gets handled later when it comes time to connect
 			return true;    		
     	}
+    	else if (!getSubSystemConfiguration().supportsUserId())
+    	{
+    		// subsystem needs no user id so dont bother prompting
+    		doConnection = true;	// this gets handled later when it comes time to connect
+    		return true;
+    	}
+    	
     	
     	try
     	{

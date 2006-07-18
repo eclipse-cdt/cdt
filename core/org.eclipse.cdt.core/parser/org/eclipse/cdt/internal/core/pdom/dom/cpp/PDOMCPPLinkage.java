@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -36,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
@@ -160,9 +162,24 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			}
 		}
 		
-		// Add in the name
-		if (pdomBinding != null)
+		// final processing
+		if (pdomBinding != null) {
+			// Add in the name
 			new PDOMName(pdom, name, file, pdomBinding);
+		
+			// Check if is a base specifier
+			if (pdomBinding instanceof ICPPClassType && name.getParent() instanceof ICPPASTBaseSpecifier) {
+				ICPPASTBaseSpecifier baseNode = (ICPPASTBaseSpecifier)name.getParent();
+				ICPPASTCompositeTypeSpecifier ownerNode = (ICPPASTCompositeTypeSpecifier)baseNode.getParent();
+				IBinding ownerBinding = adaptBinding(ownerNode.getName().resolveBinding());
+				if (ownerBinding != null && ownerBinding instanceof PDOMCPPClassType) {
+					PDOMCPPClassType ownerClass = (PDOMCPPClassType)ownerBinding;
+					PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, (PDOMCPPClassType)pdomBinding,
+							baseNode.isVirtual(), baseNode.getVisibility());
+					ownerClass.addBase(pdomBase);
+				}
+			}
+		}
 			
 		return pdomBinding;
 	}

@@ -283,4 +283,13 @@ public class ArrayUtil {
         return array;
 	}
 	
+	public static void reverse(Object [] array) {
+		for (int left = 0, right = array.length - 1;
+				left < right; ++left, --right) {
+			Object tmp = array[left];
+			array[left] = array[right];
+			array[right] = tmp;
+		}
+	}
+	
 }

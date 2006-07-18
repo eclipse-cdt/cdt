@@ -21,53 +21,93 @@ import org.eclipse.rse.internal.model.IPropertyType;
 
 public  class PropertyType implements IPropertyType
 {
-	private final String ENUMERATION_STR = "enumeration:";
-	
 	private int _type = 0;
-
-	
 	private String[] _enumValues;
+
+	private static final String ENUMERATION_STR = "enumeration:"; //$NON-NLS-1$
 	
-	public PropertyType(int type)
+	private static IPropertyType _booleanPropertyType = new PropertyType(TYPE_BOOLEAN);
+	private static IPropertyType _integerPropertyType = new PropertyType(TYPE_INTEGER);
+	private static IPropertyType _stringPropertyType = new PropertyType(TYPE_STRING);
+
+	private PropertyType(int type)
 	{
 		_type = type;
 	}
+
+	/**
+	 * Return an instance of boolean property type.
+	 * @return IPropertyType
+	 */
+	public static IPropertyType getBooleanPropertyType()
+	{
+		return _booleanPropertyType;
+	}
+
+	/**
+	 * Return an instance of integer property type.
+	 * @return IPropertyType
+	 */
+	public static IPropertyType getIntegerPropertyType()
+	{
+		return _integerPropertyType;
+	}
+
+	/**
+	 * Return an instance of string property type.
+	 * @return IPropertyType
+	 */
+	public static IPropertyType getStringPropertyType()
+	{
+		return _stringPropertyType;
+	}
 	
-	public PropertyType(String typeStr)
+	/**
+	 * Return an instance of enum property type.
+	 * @param values String[] array of allowed enumerator values. 
+	 * @return IPropertyType
+	 */
+	public static IPropertyType getEnumPropertyType(String[] values)
+	{
+		PropertyType type = new PropertyType(TYPE_ENUM);
+		type.setEnumValues(values);
+		return type;
+	}
+	
+	/**
+	 * Return an instance of property type based on the String specification.
+	 * This is the reverse of PropertyType.toString().
+	 * @return IPropertyType instance based on String specification.
+	 */
+	public static IPropertyType fromString(String typeStr)
 	{
 		if (typeStr.equals(String.class.toString()))
 		{
-			setType(TYPE_STRING);
+			return getStringPropertyType();
 		}
 		else if (typeStr.equals(Integer.class.toString()))
 		{
-			setType(TYPE_INTEGER);
+			return getIntegerPropertyType();
 		}
 		else if (typeStr.startsWith(ENUMERATION_STR))
 		{
-			setType(TYPE_ENUM);
 			String subString = typeStr.substring(ENUMERATION_STR.length());
-			String[] enumValues = subString.split(",");
-			setEnumValues(enumValues);
+			String[] enumValues = subString.split(","); //$NON-NLS-1$
+			return getEnumPropertyType(enumValues);
 		}
 		else if (typeStr.equals(Boolean.class.toString()))
 		{
-			setType(TYPE_BOOLEAN);
+			return getBooleanPropertyType();
 		}
 		else
 		{
-			setType(TYPE_STRING);
+			return getStringPropertyType();
 		}
 	}
-	
+
 	public int getType()
 	{
 		return _type;
-	}
-	
-	public void setType(int type)
-	{
-		_type = type;
 	}
 	
 	public boolean isString()
@@ -90,11 +130,10 @@ public  class PropertyType implements IPropertyType
 		return _type == TYPE_BOOLEAN;
 	}
 
-	public void setEnumValues(String[] enumValues)
+	private void setEnumValues(String[] enumValues)
 	{
 		_enumValues = enumValues;
 	}
-
 	
 	public String[] getEnumValues()
 	{
@@ -121,7 +160,7 @@ public  class PropertyType implements IPropertyType
 				buf.append(enumValues[i]);
 				if (i + 1 < enumValues.length)
 				{
-					buf.append(",");
+					buf.append(","); //$NON-NLS-1$
 				}				
 			}
 			return buf.toString();

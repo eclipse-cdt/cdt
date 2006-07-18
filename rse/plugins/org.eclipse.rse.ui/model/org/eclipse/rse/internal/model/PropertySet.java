@@ -30,7 +30,7 @@ public class PropertySet implements IPropertySet
 	private String _name;
 	private Map _properties;
 	
-	protected static PropertyType _defaultType =  new PropertyType(IPropertyType.TYPE_STRING);
+	protected static IPropertyType _defaultType =  PropertyType.getStringPropertyType();
 	
 	public PropertySet(IPropertySet propertySet)
 	{

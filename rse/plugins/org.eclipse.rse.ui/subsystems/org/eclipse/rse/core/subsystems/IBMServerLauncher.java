@@ -98,31 +98,11 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 	
 	protected boolean _autoDetectSSL = AUTODETECT_SSL_EDEFAULT;
 
-	protected PropertyType _serverLauncherEnumType;
-	protected PropertyType _intPropertyType;
-	protected PropertyType _booleanPropertyType;
+	protected IPropertyType _serverLauncherEnumType;
 	
 	protected IBMServerLauncher(String name, IConnectorService connectorService)
 	{
 		super(name, connectorService);		
-	}
-	
-	public IPropertyType getIntegerPropertyType()
-	{
-		if (_intPropertyType == null)
-		{
-			_intPropertyType = new PropertyType(IPropertyType.TYPE_INTEGER);
-		}
-		return _intPropertyType;
-	}
-	
-	public IPropertyType getBooleanPropertyType()
-	{
-		if (_booleanPropertyType == null)
-		{
-			_booleanPropertyType = new PropertyType(IPropertyType.TYPE_BOOLEAN);
-		}
-		return _booleanPropertyType;
 	}
 	
 	public IPropertyType getServerLauncherPropertyType()
@@ -130,7 +110,6 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 		if (_serverLauncherEnumType == null)
 		{
 			// for persistence
-			_serverLauncherEnumType = new PropertyType(IPropertyType.TYPE_ENUM);
 			List values = Arrays.asList(getSupportedLauncherEnumTypes());
 				// DKM - only need supported types 
 				/// ServerLaunchType.VALUES;
@@ -141,7 +120,7 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 				ServerLaunchType type = (ServerLaunchType)values.get(i);
 				enumValues[i] = type.getName();
 			}
-			_serverLauncherEnumType.setEnumValues(enumValues);
+			_serverLauncherEnumType = PropertyType.getEnumPropertyType(enumValues);
 		}
 		return _serverLauncherEnumType;
 	}
@@ -221,16 +200,16 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 		IProperty launchTypeProperty = set.addProperty(KEY_SERVER_LAUNCH_TYPE_NAME, _serverLaunchType.getName(), getServerLauncherPropertyType());
 		launchTypeProperty.setLabel(SystemResources.RESID_PROP_SERVERLAUNCHER_MEANS_LABEL);
 		
-		IProperty daemonPortProperty = set.addProperty(KEY_DAEMON_PORT, ""+_daemonPort, getIntegerPropertyType());
+		IProperty daemonPortProperty = set.addProperty(KEY_DAEMON_PORT, ""+_daemonPort, PropertyType.getIntegerPropertyType());
 		daemonPortProperty.setEnabled(_serverLaunchType.getType() == ServerLaunchType.DAEMON);
 		daemonPortProperty.setLabel(SystemResources.RESID_CONNECTION_DAEMON_PORT_LABEL);
 		
-		IProperty rexecPortProperty  = set.addProperty(KEY_REXEC_PORT, ""+_rexecPort, getIntegerPropertyType());	
+		IProperty rexecPortProperty  = set.addProperty(KEY_REXEC_PORT, ""+_rexecPort, PropertyType.getIntegerPropertyType());	
 		boolean usingRexec = _serverLaunchType.getType() == ServerLaunchType.REXEC;
 		rexecPortProperty.setEnabled(usingRexec);
 		rexecPortProperty.setLabel(SystemResources.RESID_CONNECTION_PORT_LABEL);
 		
-		IProperty autoDetectSSLProperty  = set.addProperty(KEY_AUTODETECT_SSL, ""+_autoDetectSSL, getBooleanPropertyType());	
+		IProperty autoDetectSSLProperty  = set.addProperty(KEY_AUTODETECT_SSL, ""+_autoDetectSSL, PropertyType.getBooleanPropertyType());	
 		autoDetectSSLProperty.setEnabled(usingRexec);
 		autoDetectSSLProperty.setLabel(SystemResources.RESID_SUBSYSTEM_AUTODETECT_LABEL);
 		

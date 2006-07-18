@@ -513,7 +513,7 @@ public class RSEDOMImporter implements IRSEDOMImporter
 		{
 			RSEDOMNodeAttribute attribute = attributes[i];
 			String typeStr = attribute.getType();
-			IPropertyType type = new PropertyType(typeStr);
+			IPropertyType type = PropertyType.fromString(typeStr);
 			
 			set.addProperty(attribute.getKey(), attribute.getValue(), type);
 			

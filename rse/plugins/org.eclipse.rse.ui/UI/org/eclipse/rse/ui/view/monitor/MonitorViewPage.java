@@ -143,7 +143,10 @@ FocusListener
 		   					if (children != null)
 		   					{
 		   						SystemTableTreeViewProvider provider = (SystemTableTreeViewProvider)_viewer.getContentProvider();
-								provider.setCache(children);
+		   						if (provider!=null) {
+		   							//bug 150924: provider can be lost when disconnecting while this job runs
+									provider.setCache(children);
+		   						}
 								
 		   					}
 

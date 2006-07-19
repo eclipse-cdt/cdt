@@ -161,6 +161,51 @@ public class PreferenceConstants {
 	public static final String EDITOR_TEXT_HOVER_MODIFIER_MASKS= "hoverModifierMasks"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls whether the 'close strings' feature
+	 *  is   enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 */
+	public final static String EDITOR_CLOSE_STRINGS= "closeStrings"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether the 'wrap strings' feature is
+	 * enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 */
+	public final static String EDITOR_WRAP_STRINGS= "wrapStrings"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether the 'escape strings' feature is
+	 * enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 */
+	public final static String EDITOR_ESCAPE_STRINGS= "escapeStrings"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether the 'close brackets' feature is
+	 * enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 */
+	public final static String EDITOR_CLOSE_BRACKETS= "closeBrackets"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether the 'close braces' feature is
+	 * enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 */
+	public final static String EDITOR_CLOSE_BRACES= "closeBraces"; //$NON-NLS-1$
+
+	/**
 	 * The id of the best match hover contributed for extension point
 	 * <code>javaEditorTextHovers</code>.
 	 *
@@ -412,6 +457,10 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_METHODS, false);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_MACROS, true);
 
-
+		store.setDefault(PreferenceConstants.EDITOR_CLOSE_STRINGS, true);
+		store.setDefault(PreferenceConstants.EDITOR_CLOSE_BRACKETS, true);
+		store.setDefault(PreferenceConstants.EDITOR_CLOSE_BRACES, true);
+		store.setDefault(PreferenceConstants.EDITOR_WRAP_STRINGS, true);
+		store.setDefault(PreferenceConstants.EDITOR_ESCAPE_STRINGS, false);
     }
 }

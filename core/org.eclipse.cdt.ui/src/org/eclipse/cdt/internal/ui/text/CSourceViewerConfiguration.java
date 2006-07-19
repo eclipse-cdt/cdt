@@ -44,17 +44,23 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ILanguageUI;
+import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
@@ -62,7 +68,6 @@ import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
-
 
 
 /**
@@ -144,7 +149,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(null));
         final IInformationProvider provider = new CElementContentProvider(getEditor());
         presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
-        presenter.setInformationProvider(provider, ICPartitions.C_MULTILINE_COMMENT);
+        presenter.setInformationProvider(provider, ICPartitions.C_MULTI_LINE_COMMENT);
         presenter.setInformationProvider(provider, ICPartitions.C_SINGLE_LINE_COMMENT);
         presenter.setInformationProvider(provider, ICPartitions.C_STRING);
         presenter.setInformationProvider(provider, ICPartitions.C_CHARACTER);
@@ -190,8 +195,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		reconciler.setRepairer(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
 		
 		dr= new DefaultDamagerRepairer(getMultilineCommentScanner());		
-		reconciler.setDamager(dr, ICPartitions.C_MULTILINE_COMMENT);
-		reconciler.setRepairer(dr, ICPartitions.C_MULTILINE_COMMENT);
+		reconciler.setDamager(dr, ICPartitions.C_MULTI_LINE_COMMENT);
+		reconciler.setRepairer(dr, ICPartitions.C_MULTI_LINE_COMMENT);
 
 		dr= new DefaultDamagerRepairer(getStringScanner());
 		reconciler.setDamager(dr, ICPartitions.C_STRING);
@@ -247,10 +252,13 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoEditStrategies(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
-		if(ICPartitions.C_MULTILINE_COMMENT.equals(contentType)) {
-			return new IAutoEditStrategy[] {new CCommentAutoIndentStrategy()};
-		}
-		return new IAutoEditStrategy[] {new CAutoIndentStrategy()};
+		String partitioning= getConfiguredDocumentPartitioning(sourceViewer);
+		if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType))
+			return new IAutoEditStrategy[] { new CCommentAutoIndentStrategy() };
+//		else if (ICPartitions.C_STRING.equals(contentType))
+//			return new IAutoEditStrategy[] { new SmartSemicolonAutoEditStrategy(partitioning), new JavaStringAutoIndentStrategy(partitioning) };
+		else
+			return new IAutoEditStrategy[] { new CAutoIndentStrategy(partitioning, getProject()) };
 	}
 
 	/**
@@ -301,6 +309,25 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		vector.add(""); //$NON-NLS-1$
 		
 		return (String[]) vector.toArray(new String[vector.size()]);
+	}
+
+	private ICProject getProject() {
+		ITextEditor editor= getEditor();
+		if (editor == null)
+			return null;
+
+		ICElement element= null;
+		IEditorInput input= editor.getEditorInput();
+		IDocumentProvider provider= editor.getDocumentProvider();
+		if (provider instanceof CDocumentProvider) {
+			CDocumentProvider cudp= (CDocumentProvider) provider;
+			element= cudp.getWorkingCopy(input);
+		}
+
+		if (element == null)
+			return null;
+
+		return element.getCProject();
 	}
 
 	/**
@@ -370,7 +397,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] { 	
 				IDocument.DEFAULT_CONTENT_TYPE, 
-				ICPartitions.C_MULTILINE_COMMENT,
+				ICPartitions.C_MULTI_LINE_COMMENT,
 				ICPartitions.C_SINGLE_LINE_COMMENT,
 				ICPartitions.C_STRING,
 				ICPartitions.C_CHARACTER};

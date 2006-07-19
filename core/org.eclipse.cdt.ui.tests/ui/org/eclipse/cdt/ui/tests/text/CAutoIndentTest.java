@@ -19,11 +19,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
-import org.eclipse.cdt.internal.ui.text.CCommentAutoIndentStrategy;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -32,6 +27,15 @@ import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
+
+import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
+import org.eclipse.cdt.internal.ui.text.CCommentAutoIndentStrategy;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 /**
  * Testing the auto indent strategies.
@@ -71,7 +75,7 @@ public class CAutoIndentTest extends TestCase {
 		public void type(char c) throws BadLocationException {
 			TestDocumentCommand command = new TestDocumentCommand(fCaretOffset, 0, new String(new char[] { c }));
 			customizeDocumentCommand(command);
-			fCaretOffset += command.exec(fDoc);
+			fCaretOffset = command.exec(fDoc);
 		}
 
 		private void customizeDocumentCommand(TestDocumentCommand command) throws BadLocationException {
@@ -94,7 +98,7 @@ public class CAutoIndentTest extends TestCase {
 		public void paste(String text) throws BadLocationException {
 			TestDocumentCommand command = new TestDocumentCommand(fCaretOffset, 0, text);
 			customizeDocumentCommand(command);
-			fCaretOffset += command.exec(fDoc);
+			fCaretOffset = command.exec(fDoc);
 		}
 
 		public void paste(int offset, String text) throws BadLocationException {
@@ -110,11 +114,30 @@ public class CAutoIndentTest extends TestCase {
 		public void backspace() throws BadLocationException {
 			TestDocumentCommand command = new TestDocumentCommand(fCaretOffset-1, 1, ""); //$NON-NLS-1$
 			customizeDocumentCommand(command);
-			fCaretOffset += command.exec(fDoc);
+			fCaretOffset = command.exec(fDoc);
 		}
 
 		public int getCaretOffset() {
 			return fCaretOffset;
+		}
+
+		public int setCaretOffset(int offset) {
+			fCaretOffset = offset;
+			if (fCaretOffset < 0)
+				fCaretOffset = 0;
+			else if (fCaretOffset > fDoc.getLength())
+				fCaretOffset = fDoc.getLength();
+			return fCaretOffset;
+		}
+		
+		/**
+		 * Moves caret right or left by the given number of characters.
+		 * 
+		 * @param shift Move distance.
+		 * @return New caret offset.
+		 */
+		public int moveCaret(int shift) {
+			return setCaretOffset(fCaretOffset + shift);
 		}
 
 		public int getCaretLine() throws BadLocationException {
@@ -167,12 +190,16 @@ public class CAutoIndentTest extends TestCase {
 
 			owner = null;
 			caretOffset = -1;
-
 		}
 
+		/**
+		 * Returns new caret position.
+		 */
 		public int exec(IDocument doc) throws BadLocationException {
 			doc.replace(offset, length, text);
-			return text.length() - length;
+			return caretOffset != -1 ?
+						caretOffset :
+						offset + (text == null ? 0 : text.length());
 		}
 	}
 
@@ -188,13 +215,21 @@ public class CAutoIndentTest extends TestCase {
 		return new TestSuite(CAutoIndentTest.class);
 	}
 
+	protected void setUp() throws Exception {
+		super.setUp();
+		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();  
+		shell.forceActive();
+		shell.forceFocus();
+	}
+	
 	private AutoEditTester createAutoEditTester() {
 		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
 		IDocument doc = new Document();
 		textTools.setupCDocument(doc);
 		AutoEditTester tester = new AutoEditTester(doc, textTools.getDocumentPartitioning());
-		tester.setAutoEditStrategy(IDocument.DEFAULT_CONTENT_TYPE, new CAutoIndentStrategy());
-		tester.setAutoEditStrategy(ICPartitions.C_MULTILINE_COMMENT, new CCommentAutoIndentStrategy());
+		tester.setAutoEditStrategy(IDocument.DEFAULT_CONTENT_TYPE,
+				                   new CAutoIndentStrategy(textTools.getDocumentPartitioning(), null));
+		tester.setAutoEditStrategy(ICPartitions.C_MULTI_LINE_COMMENT, new CCommentAutoIndentStrategy());
 		return tester;
 	}
 
@@ -202,10 +237,38 @@ public class CAutoIndentTest extends TestCase {
 		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
 		tester.type("void main() {\n"); //$NON-NLS-1$
 		assertEquals(1, tester.getCaretLine());
+		// Nested statement is indented by one.
 		assertEquals(1, tester.getCaretColumn());
-		tester.type("}\n"); //$NON-NLS-1$
+		// The brace was closed automatically.
+		assertEquals("}", tester.getLine(1)); //$NON-NLS-1$
+		tester.type("if (expression1 &&\n"); //$NON-NLS-1$
 		assertEquals(2, tester.getCaretLine());
-		assertEquals(0, tester.getCaretColumn());
+		// Continuation line is indented by two relative to the statement.
+		assertEquals(3, tester.getCaretColumn());
+		tester.type("expression2 &&\n"); //$NON-NLS-1$
+		assertEquals(3, tester.getCaretLine());
+		// Second continuation line is also indented by two relative to the statement.
+		assertEquals(3, tester.getCaretColumn());
+		tester.type("expression3) {"); //$NON-NLS-1$
+		// Remember caret position.
+		int offset = tester.getCaretOffset();
+		// Press Enter
+        tester.type("\n");  //$NON-NLS-1$
+		assertEquals(4, tester.getCaretLine());
+		// Nested statement is indented by one relative to the containing statement.
+		assertEquals(2, tester.getCaretColumn());
+		// The brace was closed automatically.
+		assertEquals("\t}", tester.getLine(1)); //$NON-NLS-1$
+		tester.type("int x = 5;"); //$NON-NLS-1$
+		// Move caret back after the opening brace.
+		tester.setCaretOffset(offset);
+		// Press Enter
+        tester.type("\n"); //$NON-NLS-1$
+		assertEquals(4, tester.getCaretLine());
+		// Nested statement is indented by one relative to the containing statement.
+		assertEquals(2, tester.getCaretColumn());
+        // No auto closing brace since the braces are already balanced.
+		assertEquals("\t\tint x = 5;", tester.getLine(1)); //$NON-NLS-1$
 	}
 
 	public void testDefaultAutoIndent() throws IOException, CoreException, BadLocationException {
@@ -233,7 +296,7 @@ public class CAutoIndentTest extends TestCase {
 	public void testCCommentAutoIndent() throws IOException, CoreException, BadLocationException {
 		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
 		tester.type("/*\n"); //$NON-NLS-1$
-		assertEquals(ICPartitions.C_MULTILINE_COMMENT, tester.getContentType(-1));
+		assertEquals(ICPartitions.C_MULTI_LINE_COMMENT, tester.getContentType(-1));
 		assertEquals(1, tester.getCaretLine());
 		assertEquals(3, tester.getCaretColumn());
 		assertEquals(" * ", tester.getLine()); //$NON-NLS-1$

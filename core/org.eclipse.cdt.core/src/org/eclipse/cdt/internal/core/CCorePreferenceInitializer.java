@@ -7,16 +7,23 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Sergey Prigogin, Google
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.core.formatter.CodeFormatterConstants;
 import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.core.runtime.Preferences;
+//import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 
 
 public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
@@ -25,19 +32,24 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-        Preferences preferences = CCorePlugin.getDefault().getPluginPreferences();
         HashSet optionNames = CModelManager.OptionNames;
     
-        // Compiler settings
-        preferences.setDefault(CCorePreferenceConstants.TRANSLATION_TASK_TAGS, CCorePreferenceConstants.DEFAULT_TASK_TAG); 
-        optionNames.add(CCorePreferenceConstants.TRANSLATION_TASK_TAGS);
+		// Formatter settings
+		Map defaultOptionsMap = CodeFormatterConstants.getEclipseDefaultSettings(); // code formatter defaults
 
-        preferences.setDefault(CCorePreferenceConstants.TRANSLATION_TASK_PRIORITIES, CCorePreferenceConstants.DEFAULT_TASK_PRIORITY); 
-        optionNames.add(CCorePreferenceConstants.TRANSLATION_TASK_PRIORITIES);
-        
-        preferences.setDefault(CCorePreferenceConstants.CODE_FORMATTER, CCorePreferenceConstants.DEFAULT_CODE_FORMATTER); 
-        optionNames.add(CCorePreferenceConstants.CODE_FORMATTER);
+		// Compiler settings
+		defaultOptionsMap.put(CCorePreferenceConstants.TRANSLATION_TASK_TAGS, CCorePreferenceConstants.DEFAULT_TASK_TAG); 
+		defaultOptionsMap.put(CCorePreferenceConstants.TRANSLATION_TASK_PRIORITIES, CCorePreferenceConstants.DEFAULT_TASK_PRIORITY); 
+		defaultOptionsMap.put(CCorePreferenceConstants.CODE_FORMATTER, CCorePreferenceConstants.DEFAULT_CODE_FORMATTER); 
                 
+		// Store default values to default preferences
+	 	IEclipsePreferences defaultPreferences = ((IScopeContext) new DefaultScope()).getNode(CCorePlugin.PLUGIN_ID);
+		for (Iterator iter = defaultOptionsMap.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry entry = (Map.Entry) iter.next();
+			String optionName = (String) entry.getKey();
+			defaultPreferences.put(optionName, (String)entry.getValue());
+			optionNames.add(optionName);
+		}
 	}
 
 }

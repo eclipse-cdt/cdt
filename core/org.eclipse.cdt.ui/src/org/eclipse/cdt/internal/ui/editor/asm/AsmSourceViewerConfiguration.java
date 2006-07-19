@@ -20,7 +20,7 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
-import org.eclipse.cdt.internal.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.ICPartitions;
 
 
 public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration {
@@ -83,8 +83,8 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
 		dr= new DefaultDamagerRepairer(getMultilineCommentScanner());		
-		reconciler.setDamager(dr, ICPartitions.C_MULTILINE_COMMENT);
-		reconciler.setRepairer(dr, ICPartitions.C_MULTILINE_COMMENT);
+		reconciler.setDamager(dr, ICPartitions.C_MULTI_LINE_COMMENT);
+		reconciler.setRepairer(dr, ICPartitions.C_MULTI_LINE_COMMENT);
 		
 		dr= new DefaultDamagerRepairer(getSinglelineCommentScanner());		
 		reconciler.setDamager(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
@@ -108,7 +108,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] { 	
 				IDocument.DEFAULT_CONTENT_TYPE, 
-				ICPartitions.C_MULTILINE_COMMENT,
+				ICPartitions.C_MULTI_LINE_COMMENT,
 				ICPartitions.C_SINGLE_LINE_COMMENT,
 				ICPartitions.C_STRING,
 				ICPartitions.C_CHARACTER };

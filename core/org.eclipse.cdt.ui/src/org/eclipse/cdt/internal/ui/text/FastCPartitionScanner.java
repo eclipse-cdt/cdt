@@ -18,6 +18,8 @@ import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 
+import org.eclipse.cdt.ui.text.ICPartitions;
+
 
 /**
  * This scanner recognizes the C multi line comments, C single line comments,
@@ -59,7 +61,7 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 	private final IToken[] fTokens= new IToken[] {
 		new Token(null),
 		new Token(C_SINGLE_LINE_COMMENT),
-		new Token(C_MULTILINE_COMMENT),
+		new Token(C_MULTI_LINE_COMMENT),
 		new Token(C_CHARACTER),
 		new Token(C_STRING)
 	};
@@ -340,7 +342,7 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 		else if (contentType.equals(C_SINGLE_LINE_COMMENT))
 			return SINGLE_LINE_COMMENT;
 
-		else if (contentType.equals(C_MULTILINE_COMMENT))
+		else if (contentType.equals(C_MULTI_LINE_COMMENT))
 			return MULTI_LINE_COMMENT;
 
 		else if (contentType.equals(C_STRING))

@@ -25,6 +25,8 @@ import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
 
+import org.eclipse.cdt.ui.text.ICPartitions;
+
 
 /**
  * This scanner is not actually use in the code it was relace by
@@ -90,7 +92,7 @@ public class CPartitionScanner extends RuleBasedPartitionScanner implements ICPa
 	public CPartitionScanner() {
 		super();
 		
-		IToken comment= new Token(C_MULTILINE_COMMENT);
+		IToken comment= new Token(C_MULTI_LINE_COMMENT);
 		IToken single_comment= new Token(C_SINGLE_LINE_COMMENT);
 		IToken string= new Token(C_STRING);
 		IToken character = new Token(C_CHARACTER);

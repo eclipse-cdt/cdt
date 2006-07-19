@@ -15,13 +15,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.internal.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * Action that removes the enclosing comment marks from a Java block comment.
@@ -59,7 +60,7 @@ public class RemoveBlockCommentAction extends BlockCommentAction {
 		
 		while (partEndOffset < endOffset) {
 			
-			if (partition.getType() == ICPartitions.C_MULTILINE_COMMENT) {
+			if (partition.getType() == ICPartitions.C_MULTI_LINE_COMMENT) {
 				edits.add(factory.createEdit(partOffset, tokenLength, "")); //$NON-NLS-1$
 				edits.add(factory.createEdit(partEndOffset - tokenLength, tokenLength, "")); //$NON-NLS-1$
 			}
@@ -69,7 +70,7 @@ public class RemoveBlockCommentAction extends BlockCommentAction {
 			partEndOffset= partOffset + partition.getLength();
 		}
 
-		if (partition.getType() == ICPartitions.C_MULTILINE_COMMENT) {
+		if (partition.getType() == ICPartitions.C_MULTI_LINE_COMMENT) {
 			edits.add(factory.createEdit(partOffset, tokenLength, "")); //$NON-NLS-1$
 			edits.add(factory.createEdit(partEndOffset - tokenLength, tokenLength, "")); //$NON-NLS-1$
 		}

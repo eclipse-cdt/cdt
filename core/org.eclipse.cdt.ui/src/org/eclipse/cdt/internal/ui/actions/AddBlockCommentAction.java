@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.internal.ui.text.ICPartitions;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;
@@ -24,6 +23,8 @@ import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * Action that encloses the editor's current selection with Java block comment terminators
@@ -109,7 +110,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 		int partEndOffset= partition.getOffset() + partition.getLength();
 		int tokenLength= getCommentStart().length();
 		
-		if (partType == ICPartitions.C_MULTILINE_COMMENT) {	
+		if (partType == ICPartitions.C_MULTI_LINE_COMMENT) {	
 			// already in a comment - remove ending mark
 			edits.add(factory.createEdit(partEndOffset - tokenLength, tokenLength, "")); //$NON-NLS-1$	
 		}
@@ -119,7 +120,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 		partType= partition.getType();
 
 		// start of next partition		
-		if (partType == ICPartitions.C_MULTILINE_COMMENT) {
+		if (partType == ICPartitions.C_MULTI_LINE_COMMENT) {
 			// already in a comment - remove startToken
 			edits.add(factory.createEdit(partition.getOffset(), getCommentStart().length(), "")); //$NON-NLS-1$
 		}

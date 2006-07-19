@@ -129,6 +129,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.actions.ShowInCViewAction;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
@@ -149,7 +150,6 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.CWordIterator;
 import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
 import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
-import org.eclipse.cdt.internal.ui.text.ICPartitions;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.util.CUIHelp;
@@ -1481,52 +1481,50 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		}
 		
 		public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
-			String text= command.text;
+			String text = command.text;
 			if (text == null)
 				return;
 				
-			int index= text.indexOf('\t');
+			int index = text.indexOf('\t');
 			if (index > -1) {
-				
-				StringBuffer buffer= new StringBuffer();
+				StringBuffer buffer = new StringBuffer();
 				
 				fLineTracker.set(command.text);
-				int lines= fLineTracker.getNumberOfLines();
+				int lines = fLineTracker.getNumberOfLines();
 				
 				try {
+					for (int i = 0; i < lines; i++) {
+						int offset = fLineTracker.getLineOffset(i);
+						int endOffset = offset + fLineTracker.getLineLength(i);
+						String line = text.substring(offset, endOffset);
 						
-						for (int i= 0; i < lines; i++) {
-							
-							int offset= fLineTracker.getLineOffset(i);
-							int endOffset= offset + fLineTracker.getLineLength(i);
-							String line= text.substring(offset, endOffset);
-							
-							int position= 0;
-							if (i == 0) {
-								IRegion firstLine= document.getLineInformationOfOffset(command.offset);
-								position= command.offset - firstLine.getOffset();	
-							}
-							
-							int length= line.length();
-							for (int j= 0; j < length; j++) {
-								char c= line.charAt(j);
-								if (c == '\t') {
-									position += insertTabString(buffer, position);
-								} else {
-									buffer.append(c);
-									++ position;
-								}
-							}
-							
+						int position= 0;
+						if (i == 0) {
+							IRegion firstLine = document.getLineInformationOfOffset(command.offset);
+							position = command.offset - firstLine.getOffset();	
 						}
 						
-						command.text= buffer.toString();
+						int length = line.length();
+						for (int j = 0; j < length; j++) {
+							char c = line.charAt(j);
+							if (c == '\t') {
+								int oldPosition = position;
+								position += insertTabString(buffer, position);
+								if (command.caretOffset > command.offset + oldPosition) {
+									command.caretOffset += position - oldPosition - 1;
+								}
+							} else {
+								buffer.append(c);
+								++position;
+							}
+						}
+					}
 						
+					command.text = buffer.toString();
 				} catch (BadLocationException x) {
 				}
 			}
 		}
-
 	}
 
 	/*

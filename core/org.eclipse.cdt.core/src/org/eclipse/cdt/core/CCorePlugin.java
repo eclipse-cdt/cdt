@@ -141,6 +141,26 @@ public class CCorePlugin extends Plugin {
 	 */
 	public final static String CONTENT_TYPE_ASMSOURCE = "org.eclipse.cdt.core.asmSource"; //$NON-NLS-1$
 
+	/**
+	 * Possible  configurable option value.
+	 * @see #getDefaultOptions()
+	 */
+	public static final String INSERT = "insert"; //$NON-NLS-1$
+	/**
+	 * Possible  configurable option value.
+	 * @see #getDefaultOptions()
+	 */
+	public static final String DO_NOT_INSERT = "do not insert"; //$NON-NLS-1$
+	/**
+	 * Possible  configurable option value.
+	 * @see #getDefaultOptions()
+	 */
+	public static final String TAB = "tab"; //$NON-NLS-1$
+	/**
+	 * Possible  configurable option value.
+	 * @see #getDefaultOptions()
+	 */
+	public static final String SPACE = "space"; //$NON-NLS-1$
 
     public CDTLogWriter cdtLog = null;
 

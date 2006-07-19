@@ -12,9 +12,13 @@ package org.eclipse.cdt.internal.corext.util;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ToolFactory;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
+import org.eclipse.cdt.core.formatter.CodeFormatterConstants;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -34,7 +38,82 @@ public class CodeFormatterUtil {
 //		String str= format(CodeFormatter.K_EXPRESSION, "x", indent, null, "", (Map) null); //$NON-NLS-1$ //$NON-NLS-2$
 //		return str.substring(0, str.indexOf('x'));
 //	} 
+
+	/**
+	 * Gets the current tab width.
+	 * 
+	 * @param project The project where the source is used, used for project
+	 *        specific options or <code>null</code> if the project is unknown
+	 *        and the workspace default should be used
+	 * @return The tab width
+	 */
+	public static int getTabWidth(ICProject project) {
+		/*
+		 * If the tab-char is SPACE, FORMATTER_INDENTATION_SIZE is not used
+		 * by the core formatter.
+		 * We piggy back the visual tab length setting in that preference in
+		 * that case.
+		 */
+		String key;
+		if (CCorePlugin.SPACE.equals(getCoreOption(project, CodeFormatterConstants.FORMATTER_TAB_CHAR)))
+			key= CodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
+		else
+			key= CodeFormatterConstants.FORMATTER_TAB_SIZE;
 		
+		return getCoreOption(project, key, 4);
+	}
+
+	/**
+	 * Returns the current indent width.
+	 * 
+	 * @param project the project where the source is used or <code>null</code>
+	 *        if the project is unknown and the workspace default should be used
+	 * @return the indent width
+	 */
+	public static int getIndentWidth(ICProject project) {
+		String key;
+		if (CodeFormatterConstants.MIXED.equals(getCoreOption(project, CodeFormatterConstants.FORMATTER_TAB_CHAR)))
+			key= CodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
+		else
+			key= CodeFormatterConstants.FORMATTER_TAB_SIZE;
+		
+		return getCoreOption(project, key, 4);
+	}
+
+	/**
+	 * Returns the possibly <code>project</code>-specific core preference
+	 * defined under <code>key</code>.
+	 * 
+	 * @param project the project to get the preference from, or
+	 *        <code>null</code> to get the global preference
+	 * @param key the key of the preference
+	 * @return the value of the preference
+	 */
+	private static String getCoreOption(ICProject project, String key) {
+		if (project == null)
+			return CCorePlugin.getOption(key);
+		return project.getOption(key, true);
+	}
+
+	/**
+	 * Returns the possibly <code>project</code>-specific core preference
+	 * defined under <code>key</code>, or <code>def</code> if the value is
+	 * not a integer.
+	 * 
+	 * @param project the project to get the preference from, or
+	 *        <code>null</code> to get the global preference
+	 * @param key the key of the preference
+	 * @param def the default value
+	 * @return the value of the preference
+	 */
+	private static int getCoreOption(ICProject project, String key, int def) {
+		try {
+			return Integer.parseInt(getCoreOption(project, key));
+		} catch (NumberFormatException e) {
+			return def;
+		}
+	}
+
 	/**
 	 * Evaluates the edit on the given string.
 	 * @throws IllegalArgumentException If the positions are not inside the string, a

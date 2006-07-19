@@ -11,11 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-import org.eclipse.cdt.internal.ui.text.util.CColorManager;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.core.runtime.Preferences;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
@@ -25,6 +21,11 @@ import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
+
+import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 
 
 /**
@@ -178,7 +179,7 @@ public class CTextTools {
 	public IDocumentPartitioner createDocumentPartitioner() {
 		
 		String[] types= new String[] {
-			ICPartitions.C_MULTILINE_COMMENT,
+			ICPartitions.C_MULTI_LINE_COMMENT,
 			ICPartitions.C_SINGLE_LINE_COMMENT,
 			ICPartitions.C_STRING,
 			ICPartitions.C_CHARACTER

@@ -76,3 +76,4 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.variables,
  org.eclipse.core.filebuffers
 Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

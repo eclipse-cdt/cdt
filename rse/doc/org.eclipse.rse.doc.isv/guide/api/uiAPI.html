@@ -11,15 +11,15 @@
 <body bgcolor="#ffffff">
 <h1>RSE User Interface API</h1>
 <p>The RSE provides a number of classes that can help with programming productivity when authoring
-user interface artifacts, such as actions, dialogs, wizards, property pages and preferences pages. 
-Further, a common requirement in all of these artifacts is the need to display translated messages 
-to the user. The RSE supplies a framework for defining and displaying rich messages that have second 
-level help, severity and ID attributes. 
+user interface artifacts, such as actions, dialogs, wizards, property pages and preferences pages.
+Further, a common requirement in all of these artifacts is the need to display translated messages
+to the user. The RSE supplies a framework for defining and displaying rich messages that have second
+level help, severity and ID attributes.
 </p>
 <p>
 In the following sections we introduce the support offered by the RSE for these UI constructs.
 <h2>Plugin Class</h2>
-<p>The RSE supplies a base plugin class <samp><a href="plugin/uiPluginAPI.html">SystemBasePlugin</a></samp> that offers 
+<p>The RSE supplies a base plugin class <samp><a href="plugin/uiPluginAPI.html">SystemBasePlugin</a></samp> that offers
 some advantages over the base eclipse <samp>AbstractUIPlugin</samp> class:
 <ol>
 <li>Simplified methods for registering images, and support for retrieving them either as an image
@@ -30,15 +30,15 @@ or an image descriptor.
 <li>Helper methods for getting the active workbench window and shell.
 </ol>
 </p>
-<p>To use the base plugin class effectively, you must subclass it and supply some critical 
-methods of your own. 
+<p>To use the base plugin class effectively, you must subclass it and supply some critical
+methods of your own.
 </p>
 
 <h2>Logging</h2>
 <p>The Remote System Explorer comes with special support for <a href="logger/uiLoggerAPI.html">logging information</a> to a log file,
 for the purpose of problem determination for servicing your plugin. The log file support allows
-you to either log your messages to the common RSE log file in the <samp>.metadata\plugins\com.ibm.etools.systems.core</samp>
-folder, or to define your own log file in your plugin metadata folder, if desired. 
+you to either log your messages to the common RSE log file in the <samp>.metadata\plugins\org.eclipse.rse.core</samp>
+folder, or to define your own log file in your plugin metadata folder, if desired.
 </p>
 
 <h2>Messages</h2>
@@ -52,36 +52,36 @@ additional properties of the message. Further, there is support for logging seve
 file, enabling better service support.
 </p>
 <p>
-Your own plugins can enjoy this rich message support too, even independently of using the rest of 
-the RSE for remote resource access. This support involves defining an xml 
+Your own plugins can enjoy this rich message support too, even independently of using the rest of
+the RSE for remote resource access. This support involves defining an xml
 <a href="messages/uiMessageFile.html">message file</a>, which defines
-the messages, and using a set of 
+the messages, and using a set of
 <a href="messages/uiMessageAPI.html">supplied classes</a> to work with the messages.
 </p>
-<p>Before defining your own messages, you may wish to peruse the list of <a href="messages/uiMessagesCore.html">IBM-supplied messages</a> already defined
-by the RSE. The key benefit to using an existing message is translation, as these are already
+<p>Before defining your own messages, you may wish to peruse the list of <a href="messages/uiMessagesCore.html">RSE-supplied messages</a> that are
+already defined. The key benefit to using an existing message is translation, as these are already
 translated into many languages.
 </p>
 
 <h2>Preference Pages</h2>
-<p>When defining your own <a href="preferences/uiPreferencesAPI.html">preferences pages</a>, 
-you may want to place your preference pages within the Remote Systems preference page category. 
-As you author your preference page classes, you may find some of the RSE-supplied classes for 
-preference pages to be useful. 
+<p>When defining your own <a href="preferences/uiPreferencesAPI.html">preferences pages</a>,
+you may want to place your preference pages within the Remote Systems preference page category.
+As you author your preference page classes, you may find some of the RSE-supplied classes for
+preference pages to be useful.
 </p>
 
 <h2>Property Pages</h2>
 <p>Property pages can appear in the Properties dialog of any object in eclipse. This dialog is available by selecting
-"Properties" from the pop-up menu for the object. The RSE supports defining your own 
-<a href="properties/uiPropertiesAPI.html">property pages</a> for the resources in its model, although there is a 
-distinction between local and remote resources. 
+"Properties" from the pop-up menu for the object. The RSE supports defining your own
+<a href="properties/uiPropertiesAPI.html">property pages</a> for the resources in its model, although there is a
+distinction between local and remote resources.
 </p>
 
 <h2>Validators</h2>
 <p>Validating user-entered text is a common and tedious task in any GUI programming. Using validators to encapsulate
-the error checking for a particular type of data is a highly recommended practice. The 
+the error checking for a particular type of data is a highly recommended practice. The
 <a href="validators/uiValidatorsAPI.html">RSE validator</a> support is very
-helpful for this, offering both a common interface for all manner of validators and a large list of pre-supplied 
+helpful for this, offering both a common interface for all manner of validators and a large list of pre-supplied
 validators.
 </p>
 
@@ -99,12 +99,12 @@ find useful.
 
 <h2>Dialogs</h2>
 <p>The RSE supplies rich support for <a href="dialogs/uiDialogsAPI.html">dialogs</a>, including a powerful base class
-and, re-usable pre-built dialogs. 
+and, re-usable pre-built dialogs.
 </p>
 
 <h2>Wizards</h2>
 <p>Wizards are a common building block of an eclipse GUI. Typically, a wizard is used to prompt for information to create
-something new, while a dialog is used to prompt for information for other purposes. 
+something new, while a dialog is used to prompt for information for other purposes.
 The RSE <a href="wizards/uiWizardsAPI.html">wizard support</a> includes base classes that can simplify the task of creating wizards.
 </p>
 
@@ -116,10 +116,10 @@ together with the RSE dialog and wizard support.
 </p>
 
 <p>Often we want to refresh the contents of the Remote Systems view or Table view from within our actions, to visualize
-changes to the selected resources. To do this, use the 
-<samp><A href="../../com/ibm/etools/systems/model/SystemRegistry.html#fireRemoteResourceChangeEvent(int, java.lang.Object, java.lang.Object, com.ibm.etools.systems.subsystems.SubSystem, java.lang.String, org.eclipse.jface.viewers.Viewer)">method</a></samp>.
-To get the system registry, use the 
-<samp><A href="../../com/ibm/etools/systems/core/SystemPlugin.html#getTheSystemRegistry()">method</a></samp>.
+changes to the selected resources. To do this, use the
+<samp><A href="../../org/eclipse/rse/model/ISystemRegistry.html#fireRemoteResourceChangeEvent(int, java.lang.Object, java.lang.Object, org.eclipse.rse.core.subsystems.ISubSystem, java.lang.String, org.eclipse.jface.viewers.Viewer)">method</a></samp>.
+To get the system registry, use the
+<samp><A href="../../org/eclipse/rse/model/SystemStartHere.html#getSystemRegistry()">method</a></samp>.
 </body>
 
 </html>

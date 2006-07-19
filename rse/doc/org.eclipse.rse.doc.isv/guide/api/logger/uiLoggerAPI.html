@@ -11,13 +11,13 @@
 <body bgcolor="#ffffff">
 <h1>RSE Logger API</h1>
 <p>To use the RSE logging framework, you must first decide if you want your own log file,
-or want to use the common RSE log file. 
+or want to use the common RSE log file.
 </p>
 
 <h2>Using Your Own Log File</h2>
 <p>
-The log file support is encapsulated in a separate plugin, <b><samp>com.ibm.etools.systems.logging</samp></b>, which
-defines the primary <samp><A href="../../../com/ibm/etools/systems/logging/Logger.html">com.ibm.etools.systems.logging.Logger</a></samp> class that manages the log file.
+The log file support is encapsulated in a separate plugin, <b><samp>org.eclipse.rse.logging</samp></b>, which
+defines the primary <samp><A href="../../../org/eclipse/rse/logging/Logger.html">org.eclipse.rse.logging.Logger</a></samp> class that manages the log file.
 This log file support offers the ability to log the following types of log messages:</p>
 <ul>
 <li><b>Error</b>. These are serious errors detected by your programming logic.
@@ -34,29 +34,29 @@ This log file support offers the ability to log the following types of log messa
 <code>if (log == null) log = LoggerFactory.getInst(this);</code>
 <li>For convenience, offer fastpaths to the logXXX methods in your Logger instance:
 <pre>
-    public static void <b>logInfo</b>(String message) 
+    public static void <b>logInfo</b>(String message)
     {
     	log.logInfo(message);
     }
-    public static void <b>logWarning</b>(String message) 
+    public static void <b>logWarning</b>(String message)
     {
     	log.logWarning(message);
     }
-    public static void <b>logError</b>(String message) 
+    public static void <b>logError</b>(String message)
     {
     	log.logError(message, null);
     }
-    public static void <b>logError</b>(String message, Throwable exception) 
+    public static void <b>logError</b>(String message, Throwable exception)
     {
     	log.logError(message, exception);
     }
-    public static void <b>logDebugMessage</b>(String prefix, String message) 
+    public static void <b>logDebugMessage</b>(String prefix, String message)
     {		
-        if (Logger.DEBUG) 
+        if (Logger.DEBUG)
         {
            log.logDebugMessage(prefix, message);
         }
-    }		         
+    }		
 </pre>
 <li>In the <samp>shutdown</samp> method of your plugin class, close the log file:
 <code>
@@ -73,10 +73,10 @@ preference page is supplied:</p>
 <P><IMG border="0" src="logPreferences.gif"></P>
 
 <h2>Using The Common RSE Log File</h2>
-<p>To log your messages to the common RSE log file in <samp>.metadata\plugins\com.ibm.etools.systems.core</samp>,
-either base your plugin class on the <samp>com.ibm.etools.systems.core.SystemBasePlugin</samp> class and use
-the inherited logging methods, or instead of instantiating your own <samp>Logging</samp> object, re-use the 
-RSE-supplied logging object by calling <samp>getDefault().getLog()</samp> in the <samp>com.ibm.etools.systems.core.SystemBasePlugin</samp>
+<p>To log your messages to the common RSE log file in <samp>.metadata\plugins\org.eclipse.rse.core</samp>,
+either base your plugin class on the <samp>org.eclipse.rse.core.SystemBasePlugin</samp> class and use
+the inherited logging methods, or instead of instantiating your own <samp>Logging</samp> object, re-use the
+RSE-supplied logging object by calling <samp>getDefault().getLog()</samp> in the <samp>org.eclipse.core.SystemBasePlugin</samp>
 class.
 </p>
 

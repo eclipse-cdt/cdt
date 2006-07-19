@@ -15,7 +15,7 @@
 <p>
 If you're writing an RSE subsystem to connect to a local standalone DataStore, the following needs
 to be done during the connect:
-</p> 
+</p>
 
 <font color='#4444CC'>
 <pre>
@@ -87,14 +87,14 @@ miner as follows.
 </font>
 
 <p>
-This tells the host DataStore to instantiate and initialize all miners listed in 
+This tells the host DataStore to instantiate and initialize all miners listed in
 the specified minerFile.dat file.
 </p>
 
 
 <h2>Sending Commands to a Miner</h2>
 <p>
-To send a command to a miner, the required <a href="DataElements.html#commanddescriptor">command descriptor</a> must first be optained
+To send a command to a miner, the required <a href="DataElements.html#commanddescriptor">command descriptor</a> must first be obtained
 using the method <code>DataStore.localDescriptorQuery</code>.  The method <code>DataStore.command</code> is then called with command
 descriptor and the subject of the command.  For example, a query might need to be called on the miner as shown in the following code segment.
 </p>
@@ -123,7 +123,7 @@ descriptor and the subject of the command.  For example, a query might need to b
 <h2>Receiving Data from a Miner</h2>
 <p>
 After a command is sent to a miner, you might want to receive information that the miner produced in response to the command.
-DataStore commands and responses are sent asynchronously, much like events.  On the server, the 
+DataStore commands and responses are sent asynchronously, much like events.  On the server, the
 <a href="Communications.html#servercommandhandler">Server Command Handler</a> reacts to incoming commands by calling the <code>handleCommand</code>
 method on the appropriate miner.  For the client, the <a href="Communications.html#clientcommandhandler">Client Command Handler</a>
 reacts to incoming responses by firing domain notifications.  In order to receive miner responses, asynchronously,
@@ -143,7 +143,7 @@ list.  The following is what a simple domain listener looks like:
 	    	// check if we care about this event
 	    	...
 	    }
-	    
+	
 	    public void domainChanged(DomainEvent e)
 	    {
 	    	// get the data from this event
@@ -156,13 +156,13 @@ list.  The following is what a simple domain listener looks like:
 <p>
 A domain listener may either listen for the duration of a DataStore session or may be transient, to be used for
 a receiving data from a particular command.  For example, after calling <code>DataStore.command</code>, which returns
-the status of the command instance, a listener can be added as follows:  
+the status of the command instance, a listener can be added as follows:
 </p>
 <font color='#4444CC'>
 <pre>
 		...
        	MyDomainListener listener = new MyDomainListener(shell);
-       `ds.getDomainNotifier().addDomainListener(listener);            
+       `ds.getDomainNotifier().addDomainListener(listener);
        	listener.setStatus(status);
 		...
 </pre>

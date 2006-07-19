@@ -11,30 +11,30 @@
 
 <body bgcolor="#ffffff">
 <h1>Plugging In Property Pages</h1>
-<p>The <samp><A href="../../doc/org_eclipse_rse_ui_propertyPages.html">com.ibm.etools.systems.core.propertyPages</a></samp> extension point is defined in the
-plugin <samp>com.ibm.etools.systems.core</samp>, and it is patterned after Eclipse's <samp>org.Eclipse.ui.propertyPages</samp> extension point, but both 
+<p>The <samp><A href="../../doc/org_eclipse_rse_ui_propertyPages.html">org.eclipse.rse.ui.propertyPages</a></samp> extension point is defined in the
+plugin <samp>org.eclipse.rse.ui</samp>, and it is patterned after Eclipse's <samp>org.eclipse.ui.propertyPages</samp> extension point, but both
 simplified and extended specifically for remote objects. <BR>
-What is a property page? 
-It is a page that shows up in the Eclipse <A href="propertypage_figure2.gif">Properties dialog</A> that users 
-get to by right-clicking on an object within any tree or table view, and selecting 
+What is a property page?
+It is a page that shows up in the Eclipse <A href="propertypage_figure2.gif">Properties dialog</A> that users
+get to by right-clicking on an object within any tree or table view, and selecting
 the <A href="propertypage_figure1.gif">Properties action</A>.</p>
-<p>Extenders supply one or more <samp>&lt;page&gt;</samp> elements within the beginning and ending <samp>&lt;extension&gt;</samp> element for this. 
+<p>Extenders supply one or more <samp>&lt;page&gt;</samp> elements within the beginning and ending <samp>&lt;extension&gt;</samp> element for this.
 The attributes of this <samp>&lt;page&gt;</samp> element are:</p>
 <ul>
 <li><b>id</b>. A unique ID for this extension point. Not actually used, but required by Eclipse.
-<li><b>name</b>. A translated node-name to show in the left tree view in the Eclipse-supplied 
+<li><b>name</b>. A translated node-name to show in the left tree view in the Eclipse-supplied
 Properties dialog that comes up when the user selects "Properties..." from the pop-up menu.
 <li><b>icon</b>. An optional icon to show in the Properties dialog for this property page.
-<li><b>class</b>. The fully qualified name of the class that implements the Eclipse interface 
-<samp>org.Eclipse.ui.IWorkbenchPropertyPage</samp>. This is usually done by extending the Eclipse class 
-<samp>org.Eclipse.ui.dialog.PropertyPage</samp>. Your class will populate the detail page on the right of the 
-Eclipse-supplied Properties dialog when the node-name is selected in the left hand tree view. 
-<li><b><i>filtering criteria</i></b>. To scope which remote objects these property pages should show up for, 
-there are a series of filtering attributes. These attributes are identical to those in the <samp><A href="popup.html">pop-upMenus</A></samp> 
-extension point. Providers supply as many as needed to uniquely identify their target objects. Every one of these 
-values can be scalar or "simple generic", meaning it can start or end with an asterisk for pattern matching: 
+<li><b>class</b>. The fully qualified name of the class that implements the Eclipse interface
+<samp>org.Eclipse.ui.IWorkbenchPropertyPage</samp>. This is usually done by extending the Eclipse class
+<samp>org.Eclipse.ui.dialog.PropertyPage</samp>. Your class will populate the detail page on the right of the
+Eclipse-supplied Properties dialog when the node-name is selected in the left hand tree view.
+<li><b><i>filtering criteria</i></b>. To scope which remote objects these property pages should show up for,
+there are a series of filtering attributes. These attributes are identical to those in the <samp><A href="popup.html">pop-upMenus</A></samp>
+extension point. Providers supply as many as needed to uniquely identify their target objects. Every one of these
+values can be scalar or "simple generic", meaning it can start or end with an asterisk for pattern matching:
 <ul>
-<li><b>subsystemfactoryid</b>. Restrict to remote objects originating from subsystems created by this subsystem factory. 
+<li><b>subsystemfactoryid</b>. Restrict to remote objects originating from subsystems created by this subsystem factory.
 <li><b>typecategoryfilter</b>. Restrict to remote objects originating from subsystems created by a subsystem factory that specified this value for their category attribute
 <li><b>namefilter</b>. Restrict to remote objects matching this simple generic name
 <li><b>typefilter</b>. Restrict to remote objects matching this simple type filter. The "type" of any remote object is subsystem-determined.
@@ -44,9 +44,9 @@ values can be scalar or "simple generic", meaning it can start or end with an as
 </ul>
 
 <h2>Programming Details</h2>
-<p>To use this extension point your class will typically extend one of the supplied base classes to 
-make it easier to create these property pages for remote objects. The only method you must implement in these 
-classes is <samp>createContents(Composite)</samp>, which populates the details page on the right side when the node is 
+<p>To use this extension point your class will typically extend one of the supplied base classes to
+make it easier to create these property pages for remote objects. The only method you must implement in these
+classes is <samp>createContents(Composite)</samp>, which populates the details page on the right side when the node is
 selected on the left side. The supplied classes are listed here:
 </p>
 
@@ -57,13 +57,13 @@ selected on the left side. The supplied classes are listed here:
 			<TH>Description</TH>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../com/ibm/etools/systems/core/ui/propertypages/SystemAbstractPropertyPageExtensionAction.html">SystemAbstractPropertyPageExtensionAction</A></samp> 
-			in <samp>com.ibm.etools.systems.core</samp> plugin.</TD>
+			<TD><samp><A href="../../org/eclipse/rse/ui/propertypages/SystemAbstractPropertyPageExtensionAction.html">SystemAbstractPropertyPageExtensionAction</A></samp>
+			in <samp>org.eclipse.rse.ui</samp> plugin.</TD>
 			<TD>Base class offering generic support for any remote object property page.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../com/ibm/etools/systems/core/ui/propertypages/SystemAbstractRemoteFilePropertyPageExtensionAction.html">SystemAbstractRemoteFilePropertyPageExtensionAction</A></samp> 
-			in <samp>com.ibm.etools.systems.core</samp> plugin.</TD>
+			<TD><samp><A href="../../org/eclipse/rse/files/ui/propertypages/SystemAbstractRemoteFilePropertyPageExtensionAction.html">SystemAbstractRemoteFilePropertyPageExtensionAction</A></samp>
+			in <samp>org.eclipse.rse.files.ui</samp> plugin.</TD>
 			<TD>Specialized base class offering specific support for any remote file object property page.</TD>
 		</TR>
 		<TR>

@@ -11,8 +11,8 @@
 
 <body bgcolor="#ffffff">
 <h1>Plugging In Popup Menu Actions</h1>
-<p>The <samp><A href="../../doc/org_eclipse_rse_ui_popupMenus.html">com.ibm.etools.systems.core.popupMenus</a></samp> extension point is defined in the
-plugin <samp>com.ibm.etools.systems.core</samp>, and it is patterned 
+<p>The <samp><A href="../../doc/org_eclipse_rse_ui_popupMenus.html">org.eclipse.rse.ui.popupMenus</a></samp> extension point is defined in the
+plugin <samp>org.eclipse.rse.ui</samp>, and it is patterned
 after Eclipse's <samp>org.eclipse.ui.popupMenus</samp> extension point. However, it is
 both simplified and extended specifically for remote objects.
 </p>
@@ -21,45 +21,45 @@ which scopes the remote objects to which the child elements apply:
 </p>
 <ul>
 <li><b>id</b>.A unique ID for this extension point. Not used, but required by Eclipse.
-<li><b><i>filtering attributes</i></b>.To scope which remote objects these actions should show up for. 
+<li><b><i>filtering attributes</i></b>.To scope which remote objects these actions should show up for.
 Described in the <samp><A href="../../doc/org_eclipse_rse_ui_popupMenus.html">documentation</a></samp>
 of this element.
 </ul>
 <p>Within each <samp>&lt;objectContribution&gt;</samp> element are zero or more <B><samp>&lt;menu&gt;</samp></B> elements for
-optionally defining cascading submenus, and &lt;<B>action</B>&gt; elements for the actual actions. 
-To have the actions show up in a cascading menu, use the <samp>&lt;menu&gt;</samp> element with these 
+optionally defining cascading submenus, and &lt;<B>action</B>&gt; elements for the actual actions.
+To have the actions show up in a cascading menu, use the <samp>&lt;menu&gt;</samp> element with these
 attributes:
 </p>
 <ul>
 <li><b>id</b>. Unique id for the submenu. Used later to target actions into this cascading submenu.
 <li><b>label</b>. The text the user sees in the pop-up menu.
-<li><b>path</b>. For multi-cascading menus, use this attribute to identify a previously specified menu that 
-this menu is to be nested within. The syntax is a bit tricky. It is <samp>id/group</samp>, where <samp>id</samp> 
-matches the id attribute from a previous <samp>&lt;menu&gt;</samp> element, and <samp>group</samp> matches the name attribute 
-of a <samp>&lt;separator&gt;</samp> sub-element within that previous <samp>&lt;menu&gt;</samp> element. For multi-nesting, repeat the <samp>id</samp> 
-part, as in <samp>id1/id2/id3/group</samp>. In this case, there must be a <samp>&lt;menu&gt;</samp> element with and id value of 
-<samp>id3</samp> that refers to another <samp>&lt;menu&gt;</samp> element <samp>id2</samp> via is path attribute, which in turn 
-refers to <samp>&lt;menu&gt;</samp> element <samp>id1</samp> via its <samp>path</samp> attribute. If the group does not exist, 
+<li><b>path</b>. For multi-cascading menus, use this attribute to identify a previously specified menu that
+this menu is to be nested within. The syntax is a bit tricky. It is <samp>id/group</samp>, where <samp>id</samp>
+matches the id attribute from a previous <samp>&lt;menu&gt;</samp> element, and <samp>group</samp> matches the name attribute
+of a <samp>&lt;separator&gt;</samp> sub-element within that previous <samp>&lt;menu&gt;</samp> element. For multi-nesting, repeat the <samp>id</samp>
+part, as in <samp>id1/id2/id3/group</samp>. In this case, there must be a <samp>&lt;menu&gt;</samp> element with and id value of
+<samp>id3</samp> that refers to another <samp>&lt;menu&gt;</samp> element <samp>id2</samp> via is path attribute, which in turn
+refers to <samp>&lt;menu&gt;</samp> element <samp>id1</samp> via its <samp>path</samp> attribute. If the group does not exist,
 it will be created.
 <br>
-For the root cascading menu, you can also use this to specify a group within the remote object's pop-up, 
-for where to place this cascading menu. The default is the <samp>additions</samp> group, which is near the 
-bottom of the pop-up menu. The IBM-supplied groups for pop-up menus are listed shortly in Table 4. There are 
-also a few IBM-supplied cascading menus listed in Table 4, which can be specified for the id prefix in order 
-to add a cascading menu to an IBM-supplied cascading menu.
+For the root cascading menu, you can also use this to specify a group within the remote object's pop-up,
+for where to place this cascading menu. The default is the <samp>additions</samp> group, which is near the
+bottom of the pop-up menu. The RSE-supplied groups for pop-up menus are listed shortly in Table 4. There are
+also a few RSE-supplied cascading menus listed in Table 4, which can be specified for the id prefix in order
+to add a cascading menu to an RSE-supplied cascading menu.
 </ul>
-<P>Within each <samp>&lt;menu&gt;</samp> element are one or more <b><samp>&lt;separator&gt;</samp></b> elements that partition the cascading 
-menu into groups. Groups are simply named physical areas of the menu. The order in which they are defined is the order they 
-appear in the menu. Actions always go into groups. Groups avoid the need to specify relative information to identify where 
+<P>Within each <samp>&lt;menu&gt;</samp> element are one or more <b><samp>&lt;separator&gt;</samp></b> elements that partition the cascading
+menu into groups. Groups are simply named physical areas of the menu. The order in which they are defined is the order they
+appear in the menu. Actions always go into groups. Groups avoid the need to specify relative information to identify where
 within a pop-up menu to place actions. There is only one attribute for this element:
 </P>
 <ul>
-<li><b>name</b>. The name to give this group. Users do not see this, but it is used in the <samp>action</samp> element to identify where to place 
-the action within this submenu. Groups exist in the order they are defined, top to bottom. Between groups is a separator unless 
+<li><b>name</b>. The name to give this group. Users do not see this, but it is used in the <samp>action</samp> element to identify where to place
+the action within this submenu. Groups exist in the order they are defined, top to bottom. Between groups is a separator unless
 contiguous groups are empty. There is always a default group named <samp>additions</samp> supplied for you.
 </ul>
-<p>Finally, within <samp>&lt;objectContribution&gt;</samp> elements are one or more <b><samp>&lt;action&gt;</samp></b> elements identifying the 
-actual actions, each of which only show up if the scoping criteria is met for that parent <samp>&lt;objectContribution&gt;</samp> 
+<p>Finally, within <samp>&lt;objectContribution&gt;</samp> elements are one or more <b><samp>&lt;action&gt;</samp></b> elements identifying the
+actual actions, each of which only show up if the scoping criteria is met for that parent <samp>&lt;objectContribution&gt;</samp>
 element. The attributes for <samp>&lt;action&gt;</samp> elements are:
 </p>
 <ul>
@@ -67,56 +67,56 @@ element. The attributes for <samp>&lt;action&gt;</samp> elements are:
 <li><b>label</b>. What the user sees in the pop-up menu.
 <li><b>icon</b>. Optional icon to show beside the label. This is the name of a file qualified by a path relative to this plugin's directory.
 <li><b>class</b>. Name of the class extending one of the classes listed in the documentation.
-<li><b>menubarPath</b>. Where to put this action. This is optional and only required when you do not want the action to go into the 
-default location within the remote object's pop-up menu. This is a group name, optionally preceded by slash-delimited Ids for actions 
-that go inside cascading menus, where each Id matches an id attribute from a previously specified <samp>&lt;menu&gt;</samp> element. 
-If no menubarPath is specified, the action goes into the <samp>&lt;additions&gt;</samp> area of the object's popup menu, which is 
-near the bottom of the pop-up menu. The IBM-supplied groups for remote object pop-up menus are listed in Table 4, as well as menu Ids 
-for IBM-supplied cascading menus, should you wish to add an action to an IBM-supplied cascading menu.
-<li><b>enablesFor</b>. Tells when to enable this action based on how many items are selected. Typically, specify "1" for 
-single-selection or "+" for multiple-selection. You can also change the enabled state of your action within your class, 
-by calling the <samp>setEnabled(boolean)</samp> method or overriding the <samp>getEnabled(Object[] currentlySelected)</samp> method that is called 
+<li><b>menubarPath</b>. Where to put this action. This is optional and only required when you do not want the action to go into the
+default location within the remote object's pop-up menu. This is a group name, optionally preceded by slash-delimited Ids for actions
+that go inside cascading menus, where each Id matches an id attribute from a previously specified <samp>&lt;menu&gt;</samp> element.
+If no menubarPath is specified, the action goes into the <samp>&lt;additions&gt;</samp> area of the object's popup menu, which is
+near the bottom of the pop-up menu. The RSE-supplied groups for remote object pop-up menus are listed in Table 4, as well as menu Ids
+for RSE-supplied cascading menus, should you wish to add an action to an RSE-supplied cascading menu.
+<li><b>enablesFor</b>. Tells when to enable this action based on how many items are selected. Typically, specify "1" for
+single-selection or "+" for multiple-selection. You can also change the enabled state of your action within your class,
+by calling the <samp>setEnabled(boolean)</samp> method or overriding the <samp>getEnabled(Object[] currentlySelected)</samp> method that is called
 when the selection changes.
-<li><b>state</b>. Specify if this is a toggle (checkable) menu item. Specify "true" or "false" to indicate initial 
+<li><b>state</b>. Specify if this is a toggle (checkable) menu item. Specify "true" or "false" to indicate initial
 toggle status. Call <samp>setChecked(boolean)</samp> in your class to change the toggled state.
 <li><b>helpContextId</b>. Allows F1 help for this action. Optional.
 </ul>
 <p>
-The <samp>path</samp> attribute for the <samp>&lt;menu&gt;</samp> element, and the <samp>menubarPath</samp> attribute for the <samp>&lt;action&gt;</samp> 
+The <samp>path</samp> attribute for the <samp>&lt;menu&gt;</samp> element, and the <samp>menubarPath</samp> attribute for the <samp>&lt;action&gt;</samp>
 element, are the most difficult to master. The rules are reasonably simple though:
 </p>
 <ol>
-<li>To have your action show up in the initial pop-up menu, just specify a group name on the <samp>menubarPath</samp> attribute. That name can be 
-one of the IBM-supplied group names defined in Table 4, or your own group name, which will be created and appended to the end of the 
-pop-up menu. The default group is <samp>"additions"</samp>. 
+<li>To have your action show up in the initial pop-up menu, just specify a group name on the <samp>menubarPath</samp> attribute. That name can be
+one of the RSE-supplied group names defined in Table 4, or your own group name, which will be created and appended to the end of the
+pop-up menu. The default group is <samp>"additions"</samp>.
 <br>Example: <samp>menubarPath="myGroup"</samp>
-<li>To have your action show up in a simple IBM-supplied cascading menu within the pop-up menu, in your <samp>&lt;action&gt;</samp> element, 
-specify the IBM-supplied menu ID from Table 4 in the <samp>menubarPath</samp> attribute, then a slash followed by the name of a group. The only 
-IBM-supplied group for cascading menus is <samp>"additions"</samp>. If you specify anything else for the group, the group will be created for you 
-at the bottom of the menu. 
+<li>To have your action show up in a simple RSE-supplied cascading menu within the pop-up menu, in your <samp>&lt;action&gt;</samp> element,
+specify the RSE-supplied menu ID from Table 4 in the <samp>menubarPath</samp> attribute, then a slash followed by the name of a group. The only
+RSE-supplied group for cascading menus is <samp>"additions"</samp>. If you specify anything else for the group, the group will be created for you
+at the bottom of the menu.
 <br>Example: <samp>menubarPath="menu.new/myGroup"</samp>
-<li>To have your action show up in a simple cascading menu of your own, first define the menu with a <samp>&lt;menu&gt;</samp> element, 
-giving it an ID via the id attribute. In your <samp>&lt;action&gt;</samp> element, in the <samp>menubarPath</samp> attribute specify that id followed by a slash 
-and then the name of a group. That group name can be one specified on a <samp>&lt;separator&gt;</samp> element within your menu, or a new name, which 
-results in a new group at the bottom of the menu. In the latter case, there will be no separators delimiting the group, while in the former case 
-there will be. 
+<li>To have your action show up in a simple cascading menu of your own, first define the menu with a <samp>&lt;menu&gt;</samp> element,
+giving it an ID via the id attribute. In your <samp>&lt;action&gt;</samp> element, in the <samp>menubarPath</samp> attribute specify that id followed by a slash
+and then the name of a group. That group name can be one specified on a <samp>&lt;separator&gt;</samp> element within your menu, or a new name, which
+results in a new group at the bottom of the menu. In the latter case, there will be no separators delimiting the group, while in the former case
+there will be.
 <br>Example: <samp>menubarPath="myMenu1/myGroup"</samp>
-<li>To have your action show up in a multi-cascading menu of your own, define each of the menu via <samp>&lt;menu&gt;</samp> elements. For all but the 
-first, identify the parent menu using the path attribute, specifying the Ids for each of the parent menus, slash-separated. At 
-the end of the path attribute, specify the group within the final parent menu into which this menu will be placed. Again, this 
-will either be a group defined with a <samp>&lt;separator&gt;</samp> element in the parent <samp>menu</samp> element, or specify a non-existing group that will be 
-created for you. Once your multi-cascading menu is created, you identify it in your <samp>&lt;action&gt;</samp> element via the <samp>menubarPath</samp> attribute, 
-specifying all the menu Ids up to the final menu, slash-separated, and then the group within that final menu, as usual. 
+<li>To have your action show up in a multi-cascading menu of your own, define each of the menu via <samp>&lt;menu&gt;</samp> elements. For all but the
+first, identify the parent menu using the path attribute, specifying the Ids for each of the parent menus, slash-separated. At
+the end of the path attribute, specify the group within the final parent menu into which this menu will be placed. Again, this
+will either be a group defined with a <samp>&lt;separator&gt;</samp> element in the parent <samp>menu</samp> element, or specify a non-existing group that will be
+created for you. Once your multi-cascading menu is created, you identify it in your <samp>&lt;action&gt;</samp> element via the <samp>menubarPath</samp> attribute,
+specifying all the menu Ids up to the final menu, slash-separated, and then the group within that final menu, as usual.
 <br>Example: <samp>menubarPath="myMenu1/myMenu2/myGroup"</samp>
 </ol>
 
 <h2>Programming Details</h2>
-<p>To use this extension point you will create a class that extends the 
-<samp><A href="../../com/ibm/etools/systems/core/ui/actions/SystemAbstractPopupMenuExtensionAction.html">SystemAbstractPopupMenuExtensionAction</A></samp> class in the 
-package <samp><A href="../../com/ibm/etools/systems/core/ui/actions/package-summary.html">com.ibm.etools.systems.core.ui.actions</A></samp>. This is your action class, 
-and when the user selects your action, the <samp>run()</samp> 
-method in your action class will be called. You will rarely extend the <samp>SystemAbstractPopupMenuExtensionAction</samp> base class 
-directly, though. Instead there are subclasses of it that offer additional functionality for specific types of remote objects, 
+<p>To use this extension point you will create a class that extends the
+<samp><A href="../../org/eclipse/rse/ui/actions/SystemAbstractPopupMenuExtensionAction.html">SystemAbstractPopupMenuExtensionAction</A></samp> class in the
+package <samp><A href="../../org/eclipse/rse/ui/actions/package-summary.html">org.eclipse.rse.ui.actions</A></samp>. This is your action class,
+and when the user selects your action, the <samp>run()</samp>
+method in your action class will be called. You will rarely extend the <samp>SystemAbstractPopupMenuExtensionAction</samp> base class
+directly, though. Instead there are subclasses of it that offer additional functionality for specific types of remote objects,
 as shown here:
 </p>
 
@@ -128,22 +128,22 @@ as shown here:
 			<TH>Description</TH>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../com/ibm/etools/systems/core/ui/actions/SystemAbstractPopupMenuExtensionAction.html">SystemAbstractPopupMenuExtensionAction</A></samp> in 
-			<samp>com.ibm.etools.systems.core</samp> plugin</TD>
+			<TD><samp><A href="../../org/eclipse/rse/ui/actions/SystemAbstractPopupMenuExtensionAction.html">SystemAbstractPopupMenuExtensionAction</A></samp> in
+			<samp>org.eclipse.rse.ui</samp> plugin</TD>
 			<TD>Base class offering generic support for any remote object pop-up menu action, for any system type.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../com/ibm/etools/systems/core/ui/actions/SystemAbstractRemoteFilePopupMenuExtensionAction.html">SystemAbstractRemoteFilePopupMenuExtensionAction</A></samp> 
-			in <samp>com.ibm.etools.systems.core</samp> plugin</TD>
+			<TD><samp><A href="../../org/eclipse/rse/files/ui/actions/SystemAbstractRemoteFilePopupMenuExtensionAction.html">SystemAbstractRemoteFilePopupMenuExtensionAction</A></samp>
+			in <samp>org.eclipse.rse.files.ui</samp> plugin</TD>
 			<TD>Specialized base class offering specific support for any remote file object pop-up menu action, for any system type.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../com.ibm.etools.iseries.core/com/ibm/etools/iseries/core/ui/actions/isv/ISeriesAbstractIFSPopupMenuExtensionAction.html">ISeriesAbstractIFSPopupMenuExtensionAction</A></samp> 
+			<TD><samp><A href="../../../com.ibm.etools.iseries.core/com/ibm/etools/iseries/core/ui/actions/isv/ISeriesAbstractIFSPopupMenuExtensionAction.html">ISeriesAbstractIFSPopupMenuExtensionAction</A></samp>
 			in <samp>com.ibm.etools.iseries.core</samp> plugin</TD>
 			<TD>Specialized base class offering specific support for iSeries IFS file or folder pop-up menu actions.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../com.ibm.etools.iseries.core/com/ibm/etools/iseries/core/ui/actions/isv/ISeriesAbstractQSYSPopupMenuExtensionAction.html">ISeriesAbstractQSYSPopupMenuExtensionAction</A></samp> 
+			<TD><samp><A href="../../../com.ibm.etools.iseries.core/com/ibm/etools/iseries/core/ui/actions/isv/ISeriesAbstractQSYSPopupMenuExtensionAction.html">ISeriesAbstractQSYSPopupMenuExtensionAction</A></samp>
 			in <samp>com.ibm.etools.iseries.core</samp> plugin</TD>
 			<TD>Specialized base class offering specific support for pop-up menu actions for iSeries objects in the QSYS file system.</TD>
 		</TR>

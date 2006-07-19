@@ -22,20 +22,20 @@ The attribute indices that can be used are as follows:
 <tr><td><code>A_NAME</code></td><td>Attribute indicating the name of object.</td></tr>
 <tr><td><code>A_VALUE</code></td><td>Attribute indicating the more information about that object</td></tr>
 <tr><td><code>A_SOURCE</code></td><td>Attribute indicating source information about an object, if applicable</td></tr>
-<tr><td><code>A_ISREF</code></td><td>Attribute indicating whether a the object is a reference or not.  In the DataStore, a reference to another DataElement is represented with a DataElement</td></tr>
+<tr><td><code>A_REF_TYPE</code></td><td>Attribute indicating whether the object is a normal object ("value"), a spirit ("spirit"), or a reference to another DataElement ("reference").  In the DataStore, a reference to another DataElement is represented with a DataElement. For more information on spirit elements, see <a href="MemoryManagement.html">Memory Management in DataStore</a> </td></tr>
 <tr><td><code>A_ID</code></td><td>The unique ID of a DataElement.</td></tr>.
 </table>
 </p>
 <p>
 Rather than representing different types of objects as different classes, the type attribute of a DataElement
-indicates it's type.  There are two general categories of DataElements.  There are schema elements, <A href="#descriptors">descriptors</a>, and instances of 
+indicates its type.  There are two general categories of DataElements.  There are schema elements, <A href="#descriptors">descriptors</a>, and instances of
 those schema elements, <a href="#instances">instances</a>.
 </p>
 
 <h2><a name="descriptors">Descriptors</a></h2>
 <p>
 A descriptor is a DataElement that describes some type of object.  The <code>A_TYPE</code> attribute of a descriptor indicates what type of
-descriptor it is.  The <code>A_NAME</code> attribute of a descriptor identifies the type that the descriptor describes.  
+descriptor it is.  The <code>A_NAME</code> attribute of a descriptor identifies the type that the descriptor describes.
 </p>
 <p>
 A descriptor may be of one of the following types:
@@ -49,8 +49,8 @@ A descriptor may be of one of the following types:
 <h3><a name="objectdescriptors">Object Descriptors</a></h3>
 <p>
 <b>Object descriptors</b> describe the different types of data that can be represented in the DataStore repository.  Object descriptors
-can describe types of object instances as well as other types of object descriptors.  Each object descriptor is related to other object, 
-relationship and command descriptors.  
+can describe types of object instances as well as other types of object descriptors.  Each object descriptor is related to other object,
+relationship and command descriptors.
 </p>
 
 <h3><a name="relationdescriptors">Relation Descriptors</a></h3>
@@ -58,7 +58,7 @@ relationship and command descriptors.
 <b>Relation descriptors</b> describe the different types of relationships that can be represented in the DataStore repository.  Relation
 descriptors describe types of relationships between object instances, object descriptors, command instances and command descriptors.
 </p>
- 
+
 <h3><a name="commanddescriptors">Command Descriptors</a></h3>
 <p>
 <b>Command descriptors</b> describe the different types of commands that can be executed on an object in the DataStore repository.
@@ -76,15 +76,15 @@ relationships between descriptors in the schema.
 <h2><a name="instances">Instances</a></h2>
 <p>
 An instance object is a DataElement that is an instance of a descriptor.  An instance may either by an object, a
-relation or a command.  An instance uses it's descriptor's <code>A_NAME</code> attribute as it's <code>A_TYPE</code> attribute.
+relation or a command.  An instance uses its descriptor's <code>A_NAME</code> attribute as its <code>A_TYPE</code> attribute.
 </p>
 
 <h3><a name="objects">Objects</a></h3>
 <p>
-<b>Objects</b> are instances of <b>object descriptors</b>.  Objects are used to the represent the external or internal 
-entities that are being interacted with.  An instance object can be related in a certain way to another type of 
-instance object if it's object descriptor has the same kind of relationship to the other object's object descriptor.  
-An instance object may be associated with a particular command if it's object descriptor is associated with the command descriptor
+<b>Objects</b> are instances of <b>object descriptors</b>.  Objects are used to the represent the external or internal
+entities that are being interacted with.  An instance object can be related in a certain way to another type of
+instance object if its object descriptor has the same kind of relationship to the other object's object descriptor.
+An instance object may be associated with a particular command if its object descriptor is associated with the command descriptor
 for that command.
 </p>
 
@@ -92,27 +92,27 @@ for that command.
 <p>
 <b>Relations</b> are instances of <b>relation descriptors</b>.  A relation is really a typed reference to another object.  Relations
 may exist from one object to another if the schema indicates that the object descriptor for the first object may have a relationship
-of that type to the other object's descriptor.  Relations are used to describe the relationship between two instances, the 
-relationship between two descriptors and the relationship between an instance and a descriptor.  A relation is able to reference 
-another element by storing the other element's <code>A_ID</code> attribute in it's <code>A_SOURCE</code> attribute.  If a relation object
-needs to be dereferenced, it uses this attribute to query the DataStore for the object being referenced.  
+of that type to the other object's descriptor.  Relations are used to describe the relationship between two instances, the
+relationship between two descriptors and the relationship between an instance and a descriptor.  A relation is able to reference
+another element by storing the other element's <code>A_ID</code> attribute in its <code>A_SOURCE</code> attribute.  If a relation object
+needs to be dereferenced, it uses this attribute to query the DataStore for the object being referenced.
 </p>
 <p>
-A relation is typically represented by having an instance object DataElement contain a relation DataElement. 
-There are two types of relationships between elements that are implicit.  These are the <i>contains</i> and 
-the <i>parent of</i> relationships.  If an element is directly contained within another element, the 
+A relation is typically represented by having an instance object DataElement contain a relation DataElement.
+There are two types of relationships between elements that are implicit.  These are the <i>contains</i> and
+the <i>parent of</i> relationships.  If an element is directly contained within another element, the
 relationship between those two elements is implied to be <i>contains/parent of</i> relationships.
 </p>
 
 <h3><a name="commands">Commands</a></h3>
 <p>
-<b>Commands</b> are instances of <b>command descriptors</b>.  A command is always associated with a instance object such that
-the command is to be performed on that object.  The object associated with a command is referred to as the <i>subject</i> of 
+<b>Commands</b> are instances of <b>command descriptors</b>.  A command is always associated with an instance object such that
+the command is to be performed on that object.  The object associated with a command is referred to as the <i>subject</i> of
 the command.  Only a command that has a command descriptor that is related to the object descriptor of the subject may be
 constructed.  A command object is constructed when the DataStore method <code>command()</code> is called.  The command is
 created with a reference to the subject, an optional set of arguments, also instance objects, and a status object instance, used
 to indicate the state of the command.  The tree of elements for a command is communicated, via the DataStore comm layer, to
-the appropriate miner(s), where it is interpretted and executed.
+the appropriate miner(s), where it is interpreted and executed.
 </p>
 <p>
 The structure of a command looks like the following:
@@ -130,7 +130,7 @@ The structure of a command looks like the following:
 </ul>
 
 <p>
-As an example, suppose the DataStore is being used for browsing a filesystem.  The filesystem entities and how to interact 
+As an example, suppose the DataStore is being used for browsing a filesystem.  The filesystem entities and how to interact
 with the filesystem needs to be defined in the schema.  The following descriptors could be used to describe this.
 </p>
 
@@ -167,7 +167,7 @@ symbol "-&gt;" implies a "contains" relationship and "IO()" implies an instance 
 <ul>
 <li>"generic file object"
 	<ul>
-	<li>-&gt;"rename"</li> 
+	<li>-&gt;"rename"</li>
 	<li>-&gt;"delete"</li>
 	<li>-&gt;IO("abstracts")-&gt;"folder"</li>
 	<li>-&gt;IO("abstracts")-&gt;"file"</li>	
@@ -175,7 +175,7 @@ symbol "-&gt;" implies a "contains" relationship and "IO()" implies an instance 
 </li>
 <li>"folder"
 	<ul>
-	<li>-&gt;"create"</li> 
+	<li>-&gt;"create"</li>
 	<li>-&gt;"query"</li>
 	<li>-&gt;IO("abstracted by")-&gt;"generic file object"</li>
 	<li>-&gt;IO("contains")-&gt;"generic file object"</li>
@@ -190,7 +190,7 @@ symbol "-&gt;" implies a "contains" relationship and "IO()" implies an instance 
 
 <p>
 DataStore schemas are created by the DataStore <b>miners</b>.  Each tool contributes it's
-own schema or to the DataStore schema, referencing descriptors of other schemas, such
+own schema to the DataStore schema, referencing descriptors of other schemas, such
 that one tool can contribute to another tool.  All the command descriptors that are
 contributed by a miner are expected to be handled by the contributing miner.  Whenever
 a miner creates a new command descriptor, the <code>A_SOURCE</code> attribute indicates

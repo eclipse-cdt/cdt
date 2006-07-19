@@ -10,22 +10,22 @@
 
 <body bgcolor="#ffffff">
 <h1>RSE Validator Sample Four</h1>
-<p>This is an example of a validator written by extending an existing RSE-supplied validator, and 
-simply supplying unique messages. 
+<p>This is an example of a validator written by extending an existing RSE-supplied validator, and
+simply supplying unique messages.
 <pre>
-package com.ibm.etools.systems.samples.ui.frameworks.dialogs;
-import com.ibm.etools.systems.core.ui.validators.ValidatorIntegerRangeInput;
-import com.ibm.etools.systems.samples.*;
+package org.eclipse.rse.samples.ui.frameworks.dialogs;
+import org.eclipse.rse.core.ui.validators.ValidatorIntegerRangeInput;
+import org.eclipse.rse.samples.*;
 
 /**
  * <I>An example of a customized validator, that prompts for a birth day.</I>
  */
-public class <B>SampleBirthDayValidator</B> extends ValidatorIntegerRangeInput 
+public class <B>SampleBirthDayValidator</B> extends ValidatorIntegerRangeInput
 {
 	/**
 	 * <I>Constructor. Specifies the valid range, and unique error messages</I>.
 	 */
-	public SampleBirthDayValidator() 
+	public SampleBirthDayValidator()
 	{
 		super(1, 31);
 		super.setErrorMessages(SamplesPlugin.<A

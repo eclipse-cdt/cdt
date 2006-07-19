@@ -11,8 +11,8 @@
 
 <body bgcolor="#ffffff">
 <h1>Plugging In System Types</h1>
-<p>The <samp><A href="../../doc/org_eclipse_rse_ui_systemtype.html">com.ibm.etools.systems.core.systemtype</a></samp> extension point is defined in the
-plugin <samp>com.ibm.etools.systems.core</samp>. It enables new system types to be
+<p>The <samp><A href="../../doc/org_eclipse_rse_ui_systemtype.html">org.eclipse.rse.ui.systemType</a></samp> extension point is defined in the
+plugin <samp>org.eclipse.rse.ui</samp>. It enables new system types to be
 defined in the Remote System Explorer's <A href="NewConnection.gif">New
 Connection wizard</A>, such that users can define connections to systems of that type. For example,
 you might define a new system type of "Solaris" or "RedHat" or some other specific type
@@ -26,11 +26,11 @@ type, and two icons - one icon for connections to that systems of that type, and
 adorned icon that is used when there is a live connection to that particular system.
 </p>
 <p>
-When youcreates a new connection, the Remote System Explorer framework will consult
+When you create a new connection, the Remote System Explorer framework will consult
 each registered <A href="subsystem.html">subsystem extension point</A> to see if it supports
 that connection's system type, and if so the extension point's subsystem factory class
 will be used to create a new subsystem within the new connection. Thus, when the user
-expands a connection in the Remote Systems view, only subsystems supported for that 
+expands a connection in the Remote Systems view, only subsystems supported for that
 connection's system type are available.
 </p>
 </body>

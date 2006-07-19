@@ -10,13 +10,13 @@
 
 <body bgcolor="#ffffff">
 <h1>RSE Properties API</h1>
-<p>You can supply your own property pages to any node in the Remote Systems tree or table views. 
+<p>You can supply your own property pages to any node in the Remote Systems tree or table views.
 As you author your property page classes, you may find the RSE-supplied base class for property pages
 of value.
 
 <h2>RSE-Supplied Base Class for Property Pages</h2>
-<p>The RSE supplies a base class for property pages, 
-<samp><A href="../../../com/ibm/etools/systems/core/ui/propertypages/SystemBasePropertyPage.html">com.ibm.etools.systems.core.ui.propertypages.SystemBasePropertyPage</A></samp>,
+<p>The RSE supplies a base class for property pages,
+<samp><A href="../../../org/eclipse/rse/ui/propertypages/SystemBasePropertyPage.html">org.eclipse.rse.ui.propertypages.SystemBasePropertyPage</A></samp>,
 that extends the base eclipse property page <samp>org.eclipse.ui.dialogs.PropertyPage</samp>. The advantages
 of using this RSE-supplied class are:
 </p>
@@ -29,7 +29,7 @@ property is important to set correct, so eclipse knows when to prevent the user 
 
 
 <h2>Property Pages for RSE Non-Remote Resources</h2>
-<p>You can simply use the eclipse-supplied extension point <samp>org.eclipse.ui.propertyPages</samp> to 
+<p>You can simply use the eclipse-supplied extension point <samp>org.eclipse.ui.propertyPages</samp> to
 contribute property pages to any of the non-remote artifacts from the RSE model. To use this extension
 point, you need to know the class or, preferably, interface that the objects implement, which we describe here:
 </p>
@@ -42,23 +42,23 @@ point, you need to know the class or, preferably, interface that the objects imp
 		</TR>
 		<TR>
 			<TD>Profile</TD>
-			<TD><samp><A href="../../../com/ibm/etools/systems/model/SystemProfile.html">com.ibm.etools.systems.model.SystemProfile</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/model/ISystemProfile.html">org.eclipse.rse.model.ISystemProfile</A></samp></TD>
 		</TR>
 		<TR>
-			<TD>Connection</TD>
-			<TD><samp><A href="../../../com/ibm/etools/systems/model/SystemConnection.html">com.ibm.etools.systems.model.SystemConnection</A></samp></TD>
+			<TD>Host</TD>
+			<TD><samp><A href="../../../org/eclipse/rse/model/IHost.html">org.eclipse.rse.model.IHost</A></samp></TD>
 		</TR>
 		<TR>
 			<TD>Subsystem</TD>
-			<TD><samp><A href="../../../com/ibm/etools/systems/subsystems/SubSystem.html">com.ibm.etools.systems.subsystems.SubSystem</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/core/subsystems/ISubSystem.html">org.eclipse.rse.core.subsystems.ISubSystem</A></samp></TD>
 		</TR>
 		<TR>
 			<TD>Filter pool reference</TD>
-			<TD><samp><A href="../../../com/ibm/etools/systems/filters/SystemFilterPoolReference.html">com.ibm.etools.systems.filters.SystemFilterPoolReference</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/filters/ISystemFilterPoolReference.html">org.eclipse.rse.filters.ISystemFilterPoolReference</A></samp></TD>
 		</TR>
 		<TR>
 			<TD>Filter reference</TD>
-			<TD><samp><A href="../../../com/ibm/etools/systems/filters/SystemFilterReference.html">com.ibm.etools.systems.filters.SystemFilterReference</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/filters/ISystemFilterReference.html">org.eclipse.rse.filters.ISystemFilterReference</A></samp></TD>
 		</TR>
 	</TBODY>
 </TABLE>

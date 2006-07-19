@@ -10,14 +10,14 @@
 
 <body bgcolor="#ffffff">
 <h1>RSE Model API</h1>
-<p>The front door to accessing the elements of the RSE model is the 
-<A href="../../com/ibm/etools/systems/model/SystemRegistry.html">SystemRegistry</A>, which is a 
-singleton object accessible via <A href="../../com/ibm/etools/systems/core/SystemPlugin.html#getTheSystemRegistry()">SystemPlugin.getTheSystemRegistry()</A>. 
+<p>The front door to accessing the elements of the RSE model is the
+<A href="../../org/eclipse/rse/model/SystemRegistry.html">SystemRegistry</A>, which is a
+singleton object accessible via <A href="../../org/eclipse/rse/model/SystemStartHere.html#getSystemRegistry()">SystemStartHere.getSystemRegistry()</A>.
 </p>
-<p>The system registry will get you access to profiles, connections and subsystem factories. 
-From a <A href="../../com/ibm/etools/systems/subsystems/SubSystemFactory.html">subsystem factory</A> you can access subsystems, filter pools, 
-user actions and compile commands. 
-From <A href="../../com/ibm/etools/systems/subsystems/SubSystem.html">subsystems</A> you can access remote resources, as well 
+<p>The system registry will get you access to profiles, connections and subsystem factories.
+From a <A href="../../org/eclipse/rse/core/subsystems/ISubSystemConfiguration.html">subsystem configuration</A> you can access subsystems, filter pools,
+user actions and compile commands.
+From <A href="../../org/eclipse/rse/core/subsystems/ISubSystem.html">ISubSystem</A> you can access remote resources, as well
 as filter pools referenced by the subsystem.
 </p>
 </body>

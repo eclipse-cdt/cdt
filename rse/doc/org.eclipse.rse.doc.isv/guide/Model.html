@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 
-<head> 
+<head>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
 <meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
@@ -14,39 +14,39 @@
 <p>The underlying containment model for the RSE artifacts is shown here.
 </p>
 <ul>
-<li><A href="../com/ibm/etools/systems/model/SystemProfile.html">Profiles</A> are managed 
-by a <A href="../com/ibm/etools/systems/model/SystemProfileManager.html">profile manager</A>, and contain:</li>
+<li><A href="../org/eclipse/rse/model/ISystemProfile.html">Profiles</A> are managed
+by a <A href="../org/eclipse/rse/model/ISystemProfileManager.html">profile manager</A>, and contain:</li>
  <ul>
- <li><A href="../com/ibm/etools/systems/model/SystemConnectionPool.html">Connection Pools</A>, one per profile, which contain</li>
+ <li><A href="../org/eclipse/rse/model/ISystemHostPool.html">Host Pools</A>, one per profile, which contain</li>
   <ul>
-     <li><A href="../com/ibm/etools/systems/model/SystemConnection.html">Connections</A></li>
+     <li><A href="../org/eclipse/rse/model/IHost.html">Hosts</A></li>
   </ul>
- <li><A href="../com/ibm/etools/systems/filters/SystemFilterPool.html">Filter pools</A>, 
-keyed by Subsystem Factory, 
-and managed by a <A href="../com/ibm/etools/systems/filters/SystemFilterPoolManager.html">filter pool manager</A> 
+ <li><A href="../org/eclipse/rse/filters/ISystemFilterPool.html">Filter pools</A>,
+keyed by Subsystem Factory,
+and managed by a <A href="../org/eclipse/rse/filters/ISystemFilterPoolManager.html">filter pool manager</A>
 which contain</li>
   <ul>
-    <li><A href="../com/ibm/etools/systems/filters/SystemFilter.html">Filters</A>, which contain</li>
+    <li><A href="../org/eclipse/rse/filters/ISystemFilter.html">Filters</A>, which contain</li>
       <ul>
-        <li><A href="../com/ibm/etools/systems/filters/SystemFilterString.html">Filter strings</A></li>
+        <li><A href="../org/eclipse/rse/filters/ISystemFilterString.html">Filter strings</A></li>
       </ul>
   </ul>
- <li><A href="../com/ibm/etools/systems/core/ui/uda/SystemUDActionElement.html">User actions</A>, keyed by Subsystem Factory, which contain</li>
+ <li><A href="../org/eclipse/rse/ui/uda/ISystemUDActionElement.html">User actions</A>, keyed by Subsystem Configuration, which contain</li>
   <ul>
-    <li><i>References</i> to <A href="../com/ibm/etools/systems/core/ui/uda/SystemUDTypeElement.html">named types</A></li>
+    <li><i>References</i> to <A href="../org/eclipse/rse/ui/uda/ISystemUDTypeElement.html">named types</A></li>
   </ul>
- <li><A href="../com/ibm/etools/systems/core/ui/compile/SystemCompileCommand.html">Compile commands</A></li>
+ <li><A href="../org/eclipse/rse/ui/compile/SystemCompileCommand.html">Compile commands</A></li>
  </ul>
 
-<li><A href="../com/ibm/etools/systems/subsystems/SubSystemFactory.html">Subsystem Factories</A> contain:</li>
+<li><A href="../org/eclipse/rse/core/subsystems/SubSystemConfiguration.html">Subsystem Configurations</A> contain:</li>
  <ul>
-    <li><A href="../com/ibm/etools/systems/subsystems/SubSystem.html">Subsystems</A>, keyed by connection, 
+    <li><A href="../org/eclipse/rse/core/subsystems/SubSystem.html">Subsystems</A>, keyed by host,
     which contain</li>
     <ul>
-      <li><i><A href="../com/ibm/etools/systems/filters/SystemFilterPoolReference.html">References</A></i> 
-      to <A href="../com/ibm/etools/systems/filters/SystemFilterPool.html">filter pools</A>, which are managed by <A href="../com/ibm/etools/systems/filters/SystemFilterPoolManager.html">filter pool managers</A></li>
+      <li><i><A href="../org/eclipse/rse/filters/ISystemFilterPoolReference.html">References</A></i>
+      to <A href="../org/eclipse/rse/filters/ISystemFilterPool.html">filter pools</A>, which are managed by <A href="../org/eclipse/rse/filters/ISystemFilterPoolManager.html">filter pool managers</A></li>
     </ul>
-    <li><A href="../com/ibm/etools/systems/core/ui/uda/SystemUDTypeElement.html">Named types</A></li>
+    <li><A href="../org/eclipse/rse/ui/uda/SystemUDTypeElement.html">Named types</A></li>
  </ul>
 </ul>
 </body>

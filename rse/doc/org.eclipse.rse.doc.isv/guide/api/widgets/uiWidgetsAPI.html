@@ -11,18 +11,18 @@
 <body bgcolor="#ffffff">
 
 <h1>RSE Widgets API</h1>
-<p>Whether coding dialogs, property pages, preference pages or wizard pages we need to write the code to display 
+<p>Whether coding dialogs, property pages, preference pages or wizard pages we need to write the code to display
 and process the widgets in the client area. The RSE offers some help in this area in two ways:
 </p>
 <ol>
-<li>A <samp><A href="../../../com/ibm/etools/systems/core/ui/SystemWidgetHelpers.html">SystemWidgetHelpers</A></samp> 
+<li>A <samp><A href="../../../org/eclipse/rse/ui/SystemWidgetHelpers.html">SystemWidgetHelpers</A></samp>
 class full of static methods to make it easier to create SWT widgets.
 <li>A few re-usable widgets that extend SWT.
 </ol>
 
 <h2>SystemWidgetHelpers Class</h2>
-<p>The <samp><A href="../../../com/ibm/etools/systems/core/ui/SystemWidgetHelpers.html">SystemWidgetHelpers</A></samp> 
-class in <samp><A href="../../../com/ibm/etools/systems/core/ui/package-summary.html">com.ibm.etools.systems.core.ui</A></samp> 
+<p>The <samp><A href="../../../org/eclipse/rse/ui/SystemWidgetHelpers.html">SystemWidgetHelpers</A></samp>
+class in <samp><A href="../../../org/eclipse/rse/ui/package-summary.html">org.eclipse.rse.ui</A></samp>
 is chock full of static methods to simplify the work in populating a GridLayout composite with widgets. The GridLayout composite is the most
 flexible and useful of the layouts, yet the most work to code to. These methods will help with that. The methods include:
 </p>
@@ -38,7 +38,7 @@ flexible and useful of the layouts, yet the most work to code to. These methods 
 </ul>
 
 <h2>RSE-Supplied Widgets</h2>
-<p>The <samp><A href="../../../com/ibm/etools/systems/core/ui/widgets/package-summary.html">com.ibm.etools.systems.core.ui.widgets</A></samp> 
+<p>The <samp><A href="../../../org/eclipse/rse/ui/widgets/package-summary.html">org.eclipse.rse.ui.widgets</A></samp>
 package contains some specialized widgets you may find a use for:
 </p>
 <TABLE border="1">
@@ -48,25 +48,25 @@ package contains some specialized widgets you may find a use for:
 			<TH>Description</TH>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/widgets/SystemHistoryCombo.html">SystemHistoryCombo</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/ui/widgets/SystemHistoryCombo.html">SystemHistoryCombo</A></samp></TD>
 			<TD>A entry field that remembers its previous values and shows them in a dropdown so the user can easily re-select a previously typed value. The history is maintained for you, and is indexed by a key. This allows the combos to share history across numerous dialogs, property pages or wizard pages. The history can be bounded and pre-filled, and the user can clear the history at any time. This handy widget is used extensively within the RSE.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/widgets/InheritableEntryField.html">InheritableEntryField</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/ui/widgets/InheritableEntryField.html">InheritableEntryField</A></samp></TD>
 			<TD>An entry field with an left-right arrow beside it. When toggled left, the entry field is not editable and displays a supplied value. When toggled right, the entry field is editable. Useful in cases where the user can choose between an inherited or default value, or enter their own value.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/widgets/SystemPortPrompt.html">SystemPortPrompt</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/ui/widgets/SystemPortPrompt.html">SystemPortPrompt</A></samp></TD>
 			<TD>Uses the InheritableEntryField to prompt for a TCP/IP port, where toggling to the left means port 0, or let the &quot;first available port&quot;.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/widgets/SystemConnectionCombo.html">SystemConnectionCombo</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/ui/widgets/SystemConnectionCombo.html">SystemConnectionCombo</A></samp></TD>
 			<TD>This is a combo box that displays the currently defined RSE system connections. The list can be subset by system type or types. Further, you can optionally display a New button beside the combo that allows the user to create a new connection.</TD>
 		</TR>
 	</TBODY>
 </TABLE>
 <p>There are also many useful widgets related to the selection of remote files or folders, in package
-<samp><A href="../../../com/ibm/etools/systems/files/ui/widgets/package-summary.html">com.ibm.etools.systems.files.ui.widgets</A></samp>
+<samp><A href="../../../org/eclipse/rse/files/ui/widgets/package-summary.html">org.eclipse.rse.files.ui.widgets</A></samp>
 
 <P><BR></P>
 </body>

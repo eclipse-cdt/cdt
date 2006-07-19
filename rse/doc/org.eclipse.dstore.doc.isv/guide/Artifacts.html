@@ -20,7 +20,7 @@
 <p>All the classes and interfaces mentioned here are defined in the <samp>org.eclipse.dstore.core</samp> plugin.
 
 <h2><A name="clientconnection">Client Connection</A></h2>
-<p> 
+<p>
 The <b>ClientConnection</b> class is used for establishing a DataStore connection.   This class provides the
 means to instantiate a client DataStore and connect to a server DataStore on a specified host running under a
 specified port.  The connection to the server DataStore may either be made directly or a startup
@@ -29,29 +29,29 @@ for disconnecting from the DataStore.
 </p>
 
 <h2><A name="datastore">DataStore</A></h2>
-<p> 
+<p>
 The <b>DataStore</b> class is the heart of the DataStore communications framework.  An instance of a DataStore contains a tree
 of <a href="#dataelement">DataElements</a>.  This tree can be referred to as the <i>DataStore repository</i> because
 it consists of all the schema information and data content used.  Any type of object or relationship defined, command definition or
-peice of data that needs to be communicated between the client and server are stored in the <i>DataStore repository</i>.  
-The DataStore class can be used for finding, creating and deleting DataElements and for communicating commands 
-to <a href="#miner">miner</a>.  The DataStore class encapsulates all remote synchronizations between the client and the 
-server via it's <code>command</code> and <code>refresh</code> APIs.
+piece of data that needs to be communicated between the client and server are stored in the <i>DataStore repository</i>.
+The DataStore class can be used for finding, creating and deleting DataElements and for communicating commands
+to <a href="#miner">miner</a>.  The DataStore class encapsulates all remote synchronizations between the client and the
+server via its <code>command</code> and <code>refresh</code> APIs.
 </p>
 
 <h2><A name="dataelement">DataElement</A></h2>
 <p>
 The <b>DataElement</b> is the unit of information in a DataStore repository.  Each DataElement has a set of attributes that describe
 the object it represents and is related to other DataElements by containing other DataElements.  DataElements represent both the meaning
-of data as well as the data itself.    
+of data as well as the data itself.
 </p>
 <p>
 For more information about DataElements, see the section, <a href="DataElements.html">DataElements and the DataStore model</a>.
 </p>
 
 <h2><A name="miner">Miner</A></h2>
-<p> 
-A <b>Miner</b> is an extension point to the DataStore.  Miners are classes, residing on the server-side, that implement a common 
+<p>
+A <b>Miner</b> is an extension point to the DataStore.  Miners are classes, residing on the server-side, that implement a common
 interface used by the DataStore for communication information between the DataStore and the tools.
 </p>
 <p>

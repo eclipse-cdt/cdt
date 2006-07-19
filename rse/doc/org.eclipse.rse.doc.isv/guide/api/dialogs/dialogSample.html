@@ -14,23 +14,23 @@
 typical full error checking.
 <pre>
 
-package com.ibm.etools.systems.samples.ui.frameworks.dialogs;
+package org.eclipse.rse.samples.ui.frameworks.dialogs;
 
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
 
-import com.ibm.etools.systems.samples.*;
+import org.eclipse.rse.samples.*;
 
-import com.ibm.etools.systems.core.ui.dialogs.SystemPromptDialog;
-import com.ibm.etools.systems.core.ui.*;
-import com.ibm.etools.systems.core.ui.widgets.*;
-import com.ibm.etools.systems.core.ui.messages.*;
-import com.ibm.etools.systems.core.ui.validators.*;
+import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
+import org.eclipse.rse.ui.*;
+import org.eclipse.rse.ui.widgets.*;
+import org.eclipse.rse.ui.messages.*;
+import org.eclipse.rse.ui.validators.*;
 
 /**
  * <I>A simple example of using the SystemPromptDialog class as the basis for a new dialog</I>.
  */
-public class <B>SampleDialog</B> extends SystemPromptDialog 
+public class <B>SampleDialog</B> extends SystemPromptDialog
 {
 	// <I>gui widgets</I>
 	private SystemHistoryCombo namePrompt;
@@ -45,9 +45,9 @@ public class <B>SampleDialog</B> extends SystemPromptDialog
 	/**
 	 * <I>Constructor for SampleDialog</I>.
 	 */
-	public <B>SampleDialog</B>(Shell shell) 
+	public <B>SampleDialog</B>(Shell shell)
 	{
-		super(shell, SamplesPlugin.getString(&quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.title&quot;));
+		super(shell, SamplesPlugin.getString(&quot;org.eclipse.rse.samples.ui.dialogs.dialog1.title&quot;));
 		setHelp(SamplesPlugin.HELPPREFIX + &quot;dlg11000&quot;);
 		nameValidator = new <A href="../validators/validatorSample1.html">SampleNameValidator</A>();
 		yearValidator = new <A href="../validators/validatorSample2.html">SampleBirthYearValidator</A>();
@@ -59,28 +59,28 @@ public class <B>SampleDialog</B> extends SystemPromptDialog
 	 * <I>Required parent override.</I>
 	 * <I>This is where we populate the client area</I>
 	 */
-	protected Control <B>createInner</B>(Composite parent) 
+	protected Control <B>createInner</B>(Composite parent)
 	{
 		int nbrColumns = 2;
 		Composite parentComposite = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 
 		// <I>add gui widgets</I>...				
-		SystemWidgetHelpers.createLabel(parentComposite, SamplesPlugin.getResourceBundle(), &quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.name.&quot;);
+		SystemWidgetHelpers.createLabel(parentComposite, SamplesPlugin.getResourceBundle(), &quot;org.eclipse.rse.samples.ui.dialogs.dialog1.name.&quot;);
 		boolean readonly = false;
 		namePrompt = SystemWidgetHelpers.createHistoryCombo(parentComposite, null, &quot;name.history.key&quot;, readonly,
-		                 SamplesPlugin.getResourceBundle(), &quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.name.tooltip&quot;);
+		                 SamplesPlugin.getResourceBundle(), &quot;org.eclipse.rse.samples.ui.dialogs.dialog1.name.tooltip&quot;);
 		
 		addSeparatorLine(parentComposite, nbrColumns);
 		boolean wantBorder = false;
-		SystemWidgetHelpers.createLabel(parentComposite, SamplesPlugin.getResourceBundle(), 
-		      &quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.birthday.verbage.&quot;, nbrColumns, wantBorder);
-		      
-		yearPrompt = SystemWidgetHelpers.createLabeledTextField(parentComposite, null, 
-		                 SamplesPlugin.getResourceBundle(), &quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.birthday.year.&quot;);
-		monthPrompt = SystemWidgetHelpers.createLabeledTextField(parentComposite, null, 
-		                 SamplesPlugin.getResourceBundle(), &quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.birthday.month.&quot;);
-		dayPrompt = SystemWidgetHelpers.createLabeledTextField(parentComposite, null, 
-		                 SamplesPlugin.getResourceBundle(), &quot;com.ibm.etools.systems.samples.ui.dialogs.dialog1.birthday.day.&quot;);
+		SystemWidgetHelpers.createLabel(parentComposite, SamplesPlugin.getResourceBundle(),
+		      &quot;org.eclipse.rse.samples.ui.dialogs.dialog1.birthday.verbage.&quot;, nbrColumns, wantBorder);
+		
+		yearPrompt = SystemWidgetHelpers.createLabeledTextField(parentComposite, null,
+		                 SamplesPlugin.getResourceBundle(), &quot;org.eclipse.rse.samples.ui.dialogs.dialog1.birthday.year.&quot;);
+		monthPrompt = SystemWidgetHelpers.createLabeledTextField(parentComposite, null,
+		                 SamplesPlugin.getResourceBundle(), &quot;org.eclipse.rse.samples.ui.dialogs.dialog1.birthday.month.&quot;);
+		dayPrompt = SystemWidgetHelpers.createLabeledTextField(parentComposite, null,
+		                 SamplesPlugin.getResourceBundle(), &quot;org.eclipse.rse.samples.ui.dialogs.dialog1.birthday.day.&quot;);
 		
 		// <I>if given an existing object, prefill it</I>...
 		inpCust = (SampleCustomer)getInputObject();
@@ -92,9 +92,9 @@ public class <B>SampleDialog</B> extends SystemPromptDialog
 			dayPrompt.setText(inpCust.getDay());
 		}
 		
-		                 
+		
 		// <I>add modify listeners</I>...	
-	        namePrompt.addModifyListener( new ModifyListener() 
+	        namePrompt.addModifyListener( new ModifyListener()
 	        {
 	      	   public void modifyText(ModifyEvent event)
 	      	   {
@@ -102,7 +102,7 @@ public class <B>SampleDialog</B> extends SystemPromptDialog
 	      	 	  validate(namePrompt.getCombo());
 	      	   }
 	        } );
-	        yearPrompt.addModifyListener( new ModifyListener() 
+	        yearPrompt.addModifyListener( new ModifyListener()
 	        {
 	      	   public void modifyText(ModifyEvent event)
 	      	   {
@@ -110,7 +110,7 @@ public class <B>SampleDialog</B> extends SystemPromptDialog
 	      	 	  validate(yearPrompt);
 	      	   }
 	        } );
-	        monthPrompt.addModifyListener( new ModifyListener() 
+	        monthPrompt.addModifyListener( new ModifyListener()
 	        {
 	      	   public void modifyText(ModifyEvent event)
 	      	   {
@@ -118,7 +118,7 @@ public class <B>SampleDialog</B> extends SystemPromptDialog
 	      	 	  validate(monthPrompt);
 	      	   }
 	        } );
-	        dayPrompt.addModifyListener( new ModifyListener() 
+	        dayPrompt.addModifyListener( new ModifyListener()
 	        {
 	      	   public void modifyText(ModifyEvent event)
 	      	   {
@@ -137,7 +137,7 @@ public class <B>SampleDialog</B> extends SystemPromptDialog
 	 * <I>Required parent override</I>.
 	 * <I>This is where we return the first input control, to give it focus when the dialog appears</I>.
 	 */
-	protected Control <B>getInitialFocusControl</B>() 
+	protected Control <B>getInitialFocusControl</B>()
 	{
 		return namePrompt.getCombo();
 	}
@@ -149,7 +149,7 @@ public class <B>SampleDialog</B> extends SystemPromptDialog
 	protected boolean <B>processOK</B>()
 	{
 		errorMessage = null;
-		Control controlInError = validate(null);		  
+		Control controlInError = validate(null);		
 		if (controlInError != null)
 		  controlInError.setFocus();
 		else
@@ -194,7 +194,7 @@ public class <B>SampleDialog</B> extends SystemPromptDialog
 		  controlInError = monthPrompt;
 		if ((controlInError==null) &amp;&amp; (controlToSkip != dayPrompt) &amp;&amp; !validateDay())
 		  controlInError = dayPrompt;
-		  
+		
 		return controlInError;		
 	}
 	/**
@@ -207,7 +207,7 @@ public class <B>SampleDialog</B> extends SystemPromptDialog
 		return (errorMessage==null);
 	}
 	/**
-	 * <I>Validate the customer birth year prompt</I>. 
+	 * <I>Validate the customer birth year prompt</I>.
 	 */
 	protected boolean <B>validateYear</B>()
 	{
@@ -216,7 +216,7 @@ public class <B>SampleDialog</B> extends SystemPromptDialog
 		return (errorMessage==null);
 	}
 	/**
-	 * <I>Validate the customer birth month prompt</I>. 
+	 * <I>Validate the customer birth month prompt</I>.
 	 */
 	protected boolean <B>validateMonth</B>()
 	{
@@ -225,7 +225,7 @@ public class <B>SampleDialog</B> extends SystemPromptDialog
 		return (errorMessage==null);
 	}
 	/**
-	 * <I>Validate the customer birth day prompt</I>. 
+	 * <I>Validate the customer birth day prompt</I>.
 	 */
 	protected boolean <B>validateDay</B>()
 	{
@@ -252,7 +252,7 @@ public class <B>SampleDialog</B> extends SystemPromptDialog
 	 */
 	protected boolean <B>isPageComplete</B>()
 	{
-		return ((errorMessage == null) &amp;&amp; 
+		return ((errorMessage == null) &amp;&amp;
 		        (namePrompt.getText().trim().length()&gt;0) &amp;&amp;
 		        (yearPrompt.getText().trim().length()&gt;0) &amp;&amp;
 		        (monthPrompt.getText().trim().length()&gt;0) &amp;&amp;

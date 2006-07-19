@@ -19,60 +19,60 @@
 
 <h2>RSE-Supplied Base Class for Dialogs</h2>
 <p>Dialogs are secondary windows that prompt the user for information or display information to the user. They are typically
-<i>modal</i>, meaning the rest of the application (in this case eclipse) is disabled while the dialog is showing. 
+<i>modal</i>, meaning the rest of the application (in this case eclipse) is disabled while the dialog is showing.
 Eclipse supplies a raw dialog class in SWT, as well as more robust dialog class in JFace. The RSE supplies its own
-class, 
-<samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html">SystemPromptDialog</A></samp>
-in package 
-<samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/package-summary.html">com.ibm.etools.systems.core.ui.dialogs</A></samp>
+class,
+<samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html">SystemPromptDialog</A></samp>
+in package
+<samp><A href="../../../org/eclipse/rse/ui/dialogs/package-summary.html">org.eclipse.rse.ui.dialogs</A></samp>
 , that extends
 the JFace dialog class and adds to it the following capabilities inherited by all classes which extend it:
 </p>
 <ul>
 <li>Support for an optional visual message line at the bottom, on which messages can be displayed to the user. These can be either
 <samp>SystemMessage</samp> objects, or simple string messages. <samp><A
-		href="../messages/uiMessageAPI.html#SystemMessage">SystemMessage</A></samp> objects are preferred, as using these enables a button 
+		href="../messages/uiMessageAPI.html#SystemMessage">SystemMessage</A></samp> objects are preferred, as using these enables a button
 beside the message line which users can press to see the details for the message. This is supported via the <samp><A
 		href="../messages/uiMessageAPI.html#ISystemMessageLine">ISystemMessageLine</A></samp>
 interface, and so offers a consistent programming interface with the RSE property page and wizard page classes.
 <li>Support of automatic assignment of mnemonics for input-capable widgets such as buttons. This saves tremendous development
 effort if your user interface is translated as the assignment of unique mnemonics can be difficult after translation.
-<li>Built-in support for a number of typical push buttons at the bottom of the dialog: OK, Cancel, Browse, Test, Add and 
+<li>Built-in support for a number of typical push buttons at the bottom of the dialog: OK, Cancel, Browse, Test, Add and
 Details. You control via setters which buttons to show, and you can affect their label and tooltip text, although the
 default labels and tips are already translated for you. To program what happens when pressed, override the appropriate
-<samp>processXXX()</samp> method, such as <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#processOK()">processOK()</A></samp>. By default, you get OK and Cancel buttons.
+<samp>processXXX()</samp> method, such as <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#processOK()">processOK()</A></samp>. By default, you get OK and Cancel buttons.
 <li>Support for an optional built-in progress monitor at the bottom of the dialog, just like what eclipse offers for wizards.
-<li>Support of a simple <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#wasCancelled()">wasCancelled()</A></samp> method to easily test if the dialog was cancelled or not.
+<li>Support of a simple <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#wasCancelled()">wasCancelled()</A></samp> method to easily test if the dialog was cancelled or not.
 <li>Support for methods to set an input object, and retrieving an output object, making it easy to pass in data and
-get back data. Your calling code sets the input object, your subclass code sets the output object (typically in 
-its <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#processOK()">processOK()</A></samp> method) and your calling code gets the output object, 
-if <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#wasCancelled()">wasCancelled()</A></samp> returns false.
-<li>Support of a <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#setPageComplete(boolean)">setPageComplete(boolean)</A></samp> method, consistent with wizard pages, to enable/disable the OK button.
+get back data. Your calling code sets the input object, your subclass code sets the output object (typically in
+its <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#processOK()">processOK()</A></samp> method) and your calling code gets the output object,
+if <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#wasCancelled()">wasCancelled()</A></samp> returns false.
+<li>Support of a <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#setPageComplete(boolean)">setPageComplete(boolean)</A></samp> method, consistent with wizard pages, to enable/disable the OK button.
 This is typically called by your keystroke and button validators. That is, if an error is detected as input is entered, a message
 is issued to the message line and the OK button is disabled.
-<li>Support of a simple <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#setHelp(java.lang.String)">setHelp(String helpId)</A></samp> method to set the dialog's popup help.
-<li>A simple way to toggle the cursor between busy and normal, using 
-<samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#setBusyCursor(boolean)">setBusyCursor(boolean)</A></samp>
-<li>Helper methods for adding <A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#addFillerLine(org.eclipse.swt.widgets.Composite, int)">filler lines</A>
-and <A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#addSeparatorLine(org.eclipse.swt.widgets.Composite, int)">separator lines</A>. 
+<li>Support of a simple <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#setHelp(java.lang.String)">setHelp(String helpId)</A></samp> method to set the dialog's popup help.
+<li>A simple way to toggle the cursor between busy and normal, using
+<samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#setBusyCursor(boolean)">setBusyCursor(boolean)</A></samp>
+<li>Helper methods for adding <A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#addFillerLine(org.eclipse.swt.widgets.Composite, int)">filler lines</A>
+and <A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#addSeparatorLine(org.eclipse.swt.widgets.Composite, int)">separator lines</A>.
 </ul>
 <p>To create your own dialog:</p>
 <ol>
-<li>Subclass <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html">SystemPromptDialog</A></samp>, picking the appropriate constructor, the simplest
+<li>Subclass <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html">SystemPromptDialog</A></samp>, picking the appropriate constructor, the simplest
 of which simply requires the shell of the parent window and the title string for this dialog.
 <li>If buttons beyond OK and Cancel are desired, in your own constructor call the appropriate <samp>setShowXXXButton(true)</samp> methods to enable
 these buttons, and override the appropriate <samp>processXXX()</samp> methods to process these buttons when pressed by the user.
-<li>If a progress monitor is desired, in your own constructor call <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#setNeedsProgressMonitor(boolean)">setNeedsProgressMonitor(true)</A></samp>. Later, to run
-a long-running operation that displays the progress monitor, use <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#getProgressMonitor()">getProgressMonitor()</A></samp>.
-<li>Override the <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#createInner(org.eclipse.swt.widgets.Composite)">createInner(Composite)</A></samp> method to populate the client area of the dialog with SWT widgets. Typically
-you create your composite with a GridLayout layout, populate it, and return it. To ease this programming burden, use the many 
-static helper methods in <samp><A href="../../../com/ibm/etools/systems/core/ui/SystemWidgetHelpers.html">SystemWidgetHelpers</A></samp>.
-<li>Override the <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#getInitialFocusControl()">getInitialFocusControl()</A></samp> method to supply the control to get initial focus when the dialog is displayed.
-<li>Override the <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#processOK()">processOK()</A></samp> method to supply the processing for when OK is pressed. You typically first validate
+<li>If a progress monitor is desired, in your own constructor call <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#setNeedsProgressMonitor(boolean)">setNeedsProgressMonitor(true)</A></samp>. Later, to run
+a long-running operation that displays the progress monitor, use <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#getProgressMonitor()">getProgressMonitor()</A></samp>.
+<li>Override the <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#createInner(org.eclipse.swt.widgets.Composite)">createInner(Composite)</A></samp> method to populate the client area of the dialog with SWT widgets. Typically
+you create your composite with a GridLayout layout, populate it, and return it. To ease this programming burden, use the many
+static helper methods in <samp><A href="../../../org/eclipse/rse/ui/SystemWidgetHelpers.html">SystemWidgetHelpers</A></samp>.
+<li>Override the <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#getInitialFocusControl()">getInitialFocusControl()</A></samp> method to supply the control to get initial focus when the dialog is displayed.
+<li>Override the <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#processOK()">processOK()</A></samp> method to supply the processing for when OK is pressed. You typically first validate
 the user input, and then return true if there are no errors found.
-<li>To allow the caller to get user-entered information out of the dialog, either supply getter methods, 
-or call <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#setOutputObject(java.lang.Object)">setOuputObject(Object)</A></samp>
-in your processOK logic so that your caller can code <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemPromptDialog.html#getOutputObject()">getOutputObject()</A></samp>.
+<li>To allow the caller to get user-entered information out of the dialog, either supply getter methods,
+or call <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#setOutputObject(java.lang.Object)">setOuputObject(Object)</A></samp>
+in your processOK logic so that your caller can code <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html#getOutputObject()">getOutputObject()</A></samp>.
 </ol>
 <P>One of the more difficult efforts in building a dialog with multiple entry fields, is the code to do the validation of those entry fields. A common strategy is to add modify listeners to the entry fields, and for each one validate the data as it typed. If the validation fails, a message is issued. If the validation succeeds, then the other fields on the dialog are validated. At the end of the validation, the OK button is enabled or disabled depending on the error message status, and whether the required information has been supplied. The RSE can help with this effort, somewhat, through the use of re-usable <A
 	href="../validators/uiValidatorsAPI.html">validators</A> for various types of input.<BR>
@@ -81,11 +81,11 @@ Follow this <A href="dialogSample.html">link</A> for an example of a fully-forme
 error checking.</P>
 
 <p>Typically, after creating your dialog, you will create an action to invoke it. The RSE can help with this too, via the
-supplied <samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemBaseDialogAction.html">SystemBaseDialogAction</A></samp> base class.
+supplied <samp><A href="../../../org/eclipse/rse/ui/actions/SystemBaseDialogAction.html">SystemBaseDialogAction</A></samp> base class.
 
 <h2>Dialogs Pre-Supplied by RSE</h2>
 <p>You may find some of the dialogs supplied by the RSE to be immediately re-usable in your own code, saving some
-development and test effort. All these dialogs are in package <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/package-summary.html">com.ibm.etools.systems.core.ui.dialogs</A></samp>:
+development and test effort. All these dialogs are in package <samp><A href="../../../org/eclipse/rse/ui/dialogs/package-summary.html">org.eclipse.rse.ui.dialogs</A></samp>:
 </p>
 
 
@@ -98,51 +98,51 @@ development and test effort. All these dialogs are in package <samp><A href="../
 			<TH>Action</TH>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemRenameDialog.html">SystemRenameDialog</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemRenameDialog.html">SystemRenameDialog</A></samp></TD>
 			<TD>Rename multiple items. Provides a table listing the old names and new names, which are editable. If your input objects
-			    do not adapt to <samp><A href="../../../com/ibm/etools/systems/core/ui/view/ISystemViewElementAdapter.html">ISystemViewElementAdapter</A></samp> 
+			    do not adapt to <samp><A href="../../../org/eclipse/rse/ui/view/ISystemViewElementAdapter.html">ISystemViewElementAdapter</A></samp>
 			    or <samp><A href="../../../org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html">ISystemRemoteElementAdapter</A></samp>,
-			    you should call <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemRenameDialog.html#setNameValidator(com.ibm.etools.systems.core.ui.validators.ISystemValidator)">setNameValidator</A></samp> to specify a validator that ensures the new name is correct, and your 
-			    input objects should also either be IResource objects or implement 
-			    <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/ISystemTypedObject.html">ISystemTypedObject</A></samp>.
+			    you should call <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemRenameDialog.html#setNameValidator(org.eclipse.rse.ui.validators.ISystemValidator)">setNameValidator</A></samp> to specify a validator that ensures the new name is correct, and your
+			    input objects should also either be IResource objects or implement
+			    <samp><A href="../../../org/eclipse/rse/ui/dialogs/ISystemTypedObject.html">ISystemTypedObject</A></samp>.
 			</TD>
 			<TD align="center"><A href="renameManyDialog.gif">Sample image</A></TD>
-			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemCommonRenameAction.html">SystemCommonRenameAction</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/ui/actions/SystemCommonRenameAction.html">SystemCommonRenameAction</A></samp></TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemRenameSingleDialog.html">SystemRenameSingleDialog</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemRenameSingleDialog.html">SystemRenameSingleDialog</A></samp></TD>
 			<TD>Rename a single item. Provides a simple entry field for the new name. If your input object
-			    does not adapt to <samp><A href="../../../com/ibm/etools/systems/core/ui/view/ISystemViewElementAdapter.html">ISystemViewElementAdapter</A></samp> or 
+			    does not adapt to <samp><A href="../../../org/eclipse/rse/ui/view/ISystemViewElementAdapter.html">ISystemViewElementAdapter</A></samp> or
 			    <samp><A href="../../../org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html">ISystemRemoteElementAdapter</A></samp>,
-			    you should call <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemRenameSingleDialog.html#setNameValidator(com.ibm.etools.systems.core.ui.validators.ISystemValidator)">setNameValidator</A></samp> to specify a validator that ensures the new name is correct, and your 
-			    input object should also either be an IResource object or implement <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/ISystemTypedObject.html">ISystemTypedObject</A></samp>.
+			    you should call <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemRenameSingleDialog.html#setNameValidator(org.eclipse.rse.ui.validators.ISystemValidator)">setNameValidator</A></samp> to specify a validator that ensures the new name is correct, and your
+			    input object should also either be an IResource object or implement <samp><A href="../../../org/eclipse/rse/ui/dialogs/ISystemTypedObject.html">ISystemTypedObject</A></samp>.
 			</TD>
 			<TD align="center"><A href="renameOneDialog.gif">Sample image</A></TD>
-			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemCommonRenameAction.html">SystemCommonRenameAction</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/ui/actions/SystemCommonRenameAction.html">SystemCommonRenameAction</A></samp></TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemDeleteDialog.html">SystemDeleteDialog</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemDeleteDialog.html">SystemDeleteDialog</A></samp></TD>
 			<TD>Confirm delete of one or more items. Provides a table listing the names of input objects. If your input objects
-			    do not adapt to <samp><A href="../../../com/ibm/etools/systems/core/ui/view/ISystemViewElementAdapter.html">ISystemViewElementAdapter</A></samp> or 
+			    do not adapt to <samp><A href="../../../org/eclipse/rse/ui/view/ISystemViewElementAdapter.html">ISystemViewElementAdapter</A></samp> or
 			    <samp><A href="../../../org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html">ISystemRemoteElementAdapter</A></samp>,
-			    your input objects should either be IResource objects or implement <samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/ISystemTypedObject.html">ISystemTypedObject</A></samp>.
+			    your input objects should either be IResource objects or implement <samp><A href="../../../org/eclipse/rse/ui/dialogs/ISystemTypedObject.html">ISystemTypedObject</A></samp>.
 			</TD>
 			<TD align="center"><A href="deleteDialog.gif">Sample image</A></TD>
-			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemCommonDeleteAction.html">SystemCommonDeleteAction</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/ui/actions/SystemCommonDeleteAction.html">SystemCommonDeleteAction</A></samp></TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemSelectFileTypesDialog.html">SystemSelectFileTypesDialog</A></samp></TD>
-			<TD>Presents a dialog listing all the file types defined in the eclipse File Associations preferences page, and 
+			<TD><samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemSelectFileTypesDialog.html">SystemSelectFileTypesDialog</A></samp></TD>
+			<TD>Presents a dialog listing all the file types defined in the eclipse File Associations preferences page, and
 			allows the user to select one or more of these types, or enter additional types not defined in eclipse.</TD>
 			<TD align="center"><A href="selectTypesDialog.gif">Sample image</A></TD>
-			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/actions/SystemSelectFileTypesAction.html">SystemSelectFileTypesAction</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/ui/actions/SystemSelectFileTypesAction.html">SystemSelectFileTypesAction</A></samp></TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemSimpleSelectDialog.html">SystemSimpleSelectDialog</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemSimpleSelectDialog.html">SystemSimpleSelectDialog</A></samp></TD>
 			<TD>Eclipse has a CheckboxTreeViewer that is designed to allow the user to select multiple items from a hierarchical model.
 			This is a nice viewer, but very difficult to program to, as you have to handle reflecting the state of the selected children
 			for each parent node yourself. This dialog makes that trivial. The trick is to create wrappers of your model objects using
-			<samp><A href="../../../com/ibm/etools/systems/core/ui/dialogs/SystemSimpleContentElement.html">SystemSimpleContentElement</A></samp>, maintaining the parent/child hierarchy, and pass the root element to the dialog. The rest is 
+			<samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemSimpleContentElement.html">SystemSimpleContentElement</A></samp>, maintaining the parent/child hierarchy, and pass the root element to the dialog. The rest is
 			done for you, and the result is the selected state set for those elements selected by the user. Note this can also be used
 			as a simple flat list checkbox selection dialog, just by passing a non-visible root with a flat list of children.</TD>
 			<TD align="center"><A href="simpleSelectDialog.gif">Sample image</A></TD>
@@ -151,13 +151,13 @@ development and test effort. All these dialogs are in package <samp><A href="../
 
 	</TBODY>
 </TABLE>
-<P><BR>While the dialogs can be instantiated directly, it is perhaps best to use them by instantiating their action class, and calling the run method on it. 
-The action classes are all in <samp><A href="../../../com/ibm/etools/systems/core/ui/actions/package-summary.html">com.ibm.etools.systems.core.ui.actions</A></samp> package.
+<P><BR>While the dialogs can be instantiated directly, it is perhaps best to use them by instantiating their action class, and calling the run method on it.
+The action classes are all in <samp><A href="../../../org/eclipse/rse/ui/actions/package-summary.html">org.eclipse.rse.ui.actions</A></samp> package.
 </P>
 
-<P>In addition to these universal dialogs, there are dialogs specific to the Files subsystem supplied by IBM. These enable selection 
-of remote files or folders. They can be found in the <A href="../../../com/ibm/etools/systems/files/ui/dialogss/package-summary.html">
-com.ibm.etools.systems.files.ui.dialogs</A> package.
+<P>In addition to these universal dialogs, there are dialogs specific to the Files subsystem supplied by IBM. These enable selection
+of remote files or folders. They can be found in the <A href="../../../org/eclipse/rse/files/ui/dialogss/package-summary.html">
+org.eclipse.rse.files.ui.dialogs</A> package.
 </p>
 <TABLE border="1">
 	<TBODY>
@@ -168,14 +168,14 @@ com.ibm.etools.systems.files.ui.dialogs</A> package.
 			<TH>Action</TH>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../com/ibm/etools/systems/files/ui/dialogs/SystemSelectRemoteFileOrFolderDialog.html">SystemSelectRemoteFileOrFolderDialog</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/files/ui/dialogs/SystemSelectRemoteFileOrFolderDialog.html">SystemSelectRemoteFileOrFolderDialog</A></samp></TD>
 			<TD>Allows users to select a remote file, or folder (configurable) using a dialog similar to what is used in Eclipse for local file or
 			folder selection. Can be configured to allow user to select from any existing connection, or to be scoped to a particular connection,
 			or even a particular folder in a particular connection.
 			</TD>
 			<TD align="center"><A href="browseFolderDialog.gif">Sample image</A></TD>
-			<TD><samp><A href="../../../com/ibm/etools/systems/files/ui/actions/SystemSelectRemoteFileAction.html">SystemSelectRemoteFileAction</A></samp> or
-			    <samp><A href="../../../com/ibm/etools/systems/files/ui/actions/SystemSelectRemoteFolderAction.html">SystemSelectRemoteFolderAction</A></samp></TD>
+			<TD><samp><A href="../../../org/eclipse/rse/files/ui/actions/SystemSelectRemoteFileAction.html">SystemSelectRemoteFileAction</A></samp> or
+			    <samp><A href="../../../org/eclipse/rse/files/ui/actions/SystemSelectRemoteFolderAction.html">SystemSelectRemoteFolderAction</A></samp></TD>
 		</TR>
 	</TBODY>
 </TABLE>

@@ -11,32 +11,32 @@
 
 <body bgcolor="#ffffff">
 <h1>Plugging In SubSystems</h1>
-<p>The <samp><A href="../../doc/org_eclipse_rse_ui_subsystemfactory.html">com.ibm.etools.systems.core.subsystemfactory</a></samp> 
-extension point is defined in the plugin <samp>com.ibm.etools.systems.core</samp>. 
+<p>The <samp><A href="../../doc/org_eclipse_rse_ui_subsystemConfiguration.html">org.eclipse.rse.ui.subsystemConfiguration</a></samp>
+extension point is defined in the plugin <samp>org.eclipse.rse.ui</samp>.
 This is the most complex extension point to use, but also the most powerful. It enables
 tool providers to register a class that creates subsystem objects, which appear under
-a connection when a connection is expanded in the Remote Systems view. 
-For example, <A href="RSView_iSeries.gif">here is an iSeries connection</A> with four subsystems, 
-each created by a subsystem factory registered with this extension point.
+a connection when a connection is expanded in the Remote Systems view.
+For example, <A href="RSView_iSeries.gif">here is an iSeries connection</A> with four subsystems,
+each created by a subsystem configuration registered with this extension point.
 </p>
-<p>The <A href="../../doc/org_eclipse_rse_ui_subsystemfactory.html">extension markup</A> is quite simple for this extension point, 
-as it has only one element, <b><samp>&lt;factory&gt;</samp></b>, with only a few simple attributes to supply:
+<p>The <A href="../../doc/org_eclipse_rse_ui_subsystemConfiguration.html">extension markup</A> is quite simple for this extension point,
+as it has only one element, <b><samp>&lt;configuration&gt;</samp></b>, with only a few simple attributes to supply:
 </p>
 <ul>
 <li><b>id</b>. Unique id for the extension, as required for all extensions. However, in this case it is used to create
 folders within the <samp>RemoteSystemsConnections</samp> project, where all Remote Systems Explorer data is stored.
-There is also a way to <A href="../../com/ibm/etools/systems/model/SystemRegistry.html#getSubSystemFactory(java.lang.String)">query</A> a subsystem factory 
-object via its ID.<li><b>vendor</b>. Your company name, shown in properties dialog for subsystems created by this subsystem factory.
-<li><b>icon</b>. The icon displayed in the Remote Systems view for each subsystem created by this subsystem factory.
-<li><b>iconlive</b>. The icon used when the subsystem is physically connected to its remote system. 
-<li><b>name</b>. The name displayed in the Remote Systems view for each subsystem created by this subsystem factory.
-<li><b>systemtypes</b>. A semi-colon separated list of system types which this subsystem factory supports. When a user creates a
-connection, this factory will only be asked to create a subsystem for connections to systems of these types. The default is all
+There is also a way to <A href="../../org/eclipse/rse/model/ISystemRegistry.html#getSubSystemConfiguration(java.lang.String)">query</A> a subsystem configuration
+object via its ID.<li><b>vendor</b>. Your company name, shown in properties dialog for subsystems created by this subsystem configuration.
+<li><b>icon</b>. The icon displayed in the Remote Systems view for each subsystem created by this subsystem configuration.
+<li><b>iconlive</b>. The icon used when the subsystem is physically connected to its remote system.
+<li><b>name</b>. The name displayed in the Remote Systems view for each subsystem created by this subsystem configuration.
+<li><b>systemtypes</b>. A semi-colon separated list of system types which this subsystem configuration supports. When a user creates a
+connection, this configuration will only be asked to create a subsystem for connections to systems of these types. The default is all
 system types.
 <li><b>category</b>. A name used to categorize this subsystem's functionality. Used by the <A href="popup.html">popupMenus</A>
-and <A href="propertypage.html">propertyPages</A> extension points to allow actions and property pages to be scoped to 
+and <A href="propertypage.html">propertyPages</A> extension points to allow actions and property pages to be scoped to
 resources shown in subsystems of a particular category. Multiple subsystems can have the same category.
-<li><b>class</b>. A class implementing <A href="../../com/ibm/etools/systems/subsystems/SubSystemFactory.html">SubSystemFactory</A> 
+<li><b>class</b>. A class implementing <A href="../../org/eclipse/rse/core/subsystems/ISubSystemConfiguration.html">ISubSystemConfiguration</A>
 interface, as described in the following programming details section.
 </ul>
 
@@ -44,36 +44,36 @@ interface, as described in the following programming details section.
 <h2>Programming Details</h2>
 <p>It is important to remember what the purpose of a subsystem is, and how it fits in the overall RSE <A
 	href="../Model.html">model</A>, so as to understand the programming details for supporting
-subsystems via this subsystem factory extension point. Minimumly speaking, this extension point requires a class that implements the interface
-<samp><A href="../../com/ibm/etools/systems/subsystems/SubSystemFactory.html"><B>SubSystemFactory</B></A></samp>. 
-Ultimately, the intent of a subsystem <I>factory</I> is to provide individual
-subsystem <I>instances</I> to each connection, and the intent of a subsystem instance is to present remote resources for display or manipulation purposes. Thus, you must also create a class implementing the interface <samp><A href="../../com/ibm/etools/systems/subsystems/SubSystem.html"><B>SubSystem</B></A></samp>.
+subsystems via this subsystem configuration extension point. Minimally speaking, this extension point requires a class that implements the interface
+<samp><A href="../../org/eclipse/rse/core/subsystems/ISubSystemFactory.html"><B>ISubSystemFactory</B></A></samp>.
+Ultimately, the intent of a subsystem <I>configuration</I> is to provide individual
+subsystem <I>instances</I> to each connection, and the intent of a subsystem instance is to present remote resources for display or manipulation purposes. Thus, you must also create a class implementing the interface <samp><A href="../../org/eclipse/rse/core/subsystems/ISubSystem.html"><B>ISubSystem</B></A></samp>.
 <BR>
-The intent of each subsystem is to show remote resources from the remote system 
-identified by the parent connection, for the user. (Subsystems can in fact be hidden, which means their their role is to return remote resources for programmatic purposes only.)   When the first request is made for remote objects, the subsystem is asked to connect to the remote system if it is not already. 
-This job is deferred to a <A href="../../com/ibm/etools/systems/subsystems/ISystem.html">system</A> object whose role it is to manage connecting and disconnecting 
-to the remote physical system. By use of a <A href="../../com/ibm/etools/systems/subsystems/impl/AbstractSystemManager.html">system manager</a>, 
-one system can manage the live connections of multiple subsystems in the same system connection, should they happen to share the same communication pipe. 
-If filters are <A href="../../com/ibm/etools/systems/subsystems/SubSystemFactory.html#supportsFilters()">supported</A>
-(the default), the first connection is made, and the remote resources are subsequently shown, when filters within the subsystem 
-are expanded, which results in a call to 
-<samp><A href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemImpl.html#internalResolveFilterString(org.eclipse.core.runtime.IProgressMonitor, java.lang.String)">resolveFilterString</A></samp>
+The intent of each subsystem is to show remote resources from the remote system
+identified by the parent connection, for the user. (Subsystems can in fact be hidden, which means their their role is to return remote resources for programmatic purposes only.)   When the first request is made for remote objects, the subsystem is asked to connect to the remote system if it is not already.
+This job is deferred to a <A href="../../org/eclipse/rse/core/subsystems/IConnectorService.html">IConnectorService</A> object whose role it is to manage connecting and disconnecting
+to the remote physical system. By use of a <A href="../../org/eclipse/rse/core/subsystems/AbstractConnectorServiceManager.html">connector service manager</a>,
+one system can manage the live connections of multiple subsystems in the same system connection, should they happen to share the same communication pipe.
+If filters are <A href="../../org/eclipse/rse/core/subsystems/ISubSystemConfiguration.html#supportsFilters()">supported</A>
+(the default), the first connection is made, and the remote resources are subsequently shown, when filters within the subsystem
+are expanded, which results in a call to
+<samp><A href="../../org/eclipse/rse/subsystems/files/core/subsystems/RemoteFileSubSystem.html#internalResolveFilterString(org.eclipse.core.runtime.IProgressMonitor, java.lang.String)">resolveFilterString</A></samp>
 in the subsystem object. <BR>
-Furthermore, you will want to supply your own 
+Furthermore, you will want to supply your own
 <B><A
-	href="../../com/ibm/etools/systems/filters/ui/actions/SystemNewFilterAction.html">new-filter</A></B> and 
-<A href="../../com/ibm/etools/systems/filters/ui/actions/SystemChangeFilterAction.html"><B>change-filter</B></A> actions.  
-If filters are not supported, then these remote resources are shown immediately when the subsystem itself is expanded, via a call to 
-<samp><A href="../../com/ibm/etools/systems/subsystems/SubSystem.html#getChildren()">getChildren</A></samp>. 
-Either way the resulting resources are displayed to the user. To facilitate the displaying of these objects in the RSE views, the objects 
-themselves must implement the Eclipse IAdaptable interface (to enable the property sheet viewer) and there must be a specific RSE 
+	href="../../org/eclipse/rse/filters/ui/actions/SystemNewFilterAction.html">new-filter</A></B> and
+<A href="../../org/eclipse/rse/filters/ui/actions/SystemChangeFilterAction.html"><B>change-filter</B></A> actions.
+If filters are not supported, then these remote resources are shown immediately when the subsystem itself is expanded, via a call to
+<samp><A href="../../org/eclipse/rse/core/subsystems/ISubSystem.html#getChildren()">getChildren</A></samp>.
+Either way the resulting resources are displayed to the user. To facilitate the displaying of these objects in the RSE views, the objects
+themselves must implement the Eclipse IAdaptable interface (to enable the property sheet viewer) and there must be a specific RSE
 <B><A
-	href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html">view
+	href="../../org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html">view
 adapter</A></B>
 and an RSE <B><A
 	href="../../org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html">remote-information
 adapter</A></B>
-registered for the remote objects, which the RSE views consult to get the labels, images, actions, 
+registered for the remote objects, which the RSE views consult to get the labels, images, actions,
 and property sheet values for the remote objects.
 Typically, you will supply actions by leveraging the <A
 	href="../api/uiAPI.html">user interface elements</A> supplied by the RSE, such as base classes for <A
@@ -82,7 +82,7 @@ Typically, you will supply actions by leveraging the <A
 	href="../api/dialogs/uiDialogsAPI.html">dialogs</A>, <A
 	href="../api/wizards/uiWizardsAPI.html">wizards</A>, <A
 	href="../api/properties/uiPropertiesAPI.html">property pages</A> and <A
-	href="../api/preferences/uiPreferencesAPI.html">preference page editors</A>. You will probably also supply a 
+	href="../api/preferences/uiPreferencesAPI.html">preference page editors</A>. You will probably also supply a
 	property page for your subsystem objects, via the Eclipse <samp>propertyPages</samp> extension point, and for your remote resource objects, via the RSE <A
 	href="propertypage.html">propertyPages</A> extension point.</p>
 
@@ -99,26 +99,26 @@ following summarizes the minimum set of classes you will be creating in order to
 			<TH>Description</TH>
 		</TR>
 		<TR>
-			<TD>subsystem factory</TD>
-			<TD><samp><A href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemFactoryImpl.html">DefaultSubSystemFactoryImpl</A></samp></TD>
+			<TD>subsystem configuration</TD>
+			<TD><samp><A href="../../org/eclipse/rse/core/subsystems/SubSystemConfiguration.html">SubSystemConfiguration</A></samp></TD>
 			<TD>The factory class responsible for creating instances of subsystem class</TD>
 		</TR>
 		<TR>
 			<TD>subsystem</TD>
-			<TD><samp><A href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemImpl.html">DefaultSubSystemImpl</A></samp></TD>
-			<TD>The subsystem class. There will be one instance created for each connection. In addition to storing 
-			your unique attributes, this must return the remote resource objects when a filter is expanded within the 
+			<TD><samp><A href="../../org/eclipse/rse/core/subsystems/SubSystem.html">SubSystem</A></samp></TD>
+			<TD>The subsystem class. There will be one instance created for each connection. In addition to storing
+			your unique attributes, this must return the remote resource objects when a filter is expanded within the
 			subsystem. How that communication with the remote system is done is left up to you.</TD>
 		</TR>
 		<TR>
 			<TD>system</TD>
-			<TD><samp><A href="../../com/ibm/etools/systems/subsystems/impl/AbstractSystem.html">AbstractSystem</A></samp></TD>
+			<TD><samp><A href="../../org/eclipse/rse/core/subsystems/AbstractConnectorService.html">AbstractConnectorService</A></samp></TD>
 			<TD>Represents and manages a live connection to the remote system, doing the connecting and disconnecting.</TD>
 		</TR>
 		<TR>
 			<TD>system manager</TD>
-			<TD><samp><A href="../../com/ibm/etools/systems/subsystems/impl/AbstractSystemManager.html">AbstractSystemManager</A></samp></TD>
-			<TD>Manages a single system instance that is shared among multiple subsystems in a single connection. Even if you only have a single subsystem factory, it is useful to use this in 
+			<TD><samp><A href="../../org/eclipse/rse/core/subsystems/AbstractConnectorServiceManager.html">AbstractConnectorServiceManager</A></samp></TD>
+			<TD>Manages a single system instance that is shared among multiple subsystems in a single connection. Even if you only have a single subsystem configuration it is useful to use this in
 			case you later add additional factories, and their subsystems share the same communication pipe. To enable this, all your subsystem classes need to implement a unique interface of your own creation.</TD>
 		</TR>
 		<TR>
@@ -128,8 +128,8 @@ following summarizes the minimum set of classes you will be creating in order to
 		</TR>
 		<TR>
 			<TD>new-filter wizard</TD>
-			<TD><samp><A href="../../com/ibm/etools/systems/filters/ui/actions/SystemNewFilterAction.html">SystemNewFilterAction</A></samp> and 
-			<samp><A href="../../com/ibm/etools/systems/filters/ui/SystemFilterStringEditPane.html">SystemFilterStringEditPane</A></samp></TD>
+			<TD><samp><A href="../../org/eclipse/rse/ui/filters/actions/SystemNewFilterAction.html">SystemNewFilterAction</A></samp> and
+			<samp><A href="../../org/eclipse/rse/ui/filters/SystemFilterStringEditPane.html">SystemFilterStringEditPane</A></samp></TD>
 			<TD>Displays a wizard prompting for a new filter. Filters contain filter strings, which are up to each subsystem to design and interpret. The New Filter wizard
 			prompts for a single filter string (more can be added in change mode). Typically you subclass <samp>SystemFilterStringEditPane</samp> to create your own
 			prompt for the filter string information, and then subclass <samp>SystemNewFilterAction</samp> so as to configure the default New Filter wizard to use
@@ -137,15 +137,15 @@ following summarizes the minimum set of classes you will be creating in order to
 		</TR>
 		<TR>
 			<TD>change-filter dialog</TD>
-			<TD><samp><A href="../../com/ibm/etools/systems/filters/ui/actions/SystemChangeFilterAction.html">SystemChangeFilterAction</A></samp> and 
-			<samp><A href="../../com/ibm/etools/systems/filters/ui/SystemFilterStringEditPane.html">SystemFilterStringEditPane</A></samp></TD>
+			<TD><samp><A href="../../org/eclipse/rse/ui/filters/actions/SystemChangeFilterAction.html">SystemChangeFilterAction</A></samp> and
+			<samp><A href="../../org/eclipse/rse/ui/filters/SystemFilterStringEditPane.html">SystemFilterStringEditPane</A></samp></TD>
 			<TD>Displays a dialog prompting to change an existing filter. The default dialog allows the user to create and edit filter strings. Typically, you
 			override the <samp>SystemChangeFilterAction</samp> class, and configure the dialog to use the same edit pane used in the New Filter wizard.
             </TD>
 		</TR>
 		<TR>
 			<TD>remote element adapter</TD>
-			<TD><samp><A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html">AbstractSystemViewAdapter</A></samp> and
+			<TD><samp><A href="../../org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html">AbstractSystemViewAdapter</A></samp> and
 			    <samp><A href="../../org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html">ISystemRemoteElementAdapter</A></samp>
 			</TD>
 			<TD>The view adapter is an amalgamation of all the required information needed to populate the RSE views. You will define one class per unique remote object interface or class, and in it you will override methods to return the remote object's label, image, popup-menu actions, property sheet properties and children (if expandable). You can also decide whether to enable common RSE popup menu actions like rename, delete and refresh. <BR>Your view adapter will usually also implement the remote adapter interface, enabling the many common RSE capabilities to work, such as the copy, paste, drag and drop, and more. </TD>
@@ -157,42 +157,42 @@ following summarizes the minimum set of classes you will be creating in order to
 <p>Implementing a subsystem involves the following steps, in the following order:</p>
 <OL>
   <li>Creating an interface for your subsystem. It can, and often is, an empty interface.</li>
-  <li>Creating a subclass of <A href="../../com/ibm/etools/systems/subsystems/impl/AbstractSystem.html">AbstractSystem</A>. 
+  <li>Creating a subclass of <A href="../../org/eclipse/rse/core/subsystems/AbstractConnectorService.html">AbstractConnectorService</A>.
       The code here will interact as necessary with your subsystem to manage the live connection to the remote system.</li>
-  <li>Creating a subclass of <A href="../../com/ibm/etools/systems/subsystems/impl/AbstractSystemManager.html">AbstractSystemManager</A>. 
+  <li>Creating a subclass of <A href="../../org/eclipse/rse/core/subsystems/AbstractConnectorServiceManager.html">AbstractConnectorServiceManager</A>.
       The code here will re-use the same system object from step 2 for all subsystems that implement the interface from step 1, within the same connection.</li>
   <li>Designing the classes to represent the remote resources (your <i>model</i>) that you will show from your subsystem.
       Each must implement the <samp>org.eclipse.core.runtime.IAdaptable</samp> interface from Eclipse.
       It is also very helpful if they also maintain a reference to the subsystem which created them. The base class
       <A href="../../org/eclipse/rse/ui/subsystems/impl/AbstractResource.html">AbstractResource</A> is offered to help with this.</li>
-  <li>Designing the syntax of the <i>filter string</i> that will be used as a pattern to tell your subsystem what resources to show. For example, for files this might be of the  
+  <li>Designing the syntax of the <i>filter string</i> that will be used as a pattern to tell your subsystem what resources to show. For example, for files this might be of the
          form "path/generic-name /options". It is the job of your subsystem to interpret these strings and return a list of remote resources matching the
          criteria capturing in the string. You will eventually design a user interface to prompt the user for one the
          contents of one of these filter strings. You might find it helps to create a class that holds one of these filter strings passed via a constructor, and
          can parse it into its constituent pieces via getter methods. It should also support a default constructor and setting of constituent pieces via setter methods,
-         and the generation of the filter string via toString(). 
+         and the generation of the filter string via toString().
    </li>
-  <li>Creating a subclass of <A href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemImpl.html">DefaultSubSystemImpl</A> 
+  <li>Creating a subclass of <A href="../../org/eclipse/rse/core/subsystems/SubSystem.html">SubSystem</A>
       that implements the interface you designed in step 1. This will:
       <ul>
-       <li>return a singleton instance of the system manager from step 3 in its <A href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemImpl.html#getSystemManager()">getSystemManager</A> method,
-       <li>manage persistent properties via calls to the inherited <A href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemImpl.html#setVendorAttribute(java.lang.String, java.lang.String, java.lang.String)">setVendorAttribute</A> 
-       and <A href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemImpl.html#getVendorAttribute(java.lang.String, java.lang.String)">getVendorAttribute</A> methods,
-       <li>use your communications layer to return instances of your model objects in its <A href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemImpl.html#internalResolveFilterString(org.eclipse.core.runtime.IProgressMonitor, java.lang.String)">internalResolveFilterString</A> method. 
+       <li>return a singleton instance of the system manager from step 3 in its <A href="../../org/eclipse/rse/core/subsystems/SubSystem.html#getSystemManager()">getSystemManager</A> method,
+       <li>manage persistent properties via calls to the inherited <A href="../../org/eclipse/rse/core/subsystems/SubSystem.html#setVendorAttribute(java.lang.String, java.lang.String, java.lang.String)">setVendorAttribute</A>
+       and <A href="../../org/eclipse/rse/core/subsystems/SubSystem.htmll#getVendorAttribute(java.lang.String, java.lang.String)">getVendorAttribute</A> methods,
+       <li>use your communications layer to return instances of your model objects in its <A href="../../org/eclipse/rse/core/subsystems/SubSystem.html.html#internalResolveFilterString(org.eclipse.core.runtime.IProgressMonitor, java.lang.String)">internalResolveFilterString</A> method.
        The input to this is one or more strings such as you designed in step 5. It will return all remote resources matching the criteria captured in the input filter string.
-       You may also find the <A href="../../com/ibm/etools/systems/core/clientserver/NamePatternMatcher.html">com.ibm.etools.systems.core.clientserver.NamePatternMatcher</a>
+       You may also find the <A href="../../org/eclipse/rse/services/clientserver/NamePatternMatcher.html">org.eclipse.rse.services.clientserver.NamePatternMatcher</a>
        class to be handy in comparing a generic pattern to a particular input. This class is in the <samp>runtime/clientserver.jar</samp> file,
        and has no eclipse-dependencies, so it can be used in your client subsystem code, or your server-side code.
       </ul>
    </li>
-  <li>Creating a subclass of <A href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemFactoryImpl.html">DefaultSubSystemFactoryImpl.</A></li>
-  <li>Defining your <A href="../../doc/org_eclipse_rse_ui_subsystemfactory.html">subsystemfactory extension</a> in your <samp>plugin.xml</samp> file.</li>
-  <li>For each remote resource class you created in step 4, you need to create an adapter class, which extends 
-      <A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html">AbstractSystemViewAdapter</A> and which
+  <li>Creating a subclass of <A href="../../org/eclipse/rse/core/subsystems/SubSystemConfiguration.html">DefaultSubSystemFactoryImpl.</A></li>
+  <li>Defining your <A href="../../doc/org_eclipse_rse_ui_subsystemConfiguration.html">subsystemConfiguration extension</a> in your <samp>plugin.xml</samp> file.</li>
+  <li>For each remote resource class you created in step 4, you need to create an adapter class, which extends
+      <A href="../../org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html">AbstractSystemViewAdapter</A> and which
       implements <A href="../../org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html">ISystemRemoteElementAdapter</A>.
   </li>
   <li>Register your adapters with the platform. First you create an
-      adapter class that extends <samp><a href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemRemoteAdapterFactory.html">AbstractSystemRemoteAdapterFactory</a></samp> 
+      adapter class that extends <samp><a href="../../org/eclipse/rse/ui/view/AbstractSystemRemoteAdapterFactory.html">AbstractSystemRemoteAdapterFactory</a></samp>
       and implements interface <samp><b>org.eclipse.core.runtime.IAdapterFactory</b></samp>. Next,
       in the <samp>startup()</samp> method of your plugin class, add code to instantiate the class and register the object with
       the platform adapter manager, once for each class in your resource model. For example:
@@ -204,37 +204,37 @@ following summarizes the minimum set of classes you will be creating in order to
       </samp>
   </li>
   <li>If your filter string from step 5 is complicated enough, you will probably find the
-  RSE-supplied <a href="NewFilterWizard_Default.gif">filter wizard</a> and 
+  RSE-supplied <a href="NewFilterWizard_Default.gif">filter wizard</a> and
   <a href="ChangeFilterDialog_Default.gif">change-dialog</a> insufficient. The idea with these is that the
   New Filter wizard prompts in its first page for a single filter string. The change dialog
   allows the user to change that single filter string, or add additional filter strings. To
   change these for your subsystem, you need to:
     <ol>
-      <li type="i">Create your own 
-            <a href="../../com/ibm/etools/systems/filters/ui/SystemFilterStringEditPane.html">filter string edit pane</a>
+      <li type="i">Create your own
+            <a href="../../org/eclipse/rse/ui/filters/SystemFilterStringEditPane.html">filter string edit pane</a>
             subclass that contains your own GUI prompts as desired.
-      <li type="i">Create your own 
-            <a href="../../com/ibm/etools/systems/filters/ui/actions/SystemNewFilterAction.html">new-filter wizard action</a>
-            subclass, and configure it to use your own edit pane subclass by overriding 
-            <samp><a href="../../com/ibm/etools/systems/filters/ui/actions/SystemNewFilterAction.html#configureNewFilterWizard(com.ibm.etools.systems.filters.ui.dialogs.SystemNewFilterWizard)">configureNewFilterWizard</a></samp> 
-            and in it calling <samp><a href="../../com/ibm/etools/systems/filters/ui/dialogs/SystemNewFilterWizard.html#setFilterStringEditPane(com.ibm.etools.systems.filters.ui.SystemFilterStringEditPane)">setFilterStringEditPane</a></samp>
+      <li type="i">Create your own
+            <a href="../../org/eclipse/rse/ui/filters/actions/SystemNewFilterAction.html">new-filter wizard action</a>
+            subclass, and configure it to use your own edit pane subclass by overriding
+            <samp><a href="../../org/eclipse/rse/ui/filters/actions/SystemNewFilterAction.html#configureNewFilterWizard(org.eclipse.rse.ui.filters.dialogs.SystemNewFilterWizard)">configureNewFilterWizard</a></samp>
+            and in it calling <samp><a href="../../org/eclipse/rse/ui/filters/dialogs/SystemNewFilterWizard.html#setFilterStringEditPane(org.eclipse.rse.ui.filters.SystemFilterStringEditPane)">setFilterStringEditPane</a></samp>
             on the given wizard.
-      <li type="i">Create your own 
-            <a href="../../com/ibm/etools/systems/filters/ui/actions/SystemChangeFilterAction.html">change-filter action</a>
-            subclass, and configure it to use your own edit pane subclass by overriding 
-            <samp><a href="../../com/ibm/etools/systems/filters/ui/actions/SystemChangeFilterAction.html#configureFilterDialog(com.ibm.etools.systems.filters.ui.dialogs.SystemChangeFilterDialog)">configureFilterDialog</a></samp> 
-            and in it calling <samp><a href="../../com/ibm/etools/systems/filters/ui/dialogs/SystemChangeFilterDialog.html#setFilterStringEditPane(com.ibm.etools.systems.filters.ui.SystemFilterStringEditPane)">setFilterStringEditPane</a></samp>
+      <li type="i">Create your own
+            <a href="../../org/eclipse/rse/ui/filters/actions/SystemChangeFilterAction.html">change-filter action</a>
+            subclass, and configure it to use your own edit pane subclass by overriding
+            <samp><a href="../../org/eclipse/rse/ui/filters/actions/SystemChangeFilterAction.html#configureFilterDialog(org.eclipse.rse.ui.filters.dialogs.SystemChangeFilterDialog)">configureFilterDialog</a></samp>
+            and in it calling <samp><a href="../../org/eclipse/rse/ui/filters/dialogs/SystemChangeFilterDialog.html#setFilterStringEditPane(org.eclipse.rse.ui.filters.SystemFilterStringEditPane)">setFilterStringEditPane</a></samp>
             on the given dialog.
-      <li type="i">Override the <samp><a href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemFactoryImpl.html#getNewFilterPoolFilterAction(com.ibm.etools.systems.filters.SystemFilterPool, org.eclipse.swt.widgets.Shell)">getNewFilterPoolFilterAction(SystemFilterPool, Shell)</a></samp>
-            method in your subsystem factory, to return an instance of your new-filter action. 
+      <li type="i">Override the <samp><a href="../../org/eclipse/rse/ui/view/SubSystemFactoryAdapter.html#getNewFilterPoolFilterAction(org.eclipse.rse.filters.ISystemFilterPool, org.eclipse.swt.widgets.Shell)">getNewFilterPoolFilterAction(SystemFilterPool, Shell)</a></samp>
+            method in your subsystem factory, to return an instance of your new-filter action.
             You can actually avoid creating an action subclass if you choose, by calling the configuration methods
-            in the RSE-supplied <a href="../../com/ibm/etools/systems/filters/ui/actions/SystemNewFilterAction.html">new-filter action class</a>.
-      <li type="i">Override the <samp><a href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemFactoryImpl.html#getChangeFilterAction(com.ibm.etools.systems.filters.SystemFilter, org.eclipse.swt.widgets.Shell)">getChangeFilterAction(SystemFilter, Shell)</a></samp>
+            in the RSE-supplied <a href="../../org/eclipse/rse/ui/filters/actions/SystemNewFilterAction.html">new-filter action class</a>.
+      <li type="i">Override the <samp><a href="../../org/eclipse/rse/ui/view/SubSystemFactoryAdapter.html#getChangeFilterAction(org.eclipse.rse.filters.ISystemFilter, org.eclipse.swt.widgets.Shell)">getChangeFilterAction(SystemFilter, Shell)</a></samp>
             method in your subsystem factory, to return an instance of your change-filter action.
             You can actually avoid creating an action subclass if you choose, by calling the configuration methods
-            in the RSE-supplied <a href="../../com/ibm/etools/systems/filters/ui/actions/SystemChangeFilterAction.html">change-filter action class</a>.
+            in the RSE-supplied <a href="../../org/eclipse/rse/ui/filters/actions/SystemChangeFilterAction.html">change-filter action class</a>.
     </ol>
-  </li>  
+  </li>
 </OL>
 
 <br><hr>

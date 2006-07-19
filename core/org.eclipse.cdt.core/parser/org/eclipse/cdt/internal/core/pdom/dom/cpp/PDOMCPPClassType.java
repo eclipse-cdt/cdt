@@ -11,6 +11,11 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -25,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
@@ -40,9 +46,10 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 		ICPPClassScope {
 
-	private static final int KEY = PDOMMemberOwner.RECORD_SIZE + 0; // byte
+	private static final int FIRSTBASE = PDOMMemberOwner.RECORD_SIZE + 0;
+	private static final int KEY = PDOMMemberOwner.RECORD_SIZE + 4; // byte
 
-	protected static final int RECORD_SIZE = PDOMMemberOwner.RECORD_SIZE + 1;
+	protected static final int RECORD_SIZE = PDOMMemberOwner.RECORD_SIZE + 5;
 
 	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, IASTName name)
 			throws CoreException {
@@ -67,6 +74,22 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 		return PDOMCPPLinkage.CPPCLASSTYPE;
 	}
 
+	public PDOMCPPBase getFirstBase() throws CoreException {
+		int rec = pdom.getDB().getInt(record + FIRSTBASE);
+		return rec != 0 ? new PDOMCPPBase(pdom, rec) : null;
+	}
+
+	private void setFirstBase(PDOMCPPBase base) throws CoreException {
+		int rec = base != null ? base.getRecord() : 0;
+		pdom.getDB().putInt(record + FIRSTBASE, rec);
+	}
+	
+	public void addBase(PDOMCPPBase base) throws CoreException {
+		PDOMCPPBase firstBase = getFirstBase();
+		base.setNextBase(firstBase);
+		setFirstBase(base);
+	}
+	
 	public boolean isSameType(IType type) {
 		if (type instanceof PDOMBinding)
 			return record == ((PDOMBinding)type).getRecord();
@@ -82,14 +105,50 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 	public IField findField(String name) throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
-
+	
+	private void visitAllDeclaredMethods(Set visited, List methods) throws CoreException {
+		if (visited.contains(this))
+			return;
+		visited.add(this);
+		
+		// Get my members
+		for (PDOMMember member = getFirstMember(); member != null; member = member.getNextMember()) {
+			if (member instanceof ICPPMethod)
+				methods.add(member);
+		}
+		
+		// Visit my base classes
+		for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase()) {
+			IBinding baseClass = base.getBaseClass();
+			if (baseClass != null && baseClass instanceof PDOMCPPClassType)
+				((PDOMCPPClassType)baseClass).visitAllDeclaredMethods(visited, methods);
+		}
+	}
+	
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
-		throw new PDOMNotImplementedError();
+		List methods = new ArrayList();
+		Set visited = new HashSet();
+		try {
+			visitAllDeclaredMethods(visited, methods);
+			return (ICPPMethod[])methods.toArray(new ICPPMethod[methods.size()]);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new ICPPMethod[0];
+		}
 	}
 
 	public ICPPBase[] getBases() throws DOMException {
-		// TODO
-		return new ICPPBase[0];
+		try {
+			List list = new ArrayList();
+			for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase())
+				list.add(base);
+			ICPPBase[] bases = (ICPPBase[])list.toArray(new ICPPBase[list.size()]);
+			ArrayUtil.reverse(bases);
+			return bases;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new ICPPBase[0];
+		}
 	}
 
 	public ICPPConstructor[] getConstructors() throws DOMException {

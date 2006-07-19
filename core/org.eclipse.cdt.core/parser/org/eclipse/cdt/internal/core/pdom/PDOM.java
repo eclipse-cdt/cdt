@@ -54,7 +54,7 @@ public class PDOM extends PlatformObject
 
 	private Database db;
 	
-	public static final int VERSION = 8;
+	public static final int VERSION = 9;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
@@ -64,6 +64,7 @@ public class PDOM extends PlatformObject
 	// 6 - function style macros.
 	// 7 - class key
 	// 8 - enumerators
+	// 9 - base classes
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;

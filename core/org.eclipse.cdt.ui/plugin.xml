@@ -1398,14 +1398,9 @@
        <triggerPoints>
           <or>
              <adapt type="org.eclipse.core.resources.IProject">
-                <or>
-                   <test
-                         property="org.eclipse.core.resources.projectNature"
-                         value="org.eclipse.cdt.core.cnature"/>
-                   <test
-                         property="org.eclipse.core.resources.projectNature"
-                         value="org.eclipse.cdt.core.ccnature"/>
-                </or>
+                <test
+                      property="org.eclipse.core.resources.projectNature"
+                      value="org.eclipse.cdt.core.cnature"/>
              </adapt>
              <instanceof value="org.eclipse.core.resources.IWorkspaceRoot"/>
              <instanceof value="org.eclipse.core.resources.IFolder" />
@@ -1461,6 +1456,14 @@
              <instanceof value="org.eclipse.cdt.core.model.ICElement"/>
           </enablement>
        </actionProvider>
+       <actionProvider
+             class="org.eclipse.cdt.internal.ui.navigator.CNavigatorRefactorActionProvider"
+             id="org.eclipse.cdt.ui.navigator.actions.refactor"
+             overrides="org.eclipse.ui.navigator.resources.actions.RefactorActions">
+          <enablement>
+             <adapt type="org.eclipse.core.resources.IResource"/>
+          </enablement>
+       </actionProvider>
 	   <commonWizard
 	         associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
 	         menuGroupId="org.eclipse.cdt.ui"
@@ -1470,14 +1473,9 @@
 					<or>
 						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
 			            <adapt type="org.eclipse.core.resources.IProject">
-			               <or>
-			                  <test
-			                        property="org.eclipse.core.resources.projectNature"
-			                        value="org.eclipse.cdt.core.cnature"/>
-			                  <test
-			                        property="org.eclipse.core.resources.projectNature"
-			                        value="org.eclipse.cdt.core.ccnature"/>
-			               </or>
+			               <test
+			                     property="org.eclipse.core.resources.projectNature"
+			                     value="org.eclipse.cdt.core.cnature"/>
 			            </adapt>
 					</or>
 		         </enablement>
@@ -1491,14 +1489,9 @@
 					<or>
 						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
 			            <adapt type="org.eclipse.core.resources.IProject">
-			               <or>
-			                  <test
-			                        property="org.eclipse.core.resources.projectNature"
-			                        value="org.eclipse.cdt.core.cnature"/>
-			                  <test
-			                        property="org.eclipse.core.resources.projectNature"
-			                        value="org.eclipse.cdt.core.ccnature"/>
-			               </or>
+			               <test
+			                     property="org.eclipse.core.resources.projectNature"
+			                     value="org.eclipse.cdt.core.cnature"/>
 			            </adapt>
 					</or>
 		         </enablement>
@@ -1512,14 +1505,9 @@
 					<or>
 						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
 			            <adapt type="org.eclipse.core.resources.IProject">
-			               <or>
-			                  <test
-			                        property="org.eclipse.core.resources.projectNature"
-			                        value="org.eclipse.cdt.core.cnature"/>
-			                  <test
-			                        property="org.eclipse.core.resources.projectNature"
-			                        value="org.eclipse.cdt.core.ccnature"/>
-			               </or>
+			               <test
+			                     property="org.eclipse.core.resources.projectNature"
+			                     value="org.eclipse.cdt.core.cnature"/>
 			            </adapt>
 					</or>
 		         </enablement>
@@ -1533,11 +1521,9 @@
 					<or>
 						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
 			            <adapt type="org.eclipse.core.resources.IProject">
-			               <or>
-			                  <test
-			                        property="org.eclipse.core.resources.projectNature"
-			                        value="org.eclipse.cdt.core.ccnature"/>
-			               </or>
+		                   <test
+		                         property="org.eclipse.core.resources.projectNature"
+		                         value="org.eclipse.cdt.core.ccnature"/>
 			            </adapt>
 					</or>
 		         </enablement>

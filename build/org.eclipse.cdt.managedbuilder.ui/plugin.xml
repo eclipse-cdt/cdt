@@ -227,18 +227,24 @@
         <actionSet id="org.eclipse.cdt.managedbuilder.ui.buildSelectedFilesActionSet"/>
      </perspectiveExtension>
   </extension>
+
+  <!-- Common Navigator extensions  -->
   <extension
         point="org.eclipse.ui.navigator.navigatorContent">
      <commonWizard
            associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
            menuGroupId="org.eclipse.cdt.ui.newCWizards"
            type="new"
-           wizardId="org.eclipse.cdt.managedbuilder.ui.wizards.StdCCWizard"/>
+           wizardId="org.eclipse.cdt.managedbuilder.ui.wizards.StdCCWizard">
+         <enablement/>
+      </commonWizard>
      <commonWizard
            associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
            menuGroupId="org.eclipse.cdt.ui.newCWizards"
            type="new"
-           wizardId="org.eclipse.cdt.managedbuilder.ui.wizards.StdCWizard"/>
+           wizardId="org.eclipse.cdt.managedbuilder.ui.wizards.StdCWizard">
+         <enablement/>
+      </commonWizard>
   </extension>
   <extension
         point="org.eclipse.ui.navigator.viewer">

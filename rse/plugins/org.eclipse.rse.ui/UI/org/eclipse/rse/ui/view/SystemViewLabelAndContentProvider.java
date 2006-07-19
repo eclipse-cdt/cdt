@@ -44,6 +44,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
+import org.eclipse.ui.progress.PendingUpdateAdapter;
 
 
 /**
@@ -181,14 +182,23 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	{
     	  	SystemBasePlugin.logWarning("ERROR: null passed to getAdapter in SystemViewLabelAndContentProvider");    	  
     	}
-
+    	else
     	{
-    	  	if (!(o instanceof IAdaptable)) 
-            	adapter = (ISystemViewElementAdapter)Platform.getAdapterManager().getAdapter(o,ISystemViewElementAdapter.class);
-          	else
+    	  	if (o instanceof IAdaptable)
+    	  	{ 
     	    	adapter = (ISystemViewElementAdapter)((IAdaptable)o).getAdapter(ISystemViewElementAdapter.class);
+    	  	}
+    	  	else
+    	  	{
+            	adapter = (ISystemViewElementAdapter)Platform.getAdapterManager().getAdapter(o,ISystemViewElementAdapter.class);
+    	  	}
     	  	if (adapter == null)
-    	    	SystemBasePlugin.logWarning("ADAPTER IS NULL FOR ELEMENT OF TYPE: " + o.getClass().getName());
+    	  	{
+    	  		if (!(o instanceof PendingUpdateAdapter))
+    	  		{
+        	    	SystemBasePlugin.logWarning("ADAPTER IS NULL FOR ELEMENT OF TYPE: " + o.getClass().getName());
+    	  		}
+    	  	}
     	}
     	if ((adapter!=null) && (viewer != null))
     	{    	

@@ -76,7 +76,11 @@ public class PDOMTypeReference implements ITypeReference {
 	}
 
 	public ITranslationUnit getTranslationUnit() {
-		return CoreModel.getDefault().createTranslationUnitFrom(project, path);
+		ICElement element = CoreModel.getDefault().create(path);
+		if (element != null && element instanceof ITranslationUnit)
+			return (ITranslationUnit)element;
+		else
+			return CoreModel.getDefault().createTranslationUnitFrom(project, path);
 	}
 
 	public IWorkingCopy getWorkingCopy() {

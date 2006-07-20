@@ -96,11 +96,6 @@ public class CSourceViewer extends ProjectionViewer implements ITextViewerExtens
 			IFile file = ResourceUtil.getFile(input);
 			if (file != null) {
 				contentType = CCorePlugin.getContentType(file.getProject(), file.getName());
-				try {
-					return LanguageManager.getInstance().getLanguage(contentType);
-				} catch (CoreException exc) {
-					CUIPlugin.getDefault().log(exc.getStatus());
-				}
 			} else if (input instanceof IPathEditorInput) {
 				IPath path = ((IPathEditorInput)input).getPath();
 				contentType = CCorePlugin.getContentType(path.lastSegment());

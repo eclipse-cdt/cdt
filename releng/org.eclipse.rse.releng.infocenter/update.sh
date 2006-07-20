@@ -41,9 +41,10 @@ if [ "$NEED_RESTART" != "0" ]; then
   cd $IHOME
   echo "Restarting infocenter..."
   nohup $IHOME/bin/infocenter.sh start &
+  echo "Waiting for Infocenter / Apache to come up [60 seconds]"
+  sleep 60
   echo "Doing fake search to force rebuilding index"
-  sleep 5
-  wget "http://localhost/help/latest/advanced/searchView.jsp?searchWord=SystemBasePlugin&maxHits=2" -O search.out.jsp
+  wget "http://localhost/help/latest/advanced/searchView.jsp?searchWord=SystemBasePlugin&maxHits=2" -O search.out.jsp -t 3 --waitretry=30
   echo "Done, index should be up again!"
 else
   echo "Nothing new deployed, no restart necessary."

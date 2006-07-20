@@ -120,13 +120,13 @@ subsystems share. System objects are described next.</p>
 
 <h2><A name="systems">Systems and System Managers</A></h2>
 <p>While not seen by the user, subsystem objects are required to return a <b>connectorservice</b> object via the
-<A href="../org/eclipse/rse/core/subsystems/ISubSystem.html#getConnectorService()">getConnectorService()</A> method.
-A connectorService object is an object implementing the <A href="../org/eclipse/rse/core/subsystems/IConnectorService.html">IConnectorService</A> interface.
+<A href="../reference/api/org/eclipse/rse/core/subsystems/ISubSystem.html#getConnectorService()">getConnectorService()</A> method.
+A connectorService object is an object implementing the <A href="../reference/api/org/eclipse/rse/core/subsystems/IConnectorService.html">IConnectorService</A> interface.
 A connectorService object manages the live host to the remote system, and supports
 lifecycle methods for that host such as
-<A href="../org/eclipse/rse/core/subsystems/IConnectorService.html#connect(org.eclipse.core.runtime.IProgressMonitor)">connect</A>,
-<A href="../org/eclipse/rse/core/subsystems/IConnectorService.html#disconnect()">disconnect</A>, and
-<A href="../org/eclipse/rse/core/subsystems/IConnectorService.html#isConnected()">isConnected</A>.
+<A href="../reference/api/org/eclipse/rse/core/subsystems/IConnectorService.html#connect(org.eclipse.core.runtime.IProgressMonitor)">connect</A>,
+<A href="../reference/api/org/eclipse/rse/core/subsystems/IConnectorService.html#disconnect()">disconnect</A>, and
+<A href="../reference/api/org/eclipse/rse/core/subsystems/IConnectorService.html#isConnected()">isConnected</A>.
 The communication layer for that host is entirely the programmer's responsibility, and might use sockets, JDBC, HTTP or
 SOAP. It is up the provider of the subsystem factory to author their own communication layer; the framework
 only dictates the handful of methods in IConnectorService, that the RSE UI depends upon. The framework supplies a base
@@ -134,7 +134,7 @@ system class that is easily extended.
 </p>
 <p>It may be the case that multiple subsystems, each from a different subsystem configuration, share the same live
 host for a given host object. To enable this, the framework supplies a base
-<b>connector service manager</b> <A href="../org/eclipse/rse/core/subsystems/impl/AbstractConnectorServiceManager.html">class</A>
+<b>connector service manager</b> <A href="../reference/api/org/eclipse/rse/core/subsystems/impl/AbstractConnectorServiceManager.html">class</A>
 that can be used to manage a single shared connector service object across multiple subsystems. It uses a hashtable to store and
 return the connector service objects, keyed by a subsystem interface that all subsystems sharing the same connector service object
 are to implement. The subclass of the base connector service manager class supplies that interface. Further, the subclass
@@ -147,8 +147,8 @@ the RSE-supplied subsystems. You might do this if the subsystem configuration us
 accessing remote objects, in which case there is no need for a unique communication layer. By sharing the
 same connector service object, it prevents the user from being prompted to signon multiple times. To do this, simply access
 any RSE-supplied subsystem for a given host, and ask for its
-<A href="../org/eclipse/rse/core/subsystems/ISubSystem.html#getConnectorServiceManager()">connector service manager</A>
-in your own subsystem's <A href="../org/eclipse/rse/core/subsystems/AbstractConnectorService.html#getConnectorServiceManager()">getConnectorServiceManager</A> method.
+<A href="../reference/api/org/eclipse/rse/core/subsystems/ISubSystem.html#getConnectorServiceManager()">connector service manager</A>
+in your own subsystem's <A href="../reference/api/org/eclipse/rse/core/subsystems/AbstractConnectorService.html#getConnectorServiceManager()">getConnectorServiceManager</A> method.
 </p>
 
 <h2><A name="filters">Filters</A></h2>
@@ -156,7 +156,7 @@ in your own subsystem's <A href="../org/eclipse/rse/core/subsystems/AbstractConn
 When a subsystem is expanded, users usually see <b>filters</b>. Since subsystems typically list remote artifacts,
 it is typical that a mechanism is needed to allow users to define which artifacts they wish to see, with some
 form of filtering criteria. Filters are this mechanism. The filter support is fully supplied by the RSE framework.
-A filter is simply a <A href="../org/eclipse/rse/filters/ISystemFilter.html">ISystemFilter</A>
+A filter is simply a <A href="../reference/api/org/eclipse/rse/filters/ISystemFilter.html">ISystemFilter</A>
 object containing a name and a collection of <b>filter strings</b>. Filter strings are just strings, which
 the subsystem is required to interpret. When a user expands a filter, the owning subsystem is asked to resolve
 the filter strings within the filter. The subsystem typically interprets each filter string as some form of
@@ -175,12 +175,12 @@ It is possible to author a subsystem that does not support filters, if this is d
 Subsystems do not actually "own" filters. Since each host has unique subsystems, if each subsystem owned its
 own filters then filters could not be shared across Hosts, which is sometimes desirable. Instead, filters are
 actually contained within <b>filter pools</b>. Filter pools are simply
-<A href="../org/eclipse/rse/filters/ISystemFilterPool.html">ISystemFilterPool</A>
+<A href="../reference/api/org/eclipse/rse/filters/ISystemFilterPool.html">ISystemFilterPool</A>
 objects which have a name and a collection of filters.
 Filter pools are owned by subsystem configurations, per profile. That is, each subsystem configuration will contain filter pools
 scoped by profile. Each such configuration plus profile grouping is known internally as a
-<A href="../org/eclipse/rse/filters/ISystemFilterPoolManager.html">filter pool manager</A>.
-Subsystems contain <A href="../org/eclipse/rse/filters/ISystemFilterPoolReference.html">references</A>
+<A href="../reference/api/org/eclipse/rse/filters/ISystemFilterPoolManager.html">filter pool manager</A>.
+Subsystems contain <A href="../reference/api/org/eclipse/rse/filters/ISystemFilterPoolReference.html">references</A>
 to filter pools. By default, each subsystem configuration automatically creates one filter pool
 for each profile, named the "xxx Filter Pool", where "xxx" is the name of the profile. Subsystems contain references to
 filter pools, so that as the filters in the pool are created, changed, deleted or re-ordered, those changes are automatically
@@ -209,7 +209,7 @@ reference it.
 <h2><A name="useractions">User Actions and Named Types</A></h2>
 <p>
 If the subsystem configuration returns true to the
-<A href="../org/eclipse/rse/core/subsystems/ISubSystemConfiguration.html#supportsUserDefinedActions()">supportsUserDefinedActions</A>
+<A href="../reference/api/org/eclipse/rse/core/subsystems/ISubSystemConfiguration.html#supportsUserDefinedActions()">supportsUserDefinedActions</A>
 method, users can create their own <b>actions</b>
 that appear in the pop-up menu for remote objects, using the Work With User Actions <A href="useractions_ww_action.gif">action</A> and
 <A href="useractions_ww_dialog.gif">dialog</A>. User actions use substitution variables that are resolved at
@@ -228,7 +228,7 @@ This is done using the Work With Named Types <A	href="namedtypes_ww_action.gif">
 <A href="namedtypes_ww_dialog.gif">dialog</A>.</p>
 <p>
 User actions are contained by each subsystem factory, scoped by profile. You can programmatically access them by calling
-<A href="../org/eclipse/rse/core/subsystems/util/ISubsystemConfigurationAdapter.html#getSubSystemActions(org.eclipse.rse.subsystems.ISubSystem)">getSubSystemActions</A>
+<A href="../reference/api/org/eclipse/rse/core/subsystems/util/ISubsystemConfigurationAdapter.html#getSubSystemActions(org.eclipse.rse.subsystems.ISubSystem)">getSubSystemActions</A>
 in a subsystem configuration object. They are scoped to the configuration, not the subsystem,
 so the same list of actions is available for every host. The <A href="useractions_menu.gif">User Actions cascading menu </A>
 for remote objects lists <i>all</i> the actions defined for <i>all active profiles</i>, whose file type scoping criteria matches the
@@ -247,7 +247,7 @@ It is assumed there will be fewer of these, and they are not likely to be differ
 <h2><A name="compilecmds">Compile Commands</A></h2>
 <p>
 If the subsystem configuration returns true to the
-<A href="../org/eclipse/rse/core/subsystems/ISubSystemConfiguration.html#supportsCompileActions()">supportsCompileActions</A>
+<A href="../reference/api/org/eclipse/rse/core/subsystems/ISubSystemConfiguration.html#supportsCompileActions()">supportsCompileActions</A>
 method, users will see a <b>Compile</b> <A href="compile_action.gif">action</A> in
 the pop-up menu for compilable source files. Clearly, this support usually only makes sense for subsystems that
 list remote source files. Whether a selected file is compilable or not is decided by the subsystem factory. It
@@ -257,7 +257,7 @@ class for this. The compile manager is also responsible for pre-supplying defaul
 <p>
 The framework also supplies a Work With Compile Commands <A href="compile_ww_action.gif">action</A> and <A href="compile_ww_dialog.gif">dialog</A>,
 by which users can create their own compile commands,
-per source type. Compile commands internally are <A href="../org/eclipse/rse/ui/compile/SystemCompileCommand.html">SystemCompileCommand</A> objects.
+per source type. Compile commands internally are <A href="../reference/api/org/eclipse/rse/ui/compile/SystemCompileCommand.html">SystemCompileCommand</A> objects.
 These compile commands are stored per subsystem configuration, such that they are usable across all Hosts.
 They are also scoped by profile, and the cascading compile action will list all compile commands from all active profiles,
 for the selected file's source type. This scoping by profile, as with user actions, enables team support such that
@@ -277,11 +277,11 @@ be exported and imported.
 <h2><A name="Registry">System Registry</A></h2>
 <p>The programmatic front door to all the artifacts in the RSE is the
 <b>System Registry</b>, which is an object implementing
-<A href="../org/eclipse/rse/model/ISystemRegistry.html">ISystemRegistry</A>.
+<A href="../reference/api/org/eclipse/rse/model/ISystemRegistry.html">ISystemRegistry</A>.
 This is a singleton object that you
 can access by calling the static method
-<A href="../org/eclipse/rse/model/SystemStartHere.html#getSystemRegistry()">getSystemRegistry()</A> in the
-<A href="../org/eclipse/rse/model/SystemStartHere.html">SystemStartHere</A>
+<A href="../reference/api/org/eclipse/rse/model/SystemStartHere.html#getSystemRegistry()">getSystemRegistry()</A> in the
+<A href="../reference/api/org/eclipse/rse/model/SystemStartHere.html">SystemStartHere</A>
 class in the <samp>org.eclipse.rse.ui</samp> plugin.
 </p>
 </body>

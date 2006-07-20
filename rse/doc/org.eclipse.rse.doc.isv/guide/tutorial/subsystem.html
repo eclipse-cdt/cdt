@@ -64,7 +64,7 @@ a factory method, and flesh out the methods, as highlighted <a href="DeveloperSy
 </li>
 <li>Create a package named <samp><b>samples.model</b></samp>. Create two classes in it: 
 <b><samp>TeamResource</samp></b> and <b><samp>DeveloperResource</samp></b>, each of which extend
-<A href="../../org/eclipse/rse/ui/subsystems/impl/AbstractResource.html">AbstractResource</A>.
+<A href="../../reference/api/org/eclipse/rse/ui/subsystems/impl/AbstractResource.html">AbstractResource</A>.
   <ol>
     <li type="i">Edit <samp>DeveloperResource</samp> to add <samp>name</samp>, <samp>id</samp>, and <samp>deptNbr</samp> properties,
     as shown in bold <a href="DeveloperResource.html"><samp>here</samp></a>.
@@ -122,12 +122,12 @@ by creating adapters for the resources:</p>
    <ol>
    <li type="i">Create a new class named <b><samp>TeamResourceAdapter</samp></b>
        that extends <a href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter</samp></A> and implements
-       <a href="../../org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter</samp></A>. 
+       <a href="../../reference/api/org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter</samp></A>. 
        Edit the generated class and add the code highlighted <a href="TeamResourceAdapter.html"><b>here</b></a>.
    </li>
    <li type="i">Create a new class named <b><samp>DeveloperResourceAdapter</samp></b>
        that extends <a href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter</samp></A> and implements
-       <a href="../../org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter</samp></A>. 
+       <a href="../../reference/api/org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter</samp></A>. 
        Edit the generated class and add the code highlighted <a href="DeveloperResourceAdapter.html"><b>here</b></a>.
    </li>
    <li type="i">Next, you need the icons for your remote resources, which you referred to in your adapters. Edit the <samp>RSESamplesPlugin</samp> file and edit the <samp>initializeImageRegistry</samp>

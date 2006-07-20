@@ -16,26 +16,26 @@ of using this as your base class is the inherited methods you can access.
 </p>
 <h2>Methods required in your plugin subclass</h2>
 <p>To use the RSE base plugin class
-<samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html">org.eclipse.rse.core.SystemBasePlugin</A></samp>,
+<samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html">org.eclipse.rse.core.SystemBasePlugin</A></samp>,
 you subclass it for your own plugin class, and supply some key static methods of your own:
 </p>
 <ul>
 <li><samp>getDefault()</samp>. Return a singleton instance of your plugin.
 <li><samp>getResourceBundle()</samp>. Return the resource bundle for your plugin. This is stored in
-a static field, initialized in your constructor by calling the <samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#loadResourceBundle(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadResourceBundle(...)</A></samp> inherited method.
+a static field, initialized in your constructor by calling the <samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#loadResourceBundle(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadResourceBundle(...)</A></samp> inherited method.
 <li><samp>getString(String key)</samp>. Return a translated string by calling the inherited method
-<samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getString(java.util.ResourceBundle, java.lang.String)">getString(ResourceBundle rb, String key)</A></samp>, passing in the static resource bundle field.
+<samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getString(java.util.ResourceBundle, java.lang.String)">getString(ResourceBundle rb, String key)</A></samp>, passing in the static resource bundle field.
 <li><samp>getPluginMessageFile()</samp>. Return your RSE message file instance, initialized in your
-constructor by calling <samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#loadMessageFile(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadMessageFile(...)</A></samp>.
+constructor by calling <samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#loadMessageFile(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadMessageFile(...)</A></samp>.
 <li><samp>getPluginMessage(String msgID)</samp>. Return the
-<samp><A href="../../../org/eclipse/rse/services/clientserver/messages/SystemMessage.html">SystemMessage</A></samp> for the given ID, by
+<samp><A href="../../../reference/api/org/eclipse/rse/services/clientserver/messages/SystemMessage.html">SystemMessage</A></samp> for the given ID, by
 calling the inherited method
-<samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getMessage(org.eclipse.rse.services.clientserver.messages.SystemMessageFile, java.lang.String)">getMessage(getPluginMessageFile(), msgId)</a></samp>. You will call this method often to get message objects.
+<samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getMessage(org.eclipse.rse.services.clientserver.messages.SystemMessageFile, java.lang.String)">getMessage(getPluginMessageFile(), msgId)</a></samp>. You will call this method often to get message objects.
 </ul>
 <p>You may also override some RSE-supplied instance methods:
 <ul>
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#initializeImageRegistry()">initializeImageRegistry()</A></samp>. Call
-<samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#putImageInRegistry(java.lang.String, java.lang.String)">putImageInRegistry(String id, String imageFileName)</A></samp>
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#initializeImageRegistry()">initializeImageRegistry()</A></samp>. Call
+<samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#putImageInRegistry(java.lang.String, java.lang.String)">putImageInRegistry(String id, String imageFileName)</A></samp>
 to load each of your images.
 </ul>
 </p>
@@ -50,31 +50,31 @@ to load each of your images.
 <h2>Methods inherited from the RSE base class</h2>
 <p>The methods you get access to by using the RSE-supplied base plugin class include:</p>
 <ul>
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getPluginId()">getPluginId()</A></samp>. Return this plugin's ID.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getActiveWorkbenchShell()">getActiveWorkbenchShell()</A></samp>. Return the shell of the active workbench window.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getActiveWorkbenchWindow()">getActiveWorkbenchWindow()</A></samp>. Return the active workbench window.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getWorkspaceRoot()">getWorkspaceRoot()</A></samp>. Return the root of the workspace.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getWorkspace()">getWorkspace()</A></samp>. Return the workspace root.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getInstallLocation()">getInstallLocation()</A></samp>. Return the install directory for this plugin.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getIconPath()">getIconPath()</A></samp>. Return the typical path for icons, relative to the plugin's folder: "icons"
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#putImageInRegistry(java.lang.String, java.lang.String)">putImageInRegistry(String id, String fileName)</A></samp>. Load an image in the image registry, given the ID to retrieve it with, and its filename and path relative to this plugin's folder
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getImage(java.lang.String)">getImage(String id)</A></samp>. Return an Image given the ID with which it was registered in putImageInRegistry.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getImageDescriptor(java.lang.String)">getImageDescriptor(String id)</A></samp>. Return an ImageDescriptor given the ID with which it was registered in putImageInRegistry.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#loadResourceBundle(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadResourceBundle(IPluginDescriptor descriptor, String fileName)</A></samp>. Load a resource bundle, given its file name, relative to the given plugin's installation folder.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#loadResourceBundle(java.lang.String)">loadResourceBundle(String fileName)</A></samp>. Load a resource bundle, given its file name, relative to this plugin's installation folder.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getString(java.util.ResourceBundle, java.lang.String)">getString(ResourceBundle rb, String id)</A></samp>. Return a translated string from a resource bundle, given its key ID.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getString(java.util.ResourceBundle, java.lang.String, java.lang.String)">getString(ResourceBundle rb, String id, String default)</A></samp>. Return a translated string from a resource bundle, given its key ID. If key not found in the resource bundle, returns the given default string.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#loadMessageFile(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadMessageFile(IPluginDescriptor descriptor,String fileName)</A></samp>. Parse an RSE-style message file into memory, given the plugin and message file name.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getMessage(org.eclipse.rse.services.clientserver.messages.SystemMessageFile, java.lang.String)">getMessage(SystemMessageFile msgFile, String msgId)</A></samp>. Retrieve a SystemMessage object, given the message file that contains it, and its message ID including component and subcomponent abbreviations.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#scanForDuplicateMessages(org.eclipse.rse.services.clientserver.messages.SystemMessageFile)">scanForDuplicateMessages(SystemMessageFile msgFile)</A></samp>. Scan given message file for duplicate IDs. Typically only called during the development cycle.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#printMessages(org.eclipse.rse.services.clientserver.messages.SystemMessageFile, java.lang.String)">printMessages(SystemMessageFile msgFile, String fullyQualifiedTargetFile)</A></samp>. Generate an HTML file documenting the messages in the given message file, given the fully qualified name of the target HTML file.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#showProgrammerErrorMessage(java.lang.String)">showProgrammerErrorMessage(String msg)</A></samp>. Show a message to the user, when the message file support is not available.
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#logInfo(java.lang.String)">logInfo(String message)</A></samp>. Log an informational message to the RSE's core log file (<samp>.....\.metadata\.plugins\org.eclipse.rse.core\.log</samp>).
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#logWarning(java.lang.String)">logWarning(String message)</A></samp>. Log a warning message to the RSE's core log file (<samp>.....\.metadata\.plugins\org.eclipse.rse.core\.log</samp>).
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#logError(java.lang.String)">logError(String message)</A></samp>. Log an error message to the RSE's core log file (<samp>.....\.metadata\.plugins\org.eclipse.rse.core\.log</samp>).
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#logError(java.lang.String, java.lang.Throwable)">logError(String message, Throwable exception)</A></samp>. Log an error message resulting from an exception to the RSE's core log file (<samp>.....\.metadata\.plugins\org.eclipse.rse.core\.log</samp>).
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#logDebugMessage(java.lang.String, java.lang.String)">logDebugMessage(String prefix, String message)</A></samp>. Log a debug (trace) message to the RSE's core log file (<samp>.....\.metadata\.plugins\org.eclipse.rse.core\.log</samp>).
-<li><samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getLogger()">getLogger()</A></samp>.Return the Logger instance for the RSE default logging file (<samp>.....\.metadata\.plugins\org.eclipse.rse.core\.log</samp>).
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getPluginId()">getPluginId()</A></samp>. Return this plugin's ID.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getActiveWorkbenchShell()">getActiveWorkbenchShell()</A></samp>. Return the shell of the active workbench window.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getActiveWorkbenchWindow()">getActiveWorkbenchWindow()</A></samp>. Return the active workbench window.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getWorkspaceRoot()">getWorkspaceRoot()</A></samp>. Return the root of the workspace.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getWorkspace()">getWorkspace()</A></samp>. Return the workspace root.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getInstallLocation()">getInstallLocation()</A></samp>. Return the install directory for this plugin.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getIconPath()">getIconPath()</A></samp>. Return the typical path for icons, relative to the plugin's folder: "icons"
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#putImageInRegistry(java.lang.String, java.lang.String)">putImageInRegistry(String id, String fileName)</A></samp>. Load an image in the image registry, given the ID to retrieve it with, and its filename and path relative to this plugin's folder
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getImage(java.lang.String)">getImage(String id)</A></samp>. Return an Image given the ID with which it was registered in putImageInRegistry.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getImageDescriptor(java.lang.String)">getImageDescriptor(String id)</A></samp>. Return an ImageDescriptor given the ID with which it was registered in putImageInRegistry.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#loadResourceBundle(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadResourceBundle(IPluginDescriptor descriptor, String fileName)</A></samp>. Load a resource bundle, given its file name, relative to the given plugin's installation folder.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#loadResourceBundle(java.lang.String)">loadResourceBundle(String fileName)</A></samp>. Load a resource bundle, given its file name, relative to this plugin's installation folder.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getString(java.util.ResourceBundle, java.lang.String)">getString(ResourceBundle rb, String id)</A></samp>. Return a translated string from a resource bundle, given its key ID.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getString(java.util.ResourceBundle, java.lang.String, java.lang.String)">getString(ResourceBundle rb, String id, String default)</A></samp>. Return a translated string from a resource bundle, given its key ID. If key not found in the resource bundle, returns the given default string.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#loadMessageFile(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadMessageFile(IPluginDescriptor descriptor,String fileName)</A></samp>. Parse an RSE-style message file into memory, given the plugin and message file name.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getMessage(org.eclipse.rse.services.clientserver.messages.SystemMessageFile, java.lang.String)">getMessage(SystemMessageFile msgFile, String msgId)</A></samp>. Retrieve a SystemMessage object, given the message file that contains it, and its message ID including component and subcomponent abbreviations.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#scanForDuplicateMessages(org.eclipse.rse.services.clientserver.messages.SystemMessageFile)">scanForDuplicateMessages(SystemMessageFile msgFile)</A></samp>. Scan given message file for duplicate IDs. Typically only called during the development cycle.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#printMessages(org.eclipse.rse.services.clientserver.messages.SystemMessageFile, java.lang.String)">printMessages(SystemMessageFile msgFile, String fullyQualifiedTargetFile)</A></samp>. Generate an HTML file documenting the messages in the given message file, given the fully qualified name of the target HTML file.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#showProgrammerErrorMessage(java.lang.String)">showProgrammerErrorMessage(String msg)</A></samp>. Show a message to the user, when the message file support is not available.
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#logInfo(java.lang.String)">logInfo(String message)</A></samp>. Log an informational message to the RSE's core log file (<samp>.....\.metadata\.plugins\org.eclipse.rse.core\.log</samp>).
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#logWarning(java.lang.String)">logWarning(String message)</A></samp>. Log a warning message to the RSE's core log file (<samp>.....\.metadata\.plugins\org.eclipse.rse.core\.log</samp>).
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#logError(java.lang.String)">logError(String message)</A></samp>. Log an error message to the RSE's core log file (<samp>.....\.metadata\.plugins\org.eclipse.rse.core\.log</samp>).
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#logError(java.lang.String, java.lang.Throwable)">logError(String message, Throwable exception)</A></samp>. Log an error message resulting from an exception to the RSE's core log file (<samp>.....\.metadata\.plugins\org.eclipse.rse.core\.log</samp>).
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#logDebugMessage(java.lang.String, java.lang.String)">logDebugMessage(String prefix, String message)</A></samp>. Log a debug (trace) message to the RSE's core log file (<samp>.....\.metadata\.plugins\org.eclipse.rse.core\.log</samp>).
+<li><samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getLogger()">getLogger()</A></samp>.Return the Logger instance for the RSE default logging file (<samp>.....\.metadata\.plugins\org.eclipse.rse.core\.log</samp>).
 </ul>
 </body>
 </html>

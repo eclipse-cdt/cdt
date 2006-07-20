@@ -15,78 +15,78 @@ you use:
 </p>
 <ul>
 <li>Static methods in the
-<samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html"org.eclipse.rse.core.SystemBasePlugin</A></samp>
+<samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html"org.eclipse.rse.core.SystemBasePlugin</A></samp>
 class to load the message file and extract messages from it.
 <li>Classes in the
-<samp><A href="../../../org/eclipse/rse/ui/messages/package-summary.html">org.eclipse.rse.ui.messages</A></samp>
+<samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/package-summary.html">org.eclipse.rse.ui.messages</A></samp>
 package to do variable substitution, and display the messages to the user.
 </ul>
 
 <h2>Methods for Parsing the Message File</h2>
 <p>Once you have defined your message file, you must update your plugin class to load it at startup time.
 To do this, simply call the static method
-<samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#loadMessageFile(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadMessageFile</a></samp>
+<samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#loadMessageFile(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadMessageFile</a></samp>
 in the RSE-supplied <samp><a href="../plugin/uiPluginAPI.html">SystemBasePlugin</a></samp> class.
 <BR>
 <BR>
 After the message file is loaded into memory, you can extract messages from it by calling the static method
-<samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getMessage(org.eclipse.rse.ui.messages.SystemMessageFile, java.lang.String)">getMessage</a></samp>
+<samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getMessage(org.eclipse.rse.ui.messages.SystemMessageFile, java.lang.String)">getMessage</a></samp>
 from the same <samp><a href="../plugin/uiPluginAPI.html">SystemBasePlugin</a></samp> class.
 </p>
 
 <h2>Classes for Displaying Messages</h2>
-<p>The following classes are all defined in the <samp><A href="../../../org/eclipse/rse/ui/messages/package-summary.html">org.eclipse.rse.ui.messages</a></samp> package. </p>
+<p>The following classes are all defined in the <samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/package-summary.html">org.eclipse.rse.ui.messages</a></samp> package. </p>
 
 <h3><A name="SystemMessageFile"></A>The <samp>SystemMessageFile</samp> Class</h3>
-<p>The <samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#loadMessageFile(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadMessageFile</a></samp> method in <samp>SystemBasePlugin</samp>, returns an instance of
-<samp><A href="../../../org/eclipse/rse/ui/messages/SystemMessageFile.html">SystemMessageFile</a></samp>,
+<p>The <samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#loadMessageFile(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadMessageFile</a></samp> method in <samp>SystemBasePlugin</samp>, returns an instance of
+<samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/SystemMessageFile.html">SystemMessageFile</a></samp>,
 representing the parsed message file. It is methods in this which return individual messages.
 <h3><A name="SystemMessage"></A>The <samp>SystemMessage</samp> Class</h3>
-The <samp><A href="../../../org/eclipse/rse/core/SystemBasePlugin.html#getMessage(org.eclipse.rse.ui.messages.SystemMessageFile, java.lang.String)">getMessage</a></samp> method in <samp>SystemBasePlugin</samp> returns an instance of
-<samp><A href="../../../org/eclipse/rse/ui/messages/SystemMessage.html">SystemMessage</a></samp>,
+The <samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getMessage(org.eclipse.rse.ui.messages.SystemMessageFile, java.lang.String)">getMessage</a></samp> method in <samp>SystemBasePlugin</samp> returns an instance of
+<samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/SystemMessage.html">SystemMessage</a></samp>,
 representing an individual message from the message file.
 </p>
 <p>To do message <i>variable substitution</i>, call the appropriate overload of the <samp>makeSubstitution</samp> method in
-the <A href="../../../org/eclipse/rse/ui/messages/SystemMessage.html">message</A> object, passing as many parameters as there are unique substitution variables in the message.
+the <A href="../../../reference/api/org/eclipse/rse/ui/messages/SystemMessage.html">message</A> object, passing as many parameters as there are unique substitution variables in the message.
 </p>
-<p>To get the first level message text, call <samp><A href="../../../org/eclipse/rse/ui/messages/SystemMessage.html#getLevelOneText()">getLevelOneText</a></samp> on the message object. To get
-the second level help, call <samp><A href="../../../org/eclipse/rse/ui/messages/SystemMessage.html#getLevelTwoText()">getLevelTwoText</a></samp>.
+<p>To get the first level message text, call <samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/SystemMessage.html#getLevelOneText()">getLevelOneText</a></samp> on the message object. To get
+the second level help, call <samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/SystemMessage.html#getLevelTwoText()">getLevelTwoText</a></samp>.
 </p>
 
 <h3><A name="SystemMessageDialog"></A>The <samp>SystemMessageDialog</samp> Class</h3>
-<p>To display a message in a dialog, instantiate <samp><A href="../../../org/eclipse/rse/ui/messages/SystemMessageDialog.html">SystemMessageDialog</a></samp>, passing
-in a parent shell and the message object, and then call the appropriate <samp><A href="../../../org/eclipse/rse/ui/messages/SystemMessageDialog.html#open()">open</a></samp> method in the dialog object. Here is what the message
+<p>To display a message in a dialog, instantiate <samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/SystemMessageDialog.html">SystemMessageDialog</a></samp>, passing
+in a parent shell and the message object, and then call the appropriate <samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/SystemMessageDialog.html#open()">open</a></samp> method in the dialog object. Here is what the message
 dialog looks like, for a message of type Error (the type dictates the error icon):
 </p>
 <P><IMG border="0" src="msgDialog.gif" width="457" height="190"></P>
 
 <h3><A name="ISystemMessageLine"></A>The <samp>ISystemMessageLine</samp> Interface</h3>
-<p>If you are extending the RSE class <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html">SystemPromptDialog</a></samp> for dialogs,
-or <samp><A href="../../../org/eclipse/rse/ui/wizards/AbstractSystemWizardPage.html">AbstractSystemWizardPage</a></samp> for wizard pages
-or <samp><A href="../../../org/eclipse/rse/ui/propertypages/SystemBasePropertyPage.html">SystemBasePropertyPage</a></samp> for property pages, you can display the message to the
-user by calling the <samp><A href="../../../org/eclipse/rse/ui/messages/ISystemMessageLine.html#setErrorMessage(org.eclipse.rse.ui.messages.SystemMessage)">setErrorMessage</a></samp> method all these classes support. These classes all implement
-the interface <b><samp><A href="../../../org/eclipse/rse/ui/messages/ISystemMessageLine.html">ISystemMessageLine</a></samp></b>, which also includes the method <samp>clearErrorMessage</samp>. For non-error
-messages, use <samp><A href="../../../org/eclipse/rse/ui/messages/ISystemMessageLine.html#setMessage(org.eclipse.rse.ui.messages.SystemMessage)">setMessage</a></samp>
-and <samp><A href="../../../org/eclipse/rse/ui/messages/ISystemMessageLine.html#clearMessage()">clearMessage</a></samp>.</p>
+<p>If you are extending the RSE class <samp><A href="../../../reference/api/org/eclipse/rse/ui/dialogs/SystemPromptDialog.html">SystemPromptDialog</a></samp> for dialogs,
+or <samp><A href="../../../reference/api/org/eclipse/rse/ui/wizards/AbstractSystemWizardPage.html">AbstractSystemWizardPage</a></samp> for wizard pages
+or <samp><A href="../../../reference/api/org/eclipse/rse/ui/propertypages/SystemBasePropertyPage.html">SystemBasePropertyPage</a></samp> for property pages, you can display the message to the
+user by calling the <samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/ISystemMessageLine.html#setErrorMessage(org.eclipse.rse.ui.messages.SystemMessage)">setErrorMessage</a></samp> method all these classes support. These classes all implement
+the interface <b><samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/ISystemMessageLine.html">ISystemMessageLine</a></samp></b>, which also includes the method <samp>clearErrorMessage</samp>. For non-error
+messages, use <samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/ISystemMessageLine.html#setMessage(org.eclipse.rse.ui.messages.SystemMessage)">setMessage</a></samp>
+and <samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/ISystemMessageLine.html#clearMessage()">clearMessage</a></samp>.</p>
 <p>
-Here is what a system message issued in a <samp><A href="../../../org/eclipse/rse/ui/dialogs/SystemPromptDialog.html">SystemPromptDialog</a></samp> dialog looks like:</p>
+Here is what a system message issued in a <samp><A href="../../../reference/api/org/eclipse/rse/ui/dialogs/SystemPromptDialog.html">SystemPromptDialog</a></samp> dialog looks like:</p>
 <P><IMG border="0" src="msgLine_dialog.gif" width="264" height="125"></P>
 <p>The user can select the question mark icon on the right to see the full message dialog, and hence access the second level help for the message.
-<p>Here is what a system message issued in an <samp><A href="../../../org/eclipse/rse/ui/wizards/AbstractSystemWizardPage.html">AbstractSystemWizardPage</a></samp> looks like:</p>
+<p>Here is what a system message issued in an <samp><A href="../../../reference/api/org/eclipse/rse/ui/wizards/AbstractSystemWizardPage.html">AbstractSystemWizardPage</a></samp> looks like:</p>
 <P><IMG border="0" src="msgLine_wizard.gif" width="439" height="98"></P>
 <p>If the user clicks the mouse on the message or icon, they will see the full message dialog for the message.</p>
 
-<p>Here is what a system message issued in a <samp><A href="../../../org/eclipse/rse/ui/propertypages/SystemBasePropertyPage.html">SystemBasePropertyPage</a></samp> looks like:</p>
+<p>Here is what a system message issued in a <samp><A href="../../../reference/api/org/eclipse/rse/ui/propertypages/SystemBasePropertyPage.html">SystemBasePropertyPage</a></samp> looks like:</p>
 <P><IMG border="0" src="msgLine_properties.gif" width="491" height="75"></P>
 <p>Again, if the user clicks the mouse on the message or icon, they will see the full message dialog for the message.</p>
 
 <h2>Classes for Displaying Message Exceptions</h2>
-<p>The following class is defined in the <samp><A href="../../../org/eclipse/rse/services/clientserver/messages/package-summary.html">org.eclipse.rse.services.clientserver.messages</a></samp> package.
+<p>The following class is defined in the <samp><A href="../../../reference/api/org/eclipse/rse/services/clientserver/messages/package-summary.html">org.eclipse.rse.services.clientserver.messages</a></samp> package.
 
 <h3>The <samp>SystemMessageDialog</samp> Class</h3>
-<p>Many of the RSE APIs throw <samp><A href="../../../org/eclipse/rse/services/clientserver/messages/SystemMessageException.html">org.eclipse.rse.services.clientserver.messages.SystemMessageException</a></samp>, which
-encapsulates a system message object. To get the encapsulated message, call <samp><A href="../../../org/eclipse/rse/services/clientserver/messages/SystemMessageException.html#getSystemMessage()">getSystemMessage()</a></samp>.
-To display the message in an RSE message dialog box, simply call <samp><A href="../../../org/eclipse/rse/services/clientserver/messages/SystemMessageException.html#displayMessage()">displayMessage()</a></samp> on the exception object.
+<p>Many of the RSE APIs throw <samp><A href="../../../reference/api/org/eclipse/rse/services/clientserver/messages/SystemMessageException.html">org.eclipse.rse.services.clientserver.messages.SystemMessageException</a></samp>, which
+encapsulates a system message object. To get the encapsulated message, call <samp><A href="../../../reference/api/org/eclipse/rse/services/clientserver/messages/SystemMessageException.html#getSystemMessage()">getSystemMessage()</a></samp>.
+To display the message in an RSE message dialog box, simply call <samp><A href="../../../reference/api/org/eclipse/rse/services/clientserver/messages/SystemMessageException.html#displayMessage()">displayMessage()</a></samp> on the exception object.
 To get the first-level text, call <samp>getMessage()</samp>, or <samp>getSystemMessage().getLevelOneText()</samp>
 </p>
 

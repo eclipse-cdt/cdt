@@ -16,17 +16,17 @@ and encapsulates this concept into massagers which can be re-used. A few are pre
 </p>
 
 <h2>RSE Massager Interfaces</h2>
-<p>The <samp><A href="../../../org/eclipse/rse/ui/ISystemMassager.html">ISystemMassager</A></samp> interface is in package
-<samp><A href="../../../org/eclipse/rse/ui/package-summary.html">org.eclipse.rse.ui</A></samp>.
+<p>The <samp><A href="../../../reference/api/org/eclipse/rse/ui/ISystemMassager.html">ISystemMassager</A></samp> interface is in package
+<samp><A href="../../../reference/api/org/eclipse/rse/ui/package-summary.html">org.eclipse.rse.ui</A></samp>.
 It is a very simple interface with one method:
-<samp><A href="../../../org/eclipse/rse/ui/ISystemMassager.html#massage(java.lang.String)">public String massage(String text)</A></samp>.
+<samp><A href="../../../reference/api/org/eclipse/rse/ui/ISystemMassager.html#massage(java.lang.String)">public String massage(String text)</A></samp>.
 Given input text, return the massaged text. While simple, by encapsulating this operation into an interface,
 you will be able to write re-usable dialogs that take a massager as input. Further, tricky massaging can be
 built as a re-usable object.
 </p>
 
 <h2>RSE-Supplied Massagers</h2>
-<p>The RSE supplies the following massagers in package <samp><A href="../../../org/eclipse/rse/ui/package-summary.html">org.eclipse.rse.ui</A></samp>:
+<p>The RSE supplies the following massagers in package <samp><A href="../../../reference/api/org/eclipse/rse/ui/package-summary.html">org.eclipse.rse.ui</A></samp>:
 </p>
 <BR>
 <TABLE border="1">
@@ -36,15 +36,15 @@ built as a re-usable object.
 			<TH>Description</TH>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/MassagerFoldCase.html">MassagerFoldCase</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/MassagerFoldCase.html">MassagerFoldCase</A></samp></TD>
 			<TD>Simply folds the text to uppercase or lowercase</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/MassagerFoldCaseOutsideQuotes.html">MassagerFoldCaseOutsideQuotes</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/MassagerFoldCaseOutsideQuotes.html">MassagerFoldCaseOutsideQuotes</A></samp></TD>
 			<TD>Folds the text to uppercase or lowercase, except parts of the text that are surrounded by quotes or any given delimiter characters</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/MassagerFoldCaseUnlessQuoted.html">MassagerFoldCaseUnlessQuoted</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/MassagerFoldCaseUnlessQuoted.html">MassagerFoldCaseUnlessQuoted</A></samp></TD>
 			<TD>Folds the text to uppercase or lowercase, unless the whole text is surrounded by quotes or any given delimiter character</TD>
 		</TR>
 	</TBODY>

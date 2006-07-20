@@ -20,10 +20,10 @@ supplied to enhance re-use, such as the maximum length, which can be used to set
 </p>
 
 <h2>RSE Validator Interfaces</h2>
-<p>All RSE validator interfaces and classes are in package <samp><A href="../../../org/eclipse/rse/ui/validators/package-summary.html">org.eclipse.rse.ui.validators</A></samp>.
+<p>All RSE validator interfaces and classes are in package <samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/package-summary.html">org.eclipse.rse.ui.validators</A></samp>.
 
 <h3>ISystemValidator Interface</h3>
-<p>The primary validator interface is <samp><A href="../../../org/eclipse/rse/ui/validators/ISystemValidator.html">ISystemValidator</A></samp>, which is extends <samp>org.eclipse.jface.dialogs.IInputValidator</samp>
+<p>The primary validator interface is <samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ISystemValidator.html">ISystemValidator</A></samp>, which is extends <samp>org.eclipse.jface.dialogs.IInputValidator</samp>
 and <samp>org.eclipse.jface.viewers.ICellEditorValidator</samp>. Both parent interfaces define an <samp>isValid</samp> method,
 but the former takes a String while the latter takes an Object. They both return a String which is the error message if an
 error was detected, or null if no error detected. The <samp>ISystemValidator</samp> interface adds the following additional methods:
@@ -36,17 +36,17 @@ error was detected, or null if no error detected. The <samp>ISystemValidator</sa
 			<TH>Description</TH>
 		</TR>
 		<TR>
-			<TD><samp>public int <A href="../../../org/eclipse/rse/ui/validators/ISystemValidator.html#getMaximumNameLength()">getMaximumNameLength()</A></samp></TD>
+			<TD><samp>public int <A href="../../../reference/api/org/eclipse/rse/ui/validators/ISystemValidator.html#getMaximumNameLength()">getMaximumNameLength()</A></samp></TD>
 			<TD>Returns the maximum length allowed for this text. Can be used to set text limit of text widgets.</TD>
 		</TR>
 		<TR>
-			<TD><samp>public SystemMessage <A href="../../../org/eclipse/rse/ui/validators/ISystemValidator.html#getSystemMessage()">getSystemMessage()</A></samp></TD>
+			<TD><samp>public SystemMessage <A href="../../../reference/api/org/eclipse/rse/ui/validators/ISystemValidator.html#getSystemMessage()">getSystemMessage()</A></samp></TD>
 			<TD>If <samp>isValid</samp> returns false, this returns a <samp>SystemMessage</samp> object that offers richer message support than just a string.
 			Return null if you don't support <samp><A href="../messages/uiMessageAPI.html">SystemMessages</A></samp>.
-			Callers don't need to use this if they use <samp><A href="../../../org/eclipse/rse/ui/validators/ISystemValidator.html#validate(java.lang.String)">validate(String)</A></samp> instead of <samp>isValid(String)</samp>.</TD>
+			Callers don't need to use this if they use <samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ISystemValidator.html#validate(java.lang.String)">validate(String)</A></samp> instead of <samp>isValid(String)</samp>.</TD>
 		</TR>
 		<TR>
-			<TD><samp>public SystemMessage <A href="../../../org/eclipse/rse/ui/validators/ISystemValidator.html#validate(java.lang.String)">validate(String text)</A></samp></TD>
+			<TD><samp>public SystemMessage <A href="../../../reference/api/org/eclipse/rse/ui/validators/ISystemValidator.html#validate(java.lang.String)">validate(String text)</A></samp></TD>
 			<TD>An alternative to <samp>isValid</samp> if your validator does support <samp>SystemMessage</samp> objects versus simple strings for error messages.</TD>
 		</TR>
 	</TBODY>
@@ -54,7 +54,7 @@ error was detected, or null if no error detected. The <samp>ISystemValidator</sa
 
 <h3>ISystemValidatorUniqueString Interface</h3>
 <p>Often our validation requires checking that the given text is unique, in some given list of existing things, like names say. To facilitate
-this, there is an interface <samp><A href="../../../org/eclipse/rse/ui/validators/ISystemValidatorUniqueString.html">ISystemValidatorUniqueString</A></samp>, which extends <samp>ISystemValidator</samp> and adds some additional
+this, there is an interface <samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ISystemValidatorUniqueString.html">ISystemValidatorUniqueString</A></samp>, which extends <samp>ISystemValidator</samp> and adds some additional
 methods required for uniqueness validation:
 </p>
 
@@ -65,31 +65,31 @@ methods required for uniqueness validation:
 			<TH>Description</TH>
 		</TR>
 		<TR>
-			<TD><samp>public void <A href="../../../org/eclipse/rse/ui/validators/ISystemValidatorUniqueString.html#setCaseSensitive(boolean)">setCaseSensitive(boolean caseSensitive)</A></samp></TD>
+			<TD><samp>public void <A href="../../../reference/api/org/eclipse/rse/ui/validators/ISystemValidatorUniqueString.html#setCaseSensitive(boolean)">setCaseSensitive(boolean caseSensitive)</A></samp></TD>
 			<TD>Specifies whether the test for an existing string should consider case or not.</TD>
 		</TR>
 		<TR>
-			<TD><samp>public void <A href="../../../org/eclipse/rse/ui/validators/ISystemValidatorUniqueString.html#setExistingNamesList(java.lang.String[])">setExistingNamesList(String[] existingList)</A></samp></TD>
+			<TD><samp>public void <A href="../../../reference/api/org/eclipse/rse/ui/validators/ISystemValidatorUniqueString.html#setExistingNamesList(java.lang.String[])">setExistingNamesList(String[] existingList)</A></samp></TD>
 			<TD>Sets the existing list to test against, as an array.</TD>
 		</TR>
 		<TR>
-			<TD><samp>public void <A href="../../../org/eclipse/rse/ui/validators/ISystemValidatorUniqueString.html#setExistingNamesList(java.util.Vector)">setExistingNamesList(Vector existingList)</A></samp></TD>
+			<TD><samp>public void <A href="../../../reference/api/org/eclipse/rse/ui/validators/ISystemValidatorUniqueString.html#setExistingNamesList(java.util.Vector)">setExistingNamesList(Vector existingList)</A></samp></TD>
 			<TD>Sets the existing list to test against, as a vector of Strings.</TD>
 		</TR>
 		<TR>
-			<TD><samp>public String[] <A href="../../../org/eclipse/rse/ui/validators/ISystemValidatorUniqueString.html#getExistingNamesList()">getExistingNamesList()</A></samp></TD>
+			<TD><samp>public String[] <A href="../../../reference/api/org/eclipse/rse/ui/validators/ISystemValidatorUniqueString.html#getExistingNamesList()">getExistingNamesList()</A></samp></TD>
 			<TD>Returns the existing list that is used to test against.</TD>
 		</TR>
 	</TBODY>
 </TABLE>
-<p>If you desire to create a unique string validator, you probably will start by subclassing <samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorUniqueString.html">ValidatorUniqueString</A></samp>.
+<p>If you desire to create a unique string validator, you probably will start by subclassing <samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorUniqueString.html">ValidatorUniqueString</A></samp>.
 </p>
 
 <h3>IValidatorRemoteSelection Interface</h3>
-<p>The third validator interface is <samp><A href="../../../org/eclipse/rse/ui/validators/IValidatorRemoteSelection.html">IValidatorRemoteSelection</A></samp>, which is specifically intended to be used
+<p>The third validator interface is <samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/IValidatorRemoteSelection.html">IValidatorRemoteSelection</A></samp>, which is specifically intended to be used
 in the remote resource selection dialogs supplied by the RSE. It allows you to decide when to enable the OK button, based on what
 is selected. It contains only the following method:</p>
-<samp>public SystemMessage <A href="../../../org/eclipse/rse/ui/validators/IValidatorRemoteSelection.html#isValid(org.eclipse.rse.model.IHost, java.lang.Object[], org.eclipse.rse.ui.view.ISystemRemoteElementAdapter[])">isValid(SystemConnection selectedConnection, Object[] selectedObjects, ISystemRemoteElementAdapter[] remoteAdaptersForSelectedObject)</A>;</samp>
+<samp>public SystemMessage <A href="../../../reference/api/org/eclipse/rse/ui/validators/IValidatorRemoteSelection.html#isValid(org.eclipse.rse.model.IHost, java.lang.Object[], org.eclipse.rse.ui.view.ISystemRemoteElementAdapter[])">isValid(SystemConnection selectedConnection, Object[] selectedObjects, ISystemRemoteElementAdapter[] remoteAdaptersForSelectedObject)</A>;</samp>
 <p>You typically won't implement this interface directly, but rather sublcass <samp>ValidatorRemoteSelection</samp>.</p>
 
 <h3>Validator Samples</h3>
@@ -106,9 +106,9 @@ appropriate to simply subclass one of these RSE-supplied validators. All of them
 via setter calls, or subclassed, whichever is most convenient.</p>
 <p>All of these validators support rich <samp><A href="../messages/uiMessageAPI.html">SystemMessage</A></samp> objects, versus just simple strings for the error message. When used with the
 RSE dialog, property page or wizard page classes, you should call
-<samp><A href="../../../org/eclipse/rse/ui/validators/ISystemValidator.html#validate(java.lang.String)">validate(String)</A></samp> and call
-<samp><A href="../../../org/eclipse/rse/ui/messages/ISystemMessageLine.html#setErrorMessage(org.eclipse.rse.ui.messages.SystemMessage)">setErrorMessage</A></samp> with the result. When used
-in other places you should use <samp><A href="../../../org/eclipse/rse/ui/validators/ISystemValidator.html#isValid(java.lang.String)">isValid(String)</A></samp> as it returns just the first-level text of the system message.</p>
+<samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ISystemValidator.html#validate(java.lang.String)">validate(String)</A></samp> and call
+<samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/ISystemMessageLine.html#setErrorMessage(org.eclipse.rse.ui.messages.SystemMessage)">setErrorMessage</A></samp> with the result. When used
+in other places you should use <samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ISystemValidator.html#isValid(java.lang.String)">isValid(String)</A></samp> as it returns just the first-level text of the system message.</p>
 <TABLE border="1">
 	<TBODY>
 		<TR>
@@ -116,104 +116,104 @@ in other places you should use <samp><A href="../../../org/eclipse/rse/ui/valida
 			<TH>Description</TH>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorCompileCommandLabel.html">ValidatorCompileCommandLabel</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorCompileCommandLabel.html">ValidatorCompileCommandLabel</A></samp></TD>
 			<TD>Validates the label for a compile command in the RSE.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorConnectionName.html">ValidatorConnectionName</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorConnectionName.html">ValidatorConnectionName</A></samp></TD>
 			<TD>Validates the name of a connection in the RSE.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorFileName.html">ValidatorFileName</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorFileName.html">ValidatorFileName</A></samp></TD>
 			<TD>Validates the name of a file in eclipse.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorFilterName.html">ValidatorFilterName</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorFilterName.html">ValidatorFilterName</A></samp></TD>
 			<TD>Validates the name of a filter in the RSE.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorFilterPoolName.html">ValidatorFilterPoolName</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorFilterPoolName.html">ValidatorFilterPoolName</A></samp></TD>
 			<TD>Validates the name of a filter pool in the RSE.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorFilterString.html">ValidatorFilterString</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorFilterString.html">ValidatorFilterString</A></samp></TD>
 			<TD>Validates the contents of a filter string in the RSE.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorFolderName.html">ValidatorFolderName</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorFolderName.html">ValidatorFolderName</A></samp></TD>
 			<TD>Validates the name of a folder in eclipse.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorIntegerInput.html">ValidatorIntegerInput</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorIntegerInput.html">ValidatorIntegerInput</A></samp></TD>
 			<TD>Validates the given string is a valid integer.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorIntegerRangeInput.html">ValidatorIntegerRangeInput</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorIntegerRangeInput.html">ValidatorIntegerRangeInput</A></samp></TD>
 			<TD>Validates the given string is a valid integer within a given range.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorLongInput.html">ValidatorLongInput</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorLongInput.html">ValidatorLongInput</A></samp></TD>
 			<TD>Validates the given string is a valid long integer.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorLongRangeInput.html">ValidatorLongRangeInput</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorLongRangeInput.html">ValidatorLongRangeInput</A></samp></TD>
 			<TD>Validates the given string is a valid long integer within a given range.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorPathName.html">ValidatorPathName</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorPathName.html">ValidatorPathName</A></samp></TD>
 			<TD>Validates the given string is a valid folder path in eclipse.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorPortInput.html">ValidatorPortInput</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorPortInput.html">ValidatorPortInput</A></samp></TD>
 			<TD>Validates the given string is a valid TCP/IP port number.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorProfileName.html">ValidatorProfileName</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorProfileName.html">ValidatorProfileName</A></samp></TD>
 			<TD>Validates the name of a system profile in the RSE.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorRemoteSelection.html">ValidatorRemoteSelection</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorRemoteSelection.html">ValidatorRemoteSelection</A></samp></TD>
 			<TD>This is a very special case abstract base class, for validators that decide the enablement of the OK button
 			 in the RSE-supplied remote resource selection dialogs.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorSourceType.html">ValidatorSourceType</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorSourceType.html">ValidatorSourceType</A></samp></TD>
 			<TD>A validator for source types, such as a file type or "*.java". It is intended to be subclassed.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorSpecialChar.html">ValidatorSpecialChar</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorSpecialChar.html">ValidatorSpecialChar</A></samp></TD>
 			<TD>A base class for validators that need to ensure the given string doesn't contain certain characters.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorSystemName.html">ValidatorSystemName</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorSystemName.html">ValidatorSystemName</A></samp></TD>
 			<TD>A name validator, to be used when the name being prompted for must follow Java identifier rules.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorUniqueString.html">ValidatorUniqueString</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorUniqueString.html">ValidatorUniqueString</A></samp></TD>
 			<TD>A base class, or configurable class, to be used for any validation that requires the string to be unique within a given list.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorUserActionCommand.html">ValidatorUserActionCommand</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorUserActionCommand.html">ValidatorUserActionCommand</A></samp></TD>
 			<TD>Validates the command of a user defined action in the RSE.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorUserActionComment.html">ValidatorUserActionComment</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorUserActionComment.html">ValidatorUserActionComment</A></samp></TD>
 			<TD>Validates the comment of a user defined action in the RSE.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorUserActionName.html">ValidatorUserActionName</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorUserActionName.html">ValidatorUserActionName</A></samp></TD>
 			<TD>Validates the name of a user defined action in the RSE.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorUserId.html">ValidatorUserId</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorUserId.html">ValidatorUserId</A></samp></TD>
 			<TD>Validates a user ID. Does only basic checking, intended to be subclassed.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorUserTypeName.html">ValidatorUserTypeName</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorUserTypeName.html">ValidatorUserTypeName</A></samp></TD>
 			<TD>Validates the name of a named type in the RSE.</TD>
 		</TR>
 		<TR>
-			<TD><samp><A href="../../../org/eclipse/rse/ui/validators/ValidatorUserTypeTypes.html">ValidatorUserTypeTypes</A></samp></TD>
+			<TD><samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/ValidatorUserTypeTypes.html">ValidatorUserTypeTypes</A></samp></TD>
 			<TD>Validates the type list of a named type in the RSE.</TD>
 		</TR>
 	</TBODY>

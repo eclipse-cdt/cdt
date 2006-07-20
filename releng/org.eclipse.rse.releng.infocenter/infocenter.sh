@@ -5,7 +5,7 @@ PATH=/opt/j2sdk1.4.2_12/bin:$PATH
 export PATH
 
 EHOME=/home/infocenter/eclipse3.2/eclipse
-if [ "$IHOME="" ]; then
+if [ "$IHOME" = "" ]; then
   IHOME=/home/infocenter/latest
 fi
 

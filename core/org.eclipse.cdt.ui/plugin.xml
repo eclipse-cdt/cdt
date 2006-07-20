@@ -852,17 +852,12 @@
             sequence="M1+M2+F"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
-            commandId="org.eclipse.cdt.ui.edit.text.c.format"/>
+            commandId="org.eclipse.cdt.ui.edit.text.c.format"/>      
      <key
             sequence="M1+/"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
-            commandId="org.eclipse.cdt.ui.edit.text.c.comment"/>
-     <key
-            sequence="M1+\"
-            contextId="org.eclipse.cdt.ui.cEditorScope"
-            commandId="org.eclipse.cdt.ui.edit.text.c.uncomment"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>    
+            commandId="org.eclipse.cdt.ui.edit.text.c.toggle.comment"/>
      <key
             sequence="M1+M2+/"
             contextId="org.eclipse.cdt.ui.cEditorScope"
@@ -960,16 +955,10 @@
             id="org.eclipse.cdt.ui.edit.text.c.format">
       </command>
       <command
-            name="%ActionDefinition.comment.name"
+            name="%ActionDefinition.toggleComment.name"
+            description="%ActionDefinition.toggleComment.description"
             categoryId="org.eclipse.cdt.ui.category.source"
-            description="%ActionDefinition.comment.description"
-            id="org.eclipse.cdt.ui.edit.text.c.comment">
-      </command>
-      <command
-            name="%ActionDefinition.uncomment.name"
-            categoryId="org.eclipse.cdt.ui.category.source"
-            description="%ActionDefinition.uncomment.description"
-            id="org.eclipse.cdt.ui.edit.text.c.uncomment">
+            id="org.eclipse.cdt.ui.edit.text.c.toggle.comment">
       </command>
       <command
             name="%ActionDefinition.addBlockComment.name"

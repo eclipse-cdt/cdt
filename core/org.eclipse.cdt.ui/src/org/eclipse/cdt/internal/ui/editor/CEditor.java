@@ -1022,16 +1022,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.JOIN_LINES);
 		setAction("Join Lines", action); //$NON-NLS-1$
 		
-		action = new TextOperationAction(CEditorMessages.getResourceBundle(), "Comment.", this, ITextOperationTarget.PREFIX); //$NON-NLS-1$
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.COMMENT);
-		setAction("Comment", action); //$NON-NLS-1$
-		markAsStateDependentAction("Comment", true); //$NON-NLS-1$
-
-		action = new TextOperationAction(CEditorMessages.getResourceBundle(), "Uncomment.", this, ITextOperationTarget.STRIP_PREFIX); //$NON-NLS-1$
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.UNCOMMENT);
-		setAction("Uncomment", action); //$NON-NLS-1$
-		markAsStateDependentAction("Uncomment", true); //$NON-NLS-1$
-
+		action= new ToggleCommentAction(CEditorMessages.getResourceBundle(), "ToggleComment.", this); //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_COMMENT);
+		setAction("ToggleComment", action); //$NON-NLS-1$
+		markAsStateDependentAction("ToggleComment", true); //$NON-NLS-1$
+		configureToggleCommentAction();
+		
 		action= new AddBlockCommentAction(CEditorMessages.getResourceBundle(), "AddBlockComment.", this);  //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_BLOCK_COMMENT);		
 		setAction("AddBlockComment", action); //$NON-NLS-1$
@@ -1370,6 +1366,20 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			return ((EditorActionBarContributor) contributor).getActionBars().getStatusLineManager();
 		}
 		return null;
+	}
+	
+	/**
+	 * Configures the toggle comment action
+	 *
+	 * @since 4.0.0
+	 */
+	private void configureToggleCommentAction() {
+		IAction action= getAction("ToggleComment"); //$NON-NLS-1$
+		if (action instanceof ToggleCommentAction) {
+			ISourceViewer sourceViewer= getSourceViewer();
+			SourceViewerConfiguration configuration= getSourceViewerConfiguration();
+			((ToggleCommentAction)action).configure(sourceViewer, configuration);
+		}
 	}
 
 	private void configureTabConverter() {

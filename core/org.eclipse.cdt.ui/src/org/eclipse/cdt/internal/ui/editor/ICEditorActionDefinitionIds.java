@@ -26,17 +26,13 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinitionIds {
 
 	/**
-	 * Action definition ID of the source -> comment action
-	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.comment"</code>).
+	 * Action definition ID of the source -> toggle comment action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.toggle.comment"</code>).
+	 * @since 4.0.0
 	 */
-	public static final String COMMENT = "org.eclipse.cdt.ui.edit.text.c.comment"; //$NON-NLS-1$
+	public static final String TOGGLE_COMMENT= "org.eclipse.cdt.ui.edit.text.c.toggle.comment"; //$NON-NLS-1$
 	
-	/**
-	 * Action definition ID of the source -> uncomment action
-	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.uncomment"</code>).
-	 */
-	public static final String UNCOMMENT = "org.eclipse.cdt.ui.edit.text.c.uncomment"; //$NON-NLS-1$
-
+	
 	/**
 	 * Action definition ID of the source -> add block comment action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.add.block.comment"</code>).

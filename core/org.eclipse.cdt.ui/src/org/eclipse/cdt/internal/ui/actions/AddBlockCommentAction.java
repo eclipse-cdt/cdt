@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 		int selectionOffset= selection.getOffset();
 		int selectionEndOffset= selectionOffset + selection.getLength();
 		List edits= new LinkedList();
-		ITypedRegion partition= docExtension.getPartition(IDocumentExtension3.DEFAULT_PARTITIONING, selectionOffset, false);
+		ITypedRegion partition= docExtension.getPartition(ICPartitions.C_PARTITIONING, selectionOffset, false);
 
 		handleFirstPartition(partition, edits, factory, selectionOffset);
 
@@ -116,7 +116,7 @@ public class AddBlockCommentAction extends BlockCommentAction {
 		}
 
 		// advance to next partition
-		partition= docExtension.getPartition(IDocumentExtension3.DEFAULT_PARTITIONING, partEndOffset, false);
+		partition= docExtension.getPartition(ICPartitions.C_PARTITIONING, partEndOffset, false);
 		partType= partition.getType();
 
 		// start of next partition		

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site>
+<site mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/updates/site.xml&amp;format=xml&amp;protocol=http">
    <description url="http://download.eclipse.org/dsdp/tm/updates/">
-      Target Management Project Updates
+		This is the Target Management Project Update Site for the Remote Systems Explorer (RSE).
    </description>
    <feature url="features/org.eclipse.rse.core_1.0.0.200607201800.jar" id="org.eclipse.rse.core" version="1.0.0.200607201800">
       <category name="Remote System Explorer (Runtime Only)"/>

@@ -937,7 +937,7 @@
            commandId="org.eclipse.cdt.ui.edit.text.c.join.lines"
            contextId="org.eclipse.cdt.ui.cEditorScope"
            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-           sequence="M1+M2+J"/>
+           sequence="M1+M3+J"/>
            
      <key
             sequence="F2"

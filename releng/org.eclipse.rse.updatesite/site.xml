@@ -3,33 +3,32 @@
    <description url="http://download.eclipse.org/dsdp/tm/updates/">
       Target Management Project Updates
    </description>
-   <feature url="features/org.eclipse.rse.core_1.0.0.200607201701.jar" id="org.eclipse.rse.core" version="1.0.0.200607201701">
-      <category name="RSE_Runtime"/>
+   <feature url="features/org.eclipse.rse.core_1.0.0.200607201800.jar" id="org.eclipse.rse.core" version="1.0.0.200607201800">
+      <category name="Remote System Explorer (Runtime Only)"/>
    </feature>
-   <feature url="features/org.eclipse.rse.dstore_1.0.0.200607201701.jar" id="org.eclipse.rse.dstore" version="1.0.0.200607201701">
-      <category name="RSE_Runtime"/>
+   <feature url="features/org.eclipse.rse.dstore_1.0.0.200607201800.jar" id="org.eclipse.rse.dstore" version="1.0.0.200607201800">
+      <category name="Remote System Explorer (Runtime Only)"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ftp_1.0.0.200607201701.jar" id="org.eclipse.rse.ftp" version="1.0.0.200607201701">
-      <category name="RSE_Runtime"/>
+   <feature url="features/org.eclipse.rse.ftp_1.0.0.200607201800.jar" id="org.eclipse.rse.ftp" version="1.0.0.200607201800">
+      <category name="Remote System Explorer (Runtime Only)"/>
    </feature>
-   <feature url="features/org.eclipse.rse.local_1.0.0.200607201701.jar" id="org.eclipse.rse.local" version="1.0.0.200607201701">
-      <category name="RSE_Runtime"/>
+   <feature url="features/org.eclipse.rse.local_1.0.0.200607201800.jar" id="org.eclipse.rse.local" version="1.0.0.200607201800">
+      <category name="Remote System Explorer (Runtime Only)"/>
    </feature>
-   <feature url="features/org.eclipse.rse.sdk_1.0.0.200607201701.jar" id="org.eclipse.rse.sdk" version="1.0.0.200607201701">
-      <category name="RSE"/>
+   <feature url="features/org.eclipse.rse.sdk_1.0.0.200607201800.jar" id="org.eclipse.rse.sdk" version="1.0.0.200607201800">
+      <category name="Remote System Explorer (RSE)"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ssh_1.0.0.200607201701.jar" id="org.eclipse.rse.ssh" version="1.0.0.200607201701">
-      <category name="RSE_Runtime"/>
+   <feature url="features/org.eclipse.rse.ssh_1.0.0.200607201800.jar" id="org.eclipse.rse.ssh" version="1.0.0.200607201800">
+      <category name="Remote System Explorer (Runtime Only)"/>
    </feature>
-   <category-def name="RSE" label="Remote Systems Explorer (RSE)">
+   <category-def name="Remote System Explorer (RSE)" label="RSE">
       <description>
-         This category contains the features of the Remote Systems Explorer (RSE).
+         This category contains the features of the Remote System Explorer (RSE).
       </description>
    </category-def>
-   <category-def name="RSE_Runtime" label="Remote Systems Explorer (RSE) - Runtime only">
+   <category-def name="Remote System Explorer (Runtime Only)" label="RSE_Runtime">
       <description>
-         This category contains the features of the Remote Systems Explorer (RSE) - Runtime only.
-These features are included in the RSE SDK; use these instead of the SDK if you do not want to get developer documentation, or sources. Select one or more of the &quot;Services&quot; features you need, then choose &quot;select required&quot; to get the core.
+         RSE Runtime-only features: Use this if you do not want to get developer documentation or sources.
       </description>
    </category-def>
 </site>

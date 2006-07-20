@@ -5,7 +5,9 @@ PATH=/opt/j2sdk1.4.2_12/bin:$PATH
 export PATH
 
 EHOME=/home/infocenter/eclipse3.2/eclipse
-IHOME=/home/infocenter/latest
+if [ "$IHOME="" ]; then
+  IHOME=/home/infocenter/latest
+fi
 
 if [ "$1" = "" -o "$1" = "help" ]; then
   echo "Usage: infocenter.sh [start|shutdown|addSite -from dir|apply]"

@@ -12,6 +12,7 @@ export IHOME
 umask 022
 cd "$IHOME/bin"
 cvs -q update -d
+chmod a+x *.sh
 
 #Update the infocenter
 ./update.sh

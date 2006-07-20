@@ -1105,8 +1105,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		addGroup(menu, ITextEditorActionConstants.GROUP_EDIT, IContextMenuConstants.GROUP_NEW);
 
 		// Code formatting menu items -- only show in C perspective
-		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Comment"); //$NON-NLS-1$
-		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Uncomment"); //$NON-NLS-1$
+		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "ToggleComment"); //$NON-NLS-1$
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "AddBlockComment"); //$NON-NLS-1$
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "RemoveBlockComment"); //$NON-NLS-1$
 

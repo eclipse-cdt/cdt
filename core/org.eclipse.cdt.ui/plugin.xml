@@ -620,6 +620,12 @@
                actionID="RulerDoubleClick"
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
+         <action
+               label="%Dummy.label"
+               class="org.eclipse.ui.texteditor.SelectRulerAction"
+               actionID="RulerClick"
+               id="org.eclipse.ui.texteditor.SelectRulerAction">
+         </action>
       </editorContribution>
    </extension>
    <extension

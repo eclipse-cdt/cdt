@@ -1075,7 +1075,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CVIEW);
 		setAction("ShowInCView", action); //$NON-NLS-1$
         
-        action = new TextOperationAction(CEditorMessages.getResourceBundle(), "OpenOutline.", this, CSourceViewer.SHOW_OUTLINE); //$NON-NLS-1$
+        action = new TextOperationAction(CEditorMessages.getResourceBundle(), "OpenOutline.", this, CSourceViewer.SHOW_OUTLINE, true); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_OUTLINE);
         setAction("OpenOutline", action); //$NON-NLS-1$*/
         

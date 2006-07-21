@@ -52,7 +52,7 @@ public class TypesTests extends PDOMTestBase {
 		IASTName[] xRefs = pdom.getReferences(x);
 		assertEquals(1, xRefs.length);
 		IASTFileLocation loc = xRefs[0].getFileLocation();
-		assertEquals(offset(85, 75), loc.getNodeOffset());
+		assertEquals(offset(85, 77), loc.getNodeOffset());
 	}
 
 	public void testCPP() throws Exception {

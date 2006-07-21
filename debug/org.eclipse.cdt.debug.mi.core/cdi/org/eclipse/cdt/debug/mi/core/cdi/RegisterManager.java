@@ -254,9 +254,10 @@ public class RegisterManager extends Manager {
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
-		target.setCurrentThread(frame.getThread(), false);
-		((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
+		target.lockTarget();
 		try {
+			target.setCurrentThread(frame.getThread(), false);
+			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			MIVarCreate var = factory.createMIVarCreate(regName);
@@ -269,8 +270,12 @@ public class RegisterManager extends Manager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
+			try {
 			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
+			} finally {
+				target.releaseTarget();
+			}
 		}
 	}
 

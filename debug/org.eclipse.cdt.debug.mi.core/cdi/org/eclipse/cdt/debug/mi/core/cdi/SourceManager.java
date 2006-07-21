@@ -424,13 +424,15 @@ public class SourceManager extends Manager {
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
-		target.setCurrentThread(frame.getThread(), false);
-		((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
+		target.lockTarget();
 		try {
+			target.setCurrentThread(frame.getThread(), false);
+			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
 			return getDetailTypeName(target, variable);
 		} finally {
 			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
+			target.releaseTarget();
 		}
 	}
 	public String getDetailTypeName(Target target, String typename) throws CDIException {
@@ -460,13 +462,15 @@ public class SourceManager extends Manager {
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
-		target.setCurrentThread(frame.getThread(), false);
-		((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
+		target.lockTarget();
 		try {
+			target.setCurrentThread(frame.getThread(), false);
+			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
 			return getTypeName(target, variable);
 		} finally {
 			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
+			target.releaseTarget();
 		}
 	}
 

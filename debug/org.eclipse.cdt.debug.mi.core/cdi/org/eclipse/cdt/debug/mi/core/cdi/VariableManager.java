@@ -175,9 +175,10 @@ public class VariableManager extends Manager {
 			Target target = (Target)frame.getTarget();
 			Thread currentThread = (Thread)target.getCurrentThread();
 			StackFrame currentFrame = currentThread.getCurrentStackFrame();
-			target.setCurrentThread(frame.getThread(), false);
-			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
+			target.lockTarget();
 			try {
+				target.setCurrentThread(frame.getThread(), false);
+				((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
 				MISession miSession = target.getMISession();
 				RxThread rxThread = miSession.getRxThread();
 				rxThread.setEnableConsole(false);
@@ -196,6 +197,7 @@ public class VariableManager extends Manager {
 				rxThread.setEnableConsole(true);
 				target.setCurrentThread(currentThread, false);
 				currentThread.setCurrentStackFrame(currentFrame, false);
+				target.releaseTarget();
 			}
 		} else {
 			throw new CDIException(CdiResources.getString("cdi.VariableManager.Unknown_type")); //$NON-NLS-1$
@@ -367,9 +369,10 @@ public class VariableManager extends Manager {
 			Target target = (Target)argDesc.getTarget();
 			Thread currentThread = (Thread)target.getCurrentThread();
 			StackFrame currentFrame = currentThread.getCurrentStackFrame();
-			target.setCurrentThread(stack.getThread(), false);
-			((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
+			target.lockTarget();
 			try {
+				target.setCurrentThread(stack.getThread(), false);
+				((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
 				MISession mi = target.getMISession();
 				CommandFactory factory = mi.getCommandFactory();
 				MIVarCreate var = factory.createMIVarCreate(name);
@@ -388,6 +391,7 @@ public class VariableManager extends Manager {
 			} finally {
 				target.setCurrentThread(currentThread, false);
 				currentThread.setCurrentStackFrame(currentFrame, false);
+				target.releaseTarget();
 			}
 		}
 		return argument;
@@ -398,9 +402,10 @@ public class VariableManager extends Manager {
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
-		target.setCurrentThread(frame.getThread(), false);
-		((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
+		target.lockTarget();
 		try {
+			target.setCurrentThread(frame.getThread(), false);
+			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			int depth = frame.getThread().getStackFrameCount();
@@ -429,6 +434,7 @@ public class VariableManager extends Manager {
 		} finally {
 			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
+			target.releaseTarget();
 		}
 		return (ICDIArgumentDescriptor[]) argObjects.toArray(new ICDIArgumentDescriptor[0]);
 	}
@@ -489,9 +495,10 @@ public class VariableManager extends Manager {
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
-		target.setCurrentThread(frame.getThread(), false);
-		((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
+		target.lockTarget();
 		try {
+			target.setCurrentThread(frame.getThread(), false);
+			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			int level = frame.getLevel();
@@ -514,6 +521,7 @@ public class VariableManager extends Manager {
 		} finally {
 			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
+			target.releaseTarget();
 		}
 		return (ICDILocalVariableDescriptor[]) varObjects.toArray(new ICDILocalVariableDescriptor[0]);
 	}
@@ -530,9 +538,10 @@ public class VariableManager extends Manager {
 			Target target = (Target)varDesc.getTarget();
 			Thread currentThread = (Thread)target.getCurrentThread();
 			StackFrame currentFrame = currentThread.getCurrentStackFrame();
-			target.setCurrentThread(stack.getThread(), false);
-			((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
+			target.lockTarget();
 			try {
+				target.setCurrentThread(stack.getThread(), false);
+				((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
 				MISession mi = target.getMISession();
 				CommandFactory factory = mi.getCommandFactory();
 				MIVarCreate var = factory.createMIVarCreate(name);
@@ -551,6 +560,7 @@ public class VariableManager extends Manager {
 			} finally {
 				target.setCurrentThread(currentThread, false);
 				currentThread.setCurrentStackFrame(currentFrame, false);
+				target.releaseTarget();
 			}
 		}
 		return local;

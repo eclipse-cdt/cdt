@@ -184,9 +184,10 @@ public class ExpressionManager extends Manager {
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
-		target.setCurrentThread(frame.getThread(), false);
-		((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
+		target.lockTarget();
 		try {
+			target.setCurrentThread(frame.getThread(), false);
+			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			MIVarCreate var = factory.createMIVarCreate(code);
@@ -204,6 +205,7 @@ public class ExpressionManager extends Manager {
 		} finally {
 			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
+			target.releaseTarget();
 		}
 	}
 

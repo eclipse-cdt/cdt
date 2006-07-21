@@ -240,17 +240,18 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 			StackFrame currentFrame = currentThread.getCurrentStackFrame();
 			StackFrame frame = (StackFrame)getStackFrame();
 			Thread thread = (Thread)getThread();
-			if (frame != null) {
-				target.setCurrentThread(frame.getThread(), false);				
-				((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
-			} else if (thread != null) {
-				target.setCurrentThread(thread, false);				
-			}
-			MISession mi = target.getMISession();
-			CommandFactory factory = mi.getCommandFactory();
-			String exp = "sizeof(" + getTypeName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-			MIDataEvaluateExpression evaluate = factory.createMIDataEvaluateExpression(exp);
+			target.lockTarget();
 			try {
+				if (frame != null) {
+					target.setCurrentThread(frame.getThread(), false);				
+					((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
+				} else if (thread != null) {
+					target.setCurrentThread(thread, false);				
+				}
+				MISession mi = target.getMISession();
+				CommandFactory factory = mi.getCommandFactory();
+				String exp = "sizeof(" + getTypeName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+				MIDataEvaluateExpression evaluate = factory.createMIDataEvaluateExpression(exp);
 				mi.postCommand(evaluate);
 				MIDataEvaluateExpressionInfo info = evaluate.getMIDataEvaluateExpressionInfo();
 				if (info == null) {
@@ -260,11 +261,15 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			} finally {
-				if (frame != null) {
-					target.setCurrentThread(currentThread, false);
-					currentThread.setCurrentStackFrame(currentFrame, false);
-				} else if (thread != null) {
-					target.setCurrentThread(currentThread, false);
+				try {
+					if (frame != null) {
+						target.setCurrentThread(currentThread, false);
+						currentThread.setCurrentStackFrame(currentFrame, false);
+					} else if (thread != null) {
+						target.setCurrentThread(currentThread, false);
+					}
+				} finally {
+					target.releaseTarget();
 				}
 			}
 		}

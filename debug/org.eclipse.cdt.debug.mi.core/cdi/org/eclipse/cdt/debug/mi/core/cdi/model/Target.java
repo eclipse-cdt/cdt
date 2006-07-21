@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
@@ -87,6 +88,45 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
  */
 public class Target extends SessionObject implements ICDITarget {
 
+	public class Lock {
+
+		java.lang.Thread heldBy;
+		int count;
+
+		public Lock() {
+
+		}
+
+		public synchronized void aquire() {
+			if (heldBy == null || heldBy == java.lang.Thread.currentThread()) {
+				heldBy = java.lang.Thread.currentThread();
+				count++;
+			} else {
+				while (true) {
+					try {
+						wait();
+					} catch (InterruptedException e) {
+					}
+					if (heldBy == null) {
+						heldBy = java.lang.Thread.currentThread();
+						count++;
+						return;
+					}					
+				}
+			}
+		}
+
+		public synchronized void release() {
+			if (heldBy == null || heldBy != java.lang.Thread.currentThread()) {
+				throw new IllegalStateException("Thread does not own lock");
+			}
+			if(--count == 0) {
+				heldBy = null;
+				notifyAll();
+			}
+		}
+	}
+
 	MISession miSession;
 	ICDITargetConfiguration fConfiguration;
 	Thread[] noThreads = new Thread[0];
@@ -95,13 +135,22 @@ public class Target extends SessionObject implements ICDITarget {
 	String fEndian = null;
 	boolean suspended = true;
 	boolean deferBreakpoints = true;
-	
+	Lock lock = new Lock();
+
 	public Target(Session s, MISession mi) {
 		super(s);
 		miSession = mi;
 		currentThreads = noThreads;
 	}
 
+	public void lockTarget() {
+		lock.aquire();
+	}
+	
+	public void releaseTarget() {
+		lock.release();
+	}
+	
 	public MISession getMISession() {
 		return miSession;
 	}
@@ -116,7 +165,7 @@ public class Target extends SessionObject implements ICDITarget {
 	public ICDITarget getTarget() {
 		return this;
 	}
-	
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#setCurrentThread(ICDIThread)
 	 */
@@ -127,7 +176,7 @@ public class Target extends SessionObject implements ICDITarget {
 			throw new CDIException(CdiResources.getString("cdi.model.Target.Unknown_thread")); //$NON-NLS-1$
 		}
 	}
-	
+
 	public void setCurrentThread(ICDIThread cthread, boolean doUpdate) throws CDIException {
 		if (cthread instanceof Thread) {
 			setCurrentThread((Thread)cthread, doUpdate);
@@ -163,7 +212,7 @@ public class Target extends SessionObject implements ICDITarget {
 				currentThreadId = info.getNewThreadId();
 
 				// @^&#@^$*^$
-				// GDB reset the currentFrame to  some other level 0 when switching thread.
+				// GDB reset the currentFrame to some other level 0 when switching thread.
 				// we need to reposition the current stack level.
 				MIFrame miFrame = info.getFrame();
 				if (miFrame != null) {
@@ -176,7 +225,7 @@ public class Target extends SessionObject implements ICDITarget {
 
 			Session session = (Session)getSession();
 			// Resetting threads may change the value of
-			// some variables like Register.  Call an update()
+			// some variables like Register. Call an update()
 			// To generate changeEvents.
 			if (doUpdate) {
 				RegisterManager regMgr = session.getRegisterManager();
@@ -192,7 +241,7 @@ public class Target extends SessionObject implements ICDITarget {
 
 		// We should be allright now.
 		if (currentThreadId != id) {
-			// thread is gone.  Generate a Thread destroyed.
+			// thread is gone. Generate a Thread destroyed.
 			miSession.fireEvent(new MIThreadExitEvent(miSession, id));
 			throw new CDIException(CdiResources.getString("cdi.model.Target.Cannot_switch_to_thread") + id); //$NON-NLS-1$
 		}
@@ -205,7 +254,7 @@ public class Target extends SessionObject implements ICDITarget {
 		Thread[] oldThreads = currentThreads;
 
 		// If we use "info threads" in getCThreads() this
-		// will be overwritten.  However if we use -stack-list-threads
+		// will be overwritten. However if we use -stack-list-threads
 		// it does not provide to the current thread
 		currentThreadId = newThreadId;
 
@@ -280,11 +329,11 @@ public class Target extends SessionObject implements ICDITarget {
 			// HACK/FIXME: gdb/mi thread-list-ids does not
 			// show any newly create thread, we workaround by
 			// issuing "info threads" instead.
-			//MIThreadListIds tids = factory.createMIThreadListIds();
-			//MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
+			// MIThreadListIds tids = factory.createMIThreadListIds();
+			// MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
 			miSession.postCommand(tids);
 			CLIInfoThreadsInfo info = tids.getMIInfoThreadsInfo();
-			int [] ids;
+			int[] ids;
 			String[] names;
 			if (info == null) {
 				ids = new int[0];
@@ -310,7 +359,7 @@ public class Target extends SessionObject implements ICDITarget {
 				cthreads = new Thread[]{new Thread(this, 0)};
 			}
 			currentThreadId = info.getCurrentThread();
-			//FIX: When attaching there is no thread selected
+			// FIX: When attaching there is no thread selected
 			// We will choose the first one as a workaround.
 			if (currentThreadId == 0 && cthreads.length > 0) {
 				currentThreadId = cthreads[0].getId();
@@ -416,9 +465,8 @@ public class Target extends SessionObject implements ICDITarget {
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
-		}		
+		}
 	}
-
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#stepIntoInstruction()
@@ -442,7 +490,7 @@ public class Target extends SessionObject implements ICDITarget {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-		
+
 	}
 
 	/**
@@ -466,7 +514,7 @@ public class Target extends SessionObject implements ICDITarget {
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
-		}		
+		}
 	}
 
 	/**
@@ -529,14 +577,14 @@ public class Target extends SessionObject implements ICDITarget {
 				}
 			}
 		} else if (location instanceof ICDIAddressLocation) {
-			ICDIAddressLocation addrLocation = (ICDIAddressLocation) location;
-			if (! addrLocation.getAddress().equals(BigInteger.ZERO)) {
+			ICDIAddressLocation addrLocation = (ICDIAddressLocation)location;
+			if (!addrLocation.getAddress().equals(BigInteger.ZERO)) {
 				loc = "*0x" + addrLocation.getAddress().toString(16); //$NON-NLS-1$
 			}
 		}
 		// Throw an exception we do know where to go
 		if (loc == null) {
-			throw new CDIException (CdiResources.getString("cdi.mode.Target.Bad_location")); //$NON-NLS-1$
+			throw new CDIException(CdiResources.getString("cdi.mode.Target.Bad_location")); //$NON-NLS-1$
 		}
 		MIExecUntil until = factory.createMIExecUntil(loc);
 		try {
@@ -547,7 +595,7 @@ public class Target extends SessionObject implements ICDITarget {
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
-		}		
+		}
 	}
 
 	/**
@@ -580,7 +628,7 @@ public class Target extends SessionObject implements ICDITarget {
 				((EventManager)getSession().getEventManager()).allowProcessingEvents(false);
 				suspend();
 			} finally {
-				((EventManager)getSession().getEventManager()).allowProcessingEvents(true);			
+				((EventManager)getSession().getEventManager()).allowProcessingEvents(true);
 			}
 		}
 		CommandFactory factory = miSession.getCommandFactory();
@@ -651,7 +699,7 @@ public class Target extends SessionObject implements ICDITarget {
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
-		}		
+		}
 	}
 
 	/**
@@ -676,14 +724,14 @@ public class Target extends SessionObject implements ICDITarget {
 				}
 			}
 		} else if (location instanceof ICDIAddressLocation) {
-			ICDIAddressLocation addrLocation = (ICDIAddressLocation) location;
-			if (! addrLocation.getAddress().equals(BigInteger.ZERO)) {
+			ICDIAddressLocation addrLocation = (ICDIAddressLocation)location;
+			if (!addrLocation.getAddress().equals(BigInteger.ZERO)) {
 				loc = "*0x" + addrLocation.getAddress().toString(16); //$NON-NLS-1$
 			}
 		}
 		// Throw an exception we do know where to go
 		if (loc == null) {
-			throw new CDIException (CdiResources.getString("cdi.mode.Target.Bad_location")); //$NON-NLS-1$
+			throw new CDIException(CdiResources.getString("cdi.mode.Target.Bad_location")); //$NON-NLS-1$
 		}
 
 		CLIJump jump = factory.createCLIJump(loc);
@@ -871,10 +919,10 @@ public class Target extends SessionObject implements ICDITarget {
 	 */
 	public void deleteAllBreakpoints() throws CDIException {
 		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
-		bMgr.deleteAllBreakpoints(this);		
+		bMgr.deleteAllBreakpoints(this);
 	}
 
-	/* 
+	/*
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createCondition(int, java.lang.String, String)
 	 */
 	public ICDICondition createCondition(int ignoreCount, String expression) {
@@ -1090,14 +1138,14 @@ public class Target extends SessionObject implements ICDITarget {
 		if (fConfiguration == null) {
 			if (miSession.isProgramSession()) {
 				fConfiguration = new TargetConfiguration(this);
-			}  else if (miSession.isAttachSession()){
+			} else if (miSession.isAttachSession()) {
 				fConfiguration = new TargetConfiguration(this);
 			} else if (miSession.isCoreSession()) {
 				fConfiguration = new CoreFileConfiguration(this);
 			} else {
-				fConfiguration = new TargetConfiguration(this);				
+				fConfiguration = new TargetConfiguration(this);
 			}
-		}		
+		}
 		return fConfiguration;
 	}
 
@@ -1119,12 +1167,12 @@ public class Target extends SessionObject implements ICDITarget {
 		if (varDesc instanceof RegisterDescriptor) {
 			Session session = (Session)getTarget().getSession();
 			RegisterManager mgr = session.getRegisterManager();
-			return mgr.createRegister((RegisterDescriptor)varDesc);			
+			return mgr.createRegister((RegisterDescriptor)varDesc);
 		}
-		return null;		
+		return null;
 	}
 
-	public void deferBreakpoints( boolean defer ) {
+	public void deferBreakpoints(boolean defer) {
 		this.deferBreakpoints = defer;
 	}
 

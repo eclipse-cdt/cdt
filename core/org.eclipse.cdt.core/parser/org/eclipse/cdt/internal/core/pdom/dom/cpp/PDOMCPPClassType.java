@@ -173,7 +173,19 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 	}
 
 	public ICPPMethod[] getMethods() throws DOMException {
-		throw new PDOMNotImplementedError();
+		try {
+			ArrayList methods = new ArrayList();
+		
+			for (PDOMMember member = getFirstMember(); member != null; member = member.getNextMember()) {
+				if (member instanceof ICPPMethod)
+					methods.add(member);
+			}
+			
+			return (ICPPMethod[])methods.toArray(new ICPPMethod[methods.size()]);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new ICPPMethod[0];
+		}
 	}
 
 	public ICPPClassType[] getNestedClasses() throws DOMException {

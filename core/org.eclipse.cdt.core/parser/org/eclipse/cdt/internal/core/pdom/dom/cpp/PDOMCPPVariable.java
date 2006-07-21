@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
@@ -44,11 +43,9 @@ public class PDOMCPPVariable extends PDOMBinding implements ICPPVariable {
 		if (nameParent instanceof IASTDeclarator) {
 			IASTDeclarator declarator = (IASTDeclarator)nameParent;
 			IType type = CPPVisitor.createType(declarator);
-			if (type != null && type instanceof IBinding) {
-				PDOMBinding pdomType = parent.getLinkage().adaptBinding((IBinding)type);
-				if (pdomType != null)
-					pdom.getDB().putInt(record + TYPE_OFFSET, pdomType.getRecord());
-			}
+			PDOMNode typeNode = parent.getLinkage().addType(this, type);
+			if (typeNode != null)
+				pdom.getDB().putInt(record + TYPE_OFFSET, typeNode.getRecord());
 		}
 	}
 

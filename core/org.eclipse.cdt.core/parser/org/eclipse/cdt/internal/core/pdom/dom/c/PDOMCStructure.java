@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -52,7 +54,19 @@ public class PDOMCStructure extends PDOMMemberOwner implements ICompositeType {
 	}
 
 	public IField[] getFields() throws DOMException {
-		throw new PDOMNotImplementedError();
+		try {
+			ArrayList fields = new ArrayList();
+		
+			for (PDOMMember member = getFirstMember(); member != null; member = member.getNextMember()) {
+				if (member instanceof IField)
+					fields.add(member);
+			}
+			
+			return (IField[])fields.toArray(new IField[fields.size()]);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new IField[0];
+		}
 	}
 
 	public IField findField(String name) throws DOMException {

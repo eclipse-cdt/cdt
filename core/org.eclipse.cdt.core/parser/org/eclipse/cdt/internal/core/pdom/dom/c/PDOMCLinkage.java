@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
@@ -68,6 +69,7 @@ public class PDOMCLinkage extends PDOMLinkage {
 	public static final int CFIELD = PDOMLinkage.LAST_NODE_TYPE + 4;
 	public static final int CENUMERATION = PDOMLinkage.LAST_NODE_TYPE + 5;
 	public static final int CENUMERATOR = PDOMLinkage.LAST_NODE_TYPE + 6;
+	public static final int CTYPEDEF = PDOMLinkage.LAST_NODE_TYPE + 7;
 
 	public ILanguage getLanguage() {
 		return new GCCLanguage();
@@ -138,7 +140,8 @@ public class PDOMCLinkage extends PDOMLinkage {
 				if (pdomEnumeration instanceof PDOMCEnumeration)
 				pdomBinding = new PDOMCEnumerator(pdom, parent, name,
 						(PDOMCEnumeration)pdomEnumeration);
-			}
+			} else if (binding instanceof ITypedef)
+				pdomBinding = new PDOMCTypedef(pdom, parent, name, (ITypedef)binding);
 		}
 		
 		if (pdomBinding != null)
@@ -184,6 +187,8 @@ public class PDOMCLinkage extends PDOMLinkage {
 			return CENUMERATION;
 		else if (binding instanceof IEnumerator)
 			return CENUMERATOR;
+		else if (binding instanceof ITypedef)
+			return CTYPEDEF;
 		else
 			return 0;
 	}
@@ -223,6 +228,8 @@ public class PDOMCLinkage extends PDOMLinkage {
 			return new PDOMCEnumeration(pdom, record);
 		case CENUMERATOR:
 			return new PDOMCEnumerator(pdom, record);
+		case CTYPEDEF:
+			return new PDOMCTypedef(pdom, record);
 		}
 
 		return super.getNode(record);

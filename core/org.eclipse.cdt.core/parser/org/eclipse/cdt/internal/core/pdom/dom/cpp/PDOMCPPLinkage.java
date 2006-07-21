@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -88,6 +89,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	public static final int CPPPARAMETER = PDOMLinkage.LAST_NODE_TYPE + 9;
 	public static final int CPPENUMERATION = PDOMLinkage.LAST_NODE_TYPE + 10;
 	public static final int CPPENUMERATOR = PDOMLinkage.LAST_NODE_TYPE + 11;
+	public static final int CPPTYPEDEF = PDOMLinkage.LAST_NODE_TYPE + 12;
 
 	public ILanguage getLanguage() {
 		return new GPPLanguage();
@@ -159,6 +161,8 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 				if (pdomEnumeration instanceof PDOMCPPEnumeration)
 				pdomBinding = new PDOMCPPEnumerator(pdom, parent, name,
 						(PDOMCPPEnumeration)pdomEnumeration);
+			} else if (binding instanceof ITypedef) {
+				pdomBinding = new PDOMCPPTypedef(pdom, parent, name, (ITypedef)binding);
 			}
 		}
 		
@@ -233,6 +237,8 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			return CPPENUMERATION;
 		else if (binding instanceof IEnumerator)
 			return CPPENUMERATOR;
+		else if (binding instanceof ITypedef)
+			return CPPTYPEDEF;
 		else
 			return 0;
 	}
@@ -382,6 +388,8 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			return new PDOMCPPEnumeration(pdom, record);
 		case CPPENUMERATOR:
 			return new PDOMCPPEnumerator(pdom, record);
+		case CPPTYPEDEF:
+			return new PDOMCPPTypedef(pdom, record);
 		default:
 			return super.getNode(record);
 		}

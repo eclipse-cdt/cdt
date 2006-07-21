@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -80,7 +79,9 @@ public class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType {
 	}
 
 	public IASTExpression getValue() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// Returning null for now, not sure what needs to be here if anything
+		// Values only seem to be used at type resolution time.
+		return null;
 	}
 
 	private char getFlags() throws CoreException {

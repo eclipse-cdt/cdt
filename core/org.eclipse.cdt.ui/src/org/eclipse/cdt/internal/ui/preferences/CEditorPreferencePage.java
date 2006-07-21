@@ -223,7 +223,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		editorComposite.setLayoutData(gd);
 
-		fList = new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL);
+		fList = new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = convertHeightInCharsToPixels(5);
 		fList.setLayoutData(gd);
@@ -306,8 +306,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 		fCTextTools = CUIPlugin.getDefault().getTextTools();
 		CSourceViewerConfiguration configuration = new CSourceViewerConfiguration(fCTextTools, null);
-		//fPreviewViewer = new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
-		fPreviewViewer = new PreviewSourceViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+		fPreviewViewer = new PreviewSourceViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		fPreviewViewer.setPreferenceStore(CUIPlugin.getDefault().getCombinedPreferenceStore());
 		fPreviewViewer.configure(configuration);
 		fPreviewViewer.getTextWidget().setFont(JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT));

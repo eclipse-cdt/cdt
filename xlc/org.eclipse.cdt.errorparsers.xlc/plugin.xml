@@ -1,0 +1,7 @@
+<plugin>
+<extension id="XlcErrorParser" 
+	name="%CDTXLCErrorParser.name" 
+	point="org.eclipse.cdt.core.ErrorParser">
+	<errorparser class="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser" /> 
+</extension>
+</plugin>

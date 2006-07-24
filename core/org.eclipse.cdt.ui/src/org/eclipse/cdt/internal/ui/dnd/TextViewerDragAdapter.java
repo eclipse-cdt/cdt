@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dnd;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
@@ -100,6 +101,11 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
 	public void dragStart(DragSourceEvent event) {
+		// disable text drag on GTK until bug 151197 is fixed
+		if (Platform.WS_GTK.equals(Platform.getWS())) {
+			event.doit = false;
+			return;
+		}
 		/// convert screen coordinates to widget offest
 		int offset= getOffsetAtLocation(event.x, event.y, false);
 		// convert further to a document offset

@@ -408,6 +408,14 @@ public class PreferenceConstants {
 	 */	
 	public static final String TEMPLATES_USE_CODEFORMATTER= "org.eclipse.cdt.ui.text.templates.format"; //$NON-NLS-1$
 
+
+	/** 
+	 * Preference key for whether to ensure a newline at the end of files when saving.
+	 * 
+	 * @since 4.0
+	 */
+	public final static String ENSURE_NEWLINE_AT_EOF = "ensureNewlineAtEOF"; //$NON-NLS-1$	
+
 	/**
 	 * Returns the CDT-UI preference store.
 	 * 
@@ -462,5 +470,7 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_CLOSE_BRACES, true);
 		store.setDefault(PreferenceConstants.EDITOR_WRAP_STRINGS, true);
 		store.setDefault(PreferenceConstants.EDITOR_ESCAPE_STRINGS, false);
+		
+		store.setDefault(PreferenceConstants.ENSURE_NEWLINE_AT_EOF, false);
     }
 }

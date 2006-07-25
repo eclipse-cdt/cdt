@@ -29,6 +29,7 @@ import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
@@ -922,6 +923,34 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createSaveOperation(java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
 	 */
 	protected DocumentProviderOperation createSaveOperation(final Object element, final IDocument document, final boolean overwrite) throws CoreException {
+		//add a newline to the end of the document (if it is not already present)
+		//-----------------------------------------------------------------------
+		//for people who do not want auto-modification of their files,
+		//this flag will prevent addition of a newline unless the user
+		//explicitly sets the preference thru Window -> Preferences -> C/C++ -> Editor 
+		//  -> Appearance Tab -> Ensure newline end of file when saving
+		if (PreferenceConstants.getPreferenceStore().getBoolean(
+				PreferenceConstants.ENSURE_NEWLINE_AT_EOF)) {
+			// even if the document is empty, there will be at least one line in
+			// it (the 0th one)
+			int lastLineIndex = document.getNumberOfLines() - 1;
+
+			try {
+				// we have to ensure that the length of the last line is 0.
+				// this will also take care of empty files. empty files have
+				// only one line in them and the length of this one and only 
+				// line is 0. 
+				// Thus we do not need to append an extra line separator to
+				// empty files.
+				int lastLineLength = document.getLineLength(lastLineIndex);
+				if (lastLineLength != 0) {
+					document.replace(document.getLength(), 0, TextUtilities
+							.getDefaultLineDelimiter(document));
+				}
+			} catch (BadLocationException e) {
+			}
+		}		
+		
 		final FileInfo info= getFileInfo(element);
 		if (info instanceof TranslationUnitInfo) {
 			return new DocumentProviderOperation() {

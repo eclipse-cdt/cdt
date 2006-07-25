@@ -13,8 +13,6 @@ package org.eclipse.cdt.ui.tests.text.contentassist2;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
-
 /**
  * @author hamer
  * 

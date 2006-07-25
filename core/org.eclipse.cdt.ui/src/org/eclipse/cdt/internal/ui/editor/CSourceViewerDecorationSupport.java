@@ -90,7 +90,8 @@ public class CSourceViewerDecorationSupport
 			if (fASTTranslationUnit == null && fTranslationUnit != null) {
 				try {
 					fParseTimeStamp = System.currentTimeMillis();
-					fASTTranslationUnit = fTranslationUnit.getLanguage().getASTTranslationUnit(fTranslationUnit, ILanguage.AST_SKIP_IF_NO_BUILD_INFO | ILanguage.AST_SKIP_INDEXED_HEADERS);
+					int style = ILanguage.AST_SKIP_IF_NO_BUILD_INFO | ILanguage.AST_SKIP_INDEXED_HEADERS;
+					fASTTranslationUnit = fTranslationUnit.getLanguage().getASTTranslationUnit(fTranslationUnit, style);
 				} catch (CoreException exc) {
 					result = exc.getStatus();
 				}
@@ -431,7 +432,7 @@ public class CSourceViewerDecorationSupport
 		if (translationUnit == null) {
 			return Collections.EMPTY_LIST;
 		}
-		String fileName = translationUnit.getContainingFilename();
+		String fileName = translationUnit.getFilePath();
 		if (fileName == null) {
 			return Collections.EMPTY_LIST;
 		}

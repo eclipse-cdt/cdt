@@ -60,6 +60,9 @@ command += "-DbaseLocation=#{eclipse} "
 command += "-DbuildType=#{buildType} "
 command += "-DbuildId=#{buildId} "
 command += "-DmapVersionTag=#{tag} "
+if ("#{buildType}" == "N") then
+	command += "-DforceContextQualifier=#{buildId} "
+end
 
 puts(command)
 

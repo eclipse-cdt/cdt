@@ -35,6 +35,7 @@ command="$command -DbuildType=${buildType} "
 command="$command -DbuildId=${buildId} "
 command="$command -DmapVersionTag=${tag} "
 command="$command -DdoPublish=true "
+command="$command -DforceContextQualifier=${buildId} "
 #command="$command postBuild "
 
 echo "$command"

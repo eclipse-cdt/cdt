@@ -80,6 +80,10 @@ $incantation .= "-DbaseLocation=${eclipse} ";
 $incantation .= "-DbuildType=${buildType} ";
 $incantation .= "-DbuildId=${buildId} ";
 $incantation .= "-DmapVersionTag=${tag} ";
+if ($buildType == "N") {
+	$incantation .= "-DforceContextQualifier=${buildId} ";
+
+}
 
 print("${incantation}\n");
 

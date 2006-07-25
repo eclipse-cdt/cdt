@@ -59,6 +59,8 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
  * A drop adapter which supports dragging a non-workspace file from some
  * external tool (e.g. explorer) into the editor area. The adaptor also supports
  * text and marker transfer.
+ * 
+ * @since 4.0
  */
 public class TextEditorDropAdapter extends DropTargetAdapter implements
 		ITextEditorDropTargetListener {
@@ -395,13 +397,15 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 	 * Convert mouse screen coordinates to a <code>StyledText</code> offset.
 	 * 
 	 * @param x
+	 *            screen X-coordinate
 	 * @param y
+	 *            screen Y-coordinate
 	 * @param absolute
 	 *            if <code>true</code>, coordinates are expected to be
 	 *            absolute screen coordinates
 	 * @return text offset
 	 * 
-	 * @see StyledText#getOffsetAtLocation() \
+	 * @see StyledText#getOffsetAtLocation()
 	 */
 	private int getOffsetAtLocation(int x, int y, boolean absolute) {
 		StyledText textWidget= fViewer.getTextWidget();

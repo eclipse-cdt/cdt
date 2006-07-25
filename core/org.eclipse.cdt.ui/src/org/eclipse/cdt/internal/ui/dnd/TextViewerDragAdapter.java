@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dnd;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
@@ -21,16 +20,21 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextContent;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
 
 /**
  * Drag source adapter for text selections in ITextViewers.
+ * 
+ * @since 4.0
  */
 public class TextViewerDragAdapter extends DragSourceAdapter {
 
@@ -44,6 +48,8 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 	private ITextViewer fViewer;
 	/** The editor of the viewer (may be null) */
 	private ITextEditorExtension fEditor;
+	/** Location of last mouse down event (as a workaround for bug 151197) */
+	private Point fDragStartLocation;
 
 	/**
 	 * Create a new TextViewerDragAdapter.
@@ -60,7 +66,22 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 	public TextViewerDragAdapter(ITextViewer viewer, ITextEditorExtension editor) {
 		fViewer= viewer;
 		fEditor= editor;
+		fViewer.getTextWidget().addListener(SWT.MouseDown, new Listener() {
+			public void handleEvent(Event event) {
+				// workaround for bug 151197
+				Point selection= fViewer.getTextWidget().getSelection();
+				if (selection.x != selection.y) {
+					// remember last mouse down location
+					// to check if drag started inside selection
+					fDragStartLocation= new Point(event.x,event.y);
+				} else {
+					// no active selection - this is no valid drag start
+					fDragStartLocation= null;
+				}
+			}
+		});
 	}
+
 	/*
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
@@ -101,13 +122,13 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
 	public void dragStart(DragSourceEvent event) {
-		// disable text drag on GTK until bug 151197 is fixed
-		if (Platform.WS_GTK.equals(Platform.getWS())) {
-			event.doit = false;
+		// workaround for bug 151197
+		if (fDragStartLocation == null) {
+			event.doit= false;
 			return;
 		}
-		/// convert screen coordinates to widget offest
-		int offset= getOffsetAtLocation(event.x, event.y, false);
+		// convert screen coordinates to widget offest
+		int offset= getOffsetAtLocation(fDragStartLocation.x, fDragStartLocation.y, false);
 		// convert further to a document offset
 		offset= getDocumentOffset(offset);
 		Point selection= fViewer.getSelectedRange();
@@ -145,11 +166,17 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 
 	/**
 	 * Convert mouse screen coordinates to a <code>StyledText</code> offset.
+	 * 
 	 * @param x
+	 *            screen X-coordinate
 	 * @param y
-	 * @param absolute if true, coordinates are expected to be absolute
-	 *        screen coordinates
+	 *            screen Y-coordinate
+	 * @param absolute
+	 *            if <code>true</code>, coordinates are expected to be
+	 *            absolute screen coordinates
 	 * @return text offset
+	 * 
+	 * @see StyledText#getOffsetAtLocation()
 	 */
 	private int getOffsetAtLocation(int x, int y, boolean absolute) {
 		StyledText textWidget= fViewer.getTextWidget();

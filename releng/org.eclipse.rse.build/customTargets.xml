@@ -170,8 +170,44 @@
 		<replace dir="${buildDirectory}/plugins" value="${buildId}" token="@build@">
 			<include name="**/about.mappings" />
 		</replace>
+		<!-- build.update.jars builds BEFORE the normal build, since -->
+		<!-- update.jars does a clean but the normal build does not  -->
+		<antcall target="build.update.jars" />
 	</target>
 
+	<target name="build.update.jars" depends="myInit">
+		<!-- build this only for toplevel features, since they include all    -->
+		<!-- other features and the build.update.jar cleans all build results -->
+		<property name="updateDir" value="${packageDirectory}/${dropDir}/updates" />
+		<property name="type" value="feature" />
+		<property name="id" value="org.eclipse.rse.sdk" />
+		<mkdir dir="${updateDir}/features" />
+		<mkdir dir="${updateDir}/plugins" />
+		<property name="elementPath" value="${buildDirectory}/${type}s/${id}" />
+		<ant antfile="build.xml" dir="${elementPath}" target="build.update.jar">
+			<property name="target" value="build.update.jar"/>
+			<property name="plugin.destination" value="${updateDir}/plugins" />
+			<property name="feature.destination" value="${updateDir}/features" />
+		</ant>
+		<!-- Now get rid of server jars: works on UNIX only! -->
+		<exec dir="${updateDir}/plugins" executable="sh">
+			<arg value="-c"/>
+			<arg value="zip org.eclipse.dstore.core_*.jar -d dstore_core.jar"/>
+		</exec>
+		<exec dir="${updateDir}/plugins" executable="sh">
+			<arg value="-c"/>
+			<arg value="zip org.eclipse.dstore.extra_*.jar -d dstore_extra_server.jar"/>
+		</exec>
+		<exec dir="${updateDir}/plugins" executable="sh">
+			<arg value="-c"/>
+			<arg value="zip org.eclipse.rse.services_*.jar -d clientserver.jar"/>
+		</exec>
+		<exec dir="${updateDir}/plugins" executable="sh">
+			<arg value="-c"/>
+			<arg value="zip org.eclipse.rse.services.dstore_*.jar -d dstore_miners.jar"/>
+		</exec>
+	</target>
+	
 	<!-- ===================================================================== -->
 	<!-- Steps to do after running the build.xmls for the elements being built. -->
 	<!-- ===================================================================== -->

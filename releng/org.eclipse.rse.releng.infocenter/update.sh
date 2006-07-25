@@ -9,8 +9,10 @@ NEED_RESTART=0
 #update RSE into deplopyment directory
 cd $IHOME/deploy/rse
 rm *.zip
+echo "Downloading RSE-SDK-latest.zip..."
 wget -q "http://download.eclipse.org/dsdp/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"
 if [ -e RSE-SDK-latest.zip ]; then
+  echo "Unzipping..."
   unzip -q RSE-SDK-latest.zip
   if [ -e plugins.tmp ]; then
     rm -rf plugins.tmp
@@ -21,6 +23,7 @@ if [ -e RSE-SDK-latest.zip ]; then
   NUM=`ls plugins.tmp/*.jar | wc -l`
   echo "RSE plugins.tmp: NUM=$NUM"
   if [ "$NUM" = "3" ]; then
+    echo "Doc plugins got successfully, installing from plugins.tmp into plugins..."
     if [ -e plugins ]; then 
       rm -rf plugins
     fi

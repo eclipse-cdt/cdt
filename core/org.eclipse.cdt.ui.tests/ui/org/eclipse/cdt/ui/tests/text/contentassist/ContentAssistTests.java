@@ -30,7 +30,10 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
+
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -39,7 +42,12 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * @author aniefer
@@ -157,7 +165,15 @@ public class ContentAssistTests extends TestCase {
 		}
 	
 		// call the CompletionProcessor
-		return new ICompletionProposal[0];
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		FileEditorInput editorInput = new FileEditorInput(file);
+		IEditorPart editorPart = page.openEditor(editorInput, "org.eclipse.cdt.ui.editor.CEditor");
+		CEditor editor = (CEditor) editorPart ;
+		IAction completionAction = editor.getAction("ContentAssistProposal");
+		CCompletionProcessor2 completionProcessor = new CCompletionProcessor2(editorPart);
+		ICompletionProposal[] results = completionProcessor.computeCompletionProposals(editor.getCSourceViewer(), offset); // (document, pos, wc, null);
+
+		return results ;
     }
     
     public void testBug69334() throws Exception {
@@ -174,8 +190,8 @@ public class ContentAssistTests extends TestCase {
         
         ICompletionProposal [] results = getResults( cu, code.indexOf( "very " ) + 4 ); //$NON-NLS-1$
         
-        assertEquals( results.length, 1 );
-        assertEquals( results[0].getDisplayString(), "veryLongName : int" ); //$NON-NLS-1$
+        assertEquals( 1, results.length );
+        assertEquals( "veryLongName : int", results[0].getDisplayString() ); //$NON-NLS-1$
     }
     
     public void testBug72824() throws Exception {
@@ -193,18 +209,18 @@ public class ContentAssistTests extends TestCase {
         IFile cu = importFile( "strategy.cpp", c2 ); //$NON-NLS-1$
         
         ICompletionProposal [] results = getResults( cu, c2.indexOf( "Str " ) + 3 ); //$NON-NLS-1$
-        assertEquals( results.length, 1 );
-        assertEquals( results[0].getDisplayString(), "Strategy" ); //$NON-NLS-1$
+        assertEquals( 1, results.length );
+        assertEquals( "Strategy", results[0].getDisplayString() ); //$NON-NLS-1$
         
         c2 = code + "   Strategy *p[3] = { new Strategy( Strategy:: \n"; //$NON-NLS-1$
 
         cu = importFile( "strategy.cpp", c2 ); //$NON-NLS-1$
         
         results = getResults( cu, c2.indexOf( "::" ) + 2 ); //$NON-NLS-1$
-        assertEquals( results.length, 3 );
-        assertEquals( results[0].getDisplayString(), "CHEAT" ); //$NON-NLS-1$
-        assertEquals( results[1].getDisplayString(), "IDIOT" ); //$NON-NLS-1$
-        assertEquals( results[2].getDisplayString(), "NORMAL" ); //$NON-NLS-1$
+        assertEquals( 3, results.length );
+        assertEquals( "CHEAT", results[0].getDisplayString()  ); //$NON-NLS-1$
+        assertEquals( "IDIOT", results[1].getDisplayString()  ); //$NON-NLS-1$
+        assertEquals( "NORMAL", results[2].getDisplayString()  ); //$NON-NLS-1$
     }
     
     public void testBug72559() throws Exception {
@@ -221,10 +237,9 @@ public class ContentAssistTests extends TestCase {
         IFile cu = importFile( "t.cpp", code ); //$NON-NLS-1$
         ICompletionProposal [] results = getResults( cu, code.indexOf( "v " ) + 1 ); //$NON-NLS-1$
         
-        assertEquals( results.length, 4 );
+        assertEquals( results.length, 3 );
         assertEquals( results[0].getDisplayString(), "var : float" ); //$NON-NLS-1$
         assertEquals( results[1].getDisplayString(), "virtual" ); //$NON-NLS-1$
-        assertEquals( results[2].getDisplayString(), "void" ); //$NON-NLS-1$
-        assertEquals( results[3].getDisplayString(), "volatile" ); //$NON-NLS-1$
+        assertEquals( results[2].getDisplayString(), "volatile" ); //$NON-NLS-1$
     }
 }

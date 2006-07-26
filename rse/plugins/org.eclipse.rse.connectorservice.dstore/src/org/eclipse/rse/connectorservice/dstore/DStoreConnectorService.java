@@ -22,6 +22,8 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Vector;
 
+import javax.net.ssl.SSLHandshakeException;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dstore.core.client.ClientConnection;
@@ -636,13 +638,16 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				}
 				// connect to launched server
 				connectStatus = clientConnection.connect(launchStatus.getTicket(), timeout);
-				if (!connectStatus.isConnected() && connectStatus.getMessage().startsWith(ClientConnection.CANNOT_CONNECT))
+
+				if (!connectStatus.isConnected() && 
+						(connectStatus.getMessage().startsWith(ClientConnection.CANNOT_CONNECT) ||
+						 connectStatus.getException() instanceof SSLHandshakeException)		
+						)
 				{
 					launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
 					if (!launchStatus.isConnected())
 					{
 						launchFailed = true;
-						SystemBasePlugin.logError("Error launching server: " + launchStatus.getMessage(), null);
 					}
 					else
 					{

@@ -1,5 +1,9 @@
 #!/bin/sh
 # Convert normal "site.xml" to "testUpdates"
+#
+# Prerequisites: 
+# - Eclipse 3.2 installed in $HOME/ws/eclipse
+# - Java5 in the PATH or in /shared/common/ibm-java2-ppc64-50
 
 curdir=`pwd`
 cd `dirname $0`
@@ -26,13 +30,20 @@ cd $HOME/ws/eclipse
 #Use Java5 on build.eclipse.org
 export PATH=/shared/common/ibm-java2-ppc64-50/bin:$PATH
 #Pack the site
+echo "Packing the site..."
 java -jar startup.jar \
-    -application org.eclipse.update.core.siteOptimizer 
-    -jarProcessor -outputDir $site
+    -application org.eclipse.update.core.siteOptimizer \
+    -jarProcessor -outputDir $site \
     -processAll -pack $site
 
 #Create the digest
+echo "Creating digest..."
 java -jar startup.jar \
     -application org.eclipse.update.core.siteOptimizer \
     -digestBuilder -digestOutputDir=$site \
     -siteXML=$site/site.xml
+
+cd $site
+chown -R dsdp-tm-rse .
+chmod -R g+w .
+cd $curdir

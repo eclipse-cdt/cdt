@@ -33,24 +33,23 @@ chgrp dsdp-tm-rse site.xml
 
 # optimize the site
 # see http://wiki.eclipse.org/index.php/Platform-releng-faq
-cd $HOME/ws/eclipse
 #Use Java5 on build.eclipse.org
 export PATH=/shared/common/ibm-java2-ppc64-50/bin:$PATH
 #Pack the site
-echo "Packing the site..."
-java -jar startup.jar \
+echo "Packing the site... $SITE"
+java -jar $HOME/ws/eclipse/startup.jar \
     -application org.eclipse.update.core.siteOptimizer \
     -jarProcessor -outputDir $SITE \
     -processAll -pack $SITE
 
 #Create the digest
 echo "Creating digest..."
-java -jar startup.jar \
+java -jar $HOME/ws/eclipse/startup.jar \
     -application org.eclipse.update.core.siteOptimizer \
     -digestBuilder -digestOutputDir=$SITE \
     -siteXML=$SITE/site.xml
 
 cd $SITE
-chown -R dsdp-tm-rse .
+chgrp -R dsdp-tm-rse .
 chmod -R g+w .
 cd $curdir

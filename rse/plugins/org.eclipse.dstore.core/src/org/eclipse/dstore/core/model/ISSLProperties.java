@@ -19,6 +19,7 @@ package org.eclipse.dstore.core.model;
 public interface ISSLProperties
 {
 	public boolean usingSSL();
+	public boolean usingServerSSL();
 	public String getDaemonKeyStorePassword();
 	public String getDaemonKeyStorePath();
 	public String getServerKeyStorePassword();

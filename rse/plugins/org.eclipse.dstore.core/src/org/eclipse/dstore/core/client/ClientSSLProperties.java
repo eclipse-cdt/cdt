@@ -17,10 +17,10 @@
 package org.eclipse.dstore.core.client;
 
 import org.eclipse.dstore.core.model.ISSLProperties;
-
 public class ClientSSLProperties implements ISSLProperties
 {
 	private boolean _enableSSL = false;
+	private boolean _disableServerSSL = false;
 	private String _daemonKeyStorePath;
 	private String _daemonKeyStorePassword;
 	
@@ -38,6 +38,18 @@ public class ClientSSLProperties implements ISSLProperties
 		_serverKeyStorePassword = serverPassword;
 	}
 	
+	public ClientSSLProperties(boolean enableSSL, boolean disableServerSSL,
+			String daemonKeystore, String daemonPassword,
+				String serverKeystore, String serverPassword)
+	{
+		_enableSSL = enableSSL;
+		_disableServerSSL = disableServerSSL;
+		_daemonKeyStorePath = daemonKeystore;
+		_daemonKeyStorePassword = daemonPassword;
+		_serverKeyStorePath = serverKeystore;
+		_serverKeyStorePassword = serverPassword;
+	}
+	
 	public ClientSSLProperties(boolean enableSSL, String keystore, String password)
 	{
 		_enableSSL = enableSSL;
@@ -48,9 +60,26 @@ public class ClientSSLProperties implements ISSLProperties
 		_serverKeyStorePassword = password;
 	}
 	
+	public ClientSSLProperties(boolean enableSSL, boolean disableServerSSL, String keystore, String password)
+	{
+		_enableSSL = enableSSL;
+		_disableServerSSL = disableServerSSL;
+		_daemonKeyStorePath = keystore;
+		_daemonKeyStorePassword = password;
+
+		_serverKeyStorePath = keystore;
+		_serverKeyStorePassword = password;
+	}
+	
+	
 	public boolean usingSSL()
 	{
 		return _enableSSL;
+	}
+	
+	public boolean usingServerSSL()
+	{
+		return !_disableServerSSL;
 	}
 
 

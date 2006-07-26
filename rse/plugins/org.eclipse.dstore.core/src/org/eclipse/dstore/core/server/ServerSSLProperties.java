@@ -21,10 +21,11 @@ import java.util.ResourceBundle;
 import org.eclipse.dstore.core.model.ISSLProperties;
 
 
-
 public class ServerSSLProperties implements ISSLProperties
 {
 	private boolean _enableSSL = false;
+	private boolean _disableServerSSL = false;
+	
 	private String _daemonKeyStorePath;
 	private String _daemonKeyStorePassword;
 
@@ -33,6 +34,7 @@ public class ServerSSLProperties implements ISSLProperties
 
 	
 	private static final String ENABLE_SSL    = "enable_ssl";	
+	private static final String DISABLE_SERVER_SSL = "disable_server_ssl";
 	
 	private static final String DAEMON_KEYSTORE_FILE = "daemon_keystore_file";
 	private static final String DAEMON_KEYSTORE_PASSWORD = "daemon_keystore_password";
@@ -46,19 +48,29 @@ public class ServerSSLProperties implements ISSLProperties
 		try 
 		{ 
 			ResourceBundle properties = ResourceBundle.getBundle("ssl");
-			if (properties != null)
+			_enableSSL = properties.getString(ENABLE_SSL).trim().equals("true");
+			if (_enableSSL)
 			{
-				_enableSSL = properties.getString(ENABLE_SSL).trim().equals("true");
-				if (_enableSSL)
+				try
 				{
-					try
-					{
-						_daemonKeyStorePath = properties.getString(DAEMON_KEYSTORE_FILE).trim();
-						_daemonKeyStorePassword = properties.getString(DAEMON_KEYSTORE_PASSWORD).trim();
-					}
-					catch (Exception e)
-					{					
-					}
+					_disableServerSSL = properties.getString(DISABLE_SERVER_SSL).trim().equals("true");
+				}
+				catch (Exception e)
+				{
+					
+				}
+				
+				try
+				{
+					_daemonKeyStorePath = properties.getString(DAEMON_KEYSTORE_FILE).trim();
+					_daemonKeyStorePassword = properties.getString(DAEMON_KEYSTORE_PASSWORD).trim();
+				}
+				catch (Exception e)
+				{					
+				}
+				
+				if (!_disableServerSSL)
+				{
 					try
 					{
 						_serverKeyStorePath = properties.getString(SERVER_KEYSTORE_FILE).trim();
@@ -67,40 +79,36 @@ public class ServerSSLProperties implements ISSLProperties
 					catch (Exception e)
 					{
 					}
-					
-					if (_daemonKeyStorePath == null && _serverKeyStorePath != null)
-					{
-						_daemonKeyStorePath = _serverKeyStorePath;
-						_daemonKeyStorePassword = _serverKeyStorePassword;
-					}
-					if (_serverKeyStorePath == null && _daemonKeyStorePath != null)
-					{
-						_serverKeyStorePath = _daemonKeyStorePath;
-						_serverKeyStorePassword = _daemonKeyStorePassword;
-					}
-					
 				}
 				
-				if (_enableSSL)
+				if (_daemonKeyStorePath == null && _serverKeyStorePath != null)
 				{
-					System.out.println("SSL Settings");
-					System.out.println("[daemon keystore:\t"+_daemonKeyStorePath+"]");
-					System.out.println("[daemon keystore pw:\t"+_daemonKeyStorePassword+"]");
+					_daemonKeyStorePath = _serverKeyStorePath;
+					_daemonKeyStorePassword = _serverKeyStorePassword;
+				}
+				if (!_disableServerSSL && _serverKeyStorePath == null && _daemonKeyStorePath != null)
+				{
+					_serverKeyStorePath = _daemonKeyStorePath;
+					_serverKeyStorePassword = _daemonKeyStorePassword;
+				}
+				
+			}
+			
+			if (_enableSSL)
+			{
+				System.out.println("SSL Settings");
+				System.out.println("[daemon keystore:\t"+_daemonKeyStorePath+"]");
+				System.out.println("[daemon keystore pw:\t"+_daemonKeyStorePassword+"]");
+				if (!_disableServerSSL)
+				{
 					System.out.println("[server keystore:\t"+_serverKeyStorePath+"]");
 					System.out.println("[server keystore pw:\t"+_serverKeyStorePassword+"]");					
 				}
 			}
-			else
-			{
-				_enableSSL = false;
-			}
 		} 
 		catch (Exception e) 
 		{
-			// no ssl properties...set to disabled
-			_enableSSL = false;
-			
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 	
@@ -108,6 +116,11 @@ public class ServerSSLProperties implements ISSLProperties
 	public boolean usingSSL()
 	{
 		return _enableSSL;
+	}
+	
+	public boolean usingServerSSL()
+	{
+		return !_disableServerSSL;
 	}
 	
 	
@@ -131,5 +144,4 @@ public class ServerSSLProperties implements ISSLProperties
 		return _serverKeyStorePassword;
 	}
 
-	
 }

@@ -291,16 +291,16 @@ public final class DataStore
 		_loaders.add(loader);
 	}
 
+
 	
 	public boolean usingSSL()
 	{
 		if (_sslProperties != null)
 		{
-			return _sslProperties.usingSSL();
+			return _sslProperties.usingSSL() && _sslProperties.usingServerSSL();
 		}
 		return false;
 	}
-	
 	/**
 	 * Specifies the security properties of this DataStore.
 	 * These properties indicate whether or not to use ssl,

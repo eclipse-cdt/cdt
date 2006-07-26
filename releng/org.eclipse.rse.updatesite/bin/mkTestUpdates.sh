@@ -15,21 +15,23 @@ umask 002
 cd ..
 SITE=`pwd`
 TAG=`ls features | head -1 | sed -e 's,[^_]*_[0-9.]*\([^.]*\).jar,\1,'`
-rm site.xml
+rm site.xml web/site.xsl
 cvs -q update -d
 if [ `basename $SITE` = testUpdates ]; then
     echo "Working on test update site"
     sed -e 's,/dsdp/tm/updates,/dsdp/tm/testUpdates,g' \
-        -e 's,Project Update Site,Project Test Update Site,g' \
+        -e 's,Project Update,Project Test Update,g' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
+    sed -e 's,Project Update,Project Test Update,g' \
+    	web/site.xsl > web/site.xsl.new
+    mv -f web/site.xsl.new web/site.xsl
 else
     echo "Working on official update site"
 fi
 sed -e "s,200607201800,$TAG,g" \
     site.xml > site.xml.new
 mv -f site.xml.new site.xml
-chgrp dsdp-tm-rse site.xml
 
 # optimize the site
 # see http://wiki.eclipse.org/index.php/Platform-releng-faq

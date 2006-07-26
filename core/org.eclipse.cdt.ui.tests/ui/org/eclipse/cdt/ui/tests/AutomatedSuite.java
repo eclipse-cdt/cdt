@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.ui.tests.text.CAutoIndentTest;
 import org.eclipse.cdt.ui.tests.text.CBreakIteratorTest;
+import org.eclipse.cdt.ui.tests.text.CPartitionerTest;
 import org.eclipse.cdt.ui.tests.text.CWordIteratorTest;
 import org.eclipse.cdt.ui.tests.text.NumberRuleTest;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionFailedTest_MemberReference_Arrow_Prefix2;
@@ -86,6 +87,8 @@ public class AutomatedSuite extends TestSuite {
 		//addTest(PartitionTokenScannerTest.suite());
 		addTest(NumberRuleTest.suite());
 		addTest(CAutoIndentTest.suite());
+		addTest(CPartitionerTest.suite());
+		
 		// completion tests
 		addTest(CompletionTest_FieldType_Prefix.suite());
 		addTest(CompletionTest_FieldType_NoPrefix.suite());

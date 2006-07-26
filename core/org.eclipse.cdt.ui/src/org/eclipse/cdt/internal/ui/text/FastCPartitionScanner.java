@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -100,7 +101,7 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 				switch (fState) {
 				case SINGLE_LINE_COMMENT:
 				case CHARACTER:
-				//case STRING:				
+				case STRING:
 					// assert(fTokenLength > 0);
 					// if last char was a backslash then we have an escaped line
 					if (fLast != BACKSLASH) {
@@ -166,7 +167,6 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 					preFix(CCODE, STRING, NONE, 1);
 					fTokenOffset += fTokenLength;
 					fTokenLength= fPrefixLength;
-					consume();
 					break;
 
 				default:

@@ -12,6 +12,8 @@ package org.eclipse.cdt.ui.text;
 
 /**
  * Definition of C partitioning and its partitions.
+ * 
+ * @since 4.0
  */
 public interface ICPartitions {
 

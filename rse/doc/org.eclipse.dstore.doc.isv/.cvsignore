@@ -1,1 +1,6 @@
 bin
+index
+build.xml
+temp.bin.log
+temp.options.txt
+temp.convert.txt

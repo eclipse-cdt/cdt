@@ -1,5 +1,6 @@
 -charset "iso-8859-1"
--sourcepath "../org.eclipse.dstore.core/src@sep@../org.eclipse.dstore.extra/src"
+-sourcepath "../org.eclipse.dstore.core/src
+;../org.eclipse.dstore.extra/src"
 -d reference/api
 -classpath @rt@
 -breakiterator

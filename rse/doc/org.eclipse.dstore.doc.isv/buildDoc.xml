@@ -3,6 +3,66 @@
 
 	<target name="init">
 		<available file="${basedir}/index" property="index.present" />
+		<path id="path_bootclasspath">
+			<fileset dir="${java.home}/lib">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+		<property name="bootclasspath" refid="path_bootclasspath"/>
+		<condition property="safeBaseLocation"
+			value="${baseLocation}"
+			else="${eclipse.home}">
+			<isset property="baseLocation"/>
+		</condition>
+	</target>
+
+	<target name="computeClasspath" unless="javadoc.classpath">
+		<!-- Construct the javadoc classpath and store it in a property. -->
+		<echo level="info" message="Computing classpath ..."/>
+		
+		<!-- Add platform dependencies required by your plug-in here.
+			 Note that this pattern expects GMF and its dependencies to have 
+			 been installed into the platform directory structure, as is
+			 the case during the build. -->
+		<patternset id="platform.classpath.pattern">
+			<include name="**/org.eclipse.core*.jar"/>
+			<include name="**/org.eclipse.core*/**/*.jar"/>
+			<include name="**/org.eclipse.compare*.jar"/>
+			<include name="**/org.eclipse.debug.core*.jar"/>
+			<include name="**/org.eclipse.debug.ui*.jar"/>
+			<include name="**/org.eclipse.search*.jar"/>
+        	<include name="**/org.eclipse.swt*.jar"/>
+        	<include name="**/org.eclipse.swt*/**/*.jar"/>
+        	<include name="**/org.eclipse.ui*.jar"/>
+        	<include name="**/org.eclipse.ui*/**/*.jar"/>
+        	<include name="**/org.eclipse.update*.jar"/>
+        	<include name="**/org.eclipse.update*/**/*.jar"/>
+        	<include name="**/org.eclipse.osgi*.jar"/>
+        	<include name="**/org.eclipse.osgi*/**/*.jar"/>
+        	<include name="**/org.eclipse.equinox*.jar"/>
+        	<include name="**/org.eclipse.equinox*/**/*.jar"/>
+        	<include name="**/org.eclipse.jface*.jar"/>
+        	<include name="**/org.eclipse.jface*/**/*.jar"/>
+        	<include name="**/org.eclipse.text*.jar"/>
+        	<include name="**/org.eclipse.text*/**/*.jar"/>
+        	<include name="**/org.eclipse.team*.jar"/>
+        	<include name="**/org.eclipse.team*/**/*.jar"/>
+        	<include name="**/org.junit*.jar"/>
+        	<include name="**/org.junit*/**/*.jar"/>
+			<include name="**/com.ibm.icu*.jar"/>
+			<include name="**/com.jcraft.jsch*.jar"/>
+		</patternset>
+			
+		<pathconvert property="javadoc.classpath">
+			<path>				
+				<fileset dir="${safeBaseLocation}">
+					<patternset refid="platform.classpath.pattern"/>
+		    	</fileset>
+			</path>
+		</pathconvert>
+		<echo level="info" message="Done computing classpath."/>
+		<echo level="info" message="Bootclasspath is: ${bootclasspath}"/>
+		<echo level="info" message="Classpath is: ${javadoc.classpath}"/>
 	</target>
 
 	<target name="all" depends="init" unless="index.present">
@@ -28,24 +88,29 @@
 		<available file="/usr/bin/javadoc" property="javadoc" value="/usr/bin/javadoc" />
 	</target>
 
-	<target name="generateJavadoc" depends="getJavadocPath" if="javadoc">
+	<target name="generateJavadoc" depends="getJavadocPath,computeClasspath" if="javadoc">
+		<property name="optionsFile" value="temp.options.txt" />
+		<copy file="options.txt" tofile="${optionsFile}" overwrite="true" />
+		
+		<condition property="argsListDelimiter" value=":">
+			<os family="unix" />
+		</condition>
+		<condition property="argsListDelimiter" value=";">
+			<os family="windows" />
+		</condition>
+
+		<replaceregexp file="${basedir}/${optionsFile}" flags="g" match="(\r\n?|\n);" replace="${argsListDelimiter}" />
+		<replace file="${basedir}/${optionsFile}" token="@rt@" value="${bootclasspath}${argsListDelimiter}${javadoc.classpath}" />
+		<replace file="${basedir}/${optionsFile}" token="@baseLocation@" value="${safeBaseLocation}" />
+
 		<!--scrub isv plugin directories of any preexisting api doc content-->
 		<delete dir="reference/api" />
 		<mkdir dir="reference/api" />
 
-		<condition property="sep" value=":">
-			<os family="unix" />
-		</condition>
-		<condition property="sep" value=";">
-			<os family="windows" />
-		</condition>
-
-		<copy file="options.txt" tofile="temp.options.txt" />
-		<replace file="${basedir}/temp.options.txt" token="@sep@" value="${sep}" />
-		<replace file="${basedir}/temp.options.txt" token="@rt@" value="${bootclasspath}" />
-
+		<echo message="sep = ${argsListDelimiter}"/>
+		<echo message="javadoc = ${javadoc}"/>
 		<exec dir="." executable="${javadoc}" output="temp.bin.log">
-			<arg line="@${basedir}/temp.options.txt -J-Xmx1000M" />
+			<arg line="@${basedir}/${optionsFile} -J-Xmx1000M" />
 		</exec>
 	</target>
 

@@ -26,7 +26,7 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 	{
 		super(cmdSS, hostShell);
 		_patterns = new Patterns();
-		_patterns.update("cmd");
+		_patterns.update("cmd"); //$NON-NLS-1$
 		ISubSystem[] sses = cmdSS.getHost().getSubSystems();
 		for (int i = 0; i < sses.length; i++)
 		{
@@ -75,7 +75,7 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 			}
 			
 			RemoteOutput output = null;
-			String type = "stdout";
+			String type = "stdout"; //$NON-NLS-1$
 			if (parsedMsg != null)
 			{
 				type = parsedMsg.type;
@@ -97,7 +97,7 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 			if (parsedMsg != null)
 			{		
 				String file = parsedMsg.file;
-				if (type.equals("prompt"))
+				if (type.equals("prompt")) //$NON-NLS-1$
 				{
 					_workingDir = file;
 					output.setAbsolutePath(_workingDir);

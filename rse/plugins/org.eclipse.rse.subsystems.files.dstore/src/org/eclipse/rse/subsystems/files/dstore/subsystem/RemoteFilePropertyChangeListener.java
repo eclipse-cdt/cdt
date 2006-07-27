@@ -212,7 +212,7 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
 	                    if (updated != null)
 	                    {
 	                         String classification = updated.getClassification();
-	                        if (!classification.equals("file") && !classification.equals("directory"))
+	                        if (!classification.equals("file") && !classification.equals("directory")) //$NON-NLS-1$ //$NON-NLS-2$
 	                        {
 	                            refreshParent = true;
 	                            toUpdate.add(updated);

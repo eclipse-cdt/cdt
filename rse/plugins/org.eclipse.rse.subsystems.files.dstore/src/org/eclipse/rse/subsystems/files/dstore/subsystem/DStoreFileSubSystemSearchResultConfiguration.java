@@ -83,7 +83,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 							_fileSubSystem.listFiles(parentRemoteFile);
 						}
 						
-						String path = fileNode.getValue() + "/" + fileNode.getName();
+						String path = fileNode.getValue() + "/" + fileNode.getName(); //$NON-NLS-1$
 						IRemoteFile remoteFile = _fileSubSystem.getRemoteFileObject(path);
 	
 						List contained = fileNode.getNestedData();

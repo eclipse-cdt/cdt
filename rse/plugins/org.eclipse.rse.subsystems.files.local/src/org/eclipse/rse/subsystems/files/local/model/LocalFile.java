@@ -54,7 +54,7 @@ public class LocalFile extends AbstractRemoteFile implements IRemoteFile
 		}
 		catch (Exception e)
 		{
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 	

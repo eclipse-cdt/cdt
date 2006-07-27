@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.rse.connectorservice.dstore.DStoreConnectorService;
+import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.services.dstore.files.DStoreVirtualHostFile;
 import org.eclipse.rse.services.files.IHostFile;
@@ -42,7 +43,7 @@ public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 		if (_listener == null)
 		{
 			DStoreConnectorService connectorService = (DStoreConnectorService)ss.getConnectorService();
-			Shell shell = FileServiceSubSystem.getActiveWorkbenchShell();
+			Shell shell = SubSystem.getActiveWorkbenchShell();
 			_listener = new RemoteFilePropertyChangeListener(shell, connectorService, connectorService.getDataStore(), ss);
 		}
 	}

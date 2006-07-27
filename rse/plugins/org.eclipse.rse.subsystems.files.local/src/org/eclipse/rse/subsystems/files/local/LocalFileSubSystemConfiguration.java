@@ -57,9 +57,9 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	public LocalFileSubSystemConfiguration() 
 	{
 		super();
-		String osName = System.getProperty("os.name").toLowerCase();
+		String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 	
-		_isWindows = (osName.startsWith("windows"));
+		_isWindows = (osName.startsWith("windows")); //$NON-NLS-1$
 		setIsUnixStyle(!_isWindows);
 	}
 

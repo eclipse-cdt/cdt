@@ -68,6 +68,6 @@ public class Activator extends AbstractUIPlugin {
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.rse.subsystems.files.ftp", path);
+		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.rse.subsystems.files.ftp", path); //$NON-NLS-1$
 	}
 }

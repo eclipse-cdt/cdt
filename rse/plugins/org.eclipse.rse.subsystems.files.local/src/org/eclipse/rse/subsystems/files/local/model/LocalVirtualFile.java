@@ -89,25 +89,25 @@ public class LocalVirtualFile extends LocalFile implements IVirtualRemoteFile
 
 	public void setVirtualFullPath(String string) 
 	{
-		if (string.equals(""))
+		if (string.equals("")) //$NON-NLS-1$
 		{
 			_node.getChild().renameTo(_node.getChild().name);
 		}
 		else
 		{
-			_node.getChild().renameTo(string + "/" + _node.getChild().name);
+			_node.getChild().renameTo(string + "/" + _node.getChild().name); //$NON-NLS-1$
 		}
 	}
 
 	public void setVirtualName(String string) 
 	{
-		if (_node.getChild().path.equals(""))
+		if (_node.getChild().path.equals("")) //$NON-NLS-1$
 		{
 			_node.getChild().renameTo(string);
 		}
 		else
 		{
-			_node.getChild().renameTo(_node.getChild().path + "/" + string);
+			_node.getChild().renameTo(_node.getChild().path + "/" + string); //$NON-NLS-1$
 		}
 	}
 	

@@ -69,6 +69,6 @@ public class Activator extends AbstractUIPlugin {
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.rse.subsystems.shells.dstore", path);
+		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.rse.subsystems.shells.local", path); //$NON-NLS-1$
 	}
 }

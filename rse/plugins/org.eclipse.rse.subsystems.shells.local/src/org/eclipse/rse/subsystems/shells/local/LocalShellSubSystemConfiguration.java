@@ -45,14 +45,14 @@ public class LocalShellSubSystemConfiguration extends ShellServiceSubSystemConfi
 	 */
     public String getCommandSeparator()
     {
-    	String os = System.getProperty("os.name").toLowerCase();
-    	if (os.startsWith("win"))
+    	String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+    	if (os.startsWith("win")) //$NON-NLS-1$
     	{
-    		return "&";
+    		return "&"; //$NON-NLS-1$
     	}
     	else
     	{
-    		return ";";
+    		return ";"; //$NON-NLS-1$
     	}
     	
     }

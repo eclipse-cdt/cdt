@@ -49,11 +49,11 @@ public class FTPRemoteFile extends AbstractRemoteFile
 	{
 		if (isFile())
 		{
-			return "file";
+			return "file"; //$NON-NLS-1$
 		}
 		else
 		{
-			return "directory";
+			return "directory"; //$NON-NLS-1$
 		}
 	}
 

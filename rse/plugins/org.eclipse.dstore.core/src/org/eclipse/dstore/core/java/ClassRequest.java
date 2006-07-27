@@ -34,7 +34,6 @@ public class ClassRequest
 	/**
 	 * Constructs a new ClassRequest
 	 * @param className The name of the class requested
-	 * @param Thread optional thread that requested the class
 	 * @param synchronous whether or not the request is synchronous
 	 */
 	public ClassRequest(String className, boolean synchronous)

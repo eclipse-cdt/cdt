@@ -270,7 +270,7 @@ public final class DataStore
 	/**
 	 * Sets the loaders for this <code>DataStore</code>.  The loaders are used to load miners (extension tools). 
 	 *
-	 * @param loader the loader for the miners this <code>DataStore</code> will be using
+	 * @param loaders the loaders for the miners this <code>DataStore</code> will be using
 	 */
 	public void setLoaders(ArrayList loaders)
 	{
@@ -370,7 +370,7 @@ public final class DataStore
 	/**
 	 * Tells the <code>DataStore</code> where to find the miners which it needs to load. 
 	 *
-	 * @param minersLocation a <code>DataElement</code> representing the location of the miners
+	 * @param location a <code>DataElement</code> representing the location of the miners
 	 */
 	public void addMinersLocation(DataElement location)
 	{
@@ -757,7 +757,7 @@ public final class DataStore
 	/**
 	 * Returns the attribute indicated by an index.
 	 *
-	 * @param the index of the attribute to get
+	 * @param attribute the index of the attribute to get
 	 * @return the attribute
 	 */
 	public String getAttribute(int attribute)
@@ -922,7 +922,6 @@ public final class DataStore
 	 * @param from the element that references the other elements
 	 * @param to a list of elements that from references
 	 * @param type the string that represents the type of relationships between from and to
-	 * @return the new reference
 	 */
 	public void createReferences(DataElement from, ArrayList to, String type)
 	{
@@ -2317,8 +2316,8 @@ public final class DataStore
 	 * Creates and issues a synchronized command.  
 	 *
 	 * @param commandDescriptor the comamnd descriptor for the command
+	 * @param arguments the arguments for the command
 	 * @param dataObject the subject of the command
-	 * @param noRef and indication of whether the subject should be referenced or not
 	 * @return the status of the command
 	 */
 	public DataElement synchronizedCommand(DataElement commandDescriptor, ArrayList arguments, DataElement dataObject)
@@ -2487,7 +2486,7 @@ public final class DataStore
 	/**
 	 * Find a command descriptor element in the schema with the given value.  
 	 *
-	 * @param object the object descriptor representing the type of object that can issue such a command
+	 * @param descriptor the object descriptor representing the type of object that can issue such a command
 	 * @param keyName the value of the command to search for
 	 * @param depth the depth of abstraction to search 
 	 * @return the command descriptor for the specified command
@@ -2621,7 +2620,6 @@ public final class DataStore
 	 * Finds all the deleted elements
 	 *
 	 * @param root where to search from 
-	 * @param type the descriptor representing the type of the objects to search for 
 	 * @return a list of elements
 	 */
 	public synchronized List findDeleted(DataElement root)

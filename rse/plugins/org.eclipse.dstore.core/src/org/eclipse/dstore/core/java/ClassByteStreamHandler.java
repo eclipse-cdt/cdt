@@ -48,7 +48,7 @@ public class ClassByteStreamHandler implements IClassByteStreamHandler
 	/**
 	 * Contructor
 	 * @param dataStore the DataStore instance
-	 * @param the log in which to log status and messages
+	 * @param log the log in which to log status and messages
 	 */
 	public ClassByteStreamHandler(DataStore dataStore, DataElement log)
 	{

@@ -271,7 +271,7 @@ public class RemoteClassLoader extends ClassLoader
 	 * class has been loaded.
 	 * @param className the name of the class to receive
 	 * @param bytes the bytes in the class
-	 * @param the size of the class
+	 * @param size the size of the class
 	 */
 	public synchronized void receiveClass(String className, byte[] bytes, int size)
 	{

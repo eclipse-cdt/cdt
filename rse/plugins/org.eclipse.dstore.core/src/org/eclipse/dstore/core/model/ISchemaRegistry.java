@@ -43,7 +43,7 @@ public interface ISchemaRegistry
 	
 	/**
 	 * Returns an <code>ExternalLoader</code> for the specified qualified class name
-	 * @param qualfiedClassName the qualified class name of an external tool
+	 * @param qualifiedClassName the qualified class name of an external tool
 	 * @return the external loader that can load to specified class
 	 */
 	public ExternalLoader getLoaderFor(String qualifiedClassName);

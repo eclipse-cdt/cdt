@@ -387,7 +387,7 @@ public class ServerUpdateHandler extends UpdateHandler
 	 * Implemented to provide the means by which classes are sent
 	 * across the comm channel.
 	 * @param className the name of the class to send
-	 * @param classbyteStreamHandlerId the name of the byte stream handler to use to receive the class
+	 * @param classByteStreamHandlerId the name of the byte stream handler to use to receive the class
 	 */
 	public synchronized void sendClass(String className, String classByteStreamHandlerId) 
 	{

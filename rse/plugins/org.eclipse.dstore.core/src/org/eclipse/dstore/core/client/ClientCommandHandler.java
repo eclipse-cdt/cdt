@@ -144,7 +144,7 @@ public class ClientCommandHandler extends CommandHandler
 	 * @param bytes the bytes of a file to send
 	 * @param size the number of bytes to send
 	 * @param binary indicates whether to send the bytes as binary or unicode
-	 * @param bytesStreamHandlerId indicates wwhich byte stream handler should receive the bytes
+	 * @param byteStreamHandlerId indicates wwhich byte stream handler should receive the bytes
 	 */
 	public synchronized void sendFile(String fileName, byte[] bytes, int size, boolean binary, String byteStreamHandlerId)
 	{

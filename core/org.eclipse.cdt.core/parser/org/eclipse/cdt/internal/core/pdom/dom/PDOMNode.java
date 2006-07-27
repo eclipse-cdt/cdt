@@ -82,6 +82,11 @@ public abstract class PDOMNode implements IPDOMNode{
 		return pdom.getDB().getInt(record + TYPE);
 	}
 	
+	public PDOMNode getParentNode() throws CoreException {
+		int parentrec = pdom.getDB().getInt(record + PARENT);
+		return parentrec != 0 ? getLinkage().getNode(parentrec) : null;
+	}
+	
 	public PDOMLinkage getLinkage() throws CoreException {
 		return getLinkage(pdom, record);
 	}

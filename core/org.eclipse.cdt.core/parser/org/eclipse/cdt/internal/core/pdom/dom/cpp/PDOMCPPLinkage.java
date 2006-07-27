@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
@@ -221,6 +222,9 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	protected int getBindingType(IBinding binding) {
 		if (binding instanceof ICPPVariable)
 			return CPPVARIABLE;
+		else if (binding instanceof ICPPTemplateDefinition)
+			// this must be before class type
+			return 0;
 		else if (binding instanceof ICPPFunction)
 			return CPPFUNCTION;
 		else if (binding instanceof ICPPClassType)

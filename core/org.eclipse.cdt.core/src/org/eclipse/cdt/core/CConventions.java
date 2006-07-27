@@ -455,4 +455,65 @@ public class CConventions {
 
 		return val;
 	}
+
+	/**
+	 * Validate the given CPP enum name, either simple or qualified. For
+	 * example, <code>"A::B::C"</code>, or <code>"C"</code>.
+	 * <p>
+	 *
+	 * @param name the name of a enum
+	 * @return a status object with code <code>IStatus.OK</code> if
+	 *		the given name is valid as a CPP enum name,
+	 *      a status with code <code>IStatus.WARNING</code>
+	 *		indicating why the given name is discouraged,
+	 *      otherwise a status object indicating what is wrong with
+	 *      the name
+	 */
+	public static IStatus validateEnumName(String name) {
+		if (name == null) {
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.enum.nullName"), null); //$NON-NLS-1$ 
+		}
+		String trimmed = name.trim();
+		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1) ){ //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.enum.nameWithBlanks"), null); //$NON-NLS-1$ 
+		}
+		int index = name.lastIndexOf(scopeResolutionOperator);
+		char[] scannedID;
+		if (index == -1) {
+			// simple name
+			IStatus status = validateIdentifier(name);
+			if (!status.isOK()){
+				return status;
+			}
+	
+			scannedID = name.toCharArray();
+		} else {
+			// qualified name
+			String pkg = name.substring(0, index).trim();
+			IStatus status = validateScopeName(pkg);
+			if (!status.isOK()) {
+				return status;
+			}
+			String type = name.substring(index + scopeResolutionOperator.length()).trim();
+			status = validateIdentifier(type);
+			if (!status.isOK()){
+				return status;
+			}
+			scannedID = type.toCharArray();
+		}
+	
+		if (scannedID != null) {
+			if (CharOperation.contains('$', scannedID)) {
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.enum.dollarName"), null); //$NON-NLS-1$ 
+			}
+			if (scannedID.length > 0 && scannedID[0] == '_') {
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.enum.leadingUnderscore"), null); //$NON-NLS-1$ 
+			}
+			if (scannedID.length > 0 && Character.isLowerCase(scannedID[0])) {
+				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.enum.lowercaseName"), null); //$NON-NLS-1$
+			}
+			return CModelStatus.VERIFIED_OK;
+		}
+		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.enum.invalidName"), null);  //$NON-NLS-1$
+	}
 }

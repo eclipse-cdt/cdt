@@ -1,6 +1,7 @@
 bin
 index
 build.xml
-rseconvert.txt
+javadoc.link.location
 temp.bin.log
+temp.convert.txt
 temp.options.txt

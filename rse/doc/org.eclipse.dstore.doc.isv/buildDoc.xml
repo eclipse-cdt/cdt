@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="RSE DStore ISV Doc Build" default="all" basedir=".">
 
+	<property name="javadoc.link.location" value="${basedir}/javadoc.link.location"/>
+
 	<target name="init">
 		<available file="${basedir}/index" property="index.present" />
 		<path id="path_bootclasspath">
@@ -14,6 +16,7 @@
 			else="${eclipse.home}">
 			<isset property="baseLocation"/>
 		</condition>
+		<delete dir="${javadoc.link.location}" />
 	</target>
 
 	<target name="computeClasspath" unless="javadoc.classpath">
@@ -21,7 +24,7 @@
 		<echo level="info" message="Computing classpath ..."/>
 		
 		<!-- Add platform dependencies required by your plug-in here.
-			 Note that this pattern expects GMF and its dependencies to have 
+			 Note that this pattern expects Eclipse to have 
 			 been installed into the platform directory structure, as is
 			 the case during the build. -->
 		<patternset id="platform.classpath.pattern">
@@ -48,8 +51,24 @@
 			</path>
 		</pathconvert>
 		<echo level="info" message="Done computing classpath."/>
-		<echo level="info" message="Bootclasspath is: ${bootclasspath}"/>
-		<echo level="info" message="Classpath is: ${javadoc.classpath}"/>
+		<echo level="debug" message="Bootclasspath is: ${bootclasspath}"/>
+		<echo level="debug" message="Classpath is: ${javadoc.classpath}"/>
+	</target>
+
+	<target name="extractLinks">
+		<mkdir dir="${javadoc.link.location}"/>
+		
+		<patternset id="package.list">
+			<include name="**/package-list"/>
+		</patternset>
+		
+		<!-- We only need the package-list files out of these -->
+		<unzip dest="${javadoc.link.location}/platform/">
+			<patternset refid="package.list"/>
+			<fileset dir="${safeBaseLocation}/plugins">
+				<include name="org.eclipse.platform.doc.isv*.jar"/>
+			</fileset>
+		</unzip>
 	</target>
 
 	<target name="all" depends="init" unless="index.present">
@@ -64,9 +83,11 @@
 
 	<target name="convertSchemaToHtml" if="eclipse.running">
 		<property name="dest" value="reference/extension-points" />
+		<!--
 		<record name="${basedir}/temp.convert.txt" action="start" />
-		<!-- pde.convertSchemaToHTML manifest="../org.eclipse.dstore.core/plugin.xml" destination="${dest}" / -->
+		<pde.convertSchemaToHTML manifest="../org.eclipse.dstore.core/plugin.xml" destination="${dest}" />
 		<record name="${basedir}/temp.convert.txt" action="stop" />
+		-->
 	</target>
 
 	<target name="getJavadocPath">
@@ -75,7 +96,7 @@
 		<available file="/usr/bin/javadoc" property="javadoc" value="/usr/bin/javadoc" />
 	</target>
 
-	<target name="generateJavadoc" depends="getJavadocPath,computeClasspath" if="javadoc">
+	<target name="generateJavadoc" depends="getJavadocPath,extractLinks,computeClasspath" if="javadoc">
 		<property name="optionsFile" value="temp.options.txt" />
 		<copy file="options.txt" tofile="${optionsFile}" overwrite="true" />
 		
@@ -89,6 +110,7 @@
 		<replaceregexp file="${basedir}/${optionsFile}" flags="g" match="(\r\n?|\n);" replace="${argsListDelimiter}" />
 		<replace file="${basedir}/${optionsFile}" token="@rt@" value="${bootclasspath}${argsListDelimiter}${javadoc.classpath}" />
 		<replace file="${basedir}/${optionsFile}" token="@baseLocation@" value="${safeBaseLocation}" />
+		<replace file="${basedir}/${optionsFile}" token="@javadoc.link.location@" value="${javadoc.link.location}" />
 
 		<!--scrub isv plugin directories of any preexisting api doc content-->
 		<delete dir="reference/api" />

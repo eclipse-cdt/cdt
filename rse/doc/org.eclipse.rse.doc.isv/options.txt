@@ -57,7 +57,7 @@
 -group "RSE Core Plug-in Packages" "org.eclipse.rse.core;org.eclipse.rse.core.*"
 -group "RSE UI Plug-in Packages" "org.eclipse.rse.ui;org.eclipse.rse.ui.*"
 -link http://java.sun.com/j2se/1.5/docs/api
--linkoffline ./../../../org.eclipse.platform.doc.isv/reference/api ../org.eclipse.platform.doc.isv/reference/api
+-linkoffline ./../../../org.eclipse.platform.doc.isv/reference/api @javadoc.link.location@/platform/reference/api/
 -linkoffline ./../../../org.eclipse.dstore.doc.isv/reference/api ../org.eclipse.dstore.doc.isv/reference/api
 -link http://bundles.osgi.org/javadoc/r4
 

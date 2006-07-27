@@ -11,7 +11,8 @@
 -header "<b>Remote System Explorer DataStore</b><br>Release 1.0"
 -bottom '<font size="-1"><p><a href="{@docRoot}/../misc/api-usage-rules.html">Guidelines for using DataStore APIs</a>.</p></font>'
 -link http://java.sun.com/j2se/1.4.2/docs/api
--linkoffline ../org.eclipse.rse.doc.isv/reference/api ..
+-linkoffline ./../../../org.eclipse.platform.doc.isv/reference/api @javadoc.link.location@/platform/reference/api/
+-link http://bundles.osgi.org/javadoc/r4
 
 org.eclipse.dstore.core.model
 org.eclipse.dstore.core.client

@@ -77,7 +77,7 @@ org.eclipse.rse.dstore.security.widgets
 org.eclipse.rse.dstore.security.wizards
 org.eclipse.rse.dstore.universal.miners
 org.eclipse.rse.dstore.universal.miners.command
-org.eclipse.rse.dstore.universal.miners.command.pattern
+org.eclipse.rse.dstore.universal.miners.command.patterns
 org.eclipse.rse.dstore.universal.miners.environment
 org.eclipse.rse.dstore.universal.miners.filesystem
 org.eclipse.rse.dstore.universal.miners.processes

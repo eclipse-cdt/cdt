@@ -14,10 +14,12 @@
 -linkoffline ./../../../org.eclipse.platform.doc.isv/reference/api @javadoc.link.location@/platform/reference/api/
 -link http://bundles.osgi.org/javadoc/r4
 
-org.eclipse.dstore.core.model
+org.eclipse.dstore.core
 org.eclipse.dstore.core.client
+org.eclipse.dstore.core.java
+org.eclipse.dstore.core.miners.miner
+org.eclipse.dstore.core.model
 org.eclipse.dstore.core.server
 org.eclipse.dstore.core.util
 org.eclipse.dstore.core.util.ssl
-org.eclipse.dstore.core.java
-org.eclipse.dstore.core.miners.miner
+org.eclipse.dstore.extra

@@ -27,30 +27,17 @@
 		<patternset id="platform.classpath.pattern">
 			<include name="**/org.eclipse.core*.jar"/>
 			<include name="**/org.eclipse.core*/**/*.jar"/>
-			<include name="**/org.eclipse.compare*.jar"/>
-			<include name="**/org.eclipse.debug.core*.jar"/>
-			<include name="**/org.eclipse.debug.ui*.jar"/>
-			<include name="**/org.eclipse.search*.jar"/>
-        	<include name="**/org.eclipse.swt*.jar"/>
-        	<include name="**/org.eclipse.swt*/**/*.jar"/>
         	<include name="**/org.eclipse.ui*.jar"/>
         	<include name="**/org.eclipse.ui*/**/*.jar"/>
-        	<include name="**/org.eclipse.update*.jar"/>
-        	<include name="**/org.eclipse.update*/**/*.jar"/>
         	<include name="**/org.eclipse.osgi*.jar"/>
         	<include name="**/org.eclipse.osgi*/**/*.jar"/>
         	<include name="**/org.eclipse.equinox*.jar"/>
         	<include name="**/org.eclipse.equinox*/**/*.jar"/>
         	<include name="**/org.eclipse.jface*.jar"/>
         	<include name="**/org.eclipse.jface*/**/*.jar"/>
-        	<include name="**/org.eclipse.text*.jar"/>
-        	<include name="**/org.eclipse.text*/**/*.jar"/>
-        	<include name="**/org.eclipse.team*.jar"/>
-        	<include name="**/org.eclipse.team*/**/*.jar"/>
         	<include name="**/org.junit*.jar"/>
         	<include name="**/org.junit*/**/*.jar"/>
 			<include name="**/com.ibm.icu*.jar"/>
-			<include name="**/com.jcraft.jsch*.jar"/>
 		</patternset>
 			
 		<pathconvert property="javadoc.classpath">

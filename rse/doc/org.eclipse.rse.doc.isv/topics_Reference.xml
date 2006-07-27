@@ -12,6 +12,7 @@
 		<topic label="org.eclipse.rse.ui.dynamicPopupMenuExtensions" href="reference/extension-points/org_eclipse_rse_ui_dynamicPopupMenuExtensions.html" />
 		<topic label="org.eclipse.rse.ui.keystoreProviders" href="reference/extension-points/org_eclipse_rse_ui_keystoreProviders.html" />
 		<topic label="org.eclipse.rse.ui.mountPathMappers" href="reference/extension-points/org_eclipse_rse_ui_mountPathMappers.html" />
+		<topic label="org.eclipse.rse.ui.newConnectionWizardDelegate" href="reference/extension-points/org_eclipse_rse_ui_newConnectionWizardDelegate.html" />
 		<topic label="org.eclipse.rse.ui.passwordPersistence" href="reference/extension-points/org_eclipse_rse_ui_passwordPersistence.html" />
 		<topic label="org.eclipse.rse.ui.persistenceProviders" href="reference/extension-points/org_eclipse_rse_ui_persistenceProviders.html" />
 		<topic label="org.eclipse.rse.ui.popupMenus" href="reference/extension-points/org_eclipse_rse_ui_popupMenus.html" />

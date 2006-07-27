@@ -1,5 +1,11 @@
-Last revised May 31, 2006
+Last revised July 27, 2006
 (This file is for information only; it is not included in the release.)
+
+See also
+  http://wiki.eclipse.org/index.php/How_to_add_things_to_the_Eclipse_doc
+with the following exceptions:
+- platformOptions.txt    -> options.txt
+- overview-platform.html -> /reference/misc/overview-rse.html
 
 To add new plug-ins you need to make changes in several places in
 this doc plug-in:

@@ -382,7 +382,6 @@ public class CConventions {
 	 *		indicating why the given name is discouraged,
 	 *      otherwise a status object indicating what is wrong with
 	 *      the name
-	 * @since 4.0
 	 */
 	public static IStatus validateFileName(String name) {
 		//TODO could use a prefs option for file naming conventions
@@ -469,6 +468,7 @@ public class CConventions {
 	 *		indicating why the given name is discouraged,
 	 *      otherwise a status object indicating what is wrong with
 	 *      the name
+	 * @since 4.0
 	 */
 	public static IStatus validateEnumName(String name) {
 		if (name == null) {

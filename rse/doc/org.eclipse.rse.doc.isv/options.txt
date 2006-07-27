@@ -1,5 +1,40 @@
+-quiet
+-encoding "iso-8859-1"
 -charset "iso-8859-1"
--sourcepath "../org.eclipse.rse.connectorservice.dstore/src@sep@../org.eclipse.rse.connectorservice.local/src@sep@../org.eclipse.rse.connectorservice.ssh/src@sep@../org.eclipse.rse.core/src@sep@../org.eclipse.rse.dstore.security/src@sep@../org.eclipse.rse.eclipse.filesystem/src@sep@../org.eclipse.rse.files.ui/src@sep@../org.eclipse.rse.logging/src@sep@../org.eclipse.rse.processes.ui/src@sep@../org.eclipse.rse.services/src@sep@../org.eclipse.rse.services.dstore/src@sep@../org.eclipse.rse.services.files.ftp/src@sep@../org.eclipse.rse.services.local/src@sep@../org.eclipse.rse.services.ssh/src@sep@../org.eclipse.rse.shells.ui/src@sep@../org.eclipse.rse.subsystems.files.core/src@sep@../org.eclipse.rse.subsystems.files.dstore/src@sep@../org.eclipse.rse.subsystems.files.ftp/src@sep@../org.eclipse.rse.subsystems.files.local/src@sep@../org.eclipse.rse.subsystems.files.ssh/src@sep@../org.eclipse.rse.subsystems.processes.core/src@sep@../org.eclipse.rse.subsystems.processes.dstore/src@sep@../org.eclipse.rse.subsystems.processes.local/src@sep@../org.eclipse.rse.subsystems.shells.core/src@sep@../org.eclipse.rse.subsystems.shells.dstore/src@sep@../org.eclipse.rse.subsystems.shells.local/src@sep@../org.eclipse.rse.subsystems.shells.ssh/src@sep@../org.eclipse.rse.ui/filters@sep@../org.eclipse.rse.ui/persistence@sep@../org.eclipse.rse.ui/references@sep@../org.eclipse.rse.ui/model@sep@../org.eclipse.rse.ui/UI@sep@../org.eclipse.rse.ui/subsystems@sep@../org.eclipse.rse.ui/systems@sep@"
+-sourcepath "../org.eclipse.rse.connectorservice.dstore/src
+;../org.eclipse.rse.connectorservice.local/src
+;../org.eclipse.rse.connectorservice.ssh/src
+;../org.eclipse.rse.core/src
+;../org.eclipse.rse.dstore.security/src
+;../org.eclipse.rse.eclipse.filesystem/src
+;../org.eclipse.rse.files.ui/src
+;../org.eclipse.rse.logging/src
+;../org.eclipse.rse.processes.ui/src
+;../org.eclipse.rse.services/src
+;../org.eclipse.rse.services.dstore/src
+;../org.eclipse.rse.services.files.ftp/src
+;../org.eclipse.rse.services.local/src
+;../org.eclipse.rse.services.ssh/src
+;../org.eclipse.rse.shells.ui/src
+;../org.eclipse.rse.subsystems.files.core/src
+;../org.eclipse.rse.subsystems.files.dstore/src
+;../org.eclipse.rse.subsystems.files.ftp/src
+;../org.eclipse.rse.subsystems.files.local/src
+;../org.eclipse.rse.subsystems.files.ssh/src
+;../org.eclipse.rse.subsystems.processes.core/src
+;../org.eclipse.rse.subsystems.processes.dstore/src
+;../org.eclipse.rse.subsystems.processes.local/src
+;../org.eclipse.rse.subsystems.shells.core/src
+;../org.eclipse.rse.subsystems.shells.dstore/src
+;../org.eclipse.rse.subsystems.shells.local/src
+;../org.eclipse.rse.subsystems.shells.ssh/src
+;../org.eclipse.rse.ui/filters
+;../org.eclipse.rse.ui/persistence
+;../org.eclipse.rse.ui/references
+;../org.eclipse.rse.ui/model
+;../org.eclipse.rse.ui/UI
+;../org.eclipse.rse.ui/subsystems
+;../org.eclipse.rse.ui/systems"
 -d reference/api
 -classpath @rt@
 -breakiterator
@@ -13,6 +48,7 @@
 -group "RSE UI Plug-in Packages" "org.eclipse.rse.ui;org.eclipse.rse.ui.*"
 -link http://java.sun.com/j2se/1.5/docs/api
 -linkoffline ./../../../org.eclipse.platform.doc.isv/reference/api ../org.eclipse.platform.doc.isv/reference/api
+-link http://bundles.osgi.org/javadoc/r4
 
 org.eclipse.rse.connectorservice.dstore
 org.eclipse.rse.connectorservice.dstore.util

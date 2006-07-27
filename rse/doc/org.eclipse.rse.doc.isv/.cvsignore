@@ -1,5 +1,6 @@
-api
 bin
+index
 build.xml
+rseconvert.txt
 temp.bin.log
 temp.options.txt

@@ -58,7 +58,7 @@ public class DStoreShellSubSystemConfiguration extends ShellServiceSubSystemConf
 	/**
 	 * Instantiate and return an instance of OUR subystem. 
 	 * Do not populate it yet though!
-	 * @see org.eclipse.rse.core.subsystems.impl.SubSystemFactoryImpl#createSubSystemInternal(Host)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#createSubSystemInternal(IHost)
 	 */
 	public ISubSystem createSubSystemInternal(IHost host) 
 	{

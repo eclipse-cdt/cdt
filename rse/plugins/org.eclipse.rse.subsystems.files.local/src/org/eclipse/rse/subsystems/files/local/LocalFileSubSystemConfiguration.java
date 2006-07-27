@@ -148,7 +148,7 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	/**
 	 * Instantiate and return an instance of OUR subystem. 
 	 * Do not populate it yet though!
-	 * @see org.eclipse.rse.core.subsystems.impl.SubSystemFactoryImpl#createSubSystemInternal(Host)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#createSubSystemInternal(IHost)
 	 */
 	public ISubSystem createSubSystemInternal(IHost host) 
 	{
@@ -209,7 +209,7 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	
 	/**
 	 * Creates a config and adds it to the result set.
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfigurationFactory#createSearchConfiguration(org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultSet, java.lang.Object, org.eclipse.rse.services.clientserver.SystemSearchString)
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfigurationFactory#createSearchConfiguration(org.eclipse.rse.services.search.IHostSearchResultSet, java.lang.Object, org.eclipse.rse.services.clientserver.SystemSearchString)
 	 */
 	public IHostSearchResultConfiguration createSearchConfiguration(IHost host, IHostSearchResultSet resultSet, Object searchTarget, SystemSearchString searchString) 
 	{

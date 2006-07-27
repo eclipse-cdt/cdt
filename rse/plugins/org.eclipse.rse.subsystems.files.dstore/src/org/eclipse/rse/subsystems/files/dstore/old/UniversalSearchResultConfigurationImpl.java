@@ -46,7 +46,7 @@ public class UniversalSearchResultConfigurationImpl extends RemoteSearchResultCo
 	}
 	
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#cancel()
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#cancel()
 	 */
 	public void cancel() {
 		

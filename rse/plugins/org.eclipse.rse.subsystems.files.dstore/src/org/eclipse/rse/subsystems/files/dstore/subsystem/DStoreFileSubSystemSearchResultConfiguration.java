@@ -47,7 +47,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 	}
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#getResultsSize()
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#getResultsSize()
 	 */
 	public int getResultsSize() 
 	{

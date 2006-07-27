@@ -67,7 +67,7 @@ public class DaytimeSubsystemConfiguration extends ServiceSubSystemConfiguration
 	/**
 	 * Instantiate and return an instance of OUR subystem. 
 	 * Do not populate it yet though!
-	 * @see org.eclipse.rse.core.subsystems.impl.SubSystemFactoryImpl#createSubSystemInternal(IHost)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#createSubSystemInternal(IHost)
 	 */
 	public ISubSystem createSubSystemInternal(IHost host) {
 		IConnectorService connectorService = getConnectorService(host);

@@ -60,63 +60,63 @@ public class RemoteSearchResultConfiguration implements IHostSearchResultConfigu
 	}
 	
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#setParentResultSet(org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultSet)
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#setParentResultSet(org.eclipse.rse.services.search.IHostSearchResultSet)
 	 */
 	public void setParentResultSet(IHostSearchResultSet resultSet) {
 		this.parentResultSet = resultSet;
 	}
 	
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#getParentResultSet()
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#getParentResultSet()
 	 */
 	public IHostSearchResultSet getParentResultSet() {
 		return parentResultSet;
 	}
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#setSearchTarget(java.lang.Object)
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#setSearchTarget(java.lang.Object)
 	 */
 	public void setSearchTarget(Object searchObject) {
 		this.searchTarget = searchObject;
 	}
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#getSearchTarget()
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#getSearchTarget()
 	 */
 	public Object getSearchTarget() {
 		return searchTarget;
 	}
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#setSearchString(org.eclipse.rse.services.clientserver.SystemSearchString)
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#setSearchString(org.eclipse.rse.services.clientserver.SystemSearchString)
 	 */
 	public void setSearchString(SystemSearchString string) {
 		this.searchString = string;
 	}
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#getSearchString()
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#getSearchString()
 	 */
 	public SystemSearchString getSearchString() {
 		return searchString;
 	}
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#addResult(java.lang.Object)
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#addResult(java.lang.Object)
 	 */
 	public void addResult(Object result) {
 		results.add(result);
 	}
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#removeResult(java.lang.Object)
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#removeResult(java.lang.Object)
 	 */
 	public void removeResult(Object result) {
 		results.remove(result);
 	}
 	
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#removeAndAddResult(java.lang.Object, java.lang.Object)
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#removeAndAddResult(java.lang.Object, java.lang.Object)
 	 */
 	public void removeAndAddResult(Object oldResult, Object newResult) {
 		results.remove(oldResult);
@@ -124,7 +124,7 @@ public class RemoteSearchResultConfiguration implements IHostSearchResultConfigu
 	}
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#getResults()
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#getResults()
 	 */
 	public Object[] getResults() {
 		return results.toArray();
@@ -136,28 +136,28 @@ public class RemoteSearchResultConfiguration implements IHostSearchResultConfigu
 	}
 	
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#getResultsSize()
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#getResultsSize()
 	 */
 	public int getResultsSize() {
 		return results.size();
 	}
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#removeResults()
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#removeResults()
 	 */
 	public void removeResults() {
 		results.removeAllElements();
 	}
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#setStatus(int)
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#setStatus(int)
 	 */
 	public void setStatus(int status) {
 		this.status = status;
 	}
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#getStatus()
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#getStatus()
 	 */
 	public int getStatus() {
 		return status;
@@ -165,7 +165,7 @@ public class RemoteSearchResultConfiguration implements IHostSearchResultConfigu
 	
 	/**
 	 * Does nothing.
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#cancel()
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#cancel()
 	 */
 	public void cancel() {
 		
@@ -176,7 +176,7 @@ public class RemoteSearchResultConfiguration implements IHostSearchResultConfigu
 	}
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#dispose()
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#dispose()
 	 */
 	public void dispose() {
 		

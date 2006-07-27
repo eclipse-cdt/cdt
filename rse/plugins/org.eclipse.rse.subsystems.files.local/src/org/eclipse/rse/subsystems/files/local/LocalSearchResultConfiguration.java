@@ -85,7 +85,7 @@ public class LocalSearchResultConfiguration extends AbstractSearchResultConfigur
 
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.files.core.subsystems.IHostSearchResultConfiguration#cancel()
+	 * @see org.eclipse.rse.services.search.IHostSearchResultConfiguration#cancel()
 	 */
 	public void cancel() {
 		

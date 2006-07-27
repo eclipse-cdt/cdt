@@ -42,7 +42,7 @@ public class LocalJavaLanguageUtility extends AbstractJavaLanguageUtility {
 
 	/**
 	 * The given remote file must be an instance of <code>LocalFileImpl</code>.
-	 * @see org.eclipse.rse.internal.subsystems.files.IJavaLanguageUtility#getQualifiedClassName(org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile)
+	 * @see org.eclipse.rse.internal.subsystems.files.core.IJavaLanguageUtility#getQualifiedClassName(org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile)
 	 */
 	public String getQualifiedClassName(IRemoteFile remoteFile) {
 		

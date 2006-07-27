@@ -798,7 +798,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 * Retrieve an image descriptor in this plugin's directory tree given its file name. The
 	 * file name should be qualified relative to this plugin's bundle. 
 	 * For example "icons/myicon.gif"
-	 * @parm imagePath the path name to the image relative to this bundle
+	 * @param imagePath the path name to the image relative to this bundle
 	 * @return the image descriptor
 	 */
 	public ImageDescriptor getPluginImage(String imagePath) {
@@ -811,7 +811,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 * Thus, image resources retrieved in this way need not be disposed by the
 	 * caller.
 	 * 
-	 * @parm key the id of the image to retrieve.
+	 * @param key the id of the image to retrieve.
 	 * @return the Image resource for this id.
 	 */
     public Image getImage(String key)
@@ -833,7 +833,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
     
     /**
 	 * Returns the image descriptor that has been registered to this id.
-	 * @parm key the id of the image descriptor to retrieve
+	 * @param key the id of the image descriptor to retrieve
 	 * @return an ImageDescriptor
 	 */
 	public ImageDescriptor getImageDescriptor(String key) {

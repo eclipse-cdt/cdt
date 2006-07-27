@@ -461,7 +461,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	/**
 	 * Download the file.
 	 * @param the progress monitor
-	 * @returns true if the operation was successful.  false if the user cancels.
+	 * @return true if the operation was successful.  false if the user cancels.
 	 */
 	public boolean download(IProgressMonitor monitor) throws Exception
 	{

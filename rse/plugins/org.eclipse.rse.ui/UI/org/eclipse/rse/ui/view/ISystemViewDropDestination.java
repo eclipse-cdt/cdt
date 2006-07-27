@@ -27,8 +27,8 @@ public interface ISystemViewDropDestination
 
 	/**
 	 * ask source adapter if it supports drop of its type on this target
-	 * @parm resource (type) in question
-	 * @returns true if copy/move/drop is supported
+	 * @param resource (type) in question
+	 * @return true if copy/move/drop is supported
 	 */
 	public boolean supportDropDestination(Object target);
 }

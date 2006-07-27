@@ -168,7 +168,7 @@ public class PerformanceLogger {
 	}
 
 	/* public static String register(String comp_id) : registering a component using default
-	 * @parm
+	 * @param
 	 * - comp_id: Component to be registered
 	 * @return
 	 * 	compont comp_id registered with no product info
@@ -178,7 +178,7 @@ public class PerformanceLogger {
 	}
 
 	/* public static String register(String feature, String version) : method for registering a component using default
-	 * @parm
+	 * @param
 	 * - feature: Identifier for Product Feature attribute in XML
 	 * - version: Identifier for Product Version attribute in XML
 	 * @return
@@ -192,7 +192,7 @@ public class PerformanceLogger {
 
 	/**
 	 * public static String register(String comp_id, String feature, String version) : Registering a component
-	 * @parm
+	 * @param
 	 * - comp_id: Component to be registered
 	 * - feature: Identifier for Product Feature attribute in XML
 	 * - version: Identifier for Product Version attribute in XML
@@ -242,7 +242,7 @@ public class PerformanceLogger {
 
 	/**
 	 * public static void deRegister(String key): De-register a component
-	 * @parm
+	 * @param
 	 * 	key : component to be removed
 	 * @return 
 	 * 	component identified by key removed
@@ -296,7 +296,7 @@ public class PerformanceLogger {
 
 	/**
 	 * public static long start(String comp_id): start timer for component comp_id using default TaskID
-	 * @parm : 
+	 * @param : 
 	 * 	comp_id : component registered previously by register(comp_id,..)
 	 * @return
 	 * 	- started time in milliseconds.
@@ -309,7 +309,7 @@ public class PerformanceLogger {
 
 	/**
 	 * public long start(String comp_id, String call_id): start the timer for registered component comp_id
-	 * @parm
+	 * @param
 	 * 	comp_id is the registered component
 	 * 	call_id is the "CallID" attribute value for the XML tag "Task"
 	 * @return

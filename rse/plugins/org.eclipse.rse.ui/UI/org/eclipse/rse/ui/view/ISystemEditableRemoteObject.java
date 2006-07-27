@@ -64,14 +64,14 @@ public interface ISystemEditableRemoteObject
 	/**
 	 * Download the file.
 	 * @param the progress monitor
-	 * @returns true if the operation was successful.  false if the user cancels.
+	 * @return true if the operation was successful.  false if the user cancels.
 	 */
 	public boolean download(IProgressMonitor monitor) throws Exception;
 	
 	/**
 	 * Saves the local file and uploads it to the host immediately, rather than, in response to a resource change
 	 * event.
-	 * @returns true if the operation was successful. false if the upload fails.
+	 * @return true if the operation was successful. false if the upload fails.
 	 */
 	public boolean doImmediateSaveAndUpload();
 

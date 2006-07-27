@@ -11,7 +11,9 @@
 ;../org.eclipse.rse.logging/src
 ;../org.eclipse.rse.processes.ui/src
 ;../org.eclipse.rse.services/src
+;../org.eclipse.rse.services/clientserver
 ;../org.eclipse.rse.services.dstore/src
+;../org.eclipse.rse.services.dstore/miners
 ;../org.eclipse.rse.services.files.ftp/src
 ;../org.eclipse.rse.services.local/src
 ;../org.eclipse.rse.services.ssh/src
@@ -37,7 +39,15 @@
 ;../org.eclipse.rse.ui/systems"
 -d reference/api
 -classpath @rt@
+;../org.eclipse.dstore.core/@dot
+;../org.eclipse.dstore.core/bin
+;../org.eclipse.dstore.extra/@dot
+;../org.eclipse.dstore.extra/bin
 -breakiterator
+-tag generated:X
+-tag lastgen:X
+-tag model:X
+-tag ordered:X
 -use
 -splitIndex
 -windowtitle "RSE API Specification"
@@ -48,6 +58,7 @@
 -group "RSE UI Plug-in Packages" "org.eclipse.rse.ui;org.eclipse.rse.ui.*"
 -link http://java.sun.com/j2se/1.5/docs/api
 -linkoffline ./../../../org.eclipse.platform.doc.isv/reference/api ../org.eclipse.platform.doc.isv/reference/api
+-linkoffline ./../../../org.eclipse.dstore.doc.isv/reference/api ../org.eclipse.dstore.doc.isv/reference/api
 -link http://bundles.osgi.org/javadoc/r4
 
 org.eclipse.rse.connectorservice.dstore

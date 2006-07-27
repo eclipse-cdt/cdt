@@ -462,7 +462,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	/**
 	 * opens the dialog with Yes, No, Cancel Details for an Inquiry/Question message
 	 * throws an IndicatorException if the indicator is not Inquiry
-	 * @returns IDialogConstants.YES_ID or NO_ID
+	 * @return IDialogConstants.YES_ID or NO_ID
   	 */
 	public int openYesNoCancel() 
 	{

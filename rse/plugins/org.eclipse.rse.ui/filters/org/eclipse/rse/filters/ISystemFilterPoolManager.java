@@ -232,7 +232,7 @@ public interface ISystemFilterPoolManager extends IRSEPersistableContainer
     /**
      * Pre-test if we are going to run into any trouble renaming any of the files or folders
      *  used to persist a filter pool.
-     * @returns true if everything seems ok, false if a file/folder is in use.
+     * @return true if everything seems ok, false if a file/folder is in use.
      */
     public boolean preTestRenameFilterPool(ISystemFilterPool pool) throws Exception;
     /**

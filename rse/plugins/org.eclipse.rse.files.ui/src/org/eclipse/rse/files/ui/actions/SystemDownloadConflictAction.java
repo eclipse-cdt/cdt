@@ -69,7 +69,7 @@ public class SystemDownloadConflictAction extends SystemBaseAction implements Ru
 
 		/**
 		 * Return whether the user decided to keep the local cached file
-		 * @returns the whether the user decided to keep the local cached file
+		 * @return the whether the user decided to keep the local cached file
 		 */
 		public boolean keepLocal()
 		{
@@ -235,7 +235,7 @@ public class SystemDownloadConflictAction extends SystemBaseAction implements Ru
 
 	/**
 	 * Returns the dialog used to prompt a user on how to resolve a conflict.
-	 * @returns the dialog
+	 * @return the dialog
 	 */
 	protected DownloadConflictDialog getConflictDialog()
 	{

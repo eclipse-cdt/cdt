@@ -166,7 +166,7 @@ public class SystemSearchViewContentProvider implements ITreeContentProvider {
 	}
 	/**
 	 * Set the ViewPart of this provider
-	 * @parm ViewPart of this provider
+	 * @param ViewPart of this provider
 	 */
 	public void setViewPart(ViewPart viewPart) 
 	{

@@ -22,17 +22,15 @@ import java.io.File;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.services.dstore.ServiceResources;
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.extra.internal.extra.DomainEvent;
 import org.eclipse.dstore.extra.internal.extra.IDomainListener;
+import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.dstore.ServiceResources;
+import org.eclipse.swt.widgets.Display;
 
 public class DownloadListener implements IDomainListener,IUniversalDataStoreConstants
 {

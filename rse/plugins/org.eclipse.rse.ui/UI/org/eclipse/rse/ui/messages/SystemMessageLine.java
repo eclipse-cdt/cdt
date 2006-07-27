@@ -17,6 +17,7 @@
 package org.eclipse.rse.ui.messages;
 
 import java.util.Stack;
+
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.rse.core.SystemBasePlugin;

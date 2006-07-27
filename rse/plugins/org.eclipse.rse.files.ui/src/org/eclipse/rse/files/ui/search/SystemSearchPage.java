@@ -40,7 +40,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.search.SystemSearchUtil;
 import org.eclipse.rse.services.search.HostSearchResultSet;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
-import org.eclipse.rse.services.search.IHostSearchResultConfigurationFactory;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;

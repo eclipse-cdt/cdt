@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.ISystemViewSupplier;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPropertyPageExtension;
 import org.eclipse.rse.core.SystemResourceManager;

@@ -34,7 +34,6 @@ import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.internal.references.SystemPersistableReferenceManager;
 import org.eclipse.rse.references.ISystemBasePersistableReferencingObject;
-import org.eclipse.rse.references.ISystemPersistableReferencedObject;
 
 
 /**

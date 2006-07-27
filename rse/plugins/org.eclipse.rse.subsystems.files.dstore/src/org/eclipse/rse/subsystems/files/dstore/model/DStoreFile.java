@@ -16,14 +16,13 @@
 
 package org.eclipse.rse.subsystems.files.dstore.model;
 
+import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.AbstractRemoteFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
-
-import org.eclipse.dstore.core.model.DataElement;
 
 public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 {

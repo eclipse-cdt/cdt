@@ -21,9 +21,9 @@ import java.io.InputStreamReader;
 import java.util.SortedSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.rse.services.clientserver.processes.IHostProcess;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.clientserver.processes.IHostProcess;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.services.clientserver.processes.handlers.ProcessHandler;
 import org.eclipse.rse.services.clientserver.processes.handlers.ProcessHandlerManager;

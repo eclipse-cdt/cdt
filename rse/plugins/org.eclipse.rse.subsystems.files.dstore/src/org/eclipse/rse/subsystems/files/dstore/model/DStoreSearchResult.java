@@ -18,11 +18,10 @@ package org.eclipse.rse.subsystems.files.dstore.model;
 
 
 
+import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteSearchResult;
-
-import org.eclipse.dstore.core.model.DataElement;
 
 /**
  * Class for describing a line of command output on a 

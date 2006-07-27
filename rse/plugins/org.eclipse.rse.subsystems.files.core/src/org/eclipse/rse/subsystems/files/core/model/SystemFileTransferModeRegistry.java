@@ -40,7 +40,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.Workbench;
 
 

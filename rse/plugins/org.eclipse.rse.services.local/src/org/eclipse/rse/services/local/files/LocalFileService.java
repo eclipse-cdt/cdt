@@ -30,6 +30,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;

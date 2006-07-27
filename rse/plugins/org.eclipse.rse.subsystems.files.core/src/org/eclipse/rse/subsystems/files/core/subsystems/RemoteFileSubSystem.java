@@ -58,7 +58,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.search.IHostSearchResult;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
-import org.eclipse.rse.services.search.IHostSearchResultConfigurationFactory;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;

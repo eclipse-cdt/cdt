@@ -28,7 +28,6 @@ import org.eclipse.rse.dstore.security.ImageRegistry;
 import org.eclipse.rse.dstore.security.UniversalSecurityProperties;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizard;
 
 public class SystemImportCertWizard 

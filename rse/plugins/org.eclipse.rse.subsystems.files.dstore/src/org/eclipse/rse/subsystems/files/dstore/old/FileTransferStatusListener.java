@@ -17,14 +17,13 @@
 package org.eclipse.rse.subsystems.files.dstore.old;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.services.clientserver.IServiceConstants;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreSchema;
+import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.services.clientserver.IServiceConstants;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * @author mjberger

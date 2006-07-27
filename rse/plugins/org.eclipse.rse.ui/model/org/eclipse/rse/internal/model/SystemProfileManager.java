@@ -22,7 +22,6 @@ import java.util.Vector;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
-import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemProfileManager;
 import org.eclipse.rse.model.SystemStartHere;

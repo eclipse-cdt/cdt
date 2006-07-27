@@ -33,7 +33,6 @@ import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
-import org.eclipse.swt.widgets.Shell;
 
 
 

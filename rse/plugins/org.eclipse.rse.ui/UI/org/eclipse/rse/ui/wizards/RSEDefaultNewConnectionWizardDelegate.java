@@ -20,7 +20,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPerspectiveHelpers;

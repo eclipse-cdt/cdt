@@ -16,9 +16,9 @@
 
 package org.eclipse.dstore.extra.internal.extra;
 
-import org.eclipse.jface.resource.*;
+import java.util.List;
 
-import java.util.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 
 public class DesktopElement implements org.eclipse.ui.model.IWorkbenchAdapter

@@ -19,6 +19,14 @@ package org.eclipse.rse.subsystems.files.dstore.subsystem;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.dstore.core.model.DE;
+import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.extra.internal.extra.DomainEvent;
+import org.eclipse.dstore.extra.internal.extra.IDomainListener;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
@@ -33,15 +41,6 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.dstore.core.model.DE;
-import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.core.model.DataStore;
-import org.eclipse.dstore.extra.internal.extra.DomainEvent;
-import org.eclipse.dstore.extra.internal.extra.IDomainListener;
 
 
 

@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

@@ -19,7 +19,6 @@ package org.eclipse.rse.internal.services.local.shells;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-
 import org.eclipse.rse.services.shells.AbstractHostShellOutputReader;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellOutputReader;

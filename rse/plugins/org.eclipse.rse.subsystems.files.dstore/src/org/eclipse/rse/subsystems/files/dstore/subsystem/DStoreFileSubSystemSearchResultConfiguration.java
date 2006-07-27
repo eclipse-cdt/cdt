@@ -18,6 +18,8 @@ package org.eclipse.rse.subsystems.files.dstore.subsystem;
 
 import java.util.List;
 
+import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.extra.internal.extra.DomainEvent;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.dstore.search.DStoreSearchResultConfiguration;
@@ -31,9 +33,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteSearchResultsContentsType;
 import org.eclipse.rse.subsystems.files.dstore.model.DStoreSearchResult;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.extra.internal.extra.DomainEvent;
 
 public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchResultConfiguration
 {

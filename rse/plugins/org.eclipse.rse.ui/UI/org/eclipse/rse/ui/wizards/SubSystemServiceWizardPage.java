@@ -27,7 +27,6 @@ import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.model.DummyHost;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.RSEUIPlugin;

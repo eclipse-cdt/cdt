@@ -2,13 +2,10 @@ package org.eclipse.rse.eclipse.filesystem;
 
 import java.net.URI;
 
-import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
-import org.eclipse.rse.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;

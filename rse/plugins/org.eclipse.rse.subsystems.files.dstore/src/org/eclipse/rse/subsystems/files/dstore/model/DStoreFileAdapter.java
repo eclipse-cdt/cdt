@@ -19,8 +19,8 @@ package org.eclipse.rse.subsystems.files.dstore.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.rse.connectorservice.dstore.DStoreConnectorService;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.services.dstore.files.DStoreVirtualHostFile;
 import org.eclipse.rse.services.files.IHostFile;
@@ -32,9 +32,6 @@ import org.eclipse.rse.subsystems.files.dstore.subsystem.RemoteFilePropertyChang
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.dstore.core.model.DataElement;
 
 public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 {

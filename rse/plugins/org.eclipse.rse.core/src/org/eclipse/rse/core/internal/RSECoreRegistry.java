@@ -15,8 +15,6 @@
  ********************************************************************************/
 package org.eclipse.rse.core.internal;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;

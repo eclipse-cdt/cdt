@@ -16,10 +16,12 @@
 
 package org.eclipse.rse.subsystems.shells.dstore;
 
+import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.connectorservice.dstore.DStoreConnectorService;
 import org.eclipse.rse.connectorservice.dstore.DStoreConnectorServiceManager;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.model.Host;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.dstore.IDStoreService;
 import org.eclipse.rse.services.dstore.shells.DStoreShellService;
@@ -30,8 +32,6 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IServi
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.shells.dstore.model.DStoreServiceCommandShell;
-
-import org.eclipse.dstore.core.model.IDataStoreProvider;
 
 /**
  * Provides a factory for generating instances of the class

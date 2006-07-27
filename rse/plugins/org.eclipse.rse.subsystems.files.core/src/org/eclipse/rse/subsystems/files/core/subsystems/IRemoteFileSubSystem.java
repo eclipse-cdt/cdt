@@ -27,7 +27,6 @@ import org.eclipse.rse.internal.subsystems.files.core.ILanguageUtilityFactory;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
-import org.eclipse.rse.services.search.IHostSearchResultConfigurationFactory;
 
 
 //

@@ -42,7 +42,6 @@ import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 
-
 import sun.net.TelnetInputStream;
 import sun.net.ftp.FtpClient;
 

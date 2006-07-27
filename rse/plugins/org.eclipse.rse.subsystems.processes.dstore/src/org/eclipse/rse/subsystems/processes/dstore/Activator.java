@@ -16,9 +16,9 @@
 
 package org.eclipse.rse.subsystems.processes.dstore;
 
-import org.eclipse.rse.processes.ui.ProcessesPlugin;
-import org.eclipse.ui.plugin.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.processes.ui.ProcessesPlugin;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 /**

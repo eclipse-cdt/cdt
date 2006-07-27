@@ -21,6 +21,11 @@ package org.eclipse.rse.subsystems.files.dstore.old;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.dstore.core.model.DE;
+import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.extra.internal.extra.DomainEvent;
+import org.eclipse.dstore.extra.internal.extra.IDomainListener;
 import org.eclipse.rse.connectorservice.dstore.util.ICommunicationsDiagnosticFactory;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
@@ -31,12 +36,6 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.dstore.core.model.DE;
-import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.core.model.DataStore;
-import org.eclipse.dstore.extra.internal.extra.DomainEvent;
-import org.eclipse.dstore.extra.internal.extra.IDomainListener;
 
 public class DownloadListener implements IDomainListener, ICommunicationsListener, IUniversalDataStoreConstants
 {

@@ -18,7 +18,6 @@ package org.eclipse.rse.connectorservice.dstore;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.osgi.framework.BundleContext;

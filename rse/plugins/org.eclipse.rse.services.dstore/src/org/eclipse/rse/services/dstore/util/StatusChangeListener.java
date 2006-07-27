@@ -20,13 +20,12 @@ package org.eclipse.rse.services.dstore.util;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.extra.internal.extra.DomainEvent;
 import org.eclipse.dstore.extra.internal.extra.IDomainListener;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 /*
  * Utility class for determining when a DataStore command is complete via the status.

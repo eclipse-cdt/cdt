@@ -19,6 +19,11 @@ package org.eclipse.rse.subsystems.files.dstore.old;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.dstore.core.model.DE;
+import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.extra.internal.extra.DomainEvent;
+import org.eclipse.dstore.extra.internal.extra.IDomainListener;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
@@ -43,12 +48,6 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.dstore.core.model.DE;
-import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.core.model.DataStore;
-import org.eclipse.dstore.extra.internal.extra.DomainEvent;
-import org.eclipse.dstore.extra.internal.extra.IDomainListener;
 
 
 public class SearchResultsChangeListener implements IDomainListener, ICommunicationsListener {

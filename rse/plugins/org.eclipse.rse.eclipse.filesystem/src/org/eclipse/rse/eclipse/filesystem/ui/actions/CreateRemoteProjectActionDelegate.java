@@ -3,7 +3,6 @@ package org.eclipse.rse.eclipse.filesystem.ui.actions;
 import java.net.URI;
 import java.util.Iterator;
 
-import org.eclipse.core.internal.resources.ProjectDescription;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -17,7 +16,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.eclipse.filesystem.RSEFileSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.swt.widgets.Display;

@@ -16,7 +16,7 @@
 
 package org.eclipse.dstore.extra.internal.extra;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
 
 public interface IElement extends IAdaptable
 {

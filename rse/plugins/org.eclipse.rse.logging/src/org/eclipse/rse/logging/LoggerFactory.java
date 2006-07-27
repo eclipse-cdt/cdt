@@ -17,6 +17,7 @@
 package org.eclipse.rse.logging;
 
 import java.util.Hashtable;
+
 import org.eclipse.core.runtime.Plugin;
 
 /**

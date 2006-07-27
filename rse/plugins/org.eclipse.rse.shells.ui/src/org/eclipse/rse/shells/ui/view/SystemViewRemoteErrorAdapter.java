@@ -18,8 +18,8 @@ package org.eclipse.rse.shells.ui.view;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteError;
-import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.SystemViewResources;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;

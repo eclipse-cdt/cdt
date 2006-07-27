@@ -30,8 +30,8 @@ import org.eclipse.rse.services.clientserver.processes.HostProcessFilterImpl;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext;
-import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;
+import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem;
 
 /**
  * The implementation of the RemoteProcessSubSystem interface. 

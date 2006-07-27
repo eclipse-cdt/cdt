@@ -17,7 +17,6 @@
 package org.eclipse.rse.ui;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-//import org.eclipse.ui.views.properties.*;
 
 /**
  * In order to populate the PropertySheet, an object must implement the

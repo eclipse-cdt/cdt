@@ -19,8 +19,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.model.ISystemMessageObject;
 import org.eclipse.rse.ui.ISystemIconConstants;
-import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 

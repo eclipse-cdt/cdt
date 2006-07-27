@@ -16,13 +16,12 @@
 
 package org.eclipse.rse.subsystems.files.dstore.old;
 
+import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteSearchResultConfiguration;
-
-import org.eclipse.dstore.core.model.DataElement;
 
 public class UniversalSearchResultConfigurationImpl extends RemoteSearchResultConfiguration {
 	

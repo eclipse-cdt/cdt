@@ -16,6 +16,9 @@
 
 package org.eclipse.rse.subsystems.files.dstore.subsystem;
 
+import org.eclipse.dstore.core.model.DE;
+import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.subsystems.files.core.AbstractJavaLanguageUtility;
@@ -23,9 +26,6 @@ import org.eclipse.rse.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.dstore.model.DStoreFile;
-import org.eclipse.dstore.core.model.DE;
-import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.core.model.DataStore;
 
 /**
  * This class is the Java language utility for universal.

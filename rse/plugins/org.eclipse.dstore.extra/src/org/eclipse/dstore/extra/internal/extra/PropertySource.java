@@ -16,10 +16,11 @@
 
 package org.eclipse.dstore.extra.internal.extra;
 
-import org.eclipse.ui.views.properties.*;
+import java.util.HashMap;
+import java.util.List;
 
-
-import java.util.*; 
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class PropertySource implements IPropertySource
 {

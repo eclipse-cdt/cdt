@@ -17,7 +17,6 @@
 package org.eclipse.rse.eclipse.filesystem;
 
 import java.net.URI;
-import java.rmi.RemoteException;
 import java.util.HashMap;
 
 import org.eclipse.core.filesystem.IFileStore;
@@ -32,7 +31,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEmpty;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.Workbench;
 
 public class RSEFileSystem extends FileSystem 
 {

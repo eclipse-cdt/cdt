@@ -25,6 +25,7 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.internal.model.Host;
 import org.eclipse.rse.internal.subsystems.files.core.ILanguageUtilityFactory;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.clientserver.SystemSearchString;

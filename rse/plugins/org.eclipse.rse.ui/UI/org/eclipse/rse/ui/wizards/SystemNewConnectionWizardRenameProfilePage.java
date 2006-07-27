@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.ui.wizards;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;

@@ -20,6 +20,11 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.dstore.core.model.DE;
+import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.extra.internal.extra.DomainEvent;
+import org.eclipse.dstore.extra.internal.extra.IDomainListener;
 import org.eclipse.rse.connectorservice.dstore.util.ICommunicationsDiagnostic;
 import org.eclipse.rse.connectorservice.dstore.util.ICommunicationsDiagnosticFactory;
 import org.eclipse.rse.core.SystemBasePlugin;
@@ -28,12 +33,6 @@ import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.dstore.core.model.DE;
-import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.core.model.DataStore;
-import org.eclipse.dstore.extra.internal.extra.DomainEvent;
-import org.eclipse.dstore.extra.internal.extra.IDomainListener;
 
 /*
  * Utility class for determining when a DataStore command is complete via the status.

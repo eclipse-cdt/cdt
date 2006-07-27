@@ -15,7 +15,6 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.SystemPropertyPageExtension;

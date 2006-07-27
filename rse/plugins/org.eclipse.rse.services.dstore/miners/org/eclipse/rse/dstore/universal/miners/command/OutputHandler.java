@@ -16,7 +16,8 @@
 
 package org.eclipse.rse.dstore.universal.miners.command;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;

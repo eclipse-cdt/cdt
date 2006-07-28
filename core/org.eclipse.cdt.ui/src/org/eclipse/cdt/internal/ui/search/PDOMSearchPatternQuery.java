@@ -99,7 +99,7 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 	}
 	
 	public String getLabel() {
-		return Messages.format(CSearchMessages.getString("PDOMSearchPatternQuery.PatternQuery_labelPatternInScope"), getLabel(), patternStr, scopeDesc); //$NON-NLS-1$
+		return Messages.format(CSearchMessages.getString("PDOMSearchPatternQuery.PatternQuery_labelPatternInScope"), super.getLabel(), patternStr, scopeDesc); //$NON-NLS-1$
 	}
 	
 }

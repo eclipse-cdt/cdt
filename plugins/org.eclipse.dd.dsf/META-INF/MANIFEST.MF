@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Riverbed Plug-in
+Bundle-SymbolicName: org.eclipse.dd.dsf
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.dd.dsf.DsfPlugin
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.debug.core
+Eclipse-LazyStart: true
+Export-Package: org.eclipse.dd.dsf.concurrent,
+ org.eclipse.dd.dsf.debug,
+ org.eclipse.dd.dsf.model,
+ org.eclipse.dd.dsf.service

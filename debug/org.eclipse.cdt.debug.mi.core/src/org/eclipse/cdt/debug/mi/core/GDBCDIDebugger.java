@@ -282,16 +282,18 @@ public class GDBCDIDebugger implements ICDIDebugger {
 		String message = MIPlugin.getResourceString("src.GDBDebugger.Error_creating_session") + exception.getMessage();//$NON-NLS-1$
 		int code =  ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR;
 		String ID = MIPlugin.getUniqueIdentifier();
+		String exMessage = ((exception==null)||(exception.getLocalizedMessage()==null)) ? new String() : exception.getLocalizedMessage();
 		MultiStatus status = new MultiStatus(ID, code, message, exception);
-		status.add(new Status(IStatus.ERROR, ID, code, exception == null ? new String() : exception.getLocalizedMessage(), exception));
+		status.add(new Status(IStatus.ERROR, ID, code, exMessage, exception));
 		return new CoreException(status);
 	}
 
 	protected CoreException newCoreException(String message, Throwable exception) {
 		int code =  ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR;
 		String ID = MIPlugin.getUniqueIdentifier();
+		String exMessage = ((exception==null)||(exception.getLocalizedMessage()==null)) ? new String() : exception.getLocalizedMessage();
 		MultiStatus status = new MultiStatus(ID, code, message, exception);
-		status.add(new Status(IStatus.ERROR, ID, code, exception == null ? new String() : exception.getLocalizedMessage(), exception));
+		status.add(new Status(IStatus.ERROR, ID, code, exMessage, exception));
 		return new CoreException(status);
 	}
 

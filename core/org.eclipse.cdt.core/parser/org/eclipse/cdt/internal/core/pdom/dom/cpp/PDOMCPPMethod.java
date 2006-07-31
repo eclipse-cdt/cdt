@@ -197,7 +197,12 @@ public class PDOMCPPMethod extends PDOMMember implements ICPPMethod, ICPPFunctio
 	}
 
 	public boolean isSameType(IType type) {
-		throw new PDOMNotImplementedError();
+		if (type == this)
+			return true;
+		if (type instanceof PDOMCPPMethod)
+			return getRecord() == ((PDOMCPPMethod)type).getRecordSize();
+		// TODO further analysis to compare with DOM objects
+		return false;
 	}
 
 }

@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -214,13 +215,15 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 	}
 
 	public boolean isGloballyQualified() throws DOMException {
-		throw new PDOMNotImplementedError();
+		try {
+			return getParentNode() instanceof PDOMLinkage;
+		} catch (CoreException e) {
+			return true;
+		}
 	}
 
 	public ICPPClassType getClassType() {
-		return null;
-		// TODO - do we need the real type?
-		// throw new PDOMNotImplementedError();
+		return this;
 	}
 
 	public ICPPMethod[] getImplicitMethods() {

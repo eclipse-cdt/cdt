@@ -50,9 +50,6 @@ public class SystemProcessesViewResources extends NLS
 	public static String RESID_PROPERTY_PROCESS_VMRSS_TOOLTIP;
 	public static String RESID_PROPERTY_PROCESS_VMRSS_VALUE;
 	
-	public static String RESID_PROPERTY_PROCESS_DEFAULTFILTER_LABEL;
-	public static String RESID_PROPERTY_PROCESS_MYPROCESSESFILTER_LABEL;
-
 	// Property sheet values: Processes
 	public static String RESID_PROPERTY_PROCESS_TYPE;
 	public static String RESID_PROPERTY_PROCESS_TYPE_ROOT;

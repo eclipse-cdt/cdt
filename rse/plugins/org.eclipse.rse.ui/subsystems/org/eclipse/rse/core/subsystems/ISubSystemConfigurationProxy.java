@@ -18,7 +18,7 @@ package org.eclipse.rse.core.subsystems;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * Interface to SubSystemFactoryExtension class
+ * Interface to SubSystemConfigurationExtension class
  * Internal use, not likely you will ever need to use it or access it directly.
  */
 public interface ISubSystemConfigurationProxy 
@@ -56,7 +56,7 @@ public interface ISubSystemConfigurationProxy
     /**
      * Return value of the <samp>category</samp> xml attribute.
      * Return the category this subsystem configuration subscribes to.
-     * @see org.eclipse.rse.model.ISubSystemFactoryCategories
+     * @see org.eclipse.rse.model.ISubSystemConfigurationCategories
      */
     public String getCategory();
     /**

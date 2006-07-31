@@ -153,15 +153,15 @@ public class SystemPopupMenuActionContributor extends PluginActionBuilder implem
 	/**
 	 * Return what was specified for the <samp>subsystemconfigurationid</samp> xml attribute.
 	 */
-	public String getSubSystemFactoryId() {
-		return matcher.getSubSystemFactoryId();
+	public String getSubSystemConfigurationId() {
+		return matcher.getSubSystemConfigurationId();
 	}
 
 	/**
 	 * Return what was specified for the <samp>subsystemconfigurationCategory</samp> xml attribute.
 	 */
-	public String getSubSystemFactoryCategoryFilter() {
-		return matcher.getSubSystemFactoryCategoryFilter();
+	public String getSubSystemConfigurationCategoryFilter() {
+		return matcher.getSubSystemConfigurationCategoryFilter();
 	}
 
 	/**

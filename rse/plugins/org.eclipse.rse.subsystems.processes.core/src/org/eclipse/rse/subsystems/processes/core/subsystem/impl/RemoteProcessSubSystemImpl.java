@@ -55,9 +55,9 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem#getParentRemoteProcessSubSystemFactory()
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem#getParentRemoteProcessSubSystemConfiguration()
 	 */
-	public IRemoteProcessSubSystemConfiguration getParentRemoteProcessSubSystemFactory()
+	public IRemoteProcessSubSystemConfiguration getParentRemoteProcessSubSystemConfiguration()
 	{
 		return (IRemoteProcessSubSystemConfiguration) super.getSubSystemConfiguration();
 	}

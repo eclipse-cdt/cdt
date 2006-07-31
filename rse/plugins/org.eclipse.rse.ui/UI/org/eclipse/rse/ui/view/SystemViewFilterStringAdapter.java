@@ -62,7 +62,7 @@ public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter imp
 		if (filterString.getParentSystemFilter().isTransient())
 		  return;
 		/*
-	    SubSystemFactory ssFactory = SubSystemHelpers.getParentSubSystemFactory(filterString);
+	    SubSystemConfiguration ssFactory = SubSystemHelpers.getParentSubSystemConfiguration(filterString);
 	    ssFactory.setConnection(null);
 		IAction[] actions = ssFactory.getFilterActions(filter, shell);
 		if (actions != null)
@@ -131,7 +131,7 @@ public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter imp
 		//SystemFilterString filterString = getFilterString(element);
 		//if (filterString.getParentSystemFilter().isTransient())
 		  return SystemResources.RESID_PP_FILTERSTRING_TYPE_VALUE;
-		//SubSystemFactory ssParentFactory = SubSystemHelpers.getParentSubSystemFactory(filterString.getParentSystemFilter());		
+		//SubSystemConfiguration ssParentFactory = SubSystemHelpers.getParentSubSystemConfiguration(filterString.getParentSystemFilter());		
 		//return ssParentFactory.getTranslatedFilterStringTypeProperty(filterString);
 	}	
 	

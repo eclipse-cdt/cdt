@@ -71,26 +71,26 @@ public class SystemStartHere
    /**
     * STEP 2c. Get all connections for your subsystem factory
     * <p>
-    * SAME AS: <code>getSystemRegistry().getConnectionsBySubSystemFactory(factory)</code>
+    * SAME AS: <code>getSystemRegistry().getConnectionsBySubSystemConfiguration(factory)</code>
     * @param factory A subsystem factory object. 
     * @see org.eclipse.rse.model.ISystemRegistry#getHostsBySubSystemConfiguration(ISubSystemConfiguration)
-    * @see #getConnectionsBySubSystemFactory(String)
+    * @see #getConnectionsBySubSystemConfiguration(String)
     */
-   public static IHost[] getConnectionsBySubSystemFactory(ISubSystemConfiguration factory)
+   public static IHost[] getConnectionsBySubSystemConfiguration(ISubSystemConfiguration factory)
    {
    	   return getSystemRegistry().getHostsBySubSystemConfiguration(factory);
    }
    /**
     * STEP 2d. Get all connections for your subsystem factory, identified by factory Id.
     * <p>
-    * SAME AS: <code>getSystemRegistry().getConnectionsBySubSystemFactory(getSubSystemFactory(factoryId))</code>
+    * SAME AS: <code>getSystemRegistry().getConnectionsBySubSystemConfiguration(getSubSystemConfiguration(factoryId))</code>
     * @param factoryId The id of the subsystem factory as given in its plugin.xml id attribute for the subsystemconfiguration extension point
-    * @see #getSubSystemFactory(String)
-    * @see #getConnectionsBySubSystemFactory(ISubSystemConfiguration)
+    * @see #getSubSystemConfiguration(String)
+    * @see #getConnectionsBySubSystemConfiguration(ISubSystemConfiguration)
     */
-   public static IHost[] getConnectionsBySubSystemFactory(String factoryId)
+   public static IHost[] getConnectionsBySubSystemConfiguration(String factoryId)
    {
-   	   return getSystemRegistry().getHostsBySubSystemConfiguration(getSubSystemFactory(factoryId));
+   	   return getSystemRegistry().getHostsBySubSystemConfiguration(getSubSystemConfiguration(factoryId));
    }
 
    /**
@@ -143,10 +143,10 @@ public class SystemStartHere
    /**
     * Miscallenous Helper. Return the subsystem factory object for the given subsystem factory Id
     * <p>
-    * SAME AS: <code>getSystemRegistry().getSubSystemFactory(factoryId)</code>
+    * SAME AS: <code>getSystemRegistry().getSubSystemConfiguration(factoryId)</code>
     * @param factoryId The id of the subsystem factory as given in its plugin.xml id attribute for the subsystemconfiguration extension point
     */
-   public static ISubSystemConfiguration getSubSystemFactory(String factoryId)
+   public static ISubSystemConfiguration getSubSystemConfiguration(String factoryId)
    {
    	   return getSystemRegistry().getSubSystemConfiguration(factoryId);
    }

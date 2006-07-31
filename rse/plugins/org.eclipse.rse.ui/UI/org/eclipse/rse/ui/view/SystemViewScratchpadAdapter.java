@@ -196,9 +196,9 @@ public class SystemViewScratchpadAdapter extends AbstractSystemViewAdapter imple
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getSubSystemFactoryId(java.lang.Object)
+     * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getSubSystemConfigurationId(java.lang.Object)
      */
-    public String getSubSystemFactoryId(Object element)
+    public String getSubSystemConfigurationId(Object element)
     {
         // TODO Auto-generated method stub
         return null;

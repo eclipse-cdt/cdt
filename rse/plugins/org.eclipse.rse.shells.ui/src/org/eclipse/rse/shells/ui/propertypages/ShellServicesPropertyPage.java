@@ -58,7 +58,7 @@ public class ShellServicesPropertyPage extends ServicesPropertyPage
 		else
 		{
 			host = subSystem.getHost();
-			_currentFactory = (IShellServiceSubSystemConfiguration)subSystem.getParentRemoteCmdSubSystemFactory();
+			_currentFactory = (IShellServiceSubSystemConfiguration)subSystem.getParentRemoteCmdSubSystemConfiguration();
 			factories = getShellServiceSubSystemFactories(host.getSystemType());
 		}
 		
@@ -97,12 +97,12 @@ public class ShellServicesPropertyPage extends ServicesPropertyPage
 	}
 
 
-	protected IServiceSubSystemConfiguration getCurrentServiceSubSystemFactory()
+	protected IServiceSubSystemConfiguration getCurrentServiceSubSystemConfiguration()
 	{
 		return _currentFactory;
 	}
 	
-	public void setSubSystemFactory(ISubSystemConfiguration factory)
+	public void setSubSystemConfiguration(ISubSystemConfiguration factory)
 	{
 		_currentFactory = (IShellServiceSubSystemConfiguration)factory;
 	}

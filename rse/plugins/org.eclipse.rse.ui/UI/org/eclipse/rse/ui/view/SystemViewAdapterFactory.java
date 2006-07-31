@@ -33,8 +33,8 @@ import org.eclipse.rse.model.ISystemPromptableObject;
 import org.eclipse.rse.ui.view.team.SystemTeamViewCategoryAdapter;
 import org.eclipse.rse.ui.view.team.SystemTeamViewCategoryNode;
 import org.eclipse.rse.ui.view.team.SystemTeamViewProfileAdapter;
-import org.eclipse.rse.ui.view.team.SystemTeamViewSubSystemFactoryAdapter;
-import org.eclipse.rse.ui.view.team.SystemTeamViewSubSystemFactoryNode;
+import org.eclipse.rse.ui.view.team.SystemTeamViewSubSystemConfigurationAdapter;
+import org.eclipse.rse.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
@@ -60,7 +60,7 @@ public class SystemViewAdapterFactory implements IAdapterFactory
 	private SystemViewNewConnectionPromptAdapter   newConnPromptAdapter = new SystemViewNewConnectionPromptAdapter();
 	private SystemTeamViewProfileAdapter           profileAdapter= new SystemTeamViewProfileAdapter();
 	private SystemTeamViewCategoryAdapter          categoryAdapter;
-	private SystemTeamViewSubSystemFactoryAdapter  subsysFactoryAdapter;
+	private SystemTeamViewSubSystemConfigurationAdapter  subsysFactoryAdapter;
 	
 	private SystemViewFilterStringAdapter          filterStringAdapter       = new SystemViewFilterStringAdapter();	
 
@@ -97,7 +97,7 @@ public class SystemViewAdapterFactory implements IAdapterFactory
         manager.registerAdapters(this, ISystemMessageObject.class);
         manager.registerAdapters(this, ISystemPromptableObject.class);
         manager.registerAdapters(this, SystemTeamViewCategoryNode.class);
-		manager.registerAdapters(this, SystemTeamViewSubSystemFactoryNode.class);	
+		manager.registerAdapters(this, SystemTeamViewSubSystemConfigurationNode.class);	
 		
 		// FIXME - UDAs no longer in core
 		//manager.registerAdapters(this, SystemTeamViewCompileTypeNode.class);
@@ -145,8 +145,8 @@ public class SystemViewAdapterFactory implements IAdapterFactory
 	      }
 		  else if (adaptableObject instanceof SystemTeamViewCategoryNode)
 		  	adapter = getCategoryAdapter();
-		  else if (adaptableObject instanceof SystemTeamViewSubSystemFactoryNode)
-		    adapter = getSubSystemFactoryAdapter();
+		  else if (adaptableObject instanceof SystemTeamViewSubSystemConfigurationNode)
+		    adapter = getSubSystemConfigurationAdapter();
 	      
 	      /** FIXME - UDAs no longer in core
 		  else if (adaptableObject instanceof SystemTeamViewCompileTypeNode)
@@ -302,10 +302,10 @@ public class SystemViewAdapterFactory implements IAdapterFactory
 	/**
 	 * Return adapter for subsystem factory nodes in team view
 	 */	
-	public SystemTeamViewSubSystemFactoryAdapter getSubSystemFactoryAdapter()
+	public SystemTeamViewSubSystemConfigurationAdapter getSubSystemConfigurationAdapter()
 	{
 		if (subsysFactoryAdapter == null)
-			subsysFactoryAdapter = new SystemTeamViewSubSystemFactoryAdapter();
+			subsysFactoryAdapter = new SystemTeamViewSubSystemConfigurationAdapter();
 		return subsysFactoryAdapter;
 	}
 	

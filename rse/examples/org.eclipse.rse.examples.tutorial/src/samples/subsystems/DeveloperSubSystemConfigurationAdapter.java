@@ -23,7 +23,7 @@ import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.ui.filters.actions.SystemChangeFilterAction;
 import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
-import org.eclipse.rse.ui.view.SubsystemFactoryAdapter;
+import org.eclipse.rse.ui.view.SubsystemConfigurationAdapter;
 import org.eclipse.swt.widgets.Shell;
 
 import samples.RSESamplesPlugin;
@@ -32,7 +32,7 @@ import samples.RSESamplesPlugin;
  * Adds functionality to the basic SubSystemConfiguration.
  */
 public class DeveloperSubSystemConfigurationAdapter extends
-		SubsystemFactoryAdapter
+		SubsystemConfigurationAdapter
 {
 
 	/**

@@ -296,7 +296,7 @@ public class SystemRemoteObjectMatcher
      * Getter method.
      * Return what was specified for the <samp>subsystemconfigurationCategory</samp> xml attribute.
      */
-    public String getSubSystemFactoryCategoryFilter()
+    public String getSubSystemConfigurationCategoryFilter()
     {
     	return subsystemCategoryFilter;
     }        
@@ -353,7 +353,7 @@ public class SystemRemoteObjectMatcher
      * Getter method.
      * Return what was specified for the <samp>subsystemconfigurationid</samp> xml attribute.
      */
-    public String getSubSystemFactoryId()
+    public String getSubSystemConfigurationId()
     {
     	return subsystemfilter;
     }    
@@ -373,7 +373,7 @@ public class SystemRemoteObjectMatcher
         boolean subsystemMatch = true;
         if (!allSubSystems)
         {
-        	String subsystem = adapter.getSubSystemFactoryId(element);
+        	String subsystem = adapter.getSubSystemConfigurationId(element);
         	if (subsystem == null)
         	  subsystemMatch = false;
             else if (!genericSubSystemStart && !genericSubSystemEnd)

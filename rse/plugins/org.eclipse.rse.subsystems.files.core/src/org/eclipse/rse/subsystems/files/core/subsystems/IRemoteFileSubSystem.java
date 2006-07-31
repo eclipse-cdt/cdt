@@ -51,9 +51,9 @@ public interface IRemoteFileSubSystem extends ISubSystem{
     // ----------------------
     
 	/**
-	 * Return parent subsystem factory, cast to a RemoteFileSubSystemFactory
+	 * Return parent subsystem factory, cast to a RemoteFileSubSystemConfiguration
 	 */
-	public IRemoteFileSubSystemConfiguration getParentRemoteFileSubSystemFactory();		
+	public IRemoteFileSubSystemConfiguration getParentRemoteFileSubSystemConfiguration();		
 	/**
 	 * Return true if file names are case-sensitive. Used when doing name or type filtering
 	 */
@@ -65,35 +65,35 @@ public interface IRemoteFileSubSystem extends ISubSystem{
 	/**
 	 * Return in string format the character used to separate folders. Eg, "\" or "/".
 	 * <br>
-	 * Shortcut to {@link #getParentRemoteFileSubSystemFactory()}.getSeparator()
+	 * Shortcut to {@link #getParentRemoteFileSubSystemConfiguration()}.getSeparator()
 	 */
 	public String getSeparator();
 
 	/**
 	 * Return in character format the character used to separate folders. Eg, "\" or "/"
 	 * <br>
-	 * Shortcut to {@link #getParentRemoteFileSubSystemFactory()}.getSeparatorChar()
+	 * Shortcut to {@link #getParentRemoteFileSubSystemConfiguration()}.getSeparatorChar()
 	 */    
 	public char getSeparatorChar();
 
 	/**
 	 * Return in string format the character used to separate paths. Eg, ";" or ":"
 	 * <br>
-	 * Shortcut to {@link #getParentRemoteFileSubSystemFactory()}.getPathSeparator()
+	 * Shortcut to {@link #getParentRemoteFileSubSystemConfiguration()}.getPathSeparator()
 	 */    
 	public String getPathSeparator();
 
 	/**
 	 * Return in char format the character used to separate paths. Eg, ";" or ":"
 	 * <br>
-	 * Shortcut to {@link #getParentRemoteFileSubSystemFactory()}.getPathSeparatorChar()
+	 * Shortcut to {@link #getParentRemoteFileSubSystemConfiguration()}.getPathSeparatorChar()
 	 */    
 	public char getPathSeparatorChar();
 
 	/**
 	 * Return as a string the line separator.
 	 * <br>
-	 * Shortcut to {@link #getParentRemoteFileSubSystemFactory()}.getLineSeparator()
+	 * Shortcut to {@link #getParentRemoteFileSubSystemConfiguration()}.getLineSeparator()
 	 */
 	public String getLineSeparator();
 	

@@ -146,7 +146,7 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.servicesubsystem.IServiceSubSystem#switchServiceFactory(org.eclipse.rse.core.servicesubsystem.IServiceSubSystemFactory)
+	 * @see org.eclipse.rse.core.servicesubsystem.IServiceSubSystem#switchServiceFactory(org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration)
 	 */
 	public void switchServiceFactory(IServiceSubSystemConfiguration fact) 
 	{

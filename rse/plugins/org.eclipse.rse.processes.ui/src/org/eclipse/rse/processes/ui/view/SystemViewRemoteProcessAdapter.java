@@ -460,7 +460,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 	 * Return the subsystem factory id that owns this remote object
 	 * The value must not be translated, so that property pages registered via xml can subset by it.
 	 */
-	public String getSubSystemFactoryId(Object element)
+	public String getSubSystemConfigurationId(Object element)
 	{
 		IRemoteProcess process = (IRemoteProcess) element;
 		return process.getParentRemoteProcessSubSystem().getSubSystemConfiguration().getId();

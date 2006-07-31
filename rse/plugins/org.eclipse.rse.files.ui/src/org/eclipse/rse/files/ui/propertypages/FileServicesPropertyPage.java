@@ -46,7 +46,7 @@ public class FileServicesPropertyPage extends ServicesPropertyPage
 		FileServiceSubSystem subSystem = getFileServiceSubSystem();
 	
 		IHost host = subSystem.getHost();
-		_currentFactory = (IFileServiceSubSystemConfiguration)subSystem.getParentRemoteFileSubSystemFactory();
+		_currentFactory = (IFileServiceSubSystemConfiguration)subSystem.getParentRemoteFileSubSystemConfiguration();
 		IFileServiceSubSystemConfiguration[] factories = getFileServiceSubSystemFactories(host.getSystemType());
 		
 		
@@ -84,12 +84,12 @@ public class FileServicesPropertyPage extends ServicesPropertyPage
 	}
 	
 	
-	protected IServiceSubSystemConfiguration getCurrentServiceSubSystemFactory()
+	protected IServiceSubSystemConfiguration getCurrentServiceSubSystemConfiguration()
 	{
 		return _currentFactory;
 	}
 
-	public void setSubSystemFactory(ISubSystemConfiguration factory)
+	public void setSubSystemConfiguration(ISubSystemConfiguration factory)
 	{
 		_currentFactory = (IFileServiceSubSystemConfiguration)factory;
 	}

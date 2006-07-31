@@ -220,7 +220,7 @@ public class SystemSearchTableView extends SystemTableTreeView
 									String childPath = adapt.getAbsoluteName(child);
 									
 									// find out if system is case sensitive
-									boolean isCaseSensitive = resourceSubSystem.getParentSubSystemFactory().isCaseSensitive();
+									boolean isCaseSensitive = resourceSubSystem.getParentSubSystemConfiguration().isCaseSensitive();
 									
 									boolean matches = false;
 									

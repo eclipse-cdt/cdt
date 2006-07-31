@@ -37,7 +37,7 @@ import org.eclipse.ui.IObjectActionDelegate;
  *   <li>{@link #getSelectedRemoteFiles()}
  *   <li>{@link #getFirstSelectedRemoteFile()}
  *   <li>{@link #getRemoteFileSubSystem()}
- *   <li>{@link #getRemoteFileSubSystemFactory()}
+ *   <li>{@link #getRemoteFileSubSystemConfiguration()}
  * </ul>
  * <p>
  * See also the convenience methods available in the parent class {@link SystemAbstractPopupMenuExtensionAction}
@@ -133,9 +133,9 @@ public abstract class SystemAbstractRemoteFilePopupMenuExtensionAction
      * selected remote objects were resolved. This has some useful methods in it, 
      * including isUnixStyle() indicating if this remote file system is unix or windows.
      */
-    public IRemoteFileSubSystemConfiguration getRemoteFileSubSystemFactory()
+    public IRemoteFileSubSystemConfiguration getRemoteFileSubSystemConfiguration()
     {
-    	return (IRemoteFileSubSystemConfiguration)getSubSystemFactory();
+    	return (IRemoteFileSubSystemConfiguration)getSubSystemConfiguration();
     }    
     
 }

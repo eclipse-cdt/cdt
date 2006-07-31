@@ -374,7 +374,7 @@ public class CombineForm extends SystemSelectRemoteFileOrFolderForm
 		setAutoExpandDepth(0);        
 		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IRemoteFileSubSystem ss = RemoteFileUtility.getFileSubSystem(connection);
-		IRemoteFileSubSystemConfiguration ssf = ss.getParentRemoteFileSubSystemFactory();
+		IRemoteFileSubSystemConfiguration ssf = ss.getParentRemoteFileSubSystemConfiguration();
 		RemoteFileFilterString rffs = new RemoteFileFilterString(ssf);
 		rffs.setShowFiles(fileMode);  // no files if in folders mode
 		rffs.setShowSubDirs(!fileMode || !filesOnlyMode); // yes folders, always, for now

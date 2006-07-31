@@ -26,7 +26,7 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystemConf
 
 
 /**
- * @lastgen interface DefaultCmdSubSystemFactory extends RemoteCmdSubSystemFactory {}
+ * @lastgen interface DefaultCmdSubSystemConfiguration extends RemoteCmdSubSystemConfiguration {}
  */
 public interface IShellServiceSubSystemConfiguration extends IRemoteCmdSubSystemConfiguration, IServiceSubSystemConfiguration
 {
@@ -34,4 +34,4 @@ public interface IShellServiceSubSystemConfiguration extends IRemoteCmdSubSystem
 	public IShellService createShellService(IHost host);
 	public IServiceCommandShell createRemoteCommandShell(IRemoteCmdSubSystem cmdSS, IHostShell hostShell);
 
-} //DefaultCmdSubSystemFactory
+} //DefaultCmdSubSystemConfiguration

@@ -193,7 +193,7 @@ public class SystemExtractAction extends SystemBaseAction
 			if (selected != null && selected instanceof IRemoteFile)
 			{
 				IRemoteFile file = (IRemoteFile) selected;
-				if (file.isArchive() && file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement())
+				if (file.isArchive() && file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement())
 				{
 					_selected.add(file);
 					enable = true;

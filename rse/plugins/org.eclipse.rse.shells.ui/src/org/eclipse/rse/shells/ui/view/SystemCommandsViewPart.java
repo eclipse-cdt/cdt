@@ -399,7 +399,7 @@ public class SystemCommandsViewPart
 	        IRemoteCommandShell cmdShell = (IRemoteCommandShell)_folder.getInput();
 	        SystemViewRemoteOutputAdapter adapter = (SystemViewRemoteOutputAdapter)((IAdaptable)cmdShell).getAdapter(ISystemViewElementAdapter.class);
 	        
-	        _shellActions = adapter.getShellActions(cmdShell.getCommandSubSystem().getParentRemoteCmdSubSystemFactory());
+	        _shellActions = adapter.getShellActions(cmdShell.getCommandSubSystem().getParentRemoteCmdSubSystemConfiguration());
 	    }
 	    else if (_shellActions != null)
 	    {

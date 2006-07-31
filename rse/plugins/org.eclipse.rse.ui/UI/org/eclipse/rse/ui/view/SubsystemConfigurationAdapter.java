@@ -90,7 +90,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 
-public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, ISystemNewFilterActionConfigurator
+public class SubsystemConfigurationAdapter implements ISubsystemConfigurationAdapter, ISystemNewFilterActionConfigurator
 {					
 	protected Hashtable imageTable = null;
 	
@@ -99,7 +99,7 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 	private IAction[] filterPoolActions = null;
 	private IAction[] filterPoolReferenceActions = null;
 	private IAction[] filterActions = null;
-	public SubsystemFactoryAdapter()
+	public SubsystemConfigurationAdapter()
 	{
 	}
 	
@@ -279,14 +279,14 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 //		 * @see #supportsUserDefinedActions()
 //		 * @see #createActionSubSystem()
 //		 */
-//		public SystemUDActionSubsystem getActionSubSystem(ISubSystemFactory factory, ISubSystem subsystem)
+//		public SystemUDActionSubsystem getActionSubSystem(ISubSystemConfiguration factory, ISubSystem subsystem)
 //		{
 //			if (udas == null)
 //				udas = createActionSubSystem(factory);
 //			if (udas != null)
 //			{
 //				udas.setSubsystem(subsystem);
-//				udas.setSubSystemFactory(factory);
+//				udas.setSubSystemConfiguration(factory);
 //			}
 //			return udas;
 //		}
@@ -298,7 +298,7 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 //		 * @see #supportsUserDefinedActions()
 //		 * @see #getActionSubSystem(ISubSystem)
 //		 */
-//		protected SystemUDActionSubsystem createActionSubSystem(ISubSystemFactory factory)
+//		protected SystemUDActionSubsystem createActionSubSystem(ISubSystemConfiguration factory)
 //		{
 //			return null;
 //		}
@@ -310,7 +310,7 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 //		 * This is called by the addCommonRemoteObjectsActions method, if this subsystem
 //		 *  supports user defined actions.
 //		 */
-//		public static void addUserDefinedActions(ISubSystemFactory factory, Shell shell, IStructuredSelection selection, SystemMenuManager menu, String menuGroup, SystemUDActionSubsystem userActionSubSystem)
+//		public static void addUserDefinedActions(ISubSystemConfiguration factory, Shell shell, IStructuredSelection selection, SystemMenuManager menu, String menuGroup, SystemUDActionSubsystem userActionSubSystem)
 //		{
 //			SystemUDACascadeAction act = new SystemUDACascadeAction(userActionSubSystem, selection);
 //			menu.add(menuGroup, act);
@@ -488,7 +488,7 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 						   SystemFilterPoolReferenceManager refMgr = selectedSubSystem.getSystemFilterPoolReferenceManager();
 						   SystemFilterPool[] refdPools = refMgr.getReferencedSystemFilterPools();
 						   if ( refdPools.length == 0 )
-						      RSEUIPlugin.logInfo("SubSystemFactoryImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of lenght zero.");
+						      RSEUIPlugin.logInfo("SubSystemConfigurationImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of lenght zero.");
 						   for (int idx=0; idx<newFilterActions.length; idx++)
 						   {
 						         if (newFilterActions[idx] instanceof SystemFilterBaseNewFilterAction && refdPools.length > 0 )
@@ -605,7 +605,7 @@ public class SubsystemFactoryAdapter implements ISubsystemConfigurationAdapter, 
 				ISystemFilterPoolReferenceManager refMgr = selectedSubSystem.getSystemFilterPoolReferenceManager();
 				ISystemFilterPool[] refdPools = refMgr.getReferencedSystemFilterPools();
 				if (refdPools.length == 0)
-					SystemBasePlugin.logInfo("SubSystemFactoryImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of length zero.");
+					SystemBasePlugin.logInfo("SubSystemConfigurationImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of length zero.");
 				// so there already exists references to more than one filter pool, but it might simply be a reference
 				//  to the default filter pool in the user's profile and another to reference to the default filter pool in
 				//  the team profile... let's see...

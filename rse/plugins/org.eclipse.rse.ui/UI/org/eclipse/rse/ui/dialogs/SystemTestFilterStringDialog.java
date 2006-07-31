@@ -174,7 +174,7 @@ public class SystemTestFilterStringDialog
     {
 		this.subsystem = subsystem;
 		this.filterString = filterString;
-		//this.subsystemFactoryId = subsystem.getParentSubSystemFactory().getId();
+		//this.subsystemFactoryId = subsystem.getParentSubSystemConfiguration().getId();
     	inputProvider.setSubSystem(subsystem);
     	inputProvider.setFilterString(filterString);
     	tree.reset(inputProvider);    		

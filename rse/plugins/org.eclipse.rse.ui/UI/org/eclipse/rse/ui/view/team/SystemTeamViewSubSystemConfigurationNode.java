@@ -28,7 +28,7 @@ import org.eclipse.rse.ui.SystemResources;
  * This class represents a child node under category nodes, in the Team view.
  * It represents expandable subsystem factories such as "Files" or "iSeries Objects". 
  */
-public class SystemTeamViewSubSystemFactoryNode implements IAdaptable
+public class SystemTeamViewSubSystemConfigurationNode implements IAdaptable
 {
 	private String mementoHandle;
 	private ISystemProfile profile;
@@ -39,7 +39,7 @@ public class SystemTeamViewSubSystemFactoryNode implements IAdaptable
 	/**
 	 * Constructor
 	 */
-	public SystemTeamViewSubSystemFactoryNode(ISystemProfile profile, SystemTeamViewCategoryNode parentCategory, ISubSystemConfiguration ssf)
+	public SystemTeamViewSubSystemConfigurationNode(ISystemProfile profile, SystemTeamViewCategoryNode parentCategory, ISubSystemConfiguration ssf)
 	{
 		super();
 		this.profile = profile;
@@ -62,10 +62,10 @@ public class SystemTeamViewSubSystemFactoryNode implements IAdaptable
 	 */
 	public boolean equals(Object o)
 	{
-		if (o instanceof SystemTeamViewSubSystemFactoryNode)
+		if (o instanceof SystemTeamViewSubSystemConfigurationNode)
 		{
-			SystemTeamViewSubSystemFactoryNode other = (SystemTeamViewSubSystemFactoryNode)o;
-			if ((ssf == other.getSubSystemFactory()) &&
+			SystemTeamViewSubSystemConfigurationNode other = (SystemTeamViewSubSystemConfigurationNode)o;
+			if ((ssf == other.getSubSystemConfiguration()) &&
 			 	(parentCategory == other.getParentCategory()) &&
 			 	(profile == other.getProfile()))
 			 	return true;
@@ -95,7 +95,7 @@ public class SystemTeamViewSubSystemFactoryNode implements IAdaptable
 		{
 			name = "";
 			String[] types = ssf.getSystemTypes();
-			if (ssf.getSubSystemFactoryProxy().supportsAllSystemTypes())
+			if (ssf.getSubSystemConfigurationProxy().supportsAllSystemTypes())
 			{
 				name = SystemResources.TERM_ALL;
 			}
@@ -159,7 +159,7 @@ public class SystemTeamViewSubSystemFactoryNode implements IAdaptable
 	/**
 	 * Return the subsystem factory this node represents
 	 */
-	public ISubSystemConfiguration getSubSystemFactory()
+	public ISubSystemConfiguration getSubSystemConfiguration()
 	{
 		return ssf;
 	}
@@ -167,7 +167,7 @@ public class SystemTeamViewSubSystemFactoryNode implements IAdaptable
 	/**
 	 * Set the subsystem factory this node represents
 	 */
-	public void setSubSystemFactory(ISubSystemConfiguration factory)
+	public void setSubSystemConfiguration(ISubSystemConfiguration factory)
 	{
 		ssf = factory;
 	}

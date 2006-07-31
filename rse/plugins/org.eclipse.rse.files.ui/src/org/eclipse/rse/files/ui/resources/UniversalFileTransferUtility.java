@@ -564,7 +564,7 @@ public class UniversalFileTransferUtility
 	public static SystemRemoteResourceSet copyWorkspaceResourcesToRemote(SystemWorkspaceResourceSet workspaceSet, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
 	{	
 		boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER)
-											&& targetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement();
+											&& targetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
  
 		IRemoteFileSubSystem targetFS = targetFolder.getParentRemoteFileSubSystem();
 		SystemRemoteResourceSet resultSet = new SystemRemoteResourceSet(targetFS);
@@ -593,7 +593,7 @@ public class UniversalFileTransferUtility
 			return null;
 		}
 		boolean isTargetArchive = targetFolder.isArchive();
-		if (isTargetArchive && !targetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement()) return null;
+		if (isTargetArchive && !targetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement()) return null;
 		StringBuffer newPathBuf = new StringBuffer(targetFolder.getAbsolutePath());
 		if (isTargetArchive)
 		{
@@ -829,7 +829,7 @@ public class UniversalFileTransferUtility
 			}
 
 			boolean isTargetArchive = targetFolder.isArchive();
-			if (isTargetArchive && !targetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement()) return null;
+			if (isTargetArchive && !targetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement()) return null;
 			StringBuffer newPathBuf = new StringBuffer(targetFolder.getAbsolutePath());
 			if (isTargetArchive)
 			{
@@ -970,7 +970,7 @@ public class UniversalFileTransferUtility
 
 	public static void compressedCopyWorkspaceResourceToRemote(IContainer directory, IRemoteFile newTargetFolder, IProgressMonitor monitor) throws Exception
 	{
-		if (!newTargetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement()) return;
+		if (!newTargetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement()) return;
 		if (ArchiveHandlerManager.isVirtual(newTargetFolder.getAbsolutePath()))
 		{
 			return;
@@ -1102,7 +1102,7 @@ public class UniversalFileTransferUtility
 	
 	public static IResource compressedCopyRemoteResourceToWorkspace(IRemoteFile directory, IProgressMonitor monitor) throws Exception
 	{
-		if (!directory.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement()) return null;
+		if (!directory.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement()) return null;
 		IRemoteFile destinationArchive = null;
 		IRemoteFile cpdest = null;
 		File dest = null;

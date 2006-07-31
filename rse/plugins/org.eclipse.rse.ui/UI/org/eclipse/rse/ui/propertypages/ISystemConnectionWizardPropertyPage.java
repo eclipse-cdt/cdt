@@ -26,7 +26,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 public interface ISystemConnectionWizardPropertyPage 
 {
 	public boolean applyValues(IConnectorService subsystem);
-	public void setSubSystemFactory(ISubSystemConfiguration factory);
+	public void setSubSystemConfiguration(ISubSystemConfiguration factory);
 	public void setHostname(String hostname);
 	public void setSystemType(String systemType);
 }

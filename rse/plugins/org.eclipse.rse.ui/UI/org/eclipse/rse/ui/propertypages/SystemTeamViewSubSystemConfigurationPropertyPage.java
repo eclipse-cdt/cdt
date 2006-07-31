@@ -22,7 +22,7 @@ import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.view.SystemViewResources;
-import org.eclipse.rse.ui.view.team.SystemTeamViewSubSystemFactoryNode;
+import org.eclipse.rse.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Label;
  * The property page for subsystem factory nodes in the Team view.
  * This is an output-only page.
  */
-public class SystemTeamViewSubSystemFactoryPropertyPage extends SystemBasePropertyPage
+public class SystemTeamViewSubSystemConfigurationPropertyPage extends SystemBasePropertyPage
        implements  ISystemMessages
 {
 	
@@ -43,7 +43,7 @@ public class SystemTeamViewSubSystemFactoryPropertyPage extends SystemBaseProper
 	/**
 	 * Constructor for SystemFilterPropertyPage
 	 */
-	public SystemTeamViewSubSystemFactoryPropertyPage()
+	public SystemTeamViewSubSystemConfigurationPropertyPage()
 	{
 		super();
 	}
@@ -95,11 +95,11 @@ public class SystemTeamViewSubSystemFactoryPropertyPage extends SystemBaseProper
 	/**
 	 * Get the input team view subsystem factory node
 	 */
-	protected ISubSystemConfiguration getSubSystemFactory()
+	protected ISubSystemConfiguration getSubSystemConfiguration()
 	{
 		Object element = getElement();
-		SystemTeamViewSubSystemFactoryNode ssfNode = (SystemTeamViewSubSystemFactoryNode)element;
-		return ssfNode.getSubSystemFactory();
+		SystemTeamViewSubSystemConfigurationNode ssfNode = (SystemTeamViewSubSystemConfigurationNode)element;
+		return ssfNode.getSubSystemConfiguration();
 	}
 
 	/**
@@ -108,15 +108,15 @@ public class SystemTeamViewSubSystemFactoryPropertyPage extends SystemBaseProper
 	protected void doInitializeFields()
 	{
 		initDone = true;
-		ISubSystemConfiguration ssf = getSubSystemFactory();
-		ISubSystemConfigurationProxy proxy = ssf.getSubSystemFactoryProxy();
+		ISubSystemConfiguration ssf = getSubSystemConfiguration();
+		ISubSystemConfigurationProxy proxy = ssf.getSubSystemConfigurationProxy();
 		// populate GUI...
 		labelName.setText(ssf.getName());
 		labelId.setText(proxy.getId());
 		labelVendor.setText(proxy.getVendor());
 		String systypes = "";
 		String[] types = ssf.getSystemTypes();
-		if (ssf.getSubSystemFactoryProxy().supportsAllSystemTypes())
+		if (ssf.getSubSystemConfigurationProxy().supportsAllSystemTypes())
 		{
 			systypes = SystemResources.TERM_ALL;
 		}

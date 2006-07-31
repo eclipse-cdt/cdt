@@ -35,10 +35,10 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 
 /**
- * Adapter for displaying and processing SystemTeamViewSubSystemFactoryNode objects in tree views, such as
+ * Adapter for displaying and processing SystemTeamViewSubSystemConfigurationNode objects in tree views, such as
  *  the Team view.
  */
-public class SystemTeamViewSubSystemFactoryAdapter 
+public class SystemTeamViewSubSystemConfigurationAdapter 
        extends AbstractSystemViewAdapter 
        implements ISystemViewElementAdapter, ISystemUserIdConstants
 {
@@ -66,30 +66,30 @@ public class SystemTeamViewSubSystemFactoryAdapter
 		if (!actionsCreated)
 		  createActions();	    
 
-		SystemTeamViewSubSystemFactoryNode ssfNode = (SystemTeamViewSubSystemFactoryNode)selection.getFirstElement();
+		SystemTeamViewSubSystemConfigurationNode ssfNode = (SystemTeamViewSubSystemConfigurationNode)selection.getFirstElement();
 		SystemTeamViewCategoryNode category = ssfNode.getParentCategory();
 		String categoryType = category.getMementoHandle();
 		
 // 		FIXME - user actions and compilecmds no longer coupled to core
-//		if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_USERACTIONS) && ssfNode.getSubSystemFactory().supportsUserDefinedActions())
+//		if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_USERACTIONS) && ssfNode.getSubSystemConfiguration().supportsUserDefinedActions())
 //		{
 //			wwActionsAction.reset();		  
 //			wwActionsAction.setShell(shell);
 //	    	menu.add(menuGroup, wwActionsAction);	    
 //		}
-//		else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_COMPILECMDS) && ssfNode.getSubSystemFactory().supportsCompileActions())
+//		else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_COMPILECMDS) && ssfNode.getSubSystemConfiguration().supportsCompileActions())
 //		{		  
 //			wwCmdsAction.reset();
 //			wwCmdsAction.setShell(shell);
 //			menu.add(menuGroup, wwCmdsAction);
 //		}	    
-		if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_FILTERPOOLS) && ssfNode.getSubSystemFactory().supportsFilters())
+		if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_FILTERPOOLS) && ssfNode.getSubSystemConfiguration().supportsFilters())
 		{		  
 			wwPoolsAction.reset();
 			wwPoolsAction.setShell(shell);
-			wwPoolsAction.setFilterPoolManagerProvider(ssfNode.getSubSystemFactory());
+			wwPoolsAction.setFilterPoolManagerProvider(ssfNode.getSubSystemConfiguration());
 			ISystemFilterPoolManager[] poolMgrs = new ISystemFilterPoolManager[1];
-			poolMgrs[0] = ssfNode.getSubSystemFactory().getFilterPoolManager(ssfNode.getProfile());
+			poolMgrs[0] = ssfNode.getSubSystemConfiguration().getFilterPoolManager(ssfNode.getProfile());
 			wwPoolsAction.setFilterPoolManagers(poolMgrs);
 			menu.add(menuGroup, wwPoolsAction);
 		}	    
@@ -110,7 +110,7 @@ public class SystemTeamViewSubSystemFactoryAdapter
 	 */
 	public ImageDescriptor getImageDescriptor(Object element)
 	{				
-	    return ((SystemTeamViewSubSystemFactoryNode)element).getImageDescriptor();
+	    return ((SystemTeamViewSubSystemConfigurationNode)element).getImageDescriptor();
 	}
 	
 	/**
@@ -118,7 +118,7 @@ public class SystemTeamViewSubSystemFactoryAdapter
 	 */
 	public String getText(Object element)
 	{
-		return ((SystemTeamViewSubSystemFactoryNode)element).getLabel();
+		return ((SystemTeamViewSubSystemConfigurationNode)element).getLabel();
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class SystemTeamViewSubSystemFactoryAdapter
 	 */
 	public String getName(Object element)
 	{
-		return ((SystemTeamViewSubSystemFactoryNode)element).getLabel();
+		return ((SystemTeamViewSubSystemConfigurationNode)element).getLabel();
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class SystemTeamViewSubSystemFactoryAdapter
 	 */
 	public String getAbsoluteName(Object element)
 	{
-		SystemTeamViewSubSystemFactoryNode factory = (SystemTeamViewSubSystemFactoryNode)element;
+		SystemTeamViewSubSystemConfigurationNode factory = (SystemTeamViewSubSystemConfigurationNode)element;
 		return factory.getProfile().getName() + "." + factory.getParentCategory().getLabel() + factory.getLabel();
 	}
 		
@@ -153,7 +153,7 @@ public class SystemTeamViewSubSystemFactoryAdapter
 	 */
 	public String getStatusLineText(Object element)
 	{
-		SystemTeamViewSubSystemFactoryNode factory = (SystemTeamViewSubSystemFactoryNode)element;
+		SystemTeamViewSubSystemConfigurationNode factory = (SystemTeamViewSubSystemConfigurationNode)element;
 		return SystemResources.RESID_TEAMVIEW_SUBSYSFACTORY_VALUE + ": " + factory.getLabel();
 	}
 			
@@ -162,7 +162,7 @@ public class SystemTeamViewSubSystemFactoryAdapter
 	 */
 	public Object getParent(Object element)
 	{
-		SystemTeamViewSubSystemFactoryNode factory = (SystemTeamViewSubSystemFactoryNode)element;
+		SystemTeamViewSubSystemConfigurationNode factory = (SystemTeamViewSubSystemConfigurationNode)element;
 		return factory.getParentCategory();
 	}
 	
@@ -171,11 +171,11 @@ public class SystemTeamViewSubSystemFactoryAdapter
 	 */
 	public Object[] getChildren(Object element)
 	{		
-		SystemTeamViewSubSystemFactoryNode ssfNode = (SystemTeamViewSubSystemFactoryNode)element;
+		SystemTeamViewSubSystemConfigurationNode ssfNode = (SystemTeamViewSubSystemConfigurationNode)element;
 		SystemTeamViewCategoryNode category = ssfNode.getParentCategory();
 		ISystemProfile profile = ssfNode.getProfile();
 		String categoryType = category.getMementoHandle();
-		ISubSystemConfiguration ssf = ssfNode.getSubSystemFactory();
+		ISubSystemConfiguration ssf = ssfNode.getSubSystemConfiguration();
 		if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_FILTERPOOLS))
 		{
 			return profile.getFilterPools(ssf);
@@ -216,11 +216,11 @@ public class SystemTeamViewSubSystemFactoryAdapter
 	 */
 	public boolean hasChildren(Object element)
 	{
-		SystemTeamViewSubSystemFactoryNode ssfNode = (SystemTeamViewSubSystemFactoryNode)element;
+		SystemTeamViewSubSystemConfigurationNode ssfNode = (SystemTeamViewSubSystemConfigurationNode)element;
 		SystemTeamViewCategoryNode category = ssfNode.getParentCategory();
 		ISystemProfile profile = ssfNode.getProfile();
 		String categoryType = category.getMementoHandle();
-		ISubSystemConfiguration ssf = ssfNode.getSubSystemFactory();
+		ISubSystemConfiguration ssf = ssfNode.getSubSystemConfiguration();
 		if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_FILTERPOOLS))
 			return true;
 		else  if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_USERACTIONS))
@@ -294,7 +294,7 @@ public class SystemTeamViewSubSystemFactoryAdapter
 	 */
 	public String getMementoHandle(Object element)
 	{
-		SystemTeamViewSubSystemFactoryNode factory = (SystemTeamViewSubSystemFactoryNode)element;	
+		SystemTeamViewSubSystemConfigurationNode factory = (SystemTeamViewSubSystemConfigurationNode)element;	
 		return factory.getMementoHandle(); 
 	}
 	/**
@@ -302,7 +302,7 @@ public class SystemTeamViewSubSystemFactoryAdapter
 	 */
 	public String getMementoHandleKey(Object element)
 	{
-		SystemTeamViewSubSystemFactoryNode factory = (SystemTeamViewSubSystemFactoryNode)element;	
+		SystemTeamViewSubSystemConfigurationNode factory = (SystemTeamViewSubSystemConfigurationNode)element;	
 		return factory.getProfile().getName() + "." + factory.getParentCategory().getLabel() + "." + factory.getLabel(); 
 	}
 

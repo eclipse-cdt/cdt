@@ -58,7 +58,7 @@ import org.eclipse.rse.ui.internal.RSESystemTypeAdapterFactory;
 import org.eclipse.rse.ui.internal.RSEUIRegistry;
 import org.eclipse.rse.ui.propertypages.RemoteSystemsPreferencePage;
 import org.eclipse.rse.ui.propertypages.SystemCommunicationsPreferencePage;
-import org.eclipse.rse.ui.view.SubsystemFactoryAdapterFactory;
+import org.eclipse.rse.ui.view.SubsystemConfigurationAdapterFactory;
 import org.eclipse.rse.ui.view.SystemViewAdapterFactory;
 import org.eclipse.rse.ui.view.team.SystemTeamViewResourceAdapterFactory;
 import org.osgi.framework.Bundle;
@@ -514,7 +514,7 @@ public class RSEUIPlugin extends SystemBasePlugin
 
 	    // DKM
 	    // for subsystem factories
-	    SubsystemFactoryAdapterFactory ssfaf = new SubsystemFactoryAdapterFactory();
+	    SubsystemConfigurationAdapterFactory ssfaf = new SubsystemConfigurationAdapterFactory();
 	    ssfaf.registerWithManager(manager);
 	    
 	    RSESystemTypeAdapterFactory rseSysTypeFactory = new RSESystemTypeAdapterFactory();
@@ -714,7 +714,7 @@ public class RSEUIPlugin extends SystemBasePlugin
     	  {
     	  	for (int idx=0; idx < proxies.length; idx++)
     	  	{
-    	  	   //System.out.println("In shutdown. proxy " + proxies[idx].getId() + " active? " + proxies[idx].isSubSystemFactoryActive());
+    	  	   //System.out.println("In shutdown. proxy " + proxies[idx].getId() + " active? " + proxies[idx].isSubSystemConfigurationActive());
     	  	   if (proxies[idx].isSubSystemConfigurationActive())
     	  	   {
     	  	   	 ISubSystemConfiguration ssf = proxies[idx].getSubSystemConfiguration();
@@ -784,16 +784,16 @@ public class RSEUIPlugin extends SystemBasePlugin
     				//       and then just used later by subsystems. The system types do not
     				//       appear until there is a subsystem factory that is registered for
     				//       this type.
-    				boolean usedBySubSystemFactory = false;
-    				for (int proxyIdx=0; !usedBySubSystemFactory && (proxyIdx<proxies.length); proxyIdx++)
+    				boolean usedBySubSystemConfiguration = false;
+    				for (int proxyIdx=0; !usedBySubSystemConfiguration && (proxyIdx<proxies.length); proxyIdx++)
     					if (proxies[proxyIdx].appliesToSystemType(name))
-    						usedBySubSystemFactory = true;
+    						usedBySubSystemConfiguration = true;
           
     				//DKM v doesn't contain names - it contains SystemTypes
     				// changing this to use typeStrs - an array of names
     				boolean alreadyDeclared = typeStrs.contains(name);
  
-    				if (usedBySubSystemFactory && !alreadyDeclared)
+    				if (usedBySubSystemConfiguration && !alreadyDeclared)
     				{
     					String icon = getSystemTypeIcon(typePlugins[idx]);
     					String iconLive = getSystemTypeLiveIcon(typePlugins[idx]);
@@ -820,7 +820,7 @@ public class RSEUIPlugin extends SystemBasePlugin
     				// TODO: need to figure out a way to give preference to a particular declaration
     				// of a system type (among more than one such declaration). One idea is to tie
     				// this to a product branding, i.e. product ID.
-    				else if (usedBySubSystemFactory && alreadyDeclared)
+    				else if (usedBySubSystemConfiguration && alreadyDeclared)
     				{
     					// KM: if a system type is redeclared, how do we know which one
     					// to give preference to? Currently, we don't, so for now
@@ -1085,7 +1085,7 @@ public class RSEUIPlugin extends SystemBasePlugin
     }*/
     
     /**
-     * Return an array of SubSystemFactoryProxy objects.
+     * Return an array of SubSystemConfigurationProxy objects.
      * These represent all extensions to our subsystemconfiguration extension point.
      */
     public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxies()

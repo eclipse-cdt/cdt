@@ -24,11 +24,11 @@ import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.processes.ui.actions.SystemNewProcessFilterAction;
 import org.eclipse.rse.processes.ui.actions.SystemProcessUpdateFilterAction;
-import org.eclipse.rse.ui.view.SubsystemFactoryAdapter;
+import org.eclipse.rse.ui.view.SubsystemConfigurationAdapter;
 import org.eclipse.swt.widgets.Shell;
 
 
-public class RemoteProcessSubSystemFactoryAdapter extends SubsystemFactoryAdapter
+public class RemoteProcessSubSystemConfigurationAdapter extends SubsystemConfigurationAdapter
 {
 	
 	SystemNewProcessFilterAction _newProcessFilterAction;

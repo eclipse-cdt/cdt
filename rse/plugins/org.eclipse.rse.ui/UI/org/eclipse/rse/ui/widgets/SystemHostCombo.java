@@ -73,7 +73,7 @@ import org.eclipse.swt.widgets.Shell;
  * <li>By subsystem factory. Only connections with subsystems owned by the given subsystem factory are listed.
  * <li>By subsystem factory category. Only connections which contain subsystems owned by subsystem factories which
  *       are defined in their xml extension point as being of the given category are listed. 
- *       For a list of pre-defined categories, see {@link org.eclipse.rse.model.ISubSystemFactoryCategories}.
+ *       For a list of pre-defined categories, see {@link org.eclipse.rse.model.ISubSystemConfigurationCategories}.
  * </ul>
  */
 public class SystemHostCombo extends Composite implements ISelectionProvider, ISystemCombo,

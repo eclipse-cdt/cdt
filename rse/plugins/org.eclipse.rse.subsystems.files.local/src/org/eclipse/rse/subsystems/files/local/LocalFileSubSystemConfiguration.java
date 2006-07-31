@@ -158,7 +158,7 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ibm.etools.systems.subsystems.SubSystemFactory#supportsFileTypes()
+	 * @see com.ibm.etools.systems.subsystems.SubSystemConfiguration#supportsFileTypes()
 	 */
 	public boolean supportsFileTypes() {
 		return false;

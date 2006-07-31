@@ -39,13 +39,13 @@ import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
-import org.eclipse.rse.ui.view.SubsystemFactoryAdapter;
+import org.eclipse.rse.ui.view.SubsystemConfigurationAdapter;
 import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Shell;
 
 
-public class RemoteFileSubSystemFactoryAdapter extends SubsystemFactoryAdapter
+public class RemoteFileSubSystemConfigurationAdapter extends SubsystemConfigurationAdapter
 {
 	
 	SystemNewFileFilterAction _newFileFilterAction;

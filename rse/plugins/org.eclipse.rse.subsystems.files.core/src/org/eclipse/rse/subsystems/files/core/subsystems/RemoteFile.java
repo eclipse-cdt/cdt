@@ -147,13 +147,13 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     /**
      * Return the parent subsystem factory
      */
-    public IRemoteFileSubSystemConfiguration getParentRemoteFileSubSystemFactory()
+    public IRemoteFileSubSystemConfiguration getParentRemoteFileSubSystemConfiguration()
     {
     	IRemoteFileSubSystem ss = _context.getParentRemoteFileSubSystem();
     	if (ss == null)
     	  return null;
     	else
-    	  return ss.getParentRemoteFileSubSystemFactory();
+    	  return ss.getParentRemoteFileSubSystemConfiguration();
     }
     
     public void setParentRemoteFile(IRemoteFile parentFile)
@@ -233,7 +233,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
      */
     public char getSeparatorChar()
     {
-    	IRemoteFileSubSystemConfiguration ssf = getParentRemoteFileSubSystemFactory();
+    	IRemoteFileSubSystemConfiguration ssf = getParentRemoteFileSubSystemConfiguration();
     	if (ssf != null)
     	  return ssf.getSeparatorChar();
     	else
@@ -245,7 +245,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
      */
     public String getSeparator()
     {
-    	IRemoteFileSubSystemConfiguration ssf = getParentRemoteFileSubSystemFactory();
+    	IRemoteFileSubSystemConfiguration ssf = getParentRemoteFileSubSystemConfiguration();
     	if (ssf != null)
     	  return ssf.getSeparator();
     	else
@@ -256,7 +256,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	 */
 	public String getLineSeparator()
 	{
-    	IRemoteFileSubSystemConfiguration ssf = getParentRemoteFileSubSystemFactory();
+    	IRemoteFileSubSystemConfiguration ssf = getParentRemoteFileSubSystemConfiguration();
     	if (ssf != null)
     	  return ssf.getLineSeparator();
     	else
@@ -268,7 +268,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
      */
     public boolean isUnix()
     {
-    	IRemoteFileSubSystemConfiguration ssf = getParentRemoteFileSubSystemFactory();
+    	IRemoteFileSubSystemConfiguration ssf = getParentRemoteFileSubSystemConfiguration();
     	if (ssf != null)
     	  return ssf.isUnixStyle();
     	else
@@ -687,7 +687,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		for (int i = 0; i < filesAndFolders.length; i++)
 		{
 			IRemoteFile fileOrFolder = (IRemoteFile)filesAndFolders[i];
-			boolean supportsArchiveManagement = fileOrFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement();
+			boolean supportsArchiveManagement = fileOrFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 			if (fileOrFolder.isFile() || (fileOrFolder.isArchive() && supportsArchiveManagement))
 			{
 				results.add(fileOrFolder);
@@ -702,7 +702,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		for (int i = 0; i < filesAndFolders.length; i++)
 		{
 			IRemoteFile fileOrFolder = (IRemoteFile)filesAndFolders[i];
-			boolean supportsArchiveManagement = fileOrFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement();
+			boolean supportsArchiveManagement = fileOrFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 			if (!fileOrFolder.isFile() || (fileOrFolder.isArchive() && supportsArchiveManagement))
 			{
 				results.add(fileOrFolder);

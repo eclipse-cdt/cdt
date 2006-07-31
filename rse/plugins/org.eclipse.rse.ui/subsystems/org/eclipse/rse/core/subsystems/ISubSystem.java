@@ -189,7 +189,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 
     /**
      * Return true if userId and password should be forced to uppercase.
-     * Shortcut to calling same method in parent SubSystemFactory.
+     * Shortcut to calling same method in parent SubSystemConfiguration.
      */
     public boolean forceUserIdToUpperCase();
     /**

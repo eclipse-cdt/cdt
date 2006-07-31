@@ -150,14 +150,14 @@ public class SystemTeamViewCategoryAdapter
 			return profile.getHosts();
 		}
 		else
-			return createSubSystemFactoryNodes(profile, category);
+			return createSubSystemConfigurationNodes(profile, category);
 	}
 	/**
 	 * Create subsystem factory child nodes for expanded category node
 	 */
-	private SystemTeamViewSubSystemFactoryNode[] createSubSystemFactoryNodes(ISystemProfile profile, SystemTeamViewCategoryNode category)
+	private SystemTeamViewSubSystemConfigurationNode[] createSubSystemConfigurationNodes(ISystemProfile profile, SystemTeamViewCategoryNode category)
 	{
-		SystemTeamViewSubSystemFactoryNode[] nodes = null;
+		SystemTeamViewSubSystemConfigurationNode[] nodes = null;
 		
 		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		ISubSystemConfiguration[] factories = sr.getSubSystemConfigurations();
@@ -186,12 +186,12 @@ public class SystemTeamViewCategoryAdapter
 					createNode = ssf.supportsTargets(); // && profile.getTargets(ssf).length > 0;
 				}
 				if (createNode)
-					v.addElement(new SystemTeamViewSubSystemFactoryNode(profile, category, factories[idx]));
+					v.addElement(new SystemTeamViewSubSystemConfigurationNode(profile, category, factories[idx]));
 			}
-			nodes = new SystemTeamViewSubSystemFactoryNode[v.size()];
+			nodes = new SystemTeamViewSubSystemConfigurationNode[v.size()];
 			for (int idx=0; idx<nodes.length; idx++)
 			{
-				nodes[idx] = (SystemTeamViewSubSystemFactoryNode)v.elementAt(idx);
+				nodes[idx] = (SystemTeamViewSubSystemConfigurationNode)v.elementAt(idx);
 			}
 		}		
 		return nodes;

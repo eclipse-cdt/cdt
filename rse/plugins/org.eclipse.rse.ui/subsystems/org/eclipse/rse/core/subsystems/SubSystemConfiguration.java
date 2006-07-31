@@ -89,18 +89,18 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * </ul>
  * Child classes can optionally override:
  * <ul>
- *  <li>SubSystemFactory#supportsFilters() to indicate if filters are to be enabled for this factory
- *  <li>SubSystemFactory#supportsNestedFilters() to indicate if filters can exist inside filters.
- *  <li>SubSystemFactory#supportsDuplicateFilterStrings() to indicate if filter strings can be duplicates within a filter
- *  <li>SubSystemFactory#isCaseSensitive() to indicate if filter strings are case sensitive or not
- *  <li>SubSystemFactory#supportsQuickFilters() to indicate if filters can be specified at contain expansion time.
- *  <li>SubSystemFactory#supportsUserActions() to indicate if users can define their own actions for your subsystems' child objects.
- *  <li>SubSystemFactory#supportsCompileActions() to indicate if users can compile remote objects using menu actions 
- *  <li>SubSystemFactory#supportsFileTypes() to indicate if users can define their own named file types.
- *  <li>SubSystemFactory#isSubSystemsDeletable() if they support user-deleting of subsystems. Default is false
- *  <li>SubSystemFactory#supportsSubSystemConnect() to return false if the connect() action is not supported
- *  <li>SubSystemFactory#supportsTargets() to return true if this factory supports the notions of targets. Normally, this is only for file system factories.
- *  <li>SubSystemFactory#getSubSystemActions() if they wish to supply actions for the right-click menu when
+ *  <li>SubSystemConfiguration#supportsFilters() to indicate if filters are to be enabled for this factory
+ *  <li>SubSystemConfiguration#supportsNestedFilters() to indicate if filters can exist inside filters.
+ *  <li>SubSystemConfiguration#supportsDuplicateFilterStrings() to indicate if filter strings can be duplicates within a filter
+ *  <li>SubSystemConfiguration#isCaseSensitive() to indicate if filter strings are case sensitive or not
+ *  <li>SubSystemConfiguration#supportsQuickFilters() to indicate if filters can be specified at contain expansion time.
+ *  <li>SubSystemConfiguration#supportsUserActions() to indicate if users can define their own actions for your subsystems' child objects.
+ *  <li>SubSystemConfiguration#supportsCompileActions() to indicate if users can compile remote objects using menu actions 
+ *  <li>SubSystemConfiguration#supportsFileTypes() to indicate if users can define their own named file types.
+ *  <li>SubSystemConfiguration#isSubSystemsDeletable() if they support user-deleting of subsystems. Default is false
+ *  <li>SubSystemConfiguration#supportsSubSystemConnect() to return false if the connect() action is not supported
+ *  <li>SubSystemConfiguration#supportsTargets() to return true if this factory supports the notions of targets. Normally, this is only for file system factories.
+ *  <li>SubSystemConfiguration#getSubSystemActions() if they wish to supply actions for the right-click menu when
  *       the user right clicks on a subsystem object created by this factory.
  *  <li>CreateDefaultFilterPool() to create any default filter pool when a new profile is created.
  *  <li>#initializeSubSystem(SubSystem ss, ISystemNewConnectionWizardPage[])
@@ -150,7 +150,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 
 	// support for default subclasses for non-mof users
 	protected static IHost currentlyProcessingConnection;
-	protected static SubSystemConfiguration currentlyProcessingSubSystemFactory;
+	protected static SubSystemConfiguration currentlyProcessingSubSystemConfiguration;
 
 
 	protected java.util.List subSystemList = null;
@@ -460,7 +460,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 *  properties. 
 	 * <p>
 	 * If you return true here, you may also want to override {@link #supportsServerLaunchType(ServerLaunchType)}. 
-	 * <br> By default we return false here. This is overridden in UniversalFileSubSystemFactory though. 
+	 * <br> By default we return false here. This is overridden in UniversalFileSubSystemConfiguration though. 
 	 */
 	public abstract boolean supportsServerLaunchProperties(IHost host);
 
@@ -567,7 +567,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 //		{
 //			compileManager = createCompileManager();
 //			if (compileManager != null)
-//				compileManager.setSubSystemFactory(this);
+//				compileManager.setSubSystemConfiguration(this);
 //		}
 //		return compileManager;
 //	}
@@ -625,10 +625,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	// ---------------------------------
 
 	/**
-	 * The following is called for you by the SubSystemFactoryProxy, after
+	 * The following is called for you by the SubSystemConfigurationProxy, after
 	 *  starting this object via the extension point mechanism
 	 */
-	public void setSubSystemFactoryProxy(ISubSystemConfigurationProxy proxy)
+	public void setSubSystemConfigurationProxy(ISubSystemConfigurationProxy proxy)
 	{
 		this.proxy = proxy;
 		//FIXME initMOF();
@@ -636,7 +636,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * The following is here for completeness but should never be needed.
 	 */
-	public ISubSystemConfigurationProxy getSubSystemFactoryProxy()
+	public ISubSystemConfigurationProxy getSubSystemConfigurationProxy()
 	{
 		return proxy;
 	}
@@ -749,7 +749,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 
 	/**
 	 * Return the category this subsystem factory subscribes to.
-	 * @see org.eclipse.rse.model.ISubSystemFactoryCategories
+	 * @see org.eclipse.rse.model.ISubSystemConfigurationCategories
 	 */
 	public String getCategory()
 	{
@@ -1044,14 +1044,14 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		ISubSystem[] subsystemArray = (ISubSystem[]) subsystemsByConnection.get(conn);
 		if (subsystemArray == null || subsystemArray.length ==0)
 		{
-			//System.out.println("SubSystemFactoryImpl.getSubSystems(conn): subSystemsHaveBeenRestored(conn): "+subSystemsHaveBeenRestored(conn));
+			//System.out.println("SubSystemConfigurationImpl.getSubSystems(conn): subSystemsHaveBeenRestored(conn): "+subSystemsHaveBeenRestored(conn));
 			boolean subsystemsRestored = subSystemsHaveBeenRestored(conn);
 			if (!subsystemsRestored && force)
 			{
 				/*FIXME - this should now be triggered by new persistence model
 				try
 				{
-					//System.out.println("SubSystemFactoryImpl.getSubSystems(conn): before restoreSubSystems");
+					//System.out.println("SubSystemConfigurationImpl.getSubSystems(conn): before restoreSubSystems");
 					subsystemArray = RSEUIPlugin.getThePersistenceManager().restoreSubSystems(this, conn);
 					//System.out.println("After restoreSubSystems: "+subsystemArray.length);
 					if (subsystemArray != null)
@@ -1398,7 +1398,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * Method called by default implementation of createSubSystem method in AbstractSubSystemFactory.
+	 * Method called by default implementation of createSubSystem method in AbstractSubSystemConfiguration.
 	 */
 	public abstract ISubSystem createSubSystemInternal(IHost conn);
 
@@ -1686,7 +1686,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			ISystemFilterPoolReferenceManager refMgr = selectedSubSystem.getSystemFilterPoolReferenceManager();
 			ISystemFilterPool[] refdPools = refMgr.getReferencedSystemFilterPools();
 			if (refdPools.length == 0)
-				SystemBasePlugin.logInfo("SubSystemFactoryImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of length zero.");
+				SystemBasePlugin.logInfo("SubSystemConfigurationImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of length zero.");
 			// so there already exists references to more than one filter pool, but it might simply be a reference
 			//  to the default filter pool in the user's profile and another to reference to the default filter pool in
 			//  the team profile... let's see...
@@ -2425,7 +2425,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_REORDERED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER, filters[idx], null);		
 
 		}
-		//System.out.println("In SubSystemFactoryImpl#filterEventFiltersRepositioned(). Firing EVENT_MOVE_FILTER_REFERENCES");
+		//System.out.println("In SubSystemConfigurationImpl#filterEventFiltersRepositioned(). Firing EVENT_MOVE_FILTER_REFERENCES");
 		//fireSubSystemFilterEvent(event);
 	}
 	// -----------------------

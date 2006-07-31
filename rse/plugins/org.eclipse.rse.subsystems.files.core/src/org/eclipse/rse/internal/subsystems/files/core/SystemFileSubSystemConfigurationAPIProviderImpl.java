@@ -28,7 +28,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConf
  * It is used when the intial connections are to be subset to those that support a particular remote file subsystem factory,
  *   and subsystems shown within those connections are to be subset to only those from this subsystem factory.
  */
-public class SystemFileSubSystemFactoryAPIProviderImpl 
+public class SystemFileSubSystemConfigurationAPIProviderImpl 
        extends SystemFileAPIProviderImpl
        implements ISystemFileAPIProvider
 {
@@ -42,7 +42,7 @@ public class SystemFileSubSystemFactoryAPIProviderImpl
 	 * @param subsystemFactory The remote file subsystem factory. Users will drill down from connections that support this factory.
 	 * @param directoryMode true if you only want to traverse directories, false for both files and directories.
 	 */
-	public SystemFileSubSystemFactoryAPIProviderImpl(IRemoteFileSubSystemConfiguration subsystemFactory, boolean directoryMode)
+	public SystemFileSubSystemConfigurationAPIProviderImpl(IRemoteFileSubSystemConfiguration subsystemFactory, boolean directoryMode)
 	{
 		super(directoryMode);
 		this.subsystemFactory = subsystemFactory;
@@ -51,7 +51,7 @@ public class SystemFileSubSystemFactoryAPIProviderImpl
 	/**
 	 * Get the input subsystem object. 
 	 */
-	public IRemoteFileSubSystemConfiguration getSubSystemFactory()
+	public IRemoteFileSubSystemConfiguration getSubSystemConfiguration()
 	{
 		return subsystemFactory;
 	}

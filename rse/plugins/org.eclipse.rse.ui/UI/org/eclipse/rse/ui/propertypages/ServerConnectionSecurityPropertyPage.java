@@ -101,7 +101,7 @@ public class ServerConnectionSecurityPropertyPage extends SystemBasePropertyPage
 		return true;
 	}
 
-	public void setSubSystemFactory(ISubSystemConfiguration factory)
+	public void setSubSystemConfiguration(ISubSystemConfiguration factory)
 	{
 	}
 

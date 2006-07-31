@@ -288,7 +288,7 @@ public class SystemSelectRemoteFileOrFolderForm
         setAutoExpandDepth(1);        
 		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IRemoteFileSubSystem ss = RemoteFileUtility.getFileSubSystem(connection);
-		IRemoteFileSubSystemConfiguration ssf = ss.getParentRemoteFileSubSystemFactory();
+		IRemoteFileSubSystemConfiguration ssf = ss.getParentRemoteFileSubSystemConfiguration();
 		RemoteFileFilterString rffs = new RemoteFileFilterString(ssf);
 		rffs.setShowFiles(fileMode);  // no files if in folders mode
 		rffs.setShowSubDirs(!fileMode || !filesOnlyMode); // yes folders, always, for now
@@ -397,7 +397,7 @@ public class SystemSelectRemoteFileOrFolderForm
           parentFolder = null;		
 		if (parentFolder != null)
 		{
-		   IRemoteFileSubSystemConfiguration ssf = selection.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory();
+		   IRemoteFileSubSystemConfiguration ssf = selection.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration();
 		   boolean isUnix = ssf.isUnixStyle();
 		   if (isUnix)  
 		     setRestrictFolders(parentFolder.isRoot());

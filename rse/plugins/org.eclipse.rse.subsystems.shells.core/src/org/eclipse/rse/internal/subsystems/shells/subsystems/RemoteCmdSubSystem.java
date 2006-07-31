@@ -78,9 +78,9 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	}
 
 	/**
-	 * Return parent subsystem factory, cast to a RemoteCmdSubSystemFactory
+	 * Return parent subsystem factory, cast to a RemoteCmdSubSystemConfiguration
 	 */
-	public IRemoteCmdSubSystemConfiguration getParentRemoteCmdSubSystemFactory()
+	public IRemoteCmdSubSystemConfiguration getParentRemoteCmdSubSystemConfiguration()
 	{
 		return (IRemoteCmdSubSystemConfiguration) super.getSubSystemConfiguration();
 	}
@@ -146,7 +146,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * a pair of String arrays: the first is the environment variable names, the
 	 * second is the corresponding environment variable values.
 	 * <p>
-	 * Note, this calls getParentSubSystemFactory().saveSubSystem(this) for you.
+	 * Note, this calls getParentSubSystemConfiguration().saveSubSystem(this) for you.
 	 */
 	public void setEnvironmentVariableList(String[] envVarNames, String[] envVarValues)
 	{
@@ -181,7 +181,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	{
 		/*
 		 * FIXME RemoteSystemEnvVar rsev =
-		 * SubSystemFactoryImpl.getSSMOFfactory().createRemoteSystemEnvVar();
+		 * SubSystemConfigurationImpl.getSSMOFfactory().createRemoteSystemEnvVar();
 		 * rsev.setName(name); rsev.setValue(value);
 		 * addEnvironmentVariable(rsev);
 		 */

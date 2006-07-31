@@ -86,7 +86,7 @@ public class SystemFileFilterStringEditPane
     protected boolean skipUniquenessChecking;
     protected boolean calledFromVerify;    	
     protected boolean dontStealFocus;
-	protected RemoteFileSubSystemConfiguration inputSubsystemFactory = null;
+	protected RemoteFileSubSystemConfiguration inputSubsystemConfiguration = null;
 	
 	// actions
 	protected SystemTestFilterStringAction testAction = null;
@@ -268,15 +268,15 @@ public class SystemFileFilterStringEditPane
 		folderCombo.setFocus();
 
 		if (refProvider != null)
-			inputSubsystemFactory = (RemoteFileSubSystemConfiguration)((ISubSystem)refProvider).getSubSystemConfiguration();
+			inputSubsystemConfiguration = (RemoteFileSubSystemConfiguration)((ISubSystem)refProvider).getSubSystemConfiguration();
 		else if (provider != null)
-			inputSubsystemFactory = (RemoteFileSubSystemConfiguration)provider;
-        pathValidator = inputSubsystemFactory.getPathValidator();
-        fileValidator = inputSubsystemFactory.getFileFilterStringValidator();
+			inputSubsystemConfiguration = (RemoteFileSubSystemConfiguration)provider;
+        pathValidator = inputSubsystemConfiguration.getPathValidator();
+        fileValidator = inputSubsystemConfiguration.getFileFilterStringValidator();
         if (refProvider != null)
         	folderCombo.setSystemConnection(((ISubSystem)refProvider).getHost());
-        else if (inputSubsystemFactory != null)
-        	folderCombo.setSystemTypes(inputSubsystemFactory.getSystemTypes());
+        else if (inputSubsystemConfiguration != null)
+        	folderCombo.setSystemTypes(inputSubsystemConfiguration.getSystemTypes());
 		folderCombo.setSubSystem((IRemoteFileSubSystem)refProvider);		
 		folderCombo.setTextLimit(filterPathLength);
 		textFile.setTextLimit(filterFileLength);		  
@@ -335,7 +335,7 @@ public class SystemFileFilterStringEditPane
 			
 		if (inputFilterString != null)
 		{
-		  RemoteFileFilterString rffs = new RemoteFileFilterString(inputSubsystemFactory, inputFilterString);
+		  RemoteFileFilterString rffs = new RemoteFileFilterString(inputSubsystemConfiguration, inputFilterString);
 		  String defaultPath = rffs.getPath();
 		  folderCombo.setText((defaultPath==null) ? "" : defaultPath);
 		  String defaultFile = rffs.getFile();		  
@@ -397,11 +397,11 @@ public class SystemFileFilterStringEditPane
 
 		  String folderText = folderCombo.getText().trim();
 		  
-		  if (inputSubsystemFactory != null) {
+		  if (inputSubsystemConfiguration != null) {
 		  
 			// KM: defect 53009.
 			// if input subsystem factory is Unix, then we can not allow empty path	
-		  	if (inputSubsystemFactory.isUnixStyle()) {
+		  	if (inputSubsystemConfiguration.isUnixStyle()) {
 		  		return folderText.length() > 0 && filterGiven;
 		  	}
 		  	// otherwise, if it is Windows
@@ -603,9 +603,9 @@ public class SystemFileFilterStringEditPane
 			// If the input subsystem factory is Unix, we do not allow empty folder path.
 			// Note that for Windows, it is perfectly valid to have an empty folder path,
 			// which indicates that the filter will resolve to show all the drives
-			if (inputSubsystemFactory != null) {
+			if (inputSubsystemConfiguration != null) {
 			
-				if (inputSubsystemFactory.isUnixStyle()) {
+				if (inputSubsystemConfiguration.isUnixStyle()) {
 				
 					// let error message come from path validator
 					if (pathValidator != null) {
@@ -666,7 +666,7 @@ public class SystemFileFilterStringEditPane
 		boolean showFilesOnly = filesOnlyCheckBox.getSelection();
 		boolean showSubDirs = !showFilesOnly; //subdirCheckBox.getSelection();
         boolean showFiles = true; //fileCheckBox.getSelection();        
-        RemoteFileFilterString rffs =  new RemoteFileFilterString(inputSubsystemFactory, folder, file);
+        RemoteFileFilterString rffs =  new RemoteFileFilterString(inputSubsystemConfiguration, folder, file);
         rffs.setShowSubDirs(showSubDirs);
         rffs.setShowFiles(showFiles);
         //System.out.println("internalGetFilterString: showSubDirs = " + showSubDirs + ", showFiles = " + showFiles);
@@ -795,7 +795,7 @@ public class SystemFileFilterStringEditPane
 		
 		// KM: defect 53009.
 		// check if subsystem factory is non Unix and we're in new mode
-		if (newMode && inputSubsystemFactory != null && !inputSubsystemFactory.isUnixStyle()) {
+		if (newMode && inputSubsystemConfiguration != null && !inputSubsystemConfiguration.isUnixStyle()) {
 			
 			// check that folder combo is empty
 			String folderComboText = folderCombo.getText().trim();

@@ -51,7 +51,7 @@ public class RemoteFileFilterString implements Cloneable
 	protected String path, file;
 	protected String[] types;
 	protected boolean subdirs, files, filterByTypes;
-	//private RemoteFileSubSystemFactory subsysFactory;
+	//private RemoteFileSubSystemConfiguration subsysFactory;
 	protected String PATH_SEP = java.io.File.separator;
 	public static final char TYPE_SEP = ',';
 	public static final String TYPE_SEP_STRING = ",";
@@ -103,7 +103,7 @@ public class RemoteFileFilterString implements Cloneable
 		parse(path, input);
 	}
 	
-	public void setSubSystemFactory(IRemoteFileSubSystemConfiguration subsysFactory)
+	public void setSubSystemConfiguration(IRemoteFileSubSystemConfiguration subsysFactory)
 	{
 		PATH_SEP = subsysFactory.getSeparator();
 	}

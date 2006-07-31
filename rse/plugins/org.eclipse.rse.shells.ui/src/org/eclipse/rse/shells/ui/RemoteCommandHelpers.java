@@ -135,7 +135,7 @@ public class RemoteCommandHelpers
               	 
 					showInView(defaultShell, isCompile, cmdString);   
 					           	 
-					 IRemoteFileSubSystemConfiguration fileSSF = RemoteFileUtility.getFileSubSystemFactory(cmdSubSystem.getHost().getSystemType());
+					 IRemoteFileSubSystemConfiguration fileSSF = RemoteFileUtility.getFileSubSystemConfiguration(cmdSubSystem.getHost().getSystemType());
 					 IRemoteFile pwd = ((RemoteCommandShell)defaultShell).getWorkingDirectory();
 	                if (pwd == null || !pwd.getAbsolutePath().equals(path))
 	                {

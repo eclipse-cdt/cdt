@@ -85,7 +85,7 @@ public class RemoteCommandFilterString implements Cloneable
 		this(subsysFactory);
 	}
 	
-	public void setSubSystemFactory(IRemoteCmdSubSystemConfiguration subsysFactory)
+	public void setSubSystemConfiguration(IRemoteCmdSubSystemConfiguration subsysFactory)
 	{
 	}
  

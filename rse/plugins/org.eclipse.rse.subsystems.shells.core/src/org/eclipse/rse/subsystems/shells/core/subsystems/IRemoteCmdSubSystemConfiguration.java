@@ -22,7 +22,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
  
 //
 /**
- * @lastgen interface RemoteCmdSubSystemFactory extends SubSystemFactory {}
+ * @lastgen interface RemoteCmdSubSystemConfiguration extends SubSystemConfiguration {}
  */
 public interface IRemoteCmdSubSystemConfiguration extends ISubSystemConfiguration
 {

@@ -150,9 +150,9 @@ public class DeveloperResourceAdapter extends AbstractSystemViewAdapter
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getSubSystemFactoryId(java.lang.Object)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getSubSystemConfigurationId(java.lang.Object)
 	 */
-	public String getSubSystemFactoryId(Object element)
+	public String getSubSystemConfigurationId(Object element)
 	{
 		return "samples.subsystems.factory"; // as declared in extension in plugin.xml //$NON-NLS-1$ 
 	}

@@ -39,7 +39,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 /**
  * Adapter for displaying SystemFilterPool objects in tree views.
  * These are the masters, and only shown in work-with for the master.
- * These are children of SubSystemFactory objects
+ * These are children of SubSystemConfiguration objects
  */
 public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter implements ISystemViewElementAdapter
 {
@@ -68,7 +68,7 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter imple
 		//if (selection.size() != 1)
 		//  return; // does not make sense adding unique actions per multi-selection
 		ISystemFilterPool pool = ((ISystemFilterPool)selection.getFirstElement());			
-	    ISubSystemConfiguration ssFactory = SubSystemHelpers.getParentSubSystemFactory(pool);
+	    ISubSystemConfiguration ssFactory = SubSystemHelpers.getParentSubSystemConfiguration(pool);
 	    ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssFactory.getAdapter(ISubsystemConfigurationAdapter.class);
 		IAction[] actions = adapter.getFilterPoolActions(ssFactory, pool, shell);
 		if (actions != null)
@@ -143,7 +143,7 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter imple
 	{
 		ISystemFilterPool fp = (ISystemFilterPool)element;
 		// hmm, this will only work if a given factory only has one subsystem object...
-		ISubSystemConfiguration ssParentFactory = SubSystemHelpers.getParentSubSystemFactory(fp);
+		ISubSystemConfiguration ssParentFactory = SubSystemHelpers.getParentSubSystemConfiguration(fp);
 		return ssParentFactory.getSubSystems(false)[0];				
 	}	
 	

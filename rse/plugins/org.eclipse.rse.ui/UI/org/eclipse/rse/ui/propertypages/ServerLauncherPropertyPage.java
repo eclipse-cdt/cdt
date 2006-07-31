@@ -95,7 +95,7 @@ public class ServerLauncherPropertyPage extends SystemBasePropertyPage implement
 		return true;
 	}
 
-	public void setSubSystemFactory(ISubSystemConfiguration factory)
+	public void setSubSystemConfiguration(ISubSystemConfiguration factory)
 	{
 		_factory = factory;
 	}

@@ -77,7 +77,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 	private SystemHistoryCombo folderCombo = null;
 	private Button             browseButton = null;	
 	//private RemoteFileSubSystem subsystem = null;
-	//private RemoteFileSubSystemFactory subsystemFactory = null;
+	//private RemoteFileSubSystemConfiguration subsystemFactory = null;
 	//private String             subsystemFactoryID = null;
 	//private IRemoteFile[]      folders = null;
 	private Hashtable          resolvedFolders = new Hashtable();

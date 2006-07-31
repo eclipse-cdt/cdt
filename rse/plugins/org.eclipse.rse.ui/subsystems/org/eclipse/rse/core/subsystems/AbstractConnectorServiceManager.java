@@ -70,7 +70,7 @@ public abstract class AbstractConnectorServiceManager implements IConnectorServi
           
     /**
      * Protected constructor to ensure not instantiated this way.
-     * Use subclass-supplied static method getTheSystemFactory() instead.
+     * Use subclass-supplied static method getTheSystemConfiguration() instead.
      */
     protected AbstractConnectorServiceManager()
     {

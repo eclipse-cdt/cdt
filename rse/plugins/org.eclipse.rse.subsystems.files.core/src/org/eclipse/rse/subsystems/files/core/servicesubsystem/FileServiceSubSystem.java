@@ -701,7 +701,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	{
 		if (_languageUtilityFactory == null)
 		{
-			_languageUtilityFactory = ((IFileServiceSubSystemConfiguration)getParentRemoteFileSubSystemFactory()).getLanguageUtilityFactory(this);
+			_languageUtilityFactory = ((IFileServiceSubSystemConfiguration)getParentRemoteFileSubSystemConfiguration()).getLanguageUtilityFactory(this);
 		}
 		return _languageUtilityFactory;
 	}
@@ -735,7 +735,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		ISearchService searchService = getSearchService();
 		if (searchService != null)
 		{
-			IFileServiceSubSystemConfiguration factory = (IFileServiceSubSystemConfiguration)getParentRemoteFileSubSystemFactory();
+			IFileServiceSubSystemConfiguration factory = (IFileServiceSubSystemConfiguration)getParentRemoteFileSubSystemConfiguration();
 			if (factory != null)
 			{			
 				return factory.createSearchConfiguration(getHost(), resultSet, searchTarget, searchString);

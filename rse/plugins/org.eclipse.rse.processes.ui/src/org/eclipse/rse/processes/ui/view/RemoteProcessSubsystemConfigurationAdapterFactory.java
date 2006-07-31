@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,19 +14,18 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.shells.ui.view;
+package org.eclipse.rse.processes.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
-import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystemConfiguration;
-import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystemConfiguration;
+import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;
 
 
-public class ShellServiceSubsystemFactoryAdapterFactory implements IAdapterFactory
+public class RemoteProcessSubsystemConfigurationAdapterFactory implements IAdapterFactory
 {
 
-	private ISubsystemConfigurationAdapter ssFactoryAdapter = new ShellServiceSubSystemFactoryAdapter();
+	private ISubsystemConfigurationAdapter ssFactoryAdapter = new RemoteProcessSubSystemConfigurationAdapter();
 	
 	/**
 	 * @see IAdapterFactory#getAdapterList()
@@ -42,7 +41,7 @@ public class ShellServiceSubsystemFactoryAdapterFactory implements IAdapterFacto
 	 */
 	public void registerWithManager(IAdapterManager manager)
 	{
-		manager.registerAdapters(this, IShellServiceSubSystemConfiguration.class);
+		manager.registerAdapters(this, IRemoteProcessSubSystemConfiguration.class);
 	}
 	/**
 	 * @see IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -50,7 +49,7 @@ public class ShellServiceSubsystemFactoryAdapterFactory implements IAdapterFacto
 	public Object getAdapter(Object adaptableObject, Class adapterType) 
 	{
 	    Object adapter = null;
-	    if (adaptableObject instanceof ShellServiceSubSystemConfiguration)
+	    if (adaptableObject instanceof IRemoteProcessSubSystemConfiguration)
 	    	adapter = ssFactoryAdapter;
 	      	    
 		return adapter;

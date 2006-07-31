@@ -33,7 +33,7 @@ Contributors:
       </filesystemContributor>
    </extension>
    
-   <!-- remote eclipse filesystem not properly supported yet
+   <!-- remote eclipse filesystem not properly supported yet-->
       <extension
          point="org.eclipse.rse.ui.popupMenus">
       <objectContribution  
@@ -57,5 +57,5 @@ Contributors:
          </action>
        </objectContribution>
       </extension>
-    -->     
+ <!--  -->     
 </plugin>

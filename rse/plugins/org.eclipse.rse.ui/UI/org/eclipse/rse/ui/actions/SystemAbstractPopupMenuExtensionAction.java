@@ -51,11 +51,11 @@ import org.eclipse.ui.IWorkbenchPart;
  *  <li>{@link #getRemoteAdapter(Object)}
  *
  *  <li>{@link #getSubSystem()}
- *  <li>{@link #getSubSystemFactory()}
+ *  <li>{@link #getSubSystemConfiguration()}
  *  <li>{@link #getSystemConnection()}
  * 
  *  <li>{@link #getRemoteObjectName(Object obj, ISystemRemoteElementAdapter adapter)}
- *  <li>{@link #getRemoteObjectSubSystemFactoryId(Object obj, ISystemRemoteElementAdapter adapter)}
+ *  <li>{@link #getRemoteObjectSubSystemConfigurationId(Object obj, ISystemRemoteElementAdapter adapter)}
  *  <li>{@link #getRemoteObjectTypeCategory(Object obj, ISystemRemoteElementAdapter adapter)}
  *  <li>{@link #getRemoteObjectType(Object obj, ISystemRemoteElementAdapter adapter)}
  *  <li>{@link #getRemoteObjectSubType(Object obj, ISystemRemoteElementAdapter adapter)}
@@ -283,11 +283,11 @@ public abstract class SystemAbstractPopupMenuExtensionAction implements IObjectA
     }
     /**
      * Returns the id of the subsystem factory of the given remote object, given its remote object adapter.
-     * Same as <code>adapter.getSubSystemFactoryId(obj);</code>
+     * Same as <code>adapter.getSubSystemConfigurationId(obj);</code>
      */
-    public String getRemoteObjectSubSystemFactoryId(Object obj, ISystemRemoteElementAdapter adapter)
+    public String getRemoteObjectSubSystemConfigurationId(Object obj, ISystemRemoteElementAdapter adapter)
     {
-    	return adapter.getSubSystemFactoryId(obj);
+    	return adapter.getSubSystemConfigurationId(obj);
     }
     /**
      * Returns the type category of the given remote object, given its remote object adapter.
@@ -335,7 +335,7 @@ public abstract class SystemAbstractPopupMenuExtensionAction implements IObjectA
     /**
      * Returns the subsystem factory which owns the subsystem from which the selected remote objects were resolved
      */
-    public ISubSystemConfiguration getSubSystemFactory()
+    public ISubSystemConfiguration getSubSystemConfiguration()
     {
     	ISubSystem ss = getSubSystem();
     	if (ss != null)
@@ -380,7 +380,7 @@ public abstract class SystemAbstractPopupMenuExtensionAction implements IObjectA
           System.out.println("REMOTE INFORMATION FOR FIRST SELECTION");
           System.out.println("--------------------------------------");
           System.out.println("Remote object name................: " + getRemoteObjectName(obj,adapter));
-          System.out.println("Remote object subsystem factory id: " + getRemoteObjectSubSystemFactoryId(obj,adapter));          
+          System.out.println("Remote object subsystem factory id: " + getRemoteObjectSubSystemConfigurationId(obj,adapter));          
           System.out.println("Remote object type category.......: " + getRemoteObjectTypeCategory(obj,adapter));
           System.out.println("Remote object type ...............: " + getRemoteObjectType(obj,adapter));
           System.out.println("Remote object subtype ............: " + getRemoteObjectSubType(obj,adapter));

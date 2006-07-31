@@ -278,7 +278,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 		  {
 				/** FIXME - can't be coupled with IRemoteFile
 		  	RemoteFileFilterString rffs = 
-		  	  new RemoteFileFilterString((IRemoteFileSubSystemFactory)getSubSystemFactory(selectedObject), inputFilterString);
+		  	  new RemoteFileFilterString((IRemoteFileSubSystemConfiguration)getSubSystemConfiguration(selectedObject), inputFilterString);
 		  	rffs.setFile(filterSuffix);
 		  	result = rffs.toString();
 		  	*/
@@ -296,11 +296,11 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	 */
 	public boolean filtersNeedDecoration(Object selectedObject)
 	{
-		ISubSystemConfiguration ssf = getSubSystemFactory(selectedObject);
+		ISubSystemConfiguration ssf = getSubSystemConfiguration(selectedObject);
 		if (ssf == null)
 		  return false;
 		/** FIXME - can't be coupled with IRemoteFile
-		return ((ssf instanceof IRemoteFileSubSystemFactory) && (filterSuffix != null));
+		return ((ssf instanceof IRemoteFileSubSystemConfiguration) && (filterSuffix != null));
 		*/
 		return false;
 		
@@ -309,7 +309,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	/**
 	 * get subsystem factory from filter or filter string
 	 */
-	private ISubSystemConfiguration getSubSystemFactory(Object selectedObject)
+	private ISubSystemConfiguration getSubSystemConfiguration(Object selectedObject)
 	{
         if (selectedObject instanceof ISystemFilterReference)
         {

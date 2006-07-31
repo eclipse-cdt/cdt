@@ -109,7 +109,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 
 	protected static final String SUBSYSTEM_FILE_NAME = "subsystem";
 
-	//protected transient SubSystemFactory parentFactory = null;	
+	//protected transient SubSystemConfiguration parentFactory = null;	
     protected static final int OPERATION_RESOLVE_ABSOLUTE = 0;
     protected static final int OPERATION_RESOLVE_ABSOLUTES= 1;
     protected static final int OPERATION_RESOLVE_RELATIVE = 2;
@@ -125,7 +125,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	protected static final int OPERATION_CANCEL_SHELL = 12;
 	protected static final int OPERATION_REMOVE_SHELL = 13;
 	
-    protected ISubSystemConfiguration parentSubSystemFactory;
+    protected ISubSystemConfiguration parentSubSystemConfiguration;
     protected String           previousUserIdKey;
 	
     protected Shell shell;
@@ -230,14 +230,14 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     public ISubSystemConfiguration getSubSystemConfiguration()
     {
-    	return parentSubSystemFactory;
+    	return parentSubSystemConfiguration;
     }
     /**
      * Return the parent subsystem factory that owns this subsystem.
      */
     public void setSubSystemConfiguration(ISubSystemConfiguration ssf)
     {
-    	parentSubSystemFactory = ssf;
+    	parentSubSystemConfiguration = ssf;
     	supportsConnecting = ssf.supportsSubSystemConnect();
     	//System.out.println("subsystem supports connecting? " + supportsConnecting);
     }
@@ -257,8 +257,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     public boolean forceUserIdToUpperCase()
     {
     	/* defect 43219
-    	if (parentSubSystemFactory != null)
-    	  return parentSubSystemFactory.forceUserIdToUpperCase();
+    	if (parentSubSystemConfiguration != null)
+    	  return parentSubSystemConfiguration.forceUserIdToUpperCase();
     	else
     	  return true;
     	*/
@@ -665,7 +665,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 */
 	public String getConnectionOwnedFilterPoolName(String profileName, String connectionName)
 	{
-		// Similar to SubSystemFactoryImpl#getDefaultFilterPoolName(String)...
+		// Similar to SubSystemConfigurationImpl#getDefaultFilterPoolName(String)...
 		// System.out.println("ProfileName: " + profileName);
 		// System.out.println("ConnectionName: " + connectionName);
 				

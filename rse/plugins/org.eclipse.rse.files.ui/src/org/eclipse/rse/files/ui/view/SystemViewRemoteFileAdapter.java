@@ -280,8 +280,8 @@ public class SystemViewRemoteFileAdapter
 			isVirtual = firstFile instanceof IVirtualRemoteFile;
 			canEdit = firstFile.canRead();
 
-			supportsSearch = firstFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsSearch();
-			supportsArchiveManagement = firstFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement();
+			supportsSearch = firstFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsSearch();
+			supportsArchiveManagement = firstFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 		}
 		else
 			return;
@@ -751,7 +751,7 @@ public class SystemViewRemoteFileAdapter
 	public boolean hasChildren(Object element)
 	{
 		IRemoteFile file = (IRemoteFile) element;
-		boolean supportsArchiveManagement = file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement();
+		boolean supportsArchiveManagement = file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 		boolean hasChildren = false;
 		if (file instanceof IVirtualRemoteFile)
 		{
@@ -796,7 +796,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			file = (IRemoteFile) propertySourceInput;
 		
-			boolean supportsArchiveManagement = file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement();
+			boolean supportsArchiveManagement = file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 		
 			boolean isArchive = file != null && file.isArchive() && supportsArchiveManagement;
 			boolean isVirtual = file != null && file instanceof IVirtualRemoteFile && supportsArchiveManagement;
@@ -1228,7 +1228,7 @@ public class SystemViewRemoteFileAdapter
 		if (element instanceof IRemoteFile)
 		{
 			IRemoteFile file = (IRemoteFile) element;
-			boolean supportsArchiveManagement = file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement();
+			boolean supportsArchiveManagement = file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 			return file.canRead() && file.canWrite() && (file.isDirectory() || file.isRoot() || (file.isArchive() && supportsArchiveManagement));
 		}
 
@@ -1247,7 +1247,7 @@ public class SystemViewRemoteFileAdapter
 		if (target instanceof IRemoteFile)
 		{
 			IRemoteFile targetFile = (IRemoteFile) target;
-			boolean supportsArchiveManagement = targetFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement();
+			boolean supportsArchiveManagement = targetFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 			if (!targetFile.isFile() || (targetFile.isArchive() && supportsArchiveManagement))
 			{
 				targetFile.canWrite();
@@ -1288,7 +1288,7 @@ public class SystemViewRemoteFileAdapter
 		if (target instanceof IRemoteFile)
 		{
 			IRemoteFile targetFile = (IRemoteFile) target;
-			boolean supportsArchiveManagement = targetFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement();
+			boolean supportsArchiveManagement = targetFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 			if (!targetFile.isFile() || (targetFile.isArchive() && supportsArchiveManagement))
 			{
 				// get properties
@@ -1775,7 +1775,7 @@ public class SystemViewRemoteFileAdapter
 							}
 							/* DKM - not sure what this is doing here...
 							 *    maybe there used to be a check for an archive
-							if (!srcFileOrFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement())
+							if (!srcFileOrFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement())
 							{
 								SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_ARCHIVEMANAGEMENT_NOTSUPPORTED);
 								resultSet.setMessage(errorMessage);
@@ -2449,9 +2449,9 @@ public class SystemViewRemoteFileAdapter
 		{
 			IRemoteFile file = (IRemoteFile) element;
 			if (file.isDirectory())
-				return file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().getFolderNameValidator();
+				return file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().getFolderNameValidator();
 			else
-				return file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().getFileNameValidator();
+				return file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().getFileNameValidator();
 		}
 		return null;
 	}
@@ -2469,7 +2469,7 @@ public class SystemViewRemoteFileAdapter
 		if (element instanceof IRemoteFile)
 		{
 			IRemoteFile file = (IRemoteFile) element;
-			if (file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().isUnixStyle())
+			if (file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().isUnixStyle())
 				return newName;
 			else
 				return newName.toUpperCase();
@@ -2491,7 +2491,7 @@ public class SystemViewRemoteFileAdapter
 		if (element instanceof IRemoteFile)
 		{
 			IRemoteFile file = (IRemoteFile) element;
-			if (file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().isUnixStyle())
+			if (file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().isUnixStyle())
 				return getName(element).equals(newName);
 			else
 				return getName(element).equalsIgnoreCase(newName);
@@ -2548,7 +2548,7 @@ public class SystemViewRemoteFileAdapter
 	 * Return the subsystem factory id that owns this remote object
 	 * The value must not be translated, so that property pages registered via xml can subset by it.
 	 */
-	public String getSubSystemFactoryId(Object element)
+	public String getSubSystemConfigurationId(Object element)
 	{
 		IRemoteFile file = (IRemoteFile) element;
 		return file.getParentRemoteFileSubSystem().getSubSystemConfiguration().getId();
@@ -2725,7 +2725,7 @@ public class SystemViewRemoteFileAdapter
 		           remoteFile.getParentRemoteFileSubSystem().getCommandSubSystem());
 		}	
 		*/	
-		else if (!remoteFile.isArchive() || !remoteFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement())
+		else if (!remoteFile.isArchive() || !remoteFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement())
 		{
 			// only handle double click if object is a file
 			ISystemEditableRemoteObject editable = getEditableRemoteObject(remoteFile);

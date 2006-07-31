@@ -47,7 +47,7 @@ public class DStoreProcessSubSystemConfiguration extends ProcessServiceSubSystem
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystemFactory#createSubSystemInternal(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#createSubSystemInternal(org.eclipse.rse.model.IHost)
 	 */
 	public ISubSystem createSubSystemInternal(IHost host) 
 	{
@@ -85,7 +85,7 @@ public class DStoreProcessSubSystemConfiguration extends ProcessServiceSubSystem
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystemFactory#createProcessService(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystemConfiguration#createProcessService(org.eclipse.rse.model.IHost)
 	 */
 	public IProcessService createProcessService(IHost host) 
 	{
@@ -94,7 +94,7 @@ public class DStoreProcessSubSystemConfiguration extends ProcessServiceSubSystem
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystemFactory#getHostProcessAdapter()
+	 * @see org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystemConfiguration#getHostProcessAdapter()
 	 */
 	public IHostProcessToRemoteProcessAdapter getHostProcessAdapter() 
 	{
@@ -106,7 +106,7 @@ public class DStoreProcessSubSystemConfiguration extends ProcessServiceSubSystem
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemFactory#getConnectorService(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getConnectorService(org.eclipse.rse.model.IHost)
 	 */
 	public IConnectorService getConnectorService(IHost host)
 	{

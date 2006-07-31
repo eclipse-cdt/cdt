@@ -42,7 +42,7 @@ public abstract class ProcessServiceSubSystemConfiguration extends RemoteProcess
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystemFactory#getProcessService(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystemConfiguration#getProcessService(org.eclipse.rse.model.IHost)
 	 */
 	public IProcessService getProcessService(IHost host) 
 	{
@@ -56,7 +56,7 @@ public abstract class ProcessServiceSubSystemConfiguration extends RemoteProcess
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.servicesubsystem.IServiceSubSystemFactory#getServiceType()
+	 * @see org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration#getServiceType()
 	 */
 	public final Class getServiceType()
 	{
@@ -64,7 +64,7 @@ public abstract class ProcessServiceSubSystemConfiguration extends RemoteProcess
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystemFactory#supportsServerLaunchProperties(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchProperties(org.eclipse.rse.model.IHost)
 	 */
 	public boolean supportsServerLaunchProperties(IHost host) 
 	{
@@ -72,7 +72,7 @@ public abstract class ProcessServiceSubSystemConfiguration extends RemoteProcess
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.servicesubsystem.IServiceSubSystemFactory#getService(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration#getService(org.eclipse.rse.model.IHost)
 	 */
 	public IService getService(IHost host)
 	{

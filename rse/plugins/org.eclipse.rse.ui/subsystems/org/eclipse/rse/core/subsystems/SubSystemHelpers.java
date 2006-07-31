@@ -46,7 +46,7 @@ public class SubSystemHelpers
     /**
      * Give a filter pool, return parent subsystem factory
      */
-    public static ISubSystemConfiguration getParentSubSystemFactory(ISystemFilterPool pool)
+    public static ISubSystemConfiguration getParentSubSystemConfiguration(ISystemFilterPool pool)
     {
     	return (ISubSystemConfiguration)pool.getProvider();            	
     }    
@@ -54,7 +54,7 @@ public class SubSystemHelpers
     /**
      * Give a filter, return parent subsystem factory
      */
-    public static ISubSystemConfiguration getParentSubSystemFactory(ISystemFilter filter)
+    public static ISubSystemConfiguration getParentSubSystemConfiguration(ISystemFilter filter)
     {
     	return (ISubSystemConfiguration)filter.getProvider();            	
     }        
@@ -62,23 +62,23 @@ public class SubSystemHelpers
     /**
      * Give a filter pool or filter, return parent subsystem factory
      */
-    public static ISubSystemConfiguration getParentSubSystemFactory(ISystemFilterContainer container)
+    public static ISubSystemConfiguration getParentSubSystemConfiguration(ISystemFilterContainer container)
     {
     	if (container instanceof ISystemFilterPool)
-    	  return getParentSubSystemFactory((ISystemFilterPool)container);
+    	  return getParentSubSystemConfiguration((ISystemFilterPool)container);
     	else
-    	  return getParentSubSystemFactory((ISystemFilter)container);    	
+    	  return getParentSubSystemConfiguration((ISystemFilter)container);    	
     }        
 
 
     /**
      * Give a filter pool reference, return parent subsystem factory
      */
-    public static ISubSystemConfiguration getParentSubSystemFactory(ISystemFilterPoolReference poolRef)
+    public static ISubSystemConfiguration getParentSubSystemConfiguration(ISystemFilterPoolReference poolRef)
     {
     	ISystemFilterPool pool = poolRef.getReferencedFilterPool();
     	if (pool != null)
-    	  return getParentSubSystemFactory(pool);
+    	  return getParentSubSystemConfiguration(pool);
     	else
     	  return null;
     }    
@@ -86,11 +86,11 @@ public class SubSystemHelpers
     /**
      * Give a filter reference, return parent subsystem factory
      */
-    public static ISubSystemConfiguration getParentSubSystemFactory(ISystemFilterReference filterRef)
+    public static ISubSystemConfiguration getParentSubSystemConfiguration(ISystemFilterReference filterRef)
     {
     	ISystemFilter filter = filterRef.getReferencedFilter();
     	if (filter != null)
-    	  return getParentSubSystemFactory(filter);
+    	  return getParentSubSystemConfiguration(filter);
     	else
     	  return null;
     }        
@@ -107,7 +107,7 @@ public class SubSystemHelpers
      */
     public static ISystemProfile getParentSystemProfile(ISystemFilterPool pool)
     {
-    	return getParentSubSystemFactory(pool).getSystemProfile(pool);
+    	return getParentSubSystemConfiguration(pool).getSystemProfile(pool);
     }    
     
 }

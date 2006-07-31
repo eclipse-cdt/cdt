@@ -88,7 +88,7 @@ public class SystemProcessFilterStringEditPane extends
     protected boolean skipUniquenessChecking;
     protected boolean calledFromVerify;    	
     protected boolean dontStealFocus;
-	protected IRemoteProcessSubSystemConfiguration inputSubsystemFactory = null;
+	protected IRemoteProcessSubSystemConfiguration inputSubsystemConfiguration = null;
 	
 	// actions
 	protected SystemTestFilterStringAction testAction = null;
@@ -223,9 +223,9 @@ public class SystemProcessFilterStringEditPane extends
         txtExeName.setFocus();
 
 		if (refProvider != null)
-			inputSubsystemFactory = (IRemoteProcessSubSystemConfiguration)((ISubSystem)refProvider).getSubSystemConfiguration();
+			inputSubsystemConfiguration = (IRemoteProcessSubSystemConfiguration)((ISubSystem)refProvider).getSubSystemConfiguration();
 		else if (provider != null)
-			inputSubsystemFactory = (IRemoteProcessSubSystemConfiguration)provider;
+			inputSubsystemConfiguration = (IRemoteProcessSubSystemConfiguration)provider;
 		IStructuredContentProvider p = new SystemProcessStatesContentProvider();
 		
 		chkStatus.setContentProvider(p);

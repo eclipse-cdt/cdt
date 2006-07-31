@@ -45,7 +45,7 @@ import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISubSystemFactoryCategories;
+import org.eclipse.rse.model.ISubSystemConfigurationCategories;
 import org.eclipse.rse.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemHostPool;
 import org.eclipse.rse.model.ISystemModelChangeEvent;
@@ -284,12 +284,12 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		  for (int idx = 0; (!hasSubsystems) && (idx < subsystemFactoryProxies.length); idx++)
 		  {
 		  	 if (subsystemFactoryProxies[idx].appliesToSystemType(selectedConnection.getSystemType()) &&
-		  	     subsystemFactoryProxies[idx].isSubSystemFactoryActive())
+		  	     subsystemFactoryProxies[idx].isSubSystemConfigurationActive())
 		  	 {
-		  	   SubSystemFactory factory = subsystemFactoryProxies[idx].getSubSystemFactory();
+		  	   SubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 		  	   if (factory != null)          	   
 		  	   {
-		         SubSystem[] sss = factory.getSubSystems(selectedConnection, SubSystemFactory.LAZILY);               
+		         SubSystem[] sss = factory.getSubSystems(selectedConnection, SubSystemConfiguration.LAZILY);               
 		         if ((sss != null) && (sss.length>0))
 		           hasSubsystems = true;
 		  	   }
@@ -509,7 +509,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 
 	/**
 	 * Return all subsystem factory proxies matching a subsystem factory category.
-	 * @see ISubSystemFactoryCategories
+	 * @see ISubSystemConfigurationCategories
 	 */
 	public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxiesByCategory(String factoryCategory)
 	{
@@ -560,7 +560,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	 *  in its plugin.xml file. Thus, it is effecient as it need not bring to life a 
 	 *  subsystem factory just to test its parent class type.
 	 * 
-	 * @see ISubSystemFactoryCategories
+	 * @see ISubSystemConfigurationCategories
 	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurationsByCategory(String factoryCategory)
 	{
@@ -711,9 +711,9 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	    {
 	      for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
 	      {
-	      	 if (subsystemFactoryProxies[idx].isSubSystemFactoryActive())
+	      	 if (subsystemFactoryProxies[idx].isSubSystemConfigurationActive())
 	      	 {
-	      	   SubSystemFactory factory = subsystemFactoryProxies[idx].getSubSystemFactory();
+	      	   SubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 	      	   if ((factory!=null)&&factory.supportsFilters())
 	      	     factory.setShowFilterStrings(show);
 	      	 }
@@ -850,7 +850,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 				// Hmm, in v4 we only did this for active factories. That can't be right, as it needs to be done
 				//  for EVERY factory. Hence this commented line of code, new for v5 (and to fix a bug I found in
 				//  profile renaming... the local connection's filter pool folder was not renamed). Phil...
-				//if (proxies[idx].isSubSystemFactoryActive())
+				//if (proxies[idx].isSubSystemConfigurationActive())
 				ISubSystemConfiguration factory = proxies[idx].getSubSystemConfiguration();
 				if (factory != null)
 				{
@@ -1071,7 +1071,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		{
 			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
 			{
-				//if (subsystemFactoryProxies[idx].isSubSystemFactoryActive()) // don't bother if not yet alive
+				//if (subsystemFactoryProxies[idx].isSubSystemConfigurationActive()) // don't bother if not yet alive
 				{
 					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
@@ -1253,9 +1253,9 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		{
 			String srcProfileName = absoluteSubSystemName.substring(0, profileDelim);
 			String srcConnectionName = absoluteSubSystemName.substring(profileDelim + 1, connectionDelim);
-			String srcSubSystemFactoryId = absoluteSubSystemName.substring(connectionDelim + 1, absoluteSubSystemName.length());
+			String srcSubSystemConfigurationId = absoluteSubSystemName.substring(connectionDelim + 1, absoluteSubSystemName.length());
 
-			return getSubSystem(srcProfileName, srcConnectionName, srcSubSystemFactoryId);
+			return getSubSystem(srcProfileName, srcConnectionName, srcSubSystemConfigurationId);
 		}
 
 		return null;
@@ -1441,7 +1441,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	 * This looks for a match on the "category" of the subsystem factory's xml declaration
 	 *  in its plugin.xml file. 
 	 * 
-	 * @see org.eclipse.rse.model.ISubSystemFactoryCategories
+	 * @see org.eclipse.rse.model.ISubSystemConfigurationCategories
 	 */
 	public ISubSystem[] getSubSystemsBySubSystemConfigurationCategory(String factoryCategory, IHost connection)
 	{
@@ -1697,7 +1697,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	 *  in its plugin.xml file. Thus, it is effecient as it need not bring to live a 
 	 *  subsystem factory just to test its parent class type.
 	 * 
-	 * @see ISubSystemFactoryCategories
+	 * @see ISubSystemConfigurationCategories
 	 */
 	public IHost[] getHostsBySubSystemConfigurationCategory(String factoryCategory)
 	{
@@ -2207,14 +2207,14 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			return null;
 		int count = 0;
 		for (int idx = 0; idx < allPages.length; idx++)
-			if (allPages[idx].getSubSystemFactory() == ssf)
+			if (allPages[idx].getSubSystemConfiguration() == ssf)
 				++count;
 		if (count == 0)
 			return null;
 		ISystemNewConnectionWizardPage[] subPages = new ISystemNewConnectionWizardPage[count];
 		count = 0;
 		for (int idx = 0; idx < allPages.length; idx++)
-			if (allPages[idx].getSubSystemFactory() == ssf)
+			if (allPages[idx].getSubSystemConfiguration() == ssf)
 				subPages[count++] = allPages[idx];
 		return subPages;
 	}

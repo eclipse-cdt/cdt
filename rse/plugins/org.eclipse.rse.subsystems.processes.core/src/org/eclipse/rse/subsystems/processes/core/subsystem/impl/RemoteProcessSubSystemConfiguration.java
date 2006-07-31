@@ -30,7 +30,7 @@ import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorServerPortInput;
 
 /**
- * The implementation of the RemoteProcessSubSystemFactory interface
+ * The implementation of the RemoteProcessSubSystemConfiguration interface
  * Contains information about what features the subsystem supports 
  * @author mjberger
  *

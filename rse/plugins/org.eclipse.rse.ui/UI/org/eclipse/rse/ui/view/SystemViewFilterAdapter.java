@@ -82,7 +82,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 		ISystemFilter filter = (ISystemFilter)selection.getFirstElement();
 		if (filter.isTransient())
 		  return;
-	    ISubSystemConfiguration ssFactory = SubSystemHelpers.getParentSubSystemFactory(filter);
+	    ISubSystemConfiguration ssFactory = SubSystemHelpers.getParentSubSystemConfiguration(filter);
 	    ssFactory.setConnection(null);
 	    ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssFactory.getAdapter(ISubsystemConfigurationAdapter.class);
 		IAction[] actions = adapter.getFilterActions(ssFactory, filter, shell);
@@ -152,7 +152,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 		ISystemFilter filter = getFilter(element);
 		if (filter.isTransient())
 		  return SystemResources.RESID_PP_FILTER_TYPE_VALUE;
-		ISubSystemConfiguration ssParentFactory = SubSystemHelpers.getParentSubSystemFactory(filter);		
+		ISubSystemConfiguration ssParentFactory = SubSystemHelpers.getParentSubSystemConfiguration(filter);		
 		return ssParentFactory.getTranslatedFilterTypeProperty(filter);
 	}	
 	
@@ -548,7 +548,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 		else if (name.equalsIgnoreCase("showChangeFilterStringPropertyPage"))
 		{			
 			ISystemFilter filter = getFilter(target);
-			ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemFactory(filter);
+			ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(filter);
 			if (value.equals("true"))
 				return ssf.showChangeFilterStringsPropertyPage(filter);
 			else

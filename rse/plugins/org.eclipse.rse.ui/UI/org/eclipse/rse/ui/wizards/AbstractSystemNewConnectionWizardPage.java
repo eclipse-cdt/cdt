@@ -72,7 +72,7 @@ public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSyst
 	/**
 	 * Return the subsystem factory that supplied this page
 	 */
-	public ISubSystemConfiguration getSubSystemFactory()
+	public ISubSystemConfiguration getSubSystemConfiguration()
 	{
 		return parentFactory;
 	}

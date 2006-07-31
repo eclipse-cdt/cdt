@@ -78,7 +78,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		{
 
 			
-			IServiceSubSystemConfiguration currentFactory = (IServiceSubSystemConfiguration)getSubSystemFactory();
+			IServiceSubSystemConfiguration currentFactory = (IServiceSubSystemConfiguration)getSubSystemConfiguration();
 			
 			String systemTypeStr = getMainPage().getSystemType();
 			IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr);

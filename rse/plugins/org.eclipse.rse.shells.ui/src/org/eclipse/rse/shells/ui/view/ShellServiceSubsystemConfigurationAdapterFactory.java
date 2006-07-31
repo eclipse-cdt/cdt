@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,18 +14,19 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.view;
+package org.eclipse.rse.shells.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystemConfiguration;
+import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystemConfiguration;
 
 
-public class SubsystemFactoryAdapterFactory implements IAdapterFactory
+public class ShellServiceSubsystemConfigurationAdapterFactory implements IAdapterFactory
 {
 
-	private ISubsystemConfigurationAdapter ssFactoryAdapter = new SubsystemFactoryAdapter();
+	private ISubsystemConfigurationAdapter ssFactoryAdapter = new ShellServiceSubSystemConfigurationAdapter();
 	
 	/**
 	 * @see IAdapterFactory#getAdapterList()
@@ -41,7 +42,7 @@ public class SubsystemFactoryAdapterFactory implements IAdapterFactory
 	 */
 	public void registerWithManager(IAdapterManager manager)
 	{
-		manager.registerAdapters(this, ISubSystemConfiguration.class);
+		manager.registerAdapters(this, IShellServiceSubSystemConfiguration.class);
 	}
 	/**
 	 * @see IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -49,7 +50,7 @@ public class SubsystemFactoryAdapterFactory implements IAdapterFactory
 	public Object getAdapter(Object adaptableObject, Class adapterType) 
 	{
 	    Object adapter = null;
-	    if (adaptableObject instanceof ISubSystemConfiguration)
+	    if (adaptableObject instanceof ShellServiceSubSystemConfiguration)
 	    	adapter = ssFactoryAdapter;
 	      	    
 		return adapter;

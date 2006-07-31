@@ -179,7 +179,7 @@ public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAd
 		return null;
 	} 
 
-	public String getSubSystemFactoryId(Object element)
+	public String getSubSystemConfigurationId(Object element)
 	{
 		return null;
 	} 

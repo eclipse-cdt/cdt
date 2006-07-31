@@ -91,7 +91,7 @@ public class DaytimeResourceAdapter extends AbstractSystemViewAdapter implements
 		return "root"; //$NON-NLS-1$ 
 	}
 
-	public String getSubSystemFactoryId(Object element) {
+	public String getSubSystemConfigurationId(Object element) {
 		// as declared in extension in plugin.xml
 		return "daytime.tcp"; //$NON-NLS-1$  
 	}

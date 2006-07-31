@@ -27,7 +27,7 @@ import org.eclipse.rse.services.IService;
 /**
  * This is the interface for the class that is for subsystem-providers who desire not to use MOF.
  * 
- * @lastgen interface DefaultSubSystemFactory extends SubSystemFactory {}
+ * @lastgen interface DefaultSubSystemConfiguration extends SubSystemConfiguration {}
  */
 public interface IServiceSubSystemConfiguration extends ISubSystemConfiguration
 {
@@ -37,4 +37,4 @@ public interface IServiceSubSystemConfiguration extends ISubSystemConfiguration
 	public Class getServiceImplType();
 	public IService getService(IHost host);
 	
-} //DefaultSubSystemFactory
+} //DefaultSubSystemConfiguration

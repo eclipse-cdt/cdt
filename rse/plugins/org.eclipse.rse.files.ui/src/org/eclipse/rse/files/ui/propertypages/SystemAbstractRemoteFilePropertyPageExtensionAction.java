@@ -111,9 +111,9 @@ public abstract class SystemAbstractRemoteFilePropertyPageExtensionAction
      * selected remote objects were resolved. This has some useful methods in it, 
      * including isUnixStyle() indicating if this remote file system is unix or windows.
      */
-    public IRemoteFileSubSystemConfiguration getRemoteFileSubSystemFactory()
+    public IRemoteFileSubSystemConfiguration getRemoteFileSubSystemConfiguration()
     {
-    	return (IRemoteFileSubSystemConfiguration)getSubSystemFactory();
+    	return (IRemoteFileSubSystemConfiguration)getSubSystemConfiguration();
     }    
     
 }

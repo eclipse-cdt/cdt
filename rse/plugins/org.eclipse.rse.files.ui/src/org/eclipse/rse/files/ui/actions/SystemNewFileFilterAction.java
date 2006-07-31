@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Shell;
 public class SystemNewFileFilterAction 
        extends SystemNewFilterAction
 {
-	//private RemoteFileSubSystemFactory inputSubsystemFactory;
+	//private RemoteFileSubSystemConfiguration inputSubsystemConfiguration;
 		
 	/**
 	 * Constructor 

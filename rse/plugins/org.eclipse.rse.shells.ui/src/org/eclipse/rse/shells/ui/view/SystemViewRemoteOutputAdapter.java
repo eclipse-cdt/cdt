@@ -182,7 +182,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 		        }
 		        menu.add(ISystemContextMenuConstants.GROUP_OPEN,_showInShellView);
 		        
-		        getShellActions(cmdShell.getCommandSubSystem().getParentRemoteCmdSubSystemFactory());
+		        getShellActions(cmdShell.getCommandSubSystem().getParentRemoteCmdSubSystemConfiguration());
 		        
 		        menu.add(ISystemContextMenuConstants.GROUP_CHANGE, _terminateShellAction);
 		        menu.add(ISystemContextMenuConstants.GROUP_CHANGE, _terminateRemoveShellAction);
@@ -215,7 +215,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 	        
 	        _shellActions.add(new Separator());
 	        
-	        ShellServiceSubSystemFactoryAdapter factoryAdapter = (ShellServiceSubSystemFactoryAdapter)factory.getAdapter(ISubsystemConfigurationAdapter.class);
+	        ShellServiceSubSystemConfigurationAdapter factoryAdapter = (ShellServiceSubSystemConfigurationAdapter)factory.getAdapter(ISubsystemConfigurationAdapter.class);
 	        
 	        _exportShellOutputAction = factoryAdapter.getCommandShellOutputExportAction(shell);
 	        _shellActions.add(_exportShellOutputAction);
@@ -632,7 +632,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 	  * Return the subsystem factory id that owns this remote object
 	  * The value must not be translated, so that property pages registered via xml can subset by it.
 	  */
-	public String getSubSystemFactoryId(Object element)
+	public String getSubSystemConfigurationId(Object element)
 	{
 		return null;
 	}
@@ -820,8 +820,8 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 		else if (element instanceof IRemoteCommandShell)
 		{
 			IRemoteCommandShell command = (IRemoteCommandShell) element;
-			IRemoteCmdSubSystemConfiguration factory = command.getCommandSubSystem().getParentRemoteCmdSubSystemFactory();
-			 ShellServiceSubSystemFactoryAdapter factoryAdapter = (ShellServiceSubSystemFactoryAdapter)factory.getAdapter(ISubsystemConfigurationAdapter.class);
+			IRemoteCmdSubSystemConfiguration factory = command.getCommandSubSystem().getParentRemoteCmdSubSystemConfiguration();
+			 ShellServiceSubSystemConfigurationAdapter factoryAdapter = (ShellServiceSubSystemConfigurationAdapter)factory.getAdapter(ISubsystemConfigurationAdapter.class);
 			ImageDescriptor imageDescriptor = null; 			
 			if (command.isActive())
 			{

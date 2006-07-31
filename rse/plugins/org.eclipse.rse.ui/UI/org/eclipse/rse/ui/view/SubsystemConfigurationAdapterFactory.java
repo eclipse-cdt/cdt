@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,18 +14,18 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.files.ui.view;
+package org.eclipse.rse.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
-import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 
 
-public class RemoteFileSubsystemFactoryAdapterFactory implements IAdapterFactory
+public class SubsystemConfigurationAdapterFactory implements IAdapterFactory
 {
 
-	private ISubsystemConfigurationAdapter ssFactoryAdapter = new RemoteFileSubSystemFactoryAdapter();
+	private ISubsystemConfigurationAdapter ssFactoryAdapter = new SubsystemConfigurationAdapter();
 	
 	/**
 	 * @see IAdapterFactory#getAdapterList()
@@ -41,7 +41,7 @@ public class RemoteFileSubsystemFactoryAdapterFactory implements IAdapterFactory
 	 */
 	public void registerWithManager(IAdapterManager manager)
 	{
-		manager.registerAdapters(this, IRemoteFileSubSystemConfiguration.class);
+		manager.registerAdapters(this, ISubSystemConfiguration.class);
 	}
 	/**
 	 * @see IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -49,7 +49,7 @@ public class RemoteFileSubsystemFactoryAdapterFactory implements IAdapterFactory
 	public Object getAdapter(Object adaptableObject, Class adapterType) 
 	{
 	    Object adapter = null;
-	    if (adaptableObject instanceof IRemoteFileSubSystemConfiguration)
+	    if (adaptableObject instanceof ISubSystemConfiguration)
 	    	adapter = ssFactoryAdapter;
 	      	    
 		return adapter;

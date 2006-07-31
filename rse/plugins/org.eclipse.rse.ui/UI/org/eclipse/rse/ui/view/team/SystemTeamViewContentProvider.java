@@ -71,10 +71,10 @@ public class SystemTeamViewContentProvider extends WorkbenchContentProvider
 		}
 		/*
 		String name = element.getClass().getName();
-		if (element instanceof SystemTeamViewSubSystemFactoryNode)
+		if (element instanceof SystemTeamViewSubSystemConfigurationNode)
 		{
-			SystemTeamViewSubSystemFactoryNode ssfNode = (SystemTeamViewSubSystemFactoryNode)element;
-			name = ssfNode.getParentCategory().getLabel() + "." + ssfNode.getSubSystemFactory().getName();
+			SystemTeamViewSubSystemConfigurationNode ssfNode = (SystemTeamViewSubSystemConfigurationNode)element;
+			name = ssfNode.getParentCategory().getLabel() + "." + ssfNode.getSubSystemConfiguration().getName();
 		}
 		else if (element instanceof SystemTeamViewCategoryNode)
 		{
@@ -117,10 +117,10 @@ public class SystemTeamViewContentProvider extends WorkbenchContentProvider
 		}
 		/* debug info
 		String name = element.getClass().getName();
-		if (element instanceof SystemTeamViewSubSystemFactoryNode)
+		if (element instanceof SystemTeamViewSubSystemConfigurationNode)
 		{
-			SystemTeamViewSubSystemFactoryNode ssfNode = (SystemTeamViewSubSystemFactoryNode)element;
-			name = ssfNode.getParentCategory().getLabel() + "." + ssfNode.getSubSystemFactory().getName();
+			SystemTeamViewSubSystemConfigurationNode ssfNode = (SystemTeamViewSubSystemConfigurationNode)element;
+			name = ssfNode.getParentCategory().getLabel() + "." + ssfNode.getSubSystemConfiguration().getName();
 		}
 		else if (element instanceof SystemTeamViewCategoryNode)
 		{

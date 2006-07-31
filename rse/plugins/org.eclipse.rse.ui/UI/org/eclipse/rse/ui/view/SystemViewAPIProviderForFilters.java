@@ -127,7 +127,7 @@ public class SystemViewAPIProviderForFilters
 		//Object[] children = fRef.getChildren(getShell()); 
     	ISystemFilter referencedFilter = fRef.getReferencedFilter();
     	
-    	ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemFactory(referencedFilter);    	
+    	ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(referencedFilter);    	
     	boolean promptable = referencedFilter.isPromptable();
     	//System.out.println("Promptable? " + promptable);
     	if (promptable)

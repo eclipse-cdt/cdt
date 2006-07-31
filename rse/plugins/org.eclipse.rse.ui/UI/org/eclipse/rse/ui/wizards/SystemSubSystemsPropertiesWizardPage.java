@@ -114,7 +114,7 @@ public class SystemSubSystemsPropertiesWizardPage
 			if (page != null && page instanceof ISystemConnectionWizardPropertyPage)
 			{
 			    ISystemConnectionWizardPropertyPage cpage = (ISystemConnectionWizardPropertyPage)page;
-				cpage.setSubSystemFactory(parentFactory);
+				cpage.setSubSystemConfiguration(parentFactory);
 				
 				CTabItem titem = new CTabItem(_folder, SWT.NULL, numAdded);
 				titem.setData(page);

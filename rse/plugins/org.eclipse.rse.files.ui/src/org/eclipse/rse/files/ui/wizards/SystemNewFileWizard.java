@@ -331,7 +331,7 @@ public class SystemNewFileWizard
 	{
 		ISystemFilter filter = filterRef.getReferencedFilter();
 		IRemoteFileSubSystem parentSubSystem = (IRemoteFileSubSystem)filterRef.getSubSystem();
-		IRemoteFileSubSystemConfiguration parentFactory   = parentSubSystem.getParentRemoteFileSubSystemFactory();
+		IRemoteFileSubSystemConfiguration parentFactory   = parentSubSystem.getParentRemoteFileSubSystemConfiguration();
 		String[] filterStrings = filter.getFilterStrings();
         RemoteFileFilterString rffs = null;
         Vector v = new Vector();

@@ -1400,7 +1400,7 @@ public abstract class AbstractSystemViewAdapter
 			  return false;
 			String[] values = tokenize(value);
 			//System.out.println("Nbr of values: " + (values.length));			
-			//System.out.println("Comparing against: " + (ss.getParentSubSystemFactory().getId()));			
+			//System.out.println("Comparing against: " + (ss.getParentSubSystemConfiguration().getId()));			
 			boolean ok = false;
 			for (int idx=0; !ok && (idx<values.length); idx++)			
 			{

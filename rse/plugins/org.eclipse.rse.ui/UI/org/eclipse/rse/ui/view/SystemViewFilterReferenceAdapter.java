@@ -86,7 +86,7 @@ public class SystemViewFilterReferenceAdapter
 		//if (selection.size() != 1)
 		//  return; // does not make sense adding unique actions per multi-selection
 		ISystemFilter filter = getFilter(selection.getFirstElement());
-		ISubSystemConfiguration ssFactory = getSubSystemFactory(filter);
+		ISubSystemConfiguration ssFactory = getSubSystemConfiguration(filter);
 		ISubSystem currentSubSystem = (ISubSystem) getFilterReference(selection.getFirstElement()).getSubSystem();
 		IHost currentConnection = currentSubSystem.getHost();
 		ssFactory.setConnection(currentConnection);
@@ -113,9 +113,9 @@ public class SystemViewFilterReferenceAdapter
 		}
 	}
 
-	private ISubSystemConfiguration getSubSystemFactory(ISystemFilter filter)
+	private ISubSystemConfiguration getSubSystemConfiguration(ISystemFilter filter)
 	{
-		return SubSystemHelpers.getParentSubSystemFactory(filter);
+		return SubSystemHelpers.getParentSubSystemConfiguration(filter);
 	}
 	/**
 	 * <i>Overridden from parent.</i><br>
@@ -188,7 +188,7 @@ public class SystemViewFilterReferenceAdapter
 	public String getType(Object element)
 	{
 		ISystemFilter filter = getFilter(element);
-		ISubSystemConfiguration ssParentFactory = getSubSystemFactory(filter);
+		ISubSystemConfiguration ssParentFactory = getSubSystemConfiguration(filter);
 		return ssParentFactory.getTranslatedFilterTypeProperty(filter);
 	}
 
@@ -253,7 +253,7 @@ public class SystemViewFilterReferenceAdapter
 		boolean promptable = referencedFilter.isPromptable();
 
 		ISubSystem ss = fRef.getSubSystem();
-		ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemFactory(referencedFilter);
+		ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(referencedFilter);
 
 		// PROMPTING FILTER?...
 		if (promptable)
@@ -422,7 +422,7 @@ public class SystemViewFilterReferenceAdapter
 		ISystemFilterReference fRef = getFilterReference(element);
 		ISystemFilter referencedFilter = fRef.getReferencedFilter();
 		
-		ISubSystemConfiguration factory = getSubSystemFactory(referencedFilter);
+		ISubSystemConfiguration factory = getSubSystemConfiguration(referencedFilter);
 		if (factory.supportsFilterChildren())
 		{		
 			int nbrNestedFilters = referencedFilter.getSystemFilterCount();
@@ -482,7 +482,7 @@ public class SystemViewFilterReferenceAdapter
 		else if (name.equalsIgnoreCase("showChangeFilterStringPropertyPage"))
 		{
 			ISystemFilterReference ref = getFilterReference(target);
-			ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemFactory(ref.getReferencedFilter());
+			ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(ref.getReferencedFilter());
 			if (value.equals("true"))
 				return ssf.showChangeFilterStringsPropertyPage(ref.getReferencedFilter());
 			else
@@ -682,7 +682,7 @@ public class SystemViewFilterReferenceAdapter
 	public boolean showGenericShowInTableAction(Object element)
 	{	
 		ISystemFilter filter = getFilter(element);
-		ISubSystemConfiguration ssParentFactory = getSubSystemFactory(filter);
+		ISubSystemConfiguration ssParentFactory = getSubSystemConfiguration(filter);
 		return ssParentFactory.showGenericShowInTableOnFilter();
 	}
 
@@ -692,7 +692,7 @@ public class SystemViewFilterReferenceAdapter
 	public boolean showRefresh(Object element)
 	{
 		ISystemFilter filter = getFilter(element);
-		ISubSystemConfiguration ssParentFactory = getSubSystemFactory(filter);
+		ISubSystemConfiguration ssParentFactory = getSubSystemConfiguration(filter);
 		return ssParentFactory.showRefreshOnFilter();
 	}
 
@@ -797,7 +797,7 @@ public class SystemViewFilterReferenceAdapter
 		ISystemFilterReference fRef = getFilterReference(element);
 		if (fRef != null)
 		{
-			if (getSubSystemFactory(fRef.getReferencedFilter()).supportsFilterStringExport())
+			if (getSubSystemConfiguration(fRef.getReferencedFilter()).supportsFilterStringExport())
 			{	
 				return true;
 			}
@@ -813,7 +813,7 @@ public class SystemViewFilterReferenceAdapter
 	    ISystemFilterReference fRef = getFilterReference(element);
 	    if (fRef != null)
 	    {
-	        ISubSystemConfiguration factory = getSubSystemFactory(fRef.getReferencedFilter());
+	        ISubSystemConfiguration factory = getSubSystemConfiguration(fRef.getReferencedFilter());
 	        if (factory.supportsDropInFilters())
 	        {
 	        	// if the drop is handled by the subsystem rather than this adapter, this will be true.
@@ -906,7 +906,7 @@ public class SystemViewFilterReferenceAdapter
 		if (target instanceof ISystemFilterReference)
 		{
 			ISystemFilterReference filterRef = (ISystemFilterReference) target;
-			if (getSubSystemFactory(filterRef.getReferencedFilter()).supportsMultiStringFilters())
+			if (getSubSystemConfiguration(filterRef.getReferencedFilter()).supportsMultiStringFilters())
 			{
 				if (src instanceof ISystemFilterReference)
 				{

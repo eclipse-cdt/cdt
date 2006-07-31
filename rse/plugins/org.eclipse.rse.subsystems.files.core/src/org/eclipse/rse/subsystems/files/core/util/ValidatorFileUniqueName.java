@@ -124,7 +124,7 @@ public class ValidatorFileUniqueName
 	protected ValidatorFileName getFileNameValidator()
 	{
 		if (fileNameValidator == null)
-		  fileNameValidator = parentFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().getFileNameValidator();;
+		  fileNameValidator = parentFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().getFileNameValidator();;
 		return fileNameValidator;
 	}
 	/**
@@ -134,7 +134,7 @@ public class ValidatorFileUniqueName
 	protected ValidatorFolderName getFolderNameValidator()
 	{
 		if (folderNameValidator == null)
-		  folderNameValidator = parentFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().getFolderNameValidator();
+		  folderNameValidator = parentFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().getFolderNameValidator();
 		return folderNameValidator;
 	}
 

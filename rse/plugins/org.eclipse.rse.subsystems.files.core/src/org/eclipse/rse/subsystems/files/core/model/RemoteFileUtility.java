@@ -63,7 +63,7 @@ public class RemoteFileUtility
 		return (IRemoteFileSubSystem[])results.toArray(new IRemoteFileSubSystem[results.size()]);
 	}
 	
-	 public static IRemoteFileSubSystemConfiguration getFileSubSystemFactory(String systemType)
+	 public static IRemoteFileSubSystemConfiguration getFileSubSystemConfiguration(String systemType)
 	 {
 			ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 			ISubSystemConfiguration[] sses = sr.getSubSystemConfigurationsBySystemType(systemType);

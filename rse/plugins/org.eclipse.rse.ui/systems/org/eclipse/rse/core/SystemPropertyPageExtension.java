@@ -200,17 +200,17 @@ public class SystemPropertyPageExtension implements IPropertyPageContributor
      * Getter method.
      * Return what was specified for the <samp>subsystemconfigurationid</samp> xml attribute.
      */
-    public String getSubSystemFactoryId()
+    public String getSubSystemConfigurationId()
     {
-    	return matcher.getSubSystemFactoryId();
+    	return matcher.getSubSystemConfigurationId();
     }    
     /**
      * Getter method.
      * Return what was specified for the <samp>subsystemconfigurationCategory</samp> xml attribute.
      */
-    public String getSubSystemFactoryCategoryFilter()
+    public String getSubSystemConfigurationCategoryFilter()
     {
-    	return matcher.getSubSystemFactoryCategoryFilter();
+    	return matcher.getSubSystemConfigurationCategoryFilter();
     }        
     /**
      * Getter method.

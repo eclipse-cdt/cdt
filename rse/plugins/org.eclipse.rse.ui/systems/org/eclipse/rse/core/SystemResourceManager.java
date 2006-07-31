@@ -295,9 +295,9 @@ public class SystemResourceManager implements SystemResourceConstants
      *  |  |
      *  |  .--- UserActions (folder)    - getUserActionsFolder(SystemProfile/"team")
      *  |     |
-     *  |     .--- SubSystemFactoryID1 (folder) - getUserActionsFolder(SystemProfile/"team", SubSystemFactory)
+     *  |     .--- SubSystemConfigurationID1 (folder) - getUserActionsFolder(SystemProfile/"team", SubSystemConfiguration)
      *  |     |  .--- actions.xml (file)
-     *  |     .--- SubSystemFactoryID2 (folder)
+     *  |     .--- SubSystemConfigurationID2 (folder)
      *  |        .--- actions.xml (file)
      * --------------------------------------------------------------------------------------------------------------------------------
      */
@@ -357,9 +357,9 @@ public class SystemResourceManager implements SystemResourceConstants
      *  |  |
      *  |  .--- CompileCommands (folder)    - getCompileCommandsFolder(SystemProfile/"team")
      *  |     |
-     *  |     .--- SubSystemFactoryID1 (folder) - getCompileCommandsFolder(SystemProfile/"team", SubSystemFactory)
+     *  |     .--- SubSystemConfigurationID1 (folder) - getCompileCommandsFolder(SystemProfile/"team", SubSystemConfiguration)
      *  |     |  .--- compileCommands.xml (file)
-     *  |     .--- SubSystemFactoryID2 (folder)
+     *  |     .--- SubSystemConfigurationID2 (folder)
      *  |        .--- compileCommands.xml (file)
      * --------------------------------------------------------------------------------------------------------------------------------
      */
@@ -549,7 +549,7 @@ public class SystemResourceManager implements SystemResourceConstants
      * TYPE FILTERS SUBTREE FOLDER METHODS...
      * ======================================
      *  .--- TypeFilters (folder)    - getTypeFiltersFolder()
-     *     .--- SubSystemFactoryID1 (folder) - getTypeFiltersFolder(SubSystemFactory)
+     *     .--- SubSystemConfigurationID1 (folder) - getTypeFiltersFolder(SubSystemConfiguration)
      *     |  .--- typefilters.xmi (file)
      * --------------------------------------------------------------------------------------------------------------------------------
      */

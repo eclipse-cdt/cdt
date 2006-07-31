@@ -35,9 +35,9 @@ public interface IRemoteCmdSubSystem extends ISubSystem{
 
 
 	/**
-	 * Return parent subsystem factory, cast to a RemoteCmdSubSystemFactory
+	 * Return parent subsystem factory, cast to a RemoteCmdSubSystemConfiguration
 	 */
-	public IRemoteCmdSubSystemConfiguration getParentRemoteCmdSubSystemFactory();
+	public IRemoteCmdSubSystemConfiguration getParentRemoteCmdSubSystemConfiguration();
 
 	/**
 	 * Execute a remote command. This is only applicable if the subsystem factory reports

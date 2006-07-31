@@ -183,7 +183,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 	
 	protected IServiceCommandShell createRemoteCommandShell(IRemoteCmdSubSystem cmdSS, IHostShell hostShell)
 	{
-		IShellServiceSubSystemConfiguration config = (IShellServiceSubSystemConfiguration)getParentRemoteCmdSubSystemFactory();
+		IShellServiceSubSystemConfiguration config = (IShellServiceSubSystemConfiguration)getParentRemoteCmdSubSystemConfiguration();
 		return config.createRemoteCommandShell(cmdSS, hostShell);
 	}
 	

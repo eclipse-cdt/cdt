@@ -1198,7 +1198,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
             else
 			{
 				logMyDebugMessage(this.getClass().getName(),": -----------------------------------------------------------");
-				logMyDebugMessage(this.getClass().getName(),": REMOTE SSFID.......: " + element.getSubSystemFactoryId(firstSelection));
+				logMyDebugMessage(this.getClass().getName(),": REMOTE SSFID.......: " + element.getSubSystemConfigurationId(firstSelection));
 				logMyDebugMessage(this.getClass().getName(),": REMOTE NAME........: " + element.getName(firstSelection));
 				logMyDebugMessage(this.getClass().getName(),": REMOTE TYPECATEGORY: " + element.getRemoteTypeCategory(firstSelection));
 				logMyDebugMessage(this.getClass().getName(),": REMOTE TYPE........: " + element.getRemoteType(firstSelection));

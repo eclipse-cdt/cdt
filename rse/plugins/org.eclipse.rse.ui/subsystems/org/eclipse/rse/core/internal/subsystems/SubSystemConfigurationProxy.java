@@ -238,7 +238,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 			        object = (ISubSystemConfiguration)menuExtension.getConstructors()[0].newInstance(null);
 			    }
    	    	   
-   	   	     object.setSubSystemFactoryProxy(this); // side effect: restores filter pools
+   	   	     object.setSubSystemConfigurationProxy(this); // side effect: restores filter pools
    	   	     //System.out.println("*** STARTED SSFACTORY: " + id + " ***");
    	       } catch (Exception exc)
    	       {

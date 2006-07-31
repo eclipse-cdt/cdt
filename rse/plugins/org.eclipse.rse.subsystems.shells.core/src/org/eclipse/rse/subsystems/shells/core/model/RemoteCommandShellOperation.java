@@ -88,7 +88,7 @@ public abstract class RemoteCommandShellOperation implements ISystemResourceChan
 		_cmdSubSystem = cmdSubSystem;
 		_shell = shell;
 		_commandStack = new Stack();
-		_cmdSeparator = _cmdSubSystem.getParentRemoteCmdSubSystemFactory().getCommandSeparator();
+		_cmdSeparator = _cmdSubSystem.getParentRemoteCmdSubSystemConfiguration().getCommandSeparator();
 	}
 	 
 	public void setWorkingDirectory(IRemoteFile pwd)

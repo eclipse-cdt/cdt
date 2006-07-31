@@ -1194,7 +1194,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		SystemIFileProperties properties = new SystemIFileProperties(file);
 
-		String profileID = subsystem.getParentRemoteFileSubSystemFactory().getEditorProfileID();
+		String profileID = subsystem.getParentRemoteFileSubSystemConfiguration().getEditorProfileID();
 		properties.setEditorProfileType(profileID);
 
 		// need this to get a reference back to the object

@@ -46,5 +46,5 @@ public interface ISystemNewConnectionWizardPage extends IWizardPage
 	/**
 	 * Return the subsystem factory that supplied this page
 	 */
-	public ISubSystemConfiguration getSubSystemFactory();	
+	public ISubSystemConfiguration getSubSystemConfiguration();	
 }

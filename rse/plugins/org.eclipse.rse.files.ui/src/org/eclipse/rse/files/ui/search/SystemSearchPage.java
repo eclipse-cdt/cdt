@@ -841,7 +841,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 				if (obj instanceof IRemoteFile) {
 					
 					IRemoteFile remoteFile = (IRemoteFile)obj;
-					boolean supportsArchiveManagement = remoteFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement();
+					boolean supportsArchiveManagement = remoteFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 					
 					// if it's a file, but not an archive, get the file name, connection info, and parent folder name
 					if (remoteFile.isFile() && (!remoteFile.isArchive() && !supportsArchiveManagement)) {

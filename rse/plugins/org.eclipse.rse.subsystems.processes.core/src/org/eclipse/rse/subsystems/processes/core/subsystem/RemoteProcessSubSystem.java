@@ -34,9 +34,9 @@ public interface RemoteProcessSubSystem extends ISubSystem
     // ----------------------
     
 	/**
-	 * Return parent subsystem factory, cast to a RemoteProcessSubSystemFactory
+	 * Return parent subsystem factory, cast to a RemoteProcessSubSystemConfiguration
 	 */
-	public IRemoteProcessSubSystemConfiguration getParentRemoteProcessSubSystemFactory();		
+	public IRemoteProcessSubSystemConfiguration getParentRemoteProcessSubSystemConfiguration();		
 	
 	/**
 	 * Return true if names are case-sensitive. Used when doing name or type filtering

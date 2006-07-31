@@ -219,7 +219,7 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 		}			
 		changeFilterPane.setSystemFilterPoolManagerProvider(selectedFilter.getProvider());			
 		
-		ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemFactory(selectedFilter);
+		ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(selectedFilter);
 		ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssf.getAdapter(ISubsystemConfigurationAdapter.class);
 		adapter.customizeChangeFilterPropertyPage(ssf, this, selectedFilter, shell);
 		

@@ -18,7 +18,7 @@ package org.eclipse.rse.connectorservice.dstore;
 /**
  * Simply a tag to indicate this factory is one our universal subsystem factories.
  */
-public interface IUniversalSubSystemFactory 
+public interface IUniversalSubSystemConfiguration 
 {
 
 

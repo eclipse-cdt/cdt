@@ -101,7 +101,7 @@ public interface ISystemRegistry extends ISystemViewInputProvider, ISchedulingRu
 	public ISubSystemConfigurationProxy[]  getSubSystemConfigurationProxies();
     /**
      * Return all subsystem factory proxies matching a subsystem factory category.
-     * @see ISubSystemFactoryCategories
+     * @see ISubSystemConfigurationCategories
      */
     public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxiesByCategory(String factoryCategory);
 	/**
@@ -125,7 +125,7 @@ public interface ISystemRegistry extends ISystemViewInputProvider, ISchedulingRu
      *  in its plugin.xml file. Thus, it is effecient as it need not bring to life a 
      *  subsystem factory just to test its parent class type.
      * 
-     * @see ISubSystemFactoryCategories
+     * @see ISubSystemConfigurationCategories
      */
     public ISubSystemConfiguration[] getSubSystemConfigurationsByCategory(String factoryCategory);
     /**
@@ -314,7 +314,7 @@ public interface ISystemRegistry extends ISystemViewInputProvider, ISchedulingRu
      * This looks for a match on the "category" of the subsystem factory's xml declaration
      *  in its plugin.xml file. 
      * 
-     * @see org.eclipse.rse.model.ISubSystemFactoryCategories
+     * @see org.eclipse.rse.model.ISubSystemConfigurationCategories
      */
     public ISubSystem[] getSubSystemsBySubSystemConfigurationCategory(String factoryCategory, IHost connection);
 
@@ -368,7 +368,7 @@ public interface ISystemRegistry extends ISystemViewInputProvider, ISchedulingRu
      *  in its plugin.xml file. Thus, it is effecient as it need not bring to life a 
      *  subsystem factory just to test its parent class type.
      * 
-     * @see org.eclipse.rse.model.ISubSystemFactoryCategories
+     * @see org.eclipse.rse.model.ISubSystemConfigurationCategories
      */
     public IHost[] getHostsBySubSystemConfigurationCategory(String factoryCategory);
     /**

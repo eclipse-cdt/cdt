@@ -44,7 +44,7 @@ public class ProcessServicesPropertyPage extends ServicesPropertyPage
 		ProcessServiceSubSystem subSystem = getProcessServiceSubSystem();
 	
 		IHost host = subSystem.getHost();
-		_currentFactory = (IProcessServiceSubSystemConfiguration)subSystem.getParentRemoteProcessSubSystemFactory();
+		_currentFactory = (IProcessServiceSubSystemConfiguration)subSystem.getParentRemoteProcessSubSystemConfiguration();
 		IProcessServiceSubSystemConfiguration[] factories = getProcessServiceSubSystemFactories(host.getSystemType());
 		
 		
@@ -81,12 +81,12 @@ public class ProcessServicesPropertyPage extends ServicesPropertyPage
 		return (IProcessServiceSubSystemConfiguration[])results.toArray(new IProcessServiceSubSystemConfiguration[results.size()]);
 	}
 
-	protected IServiceSubSystemConfiguration getCurrentServiceSubSystemFactory()
+	protected IServiceSubSystemConfiguration getCurrentServiceSubSystemConfiguration()
 	{
 		return _currentFactory;
 	}
 
-	public void setSubSystemFactory(ISubSystemConfiguration factory)
+	public void setSubSystemConfiguration(ISubSystemConfiguration factory)
 	{
 		_currentFactory = (IProcessServiceSubSystemConfiguration)factory;
 	}

@@ -346,7 +346,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			return (IIBMServerLauncher)sl;
 		}	
 		else
-			//return ((SubSystemFactoryImpl)ss.getParentSubSystemFactory()).getDefaultIBMServerLauncher(ss);
+			//return ((SubSystemConfigurationImpl)ss.getParentSubSystemConfiguration()).getDefaultIBMServerLauncher(ss);
 			return null; // should never happen!		
 	}
 
@@ -440,7 +440,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	/**
 	 * Return the remote server launcher, which implements IServerLauncher.
 	 * This is called by the default implementation of connect, if 
-	 * subsystem.getParentSubSystemFactory().supportsServerLaunchProperties returns true.
+	 * subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties returns true.
 	 */
 	public IServerLauncher getRemoteServerLauncher()
 	{

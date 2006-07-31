@@ -64,7 +64,7 @@ public abstract class ServicesPropertyPage extends SystemBasePropertyPage
 	}
 	
 	protected abstract ServiceElement[] getServiceElements();
-	protected abstract IServiceSubSystemConfiguration getCurrentServiceSubSystemFactory();
+	protected abstract IServiceSubSystemConfiguration getCurrentServiceSubSystemConfiguration();
 
 	public boolean performOk()
 	{
@@ -97,7 +97,7 @@ public abstract class ServicesPropertyPage extends SystemBasePropertyPage
 		FactoryServiceElement selectedService = (FactoryServiceElement)_form.getSelectedService();	
 		
 		IServiceSubSystemConfiguration factory = (IServiceSubSystemConfiguration)selectedService.getFactory();
-		IServiceSubSystemConfiguration currentFactory = getCurrentServiceSubSystemFactory();
+		IServiceSubSystemConfiguration currentFactory = getCurrentServiceSubSystemConfiguration();
 		if (factory != currentFactory)		
 		{
 			getServiceSubSystem().switchServiceFactory(factory);

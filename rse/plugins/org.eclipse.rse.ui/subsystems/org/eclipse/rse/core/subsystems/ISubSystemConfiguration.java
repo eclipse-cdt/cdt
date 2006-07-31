@@ -191,7 +191,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 *  to configure how the server-side code for these subsystems are started. There is a Server
 	 *  Launch Setting property page, with a pluggable composite, where users can configure these 
 	 *  properties. 
-	 * <br> By default we return false here. This is overridden in UniversalFileSubSystemFactory though.
+	 * <br> By default we return false here. This is overridden in UniversalFileSubSystemConfiguration though.
 	 */
 	public boolean supportsServerLaunchProperties(IHost host);
 	/**
@@ -243,11 +243,11 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	/**
 	 * Private method called by RSEUIPlugin
 	 */
-    public void setSubSystemFactoryProxy(ISubSystemConfigurationProxy proxy);
+    public void setSubSystemConfigurationProxy(ISubSystemConfigurationProxy proxy);
     /**
      * Private method
      */
-    public ISubSystemConfigurationProxy getSubSystemFactoryProxy();
+    public ISubSystemConfigurationProxy getSubSystemConfigurationProxy();
 
 	// ---------------------------------
 	// FACTORY ATTRIBUTE METHODS...
@@ -289,7 +289,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
     public Image getGraphicsLiveImage();
     /**
      * Return the category this subsystem factory subscribes to.
-     * @see org.eclipse.rse.model.ISubSystemFactoryCategories
+     * @see org.eclipse.rse.model.ISubSystemConfigurationCategories
      */
     public String getCategory();
     /**

@@ -695,7 +695,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      * Get the userId input validator to use in the password dialog prompt.
      * <p>
      * By default, returns </p>
-     *   <pre><code>getSubSystem().getParentSubSystemFactory().getUserIdValidator()</code></pre>
+     *   <pre><code>getSubSystem().getParentSubSystemConfiguration().getUserIdValidator()</code></pre>
      */
     public ISystemValidator getUserIdValidator()
     {
@@ -706,7 +706,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      * Get the password input validator to use in the password dialog prompt.
      * <p>
      * By default, returns:</p>
-     *   <pre><code>getSubSystem().getParentSubSystemFactory().getPasswordValidator()</code></pre>
+     *   <pre><code>getSubSystem().getParentSubSystemConfiguration().getPasswordValidator()</code></pre>
      */
     public ISystemValidator getPasswordValidator()
     {
@@ -760,7 +760,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      
     /**
      * <i>You must override</i>
-     * unless subsystem.getParentSubSystemFactory().supportsServerLaunchProperties 
+     * unless subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties 
      * returns true.
      * <p>
      * Attempt to connect to the remote system.<br> 
@@ -800,7 +800,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      * By default, this is the subsystem's port property, via {@link #getPort()}.
      * Override if appropriate. 
      * <br> This is called by the default implementation of {@link #connect(IProgressMonitor)}, if
-     * subsystem.getParentSubSystemFactory().supportsServerLaunchProperties() is true.
+     * subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties() is true.
      */
     protected int getConnectPort()
     {
@@ -811,7 +811,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      * Disconnects from the remote system.
      * <p>
      * You must override
-     * if <code>subsystem.getParentSubSystemFactory().supportsServerLaunchProperties</code> 
+     * if <code>subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties</code> 
      * returns false.
      * <p>
      * If the subsystem supports server launch
@@ -849,7 +849,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	/**
 	 * Return the remote server launcher, which implements IServerLauncher.
 	 * This is called by the default implementation of connect() and disconnect(), if 
-	 * subsystem.getParentSubSystemFactory().supportsServerLaunchProperties returns true.
+	 * subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties returns true.
 	 * <p>This returns null be default!
 	 */
 	public IServerLauncher getRemoteServerLauncher()

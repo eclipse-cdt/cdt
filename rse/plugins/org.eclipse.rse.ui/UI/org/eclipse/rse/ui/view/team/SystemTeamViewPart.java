@@ -499,7 +499,7 @@ public class SystemTeamViewPart
 			ISystemViewElementAdapter adapter = SystemAdapterHelpers.getAdapter(firstSelection, treeViewer);
 			if (adapter != null)
 			{
-				if ((firstSelection instanceof SystemTeamViewSubSystemFactoryNode) ||
+				if ((firstSelection instanceof SystemTeamViewSubSystemConfigurationNode) ||
 		// FIXME - compile actions separate now			(firstSelection instanceof SystemTeamViewCompileTypeNode) ||
 					(firstSelection instanceof ISystemProfile))
 				{ 

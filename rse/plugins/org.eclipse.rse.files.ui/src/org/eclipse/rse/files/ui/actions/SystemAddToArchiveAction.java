@@ -180,7 +180,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 		{
 			return;
 		}
-		if (!destinationArchive.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemFactory().supportsArchiveManagement())
+		if (!destinationArchive.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement())
 		{
 			return;
 		}

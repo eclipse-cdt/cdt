@@ -303,7 +303,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		  data.setLocalValue(localPort.toString());
 		else
 		  data.setLocalValue(null); // clear history
-	    SubSystemFactory ssFactory = subsys.getParentSubSystemFactory();
+	    SubSystemConfiguration ssFactory = subsys.getParentSubSystemConfiguration();
 	    boolean notApplicable = (!ssFactory.isPortEditable() && (iPort <= 0));
 		if (!notApplicable)
 		{
@@ -475,7 +475,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
           portInteger = new Integer(port); 
     	else
     	  portInteger = new Integer(0);
-        SubSystemFactory ssFactory = subsys.getParentSubSystemFactory();	    
+        SubSystemConfiguration ssFactory = subsys.getParentSubSystemConfiguration();	    
 	    ssFactory.updateSubSystem((Shell)null, subsys, false, subsys.getLocalUserId(), true, portInteger); 		  		                      
     }
     */
@@ -579,9 +579,9 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 				/** FIXME can't access specific subsystems from core anymore
 				boolean supports = false;
 				if (ss instanceof IRemoteFileSubSystem)
-					supports = ((IRemoteFileSubSystemFactory)ss.getParentSubSystemFactory()).supportsEnvironmentVariablesPropertyPage();
+					supports = ((IRemoteFileSubSystemConfiguration)ss.getParentSubSystemConfiguration()).supportsEnvironmentVariablesPropertyPage();
 				else
-					supports = ((IRemoteCmdSubSystemFactory)ss.getParentSubSystemFactory()).supportsEnvironmentVariablesPropertyPage();
+					supports = ((IRemoteCmdSubSystemConfiguration)ss.getParentSubSystemConfiguration()).supportsEnvironmentVariablesPropertyPage();
 				*/
 				boolean supports = false;
 				return supports ? value.equals("true") : value.equals("false");

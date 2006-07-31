@@ -71,7 +71,7 @@ public class SystemViewFilterPoolReferenceAdapter
 		//  return; // does not make sense adding unique actions per multi-selection
 		Object element = selection.getFirstElement();
 		ISystemFilterPool pool = getFilterPool(element);
-	    ISubSystemConfiguration ssFactory = getSubSystemFactory(pool);
+	    ISubSystemConfiguration ssFactory = getSubSystemConfiguration(pool);
 	    ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssFactory.getAdapter(ISubsystemConfigurationAdapter.class);
 		
 		IAction[] actions = adapter.getFilterPoolActions(ssFactory, pool, shell);
@@ -95,9 +95,9 @@ public class SystemViewFilterPoolReferenceAdapter
 		}				
 	}
 	
-	private ISubSystemConfiguration getSubSystemFactory(ISystemFilterPool pool)
+	private ISubSystemConfiguration getSubSystemConfiguration(ISystemFilterPool pool)
 	{
-		return SubSystemHelpers.getParentSubSystemFactory(pool);
+		return SubSystemHelpers.getParentSubSystemConfiguration(pool);
 	}
 	
 	/**
@@ -267,7 +267,7 @@ public class SystemViewFilterPoolReferenceAdapter
 		ISystemFilterPool fp = getFilterPool(element);
 		ISystemFilterPoolManager fpMgr = fp.getSystemFilterPoolManager();
 		fpMgr.deleteSystemFilterPool(fp);
-		//SubSystemFactory ssParentFactory = getSubSystemFactory(fp); 			
+		//SubSystemConfiguration ssParentFactory = getSubSystemConfiguration(fp); 			
 		//ssParentFactory.deleteFilterPool(fp);
 		return true;
 	}
@@ -293,7 +293,7 @@ public class SystemViewFilterPoolReferenceAdapter
 		ISystemFilterPool fp = getFilterPool(element);
 		ISystemFilterPoolManager fpMgr = fp.getSystemFilterPoolManager();
 		fpMgr.renameSystemFilterPool(fp,name);
-		//SubSystemFactory ssParentFactory = getSubSystemFactory(fp); 					
+		//SubSystemConfiguration ssParentFactory = getSubSystemConfiguration(fp); 					
 		//ssParentFactory.renameFilterPool(fp,name);
 		return true;
 	}	

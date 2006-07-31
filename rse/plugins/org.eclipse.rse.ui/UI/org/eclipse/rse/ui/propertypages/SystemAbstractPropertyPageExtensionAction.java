@@ -134,9 +134,9 @@ public abstract class SystemAbstractPropertyPageExtensionAction
     /**
      * Returns the id of the subsystem factory of the input remote object.
      */
-    public String getRemoteObjectSubSystemFactoryId()
+    public String getRemoteObjectSubSystemConfigurationId()
     {
-    	return getRemoteAdapter().getSubSystemFactoryId(getRemoteObject());
+    	return getRemoteAdapter().getSubSystemConfigurationId(getRemoteObject());
     }
     /**
      * Returns the type category of the input remote object
@@ -176,7 +176,7 @@ public abstract class SystemAbstractPropertyPageExtensionAction
     /**
      * Returns the subsystem factory which owns the subsystem from which the input remote object was resolved
      */
-    public ISubSystemConfiguration getSubSystemFactory()
+    public ISubSystemConfiguration getSubSystemConfiguration()
     {
     	ISubSystem ss = getSubSystem();
     	if (ss != null)
@@ -209,7 +209,7 @@ public abstract class SystemAbstractPropertyPageExtensionAction
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);	
 		
         //System.out.println("Remote object name................: " + getRemoteObjectName());
-        //System.out.println("Remote object subsystem factory id: " + getRemoteObjectSubSystemFactoryId());   
+        //System.out.println("Remote object subsystem factory id: " + getRemoteObjectSubSystemConfigurationId());   
         //System.out.println("Remote object type category.......: " + getRemoteObjectTypeCategory());
         //System.out.println("Remote object type ...............: " + getRemoteObjectType());
         //System.out.println("Remote object subtype ............: " + getRemoteObjectSubType());
@@ -219,7 +219,7 @@ public abstract class SystemAbstractPropertyPageExtensionAction
 		SystemWidgetHelpers.createLabel(composite_prompts, checkForNull(getRemoteObjectName()));
 
 		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object subsystem factory id: ");
-		SystemWidgetHelpers.createLabel(composite_prompts, checkForNull(getRemoteObjectSubSystemFactoryId()));
+		SystemWidgetHelpers.createLabel(composite_prompts, checkForNull(getRemoteObjectSubSystemConfigurationId()));
 
 		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object type category: ");
 		SystemWidgetHelpers.createLabel(composite_prompts, checkForNull(getRemoteObjectTypeCategory()));

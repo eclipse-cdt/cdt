@@ -55,7 +55,7 @@ public interface ISystemRemoteElementAdapter extends IRemoteObjectIdentifier
 	 * Return the subsystem factory id that owns this remote object
 	 * The value must not be translated, so that property pages registered via xml can subset by it.
 	 */
-	public String getSubSystemFactoryId(Object element);	
+	public String getSubSystemConfigurationId(Object element);	
 	/**
 	 * Return a value for the type category property for this object
 	 * The value must not be translated, so that property pages registered via xml can subset by it.

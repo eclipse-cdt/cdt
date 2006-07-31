@@ -69,7 +69,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
 	private SystemHistoryCombo folderCombo = null;
 	private Button             browseButton = null;	
 	//private RemoteFileSubSystem subsystem = null;
-	//private RemoteFileSubSystemFactory subsystemFactory = null;
+	//private RemoteFileSubSystemConfiguration subsystemFactory = null;
 	private String[]           systemTypes = null;	
 	private IHost   connection = null;
 	private boolean            showNewConnectionPrompt = true;
@@ -146,7 +146,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
 
     /**
      * Set the input system connection to restrict the browse button to this connection only.
-     * Either call this or setSubSystemFactoryId.
+     * Either call this or setSubSystemConfigurationId.
      */
     public void setSystemConnection(IHost connection)
     {

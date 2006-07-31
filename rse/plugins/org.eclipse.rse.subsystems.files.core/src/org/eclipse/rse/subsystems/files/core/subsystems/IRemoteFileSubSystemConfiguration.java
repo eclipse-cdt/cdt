@@ -26,7 +26,7 @@ import org.eclipse.rse.ui.validators.ValidatorFolderName;
  * Specialization for file subsystem factories.
  */
 /**
- * @lastgen interface RemoteFileSubSystemFactory extends SubSystemFactory {}
+ * @lastgen interface RemoteFileSubSystemConfiguration extends SubSystemConfiguration {}
  */
 
 public interface IRemoteFileSubSystemConfiguration extends ISubSystemConfiguration

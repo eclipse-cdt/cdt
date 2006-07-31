@@ -24,7 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.files.ui.resources.SystemUniversalTempFileListener;
-import org.eclipse.rse.files.ui.view.RemoteFileSubsystemFactoryAdapterFactory;
+import org.eclipse.rse.files.ui.view.RemoteFileSubsystemConfigurationAdapterFactory;
 import org.eclipse.rse.files.ui.view.SystemViewFileAdapterFactory;
 import org.eclipse.rse.files.ui.view.SystemViewSearchResultAdapterFactory;
 import org.eclipse.rse.files.ui.view.SystemViewSearchResultSetAdapterFactory;
@@ -83,7 +83,7 @@ public class Activator extends AbstractUIPlugin {
 		svsraf = new SystemViewSearchResultAdapterFactory();	
 		svsraf.registerWithManager(manager);	
 		
-	    RemoteFileSubsystemFactoryAdapterFactory rfssfaf = new RemoteFileSubsystemFactoryAdapterFactory();
+	    RemoteFileSubsystemConfigurationAdapterFactory rfssfaf = new RemoteFileSubsystemConfigurationAdapterFactory();
 	    rfssfaf.registerWithManager(manager);
 	    
 	    // universal temp file listener

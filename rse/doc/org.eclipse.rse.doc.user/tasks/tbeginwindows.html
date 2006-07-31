@@ -14,41 +14,35 @@
 <h1 class="topictitle1">Connecting to a remote Windows server</h1>
 <div>
 <div class="p">
-<p><b>Installing the server code:</b></p>
+<p><b>Installing the server code</b></p>
 <div class="p">
 <ol>
-<li>Create a directory where you want to install the server code. The
+<li>
+Create a directory where you want to install the server code. The
 remainder of these instructions will assume the directory name and location is
-C:\rseserver, but you are free to use any directory you choose. </li>
-<li>Find the <span style="font-style: italic;">x</span>\eclipse\plugins\com.ibm.etools.systems.universal_<i>version_number</i>\serverruntime\rseserver.jar
-file on your local workstation, where <i>x</i> is the directory where you
-installed the product.</li>
-<li>Copy the rseserver.jar to the C:\rseserver directory (this can be
-on a different machine).</li>
-<li>Open a command prompt, and run the following command in the
-C:\rseserver directory to extract the server code:
-<pre>jar xf rseserver.jar</pre>
-<div class="note">If
-you receive an error, ensure that you have an entry for the /bin JDK
-directory in your Path environment variable. JDK version 1.4 is required.</div>
-</li>
+C:\rseserver, but you are free to use any directory you choose.</li>
+<li>Find the package that contains the server.
+The server code is usually packaged with a containing product and you should refer to that 
+product's documentation for finding and installing the server package.
+The server is also available, however, on the Eclipse DSDP Target Management download site as the package
+rseserver-&lt;version&gt;-&lt;os&gt;.zip. For example, rseserver-1.0-windows.zip contains the release 1.0 server
+for Windows.</li>
+<li>Copy the rseserver.zip to the C:\rseserver directory (this could be on a different machine).</li>
+<li>Using an unzip utility to extract the server code to the C:\rseserver directory.</li>
 </ol>
 </div>
-<p><b>Starting the server:</b></p>
-<p>You can start the RSE communications
-server with the server manually, or with a daemon.</p>
-<div class="p">To start the server
-manually:
+<p><b>Starting the server</b></p>
+<p>You can start the RSE communications server with the server manually, or with a daemon.</p>
+<div class="p">To start the server manually:
 <ol>
-<li>First, you need to configure your CLASSPATH and then start the
-communications server. In a command prompt, enter:
+<li>Configure your CLASSPATH and then start the communications server. In a command prompt, enter:
 <pre>
 c:<br/>
-cd:\rseserver<br/>
-win.env.bat<br/>
-run.win.bat [port]
+cd \rseserver<br/>
+setup.bat<br/>
+server.bat [port]
 </pre>
-The port parameter to the run.win.bat program is optional. If
+The port parameter to the server.bat program is optional. If
 you do not specify a port, the server will pick the first port
 available and print the port number to standard out. By default, it is usually 4033.
 You will then have to enter this port number in the port property for the
@@ -64,13 +58,13 @@ server daemon. In a command prompt, enter:
 <pre>
 c:<br/>
 cd:\rseserver<br/>
-win.env.bat<br/>
-daemon.win.bat
+setup.bat<br/>
+daemon.bat
 </pre>
 Note that the server daemon <b>does not</b> enforce any user
 authentication. If you run the server daemon, any user can connect to the machine, work
-with the file system and run commands. <span style="font-weight: bold;">Use
-of the server daemon on Windows systems is not recommended</span>.</li>
+with the file system and run commands.
+<span style="font-weight: bold;">Use of the server daemon on Windows systems is not recommended</span>.</li>
 </ol>
 </div>
 </div>

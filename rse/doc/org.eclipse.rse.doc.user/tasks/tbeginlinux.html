@@ -20,40 +20,39 @@ or UNIX server.</p>
 <p><b>Prerequisites</b></p>
 <p>To use the Remote System Explorer communications server daemon you need
 to install Perl. Using the daemon helps eliminate some of the manual steps
-when you connect to the server.Also note that Java Development Kit (JDK)
-version 1.4 or higher is required.</p>
+when you connect to the server.</p>
 <p><b>Installing the server code</b></p>
 <div class="p">
 <ol>
-  <li>Ensure that Perl is installed.</li>
-  <li>Ensure that JDK version 1.4 or higher is installed.</li>
-  <li>Create a directory where you want to install the server code. The remainder
+<li>
+Find the package that contains the server.
+The server code is usually packaged with the containing product and you should refer to that 
+product's documentation for finding and installing the server package.
+The server is also available, however, on the Eclipse DSDP Target Management download site as the package
+rseserver-&lt;version&gt;-&lt;os&gt;.tar. For example, rseserver-1.0-linux.tar contains the release 1.0 server
+for Linux. There are servers for Linux, AIX, a generic Unix version that can be tailored to your particular flavor
+of Unix, and an experimental Mac OS X version.</li> 
+<li>Ensure that Perl is installed.</li>
+<li>Ensure that a Java Runtime Environment (JRE) version 1.4 or higher is installed.</li>
+<li>Create a directory where you want to install the server code. The remainder
 of these instructions will assume the directory /opt/rseserver (suitable for
 team sharing), but you are free to use any directory.</li>
-  <li>Find the <i>x:\product directory</i>\eclipse\plugins\com.ibm.etools.systems.universal_<i>version_number</i>\serverruntime\rseserver.jar
-file on your local workstation, where <i>x:\product directory</i> is the directory
-where you installed the product, for example, c:\WSWB.</li>
-  <li>FTP the file rseserver.jar to the /opt/rseserver directory.</li>
-  <li>Switch to the /opt/rseserver directory by typing:
-  <pre>cd /opt/rseserver</pre>
-  </li>
-  <li>Run the following command in the /opt/rseserver directory to extract the
-server code:<pre>jar -xf rseserver.jar</pre>
-  <b><span class="attentiontitle">Attention</span></b><span class="attentiontitle">: </span>The
-jar command is shipped with the JDK and might not be in your path.  If you
-receive a "command not found" error when running the jar command then try
-to qualify the jar command with the installation directory for the JDK.  For
-example: <samp class="codeph">/opt/IBMJava2-131/bin/jar -xf rseserver.jar</samp>
-<br>
-</br>
-  </li>
-  <li>Still in the /opt/rseserver directory, run the following configuration
-commands:<pre>dos2unix daemon.linux
-dos2unix server.linux
-chmod 755 server.linux
-chmod 755 daemon.linux
-chmod 755 auth.pl</pre>
-  </li>
+<li>Upload the server package to this directory. You can use FTP.</li>
+<li>Switch to the /opt/rseserver directory by typing:
+<pre>cd /opt/rseserver</pre>
+</li>
+<li>Run the following command in the /opt/rseserver directory to extract the
+server code from the package appropriate to your operating system. For linux this command is:
+<pre>tar -xf rseserver-1.0-linux.tar</pre>
+</li>
+<li>Still in the /opt/rseserver directory, run the following configuration
+commands:
+<pre>
+chmod 755 server.pl
+chmod 755 daemon.pl
+chmod 755 auth.pl
+</pre>
+</li>
 </ol>
 </div>
 
@@ -70,42 +69,27 @@ Classic VM (build 1.4.1, J2RE 1.4.1 IBM build cxppc321411-20040301 (JIT enabled:
 </div>
 <div class="p">If
 you receive a "command not found" error, then try creating a symbolic link
-to the java command in /usr/bin by running the following command:<pre>ln -s  /opt/IBMJava2-131/jre/bin/java /usr/bin/java</pre>
+to the java command in /usr/bin by running the following command:<pre>ln -s  /opt/IBMJava2-141/jre/bin/java /usr/bin/java</pre>
 </div>
 <div class="p"><b>To start the server with the server daemon</b>
 <ol>
-  <li>Ensure that you are running using the root user ID. (If the daemon is
+<li>Ensure that you are running using the root user ID. (If the daemon is
 not run under root, it will be unable to authenticate connecting users.) Run
 the following commands:<pre>su -l root
 cd /opt/rseserver
-perl ./daemon.linux</pre>
+perl ./daemon.pl</pre>
 </li>
 </ol>
 Note that the server daemon runs on port 4035. You can also start the
 daemon.unix in the same way.<br></br>
-<p><b>To start the Linux server manually</b></p>
+<p><b>To start the server manually</b></p>
 <div class="p">Run
 the following commands:<pre>cd /opt/rseserver
-perl ./server.linux [port]</pre>
-These commands run the server.linux
+perl ./server.pl [port]</pre>
+These commands run the server.pl
 script located in the /opt/rseserver directory. If this does not work, try
-changing the permission attributes on server.linux (for example, enter <samp class="codeph">chmod
-755 server.linux</samp>. The port parameter to the server.linux script is
-optional. If you do not specify a port, then the server will pick the first
-one available and print the port number to standard out. By default, it is
-usually 4033. If you would like to use a different port, you will then have
-to enter this port number in port property for the Files subsystem for your
-connection in the Remote System Explorer (see <span class="uicontrol">Connecting to the
-Remote Server</span>, below). Otherwise, you do not need to change this
-property.</div>
-<p><b>To start the UNIX server manually</b></p>
-<div class="p">To run the unix.server
-script, enter the following commands:<pre>cd /opt/rseserver
-perl ./server.unix [port]</pre>
-These commands run the server.linux
-script located in the /opt/rseserver directory. If this does not work, try
-changing the permission attributes on server.unix (for example, enter <samp class="codeph">chmod
-755 server.unix</samp>. The port parameter to the server.unix script is
+changing the permission attributes on server.pl (for example, enter <samp class="codeph">chmod
+755 server.pl</samp>. The port parameter to the server.pl script is
 optional. If you do not specify a port, then the server will pick the first
 one available and print the port number to standard out. By default, it is
 usually 4033. If you would like to use a different port, you will then have
@@ -118,9 +102,8 @@ property.</div>
 to configure the daemon to run at start up for Linux. To do so, you need to
 append a call to the daemon to your startup script.  Add the following lines
 to the bottom of the /etc/rc.d/rc.local file:<pre>cd /opt/rseserver
-perl ./daemon.linux &amp;</pre>
-You can also add <samp class="codeph">perl ./daemon.unix</samp> if
-you want to run the UNIX daemon at startup.</div>
+perl ./daemon.pl &amp;</pre>
+</div>
 </div>
 </div><br></br>
 <p><b>Connecting to the Remote Server</b></p>

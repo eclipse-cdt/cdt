@@ -43,7 +43,9 @@ public class SystemPostableEventNotifier implements Runnable
 	{
 		this.event = event;
 		this.listener = listener;
-		Display d = listener.getShell().getDisplay();
+		// fix for 150919
+		Display d = Display.getDefault();
+		//Display d = listener.getShell().getDisplay();
 		//d.asyncExec(this);
 		d.syncExec(this);
 	}

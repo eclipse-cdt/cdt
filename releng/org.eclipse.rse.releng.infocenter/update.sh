@@ -40,8 +40,12 @@ if [ "$NEED_RESTART" != "0" ]; then
   $IHOME/bin/infocenter.sh shutdown
 
   echo "Deploying new plug-ins..."
+  ######################### Deploy RSE #############################
   rm $IHOME/plugins/rse/eclipse/plugins/*
   cp -p $IHOME/deploy/rse/plugins/* $IHOME/plugins/rse/eclipse/plugins/
+  ####################### Deploy dd.dsf ############################
+  rm $IHOME/plugins/dd.dsf/eclipse/plugins/*
+  cp -p $IHOME/deploy/dd.dsf/plugins/* $IHOME/plugins/dd.dsf/eclipse/plugins/
   
   #TODO: not sure if we need to delete the old index to force re-indexing
   echo "Deleting old index..."

@@ -105,10 +105,10 @@ FocusListener
 				{
 					Thread.sleep(interval);
 					doQuery();
-					while (_querying)
-					{
-						Thread.sleep(100);
-					}
+				//	while (_querying)
+				//	{
+				//		Thread.sleep(100);
+				//	}
 					doRedraw();
 				}
 				catch (InterruptedException e)
@@ -124,6 +124,7 @@ FocusListener
 		
 		protected void doQuery()
 		{
+
 			Display display = Display.getDefault();
 			if (display != null && !_querying)
 			{
@@ -160,7 +161,17 @@ FocusListener
 				   };
 				   
 				   job.schedule();		
+				   
+				   try
+				   {
+					   job.wait();
+				   }
+				   catch (Exception e)
+				   {
+					   
+				   }
 			}
+	
 		}
 		
 		protected void doRedraw()

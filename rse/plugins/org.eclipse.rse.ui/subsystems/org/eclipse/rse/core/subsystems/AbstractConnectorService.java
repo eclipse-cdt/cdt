@@ -977,9 +977,9 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	protected void enableServerLaunchType(ISubSystem subsystem, ServerLaunchType serverLaunchType, boolean enable)
 	{
 		IServerLauncherProperties sl =getRemoteServerLauncherProperties();
-		if (sl instanceof IBMServerLauncher)
+		if (sl instanceof RemoteServerLauncher)
 		{
-			IBMServerLauncher isl = (IBMServerLauncher)sl;
+			RemoteServerLauncher isl = (RemoteServerLauncher)sl;
 			isl.enableServerLaunchType(serverLaunchType, enable);
 		}
 	}
@@ -992,9 +992,9 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	protected boolean isEnabledServerLaunchType(ISubSystem subsystem, ServerLaunchType serverLaunchType)
 	{
 		IServerLauncherProperties sl = getRemoteServerLauncherProperties();
-		if (sl instanceof IBMServerLauncher)
+		if (sl instanceof RemoteServerLauncher)
 		{
-			IBMServerLauncher isl = (IBMServerLauncher)sl;
+			RemoteServerLauncher isl = (RemoteServerLauncher)sl;
 			return isl.isEnabledServerLaunchType(serverLaunchType);
 		}
 		else

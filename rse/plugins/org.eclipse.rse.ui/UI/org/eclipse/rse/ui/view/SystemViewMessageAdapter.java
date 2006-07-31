@@ -29,8 +29,6 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 /**
  * Adapter for displaying temporary message objects when an expand fails or is cancelled.
  * <p>
- * The objects must all implement com.ibm.etools.systems.model.ISystemExpandablePromptableObject
- *  to use this adapter.
  */
 public class SystemViewMessageAdapter 
        extends AbstractSystemViewAdapter implements ISystemViewElementAdapter

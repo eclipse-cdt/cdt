@@ -54,7 +54,6 @@ import org.eclipse.swt.widgets.Text;
  *   <li>{@link #setDefaultConnection(IHost)}
  *   <li>{@link #setSystemTypes(String[])} 
  *   <li>{@link #setShowPropertySheet(boolean)}
- *   <li>{@link #enableAddMode(com.ibm.etools.systems.files.ui.ISystemAddFileListener)}
  *   <li>{@link #setMultipleSelectionMode(boolean)}
  * </ul>
  * <p>

@@ -18,7 +18,7 @@ package org.eclipse.rse.ui;
 /**
  * @author mjberger
  * This is used in forms that are used within dialogs and pages, and 
- *   specifically with {@link org.eclipse.rse.ui.IBMBaseServerLauncherForm}.
+ *   specifically with {@link org.eclipse.rse.ui.RemoteBaseServerLauncherForm}.
  *   It allows the dialog or page to be called back when the form code calls
  *   verify, a method within the form class. This way the diaog or
  *   page can update their error messages if there are any.

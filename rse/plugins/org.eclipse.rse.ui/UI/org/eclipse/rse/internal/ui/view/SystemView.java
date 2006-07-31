@@ -791,17 +791,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	return gotoActions;
     }    
   		
-	/*
-	 * Helper method to collapse a node in the tree, and then re-expand it one element deep.
-	 * Called by com.ibm.etools.systems.SystemBaseElement.
-	 */
-	//public void refreshElementChildren(ISystemBaseElement element)
-	//{
-	//	boolean expanded = isElementExpanded(element);
-    //  collapseElement(element, true); // collapse and delete children
-    //  if (expanded)
-    //    expandToLevel(element, 1); // re-expand
-    //}
+
 	/**
 	 * Helper method to collapse a node in the tree.
 	 * Called when a currently expanded subsystem is disconnected.
@@ -5133,9 +5123,6 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 		if (anyOk)
 		{
             if (selectionIsRemoteObject)          
-              //sr.fireEvent(
-              //  new com.ibm.etools.systems.model.impl.SystemResourceChangeEvent(
-              //    deleted,ISystemResourceChangeEvent.EVENT_DELETE_REMOTE_MANY,null));
               sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, deletedVector, null, null, null, this);
           else
           {
@@ -5202,10 +5189,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 			if (ok)
 			{
 			  if (remoteAdapter != null)
-                //sr.fireEvent(
-                //  new com.ibm.etools.systems.model.impl.SystemResourceChangeEvent(
-                //    element,ISystemResourceChangeEvent.EVENT_RENAME_REMOTE, oldFullName));
-                sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED,
+                 sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED,
                   element, parentElement, null, oldFullName, this);
 
 			  else

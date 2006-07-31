@@ -47,12 +47,12 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
  * The property page for subsystem properties when accessed from the connection property page.
- * The plugin.xml file registers this for objects of class com.ibm.etools.systems.model.SystemConnection
+ * The plugin.xml file registers this for objects of class org.eclipse.rse.model.IHost
    <page
-         objectClass="com.ibm.etools.systems.model.SystemConnection"
+         objectClass="org.eclipse.rse.model.IHost"
          name="SubSystems"
          class="org.eclipse.rse.core.ui.propertypages.SystemConnectionSubSystemsPropertyPage"
-         id="com.ibm.etools.systems.SystemConnectionSubSystemsPropertyPage">
+         id="org.eclipse.rse.SystemConnectionSubSystemsPropertyPage">
    </page>
  */
 public class SystemConnectionSubSystemsPropertyPage extends SystemBasePropertyPage

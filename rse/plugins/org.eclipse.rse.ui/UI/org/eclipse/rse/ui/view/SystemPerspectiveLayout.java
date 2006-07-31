@@ -64,8 +64,7 @@ public class SystemPerspectiveLayout implements IPerspectiveFactory
 	
 		folder.addView(IPageLayout.ID_OUTLINE); // put in desktop-supplied outline view
 		// unfortunately we can't do the following as snippets aren't in wswb, according to DKM
-		//folder.addView("com.ibm.sed.library.libraryView"); // NEW FOR 5.1.2: SNIPPETS VIEW. PSC
-		
+
 		folder= layout.createFolder("org.eclipse.rse.ui.view.PropertiesFolder", IPageLayout.BOTTOM, 
                 (float).75, "org.eclipse.rse.ui.view.NavFolder");	
 		//layout.addView(IPageLayout.ID_PROP_SHEET, IPageLayout.BOTTOM, 

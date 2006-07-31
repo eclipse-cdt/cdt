@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.widgets;
 
-import org.eclipse.rse.core.internal.subsystems.IBMServerLauncherConstants;
+import org.eclipse.rse.core.internal.subsystems.RemoteServerLauncherConstants;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Base IBM server launcher form.  Extend this to provide a specialized server launcher form
  */
-public abstract class IBMBaseServerLauncherForm extends SystemBaseForm implements IServerLauncherForm, IBMServerLauncherConstants, ISystemConnectionWizardErrorUpdater
+public abstract class RemoteBaseServerLauncherForm extends SystemBaseForm implements IServerLauncherForm, RemoteServerLauncherConstants, ISystemConnectionWizardErrorUpdater
 {
 
 
@@ -47,7 +47,7 @@ public abstract class IBMBaseServerLauncherForm extends SystemBaseForm implement
 	 * Constructor for EnvironmentVariablesForm.
 	 * @param msgLine
 	 */
-	public IBMBaseServerLauncherForm(Shell shell, ISystemMessageLine msgLine)
+	public RemoteBaseServerLauncherForm(Shell shell, ISystemMessageLine msgLine)
 	{
 		super(shell, msgLine);
 		_msgLine = msgLine;

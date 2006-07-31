@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * The property page for filter string properties.
  * This is an output-only page.
- * The plugin.xml file registers this for objects of class com.ibm.etools.systems.filters.SystemFilterString
+ * The plugin.xml file registers this for objects of class org.eclipse.rse.internal.filters.SystemFilterString
  */
 public class SystemFilterStringPropertyPage extends SystemBasePropertyPage implements ISystemFilterStringEditPaneListener
 {

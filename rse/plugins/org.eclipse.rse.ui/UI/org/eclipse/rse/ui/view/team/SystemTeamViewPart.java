@@ -733,15 +733,7 @@ public class SystemTeamViewPart
 	     		{
 	     			if (!item.getId().equals("team.main") || privateProfileStillExists)
 	     			  menuMgr.remove(item);
-	     			/*
-	     			if (item.getId().startsWith("com.ibm.etools") || 
-	     			    item.getId().startsWith("com_ibm_etools") || 
-	     			    item.getId().equals("ValidationAction") ||
-	     			    item.getId().equals("addJETNature") ||
-	     			    item.getId().equals("addFromHistoryAction"))
-	     			{
-	     			   menuMgr.remove(item);	
-	     		    }*/
+
 	     		}
 	     	}
 	     }

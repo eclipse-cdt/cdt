@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * The property page for core subsystem properties.
- * The plugin.xml file registers this for objects of class com.ibm.etools.systems.subsystems.SubSystem
+ * The plugin.xml file registers this for objects of class org.eclipse.rse.internal.subsystems.SubSystem
  */
 public class SystemSubSystemPropertyPageCore extends SystemBasePropertyPage
        implements  ISystemMessages, ISystemMessageLine//, ISystemMessageLineTarget

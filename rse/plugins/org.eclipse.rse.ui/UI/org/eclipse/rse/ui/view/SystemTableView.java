@@ -112,8 +112,6 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
  * This subclass of the standard JFace table viewer is used to
  * show a generic table view of the selected object in the Systems view
  * <p>
- * 
- * TableViewer comes from com.ibm.jface.viewer
  */
 public class SystemTableView
 	extends TableViewer
@@ -1452,7 +1450,6 @@ public class SystemTableView
 			for (int idx = 0; idx < deleted.length; idx++)
 				deleted[idx] = deletedVector.elementAt(idx);
 			if (_selectionIsRemoteObject)
-				//sr.fireEvent(new com.ibm.etools.systems.model.impl.SystemResourceChangeEvent(deleted, ISystemResourceChangeEvent.EVENT_DELETE_REMOTE_MANY, null));
 				sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, deletedVector, null, null, null, this);
 			else
 				sr.fireEvent(new org.eclipse.rse.model.SystemResourceChangeEvent(deleted, ISystemResourceChangeEvents.EVENT_DELETE_MANY, getInput()));
@@ -1533,8 +1530,6 @@ public class SystemTableView
 						{
 							updateItem(widget, element);
 						}
-
-						//sr.fireEvent(new com.ibm.etools.systems.model.impl.SystemResourceChangeEvent(element, ISystemResourceChangeEvent.EVENT_RENAME_REMOTE, oldFullName));
 						sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, remoteAdapter.getSubSystem(element), oldFullName, this);
 
 					}

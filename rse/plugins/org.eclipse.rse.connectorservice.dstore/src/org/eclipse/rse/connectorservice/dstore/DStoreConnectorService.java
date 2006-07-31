@@ -49,7 +49,7 @@ import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
-import org.eclipse.rse.core.subsystems.IIBMServerLauncher;
+import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -337,13 +337,13 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		}
 	}
 	
-	private IIBMServerLauncher getIBMServerLauncher()
+	private IRemoteServerLauncher getIBMServerLauncher()
 	{
 		IServerLauncherProperties sl = getRemoteServerLauncherProperties();
 		//System.out.println("in UniversalSystem#getServerLauncher: sl = "+sl);
-		if (sl != null && sl instanceof IIBMServerLauncher)
+		if (sl != null && sl instanceof IRemoteServerLauncher)
 		{			
-			return (IIBMServerLauncher)sl;
+			return (IRemoteServerLauncher)sl;
 		}	
 		else
 			//return ((SubSystemConfigurationImpl)ss.getParentSubSystemConfiguration()).getDefaultIBMServerLauncher(ss);
@@ -478,7 +478,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 
 //		ISubSystem ss = getPrimarySubSystem();
 		getPrimarySubSystem();
-		IIBMServerLauncher serverLauncher = getIBMServerLauncher(); 
+		IRemoteServerLauncher serverLauncher = getIBMServerLauncher(); 
 		
 		ServerLaunchType serverLauncherType = null;
 		boolean autoDetectSSL = true;

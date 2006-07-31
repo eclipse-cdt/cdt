@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Label;
 /**
  * The property page for filter properties.
  * This is an output-only page.
- * The plugin.xml file registers this for objects of class com.ibm.etools.systems.filters.SystemFilter
+ * The plugin.xml file registers this for objects of class org.eclipse.rse.internal.filters.SystemFilter
  */
 public class SystemFilterPropertyPage extends SystemBasePropertyPage
 {

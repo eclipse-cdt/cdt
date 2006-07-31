@@ -18,7 +18,7 @@ package org.eclipse.rse.core.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.rse.core.internal.subsystems.IBMServerLauncherConstants;
+import org.eclipse.rse.core.internal.subsystems.RemoteServerLauncherConstants;
 import org.eclipse.rse.core.internal.subsystems.ServerLauncher;
 import org.eclipse.rse.internal.model.IPropertyType;
 import org.eclipse.rse.model.IProperty;
@@ -41,20 +41,20 @@ import org.eclipse.rse.ui.SystemResources;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.rse.core.subsystems.IBMServerLauncher#getServerLaunchType <em>Server Launch Type</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IBMServerLauncher#getPort <em>Port</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IBMServerLauncher#getRexecPort <em>Rexec Port</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IBMServerLauncher#getDaemonPort <em>Daemon Port</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IBMServerLauncher#getServerPath <em>Server Path</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IBMServerLauncher#getServerScript <em>Server Script</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IBMServerLauncher#getIbmAttributes <em>Ibm Attributes</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.IBMServerLauncher#getRestrictedTypes <em>Restricted Types</em>}</li>
+ *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getServerLaunchType <em>Server Launch Type</em>}</li>
+ *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getPort <em>Port</em>}</li>
+ *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getRexecPort <em>Rexec Port</em>}</li>
+ *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getDaemonPort <em>Daemon Port</em>}</li>
+ *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getServerPath <em>Server Path</em>}</li>
+ *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getServerScript <em>Server Script</em>}</li>
+ *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getIbmAttributes <em>Ibm Attributes</em>}</li>
+ *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getRestrictedTypes <em>Restricted Types</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class IBMServerLauncher extends ServerLauncher implements IIBMServerLauncher
+public class RemoteServerLauncher extends ServerLauncher implements IRemoteServerLauncher
 {
 
 	protected static final ServerLaunchType SERVER_LAUNCH_TYPE_EDEFAULT = ServerLaunchType.DAEMON_LITERAL;
@@ -100,7 +100,7 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 
 	protected IPropertyType _serverLauncherEnumType;
 	
-	protected IBMServerLauncher(String name, IConnectorService connectorService)
+	protected RemoteServerLauncher(String name, IConnectorService connectorService)
 	{
 		super(name, connectorService);		
 	}
@@ -232,15 +232,15 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 	public IServerLauncherProperties cloneServerLauncher(IServerLauncherProperties newOne)
 	{
 		super.cloneServerLauncher(newOne);
-		IIBMServerLauncher ibmNewOne = (IIBMServerLauncher)newOne;
-		ibmNewOne.addPropertySets(getPropertySets());
-		ibmNewOne.setDaemonPort(getDaemonPort());
-		ibmNewOne.setRexecPort(getRexecPort());		
-		ibmNewOne.setServerLaunchType(getServerLaunchTypeGen());
-		ibmNewOne.setServerPath(getServerPath());
-		ibmNewOne.setServerScript(getServerScript());
-		ibmNewOne.setAutoDetectSSL(getAutoDetectSSL());
-		return ibmNewOne;
+		IRemoteServerLauncher remoteNewOne = (IRemoteServerLauncher)newOne;
+		remoteNewOne.addPropertySets(getPropertySets());
+		remoteNewOne.setDaemonPort(getDaemonPort());
+		remoteNewOne.setRexecPort(getRexecPort());		
+		remoteNewOne.setServerLaunchType(getServerLaunchTypeGen());
+		remoteNewOne.setServerPath(getServerPath());
+		remoteNewOne.setServerScript(getServerScript());
+		remoteNewOne.setAutoDetectSSL(getAutoDetectSSL());
+		return remoteNewOne;
 	}
 	
 	/**
@@ -376,7 +376,7 @@ public class IBMServerLauncher extends ServerLauncher implements IIBMServerLaunc
 		String serverPath = _serverPath;
 		if ((serverPath == null) || (serverPath.length() == 0))
 		{
-			serverPath = IBMServerLauncherConstants.DEFAULT_REXEC_PATH; 
+			serverPath = RemoteServerLauncherConstants.DEFAULT_REXEC_PATH; 
 		}
 		return serverPath;
 	}

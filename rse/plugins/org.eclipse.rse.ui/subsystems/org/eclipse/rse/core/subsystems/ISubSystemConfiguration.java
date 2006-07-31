@@ -397,7 +397,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * When a subsystem is created, and {@link #supportsServerLaunchProperties()}
 	 * returns true, this method is called to create the server launcher instance
 	 * associated with the subsystem. The default implementation is to create an
-	 * instance of {@link IIBMServerLauncher}, but override to create your own 
+	 * instance of {@link IRemoteServerLauncher}, but override to create your own 
 	 * ServerLauncher instance if you have your own class.
 	 */
 	public IServerLauncherProperties createServerLauncher(IConnectorService connectorService);

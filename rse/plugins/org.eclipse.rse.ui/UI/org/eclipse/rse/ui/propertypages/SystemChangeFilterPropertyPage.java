@@ -41,8 +41,8 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * This is the property page for changing filters. This page used to be the Change dialog.
- * The plugin.xml file registers this for objects of class com.ibm.etools.systems.filters.SystemFilter or
- *   com.ibm.systems.filters.SystemFilterReference.
+ * The plugin.xml file registers this for objects of class org.eclipse.rse.internal.filters.SystemFilter or
+ *   org.eclipse.rse.filters.SystemFilterReference.
  * <p>
  * If you have your own change filter dialog (versus configuring ours) you must configure this
  *  pane yourself by overriding {@link SubSystemConfiguration#customizeChangeFilterPropertyPage(SystemChangeFilterPropertyPage, ISystemFilter, Shell)}

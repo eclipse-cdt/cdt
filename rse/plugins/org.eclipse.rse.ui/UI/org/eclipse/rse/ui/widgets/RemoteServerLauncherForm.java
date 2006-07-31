@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.widgets;
 
-import org.eclipse.rse.core.subsystems.IIBMServerLauncher;
+import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Comment goes here
  */
-public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
+public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 {
 
 	private Button _radioDaemon, _radioRexec, _radioNone, _checkBoxSSL, _checkBoxRexecSSL, _checkBoxAutoDetect;
@@ -71,7 +71,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 	 * Constructor for EnvironmentVariablesForm.
 	 * @param msgLine
 	 */
-	public IBMServerLauncherForm(Shell shell, ISystemMessageLine msgLine)
+	public RemoteServerLauncherForm(Shell shell, ISystemMessageLine msgLine)
 	{
 		super(shell, msgLine);
 		_daemonPortValidator = new ValidatorPortInput();
@@ -245,7 +245,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 	 */
 	public void initValues(IServerLauncherProperties launcher)
 	{
-		IIBMServerLauncher isl = (IIBMServerLauncher)launcher;
+		IRemoteServerLauncher isl = (IRemoteServerLauncher)launcher;
 
 		ServerLaunchType type = isl.getServerLaunchType();
 		String path = isl.getServerPath();
@@ -364,7 +364,7 @@ public class IBMServerLauncherForm extends IBMBaseServerLauncherForm
 		boolean useSSL = getUseSSL();
 		boolean autoDetect = getAutoDetect();
 
-		IIBMServerLauncher isl = (IIBMServerLauncher)launcher;
+		IRemoteServerLauncher isl = (IRemoteServerLauncher)launcher;
 		isl.setServerLaunchType(launchType);
 		isl.setServerPath(path);
 		isl.setServerScript(invocation);

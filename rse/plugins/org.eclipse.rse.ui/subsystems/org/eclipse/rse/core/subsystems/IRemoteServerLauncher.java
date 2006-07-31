@@ -27,20 +27,20 @@ package org.eclipse.rse.core.subsystems;
  * <p>
  * The following features are supported:
  * <ul>
- * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getServerLaunchType <em>Server Launch Type</em>}</li>
- * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getPort <em>Port</em>}</li>
- * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getRexecPort <em>Rexec Port</em>}</li>
- * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getDaemonPort <em>Daemon Port</em>}</li>
- * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getServerPath <em>Server Path</em>}</li>
- * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getServerScript <em>Server Script</em>}</li>
- * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getIbmAttributes <em>Ibm Attributes</em>}</li>
- * <li>{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getRestrictedTypes <em>Restricted Types</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getServerLaunchType <em>Server Launch Type</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getPort <em>Port</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getRexecPort <em>Rexec Port</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getDaemonPort <em>Daemon Port</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getServerPath <em>Server Path</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getServerScript <em>Server Script</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getIbmAttributes <em>Ibm Attributes</em>}</li>
+ * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getRestrictedTypes <em>Restricted Types</em>}</li>
  * </ul>
  * </p>
  *
  * @see org.eclipse.rse.core.subsystems.SubsystemsPackage#getIBMServerLauncher()
  */
-public interface IIBMServerLauncher extends IServerLauncherProperties{
+public interface IRemoteServerLauncher extends IServerLauncherProperties{
 	
 	/**
 	 * Returns the value of the '<em><b>Server Launch Type</b></em>' attribute.
@@ -63,7 +63,7 @@ public interface IIBMServerLauncher extends IServerLauncherProperties{
 	ServerLaunchType getServerLaunchType();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getServerLaunchType <em>Server Launch Type</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getServerLaunchType <em>Server Launch Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * This is the means by which to start the server-side code, as specified by the user, typically.
 	 * It is one of the constants in the enumeration class {@link org.eclipse.rse.core.subsystems.ServerLaunchType}
@@ -129,7 +129,7 @@ public interface IIBMServerLauncher extends IServerLauncherProperties{
 	String getServerPath();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getServerPath <em>Server Path</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getServerPath <em>Server Path</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * Set the path where the server lives on the remote system. Used by at least the REXEC server launch type. 
 	 * <!-- end-user-doc -->
@@ -155,7 +155,7 @@ public interface IIBMServerLauncher extends IServerLauncherProperties{
 	String getServerScript();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.rse.core.subsystems.IIBMServerLauncher#getServerScript <em>Server Script</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getServerScript <em>Server Script</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * The script to run on the remote system, to start the server code. 
 	 * <!-- end-user-doc -->

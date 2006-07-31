@@ -80,7 +80,7 @@ import org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage;
 import org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage;
 import org.eclipse.rse.ui.propertypages.SystemSubSystemPropertyPageCoreForm;
 import org.eclipse.rse.ui.validators.ISystemValidator;
-import org.eclipse.rse.ui.widgets.IBMServerLauncherForm;
+import org.eclipse.rse.ui.widgets.RemoteServerLauncherForm;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
 import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.ui.wizards.SubSystemServiceWizardPage;
@@ -1406,7 +1406,7 @@ public class SubsystemConfigurationAdapter implements ISubsystemConfigurationAda
 		 */
 		public IServerLauncherForm getServerLauncherForm(ISubSystemConfiguration factory, Shell shell, ISystemMessageLine msgLine)
 		{
-			return new IBMServerLauncherForm(shell, msgLine);
+			return new RemoteServerLauncherForm(shell, msgLine);
 		}
 
 		/**

@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * The property page for connection properties
- * The plugin.xml file registers this for objects of class com.ibm.etools.systems.model.SystemConnection
+ * The plugin.xml file registers this for objects of class org.eclipse.rse.rse.model.IHost
  */
 public class SystemConnectionPropertyPage extends SystemBasePropertyPage
        implements ISystemMessageLine, ISystemConnectionFormCaller

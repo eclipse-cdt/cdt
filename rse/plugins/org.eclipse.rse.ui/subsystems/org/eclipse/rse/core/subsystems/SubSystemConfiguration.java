@@ -33,7 +33,7 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
-import org.eclipse.rse.core.internal.subsystems.IBMServerLauncherConstants;
+import org.eclipse.rse.core.internal.subsystems.RemoteServerLauncherConstants;
 import org.eclipse.rse.core.internal.subsystems.SubSystemFilterNamingPolicy;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterContainer;
@@ -72,7 +72,7 @@ import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorPortInput;
 import org.eclipse.rse.ui.validators.ValidatorSpecialChar;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
-import org.eclipse.rse.ui.widgets.IBMServerLauncherForm;
+import org.eclipse.rse.ui.widgets.RemoteServerLauncherForm;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
 import org.eclipse.rse.ui.wizards.ISubSystemPropertiesWizardPage;
 import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
@@ -2648,22 +2648,22 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * When a subsystem is created, and {@link #supportsServerLaunchProperties()}
 	 * returns true, this method is called to create the server launcher instance
 	 * associated with the subsystem. The default implementation is to create an
-	 * instance of {@link IIBMServerLauncher}, but override to create your own 
+	 * instance of {@link IRemoteServerLauncher}, but override to create your own 
 	 * ServerLauncher instance if you have your own class.
 	 */
 	public IServerLauncherProperties createServerLauncher(IConnectorService connectorService)
 	{
-		IIBMServerLauncher sl = new IBMServerLauncher("IBM Server Launcher", connectorService);
+		IRemoteServerLauncher sl = new RemoteServerLauncher("Remote Server Launcher", connectorService);
 		String systemType = connectorService.getHostType();
 		
 		if (systemType.equals(IRSESystemType.SYSTEMTYPE_LINUX) ||
 				systemType.equals(IRSESystemType.SYSTEMTYPE_POWER_LINUX) ||
 				systemType.equals(IRSESystemType.SYSTEMTYPE_ZSERIES_LINUX)) {
-			sl.setServerScript(IBMServerLauncherConstants.LINUX_REXEC_SCRIPT);
+			sl.setServerScript(RemoteServerLauncherConstants.LINUX_REXEC_SCRIPT);
 		}
 		else if (systemType.equals(IRSESystemType.SYSTEMTYPE_UNIX) ||
 				systemType.equals(IRSESystemType.SYSTEMTYPE_AIX)) {
-			sl.setServerScript(IBMServerLauncherConstants.UNIX_REXEC_SCRIPT);
+			sl.setServerScript(RemoteServerLauncherConstants.UNIX_REXEC_SCRIPT);
 		}
 		
 		sl.saveToProperties();
@@ -2678,7 +2678,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public IServerLauncherForm getServerLauncherForm(Shell shell, ISystemMessageLine msgLine)
 	{
-		return new IBMServerLauncherForm(shell, msgLine);
+		return new RemoteServerLauncherForm(shell, msgLine);
 	}
 
 	// ------------------------------------------

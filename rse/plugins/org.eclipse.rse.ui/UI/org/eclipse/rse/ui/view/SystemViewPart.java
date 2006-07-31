@@ -1819,7 +1819,7 @@ public class SystemViewPart
 	public String getFactoryId()
 	{
 		//System.out.println("INSIDE GETFACTORYID IN SYSTEMVIEWPART");
-		return "com.ibm.etools.systems.systemview.elementfactory";
+		return "org.eclipse.rse.systemview.elementfactory";
 	}
 
 	/*

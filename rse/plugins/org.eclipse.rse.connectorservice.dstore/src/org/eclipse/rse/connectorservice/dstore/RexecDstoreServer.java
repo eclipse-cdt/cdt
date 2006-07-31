@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dstore.core.client.ClientConnection;
 import org.eclipse.dstore.core.client.ConnectionStatus;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.subsystems.IIBMServerLauncher;
+import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.model.SystemSignonInformation;
@@ -358,12 +358,12 @@ public class RexecDstoreServer implements IServerLauncher
 	{
 		this.propertyInfo = propertyInfo;
 		// set path...
-		this.cwd = ((IIBMServerLauncher)propertyInfo).getServerPath();
+		this.cwd = ((IRemoteServerLauncher)propertyInfo).getServerPath();
 		char separatorChar = signonInfo.getSystemType().equals("Windows") ? '\\' : '/';			
 		if (cwd.length() > 0 && cwd.charAt(cwd.length() - 1) != separatorChar)
 			cwd += separatorChar;
 	    // set script...
-	    this.invocation = ((IIBMServerLauncher)propertyInfo).getServerScript();  
+	    this.invocation = ((IRemoteServerLauncher)propertyInfo).getServerScript();  
 	}
 	
 	/**

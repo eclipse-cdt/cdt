@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
@@ -131,7 +132,10 @@ FocusListener
 				{
 					((ISystemContainer)_inputObject).markStale(true);
 				}
-
+				ISubSystem ss = _adapter.getSubSystem(_inputObject);
+				if (!ss.isConnected())
+					return;
+				
 				String name = _adapter.getName(_inputObject);
 				_queryMessage.makeSubstitution(name);
 				String txt = _queryMessage.getLevelOneText();

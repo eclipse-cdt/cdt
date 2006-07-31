@@ -55,7 +55,7 @@ public class DataElementActionFilter implements org.eclipse.ui.IActionFilter {
 	 * 
 	 * The above contribution uses the RSE pop-up extension point to contribute an action 
 	 * to any single RSE object but not anything beginning with SPECIAL.
-	 * @see IActionFilter#testAttribute(Object, String, String)
+	 * @see IDataElementActionFilter#testAttribute(Object, String, String)
 	 */
 	public boolean testAttribute(Object target, String name, String value) {
 		if (name.equals(_type) && target instanceof IDataElement) {

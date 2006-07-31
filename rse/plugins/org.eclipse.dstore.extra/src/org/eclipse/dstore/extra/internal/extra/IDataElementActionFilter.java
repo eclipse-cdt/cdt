@@ -16,7 +16,7 @@
 
 package org.eclipse.dstore.extra.internal.extra;
 
-public interface IActionFilter extends org.eclipse.ui.IActionFilter 
+public interface IDataElementActionFilter extends org.eclipse.ui.IActionFilter 
 {
 
 

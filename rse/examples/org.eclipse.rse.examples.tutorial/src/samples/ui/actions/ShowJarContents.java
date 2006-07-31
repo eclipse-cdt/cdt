@@ -16,10 +16,10 @@
 
 package samples.ui.actions;
 
-import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.rse.files.ui.actions.SystemAbstractRemoteFilePopupMenuExtensionAction;
-import org.eclipse.rse.internal.model.SystemRegistry;
 import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 
@@ -45,22 +45,17 @@ public class ShowJarContents extends SystemAbstractRemoteFilePopupMenuExtensionA
 		try {
 			runCommand(cmdToRun);
 		} catch(Exception e) {
-			//TODO: Display exception
+			MessageDialog.openError(getShell(), e.getClass().getName(), e.getLocalizedMessage());
 		}
 	}
 
 	public IRemoteCmdSubSystem getRemoteCmdSubSystem() {
 		//get the Command subsystem associated with the current host
 		IHost myHost = getSubSystem().getHost();
-		ISubSystem[] subsys = SystemRegistry.getSystemRegistry().getSubSystems(myHost);
+		IRemoteCmdSubSystem[] subsys = RemoteCommandHelpers.getCmdSubSystems(myHost);
 		for (int i=0; i<subsys.length; i++) {
-			if (subsys[i] instanceof IRemoteCmdSubSystem) {
-				IRemoteCmdSubSystem ss = (IRemoteCmdSubSystem) subsys[i];
-				if (ss.getSubSystemConfiguration().supportsCommands()) {
-					// && ss.isConnected()
-					// TODO: Check, if the remote cmd subsys is capable of connecting on demand
-					return ss;
-				}
+			if (subsys[i].getSubSystemConfiguration().supportsCommands()) {
+				return subsys[i];
 			}
 		}
 		return null;
@@ -70,10 +65,12 @@ public class ShowJarContents extends SystemAbstractRemoteFilePopupMenuExtensionA
 	{
 		IRemoteCmdSubSystem cmdss = getRemoteCmdSubSystem();
 		if (cmdss!=null && cmdss.isConnected()) {
-			Object[] result = cmdss.runCommand(command, null, "", false); //$NON-NLS-1$
-			//TODO: Display the result, or is this done in the Shell automatically?
+			//Option A: run the command invisibly
+			//cmdss.runCommand(command, null, "", false); //$NON-NLS-1$
+			//Option B: run the command in a visible shell
+			RemoteCommandHelpers.runUniversalCommand(getShell(), command, ".", cmdss); //$NON-NLS-1$
 		} else {
-			//TODO: Display error - no command subsystem available
+			MessageDialog.openError(getShell(), "No command subsystem", "Found no command subsystem");
 		}
 	}
 

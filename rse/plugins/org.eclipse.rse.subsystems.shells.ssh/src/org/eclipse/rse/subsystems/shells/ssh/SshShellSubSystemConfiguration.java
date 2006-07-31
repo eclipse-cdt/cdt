@@ -20,7 +20,6 @@ import org.eclipse.rse.connectorservice.ssh.SshConnectorService;
 import org.eclipse.rse.connectorservice.ssh.SshConnectorServiceManager;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.model.Host;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.services.ssh.ISshService;
@@ -33,11 +32,6 @@ public class SshShellSubSystemConfiguration extends
 
 	public SshShellSubSystemConfiguration() {
 		super();
-	}
-
-	public boolean supportsCommands() {
-		//TODO support commands in SshShellService.runCommand()
-		return false;
 	}
 
 	/* (non-Javadoc)

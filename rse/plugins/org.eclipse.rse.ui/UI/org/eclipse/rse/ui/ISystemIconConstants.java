@@ -62,54 +62,6 @@ public interface ISystemIconConstants
     // THING ICONS...
     public static final String ICON_MODEL_DIR = SEP + "full" + SEP + "obj16" + SEP + "";	
 
-	public static final String ICON_SYSTEM_USERACTION_NEW_ROOT = "user_action_new_obj";	
-	public static final String ICON_SYSTEM_USERACTION_NEW      = ICON_MODEL_DIR + ICON_SYSTEM_USERACTION_NEW_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_USERACTION_NEW_ID   = PREFIX+ICON_SYSTEM_USERACTION_NEW_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_USERACTION_USR_ROOT = "user_action_obj";	
-	public static final String ICON_SYSTEM_USERACTION_USR      = ICON_MODEL_DIR + ICON_SYSTEM_USERACTION_USR_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_USERACTION_USR_ID   = PREFIX+ICON_SYSTEM_USERACTION_USR_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_USERACTION_IBM_ROOT = "user_action_ibm_obj";	
-	public static final String ICON_SYSTEM_USERACTION_IBM      = ICON_MODEL_DIR + ICON_SYSTEM_USERACTION_IBM_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_USERACTION_IBM_ID   = PREFIX+ICON_SYSTEM_USERACTION_IBM_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_USERACTION_IBMUSR_ROOT = "user_action_ibm_user_obj";	
-	public static final String ICON_SYSTEM_USERACTION_IBMUSR      = ICON_MODEL_DIR + ICON_SYSTEM_USERACTION_IBMUSR_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_USERACTION_IBMUSR_ID   = PREFIX+ICON_SYSTEM_USERACTION_IBMUSR_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_USERTYPE_NEW_ROOT = "user_type_new_obj";	
-	public static final String ICON_SYSTEM_USERTYPE_NEW      = ICON_MODEL_DIR + ICON_SYSTEM_USERTYPE_NEW_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_USERTYPE_NEW_ID   = PREFIX+ICON_SYSTEM_USERTYPE_NEW_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_USERTYPE_USR_ROOT = "user_type_obj";	
-	public static final String ICON_SYSTEM_USERTYPE_USR      = ICON_MODEL_DIR + ICON_SYSTEM_USERTYPE_USR_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_USERTYPE_USR_ID   = PREFIX+ICON_SYSTEM_USERTYPE_USR_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_USERTYPE_IBM_ROOT = "user_type_ibm_obj";	
-	public static final String ICON_SYSTEM_USERTYPE_IBM      = ICON_MODEL_DIR + ICON_SYSTEM_USERTYPE_IBM_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_USERTYPE_IBM_ID   = PREFIX+ICON_SYSTEM_USERTYPE_IBM_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_USERTYPE_IBMUSR_ROOT = "user_type_ibm_user_obj";	
-	public static final String ICON_SYSTEM_USERTYPE_IBMUSR      = ICON_MODEL_DIR + ICON_SYSTEM_USERTYPE_IBMUSR_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_USERTYPE_IBMUSR_ID   = PREFIX+ICON_SYSTEM_USERTYPE_IBMUSR_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_COMPILE_NEW_ROOT = "compcmd_new_obj";	
-	public static final String ICON_SYSTEM_COMPILE_NEW      = ICON_MODEL_DIR + ICON_SYSTEM_COMPILE_NEW_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_COMPILE_NEW_ID   = PREFIX+ICON_SYSTEM_COMPILE_NEW_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_COMPILE_USR_ROOT = "compcmd_user_obj";	
-	public static final String ICON_SYSTEM_COMPILE_USR      = ICON_MODEL_DIR + ICON_SYSTEM_COMPILE_USR_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_COMPILE_USR_ID   = PREFIX+ICON_SYSTEM_COMPILE_USR_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_COMPILE_IBM_ROOT = "compcmd_ibm_obj";	
-	public static final String ICON_SYSTEM_COMPILE_IBM      = ICON_MODEL_DIR + ICON_SYSTEM_COMPILE_IBM_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_COMPILE_IBM_ID   = PREFIX+ICON_SYSTEM_COMPILE_IBM_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_COMPILE_IBMUSR_ROOT = "compcmd_ibmuser_obj";	
-	public static final String ICON_SYSTEM_COMPILE_IBMUSR      = ICON_MODEL_DIR + ICON_SYSTEM_COMPILE_IBMUSR_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_COMPILE_IBMUSR_ID   = PREFIX+ICON_SYSTEM_COMPILE_IBMUSR_ROOT+ICON_SUFFIX;
-
 	public static final String ICON_SYSTEM_PROFILE_ROOT = "systemprofile";	
 	public static final String ICON_SYSTEM_PROFILE      = ICON_MODEL_DIR + ICON_SYSTEM_PROFILE_ROOT+ICON_EXT;
 	public static final String ICON_SYSTEM_PROFILE_ID   = PREFIX+ICON_SYSTEM_PROFILE_ROOT+ICON_SUFFIX;

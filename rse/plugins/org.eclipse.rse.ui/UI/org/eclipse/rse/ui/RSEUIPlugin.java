@@ -226,32 +226,6 @@ public class RSEUIPlugin extends SystemBasePlugin
 						   path+ISystemIconConstants.ICON_SYSTEM_NEWFOLDERWIZARD);				   				
 
     	// Things...
-	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_USERACTION_NEW_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_USERACTION_NEW);
-	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_USERACTION_USR_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_USERACTION_USR);
-	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_USERACTION_IBM_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_USERACTION_IBM);
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_USERACTION_IBMUSR_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_USERACTION_IBMUSR);
-
-	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_USERTYPE_NEW_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_USERTYPE_NEW);
-	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_USERTYPE_USR_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_USERTYPE_USR);
-	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_USERTYPE_IBM_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_USERTYPE_IBM);
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_USERTYPE_IBMUSR_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_USERTYPE_IBMUSR);
-
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_COMPILE_NEW_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_COMPILE_NEW);
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_COMPILE_USR_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_COMPILE_USR);
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_COMPILE_IBM_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_COMPILE_IBM);
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_COMPILE_IBMUSR_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_COMPILE_IBMUSR);
 						   
 	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_PROFILE_ID,
 						   path+ISystemIconConstants.ICON_SYSTEM_PROFILE);

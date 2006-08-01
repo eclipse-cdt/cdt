@@ -224,7 +224,7 @@ public class SystemTeamViewProfileAdapter
 		SystemTeamViewCategoryNode[] children = (SystemTeamViewCategoryNode[])categoriesByProfile.get(profile);
 		if (children == null)
 		{
-			children = new SystemTeamViewCategoryNode[4]; //5];
+			children = new SystemTeamViewCategoryNode[2]; //5];
 			for (int idx=0; idx<children.length; idx++)
 				children[idx] = new SystemTeamViewCategoryNode(profile);
 			children[0].setLabel(SystemResources.RESID_TEAMVIEW_CATEGORY_CONNECTIONS_LABEL);
@@ -236,7 +236,7 @@ public class SystemTeamViewProfileAdapter
 			children[1].setDescription(SystemResources.RESID_TEAMVIEW_CATEGORY_FILTERPOOLS_TOOLTIP);
 			children[1].setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTERPOOL_ID));
 			children[1].setMementoHandle(SystemTeamViewCategoryNode.MEMENTO_FILTERPOOLS);
-
+/*
 			children[2].setLabel(SystemResources.RESID_TEAMVIEW_CATEGORY_USERACTIONS_LABEL);
 			children[2].setDescription(SystemResources.RESID_TEAMVIEW_CATEGORY_USERACTIONS_TOOLTIP);
 			children[2].setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_USERACTION_USR_ID));
@@ -246,7 +246,7 @@ public class SystemTeamViewProfileAdapter
 			children[3].setDescription(SystemResources.RESID_TEAMVIEW_CATEGORY_COMPILECMDS_TOOLTIP);
 			children[3].setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_COMPILE_ID));
 			children[3].setMementoHandle(SystemTeamViewCategoryNode.MEMENTO_COMPILECMDS);
-			
+	*/		
 			/*
 			children[4].setLabel(SystemResources.RESID_TEAMVIEW_CATEGORY_TARGETS_LABEL);
 			children[4].setDescription(SystemResources.RESID_TEAMVIEW_CATEGORY_TARGETS_TOOLTIP);
@@ -266,7 +266,7 @@ public class SystemTeamViewProfileAdapter
 	{
 		SystemTeamViewCategoryNode[] children = getCategoryChildren(profile);
 		SystemTeamViewCategoryNode category = null;
-		for (int idx=0; (category==null) && (idx<4); idx++)
+		for (int idx=0; (category==null) && (idx<2); idx++)
 		{
 			if (children[idx].getMementoHandle().equals(mementoHandle))
 				category = children[idx];

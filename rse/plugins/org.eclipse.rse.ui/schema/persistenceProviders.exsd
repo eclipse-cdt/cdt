@@ -61,7 +61,7 @@
                   a fully qualified name of the Java class that implements the &lt;samp&gt;org.eclipse.rse.persistence.IRSEPersistenceProvider&lt;/samp&gt; interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="com.ibm.etools.systems.persistence.IRSEpersistenceProvider"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.rse.persistence.IRSEpersistenceProvider"/>
                </appInfo>
             </annotation>
          </attribute>

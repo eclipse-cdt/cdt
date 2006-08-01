@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.rse.ui" id="remoteSystemsViewPreferencesAction" name="Remote Systems View Preferences Page Action"/>
       </appInfo>
       <documentation>
-         This extension point is for contributing an action to the Remote Systems view pulldown menu, to the Preferences cascading menu. This action will launch the Preferences dialog, scoped to the particular page you specify. This will automatically show any child pages as well. This point is easy to extend, no coding required. Just name the preference page by its id from the   preferencePages extension that defined the page. Also, if it is not a root page, then you must also name the root page (such as when using Windows-&amp;gt;Preference) by its id from its preferencePages extension. 
+         This extension point is for contributing an action to the Remote Systems view pulldown menu, to the Preferences cascading menu. This action will launch the Preferences dialog, scoped to the particular page you specify. This will automatically show any child pages as well. This point is easy to extend, no coding required. Just name the preference page by its id from the preferencePages extension that defined the page. Also, if it is not a root page, then you must also name the root page (such as when using Windows-&amp;gt;Preference) by its id from its preferencePages extension. 
 
 This would be used by anyone who extends the Remote System Explorer, and offers preference pages for their users, and wants a shortcut to those preference pages for convenience.
       </documentation>
@@ -102,7 +102,7 @@ Note this page will be shown as the root in the Preferences dialog, but it can b
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         WSWB 3.0, or WSSD/WSAD/WDSC 5.1.2
+         RSE 1.0
       </documentation>
    </annotation>
 
@@ -123,28 +123,28 @@ Note this page will be shown as the root in the Preferences dialog, but it can b
 
 &lt;extension point=&quot;org.eclipse.rse.ui.remoteSystemsViewPreferencesActions&quot;&gt;
     &lt;action 
-      id=&quot;com.ibm.etools.iseries.core.preferences.rse&quot;
+      id=&quot;com.acme.tools.core.preferences.rse&quot;
       label=&quot;%PreferencePageAction.rse.label&quot;
-      preferencePageId=&quot;com.ibm.etools.iseries.core.ui.preferences.ISeriesPreferencePage&quot;
-      preferencePageCategory=&quot;org.eclipse.rse.ui.ui.preferences.RemoteSystemsPreferencePage&quot;
+      preferencePageId=&quot;com.acme.tools.core.ui.preferences.PreferencePage&quot;
+      preferencePageCategory=&quot;org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage&quot;
       tooltip=&quot;%PreferencePageAction.rse.tooltip&quot;
-      helpContextId=&quot;com.ibm.etools.iseries.core.aprefrse&quot;
+      helpContextId=&quot;com.acme.tools.core.aprefrse&quot;
     /&gt;
     &lt;action 
-      id=&quot;com.ibm.etools.iseres.core.preferences.lpex&quot;
-      label=&quot;%PreferencePageAction.lpex.label&quot;
-      preferencePageId=&quot;com.ibm.etools.iseries.editor.preferences.ISeriesEditorGeneralPreferencePage&quot;
-      preferencePageCategory=&quot;org.eclipse.rse.ui.ui.preferences.RemoteSystemsPreferencePage&quot;
-      tooltip=&quot;%PreferencePageAction.lpex.tooltip&quot;
-      helpContextId=&quot;com.ibm.etools.iseries.core.apreflpx&quot;
+      id=&quot;com.acme.tools.core.preferences.editor&quot;
+      label=&quot;%PreferencePageAction.editor.label&quot;
+      preferencePageId=&quot;com.acme.tools.editor.preferences.EditorGeneralPreferencePage&quot;
+      preferencePageCategory=&quot;org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage&quot;
+      tooltip=&quot;%PreferencePageAction.editor.tooltip&quot;
+      helpContextId=&quot;com.acme.tools.core.helpcontext01&quot;
     /&gt;
     &lt;action 
-      id=&quot;com.ibm.etools.iseres.core.preferences.cache&quot;
+      id=&quot;com.acme.tools.core.preferences.cache&quot;
       label=&quot;%PreferencePageAction.cache.label&quot;
-      preferencePageId=&quot;com.ibm.etools.iseries.core.ui.preferences.ISeriesCachePreferencePage&quot;
-      preferencePageCategory=&quot;org.eclipse.rse.ui.ui.preferences.RemoteSystemsPreferencePage&quot;
-      tooltip=&quot;%PreferencePageAction.cache.tooltip&quot;
-      helpContextId=&quot;com.ibm.etools.iseries.core.aprefcch&quot;
+      preferencePageId=&quot;com.acme.tools.core.ui.preferences.CachingPreferencePage&quot;
+      preferencePageCategory=&quot;org.eclipse.rse.ui.preferences.RemoteSystemsPreferencePage&quot;
+      tooltip=&quot;%PreferencePageAction.caching.tooltip&quot;
+      helpContextId=&quot;com.acme.tools.core.helpcontext02&quot;
     /&gt;
 &lt;/extension&gt;
       </documentation>
@@ -164,7 +164,7 @@ Note this page will be shown as the root in the Preferences dialog, but it can b
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         This extension point is used by the &lt;code&gt;org.eclipse.rse.ui.ui.actions.SystemCascadingPreferencesAction&lt;/code&gt; class, which in turn creates a &lt;code&gt;org.eclipse.rse.ui.ui.actions.SystemShowPreferencesPageAction&lt;/code&gt; object for each extension of this point. These are used to populate the Preferences cascading menu of the Remote Systems view pulldown, but could be used elsewhere too, if desired.
+         This extension point is used by the &lt;code&gt;org.eclipse.rse.ui.actions.SystemCascadingPreferencesAction&lt;/code&gt; class, which in turn creates a &lt;code&gt;org.eclipse.rse.ui.ui.actions.SystemShowPreferencesPageAction&lt;/code&gt; object for each extension of this point. These are used to populate the Preferences cascading menu of the Remote Systems view pulldown, but could be used elsewhere too, if desired.
       </documentation>
    </annotation>
 

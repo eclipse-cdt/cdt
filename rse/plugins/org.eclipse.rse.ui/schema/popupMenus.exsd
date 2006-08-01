@@ -771,22 +771,14 @@ needed, as well as the &lt;samp&gt;menu&lt;/samp&gt; and &lt;samp&gt;action&lt;/
 Typically, you will subclass one of the supplied base classes
 for this extension point:
 &lt;ul&gt;
-&lt;li&gt;&lt;b&gt;org.eclipse.rse.ui.ui.actions.SystemAbstractPopupMenuExtensionAction&lt;/b&gt;,
+&lt;li&gt;&lt;b&gt;org.eclipse.rse.ui.actions.SystemAbstractPopupMenuExtensionAction&lt;/b&gt;,
 in plugin org.eclipse.rse.ui.
 Base class offering generic support for any remote resource popup
 menu action, for any system type.
-&lt;li&gt;&lt;b&gt;org.eclipse.rse.ui.ui.actions.SystemAbstractRemoteFilePopupMenuExtensionAction&lt;/b&gt;,
+&lt;li&gt;&lt;b&gt;org.eclipse.rse.ui.actions.SystemAbstractRemoteFilePopupMenuExtensionAction&lt;/b&gt;,
 in plugin org.eclipse.rse.ui. 
 Specialized base class offering specific support for any remote
 file or folder popup menu action, for any system type.
-&lt;li&gt;&lt;b&gt;com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractIFSPopupMenuExtensionAction&lt;/b&gt;,
-in plugin com.ibm.etools.iseries.core. 
-Specialized base class offering specific support for iSeries
-IFS file or folder popup menu actions.
-&lt;li&gt;&lt;b&gt;com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractQSYSPopupMenuExtensionAction&lt;/b&gt;,
-in plugin com.ibm.etools.iseries.core. 
-Specialized base class offering specific support for popup menu
-actions for iSeries objects in the QSYS file system.
 &lt;/ul&gt;
       </documentation>
    </annotation>

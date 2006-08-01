@@ -189,8 +189,8 @@ or extends the appropriate IBM-supplied class such as &lt;samp&gt;com.ibm.etools
          name=&quot;Databases&quot;
          icon=&quot;icons/dbsubsys.gif&quot; 
          iconlive=&quot;icons/dbsubsyslive.gif&quot;
-         id=&quot;com.acme.etools.mypkg.myconfiguration&quot;
-         class=&quot;com.acme.etools.db.DBSubSystemFactory&quot;
+         id=&quot;com.acme.tools.mypkg.myconfiguration&quot;
+         class=&quot;com.acme.tools.db.DBSubSystemFactory&quot;
          category=&quot;databases&quot;
          vendor=&quot;ACME&quot;
       &gt;
@@ -213,7 +213,7 @@ classes and interfaces for this task.
       </appInfo>
       <documentation>
          The provider of subsystem factories must implement the interface
-&lt;samp&gt;com.ibm.etools.systems.subsystems.SubSystemFactory&lt;/samp&gt;,
+&lt;samp&gt;org.eclipse.rse.core.subsystems.ISubSystemConfiguration&lt;/samp&gt;,
 although it is not recommended to create a new class from scratch.
 Rather, it is highly recommended
 to use the supplied base class &lt;samp&gt;org.eclipse.rse.core.subsystems.SubSystemConfiguration&lt;/samp&gt;.

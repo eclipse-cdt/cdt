@@ -426,12 +426,6 @@ Base class offering generic support for any remote resource property page, for a
 &lt;li&gt;&lt;b&gt;org.eclipse.rse.ui.ui.propertypages.SystemAbstractRemoteFilePropertyPageExtensionAction&lt;/b&gt;,
 in plugin org.eclipse.rse.ui. 
 Specialized base class offering specific support for any remote file or folder property page, for any system type.
-&lt;li&gt;&lt;b&gt;com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractIFSPropertyPageExtensionAction&lt;/b&gt;,
-in plugin com.ibm.etools.iseries.core. 
-Specialized base class offering specific support for iSeries IFS file or folder property pages.
-&lt;li&gt;&lt;b&gt;com.ibm.etools.iseries.core.ui.actions.isv.ISeriesAbstractQSYSPropertyPageExtensionAction&lt;/b&gt;,
-in plugin com.ibm.etools.iseries.core. 
-Specialized base class offering specific support for property pages for iSeries objects in the QSYS file system.
 &lt;/ul&gt;
 &lt;br&gt;
       </documentation>

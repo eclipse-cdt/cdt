@@ -32,7 +32,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.internal.subsystems.AbstractResource;
+import org.eclipse.rse.core.subsystems.AbstractResource;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
@@ -274,7 +274,7 @@ public abstract class AbstractSystemViewAdapter
 	/**
      * <i><b>Overridable</b> by subclasses. You should override if not using AbstractResource.</i><br>
 	 * Returns the subsystem that contains this object. By default, if the
-	 *  given element is instanceof {@link org.eclipse.rse.core.internal.subsystems.AbstractResource AbstractResource},
+	 *  given element is instanceof {@link org.eclipse.rse.core.subsystems.AbstractResource AbstractResource},
 	 *  it calls getSubSystem on it, else returns null.
 	 */ 
 	public ISubSystem getSubSystem(Object element)

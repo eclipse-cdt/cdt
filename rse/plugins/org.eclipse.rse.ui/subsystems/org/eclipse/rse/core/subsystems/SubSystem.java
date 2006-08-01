@@ -1980,7 +1980,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *        in the RSE, which is the default, then there must also be an RSE {@link org.eclipse.rse.ui.view.ISystemViewElementAdapter GUI-adapter} registered
      *        with the platform. The base class implementation of this interface is {@link org.eclipse.rse.ui.view.AbstractSystemViewAdapter}.
      * </ol>
-     * <p>A good place to start with your remote-resource classes to subclasss {@link org.eclipse.rse.core.internal.subsystems.AbstractResource}, as it
+     * <p>A good place to start with your remote-resource classes to subclasss {@link org.eclipse.rse.core.subsystems.AbstractResource}, as it
      * already implements IAdaptable, and maintains a reference to this owning subsystem, which helps when 
      * implementing the {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter remote-adapter}.
      * <p>
@@ -2282,7 +2282,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *        in the RSE, which is the default, then there must also be an RSE {@link org.eclipse.rse.ui.view.ISystemViewElementAdapter GUI-adapter} registered
      *        with the platform. The base class implementation of this interface is {@link org.eclipse.rse.ui.view.AbstractSystemViewAdapter}.
      * </ol>
-     * <p>A good place to start with your remote-resource classes to subclasss {@link org.eclipse.rse.core.internal.subsystems.AbstractResource}, as it
+     * <p>A good place to start with your remote-resource classes to subclasss {@link org.eclipse.rse.core.subsystems.AbstractResource}, as it
      * already implements IAdaptable, and maintains a reference to this owning subsystem, which helps when 
      * implementing the {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter remote-adapter}.
      * <p>
@@ -2853,7 +2853,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *        in the RSE, which is the default, then there must also be an RSE {@link org.eclipse.rse.ui.view.ISystemViewElementAdapter GUI-adapter} registered
      *        with the platform. The base class implementation of this interface is {@link org.eclipse.rse.ui.view.AbstractSystemViewAdapter}.
      * </ol>
-     * <p>A good place to start with your remote-resource classes to subclasss {@link org.eclipse.rse.core.internal.subsystems.AbstractResource}, as it
+     * <p>A good place to start with your remote-resource classes to subclasss {@link org.eclipse.rse.core.subsystems.AbstractResource}, as it
      * already implements IAdaptable, and maintains a reference to this owning subsystem, which helps when 
      * implementing the {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter remote-adapter}.
      * <p>
@@ -2948,7 +2948,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *        in the RSE, which is the default, then there must also be an RSE {@link org.eclipse.rse.ui.view.ISystemViewElementAdapter GUI-adapter} registered
      *        with the platform. The base class implementation of this interface is {@link org.eclipse.rse.ui.view.AbstractSystemViewAdapter}.
      * </ol>
-     * <p>A good place to start with your remote-resource classes to subclasss {@link org.eclipse.rse.core.internal.subsystems.AbstractResource}, as it
+     * <p>A good place to start with your remote-resource classes to subclasss {@link org.eclipse.rse.core.subsystems.AbstractResource}, as it
      * already implements IAdaptable, and maintains a reference to this owning subsystem, which helps when 
      * implementing the {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter remote-adapter}.
      * <p>

@@ -11,7 +11,7 @@
 
 package org.eclipse.rse.examples.daytime.model;
 
-import org.eclipse.rse.core.internal.subsystems.AbstractResource;
+import org.eclipse.rse.core.subsystems.AbstractResource;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
 /**

@@ -16,7 +16,7 @@
 
 package samples.model;
 
-import org.eclipse.rse.core.internal.subsystems.AbstractResource;
+import org.eclipse.rse.core.subsystems.AbstractResource;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
 /**

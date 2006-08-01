@@ -17,6 +17,7 @@
 
 package org.eclipse.rse.ui.propertypages;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -37,6 +38,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -308,7 +310,29 @@ public class SystemTypeFieldEditor extends FieldEditor
 	
 	private IRSESystemType[] getSystemTypes(boolean defaults)
 	{
-		return RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+		IRSESystemType[] types = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+		
+		ArrayList list = new ArrayList();
+
+		if (systemTypes == null) {
+			
+			for (int i = 0; i < types.length; i++) {
+				
+				ISubSystemConfiguration[] configurations = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(types[i].getName());
+				
+				if (configurations != null && configurations.length > 0) {
+					list.add(types[i]);
+				}
+			}
+		}
+		
+		types = new IRSESystemType[list.size()];
+		
+		for (int i = 0; i < list.size(); i++) {
+			types[i] = (IRSESystemType)(list.get(i));
+		}
+		
+		return types;
 	}
 
     // ------------------------

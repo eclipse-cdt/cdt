@@ -15,12 +15,14 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.model.SystemRegistry;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.ui.widgets.InheritableEntryField;
 import org.eclipse.rse.ui.widgets.SystemHistoryCombo;
@@ -1072,8 +1074,26 @@ public class SystemWidgetHelpers {
 	 */
 	public static Combo createSystemTypeCombo(Composite parent, Listener listener, String[] systemTypes) {
 		Combo combo = createReadonlyCombo(parent, listener, SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
-			String[] typeItems = ((systemTypes == null) ? RSECorePlugin.getDefault().getRegistry().getSystemTypeNames() :
-	systemTypes);
+		String[] typeItems = ((systemTypes == null) ? RSECorePlugin.getDefault().getRegistry().getSystemTypeNames() : systemTypes);
+		
+		ArrayList list = new ArrayList();
+
+		if (systemTypes == null) {
+			for (int i = 0; i < typeItems.length; i++) {
+				ISubSystemConfiguration[] configurations = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(typeItems[i]);
+				
+				if (configurations != null && configurations.length > 0) {
+					list.add(typeItems[i]);
+				}
+			}
+		}
+		
+		typeItems = new String[list.size()];
+		
+		for (int i = 0; i < list.size(); i++) {
+			typeItems[i] = (String)(list.get(i));
+		}
+		
 		combo.setItems(typeItems);
 		combo.select(0);
 		return combo;

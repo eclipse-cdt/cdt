@@ -2012,12 +2012,17 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    	   	        return Status.OK_STATUS;
 	                  if ((parentItem instanceof Item) && !getExpanded((Item)parentItem))    	   	        
 	                    refresh(parent); // flush memory
+	                  else if (parentItem instanceof Tree)
+	                  {
+	                	  refresh();
+	                  }
 	                  else
 	                  {  
 	   	    	        wasSelected = isSelectedOrChildSelected(multiSource);
 	   	    	        if (wasSelected)
 	   	    	          clearSelection();
-	    	   	        _originatingViewer.remove(multiSource);   	    	        
+	   	    	        if (_originatingViewer != null)
+	   	    	        	_originatingViewer.remove(multiSource);   	    	        
 	   	    	        if (wasSelected)
 	    	   	          setSelection(new StructuredSelection(parent),true);
 	                  }

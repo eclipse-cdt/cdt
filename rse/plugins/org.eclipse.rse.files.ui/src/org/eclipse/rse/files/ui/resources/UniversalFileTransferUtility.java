@@ -211,7 +211,12 @@ public class UniversalFileTransferUtility
 		String subSystemId = registry.getAbsoluteNameForSubSystem(subSystem);
 		properties.setRemoteFileSubSystem(subSystemId);
 		properties.setRemoteFilePath(remotePath);
-		properties.setDownloadFileTimeStamp(tempFile.getLocalTimeStamp());
+		
+	    // get the modified timestamp from the File, not the IFile
+		// for some reason, the modified timestamp from the IFile does not always return
+		// the right value. There is a Javadoc comment saying the value from IFile might be a
+		// cached value and that might be the cause of the problem.
+		properties.setDownloadFileTimeStamp(tempFile.getLocation().toFile().lastModified());
 		
 		boolean isMounted = isRemoteFileMounted(subSystem, remotePath);
 		properties.setRemoteFileMounted(isMounted);

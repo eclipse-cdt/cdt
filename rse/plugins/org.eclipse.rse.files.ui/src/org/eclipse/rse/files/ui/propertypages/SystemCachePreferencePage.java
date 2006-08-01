@@ -417,7 +417,11 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 								(ISystemEditableRemoteObject) properties.getRemoteFileObject();
 							dirtyReplicas.add(editable);
 						}
-						else if (properties.getDownloadFileTimeStamp() != child.getLocalTimeStamp())
+						// get the modified timestamp from the File, not the IFile
+						// for some reason, the modified timestamp from the IFile does not always return
+						// the right value. There is a Javadoc comment saying the value from IFile might be a
+						// cached value and that might be the cause of the problem.
+						else if (properties.getDownloadFileTimeStamp() != child.getLocation().toFile().lastModified())
 						{
 							String ssString = properties.getRemoteFileSubSystem();
 							ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();

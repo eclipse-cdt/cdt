@@ -573,7 +573,12 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		properties.setDownloadFileTimeStamp(file.getLocalTimeStamp());
 		properties.setDirty(false);
 		properties.setUsedBinaryTransfer(remoteFile.isBinary());
-		properties.setDownloadFileTimeStamp(file.getLocalTimeStamp());
+		
+	    // get the modified timestamp from the File, not the IFile
+		// for some reason, the modified timestamp from the IFile does not always return
+		// the right value. There is a Javadoc comment saying the value from IFile might be a
+		// cached value and that might be the cause of the problem.
+		properties.setDownloadFileTimeStamp(file.getLocation().toFile().lastModified());
 
 		return true;
 	}

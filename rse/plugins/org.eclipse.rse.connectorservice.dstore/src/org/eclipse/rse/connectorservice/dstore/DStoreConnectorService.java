@@ -22,6 +22,7 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Vector;
 
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -638,12 +639,34 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				}
 				// connect to launched server
 				connectStatus = clientConnection.connect(launchStatus.getTicket(), timeout);
-
+				Throwable conE = connectStatus.getException();
 				if (!connectStatus.isConnected() && 
 						(connectStatus.getMessage().startsWith(ClientConnection.CANNOT_CONNECT) ||
-						 connectStatus.getException() instanceof SSLHandshakeException)		
+						 conE instanceof SSLException 
+						 )		
 						)
 				{
+					if (conE instanceof SSLHandshakeException)
+					{
+						List certs = connectStatus.getUntrustedCertificates();
+						if (certs != null && certs.size() > 0)
+						{	
+							ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
+							if (provider != null)
+							{
+								if (provider.importCertificates(certs, getHostName()))
+								{
+									connect(monitor);
+									return;
+								}
+								else
+								{
+									throw new InterruptedException();
+								}
+							}
+						}
+						
+					}
 					launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
 					if (!launchStatus.isConnected())
 					{

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -387,7 +388,7 @@ public class ServerLauncher extends Thread
 
 		_connections = new ArrayList();
 
-		init(DEFAULT_DAEMON_PORT);
+		init(DEFAULT_DAEMON_PORT + "");
 	}
 
 	/**
@@ -406,8 +407,7 @@ public class ServerLauncher extends Thread
 		_path = pluginPath.trim();
 
 		_connections = new ArrayList();
-		int port = Integer.parseInt(portStr);
-		init(port);
+		init(portStr);
 	}
 
 	private String getKeyStoreLocation()
@@ -425,47 +425,117 @@ public class ServerLauncher extends Thread
 	 * 
 	 * @param port the daemon port
 	 */
-	public void init(int port)
+	public void init(String portStr)
 	{
 		// create server socket from port
 		_sslProperties = new ServerSSLProperties();
 		
+		// determine if portStr is a port range or just a port
+		String[] range = portStr.split("-");
+		if (range.length == 2)
+		{
+			int lPort = 0;
+			int hPort = 0;
+			try
+			{
+				lPort = Integer.parseInt(range[0]);
+				hPort = Integer.parseInt(range[1]);		
+			}
+			catch (Exception e)
+			{
+			}
 		
-		try
-		{
-			if (_sslProperties.usingSSL())
-			{
-				String keyStoreFileName = getKeyStoreLocation();
-				String keyStorePassword = getKeyStorePassword();
-
-				try				
+			boolean socketBound = false;
+			for (int i = lPort; i < hPort && !socketBound; i++)
+			{							
+				// create server socket from port
+				try
 				{
-					SSLContext sslContext = DStoreSSLContext.getServerSSLContext(keyStoreFileName, keyStorePassword);
+					if (_sslProperties.usingSSL())
+					{
+						String keyStoreFileName = getKeyStoreLocation();
+						String keyStorePassword = getKeyStorePassword();
 
-					_serverSocket = sslContext.getServerSocketFactory().createServerSocket(port);
+						try				
+						{
+							SSLContext sslContext = DStoreSSLContext.getServerSSLContext(keyStoreFileName, keyStorePassword);
+
+							_serverSocket = sslContext.getServerSocketFactory().createServerSocket(i);
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					}
+					else
+					{
+						_serverSocket = new ServerSocket(i);
+					}
+					if (_serverSocket != null && _serverSocket.getLocalPort() > 0)
+					{
+						socketBound = true;
+						System.out.println("Daemon running on: " + InetAddress.getLocalHost().getHostName() + ", port: " + i);
+					}
 				}
-				catch (Exception e)
+				catch (UnknownHostException e)
 				{
+					System.err.println("Networking problem, can't resolve local host");
 					e.printStackTrace();
+					System.exit(-1);
 				}
+				catch (BindException e)
+				{
+					System.err.println("socket taken on "+i);
+					// keep going
+				}
+				catch (IOException e)
+				{
+					System.err.println("Failure to create ServerSocket");
+					e.printStackTrace();
+					System.exit(-1);
+				}
+			
 			}
-			else
+		}
+		else
+		{
+			int port = Integer.parseInt(portStr);
+			try
 			{
-				_serverSocket = new ServerSocket(port);
+				if (_sslProperties.usingSSL())
+				{
+					String keyStoreFileName = getKeyStoreLocation();
+					String keyStorePassword = getKeyStorePassword();
+
+					try				
+					{
+						SSLContext sslContext = DStoreSSLContext.getServerSSLContext(keyStoreFileName, keyStorePassword);
+
+						_serverSocket = sslContext.getServerSocketFactory().createServerSocket(port);
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					_serverSocket = new ServerSocket(port);
+				}
+				System.out.println("Daemon running on: " + InetAddress.getLocalHost().getHostName() + ", port: " + port);
 			}
-			System.out.println("Daemon running on: " + InetAddress.getLocalHost().getHostName() + ", port: " + port);
-		}
-		catch (UnknownHostException e)
-		{
-			System.err.println("Networking problem, can't resolve local host");
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		catch (IOException e)
-		{
-			System.err.println("Failure to create ServerSocket");
-			e.printStackTrace();
-			System.exit(-1);
+			catch (UnknownHostException e)
+			{
+				System.err.println("Networking problem, can't resolve local host");
+				e.printStackTrace();
+				System.exit(-1);
+			}
+			catch (IOException e)
+			{
+				System.err.println("Failure to create ServerSocket");
+				e.printStackTrace();
+				System.exit(-1);
+			}
 		}
 	}
 

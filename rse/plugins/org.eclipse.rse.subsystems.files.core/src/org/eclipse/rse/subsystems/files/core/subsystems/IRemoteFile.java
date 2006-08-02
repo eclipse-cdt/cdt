@@ -17,6 +17,7 @@
 package org.eclipse.rse.subsystems.files.core.subsystems;
 import java.util.Date;
 
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.rse.core.subsystems.IRemoteContainer;
 import org.eclipse.rse.core.subsystems.IRemotePropertyHolder;
 import org.eclipse.rse.model.IHost;
@@ -50,7 +51,7 @@ import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
  * Note for subsystem providers: this method does not capture the set methods that the
  * RemoteFileImpl class defines. For that, cast to IRemoteFileMutable.
  */ 
-public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder
+public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, ISchedulingRule
 {
     public static final char CONNECTION_DELIMITER = ':';
 	public static final boolean ISROOT_YES = true;

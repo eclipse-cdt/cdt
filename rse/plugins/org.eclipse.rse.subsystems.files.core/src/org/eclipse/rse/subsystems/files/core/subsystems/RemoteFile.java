@@ -24,8 +24,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.IRemoteContainer;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
@@ -1053,5 +1056,68 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	public String getComment()
 	{
 		return "";
+	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see ISchedulingRule#contains(ISchedulingRule)
+	 */
+	public boolean contains(ISchedulingRule rule) {
+		if (this == rule)
+			return true;
+		if (rule instanceof MultiRule) {
+			MultiRule multi = (MultiRule) rule;
+			ISchedulingRule[] children = multi.getChildren();
+			for (int i = 0; i < children.length; i++)
+				if (!contains(children[i]))
+					return false;
+			return true;
+		}
+		if (rule instanceof IResource)
+			return true;
+		if (rule instanceof IRemoteFile)
+		{
+			RemoteFile rf = (RemoteFile)rule;
+			return getHostName().equals(rf.getHostName()) && 
+		       rf.getAbsolutePath().startsWith(getAbsolutePath());
+		}
+		//if (!(rule instanceof RemoteFileSchedulingRule))
+		//	return false;
+		if (rule instanceof RemoteFileSchedulingRule)
+		{
+		return getHostName().equals(((RemoteFileSchedulingRule) rule).getHostName()) && 
+		       ((RemoteFileSchedulingRule) rule).getAbsolutePath().startsWith(getAbsolutePath());
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see ISchedulingRule#isConflicting(ISchedulingRule)
+	 */
+	public boolean isConflicting(ISchedulingRule rule) 
+	{	
+		if (rule instanceof RemoteFile)
+		{
+			String otherPath = ((RemoteFile) rule).getAbsolutePath();
+			String path = this.getAbsolutePath();
+			String otherHost = ((RemoteFile) rule).getHostName();
+			return getHostName().equals(otherHost) && path.startsWith(otherPath) || otherPath.startsWith(path);
+		}
+		else if (rule instanceof RemoteFileSchedulingRule)
+		{	
+			String otherPath = ((RemoteFileSchedulingRule) rule).getAbsolutePath();
+			String path = this.getAbsolutePath();
+			String otherHost = ((RemoteFileSchedulingRule) rule).getHostName();
+			return getHostName().equals(otherHost) && path.startsWith(otherPath) || otherPath.startsWith(path);
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public String getHostName()
+	{
+		return getSystemConnection().getHostName();
 	}
 }

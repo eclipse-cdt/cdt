@@ -19,6 +19,7 @@ package org.eclipse.rse.files.ui.resources;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -52,6 +53,7 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
+import org.eclipse.rse.ui.view.SystemDNDTransferRunnable;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -71,6 +73,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -91,7 +94,8 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	/**
 	 * Internal class for downloading file
 	 */
-	private class InternalDownloadFileRunnable extends WorkspaceModifyOperation
+	private class InternalDownloadFileRunnable extends UIJob
+	//extends WorkspaceModifyOperation
 	{
 
 		private Exception e;
@@ -102,8 +106,11 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		 */
 		private InternalDownloadFileRunnable()
 		{
+			super("Download");
 		}
 
+
+		
 		/**
 		 * @see WorkspaceModifyOperation#execute(IProgressMonitor)
 		 */
@@ -151,6 +158,18 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			{
 				throw e;
 			}
+		}
+		
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			try
+			{
+				execute(monitor);
+			}
+			catch (Exception e)
+			{
+				return Status.CANCEL_STATUS;
+			}
+			return Status.OK_STATUS;
 		}
 	};
 
@@ -425,15 +444,22 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		if (shell != null)
 		{
-			
+				
 			
 			InternalDownloadFileRunnable downloadFileRunnable = new InternalDownloadFileRunnable();
-			ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
+			//ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
 			IFile localFile = getLocalResource();
 			SystemUniversalTempFileListener listener = SystemUniversalTempFileListener.getListener();
 			listener.addIgnoreFile(localFile);
 			
-			pmd.run(false, true, downloadFileRunnable);
+			//pmd.run(false, true, downloadFileRunnable);
+			downloadFileRunnable.setRule(getRemoteFile());
+			downloadFileRunnable.schedule();
+			while (!downloadFileRunnable.didComplete())
+			{
+				Display.getDefault().readAndDispatch();
+				//downloadFileRunnable.wait();
+			}
 			
 			listener.removeIgnoreFile(localFile);
 			downloadFileRunnable.throwException();

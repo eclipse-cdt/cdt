@@ -116,24 +116,27 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 						}
 						**/
 					}
+					/*
 					if (target instanceof ISchedulingRule)
 					{
 						rulesList.add(target);
 					}
+					*/
 					/** FIXME - IREmoteFile is systems.core independent now
 					else if (target instanceof IRemoteFile)
 					{
 						rulesList.add(new RemoteFileSchedulingRule((IRemoteFile)target));
 					}
 					*/
+					/*
 					else
 					{
 						rulesList.add(targetSubSystem);
 					}
-					
+					*/
 					ISchedulingRule[] rules = (ISchedulingRule[])rulesList.toArray(new ISchedulingRule[rulesList.size()]);
 					MultiRule rule = new MultiRule(rules);
-					//runnable.setRule(rule);
+					runnable.setRule(rule);
 				}
 			}
 			runnable.schedule();

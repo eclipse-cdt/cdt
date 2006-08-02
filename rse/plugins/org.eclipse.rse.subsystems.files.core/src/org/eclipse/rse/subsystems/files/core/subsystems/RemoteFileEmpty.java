@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
 
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.rse.services.files.IHostFile;
 
 
@@ -198,5 +199,8 @@ public class RemoteFileEmpty extends RemoteFile
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+
 
 }

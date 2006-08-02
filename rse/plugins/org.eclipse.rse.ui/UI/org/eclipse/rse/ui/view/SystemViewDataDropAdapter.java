@@ -187,17 +187,19 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter implements  ISy
 				}
 				*/
 			}
+			/*
 			if (target instanceof ISchedulingRule)
 			{
 				rulesList.add(target);
 				j++;
 			}
+			*/
 			/** FIXME - can't be coupled with IRemoteFile
 			else if (target instanceof IRemoteFile)
 			{
 				rulesList.add(new RemoteFileSchedulingRule((IRemoteFile)target));
 			}
-			*/
+			
 			else if (target instanceof IAdaptable)
 			{
 				ISystemDragDropAdapter targetAdapter = (ISystemDragDropAdapter) ((IAdaptable) target).getAdapter(ISystemDragDropAdapter.class);
@@ -209,6 +211,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter implements  ISy
 					j++;
 				}
 			}
+			*/
 			MultiRule rule = null;
 			ISchedulingRule[] rules = (ISchedulingRule[])rulesList.toArray(new ISchedulingRule[rulesList.size()]);
 			
@@ -216,7 +219,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter implements  ISy
 			
 			SystemDNDTransferRunnable runnable = new SystemDNDTransferRunnable(target, srcObjects, getViewer(), _sourceType);
 			// DKM - rules are causing problems at the moment
-			//runnable.setRule(rule);
+			runnable.setRule(rule);
 			
 			if (target instanceof SystemScratchpad)
 			{

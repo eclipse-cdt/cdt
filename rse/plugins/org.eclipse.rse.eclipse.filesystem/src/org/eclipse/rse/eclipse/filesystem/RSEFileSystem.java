@@ -22,6 +22,7 @@ import java.util.HashMap;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileSystem;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
@@ -67,7 +68,15 @@ public class RSEFileSystem extends FileSystem
 			IHost con = connections[i];
 			if (con.getHostName().equalsIgnoreCase(hostName))
 			{
-				return con;
+				boolean isConnected = false;
+				IConnectorService[] connectorServices = con.getConnectorServices();
+				for (int c = 0; c < connectorServices.length  && !isConnected; c++)
+				{
+					IConnectorService serv = connectorServices[c];
+					isConnected = serv.isConnected();
+				}
+				if (isConnected)
+					return con;
 			}
 		}
 		return null;

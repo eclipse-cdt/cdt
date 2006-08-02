@@ -216,18 +216,6 @@ public class SystemViewResources extends NLS {
 	public static String	RESID_PROPERTY_TEAM_COMPILETYPE_TYPE_VALUE;
 	public static String	RESID_PROPERTY_TEAM_COMPILECMD_TYPE_VALUE;
 
-	// Property sheet values: User actions
-	public static String	RESID_PROPERTY_ORIGIN_IBM_VALUE;
-	public static String	RESID_PROPERTY_ORIGIN_IBMUSER_VALUE;
-	public static String	RESID_PROPERTY_ORIGIN_USER_VALUE;
-	public static String	RESID_PROPERTY_ORIGIN_ISV_VALUE;
-	public static String	RESID_PROPERTY_ORIGIN_ISVUSER_VALUE;
-	public static String	RESID_PROPERTY_USERACTION_VENDOR_LABEL;
-	public static String	RESID_PROPERTY_USERACTION_VENDOR_TOOLTIP;
-	public static String	RESID_PROPERTY_USERACTION_DOMAIN_LABEL;
-	public static String	RESID_PROPERTY_USERACTION_DOMAIN_TOOLTIP;
-	public static String	RESID_PROPERTY_USERACTION_DOMAIN_ALL_VALUE;
-
 	// Property sheet values: Compile types
 	public static String	RESID_PROPERTY_COMPILETYPE_TYPES_LABEL;
 	public static String	RESID_PROPERTY_COMPILETYPE_TYPES_DESCRIPTION;

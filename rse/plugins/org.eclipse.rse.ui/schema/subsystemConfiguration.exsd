@@ -151,15 +151,13 @@ of a particular category, via their &lt;samp&gt;subsystemconfigurationCategory&l
 For example, if listing database resources
 you might specify a 
 category of &quot;database&quot;.
-IBM-supplied categories include &quot;files&quot;, &quot;cmds&quot; and &quot;jobs&quot;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="systemClass" type="string">
             <annotation>
                <documentation>
-                  Optional. Only used when naming an IBM-supplied subsystem configuration in the &lt;samp&gt;class&lt;/samp&gt; attribute, when you want to subclass or replace the IBM-supplied ISystem object used to manage the live connection with the remote system. Name a class that implements &lt;samp&gt;org.eclipse.rse.core.subsystems.IConnectorService&lt;/samp&gt;,
-or extends the appropriate IBM-supplied class such as &lt;samp&gt;com.ibm.etools.systems.universal.UniversalSystem&lt;/samp&gt; for unix, windows and system types.
+                  Optional.                
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.rse.core.subsystems.IConnectorService"/>

@@ -174,7 +174,7 @@ Contributors:
                     </Message>
                     <Message ID="1040" Indicator="E">
                           <LevelOne>Profile name %1 is reserved</LevelOne>
-                          <LevelTwo>The given profile name is reserved by IBM. Specify another name for the profile.</LevelTwo>
+                          <LevelTwo>The given profile name is reserved. Specify another name for the profile.</LevelTwo>
                     </Message>
                     <Message ID="1041" Indicator="Q">
                           <LevelOne>Connection of name %1 already exists in profile %2. Continue?</LevelOne>

@@ -19,8 +19,10 @@ package org.eclipse.rse.eclipse.filesystem;
 import java.net.URI;
 import java.util.HashMap;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileSystem;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.model.IHost;
@@ -96,7 +98,7 @@ public class RSEFileSystem extends FileSystem
 		return fstore.toURI();
 	}
 	
-	public IFileStore getStore(URI uri) 
+	public IFileStore getStore(URI uri)
 	{
 		Object obj = _fileStoreMap.get(uri);
 		if (obj != null)
@@ -117,7 +119,8 @@ public class RSEFileSystem extends FileSystem
 					ss.connect(shell);
 				}
 				catch (Exception e)
-				{					
+				{			
+					return null;
 				}
 			}
 			return store;
@@ -172,7 +175,9 @@ public class RSEFileSystem extends FileSystem
 		catch (Exception e) 
 		{
 			e.printStackTrace();
-			return FileStoreConversionUtility.convert(null, new RemoteFileEmpty());
+			return EFS.getNullFileSystem().getStore(uri);
+	
+			//return FileStoreConversionUtility.convert(null, new RemoteFileEmpty());
 		}
 		return null;
 	}

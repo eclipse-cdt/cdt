@@ -63,6 +63,7 @@ public class RSEFileSystem extends FileSystem
 	{
 		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IHost[] connections = sr.getHosts();
+		IHost unconnected = null;
 		for (int i = 0; i < connections.length; i++)
 		{
 			IHost con = connections[i];
@@ -77,9 +78,11 @@ public class RSEFileSystem extends FileSystem
 				}
 				if (isConnected)
 					return con;
+				else
+					unconnected = con;
 			}
 		}
-		return null;
+		return unconnected;
 	}
 	
 	public static IRemoteFileSubSystem getRemoteFileSubSystem(IHost host)

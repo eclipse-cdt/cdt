@@ -39,18 +39,18 @@ from the same <samp><a href="../plugin/uiPluginAPI.html">SystemBasePlugin</a></s
 
 <h3><A name="SystemMessageFile"></A>The <samp>SystemMessageFile</samp> Class</h3>
 <p>The <samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#loadMessageFile(org.eclipse.core.runtime.IPluginDescriptor, java.lang.String)">loadMessageFile</a></samp> method in <samp>SystemBasePlugin</samp>, returns an instance of
-<samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/SystemMessageFile.html">SystemMessageFile</a></samp>,
+<samp><A href="../../../reference/api/org/eclipse/rse/services/clientserver/messages/SystemMessageFile.html">SystemMessageFile</a></samp>,
 representing the parsed message file. It is methods in this which return individual messages.
 <h3><A name="SystemMessage"></A>The <samp>SystemMessage</samp> Class</h3>
 The <samp><A href="../../../reference/api/org/eclipse/rse/core/SystemBasePlugin.html#getMessage(org.eclipse.rse.ui.messages.SystemMessageFile, java.lang.String)">getMessage</a></samp> method in <samp>SystemBasePlugin</samp> returns an instance of
-<samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/SystemMessage.html">SystemMessage</a></samp>,
+<samp><A href="../../../reference/api/org/eclipse/rse/services/clientserver/messages/SystemMessage.html">SystemMessage</a></samp>,
 representing an individual message from the message file.
 </p>
 <p>To do message <i>variable substitution</i>, call the appropriate overload of the <samp>makeSubstitution</samp> method in
-the <A href="../../../reference/api/org/eclipse/rse/ui/messages/SystemMessage.html">message</A> object, passing as many parameters as there are unique substitution variables in the message.
+the <A href="../../../reference/api/org/eclipse/rse/services/clientserver/messages/SystemMessage.html">message</A> object, passing as many parameters as there are unique substitution variables in the message.
 </p>
-<p>To get the first level message text, call <samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/SystemMessage.html#getLevelOneText()">getLevelOneText</a></samp> on the message object. To get
-the second level help, call <samp><A href="../../../reference/api/org/eclipse/rse/ui/messages/SystemMessage.html#getLevelTwoText()">getLevelTwoText</a></samp>.
+<p>To get the first level message text, call <samp><A href="../../../reference/api/org/eclipse/rse/services/clientserver/messages/SystemMessage.html#getLevelOneText()">getLevelOneText</a></samp> on the message object. To get
+the second level help, call <samp><A href="../../../reference/api/org/eclipse/rse/services/clientserver/messages/SystemMessage.html#getLevelTwoText()">getLevelTwoText</a></samp>.
 </p>
 
 <h3><A name="SystemMessageDialog"></A>The <samp>SystemMessageDialog</samp> Class</h3>

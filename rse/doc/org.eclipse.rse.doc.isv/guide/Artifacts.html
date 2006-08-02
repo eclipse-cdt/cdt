@@ -33,26 +33,27 @@ The view contains a prompt to create new Hosts, and pop-up menu actions to renam
 <p>Hosts contain attributes, or data, that is saved between sessions of the workbench. These attributes are
 the host name, the remote system's host name and system type, an optional description, and a user Id that is
 used by default by each subordinate subsystem, at host time.
-Underneath, all Hosts are stored via RSE persistence in an Eclipse project named <CODE>RemoteSystemshosts</CODE></A>, which
+Underneath, all Hosts are stored via RSE persistence in an Eclipse project named <CODE>RemoteSystemsConnections</CODE></A>, which
 the user can enable for team support, allowing Hosts to be shared by a team.
 </p>
 
 <h2><A name="profiles">Profiles</A></h2>
 <p>
 To facilitate team-shared and user-unique Hosts,
-Hosts are owned by <b>profiles</b>. These are simply <A href="file_profiles.gif">folders in the RemoteSystemshosts
+Hosts are owned by <b>profiles</b>. These are simply <A href="file_profiles.gif">folders in the RemoteSystemsConnections
 project</A>, as it turns out, within which all other data including Hosts are scoped. Internally profiles are realized as
 SystemProfile objects, managed by the SystemProfileManager.
-For each profile there is also a SystemhostPool object
+For each profile there is also a SystemHostPool object
 created to manage the Hosts within that profile. There are menu actions for the
-user to create and manage profiles. The collective of all Hosts of all <b><I>active</I> profiles</b> are shown in the Remote Systems view,
+user to create and manage profiles. The collective of all Hosts of all <b><I>active</I> profiles</b> are shown in the 
+Remote Systems view,
 and the user can easily decide which profiles are active using the <A href="preference_activeProfiles.gif">local pulldown menu</A> of the Remote Systems view.
-The list of profiles currently active is stored locally on each user's workstation, and not shared by the team.
+The list of profiles currently active is stored locally on each user's workstation, and not shared by teams.
 By default, there exists a profile named <code>Team</code>, and a profile with a name unique to this user. When the first
 host is created the user is asked to supply this unique name, which defaults to the hostname of their
 workstation. Whenever a new host is created, the user is prompted for an active profile to contain the new
 host. Both default profiles are active initially, so all Hosts from each are shown. There is a preferences
-setting to show the host names qualified by their profile name. After synchronizing the RemoteSystemshost
+setting to show the host names qualified by their profile name. After synchronizing the RemoteSystemsConnections
 project with a team repository, using the RSE <A href="plugin/view_Team.gif">team view</A>, all profiles of all members of
 the team will exist in the user's workspace, and hence
 all the Hosts created by all the team members. However, only the two default profiles are active, so the Hosts
@@ -60,13 +61,16 @@ in the other profiles are not seen unless the user explicitly makes another prof
 for:
 </p>
 <ol>
-<li>Team-shared Hosts (created in the team profile or any profile all team members make active)<li>User-private Hosts (created in their own profile or any profile not active by default)<li>User-roaming, whereby a user uses a different workstation than usual, and then synchronizes with the
-team repository and sets their profile to be active.
+<li>Team-shared Hosts (created in the Team profile or any profile all team members make active)
+<li>User-private Hosts (created in their own profile or any profile not active by default)
+<li>User-roaming, whereby a user uses a different workstation than usual, 
+and then synchronizes with the team repository and sets their profile to be active.
 </ol>
 <p>
 As an aside, user IDs and passwords are not shared with the team repository, but rather stored only locally per
 workstation.
-Each subsystem can have a unique user ID, which if not set is inherited from its host, which in turn if not set is inherited from the
+Each subsystem can have a unique user ID, which if not set is inherited from its host, 
+which in turn if not set is inherited from the
 user ID preferences setting for the appropriate system type.
 </p>
 
@@ -94,30 +98,6 @@ remote commands. There is also a Remote Commands view supplied that logs all com
 randomly enter a command to be run remotely. The commands all execute within the same shell, and users
 can launch additional shells for the same host.
 </ol>
-For iSeries Hosts, these subsystems work with the folders and files in the Integrated File System,
-and run commands in the QSHELL Unix-like environment. When using a WebSphere Studio configuration that
-supports it, there is also additional subsystem configurations that supply three more subsystems for each
-iSeries host:
-<ol>
-<li>iSeries Objects. This accesses the libraries, objects, and members in the native QSYS file system, allowing
-users to explore  and manipulate them via RSE-supplied actions. For programmers, this also supplies
-common APIs for listing remote libraries, objects, members, records, and fields, with various filtering
-capabilities, as well as editing remote source members. Furthermore, there are a number of iSeries-specific
-user interface actions, wizards, dialogs, and widgets that programmers can easily re-use.
-<li>iSeries Commands. This accesses the QSYS command shell and allows remote execution of any CL command. Users
-can pre-defined commands or use the Commands view to randomly enter and run a command. For programmers, there
-are APIs supplied to execute a remote CL command, with message retrieval.
-<li>iSeries Jobs. This accesses the iSeries jobs the user has access to, allowing limited exploration
-and manipulation of those jobs. For programmers, this also supplies APIs for listing jobs, with various
-filtering capabilities.
-</ol>
-From any of these iSeries-specific subsystems, programmers can access the Toolbox for Java <code>AS400</code> object
-for the current session, thus avoiding redundant signon requests for the user, and inheritence of existing
-job attributes. There is also a method for returning a JDBC host object for accessing DB2/400 databases
-on that iSeries host. Both of these getter methods are available in the
-<A href="../../com.ibm.etools.iseries.core/com/ibm/etools/iseries/core/ISeriesSystemDataStore.html">ISeries system</A> object all iSeries
-subsystems share. System objects are described next.</p>
-
 <h2><A name="systems">Systems and System Managers</A></h2>
 <p>While not seen by the user, subsystem objects are required to return a <b>connectorservice</b> object via the
 <A href="../reference/api/org/eclipse/rse/core/subsystems/ISubSystem.html#getConnectorService()">getConnectorService()</A> method.
@@ -134,7 +114,7 @@ system class that is easily extended.
 </p>
 <p>It may be the case that multiple subsystems, each from a different subsystem configuration, share the same live
 host for a given host object. To enable this, the framework supplies a base
-<b>connector service manager</b> <A href="../reference/api/org/eclipse/rse/core/subsystems/impl/AbstractConnectorServiceManager.html">class</A>
+<b>connector service manager</b> <A href="../reference/api/org/eclipse/rse/core/subsystems/AbstractConnectorServiceManager.html">class</A>
 that can be used to manage a single shared connector service object across multiple subsystems. It uses a hashtable to store and
 return the connector service objects, keyed by a subsystem interface that all subsystems sharing the same connector service object
 are to implement. The subclass of the base connector service manager class supplies that interface. Further, the subclass
@@ -205,65 +185,6 @@ this is the default case for the default filter pool.
 reference it.
 </ol>
 </p>
-
-<h2><A name="useractions">User Actions and Named Types</A></h2>
-<p>
-If the subsystem configuration returns true to the
-<A href="../reference/api/org/eclipse/rse/core/subsystems/ISubSystemConfiguration.html#supportsUserDefinedActions()">supportsUserDefinedActions</A>
-method, users can create their own <b>actions</b>
-that appear in the pop-up menu for remote objects, using the Work With User Actions <A href="useractions_ww_action.gif">action</A> and
-<A href="useractions_ww_dialog.gif">dialog</A>. User actions use substitution variables that are resolved at
-runtime to various attributes of the selected remote objects. The actions themselves are <I>run
-on the remote system</I>
-of the host where the objects are listed from. User actions are instances of the
-<A href="../com/ibm/etools/systems/core/ui/uda/SystemUDActionElement.html">SystemUDAActionElement</A>
-class from the <A href="../com/ibm/etools/systems/core/ui/uda/package-summary.html">org.eclipse.rse.core.ui.uda</A> package.
-<BR>
-<BR>
-User actions can be scoped to only appear for objects of a
-particular type. To facilitate this, users can create <b>named types</b> which are names that represent
-one or more types of remote objects. Internally, they are
-<A href="../com/ibm/etools/systems/core/ui/uda/SystemUDTypeElement.html">SystemUDTypeElement</A> objects.
-This is done using the Work With Named Types <A	href="namedtypes_ww_action.gif">action</A> and
-<A href="namedtypes_ww_dialog.gif">dialog</A>.</p>
-<p>
-User actions are contained by each subsystem factory, scoped by profile. You can programmatically access them by calling
-<A href="../reference/api/org/eclipse/rse/core/subsystems/util/ISubsystemConfigurationAdapter.html#getSubSystemActions(org.eclipse.rse.subsystems.ISubSystem)">getSubSystemActions</A>
-in a subsystem configuration object. They are scoped to the configuration, not the subsystem,
-so the same list of actions is available for every host. The <A href="useractions_menu.gif">User Actions cascading menu </A>
-for remote objects lists <i>all</i> the actions defined for <i>all active profiles</i>, whose file type scoping criteria matches the
-types of the currently selected remote objects. When users define new actions, they specify the profile to contain them.
-This design allows for:
-<ol>
-<li>Team actions. This is done by defining actions in the team profile or any profile all team members
-have been instructed to make active. This is useful for common actions shared by all team members.
-<li>Private actions. This is done by defining actions in the user's profile or any profile that other team members
-do not make active.
-</ol>
-<p>Named types, however, are not scoped by profile. Rather, there is only one master list, per subsystem factory.
-It is assumed there will be fewer of these, and they are not likely to be different per user.
-</p>
-
-<h2><A name="compilecmds">Compile Commands</A></h2>
-<p>
-If the subsystem configuration returns true to the
-<A href="../reference/api/org/eclipse/rse/core/subsystems/ISubSystemConfiguration.html#supportsCompileActions()">supportsCompileActions</A>
-method, users will see a <b>Compile</b> <A href="compile_action.gif">action</A> in
-the pop-up menu for compilable source files. Clearly, this support usually only makes sense for subsystems that
-list remote source files. Whether a selected file is compilable or not is decided by the subsystem factory. It
-actually defers this request to a compile manager, which must be programmed by subclassing the supplied base
-class for this. The compile manager is also responsible for pre-supplying default compile commands.
-</p>
-<p>
-The framework also supplies a Work With Compile Commands <A href="compile_ww_action.gif">action</A> and <A href="compile_ww_dialog.gif">dialog</A>,
-by which users can create their own compile commands,
-per source type. Compile commands internally are <A href="../reference/api/org/eclipse/rse/ui/compile/SystemCompileCommand.html">SystemCompileCommand</A> objects.
-These compile commands are stored per subsystem configuration, such that they are usable across all Hosts.
-They are also scoped by profile, and the cascading compile action will list all compile commands from all active profiles,
-for the selected file's source type. This scoping by profile, as with user actions, enables team support such that
-users can see and can easily access their own compile commands and any shared compile commands.
-</p>
-
 <h2><A name="preferences">Preferences</A></h2>
 <p>
 Many of the default characteristics of the Remote System Explorer view and perspective are configurable by each user

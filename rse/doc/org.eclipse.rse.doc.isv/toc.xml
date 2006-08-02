@@ -5,23 +5,15 @@
 <!-- ============================================================================= -->
 
 <toc label="RSE Developer Guide">
-	<topic label="Overview (old)" href="guide/overview.html"/>
-	<topic label="Artifacts (old)" href="guide/Artifacts.html"/>
-	<topic label="Extensions (old)" href="guide/Extensions.html"/>
-	<topic label="APIs (old)" href="guide/usingAPIs.html"/>
-	<topic label="Tutorials (old)" href="guide/tutorials.html"/>
-
-	<topic label="Model (in progress)" href="guide/Model.html"/>
-
-	<topic label="Programmer&apos;s Guide (in progress)" href="guide/rse_int.html">
+	<topic label="Guide" href="guide/rse_int.html">
 		<link toc="topics_Guide.xml" />
 		<anchor id="guide_additions"/>
 	</topic>
-	<topic label="Reference (in progress)">
+	<topic label="Reference">
 		<link toc="topics_Reference.xml" />
 		<anchor id="reference_additions"/>
 	</topic>
-	<topic label="Questions Index (in progress)" href="questions/index.html">
+	<topic label="Questions Index" href="questions/index.html">
 		<link toc="topics_Questions.xml" />
 		<anchor id="questions_additions"/>
 	</topic>

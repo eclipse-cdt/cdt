@@ -52,38 +52,38 @@ Here are the extension points that are defined by the RSE:
 			<TH>Description</TH>
 		</TR>
 		<TR>
-			<TD><A href="plugin/popup.html">org.eclipse.rse.core.<B>popupMenus</B></A></TD>
+			<TD><A href="plugin/systemtype.html">org.eclipse.rse.core.<b>systemType</b></A></TD>
+			<TD>For defining new system types that show up in the New Connection wizard.</TD>
+		</TR>
+		<TR>
+			<TD><A href="plugin/subsystem.html">org.eclipse.rse.core.<b>subsystemConfiguration</b></A></TD>
+			<TD>For defining new subsystems that appear when a connection is expanded.</TD>
+		</TR>
+		<TR>
+			<TD><A href="../reference/extension-points/org_eclipse_rse_ui_archivehandlers.html">org.eclipse.rse.core.<b>archivehandlers</b></A></TD>
+			<TD>For supporting additional archive file types, such as is done today for zip, jar and tar files. This adds support for expanding the archives and supporting all the usual actions on the contents.</TD>
+		</TR>
+		<TR>
+			<TD><A href="plugin/popup.html">org.eclipse.rse.ui.<B>popupMenus</B></A></TD>
 			<TD>For	defining actions, which appear in the pop-up menu of remote objects
 			listed in the Remote Systems view.</TD>
 		</TR>
 		<TR>
-			<TD><A href="plugin/propertypage.html">org.eclipse.rse.core.<b>propertyPages</b></A></TD>
+			<TD><A href="plugin/propertypage.html">org.eclipse.rse.ui.<b>propertyPages</b></A></TD>
 			<TD>For defining property pages, which appear in the Properties dialog when
 			users select the Properties action from the pop-up menu of remote
 			objects listed in the Remote Systems view.</TD>
 		</TR>
 		<TR>
-			<TD><A href="plugin/subsystem.html">org.eclipse.rse.core.<b>subsystemfactory</b></A></TD>
-			<TD>For defining new subsystems that appear when a connection is expanded.</TD>
-		</TR>
-		<TR>
-			<TD><A href="plugin/systemtype.html">org.eclipse.rse.core.<b>systemtype</b></A></TD>
-			<TD>For defining new system types that show up in the New Connection wizard.</TD>
-		</TR>
-		<TR>
-			<TD><A href="../doc/org_eclipse_rse_ui_remoteSystemsViewPreferencesAction.html">org.eclipse.rse.core.<b>remoteSystemsViewPreferencesAction</b></A></TD>
+			<TD><A href="../reference/extension-points/org_eclipse_rse_ui_remoteSystemsViewPreferencesActions.html">org.eclipse.rse.ui.<b>remoteSystemsViewPreferencesAction</b></A></TD>
 			<TD>For contributing a fastpath action to jump to your preferences page, from the local pulldown menu of the Remote Systems view.</TD>
 		</TR>
 		<TR>
-			<TD><A href="../doc/org_eclipse_rse_ui_compile.html">org.eclipse.rse.core.<b>compile</b></A></TD>
+			<TD><A href="../reference/extension-points/org_eclipse_rse_ui_compile.html">org.eclipse.rse.ui.<b>compile</b></A></TD>
 			<TD>For contributing compile commands to the Compile menus and Work With Compile Commands dialog.</TD>
 		</TR>
 		<TR>
-			<TD><A href="../doc/org_eclipse_rse_ui_archivehandlers.html">org.eclipse.rse.core.<b>archivehandlers</b></A></TD>
-			<TD>For supporting additional archive file types, such as is done today for zip, jar and tar files. This adds support for expanding the archives and supporting all the usual actions on the contents.</TD>
-		</TR>
-		<TR>
-			<TD><A href="../doc/org_eclipse_rse_ui_setPreferenceDefaults.html">org.eclipse.rse.core.<b>setPreferenceDefaults</b></A></TD>
+			<TD><A href="../reference/extension-points/org_eclipse_rse_ui_rseConfigDefaults.html">org.eclipse.rse.ui.<b>rseConfigDefaults</b></A></TD>
 			<TD>For solution providers that are building a product that includes RSE, this extension point allows you to
 			    pre-set some out-of-box preference values. For example, whether the New Connection tree item is shown in Remote Systems view.</TD>
 		</TR>

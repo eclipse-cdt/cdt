@@ -6,11 +6,13 @@
 <toc label="Guide">
 	<topic label="RSE Architecture" href="guide/rse_int_architecture.html">
 		<topic label="Overview" href="guide/rse_int_overview.html"/>
+		<topic label="Artifacts" href="guide/Artifacts.html"/>
+		<topic label="Model" href="guide/Model.html"/>
 		<topic label="Services" href="guide/rse_int_services.html"/>
 		<topic label="Subsystems" href="guide/rse_int_subsystems.html"/>
 		<topic label="Connector Services" href="guide/rse_int_connectorservices.html"/>
 		<topic label="Hosts" href="guide/rse_int_hosts.html"/>
-		<topic label="UI" href="guide/rse_int_ui.html"/>
+		<topic label="User Interface" href="guide/rse_int_ui.html"/>
 	</topic>
 	<topic label="Using the RSE API" href="guide/usingAPIs.html">
 		<topic label="RSE User Interface API" href="guide/api/uiAPI.html" />
@@ -18,6 +20,7 @@
 		<topic label="RSE Model API" href="guide/api/modelAPI.html" />
 	</topic>
 	<topic label="Plugging into the RSE" href="guide/plugin.html">
+		<topic label="Extensions" href="guide/Extensions.html"/>
 		<topic label="Plugging in a Popup Menu" href="guide/plugin/popup.html" />
 		<topic label="Plugging in a Property Page" href="guide/plugin/propertypage.html" />
 		<topic label="Plugging in a System Type" href="guide/plugin/systemtype.html" />

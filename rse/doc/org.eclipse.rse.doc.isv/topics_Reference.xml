@@ -46,7 +46,7 @@
 		  <topic label="org.eclipse.rse.core.ui.widgets" href="reference/api/org/eclipse/rse/ui/widgets/package-summary.html" />
 		  <topic label="org.eclipse.rse.core.ui.wizards" href="reference/api/org/eclipse/rse/ui/wizards/package-summary.html" />
 	    </topic>
-		<topic label="Profiles and Connections">
+		<topic label="Profiles and Hosts">
 		  <topic label="org.eclipse.rse.model" href="reference/api/com/ibm/etools/systems/model/package-summary.html" />
 		  <topic label="org.eclipse.rse.model.impl" href="reference/api/com/ibm/etools/systems/model/impl/package-summary.html" />
 		  <topic label="org.eclipse.rse.model.util" href="reference/api/com/ibm/etools/systems/model/util/package-summary.html" />

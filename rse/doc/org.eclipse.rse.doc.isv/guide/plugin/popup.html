@@ -11,7 +11,7 @@
 
 <body bgcolor="#ffffff">
 <h1>Plugging In Popup Menu Actions</h1>
-<p>The <samp><A href="../../doc/org_eclipse_rse_ui_popupMenus.html">org.eclipse.rse.ui.popupMenus</a></samp> extension point is defined in the
+<p>The <samp><A href="../../reference/extension-points/org_eclipse_rse_ui_popupMenus.html">org.eclipse.rse.ui.popupMenus</a></samp> extension point is defined in the
 plugin <samp>org.eclipse.rse.ui</samp>, and it is patterned
 after Eclipse's <samp>org.eclipse.ui.popupMenus</samp> extension point. However, it is
 both simplified and extended specifically for remote objects.
@@ -22,7 +22,7 @@ which scopes the remote objects to which the child elements apply:
 <ul>
 <li><b>id</b>.A unique ID for this extension point. Not used, but required by Eclipse.
 <li><b><i>filtering attributes</i></b>.To scope which remote objects these actions should show up for.
-Described in the <samp><A href="../../doc/org_eclipse_rse_ui_popupMenus.html">documentation</a></samp>
+Described in the <samp><A href="../../reference/extension-points/org_eclipse_rse_ui_popupMenus.html">documentation</a></samp>
 of this element.
 </ul>
 <p>Within each <samp>&lt;objectContribution&gt;</samp> element are zero or more <B><samp>&lt;menu&gt;</samp></B> elements for
@@ -136,16 +136,6 @@ as shown here:
 			<TD><samp><A href="../../reference/api/org/eclipse/rse/files/ui/actions/SystemAbstractRemoteFilePopupMenuExtensionAction.html">SystemAbstractRemoteFilePopupMenuExtensionAction</A></samp>
 			in <samp>org.eclipse.rse.files.ui</samp> plugin</TD>
 			<TD>Specialized base class offering specific support for any remote file object pop-up menu action, for any system type.</TD>
-		</TR>
-		<TR>
-			<TD><samp><A href="../../../com.ibm.etools.iseries.core/com/ibm/etools/iseries/core/ui/actions/isv/ISeriesAbstractIFSPopupMenuExtensionAction.html">ISeriesAbstractIFSPopupMenuExtensionAction</A></samp>
-			in <samp>com.ibm.etools.iseries.core</samp> plugin</TD>
-			<TD>Specialized base class offering specific support for iSeries IFS file or folder pop-up menu actions.</TD>
-		</TR>
-		<TR>
-			<TD><samp><A href="../../../com.ibm.etools.iseries.core/com/ibm/etools/iseries/core/ui/actions/isv/ISeriesAbstractQSYSPopupMenuExtensionAction.html">ISeriesAbstractQSYSPopupMenuExtensionAction</A></samp>
-			in <samp>com.ibm.etools.iseries.core</samp> plugin</TD>
-			<TD>Specialized base class offering specific support for pop-up menu actions for iSeries objects in the QSYS file system.</TD>
 		</TR>
 	</TBODY>
 </TABLE>

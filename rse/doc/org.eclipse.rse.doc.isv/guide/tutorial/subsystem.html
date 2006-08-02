@@ -5,13 +5,12 @@
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
 <LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
-<title>Creating a Subsystem Factory</title>
+<title>Creating a Subsystem Configuration</title>
 </head>
 
 <body bgcolor="#ffffff">
-<h1>Creating a Subsystem Factory</h1>
-<p>In this tutorial, you will use the RSE <A href="../plugin/subsystem.html">subsystemfactory
-extension point</A> to show new subsystems within connections, when they are expanded. Effectively,
+<h1>Creating a Subsystem Configuration</h1>
+<p>In this tutorial, you will use the RSE <A href="../../reference/extension-points/org_eclipse_rse_ui_subsystemConfiguration.html">subsystemConfiguration extension point</A> to show new subsystems within connections, when they are expanded. Effectively,
 you will add a new <i>remote-accessing tool</i> to the Remote System Explorer.</p>
 <p>
 A full-blown tutorial to illustrate this extension point is a bit difficult without inventing
@@ -40,46 +39,41 @@ decide what resources to expose and what actions on those resources.</i></p>
 <hr>
 
 
-<h2>Step By Step: Creating a Subsystem Factory</h2>
-<p>If you have not already, first <a href="pdeProject.html">create or prepare a plugin project</a>
-We will follow the steps listed in the <A href="../plugin/subsystem.html#steps">Overview of Steps</A> section in the description of the plugin.</p>. 
-
-<ol>
+<h2>Step By Step: Creating a Subsystem Configuration</h2>
+		<p>If you have not already, first <a href="pdeProject.html">create or prepare a plugin project</a>
+We will follow the steps listed in the <A href="../plugin/subsystem.html#steps">Overview of Steps</A> section in the description of the plugin.</p>
+		<ol>
 <li>Create a package named <samp><b>samples.subsystems</b></samp>, by right-clicking on the <samp>src</samp> folder 
-and using the <b>New-&gt;Package</b> wizard. In the new package, create an empty interface 
-named <A href="IDeveloperSubSystem.html">IDeveloperSubSystem</A>, 
-by right-clicking on the package and selecting <b>New-&gt;Interface</b>. 
+and using the <b>New-&gt;Package</b> wizard. In the new package, create an empty interface named <A href="IDeveloperSubSystem.html"><samp>IDeveloperSubSystem</samp></A>, by right-clicking on the package and selecting <b>New-&gt;Interface</b>. 
 </li>
 <li>Also in package <samp>samples.subsystems</samp>, use <b>New-&gt;Class</b> to
-create a class named <samp><b>DeveloperSystem</b></samp> that extends <b>superclass</b> 
-<samp><A href="../../com/ibm/etools/systems/subsystems/impl/AbstractSystem.html">AbstractSystem</A></samp>,
+create a class named <samp><b>DeveloperConnectorService</b></samp> that extends <b>superclass</b> 
+<samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/AbstractConnectorService.html">AbstractConnectorService</A></samp>,
 selecting the option to include <b>Constructors from superclass</b>. Edit the result to add
 a <samp>connected</samp> instance variable that is used in the methods, as shown in bold <a href="DeveloperSystem.html">here</a>.
 </li>
 <li>Again in package <samp>samples.subsystems</samp>, use <b>New-&gt;Class</b> to
 create a class named <samp><b>DeveloperSystemManager</b></samp> that extends <b>superclass</b> 
-<samp><A href="../../com/ibm/etools/systems/subsystems/impl/AbstractSystemManager.html">AbstractSystemManager</A></samp>,
+<samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/AbstractConnectorServiceManager.html">AbstractSystemManager</A></samp>,
 selecting the option to include <b>Constructors from superclass</b>. Edit the result to add
 a factory method, and flesh out the methods, as highlighted <a href="DeveloperSystemManager.html">here</a>.
 </li>
 <li>Create a package named <samp><b>samples.model</b></samp>. Create two classes in it: 
 <b><samp>TeamResource</samp></b> and <b><samp>DeveloperResource</samp></b>, each of which extend
-<A href="../../reference/api/org/eclipse/rse/ui/subsystems/impl/AbstractResource.html">AbstractResource</A>.
+<A href="../../reference/api/org/eclipse/rse/core/subsystems/AbstractResource.html">AbstractResource</A>.
   <ol>
-    <li type="i">Edit <samp>DeveloperResource</samp> to add <samp>name</samp>, <samp>id</samp>, and <samp>deptNbr</samp> properties,
-    as shown in bold <a href="DeveloperResource.html"><samp>here</samp></a>.
-    <li type="i">Edit <samp>TeamResource</samp> to add <samp>name</samp> and <samp>developers</samp> (array) properties, 
-    as shown in bold <a href="TeamResource.html"><samp>here</samp></a>.
+    <li type="i">Edit <samp>DeveloperResource</samp> to add <samp>name</samp>, <samp>id</samp>, and <samp>deptNbr</samp> properties, as shown in bold <a href="DeveloperResource.html">here</a>.<li type="i">Edit <samp>TeamResource</samp> to add <samp>name</samp> and <samp>developers</samp> (array) properties, 
+    as shown in bold <a href="TeamResource.html">here</a>.
   </ol>
 <li>You need to think about  filter support. For now, you can keep it simple: users can only create filters that list teams,
 by specifying a single string that is either a scalar or a generic team name. If scalar, one team will be shown when the filter is expanded.
 If generic, all teams matching the generic pattern will be listed. Given the simplicity, you will not need to create a filter string class to perform 
 parsing. As a result, you have nothing to do for this step.</li>
 <li>Return to package <samp>samples.subsystems</samp>, and create class <b><samp>DeveloperSubSystem</samp></b>
-that extends <samp><A href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemImpl.html">DefaultSubSystemImpl</A></samp>.
+that extends <samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystem.html">SubSystem</A></samp>.
 Edit the generated class to add code highlighted <a href="DeveloperSubSystem.html">here</a>.</li>
 <li>Again in package <samp>samples.subsystems</samp>, create class <b><samp>DeveloperSubSystemFactory</samp></b>
-that extends <samp><A href="../../com/ibm/etools/systems/dftsubsystem/impl/DefaultSubSystemFactoryImpl.html">DefaultSubSystemFactoryImpl</A></samp>.
+that extends <samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystemConfiguration.html">SubSystemConfiguration</A></samp>.
 Edit the generated class to add code highlighted <a href="DeveloperSubSystemFactory.html">here</a>.
 </li>
 <li>In the project's root folder, find and edit file <samp>rseSamplesResources.properties</samp> and 
@@ -88,25 +82,25 @@ add the line highlighted <a href="rseSamplesResources3.html">here</a>.
 <li>Update your <samp>plugin.xml</samp> file to include the following lines:
 <pre><samp>
    &lt;!-- ======================================= --&gt;
-   &lt;!-- SubSystem Factory                       --&gt;
+   &lt;!-- SubSystem Configuration                 --&gt;
    &lt;!-- ======================================= --&gt;
-   &lt;extension point=&quot;com.ibm.etools.systems.core.subsystemfactory&quot;&gt;
-        &lt;factory
+   &lt;extension point=&quot;org.eclipse.rse.ui.subsystemConfiguration&quot;&gt;
+        &lt;configuration
              id=&quot;samples.subsystems.factory&quot;
              systemtypes=&quot;Linux;Unix;Windows&quot;
              name=&quot;Teams&quot;
-             class=&quot;samples.subsystems.DeveloperSubSystemFactory&quot;
+             class=&quot;samples.subsystems.DeveloperSubSystemConfiguration&quot;
              category=&quot;users&quot;
              vendor=&quot;ACME&quot;
         &gt;
-        &lt;/factory&gt;
+        &lt;/configuration&gt;
    &lt;/extension&gt;            
 </samp></pre>
 <b>Note:</b> You would normal use the <samp>icon</samp> and <samp>iconLive</samp> attributes to specify 
 a unique icon for your subsystem, but to keep it simple here, just use the default icon.
 </li>
 </ol>
-<p>Now you are far enough along that you can try our what you have, before proceeding. Select
+		<p>Now you are far enough along that you can try our what you have, before proceeding. Select
 <b>Run-&gt;Run As-&gt;Run-time workbench</b>. Create a new Linux connection in the RSE, and 
 expand it. You'll now see your <A href="runIt1.gif">new subsystem</A>, which you can expand
 to see its default filter, which in turn you can expand to see your hardcoded list of teams:<br>
@@ -120,29 +114,25 @@ by creating adapters for the resources:</p>
 <ol start="10">
  <li>Select the <samp>samples.model</samp> package, and:
    <ol>
-   <li type="i">Create a new class named <b><samp>TeamResourceAdapter</samp></b>
-       that extends <a href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter</samp></A> and implements
-       <a href="../../reference/api/org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter</samp></A>. 
+   <li type="i">Create a new class named <samp>TeamResourceAdapter</samp> that extends <a href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html"><samp>AbstractSystemViewAdapter</samp></A> and implements
+       <a href="../../reference/api/org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html"><samp>ISystemRemoteElementAdapter</samp></A>. 
        Edit the generated class and add the code highlighted <a href="TeamResourceAdapter.html"><b>here</b></a>.
    </li>
    <li type="i">Create a new class named <b><samp>DeveloperResourceAdapter</samp></b>
-       that extends <a href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter</samp></A> and implements
-       <a href="../../reference/api/org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html"><samp>com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter</samp></A>. 
+       that extends <a href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html"><samp>AbstractSystemViewAdapter</samp></a> and implements
+       <a href="../../reference/api/org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html"><samp>ISystemRemoteElementAdapter</samp></A>. 
        Edit the generated class and add the code highlighted <a href="DeveloperResourceAdapter.html"><b>here</b></a>.
    </li>
    <li type="i">Next, you need the icons for your remote resources, which you referred to in your adapters. Edit the <samp>RSESamplesPlugin</samp> file and edit the <samp>initializeImageRegistry</samp>
-       to add the lines of code highlighted <a href="InitializeImageRegistry.html"><b>here</b></a>. Now, you need the icons. Select the RSESamplesPlugin project,
-       right-click and select <b>New-&gt;Folder</b> and create a folder named <b>icons</b>. Select the new folder, and use <b>File-&gt;Import</b> to 
-       import the <samp>team.gif</samp> and <samp>developer.gif</samp> files from the <samp>plugins\com.ibm.etools.systems.doc.isv\icons</samp> folder, 
-       typically found <samp>c:\wdsc\iseries</samp> where c:\wdsc is where you installed this product.
-   </li>
+       to add the lines of code highlighted <a href="InitializeImageRegistry.html"><b>here</b></a>. Now, you need the icons. Select the <samp>RSESamplesPlugin</samp> project, right-click and select <b>New-&gt;Folder</b> and create a folder named <b>icons</b>. Select the new folder, and use <b>File-&gt;Import</b> to 
+       import the <samp>team.gif</samp> and <samp>developer.gif</samp> files from the <samp>org.eclipse.rse.examples.tutorial/icons</samp> folder.</li>
    </ol>
  </li>
  <li>Creating the adapters does nothing until you register them with the platform. To do that, you need
  an adapter factory class and you need to register it with the platform:
    <ol>
      <li type="i">Select the <samp>samples.model</samp> package and in it create a class named
-     <b>DeveloperAdapterFactory</b> that extends <samp><a href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemRemoteAdapterFactory.html">AbstracSystemRemoteAdapterFactory</a></samp> 
+     <b>DeveloperAdapterFactory</b> that extends <samp><a href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemRemoteAdapterFactory.html">AbstractSystemRemoteAdapterFactory</a></samp> 
      and implements interface <samp><b>org.eclipse.core.runtime.IAdapterFactory</b></samp>.
      Edit the generate class as per the highlighted code <a href="DeveloperAdapterFactory.html"><b>here</b></a>.
      </li>
@@ -190,22 +180,22 @@ evolve the functions via your adapter, should you want to:</p>
 <ul>
 <li>To not show the rename and delete actions at all, or to enable them, 
 override appropriate methods in the adapter class. For details see the methods 
-<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#showRename(java.lang.Object)">showRename</A>, 
-<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#showDelete(java.lang.Object)">showDelete</A>, 
-<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#doRename(org.eclipse.swt.widgets.Shell, java.lang.Object, java.lang.String)">doRename</A>
+<A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#showRename(java.lang.Object)">showRename</A>, 
+<A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#showDelete(java.lang.Object)">showDelete</A>, 
+<A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#doRename(org.eclipse.swt.widgets.Shell, java.lang.Object, java.lang.String)">doRename</A>
  and 
-<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#doDelete(org.eclipse.swt.widgets.Shell, java.lang.Object)">doDelete</A> in the parent 
-<samp><A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html">AbstractSystemViewAdapter</A></samp> class.
+<A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#doDelete(org.eclipse.swt.widgets.Shell, java.lang.Object)">doDelete</A> in the parent 
+<samp><A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html">AbstractSystemViewAdapter</A></samp> class.
 <li>To supply your own validator for syntax checking of new names on the rename dialogs,
-override <A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#getNameValidator(java.lang.Object)">getNameValidator</A>.
-<li>To add additional actions to the pop-up menus, implement the <A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#addActions(com.ibm.etools.systems.core.ui.SystemMenuManager, org.eclipse.jface.viewers.IStructuredSelection, org.eclipse.swt.widgets.Shell, java.lang.String)">addActions</a> 
+override <A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#getNameValidator(java.lang.Object)">getNameValidator</A>.
+<li>To add additional actions to the pop-up menus, implement the <A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#addActions(com.ibm.etools.systems.core.ui.SystemMenuManager, org.eclipse.jface.viewers.IStructuredSelection, org.eclipse.swt.widgets.Shell, java.lang.String)">addActions</a> 
 method in your adapter class.
 <li>To support dragging and dropping, override the 
-<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#canDrag(java.lang.Object)">canDrag</a> and 
-<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#canDrop(java.lang.Object)">canDrop</a> parent methods in your adapter class.
+<A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#canDrag(java.lang.Object)">canDrag</a> and 
+<A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#canDrop(java.lang.Object)">canDrop</a> parent methods in your adapter class.
 <li>To add additional properties to the property sheet, implement the 
-<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#internalGetPropertyDescriptors()">internalGetPropertyDescriptors</a> and
-<A href="../../com/ibm/etools/systems/core/ui/view/AbstractSystemViewAdapter.html#internalGetPropertyValue()">internalGetPropertyValue</a> methods
+<A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#internalGetPropertyDescriptors()">internalGetPropertyDescriptors</a> and
+<A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#internalGetPropertyValue()">internalGetPropertyValue</a> methods
 in your adapter class.
 <li>To add property pages to your remote objects (the Properties popup menu item will then appear) use
 the RSE <A href="../plugin/propertypage.html">propertyPages</a> extension point. 

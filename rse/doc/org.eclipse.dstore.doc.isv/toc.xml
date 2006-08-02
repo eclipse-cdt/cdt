@@ -7,6 +7,7 @@
 			<topic label="DataStore Artifacts" href="guide/Artifacts.html" />
 			<topic label="DataStore Communications" href="guide/Communications.html" />
 			<topic label="DataElements and the DataStore Model" href="guide/DataElements.html" />
+			<topic label="Memory Management of DataElements" href="guide/MemoryManagement.html" />
 			<topic label="Miners" href="guide/Miners.html" />
 		</topic>
 		<topic label="Extending and Using the DataStore" href="guide/Extending.html">

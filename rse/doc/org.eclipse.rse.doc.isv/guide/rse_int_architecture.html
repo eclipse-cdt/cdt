@@ -25,22 +25,20 @@
 This is the headless, barebones API layer that is used to interact with different protocols to
 provide remote services that can be integrated into RSE.  By default, RSE defines the following
 types of services:
-<ul>
+
+		<ul>
   <li>File Service - for listing, modifying, copying, and transfering remote file and folders</li>
   <li>Shell Service - for launching remote shells and interacting with the associated IO</li>
   <li>Process Services - for listing remote processes</li>
 </ul>
-</p>
-<p>
+		<p>
 New service types can be added as needed, either in core RSE, or extensions to the base.  The service
 interfaces are defined loosely so that different implementations of the same service can be made using
 different protocols.  For example, the IFileService could be implemented locally with java.io, FTP, DataStore or some
 other protocol.  Similarly, the IShellService could be implemented locally via DataStore, telnet, SSH or something
 else.
 </p>
-
-
-<h2><A name="SubSystems">RSE Subsystem Layer</A></h2>
+		<h2><A name="SubSystems">RSE Subsystem Layer</A></h2>
 <p>
 RSE subsystems integrate the services of the service layer with connection information, model artifacts and persistence.
 Each subsystem is associated with a single service type.  For example, the file service subsystem is associated with the

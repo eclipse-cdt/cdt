@@ -13,55 +13,55 @@
 <p>
 Since RSE version 7.0 a substantial design change has been made to the DataStore that significantly reduces the memory footprint of the
 DataElements in high-use, long up-time situations. A problem that was identified was that in the DataStore, DataElements were
-rarely being destroyed – only when the files they represented were themselves deleted. When directories in the file system were explored,
+rarely being destroyed - only when the files they represented were themselves deleted. When directories in the file system were explored,
 DataElements were being created to represent the files in the directories, but these DataElements were cached and never
 removed from the cache. Therefore, the number of DataElements in the DataStore was always increasing. With no opportunity
 to clear the cache or remove elements, the memory usage of the server continued to grow boundlessly.
 </p>
-<h2><a name="spirit">A solution – “spirit” DataElements:</a></h2>
+<h2><a name="spirit">A solution - Spirit DataElements</a></h2>
 <p>
-The solution to the problem of an ever-growing set of DataElements was simple – provide a mechanism of removing “old”
+The solution to the problem of an ever-growing set of DataElements was simple - provide a mechanism of removing "old"
 DataElements and thus shrinking the set. Since server memory real-estate comes at a much higher premium, the focus here
 is on server-side memory reduction. The assumption then, is that DataElements in the DataStore will always remain in
 memory on the client, but that in the mirror-image DataStore that resides on the server, DataElements can be removed.
 </p>
 <p>
 Formerly, the RSE ran under the assumption that the client and server DataStores mirrored each other. The new
-implementation will have a server DataStore tree that is only a subset of all the elements in the client tree (because
+implementation has a server DataStore tree that is only a subset of all the elements in the client tree (because
 some elements get removed.) In order to accommodate this, a new boolean member variable was added to the DataElement
-class called “isSpirit”. When this variable is set to true it means different things on the client and server. On the
-server, a “spirit” DataElement means the element is treated in much the same way as a “deleted” element. At the first
-opportunity, the element is purged from the DataStore and garbage collected by the JVM – freeing up memory. On the client,
-a “spirit” element means that that particular DataElement’s counterpart has been made a spirit; thus the client “knows”
+class called "isSpirit". When this variable is set to true it means different things on the client and server. On the
+server, a "spirit" DataElement means the element is treated in much the same way as a "deleted" element. At the first
+opportunity, the element is purged from the DataStore and garbage collected by the JVM - freeing up memory. On the client,
+a "spirit" element means that that particular DataElement's counterpart has been made a spirit; thus the client "knows"
 that its twin element on the server side has either been deleted, or is about to be deleted.
 </p>
-<h2><a name="disconnecting">Disconnecting “old” DataElements:</a></h2>
+<h2><a name="disconnecting">Disconnecting "old" DataElements:</a></h2>
 <p>
 How is it determined when to mark a given DataElement as a spirit? It was decided that the decision to this would be
 left to clients of the DataStore (the miners), rather than to the DataStore itself. This was done for the purposes of
 granularity: some individual miners may not want DataElements to be ever purged, some might want only specific elements,
 etc. As an example, the UniversalFileSystemMiner employs the FileClassifier to classify files returned from a directory
-query, and after each file has been classified, the DataStore’s disconnectObject() method is called on the DataElement
+query, and after each file has been classified, the DataStore's disconnectObject() method is called on the DataElement
 representing that file, setting the stage for its becoming a spirit.
 </p>
 <h2><a name="queue">Controlling the queue of DataElements:</a></h2>
 <p>
 A new class, the DataElementRemover, running in its own thread, maintains a queue of objects that were passed into
-DataStore’s disconnectObject() method; each object is stored in the queue along with the time it was added. The
+DataStore's disconnectObject() method; each object is stored in the queue along with the time it was added. The
 DataElementRemover is configurable by two command-line options: -DSPIRIT_EXPIRY_TIME=x and -DSPIRIT_INTERVAL_TIME=y;
-where x and y are integers representing a number of seconds. Every y seconds, the queue checks its elements and “makes
-spirit” all those that are older than x seconds. The DataElement is then refreshed, and the change propagated to the
+where x and y are integers representing a number of seconds. Every y seconds, the queue checks its elements and "makes
+spirit" all those that are older than x seconds. The DataElement is then refreshed, and the change propagated to the
 client. On the server side, the DataElement is deleted at the first opportunity.
 </p>
 <h2><a name="feature">Turning on the feature:</a></h2>
 <p>
-On the client side, this feature is always “on”. It is the server which is configured to do or not to do the spirit
-DataElement behaviour. This way, backwards compatibility is maintained – if a new client connects to an old server, or a
+On the client side, this feature is always "on". It is the server which is configured to do or not to do the spirit
+DataElement behaviour. This way, backwards compatibility is maintained - if a new client connects to an old server, or a
 server with spirit turned off, the client detects this and operates as before. If an old client connects to a new server
 with spirit turned on, the server detects that the client does not have spirit capability and behaves as it did before.
 </p>
 <p>
-To turn on the spirit feature on the server side, one needs to include the command-line option –DDSTORE_SPIRIT_ON=true.
+To turn on the spirit feature on the server side, one needs to include the command-line option -DDSTORE_SPIRIT_ON=true.
 The server scripts have been packaged in order to do this by default.
 </p>
 </body>

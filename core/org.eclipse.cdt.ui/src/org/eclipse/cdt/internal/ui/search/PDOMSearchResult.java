@@ -82,12 +82,13 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 		List list = new ArrayList(); 
 		Object[] elements = result.getElements();
 		for (int i = 0; i < elements.length; ++i) {
-			Match[] matches = result.getMatches(elements[i]);
-			for (int j = 0; j < matches.length; ++j) {
-				if (matches[j] instanceof PDOMSearchMatch) {
-					String mfilename = ((PDOMSearchMatch)matches[j]).getFileName();
-					if (filename.equals(mfilename))
+			if (((PDOMSearchElement) elements[i]).getFileName()
+					.equals(filename)) {
+				Match[] matches = result.getMatches(elements[i]);
+				for (int j = 0; j < matches.length; ++j) {
+					if (matches[j] instanceof PDOMSearchMatch) {
 						list.add(matches[j]);
+					}
 				}
 			}
 		}

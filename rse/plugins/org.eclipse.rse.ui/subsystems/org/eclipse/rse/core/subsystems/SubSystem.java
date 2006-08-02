@@ -912,21 +912,21 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	/**
 	 * @deprecated
 	 */
-	public void setIBMAttribute(String attributeName, String attributeValue)
+	public void setRemoteAttribute(String attributeName, String attributeValue)
 	{
-		IPropertySet set = getPropertySet("IBM");
+		IPropertySet set = getPropertySet("Remote");
 		if (set == null)
 		{
-			set = createPropertySet("IBM", getDescription());
+			set = createPropertySet("Remote", getDescription());
 		}
 		set.addProperty(attributeName, attributeValue);
 	}
 	/**
 	 * @deprecated 
 	 */
-	public String getIBMAttribute(String attributeName)
+	public String getRemoteAttribute(String attributeName)
 	{
-		IPropertySet set = getPropertySet("IBM");
+		IPropertySet set = getPropertySet("Remote");
 		if (set != null)
 		{
 			return set.getPropertyValue(attributeName);

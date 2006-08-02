@@ -167,24 +167,7 @@ all the actions defined in this objectContribution element.
 &lt;p&gt;
 This filter specifies a subsystem configuration id, such that these
 actions will only appear for remote resources returned from subsystems of the given subsystem configuration.
-This ID can be scalar, or it can be generic to match on multiple subsystem configuration IDs. The
-IDs of the IBM-supplied subsystem factories that display remote resources in the Remote
-Systems view are:
-&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;b&gt;ibm.filesLocal&lt;/b&gt;. For local file system resources, under
-the &quot;Files&quot; subsystem.
-&lt;li&gt;&lt;b&gt;ibm.filesWindows&lt;/b&gt;. For remote Windows file system resources,
-under the &quot;Files&quot; subsystem.
-&lt;li&gt;&lt;b&gt;ibm.files&lt;/b&gt;. For remote Unix and Linux file system resources,
-under the &quot;Files&quot; subsystem.
-&lt;li&gt;&lt;b&gt;ibm.filesIFS&lt;/b&gt;. For remote iSeries unix file system resources,
-under the &quot;IFS Files&quot; subsystem.
-&lt;li&gt;&lt;b&gt;ibm.files400&lt;/b&gt;. For remote iSeries native QSYS file system
-resources, under the &quot;iSeries Objects&quot; subsystem.
-&lt;li&gt;&lt;b&gt;ibm.cmds400&lt;/b&gt;. For remote iSeries commands, under the &quot;iSeries Commands&quot; subsystem
-&lt;li&gt;&lt;b&gt;ibm.jobs400&lt;/b&gt;. For remote iSeries jobs, under the &quot;iSeries Jobs&quot; subsystem.&lt;/ul&gt;
-&lt;br&gt;
+This ID can be scalar, or it can be generic to match on multiple subsystem configuration IDs. 
                </documentation>
             </annotation>
          </attribute>
@@ -634,7 +617,7 @@ Further, we show how to define multiple actions within one objectContribution:
             typecategoryfilter=&quot;files&quot;
             typefilter=&quot;file&quot;
             namefilter=&quot;*.java&quot;
-            subsystemconfigurationid=&quot;ibm.filesLocal&quot;&gt;
+            subsystemconfigurationid=&quot;local.files&quot;&gt;
             &lt;action id=&quot;com.acme.action2a&quot;
                     label=&quot;Test Action One for Local Java Files&quot;
                     class=&quot;com.acme.actions.Action2a&quot;
@@ -661,7 +644,7 @@ actions to our own single-cascading menu:
             typecategoryfilter=&quot;files&quot;
             typefilter=&quot;file&quot;
             namefilter=&quot;*.java&quot;
-            subsystemconfigurationid=&quot;ibm.filesLocal&quot;&gt;
+            subsystemconfigurationid=&quot;local.files&quot;&gt;
             &lt;menu id=&quot;com.acme.menu&quot;
                   label=&quot;Test Actions&quot;&gt;
                   &lt;separator name=&quot;taGroup&quot;/&gt;
@@ -698,7 +681,7 @@ are unrelated to each other:
             typecategoryfilter=&quot;files&quot;
             typefilter=&quot;file&quot;
             namefilter=&quot;*.java&quot;
-            subsystemconfigurationid=&quot;ibm.filesLocal&quot;&gt;
+            subsystemconfigurationid=&quot;local.files&quot;&gt;
             &lt;menu id=&quot;com.acme.menu&quot;
                   label=&quot;Test Actions&quot;&gt;
                   &lt;separator name=&quot;taGroup&quot;/&gt;
@@ -737,7 +720,7 @@ IBM-supplied cascading menu:
             typecategoryfilter=&quot;files&quot;
             typefilter=&quot;file&quot;
             namefilter=&quot;*.java&quot;
-            subsystemconfigurationid=&quot;ibm.filesLocal&quot;&gt;
+            subsystemconfigurationid=&quot;local.files&quot;&gt;
             &lt;action id=&quot;com.acme.action5a&quot;
                     label=&quot;Test Action One for Local Java Files&quot;
                     class=&quot;com.acme.actions.Action5a&quot;

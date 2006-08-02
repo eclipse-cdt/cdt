@@ -132,10 +132,7 @@ Contributors:
 <!--                        a property page for. Can be a simple name or simple generic -->
 <!--                        name to match on.                                           -->
 <!--                        This id matches the id attribute of a subsystemconfiguration      -->
-<!--                        extension point. IBM-supplied subsystem factories are       -->
-<!--                        ibm.files400, ibm.cmds400, ibm.jobs400, ibm.filesIFS,       -->
-<!--                        ibm.cmdsIFS,  ibm.filesLocal, ibm.filesWindows,             -->
-<!--                        ibm.cmdsWindows, ibm.files and ibm.cmds                     -->
+<!--                        extension point.                                            -->
 <!--  subsystemconfigurationCategory => a subsystem configuration "category" to match on. Can be a  -->
 <!--                          simple name or simple generic like "*files". Matches on   -->
 <!--                          the "category" attribute of the subsystem configuration. IBM    -->
@@ -149,16 +146,9 @@ Contributors:
 <!--                        "OBJECTFILES" and "MEMBERS". Specify "OBJECT*" to match on  -->
 <!--                        all objects including files.                                -->
 <!--  typefilter => scalar or simple generic type to match on. This too is subsystem    -->
-<!--                configuration defined. For ibm.files400, it is the remote object type     -->
-<!--                such as "*PGM" or member type such as "RPGLE". For all other        -->
-<!--                ibm.files subsystem factories (unix/linux/windows/local) it is      -->
-<!--                either "file" or "folder".                                          -->
-<!--  subtypefilter => scalar or simple generic subtype to match on. For ibm.files400,  -->
-<!--                this is the OS/400 attribute of the object, such as "RPGLE". For    -->
-<!--                ibm.files subsystem factories (unix/linux/windows/local) it is      -->
-<!--                either "subfolder" or "root" to allow distinguishing of root folders-->
-<!--  subsubtypefilter => scalar or simple generic sub-subtype to match on. No IBM      -->
-<!--                subsystem factories currently set this                              -->
+<!--                configuration defined.												-->
+<!--  subtypefilter => scalar or simple generic subtype to match on.                    -->
+<!--  subsubtypefilter => scalar or simple generic sub-subtype to match on.             -->
 <!-- ================================================================================== -->
 <!--                                                                                    -->
 <!-- __________________________________________________________________________________ -->
@@ -168,7 +158,7 @@ Contributors:
 <!--            id="com.acme.mypropertypage"                                            -->
 <!--            name="Remote File Info"                                                 -->
 <!--            icon="icons/myProperties.gif"                                           -->
-<!--            subsystemconfigurationid="ibm.filesLocal"                                     -->
+<!--            subsystemconfigurationid="local.files"                                     -->
 <!--            subsystemconfigurationCategory="files"                                        -->
 <!--            typefilter="file"                                                       -->
 <!--            subtypefilter="java"                                                    -->
@@ -221,31 +211,18 @@ Contributors:
 <!--                        a popup action for. Can be a simple name or simple generic  -->
 <!--                        name to match on.                                           -->
 <!--                        This id matches the id attribute of a subsystemconfiguration      -->
-<!--                        extension point. IBM-supplied subsystem factories are       -->
-<!--                        ibm.files400, ibm.cmds400, ibm.jobs400, ibm.filesIFS,       -->
-<!--                        ibm.cmdsIFS,  ibm.filesLocal, ibm.filesWindows,             -->
-<!--                        ibm.cmdsWindows, ibm.files and ibm.cmds                     -->
+<!--                        extension point.                                            -->
 <!--  subsystemconfigurationCategory => a subsystem configuration "category" to match on. Can be a  -->
 <!--                          simple name or simple generic like "*files". Matches on   -->
-<!--                          the "category" attribute of the subsystem configuration. IBM    -->
-<!--                          values are "file", "nativefiles", "commands" or "jobs".   -->
+<!--                          the "category" attribute of the subsystem configuration.  -->
 <!--  systemTypes => semicolon-separated list of system types or * for all              -->
 <!--  namefilter => scalar or simple generic name to match on                           -->
 <!--  typecategoryfilter => scalar or simple generic type category to match on.         -->
 <!--                        This is subsystem configuration defined and usually not needed if -->
-<!--                        the subsystemconfiguration id is given. However, for ibm.files400 -->
-<!--                        there are multiple categories: "LIBRARIES", "OBJECTS",      -->
-<!--                        "OBJECTFILES" and "MEMBERS". Specify "OBJECT*" to match on  -->
-<!--                        all objects including files.                                -->
+<!--                        the subsystemconfiguration id is given.                     -->
 <!--  typefilter => scalar or simple generic type to match on. This too is subsystem    -->
-<!--                configuration defined. For ibm.files400, it is the remote object type     -->
-<!--                such as "*PGM" or member type such as "RPGLE". For all other        -->
-<!--                ibm.files subsystem factories (unix/linux/windows/local) it is      -->
-<!--                either "file" or "folder".                                          -->
-<!--  subtypefilter => scalar or simple generic subtype to match on. For ibm.files400,  -->
-<!--                this is the OS/400 attribute of the object, such as "RPGLE". For    -->
-<!--                ibm.files subsystem factories (unix/linux/windows/local) it is      -->
-<!--                either "subfolder" or "root" to allow distinguishing of root folders-->
+<!--                configuration defined.                                              -->
+<!--  subtypefilter => scalar or simple generic subtype to match on.                    -->
 <!--  subsubtypefilter => scalar or simple generic sub-subtype to match on. No IBM      -->
 <!--                subsystem factories currently set this                              -->
 <!--                                                                                    -->
@@ -411,9 +388,7 @@ Contributors:
 <!--						compile command will apply.									-->
 <!-- namefilter			=> 	the names to match. Must be either generic or of the form	-->
 <!--						*.extension, e.g. *.java.									-->
-<!-- typefilter			=>	the type of the remote resource. Only allowed "file" for 	-->
-<!--						subsystems ibm.filesXXX, and member type for ibm.files400	-->
-<!--						e.g. RPGLE.													-->
+<!-- typefilter			=>	the type of the remote resource.                            -->
 <!-- labeleditable		=>	specify whether label is editable in the Work With Compile	-->
 <!--						Commands dialog.											-->
 <!--																					-->

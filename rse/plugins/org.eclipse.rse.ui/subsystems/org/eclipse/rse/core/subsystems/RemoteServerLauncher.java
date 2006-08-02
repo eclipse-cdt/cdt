@@ -29,14 +29,14 @@ import org.eclipse.rse.ui.SystemResources;
 
 /**
  * <!-- begin-user-doc -->
- * This subclass of {@link IServerLauncherProperties} is for use by IBM-supplied subsystems, although
- *  is possibly of value to vendors as well. The IBM-supplied subsystems use server code
+ * This subclass of {@link IServerLauncherProperties} is for use by some dstore-based subsystems, although
+ *  is possibly of value to vendors as well. The dstore-based subsystems use server code
  *  written in Java, on top of the datastore technology. You can read about this in the 
  *  developer guide for Remote System Explorer. The bottom line, however, is we offer the 
  *  user a number of ways to start that remote server from the client, as well to connect
  *  to it if it is already running. This class encapsulates the properties to support that.
  * <p>
- * Create instances via {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#createIBMServerLauncher(ISubSystem)}
+ * Create instances via {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#createRemoteServerLauncher(ISubSystem)}
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
@@ -47,7 +47,7 @@ import org.eclipse.rse.ui.SystemResources;
  *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getDaemonPort <em>Daemon Port</em>}</li>
  *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getServerPath <em>Server Path</em>}</li>
  *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getServerScript <em>Server Script</em>}</li>
- *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getIbmAttributes <em>Ibm Attributes</em>}</li>
+ *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getRemoteAttributes <em>Remote Attributes</em>}</li>
  *   <li>{@link org.eclipse.rse.core.subsystems.RemoteServerLauncher#getRestrictedTypes <em>Restricted Types</em>}</li>
  * </ul>
  * </p>
@@ -90,7 +90,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 
 	protected String _serverScript = SERVER_SCRIPT_EDEFAULT;
 
-	protected static final String IBM_ATTRIBUTES_EDEFAULT = null;
+	protected static final String REMOTE_ATTRIBUTES_EDEFAULT = null;
 
 	protected static final String RESTRICTED_TYPES_EDEFAULT = null;
 	
@@ -447,18 +447,6 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 	}
 
 
-	/**
-	 * @deprecated
-	 */
-	public void setIBMAttribute(String attributeName, String attributeValue)
-	{
-		IPropertySet set = getPropertySet("IBM");
-		if (set == null)
-		{
-			set = createPropertySet("IBM", getDescription());
-		}
-		set.addProperty(attributeName, attributeValue);
-	}
 	
 
 	/**
@@ -479,4 +467,4 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 		
 	}
 
-} //IBMServerLauncherImpl
+} //RemoteServerLauncherImpl

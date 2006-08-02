@@ -69,7 +69,7 @@ Contributors:
             objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem"
             name="%PropertyPage.ServerLauncherSettings" 
             class="org.eclipse.rse.ui.propertypages.ServerLauncherPropertyPage"
-            id="com.ibm.etools.universal.core.serverlauncher.PropertyPage">
+            id="org.eclipse.rse.ui.propertypages.ServerLauncherPropertyPage">
             <filter name="serverLaunchPP" value="true"/>
       </page>
 

@@ -87,7 +87,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	public String getShellEncoding()
 	{
-		IPropertySet set = getPropertySet("IBM");
+		IPropertySet set = getPropertySet("Remote");
 		if (set != null)
 		{
 			return set.getPropertyValue("shell.encoding");
@@ -97,10 +97,10 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	public void setShellEncoding(String encoding)
 	{
-		IPropertySet set = getPropertySet("IBM");
+		IPropertySet set = getPropertySet("Remote");
 		if (set == null)
 		{
-			set = createPropertySet("IBM", getDescription());
+			set = createPropertySet("Remote", getDescription());
 		}
 		set.addProperty("shell.encoding", encoding);
 		setDirty(true);
@@ -609,7 +609,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			}
 		}
 
-		setIBMAttribute(COMMAND_SHELLS_MEMENTO, shellBuffer.toString());
+		setRemoteAttribute(COMMAND_SHELLS_MEMENTO, shellBuffer.toString());
 	}
 
 	protected void internalRemoveShell(Object command) throws java.lang.reflect.InvocationTargetException,
@@ -639,7 +639,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	{
 		this.shell = shellWindow;
 		IRemoteCommandShell[] results = null;
-		String shellStr = getIBMAttribute(COMMAND_SHELLS_MEMENTO);
+		String shellStr = getRemoteAttribute(COMMAND_SHELLS_MEMENTO);
 		int numShells = 0;
 		if (shellStr != null && shellStr.length() > 0)
 		{

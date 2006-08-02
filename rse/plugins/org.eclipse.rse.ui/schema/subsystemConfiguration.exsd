@@ -107,12 +107,8 @@ a path to the icon&apos;s .gif file, relative to your plugin directory.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  A class that implements &lt;samp&gt;com.ibm.etools.systems.subsystems.SubSystemFactory&lt;/samp&gt;,
-or better yet extends &lt;samp&gt;com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemFactoryImpl&lt;/samp&gt;.
+                  A class that implements &lt;samp&gt;org.eclipse.rse.core.subsystems.SubSystemConfiguration&lt;/samp&gt;
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="com.ibm.etools.systems.subsystems.impl.DefaultSubSystemFactoryImpl"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -162,11 +158,11 @@ IBM-supplied categories include &quot;files&quot;, &quot;cmds&quot; and &quot;jo
          <attribute name="systemClass" type="string">
             <annotation>
                <documentation>
-                  Optional. Only used when naming an IBM-supplied subsystem configuration in the &lt;samp&gt;class&lt;/samp&gt; attribute, when you want to subclass or replace the IBM-supplied ISystem object used to manage the live connection with the remote system. Name a class that implements &lt;samp&gt;com.ibm.etools.systems.subsystems.ISystem&lt;/samp&gt;,
+                  Optional. Only used when naming an IBM-supplied subsystem configuration in the &lt;samp&gt;class&lt;/samp&gt; attribute, when you want to subclass or replace the IBM-supplied ISystem object used to manage the live connection with the remote system. Name a class that implements &lt;samp&gt;org.eclipse.rse.core.subsystems.IConnectorService&lt;/samp&gt;,
 or extends the appropriate IBM-supplied class such as &lt;samp&gt;com.ibm.etools.systems.universal.UniversalSystem&lt;/samp&gt; for unix, windows and system types.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="com.ibm.etools.systems.subsystems.ISystem"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.rse.core.subsystems.IConnectorService"/>
                </appInfo>
             </annotation>
          </attribute>

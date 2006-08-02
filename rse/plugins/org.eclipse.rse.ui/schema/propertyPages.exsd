@@ -154,25 +154,7 @@ Specify as many of these optional filters like this as needed to explicitly scop
 &lt;p&gt;
 This filter specifies a subsystem factory id, such that this
 property page will only appear for remote resources returned from subsystems of the given subsystem factory.
-This ID can be scalar, or it can be generic to match on multiple subsystem factory IDs. The
-IDs of the IBM-supplied subsystem factories that display remote resources in the Remote
-Systems view are:
-&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;b&gt;ibm.filesLocal&lt;/b&gt;. For local file system resources, under
-the &quot;Files&quot; subsystem.
-&lt;li&gt;&lt;b&gt;ibm.filesWindows&lt;/b&gt;. For remote Windows file system resources,
-under the &quot;Files&quot; subsystem.
-&lt;li&gt;&lt;b&gt;ibm.files&lt;/b&gt;. For remote Unix and Linux file system resources,
-under the &quot;Files&quot; subsystem.
-&lt;li&gt;&lt;b&gt;ibm.filesIFS&lt;/b&gt;. For remote iSeries unix file system resources,
-under the &quot;IFS Files&quot; subsystem.
-&lt;li&gt;&lt;b&gt;ibm.files400&lt;/b&gt;. For remote iSeries native QSYS file system
-resources, under the &quot;iSeries Objects&quot; subsystem.
-&lt;li&gt;&lt;b&gt;ibm.jobs400&lt;/b&gt;. For remote iSeries jobs, under the &quot;iSeries Jobs&quot; subsystem.
-&lt;li&gt;&lt;b&gt;ibm.cmds400&lt;/b&gt;. For remote iSeries jobs, under the &quot;iSeries Jobs&quot; subsystem.
-&lt;/ul&gt;
-&lt;br&gt;
+This ID can be scalar, or it can be generic to match on multiple subsystem factory IDs. 
                </documentation>
             </annotation>
          </attribute>
@@ -378,7 +360,7 @@ to files, versus folders, and only for local files:
             name=&quot;Remote File Info&quot;
             typecategoryfilter=&quot;files&quot;
             typefilter=&quot;file&quot;
-            subsystemfactoryid=&quot;ibm.filesLocal&quot;&gt;
+            subsystemfactoryid=&quot;local.files&quot;&gt;
       &lt;/page&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
@@ -396,7 +378,7 @@ to local Java files:
             name=&quot;Remote Java File Info&quot;
             typecategoryfilter=&quot;files&quot;
             typefilter=&quot;file&quot;
-            subsystemfactoryid=&quot;ibm.filesLocal&quot;
+            subsystemfactoryid=&quot;local.files&quot;
             namefilter=&quot;*.java&quot;&gt;
       &lt;/page&gt;
 &lt;/extension&gt;

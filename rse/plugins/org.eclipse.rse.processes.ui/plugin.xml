@@ -31,7 +31,7 @@ Contributors:
             category="processes"
             class="org.eclipse.rse.subsystems.processes.local.LocalProcessSubSystemConfiguration"
             vendor="IBM Corporation"
-            id="ibm.localprocesses">
+            id="local.processes">
       </factory>
       </extension>
 -->

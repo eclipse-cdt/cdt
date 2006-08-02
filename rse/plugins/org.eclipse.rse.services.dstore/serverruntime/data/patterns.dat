@@ -201,9 +201,7 @@ command: ./configure.*
 #
 # where:
 # 	<obj-name>:	The type of object that will be created in the Output View if
-#			a line of output matches this pattern.  If you have put an
-#			icon called "<object-name>.gif" in the com.ibm.etools.systems.dstore.core/icons
-#			directory, then the icon will be displayed in the view.
+#			a line of output matches this pattern.
 #	
 # 	<match-info>:	This is some combination of the words "file" and "line" or nothing
 #			at all.  This is used to define how the backreferences in the

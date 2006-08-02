@@ -338,7 +338,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		}
 	}
 	
-	private IRemoteServerLauncher getIBMServerLauncher()
+	private IRemoteServerLauncher getDStoreServerLauncher()
 	{
 		IServerLauncherProperties sl = getRemoteServerLauncherProperties();
 		//System.out.println("in UniversalSystem#getServerLauncher: sl = "+sl);
@@ -479,7 +479,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 
 //		ISubSystem ss = getPrimarySubSystem();
 		getPrimarySubSystem();
-		IRemoteServerLauncher serverLauncher = getIBMServerLauncher(); 
+		IRemoteServerLauncher serverLauncher = getDStoreServerLauncher(); 
 		
 		ServerLaunchType serverLauncherType = null;
 		boolean autoDetectSSL = true;

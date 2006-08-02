@@ -193,14 +193,15 @@ public class CPluginImages {
 	public static final String IMG_TOOL_GOTO_NEXT_ERROR= NAME_PREFIX + "next_error_nav.gif"; //$NON-NLS-1$
 	public static final String IMG_EDIT_PROPERTIES= NAME_PREFIX + "prop_edt.gif";	 //$NON-NLS-1$
     
-	public static final String IMG_ACTION_SHOW_FIELDS= NAME_PREFIX + "fields_co.gif"; //$NON-NLS-1$
+	public static final String IMG_ACTION_HIDE_FIELDS= NAME_PREFIX + "fields_co.gif"; //$NON-NLS-1$
 	public static final String IMG_ACTION_SHOW_PUBLIC= NAME_PREFIX + "public_co.gif"; //$NON-NLS-1$
-	public static final String IMG_ACTION_SHOW_STATIC= NAME_PREFIX + "static_co.gif"; //$NON-NLS-1$
+	public static final String IMG_ACTION_HIDE_STATIC= NAME_PREFIX + "static_co.gif"; //$NON-NLS-1$
 
     public static final String IMG_ACTION_SHOW_REF_BY = NAME_PREFIX + "ch_callers.gif"; //$NON-NLS-1$
     public static final String IMG_ACTION_SHOW_RELATES_TO = NAME_PREFIX + "ch_callees.gif"; //$NON-NLS-1$
     public static final String IMG_ACTION_HIDE_INACTIVE = NAME_PREFIX + "filterInactive.gif"; //$NON-NLS-1$
     public static final String IMG_ACTION_HIDE_SYSTEM = NAME_PREFIX + "filterSystem.gif"; //$NON-NLS-1$
+    public static final String IMG_ACTION_HIDE_MACROS = NAME_PREFIX + "filterDefines.gif"; //$NON-NLS-1$
     public static final String IMG_SHOW_NEXT= NAME_PREFIX + "search_next.gif"; //$NON-NLS-1$
     public static final String IMG_SHOW_PREV= NAME_PREFIX + "search_prev.gif"; //$NON-NLS-1$
     public static final String IMG_REFRESH= NAME_PREFIX + "refresh_nav.gif"; //$NON-NLS-1$

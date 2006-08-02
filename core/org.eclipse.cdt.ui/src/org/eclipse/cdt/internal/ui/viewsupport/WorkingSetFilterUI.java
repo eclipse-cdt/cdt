@@ -14,11 +14,18 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
+
+import org.eclipse.cdt.core.model.ICElement;
 
 /**
  * Wraps {@link WorkingSetFilterActionGroup} and handles the property changed
@@ -141,6 +148,13 @@ public abstract class WorkingSetFilterUI {
             return true;
         }
         return fWorkingSetFilter.isPartOfWorkingSet(element);
+    }
+
+    public boolean isPartOfWorkingSet(IPath resourceOrExternalPath) {
+        if (fWorkingSetFilter == null) {
+            return true;
+        }
+        return fWorkingSetFilter.isPartOfWorkingSet(resourceOrExternalPath);
     }
 
     public IWorkingSet getWorkingSet() {

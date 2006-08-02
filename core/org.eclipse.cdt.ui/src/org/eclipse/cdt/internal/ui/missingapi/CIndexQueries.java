@@ -25,6 +25,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -63,7 +66,26 @@ public class CIndexQueries {
 			return 0;
 		}
 	}
-
+    
+    public static class IPDOMReference {
+		private IASTName fName;
+		private ICProject fProject;
+		
+		public IPDOMReference(ICProject cproject, IASTName name) {
+			fProject= cproject;
+			fName= name;
+		}
+		public ITranslationUnit getTranslationUnit() throws CoreException {
+			return toTranslationUnit(fProject, fName);
+		}
+		public int getOffset() {
+			return fName.getFileLocation().getNodeOffset();
+		}
+		public long getTimestamp() {
+			return 0;
+		}
+    }
+    
 	private static final IPDOMInclude[] EMPTY_INCLUDES = new IPDOMInclude[0];
     private static final CIndexQueries sInstance= new CIndexQueries();
 	
@@ -73,7 +95,15 @@ public class CIndexQueries {
 	
 	public static ITranslationUnit toTranslationUnit(ICProject cproject, PDOMFile includedBy) throws CoreException {
 		String name= includedBy.getFileName().getString();
-		IPath path= Path.fromOSString(name);
+		return toTranslationUnit(cproject, name);
+	}
+
+	public static ITranslationUnit toTranslationUnit(ICProject cproject, IASTName name) throws CoreException {
+		return toTranslationUnit(cproject, name.getFileLocation().getFileName());
+	}
+
+	private static ITranslationUnit toTranslationUnit(ICProject cproject, String pathStr) throws CModelException {
+		IPath path= Path.fromOSString(pathStr);
 		ICElement e= cproject.findElement(path);
 		if (e instanceof ITranslationUnit) {
 			return (ITranslationUnit) e;
@@ -149,5 +179,40 @@ public class CIndexQueries {
 			}	
 		}		
 		return EMPTY_INCLUDES;
+	}
+
+	public IPDOMReference[] findReferences(ITranslationUnit tu, IASTName name, IProgressMonitor pm) throws CoreException, InterruptedException {
+		ArrayList result= new ArrayList();
+		LinkedList projects= new LinkedList(Arrays.asList(CoreModel.getDefault().getCModel().getCProjects()));
+		ICProject cproject= tu.getCProject();
+		if (cproject != null) {
+			projects.remove(cproject);
+			projects.addFirst(cproject);
+		}
+		
+		name.resolveBinding();
+		for (Iterator iter = projects.iterator(); iter.hasNext();) {
+			cproject = (ICProject) iter.next();
+			PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(cproject);
+			if (pdom != null) {
+				pdom.acquireReadLock();
+				try {
+					IBinding binding= pdom.resolveBinding(name);
+					if (binding != null) {
+						IASTName[] names= pdom.getReferences(binding);
+						for (int i = 0; i < names.length; i++) {
+							IASTName rname = names[i];
+							if (tu != null) {
+								result.add(new IPDOMReference(cproject, rname));
+							}
+						}
+					}
+				}
+				finally {
+					pdom.releaseReadLock();
+				}
+			}	
+		}
+		return (IPDOMReference[]) result.toArray(new IPDOMReference[result.size()]);
 	}
 }

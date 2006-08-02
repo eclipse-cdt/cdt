@@ -255,6 +255,12 @@
             icon="icons/view16/includeBrowser.gif"
             id="org.eclipse.cdt.ui.includeBrowser"
             name="%includeBrowser.name"/>
+      <view
+            category="org.eclipse.cdt.ui.views"
+            class="org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart"
+            icon="icons/view16/call_hierarchy.gif"
+            id="org.eclipse.cdt.ui.callHierarchy"
+            name="%callHierarchy.name"/>
       <!--category
             name="%CBrowsing.viewCategoryName"
             id="org.eclipse.cdt.ui.c.browsing">

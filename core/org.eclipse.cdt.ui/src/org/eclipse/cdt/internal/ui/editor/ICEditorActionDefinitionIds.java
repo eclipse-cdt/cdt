@@ -133,6 +133,12 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String OPEN_OUTLINE= "org.eclipse.cdt.ui.edit.open.outline"; //$NON-NLS-1$
 
 	/**
+	 * Action definition ID for opening the call hierarchy.
+	 * (value <code>"org.eclipse.cdt.ui.edit.open.call.hierarchy"</code>).
+	 */
+	public static final String OPEN_CALL_HIERARCHY= "org.eclipse.cdt.ui.edit.open.call.hierarchy"; //$NON-NLS-1$
+
+	/**
 	 * Action definition ID for go to next c member.
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.goto.next.memeber"</code>)
 	 */

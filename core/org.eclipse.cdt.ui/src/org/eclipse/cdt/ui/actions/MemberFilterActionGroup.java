@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Rational Software - initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
@@ -106,7 +107,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 		MemberFilterAction hideFields= new MemberFilterAction(this, title, FILTER_FIELDS, helpContext, doHideFields);
 		hideFields.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_fields.description")); //$NON-NLS-1$
 		hideFields.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_fields.tooltip")); //$NON-NLS-1$
-		CPluginImages.setImageDescriptors(hideFields, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_FIELDS); 
+		CPluginImages.setImageDescriptors(hideFields, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_FIELDS); 
 		
 		// static
 		title= ActionMessages.getString("MemberFilterActionGroup.hide_static.label"); //$NON-NLS-1$
@@ -114,7 +115,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 		MemberFilterAction hideStatic= new MemberFilterAction(this, title, FILTER_STATIC, helpContext, doHideStatic);
 		hideStatic.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_static.description")); //$NON-NLS-1$
 		hideStatic.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_static.tooltip")); //$NON-NLS-1$
-		CPluginImages.setImageDescriptors(hideStatic, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_STATIC); 
+		CPluginImages.setImageDescriptors(hideStatic, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_STATIC); 
 		
 		// non-public
 		title= ActionMessages.getString("MemberFilterActionGroup.hide_nonpublic.label"); //$NON-NLS-1$

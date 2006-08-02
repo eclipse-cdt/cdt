@@ -41,7 +41,22 @@ public class WorkingSetFilter {
         }
         return check == ACCEPT;
     }
-    
+
+    public synchronized boolean isPartOfWorkingSet(IPath resourceOrExternalPath) {
+        if (fResourceFilter == null) {
+            return true;
+        }
+        if (resourceOrExternalPath == null) {
+            return false;
+        }
+        Object check= fResourceFilter.get(resourceOrExternalPath);
+        if (check == null) {
+            check= checkWorkingSet(resourceOrExternalPath);
+            fResourceFilter.put(resourceOrExternalPath, check);
+        }
+        return check == ACCEPT;
+    }
+
     private synchronized Object checkWorkingSet(IPath path) {
         if (path.segmentCount() == 0) {
             return REJECT;

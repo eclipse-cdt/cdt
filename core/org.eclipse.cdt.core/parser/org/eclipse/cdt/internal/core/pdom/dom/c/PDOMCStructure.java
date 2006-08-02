@@ -12,8 +12,11 @@
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMNode;
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -21,11 +24,11 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
@@ -53,29 +56,60 @@ public class PDOMCStructure extends PDOMMemberOwner implements ICompositeType {
 		throw new PDOMNotImplementedError();
 	}
 
+	private static class GetFields implements IPDOMVisitor {
+		private List fields = new ArrayList();
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof IField)
+				fields.add(node);
+			return false;
+		}
+		public IField[] getFields() {
+			return (IField[])fields.toArray(new IField[fields.size()]);
+		}
+	}
 	public IField[] getFields() throws DOMException {
 		try {
-			ArrayList fields = new ArrayList();
-		
-			for (PDOMMember member = getFirstMember(); member != null; member = member.getNextMember()) {
-				if (member instanceof IField)
-					fields.add(member);
-			}
-			
-			return (IField[])fields.toArray(new IField[fields.size()]);
+			GetFields fields = new GetFields();
+			accept(fields);
+			return fields.getFields();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return new IField[0];
 		}
 	}
 
+	public static class FindField implements IPDOMVisitor {
+		private IField field;
+		private final String name;
+		public FindField(String name) {
+			this.name = name;
+		}
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof IField) {
+				IField tField = (IField)node;
+				if (name.equals(tField.getName())) {
+					field = tField;
+					throw new CoreException(Status.OK_STATUS);
+				}
+			}
+			return false;
+		}
+		public IField getField() { return field; }
+	}
+	
 	public IField findField(String name) throws DOMException {
+		FindField field = new FindField(name);
 		try {
-			PDOMMember[] members = findMembers(name.toCharArray());
-			return members.length > 0 ? (PDOMCField)members[0] : null;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			accept(field);
+			// returned => not found
 			return null;
+		} catch (CoreException e) {
+			if (e.getStatus().equals(Status.OK_STATUS))
+				return field.getField();
+			else {
+				CCorePlugin.log(e);
+				return null;
+			}
 		}
 	}
 

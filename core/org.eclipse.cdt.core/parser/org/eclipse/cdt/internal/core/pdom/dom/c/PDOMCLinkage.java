@@ -14,6 +14,8 @@ package org.eclipse.cdt.internal.core.pdom.dom.c;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.dom.IPDOMNode;
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -39,12 +41,12 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
@@ -174,15 +176,45 @@ public class PDOMCLinkage extends PDOMLinkage {
 		}
 	}
 
+	private static class FindBinding2 implements IPDOMVisitor {
+		private PDOMBinding binding;
+		private final char[] name;
+		private final int[] desiredType;
+		public FindBinding2(char[] name, int desiredType) {
+			this(name, new int[] { desiredType });
+		}
+		public FindBinding2(char[] name, int[] desiredType) {
+			this.name = name;
+			this.desiredType = desiredType;
+		}
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof PDOMBinding) {
+				PDOMBinding tBinding = (PDOMBinding)node;
+				if (tBinding.hasName(name)) {
+					int nodeType = tBinding.getNodeType();
+					for (int i = 0; i < desiredType.length; ++i)
+						if (nodeType == desiredType[i]) {
+							// got it
+							binding = tBinding;
+							throw new CoreException(Status.OK_STATUS);
+						}
+				}
+			}
+			return false;
+		}
+		public PDOMBinding getBinding() { return binding; }
+	}
+
 	protected int getBindingType(IBinding binding) {
-		if (binding instanceof IVariable)
+		if (binding instanceof IField)
+			// This needs to be before variable
+			return CFIELD;
+		else if (binding instanceof IVariable)
 			return CVARIABLE;
 		else if (binding instanceof IFunction)
 			return CFUNCTION;
 		else if (binding instanceof ICompositeType)
 			return CSTRUCTURE;
-		else if (binding instanceof IField)
-			return CFIELD;
 		else if (binding instanceof IEnumeration)
 			return CENUMERATION;
 		else if (binding instanceof IEnumerator)
@@ -203,10 +235,16 @@ public class PDOMCLinkage extends PDOMLinkage {
 			getIndex().accept(visitor);
 			return visitor.pdomBinding;
 		} else if (parent instanceof PDOMMemberOwner) {
+			FindBinding2 visitor = new FindBinding2(binding.getNameCharArray(), getBindingType(binding));
 			PDOMMemberOwner owner = (PDOMMemberOwner)parent;
-			PDOMMember[] members = owner.findMembers(binding.getNameCharArray());
-			if (members.length > 0)
-				return members[0];
+			try {
+				owner.accept(visitor);
+			} catch (CoreException e) {
+				if (e.getStatus().equals(Status.OK_STATUS))
+					return visitor.getBinding();
+				else
+					throw e;
+			}
 		}
 		return null;
 	}

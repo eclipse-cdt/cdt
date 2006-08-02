@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.model.ICProject;
@@ -47,5 +48,30 @@ public class ClassTests extends PDOMTestBase {
 		assertEquals(1, Bf_refs.length);
 		IASTFileLocation loc = Bf_refs[0].getFileLocation();
 		assertEquals(offset(95, 84), loc.getNodeOffset());
+	}
+	
+	public void testNested() throws Exception {
+		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+
+		IBinding[] bindings = pdom.findBindings(Pattern.compile("NestedA"));
+		assertEquals(1, bindings.length);
+		ICPPClassType NestedA = (ICPPClassType)bindings[0];
+		ICPPClassType[] nested = NestedA.getNestedClasses();
+		assertEquals(1, nested.length);
+		ICPPClassType NestedB = nested[0];
+		assertEquals("NestedB", NestedB.getName());
+		IField[] fields = NestedB.getFields();
+		assertEquals(1, fields.length);
+		IField NestedB_x = fields[0];
+		
+		IASTName[] refs = pdom.getReferences(NestedB);
+		assertEquals(1, refs.length);
+		IASTFileLocation loc = refs[0].getFileLocation();
+		assertEquals(offset(96, 86), loc.getNodeOffset());
+		
+		refs = pdom.getReferences(NestedB_x);
+		assertEquals(1, refs.length);
+		loc = refs[0].getFileLocation();
+		assertEquals(offset(118, 108), loc.getNodeOffset());
 	}
 }

@@ -67,7 +67,7 @@ public class ClassTests extends PDOMTestBase {
 		IASTName[] refs = pdom.getReferences(NestedB);
 		assertEquals(1, refs.length);
 		IASTFileLocation loc = refs[0].getFileLocation();
-		assertEquals(offset(96, 86), loc.getNodeOffset());
+		assertEquals(offset(96, 87), loc.getNodeOffset());
 		
 		refs = pdom.getReferences(NestedB_x);
 		assertEquals(1, refs.length);

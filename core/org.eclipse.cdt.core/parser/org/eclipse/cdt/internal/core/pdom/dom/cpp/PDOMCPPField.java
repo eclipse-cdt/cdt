@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPField extends PDOMMember implements ICPPField {
+public class PDOMCPPField extends PDOMBinding implements ICPPField {
 
 	public PDOMCPPField(PDOM pdom, PDOMCPPClassType parent, IASTName name)
 			throws CoreException {
@@ -48,7 +48,7 @@ public class PDOMCPPField extends PDOMMember implements ICPPField {
 	
 	public ICPPClassType getClassOwner() throws DOMException {
 		try {
-			return (ICPPClassType)getMemberOwner();
+			return (ICPPClassType)getParentNode();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

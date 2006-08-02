@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMNode;
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -34,7 +36,6 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -107,37 +108,6 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 		throw new PDOMNotImplementedError();
 	}
 	
-	private void visitAllDeclaredMethods(Set visited, List methods) throws CoreException {
-		if (visited.contains(this))
-			return;
-		visited.add(this);
-		
-		// Get my members
-		for (PDOMMember member = getFirstMember(); member != null; member = member.getNextMember()) {
-			if (member instanceof ICPPMethod)
-				methods.add(member);
-		}
-		
-		// Visit my base classes
-		for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase()) {
-			IBinding baseClass = base.getBaseClass();
-			if (baseClass != null && baseClass instanceof PDOMCPPClassType)
-				((PDOMCPPClassType)baseClass).visitAllDeclaredMethods(visited, methods);
-		}
-	}
-	
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
-		List methods = new ArrayList();
-		Set visited = new HashSet();
-		try {
-			visitAllDeclaredMethods(visited, methods);
-			return (ICPPMethod[])methods.toArray(new ICPPMethod[methods.size()]);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new ICPPMethod[0];
-		}
-	}
-
 	public ICPPBase[] getBases() throws DOMException {
 		try {
 			List list = new ArrayList();
@@ -161,27 +131,56 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 		throw new PDOMNotImplementedError();
 	}
 
+	private static class GetMethods implements IPDOMVisitor {
+		private final List methods;
+		public GetMethods(List methods) {
+			this.methods = methods;
+		}
+		public GetMethods() {
+			this.methods = new ArrayList();
+		}
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof ICPPMethod)
+				methods.add(node);
+			return false; // don't visit the method
+		}
+		public ICPPMethod[] getMethods() {
+			return (ICPPMethod[])methods.toArray(new ICPPMethod[methods.size()]); 
+		}
+	}
+	
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public IField[] getFields() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public IBinding[] getFriends() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public ICPPMethod[] getMethods() throws DOMException {
 		try {
-			ArrayList methods = new ArrayList();
+			GetMethods methods = new GetMethods();
+			accept(methods);
+			return methods.getMethods();
+		} catch (CoreException e) {
+			return new ICPPMethod[0];
+		}
+	}
+
+	private void visitAllDeclaredMethods(Set visited, List methods) throws CoreException {
+		if (visited.contains(this))
+			return;
+		visited.add(this);
 		
-			for (PDOMMember member = getFirstMember(); member != null; member = member.getNextMember()) {
-				if (member instanceof ICPPMethod)
-					methods.add(member);
-			}
-			
+		// Get my members
+		GetMethods myMethods = new GetMethods(methods);
+		accept(myMethods);
+		
+		// Visit my base classes
+		for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase()) {
+			IBinding baseClass = base.getBaseClass();
+			if (baseClass != null && baseClass instanceof PDOMCPPClassType)
+				((PDOMCPPClassType)baseClass).visitAllDeclaredMethods(visited, methods);
+		}
+	}
+	
+	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+		List methods = new ArrayList();
+		Set visited = new HashSet();
+		try {
+			visitAllDeclaredMethods(visited, methods);
 			return (ICPPMethod[])methods.toArray(new ICPPMethod[methods.size()]);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -189,8 +188,59 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 		}
 	}
 
-	public ICPPClassType[] getNestedClasses() throws DOMException {
+	public ICPPMethod[] getMethods() throws DOMException {
+		// TODO Should really include implicit methods too
+		return getDeclaredMethods();
+	}
+
+	private static class GetFields implements IPDOMVisitor {
+		private List fields = new ArrayList();
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof IField)
+				fields.add(node);
+			return false;
+		}
+		public IField[] getFields() {
+			return (IField[])fields.toArray(new IField[fields.size()]);
+		}
+	}
+	
+	public IField[] getFields() throws DOMException {
+		try {
+			GetFields visitor = new GetFields();
+			accept(visitor);
+			return visitor.getFields();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new IField[0];
+		}
+	}
+
+	public IBinding[] getFriends() throws DOMException {
 		throw new PDOMNotImplementedError();
+	}
+
+	private static class GetNestedClasses implements IPDOMVisitor {
+		private List nestedClasses = new ArrayList();
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof ICPPClassType)
+				nestedClasses.add(node);
+			return false;
+		}
+		public ICPPClassType[] getNestedClasses() {
+			return (ICPPClassType[])nestedClasses.toArray(new ICPPClassType[nestedClasses.size()]);
+		}
+	}
+	
+	public ICPPClassType[] getNestedClasses() throws DOMException {
+		try {
+			GetNestedClasses visitor = new GetNestedClasses();
+			accept(visitor);
+			return visitor.getNestedClasses();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new ICPPClassType[0];
+		}
 	}
 
 	public IScope getCompositeScope() throws DOMException {
@@ -248,14 +298,7 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 	}
 
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
-		try {
-			PDOMMember[] matches = findMembers(name.toCharArray());
-			// TODO - need to check for overloads
-			return matches.length > 0 ? matches[0] : null;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
+		return null;
 	}
 
 	public IScope getParent() throws DOMException {

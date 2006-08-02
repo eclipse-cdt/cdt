@@ -11,11 +11,11 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import java.util.ArrayList;
-
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.db.ListItem;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -25,9 +25,8 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class PDOMMemberOwner extends PDOMBinding {
 
 	private static final int FIRST_MEMBER = PDOMBinding.RECORD_SIZE + 0;
-	private static final int LAST_MEMBER = PDOMBinding.RECORD_SIZE + 4;
 	
-	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
+	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 
 	public PDOMMemberOwner(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name);
@@ -43,69 +42,44 @@ public abstract class PDOMMemberOwner extends PDOMBinding {
 	
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
-		for (PDOMMember member = getFirstMember(); member != null; member = member.getNextMember())
-			if (visitor.visit(member))
-				member.accept(visitor);
-				
-	}
-	
-	public void addMember(PDOMMember member) throws CoreException {
-		PDOMMember last = getLastMember();
-		if (last != null) {
-			last.setNextMember(member);
-			member.setPrevMember(last);
-		} else // first add
-			setFirstMember(member);
-			
-		setLastMember(member);
-		member.setMemberOwner(this);
-	}
-
-	public PDOMMember getFirstMember() throws CoreException {
-		return (PDOMMember)getLinkage().getNode(
-				pdom.getDB().getInt(record + FIRST_MEMBER));
-	}
-
-	public PDOMMember getLastMember() throws CoreException {
-		return (PDOMMember)getLinkage().getNode(
-				pdom.getDB().getInt(record + LAST_MEMBER));
-	}
-
-	public void setFirstMember(PDOMMember member) throws CoreException {
-		int memberrec = member != null ? member.getRecord() : 0;
-		pdom.getDB().putInt(record + FIRST_MEMBER, memberrec);
-	}
-	
-	public void setLastMember(PDOMMember member) throws CoreException {
-		int memberrec = member != null ? member.getRecord() : 0;
-		pdom.getDB().putInt(record + LAST_MEMBER, memberrec);
-	}
-	
-	public int getNumMembers() throws CoreException {
-		int n = 0;
+		ListItem firstItem = getFirstMemberItem();
+		if (firstItem == null)
+			return;
 		
-		for (PDOMMember member = getFirstMember(); member != null; member = member.getNextMember())
-			++n;
-		
-		return n;
-	}
-
-	public PDOMMember getMember(int index) throws CoreException {
-		int n = 0;
-		for (PDOMMember member = getFirstMember(); member != null; member = member.getNextMember())
-			if (n++ == index)
-				return member;
-		return null;
+		PDOMLinkage linkage = getLinkage();
+		ListItem item = firstItem;
+		do {
+			PDOMNode node = linkage.getNode(item.getItem());
+			if (visitor.visit(node))
+				node.accept(visitor);
+			item = item.getNext();
+		} while (!item.equals(firstItem));
 	}
 	
-	public PDOMMember[] findMembers(char[] name) throws CoreException {
-		ArrayList members = new ArrayList();
-		
-		for (PDOMMember member = getFirstMember(); member != null; member = member.getNextMember())
-			if (member.hasName(name))
-				members.add(member);
-			
-		return (PDOMMember[])members.toArray(new PDOMMember[members.size()]);
+	private ListItem getFirstMemberItem() throws CoreException {
+		Database db = pdom.getDB();
+		int item = db.getInt(record + FIRST_MEMBER);
+		return item != 0 ? new ListItem(db, item) : null;
+	}
+	
+	public void addMember(PDOMNode member) throws CoreException {
+		Database db = pdom.getDB();
+		ListItem firstMember = getFirstMemberItem();
+		if (firstMember == null) {
+			firstMember = new ListItem(db);
+			firstMember.setItem(member.getRecord());
+			firstMember.setNext(firstMember);
+			firstMember.setPrev(firstMember);
+			db.putInt(record + FIRST_MEMBER, firstMember.getRecord());
+		} else {
+			ListItem newMember = new ListItem(db);
+			newMember.setItem(member.getRecord());
+			ListItem prevMember = firstMember.getPrev();
+			prevMember.setNext(newMember);
+			firstMember.setPrev(newMember);
+			newMember.setPrev(prevMember);
+			newMember.setNext(firstMember);
+		}
 	}
 
 }

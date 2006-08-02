@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -37,12 +37,12 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPMethod extends PDOMMember implements ICPPMethod, ICPPFunctionType {
+public class PDOMCPPMethod extends PDOMBinding implements ICPPMethod, ICPPFunctionType {
 
-	public static final int NUM_PARAMS = PDOMMember.RECORD_SIZE + 0;
-	public static final int FIRST_PARAM = PDOMMember.RECORD_SIZE + 4;
+	public static final int NUM_PARAMS = PDOMBinding.RECORD_SIZE + 0;
+	public static final int FIRST_PARAM = PDOMBinding.RECORD_SIZE + 4;
 	
-	public static final int RECORD_SIZE = PDOMMember.RECORD_SIZE + 8;
+	public static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
 	
 	public PDOMCPPMethod(PDOM pdom, PDOMMemberOwner parent, IASTName name) throws CoreException {
 		super(pdom, parent, name);
@@ -165,7 +165,7 @@ public class PDOMCPPMethod extends PDOMMember implements ICPPMethod, ICPPFunctio
 
 	public ICPPClassType getClassOwner() throws DOMException {
 		try {
-			return (ICPPClassType)getMemberOwner();
+			return (ICPPClassType)getParentNode();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

@@ -149,7 +149,7 @@ abstract public class DataViewModelSchemaNode implements IViewModelSchemaNode {
                         childNodeDone);
                 } else {
                     getElements(
-                        (IViewModelContext)parent.getElement(), 
+                        parent.getVMC(), 
                         new GetDataDone<IViewModelContext[]>() { public void run() {
                             if (!getStatus().isOK()) {
                                 fExecutor.execute(done);

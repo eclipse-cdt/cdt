@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.model;
 
+import org.eclipse.dd.dsf.concurrent.GetDataDone;
 import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
@@ -26,4 +27,11 @@ public interface IDataModelService extends IDsfService, IDataModelData {
      * service are changed. 
      */
     IDataModelContext getServiceContext();
+    
+    /**
+     * Retrieves model data object for given context.  This method makes it
+     * un-necessary for every model service to declare a separate method 
+     * for retrieving model data of specific type.
+     */
+    <V extends IDataModelData> void getModelData(IDataModelContext<V> dmc, GetDataDone<V> done);
 }

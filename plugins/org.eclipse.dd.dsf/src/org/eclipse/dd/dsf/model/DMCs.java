@@ -26,17 +26,19 @@ public class DMCs {
      */
     @SuppressWarnings("unchecked")
     public static <V extends IDataModelContext> V getAncestorOfType(IDataModelContext ctx, Class<V> ancestorType) {
+        if (ancestorType.isAssignableFrom(ctx.getClass())) {
+            return (V)ctx;
+        }
+        
         for (IDataModelContext parent : ctx.getParents()) {
-            if (parent.getClass().equals(ancestorType)) {
+            if (ancestorType.isAssignableFrom(parent.getClass())) {
                 return (V)parent;
             }
         }
 
         for (IDataModelContext parent : ctx.getParents()) {
-            if (parent.getClass().equals(ancestorType)) {
-                V ancestor = getAncestorOfType(parent, ancestorType);
-                if (ancestor != null) return ancestor;
-            }
+            V ancestor = getAncestorOfType(parent, ancestorType);
+            if (ancestor != null) return ancestor;
         }
         return null;
     }

@@ -3,6 +3,7 @@ package org.eclipse.dd.dsf.debug;
 import java.math.BigInteger;
 
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.debug.IMemory.IAddress;
 import org.eclipse.dd.dsf.model.IDataModelContext;
 import org.eclipse.dd.dsf.model.IDataModelData;
 import org.eclipse.dd.dsf.model.IDataModelEvent;

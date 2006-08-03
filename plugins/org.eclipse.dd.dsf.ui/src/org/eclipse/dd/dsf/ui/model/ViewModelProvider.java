@@ -175,7 +175,9 @@ public class ViewModelProvider extends AbstractModelProxy
             childNode.getElements(
                 vmc, 
                 doneTracker.add( new GetDataDone<IViewModelContext[]>() { public void run() {
-                    monitor.addChildren(getData());
+                    if (getStatus().isOK()) {
+                        monitor.addChildren(getData());
+                    }
                     doneTracker.doneDone(this);
                 }}));
         }
@@ -203,7 +205,7 @@ public class ViewModelProvider extends AbstractModelProxy
         fProxyActive++;
     }
     
-    public void dipose() {
+    public void dispose() {
         fProxyActive--;
         super.dispose();
     }

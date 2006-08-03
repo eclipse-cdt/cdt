@@ -61,6 +61,12 @@ public interface INativeProcesses extends IDataModelService {
      * @param done Return token with the process context.
      */
     void debugNewProcess(String file, GetDataDone<IProcessDMC> done);
+
+    /**
+     * Retrieves the list of processes which are currently under
+     * debugger control.
+     */
+    void getProcessesBeingDebugged(GetDataDone<IProcessDMC[]> done);
     
     /** 
      * Returns a thread context for given run control execution context.
@@ -68,4 +74,18 @@ public interface INativeProcesses extends IDataModelService {
      * @return Corresponding thread context.
      */
     IThreadDMC getThreadForExecutionContext(IRunControl.IExecutionDMC execCtx); 
+    
+    /**
+     * Checks whether the given process or thread can be terminated.
+     * @param thread Thread or process to terminate.
+     * @param done Return token.
+     */
+    void canTerminate(IThreadDMC thread, GetDataDone<Boolean> done);
+
+    /**
+     * Terminates the selected process or thread.
+     * @param thread Thread or process to terminate.
+     * @param done Return token.
+     */
+    void terminate(IThreadDMC thread, Done done);
 }

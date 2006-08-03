@@ -21,7 +21,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
  * @param <V> Data model data that this context is for.
  */
 public class AbstractDMC<V extends IDataModelData> extends PlatformObject 
-    implements IDataModelContext     
+    implements IDataModelContext<V>     
 {
     private final String fSessionId;
     private final String fServiceFilter;

@@ -33,21 +33,21 @@ public interface IRunControl extends IDataModelService
     public interface IContainerDMC extends IExecutionDMC {}
 
     /** Flag indicating reason context state change. */
-    public enum StateChangeReason { USER_REQUEST, STEP, BREAKPOINT, EXCEPTION, CONTAINER };
+    public enum StateChangeReason { UNKNOWN, USER_REQUEST, STEP, BREAKPOINT, EXCEPTION, CONTAINER };
         
     /**
      * Events signaling a state changes.
      */
-    public interface SuspendedEvent extends IDataModelEvent<IExecutionDMC> {
+    public interface ISuspendedEvent extends IDataModelEvent<IExecutionDMC> {
         StateChangeReason getReason();
     }
-    public interface ResumedEvent extends IDataModelEvent<IExecutionDMC> {
+    public interface IResumedEvent extends IDataModelEvent<IExecutionDMC> {
         StateChangeReason getReason();
     }
-    public interface ContainerSuspendedEvent extends IDataModelEvent<IExecutionDMC> {
+    public interface IContainerSuspendedEvent extends IDataModelEvent<IExecutionDMC> {
         StateChangeReason getReason();
     }
-    public interface ContainerResumedEvent extends IDataModelEvent<IExecutionDMC> {
+    public interface IContainerResumedEvent extends IDataModelEvent<IExecutionDMC> {
         StateChangeReason getReason();
     }
     public interface IStartedEvent extends IDataModelEvent<IExecutionDMC> {
@@ -81,7 +81,8 @@ public interface IRunControl extends IDataModelService
     void suspend(IExecutionDMC context, Done done);
     public enum StepType { STEP_OVER, STEP_INTO, STEP_RETURN };
     boolean isStepping(IExecutionDMC context);
-    void canStep(IExecutionDMC context);
+    boolean canStep(IExecutionDMC context);
     void step(IExecutionDMC context, StepType stepType, Done done);
+    boolean canInstructionStep(IExecutionDMC context);
     void instructionStep(IExecutionDMC context, StepType stepType, Done done);
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.service;
 
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Enumeration;
 
@@ -91,13 +92,21 @@ abstract public class AbstractDsfService
      */
     @SuppressWarnings("unchecked")
     protected void register(String[] classes, Dictionary properties) {
-        String[] newClasses = new String[classes.length + 2];
-        System.arraycopy(classes, 0, newClasses, 2, classes.length);
-        newClasses[0] = IDsfService.class.getName();
-        newClasses[1] = getClass().getName();
+        if (!Arrays.asList(classes).contains(IDsfService.class.getName())) {
+            String[] newClasses = new String[classes.length + 1];
+            System.arraycopy(classes, 0, newClasses, 1, classes.length);
+            newClasses[0] = IDsfService.class.getName();
+            classes = newClasses;
+        }
+        if (!Arrays.asList(classes).contains(getClass().getName())) {
+            String[] newClasses = new String[classes.length + 1];
+            System.arraycopy(classes, 0, newClasses, 1, classes.length);
+            newClasses[0] = getClass().getName();
+            classes = newClasses;
+        }
         properties.put(PROP_SESSION_ID, getSession().getId());
         fProperties = properties;
-        fRegistration = getBundleContext().registerService(newClasses, this, properties);
+        fRegistration = getBundleContext().registerService(classes, this, properties);
         fRegistration.getReference().getProperty(Constants.OBJECTCLASS);
         fFilter = generateFilter(fProperties);
         fProperties.put(Constants.OBJECTCLASS, fRegistration.getReference().getProperty(Constants.OBJECTCLASS));

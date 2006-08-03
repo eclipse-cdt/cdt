@@ -21,7 +21,7 @@ public interface IBackEndProcess extends IDsfService {
     /**
      * Event indicating that the back end process has terminated.
      */
-    public interface ExitedEvent {}
+    public interface IExitedEvent {}
 
     /**
      * Returns the instance of the java process object representing the back

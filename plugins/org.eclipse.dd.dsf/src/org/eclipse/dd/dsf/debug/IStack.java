@@ -1,6 +1,7 @@
 package org.eclipse.dd.dsf.debug;
 
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.debug.IMemory.IAddress;
 import org.eclipse.dd.dsf.model.IDataModelContext;
 import org.eclipse.dd.dsf.model.IDataModelData;
 import org.eclipse.dd.dsf.model.IDataModelService;
@@ -24,6 +25,7 @@ public interface IStack extends IDataModelService {
     public interface IFrameData extends IDataModelData {
         IAddress getAddress();
         String getFile();
+        String getFunction();
         int getLine();
         int getColumn();
     }
@@ -44,6 +46,15 @@ public interface IStack extends IDataModelService {
         String getValue();
     }
 
+    /**
+     * Returns whether the stack frames can be retrieved for given thread.
+     * <br>
+     * TODO: I'm not sure if this method should be async.  It assumes that the 
+     * implementation can determine if stack is available based on process
+     * state information. 
+     */
+    boolean isStackAvailable(IRunControl.IExecutionDMC execContext);
+    
     /**
      * Retrieves list of stack frames for the given execution context.  Request
      * will fail if the stack frame data is not available.

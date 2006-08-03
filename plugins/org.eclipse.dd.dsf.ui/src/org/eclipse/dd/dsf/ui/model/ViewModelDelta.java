@@ -82,10 +82,13 @@ public class ViewModelDelta extends ModelDelta {
      * only needed for creating delta nodes for parent elements in the tree
      * if the VMC elements are not at the root of the tree.
      * @param element Element to create the delta for.
+     * @param vmcElement Optional VMC element for this node, it can be used
+     * by other nodes in the delta to set their VMC parent element correctly.
      */
-    public ViewModelDelta(Object element) {
+    public ViewModelDelta(Object element, IViewModelContext vmcElement) {
         super(element, IModelDelta.NO_CHANGE);
         fElement = element;
+        fVmcElement = vmcElement;
     }
         
 
@@ -108,7 +111,6 @@ public class ViewModelDelta extends ModelDelta {
     public void addFlags(int flags) {
         fFlags |= flags;
     }
-    
     
     public IViewModelContext getVMC() { return fVmcElement; }
     
@@ -155,6 +157,22 @@ public class ViewModelDelta extends ModelDelta {
      */
     public ViewModelDelta addNode(IViewModelContext element, int index, int flags) {
         ViewModelDelta node = new ViewModelDelta(element, index, flags);
+        node.setParent(this);
+        addDelta(node);
+        return node;
+    }
+    
+    /**
+     * Adds a node to the delta for a non-VMC element.  This is used to 
+     * construct the root branch of the delta before it is handed off to 
+     * ViewModelProvider.handleDataModelEvent() 
+     * @param element Element in the asynchronous view to create the new node for.
+     * @param vmcElement Optional VMC element for this node, it can be used
+     * by other nodes in the delta to set their VMC parent element correctly.
+     * @return Returns the added delta node.
+     */
+    public ViewModelDelta addNode(Object element, IViewModelContext vmcElement) {
+        ViewModelDelta node = new ViewModelDelta(element, vmcElement);
         node.setParent(this);
         addDelta(node);
         return node;

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICExtensionReference;
@@ -51,8 +52,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -508,22 +511,35 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 *             if an exception occurrs while building
 	 */
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-
-		if (orderedProjects != null) {
-			monitor.beginTask(LaunchMessages.getString("AbstractCLaunchDelegate.building_projects"), //$NON-NLS-1$
-								orderedProjects.size() + 1);
+		//This matches the old code, but I don't know that it is the right behaviour.
+		//We should be building the local project as well, not just the ordered projects
+		if(orderedProjects == null) {		
+			return false;
+		}
+		
+		if(monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		
+		int scale = 1000;
+		int totalWork = (orderedProjects.size() + 1) * scale;
+		
+		try {
+			monitor.beginTask(LaunchMessages.getString("AbstractCLaunchDelegate.building_projects"), totalWork); //$NON-NLS-1$
 
 			for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
 				IProject proj = (IProject)i.next();
 				monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.building") + proj.getName()); //$NON-NLS-1$
-				proj.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+				proj.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(monitor, scale));
 			}
 
 			monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.building") + project.getName()); //$NON-NLS-1$
-			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(monitor, scale));
+		} finally {
+			monitor.done();
 		}
-		monitor.done();
-		return false; //don't build. I already did it or I threw an exception.
+
+		return false; 
 	}
 
 	/**
@@ -540,16 +556,26 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 */
 	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		boolean continueLaunch = true;
-		if (orderedProjects != null) {
-			monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors")); //$NON-NLS-1$
+		if(orderedProjects == null) {
+			return continueLaunch;
+		}
+
+		if(monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		
+		int scale = 1000;
+		int totalWork = (orderedProjects.size() + 1) * scale;
+		try {
+			monitor.beginTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors"), totalWork); //$NON-NLS-1$
 			
 			boolean compileErrorsInProjs = false;
 			
 			//check prerequisite projects for compile errors.
 			for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
 				IProject proj = (IProject)i.next();
-				monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in") //$NON-NLS-1$
-						+ proj.getName());
+				monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in" + proj.getName())); //$NON-NLS-1$
+				monitor.worked(scale);
 				compileErrorsInProjs = existsErrors(proj);
 				if (compileErrorsInProjs) {
 					break;
@@ -558,8 +584,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			
 			//check current project, if prerequite projects were ok
 			if (!compileErrorsInProjs) {
-				monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in") //$NON-NLS-1$
-						+ project.getName());
+				monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in" + project.getName())); //$NON-NLS-1$
+				monitor.worked(scale);
 				compileErrorsInProjs = existsErrors(project);
 			}
 			
@@ -570,6 +596,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 					continueLaunch = ((Boolean)prompter.handleStatus(complileErrorPromptStatus, null)).booleanValue();
 				}
 			}
+		} finally {
+			monitor.done();
 		}
 		return continueLaunch;
 	}
@@ -602,20 +630,32 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 *      java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		// build project list
-		if (monitor != null) {
-			monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.20")); //$NON-NLS-1$
+		if(monitor == null) {
+			monitor = new NullProgressMonitor();
 		}
-		orderedProjects = null;
-		ICProject cProject = getCProject(configuration);
-		if (cProject != null) {
-			project = cProject.getProject();
-			HashSet projectSet = new HashSet();
-			getReferencedProjectSet(project, projectSet);
-			orderedProjects = getBuildOrder(new ArrayList(projectSet));
+
+		int scale = 1000;
+		int totalWork = 2 * scale;
+		
+		try {
+			monitor.beginTask(LaunchMessages.getString("AbstractCLaunchDelegate.20"), totalWork); //$NON-NLS-1$
+			
+			// build project list
+			orderedProjects = null;
+			ICProject cProject = getCProject(configuration);
+			if (cProject != null) {
+				project = cProject.getProject();
+				HashSet projectSet = new HashSet();
+				getReferencedProjectSet(project, projectSet);
+				orderedProjects = getBuildOrder(new ArrayList(projectSet));
+			}
+			monitor.worked(scale);
+			
+			// do generic launch checks
+			return super.preLaunchCheck(configuration, mode, new SubProgressMonitor(monitor, scale));
+		} finally {
+			monitor.done();
 		}
-		// do generic launch checks
-		return super.preLaunchCheck(configuration, mode, monitor);
 	}
 
 	/**

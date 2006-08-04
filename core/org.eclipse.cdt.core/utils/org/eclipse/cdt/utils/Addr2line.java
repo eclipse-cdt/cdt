@@ -117,7 +117,11 @@ public class Addr2line {
 				int colon = line.lastIndexOf(':');
 				String number = line.substring(colon + 1);
 				if (!number.startsWith("0")) { //$NON-NLS-1$
-					return Integer.parseInt(number);
+					try {
+						return Integer.parseInt(number);
+					} catch(Exception ex) {
+						return -1;
+					}
 				}
 			}
 		}

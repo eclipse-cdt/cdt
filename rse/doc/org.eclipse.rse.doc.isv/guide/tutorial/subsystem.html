@@ -8,10 +8,9 @@
 <title>Creating a Subsystem Configuration</title>
 </head>
 
-<body bgcolor="#ffffff">
+<body>
 <h1>Creating a Subsystem Configuration</h1>
-<p>In this tutorial, you will use the RSE <A href="../../reference/extension-points/org_eclipse_rse_ui_subsystemConfiguration.html">subsystemConfiguration extension point</A> to show new subsystems within connections, when they are expanded. Effectively,
-you will add a new <i>remote-accessing tool</i> to the Remote System Explorer.</p>
+<p>In this tutorial you will use the RSE <A href="../../reference/extension-points/org_eclipse_rse_ui_subsystemConfiguration.html">subsystemConfiguration</A> extension point to show new subsystems within connections, which will then appear when those connections are expanded. Effectively, you will add a new <i>remote-accessing tool</i> to the Remote System Explorer.</p>
 <p>
 A full-blown tutorial to illustrate this extension point is a bit difficult without inventing
 server-side code and a communication layer for that server-side code to communication with the
@@ -21,16 +20,10 @@ on the client-side so as to focus discussion on the client-side code. The extens
 you already have server-side code and a communication layer you now want to exploit within
 Eclipse.
 </p>
-<h2>Scenario</h2>
-<p>This tutorial pretends that you  have server-side code, which manages user profiles for developers, and
-<i>teams</i> of developers. There is a master list of developers identified for development access 
-to this server, and there is a grouping mechanism that allows developers to be assigned to named
-teams. Developers may exist on multiple teams. Each developer can have one or more <i>roles</i>, which 
-may affect what they are allowed to access.</p>
-<p>In this tutorial you will define a subsystem for working with these resources in the remote system
-identified by the parent connection object. This will first list teams, then developers within teams.
-Roles will be accessible via an action. 
-</p>
+		<p>When you are finished you should have a working subsystem similar to the one found in the org.eclipse.rse.examples.tutorial plugin.</p>
+		<h2>Scenario</h2>
+		<p>This tutorial pretends that you have server-side code which manages user profiles for developers and teams of developers. We assume there is a master list of developers identified for development access to this server, and there is a grouping mechanism that allows developers to be assigned to named teams. A developer may exist on multiple teams. Each developer can have one or more <i>roles</i> which may affect what they are allowed to access.</p>
+<p>In this tutorial you will define a subsystem for working with these resources in the remote system identified by the connection. This will first list teams and then developers within teams. Roles will be accessible via an action.</p>
 <p><i>Do not worry about how useful or realistic the example is. The point of the exercise is
 show the code necessary to fully enable new subsystems. It is up to the subsystem developer to
 decide what resources to expose and what actions on those resources.</i></p>
@@ -50,19 +43,19 @@ and using the <b>New-&gt;Package</b> wizard. In the new package, create an empty
 create a class named <samp><b>DeveloperConnectorService</b></samp> that extends <b>superclass</b> 
 <samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/AbstractConnectorService.html">AbstractConnectorService</A></samp>,
 selecting the option to include <b>Constructors from superclass</b>. Edit the result to add
-a <samp>connected</samp> instance variable that is used in the methods, as shown in bold <a href="DeveloperSystem.html">here</a>.
+a <samp>connected</samp> instance variable that is used in the methods, as shown in bold <a href="DeveloperConnectorService.html">here</a>.
 </li>
 <li>Again in package <samp>samples.subsystems</samp>, use <b>New-&gt;Class</b> to
-create a class named <samp><b>DeveloperSystemManager</b></samp> that extends <b>superclass</b> 
+create a class named <samp><b>DeveloperConnectorServiceManager</b></samp> that extends <b>superclass</b> 
 <samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/AbstractConnectorServiceManager.html">AbstractSystemManager</A></samp>,
 selecting the option to include <b>Constructors from superclass</b>. Edit the result to add
-a factory method, and flesh out the methods, as highlighted <a href="DeveloperSystemManager.html">here</a>.
+a factory method, and flesh out the methods, as highlighted <a href="DeveloperConnectorServiceManager.html">here</a>.
 </li>
 <li>Create a package named <samp><b>samples.model</b></samp>. Create two classes in it: 
 <b><samp>TeamResource</samp></b> and <b><samp>DeveloperResource</samp></b>, each of which extend
-<A href="../../reference/api/org/eclipse/rse/core/subsystems/AbstractResource.html">AbstractResource</A>.
+<A href="../../reference/api/org/eclipse/rse/core/subsystems/AbstractResource.html"><samp>AbstractResource</samp></A>.
   <ol>
-    <li type="i">Edit <samp>DeveloperResource</samp> to add <samp>name</samp>, <samp>id</samp>, and <samp>deptNbr</samp> properties, as shown in bold <a href="DeveloperResource.html">here</a>.<li type="i">Edit <samp>TeamResource</samp> to add <samp>name</samp> and <samp>developers</samp> (array) properties, 
+    <li type="i">Edit <samp>DeveloperResource</samp> to add <samp>name</samp>, <samp>id</samp>, and <samp>deptNbr</samp> properties, as shown in bold <a href="DeveloperResource.html">here</a>. You can use the refactoring support in eclipse to generate the getters and setters for these properties.<li type="i">Edit <samp>TeamResource</samp> to add <samp>name</samp> and <samp>developers</samp> (array) properties, 
     as shown in bold <a href="TeamResource.html">here</a>.
   </ol>
 <li>You need to think about  filter support. For now, you can keep it simple: users can only create filters that list teams,
@@ -72,9 +65,9 @@ parsing. As a result, you have nothing to do for this step.</li>
 <li>Return to package <samp>samples.subsystems</samp>, and create class <b><samp>DeveloperSubSystem</samp></b>
 that extends <samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystem.html">SubSystem</A></samp>.
 Edit the generated class to add code highlighted <a href="DeveloperSubSystem.html">here</a>.</li>
-<li>Again in package <samp>samples.subsystems</samp>, create class <b><samp>DeveloperSubSystemFactory</samp></b>
+<li>Again in package <samp>samples.subsystems</samp>, create class <b><samp>DeveloperSubSystemConfiguration</samp></b>
 that extends <samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystemConfiguration.html">SubSystemConfiguration</A></samp>.
-Edit the generated class to add code highlighted <a href="DeveloperSubSystemFactory.html">here</a>.
+Edit the generated class to add code highlighted <a href="DeveloperSubSystemConfiguration.html">here</a>.
 </li>
 <li>In the project's root folder, find and edit file <samp>rseSamplesResources.properties</samp> and 
 add the line highlighted <a href="rseSamplesResources3.html">here</a>.
@@ -154,9 +147,7 @@ The <a href="renameDialog.gif">rename dialog</a> can catch this error because we
 the <a href="TeamResourceAdapter.html#getNames">getRemoteParentNamesInUse</a>
 method in our team resource adapter class. Rename to a new name. The rename in fact happens because we implemented
 the <a href="TeamResourceAdapter.html#doRename">doRename</a> method.
-<li>The default filter <samp>All teams</samp> exists because we wrote code to create it in 
-our <a href="DeveloperSubSystemFactory.html#createDefaultFilterPool">createDefaultFilterPool</a> 
-subsystem factory method. Try creating a new filter: right-click on <samp>Teams</samp> subsystem and select 
+<li>The default filter <samp>All teams</samp> exists because we wrote code to create it in our <a href="DeveloperSubSystemConfiguration.html#createDefaultFilterPool">createDefaultFilterPool</a> method of our subsystem configuration. Try creating a new filter: right-click on <samp>Teams</samp> subsystem and select 
 <a href="newFilterAction.gif">New-&gt;Filter</a> to get the
 <a href="NewFilterWizard.gif">New Filter wizard</a>. Enter <samp>*2</samp>, press <b>Next</b>, and 
 enter <samp>Test filter</samp> for the filter name. Press <b>Finish</b>
@@ -165,17 +156,14 @@ to create the filter. Expand it, and you will see that only teams whose name end
 <br>
 Filter support is free in the RSE,
 but you do have to write our own code to apply that filter pattern as you see fit. In this case, we did this in our 
-<a href="DeveloperSubSystem.html#resolveFilterString">internalResolveFilterString</a> subsystem method. 
-<li>Notice how a resource like team can display multiple times, by different filters that resolve to it.
+<a href="DeveloperSubSystem.html#resolveFilterString">internalResolveFilterString</a> method of our subsystem.<li>Notice how a resource like team can display multiple times, by different filters that resolve to it.
 Rename <samp>Team 2</samp> shown under the new expanded <samp>Test filter</samp>, and notice how it is successfully
 renamed under both filters. This ability to refresh the name in all occurrences of the same resource is made
 possible by the adapter methods <a href="TeamResourceAdapter.html#getAbsoluteName">getAbsoluteName</a>, which helps
 RSE find redundant copies of the same object, and <a href="TeamResourceAdapter.html#refreshRemoteObject">refreshRemoteObject</a>,
 which the RSE calls, on each redundant copy, on a rename operation.
 <IMG border="0" src="testRename.gif"></ul>
-<p>
-<br><br><br>
-<p>There are no steps to perform here, but for your reference here is some information on how to further 
+<p><em>Note:</em> For your reference here is some information on how to further 
 evolve the functions via your adapter, should you want to:</p>
 <ul>
 <li>To not show the rename and delete actions at all, or to enable them, 
@@ -188,7 +176,7 @@ override appropriate methods in the adapter class. For details see the methods
 <samp><A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html">AbstractSystemViewAdapter</A></samp> class.
 <li>To supply your own validator for syntax checking of new names on the rename dialogs,
 override <A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#getNameValidator(java.lang.Object)">getNameValidator</A>.
-<li>To add additional actions to the pop-up menus, implement the <A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#addActions(com.ibm.etools.systems.core.ui.SystemMenuManager, org.eclipse.jface.viewers.IStructuredSelection, org.eclipse.swt.widgets.Shell, java.lang.String)">addActions</a> 
+<li>To add additional actions to the pop-up menus, implement the <A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#addActions(org.eclipse.rse.ui.SystemMenuManager, org.eclipse.jface.viewers.IStructuredSelection, org.eclipse.swt.widgets.Shell, java.lang.String)">addActions</a> 
 method in your adapter class.
 <li>To support dragging and dropping, override the 
 <A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html#canDrag(java.lang.Object)">canDrag</a> and 
@@ -200,8 +188,6 @@ in your adapter class.
 <li>To add property pages to your remote objects (the Properties popup menu item will then appear) use
 the RSE <A href="../plugin/propertypage.html">propertyPages</a> extension point. 
 </ul>
-
-<br><br><br>
 <p>Now you will continue with the tutorial by enhancing the running example to supply its own actions for creating and changing
 filters. You will support two types of filters in our subsystems: team filters and developer filters. You have seen team filter already,
 but developer filters will be new. They will contain a team name and a developer name-pattern, and when expanded, they will list all the
@@ -213,21 +199,19 @@ which dialog to present to the user. This will also allow you to have different 
       <ol>
          <li type="i">First,  create the new GUI pane for your developer filter prompts. Select the <samp>samples.subsystems</samp>
          package and in it create a new class named <samp><b>DeveloperFilterStringEditPane</b></samp> that extends the
-         class <samp><b>SystemFilterStringEditPane</b></samp> in package <samp>com.ibm.etools.systems.filters.ui</samp>. 
+         class <samp><b>SystemFilterStringEditPane</b></samp> in package <samp>org.eclipse.rse.ui.filters</samp>. 
          Edit the new class, adding the code highlighted <a href="DeveloperFilterStringEditPane.html">here</a>.
          </li>
          
-         <li type="i">Edit the <samp>DeveloperSubSystemFactory</samp> class, and add the code highlighted 
-         <a href="DeveloperSubSystemFactory2.html">here</a>.
+         <li type="i">Edit the <samp>DeveloperSubSystemConfiguration</samp> class, and add the code highlighted 
+         <a href="DeveloperSubSystemConfiguration2.html">here</a>.
          </li>
          
          <li type="i">Next, you need the unique icons for your own filters, which you referred to in your subsystem factory. Edit the <samp>RSESamplesPlugin</samp> file and edit the <samp>initializeImageRegistry</samp>
          to add the lines of code highlighted <a href="InitializeImageRegistry2.html">here</a>. Now you need these icons. 
          Select the folder named <b>icons</b> and use <b>File-&gt;Import</b> to 
          import the <samp>teamFilter.gif</samp> and <samp>developerFilter.gif</samp> files from the 
-         <samp>plugins\com.ibm.etools.systems.doc.isv\icons</samp> folder, 
-         typically found in <samp>c:\wdsc\iseries</samp> where c:\wdsc is where you installed this product.
-         </li>
+         <samp>org.eclipse.rse.examples.tutorial\icons</samp> folder.</li>
          
          <li type="i">Now you need to edit your subsystem so it will parse the two types of filters you now
          have. Edit <samp>DeveloperSubSystem</samp> and edit it as highlighted <a href="DeveloperSubSystem2.html#resolve">here</a>.

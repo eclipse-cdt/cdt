@@ -28,8 +28,8 @@
 		<topic label="Relevant Eclipse Extension Points" href="guide/plugin/other.html" />
 	</topic>
 	<topic label="Tutorials" href="guide/tutorials.html">
-		<topic label="Creating a Remote Resource Popup Menu Action" href="guide/tutorial/popup.html" />
 		<topic label="Creating a Remote Resource Property Page" href="guide/tutorial/propertypage.html" />
-		<topic label="Creating a Subsystem Factory" href="guide/tutorial/subsystem.html" />
+		<topic label="Creating a Subsystem Configuration" href="guide/tutorial/subsystem.html" />
+		<topic label="Creating a Remote Resource Popup Menu Action" href="guide/tutorial/popup.html" />
 	</topic>
 </toc>

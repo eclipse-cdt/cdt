@@ -9,22 +9,21 @@
 <title>TeamResource Class After Editing</title>
 </head>
 
-<body bgcolor="#ffffff">
+<body>
 <h1>TeamResource Class After Editing</h1>
-<p>
 <pre><samp>
 package samples.model;
 
-import com.ibm.etools.systems.subsystems.<b>SubSystem</b>;
-import com.ibm.etools.systems.subsystems.impl.AbstractResource;
+import org.eclipse.rse.core.subsystems.AbstractResource;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 
 /**
  * This models a remote resource representing a team defined on a particular system.
  */
-public class TeamResource extends AbstractResource
-{
-	<b>private String name;</b>
-	<b>private DeveloperResource[] developers;</b>
+public class TeamResource extends AbstractResource {
+
+	private String name;
+	private DeveloperResource[] developers;
 	
 	/**
 	 * Default constructor
@@ -36,51 +35,49 @@ public class TeamResource extends AbstractResource
 	/**
 	 * Constructor for TeamResource when given a parent subsystem.
 	 */
-	public TeamResource(SubSystem subsystem)
+	public TeamResource(ISubSystem parentSubSystem)
 	{
-		super(subsystem);
+		super(parentSubSystem);
 	}
 	
 	/**
 	 * Returns the name.
 	 * @return String
 	 */
-	<b>public String getName()
+	public String getName()
 	{
 		return name;
-	}</b>
+	}
 
 	/**
 	 * Sets the name.
 	 * @param name The name to set
 	 */
-	<b>public void setName(String name)
+	public void setName(String name)
 	{
 		this.name = name;
-	}</b>
+	}
 
 	/**
 	 * Returns the developers.
 	 * @return DeveloperResource[]
 	 */
-	<b>public DeveloperResource[] getDevelopers()
+	public DeveloperResource[] getDevelopers()
 	{
 		return developers;
-	}</b>
+	}
 
 	/**
 	 * Sets the developers.
 	 * @param developers The developers to set
 	 */
-	<b>public void setDevelopers(DeveloperResource[] developers)
+	public void setDevelopers(DeveloperResource[] developers)
 	{
 		this.developers = developers;
-	}</b>
+	}
+
 
 }
-
-
 </samp></pre>
-</p>
 </body>
 </html>

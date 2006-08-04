@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>DeveloperSubSystemConfiguration Class After Editing</title>
+</head>
+
+<body>
+<h1>DeveloperSubSystemConfiguration Class After Editing</h1>
+<pre><samp>
+package samples.subsystems;
+
+<strong>import java.util.Vector;</strong>
+
+<strong>import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.ISubSystem;</strong>
+import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
+<strong>import org.eclipse.rse.filters.ISystemFilterPool;
+import org.eclipse.rse.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.internal.filters.SystemFilter;
+import org.eclipse.rse.model.IHost;</strong>
+
+<strong>import samples.RSESamplesPlugin;</strong>
+
+/**
+ * This is our subsystem factory, which creates instances of our subsystems,
+ *  and supplies the subsystem and filter actions to their popup menus.
+ */
+public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
+
+	/**
+	 * Constructor for DeveloperSubSystemConfiguration.
+	 */
+	public DeveloperSubSystemConfiguration() {
+		super();
+	}
+
+	/**
+	 * Create an instance of our subsystem.
+	 */
+	<strong>public ISubSystem createSubSystemInternal(IHost conn) {
+	   	return new DeveloperSubSystem(conn, getConnectorService(conn));
+	}</strong>
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getConnectorService(org.eclipse.rse.model.IHost)
+	 */
+	public IConnectorService getConnectorService(IHost host) {
+		<strong>return DeveloperConnectorServiceManager.getTheDeveloperConnectorServiceManager()
+			.getConnectorService(host, IDeveloperSubSystem.class);</strong>
+	}
+
+	/**
+	 * Intercept of parent method that creates an initial default filter pool.
+	 * We intercept so that we can create an initial filter in that pool, which will
+	 *  list all teams.
+	 */
+	<a id="createDefaultFilterPool"/><strong>protected ISystemFilterPool createDefaultFilterPool(ISystemFilterPoolManager mgr)
+	{
+		ISystemFilterPool defaultPool = null;
+		try {
+			defaultPool = mgr.createSystemFilterPool(getDefaultFilterPoolName(mgr.getName(), getId()), true); // true=>is deletable by user
+			Vector strings = new Vector();
+			strings.add("*");
+			mgr.createSystemFilter(defaultPool, "All teams", strings);
+		} catch (Exception exc) {}
+		return defaultPool;
+	}</strong>
+	
+	/**
+	 * Intercept of parent method so we can supply our own value shown in the property
+	 *  sheet for the "type" property when a filter is selected within our subsystem.
+	 *
+	 * Requires this line in rseSamplesResources.properties: property.type.teamfilter=Team filter
+	 */
+	<strong>public String getTranslatedFilterTypeProperty(SystemFilter selectedFilter)
+	{
+	   	return RSESamplesPlugin.getResourceString("property.type.teamfilter");
+	}</strong>
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsUserId()
+	 */
+	<strong>public boolean supportsUserId() {
+		return false;
+	}</strong>
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchProperties(org.eclipse.rse.model.IHost)
+	 */
+	<strong>public boolean supportsServerLaunchProperties(IHost host) {
+		return false;
+	}</strong>
+
+}
+</samp></pre>
+</body>
+</html>

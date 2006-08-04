@@ -9,207 +9,220 @@
 <title>TeamResourceAdapter Class After Editing</title>
 </head>
 
-<body bgcolor="#ffffff">
+<body>
 <h1>TeamResourceAdapter Class After Editing</h1>
-<p>
 <pre><samp>
 package samples.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
+import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
-import com.ibm.etools.systems.core.ui.SystemMenuManager;
-import com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter;
-import com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter;
-
-<b>import samples.subsystems.*;
-import java.util.*;</b>
+<strong>import samples.RSESamplesPlugin;</strong>
+<strong>import samples.subsystems.DeveloperSubSystem;</strong>
 
 /**
- * <i>This is the adapter which enables us to work with our remote team resources.</i>
+ * This is the adapter which enables us to work with our remote team resources.
  */
-public class TeamResourceAdapter
-	extends AbstractSystemViewAdapter
-	implements ISystemRemoteElementAdapter
-{
+public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
+		ISystemRemoteElementAdapter {
 
 	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemViewElementAdapter#addActions(SystemMenuManager, IStructuredSelection, Shell, String)
+	 * Constructor.
 	 */
-	public void addActions(SystemMenuManager menu, IStructuredSelection selection, Shell parent, String menuGroup)
-	{
-	}
-	
-	/**
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(Object)
-	 */
-	public ImageDescriptor getImageDescriptor(Object object)
-	{
-		<b>return RSESamples.RSESamplesPlugin.getDefault().getImageDescriptor(&quot;ICON_ID_TEAM&quot;);</b>
+	public TeamResourceAdapter() {
+		super();
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemViewElementAdapter#getText(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#addActions(org.eclipse.rse.ui.SystemMenuManager, 
+	 * org.eclipse.jface.viewers.IStructuredSelection, org.eclipse.swt.widgets.Shell, java.lang.String)
+	 */
+	public void addActions(SystemMenuManager menu,
+			IStructuredSelection selection, Shell parent, String menuGroup)
+	{
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getImageDescriptor(java.lang.Object)
+	 */
+	public ImageDescriptor getImageDescriptor(Object element)
+	{
+		<strong>return RSESamplesPlugin.getDefault().getImageDescriptor("ICON_ID_TEAM");</strong>
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getText(java.lang.Object)
 	 */
 	public String getText(Object element)
 	{
-		<b>return ((TeamResource)element).getName();</b>
+		<strong>return ((TeamResource)element).getName();</strong>
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.subsystems.IRemoteObjectIdentifier#getAbsoluteName(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getAbsoluteName(java.lang.Object)
 	 */
-	<a name="getAbsoluteName"></a>public String getAbsoluteName(Object object)
+	<a id="getAbsoluteName"/>public String getAbsoluteName(Object object)
 	{
-		<b>TeamResource team = (TeamResource)object;
-		return "Team_"+team.getName();</b>
+		<strong>TeamResource team = (TeamResource)object;
+		return "Team_"+team.getName();</strong>
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemViewElementAdapter#getType(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getType(java.lang.Object)
 	 */
 	public String getType(Object element)
 	{
-		<b>return &quot;Team resource&quot;;</b>
+		<strong>return RSESamplesPlugin.getResourceString("property.team_resource.type");</strong>
 	}
 
-	/**
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getParent(java.lang.Object)
 	 */
-	public Object getParent(Object o)
+	public Object getParent(Object element)
 	{
 		return null; // not really used, which is good because it is ambiguous
 	}
 	
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemViewElementAdapter#hasChildren(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element)
 	{
-		<b>return true;</b>
+		<strong>return true;</strong>
 	}
 
-	/**
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getChildren(java.lang.Object)
 	 */
-	public Object[] getChildren(Object o)
+	public Object[] getChildren(Object element)
 	{
-		<b>return ((TeamResource)o).getDevelopers();</b>
+		<strong>return ((TeamResource)element).getDevelopers();</strong>
 	}
 
 	/**
-	 * @see com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter#internalGetPropertyDescriptors()
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#internalGetPropertyDescriptors()
 	 */
 	protected IPropertyDescriptor[] internalGetPropertyDescriptors()
 	{
 		return null;
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter#internalGetPropertyValue()
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#internalGetPropertyValue(java.lang.Object)
 	 */
-	public Object internalGetPropertyValue(Object key)
+	protected Object internalGetPropertyValue(Object key)
 	{
 		return null;
-	}		
-	<b>/**
+	}
+
+	/**
 	 * Intercept of parent method to indicate these objects can be renamed using the RSE-supplied
 	 *  rename action.
 	 */
-	<A name="canRename"></A>public boolean canRename(Object element)
+	<a id="canRename"/>public boolean canRename(Object element)
 	{
-		return true;
+		<strong>return true;</strong>
 	}
 	
 	/**
 	 * Intercept of parent method to actually do the rename. RSE supplies the rename GUI, but 
 	 *  defers the action work of renaming to this adapter method.
 	 */
-	<A name="doRename"></A>public boolean doRename(Shell shell, Object element, String newName)
+	<a id="doRename"/>public boolean doRename(Shell shell, Object element, String newName)
 	{
-		((TeamResource)element).setName(newName);
-		return true;
-	}</b>
+		<strong>((TeamResource)element).setName(newName);
+		return true;</strong>
+	}
 	// --------------------------------------
 	// ISystemRemoteElementAdapter methods...
 	// --------------------------------------
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getAbsoluteParentName(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getAbsoluteParentName(java.lang.Object)
 	 */
 	public String getAbsoluteParentName(Object element)
 	{
-		<b>return &quot;root&quot;;</b> // not really applicable as we have no unique hierarchy
+		<strong>return "root";</strong> // not really applicable as we have no unique hierarchy
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getSubSystemFactoryId(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getSubSystemConfigurationId(java.lang.Object)
 	 */
-	public String getSubSystemFactoryId(Object element)
+	public String getSubSystemConfigurationId(Object element)
 	{
-		<b>return &quot;samples.subsystems.factory&quot;;</b> // as declared in extension in plugin.xml 
+		<strong>return "samples.subsystems.factory";</strong> // as declared in extension in plugin.xml 
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getRemoteTypeCategory(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteTypeCategory(java.lang.Object)
 	 */
 	public String getRemoteTypeCategory(Object element)
 	{
-		<b>return &quot;developers&quot;;</b> // Course grained. Same for all our remote resources.
+		<strong>return "developers";</strong> // Course grained. Same for all our remote resources.
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getRemoteType(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteType(java.lang.Object)
 	 */
 	public String getRemoteType(Object element)
 	{
-		<b>return &quot;team&quot;;</b> // Fine grained. Unique to this resource type.
+		<strong>return "team";</strong> // Fine grained. Unique to this resource type.
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getRemoteSubType(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteSubType(java.lang.Object)
 	 */
 	public String getRemoteSubType(Object element)
 	{
 		return null; // Very fine grained. We don't use it.
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#refreshRemoteObject(Object, Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#refreshRemoteObject(java.lang.Object, java.lang.Object)
 	 */
-	<a name="refreshRemoteObject"></a>public boolean refreshRemoteObject(Object oldElement, Object newElement)
+	<a id="refreshRemoteObject"/>public boolean refreshRemoteObject(Object oldElement, Object newElement)
 	{
-		<b>TeamResource oldTeam = (TeamResource)oldElement;
+		<strong>TeamResource oldTeam = (TeamResource)oldElement;
 		TeamResource newTeam = (TeamResource)newElement;
 		newTeam.setName(oldTeam.getName());
-		return false;</b> // <i>If developer objects held references to their team names, we'd have to return true</i>
+		return false;</strong> // If developer objects held references to their team names, we'd have to return true
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getRemoteParent(Shell, Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteParent(org.eclipse.swt.widgets.Shell, java.lang.Object)
 	 */
 	public Object getRemoteParent(Shell shell, Object element) throws Exception
 	{
 		return null; // maybe this would be a Project or Roster object, or leave as null if this is the root 
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getRemoteParentNamesInUse(Shell, Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteParentNamesInUse(org.eclipse.swt.widgets.Shell, java.lang.Object)
 	 */
-<A name="getNames"></A>	public String[] getRemoteParentNamesInUse(Shell shell, Object element)
-		throws Exception
+	<a id="getNames"/>public String[] getRemoteParentNamesInUse(Shell shell, Object element)
+			throws Exception
 	{
-		<b>DeveloperSubSystem ourSS = (DeveloperSubSystem)getSubSystem(element);
+		<strong>DeveloperSubSystem ourSS = (DeveloperSubSystem)getSubSystem(element);
 		TeamResource[] allTeams = ourSS.getAllTeams();
 		String[] allNames = new String[allTeams.length];
-		for (int idx=0; idx&lt;allTeams.length; idx++)
+		for (int idx = 0; idx &lt; allTeams.length; idx++)
 		  allNames[idx] = allTeams[idx].getName();
-		return allNames;</b> // Return list of all team names 	
+		return allNames;</strong> // Return list of all team names 	
 	}
-}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#supportsUserDefinedActions(java.lang.Object)
+	 */
+	public boolean supportsUserDefinedActions(Object object) {
+		<strong>return false;</strong>
+	}
+
+}
 </samp></pre>
-</p>
 </body>
 </html>

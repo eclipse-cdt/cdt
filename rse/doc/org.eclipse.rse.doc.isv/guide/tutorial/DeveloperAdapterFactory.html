@@ -9,9 +9,8 @@
 <title>DeveloperAdapterFactory Class After Editing</title>
 </head>
 
-<body bgcolor="#ffffff">
+<body>
 <h1>DeveloperAdapterFactory Class After Editing</h1>
-<p>
 <pre><samp>
 package samples.model;
 
@@ -21,9 +20,9 @@ import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 /**
- * <i>This factory maps requests for an adapter object from a given remote object.</i>
+ * This factory maps requests for an adapter object from a given remote object.
  */
-public class DeveloperAdapterFactory
+public class DeveloperAdapterFactory 
 	extends AbstractSystemRemoteAdapterFactory
 	implements IAdapterFactory
 {
@@ -47,14 +46,13 @@ public class DeveloperAdapterFactory
 		if (adaptableObject instanceof TeamResource)
 		  adapter = teamAdapter;
 		else if (adaptableObject instanceof DeveloperResource)
-		  adapter = developerAdapter;</b>
+		  adapter = developerAdapter;
 		// <i>these lines are very important! </i>
-		<b>if ((adapter != null) &amp;&amp; (adapterType == IPropertySource.class))
+		if ((adapter != null) &amp;&amp; (adapterType == IPropertySource.class))
 		  adapter.setPropertySourceInput(adaptableObject);
 		return adapter;</b>
 	}
 }
 </samp></pre>
-</p>
 </body>
 </html>

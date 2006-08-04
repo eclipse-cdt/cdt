@@ -9,35 +9,42 @@
 <title>DeveloperResourceAdapter Class After Editing</title>
 </head>
 
-<body bgcolor="#ffffff">
+<body>
 <h1>DeveloperResourceAdapter Class After Editing</h1>
-<p>
 <pre><samp>
 package samples.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
+import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Shell;
-import <b>org.eclipse.ui.views.properties.*;</b>
+<strong>import org.eclipse.ui.views.properties.IPropertyDescriptor;</strong>
+<strong>import org.eclipse.ui.views.properties.PropertyDescriptor;</strong>
 
-import com.ibm.etools.systems.core.ui.SystemMenuManager;
-import com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter;
-import com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter;
-
-<b>import samples.subsystems.*;
-import java.util.*;</b>
+<strong>import samples.RSESamplesPlugin;</strong>
 
 /**
- * <i>This is the adapter which enables us to work with our remote developer resources.</i>
+ * This is the adapter which enables us to work with our remote developer resources.
  */
-public class DeveloperResourceAdapter
-	extends AbstractSystemViewAdapter
-	implements ISystemRemoteElementAdapter
+public class DeveloperResourceAdapter extends AbstractSystemViewAdapter
+		implements ISystemRemoteElementAdapter
 {
+
 	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemViewElementAdapter#addActions(SystemMenuManager, IStructuredSelection, Shell, String)
+	 * Constructor 
 	 */
-	public void addActions(SystemMenuManager menu,IStructuredSelection selection,Shell parent,String menuGroup)
+	public DeveloperResourceAdapter() {
+		super();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#addActions(org.eclipse.rse.ui.SystemMenuManager,
+	 * org.eclipse.jface.viewers.IStructuredSelection, org.eclipse.swt.widgets.Shell, java.lang.String)
+	 */
+	public void addActions(SystemMenuManager menu,
+			IStructuredSelection selection, Shell parent, String menuGroup)
 	{
 	}
 
@@ -46,32 +53,32 @@ public class DeveloperResourceAdapter
 	 */
 	public ImageDescriptor getImageDescriptor(Object object)
 	{
-		<b>return RSESamples.RSESamplesPlugin.getDefault().getImageDescriptor(&quot;ICON_ID_DEVELOPER&quot;);</b>
+		<strong>return RSESamplesPlugin.getDefault().getImageDescriptor("ICON_ID_DEVELOPER");</strong>
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemViewElementAdapter#getText(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getText(java.lang.Object)
 	 */
 	public String getText(Object element)
 	{
-		<b>return ((DeveloperResource)element).getName();</b>
+		<strong>return ((DeveloperResource)element).getName();</strong>
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.subsystems.IRemoteObjectIdentifier#getAbsoluteName(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getAbsoluteName(java.lang.Object)
 	 */
 	public String getAbsoluteName(Object object)
 	{
-		<b>DeveloperResource devr = (DeveloperResource)object;
-		return "Devr_" + devr.getId();</b>
+		<strong>DeveloperResource devr = (DeveloperResource)object;</strong>
+		r<strong>eturn "Devr_" + devr.getId();</strong>
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemViewElementAdapter#getType(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getType(java.lang.Object)
 	 */
 	public String getType(Object element)
 	{
-		<b>return &quot;Developer resource&quot;;</b>
+		<strong>return RSESamplesPlugin.getResourceString("property.devr_resource.type");</strong>
 	}
 
 	/**
@@ -82,8 +89,8 @@ public class DeveloperResourceAdapter
 		return null; // not really used, which is good because it is ambiguous
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemViewElementAdapter#hasChildren(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element)
 	{
@@ -98,110 +105,115 @@ public class DeveloperResourceAdapter
 		return null;
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter#internalGetPropertyDescriptors()
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#internalGetPropertyDescriptors()
 	 */
 	protected IPropertyDescriptor[] internalGetPropertyDescriptors()
 	{
-		// <i>the following array should be made static to it isn't created every time</i>		
-		<b>PropertyDescriptor[] ourPDs = new PropertyDescriptor[2];
-		ourPDs[0] = new PropertyDescriptor(&quot;devr_id&quot;, &quot;Id&quot;);
-		ourPDs[0].setDescription(&quot;ID number&quot;);
-		ourPDs[1] = new PropertyDescriptor(&quot;devr_dept&quot;, &quot;Department&quot;);
-		ourPDs[1].setDescription(&quot;Department number&quot;);
-		return ourPDs;</b>
+		// the following array should be made static to it isn't created every time		
+		<strong>PropertyDescriptor[] ourPDs = new PropertyDescriptor[2];</strong>
+		<strong>ourPDs[0] = new PropertyDescriptor("devr_id", RSESamplesPlugin.getResourceString("property.devr_id.name"));</strong>
+		<strong>ourPDs[0].setDescription(RSESamplesPlugin.getResourceString("property.devr_id.desc"));</strong>
+		<strong>ourPDs[1] = new PropertyDescriptor("devr_dept", RSESamplesPlugin.getResourceString("property.devr_dept.name"));</strong>
+		<strong>ourPDs[1].setDescription(RSESamplesPlugin.getResourceString("property.devr_dept.desc"));</strong>
+		<strong>return ourPDs;</strong>
 	}
 	
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.AbstractSystemViewAdapter#internalGetPropertyValue()
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#internalGetPropertyValue(java.lang.Object)
 	 */
-	public Object internalGetPropertyValue(Object key)
+	protected Object internalGetPropertyValue(Object key)
 	{
-		// <i>propertySourceInput holds the currently selected object</i>
-		<b>DeveloperResource devr = (DeveloperResource)propertySourceInput; 
-		if (key.equals(&quot;devr_id&quot;))
-		  return devr.getId();
-		else if (key.equals(&quot;devr_dept&quot;))
+		// propertySourceInput holds the currently selected object
+		<strong>DeveloperResource devr = (DeveloperResource)propertySourceInput; 
+		if (key.equals("devr_id")) 
+			return devr.getId();
+		else if (key.equals("devr_dept")) 
 		  return devr.getDeptNbr();
-		return null;</b>
+		return null;</strong>
 	}		
 	// --------------------------------------
-	// <b>ISystemRemoteElementAdapter methods...</b>
+	// ISystemRemoteElementAdapter methods...
 	// --------------------------------------
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getAbsoluteParentName(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getAbsoluteParentName(java.lang.Object)
 	 */
 	public String getAbsoluteParentName(Object element)
 	{
-		<b>return &quot;root&quot;;</b> // not really applicable as we have no unique hierarchy
+		<strong>return "root";</strong> // not really applicable as we have no unique hierarchy
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getSubSystemFactoryId(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getSubSystemConfigurationId(java.lang.Object)
 	 */
-	public String getSubSystemFactoryId(Object element)
+	public String getSubSystemConfigurationId(Object element)
 	{
-		<b>return &quot;samples.subsystems.factory&quot;;</b> // as declared in extension in plugin.xml 
+		<strong>return "samples.subsystems.factory";</strong> // as declared in extension in plugin.xml
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getRemoteTypeCategory(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteTypeCategory(java.lang.Object)
 	 */
 	public String getRemoteTypeCategory(Object element)
 	{
-		<b>return &quot;developers&quot;;</b> // Course grained. Same for all our remote resources.
+		<strong>return "developers";</strong> // Course grained. Same for all our remote resources.
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getRemoteType(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteType(java.lang.Object)
 	 */
 	public String getRemoteType(Object element)
 	{
-		<b>return &quot;developer&quot;;</b> // Fine grained. Unique to this resource type.
+		<strong>return "developer";</strong> // Fine grained. Unique to this resource type.
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getRemoteSubType(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteSubType(java.lang.Object)
 	 */
 	public String getRemoteSubType(Object element)
 	{
 		return null; // Very fine grained. We don't use it.
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#refreshRemoteObject(Object, Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#refreshRemoteObject(java.lang.Object, java.lang.Object)
 	 */
 	public boolean refreshRemoteObject(Object oldElement, Object newElement)
 	{
-		<b>DeveloperResource oldDevr= (DeveloperResource)oldElement;
+		<strong>DeveloperResource oldDevr= (DeveloperResource)oldElement;
 		DeveloperResource newDevr = (DeveloperResource)newElement;
 		newDevr.setName(oldDevr.getName());
-		return false;</b>
+		return false;</strong>
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getRemoteParent(Shell, Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteParent(org.eclipse.swt.widgets.Shell, java.lang.Object)
 	 */
 	public Object getRemoteParent(Shell shell, Object element) throws Exception
 	{
 		return null; // maybe this would be a Department obj, if we fully fleshed out our model
 	}
 
-	/**
-	 * @see com.ibm.etools.systems.core.ui.view.ISystemRemoteElementAdapter#getRemoteParentNamesInUse(Shell, Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteParentNamesInUse(org.eclipse.swt.widgets.Shell, java.lang.Object)
 	 */
 	public String[] getRemoteParentNamesInUse(Shell shell, Object element)
-		throws Exception
+			throws Exception
 	{
-		// <b><i>developers names do not have to be unique! So we don't need to implement this!</i></b>
+		// developers names do not have to be unique! So we don't need to implement this!
 		return null;
 
 	}
 
-}
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#supportsUserDefinedActions(java.lang.Object)
+	 */
+	public boolean supportsUserDefinedActions(Object object) {
+		<strong>return false;</strong>
+	}
 
+}
 </samp></pre>
-</p>
 </body>
 </html>

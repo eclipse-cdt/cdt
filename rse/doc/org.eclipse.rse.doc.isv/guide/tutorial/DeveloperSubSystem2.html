@@ -9,55 +9,55 @@
 <title>DeveloperSubSystem Class After Editing Supporting Multiple Filter Types</title>
 </head>
 
-<body bgcolor="#ffffff">
+<body>
 <h1>DeveloperSubSystem Class After Editing Supporting Multiple Filter Types</h1>
-<p>
 <pre><samp>
 package samples.subsystems;
 
-import samples.model.*;
+import java.util.Vector;
 
-import com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemImpl;
-import com.ibm.etools.systems.subsystems.impl.*;
-import com.ibm.etools.systems.subsystems.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.SubSystem;
+import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 
-import org.eclipse.core.runtime.*; // for IProgressMonitor
-import com.ibm.etools.systems.core.clientserver.NamePatternMatcher;
-import java.util.*;
+import samples.model.DeveloperResource;
+import samples.model.TeamResource;
 
 /**
  * This is our subsystem, which manages the remote connection and resources for
  *  a particular system connection object.
  */
-public class DeveloperSubSystem extends DefaultSubSystemImpl
+public class DeveloperSubSystem extends SubSystem
 {
 	private TeamResource[] teams; // faked-out master list of teams
 	private Vector devVector = new Vector(); // faked-out master list of developers
-	private static int employeeId = 123456; // employee Id factory
+	private static int employeeId = 123456; // employee Id factory	
 
 	/**
-	 * Constructor for DeveloperSubSystem.
+	 * @param host
+	 * @param connectorService
 	 */
-	public DeveloperSubSystem()
-	{
-		super();
+	public DeveloperSubSystem(IHost host, IConnectorService connectorService) {
+		super(host, connectorService);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#initializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void initializeSubSystem(IProgressMonitor monitor) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystem#uninitializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void uninitializeSubSystem(IProgressMonitor monitor) {
 	}
 
 	/**
-	 * Return a singleton instance of an AbstractSystemManager subclass that manages 
-	 *  a pool of ISystem objects, one per system connection. By default, getSystem()
-	 *  calls this, unless you override getSystem(). 
-	 * &lt;p&gt;
-	 * @return DeveloperSystemManager.getTheDeveloperSystemManager()
-	 */
-	public AbstractSystemManager getSystemManager()
-	{
-		return DeveloperSystemManager.getTheDeveloperSystemManager();
-	}	
-
-	/**
 	 * For drag and drop, and clipboard support of remote objects.
-	 * &lt;p&gt;
+	 *   
 	 * Return the remote object within the subsystem that corresponds to
 	 * the specified unique ID.  Because each subsystem maintains it's own
 	 * objects, it's the responsability of the subsystem to determine
@@ -66,22 +66,22 @@ public class DeveloperSubSystem extends DefaultSubSystemImpl
 	 */
 	public Object getObjectWithAbsoluteName(String key)
 	{
-		// Functional opposite getAbsoluteName(Object) in our resource adapters
-		if (key.startsWith(&quot;Team_&quot;))
+		//  Functional opposite of getAbsoluteName(Object) in our resource adapters
+		if (key.startsWith("Team_"))
 		{
 			String teamName = key.substring(5);
 			TeamResource[] allTeams = getAllTeams();
-			for (int idx=0; idx&lt;allTeams.length; idx++)
+			for (int idx = 0; idx &lt; allTeams.length; idx++)
 			   if (allTeams[idx].getName().equals(teamName))
 			     return allTeams[idx];
 		}
-		else if (key.startsWith(&quot;Devr_&quot;))
+		else if (key.startsWith("Devr_"))
 		{
 			String devrId = key.substring(5);
 			DeveloperResource[] devrs = getAllDevelopers();
-            for (int idx=0; idx&lt;devrs.length; idx++)
-               if (devrs[idx].getId().equals(devrId))
-                 return devrs[idx];            	
+			for (int idx=0; idx &lt; devrs.length; idx++)
+			  if (devrs[idx].getId().equals(devrId))
+			    return devrs[idx];            	
 		}
 		return null; 
 	}
@@ -94,13 +94,13 @@ public class DeveloperSubSystem extends DefaultSubSystemImpl
 	 * @param monitor - the progress monitor in effect while this operation performs
 	 * @param filterString - one of the filter strings from the expanded filter.
 	 */
-	<a name="resolve"></a>protected Object[] internalResolveFilterString(IProgressMonitor monitor, String filterString)
+	protected Object[] internalResolveFilterString(IProgressMonitor monitor, String filterString)
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException                
 	{
-		<b>int slashIdx = filterString.indexOf('/');
+		<strong>int slashIdx = filterString.indexOf('/');
 		if (slashIdx &lt; 0)
-		{</b>
+		{</strong>
 			// Fake it out for now and return dummy list. 
 			// In reality, this would communicate with remote server-side code/data.
 			TeamResource[] allTeams = getAllTeams();
@@ -108,23 +108,23 @@ public class DeveloperSubSystem extends DefaultSubSystemImpl
 			// Now, subset master list, based on filter string...
 			NamePatternMatcher subsetter = new NamePatternMatcher(filterString);
 			Vector v = new Vector();
-			for (int idx=0; idx&lt;allTeams.length; idx++)
+			for (int idx=0; idx &lt1; allTeams.length; idx++)
 			{
 				if (subsetter.matches(allTeams[idx].getName()))
 				  v.addElement(allTeams[idx]);
 			}		
 			TeamResource[] teams = new TeamResource[v.size()];
-			for (int idx=0; idx&lt;v.size(); idx++)
+			for (int idx=0; idx &lt; v.size(); idx++)
 			   teams[idx] = (TeamResource)v.elementAt(idx);
 			return teams;
-		<b>}
+		<strong>}
 		else
 		{
 			String teamName = filterString.substring(0, slashIdx);
 			String devrName = filterString.substring(slashIdx+1);
 			TeamResource[] allTeams = getAllTeams();
 			TeamResource match = null;
-			for (int idx=0; (match==null) &amp;&amp; (idx&lt;allTeams.length); idx++)
+			for (int idx=0; (match==null) && (idx &lt; allTeams.length); idx++)
 			   if (allTeams[idx].getName().equals(teamName))
 			     match = allTeams[idx];
 			if (match != null)
@@ -133,41 +133,41 @@ public class DeveloperSubSystem extends DefaultSubSystemImpl
 				// Now, subset master list, based on filter string...
 				NamePatternMatcher subsetter = new NamePatternMatcher(devrName);
 				Vector v = new Vector();
-				for (int idx=0; idx&lt;allDevrs.length; idx++)
+				for (int idx=0; idx &lt; allDevrs.length; idx++)
 			    {
 			    	if (subsetter.matches(allDevrs[idx].getName()))
 			    	  v.addElement(allDevrs[idx]);
 			   	}		
 			   	DeveloperResource[] devrs = new DeveloperResource[v.size()];
-			   	for (int idx=0; idx&lt;v.size(); idx++)
+			   	for (int idx=0; idx &lt; v.size(); idx++)
 			   	   devrs[idx] = (DeveloperResource)v.elementAt(idx);
 			   	return devrs;	
 			}
 		}
-		return null;</b>
+		return null;</strong>
 	}
 
 	/**
 	 * When a remote resource is expanded, this is called to return the children of the resource, if
-	 * the resource's adapter states the resource object is expandable. &lt;br&gt;
+	 * the resource's adapter states the resource object is expandable. <br>
 	 * For us, it is a Team resource that was expanded, and an array of Developer resources will be returned.
 	 * 
 	 * @param monitor - the progress monitor in effect while this operation performs
 	 * @param parent - the parent resource object being expanded
-	 * @param filterString - typically defaults to &quot;*&quot;. In future additional user-specific quick-filters may be supported.
+	 * @param filterString - typically defaults to "*". In future additional user-specific quick-filters may be supported.
 	 */
 	protected Object[] internalResolveFilterString(IProgressMonitor monitor, Object parent, String filterString)
          throws java.lang.reflect.InvocationTargetException,
                 java.lang.InterruptedException
 	{
-		// typically we ignore the filter string as it is always &quot;*&quot; 
-		//  until support is added for &quot;quick filters&quot; the user can specify/select
+		// typically we ignore the filter string as it is always "*" 
+		//  until support is added for "quick filters" the user can specify/select
 		//  at the time they expand a remote resource.
 		
 		TeamResource team = (TeamResource)parent;
 		return team.getDevelopers();
 	}
-	
+
 	// ------------------	
 	// Our own methods...
 	// ------------------
@@ -179,9 +179,10 @@ public class DeveloperSubSystem extends DefaultSubSystemImpl
 	public TeamResource[] getAllTeams()
 	{
 		if (teams == null) 
-		  teams = createTeams(&quot;Team &quot;, 4);
+		  teams = createTeams("Team ", 4);
 		return teams;		
 	}
+
 	/**
 	 * Get the list of all developers. Normally this would involve a trip the server, but we 
 	 *  fake it out and return a hard-coded local list. 
@@ -189,31 +190,33 @@ public class DeveloperSubSystem extends DefaultSubSystemImpl
 	public DeveloperResource[] getAllDevelopers()
 	{
 		DeveloperResource[] allDevrs = new DeveloperResource[devVector.size()];
-		for (int idx=0; idx&lt;allDevrs.length; idx++)
+		for (int idx=0; idx &lt; allDevrs.length; idx++)
 		  allDevrs[idx] = (DeveloperResource)devVector.elementAt(idx);
 		return allDevrs;		
 	}
+
 	/*
 	 * Create and return a dummy set of teams
 	 */
 	private TeamResource[] createTeams(String prefix, int howMany)
 	{
 		TeamResource[] teams = new TeamResource[howMany];
-		for (int idx=0; idx&lt;teams.length; idx++)
+		for (int idx=0; idx &lt; teams.length; idx++)
 		{
 			teams[idx] = new TeamResource(this);
 			teams[idx].setName(prefix + (idx+1));
-			teams[idx].setDevelopers(createDevelopers(teams[idx].getName()+&quot; developer&quot;,idx+1));
+			teams[idx].setDevelopers(createDevelopers(teams[idx].getName()+" developer",idx+1));
 		}
 		return teams;
-	}	 
+	}
+
 	/*
 	 * Create and return a dummy set of developers
 	 */
-	private DeveloperResource[] createDevelopers(String prefix, int howMany)
+	private DeveloperResource[] createDevelopers(String prefix, int nbr)
 	{
-		DeveloperResource[] devrs = new DeveloperResource[howMany];
-		for (int idx=0; idx&lt;devrs.length; idx++)
+		DeveloperResource[] devrs = new DeveloperResource[nbr];
+		for (int idx=0; idx &lt; devrs.length; idx++)
 		{
 			devrs[idx] = new DeveloperResource(this);
 			devrs[idx].setName(prefix + (idx+1));
@@ -223,11 +226,8 @@ public class DeveloperSubSystem extends DefaultSubSystemImpl
 		}
 		return devrs;
 	}
-    
 
 }
-
 </samp></pre>
-</p>
 </body>
 </html>

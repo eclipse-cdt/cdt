@@ -19,11 +19,14 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
 import org.osgi.framework.BundleContext;
+
+import samples.subsystems.DeveloperSubSystemConfigurationAdapterFactory;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -34,7 +37,7 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 	private static RSESamplesPlugin plugin;
 
 	//Resource bundle.
-	private ResourceBundle resourceBundle = null;
+	private ResourceBundle resourceBundle;
 	private static SystemMessageFile messageFile = null;
 	
 	/**
@@ -42,6 +45,7 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 	 */
 	public RSESamplesPlugin() {
 		super();
+		plugin = this;
 	}
 
 	/**
@@ -49,50 +53,58 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		<strong>plugin = this;
-		messageFile = getMessageFile("rseSamplesMessages.xml");</strong>
+		messageFile = getMessageFile("rseSamplesMessages.xml"); //$NON-NLS-1$
+
+		IAdapterManager manager = Platform.getAdapterManager();
+		samples.model.DeveloperAdapterFactory factory = new samples.model.DeveloperAdapterFactory();
+		manager.registerAdapters(factory, samples.model.TeamResource.class);
+		manager.registerAdapters(factory, samples.model.DeveloperResource.class);
+
+	    DeveloperSubSystemConfigurationAdapterFactory sscaf = new DeveloperSubSystemConfigurationAdapterFactory();
+	    sscaf.registerWithManager(manager);
+
 	}
 
 	/**
 	 * This method is called when the plug-in is stopped
 	 */
 	public void stop(BundleContext context) throws Exception {
-		<strong>plugin = null;
-		resourceBundle = null;</strong>
 		super.stop(context);
+		plugin = null;
+		resourceBundle = null;
 	}
 
 	/**
 	 * Returns the shared instance.
 	 */
-	<strong>public static RSESamplesPlugin getDefault() {
+	public static RSESamplesPlugin getDefault() {
 		return plugin;
-	}</strong>
+	}
 
 	/**
 	 * Returns the workspace instance.
 	 */
-	<strong>public static IWorkspace getWorkspace() {
+	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
-	}</strong>
+	}
 
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
 	 */
-	<strong>public static String getResourceString(String key) {
+	public static String getResourceString(String key) {
 		ResourceBundle bundle= RSESamplesPlugin.getDefault().getResourceBundle();
 		try {
 			return (bundle != null) ? bundle.getString(key) : key;
 		} catch (MissingResourceException e) {
 			return key;
 		}
-	}</strong>
+	}
 
 	/**
 	 * Returns the plugin's resource bundle,
 	 */
-	<strong>public ResourceBundle getResourceBundle() {
+	public ResourceBundle getResourceBundle() {
 		try {
 			if (resourceBundle == null)
 				resourceBundle = ResourceBundle.getBundle("samples.rseSamplesResources");
@@ -100,13 +112,28 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 			resourceBundle = null;
 		}
 		return resourceBundle;
-	}</strong>
+	}
 
+	/**
+	 * @see AbstractUIPlugin#initializeDefaultPreferences
+	 */
+	//protected void initializeDefaultPreferences(IPreferenceStore store) 
+	//{
+	//	super.initializeDefaultPreferences(store);
+	//	//RSESamplesPreferencePage.initDefaults(store);
+	//}
+	
 	/**
 	 * Initialize the image registry by declaring all of the required graphics.
 	 */
 	protected void initializeImageRegistry()
 	{
+		String path = getIconPath();
+		putImageInRegistry("ICON_ID_TEAM", path+"/team.gif");
+		putImageInRegistry("ICON_ID_DEVELOPER", path+"/developer.gif");
+		putImageInRegistry("ICON_ID_TEAMFILTER", path+"/teamFilter.gif");
+		putImageInRegistry("ICON_ID_DEVELOPERFILTER", path+"/developerFilter.gif");
+		// TO RETRIEVE AN ICON, CALL GETIMAGE OR GETIMAGEDESCRIPTOR WITH ITS XXX_ID ID
 	}
 
 	/**
@@ -114,26 +141,26 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 	 * @param messageFileName - the name of the message xml file. Will look for it in this plugin's install folder.
 	 * @return a message file object containing the parsed contents of the message file, or null if not found.
 	 */
-	<strong>public SystemMessageFile getMessageFile(String messageFileName)
-	{
-		return loadMessageFile(getBundle(), messageFileName);  	
-	}</strong>	
+    public SystemMessageFile getMessageFile(String messageFileName)
+    {
+       return loadMessageFile(getBundle(), messageFileName);  	
+    }	
 
 	/**
 	 * Return our message file
 	 */
-	<strong>public static SystemMessageFile getPluginMessageFile()
+	public static SystemMessageFile getPluginMessageFile()
 	{
 		return messageFile;
-	}</strong>  
+	}  
 
 	/**
 	 * Retrieve a message from this plugin's message file
 	 */
-	<strong>public static SystemMessage getPluginMessage(String msgId)
+	public static SystemMessage getPluginMessage(String msgId)
 	{
 		return getMessage(messageFile, msgId);
-	}</strong>
+	}
 }
 </samp></pre>
 </p>

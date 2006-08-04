@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
+<title>DeveloperConnectorServiceManager Class After Editing</title>
+</head>
+
+<body>
+<h1>DeveloperConnectorServiceManager Class After Editing</h1>
+<pre><samp>
+/********************************************************************************
+ * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Initial Contributors:
+ * The following IBM employees contributed to the Remote System Explorer
+ * component that contains this file: David McKnight, Kushal Munir, 
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+ * 
+ * Contributors:
+ * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
+ ********************************************************************************/
+
+package samples.subsystems;
+
+import org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager;
+import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.model.IHost;
+
+/**
+ * This class manages our DeveloperConnectorService objects, so that if we 
+ * ever have multiple subsystem configurations, different subsystems can share 
+ * the same system object if they share the communication layer.
+ */
+public class DeveloperConnectorServiceManager extends
+		AbstractConnectorServiceManager {
+
+	<strong>private static DeveloperConnectorServiceManager inst;</strong>
+
+	/**
+	 * Constructor for DeveloperConnectorServiceManager.
+	 */
+	public DeveloperConnectorServiceManager()
+	{
+		super();
+	}
+
+	<strong>/**
+	 * Return singleton instance
+	 */
+	public static DeveloperConnectorServiceManager getTheDeveloperConnectorServiceManager()
+	{
+		if (inst == null)
+		  inst = new DeveloperConnectorServiceManager();
+		return inst;
+	}</strong>
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager#createConnectorService(org.eclipse.rse.model.IHost)
+	 */
+	public IConnectorService createConnectorService(IHost host)
+	{
+		<strong>return new DeveloperConnectorService(host);</strong>
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager#sharesSystem(org.eclipse.rse.core.subsystems.ISubSystem)
+	 */
+	public boolean sharesSystem(ISubSystem otherSubSystem)
+	{
+		<strong>return (otherSubSystem instanceof IDeveloperSubSystem);</strong>
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager#getSubSystemCommonInterface(org.eclipse.rse.core.subsystems.ISubSystem)
+	 */
+	public Class getSubSystemCommonInterface(ISubSystem subsystem)
+	{
+		<strong>return IDeveloperSubSystem.class;</strong>
+	}
+
+}
+</samp></pre>
+</body>
+</html>

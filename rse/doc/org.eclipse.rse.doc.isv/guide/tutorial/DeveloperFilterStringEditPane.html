@@ -9,30 +9,31 @@
 <title>DeveloperFilterStringEditPane Class After Editing</title>
 </head>
 
-<body bgcolor="#ffffff">
+<body>
 <h1>DeveloperFilterStringEditPane Class After Editing</h1>
-<p>
 <pre><samp>
 package samples.subsystems;
 
-import <b>org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.events.*;</b>
+<strong>import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.SystemWidgetHelpers;</strong>
+import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;
+<strong>import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;</strong>
 
-import com.ibm.etools.systems.filters.ui.SystemFilterStringEditPane;
-<b>import RSESamples.RSESamplesPlugin;
-import com.ibm.etools.systems.core.ui.*;
-import com.ibm.etools.systems.core.ui.messages.SystemMessage;
-
-import java.util.*;</b>
+<strong>import samples.RSESamplesPlugin;</strong>
 
 /**
- * <i>Our specialized filter string edit pane for developer filters.</i>
+ * Our specialized filter string edit pane for developer filters.
  */
-public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane
-{
-	// <i>gui widgets</i>
-	<b>private Text textTeam, textDevr;</b>
+public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane {
+
+	// gui widgets
+	<strong>private Text textTeam, textDevr;</strong>
 
 	/**
 	 * Constructor for DeveloperFilterStringEditPane.
@@ -42,29 +43,37 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane
 	{
 		super(shell);
 	}
-	
+
 	/**
 	 * Override of parent method.
 	 * This is where we populate the client area.
 	 * @param parent - the composite that will be the parent of the returned client area composite
 	 * @return Control - a client-area composite populated with widgets.
 	 * 
-	 * @see com.ibm.etools.systems.core.ui.SystemWidgetHelpers
+	 * @see org.eclipse.rse.ui.SystemWidgetHelpers
 	 */
-	<b>public Control createContents(Composite parent) 
+	<strong>public Control createContents(Composite parent) 
 	{		
-		ResourceBundle rb = RSESamplesPlugin.getDefault().getResourceBundle();
-		
 		// Inner composite
 		int nbrColumns = 1;
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);	
 		((GridLayout)composite_prompts.getLayout()).marginWidth = 0;
 		
 		// CREATE TEAM-PARENT PROMPT
-		textTeam = SystemWidgetHelpers.createLabeledTextField(composite_prompts,null,rb,&quot;filter.devr.teamprompt.&quot;); 
+		textTeam = SystemWidgetHelpers.createLabeledTextField(
+			composite_prompts,
+			null,
+			RSESamplesPlugin.getResourceString("filter.devr.teamprompt.label"), //$NON-NLS-1$
+			RSESamplesPlugin.getResourceString("filter.devr.teamprompt.tooltip") //$NON-NLS-1$
+		); 
 
 		// CREATE DEVELOPER PROMPT
-		textDevr = SystemWidgetHelpers.createLabeledTextField(composite_prompts,null,rb,&quot;filter.devr.devrprompt.&quot;); 
+		textDevr = SystemWidgetHelpers.createLabeledTextField(
+			composite_prompts,
+			null,
+			RSESamplesPlugin.getResourceString("filter.devr.devrprompt.label"), //$NON-NLS-1$
+			RSESamplesPlugin.getResourceString("filter.devr.devrprompt.tooltip") //$NON-NLS-1$
+		); 
 		
 		resetFields();
 		doInitializeFields();
@@ -89,15 +98,16 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane
 			}
 		);		
 		return composite_prompts;
-	}</b>
+	}</strong>
+
 	/**
 	 * Override of parent method.
 	 * Return the control to recieve initial focus. 
 	 */
-	<b>public Control getInitialFocusControl()
+	<strong>public Control getInitialFocusControl()
 	{
 		return textTeam;
-	}	</b>
+	}</strong>	
 
 	/**
 	 * Override of parent method.
@@ -105,7 +115,7 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane
 	 * This can be called before createContents, so test for null widgets first!
 	 * Prior to this being called, resetFields is called to set the initial default state prior to input
 	 */		
-	<b>protected void doInitializeFields()
+	<strong>protected void doInitializeFields()
 	{
 		if (textTeam == null)
 		  return; // do nothing
@@ -120,27 +130,29 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane
 		    	textDevr.setText(inputFilterString.substring(idx+1));
 		    }
 		}
-	}	</b>
+	}</strong>	
+
 	/**
 	 * Override of parent method.
-	 * This is called in the change filter dialog when the user selects &quot;new&quot;, or selects another string.
+	 * This is called in the change filter dialog when the user selects "new", or selects another string.
 	 */
-	<b>protected void resetFields()
+	<strong>protected void resetFields()
 	{
-	    textTeam.setText(&quot;&quot;);		
-	    textDevr.setText(&quot;*&quot;);
-	}</b>
+	    textTeam.setText(""); //$NON-NLS-1$		
+	    textDevr.setText("*"); //$NON-NLS-1$
+	}</strong>
+
 	/**
 	 * Override of parent method.
 	 * Called by parent to decide if information is complete enough to enable finish. 
 	 */
-	<b>protected boolean areFieldsComplete()
+	<strong>protected boolean areFieldsComplete()
 	{
 		if ((textTeam == null) || (textDevr == null))
 		  return false;
 		else
-		  return (textTeam.getText().trim().length()&gt;0) &amp;&amp; (textDevr.getText().trim().length()&gt;0);
-	}</b>
+		  return (textTeam.getText().trim().length()>0) && (textDevr.getText().trim().length()>0);
+	}</strong>
 	
 	/**
 	 * Override of parent method.
@@ -148,7 +160,7 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane
 	 * Functional opposite of doInitializeFields, which tears apart the input string in update mode,
 	 *  to populate the GUIs. This method creates the filter string from the information in the GUI.
 	 */
-	<b>public String getFilterString()
+	<strong>public String getFilterString()
 	{
 		if ((textTeam == null) || (textDevr == null))
 		  return inputFilterString; // return what we were given.
@@ -156,9 +168,9 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane
 		{
 			String teamName = textTeam.getText().trim();
 			String devrName = textDevr.getText().trim();
-			return teamName + &quot;/&quot; + devrName;
+			return teamName + "/" + devrName; //$NON-NLS-1$
 		}
-	}</b>	
+	}</strong>	
 
 	/**
 	 * Override of parent method.
@@ -167,7 +179,7 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane
 	 *
 	 * @return error message if there is one, else null if ok
 	 */
-	<b>public SystemMessage verify() 
+	<strong>public SystemMessage verify() 
 	{
 		errorMessage = null;
 		Control controlInError = null;
@@ -190,11 +202,9 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane
 		      controlInError.setFocus();
 		}
 		return errorMessage;		
-	}	</b>
+	}</strong>	
+
 }
-
-
 </samp></pre>
-</p>
 </body>
 </html>

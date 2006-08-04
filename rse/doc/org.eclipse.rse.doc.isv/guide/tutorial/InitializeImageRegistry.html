@@ -9,9 +9,8 @@
 <title>InitializeImageRegistry Method</title>
 </head>
 
-<body bgcolor="#ffffff">
+<body>
 <h1>InitializeImageRegistry Method</h1>
-<p>
 <pre><samp>
 	/**
 	 * <i>Initialize the image registry by declaring all of the required graphics.</i>
@@ -19,11 +18,10 @@
 	protected void initializeImageRegistry()
 	{
 		String path = getIconPath();
-		<b>putImageInRegistry(&quot;ICON_ID_TEAM&quot;,      path+&quot;team.gif&quot;);</b>
-		<b>putImageInRegistry(&quot;ICON_ID_DEVELOPER&quot;, path+&quot;developer.gif&quot;);</b>
+		<b>putImageInRegistry("ICON_ID_TEAM", path+"team.gif");</b>
+		<b>putImageInRegistry("ICON_ID_DEVELOPER", path+"developer.gif");</b>
 		// TO RETRIEVE AN ICON, CALL GETIMAGE OR GETIMAGEDESCRIPTOR WITH ITS XXX_ID ID
 	}
 </samp></pre>
-</p>
 </body>
 </html>

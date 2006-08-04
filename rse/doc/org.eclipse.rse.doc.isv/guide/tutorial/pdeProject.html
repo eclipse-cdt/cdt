@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 
-<head>
+	<head>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
 <meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
@@ -9,83 +9,39 @@
 <title>Creating a Plug-in Project</title>
 </head>
 
-<body bgcolor="#ffffff">
-<h1>Creating a Plug-in Project</h1>
-<p>To use any Eclipse extension point, including those defined by the Remote System Explorer,
-you must first create a plug-in project using the plug-in development environment (PDE), which you will do shortly. 
-At its simplest, a plug-in project requires a <samp>plugin.xml</samp> file identifying the extension points being 
-implemented, and a set of Java classes implementing those extension points. There is usually also a 
-plug-in class file that is used as the overall manager of the project, and point of integration that other
-classes can rely on. 
-</p>
-<P><I>If you already have a plugin project, you can safely skip these
-steps! However, you must update project's classpath as described 
-<A href="pdeProject_changeClasspath.html">here</A>. You must also 
-add a <samp>requires</samp> statement to your <samp>plugin.xml</samp> file for the
-<samp>com.ibm.etools.systems.core</samp> and <samp>com.ibm.etools.systems.logging</samp>
-projects.
-</p></I>
-
-<p>Eclipse supplies a number of plug-in project templates, which generate a number of project files that
-illustrate examples of various Eclipse extension points. While you are free to pick one of these, or indeed
-start with any existing plug-in project if you have one, in the RSE tutorials everything is created by
-hand so as to keep focused on the RSE-required classes and files.</p>
-<p>The following tutorial uses numbered steps to indicate where you are required 
-to do something as you follow along.</p>
-<h2>Step By Step: Creating an RSE Plug-in Project</h2>
-<ol>
-<li>Select <b>File->New->Project.</b> </LI>
-	<LI>On the left of the dialog box, select <B>Plug-in Development</B>
-	category, and on the right, select the <B><A href="pdeProj_1.gif">Plug-in
-	Project</A></B> wizard. Press <B>Next ></B>.</LI>
-	<li>In the <A href="pdeProj_wiz_page1.gif">first page</A> of the wizard (Plug-in Project Name), enter <B>&quot;RSESamples&quot;</B> for the 
-project name (without the quotes). Press <b>Next ></b>.
-<li>In the second page of the wizard (Plug-in Project Structure), just take the defaults, and press <b>Next ></b>.
-<li>In the <A href="pdeProj_wiz_page3.gif">third page</A> of the wizard
-(Plug-in Code Generators), select <B>&quot;Default Plug-in Structure&quot;</B>, and press <B>Next &gt;</B>.</LI>
-<LI>In the <A href="pdeProj_wiz_page4.gif">fourth page</A> of the wizard (Simple Plug-in Content), enter your company for the <B>Provider Name</B>, 
-and press <B>Finish</B>. </LI>
-<li>Your new plugin project is created and visible in the Package Explorer of the Plug-in Development perspective.
-Your new <samp>plugin.xml</samp> file is also open in the <A href="pdeProj_wiz_after.gif">plug-in editor</A>. 
-<I>Close this editor</I>, as you will not be using it in this tutorial.
-</LI>
-<LI>Follow <A href="pdeProject_changeClasspath.html">these steps</A> to 
-setup your project's classpath so the code to be written will compile cleanly.
-</LI>
-<LI>It is not enough to only change the project classpath. This works for the Plug-in Development Environment, but not for run time. 
-Select the <samp>plugin.xml</samp> file, right click and select <b>Open With-&gt;Text Editor</b>. 
-Edit the <b>requires</b> statement to add the last lines highlighted here:
-<pre><code>   
-   &lt;requires&gt;
-      &lt;import plugin=&quot;org.eclipse.core.resources&quot;/&gt;
-      &lt;import plugin=&quot;org.eclipse.ui&quot;/&gt;
-      <b>&lt;import plugin=&quot;com.ibm.etools.systems.core&quot;/&gt;
-      &lt;import plugin=&quot;com.ibm.etools.systems.logging&quot;/&gt;</b>
-   &lt;/requires&gt;
-
-</code></pre>
-</LI>
-<LI>Expand the <B>src</B> folder, then the <B>RSESamples</B> package
-folder, and double-click on <SAMP><B>RSESamplesPlugin.java</B></SAMP>
-to edit this class.</LI>
-<LI>Follow <A href="pdeProject_changePluginClass.html">these steps</A> to edit the generated plugin-class, or simply
-copy and paste the <A href="RSESamplesPlugin.html">final result</A>.
-</li>
-<LI>Create the project's resources file for translatable strings: right-click on the <b>RSESamples</b> project and select <b>New-&gt;File</b> to open 
-the <b>New File</b> wizard. Enter <samp><b>rseSamplesResources.properties</b></samp> for
-the file name, as was specified in the call to <samp>loadResourceBundle</samp> in the plug-in class's constructor.
-Press <b>Finish</b> to create the file. You  will populate as you go through the tutorials,
-so for now just <i>close</i> the editor opened for the file.
-</LI>
-<LI>Create the project's RSE-style messages file for translatable messages: right-click on the <b>RSESamples</b> project and select <b>New-&gt;File</b> to get 
-the <b>New File</b> wizard. Enter <samp><b>rseSamplesMessages.xml</b></samp> for
-the file name, as was specified in the call to <samp>loadMessageFile</samp> in the plug-in class's constructor.
-Press <b>Finish</b> to create the file. You will see the XML editor open for the
-new file. Press the <b>Source</b> tab at the bottom of the editor, and enter the
-following lines (so that you can add messages to the file later on):
-<pre><CODE>
+	<body bgcolor="#ffffff">
+		<h1>Creating a Plug-in Project</h1>
+		<p>To use any Eclipse extension point, including those defined by the Remote System Explorer, you must first create a plug-in project using the plug-in development environment (PDE), which you will do shortly. At its simplest, a plug-in project requires a <tt>MANIFEST.MF</tt> file describing the plugin and its dependencies and, if extending the workbench a <samp>plugin.xml</samp> file identifying the extension points being implemented, and a set of Java classes implementing those extension points. There is usually also a plug-in class file that is used as the overall manager of the project, and point of integration that other classes can rely on.</p>
+		<p><i>If you already have a plugin project, you will need to update it slightly to make it extend SystemBasePlugin and add the few methods it requires. You may wish to examine these steps to see what methods to add. The Eclipse environment will keep your classpaths and plugin dependecies in sync for you.</i></p>
+		<p>Eclipse supplies a number of plug-in project templates, which generate a number of project files that illustrate examples of various Eclipse extension points. While you are free to pick one of these, or indeed start with any existing plug-in project if you have one, in the RSE tutorials everything is created by hand so as to keep focused on the RSE-required classes and files.</p>
+		<p>The following tutorial uses numbered steps to indicate where you are required to do something as you follow along.</p>
+		<h2>Step By Step: Creating an RSE Plug-in Project</h2>
+		<ol>
+			<li>Select <b>File-&gt;New-&gt;Project.</b>
+			<li>On the left of the dialog box, select <b>Plug-in Development</b> category, and on the right, select the <b><a href="pdeProj_1.gif">Plug-in Project</a></b> wizard. Press <b>Next &gt;</b>.
+			<li>In the <a href="pdeProj_wiz_page1.gif">first page</a> of the wizard (Plug-in Project Name), enter <b>&quot;RSESamples&quot;</b> for the project name (without the quotes). Press <b>Next &gt;</b>.
+			<li>In the second page of the wizard (Plug-in Project Structure), just take the defaults, and press <b>Next &gt;</b>.
+			<li>In the <a href="pdeProj_wiz_page3.gif">third page</a> of the wizard (Plug-in Code Generators), select <b>&quot;Default Plug-in Structure&quot;</b>, and press <b>Next &gt;</b>.
+			<li>In the <a href="pdeProj_wiz_page4.gif">fourth page</a> of the wizard (Simple Plug-in Content), enter your company for the <b>Provider Name</b>, and press <b>Finish</b>.
+			<li>Your new plugin project is created and visible in the Package Explorer of the Plug-in Development perspective. Your new <samp>plugin.xml</samp> file is also open in the <a href="pdeProj_wiz_after.gif">plug-in editor</a>. <i>Close this editor</i>, as you will not be using it in this tutorial.
+			
+			<li>Select the <samp>plugin.xml</samp> file, right click and select <b>Open</b>. Go to the dependencies tab and add the following plugins to the list:
+			<ul>
+			<li>org.eclipse.rse.ui
+			<li>org.eclipse.rse.services
+			<li>org.eclipse.rse.files.ui
+			<li>org.eclipse.rse.shells.ui
+			<li>org.rse.eclipse.subsystems.files.core
+			<li>org.rse.subsystems.shells.core
+			</ul>
+			<li>Expand the <b>src</b> folder, then the <b>RSESamples</b> package folder, and double-click on <samp><b>RSESamplesPlugin.java</b></samp> to edit this class to make it look like <a href="RSESamplesPlugin.html">this</a>.
+			
+			<li>Create the project's resources file for translatable strings: right-click on the <b>RSESamples</b> project and select <b>New-&gt;File</b> to open the <b>New File</b> wizard. Enter <samp><b>rseSamplesResources.properties</b></samp> for the file name, as was specified in the call to <samp>loadResourceBundle</samp> in the plug-in class's constructor. Press <b>Finish</b> to create the file. You will populate as you go through the tutorials, so for now just <i>close</i> the editor opened for the file.
+			
+			<li>Create the project's RSE-style messages file for translatable messages: right-click on the <b>RSESamples</b> project and select <b>New-&gt;File</b> to get the <b>New File</b> wizard. Enter <samp><b>rseSamplesMessages.xml</b></samp> for the file name, as was specified in the call to <samp>loadMessageFile</samp> in the plug-in class's constructor. Press <b>Finish</b> to create the file. You will see the XML editor open for the new file. Press the <b>Source</b> tab at the bottom of the editor, and enter the following lines (so that you can add messages to the file later on):
+				<pre><code>
 &lt;?xml version=&quot;1.0&quot; encoding='UTF-8'?&gt;
-&lt;!DOCTYPE MessageFile SYSTEM &quot;../com.ibm.etools.systems.core/messageFile.dtd&quot;&gt;
+&lt;!DOCTYPE MessageFile SYSTEM &quot;../org.eclipse.rse.ui/messageFile.dtd&quot;&gt;
 &lt;!-- This is a message file used by SystemMessage and SystemMessageDialog --&gt;
 &lt;<b>MessageFile</b> Version=&quot;1.0&quot;&gt;
      &lt;<b>Component</b> Name=&quot;RSE Samples&quot; Abbr=&quot;RSS&quot;&gt;
@@ -100,11 +56,9 @@ following lines (so that you can add messages to the file later on):
      &lt;/<b>Component</b>&gt;
 &lt;/<b>MessageFile</b>&gt;
 </code></pre>
-Save and close the file.
-</li>
-<li>That's it! Your plugin is created and you are ready to go. Now you only need to add
-code, to implement the extension points.
-</li>
-</ol>
-</body>
+				Save and close the file.
+			<li>That's it! Your plugin is created and you are ready to go. Now you only need to add code, to implement the extension points.
+		</ol>
+	</body>
+
 </html>

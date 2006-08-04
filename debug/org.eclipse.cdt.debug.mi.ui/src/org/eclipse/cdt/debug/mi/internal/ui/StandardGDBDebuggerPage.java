@@ -137,10 +137,19 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 				index = i;
 		}
 		fCommandFactoryCombo.setItems( descLabels );
-		if ( index < 0 )
+		if ( index < 0 ) {
 			index = 0;
-		fCommandFactoryCombo.select( index );
-		String[] miVersions = fCommandFactoryDescriptors[index].getMIVersions();
+		}
+		
+		//It may be the case that we can't match up any identifier with any installed debuggers associated 
+		//with this debuggerID (ie fCommandFactoryDescriptors.length == 0) for example when importing a 
+		//launch from different environments that use CDT debugging.  In this case we try and soldier on
+		//using the defaults as much as is realistic.
+		String[] miVersions = new String[0];
+		if(index < fCommandFactoryDescriptors.length) {
+			fCommandFactoryCombo.select( index );
+			miVersions = fCommandFactoryDescriptors[index].getMIVersions();
+		}
 		fProtocolCombo.setItems( miVersions );
 		if ( miVersions.length == 0 ) {
 			miVersions = new String[] { DEFAULT_MI_VERSION };

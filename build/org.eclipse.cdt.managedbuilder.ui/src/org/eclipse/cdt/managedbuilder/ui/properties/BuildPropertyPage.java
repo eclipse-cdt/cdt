@@ -74,9 +74,8 @@ public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWor
 	private static final String TIP = PREFIX + ".tip";	//$NON-NLS-1$
 	private static final String PLAT_TIP = TIP + ".platform";	//$NON-NLS-1$
 	private static final String CONF_TIP = TIP + ".config";	//$NON-NLS-1$
-	private static final String ADD_TIP = TIP + ".addconf";	//$NON-NLS-1$
+	private static final String MANAGE_TIP = TIP + ".manageconf";	//$NON-NLS-1$
 	private static final String MANAGE_TITLE = PREFIX + ".manage.title";	//$NON-NLS-1$
-	private static final String ID_SEPARATOR = ".";	//$NON-NLS-1$
 	private static final String MSG_CLOSEDPROJECT = "MngMakeProjectPropertyPage.closedproject"; //$NON-NLS-1$
 	
 	private static final String MSG_UNSUPPORTED_PROJ = PREFIX + ".unsupported.proj"; //$NON-NLS-1$
@@ -185,7 +184,7 @@ public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWor
 		});
 		configSelector.setToolTipText(ManagedBuilderUIMessages.getResourceString(CONF_TIP));
 		manageConfigs = ControlFactory.createPushButton(configGroup, ManagedBuilderUIMessages.getResourceString(ADD_CONF));
-		manageConfigs.setToolTipText(ManagedBuilderUIMessages.getResourceString(ADD_TIP));
+		manageConfigs.setToolTipText(ManagedBuilderUIMessages.getResourceString(MANAGE_TIP));
 		manageConfigs.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 				handleManageConfig();

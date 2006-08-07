@@ -81,7 +81,7 @@ public class PasswordPersistenceManager {
 	/**
 	 * Inner class used for storing registered system types 
 	 */
-	protected class RegisteredSystemType
+	private class RegisteredSystemType
 	{
 		private String _systemType;
 		private boolean _userIDCaseSensitive;

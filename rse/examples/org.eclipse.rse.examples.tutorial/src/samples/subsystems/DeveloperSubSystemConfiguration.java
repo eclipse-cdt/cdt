@@ -24,7 +24,6 @@ import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.internal.filters.SystemFilter;
 import org.eclipse.rse.model.IHost;
 
 import samples.RSESamplesPlugin;
@@ -86,7 +85,7 @@ public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 	 *
 	 * Requires this line in rseSamplesResources.properties: property.type.teamfilter=Team filter
 	 */
-	public String getTranslatedFilterTypeProperty(SystemFilter selectedFilter)
+	public String getTranslatedFilterTypeProperty(ISystemFilter selectedFilter)
 	{
 		//--tutorial part 1
 	   	//return RSESamplesPlugin.getResourceString("property.type.teamfilter"); //$NON-NLS-1$

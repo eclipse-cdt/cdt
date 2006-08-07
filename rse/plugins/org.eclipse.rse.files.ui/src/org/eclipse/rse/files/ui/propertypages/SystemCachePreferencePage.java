@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -261,7 +260,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 		return super.performOk();
 	}
 
-	public class ClearTempFilesRunnable implements IRunnableWithProgress
+	private class ClearTempFilesRunnable implements IRunnableWithProgress
 	{
 		public void run(IProgressMonitor monitor)
 		{
@@ -277,7 +276,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 			{
 				try
 				{
-					IWorkspace workspace = SystemBasePlugin.getWorkspace();
+//					IWorkspace workspace = SystemBasePlugin.getWorkspace();
 					IResource[] members = tempFiles.members();
 					if (members != null)
 					{

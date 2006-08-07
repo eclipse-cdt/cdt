@@ -20,9 +20,13 @@ package org.eclipse.rse.services.ssh.shell;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.rse.services.shells.AbstractHostShellOutputReader;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellOutputReader;
+import org.eclipse.rse.services.ssh.Activator;
 
 /**
  * Listener to shell output. As io streams through, refresh events are sent out
@@ -37,6 +41,7 @@ public class SshShellOutputReader extends AbstractHostShellOutputReader
 	public SshShellOutputReader(IHostShell hostShell, BufferedReader reader,
 			boolean isErrorReader) {
 		super(hostShell, isErrorReader);
+		setName("SshShellOutputReader-"+getName()); //$NON-NLS-1$
 		fReader = reader;
 	}
 
@@ -123,6 +128,10 @@ public class SshShellOutputReader extends AbstractHostShellOutputReader
 					}
 				}
 			} catch (IOException e) {
+				//FIXME it's dangerous to return null here since this will end
+				//our reader thread completely... the exception could just be
+				//temporary, and we should keep running!
+				Activator.getDefault().getLog().log(new Status(IStatus.WARNING, Activator.getDefault().getBundle().getSymbolicName(), 0, "IOException in SshShellOutputReader", e));
 				return null;
 			}
 		}

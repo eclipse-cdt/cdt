@@ -50,11 +50,6 @@ import org.osgi.framework.BundleContext;
 public abstract class SystemBasePlugin extends AbstractUIPlugin 
 {
 
-	/**
-	 * Default folder for icons, relative to this plugin's install folder: "icons".
-	 */
-	private static final String ICON_PATH = "icons";
-
 	// static variables
     private static SystemBasePlugin baseInst = null;
 
@@ -151,7 +146,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 * @return the prefix of the path for icons, i.e. "icons/".
 	 */
 	public static String getIconPath() {
-		return ICON_PATH;
+		return "icons/"; //$NON-NLS-1$
 	}
 
 	/**
@@ -856,7 +851,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	}
 
 	/**
-	 * Returns an image descriptor from the base IDE.
+	 * Returns an image descriptor from the base IDE. Looks only in the "icons/full/" directories.
 	 * 
 	 * @see org.eclipse.ui.views.navigator.ResourceNavigatorActionGroup#getImageDescriptor(java.lang.String)
 	 */
@@ -884,25 +879,6 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		return descriptor;
 	}    
             
-    // ----------------------------------------
-    // TRANSLATABLE RESOURCE-RELATED METHODS...
-    // ----------------------------------------
-       
-    /**
-	 * Put up an error message when a programming error is detected.
-	 * Please note this should never happen in production so we don't translate!
-	 */
-    public void showProgrammerErrorMessage(String msg)
-    {
-	     org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(null);
-	     //mb.setTitle("Remote Systems Programming Error");
-	     String errmsg = "Programming Error: " + msg;
-	     mb.setMessage(errmsg);	
-	     mb.open();
-	     logError(errmsg);
-    }
-
-
     // -----------------    
     // LOGGER METHODS...
     // -----------------

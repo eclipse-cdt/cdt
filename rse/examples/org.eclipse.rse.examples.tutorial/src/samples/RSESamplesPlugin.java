@@ -129,11 +129,10 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 	protected void initializeImageRegistry()
 	{
 		String path = getIconPath();
-		putImageInRegistry("ICON_ID_TEAM",      path+"/team.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-		putImageInRegistry("ICON_ID_DEVELOPER", path+"/developer.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-		putImageInRegistry("ICON_ID_TEAMFILTER",      path+"/teamFilter.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-		putImageInRegistry("ICON_ID_DEVELOPERFILTER", path+"/developerFilter.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-		// TO RETRIEVE AN ICON, CALL GETIMAGE OR GETIMAGEDESCRIPTOR WITH ITS XXX_ID ID
+		putImageInRegistry("ICON_ID_TEAM", path + "team.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		putImageInRegistry("ICON_ID_DEVELOPER", path + "developer.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		putImageInRegistry("ICON_ID_TEAMFILTER", path + "teamFilter.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		putImageInRegistry("ICON_ID_DEVELOPERFILTER", path + "developerFilter.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

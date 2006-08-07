@@ -23,17 +23,14 @@ public interface ISystemIconConstants
 {
 	public static final String PLUGIN_ID ="org.eclipse.rse.ui";
 	public static final String PREFIX = PLUGIN_ID + ".";
-	public static final String SEP = "/";
 	
 	// Icons
-	public static final String ICON_DIR = "icons";
-	public static final String ICON_PATH = SEP + ICON_DIR + SEP;
 	public static final String ICON_SUFFIX = "Icon";	
 	public static final String ICON_BANNER_SUFFIX = "BannerIcon";	
 	public static final String ICON_EXT = ".gif";	
 	
     // WIZARD ICONS...    		
-    public static final String ICON_WIZARD_DIR = SEP + "full" + SEP + "wizban" + SEP + "";
+    public static final String ICON_WIZARD_DIR = "full/wizban/";
 	public static final String ICON_SYSTEM_NEWPROFILEWIZARD_ROOT = "newprofile_wiz";	
 	public static final String ICON_SYSTEM_NEWPROFILEWIZARD    = ICON_WIZARD_DIR + ICON_SYSTEM_NEWPROFILEWIZARD_ROOT + ICON_EXT;
 	public static final String ICON_SYSTEM_NEWPROFILEWIZARD_ID = PREFIX + ICON_SYSTEM_NEWPROFILEWIZARD_ROOT + ICON_BANNER_SUFFIX;	
@@ -60,7 +57,7 @@ public interface ISystemIconConstants
 			
 
     // THING ICONS...
-    public static final String ICON_MODEL_DIR = SEP + "full" + SEP + "obj16" + SEP + "";	
+    public static final String ICON_MODEL_DIR = "full/obj16/";	
 
 	public static final String ICON_SYSTEM_PROFILE_ROOT = "systemprofile";	
 	public static final String ICON_SYSTEM_PROFILE      = ICON_MODEL_DIR + ICON_SYSTEM_PROFILE_ROOT+ICON_EXT;
@@ -123,7 +120,7 @@ public interface ISystemIconConstants
 	public static final String ICON_SYSTEM_TARGET_ID   = PREFIX+ICON_SYSTEM_TARGET_ROOT+ICON_SUFFIX;
 
     // NEW ACTION ICONS...
-    public static final String ICON_NEWACTIONS_DIR = SEP + "full" + SEP + "ctool16" + SEP + "";	
+    public static final String ICON_NEWACTIONS_DIR = "full/ctool16/";	
 
 	public static final String ICON_SYSTEM_NEW_ROOT = "new";	
 	public static final String ICON_SYSTEM_NEW      = ICON_NEWACTIONS_DIR + ICON_SYSTEM_NEW_ROOT+ICON_EXT;
@@ -159,7 +156,7 @@ public interface ISystemIconConstants
 	
 				
     // OTHER ACTION ICONS...    			
-    public static final String ICON_ACTIONS_DIR = SEP + "full" + SEP + "elcl16" + SEP + "";	
+    public static final String ICON_ACTIONS_DIR = "full/elcl16/";	
 
 	public static final String ICON_SYSTEM_COMPILE_ROOT = "compile";	
 	public static final String ICON_SYSTEM_COMPILE      = ICON_ACTIONS_DIR + ICON_SYSTEM_COMPILE_ROOT+ICON_EXT;
@@ -299,7 +296,7 @@ public interface ISystemIconConstants
 	public static final String ICON_SYSTEM_REFRESH_ID = PREFIX + ICON_SYSTEM_REFRESH_ROOT + ICON_SUFFIX;
 
     // SPECIAL MODEL OBJECT ICONS...
-    public static final String ICON_OBJS_DIR = SEP + "full" + SEP + "obj16" + SEP;	
+    public static final String ICON_OBJS_DIR = "full/obj16/";	
 	public static final String ICON_SYSTEM_ERROR_ROOT = "error";
 	public static final String ICON_SYSTEM_ERROR_ID = PREFIX + ICON_SYSTEM_ERROR_ROOT + ICON_SUFFIX;
 	public static final String ICON_SYSTEM_ERROR    = ICON_OBJS_DIR + ICON_SYSTEM_ERROR_ROOT + ICON_EXT;		

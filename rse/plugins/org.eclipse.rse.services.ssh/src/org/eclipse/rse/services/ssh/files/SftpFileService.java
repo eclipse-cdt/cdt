@@ -432,6 +432,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		try {
 			String fullPath = remoteParent + '/' + fileName;
 			OutputStream os = getChannel("SftpFileService.createFile").put(fullPath); //$NON-NLS-1$
+			//TODO workaround bug 153118: write a single space
+			//since jsch hangs when trying to close the stream without writing
+			os.write(32); 
 			os.close();
 			SftpATTRS attrs = getChannel("SftpFileService.createFile.stat").stat(fullPath); //$NON-NLS-1$
 			result = makeHostFile(remoteParent, fileName, attrs);

@@ -3036,6 +3036,7 @@ public final class DataStore
 	 */
 	public String mapToLocalPath(String aPath)
 	{
+		/*
 		String result = null;
 
 		char slash = '/';
@@ -3067,8 +3068,12 @@ public final class DataStore
 
 			result = new String(localRoot + remotePath);
 		}
-
+		
 		return result;
+		*/
+		
+		// no more mapping here - expect actual paths
+		return aPath;
 	}
 
 	/**

@@ -69,7 +69,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 		remotePath = new String(remotePath.replace('\\', '/'));
 		DataElement status = findStatusFor(remotePath);
 		String fileName = _dataStore.mapToLocalPath(remotePath);
-
+	
 		if (fileName != null)
 		{
 			try
@@ -190,6 +190,8 @@ public class ByteStreamHandler implements IByteStreamHandler
 				{
 					FileOutputStream outStream = new FileOutputStream(fileName, true);
 					
+					try
+					{
 					if (binary) 
 					{
 						outStream.write(buffer, 0, size);
@@ -201,8 +203,14 @@ public class ByteStreamHandler implements IByteStreamHandler
 						byte[] convertedBytes = byteConverter.convertClientBytesToHostBytes(buffer, 0, size);
 						outStream.write(convertedBytes, 0, convertedBytes.length);
 					}
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
 					
 					outStream.close();
+
 				}
 				if (status == null)
 					return;

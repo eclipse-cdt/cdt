@@ -601,9 +601,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 //		String tempRoot = getDataStoreRoot();
 		getDataStoreRoot();
 				
-		String dataStoreLocalPath = prepareForDownload(localFile.getAbsolutePath());
-		
-		DataElement localElement = ds.createObject(universaltemp, de.getType(), dataStoreLocalPath, encoding);
+		DataElement localElement = ds.createObject(universaltemp, de.getType(), localFile.getAbsolutePath(), encoding);
 		
 		DataElement bufferSizeElement = ds.createObject(universaltemp, "buffer_size", "" + getBufferDownloadSize(), "");
 		DataElement queryCmd = getCommandDescriptor(de,C_DOWNLOAD_FILE);
@@ -629,6 +627,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			}
 			catch (InterruptedException e)
 			{
+				e.printStackTrace();
 			}
 
 			//getStatusMonitor(ds).waitForUpdate(status, monitor);

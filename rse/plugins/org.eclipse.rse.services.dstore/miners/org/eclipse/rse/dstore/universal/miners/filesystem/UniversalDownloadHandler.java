@@ -46,7 +46,8 @@ public class UniversalDownloadHandler extends Thread implements ICancellableHand
 	private DataElement _cmdElement;
 	private boolean _isCancelled= false;
 	
-	public UniversalDownloadHandler(DataStore dataStore, UniversalFileSystemMiner miner, DataElement cmdElement, DataElement status)
+	public UniversalDownloadHandler(DataStore dataStore, UniversalFileSystemMiner miner, DataElement cmdElement, 
+			DataElement status)
 	{
 		_miner = miner;
 		_dataStore = dataStore;	

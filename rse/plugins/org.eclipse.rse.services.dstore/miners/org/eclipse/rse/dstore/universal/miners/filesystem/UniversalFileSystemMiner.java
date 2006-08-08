@@ -302,7 +302,9 @@ public class UniversalFileSystemMiner extends Miner implements
 						"C_GET_OSTYPE - subject is null", null);
 		} else if (C_DOWNLOAD_FILE.equals(name)) {
 			if (subject != null)
+			{ 
 				return handleDownload(theElement, status);
+			}
 			else
 				UniversalServerUtilities.logError(CLASSNAME, C_DOWNLOAD_FILE
 						+ " - subject is null", null);
@@ -2249,14 +2251,14 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			str[i] = tokenizer.nextToken();
 		}
 */
-		return ((new Integer(str[3])).intValue());
+		return ((new Integer(str[3])).intValue()); 
 	}
 
 	/**
 	 * Method to download a file.
 	 */
-	protected DataElement handleDownload(DataElement theElement,
-			DataElement status) {
+	protected DataElement handleDownload(DataElement theElement,  DataElement status) 
+	{
 
 		UniversalDownloadHandler downloadThread = new UniversalDownloadHandler(
 				_dataStore, this, theElement, status);

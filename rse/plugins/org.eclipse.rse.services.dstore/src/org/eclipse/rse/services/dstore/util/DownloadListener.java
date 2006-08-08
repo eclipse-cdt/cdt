@@ -118,7 +118,6 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 	{
 		if (_status.getValue().equals("done"))
 		{
-
 			if (_status == event.getParent())
 			{
 				setDone(true);
@@ -295,10 +294,9 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 					setDone(true);
 					throw new InterruptedException();
 				}
-
 				if (getStatus().getAttribute(DE.A_NAME).equals("done"))
 				{
-					setDone(true);
+					setDone(true); 
 				}
 				else
 				{

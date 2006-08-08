@@ -72,4 +72,8 @@ public class ServerLauncherPropertiesServiceElement extends RSEModelServiceEleme
 		super.revert();		
 	}
 
+	public IServerLauncherProperties getServerLauncherProperties()
+	{
+		return _launcherProperties;
+	}
 }

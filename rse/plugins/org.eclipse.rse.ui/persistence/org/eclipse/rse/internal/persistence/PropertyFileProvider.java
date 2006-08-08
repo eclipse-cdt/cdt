@@ -56,12 +56,12 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	private static final String PROPERTIES_FILE_NAME = "node.properties";
 
 	/* Metatype names */
-	private static final String MT_ATTRIBUTE_TYPE = "attribute-type";
-	private static final String MT_ATTRIBUTE = "attribute";
+	private static final String MT_ATTRIBUTE_TYPE = "attr-type";
+	private static final String MT_ATTRIBUTE = "attr";
 	private static final String MT_CHILD = "child";
-	private static final String MT_NODE_TYPE = "node-type";
-	private static final String MT_NODE_NAME = "node-name";
-	private static final String MT_REFERENCE = "reference";
+	private static final String MT_NODE_TYPE = "n-type";
+	private static final String MT_NODE_NAME = "n-name";
+	private static final String MT_REFERENCE = "ref";
 
 	/* Type abbreviations */
 	private static final String AB_SUBSYSTEM = "SS";
@@ -252,17 +252,22 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @param monitor The progress monitor.
 	 */
 	private void writeProperties(Properties properties, String header, IFile file) {
+		System.out.println("writing "+file.getFullPath()+"...");
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream(500);
 		PrintWriter out = new PrintWriter(outStream);
 		out.println("# " + header);
 		Map map = new TreeMap(properties);
 		Set keys = map.keySet();
+		
 		for (Iterator z = keys.iterator(); z.hasNext();) {
 			String key = (String) z.next();
 			String value = (String)map.get(key);
-			out.println(key + "=" + escapeValue(value));
+			String keyvalue = key + "=" + escapeValue(value);
+			System.out.println("writing "+keyvalue);
+			out.println(keyvalue);
 		}
 		out.close();
+		System.out.println("...wrote "+file.getFullPath());
 		ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
 		try {
 			if (!file.exists()) {
@@ -623,7 +628,8 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			project.refreshLocal(IResource.DEPTH_INFINITE, null); 
 		} catch (Exception e) {
 		}
-		IFolder providerFolder = getFolder(project, "org.eclipse.rse.dom.properties");
+		//IFolder providerFolder = getFolder(project, "org.eclipse.rse.dom.properties");
+		IFolder providerFolder = getFolder(project, "dom.properties");
 		return providerFolder;
 	}
 	

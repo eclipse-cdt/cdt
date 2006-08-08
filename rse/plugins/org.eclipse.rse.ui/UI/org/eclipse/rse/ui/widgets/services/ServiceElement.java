@@ -41,6 +41,21 @@ public abstract class ServiceElement
 	
 	public IHost getHost()
 	{
+		if (_host == null)
+		{
+			ServiceElement[] elements = getChildren();
+			if (elements != null)
+			{
+			for (int i = 0; i < elements.length; i++)
+			{
+				ServiceElement el = elements[i];
+				if (el.isSelected())
+				{
+					return el.getHost();
+				}
+			}
+			}
+		}
 		return _host;
 	}
 	

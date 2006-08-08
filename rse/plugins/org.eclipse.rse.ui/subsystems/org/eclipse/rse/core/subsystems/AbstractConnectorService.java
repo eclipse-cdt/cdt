@@ -193,8 +193,15 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     {
     	if (_primarySubSystem == null)
     	{
-    		ISubSystem ss = (ISubSystem)_registeredSubSystems.get(0);
-    		_primarySubSystem = ss.getPrimarySubSystem();
+    		if (_registeredSubSystems.size() == 0)
+    		{
+    			
+    		}
+    		else
+    		{
+    			ISubSystem ss = (ISubSystem)_registeredSubSystems.get(0);
+    			_primarySubSystem = ss.getPrimarySubSystem();
+    		}
     	}
     	return _primarySubSystem;
     }

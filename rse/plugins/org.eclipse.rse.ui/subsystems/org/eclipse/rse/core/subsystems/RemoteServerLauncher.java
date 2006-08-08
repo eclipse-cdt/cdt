@@ -443,7 +443,14 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 				return value.equals("true");
 			}
 		}
-		return getConnectorService().getPrimarySubSystem().getSubSystemConfiguration().supportsServerLaunchType(serverLaunchType);
+		
+		ISubSystem primarySS = getConnectorService().getPrimarySubSystem();
+		if (primarySS != null)
+		{
+			return primarySS.getSubSystemConfiguration().supportsServerLaunchType(serverLaunchType);		
+
+		}
+		return true;
 	}
 
 

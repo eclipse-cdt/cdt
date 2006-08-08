@@ -25,13 +25,19 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystem;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.model.DummyHost;
 import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.model.IPropertySet;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.widgets.services.ConnectorServiceElement;
 import org.eclipse.rse.ui.widgets.services.FactoryServiceElement;
+import org.eclipse.rse.ui.widgets.services.PropertyElement;
 import org.eclipse.rse.ui.widgets.services.RootServiceElement;
+import org.eclipse.rse.ui.widgets.services.ServerLauncherPropertiesServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServicesForm;
 import org.eclipse.swt.widgets.Composite;
@@ -141,9 +147,39 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		if (_root != null)
 		{
 			_root.commit();
+			
 			_selectedFactory = ((FactoryServiceElement)_form.getSelectedService()).getFactory();
 		}
 		return true;
+	}
+	
+	protected ServerLauncherPropertiesServiceElement[] getPropertiesServiceElement()
+	{
+		List results = new ArrayList();
+		for (int i = 0; i < _serviceElements.length; i++)
+		{
+			{
+				ServiceElement el = _serviceElements[i];
+				ServiceElement[] children = el.getChildren();
+				if (children != null)
+				{
+					for (int c = 0; c < children.length; c++)
+					{
+						ServiceElement child = children[c];
+						if (child instanceof ConnectorServiceElement)
+						{
+							ServiceElement[] cch = child.getChildren();
+							if (cch != null && cch.length > 0) 
+							{
+								ServerLauncherPropertiesServiceElement result = (ServerLauncherPropertiesServiceElement)cch[0];
+								results.add(result);
+							}
+						}
+					}
+				}
+			}
+		}
+		return (ServerLauncherPropertiesServiceElement[])results.toArray(new ServerLauncherPropertiesServiceElement[results.size()]);
 	}
 
 	public boolean applyValues(ISubSystem ss)
@@ -153,11 +189,36 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 			IServiceSubSystemConfiguration currentFactory = (IServiceSubSystemConfiguration)ss.getSubSystemConfiguration();
 			if (currentFactory != null)
 			{
-			
 				if (_selectedFactory != currentFactory)
 				{
 					((IServiceSubSystem)ss).switchServiceFactory(_selectedFactory);
 				}
+				IHost realHost = ss.getHost();
+				if (_root != null)
+				{ 
+					{
+						ServerLauncherPropertiesServiceElement[] elements = getPropertiesServiceElement();
+						if (elements.length > 0)
+						{
+							IServerLauncherProperties properties = elements[0].getServerLauncherProperties();
+						
+							IConnectorService rserv = ss.getConnectorService();
+							properties.saveToProperties();
+								rserv.setRemoteServerLauncherProperties(properties);
+								/*
+								PropertyElement[] properties = elements[i].getProperties();
+								for (int p = 0; p < properties.length; p++)
+								{
+									PropertyElement pel = properties[p];
+									
+								}
+								*/
+								//rserv.addPropertySets(sets);
+		
+						}
+					}
+				}
+			
 			}
 		}
 		return true;

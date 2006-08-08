@@ -44,6 +44,7 @@ import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.filters.ISystemFilterReference;
+import org.eclipse.rse.internal.persistence.RSEPersistenceManager;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISubSystemConfigurationCategories;
 import org.eclipse.rse.model.ISystemContainer;
@@ -2199,6 +2200,8 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 
 		}
 		SystemPreferencesManager.getPreferencesManager().setConnectionNamesOrder(); // update preferences order list                
+	
+		RSEUIPlugin.getThePersistenceManager().commit(conn);
 		return conn;
 	}
 	private ISystemNewConnectionWizardPage[] getApplicableWizardPages(ISubSystemConfiguration ssf, ISystemNewConnectionWizardPage[] allPages)

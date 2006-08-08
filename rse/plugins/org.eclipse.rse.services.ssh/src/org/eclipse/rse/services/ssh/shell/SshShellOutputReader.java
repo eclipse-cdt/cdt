@@ -37,11 +37,12 @@ public class SshShellOutputReader extends AbstractHostShellOutputReader
 		implements IHostShellOutputReader {
 
 	protected BufferedReader fReader;
+	private String fPromptChars = ">$%#]"; //Characters we accept as the end of a prompt //$NON-NLS-1$;
 
 	public SshShellOutputReader(IHostShell hostShell, BufferedReader reader,
 			boolean isErrorReader) {
 		super(hostShell, isErrorReader);
-		setName("SshShellOutputReader-"+getName()); //$NON-NLS-1$
+		setName("Ssh ShellOutputReader"+getName()); //$NON-NLS-1$
 		fReader = reader;
 	}
 
@@ -58,73 +59,83 @@ public class SshShellOutputReader extends AbstractHostShellOutputReader
 			return null;
 		}
 		StringBuffer theLine = new StringBuffer();
+		StringBuffer theDebugLine = null;
+		theDebugLine = new StringBuffer();
 		int ch;
-		int lastch = 0;
 		boolean done = false;
 		while (!done && !isFinished()) {
 			try {
 				ch = fReader.read();
 				switch (ch) {
 				case -1:
+				case 65535:
 					if (theLine.length() == 0) // End of Reader
 						return null;
 					done = true;
 					break;
-				case 65535:
-					if (theLine.length() == 0) // Check why I keep getting this!!!
-						return null;
-					done = true;
-					break;
+				case '\b': //backspace
+					if(theDebugLine!=null) theDebugLine.append((char)ch);
+					int len = theLine.length()-1;
+					if (len>=0) theLine.deleteCharAt(len);
+				case 13:
+					if(theDebugLine!=null) theDebugLine.append((char)ch);
+					break; // Carriage Return: dont append to the buffer
 				case 10:
+					if(theDebugLine!=null) theDebugLine.append((char)ch);
 					done = true; // Newline
 					break;
 				case 9:
-					//TODO Count characters and insert as many as needed to do a real tab
-					theLine.append("     "); // Tab //$NON-NLS-1$
+					//Tab: we count tabs at column 8
+					if(theDebugLine!=null) theDebugLine.append((char)ch);
+					int tabIndex = theLine.length() % 8;
+					while (tabIndex < 8) {
+						theLine.append(' ');
+						tabIndex++;
+					}
 					break;
-				case 13:
-					break; // Carriage Return
 				default:
 					char tch = (char) ch;
+					if(theDebugLine!=null) theDebugLine.append(tch);
 					if (!Character.isISOControl(tch)) {
 						theLine.append(tch); // Any other character
 					} else if (ch == 27) {
 						// Escape: ignore next char too
-						int nch = (char)fReader.read();
+						int nch = fReader.read();
+						if (theDebugLine!=null) theDebugLine.append((char)nch);
 						if (nch == 91) {
 							//vt100 escape sequence: read until end-of-command (skip digits and semicolon)
 							//e.g. \x1b;13;m --> ignore the entire command, including the trailing m
 							do {
 								nch = fReader.read();
+								if (theDebugLine!=null) theDebugLine.append((char)nch);
 							} while (Character.isDigit((char)nch) || nch == ';');
 						}
 					}
 				}
 
-				boolean ready = fReader.ready();
-				//TODO Get rid of this to support UNIX and Mac? -- It appears that
-				//due to vt100 emulation we get CRLF even for UNIX connections.
-				if (ch == 10 && lastch == 13) {
-					return theLine.toString();
-				}
-				lastch = ch;
-
 				// Check to see if the BufferedReader is still ready which means
 				// there are more characters
 				// in the Buffer...If not, then we assume it is waiting for
 				// input.
-				if (!ready) {
-					// wait to make sure
+				if (!done && !fReader.ready()) {
+					// wait to make sure -- max. 500 msec to wait for new chars 
+					// if we are not at a CRLF seems to be appropriate for the 
+					// Pipes and Threads in ssh.
+					long waitIncrement = 500;
+					// Check if we think we are at a prompt
+					int len = theLine.length()-1;
+					while (len>0 && Character.isSpaceChar(theLine.charAt(len))) {
+						len--;
+					}
+					if (len>=0 && fPromptChars.indexOf(theLine.charAt(len))>=0) {
+						waitIncrement = 5; //wait only 5 msec if we think it's a prompt
+					}
 					try {
-						Thread.sleep(_waitIncrement);
+						Thread.sleep(waitIncrement);
 					} catch (InterruptedException e) {
 					}
 					if (!fReader.ready()) {
-						if (done) {
-							return theLine.toString().trim();
-						} else {
-							done = true;
-						}
+						done = true;
 					}
 				}
 			} catch (IOException e) {
@@ -132,8 +143,13 @@ public class SshShellOutputReader extends AbstractHostShellOutputReader
 				//our reader thread completely... the exception could just be
 				//temporary, and we should keep running!
 				Activator.getDefault().getLog().log(new Status(IStatus.WARNING, Activator.getDefault().getBundle().getSymbolicName(), 0, "IOException in SshShellOutputReader", e));
+				//e.printStackTrace();
 				return null;
 			}
+		}
+		if (theDebugLine!=null) {
+			String debugLine = theDebugLine.toString();
+			debugLine.compareTo(""); //$NON-NLS-1$
 		}
 		return theLine.toString();
 	}

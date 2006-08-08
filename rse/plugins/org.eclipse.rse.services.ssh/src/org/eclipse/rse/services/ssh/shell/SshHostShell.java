@@ -18,25 +18,29 @@ package org.eclipse.rse.services.ssh.shell;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.Session;
 
 import org.eclipse.rse.services.shells.AbstractHostShell;
+import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellOutputReader;
 import org.eclipse.rse.services.ssh.ISshSessionProvider;
 
 /**
  * A Shell subsystem for SSH.
  */
-public class SshHostShell extends AbstractHostShell {
+public class SshHostShell extends AbstractHostShell implements IHostShell {
 
 	private ISshSessionProvider fSessionProvider;
 	private Channel fChannel;
 	private SshShellOutputReader fStdoutHandler;
 	private SshShellOutputReader fStderrHandler;
-	private PrintWriter fStdinHandler;
+	private SshShellWriterThread fShellWriter;
 	
 	public SshHostShell(ISshSessionProvider sessionProvider, String initialWorkingDirectory, String commandToRun, String encoding, String[] environment) {
 		try {
@@ -53,14 +57,35 @@ public class SshHostShell extends AbstractHostShell {
 
 			fStdoutHandler = new SshShellOutputReader(this, new BufferedReader(new InputStreamReader(fChannel.getInputStream())), false);
 			fStderrHandler = new SshShellOutputReader(this, null,true);
-			fStdinHandler = new PrintWriter(fChannel.getOutputStream());
-
+			OutputStream outputStream = fChannel.getOutputStream();
+			//TODO check if encoding or command to execute needs to be considered
+			//If a command is given, it might be possible to do without a Thread
+			//Charset cs = Charset.forName(encoding);
+			//PrintWriter outputWriter = new PrintWriter(
+			//		new BufferedWriter(new OutputStreamWriter(outputStream,cs)));
+			PrintWriter outputWriter = new PrintWriter(outputStream);
+			fShellWriter = new SshShellWriterThread(outputWriter);
 		    fChannel.connect();
-		    writeToShell("cd "+initialWorkingDirectory); //$NON-NLS-1$
+		    if (initialWorkingDirectory!=null && initialWorkingDirectory.length()>0 && !initialWorkingDirectory.equals(".")) { //$NON-NLS-1$
+			    writeToShell("cd "+initialWorkingDirectory); //$NON-NLS-1$
+		    }
 		} catch(Exception e) {
 			//TODO Forward exception to RSE properly
 			e.printStackTrace();
+			if (fShellWriter!=null) {
+				fShellWriter.stopThread();
+				fShellWriter = null;
+			}
 		}
+	}
+
+	/**
+	 * Connect to remote system and launch Threads for the
+	 * shell as needed.
+	 * @param monitor
+	 */
+	protected void start(IProgressMonitor monitor)
+	{
 	}
 
 	public boolean isActive() {
@@ -68,6 +93,7 @@ public class SshHostShell extends AbstractHostShell {
 			return true;
 		}
 		// shell is not active: check for session lost
+		exit();
 		Session session = fSessionProvider.getSession();
 		if (session!=null && !session.isConnected()) {
 			fSessionProvider.handleSessionLost();
@@ -77,8 +103,11 @@ public class SshHostShell extends AbstractHostShell {
 
 	public void writeToShell(String command) {
 		if (isActive()) {
-			fStdinHandler.println(command);
-			fStdinHandler.flush();
+			if (!fShellWriter.sendCommand(command)) {
+				//exception occurred: terminate writer thread, cancel connection
+				exit();
+				isActive();
+			}
 		}
 	}
 
@@ -91,6 +120,7 @@ public class SshHostShell extends AbstractHostShell {
 	}
 
 	public void exit() {
+		fShellWriter.stopThread();
 		fChannel.disconnect();
 	}
 

@@ -3123,10 +3123,17 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		Shell result = null;
 		if (PlatformUI.isWorkbenchRunning())
 		{
-			IWorkbenchWindow window = getActiveWorkbenchWindow();
-			if (window != null) 
+			try
 			{
-				result = window.getShell();
+				IWorkbenchWindow window = getActiveWorkbenchWindow();
+				if (window != null) 
+				{
+					result = window.getShell();
+				}
+			}
+			catch (Exception e)
+			{
+				return null;
 			}
 		}
 		else // workbench has not been loaded yet!

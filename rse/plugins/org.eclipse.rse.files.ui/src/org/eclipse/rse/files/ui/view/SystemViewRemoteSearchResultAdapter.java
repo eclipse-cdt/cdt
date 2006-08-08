@@ -713,10 +713,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 			    if (context instanceof IRemoteFile)
 			    {			        
 			        IRemoteFile cwd = (IRemoteFile)context;
-			        if (cwd != null)
-			        {	
-			        	return cwd.getAbsolutePath();			        
-			        }	
+		        	return cwd.getAbsolutePath();			        
 			    }
 			    else
 			     {
@@ -724,6 +721,6 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 			     }
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 }

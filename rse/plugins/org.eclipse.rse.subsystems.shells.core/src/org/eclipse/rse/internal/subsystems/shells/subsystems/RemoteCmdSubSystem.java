@@ -594,12 +594,9 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 				if (context instanceof IRemoteFile)
 				{
 					IRemoteFile pwdf = (IRemoteFile) context;
-					if (pwdf != null)
-					{
-						String pwd = pwdf.getAbsolutePath();
-						shellBuffer.append(pwd);
-						gotShell = true;
-					}
+					String pwd = pwdf.getAbsolutePath();
+					shellBuffer.append(pwd);
+					gotShell = true;
 				}
 				else
 				{

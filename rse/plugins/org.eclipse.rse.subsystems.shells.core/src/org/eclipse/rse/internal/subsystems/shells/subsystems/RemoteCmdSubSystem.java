@@ -59,7 +59,7 @@ import org.eclipse.swt.widgets.Shell;
 public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmdSubSystem, ICommunicationsListener
 {
 
-	public static String COMMAND_SHELLS_MEMENTO = "commandshells";
+	public static String COMMAND_SHELLS_MEMENTO = "commandshells"; //$NON-NLS-1$
 
 	protected java.util.List envVars = null;
 
@@ -87,22 +87,22 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	public String getShellEncoding()
 	{
-		IPropertySet set = getPropertySet("Remote");
+		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
 		if (set != null)
 		{
-			return set.getPropertyValue("shell.encoding");
+			return set.getPropertyValue("shell.encoding"); //$NON-NLS-1$
 		}
 		return null;
 	}
 
 	public void setShellEncoding(String encoding)
 	{
-		IPropertySet set = getPropertySet("Remote");
+		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
 		if (set == null)
 		{
-			set = createPropertySet("Remote", getDescription());
+			set = createPropertySet("Remote", getDescription()); //$NON-NLS-1$
 		}
-		set.addProperty("shell.encoding", encoding);
+		set.addProperty("shell.encoding", encoding); //$NON-NLS-1$
 		setDirty(true);
 		commit();
 	}
@@ -283,7 +283,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 				{
 					name = name.toUpperCase();
 				}
-				envVars[i] = name + "=" + list[i].getValue();
+				envVars[i] = name + "=" + list[i].getValue(); //$NON-NLS-1$
 			}
 		}
 
@@ -368,8 +368,8 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	public boolean isWindows()
 	{
 		String type = getSystemType();
-		return (type.equals("Windows") || type.equals("Local")
-				&& System.getProperty("os.name").toLowerCase().startsWith("win"));
+		return (type.equals("Windows") || type.equals("Local") //$NON-NLS-1$ //$NON-NLS-2$
+				&& System.getProperty("os.name").toLowerCase().startsWith("win")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -395,7 +395,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		ArrayList addedFolders = new ArrayList();
 
 		char separator = isWindows() ? ';' : ':';
-		StringTokenizer tokenizer = new StringTokenizer(path, separator + "");
+		StringTokenizer tokenizer = new StringTokenizer(path, separator + ""); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens())
 		{
 			String token = tokenizer.nextToken();
@@ -437,7 +437,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 */
 	public String getInvalidEnvironmentVariableNameCharacters()
 	{
-		return "=";
+		return "="; //$NON-NLS-1$
 	}
 
 	// -------------------------------
@@ -640,7 +640,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		int numShells = 0;
 		if (shellStr != null && shellStr.length() > 0)
 		{
-			StringTokenizer tok = new StringTokenizer(shellStr, "|");
+			StringTokenizer tok = new StringTokenizer(shellStr, "|"); //$NON-NLS-1$
 			results = new IRemoteCommandShell[tok.countTokens()];
 
 			while (tok.hasMoreTokens())

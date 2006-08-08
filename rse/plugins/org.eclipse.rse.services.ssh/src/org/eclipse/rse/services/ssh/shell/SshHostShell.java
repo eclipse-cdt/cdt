@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -66,7 +67,10 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 			PrintWriter outputWriter = new PrintWriter(outputStream);
 			fShellWriter = new SshShellWriterThread(outputWriter);
 		    fChannel.connect();
-		    if (initialWorkingDirectory!=null && initialWorkingDirectory.length()>0 && !initialWorkingDirectory.equals(".")) { //$NON-NLS-1$
+		    if (initialWorkingDirectory!=null && initialWorkingDirectory.length()>0 
+		    	&& !initialWorkingDirectory.equals(".") //$NON-NLS-1$
+		    	&& !initialWorkingDirectory.equals("Command Shell") //$NON-NLS-1$ //FIXME workaround for bug 153047
+		    ) { 
 			    writeToShell("cd "+initialWorkingDirectory); //$NON-NLS-1$
 		    }
 		} catch(Exception e) {

@@ -21,9 +21,12 @@ import org.eclipse.rse.connectorservice.ssh.SshConnectorServiceManager;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.services.ssh.ISshService;
 import org.eclipse.rse.services.ssh.shell.SshShellService;
+import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
+import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IServiceCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystemConfiguration;
 
@@ -70,6 +73,11 @@ public class SshShellSubSystemConfiguration extends
 
 	public Class getServiceImplType() {
 		return ISshService.class;
+	}
+
+	public IServiceCommandShell createRemoteCommandShell(IRemoteCmdSubSystem cmdSS, IHostShell hostShell)
+	{		
+		return new SshServiceCommandShell(cmdSS, hostShell);
 	}
 
 }

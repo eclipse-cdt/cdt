@@ -15,8 +15,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.BundleContext;
 
 
@@ -61,7 +65,19 @@ public class Activator extends Plugin {
 	public static Activator getDefault() {
 		return plugin;
 	}
-	
+
+	/**
+	 * Logs an throwable to the log for this plugin.
+	 * @param t the Throwable to be logged.
+	 */
+	public void logException(Throwable t) {
+		ILog log = getLog();
+		String id = getBundle().getSymbolicName();
+		String message = NLS.bind(SshServiceResources.SshPlugin_Unexpected_Exception, t.getClass().getName(), t.getLocalizedMessage());
+		IStatus status = new Status(IStatus.ERROR, id, 0, message, t);
+		log.log(status);
+	}
+
 	//<tracing code>----------------------------------------------------
 
 	private static Boolean fTracingOn = null;

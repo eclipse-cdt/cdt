@@ -20,9 +20,6 @@ package org.eclipse.rse.services.ssh.shell;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
 import org.eclipse.rse.services.shells.AbstractHostShellOutputReader;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellOutputReader;
@@ -142,8 +139,7 @@ public class SshShellOutputReader extends AbstractHostShellOutputReader
 				//FIXME it's dangerous to return null here since this will end
 				//our reader thread completely... the exception could just be
 				//temporary, and we should keep running!
-				Activator.getDefault().getLog().log(new Status(IStatus.WARNING, Activator.getDefault().getBundle().getSymbolicName(), 0, "IOException in SshShellOutputReader", e));
-				//e.printStackTrace();
+				Activator.getDefault().logException(e);
 				return null;
 			}
 		}

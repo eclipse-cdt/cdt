@@ -94,12 +94,12 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 	   if (currentNames.size() > 0) 
 	   {
 	    int number = 2;
-	    String newName = name + " " + number;
+	    String newName = name + " " + number; //$NON-NLS-1$
 	    if (currentNames.contains(name)) {
 	     while (currentNames.contains(newName))
 	     {
 	         number++;
-	         newName = name + " " + number;
+	         newName = name + " " + number; //$NON-NLS-1$
 	     }
 	     name = newName;
 	    }
@@ -279,8 +279,8 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 	{
 		String type = getCommandSubSystem().getHost().getSystemType();
 		
-		return (type.equals("Windows") || 
-				type.equals("Local") && System.getProperty("os.name").toLowerCase().startsWith("win"));
+		return (type.equals("Windows") || //$NON-NLS-1$
+				type.equals("Local") && System.getProperty("os.name").toLowerCase().startsWith("win")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	

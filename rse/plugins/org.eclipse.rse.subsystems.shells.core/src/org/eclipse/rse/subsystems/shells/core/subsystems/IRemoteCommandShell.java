@@ -54,7 +54,13 @@ public interface IRemoteCommandShell
 
 	/**
 	 * Get the current context for this command shell. In the case of a unix shell, this
-	 * will be the working directory
+	 * will be the working directory as an 
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile.
+	 * 
+	 * This is used in order to store the state of the current shell on disconnect,
+	 * such that the same directory can be set on reconnect. It may also be used
+	 * as input for content assist.
+	 * 
 	 * @return the current context
 	 */
 	public Object getContext();

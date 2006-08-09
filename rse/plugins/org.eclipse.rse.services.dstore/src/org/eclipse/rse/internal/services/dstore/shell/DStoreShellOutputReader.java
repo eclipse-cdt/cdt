@@ -31,6 +31,7 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 	public DStoreShellOutputReader(IHostShell hostShell, DataElement status, boolean isErrorReader)
 	{
 		super(hostShell, isErrorReader);
+		 setName("DStoreShellOutputReader"+getName());
 		_status = status;
 		if (status != null)
 		{
@@ -46,7 +47,7 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 	
 	protected Object internalReadLine()
 	{
-		if (_status != null)
+		if (_status != null && _keepRunning)
 		{
 			int newSize = _status.getNestedSize();
 			while (newSize > _statusOffset)
@@ -134,6 +135,12 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public void finish()
+	{
+		super.finish();
+		notifyResponse();
 	}
 	
 	/*

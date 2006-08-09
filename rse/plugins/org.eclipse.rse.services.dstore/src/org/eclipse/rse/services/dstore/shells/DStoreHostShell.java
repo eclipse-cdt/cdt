@@ -66,6 +66,8 @@ public class DStoreHostShell extends AbstractHostShell implements IHostShell
 	public void exit()
 	{
 		writeToShell("exit");
+		_stdoutHandler.finish();
+		_stderrHandler.finish();
 	}
 
 	

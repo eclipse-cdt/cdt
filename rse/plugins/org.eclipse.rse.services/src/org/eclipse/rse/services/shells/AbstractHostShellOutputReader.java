@@ -168,7 +168,7 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 			dispose();
 		}
 	}
-
+	
 	public void run()
 	{
 		while (_keepRunning)

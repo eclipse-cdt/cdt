@@ -22,4 +22,5 @@ public interface IHostShellOutputReader extends IHostShellOutputNotifier
 	public Object readLine(int index);
 	public void addOutputListener(IHostShellOutputListener listener);
 	public boolean isErrorReader();
+	public void finish();
 }

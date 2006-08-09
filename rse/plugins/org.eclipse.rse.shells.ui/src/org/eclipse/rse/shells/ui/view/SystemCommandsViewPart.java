@@ -674,9 +674,12 @@ public class SystemCommandsViewPart
 			if (cmds == null || cmds.length == 0)
 			{
 				cmds = cmdSS.restoreShellState(getShell());
-				for (int i = 0; i < cmds.length; i++)
+				if (cmds!=null)
 				{
-					updateOutput(cmds[i]);
+					for (int i = 0; i < cmds.length; i++)
+					{
+						updateOutput(cmds[i]);
+					}
 				}
 			}
 		}

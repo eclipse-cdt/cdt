@@ -1098,10 +1098,10 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	{	
 		if (rule instanceof RemoteFile)
 		{
-			String otherPath = ((RemoteFile) rule).getAbsolutePath();
+			String otherPath = ((RemoteFile)rule).getAbsolutePath();
 			String path = this.getAbsolutePath();
-			String otherHost = ((RemoteFile) rule).getHostName();
-			return getHostName().equals(otherHost) && path.startsWith(otherPath) || otherPath.startsWith(path);
+			String otherHost = ((RemoteFile)rule).getHostName();
+			return getHostName().equals(otherHost) && path.startsWith(otherPath) || otherPath.startsWith(path);	
 		}
 		else if (rule instanceof RemoteFileSchedulingRule)
 		{	
@@ -1109,6 +1109,24 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			String path = this.getAbsolutePath();
 			String otherHost = ((RemoteFileSchedulingRule) rule).getHostName();
 			return getHostName().equals(otherHost) && path.startsWith(otherPath) || otherPath.startsWith(path);
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public boolean equals(Object otherObj)
+	{
+		if (otherObj instanceof RemoteFile)
+		{
+			RemoteFile other = (RemoteFile)otherObj;
+			if  (this == other) return true;
+		
+			String otherPath = other.getAbsolutePath();
+			String path = this.getAbsolutePath();
+			String otherHost = other.getHostName();
+			return getHostName().equals(otherHost) && path.equals(otherPath) || otherPath.equals(path);	
 		}
 		else
 		{

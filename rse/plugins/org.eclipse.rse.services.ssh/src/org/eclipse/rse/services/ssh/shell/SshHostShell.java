@@ -90,6 +90,11 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 	 */
 	protected void start(IProgressMonitor monitor)
 	{
+		//TODO Move stuff from constructor to here
+		//TODO Set up environment variables fro proper prompting, e.g. like dstore
+		//varTable.put("PS1","$PWD/>");
+		//varTable.put("COLUMNS","256");
+		//alias ls='ls -1'
 	}
 
 	public boolean isActive() {
@@ -105,8 +110,19 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 		return false;
 	}
 
+	private static final Pattern cdCommands = Pattern.compile("\\A\\s*(cd|chdir|ls)\\b"); //$NON-NLS-1$
+	
+	public String getPromptCommand() {
+		return "echo $PWD'>'"; //$NON-NLS-1$
+	}
+	
 	public void writeToShell(String command) {
 		if (isActive()) {
+			if ("#break".equals(command)) { //$NON-NLS-1$
+				command = "\u0003"; //Unicode 3 == Ctrl+C //$NON-NLS-1$
+			} else if (cdCommands.matcher(command).find()) {
+				command += "\r\n" + getPromptCommand(); //$NON-NLS-1$
+			}
 			if (!fShellWriter.sendCommand(command)) {
 				//exception occurred: terminate writer thread, cancel connection
 				exit();

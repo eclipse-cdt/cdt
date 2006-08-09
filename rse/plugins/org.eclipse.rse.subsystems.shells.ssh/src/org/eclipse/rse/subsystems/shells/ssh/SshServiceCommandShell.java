@@ -17,7 +17,6 @@
 package org.eclipse.rse.subsystems.shells.ssh;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -30,6 +29,7 @@ import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
 import org.eclipse.rse.services.ssh.shell.ParsedOutput;
 import org.eclipse.rse.services.ssh.shell.Patterns;
+import org.eclipse.rse.services.ssh.shell.SshHostShell;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.model.ISystemOutputRemoteTypes;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
@@ -140,20 +140,28 @@ public class SshServiceCommandShell extends ServiceCommandShell implements ISyst
 			_lastRefreshJob.schedule();
 		}
 	}
-
-	private static final Pattern cdCommands = Pattern.compile("\\A\\s*(cd|chdir|ls)\\b"); //$NON-NLS-1$
 	
+	/**
+	 * Return the prompt command, such that lines ending with the
+	 * prompt command can be removed from output.
+	 * Should be overridden in case the IHostShell used for this 
+	 * service is not an SshHostShell.
+	 * @return String promptCommand
+	 */
 	protected String getPromptCommand() {
-		return "echo $PWD'>'"; //$NON-NLS-1$
+		IHostShell shell = getHostShell();
+		assert shell instanceof SshHostShell;
+		if (shell instanceof SshHostShell) {
+			return ((SshHostShell)shell).getPromptCommand();
+		}
+		//return something impossible such that nothing is ever matched
+		return "\uffff"; //$NON-NLS-1$
 	}
-	
+
 	public void writeToShell(String cmd)
 	{
 		_curCommand = cmd;
 		_patterns.update(cmd);
-		if (cdCommands.matcher(cmd).find()) {
-			cmd += "\r\n" + getPromptCommand(); //$NON-NLS-1$
-		}
 		super.writeToShell(cmd);
 
 	}

@@ -483,7 +483,13 @@ public class RSEDOMImporter implements IRSEDOMImporter
 			if (filterPool != null) {
 				filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPool);
 			} else {
-				filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPoolManager, filterPoolName);
+				try {
+					filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPoolManager, filterPoolName);
+				} catch(NullPointerException e) {
+					//TODO Workaround for bug 153253 -- should be fixed properly
+					System.err.println("TODO: Fix bug 153253 - NPE reading connection-private filter pools");
+					e.printStackTrace();
+				}
 			}
 		}
 		return filterPoolReference;

@@ -45,6 +45,7 @@ public abstract class UpdateHandler extends Handler
 	 */
 	public UpdateHandler()
 	{
+		 setName("DStore UpdateHandler"+getName());
 		_dataObjects = new ArrayList();
 		_classesToSend = new ArrayList();
 	}

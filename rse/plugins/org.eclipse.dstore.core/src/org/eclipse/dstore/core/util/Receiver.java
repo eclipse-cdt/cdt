@@ -48,6 +48,7 @@ public abstract class Receiver extends Thread
 	 */
 	public Receiver(Socket socket, DataStore dataStore)
 	{
+		 setName("DStore Receiver"+getName());
 		_socket = socket;
 		_dataStore = dataStore;
 		_canExit = false;

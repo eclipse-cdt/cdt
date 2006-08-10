@@ -37,6 +37,7 @@ public class DaytimeConnectorServiceManager extends AbstractConnectorServiceMana
 
 	/**
 	 * Return singleton instance
+	 * @return the singleton instance
 	 */
 	public static DaytimeConnectorServiceManager getTheDaytimeConnectorServiceManager() {
 		if (fInstance == null) {

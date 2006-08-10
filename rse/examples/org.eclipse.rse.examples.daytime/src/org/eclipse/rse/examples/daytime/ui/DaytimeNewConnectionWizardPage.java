@@ -2,6 +2,7 @@ package org.eclipse.rse.examples.daytime.ui;
 
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.examples.daytime.DaytimeResources;
 import org.eclipse.rse.ui.wizards.AbstractSystemNewConnectionWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -19,8 +20,7 @@ public class DaytimeNewConnectionWizardPage extends
 	
 	public Control createContents(Composite parent) {
 		Text field = new Text(parent, SWT.NONE);
-		field.setText("this is a test");
-		
+		field.setText(DaytimeResources.DaytimeWizard_TestFieldText);
 		
 		// TODO Auto-generated method stub
 		return field;

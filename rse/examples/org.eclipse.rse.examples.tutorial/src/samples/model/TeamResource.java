@@ -36,6 +36,7 @@ public class TeamResource extends AbstractResource {
 	}
 	/**
 	 * Constructor for TeamResource when given a parent subsystem.
+	 * @param parentSubSystem the parent subsystem
 	 */
 	public TeamResource(ISubSystem parentSubSystem)
 	{

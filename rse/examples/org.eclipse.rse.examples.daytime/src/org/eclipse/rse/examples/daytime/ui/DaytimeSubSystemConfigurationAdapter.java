@@ -18,37 +18,20 @@ package org.eclipse.rse.examples.daytime.ui;
 
 import java.util.Vector;
 
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.model.ISystemRegistry;
-import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.ui.view.SubsystemConfigurationAdapter;
 import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.widgets.Shell;
 
 
 public class DaytimeSubSystemConfigurationAdapter extends SubsystemConfigurationAdapter
 {
-	
-
-	
 	Vector _additionalActions;
 	
-	// -----------------------------------
-	// WIZARD PAGE CONTRIBUTION METHODS... (defects 43194 and 42780)
-	// -----------------------------------
-	/**
-	 * Optionally return one or more wizard pages to append to the New Connection Wizard if
-	 *  the user selects a system type that this subsystem factory supports.
-	 * <p>
-	 * Tip: consider extending AbstractSystemWizardPage for your wizard page class.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.SubsystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
 	 */
 	public ISystemNewConnectionWizardPage[] getNewConnectionWizardPages(ISubSystemConfiguration factory, IWizard wizard)
 	{

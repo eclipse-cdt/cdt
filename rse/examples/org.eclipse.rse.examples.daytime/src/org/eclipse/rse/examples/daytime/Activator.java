@@ -39,8 +39,9 @@ public class Activator extends SystemBasePlugin {
 		plugin = this;
 	}
 
-	/**
-	 * This method is called upon plug-in activation
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.SystemBasePlugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -49,8 +50,9 @@ public class Activator extends SystemBasePlugin {
 		manager.registerAdapters(factory, DaytimeResource.class);
 	}
 
-	/**
-	 * This method is called when the plug-in is stopped
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.SystemBasePlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);

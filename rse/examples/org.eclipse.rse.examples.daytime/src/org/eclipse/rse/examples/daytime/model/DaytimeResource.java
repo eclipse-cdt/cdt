@@ -27,7 +27,10 @@ public class DaytimeResource extends AbstractResource {
 		super();
 	}
 	
-	/** Constructor when parent subsystem is given */
+	/** 
+	 * Constructor when parent subsystem is given 
+	 * @param subsystem the parent subsystem
+	 */
 	public DaytimeResource(ISubSystem subsystem) {
 		super(subsystem);
 	}

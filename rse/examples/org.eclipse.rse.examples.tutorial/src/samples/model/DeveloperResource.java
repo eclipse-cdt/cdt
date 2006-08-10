@@ -38,6 +38,7 @@ public class DeveloperResource extends AbstractResource {
 	
 	/**
 	 * Constructor for DeveloperResource when given parent subsystem.
+	 * @param parentSubSystem the parent subsystem
 	 */
 	public DeveloperResource(ISubSystem parentSubSystem)
 	{

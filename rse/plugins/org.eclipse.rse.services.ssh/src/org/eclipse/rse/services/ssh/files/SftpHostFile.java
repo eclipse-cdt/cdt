@@ -135,11 +135,29 @@ public class SftpHostFile implements IHostFile {
 		return fLinkTarget;
 	}
 	
-	/** Extended data: name:value pairs */
+	/** 
+	 * Set Extended data as key,value pairs.
+	 * 
+	 * The data is maintained as a String array, where every element
+	 * with an even index refers to a key, and the next element
+	 * refers to its value. Example
+	 *   extended[0] = "acl"
+	 *   extended[1] = "joe,tim"
+	 *   extended[2] = "version"
+	 *   extended[3] = "/main/3"
+	 * 
+	 * @param extended String[] array of key,value pairs 
+	 */
 	public void setExtendedData(String[] extended) {
 		fExtended = extended;
 	}
 	
+	/**
+	 * Return extended data as name,value pairs.
+	 * @see #setExtendedData(String[])
+	 * 
+	 * @return String[] array of key,value pairs
+	 */
 	public String[] getExtendedData() {
 		return fExtended;
 	}

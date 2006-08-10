@@ -39,6 +39,7 @@ public class SshConnectorServiceManager extends AbstractConnectorServiceManager 
 
     /**
      * Return singleton instance of this class
+     * @return the singleton instance
      */
     public static SshConnectorServiceManager getInstance()
     {

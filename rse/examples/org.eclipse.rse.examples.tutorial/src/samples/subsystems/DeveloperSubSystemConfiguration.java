@@ -43,6 +43,7 @@ public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 
 	/**
 	 * Create an instance of our subsystem.
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#createSubSystemInternal(org.eclipse.rse.model.IHost)
 	 */
 	public ISubSystem createSubSystemInternal(IHost conn) {
 	   	return new DeveloperSubSystem(conn, getConnectorService(conn));
@@ -81,9 +82,10 @@ public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 	
 	/**
 	 * Intercept of parent method so we can supply our own value shown in the property
-	 *  sheet for the "type" property when a filter is selected within our subsystem.
+	 * sheet for the "type" property when a filter is selected within our subsystem.
 	 *
 	 * Requires this line in rseSamplesResources.properties: property.type.teamfilter=Team filter
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#getTranslatedFilterTypeProperty(org.eclipse.rse.filters.ISystemFilter)
 	 */
 	public String getTranslatedFilterTypeProperty(ISystemFilter selectedFilter)
 	{

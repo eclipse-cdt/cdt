@@ -48,8 +48,9 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 		plugin = this;
 	}
 
-	/**
-	 * This method is called upon plug-in activation
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.SystemBasePlugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -65,8 +66,9 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 
 	}
 
-	/**
-	 * This method is called when the plug-in is stopped
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.SystemBasePlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
@@ -76,6 +78,7 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 
 	/**
 	 * Returns the shared instance.
+	 * @return the shared instance 
 	 */
 	public static RSESamplesPlugin getDefault() {
 		return plugin;
@@ -83,6 +86,7 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 
 	/**
 	 * Returns the workspace instance.
+	 * @return the singleton Workspace from Eclipse Resources plugin
 	 */
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
@@ -91,6 +95,10 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
+	 * @see java.util.ResourceBundle#getString(String)
+	 * 
+     * @param key the key for the desired string
+     * @return the string for the given key
 	 */
 	public static String getResourceString(String key) {
 		ResourceBundle bundle= RSESamplesPlugin.getDefault().getResourceBundle();
@@ -102,7 +110,8 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 	}
 
 	/**
-	 * Returns the plugin's resource bundle,
+	 * Return the plugin's Resource bundle.
+	 * @return the Resource bundle
 	 */
 	public ResourceBundle getResourceBundle() {
 		try {
@@ -146,7 +155,9 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
     }	
 
 	/**
-	 * Return our message file
+	 * Return our message file.
+	 * 
+	 * @return the RSE message file
 	 */
 	public static SystemMessageFile getPluginMessageFile()
 	{
@@ -154,7 +165,12 @@ public class RSESamplesPlugin extends SystemBasePlugin  {
 	}  
 
 	/**
-	 * Retrieve a message from this plugin's message file
+	 * Retrieve a message from this plugin's message file,
+	 * or <code>null</code> if the message cannot be found.
+	 * @see SystemMessageFile#getMessage(String)
+	 * 
+	 * @param msgId message id 
+	 * @return the message object referenced by the given id
 	 */
 	public static SystemMessage getPluginMessage(String msgId)
 	{

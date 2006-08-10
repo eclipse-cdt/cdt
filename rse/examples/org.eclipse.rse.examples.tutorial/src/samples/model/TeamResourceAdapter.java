@@ -105,7 +105,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 		return ((TeamResource)element).getDevelopers();
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#internalGetPropertyDescriptors()
 	 */
 	protected IPropertyDescriptor[] internalGetPropertyDescriptors()
@@ -119,10 +119,13 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	protected Object internalGetPropertyValue(Object key)
 	{
 		return null;
-	}		
+	}
+	
 	/**
-	 * Intercept of parent method to indicate these objects can be renamed using the RSE-supplied
-	 *  rename action.
+	 * Intercept of parent method to indicate these objects
+	 * can be renamed using the RSE-supplied rename action.
+	 * 
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#canRename(java.lang.Object)
 	 */
 	public boolean canRename(Object element)
 	{
@@ -131,13 +134,16 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	
 	/**
 	 * Intercept of parent method to actually do the rename. RSE supplies the rename GUI, but 
-	 *  defers the action work of renaming to this adapter method.
+	 * defers the action work of renaming to this adapter method.
+	 *  
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#doRename(Shell, Object, String)
 	 */
 	public boolean doRename(Shell shell, Object element, String newName)
 	{
 		((TeamResource)element).setName(newName);
 		return true;
 	}
+	
 	// --------------------------------------
 	// ISystemRemoteElementAdapter methods...
 	// --------------------------------------

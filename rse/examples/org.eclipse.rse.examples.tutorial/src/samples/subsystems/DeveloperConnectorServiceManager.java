@@ -41,6 +41,7 @@ public class DeveloperConnectorServiceManager extends
 
 	/**
 	 * Return singleton instance
+	 * @return the singleton instance
 	 */
 	public static DeveloperConnectorServiceManager getTheDeveloperConnectorServiceManager()
 	{

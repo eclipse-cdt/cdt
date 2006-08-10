@@ -101,9 +101,12 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane {
 		);		
 		return composite_prompts;
 	}
+	
 	/**
 	 * Override of parent method.
-	 * Return the control to recieve initial focus. 
+	 * Return the control to recieve initial focus.
+	 *  
+	 * @see org.eclipse.rse.ui.filters.SystemFilterStringEditPane#getInitialFocusControl()
 	 */
 	public Control getInitialFocusControl()
 	{
@@ -157,7 +160,9 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane {
 	 * Override of parent method.
 	 * Get the filter string in its current form. 
 	 * Functional opposite of doInitializeFields, which tears apart the input string in update mode,
-	 *  to populate the GUIs. This method creates the filter string from the information in the GUI.
+	 * to populate the GUIs. This method creates the filter string from the information in the GUI.
+	 *  
+	 * @see org.eclipse.rse.ui.filters.SystemFilterStringEditPane#getFilterString()
 	 */
 	public String getFilterString()
 	{

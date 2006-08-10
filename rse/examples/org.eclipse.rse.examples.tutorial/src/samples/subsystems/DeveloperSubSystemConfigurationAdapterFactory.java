@@ -41,6 +41,7 @@ public class DeveloperSubSystemConfigurationAdapterFactory implements
 	 * Called by our plugin's startup method to register our adaptable object types 
 	 * with the platform. We prefer to do it here to isolate/encapsulate all factory
 	 * logic in this one place.
+	 * @param manager Platform adapter manager
 	 */
 	public void registerWithManager(IAdapterManager manager)
 	{

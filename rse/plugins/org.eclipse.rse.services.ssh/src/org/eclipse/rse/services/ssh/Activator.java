@@ -40,17 +40,17 @@ public class Activator extends Plugin {
 		plugin = this;
 	}
 
-	/**
-	 * This method is called upon plug-in activation
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-//		 make sure files.ui is activated
-//		org.eclipse.rse.files.ui.Activator.getDefault();
 	}
 
-	/**
-	 * This method is called when the plug-in is stopped
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);

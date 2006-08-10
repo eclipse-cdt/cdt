@@ -64,7 +64,10 @@ public class DeveloperSubSystem extends SubSystem
 	 * the specified unique ID.  Because each subsystem maintains it's own
 	 * objects, it's the responsability of the subsystem to determine
 	 * how an ID (or key) for a given object maps to the real object.
-	 * By default this returns null. 
+	 * By default this returns null.
+	 *  
+	 * @param key internal unique ID for object 
+	 * @return Object identified by the given key
 	 */
 	public Object getObjectWithAbsoluteName(String key)
 	{
@@ -176,6 +179,7 @@ public class DeveloperSubSystem extends SubSystem
 	/**
 	 * Get the list of all teams. Normally this would involve a trip the server, but we 
 	 *  fake it out and return a hard-coded local list. 
+	 * @return array of all teams
 	 */
 	public TeamResource[] getAllTeams()
 	{
@@ -186,6 +190,7 @@ public class DeveloperSubSystem extends SubSystem
 	/**
 	 * Get the list of all developers. Normally this would involve a trip the server, but we 
 	 *  fake it out and return a hard-coded local list. 
+	 * @return array of all developers
 	 */
 	public DeveloperResource[] getAllDevelopers()
 	{

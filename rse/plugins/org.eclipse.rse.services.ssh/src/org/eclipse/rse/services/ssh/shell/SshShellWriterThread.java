@@ -31,7 +31,7 @@ public class SshShellWriterThread extends Thread
 
 	/**
 	 * constructor for ssh shell writer thread
-	 * @param outputStream Stream to write to in separate Thread
+	 * @param outputWriter PrintWriter to write to in separate Thread
 	 */
 	public SshShellWriterThread(PrintWriter outputWriter)
 	{

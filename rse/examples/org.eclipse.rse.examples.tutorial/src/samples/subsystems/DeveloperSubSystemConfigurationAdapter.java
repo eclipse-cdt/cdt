@@ -92,6 +92,7 @@ public class DeveloperSubSystemConfigurationAdapter extends
 
 	/**
 	 * Override of parent method for returning the image for filters in our subsystem.
+	 * @see org.eclipse.rse.ui.view.SubsystemConfigurationAdapter#getSystemFilterImage(org.eclipse.rse.filters.ISystemFilter)
 	 */
 	public ImageDescriptor getSystemFilterImage(ISystemFilter filter)
 	{

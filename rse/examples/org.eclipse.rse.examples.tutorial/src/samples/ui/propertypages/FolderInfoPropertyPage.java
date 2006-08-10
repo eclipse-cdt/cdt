@@ -103,6 +103,7 @@ public class FolderInfoPropertyPage
 	/**
 	 * Intercept from PreferencePage. Called when user presses Cancel button.
 	 * We stop the background thread.
+	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
 	 */
 	public boolean performCancel() 
 	{
@@ -142,6 +143,7 @@ public class FolderInfoPropertyPage
 	
 	/**
 	 * From SelectionListener
+	 * @see SelectionListener#widgetSelected(SelectionEvent)
 	 */
 	public void widgetSelected(SelectionEvent event) 
 	{
@@ -153,9 +155,11 @@ public class FolderInfoPropertyPage
 	}
 	/**
 	 * From SelectionListener
+	 * @see SelectionListener#widgetDefaultSelected(SelectionEvent)
 	 */
-	public void widgetDefaultSelected(SelectionEvent event) {}
-	
+	public void widgetDefaultSelected(SelectionEvent event)
+	{
+	}
 
 	// ----------------
 	// Inner classes...

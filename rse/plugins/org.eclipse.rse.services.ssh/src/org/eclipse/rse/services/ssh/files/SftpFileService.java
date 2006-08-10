@@ -49,6 +49,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	private ISshSessionProvider fSessionProvider;
 	private ChannelSftp fChannelSftp;
 	private String fUserHome;
+	private Mutex fDirChannelMutex = new Mutex();
+	private long fDirChannelTimeout = 5000; //max.5 seconds to obtain dir channel 
 	
 //	public SftpFileService(SshConnectorService conn) {
 //		fConnector = conn;
@@ -130,6 +132,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		if (fChannelSftp!=null && fChannelSftp.isConnected()) {
 			fChannelSftp.disconnect();
 		}
+		fDirChannelMutex.interruptAll();
 		fChannelSftp = null;
 	}
 	
@@ -140,11 +143,15 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		//the API docs.
 		SftpHostFile node = null;
 		SftpATTRS attrs = null;
-		try {
-			attrs = getChannel("SftpFileService.getFile").stat(remoteParent+'/'+fileName); //$NON-NLS-1$
-			Activator.trace("SftpFileService.getFile done"); //$NON-NLS-1$
-		} catch(Exception e) {
-			Activator.trace("SftpFileService.getFile failed: "+e.toString()); //$NON-NLS-1$
+		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
+			try {
+				attrs = getChannel("SftpFileService.getFile").stat(remoteParent+'/'+fileName); //$NON-NLS-1$
+				Activator.trace("SftpFileService.getFile done"); //$NON-NLS-1$
+			} catch(Exception e) {
+				Activator.trace("SftpFileService.getFile failed: "+e.toString()); //$NON-NLS-1$
+			} finally {
+				fDirChannelMutex.release();
+			}
 		}
 		if (attrs!=null) {
 			node = makeHostFile(remoteParent, fileName, attrs);
@@ -171,48 +178,52 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 		NamePatternMatcher filematcher = new NamePatternMatcher(fileFilter, true, true);
 		List results = new ArrayList();
-		try {
-		    java.util.Vector vv=getChannel("SftpFileService.internalFetch").ls(parentPath); //$NON-NLS-1$
-		    for(int ii=0; ii<vv.size(); ii++) {
-		    	Object obj=vv.elementAt(ii);
-		    	if(obj instanceof ChannelSftp.LsEntry){
-		    		ChannelSftp.LsEntry lsEntry = (ChannelSftp.LsEntry)obj;
-		    		String fileName = lsEntry.getFilename();
-		    		if (".".equals(fileName) || "..".equals(fileName)) { //$NON-NLS-1$ //$NON-NLS-2$
-		    			//don't show the trivial names
-		    			continue;
-		    		}
-		    		if (filematcher.matches(fileName)) {
-		    			SftpHostFile node = makeHostFile(parentPath, fileName, lsEntry.getAttrs());
-		    			if (isRightType(fileType, node)) {
-		    				results.add(node);
-		    			}
-		    		}
-		    	}
-		    }
-			Activator.trace("SftpFileService.internalFetch ok"); //$NON-NLS-1$
-		} catch(Exception e) {
-			//TODO throw new SystemMessageException.
-			//We get a "2: No such file" exception when we try to get contents
-			//of a symbolic link that turns out to point to a file rather than
-			//a directory. In this case, the result is probably expected.
-			//We should try to classify symbolic links as "file" or "dir" correctly.
-			if (checkSessionConnected()) {
-				//TODO not quite sure who should really check for session conneced,
-				//perhaps this should be done in the caller? - If we eventually
-				//want to support re-connect and re-doing the failed operation 
-				//after reconnect this might be necessary.
-				Activator.trace("SftpFileService.internalFetch failed: "+e.toString()); //$NON-NLS-1$
-				//TODO bug 149181: In case of errors like "4:permission denied", throw an
-				//exception to show an error dialog to the user.
-				e.printStackTrace();
-				//TODO bug 149155: since channelSftp is totally single-threaded, multiple
-				//parallel access to the channel may break it, typically resulting in
-				//SftpException here. I'm not sure how to safely avoid this yet.
-				//So here's a little workaround to get the system into a "usable" state again:
-				//disconnect our channel, it will be reconnected on the next operation.
-				//Session handling needs to be re-thought...
-				fChannelSftp.disconnect();
+		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
+			try {
+			    java.util.Vector vv=getChannel("SftpFileService.internalFetch").ls(parentPath); //$NON-NLS-1$
+			    for(int ii=0; ii<vv.size(); ii++) {
+			    	Object obj=vv.elementAt(ii);
+			    	if(obj instanceof ChannelSftp.LsEntry){
+			    		ChannelSftp.LsEntry lsEntry = (ChannelSftp.LsEntry)obj;
+			    		String fileName = lsEntry.getFilename();
+			    		if (".".equals(fileName) || "..".equals(fileName)) { //$NON-NLS-1$ //$NON-NLS-2$
+			    			//don't show the trivial names
+			    			continue;
+			    		}
+			    		if (filematcher.matches(fileName)) {
+			    			SftpHostFile node = makeHostFile(parentPath, fileName, lsEntry.getAttrs());
+			    			if (isRightType(fileType, node)) {
+			    				results.add(node);
+			    			}
+			    		}
+			    	}
+			    }
+				Activator.trace("SftpFileService.internalFetch ok"); //$NON-NLS-1$
+			} catch(Exception e) {
+				//TODO throw new SystemMessageException.
+				//We get a "2: No such file" exception when we try to get contents
+				//of a symbolic link that turns out to point to a file rather than
+				//a directory. In this case, the result is probably expected.
+				//We should try to classify symbolic links as "file" or "dir" correctly.
+				if (checkSessionConnected()) {
+					//TODO not quite sure who should really check for session conneced,
+					//perhaps this should be done in the caller? - If we eventually
+					//want to support re-connect and re-doing the failed operation 
+					//after reconnect this might be necessary.
+					Activator.trace("SftpFileService.internalFetch failed: "+e.toString()); //$NON-NLS-1$
+					//TODO bug 149181: In case of errors like "4:permission denied", throw an
+					//exception to show an error dialog to the user.
+					e.printStackTrace();
+					//TODO bug 149155: since channelSftp is totally single-threaded, multiple
+					//parallel access to the channel may break it, typically resulting in
+					//SftpException here. I'm not sure how to safely avoid this yet.
+					//So here's a little workaround to get the system into a "usable" state again:
+					//disconnect our channel, it will be reconnected on the next operation.
+					//Session handling needs to be re-thought...
+					fChannelSftp.disconnect();
+				}
+			} finally {
+				fDirChannelMutex.release();
 			}
 		}
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
@@ -429,21 +440,25 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	public IHostFile createFile(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException 
 	{
 		IHostFile result = null;
-		try {
-			String fullPath = remoteParent + '/' + fileName;
-			OutputStream os = getChannel("SftpFileService.createFile").put(fullPath); //$NON-NLS-1$
-			//TODO workaround bug 153118: write a single space
-			//since jsch hangs when trying to close the stream without writing
-			os.write(32); 
-			os.close();
-			SftpATTRS attrs = getChannel("SftpFileService.createFile.stat").stat(fullPath); //$NON-NLS-1$
-			result = makeHostFile(remoteParent, fileName, attrs);
-			Activator.trace("SftpFileService.createFile ok"); //$NON-NLS-1$
-		} catch (Exception e) {
-			Activator.trace("SftpFileService.createFile failed: "+e.toString()); //$NON-NLS-1$
-			e.printStackTrace();
-		// DKM commenting out because services don't know about this class
-			// throw new RemoteFileIOException(e);
+		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
+			try {
+				String fullPath = remoteParent + '/' + fileName;
+				OutputStream os = getChannel("SftpFileService.createFile").put(fullPath); //$NON-NLS-1$
+				//TODO workaround bug 153118: write a single space
+				//since jsch hangs when trying to close the stream without writing
+				os.write(32); 
+				os.close();
+				SftpATTRS attrs = getChannel("SftpFileService.createFile.stat").stat(fullPath); //$NON-NLS-1$
+				result = makeHostFile(remoteParent, fileName, attrs);
+				Activator.trace("SftpFileService.createFile ok"); //$NON-NLS-1$
+			} catch (Exception e) {
+				Activator.trace("SftpFileService.createFile failed: "+e.toString()); //$NON-NLS-1$
+				e.printStackTrace();
+			// DKM commenting out because services don't know about this class
+				// throw new RemoteFileIOException(e);
+			} finally {
+				fDirChannelMutex.release();
+			}
 		}
 		return result;
 	}
@@ -451,17 +466,21 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	public IHostFile createFolder(IProgressMonitor monitor, String remoteParent, String folderName) throws SystemMessageException
 	{
 		IHostFile result = null;
-		try {
-			String fullPath = remoteParent + '/' + folderName;
-			getChannel("SftpFileService.createFolder").mkdir(fullPath); //$NON-NLS-1$
-			SftpATTRS attrs = getChannel("SftpFileService.createFolder.stat").stat(fullPath); //$NON-NLS-1$
-			result = makeHostFile(remoteParent, folderName, attrs);
-			Activator.trace("SftpFileService.createFolder ok"); //$NON-NLS-1$
-		} catch (Exception e) {
-			Activator.trace("SftpFileService.createFolder failed: "+e.toString()); //$NON-NLS-1$
-			e.printStackTrace();
-			// DKM commenting out because services don't know about this class
-			//throw new RemoteFileIOException(e);
+		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
+			try {
+				String fullPath = remoteParent + '/' + folderName;
+				getChannel("SftpFileService.createFolder").mkdir(fullPath); //$NON-NLS-1$
+				SftpATTRS attrs = getChannel("SftpFileService.createFolder.stat").stat(fullPath); //$NON-NLS-1$
+				result = makeHostFile(remoteParent, folderName, attrs);
+				Activator.trace("SftpFileService.createFolder ok"); //$NON-NLS-1$
+			} catch (Exception e) {
+				Activator.trace("SftpFileService.createFolder failed: "+e.toString()); //$NON-NLS-1$
+				e.printStackTrace();
+				// DKM commenting out because services don't know about this class
+				//throw new RemoteFileIOException(e);
+			} finally {
+				fDirChannelMutex.release();
+			}
 		}
 		return result;
 	}
@@ -469,23 +488,27 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	public boolean delete(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException
 	{
 		boolean ok=false;
-		try {
-			String fullPath = remoteParent + '/' + fileName;
-			SftpATTRS attrs = getChannel("SftpFileService.delete").stat(fullPath); //$NON-NLS-1$
-			if (attrs==null) {
-				//doesn't exist, nothing to do
-			} else if (attrs.isDir()) {
-				getChannel("SftpFileService.delete.rmdir").rmdir(fullPath); //$NON-NLS-1$
-			} else {
-				getChannel("SftpFileService.delete.rm").rm(fullPath); //$NON-NLS-1$
+		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
+			try {
+				String fullPath = remoteParent + '/' + fileName;
+				SftpATTRS attrs = getChannel("SftpFileService.delete").stat(fullPath); //$NON-NLS-1$
+				if (attrs==null) {
+					//doesn't exist, nothing to do
+				} else if (attrs.isDir()) {
+					getChannel("SftpFileService.delete.rmdir").rmdir(fullPath); //$NON-NLS-1$
+				} else {
+					getChannel("SftpFileService.delete.rm").rm(fullPath); //$NON-NLS-1$
+				}
+				ok=true;
+				Activator.trace("SftpFileService.delete ok"); //$NON-NLS-1$
+			} catch (Exception e) {
+				Activator.trace("SftpFileService.delete: "+e.toString()); //$NON-NLS-1$
+				e.printStackTrace();
+				// DKM commenting out because services don't know about this class
+				//throw new RemoteFileIOException(e);
+			} finally {
+				fDirChannelMutex.release();
 			}
-			ok=true;
-			Activator.trace("SftpFileService.delete ok"); //$NON-NLS-1$
-		} catch (Exception e) {
-			Activator.trace("SftpFileService.delete: "+e.toString()); //$NON-NLS-1$
-			e.printStackTrace();
-			// DKM commenting out because services don't know about this class
-			//throw new RemoteFileIOException(e);
 		}
 		return ok;
 	}
@@ -493,17 +516,21 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName) throws SystemMessageException
 	{
 		boolean ok=false;
-		try {
-			String fullPathOld = remoteParent + '/' + oldName;
-			String fullPathNew = remoteParent + '/' + newName;
-			getChannel("SftpFileService.rename").rename(fullPathOld, fullPathNew); //$NON-NLS-1$
-			ok=true;
-			Activator.trace("SftpFileService.rename ok"); //$NON-NLS-1$
-		} catch (Exception e) {
-			Activator.trace("SftpFileService.rename failed: "+e.toString()); //$NON-NLS-1$
-			e.printStackTrace();
-			// DKM commenting out because services don't know about this class
-			//throw new RemoteFileIOException(e);
+		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
+			try {
+				String fullPathOld = remoteParent + '/' + oldName;
+				String fullPathNew = remoteParent + '/' + newName;
+				getChannel("SftpFileService.rename").rename(fullPathOld, fullPathNew); //$NON-NLS-1$
+				ok=true;
+				Activator.trace("SftpFileService.rename ok"); //$NON-NLS-1$
+			} catch (Exception e) {
+				Activator.trace("SftpFileService.rename failed: "+e.toString()); //$NON-NLS-1$
+				e.printStackTrace();
+				// DKM commenting out because services don't know about this class
+				//throw new RemoteFileIOException(e);
+			} finally {
+				fDirChannelMutex.release();
+			}
 		}
 		return ok;
 	}

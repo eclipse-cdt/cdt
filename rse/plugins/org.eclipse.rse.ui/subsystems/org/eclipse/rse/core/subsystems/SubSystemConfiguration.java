@@ -91,13 +91,13 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * <ul>
  *  <li>SubSystemConfiguration#supportsFilters() to indicate if filters are to be enabled for this factory
  *  <li>SubSystemConfiguration#supportsNestedFilters() to indicate if filters can exist inside filters.
- *  <li>SubSystemConfiguration#supportsDuplicateFilterStrings() to indicate if filter strings can be duplicates within a filter
+ *  <li>SubSystemConfiguration#supportsDuplicateFilterStrings() to indicate if filter strings can be duplicated within a filter
  *  <li>SubSystemConfiguration#isCaseSensitive() to indicate if filter strings are case sensitive or not
  *  <li>SubSystemConfiguration#supportsQuickFilters() to indicate if filters can be specified at contain expansion time.
  *  <li>SubSystemConfiguration#supportsUserActions() to indicate if users can define their own actions for your subsystems' child objects.
  *  <li>SubSystemConfiguration#supportsCompileActions() to indicate if users can compile remote objects using menu actions 
  *  <li>SubSystemConfiguration#supportsFileTypes() to indicate if users can define their own named file types.
- *  <li>SubSystemConfiguration#isSubSystemsDeletable() if they support user-deleting of subsystems. Default is false
+ *  <li>SubSystemConfiguration#isSubSystemsDeletable() if they support user-deleting of subsystems. Default is false.
  *  <li>SubSystemConfiguration#supportsSubSystemConnect() to return false if the connect() action is not supported
  *  <li>SubSystemConfiguration#supportsTargets() to return true if this factory supports the notions of targets. Normally, this is only for file system factories.
  *  <li>SubSystemConfiguration#getSubSystemActions() if they wish to supply actions for the right-click menu when
@@ -200,6 +200,28 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#requiresUserId()
+	 */
+	public boolean requiresUserId() {
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#supportsPassword()
+	 */
+	public boolean supportsPassword() {
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#requiresPassword()
+	 */
+	public boolean requiresPassword() {
+		return true;
+	}
+	
 	/**
 	 * Return true if instance of this factory's subsystems support connect and disconnect actions.
 	 * <b>By default, returns true</b>.

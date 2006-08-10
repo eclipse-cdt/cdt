@@ -40,7 +40,7 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.filters.ISystemFilterReference;
@@ -855,7 +855,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 				ISubSystemConfiguration factory = proxies[idx].getSubSystemConfiguration();
 				if (factory != null)
 				{
-					ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)factory.getAdapter(ISubsystemConfigurationAdapter.class);
+					ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)factory.getAdapter(ISubSystemConfigurationAdapter.class);
 					adapter.renameSubSystemProfile(factory,oldName, newName);
 				}
 			}

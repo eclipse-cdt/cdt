@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Shell;
  * Defines the interface that must be implemented for adapters of for subsystem configurations.
  * This adapter is used when creating wizard pages for new connections.
  */
-public interface ISubsystemConfigurationAdapter
+public interface ISubSystemConfigurationAdapter
 {	
 	
 	/**

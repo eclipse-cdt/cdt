@@ -18,22 +18,22 @@ package org.eclipse.rse.shells.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystemConfiguration;
 
 
-public class ShellServiceSubsystemConfigurationAdapterFactory implements IAdapterFactory
+public class ShellServiceSubSystemConfigurationAdapterFactory implements IAdapterFactory
 {
 
-	private ISubsystemConfigurationAdapter ssFactoryAdapter = new ShellServiceSubSystemConfigurationAdapter();
+	private ISubSystemConfigurationAdapter ssFactoryAdapter = new ShellServiceSubSystemConfigurationAdapter();
 	
 	/**
 	 * @see IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() 
 	{
-	    return new Class[] {ISubsystemConfigurationAdapter.class};		
+	    return new Class[] {ISubSystemConfigurationAdapter.class};		
 	}
 	/**
 	 * Called by our plugin's startup method to register our adaptable object types 

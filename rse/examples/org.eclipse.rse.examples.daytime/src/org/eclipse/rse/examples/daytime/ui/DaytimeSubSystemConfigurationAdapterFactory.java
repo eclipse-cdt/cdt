@@ -2,12 +2,12 @@ package org.eclipse.rse.examples.daytime.ui;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
-import org.eclipse.rse.examples.daytime.subsystems.DaytimeSubsystemConfiguration;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
+import org.eclipse.rse.examples.daytime.subsystems.DaytimeSubSystemConfiguration;
 
 public class DaytimeSubSystemConfigurationAdapterFactory implements IAdapterFactory {
 
-	private ISubsystemConfigurationAdapter ssFactoryAdapter = new DaytimeSubSystemConfigurationAdapter();
+	private ISubSystemConfigurationAdapter ssFactoryAdapter = new DaytimeSubSystemConfigurationAdapter();
 	
 	/*
 	 * (non-Javadoc)
@@ -15,7 +15,7 @@ public class DaytimeSubSystemConfigurationAdapterFactory implements IAdapterFact
 	 */
 	public Class[] getAdapterList() 
 	{
-	    return new Class[] {ISubsystemConfigurationAdapter.class};		
+	    return new Class[] {ISubSystemConfigurationAdapter.class};		
 	}
 	
 	/**
@@ -27,7 +27,7 @@ public class DaytimeSubSystemConfigurationAdapterFactory implements IAdapterFact
 	 */
 	public void registerWithManager(IAdapterManager manager)
 	{
-		manager.registerAdapters(this, DaytimeSubsystemConfiguration.class);
+		manager.registerAdapters(this, DaytimeSubSystemConfiguration.class);
 	}
 	
 	/*
@@ -37,7 +37,7 @@ public class DaytimeSubSystemConfigurationAdapterFactory implements IAdapterFact
 	public Object getAdapter(Object adaptableObject, Class adapterType) 
 	{
 	    Object adapter = null;
-	    if (adaptableObject instanceof DaytimeSubsystemConfiguration)
+	    if (adaptableObject instanceof DaytimeSubSystemConfiguration)
 	    	adapter = ssFactoryAdapter;
 	      	    
 		return adapter;

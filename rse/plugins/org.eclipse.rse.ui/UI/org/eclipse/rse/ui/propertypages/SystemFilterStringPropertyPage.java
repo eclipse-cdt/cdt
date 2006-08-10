@@ -20,7 +20,7 @@ import java.util.Vector;
 
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
@@ -230,7 +230,7 @@ public class SystemFilterStringPropertyPage extends SystemBasePropertyPage imple
 
 	    // edit pane
 	    ISubSystemConfiguration factory = (ISubSystemConfiguration)filter.getProvider();
-	    ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)factory.getAdapter(ISubsystemConfigurationAdapter.class);
+	    ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)factory.getAdapter(ISubSystemConfigurationAdapter.class);
 	    adapter.customizeFilterStringPropertyPage(factory, this, filterstring, getShell());
 	    if (editPane == null)
 	    {

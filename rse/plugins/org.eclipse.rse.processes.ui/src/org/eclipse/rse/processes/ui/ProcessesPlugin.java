@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.processes.ui.view.RemoteProcessSubsystemConfigurationAdapterFactory;
+import org.eclipse.rse.processes.ui.view.RemoteProcessSubSystemConfigurationAdapterFactory;
 import org.eclipse.rse.processes.ui.view.SystemViewProcessAdapterFactory;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
@@ -66,7 +66,7 @@ public class ProcessesPlugin extends SystemBasePlugin {
 		svpaf = new SystemViewProcessAdapterFactory();
 		svpaf.registerWithManager(manager);
 
-		RemoteProcessSubsystemConfigurationAdapterFactory rpssfaf = new RemoteProcessSubsystemConfigurationAdapterFactory();
+		RemoteProcessSubSystemConfigurationAdapterFactory rpssfaf = new RemoteProcessSubSystemConfigurationAdapterFactory();
 		rpssfaf.registerWithManager(manager);
 	}
 

@@ -25,7 +25,7 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPerspectiveHelpers;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.model.DummyHost;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemProfile;
@@ -428,7 +428,7 @@ public class      SystemNewConnectionWizard
             ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType, true);
             for (int idx=0; idx<factories.length; idx++)
             {
-            	ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)factories[idx].getAdapter(ISubsystemConfigurationAdapter.class);
+            	ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)factories[idx].getAdapter(ISubSystemConfigurationAdapter.class);
             		
             	IWizardPage[] pages = adapter.getNewConnectionWizardPages(factories[idx], this);
             	if (pages != null)

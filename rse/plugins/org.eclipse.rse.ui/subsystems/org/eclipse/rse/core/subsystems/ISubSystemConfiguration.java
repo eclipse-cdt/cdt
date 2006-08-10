@@ -377,7 +377,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
     public ISubSystem createSubSystem(IHost conn, boolean creatingConnection, ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages);
 
 	// used in the case where newsubsystems are added after a connection exists
-	public ISubSystem createSubsystemAfterTheFact(IHost conn);
+	public ISubSystem createSubSystemAfterTheFact(IHost conn);
 
 	public ISubSystem createSubSystemInternal(IHost conn);
 	

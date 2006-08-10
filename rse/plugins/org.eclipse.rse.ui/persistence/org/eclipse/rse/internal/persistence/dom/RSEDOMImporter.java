@@ -244,7 +244,7 @@ public class RSEDOMImporter implements IRSEDOMImporter
 		String type = subSystemNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
 		boolean isHidden = getBooleanValue(subSystemNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_HIDDEN).getValue());
 		ISubSystem subSystem = null;
-		ISubSystemConfiguration factory = getSubsystemConfiguration(type);
+		ISubSystemConfiguration factory = getSubSystemConfiguration(type);
 		if (factory != null)		
 		{
 			if (factory instanceof IServiceSubSystemConfiguration)
@@ -395,7 +395,7 @@ public class RSEDOMImporter implements IRSEDOMImporter
 		// create the filter pool and set it's attributes
 		try
 		{
-			ISubSystemConfiguration factory = getSubsystemConfiguration(id);
+			ISubSystemConfiguration factory = getSubSystemConfiguration(id);
 			if (factory != null)
 			{
 				ISystemFilterPoolManager mgr = factory.getFilterPoolManager(profile);
@@ -467,7 +467,7 @@ public class RSEDOMImporter implements IRSEDOMImporter
 		ISystemFilterPoolReference filterPoolReference = null;
 		String subsystemName = node.getAttribute(IRSEDOMConstants.ATTRIBUTE_REF_ID).getValue();
 		String filterPoolName = node.getName();
-		ISubSystemConfiguration configuration = getSubsystemConfiguration(subsystemName);
+		ISubSystemConfiguration configuration = getSubSystemConfiguration(subsystemName);
 		if (configuration != null) {
 			ISystemProfile profile = subsystem.getSystemProfile(); // DWD are there cases where this may be null?
 			ISystemFilterPoolManager filterPoolManager = configuration.getFilterPoolManager(profile);
@@ -542,7 +542,7 @@ public class RSEDOMImporter implements IRSEDOMImporter
 	 * @param subsystemName the name to look up
 	 * @return the subsystem configuration matching the name
 	 */
-	private ISubSystemConfiguration getSubsystemConfiguration(String subsystemName)
+	private ISubSystemConfiguration getSubSystemConfiguration(String subsystemName)
 	{
 		return RSEUIPlugin.getTheSystemRegistry().getSubSystemConfiguration(subsystemName);
 	}

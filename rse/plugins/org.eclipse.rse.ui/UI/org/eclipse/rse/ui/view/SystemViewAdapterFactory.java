@@ -285,7 +285,7 @@ public class SystemViewAdapterFactory implements IAdapterFactory
      * This method returns the RSE adapter for subsystems
 	 * @return SystemViewSubSystemAdapter
 	 */
-	public SystemViewSubSystemAdapter getSubsystemAdapter()
+	public SystemViewSubSystemAdapter getSubSystemAdapter()
 	{
 		return subsystemAdapter;
 	}

@@ -20,7 +20,7 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolReference;
@@ -134,7 +134,7 @@ public class SystemViewAPIProviderForFilters
     	{
 		   children = new SystemMessageObject[1];
     	   try {
-    		   ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssf.getAdapter(ISubsystemConfigurationAdapter.class);
+    		   ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssf.getAdapter(ISubSystemConfigurationAdapter.class);
              ISystemFilter newFilter = adapter.createFilterByPrompting(ssf, fRef, getShell());
              if (newFilter == null)
              {

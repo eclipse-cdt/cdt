@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolReference;
@@ -72,7 +72,7 @@ public class SystemViewFilterPoolReferenceAdapter
 		Object element = selection.getFirstElement();
 		ISystemFilterPool pool = getFilterPool(element);
 	    ISubSystemConfiguration ssFactory = getSubSystemConfiguration(pool);
-	    ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssFactory.getAdapter(ISubsystemConfigurationAdapter.class);
+	    ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
 		
 		IAction[] actions = adapter.getFilterPoolActions(ssFactory, pool, shell);
 		if (actions != null)
@@ -120,7 +120,7 @@ public class SystemViewFilterPoolReferenceAdapter
     	ISystemFilterPool pool = getFilterPool(element);
     	if (pool.getProvider() != null)
     	{
-    		ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)pool.getProvider().getAdapter(ISubsystemConfigurationAdapter.class);
+    		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)pool.getProvider().getAdapter(ISubSystemConfigurationAdapter.class);
           poolImage = adapter.getSystemFilterPoolImage(pool); 
     	}
     	if (poolImage == null)

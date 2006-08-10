@@ -18,7 +18,7 @@ package org.eclipse.rse.ui.filters;
 import java.util.Vector;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
@@ -121,7 +121,7 @@ public class SystemFilterUIHelpers
     	  poolMgrProvider = poolMgr.getProvider();
     	if (poolMgrProvider != null)
     	{
-    		ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)poolMgrProvider.getAdapter(ISubsystemConfigurationAdapter.class);
+    		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)poolMgrProvider.getAdapter(ISubSystemConfigurationAdapter.class);
     	  poolMgrImage = adapter.getSystemFilterPoolManagerImage(); 
     	}
     	if (poolMgrImage == null)
@@ -140,7 +140,7 @@ public class SystemFilterUIHelpers
     	  poolMgrProvider = pool.getProvider();
     	if (poolMgrProvider != null)
     	{
-    		ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)poolMgrProvider.getAdapter(ISubsystemConfigurationAdapter.class);
+    		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)poolMgrProvider.getAdapter(ISubSystemConfigurationAdapter.class);
       	  poolImage = adapter.getSystemFilterPoolImage(pool); 
     	}
     	if (poolImage == null)
@@ -158,7 +158,7 @@ public class SystemFilterUIHelpers
     	  poolMgrProvider = filter.getProvider();
     	if (poolMgrProvider != null)
     	{
-    		ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)poolMgrProvider.getAdapter(ISubsystemConfigurationAdapter.class);
+    		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)poolMgrProvider.getAdapter(ISubSystemConfigurationAdapter.class);
       	  filterImage = adapter.getSystemFilterImage(filter); 
     	}
     	if (filterImage == null)

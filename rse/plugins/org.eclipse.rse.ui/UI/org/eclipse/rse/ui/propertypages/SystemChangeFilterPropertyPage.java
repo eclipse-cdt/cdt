@@ -18,7 +18,7 @@ package org.eclipse.rse.ui.propertypages;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
@@ -220,7 +220,7 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 		changeFilterPane.setSystemFilterPoolManagerProvider(selectedFilter.getProvider());			
 		
 		ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(selectedFilter);
-		ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssf.getAdapter(ISubsystemConfigurationAdapter.class);
+		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssf.getAdapter(ISubSystemConfigurationAdapter.class);
 		adapter.customizeChangeFilterPropertyPage(ssf, this, selectedFilter, shell);
 		
 		changeFilterPane.setInputObject(getElement());

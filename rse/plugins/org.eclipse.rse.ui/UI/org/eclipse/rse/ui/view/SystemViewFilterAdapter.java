@@ -26,7 +26,7 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
@@ -84,7 +84,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 		  return;
 	    ISubSystemConfiguration ssFactory = SubSystemHelpers.getParentSubSystemConfiguration(filter);
 	    ssFactory.setConnection(null);
-	    ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssFactory.getAdapter(ISubsystemConfigurationAdapter.class);
+	    ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
 		IAction[] actions = adapter.getFilterActions(ssFactory, filter, shell);
 		if (actions != null)
 		{
@@ -112,7 +112,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
     	ISystemFilter filter = getFilter(element);
     	if (filter.getProvider() != null)
     	{
-    		ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)filter.getProvider().getAdapter(ISubsystemConfigurationAdapter.class);
+    		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)filter.getProvider().getAdapter(ISubSystemConfigurationAdapter.class);
     		filterImage = adapter.getSystemFilterImage(filter);
     	}
     	if (filterImage == null)

@@ -21,17 +21,17 @@ import java.util.Vector;
 import org.eclipse.jface.wizard.IWizard;
 
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.ui.view.SubsystemConfigurationAdapter;
+import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
 
 
-public class DaytimeSubSystemConfigurationAdapter extends SubsystemConfigurationAdapter
+public class DaytimeSubSystemConfigurationAdapter extends SubSystemConfigurationAdapter
 {
 	Vector _additionalActions;
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.SubsystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
+	 * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
 	 */
 	public ISystemNewConnectionWizardPage[] getNewConnectionWizardPages(ISubSystemConfiguration factory, IWizard wizard)
 	{

@@ -14,25 +14,25 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.processes.ui.view;
+package org.eclipse.rse.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
-import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 
 
-public class RemoteProcessSubsystemConfigurationAdapterFactory implements IAdapterFactory
+public class SubSystemConfigurationAdapterFactory implements IAdapterFactory
 {
 
-	private ISubsystemConfigurationAdapter ssFactoryAdapter = new RemoteProcessSubSystemConfigurationAdapter();
+	private ISubSystemConfigurationAdapter ssFactoryAdapter = new SubSystemConfigurationAdapter();
 	
 	/**
 	 * @see IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() 
 	{
-	    return new Class[] {ISubsystemConfigurationAdapter.class};		
+	    return new Class[] {ISubSystemConfigurationAdapter.class};		
 	}
 	/**
 	 * Called by our plugin's startup method to register our adaptable object types 
@@ -41,7 +41,7 @@ public class RemoteProcessSubsystemConfigurationAdapterFactory implements IAdapt
 	 */
 	public void registerWithManager(IAdapterManager manager)
 	{
-		manager.registerAdapters(this, IRemoteProcessSubSystemConfiguration.class);
+		manager.registerAdapters(this, ISubSystemConfiguration.class);
 	}
 	/**
 	 * @see IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -49,7 +49,7 @@ public class RemoteProcessSubsystemConfigurationAdapterFactory implements IAdapt
 	public Object getAdapter(Object adaptableObject, Class adapterType) 
 	{
 	    Object adapter = null;
-	    if (adaptableObject instanceof IRemoteProcessSubSystemConfiguration)
+	    if (adaptableObject instanceof ISubSystemConfiguration)
 	    	adapter = ssFactoryAdapter;
 	      	    
 		return adapter;

@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
@@ -299,7 +299,7 @@ public class SystemFilterCopyFilterPoolAction extends SystemBaseCopyAction
     	veryRootElement.setDeletable(false);
     	                
     	ISystemFilterPoolManager[] mgrs = poolMgrProvider.getSystemFilterPoolManagers();
-    	ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)poolMgrProvider.getAdapter(ISubsystemConfigurationAdapter.class);
+    	ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)poolMgrProvider.getAdapter(ISubSystemConfigurationAdapter.class);
     	ImageDescriptor image = adapter.getSystemFilterPoolManagerImage();
     	                                  
     	if ((mgrs == null) || (mgrs.length == 0))

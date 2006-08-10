@@ -25,7 +25,7 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -80,7 +80,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		Object element = selection.getFirstElement();	
 		ISubSystem ss = (ISubSystem)element;
 		ISubSystemConfiguration ssFactory = RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemConfiguration(ss);
-		ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssFactory.getAdapter(ISubsystemConfigurationAdapter.class);
+		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
 			
 		IAction[] actions = adapter.getSubSystemActions(ssFactory, ss,shell);
 		if (actions != null)

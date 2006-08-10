@@ -17,7 +17,7 @@
 package org.eclipse.rse.ui.propertypages;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -53,7 +53,7 @@ public class SystemSubSystemPropertyPageCore extends SystemBasePropertyPage
 	    if (element instanceof ISubSystem)
 	    {
 	    	ISubSystemConfiguration factory = ((ISubSystem)element).getSubSystemConfiguration();
-	    	ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)factory.getAdapter(ISubsystemConfigurationAdapter.class);
+	    	ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)factory.getAdapter(ISubSystemConfigurationAdapter.class);
 	        form = adapter.getSubSystemPropertyPageCoreFrom(factory, this, this);
 	    }
 	    else

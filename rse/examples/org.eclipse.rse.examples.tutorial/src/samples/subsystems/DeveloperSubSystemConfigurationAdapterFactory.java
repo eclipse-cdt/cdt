@@ -18,7 +18,7 @@ package samples.subsystems;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 
 /**
  * @author martin.oberhuber@windriver.com
@@ -27,14 +27,14 @@ import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
 public class DeveloperSubSystemConfigurationAdapterFactory implements
 		IAdapterFactory {
 
-	private ISubsystemConfigurationAdapter ssConfigAdapter = new DeveloperSubSystemConfigurationAdapter();
+	private ISubSystemConfigurationAdapter ssConfigAdapter = new DeveloperSubSystemConfigurationAdapter();
 	
 	/**
 	 * @see IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() 
 	{
-	    return new Class[] {ISubsystemConfigurationAdapter.class};		
+	    return new Class[] {ISubSystemConfigurationAdapter.class};		
 	}
 	
 	/**

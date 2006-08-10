@@ -23,7 +23,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -69,7 +69,7 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter imple
 		//  return; // does not make sense adding unique actions per multi-selection
 		ISystemFilterPool pool = ((ISystemFilterPool)selection.getFirstElement());			
 	    ISubSystemConfiguration ssFactory = SubSystemHelpers.getParentSubSystemConfiguration(pool);
-	    ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssFactory.getAdapter(ISubsystemConfigurationAdapter.class);
+	    ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
 		IAction[] actions = adapter.getFilterPoolActions(ssFactory, pool, shell);
 		if (actions != null)
 		{
@@ -93,7 +93,7 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter imple
     	if (pool.getProvider() != null)
     	{
     		
-    		ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)pool.getProvider().getAdapter(ISubsystemConfigurationAdapter.class);
+    		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)pool.getProvider().getAdapter(ISubSystemConfigurationAdapter.class);
           poolImage = adapter.getSystemFilterPoolImage(pool); 
     	}
     	if (poolImage == null)

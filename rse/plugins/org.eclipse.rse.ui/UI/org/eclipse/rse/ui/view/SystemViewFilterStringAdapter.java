@@ -20,7 +20,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
@@ -90,7 +90,7 @@ public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter imp
 		ISystemFilterString filterString = getFilterString(element);
     	if (filterString.getProvider() != null)
     	{
-    		ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)filterString.getProvider().getAdapter(ISubsystemConfigurationAdapter.class);
+    		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)filterString.getProvider().getAdapter(ISubSystemConfigurationAdapter.class);
           filterImage = adapter.getSystemFilterStringImage(filterString); 
     	}
     	if (filterImage == null)

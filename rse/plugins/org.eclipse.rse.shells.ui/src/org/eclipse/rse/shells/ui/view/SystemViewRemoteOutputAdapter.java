@@ -35,7 +35,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.IRemoteLineReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.files.ui.actions.SystemRemoteFileLineOpenWithMenu;
 import org.eclipse.rse.files.ui.resources.RemoteSourceLookupDirector;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
@@ -215,7 +215,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 	        
 	        _shellActions.add(new Separator());
 	        
-	        ShellServiceSubSystemConfigurationAdapter factoryAdapter = (ShellServiceSubSystemConfigurationAdapter)factory.getAdapter(ISubsystemConfigurationAdapter.class);
+	        ShellServiceSubSystemConfigurationAdapter factoryAdapter = (ShellServiceSubSystemConfigurationAdapter)factory.getAdapter(ISubSystemConfigurationAdapter.class);
 	        
 	        _exportShellOutputAction = factoryAdapter.getCommandShellOutputExportAction(shell);
 	        _shellActions.add(_exportShellOutputAction);
@@ -821,7 +821,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 		{
 			IRemoteCommandShell command = (IRemoteCommandShell) element;
 			IRemoteCmdSubSystemConfiguration factory = command.getCommandSubSystem().getParentRemoteCmdSubSystemConfiguration();
-			 ShellServiceSubSystemConfigurationAdapter factoryAdapter = (ShellServiceSubSystemConfigurationAdapter)factory.getAdapter(ISubsystemConfigurationAdapter.class);
+			 ShellServiceSubSystemConfigurationAdapter factoryAdapter = (ShellServiceSubSystemConfigurationAdapter)factory.getAdapter(ISubSystemConfigurationAdapter.class);
 			ImageDescriptor imageDescriptor = null; 			
 			if (command.isActive())
 			{

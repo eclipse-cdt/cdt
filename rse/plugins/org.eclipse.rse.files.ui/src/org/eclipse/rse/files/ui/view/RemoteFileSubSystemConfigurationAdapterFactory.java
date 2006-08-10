@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,25 +14,25 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.ui.view;
+package org.eclipse.rse.files.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 
 
-public class SubsystemConfigurationAdapterFactory implements IAdapterFactory
+public class RemoteFileSubSystemConfigurationAdapterFactory implements IAdapterFactory
 {
 
-	private ISubsystemConfigurationAdapter ssFactoryAdapter = new SubsystemConfigurationAdapter();
+	private ISubSystemConfigurationAdapter ssFactoryAdapter = new RemoteFileSubSystemConfigurationAdapter();
 	
 	/**
 	 * @see IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() 
 	{
-	    return new Class[] {ISubsystemConfigurationAdapter.class};		
+	    return new Class[] {ISubSystemConfigurationAdapter.class};		
 	}
 	/**
 	 * Called by our plugin's startup method to register our adaptable object types 
@@ -41,7 +41,7 @@ public class SubsystemConfigurationAdapterFactory implements IAdapterFactory
 	 */
 	public void registerWithManager(IAdapterManager manager)
 	{
-		manager.registerAdapters(this, ISubSystemConfiguration.class);
+		manager.registerAdapters(this, IRemoteFileSubSystemConfiguration.class);
 	}
 	/**
 	 * @see IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -49,7 +49,7 @@ public class SubsystemConfigurationAdapterFactory implements IAdapterFactory
 	public Object getAdapter(Object adaptableObject, Class adapterType) 
 	{
 	    Object adapter = null;
-	    if (adaptableObject instanceof ISubSystemConfiguration)
+	    if (adaptableObject instanceof IRemoteFileSubSystemConfiguration)
 	    	adapter = ssFactoryAdapter;
 	      	    
 		return adapter;

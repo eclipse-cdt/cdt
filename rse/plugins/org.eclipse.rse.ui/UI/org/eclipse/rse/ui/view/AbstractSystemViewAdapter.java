@@ -35,7 +35,7 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.AbstractResource;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemMessageObject;
 import org.eclipse.rse.model.ISystemPromptableObject;
@@ -307,7 +307,7 @@ public abstract class AbstractSystemViewAdapter
 			if (ss != null)
 			{
 				ISubSystemConfiguration ssf = ss.getSubSystemConfiguration();
-				ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssf.getAdapter(ISubsystemConfigurationAdapter.class);
+				ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssf.getAdapter(ISubSystemConfigurationAdapter.class);
 				adapter.addCommonRemoteActions(ssf, menu, selection, shell, menuGroup, ss);
 			}			
 		}

@@ -34,7 +34,7 @@ import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
@@ -90,7 +90,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 
-public class SubsystemConfigurationAdapter implements ISubsystemConfigurationAdapter, ISystemNewFilterActionConfigurator
+public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAdapter, ISystemNewFilterActionConfigurator
 {					
 	protected Hashtable imageTable = null;
 	
@@ -99,7 +99,7 @@ public class SubsystemConfigurationAdapter implements ISubsystemConfigurationAda
 	private IAction[] filterPoolActions = null;
 	private IAction[] filterPoolReferenceActions = null;
 	private IAction[] filterActions = null;
-	public SubsystemConfigurationAdapter()
+	public SubSystemConfigurationAdapter()
 	{
 	}
 	

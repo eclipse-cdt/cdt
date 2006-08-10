@@ -253,7 +253,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	final public String getUserId() {
 		String result = getLocalUserId();
 		if (result == null) {
-			result = getSubsystemUserId();
+			result = getSubSystemUserId();
 		}
 		return result;
 	}
@@ -270,7 +270,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	/**
 	 * @return the userId from the primary subsystem.
 	 */
-	private String getSubsystemUserId() {
+	private String getSubSystemUserId() {
 		ISubSystem ss = getPrimarySubSystem();
 		String result = ss.getUserId();
 		return result;

@@ -29,17 +29,17 @@ import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.IService;
 
 /**
- * The DaytimeSubsystemConfiguration implements the main API for registering
+ * The DaytimeSubSystemConfiguration implements the main API for registering
  * a new subsystem type.
  * It gives the RSE framework basic configuration data about enabled
  * or disabled options, and is responsible for instanciating the actual
  * Daytime subsystem as well as the UI-less configuration layer (service).
  */
-public class DaytimeSubsystemConfiguration extends ServiceSubSystemConfiguration {
+public class DaytimeSubSystemConfiguration extends ServiceSubSystemConfiguration {
 
 	private Map fServices = new HashMap();
 	
-	public DaytimeSubsystemConfiguration() {
+	public DaytimeSubSystemConfiguration() {
 		super();
 	}
 

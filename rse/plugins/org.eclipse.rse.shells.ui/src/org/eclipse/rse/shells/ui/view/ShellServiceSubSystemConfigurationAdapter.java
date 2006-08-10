@@ -31,11 +31,11 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.view.SubsystemConfigurationAdapter;
+import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.widgets.Shell;
 
 
-public class ShellServiceSubSystemConfigurationAdapter extends SubsystemConfigurationAdapter
+public class ShellServiceSubSystemConfigurationAdapter extends SubSystemConfigurationAdapter
 {
     protected IAction _exportShellHistoryAction;
     protected IAction _exportShellOutputAction;

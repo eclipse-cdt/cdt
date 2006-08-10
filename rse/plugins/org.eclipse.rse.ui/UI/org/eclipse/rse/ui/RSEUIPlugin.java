@@ -58,7 +58,7 @@ import org.eclipse.rse.ui.internal.RSESystemTypeAdapterFactory;
 import org.eclipse.rse.ui.internal.RSEUIRegistry;
 import org.eclipse.rse.ui.propertypages.RemoteSystemsPreferencePage;
 import org.eclipse.rse.ui.propertypages.SystemCommunicationsPreferencePage;
-import org.eclipse.rse.ui.view.SubsystemConfigurationAdapterFactory;
+import org.eclipse.rse.ui.view.SubSystemConfigurationAdapterFactory;
 import org.eclipse.rse.ui.view.SystemViewAdapterFactory;
 import org.eclipse.rse.ui.view.team.SystemTeamViewResourceAdapterFactory;
 import org.osgi.framework.Bundle;
@@ -488,7 +488,7 @@ public class RSEUIPlugin extends SystemBasePlugin
 
 	    // DKM
 	    // for subsystem factories
-	    SubsystemConfigurationAdapterFactory ssfaf = new SubsystemConfigurationAdapterFactory();
+	    SubSystemConfigurationAdapterFactory ssfaf = new SubSystemConfigurationAdapterFactory();
 	    ssfaf.registerWithManager(manager);
 	    
 	    RSESystemTypeAdapterFactory rseSysTypeFactory = new RSESystemTypeAdapterFactory();

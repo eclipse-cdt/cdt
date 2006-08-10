@@ -30,7 +30,7 @@ import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterContainerReference;
 import org.eclipse.rse.filters.ISystemFilterPool;
@@ -91,7 +91,7 @@ public class SystemViewFilterReferenceAdapter
 		IHost currentConnection = currentSubSystem.getHost();
 		ssFactory.setConnection(currentConnection);
 		ssFactory.setCurrentSelection(selection.toArray());
-		  ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssFactory.getAdapter(ISubsystemConfigurationAdapter.class);
+		  ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
 			
 		IAction[] actions = adapter.getFilterActions(ssFactory, filter, shell);
 		if (actions != null)
@@ -140,7 +140,7 @@ public class SystemViewFilterReferenceAdapter
 		if (filter.getProvider() != null) // getProvider() returns the subsystem factory
 		{
 
-			ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)filter.getProvider().getAdapter(ISubsystemConfigurationAdapter.class);
+			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)filter.getProvider().getAdapter(ISubSystemConfigurationAdapter.class);
 			filterImage = adapter.getSystemFilterImage(filter);
 		}
 		if (filterImage == null)
@@ -261,7 +261,7 @@ public class SystemViewFilterReferenceAdapter
 			children = new SystemMessageObject[1];
 			try
 			{
-				ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)ssf.getAdapter(ISubsystemConfigurationAdapter.class);
+				ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssf.getAdapter(ISubSystemConfigurationAdapter.class);
 					
 				ISystemFilter newFilter = adapter.createFilterByPrompting(ssf, fRef, getShell());
 				if (newFilter == null)

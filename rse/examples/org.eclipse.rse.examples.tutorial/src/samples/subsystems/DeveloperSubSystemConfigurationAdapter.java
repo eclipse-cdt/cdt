@@ -23,7 +23,7 @@ import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.ui.filters.actions.SystemChangeFilterAction;
 import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
-import org.eclipse.rse.ui.view.SubsystemConfigurationAdapter;
+import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.widgets.Shell;
 
 import samples.RSESamplesPlugin;
@@ -32,7 +32,7 @@ import samples.RSESamplesPlugin;
  * Adds functionality to the basic SubSystemConfiguration.
  */
 public class DeveloperSubSystemConfigurationAdapter extends
-		SubsystemConfigurationAdapter
+		SubSystemConfigurationAdapter
 {
 
 	/**
@@ -92,7 +92,7 @@ public class DeveloperSubSystemConfigurationAdapter extends
 
 	/**
 	 * Override of parent method for returning the image for filters in our subsystem.
-	 * @see org.eclipse.rse.ui.view.SubsystemConfigurationAdapter#getSystemFilterImage(org.eclipse.rse.filters.ISystemFilter)
+	 * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getSystemFilterImage(org.eclipse.rse.filters.ISystemFilter)
 	 */
 	public ImageDescriptor getSystemFilterImage(ISystemFilter filter)
 	{

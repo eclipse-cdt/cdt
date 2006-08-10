@@ -45,7 +45,7 @@ Martin Oberhuber (Wind River) - initial API and implementation
 			iconlive="icons/full/obj16/daytimelive_obj.gif"
 			icon="icons/full/obj16/daytime_obj.gif"
 			category="daytime"
-			class="org.eclipse.rse.examples.daytime.subsystems.DaytimeSubsystemConfiguration"
+			class="org.eclipse.rse.examples.daytime.subsystems.DaytimeSubSystemConfiguration"
 			vendor="Wind River Systems"
 			id="daytime.tcp">
 		</configuration>

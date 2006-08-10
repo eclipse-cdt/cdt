@@ -1204,7 +1204,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		ISubSystem subsys = createSubSystemInternal(conn);
 		if (subsys != null)
 		{
-			internalInitializeNewSubsystem(subsys, conn);
+			internalInitializeNewSubSystem(subsys, conn);
 			if (supportsFilters())
 			{
 				// We create a filter pool reference manager object to manage the filter pool references
@@ -1265,7 +1265,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		ISubSystem subsys = createSubSystemInternal(newConnection);
 		if (subsys != null)
 		{
-			internalInitializeNewSubsystem(subsys, newConnection);
+			internalInitializeNewSubSystem(subsys, newConnection);
 			// copy common data
 			subsys.setName(oldSubsystem.getName()); // just in case it was changed
 			subsys.addPropertySets(oldSubsystem.getPropertySets());	
@@ -1374,7 +1374,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * @param ss The new subsystem
 	 * @param conn The new connection containing this new subsystem
 	 */
-	private void internalInitializeNewSubsystem(ISubSystem subsys, IHost conn)
+	private void internalInitializeNewSubSystem(ISubSystem subsys, IHost conn)
 	{
 		subsys.setSubSystemConfiguration(this);
 		subsys.setHost(conn);
@@ -2818,12 +2818,12 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	// used in the case where newsubsystems are added after a connection exists
-	public ISubSystem createSubsystemAfterTheFact(IHost conn)
+	public ISubSystem createSubSystemAfterTheFact(IHost conn)
 	{
 		ISubSystem subsys = createSubSystemInternal(conn);
 		if (subsys != null)
 		{
-			internalInitializeNewSubsystem(subsys, conn);
+			internalInitializeNewSubSystem(subsys, conn);
 			if (supportsFilters())
 			{
 				// We create a filter pool reference manager object to manage the filter pool references

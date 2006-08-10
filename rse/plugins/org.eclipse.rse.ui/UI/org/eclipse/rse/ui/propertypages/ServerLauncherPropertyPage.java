@@ -21,7 +21,7 @@ import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystem;
-import org.eclipse.rse.core.subsystems.util.ISubsystemConfigurationAdapter;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.ISystemVerifyListener;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
 import org.eclipse.swt.widgets.Composite;
@@ -73,7 +73,7 @@ public class ServerLauncherPropertyPage extends SystemBasePropertyPage implement
 			factory =_factory;
 		}
 	
-		ISubsystemConfigurationAdapter adapter = (ISubsystemConfigurationAdapter)factory.getAdapter(ISubsystemConfigurationAdapter.class);
+		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)factory.getAdapter(ISubSystemConfigurationAdapter.class);
 		_form = adapter.getServerLauncherForm(factory, getShell(), getMessageLine());
 
 		// Create property page UI

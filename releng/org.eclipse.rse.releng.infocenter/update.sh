@@ -1,5 +1,7 @@
 #!/bin/sh
 umask 022
+echo "Infocenter Update: running as"
+id
 if [ "$IHOME" = "" ]; then
   IHOME=/home/infocenter/latest
 fi

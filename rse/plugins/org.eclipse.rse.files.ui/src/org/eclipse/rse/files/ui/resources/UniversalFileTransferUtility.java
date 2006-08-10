@@ -137,8 +137,10 @@ public class UniversalFileTransferUtility
 		try
 		{	
 		    // copy remote file to workspace
+			SystemUniversalTempFileListener listener = SystemUniversalTempFileListener.getListener();
+			listener.addIgnoreFile(tempFile);
 		    srcFS.download(srcFileOrFolder, tempFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
-		    
+		    listener.removeIgnoreFile(tempFile);
 		    if (!tempFile.exists() && !tempFile.isSynchronized(IResource.DEPTH_ZERO))
 		    {
 		    	// eclipse doesn't like this if the resource appears to be from another project
@@ -273,6 +275,7 @@ public class UniversalFileTransferUtility
 			{
 				if (srcFileOrFolder.isFile()) // file transfer
 				{
+
 					IFile tempFile = copyRemoteFileToWorkspace(srcFileOrFolder, monitor);
 					resultSet.addResource(tempFile);
 				}

@@ -137,7 +137,7 @@ public class Mutex {
 	 * This should be called if the resource that the Threads are 
 	 * contending for, becomes unavailable for some other reason.
 	 */
-	public void interruptAll() {
+	public synchronized void interruptAll() {
 		Iterator it = fWaitQueue.iterator();
 		while (it.hasNext()) {
 			Thread aThread = (Thread)it.next();

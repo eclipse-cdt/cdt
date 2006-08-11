@@ -18,7 +18,7 @@ rm site.xml web/site.xsl
 cvs -q update -d
 if [ `basename $SITE` = testUpdates ]; then
     echo "Working on test update site"
-    REL==`ls $HOME/ws/working/package | sort | tail -1`
+    REL=`ls $HOME/ws/working/package | sort | tail -1`
     if [ "$REL" != "" ]; then
       echo "Checking new Updates from $REL"
       DIR="$HOME/ws/working/package/$REL/updates"

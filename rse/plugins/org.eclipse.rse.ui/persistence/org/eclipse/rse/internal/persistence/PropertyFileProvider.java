@@ -252,7 +252,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @param monitor The progress monitor.
 	 */
 	private void writeProperties(Properties properties, String header, IFile file) {
-		System.out.println("writing "+file.getFullPath()+"...");
+//		System.out.println("writing "+file.getFullPath()+"...");
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream(500);
 		PrintWriter out = new PrintWriter(outStream);
 		out.println("# " + header);
@@ -263,11 +263,11 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			String key = (String) z.next();
 			String value = (String)map.get(key);
 			String keyvalue = key + "=" + escapeValue(value);
-			System.out.println("writing "+keyvalue);
-			out.println(keyvalue);
+//			System.out.println("writing "+keyvalue);
+//			out.println(keyvalue);
 		}
 		out.close();
-		System.out.println("...wrote "+file.getFullPath());
+//		System.out.println("...wrote "+file.getFullPath());
 		ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
 		try {
 			if (!file.exists()) {

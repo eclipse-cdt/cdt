@@ -75,13 +75,15 @@ public class Mutex {
                     	wait(timeLeft > pollTime ? pollTime : timeLeft);
                 		Activator.trace("Mutex: wakeup "+myself+" ?"); //$NON-NLS-1$ //$NON-NLS-2$
                     	//I'm still in the list, nobody is allowed to take me out!
-                    	assert !fWaitQueue.isEmpty(); 
+                    	//assert !fWaitQueue.isEmpty(); 
                     	if (!fLocked && fWaitQueue.get(0) == myself) {
                     		break; //gee it's my turn!
                     	}
                     	long curTime = System.currentTimeMillis();
                         timeLeft = start + timeout - curTime;
                     	if (monitor!=null) {
+                    		//TODO put the calls to the progress monitor out
+                    		//of the synchronized{}
                     		canceled = monitor.isCanceled();
                     		if (!canceled && (curTime>nextProgressUpdate)) {
                         		monitor.worked(1);

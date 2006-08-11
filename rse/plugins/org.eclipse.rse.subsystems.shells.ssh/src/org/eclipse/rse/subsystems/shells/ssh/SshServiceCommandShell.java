@@ -150,7 +150,7 @@ public class SshServiceCommandShell extends ServiceCommandShell implements ISyst
 	 */
 	protected String getPromptCommand() {
 		IHostShell shell = getHostShell();
-		assert shell instanceof SshHostShell;
+		//assert shell instanceof SshHostShell;
 		if (shell instanceof SshHostShell) {
 			return ((SshHostShell)shell).getPromptCommand();
 		}

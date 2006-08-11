@@ -43,30 +43,10 @@ public class SftpFileSubSystemConfiguration extends FileServiceSubSystemConfigur
 		return isFor;
 	}
 	
-	public boolean supportsArchiveManagement() {
-		return false;
-	}
-
 	public ISubSystem createSubSystemInternal(IHost host) {
 		SshConnectorService connectorService = (SshConnectorService)getConnectorService(host);
 		ISubSystem subsys = new FileServiceSubSystem(host, connectorService, getFileService(host), getHostFileAdapter(), getSearchService(host));
 		return subsys;
-	}
-
-	public boolean supportsFileTypes() {
-		return false;
-	}
-
-	public boolean supportsSearch() {
-		return false;
-	}
-
-	public boolean supportsEnvironmentVariablesPropertyPage() {
-		return false;
-	}
-
-	public boolean supportsFilters() {
-		return true;
 	}
 
 	public IConnectorService getConnectorService(IHost host) {
@@ -94,6 +74,10 @@ public class SftpFileSubSystemConfiguration extends FileServiceSubSystemConfigur
 		return _hostFileAdapter;
 	}
 
+	public Class getServiceImplType() {
+		return ISshService.class;
+	}
+
 	public IHostSearchResultConfiguration createSearchConfiguration(IHost host, IHostSearchResultSet resultSet, Object searchTarget, SystemSearchString searchString) {
 		return null;
 	}
@@ -102,8 +86,33 @@ public class SftpFileSubSystemConfiguration extends FileServiceSubSystemConfigur
 		return null;
 	}
 	
-	public Class getServiceImplType() {
-		return ISshService.class;
+	public boolean supportsArchiveManagement() {
+		return false;
+	}
+
+	public boolean supportsFileTypes() {
+		return false;
+	}
+
+	public boolean supportsSearch() {
+		return false;
+	}
+
+	public boolean supportsEnvironmentVariablesPropertyPage() {
+		return false;
+	}
+
+	public boolean supportsFilters() {
+		return true;
+	}
+
+	/**
+	 * Ssh allows authentification through public key, so the password
+	 * can be empty.
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#requiresPassword()
+	 */
+	public boolean requiresPassword() {
+		return false;
 	}
 
 }

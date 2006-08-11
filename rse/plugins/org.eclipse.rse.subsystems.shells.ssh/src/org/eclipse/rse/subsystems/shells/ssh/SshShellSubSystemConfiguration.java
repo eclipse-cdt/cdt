@@ -75,9 +75,19 @@ public class SshShellSubSystemConfiguration extends
 		return ISshService.class;
 	}
 
-	public IServiceCommandShell createRemoteCommandShell(IRemoteCmdSubSystem cmdSS, IHostShell hostShell)
-	{		
+	public IServiceCommandShell createRemoteCommandShell(IRemoteCmdSubSystem cmdSS, IHostShell hostShell) {		
 		return new SshServiceCommandShell(cmdSS, hostShell);
 	}
+
+	/**
+	 * Ssh allows authentification through public key, so the password
+	 * can be empty.
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#requiresPassword()
+	 */
+	public boolean requiresPassword() {
+		return false;
+	}
+	
+	
 
 }

@@ -16,7 +16,13 @@
 		<p>These downloads are provided under the
 		<a href="http://www.eclipse.org/legal/epl/notice.php">Eclipse.org Software 
 		User Agreement</a>.</p>
-		<p>To get started, see the <a href="buildNotes.php">build notes</a>.<br>
+		
+		<p><font size="+1"><strong>
+		  <a href="buildNotes.php">New and Noteworthy / Build Notes</a>
+		</strong></font></p>
+		
+		<!-- <p>To get started, see the <a href="buildNotes.php">build notes</a>.<br>
+		-->
 		To view the map file entries for this build, click
 		<a href="directory.txt">here</a>.<br>
 		To view the compile logs for this build, click 
@@ -41,11 +47,11 @@
 </table>
 <table>
   <tbody>
-    <tr><td><b>RSE requires Eclipse-3.2.<b> (<a href="http://download.eclipse.org/eclipse/downloads/index.php">download page</a>)</td></tr>
+    <tr><td><b>RSE requires Eclipse-3.2.<b> (<a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.2-200606291905/index.php">download page</a>)</td></tr>
     <tr><td>Eclipse 3.2RC2, 3.1 or lower will <b>not</b> work!</td></tr>
-    <tr>
-      <td>We've been testing with Eclipse-3.2 RC7, built 2-Jun-2006 (<a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.2RC7-200606021317/index.php">download page</a>)</td>
-    </tr>
+    <!-- <tr>
+      <td>We've been testing with Eclipse-3.2, built 29-Jun-2006 (<a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.2-200606291905/index.php">download page</a>)</td>
+    </tr> -->
   </tbody>
 </table>
 </table>
@@ -115,7 +121,10 @@
 		<font face="Arial,Helvetica" color="#FFFFFF">Client Runtime Binaries</font></b></td>
 	</tr>
 	<tr>
-	    <td>RSE-runtime-core is required, and includes the user documentation.<br/> 
+	    <td>The runtime binaries do not include source and developer documentation,
+	    and they are available in a more fine-grained packaging for re-use in
+	    other products.<br/>
+	    <b>RSE-runtime-core is required</b>, and includes the user documentation.
 	    All other runtime packages are optional.</td>
 	</tr>
 </table>

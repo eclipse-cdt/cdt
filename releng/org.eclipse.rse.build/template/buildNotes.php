@@ -23,21 +23,33 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>RSE ssh feature now supports connections via Proxy.
-  <ul>
-    <li>Re-uses ssh Preferences from Team &gt; CVS &gt; SSH2 Connection Method, and Team &gt; CVS &gt; Proxy Settings.</li>
-    <li>Ssh private key authentication is supported, but RSE requires entering a dummy password
-      (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142471">bug 142471</a>).
-      As an alternative, passwords can also be maintained by RSE.</li>
-  </ul>
-</li> 
-<li>Documentation is now available. Note that this documentation partially still
-  refers to the older IBM RSE product and thus contains lots of outdated 
-  references.</li>
-<li>The New Connection Wizard is now completely replaceable for contributed
-  system types. As a side effect of this, the ordering of subsystems for a
-  connection may change (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=149280">bug 149280</a>).
-<li>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-05-19&chfieldto=2006-06-30&chfield=resolution">
+<li>APIs and String Constants have been cleaned up from old artifacts.
+  RSE <b>Documentation</b> has been adjusted to latest refactorings. You'll get the
+  documentation as part of the installation, or you can browse it online at
+  <a href="http://dsdp.eclipse.org/help/latest/">http://dsdp.eclipse.org/help/latest/</a>.
+  Note that the online version is updated every night to hold the latest updates.</li>
+<li>The ssh command shell now supports <b>RSE pattern matching</b> in the output.
+  Output parsers are installed for make, ls, pwd, cd, ps and many popular compilers.
+  If you run such a command, it's output will be parsed by the RSE shell
+  and annotations will be added. Double clicking these partially works (Bugs 
+  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153270">153270</a>,
+  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153272">153272</a>).</li>
+<li>The ssh command shell also supports <b>content assist</b> for directory names 
+  and file names in the input box. To use it, press Ctrl+Space. After selecting
+  a completion, the command will be sent immediately (Bug
+  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153271">153271</a>).</li>
+<li>RSE now provides an <b>update site</b> at
+  <a href="http://download.eclipse.org/dsdp/tm/updates/">http://download.eclipse.org/dsdp/tm/updates/</a>.
+  We encourage users to update frequently, since we expect
+  RSE quality to improve more and more as we are approaching our 1.0 release.</li>
+<li>Numerous bugs have been fixed, and we consider RSE safe now for 
+  all kinds of data transfer, even if it's done in multiple background sessions
+  (except FTP, which will be enhanced as soon as the Jakarta Commons Net library
+  passes EMO legal review).</li>
+<li>See also the
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0M3-200606300720/buildNotes.php">
+  last milestone's New and Noteworthy</a>.</li>
+<li>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-06-30&chfieldto=2006-08-11&chfield=resolution">
   this query</a> to show the list of bugs fixed for this build.</li>
 <li>Look <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   here</a> for the CVS changelog.</li>
@@ -51,7 +63,12 @@
 	</tr>
 </table>
 <table><tbody><tr><td>
-<p>Download RSE SDK, and either
+<p>The simplest way to get RSE is via the Update Manager: From your running instance
+of Eclipse 3.2, choose <b>Help &gt; Software Updates &gt; Find and Install...</b>.
+Choose "Search for New Features to Install", and add a new Remote Site named
+"RSE" and pointing to <b>http://download.eclipse.org/dsdp/tm/updates/</b>.
+Select the RSE SDK feature, and perform the update process as usual.</p>
+<p>If you prefer manual installation, you can download RSE SDK and either
 <ul><li>Extract it into your installation of Eclipse 3.2, or</li>
     <li>Extract it into an empty directory and link it as product extension via Help &gt; Install/Update, or</li>
     <li>(If you want to write code for RSE) extract it into an empty directory, and from an Eclipse PDE Workspace 
@@ -65,7 +82,10 @@ local host, which is shown by default:
 <ul>
   <li>Browse the Filesystem, choose contextmenu &gt; show in Table, and observe the Properties view</li>
   <li>Create a new Filter to show specific resources in the file system only
-  <li>Launch an RSE Shell (Shells node &gt; Launch)</li>  
+  <li>Launch an RSE Shell (Shells node &gt; Launch)
+      <ul><li>In the Shell, perform commands such as ls, dir, ps, gcc, make and see the output interpreted</li>
+          <li>Use Ctrl+Space Content Assist on the shell command entry field</li>
+      </ul></li>
 </ul>
 For operations on an actual remote system, you can either
 <ul>
@@ -84,7 +104,7 @@ For operations on an actual remote system, you can either
 <p>
 RSE is a framework that supports plugging in many different communication protocols.
 By default, the dstore, FTP and ssh protocol plug-ins are provided, with dstore being 
-the most richest in features.</p>
+the richest in features.</p>
 <p>
 Dstore requirs a server to run on the remote system. There are several methods to 
 get a server launched for a particular user, the most easy one to set up is the 
@@ -155,9 +175,6 @@ users can start a dstore server for themselves only, instead of a daemon:
     <li>On dstore, you can browse into remote archives (*.zip, *.tar) without having to transfer the entire contents. This works thanks
         to "miners" on the remote side. Custom miners can be plugged into the dstore server.<br>
         Note: Some tar formats currently fail to work. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=139207">bug 139207</a>.</li>
-    <li>On dstore, when you list directories in a remote shell, the <b>shell output is parsed</b> to identify
-        files, folders and even line numbers from compiler error messages. These items can also be
-        dragged and dropped, or double clicked to position an editor on them.</li></ul></li>
   <li>On dstore, you can choose <b>Search &gt; Remote...</b>.<ul>
     <li>The dstore miners support searching a remote file system
       without having to transfer any data.</li></ul></li> 
@@ -183,25 +200,29 @@ users can start a dstore server for themselves only, instead of a daemon:
 	</tr>
 </table>
 <table><tbody><tr><td>
-The following M3 <a href="http://www.eclipse.org/dsdp/tm/development/plan.php">original plan</a> deliverables did 
+The following M4 <a href="http://www.eclipse.org/dsdp/tm/development/plan.php">original plan</a> deliverables did 
 not make it into this build:
 <ul>
-<li>User Actions, and Import/Export were deferred. 
-  A new <a href="http://www.eclipse.org/dsdp/tm/development/plan.php">plan</a> will be published.</li>
-<li>JUnit tests did not make it into the build due to pending IP review.
+<li>User Actions, and Import/Export were deferred with M3 already. 
+  A new <a href="http://www.eclipse.org/dsdp/tm/development/plan.php">plan</a>
+  has been published.</li>
+<li>JUnit tests did not make it into the build due to pending IP legal review.
   They are available from Bugzilla 
-  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=149080">bug 149080</a> instead.</li>
-<li>Examples are not yet available as downloadable package. A <b>CDT Launch Integration Example</b>
-  and a sample custom subsystem called <b>Daytime Example</b> are available from the
-  <a href="http://www.eclipse.org/dsdp/tm/development/index.php">RSE CVS Repository</a> instead.</li>
+  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=149080">bug 149080</a>
+  instead. Due to the missing Unit Test Framework, automated tests could also
+  not yet be added to this build.</li>
+<li>Examples are not yet available as downloadable package. A <b>CDT Launch Integration Example</b>,
+  a sample custom subsystem called <b>Daytime Example</b>,
+  as well as the <b>Tutorial Examples</b> from the ISV Docs are available 
+  from the <a href="http://www.eclipse.org/dsdp/tm/development/index.php">
+  RSE CVS Repository</a> instead.</li>
+<li>Jakarta Commons Net is not yet available for FTP and Telnet due to pending legal
+  review. We are confident to get these completed in August though.</li>
 </ul>
-The following critical or major bugs are currently known. Since
-the goal of this milestone was "functional complete" for soliciting 
-user and API feedback, we still gave a go for this milestone.
+The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=149186">bug 149186</a> - maj - downloading in background can truncate the remote file<br/>
-      -- In order to avoid this bug, do not put any data transfer into background.</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=150949">bug 150949</a> - maj - RSE gets unusable when full logging is enabled</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143462">bug 143462</a> - maj - [updating] Dirty remote editors do not get notified</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143292">bug 143292</a> - maj - [mac] Move Resource dialog causes hang/crash</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=139207">bug 139207</a> - maj - Browsing into some remote tar archives fails, and may crash the dstore server<br/>
@@ -214,10 +235,6 @@ for an up-to-date list of major or critical bugs, or
 for a complete up-to-date bugzilla status report, or
 <a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=Target+Management&component=RSE&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&format=table&action=wrap">here</a>
 for a report on bugs fixed so far.
-<!--
-<a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=bug_status&query_format=report-table&short_desc_type=allwordssubstr&short_desc=&classification=DSDP&product=Target+Management&component=RSE&format=table&action=wrap">here</a>
-for a complete up-to-date bugzilla status report. 
--->
 </td></tr></tbody></table>
 
 </body>

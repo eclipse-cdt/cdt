@@ -1,0 +1,2 @@
+dropPrefix[]=R&dropPrefix[]=S&dropPrefix[]=I&dropPrefix[]=N&
+dropType[]=Latest Release&dropType[]=1.0 Stream Stable Build&dropType[]=1.0 Stream Integration Build&dropType[]=1.0 Stream Nightly Build&

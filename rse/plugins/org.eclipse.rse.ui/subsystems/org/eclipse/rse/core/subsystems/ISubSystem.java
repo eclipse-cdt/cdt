@@ -18,15 +18,15 @@ package org.eclipse.rse.core.subsystems;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.rse.core.model.IRSEModelObject;
+import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.IRSEModelObject;
 import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.persistence.IRSEPersistableContainer;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;

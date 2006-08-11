@@ -14,27 +14,17 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
 
-import java.util.Map;
-
-import org.eclipse.rse.internal.model.IPropertyType;
-
-
-public interface IPropertySet 
+public interface IPropertySetContainer 
 {
-	public String getName();
-	public String getDescription();
-	public IProperty getProperty(String key);
-	public String getPropertyValue(String key);
-	public String[] getPropertyKeys();
-	public IPropertyType getPropertyType(String key);
-	
-	public void setName(String name);
-	public void setProperties(Map map);
-	
-	public IProperty addProperty(String key, String value);
-	public IProperty addProperty(String key, String value, IPropertyType type);
-	public boolean removeProperty(String key);
+	public IPropertySet[] getPropertySets();
+	public IPropertySet getPropertySet(String name);
 
+	public IPropertySet createPropertySet(String name);
+	public IPropertySet createPropertySet(String name, String description);
+	public boolean addPropertySet(IPropertySet set);
+	public boolean addPropertySets(IPropertySet[] sets);
+	public boolean removePropertySet(String name);
+	
 }

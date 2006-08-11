@@ -14,17 +14,15 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.persistance;
 
-public interface IPropertySetContainer 
+public interface IRSEPersistableContainer
 {
-	public IPropertySet[] getPropertySets();
-	public IPropertySet getPropertySet(String name);
-
-	public IPropertySet createPropertySet(String name);
-	public IPropertySet createPropertySet(String name, String description);
-	public boolean addPropertySet(IPropertySet set);
-	public boolean addPropertySets(IPropertySet[] sets);
-	public boolean removePropertySet(String name);
+	public boolean isDirty();
+	public void setDirty(boolean flag);
 	
+	public boolean commit();
+	
+	public boolean wasRestored();
+	public void setWasRestored(boolean flag);
 }

@@ -18,7 +18,7 @@ package org.eclipse.rse.model;
 
 import java.util.List;
 
-import org.eclipse.rse.persistence.IRSEPersistableContainer;
+import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
 
 
 //

@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.filters;
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
-import org.eclipse.rse.model.IRSEModelObject;
+import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.references.ISystemPersistableReferencedObject;
 
 

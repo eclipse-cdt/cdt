@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.internal.model;
 
-import org.eclipse.rse.model.IRSEModelObject;
+import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.ui.SystemResources;
 
 

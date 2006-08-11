@@ -17,6 +17,8 @@
 package org.eclipse.rse.persistence.dom;
 
 
+import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -25,8 +27,6 @@ import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.IPropertySet;
-import org.eclipse.rse.model.IRSEModelObject;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemProfileManager;
 

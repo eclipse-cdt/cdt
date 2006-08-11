@@ -19,9 +19,9 @@ package org.eclipse.rse.ui.widgets.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.IPropertySet;
-import org.eclipse.rse.model.IRSEModelObject;
 
 
 public abstract class RSEModelServiceElement extends ServiceElement

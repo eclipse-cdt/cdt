@@ -14,12 +14,21 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
 
-import org.eclipse.rse.persistence.IRSEPersistableContainer;
-
-public interface IRSEModelObject extends IPropertySetContainer, IRSEPersistableContainer
-{
-	String getName();
-	String getDescription();
+public interface IProperty
+{	
+	public String getKey();
+	
+	public String getLabel();
+	public void setLabel(String label);
+	
+	public void setValue(String value);
+	public String getValue();
+	
+	public void setType(IPropertyType type);
+	public IPropertyType getType();
+	
+	public void setEnabled(boolean flag);
+	public boolean isEnabled();
 }

@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.model;
 
-import org.eclipse.rse.internal.model.IPropertyType;
+import org.eclipse.rse.core.model.IPropertyType;
 
 
 public  class PropertyType implements IPropertyType

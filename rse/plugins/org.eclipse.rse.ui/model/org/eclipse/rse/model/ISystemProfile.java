@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.model;
+import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilterPool;
 

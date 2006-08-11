@@ -17,8 +17,8 @@
 package org.eclipse.rse.filters;
 import java.util.Vector;
 
+import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
 import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.persistence.IRSEPersistableContainer;
 
 
 

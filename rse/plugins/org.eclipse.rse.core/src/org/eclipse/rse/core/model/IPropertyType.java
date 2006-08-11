@@ -14,23 +14,20 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
 
-import org.eclipse.rse.internal.model.IPropertyType;
-
-public interface IProperty
-{	
-	public String getKey();
+public interface IPropertyType
+{
+	public static final int TYPE_STRING = 0;
+	public static final int TYPE_INTEGER = 1;
+	public static final int TYPE_ENUM = 2;
+	public static final int TYPE_BOOLEAN = 3;
 	
-	public String getLabel();
-	public void setLabel(String label);
+	public boolean isString();
+	public boolean isInteger();
+	public boolean isEnum();
+	public boolean isBoolean();
 	
-	public void setValue(String value);
-	public String getValue();
-	
-	public void setType(IPropertyType type);
-	public IPropertyType getType();
-	
-	public void setEnabled(boolean flag);
-	public boolean isEnabled();
+	public int getType();
+	public String[] getEnumValues();
 }

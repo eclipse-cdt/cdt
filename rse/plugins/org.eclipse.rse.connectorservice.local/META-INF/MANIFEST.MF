@@ -8,6 +8,7 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.rse.services,
+ org.eclipse.rse.core,
  org.eclipse.rse.ui
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.connectorservice.local

@@ -14,20 +14,24 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.model;
+package org.eclipse.rse.core.model;
 
-public interface IPropertyType
+import java.util.Map;
+
+public interface IPropertySet 
 {
-	public static final int TYPE_STRING = 0;
-	public static final int TYPE_INTEGER = 1;
-	public static final int TYPE_ENUM = 2;
-	public static final int TYPE_BOOLEAN = 3;
+	public String getName();
+	public String getDescription();
+	public IProperty getProperty(String key);
+	public String getPropertyValue(String key);
+	public String[] getPropertyKeys();
+	public IPropertyType getPropertyType(String key);
 	
-	public boolean isString();
-	public boolean isInteger();
-	public boolean isEnum();
-	public boolean isBoolean();
+	public void setName(String name);
+	public void setProperties(Map map);
 	
-	public int getType();
-	public String[] getEnumValues();
+	public IProperty addProperty(String key, String value);
+	public IProperty addProperty(String key, String value, IPropertyType type);
+	public boolean removeProperty(String key);
+
 }

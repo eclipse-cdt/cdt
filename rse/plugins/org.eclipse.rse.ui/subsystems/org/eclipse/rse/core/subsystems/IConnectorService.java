@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.core.subsystems;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.IRSEModelObject;
 import org.eclipse.swt.widgets.Shell;
 
 

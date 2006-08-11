@@ -14,6 +14,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.connectorservice.dstore,
  org.eclipse.rse.subsystems.processes.core,
  org.eclipse.rse.processes.ui,
+ org.eclipse.rse.core,
  org.eclipse.rse.ui
 Eclipse-LazyStart: true
 Bundle-Vendor: Eclipse.org

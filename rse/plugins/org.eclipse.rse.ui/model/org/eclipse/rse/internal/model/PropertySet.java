@@ -20,8 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.rse.model.IProperty;
-import org.eclipse.rse.model.IPropertySet;
+import org.eclipse.rse.core.model.IProperty;
+import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.IPropertyType;
 import org.eclipse.rse.model.PropertyType;
 
 

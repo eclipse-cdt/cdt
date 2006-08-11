@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
-import org.eclipse.rse.model.IRSEModelObject;
+import org.eclipse.rse.core.model.IRSEModelObject;
 
 
 

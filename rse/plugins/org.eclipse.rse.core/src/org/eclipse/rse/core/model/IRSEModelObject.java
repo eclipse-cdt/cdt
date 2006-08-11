@@ -14,15 +14,12 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.persistence;
+package org.eclipse.rse.core.model;
 
-public interface IRSEPersistableContainer
+import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
+
+public interface IRSEModelObject extends IPropertySetContainer, IRSEPersistableContainer
 {
-	public boolean isDirty();
-	public void setDirty(boolean flag);
-	
-	public boolean commit();
-	
-	public boolean wasRestored();
-	public void setWasRestored(boolean flag);
+	String getName();
+	String getDescription();
 }

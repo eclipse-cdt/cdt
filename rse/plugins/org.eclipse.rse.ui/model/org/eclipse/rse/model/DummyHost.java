@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.model;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 

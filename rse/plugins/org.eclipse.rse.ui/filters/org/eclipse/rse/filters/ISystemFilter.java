@@ -17,8 +17,8 @@
 package org.eclipse.rse.filters;
 import java.util.Vector;
 
+import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.references.IRSEReferencedObject;
-import org.eclipse.rse.model.IRSEModelObject;
 
 
 /**

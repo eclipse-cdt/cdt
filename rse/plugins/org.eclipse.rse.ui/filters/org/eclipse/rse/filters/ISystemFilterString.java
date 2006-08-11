@@ -17,8 +17,8 @@
 package org.eclipse.rse.filters;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
-import org.eclipse.rse.model.IRSEModelObject;
 
 
 /**

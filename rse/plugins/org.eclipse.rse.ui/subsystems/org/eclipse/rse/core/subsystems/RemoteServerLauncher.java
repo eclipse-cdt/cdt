@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.eclipse.rse.core.internal.subsystems.RemoteServerLauncherConstants;
 import org.eclipse.rse.core.internal.subsystems.ServerLauncher;
-import org.eclipse.rse.internal.model.IPropertyType;
-import org.eclipse.rse.model.IProperty;
-import org.eclipse.rse.model.IPropertySet;
+import org.eclipse.rse.core.model.IProperty;
+import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.IPropertyType;
 import org.eclipse.rse.model.PropertyType;
 import org.eclipse.rse.ui.SystemResources;
 

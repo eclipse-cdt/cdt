@@ -9,6 +9,7 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.services.ssh,
  org.eclipse.rse.services,
+ org.eclipse.rse.core,
  org.eclipse.rse.ui,
  org.eclipse.team.cvs.core;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.team.cvs.ssh2;bundle-version="[3.2.0,4.0.0)",

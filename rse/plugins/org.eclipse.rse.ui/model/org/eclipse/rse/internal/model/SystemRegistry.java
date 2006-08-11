@@ -630,11 +630,15 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 								// remove the other one
 								for (int i = 0; i < v.size(); i++)
 								{
-									IServiceSubSystemConfiguration addedConfig = (IServiceSubSystemConfiguration)v.get(i);
-									if (addedConfig.getServiceType() == serviceType)
-									{
-										v.remove(addedConfig);
+									if (v.get(i) instanceof IServiceSubSystemConfiguration)
+									{		
+										IServiceSubSystemConfiguration addedConfig = (IServiceSubSystemConfiguration)v.get(i);
+										if (addedConfig.getServiceType() == serviceType)
+										{
+											v.remove(addedConfig);
+										}
 									}
+
 								}
 								
 								v.addElement(ssFactory);

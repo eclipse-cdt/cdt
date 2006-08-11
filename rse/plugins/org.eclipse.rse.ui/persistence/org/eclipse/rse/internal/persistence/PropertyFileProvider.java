@@ -264,7 +264,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			String value = (String)map.get(key);
 			String keyvalue = key + "=" + escapeValue(value);
 //			System.out.println("writing "+keyvalue);
-//			out.println(keyvalue);
+			out.println(keyvalue);
 		}
 		out.close();
 //		System.out.println("...wrote "+file.getFullPath());

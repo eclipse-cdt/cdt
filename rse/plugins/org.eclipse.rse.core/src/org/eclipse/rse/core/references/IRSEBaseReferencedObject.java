@@ -14,22 +14,22 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.references;
+package org.eclipse.rse.core.references;
 /**
  * Interface that any master object that is referenced must implement.
  */
-public interface ISystemBaseReferencedObject
+public interface IRSEBaseReferencedObject
 {
 	/**
 	 * Add a reference, increment reference count, return new count
 	 * @return new count of how many referencing objects reference this object.
 	 */
-	public int addReference(ISystemBaseReferencingObject ref);		
+	public int addReference(IRSEBaseReferencingObject ref);		
 	/**
 	 * Remove a reference, decrement reference count, return new count
 	 * @return new count of how many referencing objects reference this object.
 	 */
-	public int removeReference(ISystemBaseReferencingObject ref);	
+	public int removeReference(IRSEBaseReferencingObject ref);	
 	/**
 	 * Return a count of how many referencing objects reference this object.
 	 */
@@ -41,5 +41,5 @@ public interface ISystemBaseReferencedObject
 	/**
 	 * Return a list of all referencing objects of this object
 	 */
-	public ISystemBaseReferencingObject[] getReferencingObjects();
+	public IRSEBaseReferencingObject[] getReferencingObjects();
 } 

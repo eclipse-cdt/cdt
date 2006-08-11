@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.references;
+package org.eclipse.rse.core.references;
 
 /**
  * Referenced objects are objects that have shadow objects of them.
@@ -22,7 +22,7 @@ package org.eclipse.rse.references;
  * real object to appear multiple times. In these cases, a unique shadow object 
  * is created for each unique instance of the real object.
  * <p>
- * The parent interface ISystemReferencedObject captures the simple set of methods 
+ * The parent interface IRSEReferencedObject captures the simple set of methods 
  * an object that supports such a shadow must implement.
  * <p>
  * This interface specializes that for the case of objects which support references 
@@ -38,8 +38,8 @@ package org.eclipse.rse.references;
  * This interface captures the method to allow a shadow or referencing object to
  * query that unique name or key from this referencable master object.
  */
-public interface ISystemBasePersistableReferencedObject
-	   extends ISystemBaseReferencedObject
+public interface IRSEBasePersistableReferencedObject
+	   extends IRSEBaseReferencedObject
 {
 	
     /**

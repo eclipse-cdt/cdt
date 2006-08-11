@@ -16,6 +16,9 @@
 
 package org.eclipse.rse.references;
 
+import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
+import org.eclipse.rse.core.references.IRSEReferencedObject;
+
 /**
  * A simple class that implements ISystemPersistableReferencedObject.
  * This is an object that can have shadow (reference) objects, which simply
@@ -30,7 +33,7 @@ package org.eclipse.rse.references;
  * @lastgen interface SystemPersistableReferencedObject extends SystemReferencedObject {}
  */
 
-public interface ISystemPersistableReferencedObject extends ISystemReferencedObject, ISystemBasePersistableReferencedObject
+public interface ISystemPersistableReferencedObject extends IRSEReferencedObject, IRSEBasePersistableReferencedObject
 {
 
 }

@@ -17,17 +17,17 @@
 package org.eclipse.rse.internal.references;
 import java.util.Vector;
 
-import org.eclipse.rse.references.ISystemBaseReferencedObject;
-import org.eclipse.rse.references.ISystemBaseReferencingObject;
+import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
+import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 
 
 /**
- * This is a class that implements all the methods in the ISystemReferencedObject.
+ * This is a class that implements all the methods in the IRSEReferencedObject.
  * It makes implementing this interface trivial.
  * The easiest use of this class is to subclass it, but since that is not
  * always possible, it is not abstract and hence can be leveraged via containment.
  */
-public class SystemReferencedObjectHelper implements ISystemBaseReferencedObject 
+public class SystemReferencedObjectHelper implements IRSEBaseReferencedObject 
 {
 	private Vector referencingObjects = new Vector();
 	/**
@@ -39,18 +39,18 @@ public class SystemReferencedObjectHelper implements ISystemBaseReferencedObject
 	}
 
 	/**
-	 * @see ISystemBaseReferencedObject#addReference(ISystemBaseReferencingObject)
+	 * @see IRSEBaseReferencedObject#addReference(IRSEBaseReferencingObject)
 	 */
-	public int addReference(ISystemBaseReferencingObject ref) 
+	public int addReference(IRSEBaseReferencingObject ref) 
 	{
 		referencingObjects.addElement(ref);
 		return referencingObjects.size();
 	}
 
 	/**
-	 * @see ISystemBaseReferencedObject#removeReference(ISystemBaseReferencingObject)
+	 * @see IRSEBaseReferencedObject#removeReference(IRSEBaseReferencingObject)
 	 */
-	public int removeReference(ISystemBaseReferencingObject ref) 
+	public int removeReference(IRSEBaseReferencingObject ref) 
 	{
 		int before = referencingObjects.size();
 		referencingObjects.removeElement(ref);
@@ -60,7 +60,7 @@ public class SystemReferencedObjectHelper implements ISystemBaseReferencedObject
 	}
 
 	/**
-	 * @see ISystemBaseReferencedObject#getReferenceCount()
+	 * @see IRSEBaseReferencedObject#getReferenceCount()
 	 */
 	public int getReferenceCount() 
 	{
@@ -76,13 +76,13 @@ public class SystemReferencedObjectHelper implements ISystemBaseReferencedObject
 	}
 
 	/**
-	 * @see ISystemBaseReferencedObject#getReferencingObjects()
+	 * @see IRSEBaseReferencedObject#getReferencingObjects()
 	 */
-	public ISystemBaseReferencingObject[] getReferencingObjects() 
+	public IRSEBaseReferencingObject[] getReferencingObjects() 
 	{
-		ISystemBaseReferencingObject[] references = new ISystemBaseReferencingObject[referencingObjects.size()];
+		IRSEBaseReferencingObject[] references = new IRSEBaseReferencingObject[referencingObjects.size()];
 		for (int idx=0; idx<referencingObjects.size(); idx++)
-		   references[idx] = (ISystemBaseReferencingObject)referencingObjects.elementAt(idx);
+		   references[idx] = (IRSEBaseReferencingObject)referencingObjects.elementAt(idx);
 		return references;
 	}
 

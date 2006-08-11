@@ -14,6 +14,7 @@ Require-Bundle: org.eclipse.rse.services,
  org.eclipse.core.runtime,
  org.eclipse.swt,
  org.eclipse.ui,
+ org.eclipse.rse.core,
  org.eclipse.rse.ui
 Bundle-Activator: org.eclipse.rse.subsystems.processes.core.Activator
 Eclipse-LazyStart: true

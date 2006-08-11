@@ -21,10 +21,11 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
+import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterConstants;
 import org.eclipse.rse.filters.ISystemFilterContainer;
-import org.eclipse.rse.filters.ISystemFilterNamingPolicy;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
@@ -34,7 +35,6 @@ import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.persistence.IRSEPersistenceManager;
-import org.eclipse.rse.references.ISystemBaseReferencingObject;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 //
@@ -257,7 +257,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
                                                   ISystemFilterPoolManagerProvider caller,
                                                   String name,
                                                   boolean allowNestedFilters, 
-                                                  int savePolicy, ISystemFilterNamingPolicy namingPolicy) 
+                                                  int savePolicy, IRSEFilterNamingPolicy namingPolicy) 
     {
     
     	SystemFilterPoolManager mgr = null;
@@ -648,7 +648,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
        
         
     	// remove all references
-    	ISystemBaseReferencingObject[] refs = pool.getReferencingObjects();
+    	IRSEBaseReferencingObject[] refs = pool.getReferencingObjects();
     	//boolean needsSave = false;
     	if (refs != null)
     	{
@@ -899,12 +899,12 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
         invalidatePoolCache(); 	
         
         // inform all referencees
-    	ISystemBaseReferencingObject[] refs = pool.getReferencingObjects();
+    	IRSEBaseReferencingObject[] refs = pool.getReferencingObjects();
     	if (refs != null)
     	{
     	  for (int idx=0; idx < refs.length; idx++)
     	  {
-    	  	 ISystemBaseReferencingObject ref = refs[idx];
+    	  	 IRSEBaseReferencingObject ref = refs[idx];
     	  	 if (ref instanceof ISystemFilterPoolReference)
     	   	 {
     	  	 	ISystemFilterPoolReference fpRef = (ISystemFilterPoolReference)ref;
@@ -967,7 +967,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     {
         ISystemFilterPool newPool = copySystemFilterPool(targetMgr, oldPool, newName);
         // find all references to original, and reset them to reference the new...
-    	ISystemBaseReferencingObject[] refs = oldPool.getReferencingObjects();
+    	IRSEBaseReferencingObject[] refs = oldPool.getReferencingObjects();
     	if (refs != null)
     	{
     	  for (int idx=0; idx < refs.length; idx++)
@@ -1709,7 +1709,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
      * @param name The name of the manager, from which the file name is derived.
      * @param namingPolicy Naming prefix information for persisted data file names.
      */
-    protected static ISystemFilterPoolManager restoreFromOneFile(Logger logger, IFolder mgrFolder, String name, ISystemFilterNamingPolicy namingPolicy)
+    protected static ISystemFilterPoolManager restoreFromOneFile(Logger logger, IFolder mgrFolder, String name, IRSEFilterNamingPolicy namingPolicy)
        throws Exception
     {
     	/* FIXME

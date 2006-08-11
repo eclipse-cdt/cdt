@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.filters;
+import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.model.IRSEModelObject;
 import org.eclipse.rse.references.ISystemPersistableReferencedObject;
 
@@ -37,14 +38,14 @@ public interface ISystemFilterPool extends ISystemPersistableReferencedObject, I
     public ISystemFilterPoolManagerProvider getProvider();	
     /**
      * Set the naming policy used when saving data to disk.
-     * @see org.eclipse.rse.filters.ISystemFilterNamingPolicy
+     * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
      */
-    public void setNamingPolicy(ISystemFilterNamingPolicy namingPolicy);
+    public void setNamingPolicy(IRSEFilterNamingPolicy namingPolicy);
     /**
      * Get the naming policy currently used when saving data to disk.
-     * @see org.eclipse.rse.filters.ISystemFilterNamingPolicy
+     * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
      */
-    public ISystemFilterNamingPolicy getNamingPolicy();
+    public IRSEFilterNamingPolicy getNamingPolicy();
     /**
      * Does this filter support nested filters?
      */

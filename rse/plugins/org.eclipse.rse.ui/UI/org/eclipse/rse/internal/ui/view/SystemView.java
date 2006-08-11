@@ -54,6 +54,7 @@ import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemElapsedTimer;
 import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
 import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterContainer;
@@ -77,7 +78,6 @@ import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemRemoteElementResourceSet;
-import org.eclipse.rse.references.ISystemBaseReferencingObject;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
@@ -2354,14 +2354,14 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    	   	        //clearSelection();
 	    	   	        if (toSelect != null)    	   	        
 	    	   	        {
-	    	   	          if (parent instanceof ISystemBaseReferencingObject) 
+	    	   	          if (parent instanceof IRSEBaseReferencingObject) 
 	    	   	          {
 	                        TreeItem child = (TreeItem)internalFindReferencedItem((Item)parentItem, toSelect, 1);
 	                        if (child != null)
 	                          toSelect = child.getData();
 	    	   	          }
 	    	   	          else if ( (parent instanceof ISystemFilterPoolReferenceManagerProvider) &&
-	    	   	                    !(src instanceof ISystemBaseReferencingObject) )
+	    	   	                    !(src instanceof IRSEBaseReferencingObject) )
 	    	   	          {
 	    	   	          	// we are in "don't show filter pools" mode and a new filter was created
 	    	   	          	//  (we get the actual filter, vs on pool ref creation when we get the pool ref)
@@ -4334,9 +4334,9 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     {
 	    // compare with node
 	    Object data= parent.getData();
-	    if ((data != null) && (data instanceof ISystemBaseReferencingObject))
+	    if ((data != null) && (data instanceof IRSEBaseReferencingObject))
 	    {
-	      ISystemBaseReferencingObject refingData = (ISystemBaseReferencingObject)data;
+	      IRSEBaseReferencingObject refingData = (IRSEBaseReferencingObject)data;
 	      Object refedData = refingData.getReferencedObject();
 	      //logDebugMsg("data is a refing obj to " + refingData);	      
 		  if (refedData == element)

@@ -20,13 +20,13 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.filters.SystemFilterContainerReferenceCommonMethods;
 import org.eclipse.rse.internal.filters.SystemFilterStringReference;
 import org.eclipse.rse.internal.references.SystemReferencingObject;
 import org.eclipse.rse.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemContentsType;
-import org.eclipse.rse.references.ISystemBaseReferencedObject;
 import org.eclipse.rse.references.ISystemReferencingObject;
 
 
@@ -390,14 +390,14 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
 	/**
 	 * Set the object to which we reference. Override of inherited
 	 */
-	public void setReferencedObject(ISystemBaseReferencedObject obj)
+	public void setReferencedObject(IRSEBaseReferencedObject obj)
 	{
 		setReferencedFilter((ISystemFilter)obj);
 	}
 	/**
 	 * Get the object which we reference. Override of inherited
 	 */
-	public ISystemBaseReferencedObject getReferencedObject()
+	public IRSEBaseReferencedObject getReferencedObject()
 	{
 		return getReferencedFilter();
 	}

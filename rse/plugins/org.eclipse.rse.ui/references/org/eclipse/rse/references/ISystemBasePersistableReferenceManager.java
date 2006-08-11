@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.references;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
 
 
 /**
@@ -119,7 +120,7 @@ public interface ISystemBasePersistableReferenceManager
 	 * @param object The referencable object to which to search for a referencing object within this list
 	 * @return true if found in list, false otherwise.
 	 */
-	public boolean isReferenced(ISystemBasePersistableReferencedObject object);	
+	public boolean isReferenced(IRSEBasePersistableReferencedObject object);	
 	/**
 	 * Search list of referencing objects to see if one of them references the given referencable object.
 	 * This is done by comparing the reference names of each, not the in-memory pointers.
@@ -127,7 +128,7 @@ public interface ISystemBasePersistableReferenceManager
 	 * @return the referencing object within this list which references the given referencable object, or
 	 * null if no reference found.
 	 */
-	public ISystemBasePersistableReferencingObject getReferencedObject(ISystemBasePersistableReferencedObject object);	
+	public ISystemBasePersistableReferencingObject getReferencedObject(IRSEBasePersistableReferencedObject object);	
 	
     /**
      * Attempt to save contents of manager to disk. Only call if not doing your own save from

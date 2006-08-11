@@ -23,10 +23,10 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.SystemResourceHelpers;
+import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterConstants;
 import org.eclipse.rse.filters.ISystemFilterContainer;
-import org.eclipse.rse.filters.ISystemFilterNamingPolicy;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
@@ -75,7 +75,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	protected static final String TYPE_EDEFAULT = null;
 
     private int savePolicy;
-    private ISystemFilterNamingPolicy namingPolicy = null;
+    private IRSEFilterNamingPolicy namingPolicy = null;
     private ISystemFilterPoolManager mgr;
     //private Vector filters = new Vector();
     private SystemFilterContainerCommonMethods helpers = null;
@@ -361,7 +361,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      * Private helper method to core initialization, from either createXXX or restore.
      */
 	protected void initialize(String name,
-	                          int savePolicy, ISystemFilterNamingPolicy namingPolicy)
+	                          int savePolicy, IRSEFilterNamingPolicy namingPolicy)
 	{
         setName(name); // mof attribute
         setSavePolicy(savePolicy);
@@ -411,9 +411,9 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 
     /**
      * Set the naming policy used when saving data to disk.
-     * @see org.eclipse.rse.filters.ISystemFilterNamingPolicy
+     * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
      */
-    public void setNamingPolicy(ISystemFilterNamingPolicy namingPolicy)
+    public void setNamingPolicy(IRSEFilterNamingPolicy namingPolicy)
     {
     	if (this.namingPolicy != namingPolicy)
     	{
@@ -424,9 +424,9 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 
     /**
      * Get the naming policy currently used when saving data to disk.
-     * @see org.eclipse.rse.filters.ISystemFilterNamingPolicy
+     * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
      */
-    public ISystemFilterNamingPolicy getNamingPolicy()
+    public IRSEFilterNamingPolicy getNamingPolicy()
     {
     	return namingPolicy;
     }
@@ -879,7 +879,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      * Will populate and return a list.
      * Only makes sense to use if the save policy is one file per filter.
      */
-    protected static Vector deduceFilterNames(IFolder folder, ISystemFilterNamingPolicy namingPolicy)
+    protected static Vector deduceFilterNames(IFolder folder, IRSEFilterNamingPolicy namingPolicy)
     {
     	Vector filterNames = SystemResourceHelpers.getResourceHelpers().convertToVectorAndStrip(
     	          SystemResourceHelpers.getResourceHelpers().listFiles(folder,
@@ -938,7 +938,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      * @see org.eclipse.rse.filters.ISystemFilterConstants
      */
     protected static ISystemFilterPool restore(String name, int savePolicy, 
-                                              ISystemFilterNamingPolicy namingPolicy)
+                                              IRSEFilterNamingPolicy namingPolicy)
            throws Exception
     {
         if (namingPolicy == null)
@@ -1109,7 +1109,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     /**
      * Return the root save file name without the extension .xmi
      */
-    protected static String getRootSaveFileName(ISystemFilterNamingPolicy namingPolicy, String poolName)
+    protected static String getRootSaveFileName(IRSEFilterNamingPolicy namingPolicy, String poolName)
     {
     	return namingPolicy.getFilterPoolSaveFileName(poolName);
     }
@@ -1118,7 +1118,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	/**
 	 * Return the unique reference name of this object.
 	 * <p>
-	 * As required by the {@link org.eclipse.rse.references.ISystemBasePersistableReferencedObject ISystemPersistableReferencedObject} 
+	 * As required by the {@link org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject ISystemPersistableReferencedObject} 
 	 * interface.
 	 */
 	public String getReferenceName()

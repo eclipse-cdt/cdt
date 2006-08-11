@@ -17,8 +17,8 @@
 package org.eclipse.rse.filters;
 import java.util.Vector;
 
+import org.eclipse.rse.core.references.IRSEReferencedObject;
 import org.eclipse.rse.model.IRSEModelObject;
-import org.eclipse.rse.references.ISystemReferencedObject;
 
 
 /**
@@ -53,7 +53,7 @@ import org.eclipse.rse.references.ISystemReferencedObject;
 /**
  * @lastgen interface SystemFilterPool extends SystemReferencedObject, SystemFilterContainer {}
  */
-public interface ISystemFilter extends ISystemReferencedObject, ISystemFilterContainer, IRSEModelObject
+public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContainer, IRSEModelObject
 {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.

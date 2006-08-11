@@ -16,9 +16,9 @@
 
 package org.eclipse.rse.internal.references;
 
+import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
+import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 import org.eclipse.rse.references.ISystemBasePersistableReferenceManager;
-import org.eclipse.rse.references.ISystemBasePersistableReferencedObject;
-import org.eclipse.rse.references.ISystemBaseReferencedObject;
 import org.eclipse.rse.references.ISystemPersistableReferencingObject;
 
 /**
@@ -51,10 +51,10 @@ public abstract class SystemPersistableReferencingObject extends SystemReferenci
 	 * Set the in-memory reference to the master object.
 	 * This implementation also extracts that master object's name and calls
 	 * setReferencedObjectName as part of this method call.
-	 * @see org.eclipse.rse.references.ISystemBasePersistableReferencingObject#setReferencedObject(ISystemBasePersistableReferencedObject)
+	 * @see org.eclipse.rse.references.ISystemBasePersistableReferencingObject#setReferencedObject(IRSEBasePersistableReferencedObject)
 	 */
-	public void setReferencedObject(ISystemBasePersistableReferencedObject obj) {
-		getHelper().setReferencedObject((ISystemBaseReferencedObject) obj);
+	public void setReferencedObject(IRSEBasePersistableReferencedObject obj) {
+		getHelper().setReferencedObject((IRSEBaseReferencedObject) obj);
 		setReferencedObjectName(obj.getReferenceName());
 	}
 

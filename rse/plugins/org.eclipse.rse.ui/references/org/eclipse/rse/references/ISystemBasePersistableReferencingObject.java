@@ -15,6 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.references;
+
+import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
+import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
+
 /**
  * Referencing objects are shadows of real objects. Typically, shadows are created
  * to enable a GUI which does not allow the same real object to appear multiple times.
@@ -36,14 +40,14 @@ package org.eclipse.rse.references;
  * This interface captures the methods to set and query that name or key.
  */
 public interface ISystemBasePersistableReferencingObject
-	   extends ISystemBaseReferencingObject 
+	   extends IRSEBaseReferencingObject 
 {
 	/**
 	 * Set the object to which we reference. This is an overload of the parent
 	 * interface method of the same name. This one takes an object of which we
 	 * can query its unique name for the purpose of saving that to disk.
 	 */
-	public void setReferencedObject(ISystemBasePersistableReferencedObject obj);	
+	public void setReferencedObject(IRSEBasePersistableReferencedObject obj);	
     /**
      * Query the unique name or key of the object we are referencing.
      */

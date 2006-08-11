@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.references;
+import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
+import org.eclipse.rse.core.references.IRSEReferencedObject;
 import org.eclipse.rse.internal.model.RSEModelObject;
-import org.eclipse.rse.references.ISystemBaseReferencingObject;
-import org.eclipse.rse.references.ISystemReferencedObject;
 
 
 /**
@@ -33,7 +33,7 @@ import org.eclipse.rse.references.ISystemReferencedObject;
 /** 
  * @lastgen class SystemReferencedObjectImpl Impl implements SystemReferencedObject, EObject {}
  */
-public abstract class SystemReferencedObject extends RSEModelObject implements ISystemReferencedObject
+public abstract class SystemReferencedObject extends RSEModelObject implements IRSEReferencedObject
 {
     protected SystemReferencedObjectHelper helper = null;
 	
@@ -46,13 +46,13 @@ public abstract class SystemReferencedObject extends RSEModelObject implements I
 		helper = new SystemReferencedObjectHelper();
 	}
 	// ----------------------------------
-	// ISystemReferencedObject methods...
+	// IRSEReferencedObject methods...
 	// ----------------------------------
 	/**
 	 * Add a reference, increment reference count, return new count
 	 * @return new count of how many referencing objects reference this object.
 	 */
-	public int addReference(ISystemBaseReferencingObject ref)
+	public int addReference(IRSEBaseReferencingObject ref)
 	{
 		return helper.addReference(ref);
 	}
@@ -60,7 +60,7 @@ public abstract class SystemReferencedObject extends RSEModelObject implements I
 	 * Remove a reference, decrement reference count, return new count
 	 * @return new count of how many referencing objects reference this object.
 	 */
-	public int removeReference(ISystemBaseReferencingObject ref)
+	public int removeReference(IRSEBaseReferencingObject ref)
 	{
 		return helper.removeReference(ref);
 	}
@@ -81,7 +81,7 @@ public abstract class SystemReferencedObject extends RSEModelObject implements I
 	/**
 	 * Return a list of all referencing objects of this object
 	 */
-	public ISystemBaseReferencingObject[] getReferencingObjects()
+	public IRSEBaseReferencingObject[] getReferencingObjects()
 	{
 		return helper.getReferencingObjects();
 	}

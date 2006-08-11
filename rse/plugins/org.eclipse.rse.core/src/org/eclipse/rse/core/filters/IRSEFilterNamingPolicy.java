@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.filters;
+package org.eclipse.rse.core.filters;
 /**
  * Allows tool writers to specify the naming standards for the
  * persistence files and folders involved with filters.
@@ -23,7 +23,7 @@ package org.eclipse.rse.filters;
  * <p>
  * @see org.eclipse.rse.internal.filters.SystemFilterNamingPolicy#getNamingPolicy()
  */
-public interface ISystemFilterNamingPolicy
+public interface IRSEFilterNamingPolicy
 {
     /**
      * Get the unqualified save file name for the given SystemFilterPoolManager object name.

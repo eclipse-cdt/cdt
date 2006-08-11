@@ -17,6 +17,7 @@
 package org.eclipse.rse.internal.filters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
@@ -24,7 +25,6 @@ import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.filters.ISystemFilterStringReference;
 import org.eclipse.rse.internal.references.SystemReferencingObjectHelper;
-import org.eclipse.rse.references.ISystemBaseReferencedObject;
 
 /**
  * A reference to a system filter string.
@@ -145,23 +145,23 @@ public class SystemFilterStringReference
 	// ----------------------------------------------
 	
 	/**
-	 * @see org.eclipse.rse.references.ISystemBaseReferencingObject#setReferencedObject(ISystemBaseReferencedObject)
+	 * @see org.eclipse.rse.core.references.IRSEBaseReferencingObject#setReferencedObject(IRSEBaseReferencedObject)
 	 */
-	public void setReferencedObject(ISystemBaseReferencedObject obj)
+	public void setReferencedObject(IRSEBaseReferencedObject obj)
 	{
         helper.setReferencedObject(obj);
 	}
 	
 	/**
-	 * @see org.eclipse.rse.references.ISystemBaseReferencingObject#getReferencedObject()
+	 * @see org.eclipse.rse.core.references.IRSEBaseReferencingObject#getReferencedObject()
 	 */
-	public ISystemBaseReferencedObject getReferencedObject()
+	public IRSEBaseReferencedObject getReferencedObject()
 	{
         return helper.getReferencedObject();
  	}
 	
 	/**
-	 * @see org.eclipse.rse.references.ISystemBaseReferencingObject#removeReference()
+	 * @see org.eclipse.rse.core.references.IRSEBaseReferencingObject#removeReference()
 	 */
 	public int removeReference()
 	{

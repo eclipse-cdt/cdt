@@ -44,6 +44,7 @@ import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
+import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.model.IHost;
@@ -54,7 +55,6 @@ import org.eclipse.rse.model.ISystemRemoteChangeListener;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.references.ISystemBaseReferencingObject;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
@@ -310,10 +310,10 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	    	{
 	   	    if (child instanceof ISystemFilter)
 		    {
-		        ISystemBaseReferencingObject[] references = ((ISystemFilter)child).getReferencingObjects();
+		        IRSEBaseReferencingObject[] references = ((ISystemFilter)child).getReferencingObjects();
 		        for (int i = 0; i < references.length; i++)
 		        {
-		            ISystemBaseReferencingObject ref = references[i];
+		            IRSEBaseReferencingObject ref = references[i];
 		            Widget w = findItem(ref);
 		            if (w != null)
 		            {

@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
 import org.eclipse.rse.references.ISystemBasePersistableReferenceManager;
-import org.eclipse.rse.references.ISystemBasePersistableReferencedObject;
 import org.eclipse.rse.references.ISystemBasePersistableReferencingObject;
 
 
@@ -245,7 +245,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 * @param object The referencable object to which to search for a referencing object within this list
 	 * @return true if found in list, false otherwise.
 	 */
-	public boolean isReferenced(ISystemBasePersistableReferencedObject object)
+	public boolean isReferenced(IRSEBasePersistableReferencedObject object)
 	{
         return (getReferencedObject(object) != null);
 	}
@@ -257,7 +257,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 * @return the referencing object within this list which references the given referencable object, or
 	 * null if no reference found.
 	 */
-	public ISystemBasePersistableReferencingObject getReferencedObject(ISystemBasePersistableReferencedObject object)
+	public ISystemBasePersistableReferencingObject getReferencedObject(IRSEBasePersistableReferencedObject object)
 	{
         List list = internalGetList();
     	ISystemBasePersistableReferencingObject match = null;

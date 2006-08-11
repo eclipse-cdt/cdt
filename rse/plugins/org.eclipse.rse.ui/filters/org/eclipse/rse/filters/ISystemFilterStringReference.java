@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.filters;
-import org.eclipse.rse.references.ISystemBaseReferencingObject;
+import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 
 /**
  * Represents a reference to a master filter string.
@@ -23,7 +23,7 @@ import org.eclipse.rse.references.ISystemBaseReferencingObject;
  * This is not modelled in MOF.
  */
 public interface ISystemFilterStringReference 
-       extends ISystemBaseReferencingObject 
+       extends IRSEBaseReferencingObject 
 {
 	/**
 	 * Return the reference manager which is managing this filter reference

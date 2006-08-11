@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.references;
-import org.eclipse.rse.references.ISystemBasePersistableReferencedObject;
-import org.eclipse.rse.references.ISystemBaseReferencedObject;
-import org.eclipse.rse.references.ISystemBaseReferencingObject;
+import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
+import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
+import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 
 /**
  * This class extends the support for managing a transient in-memory reference
@@ -32,7 +32,7 @@ public class SystemPersistableReferencingObjectHelper
     /**
      * Default constructor. 
      */
-    protected SystemPersistableReferencingObjectHelper(ISystemBaseReferencingObject caller)
+    protected SystemPersistableReferencingObjectHelper(IRSEBaseReferencingObject caller)
     {
     	super(caller);
     }
@@ -40,7 +40,7 @@ public class SystemPersistableReferencingObjectHelper
     /**
      * Constructor that saves effort of calling setReferencedObject.
      */
-    public SystemPersistableReferencingObjectHelper(ISystemBaseReferencingObject caller, ISystemBasePersistableReferencedObject obj)
+    public SystemPersistableReferencingObjectHelper(IRSEBaseReferencingObject caller, IRSEBasePersistableReferencedObject obj)
     {
     	this(caller);
     	setReferencedObject(obj);
@@ -51,9 +51,9 @@ public class SystemPersistableReferencingObjectHelper
 	 * ISystemPersistableReferencedObject so we can query its name for
 	 * storage purposes.
 	 */
-	public void setReferencedObject(ISystemBasePersistableReferencedObject obj)
+	public void setReferencedObject(IRSEBasePersistableReferencedObject obj)
 	{
-		super.setReferencedObject((ISystemBaseReferencedObject)obj);
+		super.setReferencedObject((IRSEBaseReferencedObject)obj);
 		this.masterObjectName = obj.getReferenceName();
 	}
 	

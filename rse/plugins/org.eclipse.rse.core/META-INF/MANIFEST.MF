@@ -7,5 +7,7 @@ Bundle-Activator: org.eclipse.rse.core.RSECorePlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.rse.core
+Export-Package: org.eclipse.rse.core,
+ org.eclipse.rse.core.filters,
+ org.eclipse.rse.core.references
 Bundle-Vendor: Eclipse.org

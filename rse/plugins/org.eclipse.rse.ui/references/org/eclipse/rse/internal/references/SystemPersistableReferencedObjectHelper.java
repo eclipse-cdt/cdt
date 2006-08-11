@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.references;
-import org.eclipse.rse.references.ISystemBasePersistableReferencedObject;
+import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
 
 /**
  * This class extends the support for a class that supports being managing by a transient 
@@ -26,7 +26,7 @@ import org.eclipse.rse.references.ISystemBasePersistableReferencedObject;
  */
 public class SystemPersistableReferencedObjectHelper 
        extends SystemReferencedObjectHelper
-       implements ISystemBasePersistableReferencedObject 
+       implements IRSEBasePersistableReferencedObject 
 {
 	private String referenceName;
 		

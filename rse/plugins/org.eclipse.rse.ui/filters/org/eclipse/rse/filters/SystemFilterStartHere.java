@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.filters;
+import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.internal.filters.SystemFilterNamingPolicy;
 import org.eclipse.rse.internal.filters.SystemFilterPoolManager;
 import org.eclipse.rse.internal.filters.SystemFilterPoolReferenceManager;
@@ -48,7 +49,7 @@ public class SystemFilterStartHere
      * Factory method to return an instance populated with defaults.
      * You can then simply override whatever is desired via setXXX methods.
      */
-    public static ISystemFilterNamingPolicy createSystemFilterNamingPolicy()
+    public static IRSEFilterNamingPolicy createSystemFilterNamingPolicy()
     {
     	return SystemFilterNamingPolicy.getNamingPolicy();
     }
@@ -99,7 +100,7 @@ public class SystemFilterStartHere
     public static ISystemFilterPoolReferenceManager createSystemFilterPoolReferenceManager(
                                                     ISystemFilterPoolReferenceManagerProvider caller,
                                                     ISystemFilterPoolManagerProvider relatedPoolMgrProvider,
-                                                    String name, ISystemFilterNamingPolicy namingPolicy)
+                                                    String name, IRSEFilterNamingPolicy namingPolicy)
     {
     	return SystemFilterPoolReferenceManager.createSystemFilterPoolReferenceManager(
     	  caller, relatedPoolMgrProvider, null, name, SAVE_POLICY_NONE, namingPolicy);

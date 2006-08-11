@@ -23,17 +23,17 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
+import org.eclipse.rse.core.references.IRSEReferencedObject;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterConstants;
 import org.eclipse.rse.filters.ISystemFilterContainer;
-import org.eclipse.rse.filters.ISystemFilterNamingPolicy;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.filters.SystemFilterSimple;
 import org.eclipse.rse.internal.references.SystemReferencedObject;
-import org.eclipse.rse.references.ISystemReferencedObject;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 
@@ -46,7 +46,7 @@ import org.eclipse.rse.ui.SystemResources;
 /** 
  * @lastgen class SystemFilterImpl extends SystemReferencedObjectImpl implements SystemFilter, SystemReferencedObject, SystemFilterContainer, IAdaptable {}
  */
-public class SystemFilter extends SystemReferencedObject implements ISystemFilter, ISystemReferencedObject, ISystemFilterContainer, IAdaptable
+public class SystemFilter extends SystemReferencedObject implements ISystemFilter, IRSEReferencedObject, ISystemFilterContainer, IAdaptable
 {
 	
 	/**
@@ -946,7 +946,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
      * @return SystemFilter object if restored ok, null if error encountered. If null, call getLastException().
      */
     public static ISystemFilter restore(IFolder folder, String name, ISystemFilterPool parentPool, 
-                                       ISystemFilterNamingPolicy namingPolicy)
+                                       IRSEFilterNamingPolicy namingPolicy)
            throws Exception
     {
     	/* FIXME
@@ -976,7 +976,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
     /**
      * Return the root save file name without the extension .xmi
      */
-    protected static String getRootSaveFileName(ISystemFilterNamingPolicy namingPolicy, String name)
+    protected static String getRootSaveFileName(IRSEFilterNamingPolicy namingPolicy, String name)
     {
     	return namingPolicy.getFilterSaveFileName(name);
     }
@@ -985,7 +985,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
     /**
      * Return naming policy
      */
-    protected static ISystemFilterNamingPolicy getNamingPolicy(ISystemFilter filter)
+    protected static IRSEFilterNamingPolicy getNamingPolicy(ISystemFilter filter)
     {
     	return filter.getParentFilterPool().getNamingPolicy();
     }

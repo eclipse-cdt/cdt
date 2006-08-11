@@ -20,10 +20,10 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.rse.core.SystemResourceHelpers;
+import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterConstants;
-import org.eclipse.rse.filters.ISystemFilterNamingPolicy;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
@@ -51,7 +51,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
     private ISystemFilterPoolManagerProvider poolMgrProvider = null;
 	private ISystemFilterPoolManager defaultPoolMgr = null;
 	private ISystemFilterPoolReferenceManagerProvider caller = null;
-	private ISystemFilterNamingPolicy namingPolicy = null;
+	private IRSEFilterNamingPolicy namingPolicy = null;
 	private int savePolicy = ISystemFilterSavePolicies.SAVE_POLICY_NONE;
 	private Object mgrData = null;
 	private IFolder mgrFolder = null;
@@ -98,7 +98,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
                                                     IFolder mgrFolder,
                                                     String name,
                                                     int savePolicy, 
-                                                    ISystemFilterNamingPolicy namingPolicy)
+                                                    IRSEFilterNamingPolicy namingPolicy)
     {
         SystemFilterPoolReferenceManager mgr = null;    	
      
@@ -147,7 +147,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
                               IFolder folder, 
                               String name, 
                               int savePolicy, 
-                              ISystemFilterNamingPolicy namingPolicy,
+                              IRSEFilterNamingPolicy namingPolicy,
                               ISystemFilterPoolManagerProvider relatedPoolManagerProvider)
     {
     	if (!initialized)
@@ -164,7 +164,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
                               IFolder folder, 
                               String name, 
                               int savePolicy, 
-                              ISystemFilterNamingPolicy namingPolicy)
+                              IRSEFilterNamingPolicy namingPolicy)
     {
     	this.mgrFolder = folder;
     	setProvider(caller);
@@ -308,18 +308,18 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
     }
     /**
      * Set the naming policy used when saving data to disk.
-     * @see org.eclipse.rse.filters.ISystemFilterNamingPolicy
+     * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
      */
-    public void setNamingPolicy(ISystemFilterNamingPolicy namingPolicy)
+    public void setNamingPolicy(IRSEFilterNamingPolicy namingPolicy)
     {
     	this.namingPolicy = namingPolicy;
     }
 
     /**
      * Get the naming policy currently used when saving data to disk.
-     * @see org.eclipse.rse.filters.ISystemFilterNamingPolicy
+     * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
      */
-    public ISystemFilterNamingPolicy getNamingPolicy()
+    public IRSEFilterNamingPolicy getNamingPolicy()
     {
     	return namingPolicy;
     }
@@ -860,7 +860,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
      */
     public static ISystemFilterPoolReferenceManager restore(ISystemFilterPoolReferenceManagerProvider caller, 
                                                            IFolder mgrFolder, String name, 
-                                                           ISystemFilterNamingPolicy namingPolicy)
+                                                           IRSEFilterNamingPolicy namingPolicy)
         throws Exception
     {
     	if (namingPolicy == null)
@@ -888,7 +888,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
      * @param name The name of the manager, from which the file name is derived.
      * @param namingPolicy Naming prefix information for persisted data file names.
      */
-    protected static ISystemFilterPoolReferenceManager restoreFromOneFile(IFolder mgrFolder, String name, ISystemFilterNamingPolicy namingPolicy)
+    protected static ISystemFilterPoolReferenceManager restoreFromOneFile(IFolder mgrFolder, String name, IRSEFilterNamingPolicy namingPolicy)
        throws Exception
     {
         ISystemFilterPoolReferenceManager mgr = null;
@@ -1044,7 +1044,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
      * If saving all info in one file, this returns the fully qualified name of that file,
      * given the unadorned manager name and the prefix (if any) to adorn with.
      */
-    protected static String getSaveFilePathAndName(IFolder mgrFolder, String name, ISystemFilterNamingPolicy namingPolicy)
+    protected static String getSaveFilePathAndName(IFolder mgrFolder, String name, IRSEFilterNamingPolicy namingPolicy)
     {
         return SystemFilter.addPathTerminator(getFolderPath(mgrFolder)) 
                  + getSaveFileName(namingPolicy.getReferenceManagerSaveFileName(name));    	

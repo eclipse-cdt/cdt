@@ -15,15 +15,15 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.filters;
+import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.filters.ISystemFilterConstants;
-import org.eclipse.rse.filters.ISystemFilterNamingPolicy;
 /**
  * A naming policy so tool writers can override defaults used when
  *  saving filter data to disk.
  * <p>
  * Subclass this and override what you wish to change.
  */
-public class SystemFilterNamingPolicy implements ISystemFilterNamingPolicy, ISystemFilterConstants 
+public class SystemFilterNamingPolicy implements IRSEFilterNamingPolicy, ISystemFilterConstants 
 {
 	
     protected String managerFileNamePrefix, poolFolderNamePrefix, poolFolderNameSuffix, 
@@ -55,7 +55,7 @@ public class SystemFilterNamingPolicy implements ISystemFilterNamingPolicy, ISys
      * Factory method to return an instance populated with defaults.
      * Can then simply override whatever is desired.
      */
-    public static ISystemFilterNamingPolicy getNamingPolicy()
+    public static IRSEFilterNamingPolicy getNamingPolicy()
     {
     	return new SystemFilterNamingPolicy();
     }

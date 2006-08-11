@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.references;
-import org.eclipse.rse.references.ISystemBaseReferencedObject;
-import org.eclipse.rse.references.ISystemBaseReferencingObject;
+import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
+import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 
 /**
  * This is a class that implements all the methods in the ISystemReferencingObject.
@@ -26,13 +26,13 @@ import org.eclipse.rse.references.ISystemBaseReferencingObject;
  */
 public class SystemReferencingObjectHelper 
 {
-    private ISystemBaseReferencedObject masterObject = null;
-    private ISystemBaseReferencingObject caller = null;
+    private IRSEBaseReferencedObject masterObject = null;
+    private IRSEBaseReferencingObject caller = null;
 	  
     /**
      * Default constructor. 
      */
-    public SystemReferencingObjectHelper(ISystemBaseReferencingObject caller)
+    public SystemReferencingObjectHelper(IRSEBaseReferencingObject caller)
     {
     	super();
     	this.caller = caller;
@@ -41,7 +41,7 @@ public class SystemReferencingObjectHelper
     /**
      * Constructor that saves effort of calling setReferencedObject.
      */
-    public SystemReferencingObjectHelper(ISystemBaseReferencingObject caller, ISystemBaseReferencedObject obj)
+    public SystemReferencingObjectHelper(IRSEBaseReferencingObject caller, IRSEBaseReferencedObject obj)
     {
     	this(caller);
     	setReferencedObject(obj);
@@ -52,7 +52,7 @@ public class SystemReferencingObjectHelper
 	 * Stores the reference in memory, replacing whatever was there.
 	 * Also, calls obj.addReference(caller);
 	 */
-	public void setReferencedObject(ISystemBaseReferencedObject obj)
+	public void setReferencedObject(IRSEBaseReferencedObject obj)
 	{
 		this.masterObject = obj;
 		if (obj != null)
@@ -62,7 +62,7 @@ public class SystemReferencingObjectHelper
 	/**
 	 * Get the object which we reference
 	 */
-	public ISystemBaseReferencedObject getReferencedObject()
+	public IRSEBaseReferencedObject getReferencedObject()
 	{
 	    return masterObject;	
 	}
@@ -75,7 +75,7 @@ public class SystemReferencingObjectHelper
 	public int removeReference()
     {
     	int newCount = 0;
-    	ISystemBaseReferencedObject masterObject = getReferencedObject();
+    	IRSEBaseReferencedObject masterObject = getReferencedObject();
     	if (masterObject != null)
     	  newCount = masterObject.removeReference(caller);
     	masterObject = null;

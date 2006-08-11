@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.references;
+package org.eclipse.rse.core.references;
 /**
  * A class to encapsulate the operations required of an object which
  * supports references to it by other objects (SystemReferencingObject).
@@ -29,6 +29,6 @@ package org.eclipse.rse.references;
  * @lastgen interface SystemReferencedObject  {}
  */
 
-public interface ISystemReferencedObject extends ISystemBaseReferencedObject{
+public interface IRSEReferencedObject extends IRSEBaseReferencedObject{
 
 }

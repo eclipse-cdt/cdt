@@ -34,6 +34,7 @@ import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPerspectiveHelpers;
 import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystem;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -65,7 +66,6 @@ import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemChildrenContentsType;
 import org.eclipse.rse.model.SystemRemoteChangeEvent;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
-import org.eclipse.rse.references.ISystemBaseReferencingObject;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -2782,10 +2782,10 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	    Object src = event.getSource();
 	    if (src instanceof ISystemFilter)
 	    {
-	        ISystemBaseReferencingObject[] references = ((ISystemFilter)src).getReferencingObjects();
+	        IRSEBaseReferencingObject[] references = ((ISystemFilter)src).getReferencingObjects();
 	        for (int i = 0; i < references.length; i++)
 	        {
-	            ISystemBaseReferencingObject ref = references[i];
+	            IRSEBaseReferencingObject ref = references[i];
 	            if (ref instanceof ISystemContainer)
 	            {
 	                ((ISystemContainer)ref).markStale(true);

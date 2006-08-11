@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.core.internal.subsystems;
 
-import org.eclipse.rse.filters.ISystemFilterNamingPolicy;
+import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.internal.filters.SystemFilterNamingPolicy;
 
 /**
@@ -27,7 +27,7 @@ import org.eclipse.rse.internal.filters.SystemFilterNamingPolicy;
  */
 public class SubSystemFilterNamingPolicy
 	extends SystemFilterNamingPolicy
-	implements ISystemFilterNamingPolicy 
+	implements IRSEFilterNamingPolicy 
 {
 	
 	/**

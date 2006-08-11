@@ -17,8 +17,8 @@
 package org.eclipse.rse.filters;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 import org.eclipse.rse.model.IRSEModelObject;
-import org.eclipse.rse.references.ISystemBaseReferencedObject;
 
 
 /**
@@ -33,7 +33,7 @@ import org.eclipse.rse.references.ISystemBaseReferencedObject;
  * @see org.eclipse.rse.ui.filters.dialogs.SystemNewFilterWizard and
  * @see org.eclipse.rse.ui.filters.actions.SystemNewFilterAction
  */
-public interface ISystemFilterString extends ISystemBaseReferencedObject, IAdaptable, IRSEModelObject
+public interface ISystemFilterString extends IRSEBaseReferencedObject, IAdaptable, IRSEModelObject
 {
     /**
      * Return the caller which instantiated the filter pool manager overseeing this filter framework instance

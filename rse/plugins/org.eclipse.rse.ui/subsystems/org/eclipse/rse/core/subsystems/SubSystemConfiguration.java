@@ -35,6 +35,7 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.internal.subsystems.RemoteServerLauncherConstants;
 import org.eclipse.rse.core.internal.subsystems.SubSystemFilterNamingPolicy;
+import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterContainer;
 import org.eclipse.rse.filters.ISystemFilterContainerReference;
@@ -56,7 +57,6 @@ import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.model.SystemStartHere;
-import org.eclipse.rse.references.ISystemBaseReferencingObject;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -2544,7 +2544,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			{
 				for (int idx = 0; idx < pools.length; idx++)
 				{
-					ISystemBaseReferencingObject[] refs = pools[idx].getReferencingObjects();
+					IRSEBaseReferencingObject[] refs = pools[idx].getReferencingObjects();
 					if ((refs != null) && (refs.length > 0))
 					{
 						for (int jdx = 0; jdx < refs.length; jdx++)

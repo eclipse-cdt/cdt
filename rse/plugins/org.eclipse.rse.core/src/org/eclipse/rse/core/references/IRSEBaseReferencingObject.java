@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.references;
+package org.eclipse.rse.core.references;
 /**
  * Referencing objects are shadows of real objects. Typically, shadows are created
  * to enable a GUI which does not allow the same real object to appear multiple times.
@@ -23,16 +23,16 @@ package org.eclipse.rse.references;
  * <p>
  * This interface captures the simple set of methods such a shadow must implement.
  */
-public interface ISystemBaseReferencingObject
+public interface IRSEBaseReferencingObject
 {
 	/**
 	 * Set the object to which we reference
 	 */
-	public void setReferencedObject(ISystemBaseReferencedObject obj);
+	public void setReferencedObject(IRSEBaseReferencedObject obj);
 	/**
 	 * Get the object which we reference
 	 */
-	public ISystemBaseReferencedObject getReferencedObject();
+	public IRSEBaseReferencedObject getReferencedObject();
 	/**
 	 * Fastpath to getReferencedObject().removeReference(this).
 	 * @return new reference count of master object

@@ -67,7 +67,7 @@
 	<!-- ===================================================================== -->
 	<target name="getMapFiles">
 		<copy todir="${buildDirectory}/maps">
-			<fileset dir="${builder}" includes="*.map" />
+			<fileset dir="${builder}/maps" includes="*.map" />
 		</copy>
 		<replace dir="${buildDirectory}/maps" token="@tag@" value="${mapVersionTag}">
 			<include name="*.map"/>

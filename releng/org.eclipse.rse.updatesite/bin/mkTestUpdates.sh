@@ -20,7 +20,7 @@ if [ `basename $SITE` = testUpdates ]; then
     echo "Working on test update site"
     REL==`ls $HOME/ws/working/package | sort | tail -1`
     if [ "$REL" != "" ]; then
-      DIR="$HOME/ws/working/package/$REL"
+      DIR="$HOME/ws/working/package/$REL/updates"
       if [ -d "$DIR/features" ]; then
         echo "Copying new plugins and features from $DIR"
         rm -rf features

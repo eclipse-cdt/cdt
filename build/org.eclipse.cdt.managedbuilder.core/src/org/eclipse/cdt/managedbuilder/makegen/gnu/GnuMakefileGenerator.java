@@ -2555,7 +2555,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		if (addlDeps != null && addlDeps.length > 0) { 
 			calculatedDependencies = new String();
 			for (int i=0; i<addlDeps.length; i++) {
-				calculatedDependencies += WHITESPACE + addlDeps[i].toString();
+				calculatedDependencies += WHITESPACE + escapeWhitespaces(addlDeps[i].toString());
 			}
 		}
 			

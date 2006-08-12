@@ -265,4 +265,34 @@ public class PDOMFile {
 		return (PDOMFile[])values.toArray(new PDOMFile[values.size()]);
 	}
 	
+	public PDOMFile[] getAllIncludes() throws CoreException {
+		Map files = new HashMap();
+		LinkedList todo = new LinkedList();
+		
+		// Add me in to make sure we don't get caught in a circular include
+		IString myFileName = getFileName();
+		files.put(myFileName, this);
+		
+		todo.addLast(this);
+		while (todo.size() > 0) {
+			PDOMFile file = (PDOMFile)todo.removeFirst();
+			PDOMInclude include = file.getFirstInclude();
+			while (include != null) {
+				PDOMFile incFile = include.getIncludes();
+				IString incFileName = incFile.getFileName();
+				if (files.get(incFileName) == null) {
+					files.put(incFileName, incFile);
+					todo.addLast(incFile);
+				}
+				include = include.getNextInIncludes();
+			}
+		}
+		
+		// Now remove me
+		files.remove(myFileName);
+		
+		Collection values = files.values(); 
+		return (PDOMFile[])values.toArray(new PDOMFile[values.size()]);
+	}
+	
 }

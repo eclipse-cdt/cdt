@@ -20,16 +20,24 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.SubSystem;
+import org.eclipse.rse.core.subsystems.SubSystem.DisplayErrorMessageJob;
 import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.GenericMessages;
+import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -49,6 +57,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
     private IRunnableContext context;
     protected ISystemViewElementAdapter _adapter;
     protected boolean _canRunAsJob;
+    protected InvocationTargetException _exc;
  
     public SystemFetchOperation(IWorkbenchPart part, IAdaptable remoteObject, ISystemViewElementAdapter adapter, IElementCollector collector) 
     {
@@ -67,6 +76,11 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		_adapter = adapter;
 		_canRunAsJob = canRunAsJob;
 	}
+    
+    public void setException(InvocationTargetException exc)
+    {
+    	_exc = exc;
+    }
     
 	/**
 	 * Return the part that is associated with this operation.
@@ -162,8 +176,22 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			
 			Display dis = Display.getDefault();
 			dis.syncExec(new PromptForPassword(ss));
-			
-			ss.getConnectorService().connect(monitor);
+			try
+			{
+				ss.getConnectorService().connect(monitor);
+				if (_exc != null)
+				{
+					showOperationErrorMessage(null, _exc, ss);
+				}
+			}
+			catch (InvocationTargetException exc)
+			{
+          	  	showOperationErrorMessage(null, exc, ss);
+			}
+			catch (Exception e)
+			{
+				showOperationErrorMessage(null, e, ss);
+			}
 			
 			dis.asyncExec(new UpdateRegistry(ss));
 			
@@ -172,6 +200,42 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	    Object[] children = _adapter.getChildren(monitor, _remoteObject);
 	    _collector.add(children, monitor);
 	    monitor.done();
+	}
+	
+    protected void showOperationErrorMessage(Shell shell, Throwable exc, SubSystem ss)
+    {
+    	SystemMessage sysMsg = null;
+    	if (exc instanceof SystemMessageException)
+    	{
+    	        displayAsyncMsg(ss, (SystemMessageException)exc);
+    	  //sysMsg = ((SystemMessageException)exc).getSystemMessage();
+    	} 
+    	else
+    	{
+    	  String excMsg = exc.getMessage();
+    	  if ((excMsg == null) || (excMsg.length()==0))
+    	    excMsg = "Exception " + exc.getClass().getName();
+          sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
+          sysMsg.makeSubstitution(excMsg);
+    	
+    	
+    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell, sysMsg);
+         msgDlg.setException(exc);
+    	 msgDlg.open();
+         //RSEUIPlugin.logError("Operation failed",exc); now done successfully in msgDlg.open()
+    	}
+ 
+    }
+    
+	/**
+	 * Display message on message thread
+	 */
+	protected void displayAsyncMsg(SubSystem ss, org.eclipse.rse.services.clientserver.messages.SystemMessageException msg)
+	{
+		DisplayErrorMessageJob job = ss.new DisplayErrorMessageJob(null, msg);
+		job.setPriority(Job.INTERACTIVE);
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	protected String getTaskName()

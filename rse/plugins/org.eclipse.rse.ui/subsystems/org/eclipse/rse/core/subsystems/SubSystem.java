@@ -982,7 +982,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 * Inner class which extends WorkbenchJob to allow us to show an error message, which is a GUI operation,
 	 *  from a non-GUI thread. This is done by creating an instance of this class and then scheduling it.
 	 */
-	protected class DisplayErrorMessageJob extends WorkbenchJob 
+	public class DisplayErrorMessageJob extends WorkbenchJob 
 	{
 		private Shell shell;
 		private org.eclipse.rse.services.clientserver.messages.SystemMessageException msgExc;
@@ -1344,7 +1344,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
             }						
             catch(InvocationTargetException exc)
             {
-            	exc.printStackTrace();
+            	//exc.printStackTrace();
             	monitor.done();
           	  	String excMsg = exc.getTargetException().getMessage();
           	  	if ((excMsg == null) || (excMsg.length()==0))

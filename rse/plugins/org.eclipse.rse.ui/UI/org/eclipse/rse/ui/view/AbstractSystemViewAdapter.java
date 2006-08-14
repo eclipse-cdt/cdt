@@ -1758,16 +1758,17 @@ public abstract class AbstractSystemViewAdapter
 	
 	public void fetchDeferredChildren(Object o, IElementCollector collector, IProgressMonitor monitor) 
 	{
+		SystemFetchOperation operation = null;
         try 
         {
             monitor = Policy.monitorFor(monitor);
             monitor.beginTask(Policy.bind("RemoteFolderElement.fetchingRemoteChildren", getLabel(o)), 100); //$NON-NLS-1$
-			SystemFetchOperation operation = getSystemFetchOperation(o, collector);
+            operation = getSystemFetchOperation(o, collector);
 			operation.run(Policy.subMonitorFor(monitor, 100));
         } 
         catch (InvocationTargetException e) 
         {
-            e.printStackTrace();
+        	operation.setException(e);
 		} 
         catch (InterruptedException e) 
 		{

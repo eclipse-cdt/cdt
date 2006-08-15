@@ -2508,16 +2508,16 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	/**
 	 * Connect to the remote system, optionally forcing a signon prompt even if the password
 	 * is cached in memory or on disk.
-     * You do not need to override this, as it does the progress monitor and error message
-     *  displaying for you.
-     * <p>
-     * Override internalConnect if you want, but by default it calls getSystem().connect(IProgressMonitor).
-     * 
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
-     * @param forcePrompt Forces the signon prompt to be displayed even if a valid password in cached in memory
-     * or saved on disk.
+	 * You do not need to override this, as it does the progress monitor and error message
+	 *  displaying for you.
+	 * <p>
+	 * Override internalConnect if you want, but by default it calls getSystem().connect(IProgressMonitor).
+	 * 
+	 * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+	 * @param forcePrompt Forces the signon prompt to be displayed even if a valid password in cached in memory
+	 * or saved on disk.
 	 */
-    public void connect(Shell shell, boolean forcePrompt) throws Exception {
+	public void connect(Shell shell, boolean forcePrompt) throws Exception {
 		// yantzi: artemis60, (defect 53082) check that the connection has not been deleted before continuing,
 		// this is a defenisve measure to protect against code that stores a handle to subsystems but does 
 		// not do this check
@@ -2543,9 +2543,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			if (runnableContext instanceof ProgressMonitorDialog) {
 				((ProgressMonitorDialog) runnableContext).setCancelable(true);
 			}
-			if (getSubSystemConfiguration().supportsUserId()) {
-				getConnectorService().promptForPassword(shell, forcePrompt); // prompt for userid and password    
-			}
+			getConnectorService().promptForPassword(shell, forcePrompt); // prompt for userid and password    
 			ConnectJob job = new ConnectJob();
 			scheduleJob(job, null, shell != null);
 			IStatus status = job.getResult();
@@ -2558,13 +2556,24 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
  
 
     /**
-     * Prompt the user for a password to the remote system. The primary request was something else,
-     *  but we have detected the user is not connected so we prompt for password outside
-     *  of the progress monitor, then set a flag to do the connection within the progress
-     *  monitor.
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+     * A convenience method, fully equivalent to promptForPassword(shell, false).
+     * @param Shell parent shell used to show any error messages.
      */
     public boolean promptForPassword(Shell shell) throws Exception
+    {
+    	return promptForPassword(shell, false);
+    }
+
+    /**
+     * Prompt the user for a password to the remote system. The primary request was something else,
+     * but we have detected the user is not connected so we prompt for password outside
+     * of the progress monitor, then set a flag to do the connection within the progress
+     * monitor.
+     * @param Shell parent shell used to show error messages.
+     * @param force true if the prompting should be forced, false if prompting can be skipped if credentials have been stored.
+     * @return true if the credentials are obtained
+     */
+    public boolean promptForPassword(Shell shell, boolean force) throws Exception
     {
     	boolean ok = false;
     	if (!supportsConnecting)
@@ -2581,17 +2590,10 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			doConnection = true;	// this gets handled later when it comes time to connect
 			return true;    		
     	}
-    	else if (!getSubSystemConfiguration().supportsUserId())
-    	{
-    		// subsystem needs no user id so dont bother prompting
-    		doConnection = true;	// this gets handled later when it comes time to connect
-    		return true;
-    	}
-    	
     	
     	try
     	{
-    	  getConnectorService().promptForPassword(shell, false); // prompt for password
+    	  getConnectorService().promptForPassword(shell, force); // prompt for password
     	  doConnection = true;
     	  ok = true;
     	}
@@ -2768,45 +2770,45 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	}	
 	
 	/**
-	 * Actually connect to the remote host. This is called by the run(IProgressMonitor monitor) method.
+	 * Connect to the remote host. This is called by the run(IProgressMonitor monitor) method.
 	 * <p>
-	 * You DO NOT OVERRIDE THIS typically. Rather, this calls connect(IProgressMonitor) in your 
-	 * ISystem class that is returned from getSystem(). That is where your code to connect should go!
+	 * DO NOT OVERRIDE THIS. Rather, this calls connect(IProgressMonitor) in the 
+	 * IConnectorService class that is returned from getConnectorService().
 	 * <p>
-	 * Your connect method in your ISystem class must follow these IRunnableWithProgress rules:
+	 * Your connect method in your IConnectorService class must follow these IRunnableWithProgress rules:
 	 * <ul>
 	 *   <li>if the user cancels (monitor.isCanceled()), throw new InterruptedException()
 	 *   <li>if something else bad happens, throw new java.lang.reflect.InvocationTargetException(exc) 
 	 *       - well, actually you can throw anything and we'll wrap it here in an InvocationTargetException
-	 *   <li>do not worry about calling monitor.done() ... caller will do that!
+	 *   <li>do not worry about calling monitor.done() ... caller will do that.
 	 * </ul>
 	 * 
 	 */
 	protected void internalConnect(IProgressMonitor monitor)
-         throws java.lang.reflect.InvocationTargetException,
-                java.lang.InterruptedException
+         throws InvocationTargetException, InterruptedException
     {
 		try 
 		{			
 		  getConnectorService().connect(monitor);
 		}
-		catch(Exception exc)
-		{
-		  if (exc instanceof java.lang.reflect.InvocationTargetException)
-		    throw (java.lang.reflect.InvocationTargetException)exc;
-		  if (exc instanceof java.lang.InterruptedException)
-		    throw (java.lang.InterruptedException)exc;
-		  throw new java.lang.reflect.InvocationTargetException(exc);
+		catch(InvocationTargetException exc) {
+			throw exc;
+		}
+		catch (InterruptedException exc) {
+			throw exc;
+		}
+		catch (Exception exc) {
+			throw new InvocationTargetException(exc);
 		}
     }
 	
 	/**
 	 * Actually disconnect from the remote host. This is called by the run(IProgressMonitor monitor) method.
 	 * <p>
-	 * You DO NOT OVERRIDE THIS typically. Rather, this calls connect(IProgressMonitor) in your 
-	 * ISystem class that is returned from getSystem(). That is where your code to disconnect should go!
+	 * You DO NOT OVERRIDE THIS. Rather, this calls connect(IProgressMonitor) in your 
+	 * IConnectorService class that is returned from getConnectorService(). That is where your code to disconnect should go!
 	 * <p>
-	 * Your connect method in your ISystem class must follow these IRunnableWithProgress rules:
+	 * Your disconnect method in your IConnectorService class must follow these IRunnableWithProgress rules:
 	 * <ul>
 	 *   <li>if the user cancels (monitor.isCanceled()), throw new InterruptedException()
 	 *   <li>if the host is unknown, throw new java.lang.reflect.InvocationTargetException(new java.net.UnknownHostException));
@@ -2816,20 +2818,20 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 * </ul>
 	 */
 	protected void internalDisconnect(IProgressMonitor monitor)
-         throws java.lang.reflect.InvocationTargetException,
-                java.lang.InterruptedException
+         throws InvocationTargetException, InterruptedException
     {
 		try 
 		{			
 		  getConnectorService().disconnect(monitor);
 		}
-		catch(Exception exc)
-		{
-		  if (exc instanceof java.lang.reflect.InvocationTargetException)
-		    throw (java.lang.reflect.InvocationTargetException)exc;
-		  if (exc instanceof java.lang.InterruptedException)
-		    throw (java.lang.InterruptedException)exc;
-		  throw new java.lang.reflect.InvocationTargetException(exc);
+		catch (InterruptedException exc) {
+			throw exc;
+		}
+		catch (InvocationTargetException exc) {
+			throw exc;
+		}
+		catch(Exception exc) {
+		  throw new InvocationTargetException(exc);
 		}
     }
 

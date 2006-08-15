@@ -102,13 +102,6 @@ public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsUserId()
-	 */
-	public boolean supportsUserId() {
-		return false;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchProperties(org.eclipse.rse.model.IHost)
 	 */
 	public boolean supportsServerLaunchProperties(IHost host) {

@@ -224,9 +224,9 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		}
 	}
 	
-	public static class ResponsiveSocketFacory extends SimpleSocketFactory {
+	public static class ResponsiveSocketFactory extends SimpleSocketFactory {
 		private IProgressMonitor monitor;
-		public ResponsiveSocketFacory(IProgressMonitor monitor) {
+		public ResponsiveSocketFactory(IProgressMonitor monitor) {
 			this.monitor = monitor;
 		}
 		public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
@@ -275,7 +275,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
         session.setPassword(password);
         MyUserInfo userInfo = new MyUserInfo(user, password);
         session.setUserInfo(userInfo);
-        session.setSocketFactory(new ResponsiveSocketFacory(monitor));
+        session.setSocketFactory(new ResponsiveSocketFactory(monitor));
 
         //java.util.Hashtable config=new java.util.Hashtable();
         //config.put("StrictHostKeyChecking", "no");
@@ -689,6 +689,22 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 	}
 
 	public boolean supportsServerLaunchProperties() {
+		return false;
+	}
+
+	/**
+	 * @return false
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#requiresPassword()
+	 */
+	public boolean requiresPassword() {
+		return false;
+	}
+
+	/**
+	 * @return false
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#requiresUserId()
+	 */
+	public boolean requiresUserId() {
 		return false;
 	}
 

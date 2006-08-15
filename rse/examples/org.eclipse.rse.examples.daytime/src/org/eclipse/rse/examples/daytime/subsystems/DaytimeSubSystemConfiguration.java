@@ -57,9 +57,6 @@ public class DaytimeSubSystemConfiguration extends ServiceSubSystemConfiguration
 	public boolean isPortEditable() {
 		return false;
 	}
-	public boolean supportsUserId() {
-		return false;
-	}
 	public boolean isFactoryFor(Class subSystemType) {
 		return DaytimeSubSystem.class.equals(subSystemType);
 	}

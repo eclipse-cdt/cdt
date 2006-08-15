@@ -291,16 +291,49 @@ public interface IConnectorService extends IRSEModelObject
 	 */
 	void setRemoteServerLauncherProperties(IServerLauncherProperties value);
 	
-	
 	boolean hasRemoteServerLauncherProperties();
 	
 	boolean supportsRemoteServerLaunching();
 	
 	/**
 	 * Tell us if this subsystem factory supports server launch properties, which allow the user
-	 *  to configure how the server-side code for these subsystems are started. There is a Server
-	 *  Launch Setting property page, with a pluggable composite, where users can configure these 
-	 *  properties. 
+	 * to configure how the server-side code for these subsystems are started. There is a Server
+	 * Launch Setting property page, with a pluggable composite, where users can configure these 
+	 * properties. 
 	 */
 	public boolean supportsServerLaunchProperties();
+	
+    /**
+     * Report if this connector service can use a user identifier.
+	 * Returns true in default implementation.
+	 * Typically used to indicate if a login dialog needs to be presented when connecting.
+     * @return true if and only if the connector service can use a user id.
+     */
+    public boolean supportsUserId();
+    
+    /**
+     * Report if this connector service requires a user id.
+	 * Returns true in default implementation.
+	 * Typically used to indicate if a login dialog can allow an empty user id.
+	 * Must be ignored if supportsUserId() is false.
+     * @return true or false to indicate if the connector service requires a user id.
+     */
+    public boolean requiresUserId();
+    
+    /**
+     * Can be used to determine if a password field is present on a login dialog for this connector service.
+     * The default implementation of this interface should return true.
+     * @return true if the subsystem can use a password, false if a password is irrelevant.
+     */
+    public boolean supportsPassword();
+    
+    /**
+     * If a password is supported this is used to determine if the password is required.
+     * Must be ignored if supportsPassword() returns false.
+     * The default implementation of this interface should return true.
+     * @return true if the connector service requires a password, false if a password may be empty.
+     */
+    public boolean requiresPassword();
+    
+
 }

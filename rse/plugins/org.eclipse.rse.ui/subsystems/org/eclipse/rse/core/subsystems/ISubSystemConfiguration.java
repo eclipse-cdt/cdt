@@ -53,39 +53,6 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	// ---------------------------------
 	// CRITICAL METHODS...
 	// ---------------------------------
-    /**
-     * Determines if a user id is relevant for this subsystem.
-	 * Returns true in default implementation.
-	 * Typically used to indicate if a login dialog needs to be presented when the subsystem
-	 * connects.
-     * @return true or false to indicate if subsystems can use a user id.
-     */
-    public boolean supportsUserId();
-    
-    /**
-     * Determines if a user id is required if a user id can be used to connect subsystems of this configuration.
-	 * Returns true in default implementation.
-	 * Typically used to indicate if a login dialog can allow an empty user id.
-     * @return true or false to indicate if subsystems requires a user id.
-     */
-    public boolean requiresUserId();
-    
-    /**
-     * Can be used to determine if a password field is present on a login dialog for subsystems
-     * of this configuration.
-     * The default implementation of this interface should return true.
-     * @return true if the subsystem can use a password, false if a password is irrelevant.
-     */
-    public boolean supportsPassword();
-    
-    /**
-     * If a password is supported this is used to determine if the password can be the empty string.
-     * Must be ignored if supportsPassword() returns false.
-     * The default implementation of this interface should return true.
-     * @return true if the subsystem requires, false if a password may be empty.
-     */
-    public boolean requiresPassword();
-    
    /**
  	* Return true if the subsystem supports more than one filter string
  	* <p>RETURNS true BY DEFAULT

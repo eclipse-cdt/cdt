@@ -79,15 +79,4 @@ public class SshShellSubSystemConfiguration extends
 		return new SshServiceCommandShell(cmdSS, hostShell);
 	}
 
-	/**
-	 * Ssh allows authentification through public key, so the password
-	 * can be empty.
-	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#requiresPassword()
-	 */
-	public boolean requiresPassword() {
-		return false;
-	}
-	
-	
-
 }

@@ -160,13 +160,6 @@ public class SystemFileNewConnectionWizardPage extends AbstractSystemNewConnecti
 	{
 		return parentFactory.isPortEditable();
 	}
-	/**
-	 * Return true if the userId is applicable for this subsystem
-	 */
-	protected boolean isUserIdApplicable()
-	{
-		return parentFactory.supportsUserId();
-	}
 
 	/**
 	 * @see ISystemWizardPage#performFinish()

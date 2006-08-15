@@ -429,10 +429,6 @@ public class PasswordPersistenceManager {
 	 */
 	public SystemSignonInformation find(String systemtype, String hostname, String userid)
 	{
-	    if (userid == null)
-	    {
-	        return null;
-	    }
 		return find(systemtype, hostname, userid, true);
 	}
 	
@@ -550,7 +546,7 @@ public class PasswordPersistenceManager {
 	{
 		String hostname = hname;//RSEUIPlugin.getQualifiedHostName(hname);
 		// Convert userid to upper case if required
-		if (!isUserIDCaseSensitive(systemtype))
+		if (!isUserIDCaseSensitive(systemtype) && userid != null)
 		{
 			userid = userid.toUpperCase();
 		}

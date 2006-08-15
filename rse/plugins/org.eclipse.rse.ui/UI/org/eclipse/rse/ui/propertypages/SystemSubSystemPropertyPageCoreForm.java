@@ -127,7 +127,7 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
 	 */
 	protected boolean isUserIdApplicable()
 	{
-		return getSubSystem().getSubSystemConfiguration().supportsUserId();
+		return getSubSystem().getConnectorService().supportsUserId();
 	}
 	
     private ISystemValidator getPortValidator()

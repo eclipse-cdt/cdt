@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Shell;
  * This is a base class to make it easier to create connector service classes.
  * <p>
  * An {@link org.eclipse.rse.core.subsystems.IConnectorService} object
- * is returned from a subsystem object via getSystem(), and
+ * is returned from a subsystem object via getConnectorService(), and
  * it is used to represent the live connection to a particular subsystem.
  * <p>
  * You must override/implement
@@ -60,6 +60,13 @@ import org.eclipse.swt.widgets.Shell;
  * <li>getVersionReleaseModification
  * <li>getHomeDirectory
  * <li>getTempDirectory
+ * </ul>
+ * You can override:
+ * <ul>
+ * <li>supportsUserId
+ * <li>requiresUserId
+ * <li>supportsPassword
+ * <li>requiresPassword
  * </ul>
  * 
  * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager
@@ -251,9 +258,12 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * cached userId.
 	 */
 	final public String getUserId() {
-		String result = getLocalUserId();
-		if (result == null) {
-			result = getSubSystemUserId();
+		String result = null;
+		if (supportsUserId()) {
+			result = getLocalUserId();
+			if (result == null) {
+				result = getSubSystemUserId();
+			}
 		}
 		return result;
 	}
@@ -370,7 +380,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      * <i>Useful utility method. Fully implemented, do not override.</i><br>
 	 * Return true if password is currently cached.
 	 */
-    final public boolean isPasswordCached() // DWD Can we make this final?
+    final public boolean isPasswordCached()
     {
         return isPasswordCached(false);
     }
@@ -386,10 +396,41 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
         return true;
     }
     
-    /**
-     * Return true if this system can share it's uid and password
-     * with other ISystems in this connection
-     * 
+    /* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresPassword()
+	 */
+	public boolean requiresPassword() {
+		return true;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsPassword()
+	 */
+	public boolean supportsPassword() {
+		return true;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#requiresUserId()
+	 */
+	public boolean requiresUserId() {
+		return true;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsUserId()
+	 */
+	public boolean supportsUserId()
+	{
+		return true;
+	}
+
+	/**
+     * Return true if this connector service can share it's uid and password
+     * with other connector services in this host (connection).
      * @return true if it can share the user/password
      */
     public boolean shareUserPasswordWithConnection()
@@ -399,119 +440,119 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     
     /**
      * <i>Do not override.</i>
-     * <p>Returns the password for this connector service.
-     * <p>
+     * Sets the signon information for this connector service.
      * The search order for the password is as follows:</p>
      * <ol>
-     * <li>First check if the password is in transient memory and that it is still valid.
-     * <li>If password not found in transient memory then check password on disk and
-     * verify that it is still valid.
-     * <li>If a valid password is not found in transient memory or on disk then prompt
-	 * the user.
+     * <li>First check if the password is already known by this connector service and that it is still valid.
+     * <li>If password not known then look in the password store and verify that it is still valid.
+     * <li>If a valid password is not found then prompt the user.
      * </ol>
-     * Throws InterruptedException if user is prompted and user cancels that prompt.
+     * Must be run in the UI thread.
      * @param shell parent for the prompt dialog if needed. 
-     * @param forcePrompt if true then present the prompt even if the password is stored.
-     * Can be null if the password is known to exist.
+     * Can be null if the password is known to exist in either this class or in the password store.
+     * @param forcePrompt if true then present the prompt even if the password was found and is valid.
+     * @throws InterruptedException if user is prompted and user cancels that prompt or if isSuppressSignonPrompt is true.
      */
     public void promptForPassword(Shell shell, boolean forcePrompt) throws InterruptedException {
 		// dy:  March 24, 2003:  check if prompting is temporarily suppressed by a tool
 		// vendor, this should only be suppressed if the user cancelled a previous signon
 		// dialog (or some other good reason)
 		if (isSuppressSignonPrompt()) throw new InterruptedException();
-    	
-		boolean passwordValid = true;
-		ISignonValidator validator = getSignonValidator();
-		SystemSignonInformation passwordInformation =  getPasswordInformation();
+
 		ISubSystem subsystem = getPrimarySubSystem();
 		IHost host = subsystem.getHost();
 		String hostName = host.getHostName();
 		String hostType = host.getSystemType();
-		String userId = getUserId();
-		PasswordPersistenceManager ppm = PasswordPersistenceManager.getInstance();
-
-		// Check the transient in memory password ...
-		// Test if userId has been changed... d43274
-		if (passwordInformation != null && !forcePrompt) {
-			boolean same = host.compareUserIds(userId, passwordInformation.getUserid());
-			same = same && hostName.equalsIgnoreCase(passwordInformation.getHostname());
-			if (!same) {
-				clearPasswordCache();
-				passwordInformation = null;
+		boolean savePassword = false;
+		if (_passwordInfo == null) {
+			_passwordInfo = new SystemSignonInformation(hostName, null, null, hostType);
+		}
+		if (supportsUserId()) {
+			String userId = getUserId();
+			if (_passwordInfo.getUserid() == null) {
+				_passwordInfo.setUserid(userId);
+			}
+			boolean sameUserId = host.compareUserIds(userId, _passwordInfo.getUserid());
+			boolean sameHost = hostName.equalsIgnoreCase(_passwordInfo.getHostname());
+			if (!(sameHost && sameUserId)) {
+				_passwordInfo.setPassword(null);
+				_passwordInfo.setUserid(userId);
 			}
 		}
-		
-		// If a transient in memory password was found, test if it is still valid ...
-		// but don't issue a message yet, just set a flag
-       	if (passwordInformation != null && validator != null && !validator.isValid(shell, passwordInformation)) {
-			passwordValid = false;
-       		clearPasswordCache();
-       	    passwordInformation = null;
-       	}
-	
-   	  	// Check the saved passwords if we still haven't found a good password.
-		if (passwordInformation == null && userId != null) {
-			SystemSignonInformation savedPasswordInformation = ppm.find(hostType, hostName, userId);
-			if (savedPasswordInformation != null) {
-				if (validator == null || validator.isValid(shell, savedPasswordInformation)) {
-					setPasswordInformation(savedPasswordInformation);
-					passwordInformation = getPasswordInformation();
-				} else {
-					passwordValid = false;
-					clearPasswordCache();
-					passwordInformation = null;
+		if (supportsPassword()) {
+			if (_passwordInfo.getPassword() == null) {
+				PasswordPersistenceManager ppm = PasswordPersistenceManager.getInstance();
+				String userId = _passwordInfo.getUserid();
+				SystemSignonInformation savedPasswordInformation = ppm.find(hostType, hostName, userId);
+				if (savedPasswordInformation != null) {
+					_passwordInfo = savedPasswordInformation;
+					savePassword = true;
 				}
 			}
-		}	
+		}
+		ISignonValidator validator = getSignonValidator();
+		boolean signonValid = (validator == null) || validator.isValid(shell, _passwordInfo);
 
 		// If we ran into an invalid password we need to tell the user.
 		// DWD refactor - want to move this to a pluggable class so that this can be moved to core.
-		if (!passwordValid) {
+		// DWD not sure this is necessary, shouldn't this message show up on the password prompt itself?
+		if (!signonValid) {
        		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_INVALID);
        		msg.makeSubstitution(getLocalUserId(), getHostName());
        		SystemMessageDialog dialog = new SystemMessageDialog(shell, msg);
        		dialog.open();
 		}
     		
-   	  	// Valid password not found so prompt, or force prompt
-    	if ((forcePrompt || (passwordInformation == null)) && (shell != null)) {
-    	  	ISystemPasswordPromptDialog dlg = getPasswordPromptDialog(shell);
-    	  	dlg.setSystemInput(this);
-    	  	passwordInformation = ppm.find(hostType, hostName, userId);
-    	  	if (passwordInformation != null) {
-    	  	    String password = passwordInformation.getPassword();
-    	  	    dlg.setPassword(password);
-    	  	    dlg.setSavePassword(true);
-    	  	} else {
-    	  		dlg.setPassword("");
-    	  		dlg.setSavePassword(false);
-    	  	}
-    	  	try {
-  	        	dlg.open();
-    	  	} catch (Exception e) {
-    	  		logException(e);
-    	  	}
-    	  	if (dlg.wasCancelled()) throw new InterruptedException();
-	    	boolean userIdChanged = dlg.getIsUserIdChanged();
-	    	if (userIdChanged) {
-          		String newUserId = dlg.getUserId();            	          	        
-	      		boolean userIdChangePermanent = dlg.getIsUserIdChangePermanent();
-	      		if (userIdChangePermanent) {
-            		updateDefaultUserId(subsystem, newUserId);
-	      		} else {
-	      			setUserId(newUserId);
-	        		_userId = newUserId;
-	      		}
-	    	}
-	    	boolean persistPassword = dlg.getIsSavePassword();
-	    	setPassword(dlg.getUserId(), dlg.getPassword(), persistPassword);
-	    	if (shareUserPasswordWithConnection()) {
-	    	    // share this uid/password with other ISystems in connection
-	    	    updatePasswordForOtherSystemsInConnection(dlg.getUserId(), dlg.getPassword(), persistPassword);
-	    	}
-    	}
+		if (supportsPassword() || supportsUserId()) {
+			if (shell != null) {
+				boolean passwordNeeded = supportsPassword() && _passwordInfo.getPassword() == null;
+				boolean userIdNeeded = supportsUserId() && _passwordInfo.getUserid() == null;
+				if (passwordNeeded || userIdNeeded || forcePrompt) {
+					ISystemPasswordPromptDialog dialog = getPasswordPromptDialog(shell);
+					if (dialog != null) {
+						dialog.setSystemInput(this);
+						dialog.setSignonValidator(getSignonValidator());
+						if (supportsUserId()) {
+							dialog.setUserIdValidator(getUserIdValidator());
+						}
+						if (supportsPassword()) {
+							String password = _passwordInfo.getPassword();
+							dialog.setSavePassword(savePassword);
+							dialog.setPassword(password);
+							dialog.setPasswordValidator(getPasswordValidator());
+						}
+			    	  	try {
+			  	        	dialog.open();
+			    	  	} catch (Exception e) {
+			    	  		logException(e);
+			    	  	}
+			    	  	if (dialog.wasCancelled()) {
+			    	  		throw new InterruptedException();
+			    	  	}
+			    	  	String userId = dialog.getUserId();
+			    	  	boolean userIdChanged = dialog.getIsUserIdChanged();
+			    	  	boolean saveUserId = dialog.getIsUserIdChangePermanent();
+			    	  	String password = dialog.getPassword();
+			    	  	savePassword = dialog.getIsSavePassword();
+				    	if (supportsUserId() && userIdChanged) {
+				      		if (saveUserId) {
+			            		updateDefaultUserId(subsystem, userId);
+				      		} else {
+				      			setUserId(userId);
+				        		_passwordInfo.setUserid(userId);
+				      		}
+				    	}
+				    	if (supportsPassword()) {
+					    	setPassword(userId, password, savePassword);
+					    	if (shareUserPasswordWithConnection()) {
+					    	    updatePasswordForOtherSystemsInConnection(userId, password, savePassword);
+					    	}
+				    	}
+					}
+				}
+			}
+		}
     }        
-    
     
     protected void clearPasswordForOtherSystemsInConnection(String uid, boolean fromDisk)
     {
@@ -601,7 +642,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 
     /**
 	 * <i>A default implementation is supplied, but can be overridden if desired.</i><br>
-	 * Instantiates and returns the dialog to prompt for the userId.
+	 * Instantiates and returns the dialog to prompt for the userId and password.
 	 * <p>
 	 * By default returns an instance of SystemPasswordPromptDialog. Calls forcePasswordToUpperCase() to decide whether the user Id and password should be folded to uppercase.
 	 * <p>
@@ -618,7 +659,6 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     {
     	  ISystemPasswordPromptDialog dlg = new SystemPasswordPromptDialog(shell);
     	  dlg.setForceToUpperCase(forcePasswordToUpperCase());
-  	      //dlg.setBlockOnOpen(true); now done by default in SystemPromptDialog
   	      dlg.setUserIdValidator(getUserIdValidator());
   	      dlg.setPasswordValidator(getPasswordValidator());
   	      dlg.setSignonValidator(getSignonValidator());
@@ -697,7 +737,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     	return getPrimarySubSystem().forceUserIdToUpperCase();
     }
     
-    /**
+	/**
      * <i>Useful utility method. Fully implemented, no need to override.</i><br>
      * Get the userId input validator to use in the password dialog prompt.
      * <p>
@@ -708,6 +748,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     {
     	return getPrimarySubSystem().getSubSystemConfiguration().getUserIdValidator();
     }
+
     /**
      * <i>Useful utility method. Fully implemented, no need to override.</i><br>
      * Get the password input validator to use in the password dialog prompt.

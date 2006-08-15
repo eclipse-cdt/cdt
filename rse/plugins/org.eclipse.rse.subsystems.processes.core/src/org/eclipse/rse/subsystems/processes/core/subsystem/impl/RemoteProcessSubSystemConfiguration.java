@@ -47,14 +47,6 @@ public abstract class RemoteProcessSubSystemConfiguration extends
     // --------------------------------------------
     // PARENT METHODS RELATED TO WHAT WE SUPPORT...
     // --------------------------------------------
-    /**
-     * We return true.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsUserId()
-     */
-    public boolean supportsUserId()
-    {
-    	return true;
-    }
     
 	/**
      * We return true.

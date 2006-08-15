@@ -33,6 +33,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * A SystemChangePasswordDialog is typically presented when the password on the remote system has expired 
+ * and a new one needs to be saved. This dialog presents presents two enabled text fields - the first holds 
+ * the new password, the second holds its confirmation. 
+ * There is also a checkbox to save the password. Actually saving the password is the responsibility of the client.
+ */
 public class SystemChangePasswordDialog extends SystemPromptDialog 
 {
 	private String _hostname;
@@ -48,6 +54,16 @@ public class SystemChangePasswordDialog extends SystemPromptDialog
     private boolean newPasswordModified = false;
     private boolean confirmModified = false;
 	
+	/**
+	 * Construct a new SystemChangePasswordDialog. Since this dialog is asking for a new password
+	 * there is no need to supply the old password, however a remote system will usually require
+	 * the old password to effect a change. Thus clients of this class would typically be expected
+	 * to have this available.
+	 * @param shell The shell the dialog will use to present itself.
+	 * @param hostname The remote host name.
+	 * @param userid The user id that will be presented. May be the empty string.
+	 * @param msg The message that will be presented when the dialog is initially shown. This may be null.
+	 */
 	public SystemChangePasswordDialog(Shell shell, String hostname, String userid, SystemMessage msg) 
 	{
 		super(shell, SystemResources.RESID_CHANGE_PASSWORD_TITLE, false);

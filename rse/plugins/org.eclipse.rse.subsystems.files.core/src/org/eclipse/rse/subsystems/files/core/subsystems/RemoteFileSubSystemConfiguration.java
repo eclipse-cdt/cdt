@@ -199,14 +199,6 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
     // --------------------------------------------
     // PARENT METHODS RELATED TO WHAT WE SUPPORT...
     // --------------------------------------------
-    /**
-     * We return true.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsUserId()
-     */
-    public boolean supportsUserId()
-    {
-    	return true;
-    }
 	/**
      * We return true.
      * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsSubSystemConnect()

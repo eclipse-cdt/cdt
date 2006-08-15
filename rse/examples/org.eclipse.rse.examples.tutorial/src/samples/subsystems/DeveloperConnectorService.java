@@ -96,4 +96,20 @@ public class DeveloperConnectorService extends AbstractConnectorService {
 		return false;
 	}
 
+	/**
+	 * @return false
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsPassword()
+	 */
+	public boolean supportsPassword() {
+		return false;
+	}
+
+	/**
+	 * @return false
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsUserId()
+	 */
+	public boolean supportsUserId() {
+		return false;
+	}
+
 }

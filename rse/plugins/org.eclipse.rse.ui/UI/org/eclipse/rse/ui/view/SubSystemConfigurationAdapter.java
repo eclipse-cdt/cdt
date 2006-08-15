@@ -529,7 +529,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				if (factory.supportsSubSystemConnect())
 				{
 					//nbrBaseActions += 2; // 4; MJB: RE defect 50854    	
-					if (factory.supportsUserId())
+					if (selectedSubSystem.getConnectorService().supportsUserId())
 						nbrBaseActions += 1;
 				}
 				//if (supportsFilters())
@@ -542,7 +542,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 					//subSystemActions[ssIdx++] = new SystemConnectAction(shell);
 					//subSystemActions[ssIdx++] = new SystemDisconnectAction(shell);
 					
-					if (factory.supportsUserId())
+					if (selectedSubSystem.getConnectorService().supportsUserId())
 						subSystemActions[ssIdx++] = new SystemClearPasswordAction(shell);
 				}
 			} // end if subsystemActons == null

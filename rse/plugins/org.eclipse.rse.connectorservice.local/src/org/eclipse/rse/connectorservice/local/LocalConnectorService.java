@@ -102,19 +102,30 @@ public class LocalConnectorService extends AbstractConnectorService
 		return false;
 	}
 
-
-
 	public boolean supportsRemoteServerLaunching() 
 	{
 		return false;
 	}
 
-
-
 	public boolean supportsServerLaunchProperties()
 	{
 		return false;
+	}
+
+	/**
+	 * @return false
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsPassword()
+	 */
+	public boolean supportsPassword() {
+		return false;
+	}
+
+	/**
+	 * @return false
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsUserId()
+	 */
+	public boolean supportsUserId() {
+		return false;
 	}    
-	
 
 }

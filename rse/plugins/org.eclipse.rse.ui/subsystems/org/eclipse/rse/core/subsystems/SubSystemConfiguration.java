@@ -189,38 +189,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	// ---------------------------------
 	// CRITICAL METHODS...
 	// ---------------------------------
-	/**
-	 * Return true (default) or false to indicate if subsystems of this factory require a userId to
-	 *  do connection or not. If not, no GUI will be supplied related to user Ids in the remote systems
-	 *  explorer view.
-	 * <p>
-	 * Returns TRUE by default.
-	 */
-	public boolean supportsUserId()
-	{
-		return true;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#requiresUserId()
-	 */
-	public boolean requiresUserId() {
-		return true;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#supportsPassword()
-	 */
-	public boolean supportsPassword() {
-		return true;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#requiresPassword()
-	 */
-	public boolean requiresPassword() {
-		return true;
-	}
 	
 	/**
 	 * Return true if instance of this factory's subsystems support connect and disconnect actions.

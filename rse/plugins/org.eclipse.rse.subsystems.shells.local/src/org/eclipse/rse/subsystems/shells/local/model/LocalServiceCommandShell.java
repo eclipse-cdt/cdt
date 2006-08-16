@@ -4,13 +4,13 @@ package org.eclipse.rse.subsystems.shells.local.model;
 import java.io.File;
 
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.services.local.shells.ParsedOutput;
-import org.eclipse.rse.internal.services.local.shells.Patterns;
 import org.eclipse.rse.internal.subsystems.shells.servicesubsystem.OutputRefreshJob;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteError;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
+import org.eclipse.rse.services.shells.ParsedOutput;
+import org.eclipse.rse.services.shells.Patterns;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;

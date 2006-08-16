@@ -13,7 +13,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  ********************************************************************************/
-package org.eclipse.rse.internal.services.local.shells;
+package org.eclipse.rse.services.shells;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import org.eclipse.rse.services.local.Activator;
+import org.eclipse.rse.services.Activator;
 import org.osgi.framework.Bundle;
 
 public class Patterns {
@@ -37,7 +37,7 @@ public class Patterns {
 
 	private void parsePatterns() {
 		Bundle bundle = Activator.getDefault().getBundle();
-		URL patterns = bundle.getEntry("/patterns.dat");
+		URL patterns = bundle.getEntry("/patterns.dat"); //$NON-NLS-1$
 		if (patterns != null) {
 			try {
 				InputStream in = patterns.openStream();
@@ -52,8 +52,8 @@ public class Patterns {
 						continue;
 					}
 					// Check if this line is the start of a new command section
-					if (curLine.startsWith("command")) {
-						int colon = curLine.indexOf(":");
+					if (curLine.startsWith("command")) { //$NON-NLS-1$
+						int colon = curLine.indexOf(":"); //$NON-NLS-1$
 						// Check that there is something after the colon
 						if (colon == (curLine.length() - 1)) {
 							continue;
@@ -64,9 +64,9 @@ public class Patterns {
 					}
 					// If we get here, the line must be an output pattern
 					else {
-						int firstSpace = curLine.indexOf(" ");
-						int patternWord = curLine.indexOf("pattern");
-						int firstEquals = curLine.indexOf("=");
+						int firstSpace = curLine.indexOf(" "); //$NON-NLS-1$
+						int patternWord = curLine.indexOf("pattern"); //$NON-NLS-1$
+						int firstEquals = curLine.indexOf("="); //$NON-NLS-1$
 						if ((firstEquals == -1) || (firstEquals == (curLine.length() - 1))) {
 							continue;
 						}

@@ -16,7 +16,10 @@
 
 package org.eclipse.rse.services;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -34,15 +37,17 @@ public class Activator extends Plugin {
 		plugin = this;
 	}
 
-	/**
-	 * This method is called upon plug-in activation
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 	}
 
-	/**
-	 * This method is called when the plug-in is stopped
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
@@ -51,9 +56,21 @@ public class Activator extends Plugin {
 
 	/**
 	 * Returns the shared instance.
+	 * @return the shared instance
 	 */
 	public static Activator getDefault() {
 		return plugin;
 	}
 
+	/**
+	 * Logs an throwable to the log for this plugin.
+	 * @param t the Throwable to be logged.
+	 */
+	public void logException(Throwable t) {
+		ILog log = getLog();
+		String id = getBundle().getSymbolicName();
+		IStatus status = new Status(IStatus.ERROR, id, 0, "Unexpected exception", t);
+		log.log(status);
+	}
+	
 }

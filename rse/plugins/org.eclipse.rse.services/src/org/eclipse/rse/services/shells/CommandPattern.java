@@ -11,10 +11,10 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Martin Oberhuber (WindRiver) - adapted from services.local
+ * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.ssh.shell;
+package org.eclipse.rse.services.shells;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;

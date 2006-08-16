@@ -1,3 +1,18 @@
+################################################################################
+# Copyright (c) 2006 IBM Corporation. All rights reserved.
+# This program and the accompanying materials are made available under the terms
+# of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+# available at http://www.eclipse.org/legal/epl-v10.html
+# 
+# Initial Contributors:
+# The following IBM employees contributed to the Remote System Explorer
+# component that contains this file: David McKnight, Kushal Munir, 
+# Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+# Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+# 
+# Contributors:
+# Martin Oberhuber (Wind River) - Adapted from RSE services.local/patterns.dat
+################################################################################
 #
 #               parse command line output.
 #
@@ -10,9 +25,9 @@ command: grep -.*n.*
 	 grep          file line         pattern =([\w,.,/,(,),\\,\-,\+,\d]*):(\d*):.*
 
 command: grep .*
-	 grep          file              pattern =([\w,.,/,(,)\\,\-,\+,\d]*):.*
+	 grep          file         	 pattern =([\w,.,/,(,)\\,\-,\+,\d]*):.*
 
-
+	 
 command: pwd
 	 directory     file              pattern=([\w,.,/,(,),\\,\-,\+,\d,:]*)
 
@@ -25,8 +40,8 @@ command: nmake.*
 	 informational file line         pattern=([\w,.,/,\-,\+,(,),\\]*)\((\d*):\d*\) : informational .*
 
 command: make.*
-	 error         file line         pattern=\"([\w,.,/,(,),\-,\+,\\]*)\", line (\d*)\.\d*: \d*-\d* \(S\).*
-	 error         file line         pattern=\"([\w,.,/,(,),\-,\+,\\]*)\",, line (\d*)\.\d*: \d*-\d* \(E\).*
+     error         file line         pattern=\"([\w,.,/,(,),\-,\+,\\]*)\", line (\d*)\.\d*: \d*-\d* \(S\).*
+     error         file line         pattern=\"([\w,.,/,(,),\-,\+,\\]*)\",, line (\d*)\.\d*: \d*-\d* \(E\).*
 	 warning       file line         pattern=\"([\w,.,/,(,),\-,\+,\\]*)\", line (\d*)\.\d*: \d*-\d* \(W\).*
 	 informational file line         pattern=\"([\w,.,/,(,),\-,\+,\\]*)\", line (\d*)\.\d*: \d*-\d* \(I\).*
 	 warning       file line         pattern =([\w,.,/,(,),\-,\+,\\]*):(\d*): warning: .*
@@ -40,14 +55,14 @@ command: make.*
 	 #makefile errors
 	 error         file line         pattern=\"([\w,\.,/,(,),\-,\+,\\]*)\", line (\d*): make:.*
 	 #xlc Options warnings
-	 warning                         pattern=\(W\) Option .*
-	 #c89 errors
+	 warning                		 pattern=\(W\) Option .*
+	 #c89 errors	
 	 error         file line         pattern=ERROR CBC\d* ([\w,.,/,\\,\-,\+,(,)]*):(\d*) .* 
 	 warning       file line         pattern=WARNING CBC\d* ([\w,.,/,\\,\-,\+,(,)]*):(\d*) .* 
 	 informational                   pattern=CBC\d*\(I\) .*  
-
+	 
 command: gmake.*
-	 error         file line         pattern=\"([\w,.,/,(,),\-,\+,\\]*)\", line (\d*)\.\d*: \d*-\d* \(S\).*
+     error         file line         pattern=\"([\w,.,/,(,),\-,\+,\\]*)\", line (\d*)\.\d*: \d*-\d* \(S\).*
 	 warning       file line         pattern=\"([\w,.,/,(,),\-,\+,\\]*)\", line (\d*)\.\d*: \d*-\d* \(W\).*
 	 informational file line         pattern=\"([\w,.,/,(,),\-,\+,\\]*)\", line (\d*)\.\d*: \d*-\d* \(I\).*
 	 warning       file line         pattern =([\w,.,/,(,),\-,\+,\\]*):(\d*): warning: .*
@@ -63,7 +78,7 @@ command: gmake.*
 	 error         file line         pattern =([\w,.,/,\\,\-,\+,(,)]*):(\d*):.*
 
 command: gcc\s.*
-	 error         file line         pattern=\"([\w,.,/,\\,\-,\+,(,)]*)\", line (\d*)\.\d*: \d*-\d* \(S\).*
+     error         file line         pattern=\"([\w,.,/,\\,\-,\+,(,)]*)\", line (\d*)\.\d*: \d*-\d* \(S\).*
 	 warning       file line         pattern=\"([\w,.,/,\\,\-,\+,(,)]*)\", line (\d*)\.\d*: \d*-\d* \(W\).*
 	 informational file line         pattern=\"([\w,.,/,\\,\-,\+,(,)]*)\", line (\d*)\.\d*: \d*-\d* \(I\).*
 	 warning       file line         pattern =([\w,.,/,\\,\-,\+,(,)]*):(\d*): warning: .*
@@ -82,26 +97,26 @@ command: c89.*
 	 error         file line         pattern=ERROR CBC\d* ([\w,.,/,\\,\-,\+,(,)]*):(\d*) .*
 	 warning       file line         pattern=WARNING CBC\d* ([\w,.,/,\\,\-,\+,(,)]*):(\d*) .*
 	 informational                   pattern=CBC\d*\(I\) .*
-	 
+	 	 
 command: icc.*
 	 error         file line         pattern =([\w,.,/,\\,\-,\+,(,)]*),\s(\d*)\.\d*:\s.* 
 	 error         file line         pattern =\"([\w,.,/,\\,\-,\+,(,)]*)\",\sline\s(\d*)\.\d*:\s.* 
-
+ 
 command: javac.*
 	 warning       file line         pattern=([\w,.,/,\\,\-,\+,(,),:]*):(\d*): warning.*
 	 error         file line         pattern=([\w,.,/,\\,\-,\+,(,),:]*):(\d*):.*	
 
 command: .*bat\s.*
-	 error         file line         pattern=\[javac\]\s([\w,.,/,\\,:]*):(\d*):.*
-	 error         file line         pattern=file:([\w,.,/,\\,:]*):(\d*):.*
-
+	 error         file line	     pattern=\[javac\]\s([\w,.,/,\\,:]*):(\d*):.*
+	 error         file line	     pattern=file:([\w,.,/,\\,:]*):(\d*):.*
+	
 command: dir.*
 	 directory     file              pattern=\d{2}/\d{2}/\d*\s*\d{2}:\d{2}\s[a,p,AM,PM]+\s*<DIR>\s*([\w,.,/,\\,\s,\-,\+,\d]*).*
 	 directory     file              pattern=.*<DIR>\s*([\w,.,/,\\,\s,\-,\+,\d]*).*
 	 file          file              pattern=\d{2}/\d{2}/\d*\s*\d{2}:\d{2}\s[a,p,AM,PM]+\s*[\d,,]*\s*([\w,.,/,\\,\s,\-,\+,\d]*).*
 	 directory     file              pattern=[\d,/,\\,.,-]+.\s*\d{2}[:,.]\d{2}.\s*<DIR>\s*([\w,.,/,\\,\s,\-,\+,\d]*)
 	 file          file              pattern=[\d,/,\\,.,-]+.\s*\d{2}[:,.]\d{2}.\s*[\d,,,.]*\s*([\w,.,/,\\,\s,\-,\+,\d]*)	 
-
+	 
 command: ls -l.*
 	 file          file              pattern=-[-,r,w,x]+\s.*\s[\d{4},\d{2}:\d{2}]+,\s([\w,.,/,(,),\\,\-,\+\s,\d]*)	
 	 file          file              pattern=l[-,r,w,x]+\s.*\s[\d{4},\d{2}:\d{2}]+,\s([\w,.,/,(,),\\,\-,\+\s,\d]*)\s->\s[\w,.,/,(,),\\,\-,\+\s,\d]*	
@@ -109,38 +124,38 @@ command: ls -l.*
 	 file          file              pattern=-.* \d{4} ([\w,.,/,(,),\\,\-,\+,\s,\d]*) 
 	 file          file              pattern=l.*\d{2}:\d{2} ([\w,.,/,(,),\\,\-,\+,\s,\d]*)\s->\s[\w,.,/,(,),\\,\-,\+\s,\d]*
 	 file          file              pattern=l.* \d{4} ([\w,.,/,(,),\\,\-,\+,\s,\d]*)\s->\s[\w,.,/,(,),\\,\-,\+\s,\d]* 
-	 directory     file              pattern=d.*\d{2}:\d{2} ([\w,.,/,(,),\\,\-,\+\s,\d]*)
-	 directory     file              pattern=d.*\d{4} ([\w,.,/,(,),\\,\-,\+,\s,\d]*)
+     directory     file              pattern=d.*\d{2}:\d{2} ([\w,.,/,(,),\\,\-,\+\s,\d]*)
+     directory     file              pattern=d.*\d{4} ([\w,.,/,(,),\\,\-,\+,\s,\d]*)
 
 command: ls -a.*
 	 file          file              pattern=-.*\d{2}:\d{2} ([\w,.,/,(,),\\,\-,\+\s,\d]*)
 	 file          file              pattern=-.* \d{4} ([\w,.,/,(,),\\,\-,\+\s,\d]*)
-	 directory     file              pattern=d.*\d{2}:\d{2} ([\w,.,/,(,),\\,\-,\+\s,\d]*)
-	 directory     file              pattern=d.*\d{4} ([\w,.,/,(,),\\,\-,\+\s,\d]*)
+     directory     file              pattern=d.*\d{2}:\d{2} ([\w,.,/,(,),\\,\-,\+\s,\d]*)
+     directory     file              pattern=d.*\d{4} ([\w,.,/,(,),\\,\-,\+\s,\d]*)
 
 command: ls
-	 file          file              pattern=([\w,\d,.,(,),\-,\+\s]+)
-
+     file          file              pattern=([\w,\d,.,(,),\-,\+\s]+)
+ 
 command: ls\s.*
-	 file          file              pattern=([\w,\d,.,(,),\-,\+\s]+)
+     file          file              pattern=([\w,\d,.,(,),\-,\+\s]+)         
 
 command: .*
 	 prompt        file              pattern=([\w,.,/,(,),\\,\-,\+,\d,:,\s]*)>.*
-
-command: find .*
-	 file          file              pattern=([\w,.,/,\\,(,),\-]+)
+	                                                              
+command: find .*                    
+         file          file              pattern=([\w,.,/,\\,(,),\-]+)
 
 command: env
-	 pathenvvar    file              pattern=PATH\=(.*)
-	 libpathenvvar file              pattern=LIBPATH\=(.*)
-	 libpathenvvar file              pattern=LIB\=(.*)
-	 envvar                          pattern=[\w\d]+\=.*
+		 pathenvvar    file            pattern=PATH\=(.*)                        
+		 libpathenvvar file            pattern=LIBPATH\=(.*)
+		 libpathenvvar file            pattern=LIB\=(.*)
+         envvar                        pattern=[\w\d]+\=.*
 
 command: ps
-	 process                         pattern=[\s]*[\d]+\s.*
-
+		process                        pattern=[\s]*[\d]+\s.*
+		
 command: ps .*
-	 process                         pattern=[\s]*[\d]+\s.*
+		process                        pattern=[\s]*[\d]+\s.*
 
 command: xl[C,c].*
 	 error         file line         pattern=\"([\w,.,/,(,),\-,\+,\\]*)\",, line (\d*)\.\d*: \d*-\d* \(S\).*
@@ -151,20 +166,20 @@ command: xl[C,c].*
 command: ixlc.*
 	 error         file line         pattern=([\w,.,/,\\]*) Line (\d*)\s.*
 	 error         file line         pattern=[\w,.,/,\\]* Line \d* \"([\w,.,/,\\]*)\", line (\d*)\.\d*: .*
-
+	 
 command: cat.*patterns.*
-	 warning       file              pattern=# .*(PATTERNS.DAT).*
-	 Output                          pattern=command: .*
-	 #statement                      pattern=#.*
-	 statement                       pattern=.* pattern.*=.*
+	 warning file 		 pattern=# .*(PATTERNS.DAT).*
+	 Output 			             pattern=command: .*
+	 #statement 			         pattern=#.*
+	 statement                   pattern=.* pattern.*=.*
 
 # special for autoconf
 command: ./bootstrap.sc.*
-	 error         file line         pattern=aclocal: ([\w,.,/,\\]*): (\d*):.*
-	 warning       file line         pattern=([\w,.,/,\\]*):(\d*):.*
+	 error          file line         pattern=aclocal: ([\w,.,/,\\]*): (\d*):.*
+	 warning        file line         pattern=([\w,.,/,\\]*):(\d*):.*
 
 command: ./configure.*
-	 error         file line         pattern=./(configure): line (\d*): .*
+         error          file line         pattern=./(configure): line (\d*): .*
 
 # How Patterns Work
 # -----------------
@@ -264,5 +279,3 @@ command: ./configure.*
 #
 #  space:
 #	The space character
-
-

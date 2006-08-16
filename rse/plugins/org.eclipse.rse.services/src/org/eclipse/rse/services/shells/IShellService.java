@@ -30,7 +30,8 @@ public interface IShellService extends IService
 	 * Launch a new shell in the specified directory
 	 * @param monitor
 	 * @param initialWorkingDirectory
-	 * @return
+	 * @param environment Array of environment variable Strings of the form "var=text"
+	 * @return the shell object
 	 */
 	public IHostShell launchShell(IProgressMonitor monitor, String initialWorkingDirectory, String[] environment);
 	
@@ -39,7 +40,8 @@ public interface IShellService extends IService
 	 * @param monitor
 	 * @param initialWorkingDirectory
 	 * @param encoding
-	 * @return
+	 * @param environment Array of environment variable Strings of the form "var=text"
+	 * @return the shell object
 	 */
 	public IHostShell launchShell(IProgressMonitor monitor, String initialWorkingDirectory, String encoding, String[] environment);
 
@@ -48,7 +50,8 @@ public interface IShellService extends IService
 	 * @param monitor
 	 * @param initialWorkingDirectory
 	 * @param command
-	 * @return
+	 * @param environment Array of environment variable Strings of the form "var=text"
+	 * @return the shell object for getting output and error streams
 	 */
 	public IHostShell runCommand(IProgressMonitor monitor, String initialWorkingDirectory, String command, String[] environment);
 	
@@ -58,13 +61,17 @@ public interface IShellService extends IService
 	 * @param initialWorkingDirectory
 	 * @param command
 	 * @param encoding
-	 * @return
+	 * @param environment Array of environment variable Strings of the form "var=text"
+	 * @return the shell object for getting output and error streams
 	 */
 	public IHostShell runCommand(IProgressMonitor monitor, String initialWorkingDirectory, String command, String encoding, String[] environment);
 
 	/**
-	 * Return an array of environment variables that describe the environment on the host
-	 * @return
+	 * Return an array of environment variables that describe the environment on the host.
+	 * Each String returned is of the format "var=text": Everything up to the
+	 * first equals sign is the name of the given environment variable, everything
+	 * after the equals sign is its contents.
+	 * @return Array of environment variable Strings of the form "var=text"
 	 */
 	public String[] getHostEnvironment();
 }

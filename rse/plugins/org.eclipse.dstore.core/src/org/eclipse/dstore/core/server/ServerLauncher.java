@@ -205,6 +205,12 @@ public class ServerLauncher extends Thread
 				_port = "0";
 			}
 
+			
+			if (_serverPortRange != null && (_port == null || _port.equals("0")))
+			{
+				_port = _serverPortRange;
+			}
+			
 			{
 				// start new server
 				try
@@ -367,6 +373,7 @@ public class ServerLauncher extends Thread
 	private ServerSocket _serverSocket;
 	private String _path;
 	private ArrayList _connections;
+	private String _serverPortRange;
 	private ISSLProperties _sslProperties;
 	
 
@@ -406,6 +413,28 @@ public class ServerLauncher extends Thread
 
 		_path = pluginPath.trim();
 
+		_connections = new ArrayList();
+		init(portStr);
+	}
+	
+
+	/**
+	 * Constructor
+	 * @param portStr the port for the daemon socket to run on
+	 * @param serverPortRange the port range for launched servers
+	 */
+	public ServerLauncher(String portStr, String serverPortRange)
+	{
+		String pluginPath = System.getProperty("A_PLUGIN_PATH");
+		if (pluginPath == null)
+		{
+			System.out.println("A_PLUGIN_PATH is not defined");
+			System.exit(-1);
+		}
+
+		_path = pluginPath.trim();
+
+		_serverPortRange = serverPortRange;
 		_connections = new ArrayList();
 		init(portStr);
 	}
@@ -612,10 +641,16 @@ public class ServerLauncher extends Thread
 	 * Entry point into the DataStore daemon
 	 *
 	 * @param args the port for the daemon to run on (default is 4035).  Optionally, the second arg specifies whether to use SSL or not.
+	 *          an optional second arg can be used to specify the port range of servers that get launched
 	 */
 	public static void main(String args[])
 	{
-		if (args.length > 0)
+		if (args.length == 2)
+		{
+			ServerLauncher theServer = new ServerLauncher(args[0], args[1]);
+			theServer.start();
+		}
+		else if (args.length == 1)
 		{
 			ServerLauncher theServer = new ServerLauncher(args[0]);
 			theServer.start();

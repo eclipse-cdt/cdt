@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.DsfPlugin;
 
 /**
- * Base class for Riverbed service method-completion callbacks.  By default
+ * Base class for DSF service method-completion callbacks.  By default
  * all callbacks that indicate a complition of a method contain the status
  * of the result.   
  * <br>NOTE: Access to the status data is not synchronized, so 

@@ -13,9 +13,9 @@ package org.eclipse.dd.dsf.concurrent;
 /**
  * A DSF-instrumented alternative to the Runnable interface.    
  * <p>
- * While it is perfectly fine for clients to call the Riverbed executor with
- * an object only implementing the Runnable interface, the RbRunnable is a 
- * place holder for future tracing enhancments for Riverbed.  
+ * While it is perfectly fine for clients to call the DSF executor with
+ * an object only implementing the Runnable interface, the DsfRunnable is a 
+ * place holder for future tracing enhancments for DSF.  
  */
 abstract public class DsfRunnable implements Runnable {
 }

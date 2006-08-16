@@ -22,8 +22,8 @@ import org.osgi.framework.ServiceRegistration;
 
 
 /**
- * Standard base implementation of the Riverbed service.  This is a convinience
- * class that provides the basic functionality that all Riverbed services have 
+ * Standard base implementation of the DSF service.  This is a convinience
+ * class that provides the basic functionality that all DSF services have 
  * to implement.
  */
 abstract public class AbstractDsfService 

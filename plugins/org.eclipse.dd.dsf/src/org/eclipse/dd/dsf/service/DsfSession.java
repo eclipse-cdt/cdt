@@ -32,12 +32,12 @@ import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.osgi.framework.Filter;
 
 /**
- * Class to manage Riverbed sessions.  A Riverbed session is a way to 
- * associate a set of Riverbed services that are running simultaneously and 
+ * Class to manage DSF sessions.  A DSF session is a way to 
+ * associate a set of DSF services that are running simultaneously and 
  * are interacting with each other to provide a complete set of functionality.
  * <p>
  * Properties of a session are following:
- * <br>1. Each session is associated with a single Riverbed executor, although there
+ * <br>1. Each session is associated with a single DSF executor, although there
  * could be multiple sessions using the same executor.
  * <br>2. Each session has a unique String identifier, which has to be used by
  * the services belonging to this session when registering with OSGI services.
@@ -135,7 +135,7 @@ public class DsfSession
      * Starts and returns a new session instance.  This method can be called on any
      * thread, but the session-started listeners will be called using the session's 
      * executor.
-     * @param executor The Riverbed executor to use for this session.
+     * @param executor The DSF executor to use for this session.
      * @return instance object of the new session
      */
     public static DsfSession startSession(DsfExecutor executor) {
@@ -214,7 +214,7 @@ public class DsfSession
     /** Returns the ID of this session */
     public String getId() { return fId; }
     
-    /** Returns the Riverbed executor of this session */
+    /** Returns the DSF executor of this session */
     public DsfExecutor getExecutor() { return fExecutor; }
  
     /**
@@ -241,7 +241,7 @@ public class DsfSession
 
     /**
      * Retrieves and increments the startup counter for services in this session.
-     * Riverbed services should retrieve this counter when they are initialized, 
+     * DSF services should retrieve this counter when they are initialized, 
      * and should return it through IService.getStartupNumber().  This number is then
      * used to prioritize service events.
      * @return current startup counter value

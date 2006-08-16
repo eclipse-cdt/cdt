@@ -16,7 +16,7 @@ public interface IBackEndProcess extends IDsfService {
      * same time, a service property is needed to allow clients to distinguish
      * between them. 
      */
-    static final String PROCESS_ID = "org.eclipse.dsdp.riverbed.debug.BackendProcess.PROCESS_ID";
+    static final String PROCESS_ID = "org.eclipse.dsdp.DSF.debug.BackendProcess.PROCESS_ID";
     
     /**
      * Event indicating that the back end process has terminated.

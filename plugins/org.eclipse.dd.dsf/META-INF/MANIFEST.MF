@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Riverbed Plug-in
+Bundle-Name: DSF Plug-in
 Bundle-SymbolicName: org.eclipse.dd.dsf
 Bundle-Version: 1.0.0
 Bundle-Activator: org.eclipse.dd.dsf.DsfPlugin

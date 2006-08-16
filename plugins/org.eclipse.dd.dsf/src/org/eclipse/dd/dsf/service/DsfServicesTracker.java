@@ -19,7 +19,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
 /**
- * Convenience class to help track Riverbed services that a given
+ * Convenience class to help track DSF services that a given
  * client needs to use.  This class is similar to the standard OSGI 
  * org.osgi.util.tracker.ServiceTracker class, with a few differences:
  * <br>1. This class is assumed to be accessed by a single thread hence it
@@ -28,7 +28,7 @@ import org.osgi.framework.ServiceReference;
  * <br>2. This class is primarily designed to track multiple services of 
  * different type (class), while OSGI ServiceTracker is designed to work with
  * single class type, with optional filtering options.
- * <br>3. This class uses knowledge of Riverbed sessions to help narrow down
+ * <br>3. This class uses knowledge of DSF sessions to help narrow down
  * service references.
  * <br>4. OSGI Service tracker explicitly listens to OSGI service 
  * startup/shutdown events and it will clear a reference to a service as
@@ -76,7 +76,7 @@ public class DsfServicesTracker {
     /** 
      * Only constructor.
      * @param bundleContext Context of the plugin that the client lives in. 
-     * @param sessionId The Riverbed session that this tracker will be used for. 
+     * @param sessionId The DSF session that this tracker will be used for. 
      */
     public DsfServicesTracker(BundleContext bundleContext, String sessionId) {
         fBundleContext = bundleContext;

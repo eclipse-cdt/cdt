@@ -16,7 +16,7 @@ import org.eclipse.dd.dsf.concurrent.Done;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 
 /**
- * The inteface that all Riverbed services must implement.  It only privides a 
+ * The inteface that all DSF services must implement.  It only privides a 
  * few features to help manage and identify the servies using the OSGI services 
  * framework.
  * <p>
@@ -27,8 +27,8 @@ import org.eclipse.dd.dsf.concurrent.DsfExecutor;
  * additional properties should be used when registering the service to allow clients 
  * to uniquely identify the services.
  * <p>
- * By convention, all methods of Riverbed services can be called only on the dispatch
- * thread of the Riverbed executor that is associated with the service.  If a 
+ * By convention, all methods of DSF services can be called only on the dispatch
+ * thread of the DSF executor that is associated with the service.  If a 
  * service exposes a method that is to be called on non-dispatch thread, it should 
  * be documented so. 
  *  
@@ -40,7 +40,7 @@ public interface IDsfService {
     
     /**
      * Property name for the session-id of this service.  This property should be set by 
-     * all Riverbed services when they are registered with OSGI service framework. 
+     * all DSF services when they are registered with OSGI service framework. 
      */
     static String PROP_SESSION_ID = "org.eclipse.dd.dsf.service.IService.session_id";
     

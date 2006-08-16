@@ -22,7 +22,7 @@ import org.eclipse.dd.dsf.DsfPlugin;
  * <p>
  * Certain complex tasks require multiple commands to be executed in a chain, 
  * because for example result of one command is used as input into another 
- * command.  The typical Riverbed pattern of solving this problem is the following:
+ * command.  The typical DSF pattern of solving this problem is the following:
  * <li> 
  * <br> 1. original caller passes a Done callback to a method and invokes it
  * <br> 2. the method is executed by a subsystem
@@ -49,7 +49,7 @@ abstract public class DsfSequence {
      * The abstract class that each step has to implement
      * <br>FIXME: convert execute() and rollBacl() to take "done" as an argument.
      * This way we can make step a static class, and make its paradigm
-     * more consistent with rest of Riverbed. 
+     * more consistent with rest of DSF. 
      */
     abstract public class Step {
         public void execute() { stepFinished(); }
@@ -69,7 +69,7 @@ abstract public class DsfSequence {
     /**
      * Default constructor.  If this constructor is used, the steps need to be initialized
      * before the sequence can be invoked.
-     * @param executor the Riverbed executor which will be used to invoke all steps 
+     * @param executor the DSF executor which will be used to invoke all steps 
      */
     public DsfSequence(DsfExecutor executor) { 
         this(executor, null); 
@@ -77,7 +77,7 @@ abstract public class DsfSequence {
     
     /**
      * Constructor that initialized the steps.
-     * @param executor the Riverbed executor which will be used to invoke all steps 
+     * @param executor the DSF executor which will be used to invoke all steps 
      * @param steps sequence steps 
      */
     public DsfSequence(DsfExecutor executor, Step[] steps) {
@@ -85,7 +85,7 @@ abstract public class DsfSequence {
         fSteps = steps;
     }
     
-    /** Returns the riverbed executor for this sequence */
+    /** Returns the DSF executor for this sequence */
     public DsfExecutor getExecutor() { return fExecutor; }
     
     /**
@@ -119,7 +119,7 @@ abstract public class DsfSequence {
     /**
      * Returns index of the step that is currently being executed.
      * <br>NOTE: After sequence is invoked, this method should be called 
-     * only in the Riverbed executor thread.
+     * only in the DSF executor thread.
      * @return
      */
     public int getCurrentIdx() { return fCurrentStepIdx; }
@@ -150,9 +150,9 @@ abstract public class DsfSequence {
     }
     
     /**
-     * Submits this sequence to the Riverbed executor, and blocks waiting for the 
+     * Submits this sequence to the DSF executor, and blocks waiting for the 
      * sequence to complete. 
-     * <br>NOTE: This method is NOT to be called on the Riverbed executor thread. 
+     * <br>NOTE: This method is NOT to be called on the DSF executor thread. 
      */
     public synchronized void invoke() {
         assert !fExecutor.isInExecutorThread() :

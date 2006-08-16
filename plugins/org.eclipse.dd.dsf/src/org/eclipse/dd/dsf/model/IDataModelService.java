@@ -14,7 +14,7 @@ import org.eclipse.dd.dsf.concurrent.GetDataDone;
 import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
- * Interface for Riverbed services that provide model data to clients.  
+ * Interface for DSF services that provide model data to clients.  
  * <p>
  * For completeness this service interface derives from <code>IDataModelData</data> 
  * and has a method which allows clients to retrieve the DMC that represents the

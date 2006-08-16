@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.DsfPlugin;
 
 /**
- * Default implementation of a Riverbed executor interfaces, based on the 
+ * Default implementation of a DSF executor interfaces, based on the 
  * standard java.util.concurrent.ThreadPoolExecutor.
  */
 
@@ -29,7 +29,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         Thread fThread;
         public Thread newThread(Runnable r) {
             assert fThread == null;  // Should be called only once.
-            fThread = new Thread(new ThreadGroup("Riverbed Thread Group"), r, "Riverbed Dispatch Thread", 0); 
+            fThread = new Thread(new ThreadGroup("DSF Thread Group"), r, "DSF Dispatch Thread", 0); 
             return fThread;
         }
     }

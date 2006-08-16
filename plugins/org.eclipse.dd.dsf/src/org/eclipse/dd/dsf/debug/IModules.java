@@ -13,7 +13,7 @@ import org.eclipse.dd.dsf.model.IDataModelService;
  * Debugger service representing module handling logic of a debugger.  
  * <br>
  * TODO: I meant this as a replacement for Application service as well as the 
- * registry API in Riverbed 1.  But I still don't fully understand the format 
+ * registry API in DSF 1.  But I still don't fully understand the format 
  * of the symbol data that is stored in the registry, so that needs to be added
  * to this interface.  
  */

@@ -7,7 +7,8 @@
  * 
  * Contributors:
  *     Intel Corporation - Initial API and implementation
- ******************************************************************************/
+ *     Mark Mitchell, CodeSourcery - Bug 136896: View variables in binary format
+******************************************************************************/
 package org.eclipse.cdt.utils;
 
 import java.math.BigInteger;
@@ -26,6 +27,8 @@ public class Addr32 implements IAddress {
 	private static final int BYTES_NUM = 4;
 	private static final int DIGITS_NUM = BYTES_NUM * 2;
 	private static final int CHARS_NUM = DIGITS_NUM + 2;
+	private static final int BINARY_DIGITS_NUM = BYTES_NUM * 8;
+	private static final int BINARY_CHARS_NUM = BINARY_DIGITS_NUM + 2;
 
 	private final long address;
 
@@ -124,6 +127,18 @@ public class Addr32 implements IAddress {
 		StringBuffer sb = new StringBuffer(CHARS_NUM);
 		int count = DIGITS_NUM - addressString.length();
 		sb.append("0x"); //$NON-NLS-1$
+		for (int i = 0; i < count; ++i) {
+			sb.append('0');
+		}
+		sb.append(addressString);
+		return sb.toString();
+	}
+
+	public String toBinaryAddressString() {
+		String addressString = Long.toString(address, 2);
+		StringBuffer sb = new StringBuffer(BINARY_CHARS_NUM);
+		int count = BINARY_DIGITS_NUM - addressString.length();
+		sb.append("0b"); //$NON-NLS-1$
 		for (int i = 0; i < count; ++i) {
 			sb.append('0');
 		}

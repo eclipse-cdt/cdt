@@ -71,9 +71,9 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private static final int NUMBER_OF_DIGITS = 3;
 
 	// Format constants
-	private static int[] fFormatIds = new int[]{ ICDIFormat.NATURAL, ICDIFormat.HEXADECIMAL, ICDIFormat.DECIMAL };
+	private static int[] fFormatIds = new int[]{ ICDIFormat.NATURAL, ICDIFormat.HEXADECIMAL, ICDIFormat.DECIMAL, ICDIFormat.BINARY };
 
-	private static String[] fFormatLabels = new String[]{ PreferenceMessages.getString( "CDebugPreferencePage.0" ), PreferenceMessages.getString( "CDebugPreferencePage.1" ), PreferenceMessages.getString( "CDebugPreferencePage.2" ) }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static String[] fFormatLabels = new String[]{ PreferenceMessages.getString( "CDebugPreferencePage.0" ), PreferenceMessages.getString( "CDebugPreferencePage.1" ), PreferenceMessages.getString( "CDebugPreferencePage.2" ), PreferenceMessages.getString( "CDebugPreferencePage.14" ) }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 	private PropertyChangeListener fPropertyChangeListener;
 

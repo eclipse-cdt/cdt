@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Intel Corporation - Initial API and implementation
+ *     Mark Mitchell, CodeSourcery - Bug 136896: View variables in binary format
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -20,8 +21,7 @@ import java.math.BigInteger;
  * Please see Addr32 and Addr64 classes to see how this interface should 
  * be extended
  */
-public interface IAddress extends Comparable
-{
+public interface IAddress extends Comparable {
 	/**
 	 * Adds offset to address and returns new address object 
 	 * which is the result  
@@ -102,6 +102,16 @@ public interface IAddress extends Comparable
 	 * @return
 	 */
 	String toHexAddressString();
+
+
+	/**
+	 * Converts address to the binary representation with '0b' prefix and 
+	 * with all leading zeros. The length of returned string should be 
+	 * the same for all addresses of given class. I.e. 34 for 32-bit 
+	 * addresses and 66 for 64-bit addresses
+	 * @return
+	 */
+	String toBinaryAddressString();
 
 	/**
 	 * Returns amount of symbols in hex representation. Is identical to 

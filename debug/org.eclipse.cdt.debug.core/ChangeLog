@@ -1,3 +1,8 @@
+2006-08-14 Mikhail Khodjaiants
+	Bug 136896: View variables in binary format.
+	Applied modified patch from Mark Mitchell (CodeSourcery).
+	* CValue.java
+
 2006-05-31 Mikhail Khodjaiants
 	Bug 144719: [Modules view] Modules from from different sessions are mixed up.
 	* CDebugElement.java

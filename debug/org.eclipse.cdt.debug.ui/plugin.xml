@@ -397,6 +397,13 @@
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.NaturalVariableFormatActionDelegate">
          </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.BinaryVariableFormatActionDelegate"
+               enablesFor="1"
+               helpContextId="binary_variable_format_action_context"
+               id="org.eclipse.cdt.debug.internal.ui.actions.BinaryVariableFormatActionDelegate"
+               label="%BinaryVariableFormatAction.label"
+               menubarPath="org.eclipse.cdt.debug.ui.CVariableFormatMenu/formatGroup"/>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICSignal"

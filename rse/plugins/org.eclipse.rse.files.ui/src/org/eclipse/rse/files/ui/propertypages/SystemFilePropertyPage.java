@@ -20,11 +20,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.services.files.RemoteFileIOException;
+import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
-import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileIOException;
-import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSecurityException;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;

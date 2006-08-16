@@ -35,6 +35,9 @@ import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.RemoteFileIOException;
+import org.eclipse.rse.services.files.RemoteFileSecurityException;
+import org.eclipse.rse.services.files.RemoteFolderNotEmptyException;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.services.search.ISearchService;
@@ -42,10 +45,7 @@ import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistr
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
-import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileIOException;
-import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
-import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFolderNotEmptyException;
 
 
 

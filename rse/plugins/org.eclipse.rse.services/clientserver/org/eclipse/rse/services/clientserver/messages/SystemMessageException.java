@@ -20,10 +20,13 @@ package org.eclipse.rse.services.clientserver.messages;
  */
 public class SystemMessageException extends Exception 
 {
-    /**
-	 * 
+
+	/**
+	 * A serialVersionUID is recommended for all serializable classes.
+	 * This trait is inherited from Throwable.
+	 * This should be updated if there is a schema change for this class.
 	 */
-	private static final long	serialVersionUID	= 6695260563678942200L;
+	private static final long serialVersionUID = 6695260563678942200L;
 	private SystemMessage msg;
 
     /**
@@ -46,7 +49,7 @@ public class SystemMessageException extends Exception
     }
     
     /**
-     * Return the SystemMessage we wrap
+     * @return the SystemMessage wrapped by this SystemMessageException
      */
     public SystemMessage getSystemMessage()
     {
@@ -65,6 +68,7 @@ public class SystemMessageException extends Exception
     
     /**
      * Set the SystemMessage being wrapped
+     * @param msg the SystemMessage wrapped by this SystemMessageException
      */
     public void setSystemMessage(SystemMessage msg)
     {

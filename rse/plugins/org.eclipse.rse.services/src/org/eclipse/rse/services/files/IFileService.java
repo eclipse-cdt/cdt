@@ -43,18 +43,22 @@ public interface IFileService extends IService
 	/**
 	 * Copy a file to the remote file system.  The remote target is denoted by a
 	 * string representing the parent and a string representing the file.
+	 * @param monitor the monitor for this potentially long running operation
 	 * @param stream input stream to transfer
 	 * @param remoteParent - a string designating the parent folder of the target for this file.
 	 * @param remoteFile - a string designating the name of the file to be written on the remote system.
 	 * @param isBinary - indicates whether the file is text or binary
 	 * @param hostEncoding - the tgt encoding of the file (if text)
 	 * @return true if the file was uploaded
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public boolean upload(IProgressMonitor monitor, InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding) throws SystemMessageException;
 	
 	/**
 	 * Copy a file to the remote file system.  The remote target is denoted by a
 	 * string representing the parent and a string representing the file.
+	 * @param monitor the monitor for this potentially long running operation
 	 * @param localFile - a real file in the local file system.
 	 * @param remoteParent - a string designating the parent folder of the target for this file.
 	 * @param remoteFile - a string designating the name of the file to be written on the remote system.
@@ -62,11 +66,14 @@ public interface IFileService extends IService
 	 * @param srcEncoding - the src encoding of the file (if text)
 	 * @param hostEncoding - the tgt encoding of the file (if text)
 	 * @return true if the file was uploaded
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public boolean upload(IProgressMonitor monitor, File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding) throws SystemMessageException;
 
 	/**
 	 * Copy a file from the remote file system to the local system.
+	 * @param monitor the monitor for this potentially long running operation
 	 * @param remoteParent - a String designating the remote parent.
 	 * @param remoteFile - a String designating the remote file residing in the parent.
 	 * @param localFile - The file that is to be written.  If the file exists it is 
@@ -74,51 +81,66 @@ public interface IFileService extends IService
 	 * @param isBinary - indicates whether the file is text on binary
 	 * @param hostEncoding - the encoding on the host (if text)
 	 * @return true if the file was copied from the remote system.
-	 * @throws SystemMessageException 
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public boolean download(IProgressMonitor monitor, String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding) throws SystemMessageException;
 
 	/**
-	 * Return the host file given the parent path and file name
+	 * @param monitor the monitor for this potentially long running operation
 	 * @param remoteParent
 	 * @param name
-	 * @return
+	 * @return the host file given the parent path and file name
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public IHostFile getFile(IProgressMonitor monitor, String remoteParent, String name) throws SystemMessageException;
 	
 	/**
+	 * @param monitor the monitor for this potentially long running operation
 	 * @param remoteParent - the name of the parent directory on the remote file 
 	 * system from which to retrieve the child list.
 	 * @param fileFilter - a string that can be used to filter the children.  Only
 	 * those files matching the filter make it into the list.  The interface 
 	 * does not dictate where the filtering occurs.
 	 * @return the list of host files. 
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public IHostFile[] getFilesAndFolders(IProgressMonitor monitor, String remoteParent, String fileFilter) throws SystemMessageException;
   
 	/**
+	 * @param monitor the monitor for this potentially long running operation
 	 * @param remoteParent - the name of the parent directory on the remote file 
 	 * system from which to retrieve the child list.
 	 * @param fileFilter - a string that can be used to filter the children.  Only
 	 * those files matching the filter make it into the list.  The interface 
 	 * does not dictate where the filtering occurs.
 	 * @return the list of host files. 
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public IHostFile[] getFiles(IProgressMonitor monitor, String remoteParent, String fileFilter) throws SystemMessageException;
   
 	/**
+	 * @param monitor the monitor for this potentially long running operation
 	 * @param remoteParent - the name of the parent directory on the remote file 
 	 * system from which to retrieve the child list.
 	 * @param fileFilter - a string that can be used to filter the children.  Only
 	 * those files matching the filter make it into the list.  The interface 
 	 * does not dictate where the filtering occurs.
 	 * @return the list of host files. 
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public IHostFile[] getFolders(IProgressMonitor monitor, String remoteParent, String fileFilter) throws SystemMessageException;
   
 	/**
+	 * @param monitor the monitor for this potentially long running operation
 	 * Return the list of roots for this system
 	 * @return the list of host files. 
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public IHostFile[] getRoots(IProgressMonitor monitor) throws SystemMessageException;
 	
@@ -130,10 +152,12 @@ public interface IFileService extends IService
 
 	/**
 	 * Create a file on the host
-	 * @param monitor the progress monitor
+	 * @param monitor the monitor for this potentially long running operation
 	 * @param remoteParent the parent directory
 	 * @param fileName the name of the new file
 	 * @return the newly created file
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public IHostFile createFile(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException;
 	
@@ -143,6 +167,8 @@ public interface IFileService extends IService
 	 * @param remoteParent the parent directory
 	 * @param folderName the name of the new folder
 	 * @return the newly created folder
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public IHostFile createFolder(IProgressMonitor monitor, String remoteParent, String folderName) throws SystemMessageException;
 	
@@ -152,6 +178,8 @@ public interface IFileService extends IService
 	 * @param remoteParent the folder containing the file to delete
 	 * @param fileName the name of the file or folder to delete
 	 * @return true if successful
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public boolean delete(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException;
 
@@ -161,6 +189,8 @@ public interface IFileService extends IService
 	 * @param remoteParents the array of folders containing the files to delete
 	 * @param fileNames the names of the files or folders to delete
 	 * @return true iff all deletes are successful
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public boolean deleteBatch(IProgressMonitor monitor, String[] remoteParents, String[] fileNames) throws SystemMessageException;
 
@@ -171,6 +201,8 @@ public interface IFileService extends IService
 	 * @param oldName the old name of the file or folder to rename
 	 * @param newName the new name for the file
 	 * @return true if successful
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName) throws SystemMessageException;
 	
@@ -182,6 +214,8 @@ public interface IFileService extends IService
 	 * @param newName the new name for the file
 	 * @param oldFile the file to update with the change
 	 * @return true if successful
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) throws SystemMessageException;
 	
@@ -192,7 +226,9 @@ public interface IFileService extends IService
 	 * @param srcName the new of the file or folder to move
 	 * @param tgtParent the destination folder for the move
 	 * @param tgtName the name of the moved file or folder
-	 * @return
+	 * @return true if the file was moved
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public boolean move(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) throws SystemMessageException;
 
@@ -203,7 +239,9 @@ public interface IFileService extends IService
 	 * @param srcName the new of the file or folder to copy
 	 * @param tgtParent the destination folder for the copy
 	 * @param tgtName the name of the copied file or folder
-	 * @return
+	 * @return true if the file was copied successfully
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public boolean copy(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) throws SystemMessageException;
 
@@ -213,13 +251,15 @@ public interface IFileService extends IService
 	 * @param srcParents the folders containing each file or folder to copy
 	 * @param srcNames the names of the files or folders to copy
 	 * @param tgtParent the destination folder for the copy
-	 * @return
+	 * @return true if all files were copied
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
 	 */
 	public boolean copyBatch(IProgressMonitor monitor, String[] srcParents, String[] srcNames, String tgtParent) throws SystemMessageException;
 
 	/**
 	 * Indicates whether the file system is case sensitive
-	 * @return
+	 * @return true if the file system has case sensitive file names
 	 */
 	public boolean isCaseSensitive();
 }

@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.subsystems.files.core.subsystems;
+package org.eclipse.rse.services.files;
 import java.util.ResourceBundle;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -34,6 +34,12 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
  */
 public class RemoteFileException extends SystemMessageException
 {
+	/**
+	 * A serialVersionUID is recommended for all serializable classes.
+	 * This trait is inherited from Throwable.
+	 * This should be updated if there is a schema change for this class.
+	 */
+	private static final long serialVersionUID = 1L;
 	private Exception wrappedException = null;
 	
 	/**
@@ -96,7 +102,7 @@ public class RemoteFileException extends SystemMessageException
 		wrappedException = remoteException;
 	}	
     /**
-     * Return the wrapped exception
+     * @return the original remote exception
      */
     public Exception getRemoteException()
     {

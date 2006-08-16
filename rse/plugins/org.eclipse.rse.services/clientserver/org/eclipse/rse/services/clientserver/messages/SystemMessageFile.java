@@ -109,7 +109,10 @@ public class SystemMessageFile implements ErrorHandler
 
 	/**
 	 * Constructor
-	 * @param messageFileName - name of xml file which will contain the messages
+	 * @param messageFileName - a key used to determine if a message file has already been loaded. 
+	 * Usually the name of the xml file containing the message file. 
+	 * @param messageFile the stream containing the message file.
+	 * @param dtdStream the stream containing the dtd for this message file.
 	 */
 	public SystemMessageFile (String messageFileName, InputStream messageFile, InputStream dtdStream) 
 	{
@@ -131,7 +134,7 @@ public class SystemMessageFile implements ErrorHandler
 	 * If the named message file has already been loaded return its
 	 * MessageFileInfo
 	 * @param messageFileName
-	 * @return
+	 * @return the MessageFileInfo for this message file
 	 */
 	protected MessageFileInfo getFromCache(String messageFileName)
 	{
@@ -305,14 +308,15 @@ public class SystemMessageFile implements ErrorHandler
 	
 	/**
 	 * Override this to provide different extended SystemMessage implementation
-	 * @param componentAbbr
-	 * @param subComponentAbbr
-	 * @param msgNumber
-	 * @param msgIndicator
-	 * @param msgL1
-	 * @param msgL2
-	 * @return
-	 * @throws IndicatorException
+	 * @param componentAbbr a three letter component name
+	 * @param subComponentAbbr a one letter subcomponent name
+	 * @param msgNumber a four digit message number
+	 * @param msgIndicator a single character message type indicator
+	 * @param msgL1 the first level text that describes the error
+	 * @param msgL2 the second level text that provides details about the error and possible recovery
+	 * @return the SystemMessage
+	 * @throws IndicatorException if the message type indicator is invalid.
+	 * @see SystemMessage for message type indicator constants
 	 */
 	protected SystemMessage loadSystemMessage(String componentAbbr, String subComponentAbbr, String msgNumber, char msgIndicator,
 			String msgL1, String msgL2) throws IndicatorException
@@ -406,7 +410,7 @@ public class SystemMessageFile implements ErrorHandler
 	/**
 	 * Use this method to generate html documentation for the messages in the message file.
 	 * This is useful for reference information, or to give to Level 2 for service support.
-	 * @param htmlFile - the fully qualified name of the file to write to. Overwrites current contents.
+	 * @param fullFileName - the fully qualified name of the file to write to. Overwrites current contents.
 	 * @return true if it went well, false if it failed for some reason, such as given a bad file name. Errors written to standard out.
 	 */
 	public boolean printHTML(String fullFileName) 
@@ -566,51 +570,6 @@ public class SystemMessageFile implements ErrorHandler
         return false;
 	}
 	
-	/**
-	 * loadAndParseXMLFile: 
-	 * tries to load and parse the specified XML file.
-	 * @param String messageFileName:	name of xml file which will contain the messages
-	 */
-	private Document loadAndParseXMLFile (String messageFileName) 
-	{
-		DocumentBuilder parser = createXmlParser();
-        
-        try 
-        {
-           Document document = parser.parse(messageFileName);
-           return document;
-        }
-		catch (SAXException e) 
-		{
-			// the parser was unable to parse the file.
-				/** TODO - DKM move this somewhere else since system message now needs to be eclipse independent
- 			SystemBasePlugin.logError("SystemMessageFile: loadAndParseXMLFile "+e.toString(), e);
-			 			
-		    MessageBox mb = new MessageBox(SystemPlugin.getActiveWorkbenchShell());
-		    mb.setText("Unexpected Error");
-		    mb.setMessage("Unable to load message file " + messageFileName );
-		    mb.open();
- 			*/
-			return null;
-		}
-		catch (IOException e) 
-		{
-				/** TODO - DKM move this somewhere else since system message now needs to be eclipse independent
-			// there was an error reading the file
- 			SystemBasePlugin.logError("SystemMessageFile: loadAndParseXMLFile "+e.toString(), e);
- 			
-		    MessageBox mb = new MessageBox(SystemPlugin.getActiveWorkbenchShell());
-		    mb.setText("Unexpected Error");
-		    mb.setMessage("Unable to load message file " + messageFileName );
-		    mb.open();
-			*/		    
-			return null;
-		}
-	    
-		// the file was successfully opened and parsed       
-//		return parser.getDocument();
-	}
-
 	/**
 	 * Create the XML parser
 	 * Set its entity resolver and error handler.

@@ -48,7 +48,8 @@
 <table>
   <tbody>
     <tr><td><b>RSE requires Eclipse-3.2.<b> (<a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.2-200606291905/index.php">download page</a>)</td></tr>
-    <tr><td>Eclipse 3.2RC2, 3.1 or lower will <b>not</b> work!</td></tr>
+    <tr><td>Earlier versions will <b>not</b> work!</td></tr>
+    <tr><td>3.3M1 has been reported to work, but has not undergone any formal testing.</td></tr>
     <!-- <tr>
       <td>We've been testing with Eclipse-3.2, built 29-Jun-2006 (<a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.2-200606291905/index.php">download page</a>)</td>
     </tr> -->

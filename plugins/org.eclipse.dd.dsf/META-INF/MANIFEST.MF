@@ -12,3 +12,4 @@ Export-Package: org.eclipse.dd.dsf.concurrent,
  org.eclipse.dd.dsf.debug,
  org.eclipse.dd.dsf.model,
  org.eclipse.dd.dsf.service
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

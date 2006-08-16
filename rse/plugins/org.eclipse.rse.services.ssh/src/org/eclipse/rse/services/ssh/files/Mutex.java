@@ -55,58 +55,72 @@ public class Mutex {
 	 * @param timeout Maximum wait time given in milliseconds.
 	 * @return <code>true</code> if the lock was obtained successfully.
 	 */
-	public synchronized boolean waitForLock(IProgressMonitor monitor, long timeout) {
+	public boolean waitForLock(IProgressMonitor monitor, long timeout) {
         if (Thread.interrupted()) {
         	return false;
 		}
-        if (fLocked) {
-        	//need to wait for the lock.
-        	boolean canceled = false;
-        	final Thread myself = Thread.currentThread();
-        	try {
-            	fWaitQueue.add(myself);
+    	final Thread myself = Thread.currentThread();
+        synchronized(fWaitQueue) {
+        	if (!fLocked) {
+        		//acquire the lock immediately.
+        		fLocked = true;
+        		return true;
+        	} else {
+        		fWaitQueue.add(myself);
             	Activator.trace("Mutex: added "+myself+", size="+fWaitQueue.size()); //$NON-NLS-1$ //$NON-NLS-2$
-                long start = System.currentTimeMillis();
-                long timeLeft = timeout;
-                long pollTime = (monitor!=null) ? 1000 : timeLeft;
-                long nextProgressUpdate = start+500;
-                while (timeLeft>0 && !canceled) {
-                    try {
-                    	wait(timeLeft > pollTime ? pollTime : timeLeft);
-                		Activator.trace("Mutex: wakeup "+myself+" ?"); //$NON-NLS-1$ //$NON-NLS-2$
-                    	//I'm still in the list, nobody is allowed to take me out!
-                    	//assert !fWaitQueue.isEmpty(); 
-                    	if (!fLocked && fWaitQueue.get(0) == myself) {
-                    		break; //gee it's my turn!
-                    	}
-                    	long curTime = System.currentTimeMillis();
-                        timeLeft = start + timeout - curTime;
-                    	if (monitor!=null) {
-                    		//TODO put the calls to the progress monitor out
-                    		//of the synchronized{}
-                    		canceled = monitor.isCanceled();
-                    		if (!canceled && (curTime>nextProgressUpdate)) {
-                        		monitor.worked(1);
-                    			nextProgressUpdate+=1000;
-                    		}
-                    	}
-                    } catch(InterruptedException e) {
-                    	canceled = true;
-                    }
-                }
-        	} finally {
-            	fWaitQueue.remove(myself);
-            	Activator.trace("Mutex: removed "+myself+", size="+fWaitQueue.size()); //$NON-NLS-1$ //$NON-NLS-2$
-        	}
-        	if (fLocked || canceled) {
-        		//we were not able to acquire the lock due to an exception,
-        		//or because the wait was canceled.
-        		return false;
         	}
         }
-        //acquire the lock myself now.
-        fLocked = true;
-        return true;
+    	//need to wait for the lock.
+        boolean lockAcquired = false;
+    	try {
+            long start = System.currentTimeMillis();
+            long timeLeft = timeout;
+            long pollTime = (monitor!=null) ? 1000 : timeLeft;
+            long nextProgressUpdate = start+500;
+        	boolean canceled = false;
+            while (timeLeft>0 && !canceled && !lockAcquired) {
+            	//is it my turn yet? Check wait queue and wait
+        		synchronized(fWaitQueue) {
+                	if (!fLocked && fWaitQueue.get(0) == myself) {
+                		fWaitQueue.remove(0);
+                    	Activator.trace("Mutex: SUCCESS, removed "+myself+", size="+fWaitQueue.size()); //$NON-NLS-1$ //$NON-NLS-2$
+                		fLocked = true;
+                		lockAcquired = true;
+                	} else {
+                    	fWaitQueue.wait(timeLeft > pollTime ? pollTime : timeLeft);
+                    	if (!fLocked && fWaitQueue.get(0) == myself) {
+                    		fWaitQueue.remove(0);
+                        	Activator.trace("Mutex: SUCCESS, removed "+myself+", size="+fWaitQueue.size()); //$NON-NLS-1$ //$NON-NLS-2$
+                    		fLocked = true;
+                    		lockAcquired = true;
+                    	}
+                	}
+        		}
+        		if (!lockAcquired) {
+        			//Need to continue waiting
+            		Activator.trace("Mutex: wakeup "+myself+" ?"); //$NON-NLS-1$ //$NON-NLS-2$
+                	long curTime = System.currentTimeMillis();
+                    timeLeft = start + timeout - curTime;
+                	if (monitor!=null) {
+                		canceled = monitor.isCanceled();
+                		if (!canceled && (curTime>nextProgressUpdate)) {
+                    		monitor.worked(1);
+                			nextProgressUpdate+=1000;
+                		}
+                	}
+        		}
+            }
+        } catch(InterruptedException e) {
+          	//canceled waiting -> no lock aquired
+    	} finally {
+    		if (!lockAcquired) {
+        		synchronized(fWaitQueue) {
+                	fWaitQueue.remove(myself);
+                	Activator.trace("Mutex: FAIL, removed "+myself+", size="+fWaitQueue.size()); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+    		}
+    	}
+        return lockAcquired;
 	}
 
 	/**
@@ -115,12 +129,14 @@ public class Mutex {
 	 * May only be called by the same thread that originally acquired 
 	 * the Mutex.
 	 */
-	public synchronized void release() {
-		fLocked=false;
-		if (!fWaitQueue.isEmpty()) {
-			Object nextOneInQueue = fWaitQueue.get(0);
-			Activator.trace("Mutex: releasing "+nextOneInQueue); //$NON-NLS-1$
-			notifyAll();
+	public void release() {
+		synchronized(fWaitQueue) {
+			fLocked=false;
+			if (!fWaitQueue.isEmpty()) {
+				Object nextOneInQueue = fWaitQueue.get(0);
+				Activator.trace("Mutex: releasing "+nextOneInQueue); //$NON-NLS-1$
+				fWaitQueue.notifyAll();
+			}
 		}
 	}
 
@@ -128,8 +144,10 @@ public class Mutex {
 	 * Return this Mutex's lock status.
 	 * @return <code>true</code> if this mutex is currently acquired by a thread.
 	 */
-	public synchronized boolean isLocked() {
-		return fLocked;
+	public boolean isLocked() {
+		synchronized(fWaitQueue) {
+			return fLocked;
+		}
 	}
 	
 	/**
@@ -139,11 +157,13 @@ public class Mutex {
 	 * This should be called if the resource that the Threads are 
 	 * contending for, becomes unavailable for some other reason.
 	 */
-	public synchronized void interruptAll() {
-		Iterator it = fWaitQueue.iterator();
-		while (it.hasNext()) {
-			Thread aThread = (Thread)it.next();
-			aThread.interrupt();
+	public void interruptAll() {
+		synchronized(fWaitQueue) {
+			Iterator it = fWaitQueue.iterator();
+			while (it.hasNext()) {
+				Thread aThread = (Thread)it.next();
+				aThread.interrupt();
+			}
 		}
 	}
 

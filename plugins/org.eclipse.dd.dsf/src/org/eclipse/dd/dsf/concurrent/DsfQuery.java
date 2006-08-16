@@ -27,9 +27,9 @@ import org.eclipse.dd.dsf.DsfPlugin;
  * @see java.util.concurrent.Callable
  * FIXME: make this class implement the Future<V> interface.
  */
-abstract public class DsfQuery {
+abstract public class DsfQuery<V> {
     
-    private Object fResult;
+    private V fResult;
     private boolean fValid;
     private DsfExecutor fExecutor;
     private Future fFuture;
@@ -52,7 +52,7 @@ abstract public class DsfQuery {
      * Allows deriving classes to implement their own snipped additional 
      * cancellation code. 
      */
-    protected void revokeChildren(Object result) {};
+    protected void revokeChildren(V result) {};
         
     /**
      * Get data associated with this proxy. This method is thread safe and 
@@ -60,7 +60,7 @@ abstract public class DsfQuery {
      * for commands to be processed on the dispatch thread, this methods itself 
      * CANNOT be called on the dispatch thread.
      */
-    public synchronized Object get() {
+    public synchronized V get() {
         assert !fExecutor.isInExecutorThread();
         if(!fValid) {
             if (!fWaiting) {
@@ -97,8 +97,8 @@ abstract public class DsfQuery {
      * Same as get(), but with code to automatically re-threw the exception if one
      * was reported by the run() method.
      */
-    public Object getWithThrows() throws CoreException {
-    	Object retVal = get();
+    public V getWithThrows() throws CoreException {
+    	V retVal = get();
         if (!getStatus().isOK()) {
             throw new CoreException(getStatus());
         }
@@ -122,7 +122,7 @@ abstract public class DsfQuery {
     }
     
     /** Abort current operation and set proxy data to 'result' */
-    public synchronized void cancel(Object newResult) {
+    public synchronized void cancel(V newResult) {
         fResult = newResult;
         cancel();
     }
@@ -133,7 +133,7 @@ abstract public class DsfQuery {
     
     public boolean isValid() { return fValid; }
     
-    public synchronized void done(Object result) {
+    public synchronized void done(V result) {
         // Valid could be true if request was cancelled while data was 
         // being retrieved, and then done() was called.
         if (fValid) return;

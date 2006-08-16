@@ -5,7 +5,8 @@ Bundle-SymbolicName: org.eclipse.rse.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.core.RSECorePlugin
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.core,
  org.eclipse.rse.core.filters,

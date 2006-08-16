@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.filters;
+import org.eclipse.rse.core.references.IRSEReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemContentsType;
-import org.eclipse.rse.references.ISystemReferencingObject;
 
 
 /**
@@ -28,7 +28,7 @@ import org.eclipse.rse.references.ISystemReferencingObject;
 /**
  * @lastgen interface SystemFilterReference extends SystemReferencingObject, SystemFilterContainerReference {}
  */
-public interface ISystemFilterReference extends ISystemReferencingObject, ISystemFilterContainerReference, ISystemContainer
+public interface ISystemFilterReference extends IRSEReferencingObject, ISystemFilterContainerReference, ISystemContainer
 {
 	/**
 	 * Return the reference manager which is managing this filter reference

@@ -14,25 +14,24 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.references;
+package org.eclipse.rse.core.references;
 
-import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 
 /**
- * A class to encapsulate the operations required of an object which
- * is merely a reference to another object, something we call a shadow.
- * Such shadows are needed to support a GUI which displays the same
- * object in multiple places. To enable that, it is necessary not to
- * use the same physical object in each UI representation as the UI
- * will only know how to update/refresh the first one it finds.
+ * A simple class that implements IRSEPersistableReferencedObject.
+ * This is an object that can have shadow (reference) objects, which simply
+ * contain a pointer (in memory) to this object, and a copy of this object's
+ * unique name or key (for storing on disk).
  * <p>
- * These references are not persistent. Persistent references are managed
- * by the subclass SystemPersistableReferencingObject.
+ * The intention is that in your Rose model, your class extends this class.
+ * Do this for any class for which you wish to persist a list of references to
+ * that class.
  */
 /**
- * @lastgen interface SystemReferencingObject  {}
+ * @lastgen interface SystemPersistableReferencedObject extends SystemReferencedObject {}
  */
 
-public interface ISystemReferencingObject extends IRSEBaseReferencingObject{
+public interface IRSEPersistableReferencedObject extends IRSEReferencedObject, IRSEBasePersistableReferencedObject
+{
 
 }

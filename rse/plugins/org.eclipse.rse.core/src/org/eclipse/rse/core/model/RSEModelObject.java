@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,30 +13,45 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  ********************************************************************************/
-package org.eclipse.rse.internal.references;
 
-import org.eclipse.rse.core.references.IRSEPersistableReferencedObject;
+package org.eclipse.rse.core.model;
+
 
 /**
- * @see org.eclipse.rse.core.references.IRSEBasePersistableReferenceManager
+ * Provides common support for local RSE model objects
+ * Extenders inherit property set support
+ * @author dmcknigh
+ *
  */
-public abstract class SystemPersistableReferencedObject extends SystemReferencedObject implements IRSEPersistableReferencedObject {
-	/**
-	 * Constructor.
-	 */
-	public SystemPersistableReferencedObject() {
-		super();
+public abstract class RSEModelObject extends PropertySetContainer implements IRSEModelObject
+{
+	protected boolean _isDirty = true;
+	protected boolean _wasRestored = false;
+	
+	
+	public final boolean isDirty()
+	{
+		return _isDirty;
 	}
 
-	/**
-	 * Return the unique reference name of this object.
-	 * <p>
-	 * As required by the {@link org.eclipse.rse.core.references.IRSEPersistableReferencedObject} 
-	 * interface.
-	 * <p>
-	 * YOUR SUBCLASS MUST OVERRIDE THIS!
-	 */
-	public String getReferenceName() {
-		return null;
+	public final void setDirty(boolean flag)
+	{
+		_isDirty = flag;
+	}
+
+
+	public final boolean wasRestored() 
+	{
+		return _wasRestored;
+	}
+
+	public final void setWasRestored(boolean flag) 
+	{
+		_wasRestored = flag;
+	}
+	
+	public String getDescription()
+	{
+		return RSEModelResources.RESID_MODELOBJECTS_MODELOBJECT_DESCRIPTION;
 	}
 }

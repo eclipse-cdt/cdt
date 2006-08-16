@@ -19,7 +19,7 @@ import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 
 /**
- * This is a class that implements all the methods in the ISystemReferencingObject.
+ * This is a class that implements all the methods in the IRSEReferencingObject.
  * It makes implementing this interface trivial.
  * The easiest use of this class is to subclass it, but since that is not
  * always possible, it is not abstract and hence can be leveraged via containment.

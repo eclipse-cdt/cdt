@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.references;
+import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.core.references.IRSEReferencedObject;
-import org.eclipse.rse.internal.model.RSEModelObject;
 
 
 /**

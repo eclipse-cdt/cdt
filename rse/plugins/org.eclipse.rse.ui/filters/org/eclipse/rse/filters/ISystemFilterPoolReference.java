@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.filters;
 import org.eclipse.rse.core.model.IRSEModelObject;
-import org.eclipse.rse.references.ISystemPersistableReferencingObject;
+import org.eclipse.rse.core.references.IRSEPersistableReferencingObject;
 
 
 /**
@@ -26,9 +26,9 @@ import org.eclipse.rse.references.ISystemPersistableReferencingObject;
  *  of their reference count.
  */
 /** 
- * @lastgen interface SystemFilterPoolReference extends SystemPersistableReferencingObject, ISystemPersistableReferencingObject, SystemFilterContainerReference  {}
+ * @lastgen interface SystemFilterPoolReference extends SystemPersistableReferencingObject, IRSEPersistableReferencingObject, SystemFilterContainerReference  {}
  */
-public interface ISystemFilterPoolReference extends ISystemPersistableReferencingObject, ISystemFilterContainerReference, IRSEModelObject
+public interface ISystemFilterPoolReference extends IRSEPersistableReferencingObject, ISystemFilterContainerReference, IRSEModelObject
 {
 	/**
 	 * Return the reference manager which is managing this filter reference

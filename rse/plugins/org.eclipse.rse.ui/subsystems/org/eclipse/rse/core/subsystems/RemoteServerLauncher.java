@@ -23,7 +23,7 @@ import org.eclipse.rse.core.internal.subsystems.ServerLauncher;
 import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IPropertyType;
-import org.eclipse.rse.model.PropertyType;
+import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.ui.SystemResources;
 
 

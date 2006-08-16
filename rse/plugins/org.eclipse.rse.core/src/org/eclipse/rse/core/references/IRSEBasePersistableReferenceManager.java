@@ -14,9 +14,9 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.references;
+package org.eclipse.rse.core.references;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
+import org.eclipse.rse.core.references.IRSEBasePersistableReferencingObject;
 
 
 /**
@@ -28,7 +28,7 @@ import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
  * <ol>
  *   <li>Include the references package from the SystemReferences .cat file
  *   <li>Ensure the class for the master objects subclass SystemPersistableReferencedObject,
- *        or implement ISystemPersistableReferencedObject.
+ *        or implement IRSEPersistableReferencedObject.
  *        <b>YOU MUST OVERRIDE getReferenceName() IN SYSTEMPERSISTABLEREFERENCEDOBJECT!</b>
  *   <li>Create a class subclassing SystemPersistableReferencingObject to hold a reference
  *        to the master object. This will hold a transient pointer, and a persistable
@@ -54,37 +54,37 @@ import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
  * @lastgen interface SystemPersistableReferenceManager  {}
  */
 
-public interface ISystemBasePersistableReferenceManager 
+public interface IRSEBasePersistableReferenceManager 
 {
 
 	/**
 	 * Return an array of the referencing objects currently being managed.
 	 * @param array of the referencing objects currently in this list.
 	 */
-	public ISystemBasePersistableReferencingObject[] getReferencingObjects();
+	public IRSEBasePersistableReferencingObject[] getReferencingObjects();
 	/**
 	 * Set in one shot the list of referencing objects. Replaces current list.
 	 * @param objects An array of referencing objects which is to become the new list.
      * @param deReference true to first de-reference all objects in the existing list.
 	 */
-	public void setReferencingObjects(ISystemBasePersistableReferencingObject[] objects, boolean deReference);
+	public void setReferencingObjects(IRSEBasePersistableReferencingObject[] objects, boolean deReference);
 	/**
 	 * Add a referencing object to the managed list.
 	 * @return new count of referenced objects being managed.
 	 */
-	public int addReferencingObject(ISystemBasePersistableReferencingObject object);
+	public int addReferencingObject(IRSEBasePersistableReferencingObject object);
 	/**
 	 * Remove a referencing object from the managed list.
 	 * <p>Does NOT call removeReference on the master referenced object.
 	 * @return new count of referenced objects being managed.
 	 */
-	public int removeReferencingObject(ISystemBasePersistableReferencingObject object);	
+	public int removeReferencingObject(IRSEBasePersistableReferencingObject object);	
 	/**
 	 * Remove and dereferences a referencing object from the managed list.
 	 * <p>DOES call removeReference on the master referenced object.
 	 * @return new count of referenced objects being managed.
 	 */
-	public int removeAndDeReferenceReferencingObject(ISystemBasePersistableReferencingObject object);	
+	public int removeAndDeReferenceReferencingObject(IRSEBasePersistableReferencingObject object);	
 	/**
 	 * Remove all objects from the list.
 	 * <p>Does NOT call removeReference on the master referenced objects.
@@ -106,13 +106,13 @@ public interface ISystemBasePersistableReferenceManager
 	 * @param object The referencing object to find position of.
 	 * @return zero-based position within the list. If not found, returns -1
 	 */
-	public int getReferencingObjectPosition(ISystemBasePersistableReferencingObject object);	
+	public int getReferencingObjectPosition(IRSEBasePersistableReferencingObject object);	
 	/**
 	 * Move the given referencing object to a new zero-based position in the list.
 	 * @param newPosition New zero-based position
 	 * @param object The referencing object to move
 	 */
-	public void moveReferencingObjectPosition(int newPosition, ISystemBasePersistableReferencingObject object);	
+	public void moveReferencingObjectPosition(int newPosition, IRSEBasePersistableReferencingObject object);	
 	/**
 	 * Return true if the given referencable object is indeed referenced by a referencing object
 	 * in the current list. This is done by comparing the reference names of each, not the
@@ -128,7 +128,7 @@ public interface ISystemBasePersistableReferenceManager
 	 * @return the referencing object within this list which references the given referencable object, or
 	 * null if no reference found.
 	 */
-	public ISystemBasePersistableReferencingObject getReferencedObject(IRSEBasePersistableReferencedObject object);	
+	public IRSEBasePersistableReferencingObject getReferencedObject(IRSEBasePersistableReferencedObject object);	
 	
     /**
      * Attempt to save contents of manager to disk. Only call if not doing your own save from

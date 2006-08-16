@@ -22,7 +22,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
-import org.eclipse.rse.internal.model.RSEModelObject;
+import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.logging.LoggerFactory;
 import org.eclipse.rse.model.IHost;

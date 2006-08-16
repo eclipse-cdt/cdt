@@ -23,8 +23,8 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
-import org.eclipse.rse.references.ISystemBasePersistableReferenceManager;
-import org.eclipse.rse.references.ISystemBasePersistableReferencingObject;
+import org.eclipse.rse.core.references.IRSEBasePersistableReferenceManager;
+import org.eclipse.rse.core.references.IRSEBasePersistableReferencingObject;
 
 
 /**
@@ -32,11 +32,11 @@ import org.eclipse.rse.references.ISystemBasePersistableReferencingObject;
  * <p>
  * <b>YOU MUST OVERRIDE getReferenceName() IN SYSTEMPERSISTABLEREFERENCEDOBJECT!</b>
  * <p>
- * @see org.eclipse.rse.references.ISystemBasePersistableReferenceManager
+ * @see org.eclipse.rse.core.references.IRSEBasePersistableReferenceManager
  * 
  * @lastgen class SystemPersistableReferenceManagerImpl Impl implements SystemPersistableReferenceManager, EObject {}
  */
-public class SystemPersistableReferenceManager implements ISystemBasePersistableReferenceManager 
+public class SystemPersistableReferenceManager implements IRSEBasePersistableReferenceManager 
 {
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -48,7 +48,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 */
 	protected static final String NAME_EDEFAULT = null;
 
-    private ISystemBasePersistableReferencingObject[] listAsArray = null;
+    private IRSEBasePersistableReferencingObject[] listAsArray = null;
     public static boolean debug = true;
     public static HashMap EMPTY_MAP = new HashMap();
 
@@ -88,17 +88,17 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 * Return an array of the referencing objects currently being managed.
 	 * @param array of the referencing objects currently in this list.
 	 */
-	public ISystemBasePersistableReferencingObject[] getReferencingObjects()
+	public IRSEBasePersistableReferencingObject[] getReferencingObjects()
 	{
         if ((listAsArray == null) || (listAsArray.length!=internalGetList().size()))
         {
           List list = internalGetList();
-          listAsArray = new ISystemBasePersistableReferencingObject[list.size()];
+          listAsArray = new IRSEBasePersistableReferencingObject[list.size()];
           Iterator i = list.iterator();
           int idx=0;
           while (i.hasNext())
           {
-          	listAsArray[idx++] = (ISystemBasePersistableReferencingObject)i.next();
+          	listAsArray[idx++] = (IRSEBasePersistableReferencingObject)i.next();
           }
         }
         return listAsArray;
@@ -109,7 +109,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 * @param objects An array of referencing objects which is to become the new list.
      * @param deReference true to first de-reference all objects in the existing list.
 	 */
-	public void setReferencingObjects(ISystemBasePersistableReferencingObject[] objects, 
+	public void setReferencingObjects(IRSEBasePersistableReferencingObject[] objects, 
 	                                  boolean deReference)
 	{
 		listAsArray = objects;
@@ -123,18 +123,18 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	}
 	
 /*
- * DWD this should probably operate on ISystemPersistableReferencingObject
+ * DWD this should probably operate on IRSEPersistableReferencingObject
  * instead and call setParentManager. This involves recasting this class to 
- * implement a new type or changing ISystemBasePersistableReferenceManager to
+ * implement a new type or changing IRSEBasePersistableReferenceManager to
  * deal with parent references - probably changing its name in the process.
- * We could collapse ISystemBasePersistableReferencingObject and its subinterface
+ * We could collapse IRSEBasePersistableReferencingObject and its subinterface
  * into one interface.
  */
 	/**
 	 * Add a referencing object to the managed list.
 	 * @return new count of referenced objects being managed.
 	 */
-	public int addReferencingObject(ISystemBasePersistableReferencingObject object)
+	public int addReferencingObject(IRSEBasePersistableReferencingObject object)
 	{
       	List list = internalGetList();
       	list.add(object);
@@ -147,7 +147,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 * <p>Does NOT call removeReference on the master referenced object.
 	 * @return new count of referenced objects being managed.
 	 */
-	public int removeReferencingObject(ISystemBasePersistableReferencingObject object)
+	public int removeReferencingObject(IRSEBasePersistableReferencingObject object)
 	{
       	List list = internalGetList();
       	list.remove(object);
@@ -160,7 +160,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 * <p>DOES call removeReference on the master referenced object.
 	 * @return new count of referenced objects being managed.
 	 */
-	public int removeAndDeReferenceReferencingObject(ISystemBasePersistableReferencingObject object)
+	public int removeAndDeReferenceReferencingObject(IRSEBasePersistableReferencingObject object)
 	{
 		object.removeReference();
       	return removeReferencingObject(object);		
@@ -181,7 +181,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 */
 	public void removeAndDeReferenceAllReferencingObjects()
 	{
-		ISystemBasePersistableReferencingObject[] objs = getReferencingObjects();
+		IRSEBasePersistableReferencingObject[] objs = getReferencingObjects();
 		for (int idx=0; idx<objs.length; idx++)
 		{
 			objs[idx].removeReference();
@@ -204,7 +204,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 * @param object The referencing object to find position of.
 	 * @return zero-based position within the list. If not found, returns -1
 	 */
-	public int getReferencingObjectPosition(ISystemBasePersistableReferencingObject object)
+	public int getReferencingObjectPosition(IRSEBasePersistableReferencingObject object)
 	{
         List list = internalGetList();
     	int position = -1;
@@ -215,7 +215,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
     	
     	while (!match && i.hasNext())
     	{
-    		ISystemBasePersistableReferencingObject curr = (ISystemBasePersistableReferencingObject)i.next();
+    		IRSEBasePersistableReferencingObject curr = (IRSEBasePersistableReferencingObject)i.next();
     		if (curr == object)
     		{
     		  match = true;
@@ -232,7 +232,7 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 * @param newPosition New zero-based position
 	 * @param object The referencing object to move
 	 */
-	public void moveReferencingObjectPosition(int newPosition, ISystemBasePersistableReferencingObject object)
+	public void moveReferencingObjectPosition(int newPosition, IRSEBasePersistableReferencingObject object)
 	{
 //    	List list = internalGetList(); 
     //FIXME	list.move(newPosition, object);		
@@ -257,16 +257,16 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
 	 * @return the referencing object within this list which references the given referencable object, or
 	 * null if no reference found.
 	 */
-	public ISystemBasePersistableReferencingObject getReferencedObject(IRSEBasePersistableReferencedObject object)
+	public IRSEBasePersistableReferencingObject getReferencedObject(IRSEBasePersistableReferencedObject object)
 	{
         List list = internalGetList();
-    	ISystemBasePersistableReferencingObject match = null;
+    	IRSEBasePersistableReferencingObject match = null;
     	Iterator i = list.iterator();
     	int idx = 0;
     	
     	while ((match==null) && i.hasNext())
     	{
-    		ISystemBasePersistableReferencingObject curr = (ISystemBasePersistableReferencingObject)i.next();
+    		IRSEBasePersistableReferencingObject curr = (IRSEBasePersistableReferencingObject)i.next();
     		if (curr.getReferencedObjectName().equals(object.getReferenceName()))
     		{
     		  match = curr;
@@ -383,10 +383,10 @@ public class SystemPersistableReferenceManager implements ISystemBasePersistable
      * @param fileName The unqualified save file name including extension such as .xmi
      * @return The restored object, or null if given file not found. Any other error gives an exception.
      */
-    public static ISystemBasePersistableReferenceManager restore(IFolder folder, String fileName)
+    public static IRSEBasePersistableReferenceManager restore(IFolder folder, String fileName)
            throws Exception
     {
-        ISystemBasePersistableReferenceManager mgr = new SystemPersistableReferenceManager();
+        IRSEBasePersistableReferenceManager mgr = new SystemPersistableReferenceManager();
 /*FIXME        
         initMOF();
 		Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;

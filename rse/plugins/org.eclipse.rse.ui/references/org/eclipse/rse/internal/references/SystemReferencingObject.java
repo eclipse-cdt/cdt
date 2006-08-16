@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.references;
+import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
-import org.eclipse.rse.internal.model.RSEModelObject;
-import org.eclipse.rse.references.ISystemReferencingObject;
+import org.eclipse.rse.core.references.IRSEReferencingObject;
 import org.eclipse.rse.ui.SystemResources;
 
 
@@ -35,7 +35,7 @@ import org.eclipse.rse.ui.SystemResources;
 /** 
  * @lastgen class SystemReferencingObjectImpl Impl implements SystemReferencingObject, EObject {}
  */
-public abstract class SystemReferencingObject extends RSEModelObject implements ISystemReferencingObject 
+public abstract class SystemReferencingObject extends RSEModelObject implements IRSEReferencingObject 
 {
     private SystemReferencingObjectHelper helper = null;
     protected boolean referenceBroken = false;

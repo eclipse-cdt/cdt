@@ -14,11 +14,13 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.references;
+package org.eclipse.rse.core.references;
+
+
 /**
- * A simple class that implements ISystemPersistableReferencingObject.
+ * A simple class that implements IRSEPersistableReferencingObject.
  * This is an object that is a shadow (reference) of a real master object
- * (ISystemPersistableReferencedObject). 
+ * (IRSEPersistableReferencedObject). 
  * <p>
  * Objects of this class contain a pointer (in memory) to the master object, 
  * and a copy of this object's unique name or key (for storing on disk).
@@ -37,7 +39,7 @@ package org.eclipse.rse.references;
  * @lastgen interface SystemPersistableReferencingObject extends SystemReferencingObject {}
  */
 
-public interface ISystemPersistableReferencingObject extends ISystemReferencingObject, ISystemBasePersistableReferencingObject{
+public interface IRSEPersistableReferencingObject extends IRSEReferencingObject, IRSEBasePersistableReferencingObject{
 	
 	/**
 	 * @generated This field/method will be replaced during code generation 
@@ -55,12 +57,12 @@ public interface ISystemPersistableReferencingObject extends ISystemReferencingO
 	 * @generated This field/method will be replaced during code generation 
 	 * @return The ParentReferenceManager reference
 	 */
-	ISystemBasePersistableReferenceManager getParentReferenceManager();
+	IRSEBasePersistableReferenceManager getParentReferenceManager();
 
 	/**
 	 * @generated This field/method will be replaced during code generation 
 	 * @param l The new value of the ParentReferenceManager reference
 	 */
-	void setParentReferenceManager(ISystemBasePersistableReferenceManager value);
+	void setParentReferenceManager(IRSEBasePersistableReferenceManager value);
 
 }

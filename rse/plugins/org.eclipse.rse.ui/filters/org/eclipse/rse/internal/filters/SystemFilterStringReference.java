@@ -141,7 +141,7 @@ public class SystemFilterStringReference
    	    return Platform.getAdapterManager().getAdapter(this, adapterType);	
     }    
 	// ----------------------------------------------
-	// ISystemReferencingObject methods...
+	// IRSEReferencingObject methods...
 	// ----------------------------------------------
 	
 	/**

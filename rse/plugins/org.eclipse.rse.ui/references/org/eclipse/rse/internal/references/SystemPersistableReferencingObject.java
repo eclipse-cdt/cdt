@@ -18,20 +18,20 @@ package org.eclipse.rse.internal.references;
 
 import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
-import org.eclipse.rse.references.ISystemBasePersistableReferenceManager;
-import org.eclipse.rse.references.ISystemPersistableReferencingObject;
+import org.eclipse.rse.core.references.IRSEBasePersistableReferenceManager;
+import org.eclipse.rse.core.references.IRSEPersistableReferencingObject;
 
 /**
  * This class represents an object that references another object in the model.
  * The reference is persistable.
  * <p>
- * @see org.eclipse.rse.references.ISystemPersistableReferencingObject
+ * @see org.eclipse.rse.core.references.IRSEPersistableReferencingObject
  */
 // DWD Change this name to SystemPersistableReference? Ditto for the interface.
-public abstract class SystemPersistableReferencingObject extends SystemReferencingObject implements ISystemPersistableReferencingObject {
+public abstract class SystemPersistableReferencingObject extends SystemReferencingObject implements IRSEPersistableReferencingObject {
 
 	protected String referencedObjectName = null;
-	protected ISystemBasePersistableReferenceManager _referenceManager;
+	protected IRSEBasePersistableReferenceManager _referenceManager;
 
 	/**
 	 * Create a new referencing object.
@@ -51,7 +51,7 @@ public abstract class SystemPersistableReferencingObject extends SystemReferenci
 	 * Set the in-memory reference to the master object.
 	 * This implementation also extracts that master object's name and calls
 	 * setReferencedObjectName as part of this method call.
-	 * @see org.eclipse.rse.references.ISystemBasePersistableReferencingObject#setReferencedObject(IRSEBasePersistableReferencedObject)
+	 * @see org.eclipse.rse.core.references.IRSEBasePersistableReferencingObject#setReferencedObject(IRSEBasePersistableReferencedObject)
 	 */
 	public void setReferencedObject(IRSEBasePersistableReferencedObject obj) {
 		getHelper().setReferencedObject((IRSEBaseReferencedObject) obj);
@@ -68,14 +68,14 @@ public abstract class SystemPersistableReferencingObject extends SystemReferenci
 	/**
 	 * @return The reference manager for this reference. 
 	 */
-	public ISystemBasePersistableReferenceManager getParentReferenceManager() {
+	public IRSEBasePersistableReferenceManager getParentReferenceManager() {
 		return _referenceManager;
 	}
 
 	/**
 	 * Sets the reference manager for this reference. Must be done when this reference is created.
 	 */
-	public void setParentReferenceManager(ISystemBasePersistableReferenceManager newParentReferenceManager) {
+	public void setParentReferenceManager(IRSEBasePersistableReferenceManager newParentReferenceManager) {
 		_referenceManager = newParentReferenceManager;
 	}
 

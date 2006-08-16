@@ -14,9 +14,8 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
 
-import org.eclipse.rse.core.model.IPropertyType;
 
 
 public  class PropertyType implements IPropertyType

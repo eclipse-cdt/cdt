@@ -17,7 +17,7 @@
 package org.eclipse.rse.filters;
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
 import org.eclipse.rse.core.model.IRSEModelObject;
-import org.eclipse.rse.references.ISystemPersistableReferencedObject;
+import org.eclipse.rse.core.references.IRSEPersistableReferencedObject;
 
 
 /**
@@ -29,7 +29,7 @@ import org.eclipse.rse.references.ISystemPersistableReferencedObject;
 /**
  * @lastgen interface SystemFilterPool extends SystemPersistableReferencedObject, SystemFilterContainer {}
  */
-public interface ISystemFilterPool extends ISystemPersistableReferencedObject, ISystemFilterContainer, IRSEModelObject 
+public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISystemFilterContainer, IRSEModelObject 
 {
 	// external methods
     /**

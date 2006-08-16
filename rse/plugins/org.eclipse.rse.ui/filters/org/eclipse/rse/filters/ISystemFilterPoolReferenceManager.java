@@ -19,8 +19,8 @@ package org.eclipse.rse.filters;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.rse.core.references.IRSEBasePersistableReferenceManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.references.ISystemBasePersistableReferenceManager;
 
 /**
  * This class manages a persistable list of objects each of which reference
@@ -31,7 +31,7 @@ import org.eclipse.rse.references.ISystemBasePersistableReferenceManager;
 /**
  * @lastgen interface SystemFilterPoolReferenceManager extends SystemPersistableReferenceManager {}
  */
-public interface ISystemFilterPoolReferenceManager extends ISystemBasePersistableReferenceManager {
+public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableReferenceManager {
 	/**
 	 * Get the object which instantiated this instance of the filter pool reference manager.
 	 * This is also available from any filter reference framework object.

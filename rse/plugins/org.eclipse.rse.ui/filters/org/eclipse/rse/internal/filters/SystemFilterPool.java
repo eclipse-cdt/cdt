@@ -1118,7 +1118,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	/**
 	 * Return the unique reference name of this object.
 	 * <p>
-	 * As required by the {@link org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject ISystemPersistableReferencedObject} 
+	 * As required by the {@link org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject IRSEPersistableReferencedObject} 
 	 * interface.
 	 */
 	public String getReferenceName()

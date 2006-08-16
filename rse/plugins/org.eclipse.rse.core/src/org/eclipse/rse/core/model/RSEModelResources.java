@@ -14,48 +14,21 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.model;
+package org.eclipse.rse.core.model;
 
-import org.eclipse.rse.core.model.IRSEModelObject;
-import org.eclipse.rse.ui.SystemResources;
-
-
+import org.eclipse.osgi.util.NLS;
 
 /**
- * Provides common support for local RSE model objects
- * Extenders inherit property set support
- * @author dmcknigh
- *
+ * This class contains bundle resources for model objects.
  */
-public abstract class RSEModelObject extends PropertySetContainer implements IRSEModelObject
-{
-	protected boolean _isDirty = true;
-	protected boolean _wasRestored = false;
+public class RSEModelResources extends NLS {
 	
+	private static String BUNDLE_NAME = "org.eclipse.rse.core.model.RSEModelResources"; //$NON-NLS-1$
 	
-	public final boolean isDirty()
-	{
-		return _isDirty;
-	}
+	public static String RESID_MODELOBJECTS_MODELOBJECT_DESCRIPTION;
 
-	public final void setDirty(boolean flag)
-	{
-		_isDirty = flag;
-	}
-
-
-	public final boolean wasRestored() 
-	{
-		return _wasRestored;
-	}
-
-	public final void setWasRestored(boolean flag) 
-	{
-		_wasRestored = flag;
-	}
-	
-	public String getDescription()
-	{
-		return SystemResources.RESID_MODELOBJECTS_MODELOBJECT_DESCRIPTION;
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, RSEModelResources.class);
 	}
 }

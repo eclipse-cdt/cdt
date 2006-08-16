@@ -26,7 +26,7 @@ import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
  */
 public class SystemPersistableReferencingObjectHelper 
        extends SystemReferencingObjectHelper
-       //implements ISystemPersistableReferencingObject
+       //implements IRSEPersistableReferencingObject
 {
     private String masterObjectName = null;
     /**
@@ -48,7 +48,7 @@ public class SystemPersistableReferencingObjectHelper
         
 	/**
 	 * Set the object to which we reference. This overload takes an
-	 * ISystemPersistableReferencedObject so we can query its name for
+	 * IRSEPersistableReferencedObject so we can query its name for
 	 * storage purposes.
 	 */
 	public void setReferencedObject(IRSEBasePersistableReferencedObject obj)

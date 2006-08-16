@@ -18,6 +18,7 @@ package org.eclipse.rse.internal.filters;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.references.IRSEPersistableReferencedObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterContainer;
@@ -29,7 +30,6 @@ import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.internal.references.SystemPersistableReferencingObject;
-import org.eclipse.rse.references.ISystemPersistableReferencedObject;
 
 /**
  * A reference to a filter pool. A reference may be "resolved" or "unresolved".
@@ -145,7 +145,7 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	 * This also calls addReference(this) on that pool!
 	 */
 	public void setReferenceToFilterPool(ISystemFilterPool pool) {
-		super.setReferencedObject((ISystemPersistableReferencedObject) pool);
+		super.setReferencedObject((IRSEPersistableReferencedObject) pool);
 	}
 
 	/**

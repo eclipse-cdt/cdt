@@ -14,10 +14,8 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.references;
+package org.eclipse.rse.core.references;
 
-import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
-import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 
 /**
  * Referencing objects are shadows of real objects. Typically, shadows are created
@@ -39,7 +37,7 @@ import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
  * <p>
  * This interface captures the methods to set and query that name or key.
  */
-public interface ISystemBasePersistableReferencingObject
+public interface IRSEBasePersistableReferencingObject
 	   extends IRSEBaseReferencingObject 
 {
 	/**

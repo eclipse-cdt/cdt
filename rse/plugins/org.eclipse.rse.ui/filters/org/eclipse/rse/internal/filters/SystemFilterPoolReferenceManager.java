@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.rse.core.SystemResourceHelpers;
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
+import org.eclipse.rse.core.references.IRSEBasePersistableReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterConstants;
@@ -33,7 +34,6 @@ import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.internal.references.SystemPersistableReferenceManager;
-import org.eclipse.rse.references.ISystemBasePersistableReferencingObject;
 
 
 /**
@@ -391,7 +391,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 	 */
 	public ISystemFilterPoolReference[] getSystemFilterPoolReferences()
 	{
-		ISystemBasePersistableReferencingObject[] refObjs = super.getReferencingObjects();
+		IRSEBasePersistableReferencingObject[] refObjs = super.getReferencingObjects();
 		if (refObjs.length == 0)
 		  return emptyFilterPoolRefArray;
 		else if ((fpRefsArray == null) || (fpRefsArray.length!=refObjs.length))
@@ -646,7 +646,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
     public void renameReferenceToSystemFilterPool(ISystemFilterPool pool)
     {
         ISystemFilterPoolReference poolRef = null;
-        ISystemBasePersistableReferencingObject[] refs = getReferencingObjects();
+        IRSEBasePersistableReferencingObject[] refs = getReferencingObjects();
         for (int idx=0; (poolRef==null) && (idx<refs.length); idx++)
            if (refs[idx].getReferencedObject()==pool)
              poolRef = (ISystemFilterPoolReference)refs[idx];

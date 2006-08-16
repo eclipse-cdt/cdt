@@ -21,13 +21,13 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
+import org.eclipse.rse.core.references.IRSEReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.filters.SystemFilterContainerReferenceCommonMethods;
 import org.eclipse.rse.internal.filters.SystemFilterStringReference;
 import org.eclipse.rse.internal.references.SystemReferencingObject;
 import org.eclipse.rse.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemContentsType;
-import org.eclipse.rse.references.ISystemReferencingObject;
 
 
 
@@ -46,7 +46,7 @@ import org.eclipse.rse.references.ISystemReferencingObject;
 /**
  * @lastgen class SystemFilterReferenceImpl extends SystemReferencingObjectImpl implements IAdaptable, SystemFilterReference, SystemReferencingObject {}
  */
-public class SystemFilterReference extends SystemReferencingObject implements IAdaptable, ISystemFilterReference, ISystemReferencingObject
+public class SystemFilterReference extends SystemReferencingObject implements IAdaptable, ISystemFilterReference, IRSEReferencingObject
 {
 	private SystemFilterContainerReferenceCommonMethods containerHelper = null;
 	private ISystemFilterContainerReference parent = null; 	
@@ -384,7 +384,7 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
     
 
 	// -----------------------------------
-	// ISystemReferencingObject methods...
+	// IRSEReferencingObject methods...
 	// -----------------------------------
 
 	/**

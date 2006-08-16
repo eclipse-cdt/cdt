@@ -40,9 +40,10 @@ public class LocalShellSubSystemConfiguration extends ShellServiceSubSystemConfi
 		super();
 	}
 
-    /**
-	 * Return in string format the character used to separate commands. Eg, ";" or "&"
-	 */
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCmdSubSystemConfiguration#getCommandSeparator()
+     */
     public String getCommandSeparator()
     {
     	String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$

@@ -18,9 +18,6 @@ package org.eclipse.rse.subsystems.shells.core.subsystems;
 
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 
-
- 
-//
 /**
  * @lastgen interface RemoteCmdSubSystemConfiguration extends SubSystemConfiguration {}
  */
@@ -30,12 +27,14 @@ public interface IRemoteCmdSubSystemConfiguration extends ISubSystemConfiguratio
 	/**
 	 * Return true if subsystems of this factory support the environment variables property.
 	 * Return true to show it, return false to hide it. 
+	 * @return <code>true</code> if environment variables are fully supported 
 	 */
 	public boolean supportsEnvironmentVariablesPropertyPage();
 	
 	
 	/**
 	 * Return in string format the character used to separate commands. Eg, ";" or "&"
+	 * @return command separator String
 	 */
     public String getCommandSeparator();
     

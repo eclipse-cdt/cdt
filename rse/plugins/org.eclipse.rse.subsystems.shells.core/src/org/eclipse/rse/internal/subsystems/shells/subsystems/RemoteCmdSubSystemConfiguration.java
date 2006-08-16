@@ -63,9 +63,11 @@ public abstract class RemoteCmdSubSystemConfiguration extends SubSystemConfigura
 	{
 		return false;
 	}
+	
 	/**
-	 * Return true if subsystems of this factory support the environment variables property.
-	 * Return true to show it, return false to hide it. We return true.
+	 * Return true if subsystems of this configuration support the environment variables property.
+	 * For default remote command subsystems, we return <code>true</code>.
+	 * @see org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystemConfiguration#supportsEnvironmentVariablesPropertyPage()
 	 */
 	public boolean supportsEnvironmentVariablesPropertyPage()
 	{
@@ -174,12 +176,13 @@ public abstract class RemoteCmdSubSystemConfiguration extends SubSystemConfigura
     	return translatedType;
     }    
     
-    /**
-	 * Return in string format the character used to separate commands. Eg, ";" or "&"
-	 */
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystemConfiguration#getCommandSeparator()
+     */
     public String getCommandSeparator()
     {
-    	return ";";
+    	return ";"; //$NON-NLS-1$
     }
 
   

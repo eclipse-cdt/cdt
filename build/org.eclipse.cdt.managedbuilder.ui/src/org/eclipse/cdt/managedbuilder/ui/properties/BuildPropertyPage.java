@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 Rational Software Corporation and others.
+ * Copyright (c) 2002, 2006 Rational Software Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,10 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -151,7 +153,7 @@ public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWor
 			noContent(parent,ManagedBuilderUIMessages.getResourceString("BuildPropertyPage.error.version_low"));	//$NON-NLS-1$
 			return;
 		}
-		projectTypes = ManagedBuildManager.getDefinedProjectTypes();
+		projectTypes = getProjectTypes();
 		IProjectType defaultProjectType = info.getManagedProject().getProjectType();
 
 		// Add a config selection area
@@ -226,6 +228,35 @@ public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWor
 		handleProjectTypeSelection();
 		
 		WorkbenchHelp.setHelp(parent, ManagedBuilderHelpContextIds.MAN_PROJ_BUILD_PROP);
+	}
+
+	private IProjectType[] getProjectTypes() {
+		
+		IProjectType [] allProjectTypes = ManagedBuildManager.getDefinedProjectTypes();
+		ArrayList types = new ArrayList();
+		
+		// The projectTypes that has 'convertToId' attribute is used only in conversion process,
+		// These projectTypes should not be used during project creation or during the display of projectTypes
+		// to the user. So we need to filter the projectTypes based on the 'convertToId' attribute.
+		// Check if project type has 'convertToId' attribute. If so, then do not add it to the list.
+		
+		
+		for (int i = 0; i < allProjectTypes.length; i++) {
+			IProjectType projectType = allProjectTypes[i];
+			if (!projectType.getConvertToId().equals(""))
+				continue;
+			types.add(projectType);
+		}
+		types.trimToSize();
+		
+		IProjectType [] tmpProjectTypes = new IProjectType[types.size()];
+		ListIterator iter = types.listIterator();
+		int index = 0;
+		while (iter.hasNext()) {
+			tmpProjectTypes[index++] = (IProjectType) iter.next();
+		}
+		return tmpProjectTypes;
+		
 	}
 
 	private void contentForClosedProject(Composite parent) {

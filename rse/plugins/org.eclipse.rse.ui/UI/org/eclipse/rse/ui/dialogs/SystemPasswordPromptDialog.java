@@ -65,6 +65,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 
 	/**
 	 * Constructor for SystemPasswordPromptDialog
+	 * @param shell The shell in which to base this dialog.
 	 */
 	public SystemPasswordPromptDialog(Shell shell) {
 		super(shell, SystemResources.RESID_PASSWORD_TITLE);
@@ -77,6 +78,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	 * contextual information.
 	 * <p>
 	 * This must be called prior to opening this dialog.
+	 * @param connectorService the connector service associated with this dialog
 	 */
 	public void setSystemInput(IConnectorService connectorService) {
 		this.connectorService = connectorService;
@@ -86,6 +88,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	 * Sets the validator for the userId. If not null it will be called per keystroke.
 	 * <p>
 	 * This must be called prior to opening this dialog if something other than the default is needed.
+	 * @param v a validator
 	 */
 	public void setUserIdValidator(ISystemValidator v) {
 		userIdValidator = v;
@@ -96,6 +99,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	 * The default validator is null.
 	 * <p>
 	 * This must be called prior to opening this dialog if something other than the default is needed.
+	 * @param v a validator
 	 */
 	public void setPasswordValidator(ISystemValidator v) {
 		passwordValidator = v;
@@ -107,16 +111,19 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	 * If not null the validator will be called when the user presses OK.
 	 * <p>
 	 * This must be called prior to opening this dialog if something other than the default is needed.
+	 * @param v a signon validator
 	 */
 	public void setSignonValidator(ISignonValidator v) {
 		signonValidator = v;
 	}
 
 	/**
-	 * Sets the option to force the userId and password to uppercase.
+	 * Sets the option to force the userId and password to uppercase. This use should be rare.
+	 * Use this with caution.
 	 * <p>
 	 * The default is false.
 	 * This must be called prior to opening this dialog if something other than the default is needed.
+	 * @param force true if the user id and password are to be forced to uppercase
 	 */
 	public void setForceToUpperCase(boolean force) {
 		this.forceToUpperCase = force;
@@ -124,12 +131,17 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 
 	/**
 	 * Call this to query the force-to-uppercase setting
+	 * @return the setting for forcing the user id and password to upper case
 	 */
 	public boolean getForceToUpperCase() {
 		return forceToUpperCase;
 	}
 
 	/**
+	 * Creates the dialog controls.
+	 * @param parent the containing composite control in which our controls will be created. It is assumed
+	 * to have a grid layout.
+	 * @return the composite control we create that nests inside the parent
 	 * @see SystemPromptDialog#createInner(Composite)
 	 */
 	protected Control createInner(Composite parent) {
@@ -351,7 +363,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		okButton.setEnabled(m == null);
 		setErrorMessage(m);
 		if (savePasswordCB != null) {
-			savePasswordCB.setEnabled(password.length() > 0); // yantzi: artemis 6.0, disable save checkbox when blank
+			savePasswordCB.setEnabled(!(connectorService.requiresPassword() && password.length() == 0));
 		}
 	}
 	
@@ -371,14 +383,14 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	}
 
 	/**
-	 * Return the userId entered by user
+	 * @return the userId entered by user
 	 */
 	public String getUserId() {
 		return userId;
 	}
 
 	/**
-	 * Returns the password may have been modified by the user.
+	 * @return the password may have been modified by the user.
 	 */
 	public String getPassword() {
 		return password;
@@ -386,27 +398,28 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 
 	/**
 	 * Sets the password, may be null if no password is available.
+	 * @param password the password to provide for the password field.
 	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
 	/**
-	 * Return true if the user changed the user id
+	 * @return true if the user changed the user id
 	 */
 	public boolean getIsUserIdChanged() {
 		return userIdChanged;
 	}
 
 	/**
-	 * Return true if the user elected to make the changed user Id a permanent change.
+	 * @return true if the user elected to make the changed user Id a permanent change.
 	 */
 	public boolean getIsUserIdChangePermanent() {
 		return userIdPermanent;
 	}
 
 	/**
-	 * Return true if the user elected to make the changed user Id a permanent change.
+	 * @return true if the user elected to make the changed user Id a permanent change.
 	 */
 	public boolean getIsSavePassword() {
 		return savePassword;
@@ -415,14 +428,14 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	/**
 	 * Preselect the save password checkbox.  Default value is to not 
 	 * select the save password checkbox.
+	 * @param save true if the save password box should be checked.
 	 */
 	public void setSavePassword(boolean save) {
 		savePassword = save;
 	}
 
 	/**
-	 * Verifies all input.
-	 * @return true if there are no errors in the user input
+	 * Verifies all input. Sets the error message if there are any conditions that are found.
 	 */
 	private void verify() {
 		Control controlInError = null;
@@ -442,8 +455,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 
 	/**
 	 * Called when user presses OK button. 
-	 * Return true to close dialog.
-	 * Return false to not close dialog.
+	 * @return true to close dialog, false to not close dialog.
 	 */
 	protected boolean processOK() {
 		setBusyCursor(true);

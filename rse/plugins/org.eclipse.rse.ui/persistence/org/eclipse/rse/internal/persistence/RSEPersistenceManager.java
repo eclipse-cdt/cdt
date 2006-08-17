@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilter;
@@ -75,6 +76,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	 * @return an IRSEPersistenceProvider which may be null if this id is not found.
 	 */
 	public IRSEPersistenceProvider getRSEPersistenceProvider(String id) {
+		Logger logger = RSECorePlugin.getDefault().getLogger();
 		IRSEPersistenceProvider provider = (IRSEPersistenceProvider) loadedProviders.get(id);
 		if (provider == null) {
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -88,18 +90,18 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 							try {
 								provider = (IRSEPersistenceProvider) providerCandidate.createExecutableExtension("class");
 							} catch (CoreException e) {
-								RSEUIPlugin.logError("Exception loading persistence provider", e); // DWD nls
+								logger.logError("Exception loading persistence provider", e); // DWD nls
 							}
 						}
 					} else {
-						RSEUIPlugin.logError("Missing id attribute in persistenceProvider element"); // DWD nls
+						logger.logError("Missing id attribute in persistenceProvider element", null); // DWD nls
 					}
 				} else {
-					RSEUIPlugin.logError("Invalid element in persistenceProviders extension point"); // DWD nls
+					logger.logError("Invalid element in persistenceProviders extension point", null); // DWD nls
 				}
 			}
 			if (provider == null) {
-				RSEUIPlugin.logError("Persistence provider not found."); // DWD nls
+				logger.logError("Persistence provider not found.", null); // DWD nls
 			}
 			loadedProviders.put(id, provider); // even if provider is null
 		}
@@ -339,7 +341,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	/**
 	 * Loads and restores RSE artifacts from the last session
 	 * @param profileManager
-	 * @return
+	 * @return true if the profiles are loaded
 	 */
     public boolean load(ISystemProfileManager profileManager)
     {
@@ -396,12 +398,10 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 			RSEDOM dom = exportRSEDOM(profile, force);
 			if (dom.needsSave() && !dom.saveScheduled())
 			{
-		
 //				IProject project = SystemResourceManager.getRemoteSystemsProject();
-					
 				SaveRSEDOMJob job = new SaveRSEDOMJob(this, dom, getRSEPersistenceProvider());
 //				job.setRule(project);
-				job.schedule();
+				job.schedule(0); // TODO dwd control job delay here
 				dom.markSaveScheduled();
 			}
 			else
@@ -430,10 +430,8 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 
 	public RSEDOM exportRSEDOM(ISystemProfile profile, boolean force)
 	{
-		RSEDOM dom = null;
 		_currentState = STATE_EXPORTING;
-		dom = _exporter.createRSEDOM(profile, force);
-
+		RSEDOM dom = _exporter.createRSEDOM(profile, force);
 		return dom;
 	}
 	
@@ -444,7 +442,8 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 		if (provider != null) {
 			dom = provider.loadRSEDOM(domName, null);
 		} else {
-			RSEUIPlugin.logError("Persistence provider is not available."); // DWD NLS
+			Logger logger = RSECorePlugin.getDefault().getLogger();
+			logger.logError("Persistence provider is not available.", null); // DWD NLS
 		}
 		return dom;
 	}

@@ -49,10 +49,14 @@
 <li>See also the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0M3-200606300720/buildNotes.php">
   last milestone's New and Noteworthy</a>.</li>
-<li>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-06-30&chfieldto=2006-08-11&chfield=resolution">
+<li>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-06-30&chfieldto=2006-08-17&chfield=resolution">
   this query</a> to show the list of bugs fixed for this build.</li>
 <li>Look <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   here</a> for the CVS changelog.</li>
+<li>New since I20060811-1342:<ul>
+    <li><a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-08-11&chfieldto=2006-08-17&chfield=resolution">
+    bugs fixed</a></li>
+    </ul></li>
 </ul>
 </td></tr></tbody></table>
 
@@ -216,12 +220,15 @@ not make it into this build:
   as well as the <b>Tutorial Examples</b> from the ISV Docs are available 
   from the <a href="http://www.eclipse.org/dsdp/tm/development/index.php">
   RSE CVS Repository</a> instead.</li>
-<li>Jakarta Commons Net is not yet available for FTP and Telnet due to pending legal
-  review. We are confident to get these completed in August though.</li>
+<li>Jakarta Commons Net is not yet available for <b>FTP and Telnet</b> due to pending legal
+  review. We are confident to get these completed in August though.<ul>
+  <li>As a consequence, FTP connections are still not quite reliable.</li>
+  </ul></li>
 </ul>
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=154207">bug 154207</a> - maj - FileServiceSubsystem doesnt forward exception info</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=150949">bug 150949</a> - maj - RSE gets unusable when full logging is enabled</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143462">bug 143462</a> - maj - [updating] Dirty remote editors do not get notified</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143292">bug 143292</a> - maj - [mac] Move Resource dialog causes hang/crash</li>

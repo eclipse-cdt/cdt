@@ -1535,6 +1535,7 @@
         <possibleDropTargets>
            <or>
               <instanceof value="org.eclipse.cdt.core.model.ISourceReference"/>
+              <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>
            </or>
         </possibleDropTargets>
      </dropAssistant>

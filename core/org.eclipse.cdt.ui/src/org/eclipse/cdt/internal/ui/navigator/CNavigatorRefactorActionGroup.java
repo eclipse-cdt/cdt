@@ -115,6 +115,12 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 		updateActionBars();
 
 //		textActionHandler.updateActionBars();
+		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(),
+                copyAction);
+		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),
+                pasteAction);
+		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(),
+                deleteAction);
 
 		actionBars.setGlobalActionHandler(ActionFactory.MOVE.getId(),
 				moveAction);

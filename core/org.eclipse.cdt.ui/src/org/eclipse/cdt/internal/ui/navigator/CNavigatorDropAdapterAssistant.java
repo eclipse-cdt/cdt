@@ -15,13 +15,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.cview.CViewMessages;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -33,9 +29,25 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
+import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
+import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.navigator.CommonDropAdapter;
 import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
+import org.eclipse.ui.part.ResourceTransfer;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+
+import org.eclipse.cdt.internal.ui.cview.CViewMessages;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 /**
  * A Common Navigator drop adapter assistant handling dropping of <code>ICElement</code>s.
@@ -44,11 +56,69 @@ import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
  */
 public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 
+	private static final IResource[] NO_RESOURCES = new IResource[0];
+
+	/*
+	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#isSupportedType(org.eclipse.swt.dnd.TransferData)
+	 */
+	public boolean isSupportedType(TransferData transferType) {
+		return super.isSupportedType(transferType)
+				|| ResourceTransfer.getInstance().isSupportedType(transferType)
+				|| FileTransfer.getInstance().isSupportedType(transferType);
+	}
+
 	/*
 	 * @see org.eclipse.ui.navigator.CommonDropAdapterAssistant#handleDrop(org.eclipse.ui.navigator.CommonDropAdapter, org.eclipse.swt.dnd.DropTargetEvent, java.lang.Object)
 	 */
 	public IStatus handleDrop(CommonDropAdapter dropAdapter,
 			DropTargetEvent event, Object target) {
+
+		// special case: drop in C source folder
+		if (target instanceof ICContainer) {
+			final Object data= event.data;
+			if (data == null) {
+				return Status.CANCEL_STATUS;
+			}
+			final IContainer destination= getDestination(target);
+			if (target == null) {
+				return Status.CANCEL_STATUS;
+			}
+			IResource[] resources = null;
+			TransferData currentTransfer = dropAdapter.getCurrentTransfer();
+			if (LocalSelectionTransfer.getTransfer().isSupportedType(
+					currentTransfer)) {
+				resources = getSelectedResources();
+			} else if (ResourceTransfer.getInstance().isSupportedType(
+					currentTransfer)) {
+				resources = (IResource[]) event.data;
+			}
+			if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
+				final String[] names = (String[]) data;
+				// Run the import operation asynchronously. 
+				// Otherwise the drag source (e.g., Windows Explorer) will be blocked 
+				// while the operation executes. Fixes bug 35796.
+				Display.getCurrent().asyncExec(new Runnable() {
+					public void run() {
+						getShell().forceActive();
+						CopyFilesAndFoldersOperation op= new CopyFilesAndFoldersOperation(getShell());
+						op.copyFiles(names, destination);
+					}
+				});
+			} else if (event.detail == DND.DROP_COPY) {
+				CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(getShell());
+				operation.copyResources(resources, destination);
+			} else {
+				ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
+					getShell(), 
+					"Move Resource Action",	//$NON-NLS-1$
+					"Move Resource Action");//$NON-NLS-1$	
+				resources = checker.checkReadOnlyResources(resources);
+				MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(getShell());
+				operation.copyResources(resources, destination);
+			}
+			return Status.OK_STATUS;
+		}
+		
 		try {
 			switch(event.detail) {
 				case DND.DROP_MOVE:
@@ -78,18 +148,56 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 	 */
 	public IStatus validateDrop(Object target, int operation,
 			TransferData transferType) {
-		try {
-			switch(operation) {
-				case DND.DROP_DEFAULT:
-					return handleValidateMove(target); 
-				case DND.DROP_COPY:
-					return handleValidateCopy(target);
-				case DND.DROP_MOVE:
-					return handleValidateMove(target);
+
+		// special case: drop in C source folder
+		if (target instanceof ICContainer) {
+			IContainer destination= getDestination(target);
+			if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
+				IResource[] selectedResources= getSelectedResources();
+				if (selectedResources.length > 0) {
+					if (operation == DND.DROP_COPY) {
+						CopyFilesAndFoldersOperation op = new CopyFilesAndFoldersOperation(getShell());
+						if (op.validateDestination(destination, selectedResources) == null) {
+							return Status.OK_STATUS;
+						}
+					} else {
+						MoveFilesAndFoldersOperation op = new MoveFilesAndFoldersOperation(getShell());
+						if (op.validateDestination(destination, selectedResources) == null) {
+							return Status.OK_STATUS;
+						}
+					}
+				}
+			} else if (FileTransfer.getInstance().isSupportedType(transferType)) {
+				String[] sourceNames = (String[]) FileTransfer.getInstance().nativeToJava(transferType);
+				if (sourceNames == null) {
+					// source names will be null on Linux. Use empty names to do
+					// destination validation.
+					// Fixes bug 29778
+					sourceNames = new String[0];
+				}
+				CopyFilesAndFoldersOperation copyOperation = new CopyFilesAndFoldersOperation(
+						getShell());
+				if (null != copyOperation.validateImportDestination(destination,
+						sourceNames)) {
+					return Status.CANCEL_STATUS;
+				}
 			}
-		} catch (CModelException e){
-			ExceptionHandler.handle(e, CViewMessages.getString("SelectionTransferDropAdapter.error.title"), CViewMessages.getString("SelectionTransferDropAdapter.error.message")); //$NON-NLS-1$ //$NON-NLS-2$
-		}	
+		}
+
+		if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
+			try {
+				switch(operation) {
+					case DND.DROP_DEFAULT:
+						return handleValidateMove(target); 
+					case DND.DROP_COPY:
+						return handleValidateCopy(target);
+					case DND.DROP_MOVE:
+						return handleValidateMove(target);
+				}
+			} catch (CModelException e){
+				ExceptionHandler.handle(e, CViewMessages.getString("SelectionTransferDropAdapter.error.title"), CViewMessages.getString("SelectionTransferDropAdapter.error.message")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 		return Status.CANCEL_STATUS;
 	}
 
@@ -252,6 +360,54 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			}
 		}
 		return true;
+	}
+
+	private IContainer getDestination(Object dropTarget) {
+		if (dropTarget instanceof IContainer) {
+			return (IContainer)dropTarget;
+		} else if (dropTarget instanceof ICElement) {
+			return getDestination(((ICElement)dropTarget).getResource());
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the resource selection from the LocalSelectionTransfer.
+	 * 
+	 * @return the resource selection from the LocalSelectionTransfer
+	 */
+	private IResource[] getSelectedResources() {
+
+		ISelection selection = LocalSelectionTransfer.getTransfer()
+				.getSelection();
+		if (selection instanceof IStructuredSelection) {
+			return getSelectedResources((IStructuredSelection)selection);
+		} 
+		return NO_RESOURCES;
+	}
+
+	/**
+	 * Returns the resource selection from the LocalSelectionTransfer.
+	 * 
+	 * @return the resource selection from the LocalSelectionTransfer
+	 */
+	private IResource[] getSelectedResources(IStructuredSelection selection) {
+		ArrayList selectedResources = new ArrayList();
+
+		for (Iterator i = selection.iterator(); i.hasNext();) {
+			Object o = i.next();
+			if (o instanceof IResource) {
+				selectedResources.add(o);
+			} else if (o instanceof IAdaptable) {
+				IAdaptable a = (IAdaptable) o;
+				IResource r = (IResource) a.getAdapter(IResource.class);
+				if (r != null) {
+					selectedResources.add(r);
+				}
+			}
+		}
+		return (IResource[]) selectedResources
+				.toArray(new IResource[selectedResources.size()]);
 	}
 
 }

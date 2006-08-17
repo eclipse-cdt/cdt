@@ -12,14 +12,15 @@ package org.eclipse.cdt.internal.ui.navigator;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.navigator.CommonDragAdapterAssistant;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * A Common Navigator drag assistant for <code>ICElement</code>s being also
@@ -34,7 +35,7 @@ public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 	 */
 	public Transfer[] getSupportedTransferTypes() {
 		Transfer[] transfers= new Transfer[] {
-				LocalSelectionTransfer.getInstance()
+				LocalSelectionTransfer.getTransfer()
 		};
 		return transfers;
 	}
@@ -45,16 +46,23 @@ public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 	public boolean setDragData(DragSourceEvent event,
 			IStructuredSelection selection) {
 		if (selection != null) {
+			boolean applicable= false;
 			for (Iterator iter= (selection).iterator(); iter.hasNext();) {
 				Object element= iter.next();
 				if (element instanceof ICElement) {
+					if (element instanceof ITranslationUnit) {
+						continue;
+					}
 					if (!(element instanceof ISourceReference)) {
 						return false;
 					}
+					applicable= true;
 				}
 			}
-			event.data = selection;
-			return true;
+			if (applicable) {
+				event.data = selection;
+				return true;
+			}
 		}
 		return false;
 	}

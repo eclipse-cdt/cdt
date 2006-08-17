@@ -224,7 +224,7 @@ public class ArchiveHandlerManager
 				}
 				catch (InvocationTargetException e)
 				{
-					Throwable target = e.getCause();
+					//Throwable target = e.getCause();
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 					System.out.println("Could not instantiate handler for " + file.getName());

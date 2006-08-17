@@ -2130,7 +2130,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 		else
 		{
-			String sourceName = name;
+			//String sourceName = name;
 			HashSet children = new HashSet();
 			listAllFiles(file, children);
 			File[] sources = new File[children.size() + 1];

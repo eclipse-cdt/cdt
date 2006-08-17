@@ -666,65 +666,58 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     }
 
     /**
-     * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-     * Return the password information for the primary subsystem of this
-     * connector service. Assumes it has been set by the subsystem at the 
-     * time the subsystem acquires the connector service.
-     */
-    protected SystemSignonInformation getPasswordInformation()
-    {
-    	return _passwordInfo;
-    }            
+	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
+	 * @return the password information for the primary subsystem of this
+	 * connector service. Assumes it has been set by the subsystem at the 
+	 * time the subsystem acquires the connector service.
+	 */
+	protected SystemSignonInformation getPasswordInformation() {
+		return _passwordInfo;
+	}
 
-    /**
-     * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-     * Sets the password information for this system's subsystem.
-     */
-    protected void setPasswordInformation(SystemSignonInformation passwordInfo)
-    {
-    	_passwordInfo = passwordInfo;
-    	if (passwordInfo != null)
-    	{
-    	    _userId = passwordInfo.getUserid();
-    	}
-    }            
+	/**
+	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
+	 * Sets the password information for this system's subsystem.
+	 * @param passwordInfo the password information object
+	 */
+	protected void setPasswordInformation(SystemSignonInformation passwordInfo) {
+		_passwordInfo = passwordInfo;
+		if (passwordInfo != null) {
+			_userId = passwordInfo.getUserid();
+		}
+	}            
     
     /**
-     * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-     * Set the password if you got it from somewhere
-     */
-    public void setPassword(String matchingUserId, String password, boolean persist)
-    {
-    	if (getPrimarySubSystem().forceUserIdToUpperCase())
-    	{
-    		matchingUserId = matchingUserId.toUpperCase();
-    	}
-    	
-		SystemSignonInformation tempPasswordInfo = new SystemSignonInformation(getHostName(), matchingUserId,
-				   password, getHostType());
+	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
+	 * Set the password if you got it from somewhere
+	 * @param matchingUserId the user for which to set the password
+	 * @param password the password to set for this userid
+	 * @param persist true if the password is to be persisted as well
+	 */
+	public void setPassword(String matchingUserId, String password, boolean persist) {
+		if (getPrimarySubSystem().forceUserIdToUpperCase()) {
+			matchingUserId = matchingUserId.toUpperCase();
+		}
+		SystemSignonInformation tempPasswordInfo = new SystemSignonInformation(getHostName(), matchingUserId, password, getHostType());
 		setPasswordInformation(tempPasswordInfo);
-    	
-    	// if password should be persisted, then add to disk
-    	if (persist) {
-    	    PasswordPersistenceManager.getInstance().add(tempPasswordInfo, true, true);
-    	}
-    	// otherwise, remove from both memory and disk
-    	else {
-    		//  now get rid of userid/password from disk
-    		String systemType = getHostType();
-			String hostName   = getHostName();
+		if (persist) { // if password should be persisted, then add to disk
+			PasswordPersistenceManager.getInstance().add(tempPasswordInfo, true, true);
+		} else { // otherwise, remove from both memory and disk
+			String systemType = getHostType();
+			String hostName = getHostName();
 			PasswordPersistenceManager.getInstance().remove(systemType, hostName, _userId);
-    	}
-    }
+		}
+	}
     
     /**
-     * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-     * Set the password if you got it from somewhere
-     */
-    public void setPassword(String matchingUserId, String password)
-    {
-        setPassword(matchingUserId, password, false);
-    }
+	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
+	 * A convenience method, fully equivalent to <code>setPassword(matchingUserId, password, false)</code>
+	 * @param matchingUserId the user for which to set the password
+	 * @param password the password to set for this userid
+	 */
+	public void setPassword(String matchingUserId, String password) {
+		setPassword(matchingUserId, password, false);
+	}
     
     /**
      * <i>Useful utility method. Fully implemented, no need to override.</i><br>

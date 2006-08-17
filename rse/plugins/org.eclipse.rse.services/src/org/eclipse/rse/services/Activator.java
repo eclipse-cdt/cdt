@@ -16,8 +16,13 @@
 
 package org.eclipse.rse.services;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
@@ -72,5 +77,41 @@ public class Activator extends Plugin {
 		IStatus status = new Status(IStatus.ERROR, id, 0, "Unexpected exception", t);
 		log.log(status);
 	}
-	
+
+	//<tracing code>----------------------------------------------------
+
+	private static Boolean fTracingOn = null;
+	public static boolean isTracingOn() {
+		if (fTracingOn==null) {
+			String id = plugin.getBundle().getSymbolicName();
+			String val = Platform.getDebugOption(id + "/debug"); //$NON-NLS-1$
+			if ("true".equals(val)) { //$NON-NLS-1$
+				fTracingOn = Boolean.TRUE;
+			} else {
+				fTracingOn = Boolean.FALSE;
+			}
+		}
+		return fTracingOn.booleanValue();
+	}
+	public static String getTimestamp() {
+		try {
+			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
+			return formatter.format(new Date());
+		} catch (Exception e) {
+			// If there were problems writing out the date, ignore and
+			// continue since that shouldn't stop us from logging the rest
+			// of the information
+		}
+		return Long.toString(System.currentTimeMillis());
+	}
+	public static void trace(String msg) {
+		if (isTracingOn()) {
+			String fullMsg = getTimestamp() + " | " + Thread.currentThread().getName() + " | " + msg; //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println(fullMsg);
+			System.out.flush();
+		}
+	}
+
+	//</tracing code>---------------------------------------------------
+
 }

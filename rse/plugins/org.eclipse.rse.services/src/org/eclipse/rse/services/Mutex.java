@@ -9,15 +9,13 @@
  * Martin Oberhuber (Wind River) - initial API and implementation 
  *******************************************************************************/
 
-package org.eclipse.rse.services.ssh.files;
+package org.eclipse.rse.services;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.rse.services.ssh.Activator;
 
 /**
  * A Mutual Exclusion Lock for Threads that need to access a resource

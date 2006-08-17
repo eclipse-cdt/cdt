@@ -33,6 +33,7 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpProgressMonitor;
 
+import org.eclipse.rse.services.Mutex;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;

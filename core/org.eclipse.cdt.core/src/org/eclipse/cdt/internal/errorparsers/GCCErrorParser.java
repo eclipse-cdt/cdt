@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn - Patch for PR 85264
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.errorparsers;
@@ -32,7 +33,7 @@ public class GCCErrorParser extends AbstractErrorParser {
 		new ErrorPattern(": note:"),
 		new ErrorPattern("instantiated from here"),
 		// The following are not...
-		new ErrorPattern("(.*?):([0-9]+):([0-9]+:)? ((warning: )?.*)", 1, 2, 4, 0, 0) {
+		new ErrorPattern("(.*?):([0-9]+):([0-9]+:)? ((.*?[Ww]arning)?.*)", 1, 2, 4, 0, 0) {
 			public String getVarName(Matcher matcher) {
 				String desc = getDesc(matcher);
 				Matcher varMatcher = null;

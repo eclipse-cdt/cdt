@@ -17,6 +17,7 @@
 package org.eclipse.rse.services.files;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
@@ -28,24 +29,22 @@ public abstract class AbstractFileService implements IFileService
 	public static final int FILE_TYPE_FILES = 1;
 	public static final int FILE_TYPE_FOLDERS = 2;
  
-
-	
-	public IHostFile[] getFiles(IProgressMonitor monitor, String remoteParent, String fileFilter) 
+	public IHostFile[] getFiles(IProgressMonitor monitor, String remoteParent, String fileFilter) throws SystemMessageException 
 	{
 		return internalFetch(monitor, remoteParent, fileFilter, FILE_TYPE_FILES);
 	}
 
-	public IHostFile[] getFolders(IProgressMonitor monitor, String remoteParent, String fileFilter) 
+	public IHostFile[] getFolders(IProgressMonitor monitor, String remoteParent, String fileFilter) throws SystemMessageException 
 	{
 		return internalFetch(monitor, remoteParent, fileFilter, FILE_TYPE_FOLDERS);
 	}
 	
-	public IHostFile[] getFilesAndFolders(IProgressMonitor monitor, String parentPath, String fileFilter)
+	public IHostFile[] getFilesAndFolders(IProgressMonitor monitor, String parentPath, String fileFilter) throws SystemMessageException
 	{
 		return internalFetch(monitor, parentPath, fileFilter, FILE_TYPE_FILES_AND_FOLDERS);
 	}
 	
-	protected abstract IHostFile[] internalFetch(IProgressMonitor monitor, String parentPath, String fileFilter, int fileType);
+	protected abstract IHostFile[] internalFetch(IProgressMonitor monitor, String parentPath, String fileFilter, int fileType) throws SystemMessageException;
 	
 	
 	protected boolean isRightType(int fileType, IHostFile node)

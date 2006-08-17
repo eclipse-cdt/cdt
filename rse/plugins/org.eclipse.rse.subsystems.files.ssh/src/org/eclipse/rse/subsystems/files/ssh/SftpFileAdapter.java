@@ -34,12 +34,14 @@ public class SftpFileAdapter implements IHostFileToRemoteFileAdapter {
 		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.SHOWHIDDEN);
 
 		List results = new ArrayList();
-		for (int i = 0; i < nodes.length; i++) {
-			SftpHostFile node = (SftpHostFile)nodes[i];
-			if (showHidden || !node.isHidden()) {
-				IRemoteFile remoteFile = new SftpRemoteFile(ss, context, parent, node);
-				results.add(remoteFile);
-				ss.cacheRemoteFile(remoteFile);
+		if (nodes!=null) {
+			for (int i = 0; i < nodes.length; i++) {
+				SftpHostFile node = (SftpHostFile)nodes[i];
+				if (showHidden || !node.isHidden()) {
+					IRemoteFile remoteFile = new SftpRemoteFile(ss, context, parent, node);
+					results.add(remoteFile);
+					ss.cacheRemoteFile(remoteFile);
+				}
 			}
 		}
 		return (IRemoteFile[])results.toArray(new IRemoteFile[results.size()]);

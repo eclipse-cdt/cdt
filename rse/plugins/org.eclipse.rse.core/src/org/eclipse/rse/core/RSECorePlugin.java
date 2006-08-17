@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.core.internal.RSECoreRegistry;
+import org.eclipse.rse.logging.Logger;
+import org.eclipse.rse.logging.LoggerFactory;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -31,6 +33,7 @@ public class RSECorePlugin extends Plugin {
 
 	// the shared instance
 	private static RSECorePlugin plugin;
+	private Logger logger = null;
 
 	/**
 	 * @return the local machine name
@@ -70,6 +73,7 @@ public class RSECorePlugin extends Plugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		logger = LoggerFactory.getLogger(this);
 	}
 
 	/**
@@ -77,6 +81,8 @@ public class RSECorePlugin extends Plugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
+		LoggerFactory.freeLogger(this);
+		logger = null;
 		plugin = null;
 	}
 
@@ -95,6 +101,10 @@ public class RSECorePlugin extends Plugin {
 	 */
 	public IRSECoreRegistry getRegistry() {
 		return RSECoreRegistry.getDefault();
+	}
+	
+	public Logger getLogger() {
+		return logger;
 	}
 
 	private void log(Throwable t) {

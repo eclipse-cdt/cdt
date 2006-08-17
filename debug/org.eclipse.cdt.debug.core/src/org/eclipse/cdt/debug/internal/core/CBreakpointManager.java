@@ -407,12 +407,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		else if ( cdiBreakpoint instanceof ICDILocationBreakpoint )
 			doHandleLocationBreakpointCreatedEvent( (ICDILocationBreakpoint)cdiBreakpoint );
 		if ( !cdiBreakpoint.isTemporary() && !DebugPlugin.getDefault().getBreakpointManager().isEnabled() ) {
-			try {
-				cdiBreakpoint.setEnabled( false );
-			}
-			catch( CDIException e ) {
-				// ignore
-			}
+			changeBreakpointPropertiesOnTarget(cdiBreakpoint, new Boolean(false), null);
 		}
 	}
 

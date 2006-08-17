@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     James Blackburn - Modified patch for 149428
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -48,7 +49,6 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -560,8 +560,15 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	}
 
 	public IBinaryFile createBinaryFile(IFile file) {
+		//Avoid name special devices, empty files and the like
+		File f = new File(file.getLocationURI());
+		if (!f.isFile() || f.length() == 0) {
+			return null;
+		}
+		
 		BinaryParserConfig[] parsers = getBinaryParser(file.getProject());
 		int hints = 0;
+		
 		for (int i = 0; i < parsers.length; i++) {
 			IBinaryParser parser = null;
 			try {

@@ -127,8 +127,12 @@ public class HashTable implements Cloneable{
 		} else {
 			// need to link
 			int j = hashTable[hash] - 1;
-			while (nextTable[j] != 0)
+			while (nextTable[j] != 0) {
+//				if(nextTable[j] - 1 == j) {
+//					break;
+//				}
 				j = nextTable[j] - 1;
+			}
 			nextTable[j] = i + 1;
 		}
 	}

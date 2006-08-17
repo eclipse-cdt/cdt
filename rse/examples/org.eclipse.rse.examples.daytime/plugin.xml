@@ -31,7 +31,7 @@ Martin Oberhuber (Wind River) - initial API and implementation
 			icon="icons/full/obj16/systemfiles_obj.gif"
 			category="files"
 			class="org.eclipse.rse.subsystems.files.ftp.FTPFileSubSystemConfiguration"
-			vendor="IBM Corp"
+			vendor="Eclipse.org"
 			id="ftp.files">
 		</configuration>
 	</extension>

@@ -29,7 +29,7 @@ Javier Montalvo Orus (Symbian) - add Windows to list of valid FTP systems
             icon="icons/full/obj16/systemfiles_obj.gif"
             category="files"
             class="org.eclipse.rse.subsystems.files.ftp.FTPFileSubSystemConfiguration"
-            vendor="IBM Corporation"
+            vendor="Eclipse.org"
             id="ftp.files">
       </configuration>
       </extension>

@@ -32,7 +32,7 @@ Contributors:
             icon="icons/full/obj16/processsubsystem_obj.gif"
             category="processes"
             class="org.eclipse.rse.subsystems.processes.dstore.DStoreProcessSubSystemConfiguration"
-            vendor="IBM Corp"
+            vendor="Eclipse.org"
             id="dstore.processes">
       </configuration>
       </extension>

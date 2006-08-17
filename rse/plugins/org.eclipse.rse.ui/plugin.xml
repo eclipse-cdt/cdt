@@ -80,16 +80,16 @@ Contributors:
 <!--                  "jobs". Can also specify your own category like "database"        -->
 <!--  icon        => icon to display for subsystems of this configuration when not connected  -->
 <!--  iconlive    => icon to display for subsystems of this configuration when connected      -->
-<!--  name        => translatable display name for subsystems of this configuration           -->
-<!--  description => translatable descriptin for subsystems of this configuration             -->
+<!--  name        => translatable display name for subsystems of this configuration     -->
+<!--  description => translatable descriptin for subsystems of this configuration       -->
 <!--  id          => unique id for this extension point. Will be used for a folder name -->
-<!--  vendor      => name of company supplying this configuration                             -->
-<!--  systemClass => Optional. Only used when naming an IBM-supplied subsystem configuration  -->
+<!--  vendor      => name of company supplying this configuration                       -->
+<!--  systemClass => Optional. Only used when naming a predefined subsystem configuration  -->
 <!--      in the <samp>class</samp> attribute, when you want to subclass or replace the -->
-<!--      IBM-supplied ISystem object used to manage the live connection with the remote-->
+<!--      predefined ISystem object used to manage the live connection with the remote  -->
 <!--      system. Name a class that implements                                          -->
-<!--        org.eclipse.rse.subsystems.ISystem or extends the appropriate        -->
-<!--      IBM-supplied class such as org.eclipse.rse.universal.UniversalSystem   -->
+<!--        org.eclipse.rse.subsystems.ISystem or extends the appropriate               -->
+<!--      predefined class such as org.eclipse.rse.universal.UniversalSystem            -->
 <!--      for unix, windows and system types.                                           -->
 <!-- ================================================================================== -->
 <!--                                                                                    -->
@@ -135,8 +135,8 @@ Contributors:
 <!--                        extension point.                                            -->
 <!--  subsystemconfigurationCategory => a subsystem configuration "category" to match on. Can be a  -->
 <!--                          simple name or simple generic like "*files". Matches on   -->
-<!--                          the "category" attribute of the subsystem configuration. IBM    -->
-<!--                          values are "file", "nativefiles", "commands" or "jobs".   -->
+<!--                          the "category" attribute of the subsystem configuration.  -->
+<!--                          Known values are "file", "nativefiles", "commands" or "jobs". -->
 <!--  systemTypes => semicolon-separated list of system types or * for all              -->
 <!--  namefilter => scalar or simple generic name to match on.                          -->
 <!--  typecategoryfilter => scalar or simple generic type category to match on.         -->
@@ -223,8 +223,8 @@ Contributors:
 <!--  typefilter => scalar or simple generic type to match on. This too is subsystem    -->
 <!--                configuration defined.                                              -->
 <!--  subtypefilter => scalar or simple generic subtype to match on.                    -->
-<!--  subsubtypefilter => scalar or simple generic sub-subtype to match on. No IBM      -->
-<!--                subsystem factories currently set this                              -->
+<!--  subsubtypefilter => scalar or simple generic sub-subtype to match on. No          -->
+<!--                predefined subsystem factories currently set this                   -->
 <!--                                                                                    -->
 <!-- ================================================================================== -->
 <!-- <menu> sub tag (of <objectContribution> tag) attributes:                           -->

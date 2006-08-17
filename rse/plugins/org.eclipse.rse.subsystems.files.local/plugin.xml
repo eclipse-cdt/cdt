@@ -28,7 +28,7 @@ Contributors:
             icon="icons/full/obj16/systemfiles_obj.gif"
             category="files"
             class="org.eclipse.rse.subsystems.files.local.LocalFileSubSystemConfiguration"
-            vendor="IBM Corp"
+            vendor="Eclipse.org"
             id="local.files">
       </configuration>
       </extension>

@@ -32,7 +32,7 @@ Contributors:
             icon="icons/full/obj16/systemcommands_obj.gif"
             category="shells"
             class="org.eclipse.rse.subsystems.shells.local.LocalShellSubSystemConfiguration"
-            vendor="IBM Corp"
+            vendor="Eclipse.org"
             id="local.shells">
       </configuration>
       </extension>

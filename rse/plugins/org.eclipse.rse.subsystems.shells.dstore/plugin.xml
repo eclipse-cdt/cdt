@@ -29,7 +29,7 @@ Contributors:
             icon="icons/full/obj16/systemcommands_obj.gif"
             category="shells"
             class="org.eclipse.rse.subsystems.shells.dstore.DStoreShellSubSystemConfiguration"
-            vendor="IBM Corp"
+            vendor="Eclipse.org"
             id="dstore.shells">
          </configuration>
 

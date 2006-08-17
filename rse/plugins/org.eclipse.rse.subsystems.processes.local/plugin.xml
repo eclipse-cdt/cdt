@@ -32,7 +32,7 @@ Contributors:
             icon="icons/full/obj16/processsubsystem_obj.gif"
             category="processes"
             class="org.eclipse.rse.subsystems.processes.local.LocalProcessSubSystemFactory"
-            vendor="IBM Corp"
+            vendor="Eclipse.org"
             id="local.processes">
       </factory>
       </extension>

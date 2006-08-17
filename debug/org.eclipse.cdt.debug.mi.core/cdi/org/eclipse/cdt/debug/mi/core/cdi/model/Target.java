@@ -256,6 +256,7 @@ public class Target extends SessionObject implements ICDITarget {
 		// If we use "info threads" in getCThreads() this
 		// will be overwritten. However if we use -stack-list-threads
 		// it does not provide to the current thread
+		lockTarget();
 		currentThreadId = newThreadId;
 
 		// get the new Threads.
@@ -264,6 +265,7 @@ public class Target extends SessionObject implements ICDITarget {
 		} catch (CDIException e) {
 			currentThreads = noThreads;
 		}
+		releaseTarget();
 
 		// Fire CreatedEvent for new threads.
 		// Replace the new threads with the old thread object
@@ -322,6 +324,7 @@ public class Target extends SessionObject implements ICDITarget {
 	public Thread[] getCThreads() throws CDIException {
 		Thread[] cthreads = noThreads;
 		try {
+			lockTarget();
 			RxThread rxThread = miSession.getRxThread();
 			rxThread.setEnableConsole(false);
 			CommandFactory factory = miSession.getCommandFactory();
@@ -362,7 +365,7 @@ public class Target extends SessionObject implements ICDITarget {
 			// FIX: When attaching there is no thread selected
 			// We will choose the first one as a workaround.
 			if (currentThreadId == 0 && cthreads.length > 0) {
-				currentThreadId = cthreads[0].getId();
+				setCurrentThread(cthreads[0], false);				
 			}
 		} catch (MIException e) {
 			// Do not throw anything in this case.
@@ -370,6 +373,7 @@ public class Target extends SessionObject implements ICDITarget {
 		} finally {
 			RxThread rxThread = miSession.getRxThread();
 			rxThread.setEnableConsole(true);
+			releaseTarget();
 		}
 		return cthreads;
 	}

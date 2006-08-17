@@ -25,7 +25,7 @@ cd org.eclipse.rse.build
 stamp=`date +'%Y%m%d-%H%M'`
 log=$HOME/ws/log-$stamp.txt
 sg dsdp-tm-rse -c "touch $log"
-sg dsdp-tm-rse -c "cvs -q update -d >> $log 2>&1"
+sg dsdp-tm-rse -c "cvs -q update -RPd >> $log 2>&1"
 daystamp=`date +'%Y%m%d-%H'`
 sg dsdp-tm-rse -c "./nightly.sh >> $log 2>&1"
 tail -50 $log

@@ -29,7 +29,7 @@ cd org.eclipse.rse.build
 stamp=`date +'%Y%m%d-%H%M'`
 log=$HOME/ws/log-$stamp.txt
 sg dsdp-tm-rse -c "touch $log"
-sg dsdp-tm-rse -c "cvs -q update -d"
+sg dsdp-tm-rse -c "cvs -q update -RPd"
 daystamp=`date +'%Y%m%d-%H'`
 echo "Enter tag to fetch from CVS (default is HEAD):"
 echo "Enter build type (P,N,I,S):"

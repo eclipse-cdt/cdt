@@ -83,16 +83,17 @@ public class FTPHostFile implements IHostFile
 
 	public String getAbsolutePath()
 	{
-		
-		StringBuffer path = new StringBuffer(getParentPath());
-		if (!_parentPath.endsWith("/"))
-		{
-			path.append('/');
+		if (isRoot()) {
+			return getName();
+		} else {
+			StringBuffer path = new StringBuffer(getParentPath());
+			if (!_parentPath.endsWith("/"))
+			{
+				path.append('/');
+			}
+			path.append(getName());
+			return path.toString();
 		}
-		path.append(getName());
-		
-		
-		return path.toString();
 	}
 
 	public long getSize()

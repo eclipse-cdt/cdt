@@ -45,30 +45,27 @@ import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
-public class RSEPersistenceManager implements IRSEPersistenceManager
-{
+public class RSEPersistenceManager implements IRSEPersistenceManager {
 	public static final int STATE_NONE = 0;
 	public static final int STATE_IMPORTING = 1;
 	public static final int STATE_EXPORTING = 2;
-	
+
 	private Map loadedProviders = new HashMap(10);
-	
+
 	private int _currentState = STATE_NONE;
-	
+
 	private RSEDOMExporter _exporter;
 	private RSEDOMImporter _importer;
-	
-	public RSEPersistenceManager()
-	{
+
+	public RSEPersistenceManager() {
 		_exporter = RSEDOMExporter.getInstance();
 		_importer = RSEDOMImporter.getInstance();
 	}
-	
-	public void registerRSEPersistenceProvider(String id, IRSEPersistenceProvider provider)
-	{
-		loadedProviders.put(id,	provider);
+
+	public void registerRSEPersistenceProvider(String id, IRSEPersistenceProvider provider) {
+		loadedProviders.put(id, provider);
 	}
-	
+
 	/**
 	 * Returns the persistence provider denoted by the id. Only one instance of this 
 	 * persistence provider is created.
@@ -107,29 +104,24 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 		}
 		return provider;
 	}
-	
+
 	/**
 	 * @return the default IRSEPersistenceProvider for this installation.
 	 * TODO: need to determine what this is. Having more than one is problematic.
 	 */
-	public IRSEPersistenceProvider getRSEPersistenceProvider()
-	{
+	public IRSEPersistenceProvider getRSEPersistenceProvider() {
 		IRSEPersistenceProvider provider = getRSEPersistenceProvider("org.eclipse.rse.persistence.PropertyFileProvider");
 		return provider;
 	}
-	
-	
-	public boolean restore(ISystemProfileManager profileManager)
-	{
+
+	public boolean restore(ISystemProfileManager profileManager) {
 		return load(profileManager);
 	}
 
 	/**
 	 * Restore a profile of a given name from disk...
 	 */
-	protected ISystemProfile restoreProfile(ISystemProfileManager mgr, String name)
-			throws Exception
-	{
+	protected ISystemProfile restoreProfile(ISystemProfileManager mgr, String name) throws Exception {
 		/*
 		 * FIXME String fileName = mgr.getRootSaveFileName(name); java.util.List
 		 * ext = null;//FIXME
@@ -144,42 +136,30 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	/**
 	 * Save all profiles to disk
 	 */
-	public boolean commit(ISystemProfileManager profileManager)
-	{
-		
+	public boolean commit(ISystemProfileManager profileManager) {
+
 		ISystemProfile[] profiles = profileManager.getSystemProfiles();
-		for (int idx = 0; idx < profiles.length; idx++)
-		{
-			try
-			{
+		for (int idx = 0; idx < profiles.length; idx++) {
+			try {
 				commit(profiles[idx]);
-			}
-			catch (Exception exc)
-			{
+			} catch (Exception exc) {
 				exc.printStackTrace();
-				System.out.println("Error saving profile " + profiles[idx]
-						+ ": " + exc.getClass().getName() + " "
-						+ exc.getMessage());
+				System.out.println("Error saving profile " + profiles[idx] + ": " + exc.getClass().getName() + " " + exc.getMessage());
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
-	
-
-	public boolean restore(ISystemHostPool connectionPool)
-	{
-	return false;
+	public boolean restore(ISystemHostPool connectionPool) {
+		return false;
 	}
 
 	/**
 	 * Restore a connection of a given name from disk...
 	 */
-	protected IHost restoreHost(ISystemHostPool hostPool, String connectionName)
-			throws Exception
-	{
+	protected IHost restoreHost(ISystemHostPool hostPool, String connectionName) throws Exception {
 		/*
 		 * FIXME //System.out.println("in SystemConnectionPoolImpl#restore for
 		 * connection " + connectionName); String fileName =
@@ -200,140 +180,121 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 		return null;
 	}
 
-	public boolean commit(ISystemHostPool connectionPool)
-	{
-		if (connectionPool.isDirty())
-		{
+	public boolean commit(ISystemHostPool connectionPool) {
+		if (connectionPool.isDirty()) {
 			commit(connectionPool.getSystemProfile());
 			connectionPool.setDirty(false);
 		}
 		/*
-		Host[] connections = connectionPool.getHosts();
-		for (int idx = 0; idx < connections.length; idx++)
-		{
-			if (!saveHost(connectionPool, connections[idx]))
-			{
-				return false;
-			}
-		}
-		return true;
-		*/
+		 Host[] connections = connectionPool.getHosts();
+		 for (int idx = 0; idx < connections.length; idx++)
+		 {
+		 if (!saveHost(connectionPool, connections[idx]))
+		 {
+		 return false;
+		 }
+		 }
+		 return true;
+		 */
 		return false; // all persistence should be at profile level
 	}
 
-	public boolean commit(ISystemFilterPoolManager filterPoolManager)
-	{
-		if (filterPoolManager.isDirty())
-		{
+	public boolean commit(ISystemFilterPoolManager filterPoolManager) {
+		if (filterPoolManager.isDirty()) {
 			commit(filterPoolManager.getSystemProfile());
 			filterPoolManager.setDirty(false);
 		}
 		return false;
 	}
 
-	public boolean commit(ISystemFilterPool filterPool)
-	{
-		if (filterPool.isDirty())
-		{
+	public boolean commit(ISystemFilterPool filterPool) {
+		if (filterPool.isDirty()) {
 			commit(filterPool.getSystemFilterPoolManager().getSystemProfile());
 			filterPool.setDirty(false);
 		}
 		return false;
 	}
 
-	public boolean restore(ISystemFilterPool filterPool)
-	{
+	public boolean restore(ISystemFilterPool filterPool) {
 		//System.out.println("restore filterpool");
 		// DWD function Is this method really needed?
 		return false;
 	}
 
-
-	 public boolean commit(ISystemFilter filter)
-   {
+	public boolean commit(ISystemFilter filter) {
 		// System.out.println("commit filter");
-		 // DWD function Is this method really needed?
-		 /*
+		// DWD function Is this method really needed?
+		/*
 		 if (filter.isDirty())
 		 {
-			 System.out.println("saving filter: "+filter.getName());
-			 filter.setDirty(false);
+		 System.out.println("saving filter: "+filter.getName());
+		 filter.setDirty(false);
 		 }
 		 */
-	   	/* FIXME
-	       //initMOF();  assume caller did this!
-	       String fileName = getRootSaveFileName(this);
-	       IFolder folder = getFolder(this);
-	   	getMOFHelpers().save(folder,fileName, this);        
-	   	*/
-	   	return false;
-   }
+		/* FIXME
+		 //initMOF();  assume caller did this!
+		 String fileName = getRootSaveFileName(this);
+		 IFolder folder = getFolder(this);
+		 getMOFHelpers().save(folder,fileName, this);        
+		 */
+		return false;
+	}
 
-	public ISystemFilterPool restoreFilterPool(String name)
-	{
+	public ISystemFilterPool restoreFilterPool(String name) {
 		//System.out.println("restore filter pool "+name);
 		// DWD function is this method really needed?
 		return null;
 	}
 
-	public boolean commit(ISubSystem subSystem)
-	{
-		
-		if (subSystem.isDirty())
-		{
-		//	System.out.println("updated " + subSystem.getName());
-			try
-			{
+	public boolean commit(ISubSystem subSystem) {
+
+		if (subSystem.isDirty()) {
+			//	System.out.println("updated " + subSystem.getName());
+			try {
 				// commit everything for now
 				ISystemProfileManager mgr = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager();
 				commit(mgr);
 				subSystem.setDirty(false);
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return true;
 		}
-		
+
 		/*
-		// FIXME
-		if (subSystem.isDirty())
-		{
-			System.out.println("saving subsystem: "+subSystem.getName());
-		}
-		*/
+		 // FIXME
+		 if (subSystem.isDirty())
+		 {
+		 System.out.println("saving subsystem: "+subSystem.getName());
+		 }
+		 */
 		return false;
 	}
-	
-	
+
 	/**
-     * Restore the filter pools from disk.
-     * @param logger The logging object to log errors to
-     * @param mgrFolder folder containing filter pool folders, or single file for that save policy
-     * @param name the name of the manager to restore. File name is derived from it when saving to one file.
-     * @param savePolicy How to persist filters. See SystemFilterConstants.
-     * @param namingPolicy Naming prefix information for persisted data file names.
-     * @return the restored manager, or null if it does not exist. If anything else went
-     *  wrong, an exception is thrown.
-     */
-    public ISystemFilterPoolManager restoreFilterPoolManager(ISystemProfile profile, Logger logger, ISystemFilterPoolManagerProvider caller,  String name)
-    {
-    
-    	ISystemFilterPoolManager mgr = SystemFilterPoolManager.createManager(profile);
-    	 ((SystemFilterPoolManager)mgr).initialize(logger,caller,name); // core data
-    	 mgr.setWasRestored(false); // DWD let's try this
-        return mgr;	
-    }
-    
-    /**
+	 * Restore the filter pools from disk.
+	 * @param logger The logging object to log errors to
+	 * @param mgrFolder folder containing filter pool folders, or single file for that save policy
+	 * @param name the name of the manager to restore. File name is derived from it when saving to one file.
+	 * @param savePolicy How to persist filters. See SystemFilterConstants.
+	 * @param namingPolicy Naming prefix information for persisted data file names.
+	 * @return the restored manager, or null if it does not exist. If anything else went
+	 *  wrong, an exception is thrown.
+	 */
+	public ISystemFilterPoolManager restoreFilterPoolManager(ISystemProfile profile, Logger logger, ISystemFilterPoolManagerProvider caller, String name) {
+
+		ISystemFilterPoolManager mgr = SystemFilterPoolManager.createManager(profile);
+		((SystemFilterPoolManager) mgr).initialize(logger, caller, name); // core data
+		mgr.setWasRestored(false); // DWD let's try this
+		return mgr;
+	}
+
+	/**
 	 * Attempt to save single profile to disk.
 	 */
-	public boolean commit(ISystemProfile profile)
-	{
-		if (profile != null)
-		{
-			return save(profile, false);			
+	public boolean commit(ISystemProfile profile) {
+		if (profile != null) {
+			return save(profile, false);
 		}
 		return false;
 	}
@@ -343,100 +304,78 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 	 * @param profileManager
 	 * @return true if the profiles are loaded
 	 */
-    public boolean load(ISystemProfileManager profileManager)
-    {
-    	boolean successful = true;
-    	if (isExporting() || isImporting())
-    	{
-    		successful = false;
-    	}
-    	else
-    	{
-    		_currentState = STATE_IMPORTING;
+	public boolean load(ISystemProfileManager profileManager) {
+		boolean successful = true;
+		if (isExporting() || isImporting()) {
+			successful = false;
+		} else {
+			_currentState = STATE_IMPORTING;
 			IProject project = SystemResourceManager.getRemoteSystemsProject();
-			try
-			{
-				if (!project.isSynchronized(IResource.DEPTH_ONE))
-					project.refreshLocal(IResource.DEPTH_ONE, null);
+			try {
+				if (!project.isSynchronized(IResource.DEPTH_ONE)) project.refreshLocal(IResource.DEPTH_ONE, null);
 				IRSEPersistenceProvider persistenceProvider = getRSEPersistenceProvider();
 				String profileNames[] = persistenceProvider.getSavedProfileNames();
 				for (int i = 0; i < profileNames.length; i++) {
 					String profileName = profileNames[i];
 					RSEDOM dom = importRSEDOM(profileName);
-					if (dom != null)
-					{
+					if (dom != null) {
 						ISystemProfile restoredProfile = _importer.restoreProfile(profileManager, dom);
-						if (restoredProfile == null)
-						{
+						if (restoredProfile == null) {
 							successful = false;
 						}
-					}
-					else
-					{
+					} else {
 						successful = false;
 					}
 				}
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			_currentState = STATE_NONE;
-    	}
-    	return successful;
-    }
-    
-    /**
-     * Saves the RSE artifacts from this session
-     */
-	public boolean save(ISystemProfile profile, boolean force)
-	{
+		}
+		return successful;
+	}
+
+	/**
+	 * Saves the RSE artifacts from this session
+	 */
+	public boolean save(ISystemProfile profile, boolean force) {
 		boolean result = false;
-		if (!isImporting() && !isExporting())
-		{
-			
+		if (!isImporting() && !isExporting()) {
+
 			RSEDOM dom = exportRSEDOM(profile, force);
-			if (dom.needsSave() && !dom.saveScheduled())
-			{
-//				IProject project = SystemResourceManager.getRemoteSystemsProject();
+			if (dom.needsSave() && !dom.saveScheduled()) {
+				//				IProject project = SystemResourceManager.getRemoteSystemsProject();
 				SaveRSEDOMJob job = new SaveRSEDOMJob(this, dom, getRSEPersistenceProvider());
-//				job.setRule(project);
+				//				job.setRule(project);
 				job.schedule(0); // TODO dwd control job delay here
 				dom.markSaveScheduled();
-			}
-			else
-			{
+			} else {
 				//System.out.println("no save required");
 				result = true;
 			}
 		}
 		return result;
-	}    
-	
-	public boolean isExporting()
-	{
+	}
+
+	public boolean isExporting() {
 		return _currentState == STATE_EXPORTING;
 	}
-	
-	public boolean isImporting()
-	{
+
+	public boolean isImporting() {
 		return _currentState == STATE_IMPORTING;
 	}
-	
-	public void setState(int state)
-	{
+
+	public void setState(int state) {
 		_currentState = state;
 	}
 
-	public RSEDOM exportRSEDOM(ISystemProfile profile, boolean force)
-	{
+	public RSEDOM exportRSEDOM(ISystemProfile profile, boolean force) {
 		_currentState = STATE_EXPORTING;
 		RSEDOM dom = _exporter.createRSEDOM(profile, force);
 		return dom;
 	}
-	
-	public RSEDOM importRSEDOM(String domName)
-	{
+
+	public RSEDOM importRSEDOM(String domName) {
 		RSEDOM dom = null;
 		IRSEPersistenceProvider provider = getRSEPersistenceProvider();
 		if (provider != null) {
@@ -448,12 +387,8 @@ public class RSEPersistenceManager implements IRSEPersistenceManager
 		return dom;
 	}
 
-
-	public boolean commit(IHost host) 
-	{
+	public boolean commit(IHost host) {
 		return commit(host.getSystemProfile());
 	}
-	
- 
 
 }

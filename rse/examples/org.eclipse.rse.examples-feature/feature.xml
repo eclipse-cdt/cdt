@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-	  id="org.eclipse.sdk.examples"
+	  id="org.eclipse.rse.examples"
       label="%featureName"
       version="1.0.0.qualifier"
       image= "eclipse_update_120.jpg"
@@ -37,7 +37,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.rse.examples.developer"
+         id="org.eclipse.rse.examples.tutorial"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -49,9 +49,9 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+-->
    <plugin
          id="org.eclipse.rse.examples.source"
          version="0.0.0"/>
--->
 
 </feature>

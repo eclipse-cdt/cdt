@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: RSE Tutorial Examples
-Bundle-SymbolicName: org.eclipse.rse.examples.developer;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-SymbolicName: org.eclipse.rse.examples.tutorial;singleton:=true
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: samples.RSESamplesPlugin
 Bundle-Vendor: Eclipse.org
 Bundle-Localization: plugin

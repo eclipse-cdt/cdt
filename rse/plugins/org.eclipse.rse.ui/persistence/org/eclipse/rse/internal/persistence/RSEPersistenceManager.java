@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -45,15 +46,20 @@ import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
+/**
+ * The persistence manager controls all aspects of persisting the RSE data model. It will both
+ * save and restore this model. There should be only persistence manager in existence. This instance
+ * can be retrieved using RSEUIPlugin.getThePersistenceManager.
+ * @see RSEUIPlugin#getThePersistenceManager() 
+ */
 public class RSEPersistenceManager implements IRSEPersistenceManager {
-	public static final int STATE_NONE = 0;
-	public static final int STATE_IMPORTING = 1;
-	public static final int STATE_EXPORTING = 2;
+
+	private static final int STATE_NONE = 0;
+	private static final int STATE_IMPORTING = 1;
+	private static final int STATE_EXPORTING = 2;
 
 	private Map loadedProviders = new HashMap(10);
-
 	private int _currentState = STATE_NONE;
-
 	private RSEDOMExporter _exporter;
 	private RSEDOMImporter _importer;
 
@@ -282,7 +288,6 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 *  wrong, an exception is thrown.
 	 */
 	public ISystemFilterPoolManager restoreFilterPoolManager(ISystemProfile profile, Logger logger, ISystemFilterPoolManagerProvider caller, String name) {
-
 		ISystemFilterPoolManager mgr = SystemFilterPoolManager.createManager(profile);
 		((SystemFilterPoolManager) mgr).initialize(logger, caller, name); // core data
 		mgr.setWasRestored(false); // DWD let's try this
@@ -299,12 +304,16 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		return false;
 	}
 
+	public boolean commit(IHost host) {
+		return commit(host.getSystemProfile());
+	}
+
 	/**
 	 * Loads and restores RSE artifacts from the last session
 	 * @param profileManager
 	 * @return true if the profiles are loaded
 	 */
-	public boolean load(ISystemProfileManager profileManager) {
+	private boolean load(ISystemProfileManager profileManager) {
 		boolean successful = true;
 		if (isExporting() || isImporting()) {
 			successful = false;
@@ -336,22 +345,25 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	}
 
 	/**
-	 * Saves the RSE artifacts from this session
+	 * Writes the RSE model to a DOM and schedules writing of that DOM to disk.
+	 * May, in fact, update an existing DOM instead of creating a new one.
+	 * If in the process of importing, skip writing.
+	 * @return true if the profile is written to a DOM
 	 */
-	public boolean save(ISystemProfile profile, boolean force) {
+	private boolean save(ISystemProfile profile, boolean force) {
 		boolean result = false;
-		if (!isImporting() && !isExporting()) {
-
-			RSEDOM dom = exportRSEDOM(profile, force);
-			if (dom.needsSave() && !dom.saveScheduled()) {
-				//				IProject project = SystemResourceManager.getRemoteSystemsProject();
-				SaveRSEDOMJob job = new SaveRSEDOMJob(this, dom, getRSEPersistenceProvider());
-				//				job.setRule(project);
-				job.schedule(0); // TODO dwd control job delay here
-				dom.markSaveScheduled();
-			} else {
-				//System.out.println("no save required");
-				result = true;
+		if (!isImporting()) {
+			_currentState = STATE_EXPORTING;
+			RSEDOM dom = exportRSEDOM(profile, true); // DWD should do merge, but does not handle deletes properly yet
+			_currentState = STATE_NONE;
+			result = true;
+			if (dom.needsSave()) {
+				Job job = dom.getSaveJob();
+				if (job == null) {
+					job = new SaveRSEDOMJob(dom, getRSEPersistenceProvider());
+					dom.setSaveJob(job);
+				}
+				job.schedule(3000); // five second delay
 			}
 		}
 		return result;
@@ -365,17 +377,16 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		return _currentState == STATE_IMPORTING;
 	}
 
-	public void setState(int state) {
-		_currentState = state;
-	}
+//	public void setState(int state) {
+//		_currentState = state;
+//	}
 
-	public RSEDOM exportRSEDOM(ISystemProfile profile, boolean force) {
-		_currentState = STATE_EXPORTING;
+	private RSEDOM exportRSEDOM(ISystemProfile profile, boolean force) {
 		RSEDOM dom = _exporter.createRSEDOM(profile, force);
 		return dom;
 	}
 
-	public RSEDOM importRSEDOM(String domName) {
+	private RSEDOM importRSEDOM(String domName) {
 		RSEDOM dom = null;
 		IRSEPersistenceProvider provider = getRSEPersistenceProvider();
 		if (provider != null) {
@@ -385,10 +396,6 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 			logger.logError("Persistence provider is not available.", null); // DWD NLS
 		}
 		return dom;
-	}
-
-	public boolean commit(IHost host) {
-		return commit(host.getSystemProfile());
 	}
 
 }

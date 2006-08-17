@@ -114,14 +114,6 @@ public interface IRSEPersistenceManager
 	
 	public ISystemFilterPoolManager restoreFilterPoolManager(ISystemProfile profile, Logger logger, ISystemFilterPoolManagerProvider caller,  String name);
     
-    /**
-     * Save the profile externally
-     * @param profile
-     * @param clean indicates whether to create from scratch or merger
-     * @return
-     */
-    public boolean save(ISystemProfile profile, boolean clean);
-    
 	public boolean isExporting();
 	public boolean isImporting();
 }

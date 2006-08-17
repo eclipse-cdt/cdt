@@ -77,18 +77,12 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     private int savePolicy;
     private IRSEFilterNamingPolicy namingPolicy = null;
     private ISystemFilterPoolManager mgr;
-    //private Vector filters = new Vector();
     private SystemFilterContainerCommonMethods helpers = null;
     private Object filterPoolData = null;
     private boolean initialized = false;
-    //private boolean isSharable = false;
     protected boolean specialCaseNoDataRestored = false;
     private boolean debug = false;
 	protected static final String DELIMITER = SystemFilterPoolReference.DELIMITER;        	
-	
-	// persistence
-//	protected boolean _isDirty = true; FIXME
-//	protected boolean _wasRestored = false; FIXME
 	
 	/**
 	 * @generated This field/method will be replaced during code generation.
@@ -473,6 +467,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	public void setSupportsDuplicateFilterStringsGen(boolean newSupportsDuplicateFilterStrings)
 	{
 		supportsDuplicateFilterStrings = newSupportsDuplicateFilterStrings;
+    	setDirty(true);
 	}
 
     /**
@@ -486,6 +481,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	if (filters != null)
     	  for (int idx=0; idx<filters.length; idx++)
     	     filters[idx].setStringsCaseSensitive(supports);   	
+    	setDirty(true);
     }
 	/**
 	 * <!-- begin-user-doc -->
@@ -496,6 +492,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	{
 		stringsCaseSensitive = newStringsCaseSensitive;
 		stringsCaseSensitiveESet = true;
+    	setDirty(true);
 	}
 
     /**
@@ -599,6 +596,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	public void setDeletable(boolean newDeletable)
 	{
 		deletable = newDeletable;
+    	setDirty(true);
 	}
 
 	/**
@@ -807,7 +805,9 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      */
     public boolean addSystemFilter(ISystemFilter filter)
     {
-    	return helpers.addSystemFilter(internalGetFilters(),filter);
+    	boolean result = helpers.addSystemFilter(internalGetFilters(),filter);
+    	if (result) setDirty(true);
+    	return result;
     }
     /**
      * Removes a given filter from the list.
@@ -816,6 +816,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     public void deleteSystemFilter(ISystemFilter filter)
     {
         helpers.deleteSystemFilter(internalGetFilters(),filter);
+    	setDirty(true);
     }
 
     /**
@@ -825,6 +826,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     public void renameSystemFilter(ISystemFilter filter, String newName)
     {
         helpers.renameSystemFilter(internalGetFilters(),filter, newName);
+    	setDirty(true);
     }
 
     /**
@@ -836,6 +838,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     public void updateSystemFilter(ISystemFilter filter, String newName, String[] newStrings)
     {
     	helpers.updateSystemFilter(internalGetFilters(), filter, newName, newStrings);
+    	setDirty(true);
     }
 
     /**
@@ -845,7 +848,9 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      */
     public ISystemFilter cloneSystemFilter(ISystemFilter filter, String aliasName)
     {
-        return helpers.cloneSystemFilter(internalGetFilters(), filter, aliasName);
+        ISystemFilter result = helpers.cloneSystemFilter(internalGetFilters(), filter, aliasName);
+    	setDirty(true);
+    	return result;
     }    
 
     /**
@@ -862,6 +867,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     public void moveSystemFilter(int pos, ISystemFilter filter)
     {
     	helpers.moveSystemFilter(internalGetFilters(),pos,filter);
+    	setDirty(true);
     }
         
     /**
@@ -1140,6 +1146,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	public void setType(String newType)
 	{
 		type = newType;
+    	setDirty(true);
 	}
 
 	/**
@@ -1157,7 +1164,8 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	{
 		stringsCaseSensitive = STRINGS_CASE_SENSITIVE_EDEFAULT;
 		stringsCaseSensitiveESet = false;
-		}
+    	setDirty(true);
+	}
 
 	/**
 	 * @generated This field/method will be replaced during code generation.
@@ -1204,6 +1212,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	public void setRelease(int newRelease)
 	{
 		release = newRelease;
+    	setDirty(true);
 	}
 
 	/**
@@ -1236,6 +1245,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	{
 		singleFilterStringOnly = newSingleFilterStringOnly;
 		singleFilterStringOnlyESet = true;
+    	setDirty(true);
 	}
 
 	/**
@@ -1247,6 +1257,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	{
 		singleFilterStringOnly = SINGLE_FILTER_STRING_ONLY_EDEFAULT;
 		singleFilterStringOnlyESet = false;
+    	setDirty(true);
 	}
 
 	/**

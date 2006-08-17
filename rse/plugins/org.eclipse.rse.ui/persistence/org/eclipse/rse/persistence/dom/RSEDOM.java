@@ -16,6 +16,8 @@
 
 package org.eclipse.rse.persistence.dom;
 
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.internal.persistence.SaveRSEDOMJob;
 import org.eclipse.rse.model.ISystemProfile;
 
 /**
@@ -28,7 +30,7 @@ public class RSEDOM extends RSEDOMNode {
 	 * Recommended for serializable objects. This should be updated if there is a schema change. 
 	 */
 	private static final long serialVersionUID = 1L;
-	private boolean _saveScheduled = false;
+	private Job saveJob = null;
 	private transient ISystemProfile _profile;
 
 	public RSEDOM(ISystemProfile profile) {
@@ -51,33 +53,6 @@ public class RSEDOM extends RSEDOMNode {
 	public void markForSave() {
 		if (!restoring && !_needsSave) {
 			_needsSave = true;
-		}
-	}
-
-	/**
-	 * Indicate that this DOM has been saved
-	 */
-	public void markUpdated() {
-		if (_needsSave) {
-			_needsSave = false;
-			_saveScheduled = false;
-			super.markUpdated();
-		}
-	}
-
-	/**
-	 * @return true if this DOM is scheduled to be saved
-	 */
-	public boolean saveScheduled() {
-		return _saveScheduled;
-	}
-
-	/**
-	 * Indicate that this DOM is scheduled to be saved
-	 */
-	public void markSaveScheduled() {
-		if (!_saveScheduled) {
-			_saveScheduled = true;
 		}
 	}
 
@@ -112,6 +87,14 @@ public class RSEDOM extends RSEDOMNode {
 			print(child, cindent);
 		}
 		System.out.println(indent + "}");
+	}
+
+	public Job getSaveJob() {
+		return saveJob;
+	}
+
+	public void setSaveJob(Job saveJob) {
+		this.saveJob = saveJob;
 	}
 
 }

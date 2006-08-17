@@ -67,7 +67,8 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 	}
 
 	/**
-	 * Creates the RSE DOM for this profile
+	 * Creates the RSE DOM for this profile. After it has found the DOM it will 
+	 * synchronize on the DOM to ensure its integrity while it is being updated.
 	 * @param profile the profile for which to create the DOM
 	 * @param clean indicates whether to create from scratch or merge with existing DOM
 	 * @return The DOM for this profile
@@ -79,7 +80,9 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 			_domMap.put(profile, dom);
 			clean = true;
 		}
-		populateRSEDOM(dom, profile, clean);
+		synchronized (dom) {
+			populateRSEDOM(dom, profile, clean);
+		}
 		return dom;
 	}
 

@@ -23,35 +23,28 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
-
-
-public class SaveRSEDOMJob extends Job 
-{
-	private RSEPersistenceManager _mgr;
+public class SaveRSEDOMJob extends Job {
+	
 	private RSEDOM _dom;
 	private IRSEPersistenceProvider _provider;
-	
-	public SaveRSEDOMJob(RSEPersistenceManager mgr, RSEDOM dom, IRSEPersistenceProvider provider)
-	{
+
+	public SaveRSEDOMJob(RSEDOM dom, IRSEPersistenceProvider provider) {
 		super("Saving RSE Profile: " + dom.getName());
 		_dom = dom;
-		_mgr = mgr;
 		_provider = provider;
 	}
-	
-	protected IStatus run(IProgressMonitor monitor) 
-	{
-		if (_dom.needsSave())
-		{
-			_provider.saveRSEDOM(_dom, monitor);
-			_dom.markUpdated();
-			_mgr.setState(RSEPersistenceManager.STATE_NONE);
-			return Status.OK_STATUS;
+
+	protected IStatus run(IProgressMonitor monitor) {
+		IStatus result = Status.OK_STATUS;
+		synchronized (_dom) { // synchronize on the DOM to prevent its update while writing
+			if (_dom.needsSave()) {
+				_provider.saveRSEDOM(_dom, monitor);
+				_dom.markUpdated();
+			} else {
+				result = Status.CANCEL_STATUS;
+			}
 		}
-		else
-		{
-			return Status.CANCEL_STATUS;
-		}
+		return result;
 	}
 
 }

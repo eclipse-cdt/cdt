@@ -1113,8 +1113,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     }
     
     /**
-     * Returns the persistence manager used for persisting RSE profiles
-     * @return
+     * @return the persistence manager used for persisting RSE profiles
      */
     public IRSEPersistenceManager getPersistenceManager()
     {

@@ -23,8 +23,8 @@ import java.util.List;
 
 public class RSEDOMNode implements IRSEDOMConstants, Serializable
 {
-	/**
-	 * 
+	/*
+	 * Recommended for serializable objects. This should be updated if there is a schema change. 
 	 */
 	private static final long serialVersionUID = 1L;
 	protected String _type;

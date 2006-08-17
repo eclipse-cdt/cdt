@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -111,9 +112,9 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#saveRSEDOM(org.eclipse.rse.persistence.dom.RSEDOM, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean saveRSEDOM(RSEDOM dom, IProgressMonitor monitor) {
-		String profileName = dom.getName();
 		IFolder providerFolder = getProviderFolder();
-		//System.out.println("saving profile " + profileName + " to " + providerFolder.getFullPath().toString() + "..."); // DWD debugging
+//		String profileName = dom.getName();
+//		System.out.println("saving profile " + profileName + " to " + providerFolder.getFullPath().toString() + "...");
 		try {
 			int n = countNodes(dom);
 			if (monitor != null) monitor.beginTask("Saving DOM", n);
@@ -441,7 +442,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		RSEDOM dom = null;
 		IFolder profileFolder = getProfileFolder(profileName);
 		if (profileFolder.exists()) {
-			//System.out.println("loading from " + profileFolder.getFullPath().toString() + "..."); // DWD debugging
+			//System.out.println("loading from " + profileFolder.getFullPath().toString() + "...");
 			int n = countPropertiesFiles(profileFolder);
 			if (monitor != null) monitor.beginTask("Loading DOM", n);
 			dom = (RSEDOM) loadNode(null, profileFolder, monitor);
@@ -547,11 +548,11 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		RSEDOMNode node = (parent == null) ? new RSEDOM(nodeName) : new RSEDOMNode(parent, nodeType, nodeName);
 		node.setRestoring(true);
 		Set keys = properties.keySet();
-		int nReferences = 0;
-		int nChildren = 0;
 		Map attributes = new HashMap();
 		Map attributeTypes = new HashMap();
 		Map childPropertiesMap = new HashMap();
+		Set childNames = new TreeSet(); // child names are 5 digit strings, a tree set is used to maintain ordering
+		Set referenceNames = new TreeSet(); // ditto for reference names
 		for (Iterator z = keys.iterator(); z.hasNext();) {
 			String key = (String) z.next();
 			String[] words = split(key, 2);
@@ -563,16 +564,15 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 				String type = properties.getProperty(key);
 				attributeTypes.put(words[1], type);
 			} else if (metatype.equals(MT_REFERENCE)) {
-				int n = Integer.parseInt(words[1]) + 1;
-				if (nReferences < n) nReferences = n;
+				String referenceName = words[1];
+				referenceNames.add(referenceName);
 			} else if (metatype.equals(MT_CHILD)) {
 				String value = properties.getProperty(key);
 				words = split(words[1], 2);
-				String indexString = words[0];
+				String childName = words[0];
+				childNames.add(childName);
 				String newKey = words[1]; 
-				int n = Integer.parseInt(indexString) + 1;
-				if (nChildren < n) nChildren = n;
-				Properties p = getProperties(childPropertiesMap, indexString);
+				Properties p = getProperties(childPropertiesMap, childName);
 				p.put(newKey, value);
 			}
 		}
@@ -584,14 +584,14 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			String attributeType = (String) attributeTypes.get(attributeName);
 			node.addAttribute(attributeName, attributeValue, attributeType);
 		}
-		for (int i = 0; i < nChildren; i++) {
-			String selector = getIndexString(i);
-			Properties p = getProperties(childPropertiesMap, selector);
+		for (Iterator z = childNames.iterator(); z.hasNext();) {
+			String childName = (String) z.next();
+			Properties p = getProperties(childPropertiesMap, childName);
 			makeNode(node, nodeFolder, p, monitor);
 		}
-		for (int i = 0; i < nReferences; i++) {
-			String selector = getIndexString(i);
-			String key = combine(MT_REFERENCE, selector);
+		for (Iterator z = referenceNames.iterator(); z.hasNext();) {
+			String referenceName = (String) z.next();
+			String key = combine(MT_REFERENCE, referenceName);
 			String childFolderName = properties.getProperty(key);
 			IFolder childFolder = getFolder(nodeFolder, childFolderName);
 			loadNode(node, childFolder, monitor);

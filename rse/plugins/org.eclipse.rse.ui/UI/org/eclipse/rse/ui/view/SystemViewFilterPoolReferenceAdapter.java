@@ -200,10 +200,16 @@ public class SystemViewFilterPoolReferenceAdapter
 	/**
 	 * Return true if this object has children
 	 */
-	public boolean hasChildren(Object element)
-	{
+	public boolean hasChildren(Object element) {
+		int count = 0;
 		ISystemFilterPoolReference fpRef = getFilterPoolReference(element);
-		return (fpRef.getReferencedFilterPool().getSystemFilterCount() > 0);
+		if (fpRef != null) {
+			ISystemFilterPool filterPool = fpRef.getReferencedFilterPool();
+			if (filterPool != null) {
+				count = filterPool.getSystemFilterCount();
+			}
+		}
+		return count > 0;
 	}
 	
     // Property sheet descriptors defining all the properties we expose in the Property Sheet

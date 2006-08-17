@@ -616,73 +616,63 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	{
 		return getConnectionPrivateFilterPool(createIfNotFound);
 	}
+	
 	/**
 	 * Find or create a new filter pool, unique to this subsystem's connection. This will be 
-	 * in the same profile as the connection, and it will follow a naming convention that ties
-	 * it to the connection: Filter Pool for xxx, where xxx is the connection name.
+	 * in the same profile as the connection and it will follow a naming convention that ties
+	 * it to the connection.
 	 * @param createIfNotFound - true to create the pool if it doesn't exist
+	 * @return the filter pool that was found or created
 	 */
-	public ISystemFilterPool getConnectionPrivateFilterPool(boolean createIfNotFound)
-	{
+	public ISystemFilterPool getConnectionPrivateFilterPool(boolean createIfNotFound) {
 		ISystemFilterPool pool = null;
-		ISystemFilterPool[] allPoolsInProfile = getSubSystemConfiguration().getFilterPoolManager(getSystemProfile()).getSystemFilterPools();
-		if (allPoolsInProfile!=null)
-		{
-			for (int idx=0; idx<allPoolsInProfile.length; idx++)
-			{
+		ISubSystemConfiguration config = getSubSystemConfiguration();
+		ISystemProfile profile = getSystemProfile();
+		ISystemFilterPoolManager fpm = config.getFilterPoolManager(profile);
+		ISystemFilterPool[] allPoolsInProfile = fpm.getSystemFilterPools();
+		IHost host = getHost();
+		String hostName = host.getAliasName();
+		if (allPoolsInProfile != null) {
+			for (int idx = 0; idx < allPoolsInProfile.length; idx++) {
 				String poolOwnerName = allPoolsInProfile[idx].getOwningParentName();
-				if ((poolOwnerName!=null) && (poolOwnerName.equals(getHost().getAliasName())))
-				{
+				if ((poolOwnerName != null) && (poolOwnerName.equals(hostName))) {
 					pool = allPoolsInProfile[idx];
 				}
 			}
 		}
-		if ((pool == null) && createIfNotFound) // not found? Create it I guess
-		{
+		if ((pool == null) && createIfNotFound) {
 			try {
-			  // -----------------------------------------------------
-			  // create a pool named to incorporate connection name
-			  // -----------------------------------------------------
-			  ISystemFilterPoolManager mgr = getSubSystemConfiguration().getFilterPoolManager(getSystemProfile());			        			 
-			  pool = mgr.createSystemFilterPool(getConnectionOwnedFilterPoolName(getSystemProfileName(), getHostAliasName()), true); // true=>is deletable by user
-			  pool.setNonRenamable(true); // don't allow users to rename this pool
-			  //pool.setNonDeletable(true); hmm, should we or not?
-			  pool.setOwningParentName(getHostAliasName());
-			  // now it is time to reference this pool in this subsystem
-			  if (getSystemFilterPoolReferenceManager().getReferenceToSystemFilterPool(pool) == null)
-			  {
-				  getSystemFilterPoolReferenceManager().addReferenceToSystemFilterPool(pool);
-			  }
-			} catch (Exception exc)
-			{
-				SystemBasePlugin.logError("Error creating connection-private filter pool for connection: "+getHostAliasName(),exc);
-			}			
+				String profileName = profile.getName();
+				pool = fpm.createSystemFilterPool(getConnectionOwnedFilterPoolName(profileName, hostName), true); // true=>is deletable by user
+				if (pool != null) {
+					pool.setNonRenamable(true);
+					pool.setOwningParentName(hostName);
+					pool.commit();
+					ISystemFilterPoolReferenceManager fprm = getSystemFilterPoolReferenceManager();
+					if (fprm.getReferenceToSystemFilterPool(pool) == null) {
+						fprm.addReferenceToSystemFilterPool(pool);
+					}
+				}
+			} catch (Exception exc) {
+				SystemBasePlugin.logError("Error creating connection-private filter pool for connection: " + hostName, exc);
+			}
 		}
 		return pool;
 	}
+	
 	/**
-	 * Return the name for the connection-owned filter pool. 
+	 * Constructs the name of a connection specific filter pool from its parts.
+	 * @param profileName the name of the profile that contains this filter pool.
+	 * @param connectionName the name of the connection the "owns" this filter pool.
+	 * @return the name for the connection-owned filter pool. 
 	 */
-	public String getConnectionOwnedFilterPoolName(String profileName, String connectionName)
-	{
-		// Similar to SubSystemConfigurationImpl#getDefaultFilterPoolName(String)...
-		// System.out.println("ProfileName: " + profileName);
-		// System.out.println("ConnectionName: " + connectionName);
-				
-//		String name = SystemResources.RESID_PERCONNECTION_FILTERPOOL;
-//
-//		StringBuffer profileNameBuffer = new StringBuffer(profileName.toLowerCase());
-//		profileNameBuffer.setCharAt(0, Character.toUpperCase(profileNameBuffer.charAt(0)));
-//		
-//		name = SystemMessage.sub(name, "%1", profileNameBuffer.toString());
-//		name = SystemMessage.sub(name, "%2", connectionName);
+	public String getConnectionOwnedFilterPoolName(String profileName, String connectionName) {
 		/*
-		 * DWD - Need to keep this name short and not translatable 
+		 * Need to keep this name short and not translatable 
 		 * since it names a team sharable resource. Not qualified by the profile
 		 * name since that is implicit by being in a profile.
 		 */
-		// DWD - does not appear to be used.
-		String name = "CN-" + connectionName;
+		String name = "CN-" + connectionName; // $NON-NLS-1$
 		return name;
 	}
 

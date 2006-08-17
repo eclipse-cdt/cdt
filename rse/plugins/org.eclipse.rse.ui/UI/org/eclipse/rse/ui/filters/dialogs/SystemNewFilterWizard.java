@@ -460,114 +460,85 @@ public class SystemNewFilterWizard
 	 *
 	 * @return whether the wizard finished successfully
 	 */
-	public boolean performFinish() 
-	{
-		//System.out.println("inside performFinish(): mainPage.performFinish() = " + mainPage.performFinish());
-        boolean ok = false;
-	    newFilter = null;
+	public boolean performFinish() {
+		boolean ok = false;
+		newFilter = null;
 		setOutputObject(null);
-		if (!mainPage.performFinish())
-           	setPageError(mainPage);
-		else if (!namePage.performFinish())
-           	setPageError(namePage);
-		else
-		{
-		    Vector filterStrings = mainPage.getFilterStrings();
-		    String filterName = null;
-		    if (showNamePrompt)
-		    {
-		        filterName = namePage.getFilterName();
-	            ISystemFilterContainer filterParent = null;
-	            if ((poolsToSelectFrom!=null) || (poolWrapperInformation != null))
-	            {
-	              	filterParent = namePage.getParentSystemFilterPool();
-	              	if (namePage.getUniqueToThisConnection())
-	              	{
-	              		// this means the user selected to create this filter in the 
-	              		//  filter pool that is unique to this connection. So now we 
-	              		//  must find, or create, that filter pool:
+		if (!mainPage.performFinish()) {
+			setPageError(mainPage);
+		} else if (!namePage.performFinish()) {
+			setPageError(namePage);
+		} else {
+			Vector filterStrings = mainPage.getFilterStrings();
+			String filterName = null;
+			if (showNamePrompt) {
+				filterName = namePage.getFilterName();
+				// Get the filter parent, i.e. the filter pool for this new filter
+				ISystemFilterContainer filterParent = null;
+				if ((poolsToSelectFrom != null) || (poolWrapperInformation != null)) {
+					filterParent = namePage.getParentSystemFilterPool();
+					if (namePage.getUniqueToThisConnection()) {
+						/*
+						 * this means the user selected to create this filter in the filter pool that is unique to this connection. So now we 
+						 * must find, or create, that filter pool.
+						 */
 						filterParent = provider.getUniqueOwningSystemFilterPool(true); // true -> create if not found
-	              	}
-	              	else
+					} else
 						filterParent = namePage.getParentSystemFilterPool();
+				} else
+					filterParent = getFilterContainer();
+				// Create the filter and possibly a filter pool reference.
+				String type = mainPage.getType();
+				try {
+					newFilter = createNewFilter(getShell(), filterParent, filterName, filterStrings, type);
+					if (newFilter == null) return false;
+					/*
+					 * We allow users to select a profile to create their filter in. From this we 
+					 * select the default filter pool for the particular subsystem in that profile.
+					 * It is possible for the user to pick a profile that this subsystem does not yet reference.
+					 * To solve this we need to add a reference for them. This is only a possibility when called
+					 * from a subsystem's New Filter action, versus that action on a directly on a filter pool.
+					 */
+					if ((provider != null) && (filterParent instanceof ISystemFilterPool)) {
+						ISystemFilterPool parentPool = (ISystemFilterPool) filterParent;
+						if (provider.getSystemFilterPoolReferenceManager().getReferenceToSystemFilterPool(parentPool) == null) {
+							provider.getSystemFilterPoolReferenceManager().addReferenceToSystemFilterPool(parentPool);
+						}
+					}
+				} catch (Exception exc) {
+					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_OCCURRED);
+					msg.makeSubstitution(exc);
+					SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), msg);
+					msgDlg.openWithDetails();
+					return false;
 				}
-	            else
-	              	filterParent = getFilterContainer();
-	      
-	            String type = mainPage.getType(); // query just in case it is changable by user
-	            try 
-	            {
-	              	newFilter = createNewFilter(getShell(), filterParent, filterName, filterStrings, type);
-	              	if (newFilter == null)
-	                	return false;
-	              	// Because we allow new users to select a profile to create their filter in, from
-	              	//  which we choose the profile's default filter pool, it is possible the user
-	              	//  will choose a filter pool that this subsystem does not yet reference. To solve
-	              	//  this we need to add a reference for them. This is only a possibility when called
-	              	//  from the subsystem New Filter action, versus from a filter pool say.
-	              	if ((provider != null) && (filterParent instanceof ISystemFilterPool))
-	              	{
-	              	 	ISystemFilterPool parentPool = (ISystemFilterPool)filterParent;
-	              	 	if (provider.getSystemFilterPoolReferenceManager().getReferenceToSystemFilterPool(parentPool) == null)
-	              	 	{
-	              	 		provider.getSystemFilterPoolReferenceManager().addReferenceToSystemFilterPool(parentPool);
-	              	 	}
-	              	}
-	              
-	              	/* Hmm, after much thought I have decided to leave this up to the 
-	               	 * caller. They can do this themselves by overriding createNewFilter in
-	               	 * their own wizard.
-		          	if (!showFilterStrings && (newFilter!=null))
-		          	{
-		             	newFilter.setNonChangable(true);
-		             	newFilter.setStringsNonChangable(true);
-		          	}
-		          	*/
-	            } catch (Exception exc)
-	            {
-		        	SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_OCCURRED);
-		    	    msg.makeSubstitution(exc);
-		    	    SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), msg);
-		    	    msgDlg.openWithDetails();
-                    return false;
-	            }
-	            setOutputObject(newFilter);            
-		        // special handling to expand the currently selected parent node and reveal the new filter
-		        if ((newFilter != null) && (getInputObject()!=null))
-		        {
-		  	      	Object selectedObject = getInputObject();
-		  	      	if ((selectedObject instanceof ISystemFilterPoolReference) ||
-		  	       	   (selectedObject instanceof ISystemFilterPoolReferenceManagerProvider))
-		          	{
-		  		    	ISystemFilterPoolReferenceManagerProvider provider = null;
-		  		    	if (selectedObject instanceof ISystemFilterPoolReference) 
-		  		    	{
-		  		      		ISystemFilterPoolReferenceManager sfprm = ((ISystemFilterPoolReference)selectedObject).getFilterPoolReferenceManager();
-		  		      		if (sfprm != null)
-		  		        		provider = sfprm.getProvider();
-		  		    	}
-		  		    	else
-		  		      	provider = (ISystemFilterPoolReferenceManagerProvider)selectedObject;
-		  		    	if (provider != null)
-		  		      		provider.filterEventFilterCreated(selectedObject, newFilter);
-		  	      	}
-		  	      	else if (selectedObject instanceof ISystemFilterReference)
-		  	      	{
-		  	      		ISystemFilterReference ref = (ISystemFilterReference)selectedObject;
-		  	      		ISystemFilterPoolReferenceManagerProvider provider = ref.getProvider();
-		  	      		provider.filterEventFilterCreated(selectedObject, newFilter);
-		  	      	}
-		        }
-		        ok = (newFilter != null);
-		    } // end if showNamePrompt	
-		    else
-		    {
-		        ok = true;	    
-	            setOutputObject(filterStrings);		        
-		    }
-		    return ok;
-	    }
-	    return false;
+				setOutputObject(newFilter);
+				// special handling to expand the currently selected parent node and reveal the new filter
+				if ((newFilter != null) && (getInputObject() != null)) {
+					Object selectedObject = getInputObject();
+					if ((selectedObject instanceof ISystemFilterPoolReference) || (selectedObject instanceof ISystemFilterPoolReferenceManagerProvider)) {
+						ISystemFilterPoolReferenceManagerProvider provider = null;
+						if (selectedObject instanceof ISystemFilterPoolReference) {
+							ISystemFilterPoolReferenceManager sfprm = ((ISystemFilterPoolReference) selectedObject).getFilterPoolReferenceManager();
+							if (sfprm != null) provider = sfprm.getProvider();
+						} else
+							provider = (ISystemFilterPoolReferenceManagerProvider) selectedObject;
+						if (provider != null) provider.filterEventFilterCreated(selectedObject, newFilter);
+					} else if (selectedObject instanceof ISystemFilterReference) {
+						ISystemFilterReference ref = (ISystemFilterReference) selectedObject;
+						ISystemFilterPoolReferenceManagerProvider provider = ref.getProvider();
+						provider.filterEventFilterCreated(selectedObject, newFilter);
+					}
+				}
+				ok = (newFilter != null);
+			} // end if showNamePrompt	
+			else {
+				ok = true;
+				setOutputObject(filterStrings);
+			}
+			return ok;
+		}
+		return false;
 	}
 	
 	/**
@@ -642,25 +613,22 @@ public class SystemNewFilterWizard
 	 * Extendable point for child classes.
 	 * Override to create unique SystemFilter object.
 	 * By default calls createSystemFilter in subsystem factory.
+	 * @param shell the shell that hosts this wizard.
+	 * @param filterParent the parent of this filter - usually a filter pool
+	 * @param aliasName the name of the filter itself
+	 * @param filterStrings a Vector of string that contain the specification of this filter
+	 * @param type the type of the filter used when interpreting the filter, usually supplied by a subsystem
+	 * @return the ISystemFilter that was created
+	 * @throws Exception if an error occurs
 	 */
-	public ISystemFilter createNewFilter(Shell shell, ISystemFilterContainer filterParent, String aliasName, Vector filterStrings, String type)
-	   throws Exception
-	{
+	public ISystemFilter createNewFilter(Shell shell, ISystemFilterContainer filterParent, String aliasName, Vector filterStrings, String type) throws Exception {
 		ISystemFilter newFilter = null;
 		ISystemFilterPoolManager fpMgr = filterParent.getSystemFilterPoolManager();
-		//try {
-		  // create filter
-		  if (type == null)
-		    newFilter = fpMgr.createSystemFilter(filterParent,aliasName,filterStrings);
-		  else
-		    newFilter = fpMgr.createSystemFilter(filterParent,aliasName,filterStrings,type);		  
-		//} catch (Exception exc)
-		//{
-		  //RSEUIPlugin.logError("Exception in createNewFilter in SystemFilterAbstractNewFilterWizard. ",);
-		  //System.out.println("Exception in createNewFilter in SystemFilterAbstractNewFilterWizard: "+exc.getMessage());
-		  //exc.printStackTrace();
-		//}
-		return newFilter;    
+		if (type == null)
+			newFilter = fpMgr.createSystemFilter(filterParent, aliasName, filterStrings);
+		else
+			newFilter = fpMgr.createSystemFilter(filterParent, aliasName, filterStrings, type);
+		return newFilter;
 	}
 	
 	// -----------------------

@@ -157,7 +157,11 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 		if (filterPool == null) {
 			String filterPoolName = getReferencedFilterPoolName();
 			filterPool = filterPoolManager.getSystemFilterPool(filterPoolName);
-			setReferenceToFilterPool(filterPool);
+			if (filterPool != null) {
+				setReferenceToFilterPool(filterPool);
+			} else {
+				this.setReferenceBroken(true);
+			}
 		}
 		return filterPool;
 	}

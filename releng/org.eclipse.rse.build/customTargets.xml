@@ -29,6 +29,10 @@
 			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.dstore" />
 		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.examples" />
+		</ant>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -59,6 +63,10 @@
 	</target>
 
 	<target name="assemble.org.eclipse.rse.dstore">
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+	</target>
+
+	<target name="assemble.org.eclipse.rse.examples">
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 	</target>
 

@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.rmi.RemoteException;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -50,6 +51,7 @@ import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEmpty;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
@@ -427,6 +429,17 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			{
 				file = UniversalFileTransferUtility.getTempFileFor(_remoteFile);
 				return file.getLocation().toFile();
+			}
+			else if (_remoteFile instanceof RemoteFileEmpty)
+			{
+				try
+				{
+					return File.createTempFile(_remoteFile.getName(), "empty");
+				}
+				catch (Exception e)
+				{
+					
+				}
 			}
 		}
 		return null;

@@ -39,312 +39,277 @@ import org.eclipse.rse.persistence.dom.IRSEDOMExporter;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 import org.eclipse.rse.persistence.dom.RSEDOMNode;
 
-
-public class RSEDOMExporter implements IRSEDOMExporter
-{
+public class RSEDOMExporter implements IRSEDOMExporter {
 	private static RSEDOMExporter _instance = new RSEDOMExporter();
 	private Map _domMap;
-	
-	protected RSEDOMExporter()
-	{
+
+	/**
+	 * Constructor to create a new DOM exporter.
+	 */
+	protected RSEDOMExporter() {
 		_domMap = new HashMap();
 	}
-	
-	public static RSEDOMExporter getInstance()
-	{
+
+	/**
+	 * @return the singleton instance of this exporter
+	 */
+	public static RSEDOMExporter getInstance() {
 		return _instance;
 	}
-	
+
 	/**
-	 * Returns the RSEDOM for this profile iff it exists
-	 * @param profile
-	 * @return
+	 * Returns the RSEDOM for this profile if it exists
+	 * @param profile the profile for which to get the DOM
+	 * @return the DOM for a particular profile, null if the DOM does not exist
 	 */
-	public RSEDOM getRSEDOM(ISystemProfile profile)
-	{
-		return (RSEDOM)_domMap.get(profile);
+	public RSEDOM getRSEDOM(ISystemProfile profile) {
+		return (RSEDOM) _domMap.get(profile);
 	}
-	
+
 	/**
 	 * Creates the RSE DOM for this profile
-	 * @param profile
-	 * @param clean indicates whether to create from scratch or merge with existing
-	 * @return
+	 * @param profile the profile for which to create the DOM
+	 * @param clean indicates whether to create from scratch or merge with existing DOM
+	 * @return The DOM for this profile
 	 */
-	public RSEDOM createRSEDOM(ISystemProfile profile, boolean clean)
-	{
+	public RSEDOM createRSEDOM(ISystemProfile profile, boolean clean) {
 		RSEDOM dom = getRSEDOM(profile);
-		if (dom == null)
-		{
+		if (dom == null) {
 			dom = new RSEDOM(profile);
 			_domMap.put(profile, dom);
 			clean = true;
-		}		
+		}
 		populateRSEDOM(dom, profile, clean);
-	
 		return dom;
 	}
-	
+
 	/**
 	 * Creates an RSE DOM for use in persistence
-	 * @param dom
-	 * @param profile
-	 * @return
+	 * @param dom the root node for the target DOM
+	 * @param profile the profile from which to populate the DOM
+	 * @param clean indicates whether to create from scratch or merge with existing DOM
+	 * @return The DOM, updated with the data from the profile
 	 */
-	public RSEDOM populateRSEDOM(RSEDOM dom, ISystemProfile profile, boolean clean)
-	{
+	public RSEDOM populateRSEDOM(RSEDOM dom, ISystemProfile profile, boolean clean) {
 		// for now we do complete refresh
 		// clean dom for fresh creation
-		if (clean)
-		{
+		if (clean) {
 			dom.clearChildren();
 		}
-		
-		if (clean || profile.isDirty() || dom.isDirty())
-		{
-			dom.clearAttributes();			
 
+		if (clean || profile.isDirty() || dom.isDirty()) {
+			dom.clearAttributes();
 			dom.addAttribute(IRSEDOMConstants.ATTRIBUTE_DEFAULT_PRIVATE, getBooleanString(profile.isDefaultPrivate()));
 			dom.addAttribute(IRSEDOMConstants.ATTRIBUTE_IS_ACTIVE, getBooleanString(profile.isActive()));
 		}
-		
+
 		// create the dom using the profile
-		
+
 		// create filter pool nodes
 		ISystemFilterPool[] filterPools = profile.getFilterPools();
-		for (int i = 0; i < filterPools.length; i++)
-		{
+		for (int i = 0; i < filterPools.length; i++) {
 			ISystemFilterPool pool = filterPools[i];
 			createNode(dom, pool, clean);
 		}
-		
+
 		// create hosts nodes 
-		
+
 		// old nodes to compare with
 		RSEDOMNode[] oldHostNodes = null;
-		if (!clean)
-		{
+		if (!clean) {
 			oldHostNodes = dom.getChildren(IRSEDOMConstants.TYPE_HOST);
 		}
-			
+
 		List missingNodes = new ArrayList();
-		if (!clean)
-		{
-			for (int o = 0; o < oldHostNodes.length; o++)
-			{
+		if (!clean) {
+			for (int o = 0; o < oldHostNodes.length; o++) {
 				missingNodes.add(oldHostNodes[o]);
 			}
 		}
-		
+
 		IHost[] hosts = profile.getHosts();
-		for (int j = 0; j < hosts.length; j++)
-		{
+		for (int j = 0; j < hosts.length; j++) {
 			IHost host = hosts[j];
-			RSEDOMNode hnode = createNode(dom, host, clean);			
-			
-			if (!clean)
-			{
+			RSEDOMNode hnode = createNode(dom, host, clean);
+
+			if (!clean) {
 				// remove this one from the missing list
 				missingNodes.remove(hnode);
 			}
 		}
-		
-		if (!clean)
-		{
+
+		if (!clean) {
 			// remaining missingNodes are probably deleted now
-			for (int x = 0; x < missingNodes.size(); x++)
-			{
-				dom.removeChild((RSEDOMNode)missingNodes.get(x));
+			for (int x = 0; x < missingNodes.size(); x++) {
+				dom.removeChild((RSEDOMNode) missingNodes.get(x));
 			}
 		}
-		
+
 		// create generic property set nodes
-		createPropertySetNodes(dom, profile, clean);		
+		createPropertySetNodes(dom, profile, clean);
 		dom.setDirty(false);
-		
+
 		return dom;
 	}
-	
+
 	/**
 	 * Creates DOM nodes for each associated property set
-	 * @param parent
-	 * @param modelObject
-	 * @return
+	 * @param parent The node of the DOM that needs a property set
+	 * @param modelObject the RSE model object that has the property set.
+	 * @param clean true if we are creating, false if we are merging
+	 * @return an array of DOM nodes - each one being a property set
 	 */
-	public RSEDOMNode[] createPropertySetNodes(RSEDOMNode parent, IRSEModelObject modelObject, boolean clean)
-	{
+	public RSEDOMNode[] createPropertySetNodes(RSEDOMNode parent, IRSEModelObject modelObject, boolean clean) {
 		IPropertySet[] propertySets = modelObject.getPropertySets();
-		for (int i = 0; i < propertySets.length; i++)
-		{
+		for (int i = 0; i < propertySets.length; i++) {
 			IPropertySet set = propertySets[i];
 			RSEDOMNode node = new RSEDOMNode(parent, IRSEDOMConstants.TYPE_PROPERTY_SET, set.getName());
 			String[] keys = set.getPropertyKeys();
-			for (int k = 0; k < keys.length; k++)
-			{
+			for (int k = 0; k < keys.length; k++) {
 				String key = keys[k];
 				String value = set.getPropertyValue(key);
 				IPropertyType type = set.getPropertyType(key);
 				node.addAttribute(key, value, type.toString());
-				
-				
 			}
-							
 		}
 		return parent.getChildren();
 	}
-	
+
 	/**
 	 * Create a DOM node representing a filter pool
-	 * @param parent
-	 * @param filterPool
-	 * @return
+	 * @param parent the parent DOM node
+	 * @param filterPool the filter pool from which to create a DOM node linked to this parent
+	 * @param clean true if we are creating, false if we are merging
+	 * @return the DOM node representing the filter pool
 	 */
-	public RSEDOMNode createNode(RSEDOMNode parent, ISystemFilterPool filterPool, boolean clean)
-	{
+	public RSEDOMNode createNode(RSEDOMNode parent, ISystemFilterPool filterPool, boolean clean) {
 		RSEDOMNode node = findOrCreateNode(parent, IRSEDOMConstants.TYPE_FILTER_POOL, filterPool, clean);
-		
-		if (clean || node.isDirty())
-		{
+		if (clean || node.isDirty()) {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, filterPool.getType());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_ID, filterPool.getId());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_NESTED_FILTERS, getBooleanString(filterPool.supportsNestedFilters()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_DELETABLE, getBooleanString(filterPool.isDeletable()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_DEFAULT, getBooleanString(filterPool.isDefault()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_STRING_CASE_SENSITIVE, getBooleanString(filterPool.isSetStringsCaseSensitive()));
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS,getBooleanString(filterPool.supportsDuplicateFilterStrings()));
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, ""+filterPool.getRelease());
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS, getBooleanString(filterPool.supportsDuplicateFilterStrings()));
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, "" + filterPool.getRelease());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY, getBooleanString(filterPool.isSetSingleFilterStringOnly()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_OWNING_PARENT_NAME, filterPool.getOwningParentName());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_NON_RENAMABLE, getBooleanString(filterPool.isNonRenamable()));
 		}
-		
 		ISystemFilter[] filters = filterPool.getSystemFilters();
-		for (int i = 0; i < filters.length; i++)
-		{
+		for (int i = 0; i < filters.length; i++) {
 			createNode(node, filters[i], clean);
 		}
 		createPropertySetNodes(node, filterPool, clean);
 		node.setDirty(false);
 		return node;
 	}
-	
+
 	/**
 	 * Creates a DOM node for a filter
-	 * @param parent
-	 * @param filter
-	 * @return
+	 * @param parent The parent DOM node for this filter, usually a DOM node for a filter pool
+	 * @param filter the filter for which to create a new node
+	 * @param clean true if we are creating, false if we are merging
+	 * @return the DOM node representing the filter
 	 */
-	public RSEDOMNode createNode(RSEDOMNode parent, ISystemFilter filter, boolean clean)
-	{
+	public RSEDOMNode createNode(RSEDOMNode parent, ISystemFilter filter, boolean clean) {
 		RSEDOMNode node = findOrCreateNode(parent, IRSEDOMConstants.TYPE_FILTER, filter, clean);
-	
-		if (clean || node.isDirty())
-		{
-			// add attributes
+		if (clean || node.isDirty()) {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_ID, filter.getName());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_NESTED_FILTERS, getBooleanString(filter.isSupportsNestedFilters()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELATIVE_ORDER, "" + filter.getRelativeOrder());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_DEFAULT, getBooleanString(filter.isDefault()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_STRING_CASE_SENSITIVE, getBooleanString(filter.isSetStringsCaseSensitive()));
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_PROMPTABLE, getBooleanString(filter.isPromptable()));		
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS,getBooleanString(filter.supportsDuplicateFilterStrings()));
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_PROMPTABLE, getBooleanString(filter.isPromptable()));
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS, getBooleanString(filter.supportsDuplicateFilterStrings()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_NON_DELETABLE, getBooleanString(filter.isNonDeletable()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_NON_RENAMABLE, getBooleanString(filter.isNonRenamable()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_NON_CHANGEABLE, getBooleanString(filter.isNonChangable()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_STRINGS_NON_CHANGABLE, getBooleanString(filter.isStringsNonChangable()));
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, ""+filter.getRelease());
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, "" + filter.getRelease());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY, getBooleanString(filter.isSetSingleFilterStringOnly()));
 		}
-		
+
 		// add nested filters
 		ISystemFilter[] nestedFilters = filter.getSystemFilters();
-		for (int i = 0; i < nestedFilters.length; i++)
-		{
+		for (int i = 0; i < nestedFilters.length; i++) {
 			createNode(node, nestedFilters[i], clean);
 		}
-		
+
 		// add filter strings
 		ISystemFilterString[] filterStrings = filter.getSystemFilterStrings();
-		for (int j = 0; j < filterStrings.length; j++)
-		{
+		for (int j = 0; j < filterStrings.length; j++) {
 			createNode(node, filterStrings[j], clean);
 		}
-		
+
 		createPropertySetNodes(node, filter, clean);
 		node.setDirty(false);
 		return node;
 	}
-	
+
 	/**
 	 * Creates a DOM node for a filter string
-	 * @param parent
-	 * @param filterString
-	 * @return
+	 * @param parent the DOM node that is the parent to this filter string. This should be a node for a filter.
+	 * @param filterString The filter string for which the node will be created
+	 * @param clean true if we are creating, false if we are merging
+	 * @return the DOM node for the filter string
 	 */
-	public RSEDOMNode createNode(RSEDOMNode parent, ISystemFilterString filterString, boolean clean)
-	{
+	public RSEDOMNode createNode(RSEDOMNode parent, ISystemFilterString filterString, boolean clean) {
 		RSEDOMNode node = findOrCreateNode(parent, IRSEDOMConstants.TYPE_FILTER_STRING, filterString, clean);
-		
-		if (clean || node.isDirty())
-		{		
+
+		if (clean || node.isDirty()) {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_STRING, filterString.getString());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, filterString.getType());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_DEFAULT, getBooleanString(filterString.isDefault()));
 		}
-	
+
 		createPropertySetNodes(node, filterString, clean);
 		return node;
 	}
-	
+
 	/**
 	 * Create a DOM node representing a host
-	 * @param parent
-	 * @param host
-	 * @return
+	 * @param parent The DOM node that is the parent to this host, usually a node representing a profile
+	 * @param host The host for which to create the DOM node
+	 * @param clean true if we are creating, false if we are merging
+	 * @return the DOM node for the host
 	 */
-	public RSEDOMNode createNode(RSEDOMNode parent, IHost host, boolean clean)
-	{
+	public RSEDOMNode createNode(RSEDOMNode parent, IHost host, boolean clean) {
 		RSEDOMNode node = findOrCreateNode(parent, IRSEDOMConstants.TYPE_HOST, host, clean);
-		
-		if (clean || node.isDirty())
-		{
+
+		if (clean || node.isDirty()) {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, host.getSystemType());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_OFFLINE, getBooleanString(host.isOffline()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_PROMPTABLE, getBooleanString(host.isPromptable()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_HOSTNAME, host.getHostName());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_DESCRIPTION, host.getDescription());
 		}
-		
-	
+
 		IConnectorService[] connectorServices = host.getConnectorServices();
-		for (int i = 0; i < connectorServices.length; i++)
-		{
+		for (int i = 0; i < connectorServices.length; i++) {
 			IConnectorService service = connectorServices[i];
-			createNode(node, service, clean);			
+			createNode(node, service, clean);
 		}
-		
-		
+
 		createPropertySetNodes(node, host, clean);
 		node.setDirty(false);
 		return node;
 	}
-	
-	
+
 	/**
 	 * Creates a DOM node for a connector service
-	 * @param parent
-	 * @param connectorService
-	 * @return
+	 * @param parent the DOM node representing the parent for a connector service. This should be a Host
+	 * @param connectorService the connector service for which a DOM node is to be created
+	 * @param clean true if we are creating, false if we are merging
+	 * @return the DOM node for the connector service
 	 */
-	public RSEDOMNode createNode(RSEDOMNode parent, IConnectorService connectorService, boolean clean)
-	{
+	public RSEDOMNode createNode(RSEDOMNode parent, IConnectorService connectorService, boolean clean) {
 		RSEDOMNode node = findOrCreateNode(parent, IRSEDOMConstants.TYPE_CONNECTOR_SERVICE, connectorService, clean);
-		if (clean || node.isDirty())
-		{		
+		if (clean || node.isDirty()) {
 			// store it's attributes
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, connectorService.getHostType());
-			
-		
+
 			// can't do this til connector service owns the properties (right now it's still subsystem)
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_GROUP, connectorService.getName());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_USE_SSL, getBooleanString(connectorService.isUsingSSL()));
@@ -352,126 +317,121 @@ public class RSEDOMExporter implements IRSEDOMExporter
 		// store the server launcher
 		// right now subsystem still owns the server launchers
 		//   that will change later
-		
+
 		IServerLauncherProperties serverLauncher = connectorService.getRemoteServerLauncherProperties();
-		if (serverLauncher != null)
-		{
+		if (serverLauncher != null) {
 			createNode(node, serverLauncher, clean);
 		}
-		
+
 		// store each subsystem
 		ISubSystem[] subSystems = connectorService.getSubSystems();
-		for (int i = 0; i < subSystems.length; i++)
-		{
+		for (int i = 0; i < subSystems.length; i++) {
 			createNode(node, subSystems[i], clean);
 		}
-				
+
 		createPropertySetNodes(node, connectorService, clean);
 		node.setDirty(false);
 		return node;
 	}
-	
+
 	/**
 	 * Creates a DOM node for a server launcher
-	 * @param parent
-	 * @param serverLauncher
-	 * @return
+	 * @param parent the DOM node represnting a parent for a server launcher, usually a connector service
+	 * @param serverLauncher the server launcher from which to create the node
+	 * @param clean true if we are creating, false if we are merging
+	 * @return the node representing the server launcher
 	 */
-	public RSEDOMNode createNode(RSEDOMNode parent, IServerLauncherProperties serverLauncher, boolean clean)
-	{
+	public RSEDOMNode createNode(RSEDOMNode parent, IServerLauncherProperties serverLauncher, boolean clean) {
 		RSEDOMNode node = findOrCreateNode(parent, IRSEDOMConstants.TYPE_SERVER_LAUNCHER, serverLauncher, clean);
-		
-		if (clean || node.isDirty())
-		{
+
+		if (clean || node.isDirty()) {
 		}
-		
+
 		serverLauncher.saveToProperties();
 		createPropertySetNodes(node, serverLauncher, clean);
 		return node;
 	}
-	
+
 	/**
 	 * Creates a DOM node for a subsystem
-	 * @param parent
-	 * @param subSystem
-	 * @return
+	 * @param parent the DOM node representing the parent for this subsystem, usually a connector service
+	 * @param subSystem the subsystem from which to create the DOM node
+	 * @param clean true if we are creating, false if we are merging
+	 * @return the DOM node representing the subsystem
 	 */
-	public RSEDOMNode createNode(RSEDOMNode parent, ISubSystem subSystem, boolean clean)
-	{
+	public RSEDOMNode createNode(RSEDOMNode parent, ISubSystem subSystem, boolean clean) {
 		RSEDOMNode node = findOrCreateNode(parent, IRSEDOMConstants.TYPE_SUBSYSTEM, subSystem, clean);
-		
-		if (clean || node.isDirty())
-		{
+
+		if (clean || node.isDirty()) {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_HIDDEN, getBooleanString(subSystem.isHidden()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE, subSystem.getSubSystemConfiguration().getId());
 		}
-		
+
 		// create filter pool reference nodes 
 		ISystemFilterPoolReferenceManager refMgr = subSystem.getFilterPoolReferenceManager();
-		if (refMgr != null)
-		{
+		if (refMgr != null) {
 			ISystemFilterPoolReference[] references = refMgr.getSystemFilterPoolReferences();
-			for (int i = 0; i < references.length; i++)
-			{
+			for (int i = 0; i < references.length; i++) {
 				ISystemFilterPoolReference ref = references[i];
 				createNode(node, ref, clean);
 			}
 		}
-		
+
 		createPropertySetNodes(node, subSystem, clean);
 		node.setDirty(false);
 		return node;
 	}
-	
+
 	/**
 	 * Creates a DOM node for a filter pool reference
-	 * @param parent
-	 * @param filterPoolReference
-	 * @return
+	 * @param parent the DOM node representing the parent for a filter pool reference, usually a subsystem
+	 * @param filterPoolReference the reference from which to create a new DOM node
+	 * @param clean true if we are creating, false if we are merging
+	 * @return the DOM node created for the filter pool reference
 	 */
-	public RSEDOMNode createNode(RSEDOMNode parent, ISystemFilterPoolReference filterPoolReference, boolean clean)
-	{
+	public RSEDOMNode createNode(RSEDOMNode parent, ISystemFilterPoolReference filterPoolReference, boolean clean) {
 		RSEDOMNode node = findOrCreateNode(parent, IRSEDOMConstants.TYPE_FILTER_POOL_REFERENCE, filterPoolReference, clean);
-		
-		if (clean || node.isDirty())
-		{		
+
+		if (clean || node.isDirty()) {
 			ISystemFilterPool filterPool = filterPoolReference.getReferencedFilterPool();
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_REF_ID, filterPool.getId());
 		}
-		
+
 		createPropertySetNodes(node, filterPoolReference, clean);
 		node.setDirty(false);
 		return node;
 	}
-	
-	private RSEDOMNode findOrCreateNode(RSEDOMNode parent, String type, IRSEModelObject modelObject, boolean clean)
-	{
+
+	/**
+	 * @param parent the DOM node representing the parent of the node we are trying to find
+	 * @param type the type of the DOM node to look for
+	 * @param modelObject the model object for which we are trying to find a matching node
+	 * @param clean true if we are creating, false if we are merging
+	 * @return the DOM node that we found or created
+	 */
+	private RSEDOMNode findOrCreateNode(RSEDOMNode parent, String type, IRSEModelObject modelObject, boolean clean) {
 		RSEDOMNode node = null;
 		String name = modelObject.getName();
-		if (!clean)
-		{
-			node = parent.getChild(type,name);
-			if (node != null && modelObject.isDirty())
-			{
+		if (!clean) {
+			node = parent.getChild(type, name);
+			if (node != null && modelObject.isDirty()) {
 				node.clearAttributes();
 				node.setDirty(true);
 			}
 		}
 		boolean newNode = (node == null);
-		if (newNode)
-		{
+		if (newNode) {
 			node = new RSEDOMNode(parent, type, name);
 		}
 		return node;
 	}
-	
+
 	/**
 	 * Helper to get either "true" or "false" based on boolean flag
-	 * @param flag
-	 * @return
+	 * @param flag the flag which to translate
+	 * @return a string value suitable for the DOM
 	 */
-	private String getBooleanString(boolean flag)
-	{
+	private String getBooleanString(boolean flag) {
 		return flag ? IRSEDOMConstants.ATTRIBUTE_TRUE : IRSEDOMConstants.ATTRIBUTE_FALSE;
 	}
 }

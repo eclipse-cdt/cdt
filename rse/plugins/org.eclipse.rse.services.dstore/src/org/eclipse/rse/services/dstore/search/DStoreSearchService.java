@@ -24,6 +24,7 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalFileSystemMiner;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
+import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
 import org.eclipse.rse.services.dstore.ServiceResources;
 import org.eclipse.rse.services.dstore.files.DStoreHostFile;
@@ -36,9 +37,9 @@ import org.eclipse.rse.services.search.ISearchService;
 
 public class DStoreSearchService extends AbstractDStoreService implements ISearchService
 {
-	public DStoreSearchService(IDataStoreProvider provider)
+	public DStoreSearchService(IDataStoreProvider provider, ISystemMessageProvider msgProvider)
 	{
-		super(provider);
+		super(provider, msgProvider);
 	}
 	
 	public String getName()

@@ -32,6 +32,7 @@ import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
@@ -46,6 +47,9 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAda
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
+import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.swt.widgets.Display;
 
 
 
@@ -57,6 +61,21 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	protected ISearchService _hostSearchService;
 	protected IHostFileToRemoteFileAdapter _hostFileToRemoteFileAdapter;
 	protected IRemoteFile _userHome;
+	
+	
+	public class SystemMessageDialogRunnable implements Runnable
+	{
+		private SystemMessageDialog _dlg;
+		public SystemMessageDialogRunnable(SystemMessageDialog dlg)
+		{
+			_dlg = dlg;
+		}
+		
+		public void run()
+		{
+			_dlg.open();
+		}
+	}
 	
 	public FileServiceSubSystem(IHost host, IConnectorService connectorService, IFileService hostFileService, IHostFileToRemoteFileAdapter fileAdapter, ISearchService searchService)
 	{
@@ -417,7 +436,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		catch (SystemMessageException e)
 		{
-			// FIXME: Display message
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dlg.open();
 		}
 	}
 	
@@ -468,7 +488,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			}
 			catch (SystemMessageException e)
 			{
-				
+				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+				dlg.open();
 			}
 		}
 	}
@@ -487,13 +508,23 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		String remoteFileName = destination.getName();
 		String hostEncoding = getRemoteEncoding(); // default host encoding
 		boolean isBinary = isBinary(encoding, hostEncoding, destination.getAbsolutePath());
+
+		if (!destination.canWrite())
+		{
+			SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEF5003").makeSubstitution(remoteFileName, getHostName());
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
+			dlg.open();
+			return;
+		}
+		
 		try
 		{
 			getFileService().upload(monitor, new File(source), remoteParentPath, remoteFileName, isBinary, encoding, hostEncoding);
 		}
 		catch (SystemMessageException e)
 		{
-		
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dlg.open();
 		}
 	}
 
@@ -509,7 +540,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		catch (SystemMessageException e)
 		{
-			
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dlg.open();
 		}
 	}
 
@@ -524,7 +556,9 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		catch (SystemMessageException e)
 		{
-			
+			Display dis = Display.getDefault();
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dis.syncExec(new SystemMessageDialogRunnable(dlg));
 		}
 		return false;
 	}
@@ -546,7 +580,9 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		catch (SystemMessageException e)
 		{
-			
+			Display dis = Display.getDefault();
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dis.syncExec(new SystemMessageDialogRunnable(dlg));
 		}
 		return false;
 	}
@@ -576,7 +612,9 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		catch (SystemMessageException e)
 		{
-			
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dlg.open();
+			return null;
 		}
 		return getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), fileToCreate.getParentRemoteFile(), newFile);
 	}
@@ -593,7 +631,9 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		catch (SystemMessageException e)
 		{
-		
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dlg.open();	
+			return null;
 		}
 		return getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), folderToCreate.getParentRemoteFile(), newFolder);
 	}
@@ -616,6 +656,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		catch (SystemMessageException e)
 		{
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dlg.open();
 			return false;
 		}
 		return result;
@@ -639,6 +681,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		catch (SystemMessageException e)
 		{
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dlg.open();
 			return false;
 		}
 		return result;
@@ -659,7 +703,9 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		catch (SystemMessageException e)
 		{
-		
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dlg.open();
+			return false;
 		}
 		return result;
 	}
@@ -679,7 +725,9 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		catch (SystemMessageException e)
 		{
-		
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dlg.open();
+			return false;
 		}
 		return result;
 	}

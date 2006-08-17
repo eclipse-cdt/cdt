@@ -26,6 +26,8 @@ public interface IHostFile
 	public boolean isDirectory();
 	public boolean isRoot();
 	public boolean isFile();
+	public boolean canWrite();
+	public boolean canRead();
 	public boolean exists();
 	public boolean isArchive();
 	

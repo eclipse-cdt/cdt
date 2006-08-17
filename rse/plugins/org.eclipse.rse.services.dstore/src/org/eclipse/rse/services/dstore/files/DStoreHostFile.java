@@ -31,6 +31,9 @@ public class DStoreHostFile implements IHostFile
 	public static final int ATTRIBUTE_MODIFIED_DATE=1;
 	public static final int ATTRIBUTE_SIZE = 2;
 	public static final int ATTRIBUTE_CLASSIFICATION =11;
+	public static final int ATTRIBUTE_IS_HIDDEN=3;
+	public static final int ATTRIBUTE_CAN_WRITE=4;
+	public static final int ATTRIBUTE_CAN_READ=5;
 
 	
 	protected DataElement _element;
@@ -114,7 +117,15 @@ public class DStoreHostFile implements IHostFile
 		else
 		{
 			
-			return name.charAt(0) == '.';
+			if  (name.charAt(0) == '.')
+			{
+				return true;
+			}
+			else
+			{
+				String str = getAttribute(_element.getSource(), ATTRIBUTE_IS_HIDDEN);
+				return(str.equals("true"));
+			}
 		}			
 	}
 	
@@ -273,4 +284,15 @@ public class DStoreHostFile implements IHostFile
 	{
 		return _isArchive;
 	}
+
+	public boolean canRead() {
+		String str = getAttribute(_element.getSource(), ATTRIBUTE_CAN_READ);
+		return(str.equals("true"));
+	}
+
+	public boolean canWrite() {
+		String str = getAttribute(_element.getSource(), ATTRIBUTE_CAN_WRITE);
+		return(str.equals("true"));
+	}
+	
 }

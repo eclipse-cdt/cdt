@@ -26,6 +26,7 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.dstore.universal.miners.command.CommandMiner;
 import org.eclipse.rse.dstore.universal.miners.environment.EnvironmentMiner;
+import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
 import org.eclipse.rse.services.dstore.ServiceResources;
@@ -40,9 +41,9 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 	protected DataElement _envMinerElement;
 	protected DataElement _envMinerStatus;
 	
-	public DStoreShellService(IDataStoreProvider dataStoreProvider)
+	public DStoreShellService(IDataStoreProvider dataStoreProvider, ISystemMessageProvider msgProvider)
 	{
-		super(dataStoreProvider);
+		super(dataStoreProvider, msgProvider);
 	}
 	
 	

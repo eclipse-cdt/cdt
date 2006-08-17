@@ -49,6 +49,7 @@ import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.persistence.IRSEPersistenceManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
 import org.eclipse.rse.ui.actions.ISystemDynamicPopupMenuExtension;
@@ -68,7 +69,7 @@ import org.osgi.framework.BundleContext;
 /**
  * Plugin for the core remote systems support.
  */
-public class RSEUIPlugin extends SystemBasePlugin 
+public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvider
 {
 	public static final String PLUGIN_ID  = "org.eclipse.rse.ui"; 	
 	public static final String HELPPREFIX = "org.eclipse.rse.ui.";
@@ -1354,6 +1355,12 @@ public class RSEUIPlugin extends SystemBasePlugin
     {
     	return messageFile;
     }
+    
+    public SystemMessage getMessage(String msgId)
+    {
+    	return getPluginMessage(msgId);
+    }
+    
 	/**
 	 * Retrieve a message from this plugin's message file
 	 * @param msgId - the ID of the message to retrieve. This is the concatenation of the

@@ -134,5 +134,15 @@ public class FTPHostFile implements IHostFile
 	{
 		return _isArchive;
 	}
+
+	//TODO implement this
+	public boolean canRead() {
+		return true;
+	}
+
+	//TODO implement this
+	public boolean canWrite() {
+		return true;
+	}
 	
 }

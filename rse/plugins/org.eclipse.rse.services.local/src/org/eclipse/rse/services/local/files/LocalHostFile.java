@@ -117,4 +117,12 @@ public class LocalHostFile implements IHostFile
 		return _isArchive;
 	}
 
+	public boolean canRead() {
+		return _file.canRead();
+	}
+
+	public boolean canWrite() {
+		return _file.canWrite();
+	}
+
 }

@@ -180,4 +180,14 @@ public class SftpHostFile implements IHostFile {
 		}
 		return result;
 	}
+
+	//TODO implement this
+	public boolean canRead() {
+		return true;
+	}
+
+	//TODO implement this
+	public boolean canWrite() {
+		return true;
+	}
 }

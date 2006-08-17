@@ -36,6 +36,7 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.dstore.model.DStoreFileAdapter;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -127,13 +128,13 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 	public IFileService createFileService(IHost host)
 	{
 		DStoreConnectorService connectorService = (DStoreConnectorService)getConnectorService(host);
-		return new DStoreFileService(connectorService, SystemFileTransferModeRegistry.getDefault());
+		return new DStoreFileService(connectorService, SystemFileTransferModeRegistry.getDefault(), RSEUIPlugin.getDefault());
 	}
 	
 	public ISearchService createSearchService(IHost host)
 	{
 		DStoreConnectorService connectorService = (DStoreConnectorService)getConnectorService(host);
-		return new DStoreSearchService(connectorService);
+		return new DStoreSearchService(connectorService, RSEUIPlugin.getDefault());
 	}
 	
 	public IHostFileToRemoteFileAdapter getHostFileAdapter()

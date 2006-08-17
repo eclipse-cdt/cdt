@@ -167,8 +167,7 @@ public abstract class AbstractRemoteFile extends RemoteFile implements IRemoteFi
 
 	public boolean isHidden()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return _hostFile.isHidden();
 	}
 
 	public boolean isVirtual()
@@ -179,14 +178,12 @@ public abstract class AbstractRemoteFile extends RemoteFile implements IRemoteFi
 
 	public boolean canRead()
 	{
-		// TODO Auto-generated method stub
-		return true;
+		return _hostFile.canRead();
 	}
 
 	public boolean canWrite()
 	{
-		// TODO Auto-generated method stub
-		return true;
+		return _hostFile.canWrite();
 	}
 
 	public boolean showReadOnlyProperty()

@@ -82,7 +82,7 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 			}
 			else
 			{
-				System.out.println("parsedMsg = null");
+				//System.out.println("parsedMsg = null");
 			}
 			if (event.isError())
 			{

@@ -25,20 +25,23 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
+import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.dstore.util.DStoreStatusMonitor;
 
 public abstract class AbstractDStoreService implements IDStoreService
 {
 	protected IDataStoreProvider _dataStoreProvider;
+	protected ISystemMessageProvider _msgProvider;
 	protected DataElement _minerElement;
 	protected DStoreStatusMonitor _statusMonitor;
 	protected Map _cmdDescriptorMap;
 	protected DataElement _initializeStatus;
 	
-	public AbstractDStoreService(IDataStoreProvider dataStoreProvider)
+	public AbstractDStoreService(IDataStoreProvider dataStoreProvider, ISystemMessageProvider msgProvider)
 	{
 		_dataStoreProvider = dataStoreProvider;
+		_msgProvider = msgProvider; 
 		_cmdDescriptorMap = new HashMap();
 	}
 	
@@ -307,6 +310,6 @@ public abstract class AbstractDStoreService implements IDStoreService
 	 */
 	public SystemMessage getMessage(String messageID)
 	{
-		return null;
+		return _msgProvider.getMessage(messageID);
 	}
 }

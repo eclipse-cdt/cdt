@@ -1020,8 +1020,8 @@ Contributors:
                     	<LevelTwo>You do not have write permission to the file %1 on %2. You can open the file in browse (read-only) mode. If you want to edit the file, change file permissions to allow write access to the file.</LevelTwo>
                     </Message>
                     <Message ID="5003" Indicator="E">
-                    	<LevelOne>File %1 can not be saved on %2. You do not have read access to the file.</LevelOne>
-                    	<LevelTwo>Change file permissions to ensure you have read access to the file.</LevelTwo>
+                    	<LevelOne>File %1 can not be saved on %2. You do not have write access to the file.</LevelOne>
+                    	<LevelTwo>Change file permissions to ensure you have write access to the file.</LevelTwo>
                     </Message>
                     <Message ID="5004" Indicator="E">
                     	<LevelOne>File %1 can not be saved on %2. You do not have write access to the file.</LevelOne>

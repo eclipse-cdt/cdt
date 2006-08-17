@@ -215,10 +215,9 @@ not make it into this build:
   <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=149080">bug 149080</a>
   instead. Due to the missing Unit Test Framework, automated tests could also
   not yet be added to this build.</li>
-<li>Examples are not yet available as downloadable package. A <b>CDT Launch Integration Example</b>,
-  a sample custom subsystem called <b>Daytime Example</b>,
-  as well as the <b>Tutorial Examples</b> from the ISV Docs are available 
-  from the <a href="http://www.eclipse.org/dsdp/tm/development/index.php">
+<li>The <b>CDT Launch Integration Example</b> is not yet available as a
+  download. It is available from the 
+  <a href="http://www.eclipse.org/dsdp/tm/development/index.php">
   RSE CVS Repository</a> instead.</li>
 <li>Jakarta Commons Net is not yet available for <b>FTP and Telnet</b> due to pending legal
   review. We are confident to get these completed in August though.<ul>
@@ -228,7 +227,6 @@ not make it into this build:
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=154207">bug 154207</a> - maj - FileServiceSubsystem doesnt forward exception info</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=150949">bug 150949</a> - maj - RSE gets unusable when full logging is enabled</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143462">bug 143462</a> - maj - [updating] Dirty remote editors do not get notified</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143292">bug 143292</a> - maj - [mac] Move Resource dialog causes hang/crash</li>

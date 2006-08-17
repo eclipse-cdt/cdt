@@ -253,7 +253,11 @@
 			<mapper type="glob" from="org.eclipse.rse.sdk-*" to="RSE-SDK-*"/>
 		</move>
 		<move todir="${packageDirectory}/${dropDir}">
-			<fileset dir="${buildDirectory}/${buildLabel}" includes="org.eclipse.rse.*" excludes="org.eclipse.rse.sdk-*"/>
+			<fileset dir="${buildDirectory}/${buildLabel}" includes="org.eclipse.rse.examples-*"/>
+			<mapper type="glob" from="org.eclipse.rse.examples-*" to="RSE-examples-*"/>
+		</move>
+		<move todir="${packageDirectory}/${dropDir}">
+			<fileset dir="${buildDirectory}/${buildLabel}" includes="org.eclipse.rse.*" excludes="*.sdk-* *.examples-*"/>
 			<mapper type="glob" from="org.eclipse.rse.*" to="RSE-runtime-*"/>
 		</move>
 		<move todir="${packageDirectory}/${dropDir}">

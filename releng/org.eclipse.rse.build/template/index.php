@@ -153,31 +153,6 @@
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-ssh-@buildId@.zip">RSE-runtime-ssh-@buildId@.zip</a></td></tr>
 </table>
 
-<!--
-<table border="0" cellspacing="5" cellpadding="2" width="100%">
-	<tr><td colspan="2">&nbsp;</td></tr>
-</table>
-
-<table border="0" cellspacing="5" cellpadding="2" width="100%">
-	<tr>
-		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">Client Runtime</font></b></td>
-	</tr>
-</table>
-<table border="0" cellspacing="2" cellpadding="0" width="100%">
-	<tr>
-		<td align="RIGHT" valign="TOP" width="7%">
-		<div align="left">
-			<b>Status</b></div>
-		</td>
-		<td width="34%"><b>Platform</b></td>
-		<td width="59%"><b>Download</b></td>
-		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-<td>All</td><td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-@buildId@.zip">RSE-runtime-@buildId@.zip</a></td>
-</tr>
-
-	</tr>
-</table>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td colspan="2">&nbsp;</td>
@@ -185,7 +160,7 @@
 </table>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
-		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
+		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
 		<font face="Arial,Helvetica" color="#FFFFFF">Examples (includes source)</font></b>
 		</td>
 	</tr>
@@ -204,6 +179,8 @@
 
 	</tr>
 </table>
+
+<!--
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td colspan="2">&nbsp;</td>

@@ -58,10 +58,10 @@ public class RemoteFileSecurityException extends RemoteFileException {
 	 */
 	private static SystemMessage getMyMessage() {
 		if (myMessage == null) {
-			String l1 = "Operation failed. File system input or output error";
+			String l1 = "Operation failed. Security violation";
 			String l2 = "Message reported from file system: %1";
 			try {
-				myMessage = new SystemMessage("RSE", "F", "1002", SystemMessage.ERROR, l1, l2);
+				myMessage = new SystemMessage("RSE", "F", "1001", SystemMessage.ERROR, l1, l2);
 			} catch (IndicatorException e) {
 			}
 		}

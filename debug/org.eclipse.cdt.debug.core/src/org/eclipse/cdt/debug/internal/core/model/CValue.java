@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Mark Mitchell, CodeSourcery - Bug 136896: View variables in binary format
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -247,12 +246,6 @@ public class CValue extends AbstractCValue {
 			sb.append( (stringValue.length() > 2) ? stringValue.substring( stringValue.length() - 2 ) : stringValue );
 			return sb.toString();
 		}
-		else if ( CVariableFormat.BINARY.equals( format ) ) {
-			StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
-			String stringValue = (isUnsigned()) ? Integer.toBinaryString( value.shortValue() ) : Integer.toBinaryString( (byte)value.byteValue() );
-			sb.append( (stringValue.length() > 8) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
-			return sb.toString();
-		}
 		return null;
 	}
 
@@ -267,12 +260,6 @@ public class CValue extends AbstractCValue {
 			sb.append( (stringValue.length() > 4) ? stringValue.substring( stringValue.length() - 4 ) : stringValue );
 			return sb.toString();
 		}
-		else if ( CVariableFormat.BINARY.equals( format ) ) {
-			StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
-			String stringValue = Integer.toBinaryString( (isUnsigned()) ? value.intValue() : value.shortValue() );
-			sb.append( (stringValue.length() > 16) ? stringValue.substring( stringValue.length() - 16 ) : stringValue );
-			return sb.toString();
-		}
 		return null;
 	}
 
@@ -285,12 +272,6 @@ public class CValue extends AbstractCValue {
 			StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
 			String stringValue = (isUnsigned()) ? Long.toHexString( value.longValue() ) : Integer.toHexString( value.intValue() );
 			sb.append( (stringValue.length() > 8) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
-			return sb.toString();
-		}
-		else if ( CVariableFormat.BINARY.equals( format ) ) {
-			StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
-			String stringValue = (isUnsigned()) ? Long.toBinaryString( value.longValue() ) : Integer.toBinaryString( value.intValue() );
-			sb.append( (stringValue.length() > 32) ? stringValue.substring( stringValue.length() - 32 ) : stringValue );
 			return sb.toString();
 		}
 		return null;
@@ -314,16 +295,6 @@ public class CValue extends AbstractCValue {
 				}
 				else
 					sb.append( Long.toHexString( value.longValue() ) );
-				return sb.toString();
-			}
-			else if ( CVariableFormat.BINARY.equals( format ) ) {
-				StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
-				if ( isUnsigned() ) {
-					BigInteger bigValue = new BigInteger( value.getValueString() );
-					sb.append( bigValue.toString( 2 ) );
-				}
-				else
-					sb.append( Long.toBinaryString( value.longValue() ) );
 				return sb.toString();
 			}
 		}
@@ -352,16 +323,6 @@ public class CValue extends AbstractCValue {
 					sb.append( Long.toHexString( value.longValue() ) );
 				return sb.toString();
 			}
-			else if ( CVariableFormat.BINARY.equals( format ) ) {
-				StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
-				if ( isUnsigned() ) {
-					BigInteger bigValue = new BigInteger( value.getValueString() );
-					sb.append( bigValue.toString( 2 ) );
-				}
-				else
-					sb.append( Long.toBinaryString( value.longValue() ) );
-				return sb.toString();
-			}
 		}
 		catch( NumberFormatException e ) {
 		}
@@ -387,12 +348,6 @@ public class CValue extends AbstractCValue {
 			sb.append( (stringValue.length() > 8) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
 			return sb.toString();
 		}
-		else if ( CVariableFormat.BINARY.equals( format ) ) {
-			StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
-			String stringValue = Long.toBinaryString( longValue );
-			sb.append( (stringValue.length() > 32) ? stringValue.substring( stringValue.length() - 32 ) : stringValue );
-			return sb.toString();
-		}
 		return null;
 	}
 
@@ -415,12 +370,6 @@ public class CValue extends AbstractCValue {
 			sb.append( (stringValue.length() > 16) ? stringValue.substring( stringValue.length() - 16 ) : stringValue );
 			return sb.toString();
 		}
-		else if ( CVariableFormat.BINARY.equals( format ) ) {
-			StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
-			String stringValue = Long.toHexString( longValue );
-			sb.append( (stringValue.length() > 64) ? stringValue.substring( stringValue.length() - 64 ) : stringValue );
-			return sb.toString();
-		}
 		return null;
 	}
 
@@ -438,8 +387,6 @@ public class CValue extends AbstractCValue {
 			return address.toHexAddressString();
 		if ( CVariableFormat.DECIMAL.equals( format ) )
 			return address.toString();
-		if ( CVariableFormat.BINARY.equals( format ) )
-			return address.toBinaryAddressString();
 		return null;
 	}
 
@@ -457,12 +404,6 @@ public class CValue extends AbstractCValue {
 					sb.append( (stringValue.length() > 4) ? stringValue.substring( stringValue.length() - 4 ) : stringValue );
 					return sb.toString();
 				}
-				else if ( CVariableFormat.BINARY.equals( format ) ) {
-					StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
-					String stringValue = Integer.toBinaryString( (isUnsigned()) ? value.intValue() : value.shortValue() );
-					sb.append( (stringValue.length() > 16) ? stringValue.substring( stringValue.length() - 16 ) : stringValue );
-					return sb.toString();
-				}
 			}
 			if ( size == 4 ) {
 				CVariableFormat format = getParentVariable().getFormat(); 
@@ -473,12 +414,6 @@ public class CValue extends AbstractCValue {
 					StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
 					String stringValue = (isUnsigned()) ? Long.toHexString( value.longValue() ) : Integer.toHexString( value.intValue() );
 					sb.append( (stringValue.length() > 8) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
-					return sb.toString();
-				}
-				else if ( CVariableFormat.BINARY.equals( format ) ) {
-					StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
-					String stringValue = (isUnsigned()) ? Long.toBinaryString( value.longValue() ) : Integer.toHexString( value.intValue() );
-					sb.append( (stringValue.length() > 32) ? stringValue.substring( stringValue.length() - 32 ) : stringValue );
 					return sb.toString();
 				}
 			}

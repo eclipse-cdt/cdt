@@ -33,6 +33,8 @@ public class LoggerFactory {
 	/**
 	 * Returns the Logger instance for a given plugin. There is only
 	 * one instance of the Logger class per plugin. 
+	 * @param plugin the plugin for which to find or create the log
+	 * @return the logger for that plugin
 	 */
 	public static Logger getLogger(Plugin plugin) {
 		Logger logger = (Logger) pluginTable.get(plugin);
@@ -44,8 +46,9 @@ public class LoggerFactory {
 	}
 
 	/**
-	 * Frees resources used by the Logger instance for the given plugin.<br>
-	 * This methods must be called as part of the the plugin shutdown life cycle.
+	 * Frees resources used by the Logger instance for the given plugin.
+	 * This method must be called as part of the the plugin shutdown life cycle.
+	 * @param plugin the plugin for which to free logging resources
 	 */
 	public static void freeLogger(Plugin plugin) {
 		Logger logger = (Logger) pluginTable.get(plugin);

@@ -131,8 +131,9 @@ public class Logger implements IPropertyChangeListener {
 
 	/** 
 	 * Log an Error message with an exception. Note that the message should already 
-	 * be localized to proper local.<br>
-	 * ie: Resource.getString() should already have been called
+	 * be localized to proper locale.
+	 * @param message the message to log.
+	 * @param ex the exception that caused the condition, may be null.
 	 */
 	public synchronized void logError(String message, Throwable ex) {
 		if (debug_level >= IRemoteSystemsLogging.LOG_ERROR) {

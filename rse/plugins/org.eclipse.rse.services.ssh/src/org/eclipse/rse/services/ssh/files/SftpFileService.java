@@ -149,11 +149,17 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			return (SystemMessageException)e;
 		}
 		else if (e instanceof SftpException) {
+			//Some extra handling to keep Sftp messages
 			//TODO more user-friendly messages for more Sftp exception types
-			int id = ((SftpException)e).id;
-			if (id == ChannelSftp.SSH_FX_PERMISSION_DENIED) {
-				return new RemoteFileSecurityException(e);
+			SystemMessageException messageException;
+			SftpException sftpe = (SftpException)e;
+			if (sftpe.id == ChannelSftp.SSH_FX_PERMISSION_DENIED) {
+				messageException = new RemoteFileSecurityException(e);
+			} else {
+				messageException = new RemoteFileIOException(e);
 			}
+			messageException.getSystemMessage().makeSubstitution("Sftp: "+sftpe.toString());
+			return messageException;
 		}
 		return new RemoteFileIOException(e);
 	}
@@ -171,7 +177,12 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				Activator.trace("SftpFileService.getFile done"); //$NON-NLS-1$
 			} catch(Exception e) {
 				Activator.trace("SftpFileService.getFile failed: "+e.toString()); //$NON-NLS-1$
-				throw makeSystemMessageException(e);
+				if ( (e instanceof SftpException) && ((SftpException)e).id==ChannelSftp.SSH_FX_NO_SUCH_FILE) {
+					//We MUST NOT throw an exception here. API requires that an empty IHostFile
+					//is returned in this case.
+				} else {
+					throw makeSystemMessageException(e);
+				}
 			} finally {
 				fDirChannelMutex.release();
 			}

@@ -49,14 +49,18 @@
 <li>See also the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0M3-200606300720/buildNotes.php">
   last milestone's New and Noteworthy</a>.</li>
-<li>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-06-30&chfieldto=2006-08-17&chfield=resolution">
-  this query</a> to show the list of bugs fixed for this build.</li>
+<li>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-06-30&chfieldto=2006-08-18&chfield=resolution">
+  this query</a> to show the list of bugs fixed since 
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0M3-200606300720/index.php">
+  RSE 1.0M3</a>.</li>
 <li>Look <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   here</a> for the CVS changelog.</li>
+  <!--
 <li>New since I20060811-1342:<ul>
     <li><a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-08-11&chfieldto=2006-08-17&chfield=resolution">
     bugs fixed</a></li>
     </ul></li>
+  -->
 </ul>
 </td></tr></tbody></table>
 

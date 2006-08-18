@@ -37,6 +37,11 @@ subsystems.
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="configuration" minOccurs="1" maxOccurs="unbounded"/>
@@ -75,8 +80,8 @@ subsystems.
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  A unique ID for this subsystem configuration. This will be used as a folder name for
-information contained by the subsystem configuration, or by any of its subsystems.
+                  A unique ID for this subsystem configuration. This will be used by persistency 
+as a folder name for information contained by the subsystem configuration, or by any of its subsystems.
                </documentation>
             </annotation>
          </attribute>
@@ -107,24 +112,27 @@ a path to the icon&apos;s .gif file, relative to your plugin directory.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  A class that implements &lt;samp&gt;org.eclipse.rse.core.subsystems.SubSystemConfiguration&lt;/samp&gt;
+                  A class that implements &lt;samp&gt;org.eclipse.rse.core.subsystems.ISubSystemConfiguration&lt;/samp&gt;.
+It is recommended to extend &lt;samp&gt;org.eclipse.rse.core.subsystems.SubSystemConfiguration&lt;/samp&gt; or &lt;samp&gt;org.eclipse.rse.core.servicesubsystem.ServiceSubSystemConfiguration&lt;/samp&gt;.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.rse.core.subsystems.SubSystemConfiguration:org.eclipse.rse.core.subsystems.ISubSystemConfiguration"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  Translatable name for subsystems created by this configuration. These appear immediately
-under a connection when the connection is expanded in the Remote Systems view of the
-Remote System Explorer perspective.
+                  Translatable name for subsystems created by this configuration.
+These appear immediately under a connection when the connection is expanded in the Remote Systems view of the Remote System Explorer perspective.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="description" type="string" use="required">
             <annotation>
                <documentation>
-                  Translatable description for subsystems created by this configuration. These appear in configuration
-                  and properties pages for subsystems.
+                  Translatable description for subsystems created by this configuration.
+These appear in configuration and properties pages for subsystems.
                </documentation>
             </annotation>
          </attribute>
@@ -167,7 +175,9 @@ category of &quot;database&quot;.
          <attribute name="priority" type="string">
             <annotation>
                <documentation>
-                  This optional attribute determines the order in which subsystems appear in the New Connection wizard and RSE views. The lower the number, the higher the priority.
+                  This optional attribute determines the order in which subsystems appear in the New Connection wizard and RSE views. Integer values are allowed. Subsystems with lower number will appear first in the RSE tree. Subsystems that do not define the priority attribute will be appended last to the list of subsystems.
+
+Note that ServiceSubSystems that share the same service should always use the same priority, since their service implementation can change at runtime. The following priorities are used by the predefined subsystems: files=100, processes=200, shells=300.
                </documentation>
             </annotation>
          </attribute>

@@ -14,6 +14,7 @@ public class SubSystemConfigurationProxyComparator implements Comparator {
 
 	/**
 	 * Compares priorities of subsystem configuration proxies. 
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Object o1, Object o2) {
 		

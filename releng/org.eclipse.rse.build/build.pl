@@ -35,7 +35,7 @@ $eclipse = "../eclipse";
 
 # $basebuilder" is the location of the Eclipse Releng basebuilder
 # This can also be set to ${eclipse}
-$basebuilder = "../org.eclipse.releng.basebuilder"
+$basebuilder = "../org.eclipse.releng.basebuilder";
 
 # $builder is the location of the custom build scripts customTargets.xml and build.properties
 # (i.e. the contents of org.eclipse.rse.build)

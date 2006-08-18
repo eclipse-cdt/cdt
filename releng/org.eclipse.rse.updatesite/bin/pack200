@@ -10,6 +10,5 @@ cd "$curdir"
 
 touch "$mydir/pack200.stamp"
 date >> "$mydir/pack200.stamp"
-env >> "$mydir/pack200.stamp"
 echo "pack200 -E4 $*" >> "$mydir/pack200.stamp"
 pack200 -E4 $*

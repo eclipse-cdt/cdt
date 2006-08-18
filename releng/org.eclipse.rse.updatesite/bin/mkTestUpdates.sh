@@ -11,6 +11,9 @@ mydir=`pwd`
 
 umask 002
 
+#Use Java5 on build.eclipse.org
+export PATH=/shared/common/ibm-java2-ppc64-50/bin:$PATH
+
 # patch site.xml
 cd ..
 SITE=`pwd`
@@ -47,11 +50,12 @@ mv -f site.xml.new site.xml
 
 # optimize the site
 # see http://wiki.eclipse.org/index.php/Platform-releng-faq
-#Use Java5 on build.eclipse.org
-export PATH=/shared/common/ibm-java2-ppc64-50/bin:$PATH
 #Pack the site
+# Workaround for downgrading effort of pack200 to avoid VM bug
+# See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154069
 echo "Packing the site... $SITE"
 java -jar $HOME/ws/eclipse/startup.jar \
+	-Dorg.eclipse.update.jarprocessor.pack200=$mydir \
     -application org.eclipse.update.core.siteOptimizer \
     -jarProcessor -outputDir $SITE \
     -processAll -pack $SITE

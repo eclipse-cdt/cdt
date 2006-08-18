@@ -30,6 +30,7 @@ Javier Montalvo Orus (Symbian) - add Windows to list of valid FTP systems
             category="files"
             class="org.eclipse.rse.subsystems.files.ftp.FTPFileSubSystemConfiguration"
             vendor="Eclipse.org"
+            priority="100"
             id="ftp.files">
       </configuration>
       </extension>

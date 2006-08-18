@@ -18,6 +18,7 @@ package org.eclipse.rse.ui;
 
 import java.net.InetAddress;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
@@ -36,6 +37,7 @@ import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.core.comm.SystemCommunicationsDaemon;
 import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
 import org.eclipse.rse.core.internal.subsystems.SubSystemConfigurationProxy;
+import org.eclipse.rse.core.internal.subsystems.SubSystemConfigurationProxyComparator;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.model.SystemProfileManager;
@@ -1086,6 +1088,9 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
                subsystemFactories[idx] = (ISubSystemConfigurationProxy)v.elementAt(idx);
           }
     	}
+    	
+    	Arrays.sort(subsystemFactories, new SubSystemConfigurationProxyComparator());
+    	
     	return subsystemFactories;
     }
 

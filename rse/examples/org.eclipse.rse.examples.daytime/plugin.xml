@@ -32,6 +32,7 @@ Martin Oberhuber (Wind River) - initial API and implementation
 			category="files"
 			class="org.eclipse.rse.subsystems.files.ftp.FTPFileSubSystemConfiguration"
 			vendor="Eclipse.org"
+			priority="100"
 			id="ftp.files">
 		</configuration>
 	</extension>
@@ -47,6 +48,7 @@ Martin Oberhuber (Wind River) - initial API and implementation
 			category="daytime"
 			class="org.eclipse.rse.examples.daytime.subsystems.DaytimeSubSystemConfiguration"
 			vendor="Wind River Systems"
+			priority="40000"
 			id="daytime.tcp">
 		</configuration>
 	</extension>

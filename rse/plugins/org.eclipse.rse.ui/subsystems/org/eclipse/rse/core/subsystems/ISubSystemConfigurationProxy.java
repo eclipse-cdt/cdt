@@ -74,6 +74,12 @@ public interface ISubSystemConfigurationProxy
      * Return true if the subsystem factory has been instantiated yet
      */
     public boolean isSubSystemConfigurationActive();
+    
+	/**
+	 * Returns the priority of the subsystem configuration.
+	 */
+	public int getPriority();
+	
     /**
      * Return the subsystem factory singleton instance. Will instantiate if not already.
      */

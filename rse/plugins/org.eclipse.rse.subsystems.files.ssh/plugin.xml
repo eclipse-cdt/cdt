@@ -22,6 +22,7 @@ Martin Oberhuber - initial API and implementation
 			category="files"
 			class="org.eclipse.rse.subsystems.files.ssh.SftpFileSubSystemConfiguration"
 			vendor="%providerName"
+            priority="100"
 			id="ssh.files">
 		</configuration>
 	</extension>

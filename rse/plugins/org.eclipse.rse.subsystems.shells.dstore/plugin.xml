@@ -30,6 +30,7 @@ Contributors:
             category="shells"
             class="org.eclipse.rse.subsystems.shells.dstore.DStoreShellSubSystemConfiguration"
             vendor="Eclipse.org"
+            priority="300"
             id="dstore.shells">
          </configuration>
 

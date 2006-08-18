@@ -64,7 +64,7 @@ Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
 			description="Example Developer Subsystem"
 			iconlive="icons/systemconnectionlive.gif"
 			icon="icons/systemconnection.gif"
-			>
+            priority="50000">
 		</configuration>
 	</extension>
 </plugin> 

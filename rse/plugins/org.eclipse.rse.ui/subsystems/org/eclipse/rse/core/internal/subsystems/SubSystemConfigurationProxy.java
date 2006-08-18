@@ -42,6 +42,7 @@ import org.osgi.framework.Bundle;
 public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 {
     private String name,description,id,types,vendor, category, systemClassName;
+    private int priority;
     private String[] systemTypes;
     private List typesArray;
     private boolean allTypes = false;
@@ -65,6 +66,21 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		this.vendor = element.getAttribute("vendor");
 		this.category = element.getAttribute("category");
 		this.systemClassName = element.getAttribute("systemClass");
+		this.priority = Integer.MAX_VALUE;
+		
+		String priorityStr = element.getAttribute("priority");
+		
+		try {
+			
+			if (priorityStr != null) {
+				priority = Integer.parseInt(priorityStr);
+			}
+		}
+		catch (NumberFormatException e) {
+			priority = Integer.MAX_VALUE;
+			RSEUIPlugin.logError("Exception reading priority for subsystem configuration " + name + " defined in plugin " + element.getDeclaringExtension().getNamespaceIdentifier(), e);
+		}
+		
 		String className = element.getAttribute("class");
 		if (vendor == null) vendor = "Unknown";
 		if (category == null) category = "Unknown";
@@ -156,8 +172,16 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
     	  return liveImage;
         else
           return image;
-    }
+    }   
+    
     /**
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy#getPriority()
+	 */
+	public int getPriority() {
+		return priority;
+	}
+	
+	/**
      * Return true if this extension's systemTypes attribute matches the given system type
      */        
     public boolean appliesToSystemType(String type)

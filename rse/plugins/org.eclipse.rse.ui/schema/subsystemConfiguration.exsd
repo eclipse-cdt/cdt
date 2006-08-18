@@ -157,11 +157,18 @@ category of &quot;database&quot;.
          <attribute name="systemClass" type="string">
             <annotation>
                <documentation>
-                  Optional.                
+                  Optional.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.rse.core.subsystems.IConnectorService"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  This optional attribute determines the order in which subsystems appear in the New Connection wizard and RSE views. The lower the number, the higher the priority.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

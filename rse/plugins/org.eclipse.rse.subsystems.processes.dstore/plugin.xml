@@ -33,6 +33,7 @@ Contributors:
             category="processes"
             class="org.eclipse.rse.subsystems.processes.dstore.DStoreProcessSubSystemConfiguration"
             vendor="Eclipse.org"
+            priority="200"
             id="dstore.processes">
       </configuration>
       </extension>

@@ -33,6 +33,7 @@ Contributors:
             category="processes"
             class="org.eclipse.rse.subsystems.processes.local.LocalProcessSubSystemFactory"
             vendor="Eclipse.org"
+            priority="200"
             id="local.processes">
       </factory>
       </extension>

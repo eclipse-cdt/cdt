@@ -42,7 +42,7 @@ chmod -R g+w $HOME/ws/working/package/*${daystamp}*
 
 #Publish
 echo "sg dsdp-tm-rse -c \"cp -R $HOME/ws/working/package/*${daystamp}* $HOME/ws/publish\""
-sg dsdp-tm-rse -c "cp -R $HOME/ws/working/package/*${daystamp}*/* $HOME/ws/publish"
+sg dsdp-tm-rse -c "cp -R $HOME/ws/working/package/*${daystamp}* $HOME/ws/publish"
 sg dsdp-tm-rse -c "rm -rf $HOME/ws/publish/*${daystamp}*/updates"
 echo "chmod -R g+w $HOME/ws/publish/*${daystamp}*"
 chmod -R g+w $HOME/ws/publish/*${daystamp}*

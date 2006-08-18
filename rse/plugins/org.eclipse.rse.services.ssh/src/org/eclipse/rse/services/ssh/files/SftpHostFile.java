@@ -28,6 +28,9 @@ public class SftpHostFile implements IHostFile {
 	private boolean fIsDirectory = false;
 	private boolean fIsRoot = false;
 	private boolean fIsArchive = false;
+	private boolean fIsReadable = true;
+	private boolean fIsWritable = true;
+	private boolean fIsExecutable = false;
 	private boolean fExists = true;
 	private long fLastModified = 0;
 	private long fSize = 0;
@@ -65,7 +68,7 @@ public class SftpHostFile implements IHostFile {
 	}
 	
 	public boolean isFile() {
-		return !(fIsDirectory || fIsRoot || fIsLink);
+		return !(fIsDirectory || fIsRoot);
 	}
 	
 	public boolean isRoot() {
@@ -166,13 +169,24 @@ public class SftpHostFile implements IHostFile {
 		//TODO: isExecutable(), shellscript vs. binary
 		String result;
 		if (isLink()) {
-			//TODO: read symbolic link target and its type to provide e.g. "symbolic link(directory):/export4/opt
 			result = "symbolic link"; //$NON-NLS-1$
 			if (fLinkTarget!=null) {
-				result += "(unknown):" +  fLinkTarget; //$NON-NLS-1$
+				if (fLinkTarget.equals(":dangling link")) {
+					result = "broken symbolic link to `unknown'"; //$NON-NLS-1$
+				} else if(isDirectory()) {
+					result += "(directory):" + fLinkTarget; //$NON-NLS-1$
+				} else if(canExecute()) {
+					result += "(executable):" +  fLinkTarget; //$NON-NLS-1$
+				} else {
+					result += "(file):" +  fLinkTarget; //$NON-NLS-1$
+				}
 			}
 		} else if (isFile()) {
-			result = "file"; //$NON-NLS-1$
+			if (canExecute()) {
+				result = "executable"; //$NON-NLS-1$
+			} else {
+				result = "file"; //$NON-NLS-1$
+			}
 		} else if (isDirectory()) {
 			result = "directory"; //$NON-NLS-1$
 		} else {
@@ -181,13 +195,23 @@ public class SftpHostFile implements IHostFile {
 		return result;
 	}
 
-	//TODO implement this
-	public boolean canRead() {
-		return true;
+	public void setReadable(boolean b) {
+		fIsReadable=b;
+	}
+	public void setWritable(boolean b) {
+		fIsWritable=b;
+	}
+	public void setExecutable(boolean b) {
+		fIsExecutable=b;
 	}
 
-	//TODO implement this
+	public boolean canRead() {
+		return fIsReadable;
+	}
 	public boolean canWrite() {
-		return true;
+		return fIsWritable;
+	}
+	public boolean canExecute() {
+		return fIsExecutable;
 	}
 }

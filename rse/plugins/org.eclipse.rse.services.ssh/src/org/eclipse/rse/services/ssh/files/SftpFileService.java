@@ -175,6 +175,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			try {
 				attrs = getChannel("SftpFileService.getFile").stat(remoteParent+'/'+fileName); //$NON-NLS-1$
 				Activator.trace("SftpFileService.getFile done"); //$NON-NLS-1$
+				node = makeHostFile(remoteParent, fileName, attrs);
 			} catch(Exception e) {
 				Activator.trace("SftpFileService.getFile failed: "+e.toString()); //$NON-NLS-1$
 				if ( (e instanceof SftpException) && ((SftpException)e).id==ChannelSftp.SSH_FX_NO_SUCH_FILE) {
@@ -187,9 +188,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				fDirChannelMutex.release();
 			}
 		}
-		if (attrs!=null) {
-			node = makeHostFile(remoteParent, fileName, attrs);
-		} else {
+		if (node==null) {
 			node = new SftpHostFile(remoteParent, fileName, false, false, false, 0, 0);
 			node.setExists(false);
 		}
@@ -253,20 +252,50 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	}
 
 	private SftpHostFile makeHostFile(String parentPath, String fileName, SftpATTRS attrs) {
-		SftpHostFile node = new SftpHostFile(parentPath, fileName, attrs.isDir(), false, attrs.isLink(), 1000L * attrs.getMTime(), attrs.getSize());
+		SftpATTRS attrsTarget = attrs;
+		String linkTarget=null;
+		if (attrs.isLink()) {
+			//TODO remove comments as soon as jsch-0.1.29 is available 
+			//	try {
+			//		//Note: readlink() is supported only with jsch-0.1.29 or higher.
+			//		//By catching the exception we remain backward compatible.
+			//		linkTarget=getChannel("makeHostFile.readlink").readlink(node.getAbsolutePath()); //$NON-NLS-1$
+			//		//TODO: Classify the type of resource linked to as file, folder or broken link
+			//	} catch(Exception e) {}
+			//check if the link points to a directory
+			try {
+				getChannel("makeHostFile.chdir").cd(parentPath+'/'+fileName); //$NON-NLS-1$
+				linkTarget=getChannel("makeHostFile.chdir").pwd(); //$NON-NLS-1$
+				if (linkTarget!=null && !linkTarget.equals(parentPath+'/'+fileName)) {
+					attrsTarget = getChannel("SftpFileService.getFile").stat(linkTarget); //$NON-NLS-1$
+				} else {
+					linkTarget=null;
+				}
+			} catch(Exception e) {
+				//dangling link?
+				if (e instanceof SftpException && ((SftpException)e).id==ChannelSftp.SSH_FX_NO_SUCH_FILE) {
+					linkTarget=":dangling link"; //$NON-NLS-1$
+				}
+			}
+		}
+		SftpHostFile node = new SftpHostFile(parentPath, fileName, attrsTarget.isDir(), false, attrs.isLink(), 1000L * attrs.getMTime(), attrs.getSize());
+		if (linkTarget!=null) {
+			node.setLinkTarget(linkTarget);
+		}
+		//Permissions: expect the current user to be the owner
+		String perms = attrsTarget.getPermissionsString();
+		if (perms.indexOf('r',1)<=0) {
+			node.setReadable(false); //not readable by anyone
+		}
+		if (perms.indexOf('w',1)<=0) {
+			node.setWritable(false); //not writable by anyone
+		}
+		if (perms.indexOf('x',1)>0) {
+			node.setExecutable(true); //executable by someone
+		}
 		if (attrs.getExtended()!=null) {
 			node.setExtendedData(attrs.getExtended());
 		}
-		//TODO remove comments as soon as jsch-0.1.29 is available 
-		//if (node.isLink()) {
-		//	try {
-		//		//Note: readlink() is supported only with jsch-0.1.29 or higher.
-		//		//By catching the exception we remain backward compatible.
-		//		String linkTarget=getChannel("makeHostFile.readlink").readlink(node.getAbsolutePath()); //$NON-NLS-1$
-		//		node.setLinkTarget(linkTarget);
-		//		//TODO: Classify the type of resource linked to as file, folder or broken link
-		//	} catch(Exception e) {}
-		//}
 		return node;
 	}
 	

@@ -43,31 +43,69 @@
 	<!-- ===================================================================== -->
 
 	<target name="assemble.org.eclipse.rse.sdk">
+		<property name="archiveName" value="RSE-SDK-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
 	<target name="assemble.org.eclipse.rse.core">
+		<property name="archiveName" value="RSE-runtime-core-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
 	<target name="assemble.org.eclipse.rse.local">
+		<property name="archiveName" value="RSE-runtime-local-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
 	<target name="assemble.org.eclipse.rse.ftp">
+		<property name="archiveName" value="RSE-runtime-ftp-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
 	<target name="assemble.org.eclipse.rse.ssh">
+		<property name="archiveName" value="RSE-runtime-ssh-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
 	<target name="assemble.org.eclipse.rse.dstore">
+		<property name="archiveName" value="RSE-runtime-dstore-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
 	<target name="assemble.org.eclipse.rse.examples">
+		<property name="archiveName" value="RSE-examples-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
+	</target>
+
+	<target name="unpackUpdateJarsForPackaging" depends="myInit">
+		<property name="tmpsite" value="${buildDirectory}/tmpsite" />
+		<mkdir dir="${tmpsite}/new/eclipse/features" />
+		<mkdir dir="${tmpsite}/new/eclipse/plugins" />
+		<exec executable="unzip" dir="${buildDirectory}/${buildLabel}">
+			<arg line="-q ${archiveName} -d ${tmpsite}" />
+		</exec>
+		<copy todir="${buildUpdateSitePath}">
+		    <fileset dir="${tmpsite}/eclipse"/>
+		</copy>
+
+		<unpackUpdateJars site="${tmpsite}/eclipse" output="${tmpsite}/new/eclipse"/>
+		<!-- <antcall target="packageLicenseFiles"/> -->
+		<zip destfile="${buildDirectory}/${buildLabel}/${archiveName}"
+			basedir="${tmpsite}/new"
+	  	/>
+		<delete dir="${tmpsite}"/>
+	</target>
+
+	<target name="packageLicenseFiles">
+		<copy file="${buildRoot}/eclipse/epl-v10.html" todir="${tmpsite}/new/eclipse"/>
+		<copy file="${buildRoot}/eclipse/notice.html" todir="${tmpsite}/new/eclipse"/>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -117,6 +155,7 @@
 		<condition property="dropDir" value="S-${buildId}-${DSTAMP}${TSTAMP}" else="${buildId}">
 			<equals arg1="${buildType}" arg2="S"/>
 		</condition>
+		<property name="buildUpdateSitePath" value="${packageDirectory}/${dropDir}/updates"/>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -178,44 +217,8 @@
 		<replace dir="${buildDirectory}/plugins" value="${buildId}" token="@build@">
 			<include name="**/about.mappings" />
 		</replace>
-		<!-- build.update.jars builds BEFORE the normal build, since -->
-		<!-- update.jars does a clean but the normal build does not  -->
-		<antcall target="build.update.jars" />
 	</target>
 
-	<target name="build.update.jars" depends="myInit">
-		<!-- build this only for toplevel features, since they include all    -->
-		<!-- other features and the build.update.jar cleans all build results -->
-		<property name="updateDir" value="${packageDirectory}/${dropDir}/updates" />
-		<property name="type" value="feature" />
-		<property name="id" value="org.eclipse.rse.sdk" />
-		<mkdir dir="${updateDir}/features" />
-		<mkdir dir="${updateDir}/plugins" />
-		<property name="elementPath" value="${buildDirectory}/${type}s/${id}" />
-		<ant antfile="build.xml" dir="${elementPath}" target="build.update.jar">
-			<property name="target" value="build.update.jar"/>
-			<property name="plugin.destination" value="${updateDir}/plugins" />
-			<property name="feature.destination" value="${updateDir}/features" />
-		</ant>
-		<!-- Now get rid of server jars: works on UNIX only! -->
-		<exec dir="${updateDir}/plugins" executable="sh">
-			<arg value="-c"/>
-			<arg value="zip org.eclipse.dstore.core_*.jar -d dstore_core.jar"/>
-		</exec>
-		<exec dir="${updateDir}/plugins" executable="sh">
-			<arg value="-c"/>
-			<arg value="zip org.eclipse.dstore.extra_*.jar -d dstore_extra_server.jar"/>
-		</exec>
-		<exec dir="${updateDir}/plugins" executable="sh">
-			<arg value="-c"/>
-			<arg value="zip org.eclipse.rse.services_*.jar -d clientserver.jar"/>
-		</exec>
-		<exec dir="${updateDir}/plugins" executable="sh">
-			<arg value="-c"/>
-			<arg value="zip org.eclipse.rse.services.dstore_*.jar -d dstore_miners.jar"/>
-		</exec>
-	</target>
-	
 	<!-- ===================================================================== -->
 	<!-- Steps to do after running the build.xmls for the elements being built. -->
 	<!-- ===================================================================== -->
@@ -249,16 +252,7 @@
 	<target name="postBuild" depends="myInit">
 		<mkdir dir="${packageDirectory}/${dropDir}" />
 		<move todir="${packageDirectory}/${dropDir}">
-			<fileset dir="${buildDirectory}/${buildLabel}" includes="org.eclipse.rse.sdk-*"/>
-			<mapper type="glob" from="org.eclipse.rse.sdk-*" to="RSE-SDK-*"/>
-		</move>
-		<move todir="${packageDirectory}/${dropDir}">
-			<fileset dir="${buildDirectory}/${buildLabel}" includes="org.eclipse.rse.examples-*"/>
-			<mapper type="glob" from="org.eclipse.rse.examples-*" to="RSE-examples-*"/>
-		</move>
-		<move todir="${packageDirectory}/${dropDir}">
-			<fileset dir="${buildDirectory}/${buildLabel}" includes="org.eclipse.rse.*" excludes="*.sdk-* *.examples-*"/>
-			<mapper type="glob" from="org.eclipse.rse.*" to="RSE-runtime-*"/>
+			<fileset dir="${buildDirectory}/${buildLabel}" includes="RSE-*.zip"/>
 		</move>
 		<move todir="${packageDirectory}/${dropDir}">
 			<fileset dir="${buildDirectory}/${buildLabel}" includes="rseserver-*"/>

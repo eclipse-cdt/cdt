@@ -33,6 +33,10 @@ sub makeAbsolute($) {
 # This should include the org.eclipse.pde.build project
 $eclipse = "../eclipse"; 
 
+# $basebuilder" is the location of the Eclipse Releng basebuilder
+# This can also be set to ${eclipse}
+$basebuilder = "../org.eclipse.releng.basebuilder"
+
 # $builder is the location of the custom build scripts customTargets.xml and build.properties
 # (i.e. the contents of org.eclipse.rse.build)
 $builder = ".";
@@ -42,13 +46,14 @@ $working = "../working";
 
 # make these absolute paths
 $eclipse = makeAbsolute($eclipse);
+$basebuilder = makeAbsolute($basebuilder);
 $builder = makeAbsolute($builder);
 $working = makeAbsolute($working);
-$plugins = File::Spec->catdir($eclipse, "plugins");
-$baseBuilderGlob = File::Spec->catdir($plugins, "org.eclipse.pde.build*");
+$plugins = File::Spec->catdir($basebuilder, "plugins");
+$pdeBuildGlob = File::Spec->catdir($plugins, "org.eclipse.pde.build*");
 
 # Find the base build scripts: genericTargets.xml and build.xml
-@candidates = glob($baseBuilderGlob);
+@candidates = glob($pdeBuildGlob);
 $n = @candidates;
 if ($n == 0) {
 	die("PDE Build was not found.");
@@ -56,7 +61,7 @@ if ($n == 0) {
 if ($n > 1) {
 	die("Too many versions of PDE Build were found.");
 }
-$baseBuilder = $candidates[0];
+$pdeBuild = $candidates[0];
 
 $buildDirectory = "$working/build";
 $packageDirectory = "$working/package";
@@ -69,9 +74,9 @@ $timeStamp = sprintf("%4.4d%2.2d%2.2d-%2.2d%2.2d", $year + 1900, ($mon + 1), $md
 $buildId = $buildType . $timeStamp;
 $buildId = ask("Enter the build id", $buildType . $timeStamp);
 
-$incantation = "java -cp ${eclipse}/startup.jar org.eclipse.core.launcher.Main ";
+$incantation = "java -cp ${basebuilder}/startup.jar org.eclipse.core.launcher.Main ";
 $incantation .= "-application org.eclipse.ant.core.antRunner ";
-$incantation .= "-buildfile ${baseBuilder}/scripts/build.xml ";
+$incantation .= "-buildfile ${pdeBuild}/scripts/build.xml ";
 $incantation .= "-DbuildDirectory=${buildDirectory} ";
 $incantation .= "-DpackageDirectory=${packageDirectory} ";
 $incantation .= "-DpublishDirectory=${publishDirectory} ";

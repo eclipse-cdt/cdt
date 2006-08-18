@@ -4,25 +4,25 @@
    <description url="http://download.eclipse.org/dsdp/tm/updates/">
       This is the Target Management Project Update Site for the Remote Systems Explorer (RSE).
    </description>
-   <feature url="features/org.eclipse.rse.core_1.0.0.200607201800.jar" id="org.eclipse.rse.core" version="1.0.0.200607201800">
+   <feature url="features/org.eclipse.rse.core_1.0.0.qualifier.jar" id="org.eclipse.rse.core" version="1.0.0.qualifier">
       <category name="Remote System Explorer (Runtime Only)"/>
    </feature>
-   <feature url="features/org.eclipse.rse.dstore_1.0.0.200607201800.jar" id="org.eclipse.rse.dstore" version="1.0.0.200607201800">
+   <feature url="features/org.eclipse.rse.dstore_1.0.0.qualifier.jar" id="org.eclipse.rse.dstore" version="1.0.0.qualifier">
       <category name="Remote System Explorer (Runtime Only)"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ftp_1.0.0.200607201800.jar" id="org.eclipse.rse.ftp" version="1.0.0.200607201800">
+   <feature url="features/org.eclipse.rse.ftp_1.0.0.qualifier.jar" id="org.eclipse.rse.ftp" version="1.0.0.qualifier">
       <category name="Remote System Explorer (Runtime Only)"/>
    </feature>
-   <feature url="features/org.eclipse.rse.local_1.0.0.200607201800.jar" id="org.eclipse.rse.local" version="1.0.0.200607201800">
+   <feature url="features/org.eclipse.rse.local_1.0.0.qualifier.jar" id="org.eclipse.rse.local" version="1.0.0.qualifier">
       <category name="Remote System Explorer (Runtime Only)"/>
    </feature>
-   <feature url="features/org.eclipse.rse.sdk_1.0.0.200607201800.jar" id="org.eclipse.rse.sdk" version="1.0.0.200607201800">
+   <feature url="features/org.eclipse.rse.sdk_1.0.0.qualifier.jar" id="org.eclipse.rse.sdk" version="1.0.0.qualifier">
       <category name="Remote System Explorer (RSE)"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ssh_1.0.0.200607201800.jar" id="org.eclipse.rse.ssh" version="1.0.0.200607201800">
+   <feature url="features/org.eclipse.rse.ssh_1.0.0.qualifier.jar" id="org.eclipse.rse.ssh" version="1.0.0.qualifier">
       <category name="Remote System Explorer (Runtime Only)"/>
    </feature>
-   <feature url="features/org.eclipse.rse.examples_1.0.0.200608180112.jar" id="org.eclipse.rse.examples" version="1.0.0.200608180112">
+   <feature url="features/org.eclipse.rse.examples_1.0.0.qualifier.jar" id="org.eclipse.rse.examples" version="1.0.0.qualifier">
       <category name="Remote System Explorer (RSE)"/>
    </feature>
    <category-def name="Remote System Explorer (RSE)" label="RSE">

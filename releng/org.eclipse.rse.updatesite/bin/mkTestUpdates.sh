@@ -18,7 +18,15 @@ export PATH=/shared/common/ibm-java2-ppc64-50/bin:$PATH
 cd ..
 SITE=`pwd`
 rm site.xml web/site.xsl
-cvs -q update -d
+cvs -q update -dPR
+if [ -f site.xml.new ]; then
+  rm -f site.xml.new
+fi
+if [ -f web/site.xsl.new ]; then
+  rm -f web/site.xsl.new
+fi
+
+# get newest plugins and features: to be done manually on real update site
 if [ `basename $SITE` = testUpdates ]; then
     echo "Working on test update site"
     REL=`ls $HOME/ws/working/package | sort | tail -1`
@@ -43,10 +51,16 @@ if [ `basename $SITE` = testUpdates ]; then
 else
     echo "Working on official update site"
 fi
-TAG=`ls features | head -1 | sed -e 's,[^_]*_[0-9.]*\([^.]*\).jar,\1,'`
-sed -e "s,200607201800,$TAG,g" \
-    site.xml > site.xml.new
-mv -f site.xml.new site.xml
+FEATURES=`grep 'features/[^ ]*\.qualifier\.jar' site.xml | sed -e 's,^[^"]*"features/\([^_]*_[0-9.]*\).*$,\1,g'`
+for feature in $FEATURES ; do
+  #list newest ones first
+  TAG=`ls -t features/${feature}*.jar | head -1 | sed -e 's,[^_]*_[0-9]*\.[0-9]*\.[0-9]*\.\([^.]*\).jar,\1,'`
+  if [ "$TAG" != "" ]; then
+    echo "$feature : $TAG"
+    sed -e "/$feature/s/qualifier/$TAG/g" site.xml > site.xml.new
+    mv -f site.xml.new site.xml
+  fi
+done
 
 # optimize the site
 # see http://wiki.eclipse.org/index.php/Platform-releng-faq
@@ -55,7 +69,7 @@ mv -f site.xml.new site.xml
 # See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154069
 echo "Packing the site... $SITE"
 java -jar $HOME/ws/eclipse/startup.jar \
-	-Dorg.eclipse.update.jarprocessor.pack200=$mydir \
+	-Dorg.eclipse.update.jarprocessor.pack200=$mydir/pack200 \
     -application org.eclipse.update.core.siteOptimizer \
     -jarProcessor -outputDir $SITE \
     -processAll -pack $SITE

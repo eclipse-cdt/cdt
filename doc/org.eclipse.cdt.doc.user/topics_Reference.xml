@@ -64,7 +64,6 @@
 			<topic label="Environment" href="reference/cdt_o_mproj_pref_env.htm"/>
 			<topic label="Build Macros" href="reference/cdt_o_mproj_pref_macro.htm"/>
 		</topic>
-		<topic label="Search preferences" href="reference/cdt_u_search_pref.htm"/>
 	</topic>
 	<topic label="C/C++ Project Properties" href="reference/cdt_u_properties.htm">
 		<topic label="Managed Make Projects" href="reference/cdt_o_mmake_proj.htm">

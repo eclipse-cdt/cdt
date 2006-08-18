@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -504,13 +505,16 @@ public class CSourceViewerDecorationSupport
 				}
 			} else if (statement instanceof IASTPreprocessorEndifStatement) {
 				IASTPreprocessorEndifStatement endifStmt = (IASTPreprocessorEndifStatement)statement;
-				boolean wasInInactiveCode = ((Boolean)inactiveCodeStack.pop()).booleanValue();
-				if (inInactiveCode && !wasInInactiveCode) {
-					IASTNodeLocation nodeLocation = endifStmt.getNodeLocations()[0];
-					int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
-					positions.add(new ReusableRegion(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
+				try {
+					boolean wasInInactiveCode = ((Boolean)inactiveCodeStack.pop()).booleanValue();
+					if (inInactiveCode && !wasInInactiveCode) {
+						IASTNodeLocation nodeLocation = endifStmt.getNodeLocations()[0];
+						int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
+						positions.add(new ReusableRegion(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
+					}
+					inInactiveCode = wasInInactiveCode;
 				}
-				inInactiveCode = wasInInactiveCode;
+		 		catch( EmptyStackException e) {}
 			}
 		}
 		if (inInactiveCode) {

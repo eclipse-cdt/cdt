@@ -44,13 +44,10 @@
   RSE quality to improve more and more as we are approaching our 1.0 release.</li>
 <li>Numerous bugs have been fixed, and we consider RSE safe now for 
   all kinds of data transfer, even if it's done in multiple background sessions
-  (except FTP, which will be enhanced as soon as the Jakarta Commons Net library
+  (except <b>FTP</b>, which will be enhanced as soon as the Jakarta Commons Net library
   passes EMO legal review).</li>
-<li>See also the
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0M3-200606300720/buildNotes.php">
-  last milestone's New and Noteworthy</a>.</li>
 <li>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-06-30&chfieldto=2006-08-18&chfield=resolution">
-  this query</a> to show the list of bugs fixed since 
+  this query</a> to show the list of bugs fixed since the last milestone,
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0M3-200606300720/index.php">
   RSE 1.0M3</a>.</li>
 <li>Look <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
@@ -71,135 +68,40 @@
 	</tr>
 </table>
 <table><tbody><tr><td>
-<p>The simplest way to get RSE is via the Update Manager: From your running instance
-of Eclipse 3.2, choose <b>Help &gt; Software Updates &gt; Find and Install...</b>.
-Choose "Search for New Features to Install", and add a new Remote Site named
-"RSE" and pointing to <b>http://download.eclipse.org/dsdp/tm/updates/</b>.
-Select the RSE SDK feature, and perform the update process as usual.</p>
-<p>If you prefer manual installation, you can download RSE SDK and either
-<ul><li>Extract it into your installation of Eclipse 3.2, or</li>
-    <li>Extract it into an empty directory and link it as product extension via Help &gt; Install/Update, or</li>
-    <li>(If you want to write code for RSE) extract it into an empty directory, and from an Eclipse PDE Workspace 
-        choose Import &gt; Plug-in development &gt; Plug-ins and Fragemtns. Select the RSE directory and import
-        everything.</li>
-</ul>
-Start Eclipse Workbench, and choose <b>Window &gt; Open Perspective &gt; Other &gt; Remote System Explorer</b>.</p>
-
-<p>Even without an actual connection to a remote system, you can start experimenting with the RSE UI on the 
-local host, which is shown by default:
-<ul>
-  <li>Browse the Filesystem, choose contextmenu &gt; show in Table, and observe the Properties view</li>
-  <li>Create a new Filter to show specific resources in the file system only
-  <li>Launch an RSE Shell (Shells node &gt; Launch)
-      <ul><li>In the Shell, perform commands such as ls, dir, ps, gcc, make and see the output interpreted</li>
-          <li>Use Ctrl+Space Content Assist on the shell command entry field</li>
-      </ul></li>
-</ul>
-For operations on an actual remote system, you can either
-<ul>
-  <li>use the "<b>SSH Only</b>" system type (<b>New > Other > Remote Systems Explorer > Connection</b>), or</li>
-  <li>start a dstore server daemon on the remote system and use any of the other connection types.</li>
-</ul>    
+<p>The RSE User Documentation now has a
+<a href="http://dsdp.eclipse.org/help/latest/index.jsp?topic=/org.eclipse.rse.doc.user/gettingstarted/g_start.html">
+Getting Started Tutorial</a> that guides you through installation, first steps,
+connection setup and important tasks.</p>
 </td></tr></tbody></table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">Installing the Dstore server</font></b></td>
+		<font face="Arial,Helvetica" color="#FFFFFF">API Freeze</font></b></td>
 	</tr>
 </table>
 <table><tbody><tr><td>
-<p>
-RSE is a framework that supports plugging in many different communication protocols.
-By default, the dstore, FTP and ssh protocol plug-ins are provided, with dstore being 
-the richest in features.</p>
-<p>
-Dstore requirs a server to run on the remote system. There are several methods to 
-get a server launched for a particular user, the most easy one to set up is the 
-daemon method. To start a dstore launcher daemon,
+<p>As per the Target Management 
+<a href="http://www.eclipse.org/dsdp/tm/development/plan.php#M4">plan</a>,
+we reached API Freeze for RSE M4.</p>
+<p>In fact we have reviewed and documented all relevant APIs, but just like most
+Eclipse projects, we'll still reserve the right to make API improvements when
+committers vote on them. Votes will be held publicly, such that everyone will
+be informed in case the APIs should change.</p>
+<p>Currently, we see the following areas for potential API changes:
 <ul>
-<li>On Windows:<ul>
-  <li>Extract the rseserver-*-windows.zip package and cd to it.</li>
-  <li>Run <b>setup.bat</b>, then run <b>daemon.bat</b>.</li>
-  </ul></li>
-<li>On Linux or AIX or other Unix:<ul>
-  <li>Extract the appropriate rseserver-*.tar package.</li>
-  <li>Become <b>root</b> and cd to the package directory.</li>
-  <li>Make sure that a <b>Sun or IBM JRE 1.4</b> or higher is in the PATH. The gcj-based java installation
-      that comes with many Linux distributions will not do! You can download a Sun JRE from
-      <a href="http://java.sun.com">http://java.sun.com</a>.
-  <li>Run <b>perl daemon.pl</b>.
-  </ul></li>
+  <li>Classes and Interfaces that are not meant for public use will be
+   moved to packages tagged as <tt>internal</tt>. This will apply 
+   particularly to the "implementation" plugins for the ssh, ftp and
+   local subsystems (these do not define any new APIs anyways).</li>
+  <li>The <tt>IConnectorService</tt> interface may be slightly modified
+   in order to allow for better UI / Non-UI separation.</li>
+  <li>Some RSE Model classes may be moved from the UI plugin to the 
+   non-UI core plugin.</li>
 </ul>
-<p>
-<b>Note:</b> In its default configuration for testing, the dstore daemon accepts <b>unencrypted 
-passwords</b> from the RSE client. For production use, SSL can be enabled in order to encrypt
-connections, or the RSE server can be launched differently (e.g. through ssh).</p>
-<p>
-When no root access is available on the remote system (typically UNIX), normal
-users can start a dstore server for themselves only, instead of a daemon:
-<ul>
-<li>On the remote system, run <b>perl server.pl [portname]</b></li>
-<li>On the RSE client, create the dstore connection</li>
-<li>After creating the connection, select it and choose Properties
-<ul><li>On <b>Server Launcher Settings</b>, choose <b>Connect to Running Server</b></li>
-    <li>On the <b>Subsystem</b> page, enter the port number you used for starting the server</li>
-</ul></li>
-<li>When connecting, enter just anything for username and password (these will be ignored).</li>
-<li>The server.pl script has more options, e.g. for using the first available
-  port instead of a well-known one, or for restricting access to a single 
-  user ID. Since all dstore communication will be on the single TCP port,
-  this port can also be forwarded through an ssh tunnel if desired.</li>
-</ul>
-
-</ul>
-
+If you want to start programming against RSE APIs now, best let us know
+about your endeavours and keep yourself up-to-date.
 </td></tr></tbody></table>
-
-<table border="0" cellspacing="5" cellpadding="2" width="100%">
-	<tr>
-		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">Using remote connections</font></b></td>
-	</tr>
-</table>
-<table><tbody><tr><td>
-<ul>
-  <li>In the RSE Perspective, Remote Systems View, press the <b>New Connection</b> button.<ul>
-    <li>Note: In the Preferences, you can enable displaying available new connection types in the RSE tree.</li></ul></li>
-  <li>Select the desired system type<ul>
-    <li>Coose system type "SSH Only" for ssh servers, or any other for dstore.</li></ul></li>
-  <li>Enter an IP address for a remote system running an ssh server or dstore server.
-    A connection name will be suggested automatically, but can be changed.<ul>
-    <li>You can also run a dstore server on the local machine for testing. In this case,
-        type "localhost" as address.</li>
-    <li>You can press Finish right away, the wizard defaults are usually fine.</li></ul></li>
-  <li>Fill in the username / password dialog.<ul>
-    <li>Note: For ssh, if you have private keys, the password here is just a dummy.
-        Enter anything and save it. You can setup ssh private key authentication through
-        the <b>Team &gt; CVS &gt; SSH2 Connection Method</b> Preference page.</li></ul></li>
-  <li><b>Browse remote files</b>, or open remote shells.<ul>
-    <li>You can <b>drag and drop</b> files between local and remote file systems, between editors and any view.
-        Files are transferred as needed.</li>
-    <li>On dstore, you can browse into remote archives (*.zip, *.tar) without having to transfer the entire contents. This works thanks
-        to "miners" on the remote side. Custom miners can be plugged into the dstore server.<br>
-        Note: Some tar formats currently fail to work. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=139207">bug 139207</a>.</li>
-  <li>On dstore, you can choose <b>Search &gt; Remote...</b>.<ul>
-    <li>The dstore miners support searching a remote file system
-      without having to transfer any data.</li></ul></li> 
-  <li>On dstore, when the remote system is Linux, AIX or Other Unix:<ul>
-    <li>Browse remote <b>Processes</b>.</li>
-    <li>Select "My Processes" and choose context menu &gt; <b>Monitor</b>.
-    <li>Enable polling, choose a short wait time. See processes appear and vanish as you perform commands in a remote shell.</li></ul></li> 
-
-</ul>
-</td></tr></tbody></table>
-
-<!--
-</td></tr></tbody></table>
-<table border="0" cellspacing="5" cellpadding="2" width="100%">
-	<tr><td colspan="2">&nbsp;</td></tr>
-</table>
--->
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
@@ -208,12 +110,11 @@ users can start a dstore server for themselves only, instead of a daemon:
 	</tr>
 </table>
 <table><tbody><tr><td>
-The following M4 <a href="http://www.eclipse.org/dsdp/tm/development/plan.php">original plan</a> deliverables did 
-not make it into this build:
+The following M4 <a href="http://www.eclipse.org/dsdp/tm/development/plan.php#M4">plan</a>
+deliverables did not make it into this build:
 <ul>
 <li>User Actions, and Import/Export were deferred with M3 already. 
-  A new <a href="http://www.eclipse.org/dsdp/tm/development/plan.php">plan</a>
-  has been published.</li>
+  A new plan has been published with M3 already.</li>
 <li>JUnit tests did not make it into the build due to pending IP legal review.
   They are available from Bugzilla 
   <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=149080">bug 149080</a>

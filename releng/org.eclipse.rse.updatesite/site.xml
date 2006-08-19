@@ -30,7 +30,7 @@
          RSE Runtime-only features: no developer documentation or sources.
       </description>
    </category-def>
-   <category-def name="Remote System Explorer (With SDK)" label="RSE_SDK">
+   <category-def name="Remote System Explorer (RSE)" label="RSE_SDK">
       <description>
          Remote System Explorer (RSE) with developer documentation and sources..
       </description>

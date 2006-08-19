@@ -14,7 +14,8 @@
 <h1 class="topictitle1">Connecting to a remote Linux or UNIX server</h1>
 <p>The following documentation explains how to install the Linux or UNIX server
 code, start the server daemon, and make a connection to a remote Linux
-or UNIX server.</p>
+or UNIX server. Look <a href="tbeginwindows.html">here</a> for setting up
+a server on <a href="tbeginwindows.html">Windows</a>.</p>
 <div>
 <div class="p">
 <p><b>Prerequisites</b></p>
@@ -116,9 +117,21 @@ append a call to the daemon to your startup script.  Add the following lines
 to the bottom of the /etc/rc.d/rc.local file:<pre>cd /opt/rseserver
 perl ./daemon.pl &amp;</pre>
 </div>
-<p><b>SSL Encryption</b></p>
+<p><b>SSL Encryption and Firewalls</b></p>
 <div class="p">By default the RSE Dstore connection is unencrypted. You
 can, however, configure it to use SSL encryption.
+<p>Because all dstore data transfer is done through a single TCP/IP 
+connection, the connection can also be tunneled through an ssh channel.
+In fact, the same ssh channel can also be used to start the server,
+like in the following example:
+<pre>
+ssh -l moberhuber build.eclipse.org -L27127:build.eclipse.org:27127 \
+  "sh -c 'cd ~/rseserver/latest; ls; perl ./server.pl 27127'"
+</pre>
+Here, the RSE Server is started on port 27127 through an ssh connection,
+and at the same time port 27127 is forwarded through ssh to the local 
+host. You can now connect RSE to localhost:27127, and the connection
+will transparently be forwarded to the remote system.
 </div>
 </div>
 </div><br></br>

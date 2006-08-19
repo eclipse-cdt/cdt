@@ -126,7 +126,7 @@ In fact, the same ssh channel can also be used to start the server,
 like in the following example:
 <pre>
 ssh -l moberhuber build.eclipse.org -L27127:build.eclipse.org:27127 \
-  "sh -c 'cd ~/rseserver/latest; ls; perl ./server.pl 27127'"
+  "sh -c 'cd ~/rseserver/latest; perl ./server.pl 27127'"
 </pre>
 Here, the RSE Server is started on port 27127 through an ssh connection,
 and at the same time port 27127 is forwarded through ssh to the local 

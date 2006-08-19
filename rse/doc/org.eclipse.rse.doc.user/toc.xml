@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 <toc label="RSE User Guide">
-   <topic label="Getting Started" href="gettingstarted/gstart.html">
+   <topic label="Getting Started" href="gettingstarted/g_start.html">
       <topic label="Installing the Remote System Explorer" href="gettingstarted/g1installing.html"/>
       <topic label="First Steps with the Remote System Explorer" href="gettingstarted/g2firststeps.html"/>
+      <topic label="Setting up a dstore server" href="tasks/tbeginlinux.html"/>
       <topic label="Using Remote Connections" href="gettingstarted/gusing.html"/>
       <topic label="Extending Remote System Explorer" href="gettingstarted/gxtending.html"/>
    </topic>

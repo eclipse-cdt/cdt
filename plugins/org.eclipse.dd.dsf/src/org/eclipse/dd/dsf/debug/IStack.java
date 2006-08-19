@@ -62,6 +62,17 @@ public interface IStack extends IDataModelService {
     void getFrames(IRunControl.IExecutionDMC execContext, GetDataDone<IFrameDMC[]> done);
     
     /**
+     * Retrieves the top stack frame for the given execution context.  
+     * Retrieving just the top frame DMC and corresponding data can be much 
+     * more efficient than just retrieving the whole stack, before the data
+     * is often included in the stopped event.  Also for some UI functionality, 
+     * such as setpping, only top stack frame is often needed. 
+     * @param execContext
+     * @param done
+     */
+    void getTopFrame(IRunControl.IExecutionDMC execContext, GetDataDone<IFrameDMC> done);
+    
+    /**
      * Retrieves variables which were arguments to the stack frame's function.
      */
     void getArguments(IFrameDMC frameCtx, GetDataDone<IVariableDMC[]> done);

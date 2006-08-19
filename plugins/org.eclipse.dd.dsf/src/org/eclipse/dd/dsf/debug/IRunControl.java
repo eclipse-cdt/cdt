@@ -17,7 +17,13 @@ import org.eclipse.dd.dsf.model.IDataModelService;
  */
 public interface IRunControl extends IDataModelService
 {
-
+    /**
+     * Amount of time in seconds, that it takes the ISteppingTimedOutEvent event to
+     * be issued after a step is started. 
+     * @see ISteppingTimedOutEvent 
+     */
+    public final static int STEPPING_TIMEOUT = 5;
+    
     /**
      * Execution context is the object on which run control operations can be
      * performed.  A lot of higher-level services reference this context to build
@@ -50,18 +56,34 @@ public interface IRunControl extends IDataModelService
     public interface IContainerResumedEvent extends IDataModelEvent<IExecutionDMC> {
         StateChangeReason getReason();
     }
-    public interface IStartedEvent extends IDataModelEvent<IExecutionDMC> {
-        IExecutionDMC getExecutionContext();
-    }
-    public interface IExitedEvent extends IDataModelEvent<IExecutionDMC> {
-        IExecutionDMC getExecutionContext();
-    }
     
+    /**
+     * Indicates that a new execution context (thread) was started.  The DMC 
+     * for the event is the container of the new exec context.
+     */
+    public interface IStartedEvent extends IDataModelEvent<IContainerDMC> {
+        IExecutionDMC getExecutionContext();
+    }
+
+    /**
+     * Indicates that an execution context has exited.  As in the started event, 
+     * the DMC for the event is the container of the exec context.
+     */
+    public interface IExitedEvent extends IDataModelEvent<IContainerDMC> {
+        IExecutionDMC getExecutionContext();
+    }
+
+    /**
+     * Indicates that the given context has been stepping for some time, 
+     * and the UI (views and actions) may need to be updated accordingly. 
+     */
+    public interface ISteppingTimedOutEvent extends IDataModelEvent<IExecutionDMC> {
+    }
+
     /**
      * Display information for an execution context.
      */
     public interface IExecutionData extends IDataModelData {
-        boolean isSuspended();
         StateChangeReason getStateChangeReason();
     }
 
@@ -81,6 +103,7 @@ public interface IRunControl extends IDataModelService
     void suspend(IExecutionDMC context, Done done);
     public enum StepType { STEP_OVER, STEP_INTO, STEP_RETURN };
     boolean isStepping(IExecutionDMC context);
+    boolean isSteppingTimedOut(IExecutionDMC context);
     boolean canStep(IExecutionDMC context);
     void step(IExecutionDMC context, StepType stepType, Done done);
     boolean canInstructionStep(IExecutionDMC context);

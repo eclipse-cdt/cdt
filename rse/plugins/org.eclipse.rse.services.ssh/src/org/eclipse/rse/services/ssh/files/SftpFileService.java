@@ -22,10 +22,12 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.util.NLS;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -158,7 +160,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			} else {
 				messageException = new RemoteFileIOException(e);
 			}
-			messageException.getSystemMessage().makeSubstitution("Sftp: "+sftpe.toString());
+			messageException.getSystemMessage().makeSubstitution("Sftp: "+sftpe.toString()); //$NON-NLS-1$ //Dont translate since the exception isnt translated either
 			return messageException;
 		}
 		return new RemoteFileIOException(e);
@@ -213,7 +215,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		List results = new ArrayList();
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-			    java.util.Vector vv=getChannel("SftpFileService.internalFetch").ls(parentPath); //$NON-NLS-1$
+			    Vector vv=getChannel("SftpFileService.internalFetch").ls(parentPath); //$NON-NLS-1$
 			    for(int ii=0; ii<vv.size(); ii++) {
 			    	Object obj=vv.elementAt(ii);
 			    	if(obj instanceof ChannelSftp.LsEntry){
@@ -334,8 +336,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				channel.setStat(dst, attr);
 				if (attr.getSize() != localFile.length()) {
 					//Error: file truncated? - Inform the user!!
-					//TODO test if this works, and externalize string
-					throw makeSystemMessageException(new IOException("ssh.upload: file size mismatch for "+dst));
+					//TODO test if this works
+					throw makeSystemMessageException(new IOException(NLS.bind(SshServiceResources.SftpFileService_Error_upload_size,dst)));
 					//return false;
 				}
 			}
@@ -445,8 +447,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				//if (0==(attrs.getPermissions() & 00400)) localFile.setReadOnly();
 				if (attr.getSize() != localFile.length()) {
 					//Error: file truncated? - Inform the user!!
-					//TODO test if this works, and externalize string
-					throw makeSystemMessageException(new IOException("ssh.download: file size mismatch for "+remotePath)); //$NON-NLS-1$
+					//TODO test if this works
+					throw makeSystemMessageException(new IOException(NLS.bind(SshServiceResources.SftpFileService_Error_download_size,remotePath)));
 					//return false;
 				}
 			}
@@ -538,7 +540,18 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
 				String fullPath = remoteParent + '/' + fileName;
-				SftpATTRS attrs = getChannel("SftpFileService.delete").stat(fullPath); //$NON-NLS-1$
+				SftpATTRS attrs = null;
+				try {
+					attrs = getChannel("SftpFileService.delete").stat(fullPath); //$NON-NLS-1$
+				} catch (SftpException e) {
+					//bug 154419: test for dangling symbolic link 
+					if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
+						//simply try to delete --> if it really doesnt exist, this will throw an exception
+						getChannel("SftpFileService.delete.rm").rm(fullPath); //$NON-NLS-1$
+					} else {
+						throw e;
+					}
+				}
 				if (attrs==null) {
 					//doesn't exist, nothing to do
 				} else if (attrs.isDir()) {
@@ -547,6 +560,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 					} catch(SftpException e) {
 						if(e.id==ChannelSftp.SSH_FX_FAILURE) {
 							throw new RemoteFolderNotEmptyException();
+						} else {
+							throw e;
 						}
 					}
 				} else {

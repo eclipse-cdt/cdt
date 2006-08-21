@@ -16,6 +16,10 @@ import org.eclipse.osgi.util.NLS;
 public class SshServiceResources extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.rse.services.ssh.SshServiceResources"; //$NON-NLS-1$
 
+	public static String SftpFileService_Error_download_size;
+
+	public static String SftpFileService_Error_upload_size;
+
 	public static String SshPlugin_Unexpected_Exception;
 	
 	public static String SftpFileService_Description;

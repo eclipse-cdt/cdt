@@ -171,7 +171,7 @@ public class SftpHostFile implements IHostFile {
 		if (isLink()) {
 			result = "symbolic link"; //$NON-NLS-1$
 			if (fLinkTarget!=null) {
-				if (fLinkTarget.equals(":dangling link")) {
+				if (fLinkTarget.equals(":dangling link")) { //$NON-NLS-1$
 					result = "broken symbolic link to `unknown'"; //$NON-NLS-1$
 				} else if(isDirectory()) {
 					result += "(directory):" + fLinkTarget; //$NON-NLS-1$

@@ -9,26 +9,6 @@
 	<style>@import url("web/site.css");</style>
 	</head>
 	<body>
-	<div align="right" width="230">
-	  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.user/images/RSESample.gif">
-      <img src="web/images/RSESample_small.gif" alt="RSE Sample Screenshot" border="0" width="230" height="165" title="RSE Sample Screenshot" />
-      </a>
-    </div>
-
-	<h1 class="title">Target Management Project Updates</h1>
-	<h2>Just getting started?</h2>
-      <p><b>See <a href="http://www.eclipse.org/dsdp/tm/tutorial/">http://www.eclipse.org/dsdp/tm/tutorial/</a></b></p>
-    <hr/>
-    <p>For getting the software on this site, you need to use the Eclipse
-    Update Manager (choose <i>Help &gt; Software Updates &gt; Find and Install</i>
-    in Eclipse 3.2 or later). Define a new remote update site named "Target Management Updates",
-    and specify</p> 
-    <p>&nbsp;&nbsp;&nbsp;<code>http://download.eclipse.org/dsdp/tm/updates/</code></p>
-    <p>as the URL to use.</p>
-    <p>See <a href="http://help.eclipse.org/help32/index.jsp?topic=/org.eclipse.platform.doc.user/tasks/tasks-34.htm">
-      Eclipse Help</a> for general information about using Update Manager.</p>
-    <p>If you do not have Eclipse installed yet, better use the downloads from
-    <a href="http://download.eclipse.org/dsdp/tm/downloads/">this site</a>.</p>
 
 	<p class="bodyText"><xsl:value-of select="description"/></p>
 	<table width="100%" border="0" cellspacing="1" cellpadding="2">

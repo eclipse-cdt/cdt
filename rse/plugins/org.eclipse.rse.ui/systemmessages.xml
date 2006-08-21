@@ -1356,6 +1356,7 @@ Contributors:
                           <LevelOne>Initializing Remote Systems Explorer host server</LevelOne>
                           <LevelTwo></LevelTwo>
                     </Message>
+    
                     <Message ID="2314" Indicator="I">
                           <LevelOne>Communication with the remote system %1 has been secured using SSL. Continue?</LevelOne>
                           <LevelTwo></LevelTwo>
@@ -1364,7 +1365,10 @@ Contributors:
                           <LevelOne>Connection %1 has not been secured using SSL. Proceed anyways?</LevelOne>
                           <LevelTwo></LevelTwo>
                     </Message>
-                    
+                          <Message ID="2316" Indicator="E">
+                          <LevelOne>The specified server port is out of the allowed range: %1</LevelOne>
+                          <LevelTwo></LevelTwo>
+                    </Message>
                     <Message ID="3001" Indicator="E">
                           <LevelOne>The connection %1 is currently offline and cannot be connected.</LevelOne>
                           <LevelTwo>You have performed an action which requires a live connection to the remote system.  Switch the connection to online and perform the action again.  To switch the connection online, right click on the connection %1 and select the Work Offline action.</LevelTwo>

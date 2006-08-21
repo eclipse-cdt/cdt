@@ -623,6 +623,19 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 						return;
 					}
 				}
+				else if (isPortOutOfRange(launchMsg))
+				{
+					launchFailed = true;
+					
+					SystemMessage cmsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_PORT_OUT_RANGE);
+					int colonIndex = launchMsg.indexOf(':');
+					String portRange = launchMsg.substring(colonIndex + 1);
+					cmsg.makeSubstitution(portRange);
+					
+					ShowConnectMessage msgAction = new ShowConnectMessage(cmsg);
+					Display.getDefault().asyncExec(msgAction);
+					return;
+				}
 				else
 				{
 					launchFailed = true;
@@ -1055,6 +1068,11 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 
 			throw new SystemMessageException(msg);
 		}
+	}
+	
+	protected boolean isPortOutOfRange(String message)
+	{
+		return message.indexOf(IDataStoreConstants.PORT_OUT_RANGE) != -1;
 	}
 	
 	protected boolean isPasswordExpired(String message)

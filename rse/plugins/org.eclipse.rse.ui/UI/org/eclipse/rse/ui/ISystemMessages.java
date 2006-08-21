@@ -122,6 +122,7 @@ public interface ISystemMessages
 	public static final String MSG_STARTING_SERVER_VIA_DAEMON = "RSEC2311";
 	public static final String MSG_CONNECTING_TO_SERVER= "RSEC2312";
 	public static final String MSG_INITIALIZING_SERVER= "RSEC2313";
+	public static final String MSG_PORT_OUT_RANGE = "RSEC2316";
 	
   	//public static final String MSG_DISCONNECT_PREFIX = MSG_PREFIX + "Disconnect.";	
 	public static final String MSG_DISCONNECT_PROGRESS = "RSEG1059"; //MSG_DISCONNECT_PREFIX + "Disconnecting";

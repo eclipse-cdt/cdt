@@ -41,52 +41,55 @@ import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.model.ISSLProperties;
 import org.eclipse.dstore.core.util.ssl.DStoreSSLContext;
 
-
 /**
- * This class is the DataStore daemon.  It is used for authenticating users, 
- * launching DataStore servers under particular user IDs, and providing a
- * client with enough information to conntect to a launched server.
+ * This class is the DataStore daemon. It is used for authenticating users,
+ * launching DataStore servers under particular user IDs, and providing a client
+ * with enough information to conntect to a launched server.
  */
-public class ServerLauncher extends Thread
-{
-
+public class ServerLauncher extends Thread {
 
 	/**
 	 * An instances of this class get loaded whenever a client requests access
-	 * to a DataStore server.  The ConnectionListener attempts to launch a server
+	 * to a DataStore server. The ConnectionListener attempts to launch a server
 	 * under the client user's ID, communicating back information to the client
-	 * so that if may connect to the launched server.  If the authentification and
-	 * connection to the server are successful, ConnectionListener continues to 
-	 * monitor the server connection until it is terminated.
+	 * so that if may connect to the launched server. If the authentification
+	 * and connection to the server are successful, ConnectionListener continues
+	 * to monitor the server connection until it is terminated.
 	 */
-	public class ConnectionListener extends Thread implements HandshakeCompletedListener
-	{
+	public class ConnectionListener extends Thread implements
+			HandshakeCompletedListener {
 
 		private Socket _socket;
+
 		private PrintWriter _writer;
+
 		private BufferedReader _reader;
+
 		private Process _serverProcess;
+
 		private String _port;
+
 		private boolean _done;
+
 		private BufferedReader _outReader;
+
 		private BufferedReader _errReader;
-		
 
 		/**
 		 * Constructor
-		 * @param socket a socket to the daemon
+		 * 
+		 * @param socket
+		 *            a socket to the daemon
 		 */
-		public ConnectionListener(Socket socket)
-		{
+		public ConnectionListener(Socket socket) {
 
 			_socket = socket;
-			try
-			{
-				_writer = new PrintWriter(new OutputStreamWriter(_socket.getOutputStream(), DE.ENCODING_UTF_8));
-				_reader = new BufferedReader(new InputStreamReader(_socket.getInputStream(), DE.ENCODING_UTF_8));
-			}
-			catch (java.io.IOException e)
-			{
+			try {
+				_writer = new PrintWriter(new OutputStreamWriter(_socket
+						.getOutputStream(), DE.ENCODING_UTF_8));
+				_reader = new BufferedReader(new InputStreamReader(_socket
+						.getInputStream(), DE.ENCODING_UTF_8));
+			} catch (java.io.IOException e) {
 				System.out.println("ServerLauncher:" + e);
 			}
 		}
@@ -94,10 +97,8 @@ public class ServerLauncher extends Thread
 		/**
 		 * Called when shutdown
 		 */
-		public void finalize() throws Throwable
-		{
-			if (_serverProcess != null)
-			{
+		public void finalize() throws Throwable {
+			if (_serverProcess != null) {
 				_serverProcess.destroy();
 			}
 			super.finalize();
@@ -107,44 +108,33 @@ public class ServerLauncher extends Thread
 		 * Listens to the connection and prints any output while the connection
 		 * is active
 		 */
-		public void run()
-		{
+		public void run() {
 			_done = true;
-			if (listen())
-			{
-				if (_serverProcess != null)
-				{
+			if (listen()) {
+				if (_serverProcess != null) {
 					_done = false;
 
-					try
-					{
+					try {
 						String line = null;
 
-						while ((_outReader != null) && ((line = _outReader.readLine()) != null))
-						{
-							if (line.equals(ServerReturnCodes.RC_FINISHED))
-							{
+						while ((_outReader != null)
+								&& ((line = _outReader.readLine()) != null)) {
+							if (line.equals(ServerReturnCodes.RC_FINISHED)) {
 								break;
-							}
-							else
-							{
+							} else {
 								System.out.println(line);
 							}
 						}
 
-						if (_outReader != null)
-						{
+						if (_outReader != null) {
 							_outReader.close();
 						}
-						if (_errReader != null)
-						{
+						if (_errReader != null) {
 							_errReader.close();
 						}
 
 						_serverProcess.waitFor();
-					}
-					catch (Exception e)
-					{
+					} catch (Exception e) {
 						System.out.println("ServerLauncher:" + e);
 					}
 				}
@@ -154,34 +144,53 @@ public class ServerLauncher extends Thread
 				_errReader = null;
 				_serverProcess = null;
 				_done = true;
-			}
-			else
-			{
+			} else {
 				_done = true;
 			}
 		}
 
 		/**
 		 * Indicates whether the connection has terminated or not
+		 * 
 		 * @return true if the connection has terminated
 		 */
-		public boolean isDone()
-		{
+		public boolean isDone() {
 			return _done;
 		}
 
 		/**
 		 * Returns the DataStore server port used
+		 * 
 		 * @return the server port
 		 */
-		public String getServerPort()
-		{
+		public String getServerPort() {
 			return _port;
 		}
+
+		private boolean isPortInRange(String portStr, String portRange) {
+			if (portRange != null) {
+				String[] range = portRange.split("-");
+				if (range.length == 2) {
+					int lPort = 0;
+					int hPort = 0;
+					int port = 0;
+					try {
+						lPort = Integer.parseInt(range[0]);
+						hPort = Integer.parseInt(range[1]);
+						port = Integer.parseInt(portStr);
+					} catch (Exception e) {
+					}
+
+					return (port >= lPort && port <= hPort);
+				}
+			}
+			return true;
+		}
+
 		/**
-		 * Attempt to start a new DataStore server.  The port and the ticket for a
-		 * newly started DataStore are captured and sent back to the client so that it
-		 * may connect to the server.
+		 * Attempt to start a new DataStore server. The port and the ticket for
+		 * a newly started DataStore are captured and sent back to the client so
+		 * that it may connect to the server.
 		 * 
 		 * @return whether the server started successfully
 		 */
@@ -206,12 +215,26 @@ public class ServerLauncher extends Thread
 			}
 
 			
+			
 			if (_serverPortRange != null && (_port == null || _port.equals("0")))
 			{
 				_port = _serverPortRange;
-			}
-			
+			}		
+
 			{
+				boolean isError = false;
+				if (_serverPortRange != null && _port != _serverPortRange)
+				{
+					if (!isPortInRange(_port, _serverPortRange))
+					{
+						String message = IDataStoreConstants.PORT_OUT_RANGE;
+						message += _serverPortRange;
+						_writer.println(message);
+						isError = true;
+					}
+				}
+				if (!isError)
+				{
 				// start new server
 				try
 				{
@@ -298,7 +321,8 @@ public class ServerLauncher extends Thread
 					}
 					else
 					{
-						// look for the server startup string, it needs to occur somewhere in the line.
+						// look for the server startup string, it needs to occur
+						// somewhere in the line.
 						String status = _errReader.readLine();
 						while (status!=null && (status.indexOf(ServerReturnCodes.RC_DSTORE_SERVER_MAGIC) < 0))
 						{
@@ -326,7 +350,8 @@ public class ServerLauncher extends Thread
 							{
 								status = new String(IDataStoreConstants.UNKNOWN_PROBLEM);
 							}
-							//TODO Make sure that the client doesnt try connecting forever
+							// TODO Make sure that the client doesnt try
+							// connecting forever
 							_writer.println(status);
 
 							_serverProcess.destroy();
@@ -338,10 +363,12 @@ public class ServerLauncher extends Thread
 							_errReader = null;
 						}
 					}
+		
 				}
 				catch (IOException e)
 				{
 					_writer.println(IDataStoreConstants.SERVER_FAILURE + e);
+				}
 				}
 			}
 
@@ -360,33 +387,31 @@ public class ServerLauncher extends Thread
 			return connected;
 		}
 
-
-		public void handshakeCompleted(HandshakeCompletedEvent event)
-		{
+		public void handshakeCompleted(HandshakeCompletedEvent event) {
 			System.out.println("handshake completed");
 			System.out.println(event);
 
 		}
 	}
 
-
 	private ServerSocket _serverSocket;
+
 	private String _path;
+
 	private ArrayList _connections;
+
 	private String _serverPortRange;
+
 	private ISSLProperties _sslProperties;
-	
 
 	public static int DEFAULT_DAEMON_PORT = 4035;
 
 	/**
 	 * Constructor
 	 */
-	public ServerLauncher()
-	{		
+	public ServerLauncher() {
 		String pluginPath = System.getProperty("A_PLUGIN_PATH");
-		if (pluginPath == null)
-		{
+		if (pluginPath == null) {
 			System.out.println("A_PLUGIN_PATH is not defined");
 			System.exit(-1);
 		}
@@ -400,13 +425,13 @@ public class ServerLauncher extends Thread
 
 	/**
 	 * Constructor
-	 * @param portStr the port for the daemon socket to run on
+	 * 
+	 * @param portStr
+	 *            the port for the daemon socket to run on
 	 */
-	public ServerLauncher(String portStr)
-	{
+	public ServerLauncher(String portStr) {
 		String pluginPath = System.getProperty("A_PLUGIN_PATH");
-		if (pluginPath == null)
-		{
+		if (pluginPath == null) {
 			System.out.println("A_PLUGIN_PATH is not defined");
 			System.exit(-1);
 		}
@@ -416,18 +441,18 @@ public class ServerLauncher extends Thread
 		_connections = new ArrayList();
 		init(portStr);
 	}
-	
 
 	/**
 	 * Constructor
-	 * @param portStr the port for the daemon socket to run on
-	 * @param serverPortRange the port range for launched servers
+	 * 
+	 * @param portStr
+	 *            the port for the daemon socket to run on
+	 * @param serverPortRange
+	 *            the port range for launched servers
 	 */
-	public ServerLauncher(String portStr, String serverPortRange)
-	{
+	public ServerLauncher(String portStr, String serverPortRange) {
 		String pluginPath = System.getProperty("A_PLUGIN_PATH");
-		if (pluginPath == null)
-		{
+		if (pluginPath == null) {
 			System.out.println("A_PLUGIN_PATH is not defined");
 			System.exit(-1);
 		}
@@ -439,128 +464,107 @@ public class ServerLauncher extends Thread
 		init(portStr);
 	}
 
-	private String getKeyStoreLocation()
-	{
+	private String getKeyStoreLocation() {
 		return _sslProperties.getDaemonKeyStorePath();
 	}
-	
-	private String getKeyStorePassword()
-	{
+
+	private String getKeyStorePassword() {
 		return _sslProperties.getDaemonKeyStorePassword();
 	}
 
 	/**
 	 * initializes the DataStore daemon
 	 * 
-	 * @param port the daemon port
+	 * @param port
+	 *            the daemon port
 	 */
-	public void init(String portStr)
-	{
+	public void init(String portStr) {
 		// create server socket from port
 		_sslProperties = new ServerSSLProperties();
-		
+
 		// determine if portStr is a port range or just a port
 		String[] range = portStr.split("-");
-		if (range.length == 2)
-		{
+		if (range.length == 2) {
 			int lPort = 0;
 			int hPort = 0;
-			try
-			{
+			try {
 				lPort = Integer.parseInt(range[0]);
-				hPort = Integer.parseInt(range[1]);		
+				hPort = Integer.parseInt(range[1]);
+			} catch (Exception e) {
 			}
-			catch (Exception e)
-			{
-			}
-		
+
 			boolean socketBound = false;
-			for (int i = lPort; i < hPort && !socketBound; i++)
-			{							
+			for (int i = lPort; i < hPort && !socketBound; i++) {
 				// create server socket from port
-				try
-				{
-					if (_sslProperties.usingSSL())
-					{
+				try {
+					if (_sslProperties.usingSSL()) {
 						String keyStoreFileName = getKeyStoreLocation();
 						String keyStorePassword = getKeyStorePassword();
 
-						try				
-						{
-							SSLContext sslContext = DStoreSSLContext.getServerSSLContext(keyStoreFileName, keyStorePassword);
+						try {
+							SSLContext sslContext = DStoreSSLContext
+									.getServerSSLContext(keyStoreFileName,
+											keyStorePassword);
 
-							_serverSocket = sslContext.getServerSocketFactory().createServerSocket(i);
-						}
-						catch (Exception e)
-						{
+							_serverSocket = sslContext.getServerSocketFactory()
+									.createServerSocket(i);
+						} catch (Exception e) {
 							e.printStackTrace();
 						}
-					}
-					else
-					{
+					} else {
 						_serverSocket = new ServerSocket(i);
 					}
-					if (_serverSocket != null && _serverSocket.getLocalPort() > 0)
-					{
+					if (_serverSocket != null
+							&& _serverSocket.getLocalPort() > 0) {
 						socketBound = true;
-						System.out.println("Daemon running on: " + InetAddress.getLocalHost().getHostName() + ", port: " + i);
+						System.out.println("Daemon running on: "
+								+ InetAddress.getLocalHost().getHostName()
+								+ ", port: " + i);
 					}
-				}
-				catch (UnknownHostException e)
-				{
-					System.err.println("Networking problem, can't resolve local host");
+				} catch (UnknownHostException e) {
+					System.err
+							.println("Networking problem, can't resolve local host");
 					e.printStackTrace();
 					System.exit(-1);
-				}
-				catch (BindException e)
-				{
-					System.err.println("socket taken on "+i);
+				} catch (BindException e) {
+					System.err.println("socket taken on " + i);
 					// keep going
-				}
-				catch (IOException e)
-				{
+				} catch (IOException e) {
 					System.err.println("Failure to create ServerSocket");
 					e.printStackTrace();
 					System.exit(-1);
 				}
-			
+
 			}
-		}
-		else
-		{
+		} else {
 			int port = Integer.parseInt(portStr);
-			try
-			{
-				if (_sslProperties.usingSSL())
-				{
+			try {
+				if (_sslProperties.usingSSL()) {
 					String keyStoreFileName = getKeyStoreLocation();
 					String keyStorePassword = getKeyStorePassword();
 
-					try				
-					{
-						SSLContext sslContext = DStoreSSLContext.getServerSSLContext(keyStoreFileName, keyStorePassword);
+					try {
+						SSLContext sslContext = DStoreSSLContext
+								.getServerSSLContext(keyStoreFileName,
+										keyStorePassword);
 
-						_serverSocket = sslContext.getServerSocketFactory().createServerSocket(port);
-					}
-					catch (Exception e)
-					{
+						_serverSocket = sslContext.getServerSocketFactory()
+								.createServerSocket(port);
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
-				}
-				else
-				{
+				} else {
 					_serverSocket = new ServerSocket(port);
 				}
-				System.out.println("Daemon running on: " + InetAddress.getLocalHost().getHostName() + ", port: " + port);
-			}
-			catch (UnknownHostException e)
-			{
-				System.err.println("Networking problem, can't resolve local host");
+				System.out.println("Daemon running on: "
+						+ InetAddress.getLocalHost().getHostName() + ", port: "
+						+ port);
+			} catch (UnknownHostException e) {
+				System.err
+						.println("Networking problem, can't resolve local host");
 				e.printStackTrace();
 				System.exit(-1);
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				System.err.println("Failure to create ServerSocket");
 				e.printStackTrace();
 				System.exit(-1);
@@ -570,16 +574,16 @@ public class ServerLauncher extends Thread
 
 	/**
 	 * Return the connection listener for the specified port if there is one
-	 * @param port the port
+	 * 
+	 * @param port
+	 *            the port
 	 * @return the listener associated with the port
 	 */
-	protected ConnectionListener getListenerForPort(String port)
-	{
-		for (int i = 0; i < _connections.size(); i++)
-		{
-			ConnectionListener listener = (ConnectionListener) _connections.get(i);
-			if (listener.getServerPort().equals(port))
-			{
+	protected ConnectionListener getListenerForPort(String port) {
+		for (int i = 0; i < _connections.size(); i++) {
+			ConnectionListener listener = (ConnectionListener) _connections
+					.get(i);
+			if (listener.getServerPort().equals(port)) {
 				return listener;
 			}
 		}
@@ -587,50 +591,41 @@ public class ServerLauncher extends Thread
 		return null;
 	}
 
-
 	/**
 	 * Run the daemon
 	 */
-	public void run()
-	{
-		while (true)
-		{
-			try
-			{
+	public void run() {
+		while (true) {
+			try {
 				boolean connectionOkay = true;
 				Socket newSocket = _serverSocket.accept();
-				if (_sslProperties.usingSSL())
-				{
+				if (_sslProperties.usingSSL()) {
 
 					SSLSocket sslSocket = (SSLSocket) newSocket;
-					sslSocket.addHandshakeCompletedListener(new HandshakeCompletedListener()
-					{
+					sslSocket
+							.addHandshakeCompletedListener(new HandshakeCompletedListener() {
 
-						public void handshakeCompleted(HandshakeCompletedEvent event)
-						{
-							System.out.println("handshake completed");
-						}
+								public void handshakeCompleted(
+										HandshakeCompletedEvent event) {
+									System.out.println("handshake completed");
+								}
 
-					});
+							});
 					SSLSession session = sslSocket.getSession();
-					if (session == null)
-					{
+					if (session == null) {
 						System.out.println("handshake failed");
-						
-						
+
 						sslSocket.close();
 						connectionOkay = false;
 					}
 				}
-				if (connectionOkay)
-				{
-					ConnectionListener listener = new ConnectionListener(newSocket);
+				if (connectionOkay) {
+					ConnectionListener listener = new ConnectionListener(
+							newSocket);
 					listener.start();
 					_connections.add(listener);
 				}
-			}
-			catch (IOException ioe)
-			{
+			} catch (IOException ioe) {
 				System.err.println("Server: error initializing socket: " + ioe);
 				System.exit(-1);
 			}
@@ -639,24 +634,21 @@ public class ServerLauncher extends Thread
 
 	/**
 	 * Entry point into the DataStore daemon
-	 *
-	 * @param args the port for the daemon to run on (default is 4035).  Optionally, the second arg specifies whether to use SSL or not.
-	 *          an optional second arg can be used to specify the port range of servers that get launched
+	 * 
+	 * @param args
+	 *            the port for the daemon to run on (default is 4035).
+	 *            Optionally, the second arg specifies whether to use SSL or
+	 *            not. an optional second arg can be used to specify the port
+	 *            range of servers that get launched
 	 */
-	public static void main(String args[])
-	{
-		if (args.length == 2)
-		{
+	public static void main(String args[]) {
+		if (args.length == 2) {
 			ServerLauncher theServer = new ServerLauncher(args[0], args[1]);
 			theServer.start();
-		}
-		else if (args.length == 1)
-		{
+		} else if (args.length == 1) {
 			ServerLauncher theServer = new ServerLauncher(args[0]);
 			theServer.start();
-		}
-		else
-		{
+		} else {
 			ServerLauncher theServer = new ServerLauncher();
 			theServer.start();
 		}

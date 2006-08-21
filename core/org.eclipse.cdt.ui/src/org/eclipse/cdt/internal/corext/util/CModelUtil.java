@@ -6,9 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.util;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -16,9 +20,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 
 public class CModelUtil {
 	/**
@@ -97,5 +100,18 @@ public class CModelUtil {
 			return !container.equals(project);
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns the translation unit the element belongs to or <code>null</code> if it does not.
+	 */
+	public static ITranslationUnit getTranslationUnit(ICElement elem) {
+		while (elem != null) {
+			if (elem instanceof ITranslationUnit) {
+				return (ITranslationUnit) elem;
+			}
+			elem= elem.getParent();
+		}
+		return null;
 	}
 }

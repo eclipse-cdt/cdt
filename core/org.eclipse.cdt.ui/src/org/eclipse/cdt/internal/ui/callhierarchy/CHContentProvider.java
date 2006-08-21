@@ -20,8 +20,11 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.text.Region;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CModelException;
@@ -33,6 +36,8 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 import org.eclipse.cdt.internal.ui.missingapi.CIndexQueries;
 import org.eclipse.cdt.internal.ui.missingapi.CIndexQueries.IPDOMReference;
@@ -61,10 +66,11 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		return super.getParent(element);
 	}
 
-	public Object[] syncronouslyComputeChildren(Object parentElement) {
+	protected Object[] syncronouslyComputeChildren(Object parentElement) {
 		if (parentElement instanceof ICElement) {
 			ICElement element = (ICElement) parentElement;
-			return new Object[] { new CHNode(null, null, element, 0) };
+			ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
+			return new Object[] { new CHNode(null, tu, 0, element) };
 		}
 		if (parentElement instanceof CHNode) {
 			CHNode node = (CHNode) parentElement;
@@ -79,7 +85,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		return null;
 	}
 
-	public Object[] asyncronouslyComputeChildren(Object parentElement,
+	protected Object[] asyncronouslyComputeChildren(Object parentElement,
 			IProgressMonitor monitor) {
 		if (parentElement instanceof CHNode) {
 			CHNode node = (CHNode) parentElement;
@@ -96,50 +102,41 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		return NO_CHILDREN;
 	}
 
-	private Object[] asyncronouslyComputeReferencedBy(CHNode parent, ICElement elem) {
-		try {
-			if (elem instanceof ISourceReference) {
-				ISourceReference sf= (ISourceReference) elem;
-				ISourceRange range = sf.getSourceRange();
-				ITranslationUnit tu = sf.getTranslationUnit();
-				if (tu != null) {
-					ILanguage language = tu.getLanguage();
-					IASTTranslationUnit ast = language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
-					IASTName[] names = language.getSelectedNames(ast, range.getIdStartPos(), range.getIdLength());
-					if (names.length > 0) {
-						IASTName name= names[names.length-1];
-						IPDOMReference[] refs= CIndexQueries.getInstance().findReferences(tu, name, NPM);
-						HashMap refsPerElement= new HashMap();
-						for (int i = 0; i < refs.length; i++) {
-							IPDOMReference reference = refs[i];
-							ICElement caller= findCaller(reference);
-							if (caller != null) {
-								addToMap(caller, reference, refsPerElement);
-							}
-						}
-						ArrayList result= new ArrayList();
-						for (Iterator iter= refsPerElement.entrySet().iterator(); iter.hasNext(); ) {
-							Map.Entry entry= (Map.Entry) iter.next();
-							ICElement element= (ICElement) entry.getKey();
-							List references= (List) entry.getValue();
-							if (!references.isEmpty()) {
-								IPDOMReference firstRef= (IPDOMReference) references.get(0);
-								CHNode node= new CHNode(parent, new CHReferenceInfo(firstRef.getOffset()),
-										element, firstRef.getTimestamp());
-								Iterator iterator = references.iterator();
-								for (iterator.next(); iterator.hasNext(); ) {
-									IPDOMReference nextRef = (IPDOMReference) iterator.next();
-									node.addReference(new CHReferenceInfo(nextRef.getOffset()));
-								}
-								result.add(node);
-							}
-						}
-						return result.toArray();
-					}
+	private static IASTName toASTName(ICElement elem) throws CoreException {
+		if (elem instanceof ISourceReference) {
+			ISourceReference sf= (ISourceReference) elem;
+			ISourceRange range = sf.getSourceRange();
+			ITranslationUnit tu = sf.getTranslationUnit();
+			if (tu != null) {
+				ILanguage language = tu.getLanguage();
+				IASTTranslationUnit ast = language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
+				IASTName[] names = language.getSelectedNames(ast, range.getIdStartPos(), range.getIdLength());
+				if (names.length > 0) {
+					return names[names.length-1];
 				}
 			}
-		} catch (CModelException e) {
-			CUIPlugin.getDefault().log(e);
+		}
+		return null;
+	}
+	
+	private Object[] asyncronouslyComputeReferencedBy(CHNode parent, ICElement elem) {
+		try {
+			IASTName name = toASTName(elem);
+			if (name != null) {
+				IPDOMReference[] refs= CIndexQueries.getInstance().findReferences(name, NPM);
+				HashMap refsPerElement = sortPerElement(refs);
+				ArrayList result= new ArrayList();
+				for (Iterator iter= refsPerElement.entrySet().iterator(); iter.hasNext(); ) {
+					Map.Entry entry= (Map.Entry) iter.next();
+					ICElement element= (ICElement) entry.getKey();
+					List references= (List) entry.getValue();
+					if (!references.isEmpty()) {
+						CHNode node = createRefbyNode(parent, element, references);
+						result.add(node);
+					}
+				}
+				return result.toArray();
+			}
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
 		} catch (InterruptedException e) {
@@ -147,13 +144,41 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		return NO_CHILDREN;
 	}
 
+	private CHNode createRefbyNode(CHNode parent, ICElement element, List references) {
+		IPDOMReference firstRef= (IPDOMReference) references.get(0);
+		ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
+		CHNode node= new CHNode(parent, tu, firstRef.getTimestamp(), element);
+		for (Iterator iter = references.iterator(); iter.hasNext(); ) {
+			IPDOMReference nextRef = (IPDOMReference) iter.next();
+			node.addReference(new CHReferenceInfo(nextRef.getOffset(), nextRef.getLength()));
+		}
+		return node;
+	}
+
+	private HashMap sortPerElement(IPDOMReference[] refs) throws CoreException {
+		HashMap refsPerElement= new HashMap();
+		for (int i = 0; i < refs.length; i++) {
+			IPDOMReference reference = refs[i];
+			ICElement caller= findCaller(reference);
+			if (caller != null) {
+				addToMap(caller, reference, refsPerElement);
+			}
+		}
+		return refsPerElement;
+	}
+
 	private ICElement findCaller(IPDOMReference reference) throws CoreException {
 		ITranslationUnit tu= reference.getTranslationUnit();
-		return findCaller(tu, reference.getOffset());
+		long timestamp= reference.getTimestamp();
+		IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu.getPath(), timestamp);
+		int offset= reference.getOffset();
+		if (pc != null) {
+			offset= pc.historicToActual(new Region(offset, 0)).getOffset();
+		}
+		return findCaller(tu, offset);
 	}
 
 	private ICElement findCaller(ICElement element, int offset) throws CModelException {
-		// mstodo use position tracker
 		if (element == null || (element instanceof IFunctionDeclaration)) {
 			return element;
 		}

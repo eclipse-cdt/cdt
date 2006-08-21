@@ -124,6 +124,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -502,6 +503,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	/** Search actions **/
 	private ActionGroup fSelectionSearchGroup;
 	private ActionGroup fTextSearchGroup;
+	private CRefactoringActionGroup fRefactoringActionGroup;
+	
     /** Action which shows selected element in CView. */
 	private ShowInCViewAction fShowInCViewAction;
 	
@@ -953,6 +956,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			fTextSearchGroup = null;
 		}
 
+		if (fRefactoringActionGroup != null) {
+			fRefactoringActionGroup.dispose();
+			fRefactoringActionGroup = null;
+		}
+
 		if (fEditorSelectionChangedListener != null)  {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener= null;
@@ -1091,6 +1099,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
         //Assorted action groupings
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fTextSearchGroup= new TextSearchGroup(this);
+		fRefactoringActionGroup= new CRefactoringActionGroup(this);
 	}
 
 	/**
@@ -1123,6 +1132,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 		fSelectionSearchGroup.fillContextMenu(menu);
 		fTextSearchGroup.fillContextMenu(menu);
+		fRefactoringActionGroup.fillContextMenu(menu);
 	}
 
 	/**

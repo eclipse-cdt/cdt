@@ -14,30 +14,32 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
-import org.eclipse.cdt.internal.ui.cview.SelectionTransferDragAdapter;
-import org.eclipse.cdt.internal.ui.cview.SelectionTransferDropAdapter;
-import org.eclipse.cdt.internal.ui.dnd.*;
-import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
-import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
-import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.StandardCElementLabelProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.actions.*;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.IPageSite;
@@ -45,6 +47,31 @@ import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
+
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
+import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.cview.SelectionTransferDragAdapter;
+import org.eclipse.cdt.internal.ui.cview.SelectionTransferDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.CDTViewerDragAdapter;
+import org.eclipse.cdt.internal.ui.dnd.DelegatingDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.TransferDragSourceListener;
+import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
+import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.StandardCElementLabelProvider;
 
 public class CContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
 	private CEditor fEditor;
@@ -62,6 +89,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 
 	private ActionGroup fSelectionSearchGroup;
 	private ActionGroup fOpenViewActionGroup;
+	private ActionGroup fRefactoringActionGroup;
+	
 	/**
 	 * Custom filter action group.
 	 * @since 3.0
@@ -203,24 +232,23 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	protected void contextMenuAboutToShow(IMenuManager menu) {
 		CUIPlugin.createStandardGroups(menu);
 		
-		if (OpenViewActionGroup.canActionBeAdded(getSelection())){
-			fOpenViewActionGroup.setContext(new ActionContext(getSite().getSelectionProvider().getSelection()));
+		ISelection selection= getSelection();
+		if (OpenViewActionGroup.canActionBeAdded(selection)){
+			fOpenViewActionGroup.setContext(new ActionContext(selection));
 			fOpenViewActionGroup.fillContextMenu(menu);
 			fOpenViewActionGroup.setContext(null);
-			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		}
 
-		if (OpenIncludeAction.canActionBeAdded(getSelection())) {
-			menu.add(fOpenIncludeAction);
+		if (OpenIncludeAction.canActionBeAdded(selection)) {
+			menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenIncludeAction);
 		}
-		
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
-		
-		if (SelectionSearchGroup.canActionBeAdded(getSelection())){
+
+		if (SelectionSearchGroup.canActionBeAdded(selection)){
 			fSelectionSearchGroup.fillContextMenu(menu);
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		}
+
+		fRefactoringActionGroup.fillContextMenu(menu);
 	}
 
 	protected CContentOutlinerProvider createContentProvider(TreeViewer viewer) {
@@ -279,6 +307,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fOpenViewActionGroup = new OpenViewActionGroup(this);
+		fRefactoringActionGroup= new CRefactoringActionGroup(this);
 		// Custom filter group
 		fCustomFiltersActionGroup= new CustomFiltersActionGroup("org.eclipse.cdt.ui.COutlinePage", getTreeViewer()); //$NON-NLS-1$
 
@@ -308,7 +337,12 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		    fOpenViewActionGroup.dispose();
 		    fOpenViewActionGroup= null;
 		}
-		
+
+		if (fRefactoringActionGroup != null) {
+			fRefactoringActionGroup.dispose();
+			fRefactoringActionGroup= null;
+		}
+
 		if (fSelectionSearchGroup != null) {
 			fSelectionSearchGroup.dispose();
 			fSelectionSearchGroup= null;
@@ -342,8 +376,9 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 
 		fMemberFilterActionGroup= new MemberFilterActionGroup(fTreeViewer, "COutlineViewer"); //$NON-NLS-1$
 		fMemberFilterActionGroup.fillActionBars(actionBars);
-
 		fCustomFiltersActionGroup.fillActionBars(actionBars);
+		fOpenViewActionGroup.fillActionBars(actionBars);
+		fRefactoringActionGroup.fillActionBars(actionBars);
 
 		IMenuManager menu= actionBars.getMenuManager();
 		menu.add(new Separator("EndFilterGroup")); //$NON-NLS-1$
@@ -375,6 +410,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		for (int i = 0; i < listeners.length; ++i) {
 			((ISelectionChangedListener) listeners[i]).selectionChanged(event);
 		}
+		fRefactoringActionGroup.setContext(new ActionContext(selection));
+		fRefactoringActionGroup.updateActionBars();
 	}
 
 	/* (non-Javadoc)

@@ -91,11 +91,22 @@ public class TreeNavigator {
 	 */
 	public TreeItem getNextSibbling(TreeItem current, boolean forward) {
         TreeItem parentItem= current.getParentItem();
-        int itemCount = parentItem.getItemCount();
-        if (parentItem != null && itemCount > 1) {
-            int index= parentItem.indexOf(current);
-            index = (index + (forward ? 1 : itemCount-1)) % itemCount;
-            return parentItem.getItem(index);
+        if (parentItem == null) {
+        	Tree tree= current.getParent();
+            int itemCount = tree.getItemCount();
+            if (itemCount > 0) {
+                int index= tree.indexOf(current);
+                index = (index + (forward ? 1 : itemCount-1)) % itemCount;
+                return tree.getItem(index);
+            }
+        }
+        else {
+        	int itemCount = parentItem.getItemCount();
+        	if (itemCount > 0) {
+        		int index= parentItem.indexOf(current);
+        		index = (index + (forward ? 1 : itemCount-1)) % itemCount;
+        		return parentItem.getItem(index);
+        	}
         }
         return null;
     }

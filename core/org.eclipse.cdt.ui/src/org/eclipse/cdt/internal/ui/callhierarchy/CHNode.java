@@ -15,8 +15,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IMacro;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 
 /**
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.model.IVariableDeclaration;
 public class CHNode {
 	private CHNode fParent;
 	private ICElement fRepresentedDecl;
+	private ITranslationUnit fFileOfReferences;
     private List fReferences;
     
     private int fHashCode;
@@ -34,10 +36,11 @@ public class CHNode {
     /**
      * Creates a new node for the include browser
      */
-    public CHNode(CHNode parent, CHReferenceInfo reference, ICElement decl, long timestamp) {
+    public CHNode(CHNode parent, ITranslationUnit fileOfReferences, long timestamp, ICElement decl) {
     	assert decl != null;
         fParent= parent;
-        fReferences= Collections.singletonList(reference);
+        fFileOfReferences= fileOfReferences;
+        fReferences= Collections.EMPTY_LIST;
         fRepresentedDecl= decl;
         fIsRecursive= computeIsRecursive(fParent, decl);
         fHashCode= computeHashCode();
@@ -121,9 +124,18 @@ public class CHNode {
 	}
 	
 	public void addReference(CHReferenceInfo info) {
-		if (fReferences.size() == 1) {
+		switch (fReferences.size()) {
+		case 0:
+			fReferences= Collections.singletonList(info);
+			return;
+		case 1:
 			fReferences= new ArrayList(fReferences);
+			break;
 		}
 		fReferences.add(info);
+	}
+
+	public ITranslationUnit getFileOfReferences() {
+		return fFileOfReferences;
 	}
 }

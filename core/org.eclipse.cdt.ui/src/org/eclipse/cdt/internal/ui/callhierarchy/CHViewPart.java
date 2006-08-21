@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
@@ -22,9 +23,11 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -46,13 +49,14 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.PageBook;
-import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -60,6 +64,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.util.CoreUtility;
 import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
 import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.TreeNavigator;
 import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
@@ -76,7 +81,9 @@ public class CHViewPart extends ViewPart {
     
     private IMemento fMemento;
     private boolean fShowsMessage;
-    private CHNode fLastNavigationNode;
+    private CHNode fNavigationNode;
+    private int fNavigationDetail;
+    
 	private ArrayList fHistoryEntries= new ArrayList(MAX_HISTORY_SIZE);
 
     // widgets
@@ -163,7 +170,7 @@ public class CHViewPart extends ViewPart {
         
         initializeActionStates();
     }
-    
+	
     private void initializeActionStates() {
         boolean referencedBy= true;
         boolean filterVariables= false;
@@ -228,8 +235,10 @@ public class CHViewPart extends ViewPart {
         fTreeViewer.setLabelProvider(fLabelProvider);
         fTreeViewer.setAutoExpandLevel(2);     
         fTreeViewer.addOpenListener(new IOpenListener() {
-            public void open(OpenEvent event) {
-                onShowReference(event.getSelection());
+			public void open(OpenEvent event) {
+            	fNavigationDetail= 0;
+            	fNavigationNode= selectionToNode(event.getSelection());
+                onShowReference();
             }
         });
     }
@@ -424,26 +433,39 @@ public class CHViewPart extends ViewPart {
         mm.add(fFilterVariablesAction);
     }
     
-    private CHNode getNextNode(boolean forward) {
+    private void setNextNode(boolean forward) {
     	TreeNavigator navigator= new TreeNavigator(fTreeViewer.getTree(), CHNode.class);
     	TreeItem selectedItem= navigator.getSelectedItemOrFirstOnLevel(1, forward);
     	if (selectedItem == null) {
-    		return null;
+    		fNavigationNode= null;
+    		return;
     	}
     	
-        if (selectedItem.getData().equals(fLastNavigationNode)) {
-        	selectedItem= navigator.getNextSibbling(selectedItem, forward);
+    	
+        if (selectedItem.getData().equals(fNavigationNode)) {
+        	if (forward && fNavigationDetail < fNavigationNode.getReferenceCount()-1) {
+        		fNavigationDetail++;
+        	}
+        	else if (!forward && fNavigationDetail > 0) {
+        		fNavigationDetail--;
+        	}
+        	else {
+        		selectedItem= navigator.getNextSibbling(selectedItem, forward);
+                fNavigationNode= selectedItem == null ? null : (CHNode) selectedItem.getData();
+                if (fNavigationNode != null) {
+                	fNavigationDetail= forward ? 0 : fNavigationNode.getReferenceCount()-1;
+                }
+        	}
         }
         
-        return selectedItem == null ? null : (CHNode) selectedItem.getData();
     }
         
     protected void onNextOrPrevious(boolean forward) {
-    	CHNode nextItem= getNextNode(forward);
-        if (nextItem != null) {
-            StructuredSelection sel= new StructuredSelection(nextItem);
+    	setNextNode(forward);
+        if (fNavigationNode != null) {
+            StructuredSelection sel= new StructuredSelection(fNavigationNode);
             fTreeViewer.setSelection(sel);
-            onShowReference(sel);
+            onShowReference();
         }
     }
 
@@ -577,77 +599,48 @@ public class CHViewPart extends ViewPart {
         m.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
     }
     
-    protected void onShowReference(ISelection selection) {
-//        CHNode node= IBConversions.selectionToNode(selection);
-//        if (node != null) {
-//            IWorkbenchPage page= getSite().getPage();
-//            IBFile ibf= node.getDirectiveFile();
-//            long timestamp= node.getTimestamp();
-//            if (ibf != null) {
-//                IEditorPart editor= null;
-//                IPath filebufferKey= null;
-//                IFile f= ibf.getResource();
-//                if (f != null) {
-//                    if (timestamp == 0) {
-//                    	timestamp= f.getLocalTimeStamp();
-//                    }
-//                	fLastNavigationNode= node;
-//                	try {
-//                		editor= IDE.openEditor(page, f, false);
-//                		filebufferKey= f.getFullPath();
-//                	} catch (PartInitException e) {
-//                		CUIPlugin.getDefault().log(e);
-//                	}
-//                }
-//                else {
-//                    IPath location= ibf.getLocation();
-//                    if (location != null) {
-//                        if (timestamp == 0) {
-//                        	timestamp= location.toFile().lastModified();
-//                        }
-//                        fLastNavigationNode= node;
-//                    	ExternalEditorInput ei= new ExternalEditorInput(new FileStorage(null, location));
-//						try {
-//                            IEditorDescriptor descriptor = IDE.getEditorDescriptor(location.lastSegment());
-//                            editor= IDE.openEditor(page, ei, descriptor.getId(), false);
-//                            filebufferKey= location;
-//						} catch (PartInitException e) {
-//                            CUIPlugin.getDefault().log(e);
-//						}
-//                    }
-//                }
-//                if (editor instanceof ITextEditor) {
-//                    ITextEditor te= (ITextEditor) editor;
-//                    Position pos= new Position(node.getDirectiveCharacterOffset(),
-//                    		node.getDirectiveName().length() + 2);
-//                    if (filebufferKey != null) {
-//                    	IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(filebufferKey, timestamp);
-//                    	if (pc != null) {
-//                    		pos= pc.historicToActual(pos);
-//                    	}
-//                    }
-//                    
-//                    te.selectAndReveal(pos.getOffset(), pos.getLength());
-//                }
-//            }
-//            else {
-//            	ITranslationUnit tu= IBConversions.selectionToTU(selection);
-//            	if (tu != null) {
-//            		IResource r= tu.getResource();
-//            		if (r != null) {
-//            			OpenFileAction ofa= new OpenFileAction(page);
-//            			ofa.selectionChanged((IStructuredSelection) selection);
-//            			ofa.run();
-//            		}
-//            	}
-//            }
-//        }
-    }
+    protected void onShowReference() {
+        if (fNavigationNode != null) {
+            ITranslationUnit file= fNavigationNode.getFileOfReferences();
+    		if (file != null) {
+                IWorkbenchPage page= getSite().getPage();
+                if (fNavigationNode.getReferenceCount() > 0) {
+                	long timestamp= fNavigationNode.getTimestamp();
+                	if (fNavigationDetail < 0) {
+                		fNavigationDetail= 0;
+                	}
+                	else if (fNavigationDetail >= fNavigationNode.getReferenceCount()-1) {
+                		fNavigationDetail= fNavigationNode.getReferenceCount()-1;
+                	}
 
-    public ShowInContext getShowInContext() {
-        return new ShowInContext(null, fTreeViewer.getSelection());
+                	CHReferenceInfo ref= fNavigationNode.getReference(fNavigationDetail);
+                	Region region= new Region(ref.getOffset(), ref.getLength());
+            		EditorOpener.open(page, file, region, timestamp);
+                }
+                else {
+                	try {
+						EditorOpener.open(page, fNavigationNode.getRepresentedDeclaration());
+					} catch (CModelException e) {
+						CUIPlugin.getDefault().log(e);
+					}
+                }
+            }
+        }
     }
     
+	private CHNode selectionToNode(ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss= (IStructuredSelection) selection;
+			for (Iterator iter = ss.iterator(); iter.hasNext(); ) {
+				Object cand= iter.next();
+				if (cand instanceof CHNode) {
+					return (CHNode) cand;
+				}
+			}
+		}
+		return null;
+	}
+
 	public Control getPageBook() {
 		return fPagebook;
 	}

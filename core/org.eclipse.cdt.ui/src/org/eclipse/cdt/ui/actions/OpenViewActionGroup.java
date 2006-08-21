@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -181,6 +182,7 @@ public class OpenViewActionGroup extends ActionGroup {
 //		provider.removeSelectionChangedListener(fOpenExternalJavadoc);
 //		provider.removeSelectionChangedListener(fOpenTypeHierarchy);
 		provider.removeSelectionChangedListener(fOpenCallHierarchy);
+		fOpenPropertiesDialog.dispose();
 		super.dispose();
 	}
 	
@@ -188,14 +190,17 @@ public class OpenViewActionGroup extends ActionGroup {
 //		actionBars.setGlobalActionHandler(JdtActionConstants.OPEN_SUPER_IMPLEMENTATION, fOpenSuperImplementation);
 //		actionBars.setGlobalActionHandler(JdtActionConstants.OPEN_EXTERNAL_JAVA_DOC, fOpenExternalJavadoc);
 //		actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_TYPE_HIERARCHY, fOpenTypeHierarchy);
-//        actionBars.setGlobalActionHandler(JdtActionConstants.OPEN_CALL_HIERARCHY, fOpenCallHierarchy);
+        actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_CALL_HIERARCHY, fOpenCallHierarchy);
 		actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), fOpenPropertiesDialog);		
 	}
 	
 	private IStructuredSelection getStructuredSelection() {
-		ISelection selection= getContext().getSelection();
-		if (selection instanceof IStructuredSelection)
-			return (IStructuredSelection)selection;
+		ActionContext context= getContext();
+		if (context != null) {
+			ISelection selection= getContext().getSelection();
+			if (selection instanceof IStructuredSelection)
+				return (IStructuredSelection)selection;
+		}
 		return null;
 	}
 

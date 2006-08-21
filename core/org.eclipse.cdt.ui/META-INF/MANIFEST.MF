@@ -71,6 +71,7 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.ui.navigator,
  org.eclipse.core.expressions,
  org.eclipse.ui.navigator.resources,
- com.ibm.icu
+ com.ibm.icu,
+ org.eclipse.cdt.refactoring
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

@@ -7,16 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
-import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
-import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
-import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -33,18 +27,26 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.AddBookmarkAction;
 import org.eclipse.ui.actions.AddTaskAction;
 import org.eclipse.ui.actions.ExportResourcesAction;
 import org.eclipse.ui.actions.ImportResourcesAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.ide.IDEActionFactory;
+
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
+import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
+
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 
 /**
  * The main action group for the cview. This contains a few actions and several
@@ -55,7 +57,6 @@ public class MainActionGroup extends CViewActionGroup {
 	// Actions for Menu context.
 	AddBookmarkAction addBookmarkAction;
 	AddTaskAction addTaskAction;
-	PropertyDialogAction propertyDialogAction;
 
 	ImportResourcesAction importAction;
 	ExportResourcesAction exportAction;
@@ -78,6 +79,9 @@ public class MainActionGroup extends CViewActionGroup {
 
 	SelectionSearchGroup selectionSearchGroup;
 
+	OpenViewActionGroup openViewActionGroup;	
+	CRefactoringActionGroup crefactoringActionGroup;
+	
     private NewWizardMenu newWizardMenu;
 
 	public MainActionGroup(CView cview) {
@@ -145,7 +149,6 @@ public class MainActionGroup extends CViewActionGroup {
 
 		addBookmarkAction = new AddBookmarkAction(shell);
 		addTaskAction = new AddTaskAction(shell);
-		propertyDialogAction = new PropertyDialogAction(shellProvider, viewer);
 
 		// Importing/exporting.
 		importAction = new ImportResourcesAction(getCView().getSite().getWorkbenchWindow());
@@ -159,6 +162,8 @@ public class MainActionGroup extends CViewActionGroup {
 //		toggleLinkingAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif"));//$NON-NLS-1$
 
 		selectionSearchGroup = new SelectionSearchGroup(getCView().getSite());
+		openViewActionGroup= new OpenViewActionGroup(getCView());
+		crefactoringActionGroup= new CRefactoringActionGroup(getCView());
 	}
 
 	/**
@@ -180,34 +185,36 @@ public class MainActionGroup extends CViewActionGroup {
 			//Can be added once support for manually adding external files to index is established
 			/*menu.add(new Separator());
 			menu.add(addToIndexAction);*/
-			menu.add(new Separator(org.eclipse.search.ui.IContextMenuConstants.GROUP_SEARCH));
+			menu.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
 			addSearchMenu(menu, celements);
-			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
+			menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
+			menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS + "-end")); //$NON-NLS-1$
 			menu.add(new Separator());
 			return;
 		}
 
-		menu.add(new Separator());
+		menu.add(new Separator(IContextMenuConstants.GROUP_GOTO));
 		gotoGroup.fillContextMenu(menu);
-		menu.add(new Separator());
+		menu.add(new Separator(IContextMenuConstants.GROUP_OPEN));
 		openFileGroup.fillContextMenu(menu);
-		menu.add(new Separator());
+		menu.add(new Separator(IContextMenuConstants.GROUP_BUILD));
 		buildGroup.fillContextMenu(menu);
-		menu.add(new Separator());
+		menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
 		refactorGroup.fillContextMenu(menu);
-		menu.add(new Separator());
+		menu.add(new Separator("group.private1")); //$NON-NLS-1$
 		importAction.selectionChanged(resources);
 		menu.add(importAction);
 		exportAction.selectionChanged(resources);
 		menu.add(exportAction);
-		menu.add(new Separator());
+		menu.add(new Separator("group.private2")); //$NON-NLS-1$
 		openProjectGroup.fillContextMenu(menu);
 		addBookMarkMenu(menu, resources);
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
-		addPropertyMenu(menu, resources);
+		menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
+		menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS + "-end")); //$NON-NLS-1$
+		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
 		
+		openViewActionGroup.fillContextMenu(menu);
+		crefactoringActionGroup.fillContextMenu(menu);
 	}
 	/**
 	 * Extends the superclass implementation to set the context in the
@@ -220,6 +227,8 @@ public class MainActionGroup extends CViewActionGroup {
 		openProjectGroup.setContext(context);
 		refactorGroup.setContext(context);
 		buildGroup.setContext(context);
+		openViewActionGroup.setContext(context);
+		crefactoringActionGroup.setContext(context);
 		//sortAndFilterGroup.setContext(context);
 		//workspaceGroup.setContext(context);
 	}
@@ -239,13 +248,6 @@ public class MainActionGroup extends CViewActionGroup {
 				addBookmarkAction.selectionChanged(selection);
 				menu.add(addBookmarkAction);
 			}
-		}
-	}
-
-	void addPropertyMenu(IMenuManager menu, IStructuredSelection selection) {
-		propertyDialogAction.selectionChanged(selection);
-		if (propertyDialogAction.isApplicableForSelection()) {
-			menu.add(propertyDialogAction);
 		}
 	}
 
@@ -279,7 +281,6 @@ public class MainActionGroup extends CViewActionGroup {
 	public void updateActionBars() {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
-		propertyDialogAction.setEnabled(selection.size() == 1);
 		//sortByTypeAction.selectionChanged(selection);
 		//sortByNameAction.selectionChanged(selection);
 		addBookmarkAction.selectionChanged(selection);
@@ -292,12 +293,14 @@ public class MainActionGroup extends CViewActionGroup {
 		refactorGroup.updateActionBars();
 		workingSetGroup.updateActionBars();
 		fCustomFiltersActionGroup.updateActionBars();
+
+		openViewActionGroup.updateActionBars();
+		crefactoringActionGroup.updateActionBars();
 	}
 
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), addBookmarkAction);
 		actionBars.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), addTaskAction);
-        actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), propertyDialogAction);
 
 		workingSetGroup.fillActionBars(actionBars);
 		fCustomFiltersActionGroup.fillActionBars(actionBars);
@@ -307,6 +310,9 @@ public class MainActionGroup extends CViewActionGroup {
 		openProjectGroup.fillActionBars(actionBars);
 		buildGroup.fillActionBars(actionBars);
 
+		openViewActionGroup.fillActionBars(actionBars);
+		crefactoringActionGroup.fillActionBars(actionBars);
+		
 		IToolBarManager toolBar = actionBars.getToolBarManager();
 		toolBar.add(new Separator());
 		toolBar.add(collapseAllAction);
@@ -343,6 +349,8 @@ public class MainActionGroup extends CViewActionGroup {
 		gotoGroup.dispose();
 		buildGroup.dispose();
 		newWizardMenu.dispose();
+		openViewActionGroup.dispose();
+		crefactoringActionGroup.dispose();
 		super.dispose();
 	}
 

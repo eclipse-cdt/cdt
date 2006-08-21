@@ -13,12 +13,18 @@ package org.eclipse.cdt.internal.ui.callhierarchy;
 
 public class CHReferenceInfo {
 	private int fOffset;
+	private int fLength;
 
-	public CHReferenceInfo(int offset) {
+	public CHReferenceInfo(int offset, int length) {
 		fOffset= offset;
+		fLength= length;
 	}
 	
 	public int getOffset() {
 		return fOffset;
+	}
+
+	public int getLength() {
+		return fLength;
 	}
 }

@@ -57,7 +57,7 @@ public class AsyncViewerTest extends TestCase {
             super(disp);
         }
 
-        public Object[] asyncronouslyComputeChildren(Object parentElement, IProgressMonitor monitor) {
+        protected Object[] asyncronouslyComputeChildren(Object parentElement, IProgressMonitor monitor) {
             Node n= (Node) parentElement;
             try {
                 Thread.sleep(n.fAsync);
@@ -67,7 +67,7 @@ public class AsyncViewerTest extends TestCase {
             return n.fChildren;
         }
 
-        public Object[] syncronouslyComputeChildren(Object parentElement) {
+        protected Object[] syncronouslyComputeChildren(Object parentElement) {
             Node n= (Node) parentElement;
             if (n.fAsync != 0) {
                 return null;

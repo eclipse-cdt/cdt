@@ -84,6 +84,9 @@ public class CIndexQueries {
 		public long getTimestamp() {
 			return 0;
 		}
+		public int getLength() {
+			return fName.getFileLocation().getNodeLength();
+		}
     }
     
 	private static final IPDOMInclude[] EMPTY_INCLUDES = new IPDOMInclude[0];
@@ -118,7 +121,7 @@ public class CIndexQueries {
 		ICProject cproject= tu.getCProject();
 		if (cproject != null) {
 			projects.remove(cproject);
-			projects.addFirst(cproject);
+			projects.addLast(cproject);
 		}
 		
 		for (Iterator iter = projects.iterator(); iter.hasNext();) {
@@ -181,38 +184,36 @@ public class CIndexQueries {
 		return EMPTY_INCLUDES;
 	}
 
-	public IPDOMReference[] findReferences(ITranslationUnit tu, IASTName name, IProgressMonitor pm) throws CoreException, InterruptedException {
+	public IPDOMReference[] findReferences(IASTName name, IProgressMonitor pm) throws CoreException, InterruptedException {
 		ArrayList result= new ArrayList();
 		LinkedList projects= new LinkedList(Arrays.asList(CoreModel.getDefault().getCModel().getCProjects()));
-		ICProject cproject= tu.getCProject();
-		if (cproject != null) {
-			projects.remove(cproject);
-			projects.addFirst(cproject);
-		}
-		
+
+		// resolve the binding.
 		name.resolveBinding();
+		
 		for (Iterator iter = projects.iterator(); iter.hasNext();) {
-			cproject = (ICProject) iter.next();
-			PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(cproject);
-			if (pdom != null) {
-				pdom.acquireReadLock();
-				try {
-					IBinding binding= pdom.resolveBinding(name);
-					if (binding != null) {
-						IASTName[] names= pdom.getReferences(binding);
-						for (int i = 0; i < names.length; i++) {
-							IASTName rname = names[i];
-							if (tu != null) {
-								result.add(new IPDOMReference(cproject, rname));
-							}
-						}
-					}
-				}
-				finally {
-					pdom.releaseReadLock();
-				}
-			}	
+			findReferences(name, (ICProject) iter.next(), result);	
 		}
 		return (IPDOMReference[]) result.toArray(new IPDOMReference[result.size()]);
+	}
+
+	private void findReferences(IASTName name, ICProject project, Collection result) throws InterruptedException, CoreException {
+		PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
+		if (pdom != null) {
+			pdom.acquireReadLock();
+			try {
+				IBinding binding= pdom.resolveBinding(name);
+				if (binding != null) {
+					IASTName[] names= pdom.getReferences(binding);
+					for (int i = 0; i < names.length; i++) {
+						IASTName rname = names[i];
+						result.add(new IPDOMReference(project, rname));
+					}
+				}
+			}
+			finally {
+				pdom.releaseReadLock();
+			}
+		}
 	}
 }

@@ -46,7 +46,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 		return super.getParent(element);
 	}
 
-	public Object[] syncronouslyComputeChildren(Object parentElement) {
+	protected Object[] syncronouslyComputeChildren(Object parentElement) {
 		if (parentElement instanceof ITranslationUnit) {
 			ITranslationUnit tu = (ITranslationUnit) parentElement;
 			return new Object[] { new IBNode(null, new IBFile(tu), null, null, 0, 0) };
@@ -61,7 +61,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 		return null;
 	}
 
-	public Object[] asyncronouslyComputeChildren(Object parentElement,
+	protected Object[] asyncronouslyComputeChildren(Object parentElement,
 			IProgressMonitor monitor) {
 		if (parentElement instanceof IBNode) {
 			IBNode node = (IBNode) parentElement;

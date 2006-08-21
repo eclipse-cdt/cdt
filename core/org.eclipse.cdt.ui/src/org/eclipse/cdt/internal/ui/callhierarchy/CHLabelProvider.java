@@ -102,13 +102,6 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
             }
         }
 
-//        if (node.getRepresentedTranslationUnit() == null) {
-//        	flags |= CElementImageDescriptor.WARNING;
-//        }
-
-        if (flags == 0) {
-            return image;
-        }
         String key= image.toString()+String.valueOf(flags);
         Image result= (Image) fCachedImages.get(key);
         if (result == null) {

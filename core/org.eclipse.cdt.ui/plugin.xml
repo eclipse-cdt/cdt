@@ -881,6 +881,11 @@
             commandId="org.eclipse.cdt.ui.edit.text.c.remove.block.comment"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>   
      <key
+            sequence="M1+M3+H"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.open.call.hierarchy"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
             sequence="M1+F3"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.opendef"
@@ -1024,6 +1029,11 @@
             description="%ActionDefinition.findrefs.description"
             name="%ActionDefinition.findrefs.name"
             id="org.eclipse.cdt.ui.search.findrefs"/>
+      <command
+            categoryId="org.eclipse.ui.category.navigate"
+            description="%ActionDefinition.openCallHierarchy.description"
+            name="%ActionDefinition.openCallHierarchy.name"
+            id="org.eclipse.cdt.ui.edit.open.call.hierarchy"/>
       <!--command
             name="%ActionDefinition.openTypeHierarchy.name"
             description="%ActionDefinition.openTypeHierarchy.description"
@@ -1117,6 +1127,15 @@
                label="%OpenTypeAction.label"
                menubarPath="navigate/open.ext2"
                tooltip="%OpenTypeAction.tooltip">
+         </action>
+         <action
+               definitionId="org.eclipse.cdt.ui.edit.open.call.hierarchy"
+               id="org.eclipse.cdt.ui.actions.OpenCallHierarchy"
+               label="%OpenCallHierarchy.label"
+               menubarPath="navigate/open.ext"
+               retarget="true"
+               toolbarPath="org.eclipse.search.searchActionSet/Search"
+               tooltip="%OpenCallHierarchy.tooltip">
          </action>
         <!--action
                definitionId="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"

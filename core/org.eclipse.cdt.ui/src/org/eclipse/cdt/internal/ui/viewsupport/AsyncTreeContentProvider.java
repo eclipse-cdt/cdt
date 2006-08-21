@@ -80,7 +80,7 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
      * @param parentElement the parent element
      * @return an array of child elements, or <code>null</code>
      */
-    public Object[] syncronouslyComputeChildren(Object parentElement) {
+    protected Object[] syncronouslyComputeChildren(Object parentElement) {
         return null;
     }
 
@@ -96,7 +96,7 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
      * @param monitor the monitor that can be checked for a cancel event.
      * @return an array of child elements.
      */
-    public Object[] asyncronouslyComputeChildren(Object parentElement, IProgressMonitor monitor) {
+    protected Object[] asyncronouslyComputeChildren(Object parentElement, IProgressMonitor monitor) {
         return NO_CHILDREN;
     }
 

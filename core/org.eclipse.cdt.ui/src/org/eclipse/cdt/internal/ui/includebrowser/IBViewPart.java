@@ -51,8 +51,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewSite;
@@ -62,7 +60,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.OpenFileAction;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -70,21 +67,17 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
 import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.TreeNavigator;
 import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
@@ -661,54 +654,23 @@ public class IBViewPart extends ViewPart
     protected void onShowInclude(ISelection selection) {
         IBNode node= IBConversions.selectionToNode(selection);
         if (node != null) {
+        	fLastNavigationNode= node;
+
             IWorkbenchPage page= getSite().getPage();
-            IBFile ibf= node.getDirectiveFile();
-            long timestamp= node.getTimestamp();
+        	IBFile ibf= node.getDirectiveFile();
             if (ibf != null) {
-                IEditorPart editor= null;
-                IPath filebufferKey= null;
+                IRegion region= new Region(node.getDirectiveCharacterOffset(), node.getDirectiveName().length() + 2);
+                long timestamp= node.getTimestamp();
+
                 IFile f= ibf.getResource();
                 if (f != null) {
-                    if (timestamp == 0) {
-                    	timestamp= f.getLocalTimeStamp();
-                    }
-                	fLastNavigationNode= node;
-                	try {
-                		editor= IDE.openEditor(page, f, false);
-                		filebufferKey= f.getFullPath();
-                	} catch (PartInitException e) {
-                		CUIPlugin.getDefault().log(e);
-                	}
+                	EditorOpener.open(page, f, region, timestamp);
                 }
                 else {
                     IPath location= ibf.getLocation();
                     if (location != null) {
-                        if (timestamp == 0) {
-                        	timestamp= location.toFile().lastModified();
-                        }
-                        fLastNavigationNode= node;
-                    	ExternalEditorInput ei= new ExternalEditorInput(new FileStorage(null, location));
-						try {
-                            IEditorDescriptor descriptor = IDE.getEditorDescriptor(location.lastSegment());
-                            editor= IDE.openEditor(page, ei, descriptor.getId(), false);
-                            filebufferKey= location;
-						} catch (PartInitException e) {
-                            CUIPlugin.getDefault().log(e);
-						}
+                    	EditorOpener.openExternalFile(page, location, region, timestamp);
                     }
-                }
-                if (editor instanceof ITextEditor) {
-                    ITextEditor te= (ITextEditor) editor;
-                    IRegion pos= new Region(node.getDirectiveCharacterOffset(),
-                    		node.getDirectiveName().length() + 2);
-                    if (filebufferKey != null) {
-                    	IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(filebufferKey, timestamp);
-                    	if (pc != null) {
-                    		pos= pc.historicToActual(pos);
-                    	}
-                    }
-                    
-                    te.selectAndReveal(pos.getOffset(), pos.getLength());
                 }
             }
             else {

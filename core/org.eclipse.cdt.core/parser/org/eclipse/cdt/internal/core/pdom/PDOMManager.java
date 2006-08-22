@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.internal.core.pdom.indexer.ctags.CtagsIndexer;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -199,7 +198,7 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     		}
     		
         	// if Indexer still null schedule a job to get it
-       		if (indexerId == null || indexerId.equals(CtagsIndexer.ID))
+       		if (indexerId == null || indexerId.equals("org.eclipse.cdt.core.ctagsindexer")) //$NON-NLS-1$
        			// make it the default, ctags is gone
        			indexerId = getDefaultIndexerId();
        		

@@ -103,6 +103,8 @@ public class CountNodeAction extends IndexAction {
 						}
 						return true;
 					}
+					public void leave(IPDOMNode node) throws CoreException {
+					}
 				});
 			}
 		} catch (CoreException e) {

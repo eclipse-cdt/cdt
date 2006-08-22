@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.search;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.cdt.core.model.CoreModel;
@@ -159,31 +158,6 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 
 	    // get the pattern and turn it into a regular expression
 	    String patternStr = patternCombo.getText();
-	    String realStr = patternStr;
-	    if (realStr.indexOf('*') >= 0 || realStr.indexOf('?') >= 0) {
-	    	StringBuffer buff = new StringBuffer(patternStr.length() + 1);
-	    	for (int i = 0; i < patternStr.length(); ++i) {
-	    		char c = patternStr.charAt(i);
-	    		switch (c) {
-	    		case '*':
-	    			buff.append(".*"); //$NON-NLS-1$
-	    			break;
-	    		case '?':
-	    			buff.append('.');
-	    			break;
-    			default:
-	    			buff.append(c);
-	    		}
-	    	}
-	    	realStr = buff.toString();
-	    }
-	    
-	    Pattern pattern;
-	    try {
-	    	pattern = Pattern.compile(realStr);
-	    } catch (PatternSyntaxException e) {
-	    	return false;
-	    }
 
 	    // Get search flags
 	    int searchFlags = 0;
@@ -250,12 +224,17 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 			? null
 			: (ICElement[])elements.toArray(new ICElement[elements.size()]);
 		
-		PDOMSearchPatternQuery job = new PDOMSearchPatternQuery(scope, scopeDescription, pattern, patternStr, 
-				isCaseSensitive, searchFlags);
+		try {
+			PDOMSearchPatternQuery job = new PDOMSearchPatternQuery(scope, scopeDescription, patternStr, 
+					isCaseSensitive, searchFlags);
 
-		NewSearchUI.activateSearchResultView();
+			NewSearchUI.activateSearchResultView();
 		
-		NewSearchUI.runQueryInBackground(job);
+			NewSearchUI.runQueryInBackground(job);
+		} catch (PatternSyntaxException e) {
+			fLineManager.setErrorMessage(CSearchMessages.getString("PDOMSearch.query.pattern.error")); //$NON-NLS-1$
+			return false;
+		}
 		
 		// Save our settings
 		IDialogSettings settings = getDialogSettings();
@@ -267,7 +246,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 			// Add only if we don't have it already
 			boolean addit = true;
 			for (int i = 0; i < previousPatterns.length; ++i) {
-				if (pattern.equals(previousPatterns[i])) {
+				if (patternStr.equals(previousPatterns[i])) {
 					addit = false;
 					break;
 				}

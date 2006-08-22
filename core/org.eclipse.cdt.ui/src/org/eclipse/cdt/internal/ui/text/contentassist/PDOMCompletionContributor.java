@@ -78,6 +78,8 @@ public class PDOMCompletionContributor extends DOMCompletionContributor implemen
 							}
 							return false;
 						}
+						public void leave(IPDOMNode node) throws CoreException {
+						}
 					});
 				} else if (parent instanceof IASTFieldReference) {
 					// Find the type the look at the fields
@@ -98,6 +100,8 @@ public class PDOMCompletionContributor extends DOMCompletionContributor implemen
 									}
 									return false;
 								};
+								public void leave(IPDOMNode node) throws CoreException {
+								}
 							});
 						}
 					}

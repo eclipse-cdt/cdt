@@ -63,6 +63,8 @@ public class PDOMCStructure extends PDOMMemberOwner implements ICompositeType {
 				fields.add(node);
 			return false;
 		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
 		public IField[] getFields() {
 			return (IField[])fields.toArray(new IField[fields.size()]);
 		}
@@ -93,6 +95,8 @@ public class PDOMCStructure extends PDOMMemberOwner implements ICompositeType {
 				}
 			}
 			return false;
+		}
+		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public IField getField() { return field; }
 	}

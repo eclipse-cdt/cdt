@@ -11,10 +11,6 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -36,35 +32,6 @@ import org.eclipse.core.runtime.CoreException;
  * link time. These are generally global symbols specific to a given language.
  */
 public abstract class PDOMLinkage extends PDOMNamedNode {
-
-	protected static final class MatchBinding implements IBTreeVisitor {
-			private final PDOM pdom;
-			private final List bindings;
-			private final Pattern pattern;
-			
-			public MatchBinding(PDOM pdom, Pattern pattern, List bindings) {
-				this.pdom = pdom;
-				this.bindings = bindings;
-				this.pattern = pattern;
-			}
-			
-			public boolean visit(int record) throws CoreException {
-				if (record == 0)
-					return true;
-				
-				// TODO of course do something smarter here
-				PDOMBinding binding = pdom.getBinding(record);
-				if (binding != null) {
-					Matcher matcher = pattern.matcher(binding.getName());
-					if (matcher.matches())
-						bindings.add(binding);
-				}
-				return true;
-			}
-			public int compare(int record) throws CoreException {
-				return 1;
-			}
-		}
 
 	// record offsets
 	private static final int ID_OFFSET   = PDOMNamedNode.RECORD_SIZE + 0;
@@ -133,6 +100,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode {
 				if (binding != null) {
 					if (visitor.visit(binding))
 						binding.accept(visitor);
+					visitor.leave(binding);
 				}
 				return true;
 			};
@@ -172,6 +140,4 @@ public abstract class PDOMLinkage extends PDOMNamedNode {
 	
 	public abstract IBinding resolveBinding(IASTName name) throws CoreException;
 
-	public abstract void findBindings(Pattern pattern, List bindings) throws CoreException;
-	
 }

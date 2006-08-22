@@ -341,7 +341,7 @@ public class SourceManager extends Manager {
 
 			if (isChar && (isSigned || isUnsigned)) {
 				return new CharType(target, typename, isUnsigned);
-			} else if (isShort && (isSigned || isUnsigned)) {
+			} else if (isShort && (isInt || isSigned || isUnsigned)) {
 				return new ShortType(target, typename, isUnsigned);
 			} else if (isInt && (isSigned || isUnsigned)) {
 				return new IntType(target, typename, isUnsigned);

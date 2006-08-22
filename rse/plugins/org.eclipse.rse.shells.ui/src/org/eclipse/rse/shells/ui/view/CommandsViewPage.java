@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteOutput;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.ShellResources;
@@ -377,6 +378,28 @@ FocusListener
 						}
 						sendInput(cdCmd);
 					}
+				}
+			}
+			else if (element instanceof RemoteOutput)
+			{
+				RemoteOutput out = (RemoteOutput)element;
+				if (out.getType().equals("directory"))
+				{
+					String path = out.getAbsolutePath();
+					ISubSystem cmdSubSystem = adapter.getSubSystem(element);
+
+					String cdCmd = "cd " + "\"" + path + "\"";
+					if (cmdSubSystem.getHost().getSystemType().equals("Local")
+						&& System.getProperty("os.name").toLowerCase().startsWith("win")
+						|| cmdSubSystem.getHost().getSystemType().equals("Windows"))
+					{
+						cdCmd = "cd /d " + path;
+					}
+					sendInput(cdCmd);
+				}
+				else
+				{
+					alreadyHandled = adapter.handleDoubleClick(element);
 				}
 			}
 			else

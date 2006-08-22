@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchSite;
-import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -195,11 +194,11 @@ public class OpenViewActionGroup extends ActionGroup {
 	}
 	
 	private IStructuredSelection getStructuredSelection() {
-		ActionContext context= getContext();
-		if (context != null) {
-			ISelection selection= getContext().getSelection();
-			if (selection instanceof IStructuredSelection)
+		if (fSite != null) {
+			ISelection selection= fSite.getSelectionProvider().getSelection();
+			if (selection instanceof IStructuredSelection) {
 				return (IStructuredSelection)selection;
+			}
 		}
 		return null;
 	}

@@ -26,6 +26,8 @@ public class CHMessages extends NLS {
 	public static String CHViewPart_HideMacros_tooltip;
 	public static String CHViewPart_NextReference_label;
 	public static String CHViewPart_NextReference_tooltip;
+	public static String CHViewPart_Open_label;
+	public static String CHViewPart_Open_tooltip;
 	public static String CHViewPart_OpenReference_label;
 	public static String CHViewPart_PreviousReference_label;
 	public static String CHViewPart_PreviousReference_tooltip;
@@ -37,6 +39,8 @@ public class CHMessages extends NLS {
 	public static String CHViewPart_ShowCallers_tooltip;
 	public static String CHViewPart_ShowFiles_label;
 	public static String CHViewPart_ShowFiles_tooltip;
+	public static String CHViewPart_ShowReference_label;
+	public static String CHViewPart_ShowReference_tooltip;
 	public static String CHViewPart_Title_callees;
 	public static String CHViewPart_Title_callers;
 	public static String CHViewPart_WorkspaceScope;

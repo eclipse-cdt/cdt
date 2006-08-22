@@ -33,7 +33,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -59,11 +58,16 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.CoreUtility;
 import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.viewsupport.AdaptingSelectionProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
 import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.TreeNavigator;
@@ -114,6 +118,13 @@ public class CHViewPart extends ViewPart {
     private Action fPreviousAction;
     private Action fRefreshAction;
 	private Action fHistoryAction;
+	private Action fShowReference;
+	
+	// action groups
+	private OpenViewActionGroup fOpenViewActionGroup;
+	private SelectionSearchGroup fSelectionSearchGroup;
+	private CRefactoringActionGroup fRefactoringActionGroup;
+	private Action fOpenElement;
 
     
     public void setFocus() {
@@ -161,15 +172,32 @@ public class CHViewPart extends ViewPart {
         createInfoPage();
         createViewerPage();
                 
+        getSite().setSelectionProvider(new AdaptingSelectionProvider(ICElement.class, fTreeViewer));
+
         initDragAndDrop();
         createActions();
         createContextMenu();
 
-        getSite().setSelectionProvider(fTreeViewer);
         setMessage(CHMessages.CHViewPart_emptyPageMessage);
         
         initializeActionStates();
     }
+	
+	public void dispose() {
+		if (fOpenViewActionGroup != null) {
+			fOpenViewActionGroup.dispose();
+			fOpenViewActionGroup= null;
+		}
+		if (fSelectionSearchGroup != null) {
+			fSelectionSearchGroup.dispose();
+			fSelectionSearchGroup= null;
+		}
+		if (fRefactoringActionGroup != null) {
+			fRefactoringActionGroup.dispose();
+			fRefactoringActionGroup= null;
+		}
+		super.dispose();
+	}
 	
     private void initializeActionStates() {
         boolean referencedBy= true;
@@ -218,7 +246,7 @@ public class CHViewPart extends ViewPart {
         Menu menu = manager.createContextMenu(fTreeViewer.getControl());
         fTreeViewer.getControl().setMenu(menu);
         IWorkbenchPartSite site = getSite();
-        site.registerContextMenu(CUIPlugin.ID_CALL_HIERARCHY, manager, fTreeViewer); 
+        site.registerContextMenu(CUIPlugin.ID_CALL_HIERARCHY, manager, fTreeViewer);
     }
 
     private void createViewerPage() {
@@ -236,9 +264,7 @@ public class CHViewPart extends ViewPart {
         fTreeViewer.setAutoExpandLevel(2);     
         fTreeViewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
-            	fNavigationDetail= 0;
-            	fNavigationNode= selectionToNode(event.getSelection());
-                onShowReference();
+            	onShowSelectedReference(event.getSelection());
             }
         });
     }
@@ -263,6 +289,11 @@ public class CHViewPart extends ViewPart {
     }
 
     private void createActions() {
+    	// action gruops
+    	fOpenViewActionGroup= new OpenViewActionGroup(this);
+    	fSelectionSearchGroup= new SelectionSearchGroup(getSite());
+    	fRefactoringActionGroup= new CRefactoringActionGroup(this);
+    	
         WorkingSetFilterUI wsFilterUI= new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
             protected void onWorkingSetChange() {
                 updateWorkingSetFilter(this);
@@ -364,6 +395,19 @@ public class CHViewPart extends ViewPart {
             }
         };
         
+        fShowReference= new Action(CHMessages.CHViewPart_ShowReference_label) {
+        	public void run() {
+        		onShowSelectedReference(fTreeViewer.getSelection());
+        	}
+        };
+        fShowReference.setToolTipText(CHMessages.CHViewPart_ShowReference_tooltip);	
+        fOpenElement= new Action(CHMessages.CHViewPart_Open_label) {
+        	public void run() {
+        		onOpenElement(fTreeViewer.getSelection());
+        	}
+        };
+        fOpenElement.setToolTipText(CHMessages.CHViewPart_Open_tooltip);
+        
         fShowFilesInLabelsAction= new Action(CHMessages.CHViewPart_ShowFiles_label, IAction.AS_CHECK_BOX) {
             public void run() {
                 onShowFilesInLabels(isChecked());
@@ -457,15 +501,44 @@ public class CHViewPart extends ViewPart {
                 }
         	}
         }
-        
+        else {
+        	fNavigationNode= (CHNode) selectedItem.getData();
+        	if (!forward && fNavigationNode != null) {
+        		fNavigationDetail= Math.max(0, fNavigationNode.getReferenceCount()-1);
+        	}
+        	else {
+        		fNavigationDetail= 0;
+        	}
+        }
     }
         
+	protected void onShowSelectedReference(ISelection selection) {
+		fNavigationDetail= 0;
+    	fNavigationNode= selectionToNode(selection);
+        showReference();
+	}
+
+	protected void onOpenElement(ISelection selection) {
+    	CHNode node= selectionToNode(selection);
+    	if (node != null) {
+    		ICElement elem= node.getRepresentedDeclaration();
+    		if (elem != null) {
+    			IWorkbenchPage page= getSite().getPage();
+    			try {
+					EditorOpener.open(page, elem);
+				} catch (CModelException e) {
+					CUIPlugin.getDefault().log(e);
+				}
+    		}
+    	}
+	}
+
     protected void onNextOrPrevious(boolean forward) {
     	setNextNode(forward);
         if (fNavigationNode != null) {
             StructuredSelection sel= new StructuredSelection(fNavigationNode);
             fTreeViewer.setSelection(sel);
-            onShowReference();
+            showReference();
         }
     }
 
@@ -564,42 +637,30 @@ public class CHViewPart extends ViewPart {
         }
     }
 
-    protected void onContextMenuAboutToShow(IMenuManager m) {
-//        final IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
-//        final CHNode node= IBConversions.selectionToNode(selection);
-//        
-//        if (node != null) {
-//            // open reference
-//            if (node.getParent() != null && node.getDirectiveFile() != null) {
-//                m.add(new Action(CHMessages.CHViewPart_OpenReference_label) {
-//                    public void run() {
-//                        onShowReference(selection);
-//                    }
-//                });
-//            }
+    protected void onContextMenuAboutToShow(IMenuManager menu) {
+		CUIPlugin.createStandardGroups(menu);
+		
+		CHNode node= selectionToNode(fTreeViewer.getSelection());
+		if (node != null) {
+			if (node.getReferenceCount() > 0) {
+				menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fShowReference);
+			}
+			menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenElement);
+		}
+		
+		// action groups
+		ISelection selection = getSite().getSelectionProvider().getSelection();
+		if (OpenViewActionGroup.canActionBeAdded(selection)){
+			fOpenViewActionGroup.fillContextMenu(menu);
+		}
 
-            // support for opening the function/method
-//            final ITranslationUnit tu= node.getRepresentedTranslationUnit();
-//            if (tu != null) {
-//                // open
-//                OpenFileAction ofa= new OpenFileAction(page);
-//                ofa.selectionChanged(selection);
-//                m.add(ofa);
-//
-//                // open with
-//                // keep the menu shorter, no open with support
-////                final IResource r= tu.getResource();
-////                if (r != null) {
-////                    IMenuManager submenu= new MenuManager(IBMessages.IBViewPart_OpenWithMenu_label); 
-////                    submenu.add(new OpenWithMenu(page, r));
-////                    m.add(submenu);
-////                }
-//            }
-//        }
-        m.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
+		if (SelectionSearchGroup.canActionBeAdded(selection)){
+			fSelectionSearchGroup.fillContextMenu(menu);
+		}
+		fRefactoringActionGroup.fillContextMenu(menu);
     }
-    
-    protected void onShowReference() {
+    	    
+    private void showReference() {
         if (fNavigationNode != null) {
             ITranslationUnit file= fNavigationNode.getFileOfReferences();
     		if (file != null) {

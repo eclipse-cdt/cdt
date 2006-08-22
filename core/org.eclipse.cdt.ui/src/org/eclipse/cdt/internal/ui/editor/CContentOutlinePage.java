@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -234,9 +235,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		
 		ISelection selection= getSelection();
 		if (OpenViewActionGroup.canActionBeAdded(selection)){
-			fOpenViewActionGroup.setContext(new ActionContext(selection));
 			fOpenViewActionGroup.fillContextMenu(menu);
-			fOpenViewActionGroup.setContext(null);
 		}
 
 		if (OpenIncludeAction.canActionBeAdded(selection)) {

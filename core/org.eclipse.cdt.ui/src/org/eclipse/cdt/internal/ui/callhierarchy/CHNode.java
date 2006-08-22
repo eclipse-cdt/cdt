@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -23,7 +25,7 @@ import org.eclipse.cdt.core.model.IVariableDeclaration;
 /**
  * Represents a node in the include browser
  */
-public class CHNode {
+public class CHNode implements IAdaptable {
 	private CHNode fParent;
 	private ICElement fRepresentedDecl;
 	private ITranslationUnit fFileOfReferences;
@@ -137,5 +139,12 @@ public class CHNode {
 
 	public ITranslationUnit getFileOfReferences() {
 		return fFileOfReferences;
+	}
+
+	public Object getAdapter(Class adapter) {
+		if (adapter.isAssignableFrom(ICElement.class)) {
+			return getRepresentedDeclaration();
+		}
+		return null;
 	}
 }

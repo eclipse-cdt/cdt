@@ -1,5 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2006 Wind River Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Wind River Systems - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.dd.dsf.debug;
 
+import org.eclipse.dd.dsf.debug.IRunControl.IExecutionDMC;
+import org.eclipse.dd.dsf.model.IDataModelEvent;
 import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
@@ -11,7 +23,21 @@ import org.eclipse.dd.dsf.service.IDsfService;
  * about to be executed. 
  */
 public interface IStepQueueManager extends IDsfService {
+    /**
+     * Amount of time in miliseconds, that it takes the ISteppingTimedOutEvent 
+     * event to be issued after a step is started. 
+     * @see ISteppingTimedOutEvent  
+     */
+    public final static int STEPPING_TIMEOUT = 500;
     
+    /**
+     * Indicates that the given context has been stepping for some time, 
+     * and the UI (views and actions) may need to be updated accordingly. 
+     */
+    public interface ISteppingTimedOutEvent extends IDataModelEvent<IExecutionDMC> {
+    }
+
+
     void setStepQueueDepth(int depth);
     int getStepQueueDepth();
     
@@ -24,8 +50,10 @@ public interface IStepQueueManager extends IDsfService {
     /**
      * Checks whether a step command can be queued up for given context.
      */
-    void canEnqueueStep(IRunControl.IExecutionDMC execCtx);
-    
+    boolean canEnqueueStep(IRunControl.IExecutionDMC execCtx);
+
+    boolean canEnqueueInstructionStep(IRunControl.IExecutionDMC execCtx);
+
     /**
      * Adds a step command to the execution queue for given context.
      * @param execCtx Execution context that should perform the step. 
@@ -40,4 +68,6 @@ public interface IStepQueueManager extends IDsfService {
      * @param stepType Type of step to execute.
      */
     void enqueueInstructionStep(IRunControl.IExecutionDMC execCtx, IRunControl.StepType stepType);
+
+    boolean isSteppingTimedOut(IExecutionDMC context);
 }

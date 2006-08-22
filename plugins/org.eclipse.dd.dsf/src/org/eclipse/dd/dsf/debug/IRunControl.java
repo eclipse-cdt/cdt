@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006 Wind River Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Wind River Systems - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.dd.dsf.debug;
 
 import org.eclipse.dd.dsf.concurrent.Done;
@@ -17,13 +27,6 @@ import org.eclipse.dd.dsf.model.IDataModelService;
  */
 public interface IRunControl extends IDataModelService
 {
-    /**
-     * Amount of time in seconds, that it takes the ISteppingTimedOutEvent event to
-     * be issued after a step is started. 
-     * @see ISteppingTimedOutEvent 
-     */
-    public final static int STEPPING_TIMEOUT = 5;
-    
     /**
      * Execution context is the object on which run control operations can be
      * performed.  A lot of higher-level services reference this context to build
@@ -74,13 +77,6 @@ public interface IRunControl extends IDataModelService
     }
 
     /**
-     * Indicates that the given context has been stepping for some time, 
-     * and the UI (views and actions) may need to be updated accordingly. 
-     */
-    public interface ISteppingTimedOutEvent extends IDataModelEvent<IExecutionDMC> {
-    }
-
-    /**
      * Display information for an execution context.
      */
     public interface IExecutionData extends IDataModelData {
@@ -103,7 +99,6 @@ public interface IRunControl extends IDataModelService
     void suspend(IExecutionDMC context, Done done);
     public enum StepType { STEP_OVER, STEP_INTO, STEP_RETURN };
     boolean isStepping(IExecutionDMC context);
-    boolean isSteppingTimedOut(IExecutionDMC context);
     boolean canStep(IExecutionDMC context);
     void step(IExecutionDMC context, StepType stepType, Done done);
     boolean canInstructionStep(IExecutionDMC context);

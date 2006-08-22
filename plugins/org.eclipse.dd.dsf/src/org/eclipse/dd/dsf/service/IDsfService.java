@@ -51,6 +51,15 @@ public interface IDsfService {
     DsfExecutor getExecutor();
     
     /**
+     * Returns the map of properties that this service was registered with.
+     * <br>
+     * TODO: is returning the properties and service filter redundant?  Should
+     * getServiceFilter() be removed from the interface since it can be generated
+     * from the properties? 
+     */
+    Dictionary getProperties();
+    
+    /**
      * Returns a filter string that can be used to uniquely identify this 
      * service. This filter string should be based on the properties and class 
      * name, which were used to register this service.

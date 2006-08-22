@@ -1,4 +1,8 @@
 2006-08-22 Mikhail Khodjaiants
+	Bug 145758: Unable to use the default command factories.
+	* MANIFEST.MF
+
+2006-08-22 Mikhail Khodjaiants
 	Bug 153894: Variable View: Can not format 'short int' to Hex.
 	Applied patch from James Blackburn (jamesblackburn+eclipse@gmail.com).
 	* SourceManager.java

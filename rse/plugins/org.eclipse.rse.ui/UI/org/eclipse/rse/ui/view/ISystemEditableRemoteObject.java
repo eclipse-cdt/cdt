@@ -107,6 +107,15 @@ public interface ISystemEditableRemoteObject
 	 */
 	public void open(Shell shell, boolean readOnly);
 
+	/**
+	 * Open in editor
+	 */
+	public void open(IProgressMonitor monitor);
+	
+	/**
+	 * Open in editor
+	 */
+	public void open(IProgressMonitor monitor, boolean readOnly);
 	
 	/**
 	 * Set local resource properties

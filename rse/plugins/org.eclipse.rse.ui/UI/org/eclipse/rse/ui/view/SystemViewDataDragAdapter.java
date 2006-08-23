@@ -288,6 +288,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 							{
 								try
 								{		
+									
 									Shell shell = event.display.getActiveShell();
 									if (editable.download(shell))
 									{

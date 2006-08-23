@@ -131,6 +131,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IElementCollector;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
@@ -2735,7 +2736,8 @@ public class SystemViewRemoteFileAdapter
 				{
 					if (editable.checkOpenInEditor() != ISystemEditableRemoteObject.OPEN_IN_SAME_PERSPECTIVE)
 					{
-						editable.open(getShell());
+						DownloadJob oJob = new DownloadJob(editable);
+						oJob.schedule();
 					}
 					else
 					{
@@ -2746,6 +2748,8 @@ public class SystemViewRemoteFileAdapter
 				catch (Exception e)
 				{
 				}
+			
+				
 			}
 			else if (remoteFile.isDirectory())
 			{
@@ -2761,7 +2765,7 @@ public class SystemViewRemoteFileAdapter
 			return false;
 		}
 	}
-
+	
 	public boolean canEdit(Object element)
 	{
 		IRemoteFile remoteFile = (IRemoteFile) element;

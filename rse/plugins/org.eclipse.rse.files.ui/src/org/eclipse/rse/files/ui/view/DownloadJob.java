@@ -3,10 +3,12 @@
  */
 package org.eclipse.rse.files.ui.view;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.files.ui.resources.SystemUniversalTempFileListener;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Display;
 
@@ -47,7 +49,11 @@ public class DownloadJob extends Job
 	{
 		try
 		{
-			_editable.download(monitor);		
+			IFile localFile = _editable.getLocalResource();
+			SystemUniversalTempFileListener listener = SystemUniversalTempFileListener.getListener();
+			listener.addIgnoreFile(localFile);
+			_editable.download(monitor);
+			listener.removeIgnoreFile(localFile);
 		}
 		catch (Exception e)
 		{				

@@ -11,11 +11,19 @@
 package org.eclipse.cdt.debug.ui.importexecutable;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -35,9 +43,11 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
@@ -78,14 +88,33 @@ public class ImportExecutablePageOne extends WizardPage {
 
 	private AbstractImportExecutableWizard wizard;
 
+	private String selectedBinaryParserId;
+	private IBinaryParser selectedBinaryParser;
+	
 	public ImportExecutablePageOne(AbstractImportExecutableWizard wizard) {
 		super("ImportApplicationPageOne");
 		this.wizard = wizard;
 		setPageComplete(false);
 		setTitle(wizard.getPageOneTitle());
 		setDescription(wizard.getPageOneDescription());
+		
+		selectedBinaryParserId = CCorePlugin.getDefault().getPluginPreferences().getDefaultString(CCorePlugin.PREF_BINARY_PARSER);
+		if (selectedBinaryParserId == null || selectedBinaryParserId.length() == 0) {
+			selectedBinaryParserId = CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID;
+		}
+		
+		try {
+			// should return the parser for the above id
+			selectedBinaryParser = CCorePlugin.getDefault().getDefaultBinaryParser();
+		} catch (CoreException e) {
+			CDebugUIPlugin.log(e);
+		}
 	}
 
+	public String getSelectedBinaryParserId() {
+		return selectedBinaryParserId;
+	}
+	
 	private void checkControlState() {
 		selectSingleFile = selectSingleButton.getSelection();
 		singleExecutablePathField.setEnabled(selectSingleFile);
@@ -109,7 +138,7 @@ public class ImportExecutablePageOne extends WizardPage {
 
 		for (int i = 0; i < contents.length; i++) {
 			File file = contents[i];
-			if (file.isFile() && wizard.isExecutableFile(file)) {
+			if (file.isFile() && isBinary(file)) {
 				files.add(file);
 			}
 		}
@@ -141,6 +170,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		selectExecutableGroup.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
 
+		createSelectBinaryParser(selectExecutableGroup);
 		createSelectExecutable(selectExecutableGroup);
 		createExecutablesRoot(selectExecutableGroup);
 		createExecutablesList(workArea);
@@ -258,6 +288,83 @@ public class ImportExecutablePageOne extends WizardPage {
 
 	}
 
+	private void createSelectBinaryParser(Composite workArea) {
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.BINARY_PARSER_SIMPLE_ID);
+		if (point == null)
+			return;
+		
+		Label label = new Label(workArea, SWT.NONE);
+		label.setText(Messages.ImportExecutablePageOne_SelectBinaryParser);
+		
+		final Combo combo = new Combo(workArea, SWT.READ_ONLY);
+		
+		final IExtension[] exts = point.getExtensions();
+		for (int i = 0, j = 0; i < exts.length; i++) {
+			if (isExtensionVisible(exts[i])) {
+				exts[j] = exts[i];
+				combo.add(exts[j].getLabel());
+				if (selectedBinaryParserId.equals(exts[j].getUniqueIdentifier()))
+					combo.select(j);
+				++j;
+			}
+		}
+		
+		combo.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			public void widgetSelected(SelectionEvent e) {
+				instantiateBinaryParser(exts[combo.getSelectionIndex()]);
+				if (selectSingleFile) {
+					String path = singleExecutablePathField.getText();
+					if (path.length() > 0)
+						validateExe(path);
+				} else {
+					previouslySearchedDirectory = null;
+					updateExecutablesList(multipleExecutablePathField.getText());
+				}
+			}
+		});
+		
+		combo.select(0);
+		
+		// Dummy to fill out the third column
+		new Label(workArea, SWT.NONE);
+	}
+	
+	private static boolean isExtensionVisible(IExtension ext) {
+ 		IConfigurationElement[] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			IConfigurationElement[] children = elements[i].getChildren("filter"); //$NON-NLS-1$
+			for (int j = 0; j < children.length; j++) {
+				String name = children[j].getAttribute("name"); //$NON-NLS-1$
+				if (name != null && name.equals("visibility")) { //$NON-NLS-1$
+					String value = children[j].getAttribute("value"); //$NON-NLS-1$
+					if (value != null && value.equals("private")) { //$NON-NLS-1$
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		return false; // invalid extension definition (must have at least cextension elements)
+	}
+
+	private void instantiateBinaryParser(IExtension ext) {
+ 		IConfigurationElement[] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			IConfigurationElement[] children = elements[i].getChildren("run"); //$NON-NLS-1$
+			for (int j = 0; j < children.length; j++) {
+				try {
+					selectedBinaryParser = (IBinaryParser)children[j].createExecutableExtension("class");
+				} catch (CoreException e) {
+					CDebugUIPlugin.log(e);
+				}
+				if (selectedBinaryParser != null)
+					return;
+			}
+		}
+	}
+	
 	private void createSelectExecutable(Composite workArea) {
 		// project specification group
 
@@ -280,24 +387,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		singleExecutablePathField.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
-				setErrorMessage(null);
-				setPageComplete(false);
-				String path = singleExecutablePathField.getText();
-				if (path.length() > 0) {
-					File testFile = new File(path);
-					if (testFile.exists()) {
-						if (wizard.isExecutableFile(testFile))
-						{
-							executables = new File[1];
-							executables[0] = testFile;
-							setPageComplete(true);
-						}
-						else
-							setErrorMessage(Messages.ImportExecutablePageOne_NoteAnEXE);
-					} else {
-						setErrorMessage(Messages.ImportExecutablePageOne_NoSuchFile);
-					}
-				}
+				validateExe(singleExecutablePathField.getText());
 			}
 
 		});
@@ -464,5 +554,37 @@ public class ImportExecutablePageOne extends WizardPage {
 		executablesViewer.refresh(true);
 		executablesViewer.setCheckedElements(executables);
 		setPageComplete(executables.length > 0);
+	}
+	
+	private boolean isBinary(File file) {
+		if (selectedBinaryParser != null) {
+			try {
+				IBinaryParser.IBinaryFile bin = selectedBinaryParser.getBinary(new Path(file.getAbsolutePath()));
+				return bin.getType() == IBinaryParser.IBinaryFile.EXECUTABLE;
+			} catch (IOException e) {
+				return false;
+			}
+		} else
+			return false;
+	}
+	
+	private void validateExe(String path) {
+		setErrorMessage(null);
+		setPageComplete(false);
+		if (path.length() > 0) {
+			File testFile = new File(path);
+			if (testFile.exists()) {
+				if (isBinary(testFile))
+				{
+					executables = new File[1];
+					executables[0] = testFile;
+					setPageComplete(true);
+				}
+				else
+					setErrorMessage(Messages.ImportExecutablePageOne_NoteAnEXE);
+			} else {
+				setErrorMessage(Messages.ImportExecutablePageOne_NoSuchFile);
+			}
+		}
 	}
 }

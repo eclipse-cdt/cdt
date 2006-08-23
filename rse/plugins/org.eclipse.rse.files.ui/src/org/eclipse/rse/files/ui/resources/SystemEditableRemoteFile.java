@@ -1129,6 +1129,156 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		}
 	}
 
+	
+	/**
+	 * Open in editor
+	 */
+	public void open(IProgressMonitor monitor)
+	{
+		open(monitor, false);
+	}
+
+	/**
+	 * Open in editor
+	 */
+	public void open(IProgressMonitor monitor, boolean readOnly)
+	{
+		
+		try
+		{
+
+			// ensure the file is stale 
+			remoteFile.markStale(true, false);
+			{
+				remoteFile = remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(remoteFile.getAbsolutePath());
+			}
+			
+			if (!remoteFile.exists())
+			{
+				SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
+				message.makeSubstitution(remotePath, subsystem.getHost().getHostName());
+		
+				
+				DisplayMessageDialog dd = new DisplayMessageDialog(message);
+				Display.getDefault().syncExec(dd);
+				return;
+			}
+			
+			// assumption is that editor is not open
+
+				if (readOnly)
+				{
+					if (download(monitor))
+					{
+						setLocalResourceProperties();
+						openEditor();
+						setEditorAsReadOnly();
+					}
+				}
+				else if (!isReadOnly())
+				{ // we have write access
+					if (download(monitor))
+					{
+						addAsListener();
+						setLocalResourceProperties();
+						openEditor();
+					}
+				}
+				else
+				{ // we do not have write access
+
+					IRemoteFile fakeRemoteFile = subsystem.getRemoteFileObject(remotePath);
+					if (!fakeRemoteFile.exists())
+					{ // this could be because file doesn't exist
+						download(monitor);
+					}
+
+					SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DOWNLOAD_NO_WRITE);
+					message.makeSubstitution(remotePath, subsystem.getHost().getHostName());
+
+					DisplayQuestionDialog dd = new DisplayQuestionDialog(message);
+					Display.getDefault().syncExec(dd);
+					boolean answer = dd.getResponse();
+
+
+					if (answer)
+					{
+						if (download(monitor))
+						{
+							setLocalResourceProperties();
+							setReadOnly(getLocalResource(), true);
+							openEditor();
+							setEditorAsReadOnly();
+						}
+					}
+				}
+
+		}
+		catch (Exception e)
+		{
+
+			if (e instanceof InterruptedException)
+			{
+				// do nothing since user pressed cancel
+			}
+			else if (e instanceof SystemMessageException)
+			{
+				DisplayMessageDialog dd = new DisplayMessageDialog(((SystemMessageException)e).getSystemMessage());
+				Display.getDefault().syncExec(dd);
+			}
+			else
+			{
+				RemoteFileIOException exc = new RemoteFileIOException(e);
+				DisplayMessageDialog dd = new DisplayMessageDialog(exc.getSystemMessage());
+				Display.getDefault().syncExec(dd);
+			}
+		}
+		}
+	
+	
+	public class DisplayMessageDialog implements Runnable
+	{
+		protected SystemMessage _msg;
+		public DisplayMessageDialog(SystemMessage msg)
+		{
+			_msg = msg;			
+		}
+		
+		public void run()
+		{
+			SystemMessageDialog dialog = new SystemMessageDialog(RSEUIPlugin.getActiveWorkbenchShell(), _msg);
+			dialog.open();
+		}
+	}
+	
+	public class DisplayQuestionDialog implements Runnable
+	{
+		protected SystemMessage _msg;
+		public boolean _responce = false;
+		public DisplayQuestionDialog(SystemMessage msg)
+		{
+			_msg = msg;
+		}
+		
+		public boolean getResponse()
+		{
+			return _responce;
+		}
+		
+		public void run()
+		{
+			SystemMessageDialog dialog = new SystemMessageDialog(RSEUIPlugin.getActiveWorkbenchShell(), _msg);
+			try
+			{
+				_responce = dialog.openQuestion(); 
+			}
+			catch (Exception e)
+			{
+				
+			}
+		}
+	}
+	
 	/**
 	 * Open in system editor
 	 */

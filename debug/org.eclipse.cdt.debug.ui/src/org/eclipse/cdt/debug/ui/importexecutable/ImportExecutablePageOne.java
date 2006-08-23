@@ -560,7 +560,8 @@ public class ImportExecutablePageOne extends WizardPage {
 		if (selectedBinaryParser != null) {
 			try {
 				IBinaryParser.IBinaryFile bin = selectedBinaryParser.getBinary(new Path(file.getAbsolutePath()));
-				return bin.getType() == IBinaryParser.IBinaryFile.EXECUTABLE;
+				return bin.getType() == IBinaryParser.IBinaryFile.EXECUTABLE
+					|| bin.getType() == IBinaryParser.IBinaryFile.SHARED;
 			} catch (IOException e) {
 				return false;
 			}

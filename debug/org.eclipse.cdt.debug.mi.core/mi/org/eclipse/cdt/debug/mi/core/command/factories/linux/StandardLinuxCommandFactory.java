@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.mi.core.command.factories.linux;
 
 import org.eclipse.cdt.debug.mi.core.command.CLIInfoSharedLibrary;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSetNewConsole;
 import org.eclipse.cdt.debug.mi.core.command.factories.StandardCommandFactory;
 
 /**
@@ -37,5 +38,35 @@ public class StandardLinuxCommandFactory extends StandardCommandFactory {
 	 */
 	public CLIInfoSharedLibrary createCLIInfoSharedLibrary() {
 		return new LinuxCLIInfoSharedLibrary();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.core.command.CommandFactory#createMIGDBSetNewConsole()
+	 */
+	public MIGDBSetNewConsole createMIGDBSetNewConsole() {
+		// Suppress "set new-console" - returns error on Linux
+		return new MIGDBSetNewConsole( getMIVersion() ) {
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.debug.mi.core.command.MICommand#getOperation()
+			 */
+			public String getOperation() {
+				return ""; //$NON-NLS-1$
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.debug.mi.core.command.MICommand#getOptions()
+			 */
+			public String[] getOptions() {
+				return new String[0];
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.debug.mi.core.command.MICommand#getParameters()
+			 */
+			public String[] getParameters() {
+				return new String[0];
+			}			
+		};
 	}
 }

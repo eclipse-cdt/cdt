@@ -414,4 +414,8 @@ public class CommandFactory {
 	public MIInterpreterExecConsole createMIInterpreterExecConsole(String cmd) {
 		return new MIInterpreterExecConsole(getMIVersion(), cmd);
 	}
+
+	public MIGDBSetNewConsole createMIGDBSetNewConsole() {
+		return new MIGDBSetNewConsole(getMIVersion());
+	}
 }

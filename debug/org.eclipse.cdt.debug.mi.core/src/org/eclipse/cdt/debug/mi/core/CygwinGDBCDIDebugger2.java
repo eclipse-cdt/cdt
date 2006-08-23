@@ -12,7 +12,7 @@ package org.eclipse.cdt.debug.mi.core;
 
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSetNewConsole;
 import org.eclipse.cdt.debug.mi.core.command.factories.win32.CygwinCommandFactory;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.core.runtime.CoreException;
@@ -41,9 +41,9 @@ public class CygwinGDBCDIDebugger2 extends GDBCDIDebugger2 {
 		MISession miSession = getMISession( session );
 		try {
 			CommandFactory factory = miSession.getCommandFactory();
-			MIGDBSet set = factory.createMIGDBSet( new String[]{ "new-console" } ); //$NON-NLS-1$
-			miSession.postCommand( set );
-			MIInfo info = set.getMIInfo();
+			MIGDBSetNewConsole newConsole = factory.createMIGDBSetNewConsole();
+			miSession.postCommand( newConsole );
+			MIInfo info = newConsole.getMIInfo();
 			if ( info == null ) {
 				throw new MIException( MIPlugin.getResourceString( "src.common.No_answer" ) ); //$NON-NLS-1$
 			}

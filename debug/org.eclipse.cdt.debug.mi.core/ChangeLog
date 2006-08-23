@@ -3,6 +3,14 @@
 	* MANIFEST.MF
 
 2006-08-22 Mikhail Khodjaiants
+	Bug 146725: Erroneous error message during GDB startup.
+	* CygwinGDBCDIDebugger2.java
+	* GDBCDIDebugger2.java
+	* CommandFactory.java
+	+ MIGDBSetNewConsole.java
+	* StandardLinuxCommandFactory.java
+
+2006-08-22 Mikhail Khodjaiants
 	Bug 153894: Variable View: Can not format 'short int' to Hex.
 	Applied patch from James Blackburn (jamesblackburn+eclipse@gmail.com).
 	* SourceManager.java

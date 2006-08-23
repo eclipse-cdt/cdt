@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -23,7 +24,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CLITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSetNewConsole;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -120,9 +121,9 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 		MISession miSession = getMISession( session );
 		try {
 			CommandFactory factory = miSession.getCommandFactory();
-			MIGDBSet set = factory.createMIGDBSet( new String[]{ "new-console" } ); //$NON-NLS-1$
-			miSession.postCommand( set );
-			MIInfo info = set.getMIInfo();
+			MIGDBSetNewConsole newConsole = factory.createMIGDBSetNewConsole();
+			miSession.postCommand( newConsole );
+			MIInfo info = newConsole.getMIInfo();
 			if ( info == null ) {
 				throw new MIException( MIPlugin.getResourceString( "src.common.No_answer" ) ); //$NON-NLS-1$
 			}

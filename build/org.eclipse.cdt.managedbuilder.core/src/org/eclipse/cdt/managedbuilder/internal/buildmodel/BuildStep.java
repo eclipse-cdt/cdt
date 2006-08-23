@@ -34,8 +34,11 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
-import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor;
+import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
+import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
+import org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor;
+import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.IFileContextData;
@@ -277,16 +280,17 @@ public class BuildStep implements IBuildStep {
 
 		IManagedCommandLineGenerator gen = fTool.getCommandLineGenerator();
 		FileContextData data = new FileContextData(inRcPath, outRcPath, null, fTool);
+
 		IManagedCommandLineInfo info = gen.generateCommandLineInfo(fTool, 
-				resolveMacros(fTool.getToolCommand(), data, true),
+				fTool.getToolCommand(),
 				getCommandFlags(inRcPath, outRcPath, resolveAll), 
-				resolveMacros(fTool.getOutputFlag(), data, true), 
-				resolveMacros(fTool.getOutputPrefix(), data, true),
+				fTool.getOutputFlag(), 
+				fTool.getOutputPrefix(),
 				listToString(resourcesToStrings(cwd, getPrimaryResources(false)), " "), 	//$NON-NLS-1$
 				resourcesToStrings(cwd, getPrimaryResources(true)), 
 				fTool.getCommandLinePattern());
-		
-		return createCommandsFromString(info.getCommandLine(), cwd, getEnvironment());
+
+		return createCommandsFromString(resolveMacros(info.getCommandLine(), data, true), cwd, getEnvironment());
 	}
 	
 	private IPath calcCWD(){
@@ -381,25 +385,36 @@ public class BuildStep implements IBuildStep {
 		}
 		return (String[])list.toArray(new String[list.size()]);
 	}
-	
 	private String resolveMacros(String str, IFileContextData fileData, boolean resolveAll){
+		String result = str;
 		try {
-			String tmp = resolveAll ? ManagedBuildManager.getBuildMacroProvider().resolveValue(str, "", " ", IBuildMacroProvider.CONTEXT_FILE, fileData)	//$NON-NLS-1$	//$NON-NLS-2$
-					:
-						ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(str, "", " ", IBuildMacroProvider.CONTEXT_FILE, fileData);	//$NON-NLS-1$	//$NON-NLS-2$
-			if((tmp = tmp.trim()).length() != 0)
-				str = tmp;
+			if(resolveAll){
+				IMacroSubstitutor sub = createSubstitutor(fileData);
+				result = MacroResolver.resolveToString(str, sub);
+			} else {
+				result = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(str, "", " ", IBuildMacroProvider.CONTEXT_FILE, fileData);	//$NON-NLS-1$	//$NON-NLS-2$
+			}
 		} catch (BuildMacroException e) {
 		}
 
-		return str;
+		return result;
+	}
+	
+	private IMacroSubstitutor createSubstitutor(IFileContextData fileData){
+		BuildMacroProvider prov = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
+		IMacroContextInfo info = prov.getMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE, fileData); 
+		FileMacroExplicitSubstitutor sub = new FileMacroExplicitSubstitutor(
+				info,
+				"", " ");	//$NON-NLS-1$	//$NON-NLS-2$
+
+		return sub;
 	}
 	
 	private String[] getCommandFlags(IPath inRcPath, IPath outRcPath, boolean resolveAll){
 		try {
 			return resolveAll ? 
 					((Tool)fTool).getToolCommandFlags(inRcPath, outRcPath, 
-							new DefaultMacroSubstitutor(IBuildMacroProvider.CONTEXT_FILE, new FileContextData(inRcPath, outRcPath, null, fTool), "", " "))	//$NON-NLS-1$	//$NON-NLS-2$
+							createSubstitutor(new FileContextData(inRcPath, outRcPath, null, fTool)))
 					:
 						fTool.getToolCommandFlags(inRcPath, outRcPath);
 		} catch (BuildException e) {

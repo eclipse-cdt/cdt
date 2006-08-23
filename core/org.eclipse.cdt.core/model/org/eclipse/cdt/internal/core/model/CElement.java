@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -29,7 +30,6 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
@@ -57,26 +57,14 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		if(adapter == IFile.class)
-		{
-			IResource resource = getUnderlyingResource();
-			if(resource instanceof IFile)
-			{
-				return (IFile) resource;
-			}
-			else
-			{
-				return null;
+		// handle all kinds of resources
+		if (IResource.class.isAssignableFrom(adapter)) {
+			IResource r= getResource();
+			if (r != null && adapter.isAssignableFrom(r.getClass())) {
+				return r;
 			}
 		}
-		if(adapter == IResource.class)
-		{
-			return getUnderlyingResource();
-		}
-		else
-		{
-			return super.getAdapter(adapter);
-		}
+		return super.getAdapter(adapter);
 	}
 	
 	

@@ -163,7 +163,7 @@ public class OpenViewActionGroup extends ActionGroup {
 		super.fillContextMenu(menu);
 //		if (!fIsTypeHiararchyViewerOwner)
 //			appendToGroup(menu, fOpenTypeHierarchy);
-		if (!fIsCallHiararchyViewerOwner) {
+		if (!fIsCallHiararchyViewerOwner && fOpenCallHierarchy.isEnabled()) {
 			menu.appendToGroup(fGroupName, fOpenCallHierarchy);
 		}
 //		appendToGroup(menu, fOpenSuperImplementation);

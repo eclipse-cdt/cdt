@@ -174,14 +174,17 @@ public class MainActionGroup extends CViewActionGroup {
 		IStructuredSelection celements = (IStructuredSelection) getCView().getViewer().getSelection();
 		IStructuredSelection resources = SelectionConverter.convertSelectionToResources(celements);
 
-		addNewMenu(menu, resources);
-
 		if (resources.isEmpty()) {
+			menu.add(new Separator(IContextMenuConstants.GROUP_GOTO));
+			menu.add(new Separator(IContextMenuConstants.GROUP_OPEN));
+			menu.add(new Separator(IContextMenuConstants.GROUP_BUILD));
 			menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
+			menu.add(new Separator("group.private1")); //$NON-NLS-1$
 			importAction.selectionChanged(resources);
 			menu.add(importAction);
 			exportAction.selectionChanged(resources);
 			menu.add(exportAction);
+			menu.add(new Separator("group.private2")); //$NON-NLS-1$
 			//Can be added once support for manually adding external files to index is established
 			/*menu.add(new Separator());
 			menu.add(addToIndexAction);*/
@@ -190,8 +193,13 @@ public class MainActionGroup extends CViewActionGroup {
 			menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
 			menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS + "-end")); //$NON-NLS-1$
 			menu.add(new Separator());
+
+			openViewActionGroup.fillContextMenu(menu);
+			crefactoringActionGroup.fillContextMenu(menu);
 			return;
 		}
+
+		addNewMenu(menu, resources);
 
 		menu.add(new Separator(IContextMenuConstants.GROUP_GOTO));
 		gotoGroup.fillContextMenu(menu);

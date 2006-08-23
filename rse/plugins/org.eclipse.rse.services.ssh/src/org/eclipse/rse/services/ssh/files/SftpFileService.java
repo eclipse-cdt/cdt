@@ -292,8 +292,14 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		if (perms.indexOf('w',1)<=0) {
 			node.setWritable(false); //not writable by anyone
 		}
-		if (perms.indexOf('x',1)>0) {
-			node.setExecutable(true); //executable by someone
+		if (node.isDirectory()) {
+			if (perms.indexOf('x',1)<=0) {
+				node.setWritable(false); //directories that are not executable are also not readable
+			}
+		} else {
+			if (perms.indexOf('x',1)>0) {
+				node.setExecutable(true); //executable by someone
+			}
 		}
 		if (attrs.getExtended()!=null) {
 			node.setExtendedData(attrs.getExtended());

@@ -295,6 +295,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			IPath exePath = new Path(programName);
 			if (projectName != null && !projectName.equals("")) { //$NON-NLS-1$
 				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+				if (!project.isAccessible()) {
+					return null;
+				}
 				if (!exePath.isAbsolute()) {
 					exePath = project.getLocation().append(exePath);
 				}

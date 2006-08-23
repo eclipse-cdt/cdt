@@ -23,19 +23,32 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IPositionConverter;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IFunctionDeclaration;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IVariableDeclaration;
 
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 public class CIndexQueries {
     public static class IPDOMInclude {
@@ -67,29 +80,7 @@ public class CIndexQueries {
 		}
 	}
     
-    public static class IPDOMReference {
-		private IASTName fName;
-		private ICProject fProject;
-		
-		public IPDOMReference(ICProject cproject, IASTName name) {
-			fProject= cproject;
-			fName= name;
-		}
-		public ITranslationUnit getTranslationUnit() throws CoreException {
-			return toTranslationUnit(fProject, fName);
-		}
-		public int getOffset() {
-			return fName.getFileLocation().getNodeOffset();
-		}
-		public long getTimestamp() {
-			return 0;
-		}
-		public int getLength() {
-			return fName.getFileLocation().getNodeLength();
-		}
-    }
-    
-	private static final IPDOMInclude[] EMPTY_INCLUDES = new IPDOMInclude[0];
+    private static final IPDOMInclude[] EMPTY_INCLUDES = new IPDOMInclude[0];
     private static final CIndexQueries sInstance= new CIndexQueries();
 	
 	public static CIndexQueries getInstance() {
@@ -184,20 +175,45 @@ public class CIndexQueries {
 		return EMPTY_INCLUDES;
 	}
 
-	public IPDOMReference[] findReferences(IASTName name, IProgressMonitor pm) throws CoreException, InterruptedException {
-		ArrayList result= new ArrayList();
+	public CalledByResult findCalledBy(ICElement callee, IProgressMonitor pm) throws CoreException, InterruptedException {
 		LinkedList projects= new LinkedList(Arrays.asList(CoreModel.getDefault().getCModel().getCProjects()));
-
-		// resolve the binding.
-		name.resolveBinding();
+		IASTName name= toASTName(callee);
 		
-		for (Iterator iter = projects.iterator(); iter.hasNext();) {
-			findReferences(name, (ICProject) iter.next(), result);	
+		CalledByResult result= new CalledByResult();
+		if (name != null) {
+			// resolve the binding.
+			name.resolveBinding();
+
+			for (Iterator iter = projects.iterator(); iter.hasNext();) {
+				findCalledBy(name, (ICProject) iter.next(), result);	
+			}
 		}
-		return (IPDOMReference[]) result.toArray(new IPDOMReference[result.size()]);
+		return result;
 	}
 
-	private void findReferences(IASTName name, ICProject project, Collection result) throws InterruptedException, CoreException {
+	private IASTName toASTName(ICElement elem) throws CoreException {
+		if (elem instanceof ISourceReference) {
+			ISourceReference sf= (ISourceReference) elem;
+			ISourceRange range = sf.getSourceRange();
+			ITranslationUnit tu = sf.getTranslationUnit();
+			if (tu != null) {
+				ILanguage language = tu.getLanguage();
+				IASTTranslationUnit ast = language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
+				return getASTName(language, ast, range);
+			}
+		}
+		return null;
+	}
+
+	private static IASTName getASTName(ILanguage language, IASTTranslationUnit ast, ISourceRange range) {
+		IASTName[] names = language.getSelectedNames(ast, range.getIdStartPos(), range.getIdLength());
+		if (names.length > 0) {
+			return names[names.length-1];
+		}
+		return null;
+	}
+
+	private void findCalledBy(IASTName name, ICProject project, CalledByResult result) throws InterruptedException, CoreException {
 		PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
 		if (pdom != null) {
 			pdom.acquireReadLock();
@@ -207,7 +223,10 @@ public class CIndexQueries {
 					IASTName[] names= pdom.getReferences(binding);
 					for (int i = 0; i < names.length; i++) {
 						IASTName rname = names[i];
-						result.add(new IPDOMReference(project, rname));
+						ITranslationUnit tu= toTranslationUnit(project, name);
+						CIndexReference ref= new CIndexReference(tu, rname);
+						ICElement elem= findCaller(ref);
+						result.add(elem, ref);
 					}
 				}
 			}
@@ -215,5 +234,124 @@ public class CIndexQueries {
 				pdom.releaseReadLock();
 			}
 		}
+	}
+
+	public CallsToResult findCallsToInRange(ITranslationUnit tu, IRegion range, IProgressMonitor pm) throws CoreException, InterruptedException {
+		CallsToResult result= new CallsToResult();
+		ICProject project = tu.getCProject();
+		PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
+		if (pdom != null) {
+			pdom.acquireReadLock();
+			try {
+				IPath location= locationForTU(tu);
+				PDOMFile file= pdom.getFile(location);
+				if (file != null) {
+					// mstodo use correct timestamp
+					long timestamp= location.toFile().lastModified();
+					IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu.getPath(), timestamp);
+					if (pc != null) {
+						range= pc.historicToActual(range);
+					}
+					PDOMName name= file.getFirstName();
+					while (name != null) {
+						if (name.isReference()) {
+							IASTFileLocation loc= name.getFileLocation();
+							if (encloses(range, loc.getNodeOffset(), loc.getNodeLength())) {
+								ICElement[] defs= findDefinitions(project, name);
+								if (defs != null && defs.length > 0) {
+									CIndexReference ref= new CIndexReference(tu, name);
+									result.add(defs, ref);
+								}
+							}
+						}
+						name= name.getNextInFile();
+					}
+				}
+			}
+			finally {
+				pdom.releaseReadLock();
+			}
+		}
+		return result;
+	}
+
+	private ICElement[] findDefinitions(ICProject project, PDOMName name) throws CoreException {
+		ArrayList defs= new ArrayList();
+		PDOMBinding binding= name.getPDOMBinding();
+		if (binding != null) {
+			PDOMName declName= binding.getFirstDefinition();
+			while (declName != null) {
+				ICElement elem= findEnclosingElement(project, declName);
+				if (elem != null) {
+					defs.add(elem);
+				}
+				declName= declName.getNextInBinding();
+			}
+			if (defs.isEmpty()) {
+				declName= binding.getFirstDeclaration();
+				while (declName != null) {
+					ICElement elem= findEnclosingElement(project, declName);
+					if (elem != null) {
+						defs.add(elem);
+					}
+					declName= declName.getNextInBinding();
+				}
+			}		
+		}
+		return (ICElement[]) defs.toArray(new ICElement[defs.size()]);
+	}
+
+	private boolean encloses(IRegion range, int nodeOffset, int nodeLength) {
+		int d1= nodeOffset - range.getOffset();
+		int d2= range.getLength() - nodeLength - d1;
+		return d1 >= 0 && d2 >= 0;
+	}
+	
+	private ICElement findEnclosingElement(ICProject project, PDOMName declName) throws CoreException {
+		ITranslationUnit tu= toTranslationUnit(project, declName);
+		if (tu != null) {
+			//	mstodo use correct timestamp			
+			//	PDOMFile file= declName.getFile();
+			long timestamp= tu.getPath().toFile().lastModified();
+			IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu.getPath(), timestamp);
+			int offset= declName.getNodeOffset();
+			if (pc != null) {
+				offset= pc.historicToActual(new Region(offset, 0)).getOffset();
+			}
+			return findElement(tu, offset, true);
+		}
+		return null;
+	}
+
+	private ICElement findCaller(CIndexReference reference) throws CoreException {
+		ITranslationUnit tu= reference.getTranslationUnit();
+		long timestamp= reference.getTimestamp();
+		IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu.getPath(), timestamp);
+		int offset= reference.getOffset();
+		if (pc != null) {
+			offset= pc.historicToActual(new Region(offset, 0)).getOffset();
+		}
+		return findElement(tu, offset, false);
+	}
+
+	private ICElement findElement(ICElement element, int offset, boolean allowVars) throws CModelException {
+		if (element == null || (element instanceof IFunctionDeclaration) || 
+				(allowVars && element instanceof IVariableDeclaration)) {
+			return element;
+		}
+		if (element instanceof IParent) {
+			ICElement[] children= ((IParent) element).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				ICElement child = children[i];
+				if (child instanceof ISourceReference) {
+					ISourceRange sr= ((ISourceReference) child).getSourceRange();
+					int startPos= sr.getStartPos();
+					if (startPos <= offset && offset < startPos + sr.getLength()) {
+						return findElement(child, offset, allowVars);
+					}
+				}
+			}
+		}
+		return null;
 	}
 }

@@ -1,0 +1,44 @@
+/*******************************************************************************
+ * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
+
+package org.eclipse.cdt.internal.ui.missingapi;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.cdt.core.model.ICElement;
+
+public class CallsToResult {
+	private Map fElementSetsToReferences= new HashMap();
+
+	public CElementSet[] getElementSets() {
+		Set elementSets = fElementSetsToReferences.keySet();
+		return (CElementSet[]) elementSets.toArray(new CElementSet[elementSets.size()]);
+	}
+	
+	public CIndexReference[] getReferences(CElementSet elementSet) {
+		List references= (List) fElementSetsToReferences.get(elementSet);
+		return (CIndexReference[]) references.toArray(new CIndexReference[references.size()]);
+	}
+
+	public void add(ICElement[] elems, CIndexReference ref) {
+		CElementSet key= new CElementSet(elems);
+		List list= (List) fElementSetsToReferences.get(key);
+		if (list == null) {
+			list= new ArrayList();
+			fElementSetsToReferences.put(key, list);
+		}
+		list.add(ref);
+	}
+}

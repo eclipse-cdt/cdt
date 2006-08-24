@@ -46,6 +46,9 @@
 
    <element name="dynamicPopupMenuExtension">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
          <documentation>
             (no description available)
          </documentation>

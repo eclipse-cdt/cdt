@@ -113,6 +113,9 @@ You can specify multiple values if you comma-separate them.
 
    <element name="page">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name" icon="icon"/>
+         </appInfo>
          <documentation>
             Identifies an individual property page contribution.
          </documentation>
@@ -148,6 +151,9 @@ Or better yet, extends one of the IBM-supplied base classes, described in the AP
                <documentation>
                   A relative path to an icon that will be used in the UI in addition to the page name. Optional.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="subsystemconfigurationid" type="string">

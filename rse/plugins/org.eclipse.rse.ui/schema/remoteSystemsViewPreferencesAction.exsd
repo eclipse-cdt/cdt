@@ -48,6 +48,9 @@ This would be used by anyone who extends the Remote System Explorer, and offers 
 
    <element name="action">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="label" icon="icon"/>
+         </appInfo>
          <documentation>
             (no description available)
          </documentation>
@@ -88,6 +91,9 @@ Note this page will be shown as the root in the Preferences dialog, but it can b
                <documentation>
                   A relative path to an icon that will be displayed in the menu, with the label. Optional
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="tooltip" type="string">

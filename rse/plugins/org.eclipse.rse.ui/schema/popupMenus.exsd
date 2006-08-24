@@ -113,6 +113,11 @@ and filters.
    <include schemaLocation="schema://org.eclipse.ui/schema/commonExpression.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="objectContribution" minOccurs="1" maxOccurs="unbounded"/>
@@ -142,6 +147,11 @@ and filters.
    </element>
 
    <element name="objectContribution">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="visibility" minOccurs="0" maxOccurs="1"/>
@@ -167,7 +177,7 @@ all the actions defined in this objectContribution element.
 &lt;p&gt;
 This filter specifies a subsystem configuration id, such that these
 actions will only appear for remote resources returned from subsystems of the given subsystem configuration.
-This ID can be scalar, or it can be generic to match on multiple subsystem configuration IDs. 
+This ID can be scalar, or it can be generic to match on multiple subsystem configuration IDs.
                </documentation>
             </annotation>
          </attribute>
@@ -449,6 +459,9 @@ To do this, for the ID-part, specify one of the following IBM-supplied menu IDs:
 
    <element name="action">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="label" icon="icon"/>
+         </appInfo>
          <documentation>
             Use this element to define an action, and where it will appear in the popup menu. The action
 defined here will only appear in a remote resource popup menu if the resource matches all the
@@ -477,6 +490,9 @@ as these are assigned for you. However, accelerator information is valid, as def
                   An optional image icon for the popup menu. This is a .gif file, given with a path relative to your plugin
 directory.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="tooltip" type="string">

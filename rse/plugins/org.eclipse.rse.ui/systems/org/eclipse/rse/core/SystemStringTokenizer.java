@@ -44,6 +44,7 @@ public class SystemStringTokenizer
 	
 	/**
 	 * Return a count of the number of tokens in the input string
+	 * @return int number of tokens
 	 */
 	public int countTokens()
 	{
@@ -51,7 +52,7 @@ public class SystemStringTokenizer
 	}
 	
 	/**
-	 * Return true if there are more tokens
+	 * @return true if there are more tokens
 	 */
 	public boolean hasMoreTokens()
 	{
@@ -59,7 +60,7 @@ public class SystemStringTokenizer
 	}
 	
 	/**
-	 * Return the next token
+	 * @return String the next token
 	 */
 	public String nextToken()
 	{
@@ -71,6 +72,9 @@ public class SystemStringTokenizer
 	
     /**
      * Parse a string into tokens. 
+     * @param inputString String to parse
+     * @param delimiter Delimiter String, may be multi-character.
+     * @return Vector of tokens found
      */
     public static Vector tokenize(String inputString, String delimiter)
     {

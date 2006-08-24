@@ -603,7 +603,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					ICLineBreakpoint breakpoint = (ICLineBreakpoint)breakpoints[i]; 
 					String handle = breakpoint.getSourceHandle();
 					IPath path = convertPath( handle );
-					ICDILineLocation location = cdiTarget.createLineLocation( path.lastSegment()/*path.toPortableString()*/, breakpoint.getLineNumber() );
+					ICDILineLocation location = cdiTarget.createLineLocation( path.toPortableString(), breakpoint.getLineNumber() );
 					ICDICondition condition = createCondition( breakpoint );
 					b = cdiTarget.setLineBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
 				} else if ( breakpoints[i] instanceof ICWatchpoint ) {

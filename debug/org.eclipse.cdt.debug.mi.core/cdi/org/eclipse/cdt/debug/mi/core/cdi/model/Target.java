@@ -83,6 +83,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIFrame;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowEndianInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
+import org.eclipse.core.runtime.Path;
 
 /**
  */
@@ -864,6 +865,10 @@ public class Target extends SessionObject implements ICDITarget {
 	public ICDILineBreakpoint setLineBreakpoint(int type, ICDILineLocation location,
 			ICDICondition condition, boolean deferred) throws CDIException {		
 		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
+		// See bug 102563. Only pass gdb the source file name, not the full path.
+		// This workaround was in CBreakpointManager in CDT 3.1 but has been moved
+		// here so that non-gdb CDI clients can get the full path.
+		location = createLineLocation( new Path(location.getFile()).lastSegment(), location.getLineNumber() );
 		return bMgr.setLineBreakpoint(this, type, location, condition, deferred);
 	}
 

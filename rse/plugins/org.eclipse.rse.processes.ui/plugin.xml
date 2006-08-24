@@ -24,7 +24,7 @@ Contributors:
       <extension
          point="org.eclipse.rse.ui.subsystemConfiguration">
       <factory
-            systemtypes="Local"
+            systemTypes="Local"
             name="%Factory.LocalProcesses"
             iconlive="icons/full/obj16/activeprocess.gif"
             icon="icons/full/obj16/activeprocess.gif"

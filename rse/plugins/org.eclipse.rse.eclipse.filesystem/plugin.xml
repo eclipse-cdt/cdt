@@ -38,7 +38,7 @@ Contributors:
          point="org.eclipse.rse.ui.popupMenus">
       <objectContribution  
       		adaptable="false" 
-            subsystemfactoryCategory="files"
+            subsystemconfigurationCategory="files"
    			typefilter="folder"
    			id="org.eclipse.rse.eclipse.filesystem.createproject.">
             <visibility> 

@@ -670,7 +670,7 @@ Contributors:
       </contexts>
    </extension>
 <!-- ============================================ -->
-<!-- Define Remote Systems Explorer View          -->
+<!-- Define Remote Systems Explorer Views         -->
 <!-- ============================================ -->
    <extension
          point="org.eclipse.ui.views">
@@ -699,8 +699,30 @@ Contributors:
             class="org.eclipse.rse.ui.view.SystemTableViewPart"
             id="org.eclipse.rse.ui.view.systemTableView">
       </view>
-
-      
+      <!-- Remote Search View                                     -->
+      <view
+			name="%View.Search"
+			icon="icons/full/obj16/system_search.gif"
+			category="org.eclipse.rse.ui.view"
+			class="org.eclipse.rse.ui.view.search.SystemSearchViewPart"
+			id="org.eclipse.rse.ui.view.SystemSearchView">
+      </view>
+      <!-- Remote Scratchpad View                                 -->
+      <view
+			name="%View.Scratchpad"
+			icon="icons/full/view16/scratchpad_view.gif"
+			category="org.eclipse.rse.ui.view"
+			class="org.eclipse.rse.ui.view.scratchpad.SystemScratchpadViewPart"
+			id="org.eclipse.rse.ui.view.scratchpad.SystemScratchpadViewPart">
+      </view>
+      <!-- Remote Monitor View                                 -->
+      <view
+			name="%View.Monitor"
+			icon="icons/full/view16/system_view.gif"
+			category="org.eclipse.rse.ui.view"
+			class="org.eclipse.rse.ui.view.monitor.SystemMonitorViewPart"
+			id="org.eclipse.rse.ui.view.monitorView">
+      </view>
 <!-- Remote Error List being commented out      
       <view
             name="%View.RemoteErrorList"
@@ -710,8 +732,8 @@ Contributors:
             id="org.eclipse.rse.ui.view.buildErrorView">
       </view>
 -->
-
    </extension>
+
 <!-- ================================================================================= -->
 <!-- Define Remote Systems Explorer view pulldown menu submenu for preferences actions -->
 <!-- ================================================================================= -->
@@ -772,55 +794,12 @@ Contributors:
 <!-- ================================================================= -->
    <extension-point id="keystoreProviders" name="%extPoint.keystoreProviders" schema="schema/keystoreProviders.exsd"/>
 
-
 <!-- ================================================================= -->
 <!-- 		Define Persistence Provider extension point -->
 <!-- ================================================================= -->
    <extension-point id="persistenceProviders" name="%extPoint.persistenceProviders" schema="schema/persistenceProviders.exsd"/>
    <extension-point id="newConnectionWizardDelegates" name="RSE New Connection Wizard Delegate" schema="schema/newConnectionWizardDelegates.exsd"/>
 
-
-
-<!-- ================================================================= -->
-<!-- Define the Remote Search View                                     -->
-<!-- ================================================================= -->
-	<extension point="org.eclipse.ui.views">
-		<view
-			name="%View.Search"
-			icon="icons/full/obj16/system_search.gif"
-			category="org.eclipse.rse.ui.view"
-			class="org.eclipse.rse.ui.view.search.SystemSearchViewPart"
-			id="org.eclipse.rse.ui.view.SystemSearchView">
-		</view>
-	</extension>
-	
-	
-	
-<!-- ================================================================= -->
-<!-- Define the Remote Scratchpad View                                 -->
-<!-- ================================================================= -->
-	<extension point="org.eclipse.ui.views">
-		<view
-			name="%View.Scratchpad"
-			icon="icons/full/view16/scratchpad_view.gif"
-			category="org.eclipse.rse.ui.view"
-			class="org.eclipse.rse.ui.view.scratchpad.SystemScratchpadViewPart"
-			id="org.eclipse.rse.ui.view.scratchpad.SystemScratchpadViewPart">
-		</view>
-	</extension>
-	
-<!-- ================================================================= -->
-<!-- Define the Remote Monitor View                                 -->
-<!-- ================================================================= -->
-	<extension point="org.eclipse.ui.views">
-		<view
-			name="%View.Monitor"
-			icon="icons/full/view16/system_view.gif"
-			category="org.eclipse.rse.ui.view"
-			class="org.eclipse.rse.ui.view.monitor.SystemMonitorViewPart"
-			id="org.eclipse.rse.ui.view.monitorView">
-		</view>
-	</extension>
 
 <!-- ================================================================= -->
 <!-- Define the Drop Actions                                           -->

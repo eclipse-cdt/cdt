@@ -101,10 +101,12 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 			ICElement[] elements= calledBy.getElements();
 			for (int i = 0; i < elements.length; i++) {
 				ICElement element = elements[i];
-				CIndexReference[] refs= calledBy.getReferences(element);
-				if (refs != null && refs.length > 0) {
-					CHNode node = createRefbyNode(parent, element, refs);
-					result.add(node);
+				if (element != null) {
+					CIndexReference[] refs= calledBy.getReferences(element);
+					if (refs != null && refs.length > 0) {
+						CHNode node = createRefbyNode(parent, element, refs);
+						result.add(node);
+					}
 				}
 			}
 			return result.toArray();

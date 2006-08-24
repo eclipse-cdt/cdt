@@ -223,7 +223,7 @@ public class CIndexQueries {
 					IASTName[] names= pdom.getReferences(binding);
 					for (int i = 0; i < names.length; i++) {
 						IASTName rname = names[i];
-						ITranslationUnit tu= toTranslationUnit(project, name);
+						ITranslationUnit tu= toTranslationUnit(project, rname);
 						CIndexReference ref= new CIndexReference(tu, rname);
 						ICElement elem= findCaller(ref);
 						result.add(elem, ref);

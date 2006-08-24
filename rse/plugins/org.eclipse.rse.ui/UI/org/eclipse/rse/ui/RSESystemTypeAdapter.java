@@ -52,12 +52,18 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 
 	/**
      * Returns the "live" image descriptor for this system type.
-     * Returns the default live connection image descriptor if no icon has been configured.
+     * 
+     * If no "live" icon is found, but a non-live icon was specified,
+     * the non-live icon is returned instead. If a non-live icon also
+     * was not specified, the default live connection image descriptor 
+     * is returned.
+     * 
      * @param object The object to get an image descriptor for.
      * @return ImageDescriptor
 	 */
 	public ImageDescriptor getLiveImageDescriptor(Object object) {
 		ImageDescriptor img = getImage(object, ICON_LIVE);
+		if (img==null) img = getImage(object, ICON);
 		if (img==null) img = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTIONLIVE_ID);
 		return img;
 	}
@@ -216,7 +222,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 			Preferences prefs = RSECorePlugin.getDefault().getPluginPreferences();
 			String key = getPreferencesKey(systemType, IRSEPreferenceNames.ST_DEFAULT_USERID);
 			if (!prefs.contains(key)) {
-				prefs.setDefault(key, System.getProperty("user.name"));
+				prefs.setDefault(key, System.getProperty("user.name")); //$NON-NLS-1$
 			}
 			result = prefs.getString(key);
 		}
@@ -240,7 +246,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 	}
 	
 	private String getPreferencesKey(IRSESystemType systemType, String preference) {
-		String key = systemType.getName() + "." + preference;
+		String key = systemType.getName() + "." + preference; //$NON-NLS-1$
 		return key;
 	}
 	

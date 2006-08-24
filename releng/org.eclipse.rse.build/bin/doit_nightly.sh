@@ -15,7 +15,10 @@ curdir=`pwd`
 #Remove old logs and builds
 echo "Removing old logs and builds..."
 cd $HOME/ws
-rm log-*.txt
+rm log-N*.txt
+if [ -d working/build ]; then
+  rm -rf working/build
+fi
 if [ -d working/package ]; then
   rm -rf working/package
 fi
@@ -23,7 +26,7 @@ fi
 #Do the main job
 cd org.eclipse.rse.build
 stamp=`date +'%Y%m%d-%H%M'`
-log=$HOME/ws/log-$stamp.txt
+log=$HOME/ws/log-N$stamp.txt
 sg dsdp-tm-rse -c "touch $log"
 sg dsdp-tm-rse -c "cvs -q update -RPd >> $log 2>&1"
 daystamp=`date +'%Y%m%d-%H'`

@@ -19,7 +19,7 @@ Contributors:
 
 
    <extension
-         point="org.eclipse.rse.ui.subsystemConfiguration">
+         point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
             systemTypes="Linux;Unix"
             name="%Files"

@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.rse.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.rse.ui" id="subsystemConfiguration" name="Subsystem Configuration"/>
+         <meta.schema plugin="org.eclipse.rse.ui" id="subsystemConfigurations" name="Subsystem Configurations"/>
       </appInfo>
       <documentation>
          This extension point allows tool-writers to extend the capability
@@ -212,7 +212,7 @@ Note that ServiceSubSystems that share the same service should always use the sa
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension 
-      point=&quot;org.eclipse.rse.ui.subsystemConfiguration&quot;&gt;
+      point=&quot;org.eclipse.rse.ui.subsystemConfigurations&quot;&gt;
       &lt;configuration
          systemTypes=&quot;Unix;Linux;Local&quot; 
          name=&quot;Databases&quot;

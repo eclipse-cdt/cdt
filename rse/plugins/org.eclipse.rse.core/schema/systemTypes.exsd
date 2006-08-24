@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.rse.core" id="systemTypes" name="RSE System Types"/>
       </appInfo>
       <documentation>
-         This extension point is used in combination with the org.eclipse.rse.ui.subsystemConfiguration
+         This extension point is used in combination with the org.eclipse.rse.ui.subsystemConfigurations
 extension point for defining new subsystems, which appear under a connection when it is expanded in the
 Remote Systems view. The systemTypes extension point allows subsystem providers to define a new system
 type that appears in the list of valid system types in the New Connection wizard, used by users when defining

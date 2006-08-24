@@ -739,7 +739,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     
     /**
      * Return an array of SubSystemConfigurationProxy objects.
-     * These represent all extensions to our subsystemConfiguration extension point.
+     * These represent all extensions to our subsystemConfigurations extension point.
      */
     public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxies()
     {
@@ -771,7 +771,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     }
 
     /**
-     *  Return all elements that extend the org.eclipse.rse.ui.subsystemConfiguration extension point
+     *  Return all elements that extend the org.eclipse.rse.ui.subsystemConfigurations extension point
      */
     private IConfigurationElement[] getSubSystemConfigurationPlugins()
     {
@@ -779,7 +779,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    IExtensionRegistry registry = Platform.getExtensionRegistry();
 	    // Get configured extenders
 	    IConfigurationElement[] subsystemFactoryExtensions =
-		  registry.getConfigurationElementsFor("org.eclipse.rse.ui","subsystemConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$   	
+		  registry.getConfigurationElementsFor("org.eclipse.rse.ui","subsystemConfigurations"); //$NON-NLS-1$ //$NON-NLS-2$   	
 
 	    return subsystemFactoryExtensions;
     }

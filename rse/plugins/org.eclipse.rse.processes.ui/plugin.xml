@@ -22,7 +22,7 @@ Contributors:
 <!-- ============================================== -->
 <!-- let's wait until this is supported on windows
       <extension
-         point="org.eclipse.rse.ui.subsystemConfiguration">
+         point="org.eclipse.rse.ui.subsystemConfigurations">
       <factory
             systemTypes="Local"
             name="%Factory.LocalProcesses"

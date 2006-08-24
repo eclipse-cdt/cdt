@@ -11,7 +11,7 @@
 
 <body bgcolor="#ffffff">
 <h1>Plugging In SubSystems</h1>
-<p>The <samp><A href="../../reference/extension-points/org_eclipse_rse_ui_subsystemConfiguration.html">org.eclipse.rse.ui.subsystemConfiguration</a></samp>
+<p>The <samp><A href="../../reference/extension-points/org_eclipse_rse_ui_subsystemConfigurations.html">org.eclipse.rse.ui.subsystemConfigurations</a></samp>
 extension point is defined in the plugin <samp>org.eclipse.rse.ui</samp>.
 This is the most complex extension point to use, but also the most powerful. It enables
 tool providers to register a class that creates subsystem objects, which appear under
@@ -186,7 +186,7 @@ following summarizes the minimum set of classes you will be creating in order to
       </ul>
    </li>
   <li>Creating a subclass of <A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystemConfiguration.html">DefaultSubSystemFactoryImpl.</A></li>
-  <li>Defining your <A href="../../reference/extension-points/org_eclipse_rse_ui_subsystemConfiguration.html">subsystemConfiguration extension</a> in your <samp>plugin.xml</samp> file.</li>
+  <li>Defining your <A href="../../reference/extension-points/org_eclipse_rse_ui_subsystemConfigurations.html">subsystemConfigurations extension</a> in your <samp>plugin.xml</samp> file.</li>
   <li>For each remote resource class you created in step 4, you need to create an adapter class, which extends
       <A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html">AbstractSystemViewAdapter</A> and which
       implements <A href="../../reference/api/org/eclipse/rse/ui/view/ISystemRemoteElementAdapter.html">ISystemRemoteElementAdapter</A>.

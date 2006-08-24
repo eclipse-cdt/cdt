@@ -84,7 +84,7 @@ public class SystemStartHere
     * STEP 2d. Get all connections for your subsystem configuration, identified by subsystemConfigurationId.
     * <p>
     * SAME AS: <code>getSystemRegistry().getConnectionsBySubSystemConfiguration(getSubSystemConfiguration(subsystemConfigurationId))</code>
-    * @param subsystemConfigurationId The id of the subsystem configuration as given in its plugin.xml id attribute for the subsystemConfiguration extension point
+    * @param subsystemConfigurationId The id of the subsystem configuration as given in its plugin.xml id attribute for the subsystemConfigurations extension point
     * @see #getSubSystemConfiguration(String)
     * @see #getConnectionsBySubSystemConfiguration(ISubSystemConfiguration)
     */
@@ -97,7 +97,7 @@ public class SystemStartHere
     * STEP 3a. Get all subsystems for all connections for your subsystem configuration, identified by subsystemConfigurationId.
     * <p>
     * SAME AS: <code>getSystemRegistry().getSubSystems(subsystemConfigurationId)</code>
-    * @param subsystemConfigurationId The subsystem configuration id as given in its plugin.xml id attribute for the subsystemConfiguration extension point
+    * @param subsystemConfigurationId The subsystem configuration id as given in its plugin.xml id attribute for the subsystemConfigurations extension point
     * @see org.eclipse.rse.model.ISystemRegistry#getSubSystems(String)
     * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getId()
     */
@@ -109,7 +109,7 @@ public class SystemStartHere
     * STEP 3b. Get all subsystems for the given connection for your subsystem configuration, identified by subsystemConfigurationId.
     * <p>
     * SAME AS: <code>getSystemRegistry().getSubSystems(subsystemConfigurationId, connection)</code>
-    * @param subsystemConfigurationId The subsystem configuration id as given in its plugin.xml id attribute for the subsystemConfiguration extension point
+    * @param subsystemConfigurationId The subsystem configuration id as given in its plugin.xml id attribute for the subsystemConfigurations extension point
     * @param connection The connection object you wish to get the subsystems for. Typically there is only one subsystem per object.
     * @see org.eclipse.rse.model.ISystemRegistry#getSubSystems(String, IHost)
     * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getId()
@@ -121,7 +121,7 @@ public class SystemStartHere
    /**
     * STEP 3c. Same as {@link #getSubSystems(String,IHost)} by used when you know
     *  the subsystem configuration only supports a single subsystem per connection.
-    * @param subsystemConfigurationId The subsystem configuration id as given in its plugin.xml id attribute for the subsystemConfiguration extension point
+    * @param subsystemConfigurationId The subsystem configuration id as given in its plugin.xml id attribute for the subsystemConfigurations extension point
     * @param connection The connection object you wish to get the subsystems for. Typically there is only one subsystem per object.
     * @see #getSubSystems(String, IHost)
     * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getId()
@@ -144,7 +144,7 @@ public class SystemStartHere
     * Miscallenous Helper. Return the subsystem configuration object for the given subsystemConfigurationId.
     * <p>
     * SAME AS: <code>getSystemRegistry().getSubSystemConfiguration(subsystemConfigurationId)</code>
-    * @param subsystemConfigurationId The id of the subsystem configuration as given in its plugin.xml id attribute for the subsystemConfiguration extension point
+    * @param subsystemConfigurationId The id of the subsystem configuration as given in its plugin.xml id attribute for the subsystemConfigurations extension point
     */
    public static ISubSystemConfiguration getSubSystemConfiguration(String subsystemConfigurationId)
    {

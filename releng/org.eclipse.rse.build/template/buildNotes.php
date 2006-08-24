@@ -23,21 +23,10 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>APIs and String Constants have been cleaned up from old artifacts.
-  RSE <b>Documentation</b> has been adjusted to latest refactorings. You'll get the
-  documentation as part of the installation, or you can browse it online at
-  <a href="http://dsdp.eclipse.org/help/latest/">http://dsdp.eclipse.org/help/latest/</a>.
-  Note that the online version is updated every night to hold the latest updates.</li>
-<li>The ssh command shell now supports <b>RSE pattern matching</b> in the output.
-  Output parsers are installed for make, ls, pwd, cd, ps and many popular compilers.
-  If you run such a command, it's output will be parsed by the RSE shell
-  and annotations will be added. Double clicking these partially works (Bugs 
-  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153270">153270</a>,
-  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153272">153272</a>).</li>
-<li>The ssh command shell also supports <b>content assist</b> for directory names 
-  and file names in the input box. To use it, press Ctrl+Space. After selecting
-  a completion, the command will be sent immediately (Bug
-  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153271">153271</a>).</li>
+<li>The <b>systemTypes</b> extension point now allows specifying the "icon", "iconLive" 
+  and "enableOffline" properties either as a Property, or as an attribute. This change
+  allows for better integration with PDE. It is backward compatible with the format used
+  in RSE 1.0M4.</li>
 <li>RSE now provides an <b>update site</b> at
   <a href="http://download.eclipse.org/dsdp/tm/updates/">http://download.eclipse.org/dsdp/tm/updates/</a>.
   We encourage users to update frequently, since we expect
@@ -46,18 +35,27 @@
   all kinds of data transfer, even if it's done in multiple background sessions
   (except <b>FTP</b>, which will be enhanced as soon as the Jakarta Commons Net library
   passes EMO legal review).</li>
-<li>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-06-30&chfieldto=2006-08-18&chfield=resolution">
+<li>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-08-18&chfieldto=2006-09-27&chfield=resolution">
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0M3-200606300720/index.php">
-  RSE 1.0M3</a>.</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0M4-200608182355/index.php">
+  RSE 1.0M4</a>.</li>
 <li>Look <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   here</a> for the CVS changelog.</li>
-  <!--
-<li>New since I20060811-1342:<ul>
-    <li><a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-08-11&chfieldto=2006-08-17&chfield=resolution">
-    bugs fixed</a></li>
-    </ul></li>
-  -->
+</ul>
+</td></tr></tbody></table>
+
+<table border="0" cellspacing="5" cellpadding="2" width="100%">
+	<tr>
+		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
+		<font face="Arial,Helvetica" color="#FFFFFF">API Changes since RSE 1.0 M4</font></b></td>
+	</tr>
+</table>
+<table><tbody><tr><td>
+<ul>
+<li>The <b>subsystemConfiguration</b> extension point has been renamed to 
+  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_subsystemConfigurations.html">
+  subsystemConfigurations</a> 
+  in order to better match the standard naming scheme used by the Platform.</li>
 </ul>
 </td></tr></tbody></table>
 
@@ -110,7 +108,7 @@ about your endeavours and keep yourself up-to-date.
 	</tr>
 </table>
 <table><tbody><tr><td>
-The following M4 <a href="http://www.eclipse.org/dsdp/tm/development/plan.php#M4">plan</a>
+The following M5 <a href="http://www.eclipse.org/dsdp/tm/development/plan.php#M5">plan</a>
 deliverables did not make it into this build:
 <ul>
 <li>User Actions, and Import/Export were deferred with M3 already. 

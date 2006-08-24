@@ -21,7 +21,7 @@ Martin Oberhuber (Wind River) - initial API and implementation
 	</extension>
 	<!-- Instantiate the FTP subsystem by referencing it from the external implementation -->
 	<extension
-		point="org.eclipse.rse.ui.subsystemConfiguration">
+		point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
 			systemTypes="FTP-Daytime"
 			name="%Files"
@@ -37,7 +37,7 @@ Martin Oberhuber (Wind River) - initial API and implementation
 	</extension>
 	<!-- Instantiate the Daytime subsystem from our own plugin -->
 	<extension
-		point="org.eclipse.rse.ui.subsystemConfiguration">
+		point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
 			systemTypes="FTP-Daytime;Unix"
 			name="%DaytimeSubsystemName"

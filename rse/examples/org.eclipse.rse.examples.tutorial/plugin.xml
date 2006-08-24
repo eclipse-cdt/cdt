@@ -53,7 +53,7 @@ Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
 	<!-- ======================================= -->
 	<!-- Tutorial #3: Creating a Subsystem Configuration -->
 	<extension
-		point="org.eclipse.rse.ui.subsystemConfiguration">
+		point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
 			id="samples.subsystems.factory"
 			systemTypes="Linux;Unix;Windows"

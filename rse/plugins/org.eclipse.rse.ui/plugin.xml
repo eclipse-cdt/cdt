@@ -18,14 +18,14 @@ Contributors:
 <plugin>
 
 <!-- ================================================================================== -->
-<!-- EXTENSION POINT: org.eclipse.rse.ui.subsystemConfiguration                      -->
+<!-- EXTENSION POINT: org.eclipse.rse.ui.subsystemConfigurations                      -->
 <!-- ================================================================================== -->
 <!-- Extension point for defining subsystem factories. A configuration is responsible for     -->
 <!--  creating subsystem instances.                                                     -->
 <!--                                                                                    -->
 <!-- Example of extension configuration:                                                -->
 <!--   <extension                                                                       -->
-<!--      point="org.eclipse.rse.ui.subsystemConfiguration">                            -->
+<!--      point="org.eclipse.rse.ui.subsystemConfigurations">                            -->
 <!--      <configuration                                                                -->
 <!--         systemTypes="Local;Unix;Linux"                                             -->
 <!--         name="Files"                                                               -->
@@ -70,7 +70,7 @@ Contributors:
 <!--                                                                                    -->
 <!-- ================================================================================== -->
 
-   <extension-point id="subsystemConfiguration" name="%extPoint.subsystemConfiguration" schema="schema/subsystemConfiguration.exsd"/>
+   <extension-point id="subsystemConfigurations" name="%extPoint.subsystemConfigurations" schema="schema/subsystemConfigurations.exsd"/>
 
 <!-- ================================================================================== -->
 <!-- EXTENSION POINT: org.eclipse.rse.ui.propertyPages                         -->
@@ -101,7 +101,7 @@ Contributors:
 <!--  subsystemconfigurationid => the subsystem configuration id to whose objects you wish to show  -->
 <!--                        a property page for. Can be a simple name or simple generic -->
 <!--                        name to match on.                                           -->
-<!--                        This id matches the id attribute of a subsystemConfiguration      -->
+<!--                        This id matches the id attribute of a subsystemConfigurations      -->
 <!--                        extension point.                                            -->
 <!--  subsystemconfigurationCategory => a subsystem configuration "category" to match on. Can be a  -->
 <!--                          simple name or simple generic like "*files". Matches on   -->
@@ -180,7 +180,7 @@ Contributors:
 <!--  subsystemconfigurationid => the subsystem configuration id for whose objects you wish to show -->
 <!--                        a popup action for. Can be a simple name or simple generic  -->
 <!--                        name to match on.                                           -->
-<!--                        This id matches the id attribute of a subsystemConfiguration      -->
+<!--                        This id matches the id attribute of a subsystemConfigurations      -->
 <!--                        extension point.                                            -->
 <!--  subsystemconfigurationCategory => a subsystem configuration "category" to match on. Can be a  -->
 <!--                          simple name or simple generic like "*files". Matches on   -->

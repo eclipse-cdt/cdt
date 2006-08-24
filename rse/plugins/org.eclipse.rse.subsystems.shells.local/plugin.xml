@@ -23,7 +23,7 @@ Contributors:
 <!-- Define subsystem factories for sample        -->
 <!-- ============================================== -->
    <extension
-         point="org.eclipse.rse.ui.subsystemConfiguration">
+         point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
             systemTypes="Local"
             name="%Shells"

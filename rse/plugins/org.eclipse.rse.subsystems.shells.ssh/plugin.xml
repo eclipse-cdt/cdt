@@ -12,7 +12,7 @@ Martin Oberhuber - initial API and implementation
 <?eclipse version="3.1"?>
 <plugin>
 	<extension
-		point="org.eclipse.rse.ui.subsystemConfiguration">
+		point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
 			systemTypes="Linux;Unix;AIX;SSH Only"
 			name="%SshShellSubsystemName"

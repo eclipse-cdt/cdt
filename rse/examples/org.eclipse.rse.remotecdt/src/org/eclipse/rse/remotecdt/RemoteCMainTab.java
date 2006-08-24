@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class RemoteCMainTab extends CMainTab {
  
-	private static final String[]  SYSTEM_TYPE = {"Ssh/Gdbserver"};
+	private static final String[]  SYSTEM_TYPE = {"Ssh/Gdbserver"}; //$NON-NLS-1$
 	/* Labels and Error Messages */
 	private static final String REMOTE_PROG_LABEL_TEXT = "Remote Path for C/C++ Application:";
 	private static final String SKIP_DOWNLOAD_BUTTON_TEXT = "Skip download to target path.";
@@ -111,8 +111,8 @@ public class RemoteCMainTab extends CMainTab {
 		if(retVal == true) {
 			setErrorMessage(null);
 			int currentSelection = connectionCombo.getSelectionIndex();
-			String connection_name = currentSelection >= 0 ? connectionCombo.getItem(currentSelection) : "";
-			if(connection_name.equals("")) {
+			String connection_name = currentSelection >= 0 ? connectionCombo.getItem(currentSelection) : ""; //$NON-NLS-1$
+			if(connection_name.equals("")) { //$NON-NLS-1$
 				setErrorMessage(CONNECTION_TEXT_ERROR);
 				retVal = false;
 			}
@@ -242,7 +242,7 @@ public class RemoteCMainTab extends CMainTab {
 		String remoteConnection = null;
 		try {
 			remoteConnection = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
-						 "");
+						 ""); //$NON-NLS-1$
 		} catch (CoreException ce) {
 			/* default to doing nothing */
 		}

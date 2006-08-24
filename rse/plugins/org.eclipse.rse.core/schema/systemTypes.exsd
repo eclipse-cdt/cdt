@@ -6,46 +6,140 @@
          <meta.schema plugin="org.eclipse.rse.core" id="systemTypes" name="RSE System Types"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point is used in combination with the org.eclipse.rse.ui.subsystemConfiguration
+extension point for defining new subsystems, which appear under a connection when it is expanded in the
+Remote Systems view. The systemTypes extension point allows subsystem providers to define a new system
+type that appears in the list of valid system types in the New Connection wizard, used by users when defining
+a new connection to a remote system. The system type is simply a string identifying the operating system
+type, such as Solaris, and an pair of icons used to identify connections to systems of this type. One
+icon is used when the connection is not connected, while the other is used when there is a live connection.
       </documentation>
    </annotation>
 
-   <element name="systemType">
+   <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
+            <element ref="systemType" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="systemType">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name" icon="icon"/>
+         </appInfo>
+         <documentation>
+            This element defines a remote system type like &quot;Linux&quot;, against which subsystem configurations can be registered.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="property"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A unique identifier for this extension.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The display name for the system type, such as &quot;Solaris&quot;. This name is also currently used when referencing the system type in filters, subsystem configurations and similar, therefore it is not translatable. Future versions of RSE may change this and reference the systemType id instead of the name.
+&lt;p&gt;
+RSE pre-defines a number of system types, although they may not appear unless a subsystem configuration is registered against that type. These are the supplied system types:
+&lt;ul&gt;
+&lt;li&gt;Local&lt;/li&gt;
+&lt;li&gt;Unix&lt;/li&gt;
+&lt;li&gt;Linux&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A short description of the system type. Shows up in preferences for system type.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="description" type="string">
+         <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  
+                  A relative path to an icon that will be used when displaying connections to systems of this type. If not specified, a default icon will be used by RSE.
                </documentation>
                <appInfo>
-                  <meta.attribute translatable="true"/>
+                  <meta.attribute kind="resource"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="iconLive" type="string">
+            <annotation>
+               <documentation>
+                  A relative path to an icon that will be used when displaying connections to systems of this type, when there is a live connection to the remote system. This is usually a derivation of the icon attribute, adorned with a bright green arrow.
+If not specified, a default icon will be used by RSE.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="enableOffline" type="boolean">
+            <annotation>
+               <documentation>
+                  Whether this system type can be put in offline mode. This decides whether to show the Work Offline action for connections of this type. This is an optional attribute, the default value is false.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="property">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+         <documentation>
+            On optional property for the system type. The following property keys are already used internally, and are thus reserved:
+&lt;ul&gt;
+&lt;li&gt;&quot;icon&quot; to store the value of the icon attribute&lt;/li&gt;
+&lt;li&gt;&quot;iconLive&quot; to store the value of the iconLive attribute&lt;/li&gt;
+&lt;li&gt;&quot;enableOffline&quot; to store the value of the enableOffline attribute&lt;/li&gt;
+&lt;/ul&gt;
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -69,7 +163,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         1.0.0
       </documentation>
    </annotation>
 
@@ -78,7 +172,18 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following is an example of the extension point schema:
+&lt;p&gt;
+&lt;pre&gt;
+  &lt;extension point=&quot;org.eclipse.rse.ui.systemTypes&quot;&gt;
+      &lt;systemType id=&quot;com.acme.systemtype.Solaris&quot;
+            name=&quot;Solaris&quot;
+   &lt;property name=&quot;icon&quot; value=&quot;icons/solaris.gif&quot;/&gt;
+   &lt;property name=&quot;iconLive&quot; value=&quot;icons/solarisLive.gif&quot;/&gt;
+   &lt;/systemType&gt;
+  &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -87,7 +192,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         There is no code to implement for this extension point.
       </documentation>
    </annotation>
 
@@ -96,7 +201,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         See the plugin.xml file for plugin org.eclipse.rse.ui for examples of using this extension point.
       </documentation>
    </annotation>
 
@@ -105,7 +210,13 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2002, 2006 IBM Corporation. All Rights Reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+IBM Corporation - initial API and implementation
       </documentation>
    </annotation>
 

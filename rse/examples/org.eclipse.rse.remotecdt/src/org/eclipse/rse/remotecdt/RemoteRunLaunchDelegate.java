@@ -45,11 +45,11 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	
-	private final static String REMOTE_GDBSERVER_COMMAND = "gdbserver";
-	private final static String SFTP_COMMAND = "sftp";
-	private final static String SFTP_COMMAND_ARGS = "-b -";
-	private final static String SSH_COMMAND = "ssh";
-	private final static String SYSTEM_TYPE = "Ssh/Gdbserver";
+	private final static String REMOTE_GDBSERVER_COMMAND = "gdbserver"; //$NON-NLS-1$
+	private final static String SFTP_COMMAND = "sftp"; //$NON-NLS-1$
+	private final static String SFTP_COMMAND_ARGS = "-b -"; //$NON-NLS-1$
+	private final static String SSH_COMMAND = "ssh"; //$NON-NLS-1$
+	private final static String SYSTEM_TYPE = "Ssh/Gdbserver"; //$NON-NLS-1$
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch
@@ -66,7 +66,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 
 		String arguments = getProgramArguments(config);
 		String remoteExePath = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,
-				 "");
+				 ""); //$NON-NLS-1$
 		
 		if(mode.equals(ILaunchManager.DEBUG_MODE)){
 			setDefaultSourceLocator(launch, config);			
@@ -83,9 +83,9 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 				/* Automatically start up the gdbserver to be used by the GDBServerCDIDebugger on the remote
 				 * using ssh.
 				 */
-				String command_arguments = ":" + IRemoteConnectionConfigurationConstants.ATTR_TCP_PORT + " " + remoteExePath;
-				if(arguments != null && !arguments.equals(""))
-					command_arguments += " " + arguments;
+				String command_arguments = ":" + IRemoteConnectionConfigurationConstants.ATTR_TCP_PORT + " " + remoteExePath; //$NON-NLS-1$ //$NON-NLS-2$
+				if(arguments != null && !arguments.equals("")) //$NON-NLS-1$
+					command_arguments += " " + arguments; //$NON-NLS-1$
 				Process sshProcess = remoteSshExec(config, REMOTE_GDBSERVER_COMMAND, command_arguments);
 				DebugPlugin.newProcess(launch, sshProcess, renderProcessLabel(REMOTE_GDBSERVER_COMMAND));
 				/* Pre-set configuration constants for the GDBSERVERCDIDebugger to indicate how the gdbserver
@@ -156,7 +156,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		if(inputString == null)
 			return null;
 		
-		return inputString.replaceAll(" ", "\\\\ ");
+		return inputString.replaceAll(" ", "\\\\ "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	protected Process remoteSftpDownload(ILaunchConfiguration config,  ILaunch launch, String localExePath, String remoteExePath)
@@ -168,14 +168,14 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			//Nothing to do.  Download is skipped.
 			return null;
 
-		String arguments = SFTP_COMMAND_ARGS + " " + getRemoteHostname(config);
+		String arguments = SFTP_COMMAND_ARGS + " " + getRemoteHostname(config); //$NON-NLS-1$
 		Process p = null;
 		try {
 			p = execLocal(SFTP_COMMAND, arguments);
 			DebugPlugin.newProcess(launch, p, renderProcessLabel(SFTP_COMMAND));
 			OutputStream outStream = p.getOutputStream();
-			String putCommand = "put " + quotify(localExePath) + " "  + quotify(remoteExePath) + "\n";
-			String exitCommand = "exit\n";
+			String putCommand = "put " + quotify(localExePath) + " "  + quotify(remoteExePath) + "\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			String exitCommand = "exit\n"; //$NON-NLS-1$
 			// Execute the put and then the exit command.
 			outStream.write(putCommand.getBytes());
 			outStream.write(exitCommand.getBytes());
@@ -193,7 +193,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	
 	protected String getRemoteHostname(ILaunchConfiguration config) throws CoreException{
 		String remoteConnection = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
-		 "");
+		 ""); //$NON-NLS-1$
 
 		IHost[] connections = RSEUIPlugin.getTheSystemRegistry().getHostsBySystemType(SYSTEM_TYPE);
 		int i = 0;
@@ -211,8 +211,8 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	protected Process remoteSshExec(ILaunchConfiguration config, String remoteCommandPath,
 			String arguments) throws CoreException {
 		String remote_command = arguments == null ? spaceEscapify(remoteCommandPath) :
-												    spaceEscapify(remoteCommandPath) + " " + arguments;
-		String ssh_arguments = getRemoteHostname(config) + " " + remote_command;	 
+												    spaceEscapify(remoteCommandPath) + " " + arguments; //$NON-NLS-1$
+		String ssh_arguments = getRemoteHostname(config) + " " + remote_command; //$NON-NLS-1$
 		
 		Process p = execLocal(SSH_COMMAND, ssh_arguments);
 		return p;
@@ -247,7 +247,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	
 	protected Process execLocal(String file, String arguments) throws CoreException {
 		Process p = null;
-		String command = file + " " + arguments;
+		String command = file + " " + arguments; //$NON-NLS-1$
 		try {
 			p = new Spawner(command, false);
 		} catch (Exception e) {
@@ -263,6 +263,6 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	}
 
 	protected String getPluginID() {
-		return "org.eclipse.rse.remotecdt";
+		return "org.eclipse.rse.remotecdt"; //$NON-NLS-1$
 	}
 }

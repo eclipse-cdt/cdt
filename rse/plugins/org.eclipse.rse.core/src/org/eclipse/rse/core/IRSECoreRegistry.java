@@ -23,8 +23,8 @@ package org.eclipse.rse.core;
  */
 public interface IRSECoreRegistry {
 
-	public static final String PI_RSE_CORE = "org.eclipse.rse.core";
-	public static final String PI_SYSTEM_TYPES = "systemTypes";
+	public static final String PI_RSE_CORE = "org.eclipse.rse.core"; //$NON-NLS-1$
+	public static final String PI_SYSTEM_TYPES = "systemTypes"; //$NON-NLS-1$
 
 	/**
 	 * Returns all defined system types.
@@ -34,6 +34,7 @@ public interface IRSECoreRegistry {
 
 	/**
 	 * Returns the names of all defined system types.
+	 * @return all defined system type names 
 	 */
 	public String[] getSystemTypeNames();
 

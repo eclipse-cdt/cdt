@@ -15,10 +15,9 @@ Martin Oberhuber (Wind River) - initial API and implementation
 	<extension point="org.eclipse.rse.core.systemTypes">
 		<systemType id="org.eclipse.rse.examples.daytime.systemtype.ftp"
 			name="FTP-Daytime"
-			description="%FTPDaytimeSystemDescription">
-			<property name="icon" value="icons/full/obj16/daytime_obj.gif"/>
-			<property name="iconLive" value="icons/full/obj16/daytimelive_obj.gif"/>
-		</systemType>
+			description="%FTPDaytimeSystemDescription"
+			icon="icons/full/obj16/daytime_obj.gif"
+			iconLive="icons/full/obj16/daytimelive_obj.gif"/>
 	</extension>
 	<!-- Instantiate the FTP subsystem by referencing it from the external implementation -->
 	<extension

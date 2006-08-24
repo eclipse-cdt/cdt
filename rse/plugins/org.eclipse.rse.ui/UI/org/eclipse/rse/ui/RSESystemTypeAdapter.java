@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.IRSESystemTypeConstants;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.osgi.framework.Bundle;
 
@@ -39,17 +40,26 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 	}
 
 	/**
+     * Returns the image descriptor for the icon of this system type.
+     * Returns the default live connection image descriptor if no icon has been configured.
 	 * @see org.eclipse.ui.model.WorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return getImage(object, ICON);
+		ImageDescriptor img = getImage(object, ICON);
+		if (img==null) img = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTION_ID);
+		return img;
 	}
 
 	/**
-	 * @see org.eclipse.ui.model.WorkbenchAdapter#getImageDescriptor(java.lang.Object)
+     * Returns the "live" image descriptor for this system type.
+     * Returns the default live connection image descriptor if no icon has been configured.
+     * @param object The object to get an image descriptor for.
+     * @return ImageDescriptor
 	 */
 	public ImageDescriptor getLiveImageDescriptor(Object object) {
-		return getImage(object, ICON_LIVE);
+		ImageDescriptor img = getImage(object, ICON_LIVE);
+		if (img==null) img = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTIONLIVE_ID);
+		return img;
 	}
 
 	private ImageDescriptor getImage(Object object, String propertyKey) {
@@ -80,7 +90,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
      *            the absolute or relative path
      * @param definingBundle
      *            bundle to be used for relative paths (may be null)
-     * @return
+     * @return ImageDescriptor
      */
     public static ImageDescriptor getImage(String value, Bundle definingBundle) {
         URL url = getUrl(value, definingBundle);

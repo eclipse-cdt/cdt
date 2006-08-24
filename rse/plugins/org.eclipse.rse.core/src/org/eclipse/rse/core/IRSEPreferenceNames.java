@@ -13,6 +13,6 @@ package org.eclipse.rse.core;
  * These constants define the set of preference names that the RSE core uses.
  */
 public interface IRSEPreferenceNames {
-	public static final String ST_DEFAULT_USERID = "systemType.defaultUserId";
-	public static final String ST_ENABLED = "systemType.enabled";
+	public static final String ST_DEFAULT_USERID = "systemType.defaultUserId"; //$NON-NLS-1$
+	public static final String ST_ENABLED = "systemType.enabled"; //$NON-NLS-1$
 }

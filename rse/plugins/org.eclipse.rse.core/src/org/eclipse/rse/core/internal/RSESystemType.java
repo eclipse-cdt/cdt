@@ -20,6 +20,7 @@ import java.util.HashMap;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.IRSESystemTypeConstants;
 import org.osgi.framework.Bundle;
 
 /**
@@ -27,10 +28,13 @@ import org.osgi.framework.Bundle;
  */
 public class RSESystemType implements IRSESystemType {
 
-	private static final String ATTR_ID = "id";
-	private static final String ATTR_NAME = "name";
-	private static final String ATTR_DESCRIPTION = "description";
-	private static final String ATTR_VALUE = "value";
+	private static final String ATTR_ID = "id"; //$NON-NLS-1$
+	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
+	private static final String ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
+	private static final String ATTR_ICON = "icon"; //$NON-NLS-1$
+	private static final String ATTR_ICONLIVE = "iconLive"; //$NON-NLS-1$
+	private static final String ATTR_ENABLEOFFLINE = "enableOffline"; //$NON-NLS-1$
+	private static final String ATTR_VALUE = "value"; //$NON-NLS-1$
 
 	String id = null;
 	String name = null;
@@ -49,6 +53,13 @@ public class RSESystemType implements IRSESystemType {
 		description = element.getAttribute(ATTR_DESCRIPTION);
 
 		loadProperties(element);
+		
+		String icon = element.getAttribute(ATTR_ICON);
+		if (icon!=null) properties.put(IRSESystemTypeConstants.ICON, icon);
+		String iconLive = element.getAttribute(ATTR_ICONLIVE);
+		if (iconLive!=null) properties.put(IRSESystemTypeConstants.ICON_LIVE, iconLive);
+		String enableOffline = element.getAttribute(ATTR_ENABLEOFFLINE);
+		if (enableOffline!=null) properties.put(IRSESystemTypeConstants.ENABLE_OFFLINE, enableOffline);
 
 		definingBundle = Platform.getBundle(element.getContributor().getName());
 	}

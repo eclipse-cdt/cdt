@@ -68,16 +68,18 @@ public class RSECorePlugin extends Plugin {
 		plugin = this;
 	}
 
-	/**
-	 * Starts the bundle.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		logger = LoggerFactory.getLogger(this);
 	}
 
-	/**
-	 * This method is called when the plug-in is stopped.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);

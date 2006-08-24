@@ -39,7 +39,7 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 	private IRSESystemType[] systemTypes;
 
 	// constants
-	private static final String ELEMENT_SYTEM_TYPE = "systemType";
+	private static final String ELEMENT_SYTEM_TYPE = "systemType"; //$NON-NLS-1$
 
 	/**
 	 * Constructor.

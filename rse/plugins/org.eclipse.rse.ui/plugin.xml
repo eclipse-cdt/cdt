@@ -17,36 +17,6 @@ Contributors:
 <?eclipse version="3.1"?>
 <plugin>
 
-<!-- ============================================================ -->
-<!-- EXTENSION POINT: org.eclipse.rse.ui.systemType      -->
-<!-- ============================================================ -->
-<!-- Extension point for defining system types.                   -->
-<!--                                                              -->
-<!-- There is no class to write for this extension                -->
-<!-- ... all that is required is a name and an icon to use when   -->
-<!-- .... not connected plus an icon to use when we are connected.-->
-<!-- Note we predefine the following, although they won't show up -->
-<!--  until a subsystem configuration is registered for them:           -->
-<!--     Local, Windows, Unix, Linux, AIX, Power Linux, iSeries   -->
-<!--       and z/OS...                                            -->
-<!-- See also the setPreferenceDefaults extension point           -->
-<!--                                                              -->
-<!-- Example of extension configuration:                          -->
-<!--   <extension point="org.eclipse.rse.ui.systemType"> -->
-<!--      <type id="com.acme.systemtype.solaris"                  -->
-<!--            name="Solaris"                                    -->
-<!--            iconlive="icons/solarisLive.gif"                  -->
-<!--            icon="icons/solaris.gif"                          -->
-<!--            description="SUN Solaris OS" (optional)           -->
-<!--            enableoffline="false" (default is false)          -->
-<!--      >                                                       -->                      
-<!--      </type>                                                 -->
-<!--   </extension>                                               -->
-<!--                                                              -->
-<!-- ============================================================ -->
-
-<!-- <extension-point id="systemtype" name="%extPoint.systemtype" schema="schema/systemtype.exsd" -->
-
 <!-- ================================================================================== -->
 <!-- EXTENSION POINT: org.eclipse.rse.ui.subsystemConfiguration                      -->
 <!-- ================================================================================== -->
@@ -393,8 +363,10 @@ Contributors:
 <!--						Commands dialog.											-->
 <!--																					-->
 <!-- See the extension point reference for more details.								-->
-	
+
+<!-- TODODeferred after RSE 1.0
 	<extension-point id="compile" name="%extPoint.compile" schema="schema/compile.exsd"/>
+-->
 
 <!-- ================================================================================== -->
 <!-- EXTENSION POINT: org.eclipse.rse.ui.remoteSystemsViewPreferencesActions   -->
@@ -529,71 +501,61 @@ Contributors:
       <!--   
       <systemType id="org.eclipse.rse.systemtype.iseries"
             name="iSeries"
-			description="%systemType.iseries">
-            <property name="icon" value="icons/full/obj16/system400_obj.gif"/>
-			<property name="iconLive" value="icons/full/obj16/system400live_obj.gif"/>
-      </systemType>
+			description="%systemType.iseries"
+            icon="icons/full/obj16/system400_obj.gif"
+			iconLive="icons/full/obj16/system400live_obj.gif"/>
       <systemType id="org.eclipse.rse.systemtype.iseries.PASE"
             name="PASE"
-			description="%systemType.iseries.PASE">
-			<property name="icon" value="icons/full/obj16/system400_obj.gif"/>
-			<property name="iconLive" value="icons/full/obj16/system400live_obj.gif"/>
-      </systemType>
+			description="%systemType.iseries.PASE"
+			icon="icons/full/obj16/system400_obj.gif"
+			iconLive="icons/full/obj16/system400live_obj.gif"/>
       -->
       <systemType id="org.eclipse.rse.systemtype.windows"
             name="Windows"
-			description="%systemType.windows">
-			<property name="icon" value="icons/full/obj16/systemwin_obj.gif"/>
-			<property name="iconLive" value="icons/full/obj16/systemwinlive_obj.gif"/>
-	  </systemType>
+			description="%systemType.windows"
+			icon="icons/full/obj16/systemwin_obj.gif"
+			iconLive="icons/full/obj16/systemwinlive_obj.gif"/>
 	  <!--
       <systemType id="org.eclipse.rse.systemtype.zseries"
          	name="z/OS"
-			description="%systemType.zseries">
-			<property name="icon" value="icons/full/obj16/system390_obj.gif"/>
-			<property name="iconLive" value="icons/full/obj16/system390live_obj.gif"/>
-   	  </systemType>
+			description="%systemType.zseries"
+			icon="icons/full/obj16/system390_obj.gif"
+			iconLive="icons/full/obj16/system390live_obj.gif"/>
    	  -->
       <systemType id="org.eclipse.rse.systemtype.linux"
             name="Linux"
-			description="%systemType.linux">
-            <property name="icon" value="icons/full/obj16/systemlinux_obj.gif"/>
-            <property name="iconLive" value="icons/full/obj16/systemlinuxlive_obj.gif"/>
-      </systemType>
+			description="%systemType.linux"
+            icon="icons/full/obj16/systemlinux_obj.gif"
+            iconLive="icons/full/obj16/systemlinuxlive_obj.gif"/>
       <!--
       <systemType id="org.eclipse.rse.systemtype.linux.power"
             name="Power Linux"
-			description="%systemType.powerlinux">
-			<property name="icon" value="icons/full/obj16/systemlinux_obj.gif"/>
-			<property name="iconLive" value="icons/full/obj16/systemlinuxlive_obj.gif"/>
-      </systemType>
+			description="%systemType.powerlinux"
+			icon="icons/full/obj16/systemlinux_obj.gif"
+			iconLive="icons/full/obj16/systemlinuxlive_obj.gif"/>
       <systemType id="org.eclipse.rse.systemtype.linux.zSeries"
             name="zSeries Linux"
-			description="%systemType.zlinux">
-			<property name="icon" value="icons/full/obj16/systemlinux_obj.gif"/>
-			<property name="iconLive" value="icons/full/obj16/systemlinuxlive_obj.gif"/>    
-      </systemType>
+			description="%systemType.zlinux"
+			icon="icons/full/obj16/systemlinux_obj.gif"
+			iconLive="icons/full/obj16/systemlinuxlive_obj.gif"/>    
       -->      
       <systemType id="org.eclipse.rse.systemtype.unix"
             name="Unix"
-			description="%systemType.unix">
-			<property name="icon" value="icons/full/obj16/systemunix_obj.gif"/>
-			<property name="iconLive" value="icons/full/obj16/systemunixlive_obj.gif"/>
-      </systemType>
+			description="%systemType.unix"
+			icon="icons/full/obj16/systemunix_obj.gif"
+			iconLive="icons/full/obj16/systemunixlive_obj.gif"/>
       <!--
       <systemType id="org.eclipse.rse.systemtype.aix"
             name="AIX"
-			description="%systemType.aix">
-			<property name="icon" value="icons/full/obj16/systemaix_obj.gif"/>
-			<property name="iconLive" value="icons/full/obj16/systemaixlive_obj.gif"/>
-      </systemType>
+			description="%systemType.aix"
+			icon="icons/full/obj16/systemaix_obj.gif"
+			iconLive="icons/full/obj16/systemaixlive_obj.gif"/>
       -->      
       <systemType id="org.eclipse.rse.systemtype.local"
             name="Local"
-			description="%systemType.local">
-			<property name="icon" value="icons/full/obj16/systemlocal_obj.gif"/>
-			<property name="iconLive" value="icons/full/obj16/systemlocallive_obj.gif"/>
-      </systemType>
+			description="%systemType.local"
+			icon="icons/full/obj16/systemlocal_obj.gif"
+			iconLive="icons/full/obj16/systemlocallive_obj.gif"/>
    </extension>
 
 

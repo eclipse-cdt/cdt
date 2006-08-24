@@ -19,12 +19,12 @@ public interface IRemoteConnectionConfigurationConstants extends
 		IMILaunchConfigurationConstants {
 	
 	public static final String ATTR_REMOTE_CONNECTION = 
-				DebugPlugin.getUniqueIdentifier() + ".REMOTE_TCP";
+				DebugPlugin.getUniqueIdentifier() + ".REMOTE_TCP"; //$NON-NLS-1$
 
 	/*
 	 * ATTR_TCP_PORT: gdbserver port.
 	 */  
-	public static final String ATTR_TCP_PORT = "2345";
+	public static final String ATTR_TCP_PORT = "2345"; //$NON-NLS-1$
 	
 	/*
 	 * Generic Remote Path and Download options
@@ -32,8 +32,8 @@ public interface IRemoteConnectionConfigurationConstants extends
 	 * ATTR_SKIP_DOWNLOAD_TO_TARGET: true if download to remote is not desired.
 	 */
 	public static final String ATTR_REMOTE_PATH = 
-				DebugPlugin.getUniqueIdentifier() + ".ATTR_TARGET_PATH";
+				DebugPlugin.getUniqueIdentifier() + ".ATTR_TARGET_PATH"; //$NON-NLS-1$
 	public static final String ATTR_SKIP_DOWNLOAD_TO_TARGET = 
-				DebugPlugin.getUniqueIdentifier() + ".ATTR_SKIP_DOWNLOAD_TO_TARGET";
+				DebugPlugin.getUniqueIdentifier() + ".ATTR_SKIP_DOWNLOAD_TO_TARGET"; //$NON-NLS-1$
 
 }

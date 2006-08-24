@@ -7,17 +7,17 @@
  * Contributors:
  * Kushal Munir (IBM) - Initial API and implementation.
  ********************************************************************************/
-package org.eclipse.rse.ui;
+package org.eclipse.rse.core;
 
 /**
  * These constants define the set of properties that the UI expects to
  * be available via <code>IRSESystemType.getProperty(String)</code>.
  *
- * @see org.eclipse.core.runtime.IRSESystemType#getProperty(String)
+ * @see org.eclipse.rse.core.IRSESystemType#getProperty(String)
  */
 public interface IRSESystemTypeConstants {
 
-	public static final String ICON = "icon";
-	public static final String ICON_LIVE = "iconLive";
-	public static final String ENABLE_OFFLINE = "enableOffline";
+	public static final String ICON = "icon"; //$NON-NLS-1$
+	public static final String ICON_LIVE = "iconLive"; //$NON-NLS-1$
+	public static final String ENABLE_OFFLINE = "enableOffline"; //$NON-NLS-1$
 }

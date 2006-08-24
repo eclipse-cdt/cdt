@@ -5,10 +5,9 @@
          point="org.eclipse.rse.core.systemTypes">
       <systemType id="org.eclipse.rse.remotecdt.sshgdbserver"
             name="Ssh/Gdbserver"
-			description="Place holder for host information used by the Remote C++ Application launch configuration.">
-			<property name="icon" value="icons/full/obj16/systemlocal_obj.gif"/>
-			<property name="iconLive" value="icons/full/obj16/systemlocallive_obj.gif"/>
-      </systemType>
+			description="Place holder for host information used by the Remote C++ Application launch configuration."
+			icon="icons/full/obj16/systemlocal_obj.gif"
+			iconLive="icons/full/obj16/systemlocallive_obj.gif"/>
    </extension>  
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">

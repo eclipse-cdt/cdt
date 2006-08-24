@@ -530,7 +530,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	}
 
 	/**
-	 * Return the parent subsystemconfiguration given a subsystem object.
+	 * Return the parent subsystem configuration given a subsystem object.
 	 */
 	public ISubSystemConfiguration getSubSystemConfiguration(ISubSystem subsystem)
 	{
@@ -538,7 +538,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	}
 
 	/**
-	 * Return the subsystemconfiguration, given its plugin.xml-declared id.
+	 * Return the subsystem configuration, given its plugin.xml-declared id.
 	 */
 	public ISubSystemConfiguration getSubSystemConfiguration(String id)
 	{

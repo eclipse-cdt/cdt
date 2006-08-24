@@ -301,14 +301,14 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	public String getUserId();
 
 	/**
-	 * @return The value of the FactoryId attribute
-	 * Ties this subsystem to its owning subsystemconfiguration, via the
-	 * id key string of the factory
+	 * @return The value of the ConfigurationId attribute
+	 * Ties this subsystem to its owning subsystem configuration, via the
+	 * id key string of the configuration.
 	 */
 	public String getConfigurationId();
 
 	/**
-	 * @param value The new value of the FactoryId attribute
+	 * @param value The new value of the ConfigurationId attribute
 	 */
 	public void setConfigurationId(String value);
 

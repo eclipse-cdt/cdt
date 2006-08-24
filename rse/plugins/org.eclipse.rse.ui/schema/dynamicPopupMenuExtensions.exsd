@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="dynamicPopupMenuExtension" minOccurs="0" maxOccurs="unbounded"/>
@@ -40,28 +45,33 @@
    </element>
 
    <element name="dynamicPopupMenuExtension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique name that will be used to identify the .
+                  a unique name that will be used to identify this extension.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  a translatable name that will be used to identify this Oopup Menu Extension in the UI.
+                  a translatable name that will be used to identify this Popup Menu Extension in the UI.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the Java class that implements the &lt;samp&gt;org.eclipse.rse.ui.ui.actions.ISystemViewAdapterMenuExtension&lt;/samp&gt; interface.
+                  a fully qualified name of the Java class that implements the &lt;samp&gt;org.eclipse.rse.ui.actions.ISystemDynamicPopupMenuExtension&lt;/samp&gt; interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.rse.ui.ui.actions.ISystemViewAdapterMenuExtension"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.rse.ui.actions.ISystemDynamicPopupMenuExtension"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -103,7 +113,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Plug-ins that want to extend this extension point must implement &lt;samp&gt;org.eclipse.rse.ui.ui.actions.ISystemViewAdapterMenuExtension&lt;/samp&gt; interface.
+         Plug-ins that want to extend this extension point must implement &lt;samp&gt;org.eclipse.rse.ui.actions.ISystemDynamicPopupMenuExtension&lt;/samp&gt; interface.
       </documentation>
    </annotation>
 

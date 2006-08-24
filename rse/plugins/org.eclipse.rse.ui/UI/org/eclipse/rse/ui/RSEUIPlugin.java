@@ -90,7 +90,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     
     private IRSEPersistenceManager         _persistenceManager = null;
  
-	private ISubSystemConfigurationProxy[]    subsystemFactories = null;
+	private ISubSystemConfigurationProxy[]    subsystemConfigurations = null;
  
 
     private Vector viewSuppliers = new Vector();
@@ -1063,12 +1063,12 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     
     /**
      * Return an array of SubSystemConfigurationProxy objects.
-     * These represent all extensions to our subsystemconfiguration extension point.
+     * These represent all extensions to our subsystemConfiguration extension point.
      */
     public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxies()
     {
-    	if (subsystemFactories != null) // added by PSC
-    		return subsystemFactories;
+    	if (subsystemConfigurations != null) // added by PSC
+    		return subsystemConfigurations;
 
     	IConfigurationElement[] factoryPlugins = getSubSystemConfigurationPlugins();
     	if (factoryPlugins != null)
@@ -1083,19 +1083,19 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
           }    	  	
           if (v.size() != 0)
           {
-            subsystemFactories = new ISubSystemConfigurationProxy[v.size()];
+            subsystemConfigurations = new ISubSystemConfigurationProxy[v.size()];
             for (int idx=0; idx<v.size(); idx++)
-               subsystemFactories[idx] = (ISubSystemConfigurationProxy)v.elementAt(idx);
+               subsystemConfigurations[idx] = (ISubSystemConfigurationProxy)v.elementAt(idx);
           }
     	}
     	
-    	Arrays.sort(subsystemFactories, new SubSystemConfigurationProxyComparator());
+    	Arrays.sort(subsystemConfigurations, new SubSystemConfigurationProxyComparator());
     	
-    	return subsystemFactories;
+    	return subsystemConfigurations;
     }
 
     /**
-     *  Return all elements that extend the org.eclipse.rse.ui.subsystemconfiguration extension point
+     *  Return all elements that extend the org.eclipse.rse.ui.subsystemConfiguration extension point
      */
     private IConfigurationElement[] getSubSystemConfigurationPlugins()
     {
@@ -1103,7 +1103,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    IExtensionRegistry registry = Platform.getExtensionRegistry();
 	    // Get configured extenders
 	    IConfigurationElement[] subsystemFactoryExtensions =
-		  registry.getConfigurationElementsFor("org.eclipse.rse.ui","subsystemConfiguration");   	
+		  registry.getConfigurationElementsFor("org.eclipse.rse.ui","subsystemConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$   	
 
 	    return subsystemFactoryExtensions;
     }
@@ -1487,7 +1487,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		
 		// Get configured extenders
-		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "dynamicPopupMenuExtensions");
+		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "dynamicPopupMenuExtensions"); //$NON-NLS-1$ //$NON-NLS-2$
 		     	
 		for (int i = 0; i < systemTypeExtensions.length; i++) 
 		{
@@ -1496,7 +1496,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 				// get the name space of the declaring extension
 			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespace();
 				
-			    String menuExtensionType = systemTypeExtensions[i].getAttribute("class");
+			    String menuExtensionType = systemTypeExtensions[i].getAttribute("class"); //$NON-NLS-1$
 			    
 				// use the name space to get the bundle
 			    Bundle bundle = Platform.getBundle(nameSpace);

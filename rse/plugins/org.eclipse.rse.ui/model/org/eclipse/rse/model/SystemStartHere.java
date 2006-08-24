@@ -69,66 +69,66 @@ public class SystemStartHere
    }
 
    /**
-    * STEP 2c. Get all connections for your subsystem factory
+    * STEP 2c. Get all connections for your subsystem configuration
     * <p>
-    * SAME AS: <code>getSystemRegistry().getConnectionsBySubSystemConfiguration(factory)</code>
-    * @param factory A subsystem factory object. 
+    * SAME AS: <code>getSystemRegistry().getConnectionsBySubSystemConfiguration(subsystemConfiguration)</code>
+    * @param subsystemConfiguration A subsystem configuration object. 
     * @see org.eclipse.rse.model.ISystemRegistry#getHostsBySubSystemConfiguration(ISubSystemConfiguration)
     * @see #getConnectionsBySubSystemConfiguration(String)
     */
-   public static IHost[] getConnectionsBySubSystemConfiguration(ISubSystemConfiguration factory)
+   public static IHost[] getConnectionsBySubSystemConfiguration(ISubSystemConfiguration subsystemConfiguration)
    {
-   	   return getSystemRegistry().getHostsBySubSystemConfiguration(factory);
+   	   return getSystemRegistry().getHostsBySubSystemConfiguration(subsystemConfiguration);
    }
    /**
-    * STEP 2d. Get all connections for your subsystem factory, identified by factory Id.
+    * STEP 2d. Get all connections for your subsystem configuration, identified by subsystemConfigurationId.
     * <p>
-    * SAME AS: <code>getSystemRegistry().getConnectionsBySubSystemConfiguration(getSubSystemConfiguration(factoryId))</code>
-    * @param factoryId The id of the subsystem factory as given in its plugin.xml id attribute for the subsystemconfiguration extension point
+    * SAME AS: <code>getSystemRegistry().getConnectionsBySubSystemConfiguration(getSubSystemConfiguration(subsystemConfigurationId))</code>
+    * @param subsystemConfigurationId The id of the subsystem configuration as given in its plugin.xml id attribute for the subsystemConfiguration extension point
     * @see #getSubSystemConfiguration(String)
     * @see #getConnectionsBySubSystemConfiguration(ISubSystemConfiguration)
     */
-   public static IHost[] getConnectionsBySubSystemConfiguration(String factoryId)
+   public static IHost[] getConnectionsBySubSystemConfiguration(String subsystemConfigurationId)
    {
-   	   return getSystemRegistry().getHostsBySubSystemConfiguration(getSubSystemConfiguration(factoryId));
+   	   return getSystemRegistry().getHostsBySubSystemConfiguration(getSubSystemConfiguration(subsystemConfigurationId));
    }
 
    /**
-    * STEP 3a. Get all subsystems for all connections for your subsystem factory, identified by factory Id.
+    * STEP 3a. Get all subsystems for all connections for your subsystem configuration, identified by subsystemConfigurationId.
     * <p>
-    * SAME AS: <code>getSystemRegistry().getSubSystems(factoryId)</code>
-    * @param factoryId The subsystem factory id as given in its plugin.xml id attribute for the subsystemconfiguration extension point
+    * SAME AS: <code>getSystemRegistry().getSubSystems(subsystemConfigurationId)</code>
+    * @param subsystemConfigurationId The subsystem configuration id as given in its plugin.xml id attribute for the subsystemConfiguration extension point
     * @see org.eclipse.rse.model.ISystemRegistry#getSubSystems(String)
     * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getId()
     */
-   public static ISubSystem[] getSubSystems(String factoryId)
+   public static ISubSystem[] getSubSystems(String subsystemConfigurationId)
    {
-   	   return getSystemRegistry().getSubSystems(factoryId);
+   	   return getSystemRegistry().getSubSystems(subsystemConfigurationId);
    }
    /**
-    * STEP 3b. Get all subsystems for the given connection for your subsystem factory, identified by factory Id.
+    * STEP 3b. Get all subsystems for the given connection for your subsystem configuration, identified by subsystemConfigurationId.
     * <p>
-    * SAME AS: <code>getSystemRegistry().getSubSystems(factoryId, connection)</code>
-    * @param factoryId The subsystem factory id as given in its plugin.xml id attribute for the subsystemconfiguration extension point
+    * SAME AS: <code>getSystemRegistry().getSubSystems(subsystemConfigurationId, connection)</code>
+    * @param subsystemConfigurationId The subsystem configuration id as given in its plugin.xml id attribute for the subsystemConfiguration extension point
     * @param connection The connection object you wish to get the subsystems for. Typically there is only one subsystem per object.
     * @see org.eclipse.rse.model.ISystemRegistry#getSubSystems(String, IHost)
     * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getId()
     */
-   public static ISubSystem[] getSubSystems(String factoryId, IHost connection)
+   public static ISubSystem[] getSubSystems(String subsystemConfigurationId, IHost connection)
    {
-   	   return getSystemRegistry().getSubSystems(factoryId, connection);
+   	   return getSystemRegistry().getSubSystems(subsystemConfigurationId, connection);
    }
    /**
     * STEP 3c. Same as {@link #getSubSystems(String,IHost)} by used when you know
-    *  the subsystem factory only supports a single subsystem per connection.
-    * @param factoryId The subsystem factory id as given in its plugin.xml id attribute for the subsystemconfiguration extension point
+    *  the subsystem configuration only supports a single subsystem per connection.
+    * @param subsystemConfigurationId The subsystem configuration id as given in its plugin.xml id attribute for the subsystemConfiguration extension point
     * @param connection The connection object you wish to get the subsystems for. Typically there is only one subsystem per object.
     * @see #getSubSystems(String, IHost)
     * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getId()
     */
-   public static ISubSystem getSubSystem(String factoryId, IHost connection)
+   public static ISubSystem getSubSystem(String subsystemConfigurationId, IHost connection)
    {
-   	   ISubSystem[] subsystems = getSystemRegistry().getSubSystems(factoryId, connection);
+   	   ISubSystem[] subsystems = getSystemRegistry().getSubSystems(subsystemConfigurationId, connection);
    	   if ((subsystems == null) || (subsystems.length==0))
    	     return null;
    	   else
@@ -141,14 +141,14 @@ public class SystemStartHere
     // MISCELLANEOUS:
     // ----------------------------           
    /**
-    * Miscallenous Helper. Return the subsystem factory object for the given subsystem factory Id
+    * Miscallenous Helper. Return the subsystem configuration object for the given subsystemConfigurationId.
     * <p>
-    * SAME AS: <code>getSystemRegistry().getSubSystemConfiguration(factoryId)</code>
-    * @param factoryId The id of the subsystem factory as given in its plugin.xml id attribute for the subsystemconfiguration extension point
+    * SAME AS: <code>getSystemRegistry().getSubSystemConfiguration(subsystemConfigurationId)</code>
+    * @param subsystemConfigurationId The id of the subsystem configuration as given in its plugin.xml id attribute for the subsystemConfiguration extension point
     */
-   public static ISubSystemConfiguration getSubSystemConfiguration(String factoryId)
+   public static ISubSystemConfiguration getSubSystemConfiguration(String subsystemConfigurationId)
    {
-   	   return getSystemRegistry().getSubSystemConfiguration(factoryId);
+   	   return getSystemRegistry().getSubSystemConfiguration(subsystemConfigurationId);
    }
     
    /**

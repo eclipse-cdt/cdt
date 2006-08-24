@@ -146,7 +146,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		
 
 	protected String _name = null;
-	protected String _factoryId = null;
+	protected String _subsystemConfigurationId = null;
 	protected boolean _hidden = false;
 
 	
@@ -3172,23 +3172,23 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 * <i><b>Private</b>. Do not override.</i>
 	 * @generated This field/method will be replaced during code generation 
 	 * Ties this subsystem to its owning subsystemconfiguration, via the
-	 * id key string of the factory
+	 * id key string of the configuration.
 	 */
 	public String getConfigurationId()
 	{
-		return _factoryId;
+		return _subsystemConfigurationId;
 	}
 
 	/**
 	 * <i><b>Private</b>. Do not override.</i>
 	 * @generated This field/method will be replaced during code generation.
 	 */
-	public void setConfigurationId(String newFactoryId)
+	public void setConfigurationId(String newConfigurationId)
 	{
-		String oldFactoryId = _factoryId;
-		if (oldFactoryId == null || !oldFactoryId.equals(newFactoryId))
+		String oldFactoryId = _subsystemConfigurationId;
+		if (oldFactoryId == null || !oldFactoryId.equals(newConfigurationId))
 		{
-			_factoryId = newFactoryId;
+			_subsystemConfigurationId = newConfigurationId;
 			setDirty(true);
 		}
 	}

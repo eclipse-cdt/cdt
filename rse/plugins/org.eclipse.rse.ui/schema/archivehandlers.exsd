@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="archivehandler" minOccurs="0" maxOccurs="unbounded"/>
@@ -40,6 +45,11 @@
    </element>
 
    <element name="archivehandler">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -58,10 +68,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the Java class that implements the &lt;samp&gt;org.eclipse.rse.ui.archiveutils.ISystemArchiveHandler&lt;/samp&gt; interface.
+                  a fully qualified name of the Java class that implements the &lt;samp&gt;org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler&lt;/samp&gt; interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.rse.ui.archiveutils.ISystemArchiveHandler"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -95,9 +105,9 @@
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.rse.ui.archivehandlers&quot;&gt;
       &lt;archivehandler
-         id=&quot;org.eclipse.rse.ui.archiveutils.ziphandler&quot;
+         id=&quot;org.eclipse.rse.services.clientserver.archiveutils.systemziphandler&quot;
          name=&quot;Zip File Handler&quot;
-         class=&quot;org.eclipse.rse.ui.archiveutils.SystemZipHandler&quot;&gt;
+         class=&quot;org.eclipse.rse.services.clientserver.archiveutils.SystemZipHandler&quot;&gt;
       &lt;/archivehandler&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
@@ -110,7 +120,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Plug-ins that want to extend this extension point must implement &lt;samp&gt;org.eclipse.rse.ui.archiveutils.ISystemArchiveHandler&lt;/samp&gt; interface.
+         Plug-ins that want to extend this extension point must implement &lt;samp&gt;org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler&lt;/samp&gt; interface.
       </documentation>
    </annotation>
 
@@ -119,7 +129,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The Remote Systems Explorer in org.eclipse.rse.ui provides three default implementations of this extension point, for ZIP, JAR, and TAR Archives.
+         The Remote Systems Explorer in org.eclipse.rse.files.ui provides three default implementations of this extension point, for ZIP, JAR, and TAR Archives.
       </documentation>
    </annotation>
 

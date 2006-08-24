@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.rse.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.rse.ui" id="remoteSystemsViewPreferencesAction" name="Remote Systems View Preferences Page Action"/>
+         <meta.schema plugin="org.eclipse.rse.ui" id="remoteSystemsViewPreferencesActions" name="Remote Systems View Preferences Page Action"/>
       </appInfo>
       <documentation>
          This extension point is for contributing an action to the Remote Systems view pulldown menu, to the Preferences cascading menu. This action will launch the Preferences dialog, scoped to the particular page you specify. This will automatically show any child pages as well. This point is easy to extend, no coding required. Just name the preference page by its id from the preferencePages extension that defined the page. Also, if it is not a root page, then you must also name the root page (such as when using Windows-&amp;gt;Preference) by its id from its preferencePages extension. 
@@ -13,6 +13,11 @@ This would be used by anyone who extends the Remote System Explorer, and offers 
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="action" minOccurs="1" maxOccurs="unbounded"/>
@@ -42,6 +47,11 @@ This would be used by anyone who extends the Remote System Explorer, and offers 
    </element>
 
    <element name="action">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -102,7 +112,7 @@ Note this page will be shown as the root in the Preferences dialog, but it can b
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         RSE 1.0
+         1.0.0
       </documentation>
    </annotation>
 
@@ -164,7 +174,7 @@ Note this page will be shown as the root in the Preferences dialog, but it can b
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         This extension point is used by the &lt;code&gt;org.eclipse.rse.ui.actions.SystemCascadingPreferencesAction&lt;/code&gt; class, which in turn creates a &lt;code&gt;org.eclipse.rse.ui.ui.actions.SystemShowPreferencesPageAction&lt;/code&gt; object for each extension of this point. These are used to populate the Preferences cascading menu of the Remote Systems view pulldown, but could be used elsewhere too, if desired.
+         This extension point is used by the &lt;code&gt;org.eclipse.rse.ui.actions.SystemCascadingPreferencesAction&lt;/code&gt; class, which in turn creates a &lt;code&gt;org.eclipse.rse.ui.actions.SystemShowPreferencesPageAction&lt;/code&gt; object for each extension of this point. These are used to populate the Preferences cascading menu of the Remote Systems view pulldown, but could be used elsewhere too, if desired.
       </documentation>
    </annotation>
 

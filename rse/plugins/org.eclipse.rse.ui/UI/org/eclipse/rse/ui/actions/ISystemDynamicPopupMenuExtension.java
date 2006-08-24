@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Required interface for use in making contributions view the
- * adapter menu extension extension point (org.eclipse.rse.core.dynamicPopupMenuActions).
+ * adapter menu extension extension point (org.eclipse.rse.ui.dynamicPopupMenuExtensions).
  */
 public interface ISystemDynamicPopupMenuExtension 
 {

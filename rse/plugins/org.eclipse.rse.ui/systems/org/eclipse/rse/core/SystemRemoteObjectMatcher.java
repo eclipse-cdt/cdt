@@ -27,8 +27,8 @@ import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
  * This class encapsulates all the criteria required to identify a match on a remote
  * system object, and the methods to determine if a given input meets that criteria.
  * <ol>
- * <li>subsystemconfigurationid. For scoping to remote objects for a given subsystem factory
- * <li>subsystemconfigurationCategory. For scoping to remote objects for a given subsystem factory category.
+ * <li>subsystemconfigurationid. For scoping to remote objects for a given subsystem configuration
+ * <li>subsystemconfigurationCategory. For scoping to remote objects for a given subsystem configuration category.
  * <li>systemTypes. For scoping to remote objects from systems of a given type, or semicolon-separated types.
  * <li>category. For scoping to remote objects of a given type category
  * <li>namefilter. For scoping to remote objects of a given name

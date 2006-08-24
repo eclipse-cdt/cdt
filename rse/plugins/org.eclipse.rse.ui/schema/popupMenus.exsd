@@ -205,7 +205,7 @@ system resources, such as in the iSeries QSYS file system.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="systemtypes" type="string">
+         <attribute name="systemTypes" type="string">
             <annotation>
                <documentation>
                   One of the optional filters to scope the remote resources for

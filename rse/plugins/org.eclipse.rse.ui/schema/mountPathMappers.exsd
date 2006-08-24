@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="mountPathMapper" minOccurs="0" maxOccurs="unbounded"/>
@@ -40,6 +45,11 @@
    </element>
 
    <element name="mountPathMapper">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -58,10 +68,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the Java class that implements the &lt;samp&gt;org.eclipse.rse.ui.resources.ISystemMountPathMapper&lt;/samp&gt; interface.
+                  a fully qualified name of the Java class that implements the &lt;samp&gt;org.eclipse.rse.files.ui.resources.ISystemMountPathMapper&lt;/samp&gt; interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.rse.ui.resources.ISystemMountPathMapper"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.rse.files.ui.resources.ISystemMountPathMapper"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -88,9 +98,9 @@
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.rse.ui.mountPathMappers&quot;&gt;
       &lt;mountPathMapper
-         id=&quot;org.eclipse.rse.ui.resources.defaultMountPathMapper&quot;
+         id=&quot;org.eclipse.rse.files.ui.resources.defaultMountPathMapper&quot;
          name=&quot;Default Mount Path Mapper&quot;
-         class=&quot;org.eclipse.rse.ui.resources.DefaultMountPathMapper&quot;&gt;
+         class=&quot;org.eclipse.rse.files.ui.resources.DefaultMountPathMapper&quot;&gt;
       &lt;/mountPathMapper&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
@@ -103,7 +113,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Plug-ins that want to extend this extension point must implement &lt;samp&gt;org.eclipse.rse.ui.resources.ISystemMountPathMapper&lt;/samp&gt; interface.
+         Plug-ins that want to extend this extension point must implement &lt;samp&gt;org.eclipse.rse.files.ui.resources.ISystemMountPathMapper&lt;/samp&gt; interface.
       </documentation>
    </annotation>
 
@@ -112,7 +122,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The Remote Systems Explorer in org.eclipse.rse.ui provides a default implementation of this extension point.
+         The Remote Systems Explorer in org.eclipse.rse.files.ui provides a default implementation of this extension point.
       </documentation>
    </annotation>
 

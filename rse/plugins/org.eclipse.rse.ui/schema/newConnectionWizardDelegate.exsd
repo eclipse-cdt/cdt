@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="newConnectionWizardDelegate"/>
@@ -43,6 +48,11 @@
    </element>
 
    <element name="newConnectionWizardDelegate">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="systemType" type="string" use="required">
             <annotation>
@@ -69,7 +79,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         
+         1.0.0
       </documentation>
    </annotation>
 
@@ -78,7 +88,17 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         
+         The following is an example of this extension point&apos;s usage:
+
+&lt;p&gt;
+&lt;pre&gt;
+	&lt;extension point=&quot;org.eclipse.rse.ui.newConnectionWizardDelegate&quot;&gt;
+		&lt;newConnectionWizardDelegate
+			class=&quot;com.abc.SerialConnectionWizardDelegate&quot;
+			systemType=&quot;Embedded-Linux-Serial&quot;/&gt;
+	&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -96,7 +116,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         
+         By default there are not contributions to this.
       </documentation>
    </annotation>
 

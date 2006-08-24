@@ -131,7 +131,7 @@ Contributors:
 <!--  subsystemconfigurationid => the subsystem configuration id to whose objects you wish to show  -->
 <!--                        a property page for. Can be a simple name or simple generic -->
 <!--                        name to match on.                                           -->
-<!--                        This id matches the id attribute of a subsystemconfiguration      -->
+<!--                        This id matches the id attribute of a subsystemConfiguration      -->
 <!--                        extension point.                                            -->
 <!--  subsystemconfigurationCategory => a subsystem configuration "category" to match on. Can be a  -->
 <!--                          simple name or simple generic like "*files". Matches on   -->
@@ -210,7 +210,7 @@ Contributors:
 <!--  subsystemconfigurationid => the subsystem configuration id for whose objects you wish to show -->
 <!--                        a popup action for. Can be a simple name or simple generic  -->
 <!--                        name to match on.                                           -->
-<!--                        This id matches the id attribute of a subsystemconfiguration      -->
+<!--                        This id matches the id attribute of a subsystemConfiguration      -->
 <!--                        extension point.                                            -->
 <!--  subsystemconfigurationCategory => a subsystem configuration "category" to match on. Can be a  -->
 <!--                          simple name or simple generic like "*files". Matches on   -->
@@ -432,7 +432,7 @@ Contributors:
 <!--																					-->
 <!-- See the extension point reference for more details.								-->
 	
-	<extension-point id="remoteSystemsViewPreferencesActions" name="%extPoint.remoteSystemsViewPreferencesAction" schema="schema/remoteSystemsViewPreferencesAction.exsd"/>
+	<extension-point id="remoteSystemsViewPreferencesActions" name="%extPoint.remoteSystemsViewPreferencesActions" schema="schema/remoteSystemsViewPreferencesAction.exsd"/>
 	
 <!-- ================================================================================== -->
 <!-- EXTENSION POINT: org.eclipse.rse.ui.showNewConnectionPrompt               -->

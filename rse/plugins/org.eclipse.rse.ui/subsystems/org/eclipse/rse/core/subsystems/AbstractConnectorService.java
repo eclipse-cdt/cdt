@@ -1011,7 +1011,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}.
 	 * However, this method is needed by ISVs that re-use IBM-supplied subsystem factories,
 	 * and merely supply their own ISystem object via the "systemClass" attribute of the
-	 * subsystemconfiguration extension point.
+	 * subsystemConfiguration extension point.
 	 * 
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
 	 */

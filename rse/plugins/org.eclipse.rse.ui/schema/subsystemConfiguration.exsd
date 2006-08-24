@@ -194,9 +194,9 @@ Note that ServiceSubSystems that share the same service should always use the sa
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension 
-      point=&quot;org.eclipse.rse.ui.subsystemconfiguration&quot;&gt;
+      point=&quot;org.eclipse.rse.ui.subsystemConfiguration&quot;&gt;
       &lt;configuration
-         systemtypes=&quot;Unix;Linux;Local&quot; 
+         systemTypes=&quot;Unix;Linux;Local&quot; 
          name=&quot;Databases&quot;
          icon=&quot;icons/dbsubsys.gif&quot; 
          iconlive=&quot;icons/dbsubsyslive.gif&quot;

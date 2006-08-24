@@ -42,8 +42,8 @@ import org.osgi.framework.Bundle;
  * <li>id. Unique identifier
  * <li>name. Displayable property page name
  * <li>class. The class which implements IWorkbenchPropertyPage
- * <li>subsystemconfigurationid. For scoping to remote objects for a given subsystem factory
- * <li>subsystemconfigurationCategory. For scoping to remote objects for a given subsystem factory category
+ * <li>subsystemconfigurationid. For scoping to remote objects for a given subsystem configuration
+ * <li>subsystemconfigurationCategory. For scoping to remote objects for a given subsystem configuration category
  * <li>systemTypes. For scoping to remote objects from systems of a given type, or semicolon-separated types.
  * <li>namefilter. For scoping to remote objects of a given name
  * <li>typecategoryfilter. For scoping to remote objects for a given remote object type category

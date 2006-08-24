@@ -78,6 +78,11 @@ You can specify multiple values if you comma-separate them.
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="page" minOccurs="1" maxOccurs="unbounded"/>
@@ -145,20 +150,20 @@ Or better yet, extends one of the IBM-supplied base classes, described in the AP
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="subsystemfactoryid" type="string">
+         <attribute name="subsystemconfigurationid" type="string">
             <annotation>
                <documentation>
                   One of the optional filters to scope the remote resources for
 which the property page is to appear.
 Specify as many of these optional filters like this as needed to explicitly scope this property page element.
 &lt;p&gt;
-This filter specifies a subsystem factory id, such that this
-property page will only appear for remote resources returned from subsystems of the given subsystem factory.
-This ID can be scalar, or it can be generic to match on multiple subsystem factory IDs. 
+This filter specifies a subsystem configuration id, such that this
+property page will only appear for remote resources returned from subsystems of the given subsystem configuration.
+This ID can be scalar, or it can be generic to match on multiple subsystem configuration IDs.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="subsystemfactoryCategory" type="string">
+         <attribute name="subsystemconfigurationCategory" type="string">
             <annotation>
                <documentation>
                   One of the optional filters to scope the remote resources for
@@ -167,16 +172,16 @@ Specify as many of these optional filters like this as needed to explicitly scop
 this property page element.
 
 &lt;p&gt;
-This filter specifies a subsystem factory category, such that
+This filter specifies a subsystem configuration category, such that
 this
 property page will only appear for remote resources returned from subsystems
-owned by factories
+owned by subsystem configurations
 declared defined with the specified category. 
 
 &lt;p&gt;
 This category can be scalar, or it can be generic to match on
-multiple subsystem factory categories. The
-categories of the IBM-supplied subsystem factories that display
+multiple subsystem configuration categories. The
+categories of the Predefined subsystem configurations that display
 remote resources in the Remote
 Systems view are:
 &lt;/p&gt;
@@ -192,7 +197,7 @@ system resources, such as in the iSeries QSYS file system.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="systemtypes" type="string">
+         <attribute name="systemTypes" type="string">
             <annotation>
                <documentation>
                   One of the optional filters to scope the remote resources for
@@ -228,7 +233,7 @@ defined within this page element.
 which the property page is to appear.
 Specify as many of these optional filters like this as needed to explicitly scope this property page element.
 &lt;p&gt;
-This filter specifies a type category. Normally the subsystemfactoryid
+This filter specifies a type category. Normally the subsystemconfigurationid
 is sufficient, but some subsystems display multiple types of
 resources, and these are categorized by a type name that can
 be used to scope property pages. Here are the type categories supported by IBM-
@@ -360,7 +365,7 @@ to files, versus folders, and only for local files:
             name=&quot;Remote File Info&quot;
             typecategoryfilter=&quot;files&quot;
             typefilter=&quot;file&quot;
-            subsystemfactoryid=&quot;local.files&quot;&gt;
+            subsystemconfigurationid=&quot;local.files&quot;&gt;
       &lt;/page&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
@@ -378,7 +383,7 @@ to local Java files:
             name=&quot;Remote Java File Info&quot;
             typecategoryfilter=&quot;files&quot;
             typefilter=&quot;file&quot;
-            subsystemfactoryid=&quot;local.files&quot;
+            subsystemconfigurationid=&quot;local.files&quot;
             namefilter=&quot;*.java&quot;&gt;
       &lt;/page&gt;
 &lt;/extension&gt;
@@ -402,11 +407,11 @@ multiple property pages within the same extension configuration.
 Typically, you will subclass one of the supplied base classes
 for this extension point:
 &lt;ul&gt;
-&lt;li&gt;&lt;b&gt;org.eclipse.rse.ui.ui.propertypages.SystemAbstractPropertyPageExtensionAction&lt;/b&gt;,
+&lt;li&gt;&lt;b&gt;org.eclipse.rse.ui.propertypages.SystemAbstractPropertyPageExtensionAction&lt;/b&gt;,
 in plugin org.eclipse.rse.ui.
 Base class offering generic support for any remote resource property page, for any system type.
-&lt;li&gt;&lt;b&gt;org.eclipse.rse.ui.ui.propertypages.SystemAbstractRemoteFilePropertyPageExtensionAction&lt;/b&gt;,
-in plugin org.eclipse.rse.ui. 
+&lt;li&gt;&lt;b&gt;org.eclipse.rse.files.ui.propertypages.SystemAbstractRemoteFilePropertyPageExtensionAction&lt;/b&gt;,
+in plugin org.eclipse.rse.files.ui. 
 Specialized base class offering specific support for any remote file or folder property page, for any system type.
 &lt;/ul&gt;
 &lt;br&gt;

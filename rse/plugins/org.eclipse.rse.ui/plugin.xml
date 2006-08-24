@@ -404,7 +404,7 @@ Contributors:
 <!--																					-->
 <!-- See the extension point reference for more details.								-->
 	
-	<extension-point id="remoteSystemsViewPreferencesActions" name="%extPoint.remoteSystemsViewPreferencesActions" schema="schema/remoteSystemsViewPreferencesAction.exsd"/>
+	<extension-point id="remoteSystemsViewPreferencesActions" name="%extPoint.remoteSystemsViewPreferencesActions" schema="schema/remoteSystemsViewPreferencesActions.exsd"/>
 	
 <!-- ================================================================================== -->
 <!-- EXTENSION POINT: org.eclipse.rse.ui.showNewConnectionPrompt               -->
@@ -777,7 +777,7 @@ Contributors:
 <!-- 		Define Persistence Provider extension point -->
 <!-- ================================================================= -->
    <extension-point id="persistenceProviders" name="%extPoint.persistenceProviders" schema="schema/persistenceProviders.exsd"/>
-   <extension-point id="newConnectionWizardDelegate" name="RSE New Connection Wizard Delegate" schema="schema/newConnectionWizardDelegate.exsd"/>
+   <extension-point id="newConnectionWizardDelegates" name="RSE New Connection Wizard Delegate" schema="schema/newConnectionWizardDelegates.exsd"/>
 
 
 

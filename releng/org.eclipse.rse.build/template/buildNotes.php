@@ -46,7 +46,7 @@
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
-		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
+		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
 		<font face="Arial,Helvetica" color="#FFFFFF">API Changes since RSE 1.0 M4</font></b></td>
 	</tr>
 </table>
@@ -55,6 +55,10 @@
 <li>The <b>subsystemConfiguration</b> extension point has been renamed to 
   <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_subsystemConfigurations.html">
   subsystemConfigurations</a> 
+  in order to better match the standard naming scheme used by the Platform.</li>
+<li>The <b>newConnectionWizardDelegate</b> extension point has been renamed to 
+  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_newConnectionWizardDelegates.html">
+  newConnectionWizardDelegates</a> 
   in order to better match the standard naming scheme used by the Platform.</li>
 </ul>
 </td></tr></tbody></table>

@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.rse.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.rse.ui" id="newConnectionWizardDelegate" name="RSE New Connection Wizard Delegate"/>
+         <meta.schema plugin="org.eclipse.rse.ui" id="newConnectionWizardDelegates" name="RSE New Connection Wizard Delegate"/>
       </appInfo>
       <documentation>
          This extension point allows a New Connection wizard delegate to be provided for a certain system type. This is useful for those system types that need New Connection wizard pages which are different from the default pages supplied by RSE.
@@ -92,7 +92,7 @@
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point=&quot;org.eclipse.rse.ui.newConnectionWizardDelegate&quot;&gt;
+	&lt;extension point=&quot;org.eclipse.rse.ui.newConnectionWizardDelegates&quot;&gt;
 		&lt;newConnectionWizardDelegate
 			class=&quot;com.abc.SerialConnectionWizardDelegate&quot;
 			systemType=&quot;Embedded-Linux-Serial&quot;/&gt;

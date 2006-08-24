@@ -940,12 +940,8 @@ Contributors:
    <extension point="org.eclipse.rse.ui.passwordPersistence">
       <provider systemType="Linux"
             id="org.eclipse.rse.universal.passwordPersistence.Linux"/>
-      <provider systemType="Power Linux"
-            id="org.eclipse.rse.universal.passwordPersistence.PowerLinux"/>
       <provider systemType="Unix"
             id="org.eclipse.rse.universal.passwordPersistence.Unix"/>
-      <provider systemType="AIX"
-            id="org.eclipse.rse.universal.passwordPersistence.AIX"/>
    </extension>
    
 <!-- ================================================================= -->

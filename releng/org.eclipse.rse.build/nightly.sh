@@ -42,6 +42,7 @@ command="$command -DbuildId=${buildId} "
 command="$command -DmapVersionTag=${tag} "
 command="$command -DdoPublish=true "
 command="$command -DforceContextQualifier=${buildId} "
+command="$command -DfetchTag=HEAD "
 #command="$command postBuild "
 
 echo "$command"

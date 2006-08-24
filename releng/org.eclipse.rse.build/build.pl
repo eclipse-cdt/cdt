@@ -87,7 +87,7 @@ $incantation .= "-DbuildId=${buildId} ";
 $incantation .= "-DmapVersionTag=${tag} ";
 if ($buildType =~ "N") {
 	$incantation .= "-DforceContextQualifier=${buildId} ";
-
+	$incantation .= "-DfetchTag=HEAD ";
 }
 
 print("${incantation}\n");

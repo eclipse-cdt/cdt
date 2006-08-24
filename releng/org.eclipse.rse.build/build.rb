@@ -67,6 +67,7 @@ command += "-DbuildId=#{buildId} "
 command += "-DmapVersionTag=#{tag} "
 if ("#{buildType}" == "N") then
 	command += "-DforceContextQualifier=#{buildId} "
+	command += "-DfetchTag=HEAD "
 end
 
 puts(command)

@@ -57,6 +57,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -146,25 +147,29 @@ public class CHViewPart extends ViewPart {
             return;
     	}
         fShowsMessage= false;
-//        boolean isHeader= false;
-//        String contentType= input.getContentTypeId();
-//        if (contentType.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER) ||
-//                contentType.equals(CCorePlugin.CONTENT_TYPE_CHEADER)) {
-//            isHeader= true;
-//        }
+        boolean allowsRefTo= allowsRefTo(input);
         fTreeViewer.setInput(null);
-//        if (!isHeader) {
-//        	fContentProvider.setComputeIncludedBy(isHeader);
-//        	fIncludedByAction.setChecked(isHeader);
-//        	fIncludesToAction.setChecked(!isHeader);
-//        	updateSorter();
-//        }
+        if (!allowsRefTo && !fContentProvider.getComputeReferencedBy()) {
+        	fContentProvider.setComputeReferencedBy(true);
+        	fReferencedByAction.setChecked(true);
+        	fMakesReferenceToAction.setChecked(false);
+        	updateSorter();
+        }
+    	fMakesReferenceToAction.setEnabled(allowsRefTo);
         fTreeViewer.setInput(input);
         fPagebook.showPage(fViewerPage);
         updateDescription();
     	updateHistory(input);
     	updateActionEnablement();
     }
+
+	private boolean allowsRefTo(ICElement element) {
+		if (element instanceof IFunction) {
+			return true;
+		}
+		
+		return false;
+	}
 
 	public void createPartControl(Composite parent) {
         fPagebook = new PageBook(parent, SWT.NULL);

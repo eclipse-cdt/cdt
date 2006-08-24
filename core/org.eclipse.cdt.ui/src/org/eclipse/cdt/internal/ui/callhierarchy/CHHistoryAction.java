@@ -24,7 +24,11 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
  * Action used for the include browser forward / backward buttons
  */
 public class CHHistoryAction extends Action {
-
+	final static int LABEL_OPTIONS= 
+		CElementLabels.M_PARAMETER_TYPES | 
+		CElementLabels.ALL_FULLY_QUALIFIED |
+		CElementLabels.MF_POST_FILE_QUALIFIED;
+	
 	private CHViewPart fViewPart;
 	private ICElement fElement;
 	
@@ -32,8 +36,8 @@ public class CHHistoryAction extends Action {
         super("", AS_RADIO_BUTTON); //$NON-NLS-1$
 		fViewPart= viewPart;
 		fElement= element;		
-		
-		String elementName= CElementLabels.getElementLabel(element, CElementLabels.ALL_POST_QUALIFIED);
+	
+		String elementName= CElementLabels.getElementLabel(element, LABEL_OPTIONS);
 		setText(elementName);
 		setImageDescriptor(getImageDescriptor(element));
 	}

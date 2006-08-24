@@ -23,9 +23,12 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IMethod;
+import org.eclipse.cdt.core.model.IField;
+import org.eclipse.cdt.core.model.IFunctionDeclaration;
+import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
@@ -96,43 +99,43 @@ public class CElementLabels {
 
 	/**
 	 * Field names contain the declared type (appended)
-	 * e.g. <code>int fHello</code>
+	 * e.g. <code>fHello: int</code>
 	 */
 	public final static int F_APP_TYPE_SIGNATURE= 1 << 9;
 
 	/**
 	 * Field names contain the declared type (prepended)
-	 * e.g. <code>fHello : int</code>
+	 * e.g. <code>int fHello</code>
 	 */
 	public final static int F_PRE_TYPE_SIGNATURE= 1 << 10;	
 
 	/**
 	 * Fields names are fully qualified.
-	 * e.g. <code>java.lang.System.out</code>
+	 * e.g. <code>ClassName::fField</code>
 	 */
 	public final static int F_FULLY_QUALIFIED= 1 << 11;
 
 	/**
 	 * Fields names are post qualified.
-	 * e.g. <code>out - java.lang.System</code>
+	 * e.g. <code>fField - ClassName</code>
 	 */
 	public final static int F_POST_QUALIFIED= 1 << 12;	
 
 	/**
 	 * Type names are fully qualified.
-	 * e.g. <code>java.util.Map.MapEntry</code>
+	 * e.g. <code>namespace::ClassName</code>
 	 */
 	public final static int T_FULLY_QUALIFIED= 1 << 13;
 
 	/**
 	 * Type names are type container qualified.
-	 * e.g. <code>Map.MapEntry</code>
+	 * e.g. <code>OuterClass::InnerClass</code>
 	 */
 	public final static int T_CONTAINER_QUALIFIED= 1 << 14;
 
 	/**
 	 * Type names are post qualified.
-	 * e.g. <code>MapEntry - java.util.Map</code>
+	 * e.g. <code>InnerClass - OuterClass</code>
 	 */
 	public final static int T_POST_QUALIFIED= 1 << 15;
 
@@ -230,6 +233,12 @@ public class CElementLabels {
 	public final static int REFERENCED_ROOT_POST_QUALIFIED= 1 << 30; 
 
 	/**
+	 * Post qualify symbols with file. 
+	 * e.g. func() - /proj/foder/file.cpp 
+	 */
+	public final static int MF_POST_FILE_QUALIFIED= 1 << 31;
+
+	/**
 	 * Qualify all elements
 	 */
 	public final static int ALL_FULLY_QUALIFIED= F_FULLY_QUALIFIED | M_FULLY_QUALIFIED | I_FULLY_QUALIFIED | T_FULLY_QUALIFIED | D_QUALIFIED | CF_QUALIFIED | CU_QUALIFIED | P_QUALIFIED | ROOT_QUALIFIED;
@@ -287,10 +296,21 @@ public class CElementLabels {
 			getSourceRootLabel(root, ROOT_QUALIFIED, buf);
 			buf.append(CONCAT_STRING);
 		}		
-		
 		switch (type) {
 			case ICElement.C_METHOD : 
-				getMethodLabel( (IMethod) element, flags, buf );
+			case ICElement.C_METHOD_DECLARATION:
+				getMethodLabel( (IMethodDeclaration) element, flags, buf );
+				break;
+			case ICElement.C_FUNCTION:
+			case ICElement.C_FUNCTION_DECLARATION:
+				getFunctionLabel( (IFunctionDeclaration) element, flags, buf);
+				break;
+			case ICElement.C_FIELD : 
+				getFieldLabel( (IField) element, flags, buf );
+				break;
+			case ICElement.C_VARIABLE:
+			case ICElement.C_VARIABLE_DECLARATION:
+				getVariableLabel( (IVariableDeclaration) element, flags, buf);
 				break;
 			case ICElement.C_CLASS:
 			case ICElement.C_STRUCT:
@@ -328,7 +348,7 @@ public class CElementLabels {
 
 	}
 	
-	public static void getMethodLabel( IMethod method, int flags, StringBuffer buf ) {
+	public static void getMethodLabel( IMethodDeclaration method, int flags, StringBuffer buf ) {
 		try {
 		//return type
 		if( getFlag( flags, M_PRE_RETURNTYPE ) && method.exists() && !method.isConstructor() ) {
@@ -400,11 +420,186 @@ public class CElementLabels {
 			buf.append( CONCAT_STRING );
 			getTypeLabel( method.getParent(), T_FULLY_QUALIFIED | (flags & P_COMPRESSED), buf );
 		}
+		if( getFlag(flags, MF_POST_FILE_QUALIFIED)) {
+			IPath path= method.getPath();
+			if (path != null) {
+				buf.append( CONCAT_STRING );
+				buf.append(path.toString());
+			}
+		}
 		} catch (CModelException e) {
 			CUIPlugin.getDefault().log(e);
 		}
 	}
-	
+
+	public static void getFieldLabel(IField field, int flags, StringBuffer buf ) {
+		try {
+		//return type
+		if( getFlag( flags, F_PRE_TYPE_SIGNATURE ) && field.exists()) {
+			buf.append( field.getTypeName() );
+			buf.append( ' ' );
+		}
+		
+		//qualification
+		if( getFlag( flags, F_FULLY_QUALIFIED ) ){
+			ICElement parent = field.getParent();
+			if (parent != null && parent.exists()) {
+				getTypeLabel( parent, T_FULLY_QUALIFIED | (flags & P_COMPRESSED), buf );
+				buf.append( "::" ); //$NON-NLS-1$
+			}
+		}
+		
+		buf.append( field.getElementName() );
+				
+		if( getFlag( flags, F_APP_TYPE_SIGNATURE ) && field.exists()) {
+			buf.append( DECL_STRING );
+			buf.append( field.getTypeName() );	
+		}			
+		
+		// post qualification
+		if( getFlag(flags, F_POST_QUALIFIED)) {
+			buf.append( CONCAT_STRING );
+			getTypeLabel( field.getParent(), T_FULLY_QUALIFIED | (flags & P_COMPRESSED), buf );
+		}
+		if( getFlag(flags, MF_POST_FILE_QUALIFIED)) {
+			IPath path= field.getPath();
+			if (path != null) {
+				buf.append( CONCAT_STRING );
+				buf.append(path.toString());
+			}
+		}
+		} catch (CModelException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+	}
+
+	public static void getVariableLabel(IVariableDeclaration var, int flags, StringBuffer buf ) {
+		try {
+		//return type
+		if( getFlag( flags, F_PRE_TYPE_SIGNATURE ) && var.exists()) {
+			buf.append( var.getTypeName() );
+			buf.append( ' ' );
+		}
+		
+		//qualification
+		if( getFlag( flags, F_FULLY_QUALIFIED ) ){
+			ICElement parent = var.getParent();
+			if (parent != null && parent.exists() && parent.getElementType() == ICElement.C_NAMESPACE) {
+				getTypeLabel( parent, T_FULLY_QUALIFIED | (flags & P_COMPRESSED), buf );
+				buf.append( "::" ); //$NON-NLS-1$
+			}
+		}
+		
+		buf.append( var.getElementName() );
+				
+		if( getFlag( flags, F_APP_TYPE_SIGNATURE ) && var.exists()) {
+			buf.append( DECL_STRING );
+			buf.append( var.getTypeName() );	
+		}			
+		
+		// post qualification
+		if( getFlag(flags, F_POST_QUALIFIED)) {
+			ICElement parent = var.getParent();
+			if (parent != null && parent.exists() && parent.getElementType() == ICElement.C_NAMESPACE) {
+				buf.append( CONCAT_STRING );
+				getTypeLabel( var.getParent(), T_FULLY_QUALIFIED | (flags & P_COMPRESSED), buf );
+			}
+		}
+		if( getFlag(flags, MF_POST_FILE_QUALIFIED)) {
+			IPath path= var.getPath();
+			if (path != null) {
+				buf.append( CONCAT_STRING );
+				buf.append(path.toString());
+			}
+		}
+		} catch (CModelException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+	}
+
+	public static void getFunctionLabel(IFunctionDeclaration func, int flags, StringBuffer buf) {
+		//return type
+		if( getFlag( flags, M_PRE_RETURNTYPE ) && func.exists()) {
+			buf.append( func.getReturnType() );
+			buf.append( ' ' );
+		}
+		
+		//qualification
+		if( getFlag( flags, M_FULLY_QUALIFIED ) ){
+			ICElement parent = func.getParent();
+			if (parent != null && parent.exists() && parent.getElementType() == ICElement.C_NAMESPACE) {
+				getTypeLabel( parent, T_FULLY_QUALIFIED | (flags & P_COMPRESSED), buf );
+				buf.append( "::" ); //$NON-NLS-1$
+			}
+		}
+		
+		buf.append( func.getElementName() );
+		
+		//parameters
+		if( getFlag( flags, M_PARAMETER_TYPES | M_PARAMETER_NAMES ) ) {
+			buf.append('(');
+
+			String[] types = getFlag(flags, M_PARAMETER_TYPES) ? func.getParameterTypes() : null;
+			String[] names = null;//(getFlag(flags, M_PARAMETER_NAMES) && method.exists()) ? method.getParameterNames() : null;
+			
+			int nParams = ( types != null ) ? types.length : names.length;
+
+			for (int i= 0; i < nParams; i++) {
+				if (i > 0) {
+					buf.append( COMMA_STRING );
+				}
+				
+				if (types != null) {
+					buf.append( types[i] );
+				}
+				
+				if (names != null) {
+					if (types != null) {
+						buf.append(' ');
+					}
+					buf.append( names[i] );
+				}
+			}
+			buf.append(')');
+		}
+		
+		//exceptions
+		if( getFlag( flags, M_EXCEPTIONS ) && func.exists() ){
+			String [] types = func.getExceptions();
+			if (types.length > 0) {
+				buf.append(" throw( "); //$NON-NLS-1$
+				for (int i= 0; i < types.length; i++) {
+					if (i > 0) {
+						buf.append(COMMA_STRING);
+					}
+					buf.append( types[i] );
+				}
+				buf.append( " )" ); //$NON-NLS-1$
+			}
+		}
+		
+		if( getFlag( flags, M_APP_RETURNTYPE ) && func.exists()) {
+			buf.append( DECL_STRING );
+			buf.append( func.getReturnType() );	
+		}			
+		
+		// post qualification
+		if( getFlag(flags, M_POST_QUALIFIED)) {
+			ICElement parent = func.getParent();
+			if (parent != null && parent.exists() && parent.getElementType() == ICElement.C_NAMESPACE) {
+				buf.append( CONCAT_STRING );
+				getTypeLabel( func.getParent(), T_FULLY_QUALIFIED | (flags & P_COMPRESSED), buf );
+			}
+		}
+		if( getFlag(flags, MF_POST_FILE_QUALIFIED)) {
+			IPath path= func.getPath();
+			if (path != null) {
+				buf.append( CONCAT_STRING );
+				buf.append(path.toString());
+			}
+		}
+	}
+
 	/**
 	 * Appends the label for a source root to a StringBuffer. Considers the ROOT_* flags.
 	 */	
@@ -478,11 +673,24 @@ public class CElementLabels {
 	 */		
 	public static void getTypeLabel(ICElement elem, int flags, StringBuffer buf) {
 		if (getFlag(flags, T_FULLY_QUALIFIED)) {
-			ISourceRoot root= CModelUtil.getSourceRoot(elem);
-			if (root != null) {
-				getSourceRootLabel(root, (flags & P_COMPRESSED), buf);
-				buf.append(root.getElementName());
-				buf.append('.');
+			ICElement parent= elem.getParent();
+			boolean isQualifier= true;
+			if (parent != null && parent.exists()) {
+				switch (parent.getElementType()) {
+				case ICElement.C_ARCHIVE:
+				case ICElement.C_BINARY:
+				case ICElement.C_CCONTAINER:
+				case ICElement.C_MODEL:
+				case ICElement.C_PROJECT:
+				case ICElement.C_UNIT:
+				case ICElement.C_VCONTAINER:
+					isQualifier= false;
+					break;
+				}
+			}
+			if (isQualifier) {
+				getTypeLabel(parent, flags, buf);
+				buf.append("::"); //$NON-NLS-1$
 			}
 		}
 		

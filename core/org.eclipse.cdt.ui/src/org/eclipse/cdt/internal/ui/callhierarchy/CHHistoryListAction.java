@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.model.ICElement;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
@@ -67,7 +66,7 @@ public class CHHistoryListAction extends Action {
 				}				
 			};
 		
-			LabelProvider labelProvider= new CUILabelProvider(CElementLabels.APPEND_ROOT_PATH, CElementImageProvider.OVERLAY_ICONS);
+			LabelProvider labelProvider= new CUILabelProvider(CHHistoryAction.LABEL_OPTIONS, CElementImageProvider.OVERLAY_ICONS);
 			
 			fHistoryList= new ListDialogField(adapter, buttonLabels, labelProvider);
 			fHistoryList.setLabelText(CHMessages.CHHistoryListAction_HistoryList_label); 

@@ -732,7 +732,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 */
 	public boolean canEvaluate() {
 		CDebugTarget target = ((CDebugTarget)getDebugTarget());
-		return target.supportsExpressionEvaluation() && target.isSuspended();
+		return target.supportsExpressionEvaluation() && isSuspended();
 	}
 
 	protected void doStepReturn() throws DebugException {

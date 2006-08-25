@@ -169,6 +169,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 	}
     
     static Proxy loadSshProxyPrefs() {
+    	//TODO Get rid of discouraged access when bug 154100 is fixed
 		boolean useProxy = CVSProviderPlugin.getPlugin().isUseProxy();
         Proxy proxy = null;
 		if (useProxy) {
@@ -231,6 +232,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 			Socket socket = null;
 			//Allows to cancel the socket creation operation if necessary.
 			//Waits for the timeout specified in CVS Preferences, maximum.
+	    	//TODO Get rid of discouraged access by copying into services plugin
 			socket = Util.createSocket(host, port, monitor);
 			// Null out the monitor so we don't hold onto anything
 			// (i.e. the SSH2 session will keep a handle to the socket factory around
@@ -581,7 +583,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 			final String finUser = fUser;
 			getStandardDisplay().syncExec(new Runnable() {
 				public void run() {
-					//TODO Write our own UserValidationDialog instead of re-using the internal one from team.ssh
+					//TODO discouraged access: Write our own UserValidationDialog
 					UserValidationDialog uvd = new UserValidationDialog(null, null,
 							finUser, message);
 					uvd.setUsernameMutable(false);
@@ -633,6 +635,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 			    final String[][] finResult = new String[1][];
 			    getStandardDisplay().syncExec(new Runnable() {
 			    	public void run() {
+			    		//TODO discouraged access: write our own KeyboardInteractiveDialog
 			    		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(null, 
 			    			null, destination, name, instruction, prompt, echo);
 			    		dialog.open();

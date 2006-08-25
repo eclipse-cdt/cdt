@@ -139,7 +139,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 			if (_remoteCommand != null)
 			{
 				RemoteCmdSubSystem cmdSubsystem = (RemoteCmdSubSystem) _remoteCommand.getCommandSubSystem();
-				String type = cmdSubsystem.getHost().getSystemType();
+				//String type = cmdSubsystem.getHost().getSystemType();
 				if (cmdSubsystem.isWindows())
 				{
 					_isWindows = true;
@@ -432,10 +432,9 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 
 	private void getEnvironmentCompletions(String currentText, CompletionResults results)
 	{
-		IRemoteCmdSubSystem subsystem = _remoteCommand.getCommandSubSystem();
-		if (subsystem instanceof IRemoteCmdSubSystem)
+		IRemoteCmdSubSystem cmdSubsystem = _remoteCommand.getCommandSubSystem();
+		if (cmdSubsystem != null)
 		{
-			IRemoteCmdSubSystem cmdSubsystem = (IRemoteCmdSubSystem) subsystem;
 			List vars = cmdSubsystem.getHostEnvironmentVariables();
 			if (vars != null)
 			{
@@ -469,10 +468,9 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 
 	private void getCommandCompletions(String currentText, CompletionResults results)
 	{
-		IRemoteCmdSubSystem subsystem = _remoteCommand.getCommandSubSystem();
-		if (subsystem instanceof IRemoteCmdSubSystem)
+		IRemoteCmdSubSystem cmdSubsystem = _remoteCommand.getCommandSubSystem();
+		if (cmdSubsystem != null)
 		{
-			IRemoteCmdSubSystem cmdSubsystem = (IRemoteCmdSubSystem) subsystem;
 			ICandidateCommand[] cmds = cmdSubsystem.getCandidateCommands(_remoteCommand);
 			if (cmds != null)
 			{

@@ -26,13 +26,22 @@ import org.eclipse.core.runtime.IAdaptable;
 public interface IPDOM extends IAdaptable {
 
 	/**
-	 * Find all the bindings that match the pattern.
+	 * Find all the bindings whose names that match the pattern.
 	 * 
 	 * @param pattern
 	 * @return
 	 * @throws CoreException
 	 */
 	public IBinding[] findBindings(Pattern pattern) throws CoreException;
+	
+	/**
+	 * Find all bindings whose qualified names match the array of patterns. 
+	 * 
+	 * @param pattern
+	 * @return
+	 * @throws CoreException
+	 */
+	public IBinding[] findBindings(Pattern[] pattern) throws CoreException;
 	
 	/**
 	 * Recursively visit the nodes in this PDOM using the given visitor.

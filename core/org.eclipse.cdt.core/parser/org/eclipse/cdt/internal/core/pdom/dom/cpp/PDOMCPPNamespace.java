@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
+import org.eclipse.cdt.internal.core.pdom.dom.FindBindingsInBTree;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -75,6 +76,7 @@ public class PDOMCPPNamespace extends PDOMBinding
 				if (binding != null) {
 					if (visitor.visit(binding))
 						binding.accept(visitor);
+					visitor.leave(binding);
 				}
 				return true;
 			};
@@ -123,41 +125,18 @@ public class PDOMCPPNamespace extends PDOMBinding
 	}
 
 	public IBinding[] find(String name) throws DOMException {
-		throw new PDOMNotImplementedError();
+		try {
+			FindBindingsInBTree visitor = new FindBindingsInBTree(pdom, name.toCharArray());
+			getIndex().accept(visitor);
+			return visitor.getBinding();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new IBinding[0];
+		}
 	}
 
 	public void flushCache() throws DOMException {
 		throw new PDOMNotImplementedError();
-	}
-
-	private static final class FindBinding extends PDOMNamedNode.NodeFinder {
-		PDOMBinding pdomBinding;
-		final int[] desiredType;
-		public FindBinding(PDOM pdom, char[] name, int desiredType) {
-			this(pdom, name, new int[] { desiredType });
-		}
-		public FindBinding(PDOM pdom, char[] name, int[] desiredType) {
-			super(pdom, name);
-			this.desiredType = desiredType;
-		}
-		public boolean visit(int record) throws CoreException {
-			if (record == 0)
-				return true;
-			PDOMBinding tBinding = pdom.getBinding(record);
-			if (!tBinding.hasName(name))
-				// no more bindings with our desired name
-				return false;
-			int nodeType = tBinding.getNodeType();
-			for (int i = 0; i < desiredType.length; ++i)
-				if (nodeType == desiredType[i]) {
-					// got it
-					pdomBinding = tBinding;
-					return false;
-				}
-			
-			// wrong type, try again
-			return true;
-		}
 	}
 
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
@@ -182,7 +161,7 @@ public class PDOMCPPNamespace extends PDOMBinding
 						return null;
 					
 					// Look up the name
-					FindBinding visitor = new FindBinding(pdom, name.toCharArray(),
+					FindBindingsInBTree visitor = new FindBindingsInBTree(pdom, name.toCharArray(),
 							new int[] {
 								PDOMCPPLinkage.CPPCLASSTYPE,
 								PDOMCPPLinkage.CPPNAMESPACE,
@@ -190,28 +169,32 @@ public class PDOMCPPNamespace extends PDOMBinding
 								PDOMCPPLinkage.CPPVARIABLE
 							});
 					getIndex().accept(visitor);
-					return visitor.pdomBinding;
+					IBinding[] bindings = visitor.getBinding();
+					return bindings.length > 0 ? bindings[0] : null;
 				}
 			}
 			if (parent instanceof IASTIdExpression) {
 				// reference
 				IASTNode eParent = parent.getParent();
 				if (eParent instanceof IASTFunctionCallExpression) {
-					FindBinding visitor = new FindBinding(pdom, name.toCharArray(), PDOMCPPLinkage.CPPFUNCTION);
+					FindBindingsInBTree visitor = new FindBindingsInBTree(pdom, name.toCharArray(), PDOMCPPLinkage.CPPFUNCTION);
 					getIndex().accept(visitor);
-					return visitor.pdomBinding;
+					IBinding[] bindings = visitor.getBinding();
+					return bindings.length > 0 ? bindings[0] : null;
 				} else {
-					FindBinding visitor = new FindBinding(pdom, name.toCharArray(), 
+					FindBindingsInBTree visitor = new FindBindingsInBTree(pdom, name.toCharArray(), 
 							(name.getParent() instanceof ICPPASTQualifiedName
 									&& ((ICPPASTQualifiedName)name.getParent()).getLastName() != name)
 								? PDOMCPPLinkage.CPPNAMESPACE : PDOMCPPLinkage.CPPVARIABLE);
 					getIndex().accept(visitor);
-					return visitor.pdomBinding;
+					IBinding[] bindings = visitor.getBinding();
+					return bindings.length > 0 ? bindings[0] : null;
 				}
 			} else if (parent instanceof IASTNamedTypeSpecifier) {
-				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), PDOMCPPLinkage.CPPCLASSTYPE);
+				FindBindingsInBTree visitor = new FindBindingsInBTree(pdom, name.toCharArray(), PDOMCPPLinkage.CPPCLASSTYPE);
 				getIndex().accept(visitor);
-				return visitor.pdomBinding;
+				IBinding[] bindings = visitor.getBinding();
+				return bindings.length > 0 ? bindings[0] : null;
 			}
 			return null;
 		} catch (CoreException e) {

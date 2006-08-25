@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.IPDOMWriter;
@@ -249,14 +250,60 @@ public class PDOM extends PlatformObject
 		return null;
 	}
 
+	private static class BindingFinder implements IPDOMVisitor {
+		private final Pattern[] pattern;
+		
+		private final IBinding[] match;
+		private int level = 0;
+		private List bindings = new ArrayList();
+		
+		public BindingFinder(Pattern[] pattern) {
+			this.pattern = pattern;
+			match = new IBinding[pattern.length];
+		}
+		
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof IBinding) {
+				IBinding binding = (IBinding)node;
+				if (pattern[level].matcher(binding.getName()).matches()) {
+					if (level < pattern.length - 1) {
+						match[level++] = binding;
+					} else {
+						bindings.add(binding);
+						// Only visit children if using simple name
+						return pattern.length == 1;
+					}
+				}
+			}
+
+			return true;
+		}
+		
+		public void leave(IPDOMNode node) throws CoreException {
+			if (node instanceof IBinding) {
+				if (level > 0 && match[level - 1] == (IBinding)node)
+					// pop the stack
+					--level;
+			}
+		}
+		
+		public IBinding[] getBindings() {
+			return (IBinding[])bindings.toArray(new IBinding[bindings.size()]);
+		}
+	}
+	
 	public IBinding[] findBindings(Pattern pattern) throws CoreException {
-		List bindings = new ArrayList();
+		return findBindings(new Pattern[] { pattern });
+	}
+	
+	public IBinding[] findBindings(Pattern[] pattern) throws CoreException {
+		BindingFinder finder = new BindingFinder(pattern);
 		PDOMLinkage linkage = getFirstLinkage();
 		while (linkage != null) {
-			linkage.findBindings(pattern, bindings);
+			linkage.accept(finder);
 			linkage = linkage.getNextLinkage();
 		}
-		return (IBinding[])bindings.toArray(new IBinding[bindings.size()]);
+		return finder.getBindings();
 	}
 	
 	public PDOMLinkage getLinkage(ILanguage language) throws CoreException {

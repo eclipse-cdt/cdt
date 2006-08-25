@@ -139,6 +139,8 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 			++count;
 			return false;
 		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
 	}
 	
 	private static class Children implements IPDOMVisitor {
@@ -151,6 +153,8 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 			nodes[index++] = node;
 			return false;
 		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
 	}
 	
 	private static class HasChildren implements IPDOMVisitor {
@@ -158,6 +162,8 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		public boolean visit(IPDOMNode node) throws CoreException {
 			hasChildren = true;
 			throw new CoreException(Status.OK_STATUS);
+		}
+		public void leave(IPDOMNode node) throws CoreException {
 		}
 	}
 	

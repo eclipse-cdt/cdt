@@ -11,9 +11,6 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import java.util.List;
-import java.util.regex.Pattern;
-
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -247,6 +244,8 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			}
 			return false;
 		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
 		public PDOMBinding getBinding() { return binding; }
 	}
 
@@ -392,11 +391,6 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			// TODO we are in another namespace
 			return null;
 		}
-	}
-	
-	public void findBindings(Pattern pattern, List bindings) throws CoreException {
-		MatchBinding visitor = new MatchBinding(pdom, pattern, bindings);
-		getIndex().accept(visitor);
 	}
 	
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {

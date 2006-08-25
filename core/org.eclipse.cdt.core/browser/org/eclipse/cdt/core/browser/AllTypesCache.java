@@ -67,6 +67,9 @@ public class AllTypesCache {
 			return true;
 		}
 		
+		public void leave(IPDOMNode node) throws CoreException {
+		}
+		
 		public List getTypes() {
 			return types;
 		}

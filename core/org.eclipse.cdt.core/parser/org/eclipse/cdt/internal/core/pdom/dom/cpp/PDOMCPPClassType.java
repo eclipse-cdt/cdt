@@ -144,6 +144,8 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 				methods.add(node);
 			return false; // don't visit the method
 		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
 		public ICPPMethod[] getMethods() {
 			return (ICPPMethod[])methods.toArray(new ICPPMethod[methods.size()]); 
 		}
@@ -200,6 +202,8 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 				fields.add(node);
 			return false;
 		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
 		public IField[] getFields() {
 			return (IField[])fields.toArray(new IField[fields.size()]);
 		}
@@ -226,6 +230,8 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 			if (node instanceof ICPPClassType)
 				nestedClasses.add(node);
 			return false;
+		}
+		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public ICPPClassType[] getNestedClasses() {
 			return (ICPPClassType[])nestedClasses.toArray(new ICPPClassType[nestedClasses.size()]);

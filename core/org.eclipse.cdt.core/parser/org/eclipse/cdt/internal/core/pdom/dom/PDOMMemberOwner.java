@@ -52,6 +52,7 @@ public abstract class PDOMMemberOwner extends PDOMBinding {
 			PDOMNode node = linkage.getNode(item.getItem());
 			if (visitor.visit(node))
 				node.accept(visitor);
+			visitor.leave(node);
 			item = item.getNext();
 		} while (!item.equals(firstItem));
 	}

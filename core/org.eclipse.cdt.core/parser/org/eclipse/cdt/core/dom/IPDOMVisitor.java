@@ -24,9 +24,17 @@ public interface IPDOMVisitor {
 	 * this node, or false to skip to the next sibling of this node.
 	 * Throw CoreException to stop the visit.
 	 *  
-	 * @param node
-	 * @return
+	 * @param node being visited
+	 * @return whether to visit children
 	 */
 	public boolean visit(IPDOMNode node) throws CoreException;
+	
+	/**
+	 * All children have been visited, about to go back to the parent.
+	 * 
+	 * @param node that has just completed visitation
+	 * @throws CoreException
+	 */
+	public void leave(IPDOMNode node) throws CoreException;
 	
 }

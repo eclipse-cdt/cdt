@@ -11,7 +11,10 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
@@ -53,19 +56,48 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 	
 	private String scopeDesc;
 	private String patternStr;
-	private Pattern pattern;
+	private Pattern[] pattern;
 	
 	public PDOMSearchPatternQuery(
 			ICElement[] scope,
 			String scopeDesc,
-			Pattern pattern,
 			String patternStr,
 			boolean isCaseSensitive,
-			int flags) {
+			int flags) throws PatternSyntaxException {
 		super(scope, flags);
 		this.scopeDesc = scopeDesc;
-		this.pattern = pattern;
+		
 		this.patternStr = patternStr;
+		
+		// Parse the pattern string
+		List patternList = new ArrayList();
+    	StringBuffer buff = new StringBuffer();
+    	int n = patternStr.length();
+    	for (int i = 0; i < n; ++i) {
+    		char c = patternStr.charAt(i);
+    		switch (c) {
+    		case '*':
+    			buff.append(".*"); //$NON-NLS-1$
+    			break;
+    		case '?':
+    			buff.append('.');
+    			break;
+    		case '.':
+    		case ':':
+    			if (buff.length() > 0) {
+    				patternList.add(Pattern.compile(buff.toString()));
+    				buff = new StringBuffer();
+    			}
+    			break;
+   			default:
+    			buff.append(c);
+    		}
+    	}
+    	
+    	if (buff.length() > 0)
+			patternList.add(Pattern.compile(buff.toString()));
+	    
+    	pattern = (Pattern[])patternList.toArray(new Pattern[patternList.size()]); 
 	}
 	
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {

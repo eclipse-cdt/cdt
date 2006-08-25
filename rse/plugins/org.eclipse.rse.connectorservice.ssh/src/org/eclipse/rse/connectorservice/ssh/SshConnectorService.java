@@ -702,12 +702,4 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		return false;
 	}
 
-	/**
-	 * @return false
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#requiresUserId()
-	 */
-	public boolean requiresUserId() {
-		return false;
-	}
-
 }

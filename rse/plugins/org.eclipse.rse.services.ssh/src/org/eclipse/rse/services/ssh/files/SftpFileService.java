@@ -45,7 +45,6 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
-import org.eclipse.rse.services.files.RemoteFolderNotEmptyException;
 import org.eclipse.rse.services.ssh.Activator;
 import org.eclipse.rse.services.ssh.ISshService;
 import org.eclipse.rse.services.ssh.ISshSessionProvider;
@@ -543,6 +542,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	public boolean delete(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException
 	{
 		boolean ok=false;
+		Activator.trace("SftpFileService.delete"); //$NON-NLS-1$
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
 				String fullPath = remoteParent + '/' + fileName;
@@ -560,20 +560,26 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				}
 				if (attrs==null) {
 					//doesn't exist, nothing to do
+					ok=true;
 				} else if (attrs.isDir()) {
 					try {
 						getChannel("SftpFileService.delete.rmdir").rmdir(fullPath); //$NON-NLS-1$
+						ok=true;
 					} catch(SftpException e) {
 						if(e.id==ChannelSftp.SSH_FX_FAILURE) {
-							throw new RemoteFolderNotEmptyException();
+							//Bug 153649: Recursive directory delete
+							//throw new RemoteFolderNotEmptyException();
+							String fullPathQuoted = enQuote(fullPath);
+							int rv = runCommand(monitor, "rm -rf "+fullPathQuoted); //$NON-NLS-1$
+							ok = (rv==0);
 						} else {
 							throw e;
 						}
 					}
 				} else {
 					getChannel("SftpFileService.delete.rm").rm(fullPath); //$NON-NLS-1$
+					ok=true;
 				}
-				ok=true;
 				Activator.trace("SftpFileService.delete ok"); //$NON-NLS-1$
 			} catch (Exception e) {
 				Activator.trace("SftpFileService.delete: "+e.toString()); //$NON-NLS-1$

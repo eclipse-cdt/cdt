@@ -436,14 +436,14 @@ public class RexecDstoreServer implements IServerLauncher
 			// to the client error port.
 			// Not sending a port number at this point indicates to the daemon
 			// that there is no error socket to establish.
-			rxOut.writeByte((int) 0); // send null terminator
+			rxOut.writeByte(0); // send null terminator
 			rxOut.flush();
 
 			// send userid and password on rexec socket
 			rxOut.writeBytes(signonInfo.getUserid());
-			rxOut.writeByte((int) 0); // send null terminator
+			rxOut.writeByte(0); // send null terminator
 			rxOut.writeBytes(signonInfo.getPassword());
-			rxOut.writeByte((int) 0); // send null terminator
+			rxOut.writeByte(0); // send null terminator
 			rxOut.flush();
 
 			// send the command on rexec socket to start datastore daemon listening
@@ -458,7 +458,7 @@ public class RexecDstoreServer implements IServerLauncher
 			SystemBasePlugin.logInfo("RexecDstoreServer :");
 
 			rxOut.writeBytes(cmd);
-			rxOut.writeByte((int) 0); // send null terminator
+			rxOut.writeByte(0); // send null terminator
 			rxOut.flush();
 
 			int inBytes = rxIn.available(); // any data available?
@@ -1146,10 +1146,9 @@ public class RexecDstoreServer implements IServerLauncher
 			logMessage("Got the port " +  port);
 			try 
 			{
-				int possiblePort = Integer.parseInt(port);
+				Integer.parseInt(port);
 				logMessage("Going to return port " +  port);
 				return port;
-				//logMessage("Return the port " + port);
 			} 
 			catch (RuntimeException e) 
 			{
@@ -1166,8 +1165,6 @@ public class RexecDstoreServer implements IServerLauncher
 	}
 	private char convertFromEBCDICToASCII(byte eByte)
 	{
-
-		StringBuffer buf = new StringBuffer();
 			int index = eByte;
 			if (index < 0)
 			{
@@ -1179,7 +1176,7 @@ public class RexecDstoreServer implements IServerLauncher
 	{
 			int index = eByte;
 			for (int i = 0; i <ebcdictounicode.length; i++) {
-				if (index ==(int)ebcdictounicode[i]){
+				if (index == ebcdictounicode[i]){
 					if (i > 128)
 						return (byte )(i - 256);
 					return (byte)i;

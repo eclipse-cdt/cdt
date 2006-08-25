@@ -53,7 +53,6 @@ import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
-import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.dstore.universal.miners.environment.EnvironmentMiner;
@@ -72,6 +71,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
+
 /**
  * System class required by the remote systems framework.
  * This represents the live connection at tool runtime.
@@ -493,7 +493,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		  //  System.out.println("server launcher is null");
 		}
 
-		long t1 = System.currentTimeMillis();
+		//long t1 = System.currentTimeMillis();
 		SystemMessage msg = null;	
 		boolean launchFailed = false;
 
@@ -860,13 +860,8 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		         statusMonitor.waitForUpdate(schemaStatus);
 		         statusMonitor.waitForUpdate(initStatus);
 			}
-
-			long t2 = System.currentTimeMillis();
-			
+			//long t2 = System.currentTimeMillis();
 			//System.out.println("connect time = "+(t2 - t1));
-		
-			
-		
 		}
 		else
 		{

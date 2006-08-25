@@ -653,8 +653,9 @@ public class PerformanceLogger {
 		if (isPerformanceLoggingEnabled()) {
 			PerformanceLogger.start(); //Start timer using default component
 		}
-		for (i = 0; i < 1000000; i++)
-			;
+		for (i = 0; i < 1000000; i++) {
+			//empty performance test loop
+		}
 		if (isPerformanceLoggingEnabled()) {
 			PerformanceLogger.stop();
 		}
@@ -666,34 +667,41 @@ public class PerformanceLogger {
 		System.out.println("Product info : " + PerformanceLogger.getCurrentProductInfo(PerformanceLogger.OPTION_GET_FEATURE, key) + " "
 				+ PerformanceLogger.getCurrentProductInfo(PerformanceLogger.OPTION_GET_VERSION, key));
 		PerformanceLogger.start(key, "NOT_NESTED_1");
-		for (i = 0; i < 1000000; i++)
-			;
+		for (i = 0; i < 1000000; i++) {
+			//empty performance test loop
+		}
 		PerformanceLogger.stop(key);
 
 		PerformanceLogger.start(key, "NESTED_ONE");
-		for (i = 0; i < 500; i++)
-			;
+		for (i = 0; i < 500; i++) {
+			//empty performance test loop
+		}
 		PerformanceLogger.start(key, "NESTED_ONE_CHILD");
-		for (i = 0; i < 300; i++)
-			;
+		for (i = 0; i < 300; i++) {
+			//empty performance test loop
+		}
 		PerformanceLogger.stop(key);
 		PerformanceLogger.stop(key);
 
 		PerformanceLogger.start(key, "NOT_NESTED_2");
-		for (i = 0; i < 2000000; i++)
-			;
+		for (i = 0; i < 2000000; i++) {
+			//empty performance test loop
+		}
 		PerformanceLogger.stop(key);
 
 		PerformanceLogger.start(key, "NESTED_THREE");
-		for (i = 0; i < 300; i++)
-			;
+		for (i = 0; i < 300; i++) {
+			//empty performance test loop
+		}
 		PerformanceLogger.start(key, "NESTED_TWO_CHILD1");
 		PerformanceLogger.start(key, "NESTED_TWO_CHILD2");
-		for (i = 0; i < 4000; i++)
-			;
+		for (i = 0; i < 4000; i++) {
+			//empty performance test loop
+		}
 		PerformanceLogger.start(key, "NESTED_TWO_CHILD3");
-		for (i = 0; i < 6000; i++)
-			;
+		for (i = 0; i < 6000; i++) {
+			//empty performance test loop
+		}
 		PerformanceLogger.stop(key);
 		PerformanceLogger.stop(key);
 		PerformanceLogger.stop(key);
@@ -701,8 +709,9 @@ public class PerformanceLogger {
 
 		PerformanceLogger.start("ABC"); //Expect error: not registered		
 		PerformanceLogger.start(key); //record timer in the previous registered component
-		for (i = 0; i < 3000000; i++)
-			;
+		for (i = 0; i < 3000000; i++) {
+			//empty performance test loop
+		}
 		PerformanceLogger.stop(key);
 		key = PerformanceLogger.register(key); // Expect error: already registered
 		PerformanceLogger.deRegister(key);

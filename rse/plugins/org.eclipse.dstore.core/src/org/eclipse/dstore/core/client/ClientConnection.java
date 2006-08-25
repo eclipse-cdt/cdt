@@ -807,16 +807,16 @@ public class ClientConnection implements IDataStoreConstants
 	private void init(int initialSize)
 	{
 		_clientAttributes = new ClientAttributes();
-		_clientAttributes.setAttribute(ClientAttributes.A_ROOT_NAME, _name);
+		_clientAttributes.setAttribute(DataStoreAttributes.A_ROOT_NAME, _name);
 
 
 		_dataStore = new DataStore(_clientAttributes, initialSize);
 		_dataStore.setDomainNotifier(_domainNotifier);
 		_dataStore.createRoot();
 
-		_host = _clientAttributes.getAttribute(ClientAttributes.A_HOST_NAME);
-		_hostDirectory = _clientAttributes.getAttribute(ClientAttributes.A_HOST_PATH);
-		_port = _clientAttributes.getAttribute(ClientAttributes.A_HOST_PORT);
+		_host = _clientAttributes.getAttribute(DataStoreAttributes.A_HOST_NAME);
+		_hostDirectory = _clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PATH);
+		_port = _clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PORT);
 	}
 
 	private void flush(DataElement object)
@@ -831,6 +831,7 @@ public class ClientConnection implements IDataStoreConstants
 		_dataStore.flush(_dataStore.getDescriptorRoot());
 		_dataStore.createRoot();
 	}
+	
 	private int doHandShake()
 	{
 		try

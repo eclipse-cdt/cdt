@@ -18,7 +18,7 @@ package org.eclipse.rse.services.clientserver;
 
 public interface IServiceConstants 
 {
-    public static final String TOKEN_SEPARATOR = "|";
+    public static final String TOKEN_SEPARATOR = "|"; //$NON-NLS-1$
     
 	// Unexpected Error
 	public static final String UNEXPECTED_ERROR = "unexpectedError";
@@ -29,7 +29,9 @@ public interface IServiceConstants
     public static final String FAILED_WITH_EXCEPTION = "failed with exception";
     public static final String FAILED_WITH_SECURITY = "failed with security";
     public static final String FAILED_TO_DELETE_DIR = "failed to delete directory";
-    public static final String SUCCESS = "success";
-    public static final String FAILED = "failed";
-    public static final String VERSION_1 = "version_1"; 
+
+    // Status strings for communication
+    public static final String SUCCESS = "success"; //$NON-NLS-1$
+    public static final String FAILED = "failed"; //$NON-NLS-1$
+    public static final String VERSION_1 = "version_1"; //$NON-NLS-1$
 }

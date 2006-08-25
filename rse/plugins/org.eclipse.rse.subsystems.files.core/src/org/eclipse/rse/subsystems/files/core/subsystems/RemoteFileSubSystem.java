@@ -39,7 +39,6 @@ import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IRemoteContainer;
-import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.filters.ISystemFilterReference;
@@ -1571,7 +1570,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	
 	protected void removeCachedRemoteFile(IRemoteFile file)
 	{
-		if (file instanceof IRemoteContainer)
+		if (file != null)
 		{
 			Object[] children = ((IRemoteContainer)file).getContents(SystemChildrenContentsType.getInstance());
 			if (children != null)
@@ -1680,7 +1679,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	
     public Object getTargetForFilter(ISystemFilterReference filterRef)
     {
-        String firstFilterString = ((ISystemFilterReference)filterRef).getReferencedFilter().getFilterStrings()[0];	
+        String firstFilterString = filterRef.getReferencedFilter().getFilterStrings()[0];	
         RemoteFileFilterString fs = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration(), firstFilterString);				    
 	    try
 	    {

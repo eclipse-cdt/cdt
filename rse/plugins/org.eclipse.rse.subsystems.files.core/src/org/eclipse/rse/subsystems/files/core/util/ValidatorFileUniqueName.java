@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Shell;
  * getFolderNameValidator methods.
  */
 public class ValidatorFileUniqueName 
-       extends ValidatorUniqueString implements ISystemMessages
+       extends ValidatorUniqueString
 {
 	//public static final boolean CASE_SENSITIVE = true;
 	//public static final boolean CASE_INSENSITIVE = false;
@@ -73,10 +73,10 @@ public class ValidatorFileUniqueName
 	    //shell.setCursor(busyCursor);
         org.eclipse.rse.ui.dialogs.SystemPromptDialog.setDisplayCursor(shell, busyCursor);	    
 
-		setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
-		                 RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE),
-		                 isFolder ? RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FOLDERNAME_NOTVALID) :
-		                            RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILENAME_NOTVALID)
+		setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY),
+		                 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_NOTUNIQUE),
+		                 isFolder ? RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FOLDERNAME_NOTVALID) :
+		                            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILENAME_NOTVALID)
 		                );  
 		IRemoteFile[] contents = parentFolder.getParentRemoteFileSubSystem().listFoldersAndFiles(parentFolder);
 		if (contents!=null)
@@ -124,7 +124,7 @@ public class ValidatorFileUniqueName
 	protected ValidatorFileName getFileNameValidator()
 	{
 		if (fileNameValidator == null)
-		  fileNameValidator = parentFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().getFileNameValidator();;
+		  fileNameValidator = parentFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().getFileNameValidator();
 		return fileNameValidator;
 	}
 	/**

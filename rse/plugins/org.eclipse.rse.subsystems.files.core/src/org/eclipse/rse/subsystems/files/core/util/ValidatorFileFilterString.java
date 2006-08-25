@@ -46,7 +46,7 @@ import org.eclipse.rse.ui.validators.ValidatorUniqueString;
  * getFolderNameValidator methods.
  */
 public class ValidatorFileFilterString 
-       extends ValidatorUniqueString implements ISystemMessages
+       extends ValidatorUniqueString
 {
 	//public static final boolean CASE_SENSITIVE = true;
 	//public static final boolean CASE_INSENSITIVE = false;
@@ -55,41 +55,41 @@ public class ValidatorFileFilterString
 	protected boolean  isFileName, isFolderName;
 	private ValidatorFileName fileNameValidator;
 	private ValidatorFolderName folderNameValidator;	
-	private IRemoteFileSubSystemConfiguration ssFactory;
+	private IRemoteFileSubSystemConfiguration ssConfiguration;
 	
 	/**
 	 * Constructor accepting a Vector for the list of existing names.
-	 * @param ssFactory - The remote subsystem factory we are validating filter strings in
+	 * @param ssConfig - The remote subsystem configuration we are validating filter strings in
 	 * @param existingList - A vector containing list of existing filter names to compare against.
 	 *        Note that toString() is used to get the string from each item.
 	 */
-	public ValidatorFileFilterString(IRemoteFileSubSystemConfiguration ssFactory, Vector existingList)
+	public ValidatorFileFilterString(IRemoteFileSubSystemConfiguration ssConfig, Vector existingList)
 	{
-		super(existingList, ssFactory.isCaseSensitive()); // case sensitive uniqueness		
-		this.ssFactory = ssFactory;
+		super(existingList, ssConfig.isCaseSensitive()); // case sensitive uniqueness		
+		this.ssConfiguration = ssConfig;
 		init();
 	}
 	/**
 	 * Constructor accepting an Array for the list of existing names.
-	 * @param ssFactory - The remote subsystem factory we are validating filter strings in
+	 * @param ssConfig - The remote subsystem configuration we are validating filter strings in
 	 * @param existingList - An array containing list of existing strings to compare against.
 	 */
-	public ValidatorFileFilterString(IRemoteFileSubSystemConfiguration ssFactory, String[] existingList)
+	public ValidatorFileFilterString(IRemoteFileSubSystemConfiguration ssConfig, String[] existingList)
 	{
-		super(existingList, ssFactory.isCaseSensitive()); // case sensitive uniqueness		
-		this.ssFactory = ssFactory;
+		super(existingList, ssConfig.isCaseSensitive()); // case sensitive uniqueness		
+		this.ssConfiguration = ssConfig;
 		init();
 	}
 
 	/**
 	 * Use this constructor when the name need not be unique, and you just want
 	 * the syntax checking.
-	 * @param ssFactory - The remote subsystem factory we are validating filter strings in
+	 * @param ssConfig - The remote subsystem configuration we are validating filter strings in
 	 */
-	public ValidatorFileFilterString(IRemoteFileSubSystemConfiguration ssFactory)
+	public ValidatorFileFilterString(IRemoteFileSubSystemConfiguration ssConfig)
 	{
-		super(new String[0], ssFactory.isCaseSensitive());
-		this.ssFactory = ssFactory;
+		super(new String[0], ssConfig.isCaseSensitive());
+		this.ssConfiguration = ssConfig;
 		init();
 	}	
 
@@ -97,9 +97,9 @@ public class ValidatorFileFilterString
     private void init()
     {
 		//setErrorMessages(RSEUIPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_EMPTY),
-		setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
-		                 RSEUIPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE),
-		                 RSEUIPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID));  
+		setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY),
+		                 RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE),
+		                 RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID));  
 		isFileName = isFolderName = true;
     }
     
@@ -158,32 +158,33 @@ public class ValidatorFileFilterString
     
 	/**
 	 * Overridable extension point to get basic file name validator
-	 * By default, queries it from the file subsystem factory
+	 * By default, queries it from the file subsystem configuration
 	 */
 	protected ValidatorFileName getFileNameValidator()
 	{
 		if (fileNameValidator == null)
-		  fileNameValidator = ssFactory.getFileNameValidator();;
+		  fileNameValidator = ssConfiguration.getFileNameValidator();
 		return fileNameValidator;
 	}
 	/**
 	 * Overridable extension point to get basic folder name validator
-	 * By default, queries it from the file subsystem factory
+	 * By default, queries it from the file subsystem configuration
 	 */
 	protected ValidatorFolderName getFolderNameValidator()
 	{
 		if (folderNameValidator == null)
-		  folderNameValidator = ssFactory.getFolderNameValidator();;
+		  folderNameValidator = ssConfiguration.getFolderNameValidator();
 		return folderNameValidator;
 	}
 	
     /**
      * Return true if case sensitive, false it not. 
-     * By default, return ssFactory.isUnixStyle()
+     * By default, return ssConfiguration.isUnixStyle()
+     * @param ssConfig subsystem configuration
      */
-    protected boolean isCaseSensitive(IRemoteFileSubSystemConfiguration ssFactory)
+    protected boolean isCaseSensitive(IRemoteFileSubSystemConfiguration ssConfig)
     {
-    	return ssFactory.isUnixStyle();
+    	return ssConfig.isUnixStyle();
     }
 
     /**

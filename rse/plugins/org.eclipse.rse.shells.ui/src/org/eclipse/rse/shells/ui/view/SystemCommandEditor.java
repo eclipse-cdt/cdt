@@ -286,8 +286,9 @@ public class SystemCommandEditor extends SourceViewer
 		_pasteAction.setText(SystemResources.ACTION_PASTE_LABEL); 
 		fGlobalActions.put(ITextEditorActionConstants.PASTE, _pasteAction);
 		_pasteAction.setEnabled(false); // defect 46369		
-		if (_pasteAction instanceof IUpdate)
-			 ((IUpdate) _pasteAction).update();
+		if (_pasteAction != null) {
+			_pasteAction.update();
+		}
 		_selectAllAction = new TextViewerAction(this, SELECT_ALL);
 		_selectAllAction.setText(SystemResources.ACTION_SELECT_ALL_LABEL); 
 		fGlobalActions.put(ITextEditorActionConstants.SELECT_ALL, _selectAllAction);

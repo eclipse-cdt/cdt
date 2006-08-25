@@ -29,7 +29,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.rse.core.SystemBasePlugin;
@@ -575,7 +574,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 	protected ISystemEditableRemoteObject getEditableFor(IAdaptable selected)
 	{
 		ISystemRemoteElementAdapter adapter =
-			(ISystemRemoteElementAdapter) ((IAdaptable) selected).getAdapter(ISystemRemoteElementAdapter.class);
+			(ISystemRemoteElementAdapter) selected.getAdapter(ISystemRemoteElementAdapter.class);
 		if (adapter.canEdit(selected))
 		{
 			ISystemEditableRemoteObject editable = adapter.getEditableRemoteObject(selected);

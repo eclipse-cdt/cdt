@@ -93,25 +93,24 @@ public class SimpleCommandOperation
 		{
 			if (!hasMoreOutput() && waitForOutput)
 			{
-				while (!hasMoreOutput())
+				Display display = Display.getCurrent();
+				try
 				{
-					if (!isActive())
+					while (!hasMoreOutput() && isActive())
 					{
-						return null;
-					}
-					try
-					{
-						Display d = Display.getCurrent();
-						if (d != null)
-						{
-							while (d.readAndDispatch());
+						while (display!=null && display.readAndDispatch()) {
+							//Process everything on event queue
 						}
-						Thread.sleep(100);
+						if (!hasMoreOutput() && isActive()) Thread.sleep(100);
 					}
-					catch (Exception e)
-					{
-						e.printStackTrace();
-					}
+				}
+				catch (InterruptedException e)
+				{
+					//Cancel waiting
+				}
+				if (!isActive())
+				{
+					return null;
 				}
 			}
 				

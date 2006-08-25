@@ -191,7 +191,7 @@ public class SystemPopupMenuActionContributor extends PluginActionBuilder implem
 	 * Contributes actions applicable for the current selection.
 	 */
 	public boolean contributeObjectActions(IWorkbenchPart part, SystemMenuManager menu, ISelectionProvider selProv, List actionIdOverrides) {
-		return contributeObjectActions(part, (IMenuManager) menu.getMenuManager(), selProv, actionIdOverrides);
+		return contributeObjectActions(part, menu.getMenuManager(), selProv, actionIdOverrides);
 	}
 
 	/**
@@ -248,7 +248,7 @@ public class SystemPopupMenuActionContributor extends PluginActionBuilder implem
 	 * Contributes menus applicable for the current selection.
 	 */
 	public boolean contributeObjectMenus(SystemMenuManager menu, ISelectionProvider selProv) {
-		return contributeObjectMenus((IMenuManager) menu.getMenuManager(), selProv);
+		return contributeObjectMenus(menu.getMenuManager(), selProv);
 	}
 
 	/**

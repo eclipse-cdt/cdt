@@ -124,8 +124,9 @@ public class SystemWizardDialog
     public void setHelp(String id)
     {
     	helpId = id;
-    	if (wizard instanceof ISystemWizard)
-    	  ((ISystemWizard)wizard).setHelp(id);
+    	if (wizard != null) {
+    		wizard.setHelp(id);
+    	}
     }
     
 	/**

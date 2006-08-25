@@ -19,7 +19,6 @@ package org.eclipse.rse.files.ui.resources;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -53,7 +52,6 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
-import org.eclipse.rse.ui.view.SystemDNDTransferRunnable;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -171,7 +169,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			}
 			return Status.OK_STATUS;
 		}
-	};
+	}
 
 	private String _editorId = null;
 	private boolean _isRemoteFileMounted = false;
@@ -455,10 +453,17 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			//pmd.run(false, true, downloadFileRunnable);
 			downloadFileRunnable.setRule(getRemoteFile());
 			downloadFileRunnable.schedule();
-			while (!downloadFileRunnable.didComplete())
-			{
-				Display.getDefault().readAndDispatch();
-				//downloadFileRunnable.wait();
+			Display display = Display.getDefault();
+			try {
+				while (!downloadFileRunnable.didComplete())
+				{
+					while (display!=null && display.readAndDispatch()) {
+						//Process everything on event queue
+					}
+					if (!downloadFileRunnable.didComplete()) Thread.sleep(200);
+				}
+			} catch(InterruptedException e) {
+				/*stop waiting*/
 			}
 			
 			listener.removeIgnoreFile(localFile);
@@ -1246,7 +1251,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		
 		public void run()
 		{
-			SystemMessageDialog dialog = new SystemMessageDialog(RSEUIPlugin.getActiveWorkbenchShell(), _msg);
+			SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), _msg);
 			dialog.open();
 		}
 	}
@@ -1267,7 +1272,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		
 		public void run()
 		{
-			SystemMessageDialog dialog = new SystemMessageDialog(RSEUIPlugin.getActiveWorkbenchShell(), _msg);
+			SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), _msg);
 			try
 			{
 				_responce = dialog.openQuestion(); 

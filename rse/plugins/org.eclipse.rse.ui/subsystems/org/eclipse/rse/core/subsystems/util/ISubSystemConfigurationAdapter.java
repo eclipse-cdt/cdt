@@ -27,7 +27,6 @@ import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.filters.ISystemFilterString;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;

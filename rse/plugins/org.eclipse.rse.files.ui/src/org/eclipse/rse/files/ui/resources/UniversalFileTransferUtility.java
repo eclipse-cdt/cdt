@@ -1257,6 +1257,7 @@ public class UniversalFileTransferUtility
 							boolean isText = currentSource.isText();
 							
 							while (display.readAndDispatch()) {
+								//Process everything on event queue
 							}
 							
 							boolean canWrite = true;
@@ -1290,6 +1291,7 @@ public class UniversalFileTransferUtility
 				        //return null;
 				    }
 				    while (display.readAndDispatch()) {
+						//Process everything on event queue
 					}
 				}
 			}

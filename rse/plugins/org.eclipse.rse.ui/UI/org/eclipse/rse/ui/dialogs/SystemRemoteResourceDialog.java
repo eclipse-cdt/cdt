@@ -211,7 +211,7 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
     {
     	if (getOutputObject() instanceof Object[])
     	  return (Object[])getOutputObject();
-    	else if (getOutputObject() instanceof Object)
+    	else if (getOutputObject() != null)
     	  return new Object[] {getOutputObject()};
     	else
     	  return null;

@@ -15,7 +15,6 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -57,7 +56,7 @@ public class InheritControl
 	   setLayout(new InheritControlLayout());
 	   //Class c = InheritControl.class;
 	   //String imagePath = "icons" + java.io.File.separatorChar;
-	   RSEUIPlugin sp = RSEUIPlugin.getDefault();
+	   //RSEUIPlugin sp = RSEUIPlugin.getDefault();
 	   try 
 	   {
 		 //ImageData source = new ImageData(c.getResourceAsStream (imagePath+"local.gif"));	   	
@@ -106,7 +105,7 @@ public class InheritControl
 		  {
 			  setLocal(!isLocal());
 	          notifyListeners(SWT.Selection, new Event());
-		  };
+		  }
 	   };
 	   button.addSelectionListener(selectionListener);
     } 

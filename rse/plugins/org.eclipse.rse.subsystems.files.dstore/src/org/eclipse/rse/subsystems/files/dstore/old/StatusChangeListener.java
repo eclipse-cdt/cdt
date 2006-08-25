@@ -274,8 +274,8 @@ public class StatusChangeListener implements IDomainListener, ICommunicationsLis
 				}
 				// Current thread is UI thread
 				while (!done && !cancelled) {
-					// Process everything on event queue
 					while (display.readAndDispatch()) {
+						//Process everything on event queue
 					}
 					
 					if ((monitor != null) && (monitor.isCanceled())) {

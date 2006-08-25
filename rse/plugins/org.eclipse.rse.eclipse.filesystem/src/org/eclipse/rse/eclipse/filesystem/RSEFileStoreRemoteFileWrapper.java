@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.rmi.RemoteException;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -77,7 +76,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 	public String[] childNames(int options, IProgressMonitor monitor) 
 	{
 		IPreferenceStore prefStore = RSEUIPlugin.getDefault().getPreferenceStore();
-		boolean origShowHidden = prefStore.getBoolean(ISystemPreferencesConstants.SHOWHIDDEN);
+		//boolean origShowHidden = prefStore.getBoolean(ISystemPreferencesConstants.SHOWHIDDEN);
 		prefStore.setValue(ISystemPreferencesConstants.SHOWHIDDEN, true);
 		
 		String[] names;
@@ -99,7 +98,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 				names = new String[children.length];
 				for (int i = 0; i < children.length; i++)
 				{
-					names[i] = ((IRemoteFile)children[i]).getName();
+					names[i] = children[i].getName();
 				}		
 			}
 			catch (SystemMessageException e)
@@ -194,7 +193,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 					try
 					{
 						int size = stream.available();
-						_subSystem.upload(stream, (long)size, _remoteFile, "utf8", monitor);
+						_subSystem.upload(stream, size, _remoteFile, "utf8", monitor);
 						_remoteFile = _subSystem.getRemoteFileObject(_remoteFile.getAbsolutePath());
 						
 					}
@@ -241,13 +240,13 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			{
 				file = (IFile)UniversalFileTransferUtility.getTempFileFor(_remoteFile);
 			}
-			if (!file.isSynchronized(IFile.DEPTH_ZERO) && !_remoteFile.getName().equals(".project"))
+			if (!file.isSynchronized(IResource.DEPTH_ZERO) && !_remoteFile.getName().equals(".project"))
 			{
-				file.refreshLocal(IFile.DEPTH_ONE, monitor);
+				file.refreshLocal(IResource.DEPTH_ONE, monitor);
 			}
 			if (file != null)
 			{
-				if (file.isSynchronized(IFile.DEPTH_ZERO))
+				if (file.isSynchronized(IResource.DEPTH_ZERO))
 				{
 					return file.getContents();
 				}

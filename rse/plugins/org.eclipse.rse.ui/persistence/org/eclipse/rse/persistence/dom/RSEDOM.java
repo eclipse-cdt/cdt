@@ -17,7 +17,6 @@
 package org.eclipse.rse.persistence.dom;
 
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.rse.internal.persistence.SaveRSEDOMJob;
 import org.eclipse.rse.model.ISystemProfile;
 
 /**

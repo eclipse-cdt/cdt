@@ -44,8 +44,9 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
     	super(element,rowNbr);
     	this.newName = getName();
     	this.inputValidator = getAdapter(element).getNameValidator(element);    	
-		if ((inputValidator != null) && (inputValidator instanceof ISystemValidator))
-		  nameLengthLimit = ((ISystemValidator)inputValidator).getMaximumNameLength();
+		if (inputValidator != null) {
+			  nameLengthLimit = inputValidator.getMaximumNameLength();
+		}
     }
     
     /**

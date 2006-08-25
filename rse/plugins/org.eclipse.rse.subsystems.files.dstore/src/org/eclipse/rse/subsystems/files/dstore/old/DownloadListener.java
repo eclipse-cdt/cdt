@@ -74,15 +74,11 @@ public class DownloadListener implements IDomainListener, ICommunicationsListene
 		_localFile = localFile;
 
 		if (monitor != null)
-			{
-				if (_display != null)
-				{
-					while (_display.readAndDispatch())
-					{
-					}
-				}
-
+		{
+			while (_display!=null && _display.readAndDispatch()) {
+				//Process everything on event queue
 			}
+		}
 		if (_status.getValue().equals("done"))
 		{
 			updateDownloadState();
@@ -170,11 +166,8 @@ public class DownloadListener implements IDomainListener, ICommunicationsListene
 					
 					_monitor.subTask(_percentMsg.getLevelOneText());
 					
-					if (_display != null)
-					{
-						while (_display.readAndDispatch())
-						{
-						}
+					while (_display!=null && _display.readAndDispatch()) {
+						//Process everything on event queue
 					}
 				}
 				catch (Exception e)
@@ -282,9 +275,8 @@ public class DownloadListener implements IDomainListener, ICommunicationsListene
 			// Current thread is UI thread
 			while (!_isDone && !_isCancelled && !_networkDown)
 			{
-				// Process everything on event queue
-				while (display.readAndDispatch())
-				{
+				while (display.readAndDispatch()) {
+					//Process everything on event queue
 				}
 
 				if ((_monitor != null) && (_monitor.isCanceled()))

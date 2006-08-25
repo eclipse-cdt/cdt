@@ -407,7 +407,7 @@ public class SystemViewRemoteFileAdapter
 		if (moveAction == null)
 			moveAction = new SystemMoveRemoteFileAction(shell);
 
-		ISubSystem subsys = firstFile.getParentRemoteFileSubSystem();
+		//ISubSystem subsys = firstFile.getParentRemoteFileSubSystem();
 
 		// DKM - clipboard based copy actions
 		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
@@ -821,7 +821,7 @@ public class SystemViewRemoteFileAdapter
 				int i = -1;
 	
 				// add our unique property descriptors...
-				RSEUIPlugin plugin = RSEUIPlugin.getDefault();
+				//RSEUIPlugin plugin = RSEUIPlugin.getDefault();
 	
 				// classification
 				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(P_FILE_CLASSIFICATION, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP);
@@ -1499,25 +1499,21 @@ public class SystemViewRemoteFileAdapter
 						return totalByteSize;
 					}
 					Display display = Display.getCurrent();
-					if (display != null)
-					{
-						while (display.readAndDispatch()) {
-							try {
-								Thread.sleep(100);
-							} catch (InterruptedException e) {
-								break;
-							}
-						}
+					while (display!=null && display.readAndDispatch()) {
+						//Process everything on event queue
+					}
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						//no action
 					}
 				}
 				else
 				{
-					try
-					{
+					try {
 						Thread.sleep(100);
-					}
-					catch (InterruptedException e)
-					{						
+					} catch (InterruptedException e) {
+						//no action
 					}
 				}
 			}
@@ -1705,7 +1701,7 @@ public class SystemViewRemoteFileAdapter
 				{
 					SystemRemoteResourceSet rmtSet = (SystemRemoteResourceSet)fromSet;
 				
-					ISystemDragDropAdapter srcAdapter = rmtSet.getAdapter();
+					//ISystemDragDropAdapter srcAdapter = rmtSet.getAdapter();
 					ISubSystem srcSubSystem = rmtSet.getSubSystem();
 				
 					Object first = set.get(0);

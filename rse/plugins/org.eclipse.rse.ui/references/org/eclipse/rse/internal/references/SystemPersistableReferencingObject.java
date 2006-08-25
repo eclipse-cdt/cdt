@@ -16,9 +16,8 @@
 
 package org.eclipse.rse.internal.references;
 
-import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
-import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 import org.eclipse.rse.core.references.IRSEBasePersistableReferenceManager;
+import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
 import org.eclipse.rse.core.references.IRSEPersistableReferencingObject;
 
 /**
@@ -54,7 +53,7 @@ public abstract class SystemPersistableReferencingObject extends SystemReferenci
 	 * @see org.eclipse.rse.core.references.IRSEBasePersistableReferencingObject#setReferencedObject(IRSEBasePersistableReferencedObject)
 	 */
 	public void setReferencedObject(IRSEBasePersistableReferencedObject obj) {
-		getHelper().setReferencedObject((IRSEBaseReferencedObject) obj);
+		getHelper().setReferencedObject(obj);
 		setReferencedObjectName(obj.getReferenceName());
 	}
 

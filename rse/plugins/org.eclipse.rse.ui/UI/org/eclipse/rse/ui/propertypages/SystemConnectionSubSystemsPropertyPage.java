@@ -71,7 +71,7 @@ public class SystemConnectionSubSystemsPropertyPage extends SystemBasePropertyPa
 	public SystemConnectionSubSystemsPropertyPage()
 	{
 		super();
-		RSEUIPlugin sp = RSEUIPlugin.getDefault();
+		//RSEUIPlugin sp = RSEUIPlugin.getDefault();
 		parentHelpId = RSEUIPlugin.HELPPREFIX + "pcon0000";
 	}
 	
@@ -90,7 +90,7 @@ public class SystemConnectionSubSystemsPropertyPage extends SystemBasePropertyPa
 	protected Control createContentArea(Composite parent)
 	{
 		// prepare input data
-		IHost conn = (IHost)getElement();
+		//IHost conn = (IHost)getElement();
 		
 		// create notebook
 		Composite composite_prompts = new Composite(parent, SWT.NONE);
@@ -150,9 +150,9 @@ public class SystemConnectionSubSystemsPropertyPage extends SystemBasePropertyPa
 				page.setContainer(getContainer());
 			}
 			
-			if ((page != null) && (page instanceof IWorkbenchPropertyPage))
+			if (page != null)
 			{
-				((IWorkbenchPropertyPage)page).setElement((IAdaptable)ss);
+				page.setElement((IAdaptable)ss);
 				
 				if (page instanceof ISystemMessageLineTarget)
 					((ISystemMessageLineTarget)page).setMessageLine(msgLine);

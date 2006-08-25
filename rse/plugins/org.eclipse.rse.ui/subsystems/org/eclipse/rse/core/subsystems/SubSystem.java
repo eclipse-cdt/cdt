@@ -2097,17 +2097,22 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	  
     	if (synch)
     	{
-              while (!job.hasStarted())
-              {
-                     while (Display.getCurrent().readAndDispatch());
-                     if (!job.hasStarted()) Thread.sleep(200);
-              }
-              while (job.getResult() == null)
-              {
-                     while (Display.getCurrent().readAndDispatch());
-                     if (job.getResult() == null) Thread.sleep(200);
-              }
-              return job.getResult();
+    		Display display = Display.getCurrent();
+            while (!job.hasStarted())
+            {
+				while (display!=null && display.readAndDispatch()) {
+					//Process everything on event queue
+				}
+                if (!job.hasStarted()) Thread.sleep(200);
+            }
+            while (job.getResult() == null)
+            {
+				while (display!=null && display.readAndDispatch()) {
+					//Process everything on event queue
+				}
+                if (job.getResult() == null) Thread.sleep(200);
+            }
+            return job.getResult();
     	}
     	else
     	{
@@ -2489,9 +2494,13 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	    //job.setUser(true);
 	    job.schedule();
 
+	    Display display = Display.getCurrent();
     	while (job.getResult() == null)
     	{
-    		Display.getCurrent().readAndDispatch(); 
+			while (display!=null && display.readAndDispatch()) {
+				//Process everything on event queue
+			}
+            if (job.getResult() == null) Thread.sleep(200);
     	}
     }
 

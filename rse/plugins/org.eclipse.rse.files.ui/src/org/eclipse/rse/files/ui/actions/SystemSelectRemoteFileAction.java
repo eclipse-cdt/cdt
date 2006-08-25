@@ -402,7 +402,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
     	  return (Object[])remoteObject;
     	else if (remoteObject instanceof IRemoteFile[])
     	  return (Object[])remoteObject;
-    	else if (remoteObject instanceof Object)
+    	else if (remoteObject != null)
     	  return new Object[] {remoteObject};
     	else
     	  return null;
@@ -450,7 +450,7 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
 		if (expandDepth != 0)
 		  dlg.setAutoExpandDepth(expandDepth);
 		if (fileTypes != null)
-		  dlg.setFileTypes((String)fileTypes); // must be called before setRootFolder!
+		  dlg.setFileTypes(fileTypes); // must be called before setRootFolder!
 		if (preSelection != null)
 		  dlg.setPreSelection(preSelection);		  
 		else if (rootFolderConnection != null)

@@ -1727,13 +1727,14 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    //job.setUser(true);
 	    job.schedule();
 	    Display display = Display.getCurrent();
-    	   try {
-    	        while (job.getResult() == null) {
-    	            while (display!=null && display.readAndDispatch()) {}
-    	            if (job.getResult() == null) Thread.sleep(200);
-    	        }
-    	    } catch(InterruptedException e) {}
-
+    	try {
+    		while (job.getResult() == null) {
+				while (display!=null && display.readAndDispatch()) {
+					//Process everything on event queue
+				}
+				if (job.getResult() == null) Thread.sleep(200);
+    		}
+    	} catch(InterruptedException e) {}
     }	
     
 	/**

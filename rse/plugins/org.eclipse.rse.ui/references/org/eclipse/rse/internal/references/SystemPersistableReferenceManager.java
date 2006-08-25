@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
 import org.eclipse.rse.core.references.IRSEBasePersistableReferenceManager;
+import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
 import org.eclipse.rse.core.references.IRSEBasePersistableReferencingObject;
 
 

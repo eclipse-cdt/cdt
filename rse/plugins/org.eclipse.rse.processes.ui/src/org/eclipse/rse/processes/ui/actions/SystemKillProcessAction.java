@@ -43,7 +43,6 @@ import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSyste
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -83,7 +82,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 	public boolean updateSelection(IStructuredSelection selection)
 	{
 		boolean enable = true;
-		Iterator e= ((IStructuredSelection) selection).iterator();		
+		Iterator e = selection.iterator();		
 		while (enable && e.hasNext())
 		{
 			Object selectedObject = e.next();

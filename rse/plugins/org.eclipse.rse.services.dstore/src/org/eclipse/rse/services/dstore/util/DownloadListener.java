@@ -67,15 +67,11 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 		_localFile = localFile;
 
 		if (monitor != null)
-			{
-				if (_display != null)
-				{
-					while (_display.readAndDispatch())
-					{
-					}
-				}
-
+		{
+			while (_display!=null && _display.readAndDispatch()) {
+				//Process everything on event queue
 			}
+		}
 		if (_status.getValue().equals("done"))
 		{
 			updateDownloadState();
@@ -162,11 +158,8 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 					
 					_monitor.subTask(str);
 					
-					if (_display != null)
-					{
-						while (_display.readAndDispatch())
-						{
-						}
+					while (_display != null && _display.readAndDispatch()) {
+						//Process everything on event queue
 					}
 				}
 				catch (Exception e)
@@ -246,9 +239,8 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 			// Current thread is UI thread
 			while (!_isDone && !_isCancelled && !_networkDown)
 			{
-				// Process everything on event queue
-				while (display.readAndDispatch())
-				{
+				while (display.readAndDispatch()) {
+					//Process everything on event queue
 				}
 
 				if ((_monitor != null) && (_monitor.isCanceled()))

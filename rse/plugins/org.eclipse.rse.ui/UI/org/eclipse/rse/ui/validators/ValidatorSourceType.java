@@ -26,7 +26,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  *  However, this class is defined to be easily subclassed.
  */
 public class ValidatorSourceType extends ValidatorUniqueString 
-       implements ISystemMessages, ISystemValidator
+       implements ISystemValidator
 {
 	public static final int MAX_SRCTYPE_LENGTH = 50; // max name for a src type
 		
@@ -45,9 +45,9 @@ public class ValidatorSourceType extends ValidatorUniqueString
 	
 	private void init()
 	{
-		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_SRCTYPE_EMPTY),
-		                        RSEUIPlugin.getPluginMessage(MSG_VALIDATE_SRCTYPE_NOTUNIQUE));  
-		msg_Invalid = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_SRCTYPE_NOTVALID);
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_SRCTYPE_EMPTY),
+		                        RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_SRCTYPE_NOTUNIQUE));  
+		msg_Invalid = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_SRCTYPE_NOTVALID);
 	}
 	
 	/**

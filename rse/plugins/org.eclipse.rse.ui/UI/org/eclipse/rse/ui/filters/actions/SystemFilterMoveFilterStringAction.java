@@ -33,7 +33,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
-import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
@@ -47,7 +46,6 @@ import org.eclipse.swt.widgets.Shell;
  * Move a filter string action.
  */
 public class SystemFilterMoveFilterStringAction extends SystemBaseCopyAction
-       implements  ISystemMessages
 {
 	private String promptString = null;
 	private SystemSimpleContentElement initialSelectionElement = null;
@@ -104,7 +102,7 @@ public class SystemFilterMoveFilterStringAction extends SystemBaseCopyAction
 	{
 		boolean enable = true;
 		/* */
-		Iterator e= ((IStructuredSelection) selection).iterator();		
+		Iterator e= selection.iterator();		
 		while (enable && e.hasNext())
 		{
 			Object selectedObject = e.next();
@@ -175,7 +173,7 @@ public class SystemFilterMoveFilterStringAction extends SystemBaseCopyAction
 		ISystemFilterString match = newFilter.getSystemFilterString(oldName);
 		if (match != null)
 		{
-		  SystemMessage msg = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERSTRING_ALREADYEXISTS);
+		  SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERSTRING_ALREADYEXISTS);
 		  msg.makeSubstitution(oldName, newFilter.getName());
   		  SystemMessageDialog.displayErrorMessage(shell, msg);
   		  
@@ -193,8 +191,8 @@ public class SystemFilterMoveFilterStringAction extends SystemBaseCopyAction
 		ISystemFilter     newFilter = (ISystemFilter)targetContainer;
 		if (supportsDuplicateFilterStrings(newFilter))
 		  return oldName;
-		ISystemFilterPool newPool   = newFilter.getParentFilterPool();
-		ISystemFilterPoolManager newMgr = newPool.getSystemFilterPoolManager();
+		//ISystemFilterPool newPool   = newFilter.getParentFilterPool();
+		//ISystemFilterPoolManager newMgr = newPool.getSystemFilterPoolManager();
 		String newName = oldName;
 		ISystemFilterString match = newFilter.getSystemFilterString(oldName);
 		if (match != null)
@@ -270,14 +268,14 @@ public class SystemFilterMoveFilterStringAction extends SystemBaseCopyAction
 	 */
 	protected SystemMessage getCopyingMessage() 
 	{
-		return RSEUIPlugin.getPluginMessage(MSG_MOVEFILTERSTRINGS_PROGRESS);
+		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_MOVEFILTERSTRINGS_PROGRESS);
 	}
 	/**
 	 * @see SystemBaseCopyAction#getCopyingMessage( String)
 	 */
 	protected SystemMessage getCopyingMessage(String oldName) 
 	{
-		return RSEUIPlugin.getPluginMessage(MSG_MOVEFILTERSTRING_PROGRESS).makeSubstitution(oldName);
+		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_MOVEFILTERSTRING_PROGRESS).makeSubstitution(oldName);
 	}
 
 	/**
@@ -307,7 +305,7 @@ public class SystemFilterMoveFilterStringAction extends SystemBaseCopyAction
     {
     	if (strings == null)
     	{
-   	      IStructuredSelection selection = (IStructuredSelection)getSelection();
+   	      IStructuredSelection selection = getSelection();
    	      strings = new ISystemFilterString[selection.size()];
    	      Iterator i = selection.iterator();
    	      int idx=0;

@@ -20,7 +20,6 @@ import org.eclipse.rse.filters.ISystemFilterPoolSelectionValidator;
 import org.eclipse.rse.filters.ISystemFilterPoolWrapper;
 import org.eclipse.rse.filters.ISystemFilterPoolWrapperInformation;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizardPage;
@@ -43,7 +42,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class SystemNewFilterWizardNamePage 
 	   extends AbstractSystemWizardPage
-	   implements ISystemMessages, SelectionListener
+	   implements SelectionListener
 {
 	
 	protected Text  nameText;
@@ -175,7 +174,7 @@ public class SystemNewFilterWizardNamePage
         
         if (poolsToSelectFrom != null)
         {
-		   	poolVerbage = (Label)SystemWidgetHelpers.createVerbiage(composite_prompts, configurator.getPage2PoolVerbage(), nbrColumns, false, 200);
+		   	poolVerbage = SystemWidgetHelpers.createVerbiage(composite_prompts, configurator.getPage2PoolVerbage(), nbrColumns, false, 200);
 		   	poolVerbage.setToolTipText(configurator.getPage2PoolVerbageTip());
            	poolCombo = SystemWidgetHelpers.createLabeledReadonlyCombo(composite_prompts, null, configurator.getPage2PoolPromptLabel(), configurator.getPage2PoolPromptTooltip());
 			poolComboLabel = SystemWidgetHelpers.getLastLabel();
@@ -202,7 +201,7 @@ public class SystemNewFilterWizardNamePage
         }
         else if (poolWrapperInformation != null)
         {
-		 	poolVerbage = (Label)SystemWidgetHelpers.createVerbiage(composite_prompts, poolWrapperInformation.getVerbageLabel(), nbrColumns, false, 200);
+		 	poolVerbage = SystemWidgetHelpers.createVerbiage(composite_prompts, poolWrapperInformation.getVerbageLabel(), nbrColumns, false, 200);
 		   	//poolWrapperCombo = SystemWidgetHelpers.createLabeledCombo(composite_prompts, null, poolWrapperInformation.getResourceBundle(), poolWrapperInformation.getPromptRBKey()); // d47323
 		   	poolWrapperCombo = SystemWidgetHelpers.createLabeledReadonlyCombo(composite_prompts, null, poolWrapperInformation.getPromptLabel(), poolWrapperInformation.getPromptTooltip());
 			poolComboLabel = SystemWidgetHelpers.getLastLabel();

@@ -17,7 +17,6 @@
 package org.eclipse.rse.ui.wizards;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.internal.model.SystemProfileManager;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemProfileForm;
 import org.eclipse.rse.ui.SystemResources;
@@ -35,7 +34,7 @@ import org.eclipse.swt.widgets.Control;
 
 public class SystemNewConnectionWizardRenameProfilePage 
 	   extends AbstractSystemWizardPage
-	   implements  ISystemMessages, 
+	   implements  
 	              ISystemMessageLine
 {
 	

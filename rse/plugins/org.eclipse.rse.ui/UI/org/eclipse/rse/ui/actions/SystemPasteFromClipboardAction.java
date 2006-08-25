@@ -30,7 +30,6 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
@@ -51,7 +50,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 /**
  * Paste resources in system clipboard to the selected resource action.
  */
-public class SystemPasteFromClipboardAction extends SystemBaseAction implements  ISystemMessages, IValidatorRemoteSelection
+public class SystemPasteFromClipboardAction extends SystemBaseAction implements  IValidatorRemoteSelection
 {
 
 
@@ -241,7 +240,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 		if (hasSource())
 		{
 			boolean enable = true;
-			Iterator e = ((IStructuredSelection) selection).iterator();
+			Iterator e = selection.iterator();
 			while (enable && e.hasNext())
 			{
 				Object selectedObject = e.next();

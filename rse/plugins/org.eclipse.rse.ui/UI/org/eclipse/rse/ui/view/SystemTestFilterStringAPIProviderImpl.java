@@ -30,7 +30,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  */
 public class SystemTestFilterStringAPIProviderImpl 
        extends SystemAbstractAPIProvider
-       implements ISystemViewInputProvider,  ISystemMessages
+       implements ISystemViewInputProvider
 {
 
 
@@ -55,9 +55,9 @@ public class SystemTestFilterStringAPIProviderImpl
 	
 	private void initMsgObjects()
 	{
-		nullObject     = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_EMPTY),ISystemMessageObject.MSGTYPE_EMPTY, null);
-		canceledObject = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_LIST_CANCELLED),ISystemMessageObject.MSGTYPE_CANCEL, null);
-		errorObject    = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FAILED),ISystemMessageObject.MSGTYPE_ERROR, null);
+		nullObject     = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),ISystemMessageObject.MSGTYPE_EMPTY, null);
+		canceledObject = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LIST_CANCELLED),ISystemMessageObject.MSGTYPE_CANCEL, null);
+		errorObject    = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),ISystemMessageObject.MSGTYPE_ERROR, null);
 	}
 	
 	/**

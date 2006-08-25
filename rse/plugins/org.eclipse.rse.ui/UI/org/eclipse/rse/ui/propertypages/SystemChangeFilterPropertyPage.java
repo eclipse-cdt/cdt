@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.ui.propertypages;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.ISystemFilter;
@@ -24,7 +23,6 @@ import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemPageCompleteListener;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPropertyResources;
@@ -35,7 +33,6 @@ import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -49,7 +46,7 @@ import org.eclipse.swt.widgets.Shell;
  *  and configuring the pane as described in that method's javadoc.
  */
 public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
-       implements  ISystemMessages, ISystemPageCompleteListener, ISystemChangeFilterPaneEditPaneSupplier
+       implements  ISystemPageCompleteListener, ISystemChangeFilterPaneEditPaneSupplier
 {
 	
 	protected String errorMessage;
@@ -208,7 +205,7 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 		{
 			int nbrColumns = 1;
 			Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
-			Label test = SystemWidgetHelpers.createLabel(composite_prompts, SystemPropertyResources.RESID_TERM_NOTAPPLICABLE, nbrColumns, false);
+			/*Label test =*/ SystemWidgetHelpers.createLabel(composite_prompts, SystemPropertyResources.RESID_TERM_NOTAPPLICABLE, nbrColumns, false);
 			return composite_prompts;			
 		}
 		

@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 
@@ -48,10 +49,10 @@ public class ValidatorFileName
 	public ValidatorFileName(Vector existingNameList)
 	{
 		super(existingNameList, false); // case insensitive uniqueness
-		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
-		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_NOTUNIQUE));  
 		fUnique = true;
-		msg_Invalid = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILENAME_NOTVALID);				
+		msg_Invalid = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILENAME_NOTVALID);				
 	}
 	/**
 	 * Use this constructor when the name must be unique. Give the
@@ -60,10 +61,10 @@ public class ValidatorFileName
 	public ValidatorFileName(String existingNameList[])
 	{
 		super(existingNameList, false); // case insensitive uniqueness
-		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
-		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_NOTUNIQUE));  
 		fUnique = true;
-		msg_Invalid = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILENAME_NOTVALID);				
+		msg_Invalid = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILENAME_NOTVALID);				
 	}
 	
 	/**
@@ -73,10 +74,10 @@ public class ValidatorFileName
 	public ValidatorFileName()
 	{
 		super(new String[0], false);
-		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
-		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_NOTUNIQUE));  
 		fUnique = true;
-		msg_Invalid = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILENAME_NOTVALID);				
+		msg_Invalid = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILENAME_NOTVALID);				
 	}	
 	/**
 	 * Supply your own error message text. By default, messages from RSEUIPlugin resource bundle are used.

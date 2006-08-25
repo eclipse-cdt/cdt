@@ -25,7 +25,6 @@ import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
@@ -47,7 +46,7 @@ import org.eclipse.ui.part.PluginTransferData;
 /**
  * Copy selected objects to clipboard action.
  */
-public class SystemCopyToClipboardAction extends SystemBaseAction implements  ISystemMessages, IValidatorRemoteSelection
+public class SystemCopyToClipboardAction extends SystemBaseAction implements  IValidatorRemoteSelection
 {
 
 
@@ -201,7 +200,7 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IS
 	public boolean updateSelection(IStructuredSelection selection)
 	{
 		boolean enable = true;
-		Iterator e = ((IStructuredSelection) selection).iterator();
+		Iterator e = selection.iterator();
 		while (enable && e.hasNext())
 		{
 			Object selectedObject = e.next();

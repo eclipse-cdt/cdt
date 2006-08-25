@@ -58,7 +58,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  * behaviour. If this is done, you must register your subclass with the 
  * platform's adapter manager in your plugin class's startup method.
  */
-public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implements ISystemViewElementAdapter, ISystemMessages
+public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implements ISystemViewElementAdapter
 {
 	//private static String translatedFilterString = null;	
 	// -------------------
@@ -299,7 +299,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
                 //SubSystem ss = (SubSystem)simpleFilter.getParent();
 
              	// return "filter created successfully" message object for this node
-		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FILTERCREATED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FILTERCREATED),
 		                                              ISystemMessageObject.MSGTYPE_OBJECTCREATED,filter);
 		                                              
 		        // select the new filter and expand it

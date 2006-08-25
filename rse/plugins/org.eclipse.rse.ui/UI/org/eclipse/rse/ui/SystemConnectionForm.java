@@ -72,7 +72,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
  */
 
 public class SystemConnectionForm 
-	   implements Listener,  ISystemMessages, ISystemUserIdConstants, 
+	   implements Listener,  ISystemUserIdConstants, 
 	               SelectionListener, Runnable, IRunnableWithProgress
 {
 	
@@ -411,7 +411,7 @@ public class SystemConnectionForm
 			if (currentHostName.length() > 0)
 			{
 			    if (verifyingHostName == null) {
-			        verifyingHostName = RSEUIPlugin.getPluginMessage(MSG_HOSTNAME_VERIFYING);
+			        verifyingHostName = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_HOSTNAME_VERIFYING);
 			    }
 			    
 			    try 
@@ -427,7 +427,7 @@ public class SystemConnectionForm
 			    catch (InvocationTargetException e)
 			    {
 				 	// error found
-				    errorMessage = RSEUIPlugin.getPluginMessage(MSG_HOSTNAME_NOTFOUND);
+				    errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_HOSTNAME_NOTFOUND);
 				    errorMessage.makeSubstitution(currentHostName);
 				    controlInError = textHostName;				
 			    }			
@@ -876,7 +876,7 @@ public class SystemConnectionForm
 		    if (!verifyHostNameCB.getSelection()) {
 		    	
 		        // clear host name not valid or not found error message so that wizard next page is enabled
-		        if (errorMessage != null && errorMessage == RSEUIPlugin.getPluginMessage(MSG_HOSTNAME_NOTFOUND)) {
+		        if (errorMessage != null && errorMessage == RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_HOSTNAME_NOTFOUND)) {
 		            errorMessage = null;
 		            
 		    		if (msgLine != null) {
@@ -1164,7 +1164,7 @@ public class SystemConnectionForm
 		if (hostValidator != null)
 	      errorMessage= hostValidator.validate(hostName);
 	    else if (getHostName().length() == 0)
-		  errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_HOSTNAME_EMPTY);    	
+		  errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_HOSTNAME_EMPTY);    	
 		if (updateMode && !userPickedVerifyHostnameCB)
 		{
 			boolean hostNameChanged = !hostName.equals(defaultHostName);
@@ -1189,7 +1189,7 @@ public class SystemConnectionForm
 		  if (userIdValidator != null)
 	        errorMessage= userIdValidator.validate(textUserId.getText());
 	      else if (getDefaultUserId().length()==0)    	
-		     errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_USERID_EMPTY);    	
+		     errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY);    	
 	    }
 		showErrorMessage(errorMessage);		
 		setPageComplete();
@@ -1297,7 +1297,7 @@ public class SystemConnectionForm
            pm.beginTask(verifyingHostName.getLevelOneText(),IProgressMonitor.UNKNOWN);
 	       try
 	       {	       	    
-		  	    InetAddress address = InetAddress.getByName(currentHostName);
+		  	    InetAddress.getByName(currentHostName);
 	       } 
 	       catch (java.net.UnknownHostException exc)
 	       {

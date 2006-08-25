@@ -19,10 +19,8 @@ package org.eclipse.rse.ui.dialogs;
 
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.ui.ISystemPageCompleteListener;
-import org.eclipse.rse.ui.SystemBaseForm;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
-import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.widgets.SystemSelectConnectionForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -213,7 +211,7 @@ public class SystemSelectConnectionDialog
     {
     	if (getOutputObject() instanceof Object[])
     	  return (Object[])getOutputObject();
-    	else if (getOutputObject() instanceof Object)
+    	else if (getOutputObject() != null)
     	  return new Object[] {getOutputObject()};
     	else
     	  return null;

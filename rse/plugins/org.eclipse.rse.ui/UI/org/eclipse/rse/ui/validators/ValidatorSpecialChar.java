@@ -28,7 +28,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * InputDialog class and numerous other platform and system classes.
  */
 public class ValidatorSpecialChar 
-	   implements ISystemMessages, ISystemValidator // IInputValidator, ICellEditorValidator
+	   implements ISystemValidator // IInputValidator, ICellEditorValidator
 {
 	
 	public static final boolean EMPTY_ALLOWED_NO = false;
@@ -47,7 +47,7 @@ public class ValidatorSpecialChar
 	 */
 	public ValidatorSpecialChar(String specialChars, boolean isEmptyAllowed)
 	{
-		this(specialChars, isEmptyAllowed, RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_NOTVALID), RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_EMPTY));
+		this(specialChars, isEmptyAllowed, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_ENTRY_NOTVALID), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_ENTRY_EMPTY));
 	}
 	/**
 	 * Constructor
@@ -57,7 +57,7 @@ public class ValidatorSpecialChar
 	 */
 	public ValidatorSpecialChar(String specialChars, boolean isEmptyAllowed, SystemMessage msg_Invalid)
 	{
-		this(specialChars, isEmptyAllowed, msg_Invalid, RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_EMPTY));
+		this(specialChars, isEmptyAllowed, msg_Invalid, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_ENTRY_EMPTY));
 	}	
 	/**
 	 * Constructor

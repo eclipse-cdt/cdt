@@ -17,8 +17,6 @@
 package org.eclipse.rse.ui.widgets.services;
 import java.util.ArrayList;
 
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 

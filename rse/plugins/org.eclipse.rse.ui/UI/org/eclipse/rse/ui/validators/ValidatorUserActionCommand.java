@@ -24,7 +24,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * This class is used to verify a user defined action's command
  */
 public class ValidatorUserActionCommand 
-       implements ISystemMessages, ISystemValidator
+       implements ISystemValidator
 {
 	public static final int MAX_UDACMD_LENGTH = 512; // max command for an action
 		

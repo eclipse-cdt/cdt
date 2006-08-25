@@ -20,22 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystem;
 import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.model.DummyHost;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.widgets.services.ConnectorServiceElement;
 import org.eclipse.rse.ui.widgets.services.FactoryServiceElement;
-import org.eclipse.rse.ui.widgets.services.PropertyElement;
 import org.eclipse.rse.ui.widgets.services.RootServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServerLauncherPropertiesServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServiceElement;
@@ -87,7 +82,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 			IServiceSubSystemConfiguration currentFactory = (IServiceSubSystemConfiguration)getSubSystemConfiguration();
 			
 			String systemTypeStr = getMainPage().getSystemType();
-			IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr);
+			//IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr);
 			
 			IServiceSubSystemConfiguration[] factories = getServiceSubSystemFactories(systemTypeStr, currentFactory.getServiceType());
 			
@@ -193,7 +188,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 				{
 					((IServiceSubSystem)ss).switchServiceFactory(_selectedFactory);
 				}
-				IHost realHost = ss.getHost();
+				//IHost realHost = ss.getHost();
 				if (_root != null)
 				{ 
 					{
@@ -229,7 +224,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 		ServiceElement[] children = _root.getChildren();
 		for (int i = 0; i < children.length; i++)
 		{
-			ServiceElement child = (ServiceElement)children[i];
+			ServiceElement child = children[i];
 			if (child instanceof FactoryServiceElement)
 			{
 				FactoryServiceElement fchild = (FactoryServiceElement)child;

@@ -31,7 +31,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
-import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
@@ -42,7 +41,6 @@ import org.eclipse.swt.widgets.Shell;
  * Copy a filter pool action.
  */
 public class SystemFilterCopyFilterPoolAction extends SystemBaseCopyAction
-       implements  ISystemMessages
 {
 	private String promptString = null;
 	private SystemSimpleContentElement initialSelectionElement = null;
@@ -87,7 +85,7 @@ public class SystemFilterCopyFilterPoolAction extends SystemBaseCopyAction
 	{
 		boolean enable = true;
 		/* */
-		Iterator e= ((IStructuredSelection) selection).iterator();		
+		Iterator e= selection.iterator();		
 		while (enable && e.hasNext())
 		{
 			Object selectedObject = e.next();
@@ -202,21 +200,21 @@ public class SystemFilterCopyFilterPoolAction extends SystemBaseCopyAction
 	 */
 	protected SystemMessage getCopyingMessage() 
 	{
-		return RSEUIPlugin.getPluginMessage(MSG_COPYFILTERPOOLS_PROGRESS);
+		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYFILTERPOOLS_PROGRESS);
 	}
 	/**
 	 * @see SystemBaseCopyAction#getCopyingMessage(String)
 	 */
 	protected SystemMessage getCopyingMessage(String oldName) 
 	{
-		return RSEUIPlugin.getPluginMessage(MSG_COPYFILTERPOOL_PROGRESS).makeSubstitution(oldName);
+		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYFILTERPOOL_PROGRESS).makeSubstitution(oldName);
 	}
 	/**
 	 * Return complete message
 	 */
 	public SystemMessage getCompletionMessage(Object targetContainer, String[] oldNames, String[] newNames)
 	{
-		return RSEUIPlugin.getPluginMessage(MSG_COPYFILTERPOOL_COMPLETE).makeSubstitution(((ISystemFilterPoolManager)targetContainer).getName());		
+		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYFILTERPOOL_COMPLETE).makeSubstitution(((ISystemFilterPoolManager)targetContainer).getName());		
 	}
 	
 	/**
@@ -244,7 +242,7 @@ public class SystemFilterCopyFilterPoolAction extends SystemBaseCopyAction
      */
     protected ISystemFilterPool[] getSelectedFilterPools()
     {
-   	    IStructuredSelection selection = (IStructuredSelection)getSelection();
+   	    IStructuredSelection selection = getSelection();
    	    ISystemFilterPool[] filterPools = new ISystemFilterPool[selection.size()];
    	    Iterator i = selection.iterator();
    	    int idx=0;

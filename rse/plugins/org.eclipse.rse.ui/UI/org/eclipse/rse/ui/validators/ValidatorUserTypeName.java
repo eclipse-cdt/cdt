@@ -24,7 +24,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * This class is used to verify a user defined type's name.
  */
 public class ValidatorUserTypeName extends ValidatorUniqueString 
-       implements ISystemMessages, ISystemValidator
+       implements ISystemValidator
 {
 	public static final int MAX_UDTNAME_LENGTH = 50; // max name for a file type
 		
@@ -41,9 +41,9 @@ public class ValidatorUserTypeName extends ValidatorUniqueString
 	
 	private void init()
 	{
-		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_UDTNAME_EMPTY),
-		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_UDTNAME_NOTUNIQUE));  
-		msg_Invalid = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_UDTNAME_NOTVALID);
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDTNAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDTNAME_NOTUNIQUE));  
+		msg_Invalid = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDTNAME_NOTVALID);
 	}
 	
 	/**

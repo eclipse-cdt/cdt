@@ -46,7 +46,7 @@ import org.eclipse.ui.PlatformUI;
  * We must first prompt user for a new name for the copied profile.
  */
 public class SystemProfileNameCopyAction extends SystemBaseDialogAction 
-                                 implements  ISystemMessages, IRunnableWithProgress
+                                 implements  IRunnableWithProgress
 {	
 	private ISystemProfile profile, newProfile;
 	private ISystemProfileManager mgr;
@@ -180,7 +180,7 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
      */
     public static String getCopyingMessage(String oldName, String newName)
     {
-    	SystemMessage msg = RSEUIPlugin.getPluginMessage(MSG_COPY_PROGRESS);
+    	SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPY_PROGRESS);
     	msg.makeSubstitution(oldName,newName);
     	return msg.getLevelOneText();
     }
@@ -205,7 +205,7 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
      */
     protected void showOperationErrorMessage(Shell shell, Throwable exc)
     {
-    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(MSG_OPERATION_FAILED).makeSubstitution(exc.getMessage()));
+    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED).makeSubstitution(exc.getMessage()));
     	msgDlg.open();
         SystemBasePlugin.logError("Copy profile operation failed",exc);
     }	
@@ -216,7 +216,7 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
      */
     protected void showOperationCancelledMessage(Shell shell)
     {
-    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(MSG_OPERATION_CANCELLED));
+    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED));
     	msgDlg.open();
     }	
 

@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
  * The IInputValidator interface is used by jface's
  * InputDialog class and numerous other platform and system classes.
  */
-public class ValidatorConnectionName extends ValidatorFolderName implements ISystemMessages, ISystemValidator
+public class ValidatorConnectionName extends ValidatorFolderName implements ISystemValidator
 {
 	public static final int MAX_CONNECTIONNAME_LENGTH = 100; // arbitrary restriction due to defects
 		
@@ -43,9 +43,9 @@ public class ValidatorConnectionName extends ValidatorFolderName implements ISys
 	public ValidatorConnectionName(Vector existingNameList)
 	{
 		super(existingNameList);
-		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_CONNECTIONNAME_EMPTY),
-		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE),
-		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_CONNECTIONNAME_NOTVALID));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_CONNECTIONNAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE),
+		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_CONNECTIONNAME_NOTVALID));  
 	}
 	
 	/**
@@ -68,7 +68,7 @@ public class ValidatorConnectionName extends ValidatorFolderName implements ISys
 			for (int jdx=0; (msg==null) && (jdx<conns.length); jdx++)
 			{				
 				if (conns[jdx].getAliasName().equalsIgnoreCase(proposedName))
-					msg = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE_OTHERPROFILE);
+					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE_OTHERPROFILE);
 			}
 		}
 		if (msg != null)

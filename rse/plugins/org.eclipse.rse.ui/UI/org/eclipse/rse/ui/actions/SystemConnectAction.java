@@ -19,7 +19,6 @@ package org.eclipse.rse.ui.actions;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
@@ -31,7 +30,6 @@ import org.eclipse.swt.widgets.Shell;
  * This is the action for connecting to the remote subsystem
  */
 public class SystemConnectAction extends SystemBaseAction
-								implements  ISystemMessages
 {
 	/**
 	 * Constructor.

@@ -15,10 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
-import java.util.ResourceBundle;
-
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -33,7 +30,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -57,7 +53,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * 
  */
 public abstract class SystemBasePropertyPage extends PropertyPage 
-       implements ISystemMessages, ISystemMessageLine, ISystemMessageLineTarget
+       implements ISystemMessageLine, ISystemMessageLineTarget
 {
 
 
@@ -187,7 +183,7 @@ public abstract class SystemBasePropertyPage extends PropertyPage
 		{
 		  // see createControl method in org.eclipse.jface.preference.PreferencePage
     	  Composite content = buttonBar.getParent();
-    	  Composite pageContainer = content.getParent();
+    	  //Composite pageContainer = content.getParent();
     	  //DY The parent PreferencePage class handles this now for us
     	  //DY buttonBar.setVisible(false);
     	  //DY buttonBar.dispose();   
@@ -202,11 +198,11 @@ public abstract class SystemBasePropertyPage extends PropertyPage
     	  }
     	  if (content != null)
     	  {
-    	  	if (content.getLayout() instanceof GridLayout)
-    	  	{
-    	  		GridLayout layout = (GridLayout)content.getLayout();
-	            //layout.marginHeight= 0; layout.marginWidth= 0;
-    	  	}
+//    	  	if (content.getLayout() instanceof GridLayout)
+//    	  	{
+//    	  		GridLayout layout = (GridLayout)content.getLayout();
+//	            layout.marginHeight= 0; layout.marginWidth= 0;
+//    	  	}
     	    content.pack();
     	  }
 		}

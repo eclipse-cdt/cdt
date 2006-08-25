@@ -30,14 +30,14 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * InputDialog class and numerous other platform and system classes.
  */
 public class ValidatorUserId 
-	   extends ValidatorSpecialChar implements ISystemMessages
+	   extends ValidatorSpecialChar
 {
 	/**
 	 * Constructor
 	 */
 	public ValidatorUserId(boolean isEmptyAllowed)
 	{
-		super("=;", isEmptyAllowed, RSEUIPlugin.getPluginMessage(MSG_VALIDATE_USERID_NOTVALID), RSEUIPlugin.getPluginMessage(MSG_VALIDATE_USERID_EMPTY));
+		super("=;", isEmptyAllowed, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_NOTVALID), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY));
 	}
 
 	/**

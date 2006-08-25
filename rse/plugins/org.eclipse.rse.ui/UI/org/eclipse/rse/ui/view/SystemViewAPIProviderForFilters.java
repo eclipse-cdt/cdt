@@ -43,7 +43,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * Used when user right clicks on a filter and selects Open In New Perspective.
  */
 public class SystemViewAPIProviderForFilters 
-       extends SystemAbstractAPIProvider implements ISystemMessages
+       extends SystemAbstractAPIProvider
 {
 
 
@@ -138,13 +138,13 @@ public class SystemViewAPIProviderForFilters
              ISystemFilter newFilter = adapter.createFilterByPrompting(ssf, fRef, getShell());
              if (newFilter == null)
              {
-		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_CANCELLED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED),
 		                                              ISystemMessageObject.MSGTYPE_CANCEL,element);
              }
              else // filter successfully created!
              {
              	// return "filter created successfully" message object for this node
-		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FILTERCREATED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FILTERCREATED),
 		                                              ISystemMessageObject.MSGTYPE_OBJECTCREATED,element);
 		        // select the new filter reference...
 		        ISubSystem ss = fRef.getSubSystem();
@@ -163,7 +163,7 @@ public class SystemViewAPIProviderForFilters
 		        }
              }
     	   } catch (Exception exc) {
-		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FAILED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),
 		                                              ISystemMessageObject.MSGTYPE_ERROR, element);
 		     	SystemBasePlugin.logError("Exception prompting for filter ",exc);          
     	   }
@@ -194,14 +194,14 @@ public class SystemViewAPIProviderForFilters
 		     catch (InterruptedException exc)
 		     {
 		     	children = new SystemMessageObject[1];
-		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_CANCELLED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED),
 		                                              ISystemMessageObject.MSGTYPE_CANCEL,element);
 		     	SystemBasePlugin.logDebugMessage(this.getClass().getName(),"Filter resolving canceled by user.");
 		     }
 		     catch (Exception exc)
 		     {
 		     	children = new SystemMessageObject[1];
-		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FAILED),
+		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),
 		                                              ISystemMessageObject.MSGTYPE_ERROR, element);
 		     	SystemBasePlugin.logError("Exception resolving filters' strings ",exc);
 		     } // message already issued
@@ -209,7 +209,7 @@ public class SystemViewAPIProviderForFilters
 			 if ((children == null) || (children.length==0))
 			 {
 		       children = new SystemMessageObject[1];
-		       children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_EMPTY),
+		       children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),
 		                                             ISystemMessageObject.MSGTYPE_EMPTY, element);
 			 }    	     
     	   	 return children;

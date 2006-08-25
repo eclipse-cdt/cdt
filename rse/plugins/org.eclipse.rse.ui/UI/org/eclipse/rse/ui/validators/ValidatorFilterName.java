@@ -29,7 +29,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * is used by jface's InputDialog class and property sheet window.
  */
 public class ValidatorFilterName 
-       extends ValidatorFileName implements ISystemMessages, ISystemValidator
+       extends ValidatorFileName implements ISystemValidator
 {
 	public static final int MAX_FILTERNAME_LENGTH = 100;
 		
@@ -60,9 +60,9 @@ public class ValidatorFilterName
 
     private void init()
     {		
-		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERNAME_EMPTY),
-		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERNAME_NOTUNIQUE),  
-		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERNAME_NOTVALID));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERNAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERNAME_NOTUNIQUE),  
+		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERNAME_NOTVALID));  
     }
 
 	public String toString()

@@ -19,7 +19,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -39,7 +38,7 @@ import org.eclipse.swt.widgets.Text;
  * Dialog for copying a system profile.
  */
 public class SystemCopyProfileDialog extends SystemPromptDialog 
-                                implements ISystemMessages, ISystemPropertyConstants
+                                implements ISystemPropertyConstants
 {
     private Text newName;
     private Button makeActiveCB;

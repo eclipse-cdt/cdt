@@ -29,7 +29,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * is used by jface's InputDialog class and property sheet window.
  */
 public class ValidatorFilterPoolName 
-       extends ValidatorFolderName implements ISystemMessages, ISystemValidator
+       extends ValidatorFolderName implements ISystemValidator
 {
 	public static final int MAX_FILTERPOOLNAME_LENGTH = 50;
 	
@@ -57,9 +57,9 @@ public class ValidatorFilterPoolName
 
     private void init()
     {				
-		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERPOOLNAME_EMPTY),
-		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERPOOLNAME_NOTUNIQUE),  
-		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERPOOLNAME_NOTVALID));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERPOOLNAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERPOOLNAME_NOTUNIQUE),  
+		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERPOOLNAME_NOTVALID));  
     }
 
 

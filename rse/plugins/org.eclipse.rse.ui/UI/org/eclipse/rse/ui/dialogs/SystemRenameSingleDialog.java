@@ -73,7 +73,7 @@ import org.eclipse.swt.widgets.Widget;
  * @see org.eclipse.rse.ui.actions.SystemCommonRenameAction
  */
 public class SystemRenameSingleDialog extends SystemPromptDialog 
-                                implements ISystemMessages, ISystemPropertyConstants,
+                                implements ISystemPropertyConstants,
                                            Runnable
 {
 	
@@ -230,13 +230,13 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
         {
           // VERBAGE
           verbageLabel = SystemWidgetHelpers.createLabel(composite, " ", nbrColumns);
-          Label filler = SystemWidgetHelpers.createLabel(composite, " ", nbrColumns);
+          SystemWidgetHelpers.createLabel(composite, " ", nbrColumns); //filler
         }
        	else if (description != null)
         {
            // VERBAGE
           verbageLabel = SystemWidgetHelpers.createLabel(composite, description, nbrColumns);
-          Label filler = SystemWidgetHelpers.createLabel(composite, " ", nbrColumns);
+          SystemWidgetHelpers.createLabel(composite, " ", nbrColumns); //filler
         }
         
 		if (copyCollisionMode)
@@ -344,9 +344,9 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		  
 		  if ((nameValidator == null) && (adapter != null))
 		    nameValidator = adapter.getNameValidator(inputElement);
-		  if ((nameValidator != null) && (nameValidator instanceof ISystemValidator))
+		  if (nameValidator != null)
 		  {
-		  	int maxLen = ((ISystemValidator)nameValidator).getMaximumNameLength();
+		  	int maxLen = nameValidator.getMaximumNameLength();
 		  	if (maxLen != -1)
 		  	  newName.setTextLimit(maxLen);
 		  }
@@ -424,8 +424,8 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		  	  if ((names != null) && (names.length>0))
 		  	  {
 		  		    uniqueNameValidator = new ValidatorUniqueString(names,caseSensitive);
-		            uniqueNameValidator.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY),
-		                                                 RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_NOTUNIQUE));
+		            uniqueNameValidator.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY),
+		                                                 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_NOTUNIQUE));
 		            if (debug)
 		            {
 		  		      System.out.println("Name validator set. Names = ");
@@ -595,18 +595,18 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 	    
 	    if (theNewName == null)
 	    {
-	    	errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY);
+	    	errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY);
 	    }
 	    else
 	    {
 		if (nameValidator != null)
 	      errorMessage= nameValidator.validate(theNewName);	    
 		else if (theNewName.length() == 0)
-		  errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_NAME_EMPTY);
+		  errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY);
 		if (errorMessage == null)
 		{
           if (adapter != null && adapter.namesAreEqual(inputElement, theNewName))
-		    errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_RENAME_OLDEQUALSNEW).makeSubstitution(inputName);
+		    errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_RENAME_OLDEQUALSNEW).makeSubstitution(inputName);
 		}
 	    }
 	    

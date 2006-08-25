@@ -25,7 +25,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -55,7 +54,7 @@ import org.eclipse.swt.widgets.TableColumn;
  * @see org.eclipse.rse.ui.actions.SystemCommonDeleteAction
  */
 public class SystemDeleteDialog extends SystemPromptDialog 
-                                implements ISystemMessages, ISystemPropertyConstants,
+                                implements ISystemPropertyConstants,
                                            ISelectionChangedListener
 {
     private String warningMessage, warningTip;

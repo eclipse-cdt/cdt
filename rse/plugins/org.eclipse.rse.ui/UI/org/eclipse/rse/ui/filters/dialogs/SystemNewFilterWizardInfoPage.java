@@ -15,7 +15,6 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.filters.dialogs;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizardPage;
 import org.eclipse.swt.widgets.Composite;
@@ -28,7 +27,6 @@ import org.eclipse.swt.widgets.Control;
  */
 public class SystemNewFilterWizardInfoPage 
 	   extends AbstractSystemWizardPage
-	   implements ISystemMessages
 {
 	private ISystemNewFilterWizardConfigurator configurator;
 			    

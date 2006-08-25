@@ -21,7 +21,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -37,7 +36,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * The form for the property page for core subsystem properties.
  */
 public abstract class AbstractSystemSubSystemPropertyPageCoreForm 
-       implements ISystemMessages, ISystemSubSystemPropertyPageCoreForm
+       implements ISystemSubSystemPropertyPageCoreForm
 {
 	
 	protected Label labelTypePrompt, labelVendorPrompt, labelNamePrompt, labelConnectionPrompt, labelProfilePrompt;

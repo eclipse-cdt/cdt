@@ -30,7 +30,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * By default, it simply checks for uniqueness.
  */
 public class ValidatorFilterString 
-       extends ValidatorUniqueString implements ISystemMessages, ISystemValidator
+       extends ValidatorUniqueString implements ISystemValidator
 {
 	public static final int MAX_FILTERSTRINGNAME_LENGTH = 1000;
 		
@@ -103,9 +103,9 @@ public class ValidatorFilterString
 
     private void init()
     {
-		setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERSTRING_EMPTY),
-		                 RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERSTRING_NOTUNIQUE),  
-		                 RSEUIPlugin.getPluginMessage(MSG_VALIDATE_FILTERSTRING_NOTVALID));  
+		setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERSTRING_EMPTY),
+		                 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERSTRING_NOTUNIQUE),  
+		                 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILTERSTRING_NOTVALID));  
     }
     
 	/**

@@ -18,7 +18,6 @@ package org.eclipse.rse.ui.filters.dialogs;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.filters.SystemFilterPoolDialogOutputs;
@@ -51,7 +50,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class SystemFilterNewFilterPoolWizardDefaultMainPage 
 	   extends AbstractSystemWizardPage
-	   implements SystemFilterNewFilterPoolWizardMainPageInterface, Listener, ISystemMessages,  SelectionListener
+	   implements SystemFilterNewFilterPoolWizardMainPageInterface, Listener,  SelectionListener
 {
 	protected Label labelName, labelMgr;
 	protected Text  textName;
@@ -329,8 +328,8 @@ public class SystemFilterNewFilterPoolWizardDefaultMainPage
 		if (iiv != null)
 		{
 	      int limit = -1;
-	      if (iiv instanceof ISystemValidator)
-	        limit = ((ISystemValidator)iiv).getMaximumNameLength();
+	      if (iiv != null)
+	        limit = iiv.getMaximumNameLength();
 	      if (limit == -1)
 	        limit = ValidatorFilterPoolName.MAX_FILTERPOOLNAME_LENGTH; // default is 50
 	      textName.setTextLimit(limit);

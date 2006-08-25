@@ -18,6 +18,7 @@ package org.eclipse.rse.ui.validators;
 import java.util.Vector;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 
@@ -69,10 +70,10 @@ public class ValidatorPathName
 	
 	protected void init()
 	{
-		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PATH_EMPTY),
-		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PATH_NOTUNIQUE));  		
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PATH_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PATH_NOTUNIQUE));  		
 		fUnique = true;		
-		msg_Invalid = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PATH_NOTVALID);				
+		msg_Invalid = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PATH_NOTVALID);				
 		specialChars = new StringBuffer("*?;'<>|");
 	    nbrSpecialChars = specialChars.length();
 	}

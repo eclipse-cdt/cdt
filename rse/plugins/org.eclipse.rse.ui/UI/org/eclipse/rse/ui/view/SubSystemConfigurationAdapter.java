@@ -43,9 +43,7 @@ import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.filters.SystemFilterPoolWrapperInformation;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -55,7 +53,6 @@ import org.eclipse.rse.ui.actions.SystemClearPasswordAction;
 import org.eclipse.rse.ui.actions.SystemConnectAction;
 import org.eclipse.rse.ui.actions.SystemDisconnectAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
-import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;
 import org.eclipse.rse.ui.filters.actions.ISystemNewFilterActionConfigurator;
 import org.eclipse.rse.ui.filters.actions.SystemChangeFilterAction;
 import org.eclipse.rse.ui.filters.actions.SystemFilterAbstractFilterPoolAction;
@@ -79,9 +76,8 @@ import org.eclipse.rse.ui.propertypages.ISystemSubSystemPropertyPageCoreForm;
 import org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage;
 import org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage;
 import org.eclipse.rse.ui.propertypages.SystemSubSystemPropertyPageCoreForm;
-import org.eclipse.rse.ui.validators.ISystemValidator;
-import org.eclipse.rse.ui.widgets.RemoteServerLauncherForm;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
+import org.eclipse.rse.ui.widgets.RemoteServerLauncherForm;
 import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.ui.wizards.SubSystemServiceWizardPage;
 import org.eclipse.rse.ui.wizards.SystemSubSystemsPropertiesWizardPage;
@@ -629,7 +625,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 					ISystemProfile activeProfile = selectedSubSystem.getHost().getSystemProfile();
 					for (int idx = 0; idx < activeProfiles.length; idx++)
 					{
-						ISystemFilterPool defaultPool = getDefaultSystemFilterPool(factory, (ISystemProfile)activeProfiles[idx]);
+						ISystemFilterPool defaultPool = getDefaultSystemFilterPool(factory, activeProfiles[idx]);
 						
 						if (defaultPool != null)
 						{

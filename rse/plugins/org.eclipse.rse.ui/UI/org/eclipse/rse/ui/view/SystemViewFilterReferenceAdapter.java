@@ -64,7 +64,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  */
 public class SystemViewFilterReferenceAdapter 
 	extends AbstractSystemViewAdapter 
-	implements ISystemViewElementAdapter, ISystemMessages
+	implements ISystemViewElementAdapter
 {
 	//private static String translatedFilterString = null;	
 	// -------------------
@@ -87,7 +87,7 @@ public class SystemViewFilterReferenceAdapter
 		//  return; // does not make sense adding unique actions per multi-selection
 		ISystemFilter filter = getFilter(selection.getFirstElement());
 		ISubSystemConfiguration ssFactory = getSubSystemConfiguration(filter);
-		ISubSystem currentSubSystem = (ISubSystem) getFilterReference(selection.getFirstElement()).getSubSystem();
+		ISubSystem currentSubSystem = getFilterReference(selection.getFirstElement()).getSubSystem();
 		IHost currentConnection = currentSubSystem.getHost();
 		ssFactory.setConnection(currentConnection);
 		ssFactory.setCurrentSelection(selection.toArray());
@@ -208,7 +208,7 @@ public class SystemViewFilterReferenceAdapter
 		if (showFPs)
 			return parentContainer;
 		else
-			return (ISubSystem) fr.getProvider();
+			return fr.getProvider();
 		//return fr.getParent();
 	}
 
@@ -266,12 +266,12 @@ public class SystemViewFilterReferenceAdapter
 				ISystemFilter newFilter = adapter.createFilterByPrompting(ssf, fRef, getShell());
 				if (newFilter == null)
 				{
-					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, element);
+					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, element);
 				}
 				else // filter successfully created!
 					{
 					// return "filter created successfully" message object for this node
-					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FILTERCREATED), ISystemMessageObject.MSGTYPE_OBJECTCREATED, element);
+					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FILTERCREATED), ISystemMessageObject.MSGTYPE_OBJECTCREATED, element);
 					// select the new filter reference...
 					ISystemFilterReference sfr = fRef.getParentSystemFilterReferencePool().getExistingSystemFilterReference(ss, newFilter);
 					ISystemViewInputProvider inputProvider = getInput();
@@ -290,7 +290,7 @@ public class SystemViewFilterReferenceAdapter
 			}
 			catch (Exception exc)
 			{
-				children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
+				children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
 				SystemBasePlugin.logError("Exception prompting for filter ", exc);
 			}
 			//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"returning children");
@@ -393,20 +393,20 @@ public class SystemViewFilterReferenceAdapter
 				catch (InterruptedException exc)
 				{
 					children = new SystemMessageObject[1];
-					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, element);
+					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, element);
 					SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Filter resolving canceled by user.");
 				}
 				catch (Exception exc)
 				{
 					children = new SystemMessageObject[1];
-					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
+					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
 					SystemBasePlugin.logError("Exception resolving filters' strings ", exc);
 				} // message already issued
 
 				if ((children == null) || (children.length == 0))
 				{
 					children = new SystemMessageObject[1];
-					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_EMPTY), ISystemMessageObject.MSGTYPE_EMPTY, element);
+					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY), ISystemMessageObject.MSGTYPE_EMPTY, element);
 				}
 				return children;
 			}

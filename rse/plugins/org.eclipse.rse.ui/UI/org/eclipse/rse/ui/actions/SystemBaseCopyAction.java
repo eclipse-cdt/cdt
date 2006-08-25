@@ -49,7 +49,7 @@ import org.eclipse.ui.PlatformUI;
  *  child classes.
  */
 public abstract class SystemBaseCopyAction extends SystemBaseDialogAction 
-                implements ISystemMessages, IRunnableWithProgress, ISystemCopyTargetSelectionCallback
+                implements IRunnableWithProgress, ISystemCopyTargetSelectionCallback
 {	
 	protected ISystemProfileManager mgr;
 	protected ISystemRegistry sr;
@@ -342,9 +342,9 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
     protected SystemMessage getCopyingMessage()
     {
 		if (mode == MODE_COPY)		
-		  return RSEUIPlugin.getPluginMessage(MSG_COPYGENERIC_PROGRESS); 
+		  return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYGENERIC_PROGRESS); 
 		else
-		  return RSEUIPlugin.getPluginMessage(MSG_MOVEGENERIC_PROGRESS); 
+		  return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_MOVEGENERIC_PROGRESS); 
     }
 	/**
 	 * Get the specific "Copying %1..." or "Moving %1..." message
@@ -353,9 +353,9 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
     {
     	SystemMessage msg = null;
 		if (mode == MODE_COPY)		
-		  msg = RSEUIPlugin.getPluginMessage(MSG_COPYTHINGGENERIC_PROGRESS); 
+		  msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYTHINGGENERIC_PROGRESS); 
 		else
-		  msg = RSEUIPlugin.getPluginMessage(MSG_MOVETHINGGENERIC_PROGRESS); 
+		  msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_MOVETHINGGENERIC_PROGRESS); 
 		msg.makeSubstitution(oldName);
 		return msg;
     }
@@ -404,7 +404,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
     	    msg = exc.getClass().getName();
     	  SystemMessageDialog msgDlg = 
     	    new SystemMessageDialog(shell, 
-    	      RSEUIPlugin.getPluginMessage(MSG_OPERATION_FAILED).makeSubstitution(msg));
+    	      RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED).makeSubstitution(msg));
     	  msgDlg.setException(exc);
     	  msgDlg.open();
           //RSEUIPlugin.logError("Copy/Move operation failed",exc);
@@ -431,7 +431,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
      */
     protected void showOperationCancelledMessage(Shell shell)
     {
-    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(MSG_OPERATION_CANCELLED));
+    	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_CANCELLED));
     	msgDlg.open();
     }	
 

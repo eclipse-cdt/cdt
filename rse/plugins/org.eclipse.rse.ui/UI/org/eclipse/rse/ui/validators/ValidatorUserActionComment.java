@@ -24,7 +24,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * This class is used to verify a user defined action's comment
  */
 public class ValidatorUserActionComment 
-       implements ISystemMessages, ISystemValidator
+       implements ISystemValidator
 {
 	public static final int MAX_UDACMT_LENGTH = 256; // max comment for an action
 		

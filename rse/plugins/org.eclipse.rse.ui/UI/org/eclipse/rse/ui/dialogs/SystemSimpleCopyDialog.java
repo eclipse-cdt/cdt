@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.ISystemCopyTargetSelectionCallback;
@@ -39,7 +38,7 @@ import org.eclipse.swt.widgets.Tree;
  */
 public class SystemSimpleCopyDialog 
        extends SystemPromptDialog 
-       implements ISystemMessages, //ISystemPropertyConstants,
+       implements //ISystemPropertyConstants,
                   ISelectionChangedListener
 {
 	private String promptString;

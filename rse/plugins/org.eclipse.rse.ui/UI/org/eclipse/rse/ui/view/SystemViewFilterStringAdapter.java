@@ -26,7 +26,6 @@ import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.ui.ISystemIconConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemResources;
@@ -38,7 +37,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 /**
  * Default Adapter for displaying filter string objects in tree views.
  */
-public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter implements ISystemViewElementAdapter, ISystemMessages
+public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter implements ISystemViewElementAdapter
 {
 	//private static String translatedFilterString = null;	
 	// -------------------

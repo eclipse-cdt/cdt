@@ -20,7 +20,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.ui.ISystemConnectionFormCaller;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemConnectionForm;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -44,7 +43,7 @@ import org.eclipse.swt.widgets.Control;
 public class RSENewConnectionWizardDefaultDelegateMainPage 
 	   //extends WizardPage
 	   extends AbstractSystemWizardPage
-	   implements  ISystemMessages, ISystemNewConnectionWizardMainPage,
+	   implements  ISystemNewConnectionWizardMainPage,
 	              ISystemMessageLine, ISystemConnectionFormCaller
 {
     protected String[] restrictSystemTypesTo;	

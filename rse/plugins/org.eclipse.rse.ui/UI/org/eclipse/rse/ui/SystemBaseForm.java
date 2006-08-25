@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 
 public abstract class SystemBaseForm 
-	   implements Listener, ISystemConnectionWizardErrorUpdater //, ISystemMessages
+	   implements Listener, ISystemConnectionWizardErrorUpdater //
 {
 	
 	private ISystemMessageLine msgLine;

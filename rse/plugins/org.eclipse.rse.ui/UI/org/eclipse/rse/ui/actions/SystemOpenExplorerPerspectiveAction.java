@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.ui.actions;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.model.ISystemPromptableObject;

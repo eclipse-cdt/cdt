@@ -19,7 +19,6 @@ package org.eclipse.rse.ui.actions;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
@@ -29,7 +28,6 @@ import org.eclipse.swt.widgets.Shell;
  * This is the action forconnecting all subsystems for a given connection.
  */
 public class SystemDisconnectAllSubSystemsAction extends SystemBaseAction
-								   implements  ISystemMessages
 {
 	
 	private ISystemRegistry sr = null;

@@ -25,7 +25,6 @@ import org.eclipse.rse.filters.ISystemFilterStringReference;
 import org.eclipse.rse.filters.SystemFilterSimple;
 import org.eclipse.rse.internal.model.SystemNewConnectionPromptObject;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -41,7 +40,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemSelectRemoteObjectAPIProviderImpl 
        extends SystemAbstractAPIProvider
-       implements ISystemViewInputProvider,  ISystemMessages
+       implements ISystemViewInputProvider
 {
 
 

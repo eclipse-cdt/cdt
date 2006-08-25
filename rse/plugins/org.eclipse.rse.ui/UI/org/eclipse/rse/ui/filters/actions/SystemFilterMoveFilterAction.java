@@ -32,7 +32,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
-import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
@@ -44,7 +43,6 @@ import org.eclipse.swt.widgets.Shell;
  * Copy a filter action.
  */
 public class SystemFilterMoveFilterAction extends SystemBaseCopyAction
-       implements  ISystemMessages
 {
 	private String promptString = null;
 	private SystemSimpleContentElement initialSelectionElement = null;
@@ -90,7 +88,7 @@ public class SystemFilterMoveFilterAction extends SystemBaseCopyAction
 	{
 		boolean enable = true;
 		/* */
-		Iterator e= ((IStructuredSelection) selection).iterator();		
+		Iterator e= selection.iterator();		
 		while (enable && e.hasNext())
 		{
 			Object selectedObject = e.next();
@@ -145,7 +143,7 @@ public class SystemFilterMoveFilterAction extends SystemBaseCopyAction
 	                                   Object targetContainer, Object oldObject, String oldName)
 	{
 		ISystemFilterPool newPool = (ISystemFilterPool)targetContainer;
-		ISystemFilterPoolManager newMgr = newPool.getSystemFilterPoolManager();
+		//ISystemFilterPoolManager newMgr = newPool.getSystemFilterPoolManager();
 		String newName = oldName;
 		ISystemFilter match = newPool.getSystemFilter(oldName);
 		if (match != null)
@@ -172,7 +170,7 @@ public class SystemFilterMoveFilterAction extends SystemBaseCopyAction
     	ISystemFilterPool oldFilterPool = oldFilter.getParentFilterPool();
 		ISystemFilterPoolManager oldMgr = oldFilterPool.getSystemFilterPoolManager();
     	ISystemFilterPool       newPool = (ISystemFilterPool)targetContainer;
-    	ISystemFilterPoolManager newMgr = newPool.getSystemFilterPoolManager();
+    	//ISystemFilterPoolManager newMgr = newPool.getSystemFilterPoolManager();
     	
         ISystemFilter         newFilter = oldMgr.moveSystemFilter(newPool, oldFilter, newName);
         
@@ -221,14 +219,14 @@ public class SystemFilterMoveFilterAction extends SystemBaseCopyAction
 	 */
 	protected SystemMessage getCopyingMessage() 
 	{
-		return RSEUIPlugin.getPluginMessage(MSG_MOVEFILTERS_PROGRESS);
+		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_MOVEFILTERS_PROGRESS);
 	}
 	/**
 	 * @see SystemBaseCopyAction#getCopyingMessage( String)
 	 */
 	protected SystemMessage getCopyingMessage(String oldName) 
 	{
-		return RSEUIPlugin.getPluginMessage(MSG_MOVEFILTER_PROGRESS).makeSubstitution(oldName);
+		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_MOVEFILTER_PROGRESS).makeSubstitution(oldName);
 	}
 
 	/**
@@ -256,7 +254,7 @@ public class SystemFilterMoveFilterAction extends SystemBaseCopyAction
      */
     protected ISystemFilter[] getSelectedFilters()
     {
-   	    IStructuredSelection selection = (IStructuredSelection)getSelection();
+   	    IStructuredSelection selection = getSelection();
    	    ISystemFilter[] filters = new ISystemFilter[selection.size()];
    	    Iterator i = selection.iterator();
    	    int idx=0;

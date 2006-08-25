@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Shell;
  * Move a connection action.
  */
 public class SystemMoveConnectionAction extends SystemBaseCopyAction
-       implements  ISystemMessages
 {
 
 	private ISystemRegistry sr = null;
@@ -69,7 +68,7 @@ public class SystemMoveConnectionAction extends SystemBaseCopyAction
 		  return false;
 		boolean enable = true;
 		ISystemProfile prevProfile = null;
-		Iterator e= ((IStructuredSelection) selection).iterator();		
+		Iterator e= selection.iterator();		
 		while (enable && e.hasNext())
 		{
 			Object selectedObject = e.next();
@@ -123,7 +122,7 @@ public class SystemMoveConnectionAction extends SystemBaseCopyAction
 		throws Exception 
     {
     	IHost oldConnection = (IHost)oldObject;
-    	String oldName = oldConnection.getAliasName();
+    	//String oldName = oldConnection.getAliasName();
     	//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"starting to copy "+oldName+" to "+newName);
     	ISystemProfile targetProfile = (ISystemProfile)targetContainer;
         IHost newConn = sr.moveHost(monitor, oldConnection, targetProfile, newName);
@@ -157,14 +156,14 @@ public class SystemMoveConnectionAction extends SystemBaseCopyAction
 	 */
 	protected SystemMessage getCopyingMessage() 
 	{
-		return RSEUIPlugin.getPluginMessage(MSG_MOVECONNECTIONS_PROGRESS);
+		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_MOVECONNECTIONS_PROGRESS);
 	}
 	/**
 	 * @see SystemBaseCopyAction#getCopyingMessage( String)
 	 */
 	protected SystemMessage getCopyingMessage(String oldName) 
 	{
-		return RSEUIPlugin.getPluginMessage(MSG_MOVECONNECTION_PROGRESS).makeSubstitution(oldName);
+		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_MOVECONNECTION_PROGRESS).makeSubstitution(oldName);
 	}
 
 	/**
@@ -192,7 +191,7 @@ public class SystemMoveConnectionAction extends SystemBaseCopyAction
      */
     protected IHost[] getSelectedConnections()
     {
-   	    IStructuredSelection selection = (IStructuredSelection)getSelection();
+   	    IStructuredSelection selection = getSelection();
    	    IHost[] conns = new IHost[selection.size()];
    	    Iterator i = selection.iterator();
    	    int idx=0;

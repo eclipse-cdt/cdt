@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Shell;
  * Copy a connection action.
  */
 public class SystemCopyConnectionAction extends SystemBaseCopyAction
-       implements  ISystemMessages
 {
 	private ISystemRegistry sr = null;
 	private SystemSimpleContentElement initialSelectionElement = null;
@@ -65,7 +64,7 @@ public class SystemCopyConnectionAction extends SystemBaseCopyAction
 		boolean enable = true;
 		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();		
 		ISystemProfile prevProfile = null;
-		Iterator e= ((IStructuredSelection) selection).iterator();		
+		Iterator e= selection.iterator();		
 		while (enable && e.hasNext())
 		{
 			Object selectedObject = e.next();
@@ -119,7 +118,7 @@ public class SystemCopyConnectionAction extends SystemBaseCopyAction
 		throws Exception 
     {
     	IHost oldConnection = (IHost)oldObject;
-    	String oldName = oldConnection.getAliasName();
+    	//String oldName = oldConnection.getAliasName();
     	//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"starting to copy "+oldName+" to "+newName);
     	ISystemProfile targetProfile = (ISystemProfile)targetContainer;
         IHost newConn = sr.copyHost(monitor, oldConnection, targetProfile, newName);
@@ -153,14 +152,14 @@ public class SystemCopyConnectionAction extends SystemBaseCopyAction
 	 */
 	protected SystemMessage getCopyingMessage() 
 	{
-		return RSEUIPlugin.getPluginMessage(MSG_COPYCONNECTIONS_PROGRESS);
+		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYCONNECTIONS_PROGRESS);
 	}
 	/**
 	 * @see SystemBaseCopyAction#getCopyingMessage( String)
 	 */
 	protected SystemMessage getCopyingMessage(String oldName) 
 	{
-		return RSEUIPlugin.getPluginMessage(MSG_COPYCONNECTION_PROGRESS).makeSubstitution(oldName);
+		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYCONNECTION_PROGRESS).makeSubstitution(oldName);
 	}
 
 	/**
@@ -188,7 +187,7 @@ public class SystemCopyConnectionAction extends SystemBaseCopyAction
      */
     protected IHost[] getSelectedConnections()
     {
-   	    IStructuredSelection selection = (IStructuredSelection)getSelection();
+   	    IStructuredSelection selection = getSelection();
    	    IHost[] conns = new IHost[selection.size()];
    	    Iterator i = selection.iterator();
    	    int idx=0;

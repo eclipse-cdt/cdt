@@ -73,7 +73,7 @@ import org.eclipse.swt.widgets.Tree;
  */
 public class SystemFilterWorkWithFilterPoolsDialog 
        extends SystemPromptDialog 
-       implements ISystemMessages, ISystemPropertyConstants,
+       implements ISystemPropertyConstants,
                   ISelectionChangedListener, 
                   ISystemDeleteTarget, ISystemRenameTarget,
                   SystemFilterPoolDialogInterface
@@ -438,7 +438,7 @@ public class SystemFilterWorkWithFilterPoolsDialog
 			//                                      ISystemMessages.MSG_EXCEPTION_DELETING,exc,
 			//                                      pool.getName()); 
     	    SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), 
-    	            RSEUIPlugin.getPluginMessage(MSG_EXCEPTION_DELETING).makeSubstitution(pool.getName(),exc));
+    	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_DELETING).makeSubstitution(pool.getName(),exc));
     	    msgDlg.open(); 
     	    //RSEUIPlugin.logError("Error deleting filter pool in workwith dialog",exc);
         }
@@ -512,7 +512,7 @@ public class SystemFilterWorkWithFilterPoolsDialog
 			//                                      ISystemMessages.MSG_EXCEPTION_RENAMING,exc,
 			//                                      pool.getName()); 
     	    SystemMessageDialog msgDlg = new SystemMessageDialog(getShell(), 
-    	            RSEUIPlugin.getPluginMessage(MSG_EXCEPTION_RENAMING).makeSubstitution(pool.getName(),exc));
+    	            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_RENAMING).makeSubstitution(pool.getName(),exc));
     	    msgDlg.open(); 
     	    //RSEUIPlugin.logError("Error renaming filter pool in workwith dialog",exc);
         }
@@ -572,7 +572,7 @@ public class SystemFilterWorkWithFilterPoolsDialog
    	    if (inputObj instanceof ISubSystem)
    	    {
    	    	ISubSystem ss = (ISubSystem)inputObj;
-   	        SystemMessage msg = RSEUIPlugin.getPluginMessage(MSG_FILTERPOOL_CREATED);
+   	        SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FILTERPOOL_CREATED);
    	        msg.makeSubstitution("'"+pool.getName()+"'", "'"+ss.getName()+"'");
    	        if (shell.isDisposed() || !shell.isVisible())
    	          shell = getShell();

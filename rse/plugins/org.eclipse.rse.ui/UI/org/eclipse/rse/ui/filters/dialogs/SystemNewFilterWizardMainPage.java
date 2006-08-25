@@ -20,7 +20,6 @@ import java.util.Vector;
 
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.filters.ISystemFilterStringEditPaneListener;
 import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizardPage;
@@ -43,7 +42,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class SystemNewFilterWizardMainPage 
        extends AbstractSystemWizardPage
-       implements ISystemMessages, ISystemFilterStringEditPaneListener 
+       implements ISystemFilterStringEditPaneListener 
 	               //,SystemFilterNewFilterWizardMainPageInterface, ISystemMessageLine
 {
 	protected SystemFilterStringEditPane editPane;	

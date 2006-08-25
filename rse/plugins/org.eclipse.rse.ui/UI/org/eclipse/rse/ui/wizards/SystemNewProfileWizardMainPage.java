@@ -17,7 +17,6 @@
 package org.eclipse.rse.ui.wizards;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -42,7 +41,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class SystemNewProfileWizardMainPage 
 	   extends AbstractSystemWizardPage
-	   implements  ISystemMessages, 
+	   implements  
 	              ISystemMessageLine
 {  
 	

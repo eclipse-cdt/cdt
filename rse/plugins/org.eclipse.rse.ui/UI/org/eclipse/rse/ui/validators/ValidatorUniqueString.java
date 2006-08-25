@@ -33,7 +33,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * is used by jface's InputDialog class and property sheet window.
  */
 public class ValidatorUniqueString 
-	   implements ISystemMessages, ISystemValidator, ISystemValidatorUniqueString
+	   implements ISystemValidator, ISystemValidatorUniqueString
 	              //,IInputValidator, ICellEditorValidator ... ISystemValidator extends these
 {
 	
@@ -59,8 +59,8 @@ public class ValidatorUniqueString
 		this.caseSensitive = caseSensitive;		
 		setExistingNamesList(existingList);
 		// initialize error messages
-		setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_EMPTY),
-		                 RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_NOTUNIQUE));
+		setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_ENTRY_EMPTY),
+		                 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_ENTRY_NOTUNIQUE));
 	}
 	/**
 	 * Constructor accepting an Array. 
@@ -72,8 +72,8 @@ public class ValidatorUniqueString
 		this.caseSensitive = caseSensitive;		
 		init(existingList, caseSensitive);
 		// initialize error messages
-		setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_EMPTY),
-		                 RSEUIPlugin.getPluginMessage(MSG_VALIDATE_ENTRY_NOTUNIQUE));
+		setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_ENTRY_EMPTY),
+		                 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_ENTRY_NOTUNIQUE));
 	}
 	/**
 	 * Constructor accepting a Vector and another validator to use for the syntax checking.

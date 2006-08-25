@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
  */
 
 public class SystemProfileForm 
-	   implements Listener,  ISystemMessages
+	   implements Listener
 {
 
 	// GUI widgets

@@ -47,10 +47,8 @@ import org.eclipse.ui.part.PluginTransferData;
  * Drop adapter for dropping objects in the Systems views.
  * 
  */
-public class SystemViewDataDropAdapter extends ViewerDropAdapter implements  ISystemMessages
+public class SystemViewDataDropAdapter extends ViewerDropAdapter
 {
-
-
 	protected Shell shell;
 	protected long hoverStart = 0;
 
@@ -141,7 +139,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter implements  ISy
 				String[] resources = (String[]) data;
 				for (int i = 0; i < resources.length; i++)
 				{
-					String resource = (String)resources[i];
+					String resource = resources[i];
 					srcObjects.add(resource);
 				}
 				_sourceType = SystemDNDTransferRunnable.SRC_TYPE_OS_RESOURCE;

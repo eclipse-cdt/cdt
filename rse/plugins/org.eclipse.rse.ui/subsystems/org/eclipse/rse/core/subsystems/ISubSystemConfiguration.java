@@ -16,11 +16,8 @@
 
 package org.eclipse.rse.core.subsystems;
 
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
@@ -28,14 +25,10 @@ import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.ui.SystemMenuManager;
-import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
-
-
 
 
 public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvider, IRSEPersistableContainer

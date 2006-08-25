@@ -30,7 +30,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  * InputDialog class and numerous other platform and system classes.
  */
 public class ValidatorProfileName 
-       extends ValidatorFolderName implements ISystemMessages, ISystemValidator
+       extends ValidatorFolderName implements ISystemValidator
 {
 	public static final int MAX_PROFILENAME_LENGTH = 100; // arbitrary restriction! Defect 41816
 	private SystemMessage reservedNameMsg;
@@ -41,9 +41,9 @@ public class ValidatorProfileName
 	public ValidatorProfileName(Vector existingNameList)
 	{
 		super(existingNameList);
-		super.setErrorMessages(RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PROFILENAME_EMPTY),
-		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PROFILENAME_NOTUNIQUE),  
-		                       RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PROFILENAME_NOTVALID));  
+		super.setErrorMessages(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PROFILENAME_EMPTY),
+		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PROFILENAME_NOTUNIQUE),  
+		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PROFILENAME_NOTVALID));  
 	}
 
     /**
@@ -60,7 +60,7 @@ public class ValidatorProfileName
     private SystemMessage getReservedNameMessage()
     {
     	if (reservedNameMsg == null)
-    	   reservedNameMsg = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PROFILENAME_RESERVED);
+    	   reservedNameMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PROFILENAME_RESERVED);
     	return reservedNameMsg;
     }
 

@@ -18,7 +18,6 @@ package org.eclipse.rse.ui.propertypages;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -31,7 +30,7 @@ import org.eclipse.swt.widgets.Control;
  * The plugin.xml file registers this for objects of class org.eclipse.rse.internal.subsystems.SubSystem
  */
 public class SystemSubSystemPropertyPageCore extends SystemBasePropertyPage
-       implements  ISystemMessages, ISystemMessageLine//, ISystemMessageLineTarget
+       implements  ISystemMessageLine//, ISystemMessageLineTarget
 {
 	
 	private ISystemSubSystemPropertyPageCoreForm form = null;

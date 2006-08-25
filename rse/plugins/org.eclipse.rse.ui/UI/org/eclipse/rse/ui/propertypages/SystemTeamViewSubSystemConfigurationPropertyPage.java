@@ -17,7 +17,6 @@
 package org.eclipse.rse.ui.propertypages;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -33,7 +32,6 @@ import org.eclipse.swt.widgets.Label;
  * This is an output-only page.
  */
 public class SystemTeamViewSubSystemConfigurationPropertyPage extends SystemBasePropertyPage
-       implements  ISystemMessages
 {
 	
 	protected Label labelType, labelName, labelId, labelVendor, labelTypes;

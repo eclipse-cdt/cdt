@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.ui.actions;
 
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
@@ -28,7 +27,6 @@ import org.eclipse.swt.widgets.Shell;
  *  within the Remote Servers cascading menu.
  */
 public class SystemRemoteServerStopAction extends SystemBaseAction
-								implements  ISystemMessages
 {
 	private SystemCascadingRemoteServerBaseAction parentAction;
 	

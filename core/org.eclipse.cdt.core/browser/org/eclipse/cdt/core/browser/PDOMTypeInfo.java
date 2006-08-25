@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ * 		QNX - Initial API and implementation
+ * 		IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.core.browser;

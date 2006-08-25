@@ -22,6 +22,7 @@ public class CHMessages extends NLS {
 	public static String CHViewPart_emptyPageMessage;
 	public static String CHViewPart_FilterVariables_label;
 	public static String CHViewPart_FilterVariables_tooltip;
+	public static String CHViewPart_FocusOn_label;
 	public static String CHViewPart_HideMacros_label;
 	public static String CHViewPart_HideMacros_tooltip;
 	public static String CHViewPart_NextReference_label;

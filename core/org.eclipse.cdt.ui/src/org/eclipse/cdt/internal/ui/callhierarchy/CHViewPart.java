@@ -69,6 +69,7 @@ import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.CoreUtility;
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.viewsupport.AdaptingSelectionProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
 import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.TreeNavigator;
@@ -658,6 +659,19 @@ public class CHViewPart extends ViewPart {
 				menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fShowReference);
 			}
 			menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenElement);
+			
+			if (node.getParent() != null) {
+				final ICElement element= node.getRepresentedDeclaration();
+				if (element != null) {
+					String label= Messages.format(CHMessages.CHViewPart_FocusOn_label, 
+							CElementLabels.getTextLabel(element, CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.M_PARAMETER_TYPES));
+					menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, new Action(label) {
+						public void run() {
+							setInput(element);
+						}
+					});
+            	}
+			}
 		}
 		
 		// action groups

@@ -743,13 +743,13 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	}
 
 	public boolean copy(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) throws SystemMessageException {
-		// move is not supported by sftp directly. Use the ssh shell instead.
-		// TODO check if newer versions of sftp support move directly
+		// copy is not supported by sftp directly. Use the ssh shell instead.
+		// TODO check if newer versions of sftp support copy directly
 		// TODO Interpret some error messages like "command not found" (use (x)copy instead of cp on windows)
 		Activator.trace("SftpFileService.copy "+srcName); //$NON-NLS-1$
 		String fullPathOld = enQuote(srcParent + '/' + srcName);
 		String fullPathNew = enQuote(tgtParent + '/' + tgtName);
-		int rv = runCommand(monitor, "cp "+fullPathOld+' '+fullPathNew); //$NON-NLS-1$
+		int rv = runCommand(monitor, "cp -Rp "+fullPathOld+' '+fullPathNew); //$NON-NLS-1$
 		return (rv==0);
 	}
 	

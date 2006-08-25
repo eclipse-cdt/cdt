@@ -23,9 +23,11 @@ package org.eclipse.rse.services.clientserver;
 public interface IMatcher 
 {
 
-
     /**
      * Test if the given name matches the given filtering criteria
+     * @param input Input string to be matched
+     * @return <code>true</code> if the input string matches this
+     * 		matcher's criteria
      */
     public boolean matches(String input);
 }

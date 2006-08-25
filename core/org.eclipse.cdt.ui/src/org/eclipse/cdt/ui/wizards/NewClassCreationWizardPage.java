@@ -10,59 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.CConventions;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.browser.AllTypesCache;
-import org.eclipse.cdt.core.browser.IQualifiedTypeName;
-import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.ITypeSearchScope;
-import org.eclipse.cdt.core.browser.PathUtil;
-import org.eclipse.cdt.core.browser.QualifiedTypeName;
-import org.eclipse.cdt.core.browser.TypeSearchScope;
-import org.eclipse.cdt.core.browser.TypeUtil;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
-import org.eclipse.cdt.internal.ui.wizards.NewElementWizardPage;
-import org.eclipse.cdt.internal.ui.wizards.SourceFolderSelectionDialog;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.BaseClassInfo;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.BaseClassesListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.ConstructorMethodStub;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.DestructorMethodStub;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.IBaseClassInfo;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.IMethodStub;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.MethodStubsListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.NamespaceSelectionDialog;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.NewBaseClassSelectionDialog;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassCodeGenerator;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardMessages;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardPrefs;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.SourceFileSelectionDialog;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardUtil;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.NewBaseClassSelectionDialog.ITypeSelectionListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -92,6 +44,67 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+
+import org.eclipse.cdt.core.CConventions;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.browser.AllTypesCache;
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.ITypeSearchScope;
+import org.eclipse.cdt.core.browser.PathUtil;
+import org.eclipse.cdt.core.browser.QualifiedTypeName;
+import org.eclipse.cdt.core.browser.TypeSearchScope;
+import org.eclipse.cdt.core.browser.TypeUtil;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPClassType;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespace;
+
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.internal.ui.wizards.NewElementWizardPage;
+import org.eclipse.cdt.internal.ui.wizards.SourceFolderSelectionDialog;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.BaseClassInfo;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.BaseClassesListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.ConstructorMethodStub;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.DestructorMethodStub;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.IBaseClassInfo;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.IMethodStub;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.MethodStubsListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NamespaceSelectionDialog;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NewBaseClassSelectionDialog;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassCodeGenerator;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardMessages;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardPrefs;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardUtil;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.SourceFileSelectionDialog;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NewBaseClassSelectionDialog.ITypeSelectionListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 
 public class NewClassCreationWizardPage extends NewElementWizardPage {
 
@@ -1449,7 +1462,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		return status;
 	}
 		
-    /**
+	/**
      * Hook method that gets called when the namespace has changed. The method validates the 
      * namespace and returns the status of the validation.
      * 
@@ -1468,7 +1481,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			return status;
 		}
 
-	    IStatus val = CConventions.validateNamespaceName(namespace);
+		IStatus val = CConventions.validateNamespaceName(namespace);
 		if (val.getSeverity() == IStatus.ERROR) {
 			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidNamespace", val.getMessage())); //$NON-NLS-1$
 			return status;
@@ -1476,63 +1489,111 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.NamespaceDiscouraged", val.getMessage())); //$NON-NLS-1$
 		}
 
-        IQualifiedTypeName typeName = new QualifiedTypeName(namespace);
+	 	IQualifiedTypeName typeName = new QualifiedTypeName(namespace);
 		ICProject project = getCurrentProject();
-	    if (project != null) {
+		if (project != null) {
+			
+			List patternList = new ArrayList(); //for binding search
+			
 		    if (typeName.isQualified()) {
-			    // make sure enclosing namespace exists
-			    ITypeInfo parentNamespace = AllTypesCache.getType(project, ICElement.C_NAMESPACE, typeName.getEnclosingTypeName());
-			    if (parentNamespace == null) {
-	                status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnclosingNamespaceNotExists")); //$NON-NLS-1$
-	                return status;
-			    }
-			}
-		    
-		    ITypeInfo[] types = AllTypesCache.getTypes(project, typeName, false, true);
-		    if (types.length > 0) {
-			    // look for namespace
-			    boolean foundNamespace = false;
-			    boolean exactMatch = false;
-		        for (int i = 0; i < types.length; ++i) {
-		            ITypeInfo currType = types[i];
-					if (currType.getCElementType() == ICElement.C_NAMESPACE) {
-					    foundNamespace = true;
-						exactMatch = currType.getQualifiedTypeName().equals(typeName);
-					    if (exactMatch) {
-					        // found a matching namespace
-					        break;
-					    }
+			    /* make sure enclosing namespace exists */    	
+		    	String[] enclosingNames = typeName.getEnclosingNames();		    	
+		    	
+		    	if (enclosingNames.length > 0)
+		    	{
+		    		//build the pattern list, for qualified enclosing names
+		    		for (int j = 0; j < enclosingNames.length; j++)
+		    		{
+		    			patternList.add(Pattern.compile(enclosingNames[j]));		    					    		
+		    		}		    		
+		    		Pattern[] patterns = (Pattern[])patternList.toArray(new Pattern[patternList.size()]);
+		    		
+		    		IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
+		    		boolean found = false;
+					try {
+						PDOM pdom = (PDOM)pdomManager.getPDOM(project);	
+						IBinding[] bindings = pdom.findBindings(patterns);
+						
+						//go through the list of bindings found and check if the fully qualified name of each binding
+						//matches the enclosing name
+						for (int i = 0; i < bindings.length; ++i) {
+							PDOMBinding binding = (PDOMBinding)bindings[i];
+							PDOMBinding pdomBinding = pdom.getLinkage(GPPLanguage.getDefault()).adaptBinding(binding);
+							
+							//get the fully qualified name of the binding
+							String fullyQualifiedName = getBindingQualifiedName(pdomBinding);							
+							if (pdomBinding instanceof PDOMCPPNamespace)
+							{
+								if (fullyQualifiedName.equals(new QualifiedTypeName(enclosingNames).getFullyQualifiedName()))
+								{
+									found = true;
+									break;
+								}
+							}							
+						}
+						
+						if (!found)
+						{
+							status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnclosingNamespaceNotExists")); //$NON-NLS-1$
+							return status;
+						}					
+		                
+					} catch (CoreException e) {
+						return e.getStatus();
 					}
-		        }
-		        if (foundNamespace) {
-		            if (exactMatch) {
-		                // we're good to go
-		                status.setOK();
-		            } else {
-		                status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.NamespaceExistsDifferentCase")); //$NON-NLS-1$
-		            }
-	                return status;
-			    }
-		        // look for other types
-		        exactMatch = false;
-		        for (int i = 0; i < types.length; ++i) {
-		        	ITypeInfo currType = types[i];
-		        	if (currType.getCElementType() != ICElement.C_NAMESPACE) {
-		        		exactMatch = currType.getQualifiedTypeName().equals(typeName);
-		        		if (exactMatch) {
-		        			// found a matching type
-		        			break;
-		        		}
-		        	}
-		        }
-		        if (exactMatch) {
-		        	status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExists")); //$NON-NLS-1$
-		        } else {
-		        	status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExistsDifferentCase")); //$NON-NLS-1$
-		        }
-		    } else {
-		        status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NamespaceNotExists")); //$NON-NLS-1$
-		    }
+		    	}
+		    }		    
+			    
+		    //look for namespace		    
+			IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
+			try {
+				PDOM pdom = (PDOM)pdomManager.getPDOM(project);	
+				//add the namespace name to the list of patterns
+				patternList.add(Pattern.compile(typeName.getName()));				
+	    		Pattern[] patterns = (Pattern[])patternList.toArray(new Pattern[patternList.size()]);				
+				IBinding[] bindings = pdom.findBindings(patterns);
+				
+				for (int i = 0; i < bindings.length; ++i) {
+					PDOMBinding binding = (PDOMBinding)bindings[i];
+					PDOMBinding pdomBinding = pdom.getLinkage(GPPLanguage.getDefault()).adaptBinding(binding);								
+					
+					//get the fully qualified name of this binding
+					String bindingFullName = getBindingQualifiedName(pdomBinding);
+					
+					if (pdomBinding instanceof PDOMCPPNamespace)
+					{
+						if (bindingFullName.equals(namespace))
+						{
+							status.setOK(); //found an exact match
+						}
+						else
+						{
+							status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.NamespaceExistsDifferentCase")); //$NON-NLS-1$
+						}						
+						return status;
+					}
+					else //a binding is found but it is not a namespace
+					{
+						if (bindingFullName.equals(namespace))
+						{
+							status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExists")); //$NON-NLS-1$
+						}
+						else 
+						{
+				        	status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExistsDifferentCase")); //$NON-NLS-1$
+				        }
+						return status;
+					}
+				}
+					
+				if (bindings.length == 0)
+				{
+					//no namespaces found with the specified name
+					status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NamespaceNotExists")); //$NON-NLS-1$
+				}
+			} catch (CoreException e) {
+				return e.getStatus();
+			}
 	    }
 
 	    val = CConventions.validateNamespaceName(typeName.lastSegment());
@@ -1540,8 +1601,28 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidNamespace", val.getMessage())); //$NON-NLS-1$
 			return status;
 		}
-
 	    return status;
+	}
+	
+	/**
+	 * Get the fully qualified name for a given PDOMBinding
+	 * @param pdomBinding
+	 * @return binding's fully qualified name
+	 * @throws CoreException
+	 */
+	private String getBindingQualifiedName(PDOMBinding pdomBinding) throws CoreException
+	{
+		StringBuffer buf = new StringBuffer(pdomBinding.getName());	
+		PDOMNode parent = pdomBinding.getParentNode();
+		while (parent != null)
+		{
+			if (parent instanceof PDOMBinding)
+			{							
+				buf.insert(0, ((PDOMBinding)parent).getName() + "::");
+			}
+			parent = parent.getParentNode();
+		}
+		return buf.toString();
 	}
 
 	/**
@@ -1561,7 +1642,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 
         IQualifiedTypeName typeName = new QualifiedTypeName(className);
-        if (typeName.isQualified()) { 
+        if (typeName.isQualified()) { //$NON-NLS-1$
             status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.QualifiedClassName")); //$NON-NLS-1$
             return status;
         }
@@ -1577,6 +1658,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	
 	    ICProject project = getCurrentProject();
 	    if (project != null) {
+	    	
 		    IQualifiedTypeName fullyQualifiedName = typeName;
 			if (isNamespaceSelected()) {
                 String namespace = getNamespaceText();
@@ -1585,51 +1667,52 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			    }
 			}
 			
-		    ITypeInfo[] types = AllTypesCache.getTypes(project, fullyQualifiedName, false, true);
-		    if (types.length > 0) {
-			    // look for class
-			    boolean foundClass = false;
-			    boolean exactMatch = false;
-		        for (int i = 0; i < types.length; ++i) {
-		            ITypeInfo currType = types[i];
-					if (currType.getCElementType() == ICElement.C_CLASS
-					        || currType.getCElementType() == ICElement.C_STRUCT) {
-					    foundClass = true;
-						exactMatch = currType.getQualifiedTypeName().equals(fullyQualifiedName);
-					    if (exactMatch) {
-					        // found a matching class
-					        break;
-					    }
+			String fullyQualifiedClassName = fullyQualifiedName.getFullyQualifiedName();
+			
+			//build the pattern list, for qualified enclosing names
+			String[] enclosingNames = fullyQualifiedName.getEnclosingNames();
+    		List patternList = new ArrayList();
+    		for (int j = 0; j < enclosingNames.length; j++)
+    		{
+    			patternList.add(Pattern.compile(enclosingNames[j]));		    					    		
+    		}
+    		//add class name to pattern
+    		patternList.add(Pattern.compile(className));
+    		Pattern[] patterns = (Pattern[])patternList.toArray(new Pattern[patternList.size()]);			
+			
+			//look for conflicting class/struct
+			IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
+			try {
+				PDOM pdom = (PDOM)pdomManager.getPDOM(project);	
+				IBinding[] bindings = pdom.findBindings(patterns);
+				for (int i = 0; i < bindings.length; ++i)
+				{
+					PDOMBinding binding = (PDOMBinding)bindings[i];
+					PDOMBinding pdomBinding = pdom.getLinkage(GPPLanguage.getDefault()).adaptBinding(binding);
+					
+					//get the fully qualified name of this binding
+					String bindingFullName = getBindingQualifiedName(pdomBinding);
+					
+					if (pdomBinding instanceof PDOMCPPClassType)
+					{						
+						if (bindingFullName.equals(fullyQualifiedClassName))
+						{
+							status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExists")); //$NON-NLS-1$
+						}
+						return status;
 					}
-		        }
-		        if (foundClass) {
-		            if (exactMatch) {
-						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExists")); //$NON-NLS-1$
-		            } else {
-						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExistsDifferentCase")); //$NON-NLS-1$
-		            }
-	                return status;
-			    }
-		        // look for other types
-		        exactMatch = false;
-		        for (int i = 0; i < types.length; ++i) {
-		        	ITypeInfo currType = types[i];
-		        	if (currType.getCElementType() != ICElement.C_CLASS
-		        			&& currType.getCElementType() != ICElement.C_STRUCT) {
-		        		exactMatch = currType.getQualifiedTypeName().equals(fullyQualifiedName);
-		        		if (exactMatch) {
-		        			// found a matching type
-		        			break;
-		        		}
-		        	}
-		        }
-		        if (exactMatch) {
-		        	status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExists")); //$NON-NLS-1$
-		        } else {
-		        	status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExistsDifferentCase")); //$NON-NLS-1$
-		        }
-		        return status;
-		    }
+					else //a binding is found but it is not a class/struct
+					{						
+						if (bindingFullName.equals(fullyQualifiedClassName))
+						{
+				        	status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExists")); //$NON-NLS-1$
+				        }
+						return status;
+					}
+				}
+			} catch (CoreException e) {
+				return e.getStatus();
+			}			    
 	    }
 		return status;
 	}

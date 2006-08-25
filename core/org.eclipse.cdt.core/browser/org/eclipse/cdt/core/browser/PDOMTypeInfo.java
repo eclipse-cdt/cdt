@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
@@ -93,9 +94,21 @@ public class PDOMTypeInfo implements ITypeInfo {
 	}
 
 	public IQualifiedTypeName getQualifiedTypeName() {
-		String bindingName = binding.getName();
-		// TODO really do qualified type names
-		return new QualifiedTypeName(bindingName);
+		StringBuffer buf = new StringBuffer(binding.getName());	
+		try {
+			PDOMNode parent = binding.getParentNode();
+			while (parent != null)
+			{
+				if (parent instanceof PDOMBinding)
+				{							
+					buf.insert(0, ((PDOMBinding)parent).getName() + "::");
+				}
+				parent = parent.getParentNode();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}		
+		return new QualifiedTypeName(buf.toString());
 	}
 
 	public ITypeReference[] getReferences() {

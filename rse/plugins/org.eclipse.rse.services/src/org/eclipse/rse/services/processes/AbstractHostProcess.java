@@ -29,23 +29,26 @@ public class AbstractHostProcess implements IHostProcess, IServiceConstants, ISy
      */
     public AbstractHostProcess()
     {
-    	_properties[PROCESS_ATTRIBUTES_INDEX_EXENAME] = " ";
+    	_properties[PROCESS_ATTRIBUTES_INDEX_EXENAME] = " "; //$NON-NLS-1$
     	_properties[PROCESS_ATTRIBUTES_INDEX_GID] = new Long(-1);
     	_properties[PROCESS_ATTRIBUTES_INDEX_PID] = new Long(-1);
     	_properties[PROCESS_ATTRIBUTES_INDEX_PPID] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_INDEX_STATUS] = new String(" ");
+    	_properties[PROCESS_ATTRIBUTES_INDEX_STATUS] = new String(" "); //$NON-NLS-1$
     	_properties[PROCESS_ATTRIBUTES_INDEX_TGID] = new Long(-1);
     	_properties[PROCESS_ATTRIBUTES_INDEX_TRACERPID] = new Long(-1);
     	_properties[PROCESS_ATTRIBUTES_INDEX_UID] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_INDEX_USERNAME] = " ";
+    	_properties[PROCESS_ATTRIBUTES_INDEX_USERNAME] = " "; //$NON-NLS-1$
     	_properties[PROCESS_ATTRIBUTES_INDEX_VMSIZE] = new Long(-1);
     	_properties[PROCESS_ATTRIBUTES_INDEX_VMRSS] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_COUNT] = " "; //set the label
+    	_properties[PROCESS_ATTRIBUTES_COUNT] = " "; //set the label //$NON-NLS-1$
     }
 
     /**
      * create a new AbstractHostProcess with initial Attributes.
-     * This is equivalent to constructing the object, then calling setAllProperties(initialAttributes)
+     * This is equivalent to constructing the object, then calling 
+     * setAllProperties(initialAttributes).
+     * @param initialAttributes String of initial attributes
+     * @see #setAllProperties(String)
      */
     public AbstractHostProcess(String initialAttributes)
     {
@@ -150,9 +153,11 @@ public class AbstractHostProcess implements IHostProcess, IServiceConstants, ISy
 	}
 	
 	/**
-	 * You can also set all attributes at once with your own string passed as a parameter, as long
-	 * as the string is in the same format as outlined below (pass in null to use the DataElement's string): 
-	 * <p> The string contains properties of the object in the following order 
+	 * This method allows to set all attributes at once with your own string 
+	 * passed as a parameter, as long as the string is in the same format as 
+	 * outlined below (pass in null to use the DataElement's string). 
+	 * <p> The string contains properties of the object in the following order,
+	 * separated by {@link IServiceConstants#TOKEN_SEPARATOR}:
 	 * <ul>
 	 *    <li>Process Id (pid) - long 
 	 *    <li>Executable name - String
@@ -166,6 +171,7 @@ public class AbstractHostProcess implements IHostProcess, IServiceConstants, ISy
 	 *    <li>VM Size - long
 	 *    <li>VM RSS - long
 	 * </ul>
+	 * @param allProperties Property String as defined above
 	 */
 	public void setAllProperties(String allProperties)
 	{
@@ -173,7 +179,7 @@ public class AbstractHostProcess implements IHostProcess, IServiceConstants, ISy
 		
 		if (s != null && s.length() > 0)
 		{
-		    String[] str = s.split("\\"+TOKEN_SEPARATOR);
+		    String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
 		    int numOfExpectedTokens = PROCESS_ATTRIBUTES_COUNT;
 		    int tokens = str.length;
 			if (tokens == numOfExpectedTokens)
@@ -275,11 +281,13 @@ public class AbstractHostProcess implements IHostProcess, IServiceConstants, ISy
 
 	/**
 	 * Return all the properties of this data structure in one string.
-	 * Properties are separated by IUniversalDataStoreConstants.TOKEN_SEPARATOR;
+	 * Properties are separated by {@link IServiceConstants#TOKEN_SEPARATOR}.
+	 * @see #setAllProperties(String)
+	 * @return String of Properties
 	 */
 	public String getAllProperties()
 	{
-		String properties = "";
+		String properties = ""; //$NON-NLS-1$
 		for (int i = 0; i < PROCESS_ATTRIBUTES_COUNT; i++)
 		{
 			properties = properties + _properties[i].toString();

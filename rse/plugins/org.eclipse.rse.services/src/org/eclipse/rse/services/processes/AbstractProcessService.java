@@ -41,7 +41,11 @@ public abstract class AbstractProcessService implements IProcessService
 	}
 
 	/**
-	 * At this point there is only one root process, the 'init' process with pid 1
+	 * Return a single IHostProcess object for the 'init' process with pid 1.
+	 * @param monitor Progress monitor
+	 * @return Array with 1 element, the IHostProcess object for the root process
+	 * @throws SystemMessageException
+	 * @see org.eclipse.rse.services.processes.IProcessService#listRootProcesses(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IHostProcess[] listRootProcesses(IProgressMonitor monitor) throws SystemMessageException 
 	{
@@ -52,7 +56,7 @@ public abstract class AbstractProcessService implements IProcessService
 
 	public IHostProcess[] listChildProcesses(IProgressMonitor monitor, long parentPID) throws SystemMessageException 
 	{
-		String pPidString = "" + parentPID;
+		String pPidString = "" + parentPID; //$NON-NLS-1$
 		HostProcessFilterImpl rpfs = new HostProcessFilterImpl();
 		rpfs.setPpid(pPidString);
 		
@@ -61,7 +65,7 @@ public abstract class AbstractProcessService implements IProcessService
 	
 	public IHostProcess[] listChildProcesses(IProgressMonitor monitor, long parentPID, IHostProcessFilter filter) throws SystemMessageException 
 	{
-		String pPidString = "" + parentPID;
+		String pPidString = "" + parentPID; //$NON-NLS-1$
 		filter.setPpid(pPidString);
 		
 		return listAllProcesses(monitor, filter);
@@ -74,7 +78,7 @@ public abstract class AbstractProcessService implements IProcessService
 
 	public IHostProcess getProcess(IProgressMonitor monitor, long PID) throws SystemMessageException 
 	{
-		String pidString = "" + PID;
+		String pidString = "" + PID; //$NON-NLS-1$
 		HostProcessFilterImpl rpfs = new HostProcessFilterImpl();
 		rpfs.setPid(pidString);
 		

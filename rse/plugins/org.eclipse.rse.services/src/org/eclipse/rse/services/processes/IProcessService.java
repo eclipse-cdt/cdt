@@ -36,28 +36,36 @@ public interface IProcessService extends IService
 	/**
 	 * Return a list of all processes on the remote system.
 	 * @param monitor A progress monitor to which progress will be reported
+	 * @return List of all processes
+	 * @throws SystemMessageException 
 	 */
 	public IHostProcess[] listAllProcesses(IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
-	 * Return a list of all processes on the remote system.
+	 * Return a filtered list of all processes on the remote system.
 	 * @param monitor A progress monitor to which progress will be reported
 	 * @param filter An object to filter results by
+	 * @return Filtered list of processes
+	 * @throws SystemMessageException 
 	 */
 	public IHostProcess[] listAllProcesses(IProgressMonitor monitor, IHostProcessFilter filter)  throws SystemMessageException;
 
 	/**
-	 * Return a list of all processes on the remote system.
+	 * Return a filtered list of all processes on the remote system.
 	 * @param monitor A progress monitor to which progress will be reported
 	 * @param exeNameFilter The executable name to filter results by, or null if no exeName filtering
 	 * @param userNameFilter The user name to filter results by, or null if no userName filtering
 	 * @param stateFilter The state code to filter results by, or null if no state filtering
+	 * @return Filtered list of processes
+	 * @throws SystemMessageException 
 	 */
 	public IHostProcess[] listAllProcesses(IProgressMonitor monitor, String exeNameFilter, String userNameFilter, String stateFilter)  throws SystemMessageException;
 	
 	/**
 	 * Returns root processes on the remote system
 	 * @param monitor A progress monitor to which progress will be reported
+	 * @return List of root processes
+	 * @throws SystemMessageException 
 	 */
 	public IHostProcess[] listRootProcesses(IProgressMonitor monitor) throws SystemMessageException;
 	
@@ -65,14 +73,18 @@ public interface IProcessService extends IService
 	 * Return a list of all remote child processes of the given parent process on the remote system
 	 * @param monitor A progress monitor to which progress will be reported
 	 * @param parentPID The ID of the parent process whose children are to be listed
+	 * @return List of child processes
+	 * @throws SystemMessageException 
 	 */
 	public IHostProcess[] listChildProcesses(IProgressMonitor monitor, long parentPID) throws SystemMessageException;
 
 	/**
-	 * Return a list of all remote child processes of the given parent process on the remote system
+	 * Return a filtered list of remote child processes of the given parent process on the remote system
 	 * @param monitor A progress monitor to which progress will be reported
 	 * @param parentPID The ID of the parent process whose children are to be listed
 	 * @param filter A filter to narrow results by
+	 * @return Filtered list of child processes
+	 * @throws SystemMessageException 
 	 */
 	public IHostProcess[] listChildProcesses(IProgressMonitor monitor, long parentPID, IHostProcessFilter filter) throws SystemMessageException;
 	
@@ -80,6 +92,8 @@ public interface IProcessService extends IService
 	 * Given a process, return its parent process object.
 	 * @param monitor A progress monitor to which progress will be reported
 	 * @param PID the ID of the process to return parent of.
+	 * @return The parent process
+	 * @throws SystemMessageException 
 	 */
 	public IHostProcess getParentProcess(IProgressMonitor monitor, long PID) throws SystemMessageException;
 	
@@ -87,6 +101,8 @@ public interface IProcessService extends IService
 	 * Given a pid, return an IHostProcess object for it.
  	 * @param monitor A progress monitor to which progress will be reported
 	 * @param PID The process ID of the desired process
+	 * @return IHostProcess object for the given pid
+	 * @throws SystemMessageException 
 	 */
 	public IHostProcess getProcess(IProgressMonitor monitor, long PID) throws SystemMessageException;		
 	
@@ -95,7 +111,9 @@ public interface IProcessService extends IService
 	 * @param monitor A progress monitor to which progress will be reported
 	 * @param PID the ID of the process to be killed.
 	 * @param signal the signal to send to the process
-	 * @return false if the given process doesn't exist, else true. Throws an exception if anything fails.
+	 * @return <code>false</code> if the given process doesn't exist, else <code>true</code>.
+	 *  Throws an exception if anything fails.
+	 * @throws SystemMessageException 
 	 */
 	public boolean kill(IProgressMonitor monitor, long PID, String signal) throws SystemMessageException;	
 

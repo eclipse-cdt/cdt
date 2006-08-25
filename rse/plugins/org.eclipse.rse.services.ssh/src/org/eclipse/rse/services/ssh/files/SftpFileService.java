@@ -542,7 +542,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	public boolean delete(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException
 	{
 		boolean ok=false;
-		Activator.trace("SftpFileService.delete"); //$NON-NLS-1$
+		Activator.trace("SftpFileService.delete.waitForLock"); //$NON-NLS-1$
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
 				String fullPath = remoteParent + '/' + fileName;

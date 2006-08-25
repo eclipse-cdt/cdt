@@ -158,6 +158,7 @@ public class LocalShellOutputReader extends AbstractHostShellOutputReader implem
 					if(theDebugLine!=null) theDebugLine.append((char)ch);
 					int len = theLine.length()-1;
 					if (len>=0) theLine.deleteCharAt(len);
+					break;
 				case 13:
 					if(theDebugLine!=null) theDebugLine.append((char)ch);
 					break; // Carriage Return: dont append to the buffer

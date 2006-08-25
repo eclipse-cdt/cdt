@@ -54,19 +54,23 @@ public class ImportExecutableWizard extends AbstractImportExecutableWizard {
 
 			public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
 				descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-				if (Platform.getOS().equals(Platform.OS_MACOSX))
-					descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, "org.eclipse.cdt.core.MachO");					
-				else
-					descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, "org.eclipse.cdt.core.PE");
+				descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, pageOne.getSelectedBinaryParserId());
 			}
 		};
 		CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(newProject.getProject(), op, null);
 	}
 
 	public boolean supportsConfigurationType(ILaunchConfigurationType type) {
-		return type.getIdentifier().startsWith("org.eclipse.cdt.launch");
+		return type.getIdentifier().startsWith("org.eclipse.cdt.launch")
+			// Just for fun, lets support QNX launches too.
+			// Really points at something missing, no?
+			|| type.getIdentifier().startsWith("com.qnx");
 	}
 
+	/**
+	 * @deprecated this has been replaced by a check of the binary
+	 * parser down in the Wizard page.
+	 */
 	public boolean isExecutableFile(File file) {
 		String filename = file.getName().toLowerCase();
 		if (Platform.getOS().equals(Platform.OS_MACOSX))

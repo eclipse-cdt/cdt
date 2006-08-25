@@ -87,4 +87,6 @@ public class Messages extends NLS {
 	public static String AbstractImportExecutableWizard_windowTitle;
 
 	public static String AbstractImportExecutableWizard_CreateLaunchConfiguration;
+	
+	public static String ImportExecutablePageOne_SelectBinaryParser;
 }

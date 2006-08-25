@@ -67,9 +67,9 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 
 	public static final String DEBUG_PROJECT_ID = "org.eclipse.cdt.debug"; //$NON-NLS-1$
 
-	private ImportExecutablePageOne pageOne;
+	protected ImportExecutablePageOne pageOne;
 
-	private ImportExecutablePageTwo pageTwo;
+	protected ImportExecutablePageTwo pageTwo;
 	
 	/**
 	 * Override this method to add the correct binary parsers to the project.

@@ -961,7 +961,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	/**
 	 * Display message on message thread
 	 */
-	protected void displayAsyncMsg(org.eclipse.rse.services.clientserver.messages.SystemMessageException msg)
+	protected void displayAsyncMsg(SystemMessageException msg)
 	{
 		DisplayErrorMessageJob job = new DisplayErrorMessageJob(getShell(), msg);
 		job.setPriority(Job.INTERACTIVE);
@@ -969,18 +969,18 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		job.schedule();
 	}
 	/**
-	 * Inner class which extends WorkbenchJob to allow us to show an error message, which is a GUI operation,
+	 * Nested class which extends WorkbenchJob to allow us to show an error message, which is a GUI operation,
 	 *  from a non-GUI thread. This is done by creating an instance of this class and then scheduling it.
 	 */
-	public class DisplayErrorMessageJob extends WorkbenchJob 
+	public static class DisplayErrorMessageJob extends WorkbenchJob 
 	{
 		private Shell shell;
-		private org.eclipse.rse.services.clientserver.messages.SystemMessageException msgExc;
+		private SystemMessageException msgExc;
 		
 		/**
 		 * Constructor
 		 */
-		public DisplayErrorMessageJob(Shell shell, org.eclipse.rse.services.clientserver.messages.SystemMessageException msgExc)
+		public DisplayErrorMessageJob(Shell shell, SystemMessageException msgExc)
 		{
 			super("");
 			this.shell = shell; //FIXME remove this

@@ -472,13 +472,15 @@ public class SystemFileFilterStringEditPane
 		
 	    errorMessage = validateFolderInput();
 	    if (errorMessage != null)
-		  controlInError = folderCombo;
-
-		if (errorMessage == null)
-		{
-			if (subsetByFileNameRadioButton.getSelection())
+	    {
+	    	controlInError = folderCombo;
+	    }
+	    else
+	    {
+			if (subsetByFileNameRadioButton.getSelection()) {
 			  errorMessage = validateFileInput();
-			else
+			} 
+			else 
 			{
 				if (textTypes.getText().trim().length() == 0)
 				{

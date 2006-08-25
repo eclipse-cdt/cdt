@@ -230,7 +230,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	 */
 	protected void displayAsyncMsg(SubSystem ss, org.eclipse.rse.services.clientserver.messages.SystemMessageException msg)
 	{
-		DisplayErrorMessageJob job = ss.new DisplayErrorMessageJob(null, msg);
+		DisplayErrorMessageJob job = new DisplayErrorMessageJob(null, msg);
 		job.setPriority(Job.INTERACTIVE);
 		job.setSystem(true);
 		job.schedule();

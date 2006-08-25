@@ -52,7 +52,7 @@ public class StatusChangeListener implements IDomainListener, ICommunicationsLis
 	
 	protected Vector historyOfTargets;
 	
-	protected class FindShell implements Runnable {
+	protected static class FindShell implements Runnable {
 		private Shell shell;
 		
 		/**
@@ -192,9 +192,6 @@ public class StatusChangeListener implements IDomainListener, ICommunicationsLis
 		this.done = done;
 	}
 	
-	/**
-	 * @see IDomainListener#getShell()
-	 */
 	public Shell getShell() {
 		// dy:  DomainNotifier (which calls this method) requires the shell not be disposed
 		//if (shell == null) {
@@ -412,7 +409,7 @@ public class StatusChangeListener implements IDomainListener, ICommunicationsLis
      * Start diagnostic 
      *
      * @param Class diagnostic is the an implementation of ICommunicationsDiagnostic
-     * @param boolean quiet is the flag to indicate if user should be prompted
+     * @param quiet is the flag to indicate if user should be prompted
      *         - true for no prompt
      * @return ICommunciationsDiagnostic class instance
      */

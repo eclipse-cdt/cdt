@@ -15,7 +15,6 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;

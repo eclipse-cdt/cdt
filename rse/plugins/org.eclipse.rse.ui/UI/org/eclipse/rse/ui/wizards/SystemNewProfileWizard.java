@@ -15,7 +15,6 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.ISystemIconConstants;

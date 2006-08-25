@@ -123,7 +123,7 @@ public class SystemFilterMoveDownFilterPoolReferenceAction extends SystemBaseAct
 		ISystemFilterPoolReferenceManager fprMgr = null;
 		while (i.hasNext())	
 		{
-		  	sortableArray[idx] = new SystemSortableSelection((ISystemFilterPoolReference)i.next());
+		  	sortableArray[idx] = new SystemSortableSelection(i.next());
 		  	filterPoolRef = (ISystemFilterPoolReference)sortableArray[idx].getSelectedObject();
 		  	fprMgr = filterPoolRef.getFilterPoolReferenceManager();
 		  	sortableArray[idx].setPosition(fprMgr.getSystemFilterPoolReferencePosition(filterPoolRef));

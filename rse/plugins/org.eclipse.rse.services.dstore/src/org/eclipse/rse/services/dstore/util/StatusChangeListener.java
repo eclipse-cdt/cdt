@@ -43,7 +43,7 @@ public class StatusChangeListener implements IDomainListener
 	
 	protected Vector historyOfTargets;
 	
-	protected class FindShell implements Runnable {
+	protected static class FindShell implements Runnable {
 		private Shell shell;
 		
 		/**
@@ -169,9 +169,6 @@ public class StatusChangeListener implements IDomainListener
 		this.done = done;
 	}
 	
-	/**
-	 * @see IDomainListener#getShell()
-	 */
 	public Shell getShell() {
 		// dy:  DomainNotifier (which calls this method) requires the shell not be disposed
 		//if (shell == null) {

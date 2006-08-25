@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.internal.references;
 import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
-import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 
 /**

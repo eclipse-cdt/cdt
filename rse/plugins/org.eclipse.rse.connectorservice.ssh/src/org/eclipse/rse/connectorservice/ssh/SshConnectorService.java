@@ -197,8 +197,6 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 				if (useAuth) {
 					((ProxySOCKS5) proxy).setUserPasswd(_user, _pass);
 				}
-			} else {
-				proxy = null;
 			}
 		}
 		return proxy;
@@ -547,7 +545,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
     	}
 	}
 
-	private static Display getStandardDisplay() {
+	protected static Display getStandardDisplay() {
     	Display display = Display.getCurrent();
     	if( display==null ) {
     		display = Display.getDefault();
@@ -580,11 +578,12 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		}
 		private String promptSecret(final String message) {
 			final String[] retval = new String[1];
+			final String finUser = fUser;
 			getStandardDisplay().syncExec(new Runnable() {
 				public void run() {
 					//TODO Write our own UserValidationDialog instead of re-using the internal one from team.ssh
 					UserValidationDialog uvd = new UserValidationDialog(null, null,
-							fUser, message);
+							finUser, message);
 					uvd.setUsernameMutable(false);
 					if (uvd.open() == Window.OK) {
 						retval[0] = uvd.getPassword();

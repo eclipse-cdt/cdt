@@ -147,16 +147,27 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
 			}
             
             CCommandDSC cmd = fUtil.getNewCCommandDSC(genericLine.toString(), extensionsIndex > 0);
-            IPath buildDirectory = fUtil.getWorkingDirectory();
-            if (buildDirectory.isPrefixOf(pFilePath)) {
+            IPath baseDirectory = fUtil.getBaseDirectory();
+            if (baseDirectory.isPrefixOf(pFilePath)) {
 	            List cmdList = new ArrayList();
 	            cmdList.add(cmd);
 	            Map sc = new HashMap(1);
 	            sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);
 
-				IPath relPath = pFilePath.removeFirstSegments(buildDirectory.segmentCount());
-                IFile file = getProject().getFile(relPath);
-                getCollector().contributeToScannerConfig(file, sc);
+				IPath relPath = pFilePath.removeFirstSegments(baseDirectory.segmentCount());
+				//Note: We add the scannerconfig even if the resource doesnt actually
+				//exist below this project (which may happen when reading existing
+				//build logs, because resources can be created as part of the build
+				//and may not exist at the time of analyzing the config but re-built
+				//later on.
+				//if (getProject().exists(relPath)) {
+	            IFile file = getProject().getFile(relPath);
+	            getCollector().contributeToScannerConfig(file, sc);
+            } else {
+            	//TODO limiting to pathes below this project means not being
+            	//able to work with linked resources. Linked resources could
+            	//be checked through IWorkspaceRoot.findFilesForLocation().
+            	TraceUtil.outputError("Build command for file outside project: "+pFilePath.toString(), line); //$NON-NLS-1$
             }
             // fUtil.addGenericCommandForFile2(longFileName, genericLine);
         }

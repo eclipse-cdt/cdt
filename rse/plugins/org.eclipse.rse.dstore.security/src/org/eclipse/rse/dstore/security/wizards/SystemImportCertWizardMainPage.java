@@ -31,7 +31,6 @@ import org.eclipse.rse.dstore.security.preference.X509CertificateElement;
 import org.eclipse.rse.dstore.security.preference.X509CertificatePropertiesDialog;
 import org.eclipse.rse.dstore.security.util.GridUtil;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
@@ -50,10 +49,8 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class SystemImportCertWizardMainPage 
  	   extends AbstractSystemWizardPage
- 	   implements  ISystemMessages, Listener        
+ 	   implements  Listener        
 {  
-
-
 	protected SystemMessage errorMessage;
 	protected ISystemValidator nameValidator;
 	protected ISystemMessageLine msgLine;

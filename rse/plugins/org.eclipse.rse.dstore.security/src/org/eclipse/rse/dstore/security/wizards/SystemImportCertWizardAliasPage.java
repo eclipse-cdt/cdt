@@ -27,7 +27,6 @@ import org.eclipse.rse.dstore.security.UniversalSecurityPlugin;
 import org.eclipse.rse.dstore.security.UniversalSecurityProperties;
 import org.eclipse.rse.dstore.security.preference.X509CertificateElement;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
@@ -44,7 +43,6 @@ import org.eclipse.swt.widgets.Text;
 
 public class SystemImportCertWizardAliasPage 
  	   extends AbstractSystemWizardPage
- 	   implements  ISystemMessages        
 {  
 
 

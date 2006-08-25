@@ -69,7 +69,7 @@ extends ViewerSorter
 
 				if(currentColumn >= 0)
 				{
-					TableColumn currentTableColumn = (TableColumn)tableViewer.getTable().getColumn(currentColumn);
+					TableColumn currentTableColumn = tableViewer.getTable().getColumn(currentColumn);
 					if(addDirectionSymbol && (currentTableColumn != null))
 					{
 						text = currentTableColumn.getText();

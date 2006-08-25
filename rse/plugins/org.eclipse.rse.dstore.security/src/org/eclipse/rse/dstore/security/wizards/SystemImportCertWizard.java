@@ -21,18 +21,15 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 
 import org.eclipse.dstore.core.util.ssl.DStoreKeyStore;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.dstore.security.ImageRegistry;
 import org.eclipse.rse.dstore.security.UniversalSecurityProperties;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizard;
 
 public class SystemImportCertWizard 
                   extends AbstractSystemWizard 
-                  implements  ISystemMessages 
 {	
 	
 	private SystemImportCertWizardMainPage  _mainPage;
@@ -60,10 +57,10 @@ public class SystemImportCertWizard
 	{
 	   try {
 	      _mainPage = createMainPage();	        
-	      addPage((WizardPage)_mainPage);
+	      addPage(_mainPage);
 		  
 		  _aliasPage = createAliasPage();
-		  addPage((WizardPage)_aliasPage);
+		  addPage(_aliasPage);
 	      //super.addPages();
 	   } catch (Exception exc)
 	   {

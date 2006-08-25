@@ -17,7 +17,6 @@
 package org.eclipse.rse.dstore.security.preference;
 import java.util.ArrayList;
 
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 

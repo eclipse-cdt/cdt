@@ -51,10 +51,10 @@ public class UniversalSecurityProperties extends NLS
 	public static String RESID_SECURITY_ADD_LBL;
 	public static String RESID_SECURITY_REMOVE_LBL;
 	public static String RESID_SECURITY_RENAME_LBL;
-	public static String RESID_SECURITY_PREF_ALIAS_NAME;;
-	public static String RESID_SECURITY_PREF_ISSUED_TO;;
-	public static String RESID_SECURITY_PREF_ISSUED_FROM;;
-	public static String RESID_SECURITY_PREF_EXPIRES;;
+	public static String RESID_SECURITY_PREF_ALIAS_NAME;
+	public static String RESID_SECURITY_PREF_ISSUED_TO;
+	public static String RESID_SECURITY_PREF_ISSUED_FROM;
+	public static String RESID_SECURITY_PREF_EXPIRES;
 
 	public static String RESID_SECURITY_KEY_IO_ERROR_;
 	public static String RESID_SECURITY_KEY_LOAD_ERROR_;
@@ -92,4 +92,4 @@ public class UniversalSecurityProperties extends NLS
 		initializeMessages(BUNDLE_NAME, UniversalSecurityProperties.class);
 	}
 	
-};
+}

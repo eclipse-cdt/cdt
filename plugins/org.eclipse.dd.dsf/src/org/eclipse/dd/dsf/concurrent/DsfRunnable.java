@@ -18,4 +18,28 @@ package org.eclipse.dd.dsf.concurrent;
  * place holder for future tracing enhancments for DSF.  
  */
 abstract public class DsfRunnable implements Runnable {
+    private StackTraceElement []  fStackTrace = null; 
+    
+    public DsfRunnable() {
+        // Use assertion flag (-ea) to jre to avoid affecting performance when not debugging.
+        boolean assertsEnabled = false;
+        assert assertsEnabled = true;
+        if (assertsEnabled) {
+            fStackTrace = Thread.currentThread().getStackTrace();
+        }
+    }
+    
+    public  String toString () {
+        // If assertions are not turned on.
+        if (fStackTrace == null) return super.toString();
+        
+        StringBuilder builder = new  StringBuilder() ;
+        // ommit the first elements in the stack trace
+        for  ( int  i= 3 ; i < fStackTrace.length; i++ ) {
+            builder.append ( "\tat " ) ;
+            builder.append ( fStackTrace [ i ] .toString ()) ;
+            builder.append ( "\n" ) ;
+        }
+        return  builder.toString () ;
+    } 
 }

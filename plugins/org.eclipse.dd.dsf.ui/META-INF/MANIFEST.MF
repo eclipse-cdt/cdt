@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Ui Plug-in
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
 Bundle-SymbolicName: org.eclipse.dd.dsf.ui
 Bundle-Version: 1.0.0
 Bundle-Activator: org.eclipse.dd.dsf.ui.DsfUIPlugin

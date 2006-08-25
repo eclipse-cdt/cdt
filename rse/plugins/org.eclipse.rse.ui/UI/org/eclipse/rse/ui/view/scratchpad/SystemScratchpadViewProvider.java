@@ -93,17 +93,12 @@ public class SystemScratchpadViewProvider implements ILabelProvider, ITreeConten
 	{
 	    if  (object instanceof IAdaptable)
 	    {
-		IAdaptable adapt = (IAdaptable) object;
-		if (adapt != null)
-		{
+	    	IAdaptable adapt = (IAdaptable) object;
 			ISystemViewElementAdapter result = (ISystemViewElementAdapter) adapt.getAdapter(ISystemViewElementAdapter.class);
 			result.setPropertySourceInput(object);
 			result.setViewer(_view);
-
 			return result;
-		}
 	    }
-
 		return null;
 	}
 

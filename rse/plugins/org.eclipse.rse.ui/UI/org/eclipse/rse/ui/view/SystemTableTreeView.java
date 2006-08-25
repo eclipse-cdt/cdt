@@ -757,7 +757,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
 		Transfer[] transfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(), EditorInputTransfer.getInstance(), FileTransfer.getInstance()};
 
-		addDragSupport(ops, transfers, new SystemViewDataDragAdapter((ISelectionProvider) this));
+		addDragSupport(ops, transfers, new SystemViewDataDragAdapter(this));
 		addDropSupport(ops | DND.DROP_DEFAULT, transfers, new SystemViewDataDropAdapter(this));
 	}
 

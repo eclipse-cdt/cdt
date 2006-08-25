@@ -523,7 +523,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
 	          }
 
 	          browseAction.run();
-              IRemoteFile folder = ((SystemSelectRemoteFolderAction)browseAction).getSelectedFolder();
+              IRemoteFile folder = browseAction.getSelectedFolder();
               if (folder != null)
                 setText(folder.getAbsolutePath());
                 

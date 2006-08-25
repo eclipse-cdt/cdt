@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.services.clientserver.messages.IndicatorException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
@@ -51,10 +52,10 @@ public class SystemUIMessageFile extends SystemMessageFile {
 						messageFileStream, dtdStream);
 				dtdStream.close();
 			} catch (IOException e) {
-				RSEUIPlugin.logError("Could not open message file DTD.", e);
+				SystemBasePlugin.logError("Could not open message file DTD.", e);
 			}
 		} else {
-			RSEUIPlugin.logError("Could not find mesage file DTD.");
+			SystemBasePlugin.logError("Could not find mesage file DTD.");
 		}
 		return result;
 	}

@@ -130,8 +130,8 @@ public class UniversalPreferencePage
 	
 	protected void createFieldEditors() {
 		
-		modeRegistry = (SystemFileTransferModeRegistry)(SystemFileTransferModeRegistry.getDefault());
-		editorRegistry = (IEditorRegistry)(PlatformUI.getWorkbench().getEditorRegistry());
+		modeRegistry = SystemFileTransferModeRegistry.getDefault();
+		editorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
 		
 		modeMappings = new ArrayList();
 		editorMappings = new ArrayList();

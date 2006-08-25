@@ -265,7 +265,7 @@ public class SystemSimpleSelectDialog extends SystemPromptDialog
 		  {		 
 		  	for (int idx=0; idx<disable.length; idx++)
 		  	{
-				SystemSimpleContentElement currElement = (SystemSimpleContentElement)disable[idx];
+				SystemSimpleContentElement currElement = disable[idx];
 				tree.setGrayed(currElement, true); // so it appears readonly
 		  	}
 		  }

@@ -198,7 +198,7 @@ public class CommandMiner extends Miner
 		}
 		else if (name.equals("C_CANCEL"))
 		{
-			DataElement de = (DataElement) subject.dereference().get(1);
+			DataElement de = subject.dereference().get(1);
 			DataElement cancelStatus = getCommandStatus(subject);
 			cancelCommand(de.getName().trim(), cancelStatus);
 			return status;

@@ -329,7 +329,7 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
      */
     public ISystemFilterStringReference getSystemFilterStringReference(ISystemFilterString filterString)
     {
-    	return new SystemFilterStringReference((ISystemFilterReference)this, filterString);  
+    	return new SystemFilterStringReference(this, filterString);  
     }	
 
     

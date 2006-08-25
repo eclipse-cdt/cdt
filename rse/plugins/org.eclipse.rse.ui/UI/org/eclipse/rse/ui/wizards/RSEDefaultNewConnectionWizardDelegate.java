@@ -287,7 +287,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
 	{
 		boolean ok = mainPage.performFinish();
 		if (!ok)
-		  getWizard().setPageError((IWizardPage)mainPage);
+		  getWizard().setPageError(mainPage);
 		else if (ok && hasAdditionalPages())
 		{
     	  for (int idx=0; ok && (idx<subsystemFactorySuppliedWizardPages.length); idx++)
@@ -413,7 +413,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
      */
     public SystemConnectionForm getMainPageForm()
     {
-    	return ((RSENewConnectionWizardDefaultDelegateMainPage)mainPage).getForm();
+    	return (mainPage).getForm();
     }
     
     // ----------------------------------------
@@ -478,7 +478,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
     {
     	if ((subsystemFactorySuppliedWizardPages != null) && (subsystemFactorySuppliedWizardPages.length>0))
     	{
-    	  IWizardPage previousPage = (IWizardPage)mainPage;
+    	  IWizardPage previousPage = mainPage;
     	  for (int idx=0; idx<subsystemFactorySuppliedWizardPages.length; idx++)
     	  {
     	  	 subsystemFactorySuppliedWizardPages[idx].setPreviousPage(previousPage);

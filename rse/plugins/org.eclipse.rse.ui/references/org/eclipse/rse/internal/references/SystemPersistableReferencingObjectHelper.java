@@ -53,7 +53,7 @@ public class SystemPersistableReferencingObjectHelper
 	 */
 	public void setReferencedObject(IRSEBasePersistableReferencedObject obj)
 	{
-		super.setReferencedObject((IRSEBaseReferencedObject)obj);
+		super.setReferencedObject(obj);
 		this.masterObjectName = obj.getReferenceName();
 	}
 	

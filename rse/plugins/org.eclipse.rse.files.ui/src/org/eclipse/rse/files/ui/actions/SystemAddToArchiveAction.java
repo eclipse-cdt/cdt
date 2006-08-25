@@ -90,8 +90,6 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 			String[] relativePaths = getRelativePaths();
 			
 			AddToArchiveDialog dialog = new AddToArchiveDialog(getShell(), title, relativePaths);
-			if (dialog == null)
-			  return;
 			dialog.setNeedsProgressMonitor(false);
 	
 			dialog.setMessage(FileResources.RESID_ADDTOARCHIVE_PROMPT);
@@ -299,7 +297,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 		_selected.clear();
 		boolean enable = false;
 
-		Iterator e = ((IStructuredSelection) selection).iterator();
+		Iterator e = selection.iterator();
 		while (e.hasNext())
 		{
 			Object selected = e.next();

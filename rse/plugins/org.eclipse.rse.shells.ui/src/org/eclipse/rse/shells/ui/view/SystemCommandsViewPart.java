@@ -716,7 +716,7 @@ public class SystemCommandsViewPart
 			if (source instanceof IRemoteCommandShell)
 			{
 			    updateOutput((IRemoteCommandShell) source, false);
-			    _folder.remove((IRemoteCommandShell)source);
+			    _folder.remove(source);
 				updateActionStates();
 			}
 		}

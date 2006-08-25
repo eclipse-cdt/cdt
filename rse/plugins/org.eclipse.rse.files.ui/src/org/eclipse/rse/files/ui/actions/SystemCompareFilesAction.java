@@ -85,7 +85,7 @@ public class SystemCompareFilesAction extends SystemBaseAction
 		_selected.clear();
 		boolean enable = false;
 
-		Iterator e = ((IStructuredSelection) selection).iterator();
+		Iterator e = selection.iterator();
 		while (e.hasNext())
 		{
 			Object selected = e.next();

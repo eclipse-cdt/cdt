@@ -22,6 +22,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
+import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.logging.LoggerFactory;
@@ -1151,7 +1152,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		
 		public void run()
 		{
-			SystemChangePasswordDialog dlg = new SystemChangePasswordDialog(RSEUIPlugin.getActiveWorkbenchShell(), getHostName(), getUserId(), _msg);
+			SystemChangePasswordDialog dlg = new SystemChangePasswordDialog(SystemBasePlugin.getActiveWorkbenchShell(), getHostName(), getUserId(), _msg);
     	  	// Check if password was saved, if so preselect the save checkbox
 			if (getLocalUserId() != null)
 			{

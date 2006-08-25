@@ -145,7 +145,7 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	 * This also calls addReference(this) on that pool!
 	 */
 	public void setReferenceToFilterPool(ISystemFilterPool pool) {
-		super.setReferencedObject((IRSEPersistableReferencedObject) pool);
+		super.setReferencedObject(pool);
 	}
 
 	/**

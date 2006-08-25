@@ -110,7 +110,7 @@ public class SystemEscapeCharHelper {
 		return ""+c;
 	*/
 
-      int intValue = (int)c;
+      int intValue = c;
       String returnStr=""+ESCAPE_CHAR;
 
       if (intValue < 10)

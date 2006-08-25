@@ -84,7 +84,7 @@ public class SystemTeamViewLabelProvider extends LabelProvider
 		// If we have a project, return the resource project images. 
 		else if (element instanceof IProject) 
 		{
-			Image projectImage = aWorkbenchLabelProvider.getImage((IProject)element);
+			Image projectImage = aWorkbenchLabelProvider.getImage(element);
 			return projectImage;
 		}
 						

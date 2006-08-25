@@ -96,7 +96,7 @@ public class LocalSearchHandler implements ISearchHandler
 		// if the remote file is not virtual, then simply get the file
 		if (!(_theRmtFile instanceof LocalVirtualHostFile))
 		{
-			_theFile = (File) (_theRmtFile.getFile());
+			_theFile = _theRmtFile.getFile();
 		}
 		// for virtual file, fake it with a non-existent file representing the
 		// actual path (note this file won't actually exist on the filesystem)

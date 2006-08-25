@@ -145,7 +145,7 @@ public class SystemChangeFilterAction extends SystemBaseDialogAction
 		if (filter != null)
 			if (filter.isSingleFilterStringOnly())
 				dlg.setSupportsMultipleStrings(false);
-		return (Dialog)dlg;
+		return dlg;
 	}
 	
 	/**

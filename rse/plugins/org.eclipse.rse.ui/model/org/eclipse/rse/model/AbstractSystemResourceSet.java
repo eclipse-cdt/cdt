@@ -100,7 +100,7 @@ public class AbstractSystemResourceSet implements ISystemResourceSet
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < _resourceSet.size(); i++)
 		{
-			Object resource = (Object)_resourceSet.get(i);
+			Object resource = _resourceSet.get(i);
 			buf.append(pathFor(resource));				
 			if (i < _resourceSet.size())
 			{

@@ -144,7 +144,7 @@ public class SystemKillDialog extends SystemPromptDialog
         	}
         }
 		else {
-			prompt = (Label)SystemWidgetHelpers.createVerbiage(composite, promptLabel, nbrColumns, false, 200);
+			prompt = SystemWidgetHelpers.createVerbiage(composite, promptLabel, nbrColumns, false, 200);
 		}
 
         // WARNING

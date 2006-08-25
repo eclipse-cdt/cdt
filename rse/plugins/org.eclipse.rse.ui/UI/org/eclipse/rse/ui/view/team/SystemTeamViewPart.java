@@ -310,7 +310,7 @@ public class SystemTeamViewPart
 			{
 				menuListenerAdded = true;
 				SystemViewMenuListener ml = new SystemViewMenuListener();
-				ml.setShowToolTipText(true, (ISystemMessageLine)this);
+				ml.setShowToolTipText(true, this);
 				m.addMenuListener(ml);
 			}
 		  }
@@ -996,7 +996,7 @@ public class SystemTeamViewPart
 	public boolean canDelete()
 	{
 		boolean ok = true;
-		IStructuredSelection selection= (IStructuredSelection)getStructuredSelection();		
+		IStructuredSelection selection= getStructuredSelection();		
 		Iterator elements= selection.iterator();
 		ISystemProfileManager mgr = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager();
 		int nbrActiveProfiles = mgr.getActiveSystemProfiles().length;
@@ -1023,7 +1023,7 @@ public class SystemTeamViewPart
 	public boolean doDelete(IProgressMonitor monitor)
 	{
 		boolean ok = true;
-		IStructuredSelection selection= (IStructuredSelection)getStructuredSelection();		
+		IStructuredSelection selection= getStructuredSelection();		
 		Iterator elements= selection.iterator();
 		Object currObj = null;
 		while (ok && elements.hasNext())
@@ -1059,7 +1059,7 @@ public class SystemTeamViewPart
 	public boolean canRename()
 	{
 		boolean ok = true;
-		IStructuredSelection selection= (IStructuredSelection)getStructuredSelection();		
+		IStructuredSelection selection= getStructuredSelection();		
 		Iterator elements= selection.iterator();
 		while (ok && elements.hasNext())
 		{
@@ -1076,7 +1076,7 @@ public class SystemTeamViewPart
 	public boolean doRename(String[] newNames)
 	{
 		boolean ok = true;
-		IStructuredSelection selection= (IStructuredSelection)getStructuredSelection();		
+		IStructuredSelection selection= getStructuredSelection();		
 		Iterator elements= selection.iterator();
 		Object currObj = null;
 		int idx = 0;
@@ -1084,7 +1084,7 @@ public class SystemTeamViewPart
 		{
 			currObj = elements.next();
 			try {
-		 		profileAdapter.doRename(getShell(), (ISystemProfile)currObj, newNames[idx++]);
+		 		profileAdapter.doRename(getShell(), currObj, newNames[idx++]);
 			} 
 			catch (SystemMessageException exc)
 			{

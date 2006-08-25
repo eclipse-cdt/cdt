@@ -622,7 +622,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		try
 		{
-			DownloadListener dlistener = new DownloadListener(monitor, status, localFile, remotePath, (long) fileLength);
+			DownloadListener dlistener = new DownloadListener(monitor, status, localFile, remotePath, fileLength);
 			try
 			{
 				dlistener.waitForUpdate();

@@ -50,7 +50,7 @@ public class      SystemNewProfileWizard
 	{
 	   try {
 	      mainPage = createMainPage();	        
-	      addPage((WizardPage)mainPage);
+	      addPage(mainPage);
 	      //super.addPages();
 	   } catch (Exception exc)
 	   {

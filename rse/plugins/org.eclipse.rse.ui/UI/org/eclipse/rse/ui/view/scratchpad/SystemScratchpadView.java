@@ -290,7 +290,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
 		Transfer[] transfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(), EditorInputTransfer.getInstance(), FileTransfer.getInstance()};
 
-		addDragSupport(ops, transfers, new SystemViewDataDragAdapter((ISelectionProvider) this));
+		addDragSupport(ops, transfers, new SystemViewDataDragAdapter(this));
 		addDropSupport(ops | DND.DROP_DEFAULT, transfers, new SystemViewDataDropAdapter(this));
 	}
 
@@ -1028,7 +1028,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 
 		Tree tree = getTree();
 
-			Tree theTree = (Tree) tree;
+			Tree theTree = tree;
 			theTree.setSelection(theTree.getItems());
 			TreeItem[] items = theTree.getItems();
 			Object[] objects = new Object[items.length];

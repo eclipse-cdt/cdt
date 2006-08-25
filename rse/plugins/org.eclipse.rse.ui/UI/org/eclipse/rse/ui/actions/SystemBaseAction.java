@@ -529,7 +529,7 @@ public class SystemBaseAction extends Action implements ISystemAction
 	public boolean updateSelection(IStructuredSelection selection)
 	{
 		boolean enable = true;
-		Iterator e= ((IStructuredSelection) selection).iterator();
+		Iterator e= selection.iterator();
 		while (enable && e.hasNext())
 		{
 		     enable = checkObjectType(e.next());		  

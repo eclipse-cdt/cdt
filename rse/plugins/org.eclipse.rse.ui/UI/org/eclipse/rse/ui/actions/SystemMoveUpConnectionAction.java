@@ -63,7 +63,7 @@ public class SystemMoveUpConnectionAction extends SystemBaseAction
 		boolean enable = true;
 		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();		
 		prevProfile = null;
-		Iterator e= ((IStructuredSelection) selection).iterator();		
+		Iterator e = selection.iterator();		
 		while (enable && e.hasNext())
 		{
 			Object selectedObject = e.next();

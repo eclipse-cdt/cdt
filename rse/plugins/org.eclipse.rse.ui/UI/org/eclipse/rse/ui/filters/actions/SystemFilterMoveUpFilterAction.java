@@ -70,7 +70,7 @@ public class SystemFilterMoveUpFilterAction extends SystemBaseAction
 	{
 		ISystemFilterContainer prevContainer = null;
 		boolean enable = true;
-		Iterator e= ((IStructuredSelection) selection).iterator();
+		Iterator e = selection.iterator();
 		while (enable && e.hasNext())
 		{
 			Object selectedObject = e.next();

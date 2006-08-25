@@ -371,7 +371,7 @@ public class SystemSearchViewPart extends ViewPart implements ISystemResourceCha
 			return false;
 		}
 		
-		ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)getAdapter(input);
+		ISystemViewElementAdapter adapter = getAdapter(input);
 		
 		if (adapter == null) {
 			return false;
@@ -537,7 +537,7 @@ public class SystemSearchViewPart extends ViewPart implements ISystemResourceCha
 		// TODO change to tabletree when eclipse fixes the swt widget
 		//TableTree table = new TableTree(pageBook, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
 		Tree tabletree = new Tree(pageBook, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
-		SystemSearchTableView viewer = new SystemSearchTableView(tabletree, (IHostSearchResultSet)resultSet, this);
+		SystemSearchTableView viewer = new SystemSearchTableView(tabletree, resultSet, this);
 		viewer.setWorkbenchPart(this);
 		
 		getSite().registerContextMenu(viewer.getContextMenuManager(), viewer);

@@ -567,7 +567,7 @@ implements ISchemaExtender
 	 */
 	public final String getCommandName(DataElement command)
 	{
-		return (String) command.getAttribute(DE.A_NAME);
+		return command.getAttribute(DE.A_NAME);
 	}
 
 	/**

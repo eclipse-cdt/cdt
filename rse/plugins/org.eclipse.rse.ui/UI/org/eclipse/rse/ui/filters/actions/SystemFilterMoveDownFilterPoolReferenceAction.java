@@ -69,7 +69,7 @@ public class SystemFilterMoveDownFilterPoolReferenceAction extends SystemBaseAct
 	{
 		ISystemFilterPoolReferenceManager prevMgr = null;
 		boolean enable = true;
-		Iterator e= ((IStructuredSelection) selection).iterator();
+		Iterator e = selection.iterator();
 		while (enable && e.hasNext())
 		{
 			Object selectedObject = e.next();

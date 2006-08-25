@@ -96,7 +96,7 @@ public abstract class ServicesPropertyPage extends SystemBasePropertyPage
 		
 		FactoryServiceElement selectedService = (FactoryServiceElement)_form.getSelectedService();	
 		
-		IServiceSubSystemConfiguration factory = (IServiceSubSystemConfiguration)selectedService.getFactory();
+		IServiceSubSystemConfiguration factory = selectedService.getFactory();
 		IServiceSubSystemConfiguration currentFactory = getCurrentServiceSubSystemConfiguration();
 		if (factory != currentFactory)		
 		{

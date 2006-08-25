@@ -244,7 +244,7 @@ public class SearchResultsChangeListener implements IDomainListener, ICommunicat
 					String remotePath = parentPath + slash + result.getName();
 					if (_subsys instanceof FileServiceSubSystem)
 					{
-						remoteFile = (IRemoteFile)((FileServiceSubSystem)_subsys).getCachedRemoteFile(remotePath);
+						remoteFile = ((FileServiceSubSystem)_subsys).getCachedRemoteFile(remotePath);
 					}
 					
 					if (remoteFile == null)

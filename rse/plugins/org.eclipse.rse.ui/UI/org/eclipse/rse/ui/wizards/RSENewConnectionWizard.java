@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
@@ -115,7 +116,7 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 					}
 				}
 				catch (CoreException e) {
-					RSEUIPlugin.logError("Class " + obj + " is not executable extension", e);
+					SystemBasePlugin.logError("Class " + obj + " is not executable extension", e);
 					continue;
 				}
 			}

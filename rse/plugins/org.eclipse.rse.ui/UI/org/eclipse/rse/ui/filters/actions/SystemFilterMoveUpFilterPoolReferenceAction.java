@@ -69,7 +69,7 @@ public class SystemFilterMoveUpFilterPoolReferenceAction extends SystemBaseActio
 	{
 		ISystemFilterPoolReferenceManager prevMgr = null;
 		boolean enable = true;
-		Iterator e= ((IStructuredSelection) selection).iterator();
+		Iterator e = selection.iterator();
 		while (enable && e.hasNext())
 		{
 			Object selectedObject = e.next();
@@ -123,7 +123,7 @@ public class SystemFilterMoveUpFilterPoolReferenceAction extends SystemBaseActio
 		ISystemFilterPoolReferenceManager fprMgr = null;
 		while (i.hasNext())	
 		{
-		  	sortableArray[idx] = new SystemSortableSelection((ISystemFilterPoolReference)i.next());
+		  	sortableArray[idx] = new SystemSortableSelection(i.next());
 		  	filterPoolRef = (ISystemFilterPoolReference)sortableArray[idx].getSelectedObject();
 		  	fprMgr = filterPoolRef.getFilterPoolReferenceManager();
 		  	sortableArray[idx].setPosition(fprMgr.getSystemFilterPoolReferencePosition(filterPoolRef));

@@ -421,11 +421,11 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		original_portData = getPortString(ss);
         changed_userId = changed_port = false;
         if (userIdDescriptor != null)
-          userIdDescriptor.setValidator((ICellEditorValidator)ssFactory.getUserIdValidator());
+          userIdDescriptor.setValidator(ssFactory.getUserIdValidator());
         //getPortDescriptor().setValidator((ICellEditorValidator)ssFactory.getPortValidator());
         if (propertyPortDescriptor != null)
 	    {
-          propertyPortDescriptor.setValidator((ICellEditorValidator)ssFactory.getPortValidator());
+          propertyPortDescriptor.setValidator(ssFactory.getPortValidator());
 	    }
         ss.getConnectorService().getPort();
 	    port_editable = ssFactory.isPortEditable();
@@ -486,7 +486,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
     {
     	if (!port_editable)
     	  return;
-        String port = (String)data;
+        String port = data;
     	Integer portInteger = null;
     	if (port.length()>0)
     	{

@@ -208,7 +208,7 @@ public class MonitorViewWorkbook extends Composite
 			if (createTab)
 			{
 				// never shown this, so add it
-				createTabItem((IAdaptable) root);
+				createTabItem(root);
 			}
 		}
 	}

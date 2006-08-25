@@ -130,7 +130,7 @@ public class SystemEditionAction extends SystemBaseAction
 	{
 		boolean enable = false;
 		_selected.clear();
-		Iterator e = ((IStructuredSelection) selection).iterator();
+		Iterator e = selection.iterator();
 		if (e.hasNext())
 		{
 			Object selected = e.next();

@@ -365,7 +365,7 @@ public class SystemNewFilterWizard
 		     mainPage.setDefaultFilterStrings(defaultFilterStrings);
 		   if (showFilterStrings)
 		   {
-	         addPage((WizardPage)mainPage);
+	         addPage(mainPage);
 		   }
 
 		   // NAME PAGE...
@@ -396,7 +396,7 @@ public class SystemNewFilterWizard
 		      }
 	          if (!showFilterStrings && page1DescriptionSet)
 	            	namePage.setDescription(configurator.getPage1Description());
-	          addPage((WizardPage)namePage);
+	          addPage(namePage);
 		   }
 	         		   	       
 		   // INFO PAGE...		   
@@ -405,7 +405,7 @@ public class SystemNewFilterWizard
 	          infoPage = createInfoPage();
 		      if (infoPage!=null)
 		      {
-	            addPage((WizardPage)infoPage);
+	            addPage(infoPage);
 		      }
 		   }
 		} catch (Exception exc)

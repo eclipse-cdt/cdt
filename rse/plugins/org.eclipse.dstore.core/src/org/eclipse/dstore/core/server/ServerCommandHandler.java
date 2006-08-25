@@ -204,7 +204,7 @@ public class ServerCommandHandler extends CommandHandler
 			if (commandName.equals(DataStoreSchema.C_VALIDATE_TICKET))
 			{
 				DataElement serverTicket = _dataStore.getTicket();
-				DataElement clientTicket = (DataElement) command.get(0);
+				DataElement clientTicket = command.get(0);
 				String st = serverTicket.getName();
 				String ct = clientTicket.getName();
 				if (ct.equals(st))
@@ -230,19 +230,19 @@ public class ServerCommandHandler extends CommandHandler
 			}
 			else if (commandName.equals(DataStoreSchema.C_SET))
 			{
-				DataElement dataObject = (DataElement) command.get(0);
+				DataElement dataObject = command.get(0);
 				status.setAttribute(DE.A_NAME,DataStoreResources.model_done);
 			}
 			else if (commandName.equals(DataStoreSchema.C_MODIFY))
 			{
-				DataElement dataObject = (DataElement) command.get(0);
+				DataElement dataObject = command.get(0);
 				DataElement original = _dataStore.find(dataObject.getId());
 				original.setAttributes(dataObject.getAttributes());
 				status.setAttribute(DE.A_NAME,DataStoreResources.model_done);
 			}
 			else if (commandName.equals(DataStoreSchema.C_SET_HOST))
 			{
-				DataElement dataObject = (DataElement) command.get(0);
+				DataElement dataObject = command.get(0);
 
 				DataElement original = _dataStore.getHostRoot();
 				original.setAttributes(dataObject.getAttributes());
@@ -253,13 +253,13 @@ public class ServerCommandHandler extends CommandHandler
 			}
 			else if (commandName.equals(DataStoreSchema.C_ADD_MINERS))
 			{
-				DataElement location = (DataElement) command.get(1);
+				DataElement location = command.get(1);
 				_dataStore.addMinersLocation(location);
 				status.setAttribute(DE.A_NAME,DataStoreResources.model_done);
 			}
 			else if (commandName.equals(DataStoreSchema.C_ACTIVATE_MINER))
 			{
-				DataElement minerId = (DataElement) command.get(0);
+				DataElement minerId = command.get(0);
 				String minerName = minerId.getName();
 				Miner miner = loadMiner(minerName);		
 				miner.initMiner(status);
@@ -268,7 +268,7 @@ public class ServerCommandHandler extends CommandHandler
 			}
 			else if (commandName.equals(DataStoreSchema.C_SET_PREFERENCE))
 			{
-				DataElement dataObject = (DataElement) command.get(0);
+				DataElement dataObject = command.get(0);
 				String property = dataObject.getName();
 				String value = dataObject.getValue();
 				_dataStore.setPreference(property, value);

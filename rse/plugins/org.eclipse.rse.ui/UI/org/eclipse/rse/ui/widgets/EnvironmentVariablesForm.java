@@ -562,7 +562,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 	private SystemMessage validateName(String value)
 	{
 		SystemMessage msg = null;
-		String name = (String) value;
+		String name = value;
 		if (name == null || name.trim().equals(""))
 		{
 			msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_NONAME);					
@@ -573,7 +573,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 			{
 				if (invalidNameChars.indexOf(' ') != -1)
 				{
-					name = ((String) value).trim();
+					name = (value).trim();
 				}
 
 				// first check for invalid characters

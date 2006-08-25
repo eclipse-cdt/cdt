@@ -97,7 +97,7 @@ public class SystemPropertyPageExtensionManager
 			  if (applies)
 			  {
 			  	added = true;
-			  	propertyPageSuppliers[idx].contributePropertyPages(manager, (IAdaptable)object);
+			  	propertyPageSuppliers[idx].contributePropertyPages(manager, object);
 			  }
 			}
 		}		

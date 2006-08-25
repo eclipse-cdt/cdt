@@ -733,7 +733,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 	            
 
 	          browseAction.run();
-              IRemoteFile folder = ((SystemSelectRemoteFolderAction)browseAction).getSelectedFolder();
+              IRemoteFile folder = browseAction.getSelectedFolder();
               if (folder != null)
                 setFolder(folder);
 		  };

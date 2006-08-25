@@ -158,7 +158,7 @@ public class TarFile implements ITarConstants {
 				// determine how many blocks make up the contents of the file
 				long fileSize = header.getSize();
 				int numFileBlocks = (int)(fileSize / BLOCK_SIZE);
-				numFileBlocks += (int)((fileSize % BLOCK_SIZE) > 0 ? 1 : 0);
+				numFileBlocks += (fileSize % BLOCK_SIZE) > 0 ? 1 : 0;
 
 				// if the file is a symbolic link, number of blocks will be 0
 				if (header.getTypeFlag() == ITarConstants.TF_SYMLINK) {
@@ -306,7 +306,7 @@ public class TarFile implements ITarConstants {
 					
 					// determine how many blocks make up the contents of the file
 					int numFileBlocks = (int)(fileSize / BLOCK_SIZE);
-					numFileBlocks += (int)((fileSize % BLOCK_SIZE) > 0 ? 1 : 0);
+					numFileBlocks += (fileSize % BLOCK_SIZE) > 0 ? 1 : 0;
 
 					// if the file is a symbolic link, number of blocks will be 0
 					if (header.getTypeFlag() == ITarConstants.TF_SYMLINK) {

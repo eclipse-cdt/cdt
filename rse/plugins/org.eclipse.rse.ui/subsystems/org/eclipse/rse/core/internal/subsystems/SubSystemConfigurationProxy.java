@@ -78,7 +78,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		}
 		catch (NumberFormatException e) {
 			priority = Integer.MAX_VALUE;
-			RSEUIPlugin.logError("Exception reading priority for subsystem configuration " + name + " defined in plugin " + element.getDeclaringExtension().getNamespaceIdentifier(), e);
+			SystemBasePlugin.logError("Exception reading priority for subsystem configuration " + name + " defined in plugin " + element.getDeclaringExtension().getNamespaceIdentifier(), e);
 		}
 		
 		String className = element.getAttribute("class");

@@ -66,7 +66,7 @@ public class SystemExpandAction extends SystemBaseAction
 		{
 			return ((ISystemTree)viewer).areAnySelectedItemsExpandable();
 		}
-		Iterator e= ((IStructuredSelection) selection).iterator();		
+		Iterator e = selection.iterator();		
 		ISystemViewElementAdapter adapter = null;
 		while (!enable && e.hasNext())
 		{

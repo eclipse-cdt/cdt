@@ -171,7 +171,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		this(parentShell,
 			message.getFullMessageID(),
 			message.getLevelOneText(),
-			(IStatus)(new MultiStatus(SystemBasePlugin.getBaseDefault().getSymbolicName(), IStatus.OK, "", new Exception(""))),
+			(new MultiStatus(SystemBasePlugin.getBaseDefault().getSymbolicName(), IStatus.OK, "", new Exception(""))),
 			 		0xFFFFF);
 		((MultiStatus)this.status).add(new Status(IStatus.INFO, SystemBasePlugin.getBaseDefault().getSymbolicName(), IStatus.OK, message.getLevelTwoText(),  new Exception("")));
 		statusList = Arrays.asList(status.getChildren());

@@ -304,16 +304,23 @@ public class UniversalFileTransferUtility
 					else
 					{
 						tempFolder = getTempFileFor(srcFileOrFolder);
-						IRemoteFile[] children = srcFS.listFoldersAndFiles(srcFileOrFolder);
-						
-						
-						SystemRemoteResourceSet childSet = new SystemRemoteResourceSet(srcFS, children);
-						SystemWorkspaceResourceSet childResults = copyRemoteResourcesToWorkspace(childSet, monitor);
-						if (childResults.hasMessage())
+						try
 						{
-							resultSet.setMessage(childResults.getMessage());
+							IRemoteFile[] children = srcFS.listFoldersAndFiles(srcFileOrFolder);
+							
+							
+							SystemRemoteResourceSet childSet = new SystemRemoteResourceSet(srcFS, children);
+							SystemWorkspaceResourceSet childResults = copyRemoteResourcesToWorkspace(childSet, monitor);
+							if (childResults.hasMessage())
+							{
+								resultSet.setMessage(childResults.getMessage());
+							}
+							resultSet.addResource(tempFolder);
 						}
-						resultSet.addResource(tempFolder);
+						catch (SystemMessageException e)
+						{
+							e.printStackTrace();
+						}
 					}
 				}
 			}
@@ -461,7 +468,15 @@ public class UniversalFileTransferUtility
 			else
 			{
 				tempFolder = getTempFileFor(srcFileOrFolder);
-				IRemoteFile[] children = srcFS.listFoldersAndFiles(srcFileOrFolder);
+				IRemoteFile[] children = null;
+				try
+				{
+					children = srcFS.listFoldersAndFiles(srcFileOrFolder);
+				}
+				catch (SystemMessageException e)
+				{
+					e.printStackTrace();
+				}
 				IResource[] childResources = new IResource[children.length];
 	
 				if (children != null)

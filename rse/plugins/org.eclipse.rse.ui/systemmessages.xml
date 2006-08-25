@@ -1070,6 +1070,12 @@ Contributors:
                     	<LevelOne>Parent folder %1 does not exist. Verify that the correct path was entered.</LevelOne>
                     	<LevelTwo></LevelTwo>
                     </Message>
+                    
+                    
+                    <Message ID="5020" Indicator="I">
+                           <LevelOne>Folder %1 is not readable. Cannot expand</LevelOne>
+                           <LevelTwo></LevelTwo>
+                    </Message>
 
                     <!-- Import/Export messages -->
                     <Message ID="5101" Indicator="E">

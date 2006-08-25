@@ -141,6 +141,8 @@ public class SystemExtractAction extends SystemBaseAction
 		
 		public void run(IProgressMonitor monitor)
 		{
+			try
+			{
 			IRemoteFile[] sources = sourceSS.listFoldersAndFiles(selection);
 			for (int j = 0; j < sources.length && !monitor.isCanceled(); j++)
 			{
@@ -167,6 +169,12 @@ public class SystemExtractAction extends SystemBaseAction
 					System.out.println(e.getMessage());
 					System.out.println("Could not extract " + sources[j].getAbsolutePath());
 				}
+			}
+			}
+			catch (SystemMessageException e)
+			{
+				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+				dlg.open();
 			}
 		}
 		

@@ -108,38 +108,38 @@ public interface IRemoteFileSubSystem extends ISubSystem{
 	 * Return a list of roots/drives on the remote system.
 	 * This version is called directly by users.
 	 */
-	public IRemoteFile[] listRoots() throws InterruptedException;
+	public IRemoteFile[] listRoots() throws InterruptedException, SystemMessageException;
 	/**
 	 * Return a list of all remote folders in the given parent folder on the remote system
 	 * @param parent The parent folder to list folders in
 	 */
-	public IRemoteFile[] listFolders(IRemoteFile parent);
+	public IRemoteFile[] listFolders(IRemoteFile parent) throws SystemMessageException;
 
 	/**
 	 * Return a full list of remote folders in the given parent folder on the remote system.
 	 * @param parent The parent folder to list folders in
 	 * @param fileNameFilter The name pattern for subsetting the file list when this folder is subsequently expanded
 	 */
-	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter);
+	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter) throws SystemMessageException;
 	
 	/**
 	 * Return a list of all remote files in the given parent folder on the remote system
 	 * @param parent The parent folder to list files in
 	 */
-	public IRemoteFile[] listFiles(IRemoteFile parent);
+	public IRemoteFile[] listFiles(IRemoteFile parent) throws SystemMessageException;
 		
 	/**
 	 * Return a list of remote files in the given folder, which match the given name pattern.
 	 * @param parent The parent folder to list files in
 	 * @param fileNameFilter The name pattern to subset the list by, or null to return all files.
 	 */
-	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter);
+	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter) throws SystemMessageException;
 	
 	/**
 	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
 	 * @param parent The parent folder to list folders and files in
 	 */
-	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent);		
+	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent) throws SystemMessageException;		
 	
 	/**
 	 * Return a list of remote folders and files in the given folder. Only file names are subsettable
@@ -147,7 +147,7 @@ public interface IRemoteFileSubSystem extends ISubSystem{
 	 * @param parent The parent folder to list folders and files in
 	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
 	 */
-	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter);
+	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter) throws SystemMessageException;
 
 	/**
 	 * Return a list of remote folders and files in the given folder. 
@@ -159,7 +159,7 @@ public interface IRemoteFileSubSystem extends ISubSystem{
 	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
 	 * @param context The holder of state information
 	 */
-	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context);
+	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context) throws SystemMessageException;
 
 	/**
 	 * Return a subsetted list of remote folders in the given parent folder on the remote system.
@@ -169,7 +169,7 @@ public interface IRemoteFileSubSystem extends ISubSystem{
 	 * @param fileNameFilter The name pattern for subsetting the file list when this folder is subsequently expanded
 	 * @param context The holder of state information
 	 */
-	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context);
+	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context) throws SystemMessageException;
 
 	/**
 	 * Return a list of remote files in the given folder, which match the given name pattern.
@@ -179,7 +179,7 @@ public interface IRemoteFileSubSystem extends ISubSystem{
 	 * @param fileNameFilter The name pattern to subset the list by, or null to return all files.
 	 * @param context The holder of state information
 	 */
-	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context);
+	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context) throws SystemMessageException;
 	/**
 	 * Given a search configuration, searches for its results.
 	 * @param searchConfig a search configuration.

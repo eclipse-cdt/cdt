@@ -18,6 +18,7 @@ package org.eclipse.rse.subsystems.files.core.util;
 import java.util.Vector;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -78,6 +79,8 @@ public class ValidatorFileUniqueName
 		                 isFolder ? RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FOLDERNAME_NOTVALID) :
 		                            RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_FILENAME_NOTVALID)
 		                );  
+		try
+		{
 		IRemoteFile[] contents = parentFolder.getParentRemoteFileSubSystem().listFoldersAndFiles(parentFolder);
 		if (contents!=null)
 		{
@@ -85,6 +88,10 @@ public class ValidatorFileUniqueName
 		  for (int idx=0; idx<names.length; idx++)
 		     names[idx] = contents[idx].getName();
 		  setExistingNamesList(names);
+		}
+		}
+		catch (SystemMessageException e)
+		{
 		}
 
 	    //shell.setCursor(null);

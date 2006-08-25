@@ -47,6 +47,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAda
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
+import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -321,7 +322,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
 	 * @param context The holder of state information
 	 */
-	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context) 
+	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context) throws SystemMessageException
 	{
 		String parentPath = null;
 		if (parent != null) {
@@ -329,15 +330,15 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		} else { 
 			parentPath = "/";
 		}
-		IHostFile[] results = null;
-		try
+		
+		if (!parent.canRead())
 		{
-			results = getFilesAndFolders(null, parentPath, fileNameFilter);
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FOLDER_UNREADABLE).makeSubstitution(parentPath);
+			throw new SystemMessageException(msg);
 		}
-		catch (SystemMessageException e)
-		{
-			
-		}
+		
+		IHostFile[] results = getFilesAndFolders(null, parentPath, fileNameFilter); 
+
 		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
 		parent.setContents(RemoteChildrenContentsType.getInstance(), fileNameFilter, farr);
 		return farr;

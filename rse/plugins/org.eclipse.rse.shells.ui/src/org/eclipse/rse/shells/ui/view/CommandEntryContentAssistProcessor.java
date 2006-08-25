@@ -31,6 +31,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCmdSubSystem;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
@@ -562,7 +563,13 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 		 }
 		 else
 		 {
-		 	fileList = workingDirectory.getParentRemoteFileSubSystem().listFoldersAndFiles(workingDirectory, currentText + "*");
+			 try
+			 {	
+				 fileList = workingDirectory.getParentRemoteFileSubSystem().listFoldersAndFiles(workingDirectory, currentText + "*");
+			 }
+			 catch (SystemMessageException e)
+			 {
+			 }
 		 }
 			//_provider.getChildren(workingDirectory);
 

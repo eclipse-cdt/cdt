@@ -49,6 +49,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEmpty;
@@ -92,12 +93,19 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		}
 		else
 		{
-			IRemoteFile[] children = _subSystem.listFoldersAndFiles(_remoteFile);
-			names = new String[children.length];
-			for (int i = 0; i < children.length; i++)
+			try
 			{
-				names[i] = ((IRemoteFile)children[i]).getName();
-			}		
+				IRemoteFile[] children = _subSystem.listFoldersAndFiles(_remoteFile);
+				names = new String[children.length];
+				for (int i = 0; i < children.length; i++)
+				{
+					names[i] = ((IRemoteFile)children[i]).getName();
+				}		
+			}
+			catch (SystemMessageException e)
+			{
+				names = new String[0];
+			}
 		}
 		prefStore.setValue(ISystemPreferencesConstants.SHOWHIDDEN, false);
 		return names;

@@ -17,6 +17,7 @@
 package samples.ui.propertypages;
 
 import org.eclipse.rse.files.ui.propertypages.SystemAbstractRemoteFilePropertyPageExtensionAction;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.events.SelectionEvent;
@@ -196,6 +197,8 @@ public class FolderInfoPropertyPage
 		 */
 		private void walkFolder(IRemoteFile currFolder)
 		{
+			try
+			{
 			IRemoteFile[] folders = currFolder.getParentRemoteFileSubSystem().listFoldersAndFiles(currFolder);
 			if ((folders != null) && (folders.length>0))
 			{
@@ -215,6 +218,11 @@ public class FolderInfoPropertyPage
 						totalSize += folders[idx].getLength();
 					}
 				}
+			}
+			}
+			catch (SystemMessageException e)
+			{
+				
 			}
 		} // end of walkFolder method
 

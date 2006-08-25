@@ -608,7 +608,8 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			}
 
 			Object[] children = null;
-			
+			try
+			{
 			// if parent exists, get its children according to the filter
 			if (parent != null && parentExists)
 			{
@@ -668,6 +669,12 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 				msg.makeSubstitution(parent.getAbsolutePath());
 				children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, null);
 			}
+			}
+			catch (SystemMessageException e)
+			{
+				children = new SystemMessageObject[1];
+				children[0] = new SystemMessageObject(e.getSystemMessage(), ISystemMessageObject.MSGTYPE_ERROR, null);
+			}
 
 			return children;
 		}
@@ -717,6 +724,8 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 
 		this.monitor = monitor;
 		RemoteFileFilterString fs = null;
+		try
+		{
 		//System.out.println("Inside internalResolveFilterString for parent '"+parent+"' for filterstring '" + filterString+"'");
 		if (filterString == null) // this will be the case when we want to support merging of filter strings
 		{
@@ -774,13 +783,20 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		}
 		else
 			return new Object[] {
-		};
+		};}
+		
+		catch (SystemMessageException e)
+		{
+				SystemMessageObject[] children = new SystemMessageObject[1];
+				children[0] = new SystemMessageObject(e.getSystemMessage(), ISystemMessageObject.MSGTYPE_ERROR, null);
+				return children;
+		}
 	}
 	/**
 	 * Do one filter string relative resolve
 	 */
 	protected Object[] internalResolveOneFilterString(IProgressMonitor monitor, Object parent, RemoteFileFilterString fs, boolean sort)
-		throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException
+		throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException, SystemMessageException
 	{
 		currFilterString = fs;
 		String filterString = fs.toStringNoSwitches();
@@ -826,7 +842,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 * Return a list of all remote folders in the given parent folder on the remote system
 	 * @param parent The parent folder to list folders in
 	 */
-	public IRemoteFile[] listFolders(IRemoteFile parent)
+	public IRemoteFile[] listFolders(IRemoteFile parent) throws SystemMessageException
 	{
 		return listFolders(parent, null);
 	}
@@ -836,7 +852,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 * @param parent The parent folder to list folders in
 	 * @param fileNameFilter The name pattern for subsetting the file list when this folder is subsequently expanded
 	 */
-	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter)
+	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter) throws SystemMessageException
 	{
 		RemoteFileFilterString filterString = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration());
 		filterString.setPath(parent.getAbsolutePath());
@@ -853,7 +869,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 * Return a list of all remote files in the given parent folder on the remote system
 	 * @param parent The parent folder to list files in
 	 */
-	public IRemoteFile[] listFiles(IRemoteFile parent)
+	public IRemoteFile[] listFiles(IRemoteFile parent) throws SystemMessageException
 	{
 		return listFiles(parent, null);
 	}
@@ -863,7 +879,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 * @param parent The parent folder to list files in
 	 * @param fileNameFilter The name pattern to subset the list by, or null to return all files.
 	 */
-	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter)
+	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter) throws SystemMessageException
 	{
 		RemoteFileFilterString filterString = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration());
 		filterString.setPath(parent.getAbsolutePath());
@@ -879,7 +895,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
 	 * @param parent The parent folder to list folders and files in
 	 */
-	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent)
+	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent) throws SystemMessageException
 	{
 		return listFoldersAndFiles(parent, (String) null);
 	}
@@ -892,7 +908,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 * @param parent The parent folder to list folders and files in
 	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
 	 */
-	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter)
+	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter) throws SystemMessageException
 	{
 		
 		

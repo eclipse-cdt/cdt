@@ -51,6 +51,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
+import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemElapsedTimer;
 import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
 import org.eclipse.rse.core.SystemPreferencesManager;
@@ -939,7 +940,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	      	     item.setInputs(getShell(), this, selection);
 	      	   } catch (Exception e)
 	      	   {
-	      	   	 RSEUIPlugin.logError("Error configuring action " + item.getClass().getName(),e);
+	      	   	 SystemBasePlugin.logError("Error configuring action " + item.getClass().getName(),e);
 	      	   }
 	      	 }
 	      	 else if (items[idx] instanceof SystemSubMenuManager)
@@ -1704,7 +1705,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    Widget parentItem = findItem(filterParentInTree); // find tree widget of parent
 	    if ((parentItem == null) || !(parentItem instanceof Item))
 	      return null;
-        TreeItem child = (TreeItem)internalFindReferencedItem((Item)parentItem, filter, 1);	    
+        TreeItem child = (TreeItem)internalFindReferencedItem(parentItem, filter, 1);	    
         if (child == null)
           return null;
         // found it! Now expand it...
@@ -2116,7 +2117,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    	   	      if (debug)
 	    	   	        logDebugMsg("SV event: EVENT_REFRESH_SELECTED_PARENT ");
 	    	   	      TreeItem[] items = getTree().getSelection();    	   	      
-	    	   	      if ((items != null) && (items.length > 0) && (items[0] instanceof Item))
+	    	   	      if ((items != null) && (items.length > 0) && (items[0] != null))
 	    	   	      {
 	    	   	      	//System.out.println("Selection not empty");
 	    	   	      	parentItem = getParentItem(items[0]); // get parent of first selection. Only allowed to select items of same parent.
@@ -2228,15 +2229,15 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    	   	      	  {
 	    	   	      	    Item parItem = getParentItem((Item)findItem(element));
 
-	    	   	      	    if ((parItem != null) && (parItem instanceof Item))
-	    	   	      	    	parentElemItem = (Item)parItem; //.getData();    	   	      	    
+	    	   	      	    if (parItem != null)
+	    	   	      	    	parentElemItem = parItem; //.getData();    	   	      	    
 		   	   	      	    	
 	 	  	   	      	    while (parItem!= null && !(parItem.getData() instanceof ISystemFilterReference))
 	    	   	      	    {
-		    	   	      	    parItem = getParentItem((Item)parItem);	    	
+		    	   	      	    parItem = getParentItem(parItem);	    	
 
-		    	   	      	    if ((parItem != null) && (parItem instanceof Item))
-		    	   	      	    	parentElemItem = (Item)parItem; //.getData();
+		    	   	      	    if (parItem != null)
+		    	   	      	    	parentElemItem = parItem; //.getData();
 	    	   	      	    }
 	    	   	      	  }
 	    	   	      	  if (getRemoteAdapter(element) != null)
@@ -2356,7 +2357,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    	   	        {
 	    	   	          if (parent instanceof IRSEBaseReferencingObject) 
 	    	   	          {
-	                        TreeItem child = (TreeItem)internalFindReferencedItem((Item)parentItem, toSelect, 1);
+	                        TreeItem child = (TreeItem)internalFindReferencedItem(parentItem, toSelect, 1);
 	                        if (child != null)
 	                          toSelect = child.getData();
 	    	   	          }
@@ -2365,7 +2366,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    	   	          {
 	    	   	          	// we are in "don't show filter pools" mode and a new filter was created
 	    	   	          	//  (we get the actual filter, vs on pool ref creation when we get the pool ref)
-	                        TreeItem child = (TreeItem)internalFindReferencedItem((Item)parentItem, toSelect, 1);
+	                        TreeItem child = (TreeItem)internalFindReferencedItem(parentItem, toSelect, 1);
 	                        if (child != null)
 	                          toSelect = child.getData();    	   	          	
 	    	   	          }
@@ -2955,11 +2956,12 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    Vector matches = null;
     	   	        
     	// STEP 1: get the object's remote adapter and subsystem
-    	String newElementName = null;
+    	//String newElementName = null;
     	ISystemRemoteElementAdapter rmtAdapter = null;
     	if (renameObject instanceof String)
     	{
-    	   newElementName = (String)renameObject;
+    		//FIXME How to get the adapter based on the String name?
+    	   //newElementName = (String)renameObject;
     	}
     	else
     	{
@@ -3197,7 +3199,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     		if (doStruct) {
     			updatePlus((Item)widget, element);
     		}	
-    		updateItem((Item)widget, element);
+    		updateItem(widget, element);
     		if (doTimings)
     		{
     		  System.out.println("doOurInternalRefresh timer 1: time to updatePlus and updateItem:" + timer.setEndTime());
@@ -3207,7 +3209,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 
     	if (doStruct) {
     		// pass null for children, to allow updateChildren to get them only if needed
-    		Object[] newChildren = null;
+    	//	Object[] newChildren = null;
 	        if ((widget instanceof Item) && getExpanded((Item)widget))
 	        {
 	    // DKM - get raw children does a query but so does internalRefresh()
@@ -3397,7 +3399,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
    	         //parentName = ra.getAbsoluteName(parentObject);
     	     if (subsystem == null)
                subsystem = ra.getSubSystem(parentObject);
-    	     Item parentItem = (Item)findFirstRemoteItemReference(parentObject, (Item)null); // search all roots for the parent
+    	     Item parentItem = findFirstRemoteItemReference(parentObject, (Item)null); // search all roots for the parent
     	     return selectRemoteObjects(src, subsystem, parentItem);
    	      }
    	      else // else parent is not a remote object. Probably its a filter
@@ -3445,7 +3447,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	//System.out.println("SELECT_REMOTE: PARENT = " + parent + ", PARENTITEM = " + parentItem);
     	if (src instanceof Vector)
     	{
-    	    String elementName = null;
+    	    //String elementName = null;
    	    	Vector selVector = (Vector)src;
    	    	ArrayList selItems = new ArrayList();
    	    	// our goal here is to turn the vector of names or remote objects into a collection of
@@ -3453,11 +3455,11 @@ public class SystemView extends TreeViewer implements  ISystemTree,
    	    	for (int idx=0; idx<selVector.size(); idx++)
    	    	{
    	    	    Object o = selVector.elementAt(idx);
-   	    	    elementName = null;
+   	    	    //elementName = null;
    	    	    if (o instanceof String)
-                  selItem = (Item)findFirstRemoteItemReference((String)o, subsystem, parentItem);
+                  selItem = findFirstRemoteItemReference((String)o, subsystem, parentItem);
                 else
-                  selItem = (Item)findFirstRemoteItemReference(o, parentItem);                      
+                  selItem = findFirstRemoteItemReference(o, parentItem);                      
 
                 if (selItem != null)
                 {
@@ -3478,9 +3480,9 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	{
    	    	if (src instanceof String)
               //selItem = (Item)findFirstRemoteItemReference((String)src, (SubSystem)null, parentItem); Phil test
-              selItem = (Item)findFirstRemoteItemReference((String)src, subsystem, parentItem);
+              selItem = findFirstRemoteItemReference((String)src, subsystem, parentItem);
             else
-              selItem = (Item)findFirstRemoteItemReference(src, parentItem);                      
+              selItem = findFirstRemoteItemReference(src, parentItem);                      
 
     	   	if (selItem != null)
     	   	{
@@ -3558,7 +3560,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
         else  
           fullRefresh = true;
         boolean[] wasExpanded = new boolean[itemsToRefresh.length];
-        boolean anyGivenItemsRemote = false;
+        //boolean anyGivenItemsRemote = false;
         for (int idx=0; idx<itemsToRefresh.length; idx++)
         {
         	TreeItem currItem = itemsToRefresh[idx];
@@ -3567,8 +3569,9 @@ public class SystemView extends TreeViewer implements  ISystemTree,
            	ISystemViewElementAdapter adapter = null;
            	if (data != null)
            	  adapter = getAdapter(data);
-            if (adapter instanceof ISystemRemoteElementAdapter)
-              anyGivenItemsRemote = true;
+            //if (adapter instanceof ISystemRemoteElementAdapter) {
+            //  anyGivenItemsRemote = true;
+            //}
            	if (currItem.getExpanded() && (adapter!=null) && adapter.isPromptable(data))
               setExpandedState(data, false); // collapse temp expansion of prompts
            	else if (currItem.getExpanded())
@@ -4244,7 +4247,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
    	    	  	ISystemFilterReference[] newRefs = new ISystemFilterReference[filters.length];
    	    	  	for (int idx=0; idx<newRefs.length; idx++)
    	    	  	{
-   	               Widget w = internalFindReferencedItem((Item)parentRefItem,filters[idx],1);
+   	               Widget w = internalFindReferencedItem(parentRefItem,filters[idx],1);
    	               newRefs[idx] = (ISystemFilterReference)((Item)w).getData();
    	    	  	}   	    	  	
    	    	    setSelection(new StructuredSelection(newRefs),true);
@@ -4258,7 +4261,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
    	    	  	ISystemFilterStringReference[] newRefs = new ISystemFilterStringReference[filterStrings.length];
    	    	  	for (int idx=0; idx<newRefs.length; idx++)
    	    	  	{
-   	               Widget w = internalFindReferencedItem((Item)parentRefItem,filterStrings[idx],1);
+   	               Widget w = internalFindReferencedItem(parentRefItem,filterStrings[idx],1);
    	               newRefs[idx] = (ISystemFilterStringReference)((Item)w).getData();
    	    	  	}   	    	  	
    	    	    setSelection(new StructuredSelection(newRefs),true);
@@ -4282,7 +4285,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 
     	for (int idx=0; idx<src.length; idx++)
     	{
-    	   oldItems[idx] = (Item)internalFindReferencedItem((Item)parentItem, masterSrc[idx], 1);    	
+    	   oldItems[idx] = (Item)internalFindReferencedItem(parentItem, masterSrc[idx], 1);    	
     	   src[idx] = oldItems[idx].getData();
     	}
     	for (int idx=0; idx<src.length; idx++) 
@@ -5135,7 +5138,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 		      for (int idx=0; idx<deleted.length; idx++)
 		          deleted[idx] = deletedVector.elementAt(idx);
               sr.fireEvent(new org.eclipse.rse.model.SystemResourceChangeEvent(
-                  deleted,ISystemResourceChangeEvent.EVENT_DELETE_MANY,getSelectedParent()));
+                  deleted,ISystemResourceChangeEvents.EVENT_DELETE_MANY,getSelectedParent()));
           }
 		}
         return ok;
@@ -5200,7 +5203,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 			  else
                 sr.fireEvent(
                   new org.eclipse.rse.model.SystemResourceChangeEvent(
-                    element,ISystemResourceChangeEvent.EVENT_RENAME, parentElement));
+                    element,ISystemResourceChangeEvents.EVENT_RENAME, parentElement));
 			}
 		  }
 		}
@@ -5226,7 +5229,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     {
     	//RSEUIPlugin.logDebugMessage(this.getClass().getName(),msg);
     	msg = this.getClass().getName()+": "+msg;
-    	RSEUIPlugin.logInfo(msg);
+    	SystemBasePlugin.logInfo(msg);
     	System.out.println(msg);
     }
 
@@ -5743,7 +5746,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
             FileTransfer.getInstance(),
             EditorInputTransfer.getInstance()
             };    
-        addDragSupport(ops | DND.DROP_DEFAULT, transfers, new SystemViewDataDragAdapter((ISelectionProvider)this));
+        addDragSupport(ops | DND.DROP_DEFAULT, transfers, new SystemViewDataDragAdapter(this));
         addDropSupport(ops | DND.DROP_DEFAULT, transfers, new SystemViewDataDropAdapter(this));
     }
     

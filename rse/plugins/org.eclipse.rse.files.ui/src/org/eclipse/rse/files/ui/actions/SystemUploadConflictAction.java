@@ -67,7 +67,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 	/**
 	 * This is the default dialog used to handle upload conflicts
 	 */
-    private class UploadConflictDialog extends SystemPromptDialog implements ISystemMessages, SelectionListener
+    private class UploadConflictDialog extends SystemPromptDialog implements SelectionListener
     {
         private Button _overwriteLocalButton;
         private Button _overwriteRemoteButton;
@@ -237,7 +237,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 else
                 {
                     enableOkButton(false);
-                    _errorMessage = RSEUIPlugin.getPluginMessage(MSG_VALIDATE_PATH_EMPTY);
+                    _errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PATH_EMPTY);
                     setErrorMessage(_errorMessage);
                 }
             }

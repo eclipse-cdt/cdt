@@ -51,7 +51,7 @@ public abstract class SystemBaseShellAction extends SystemBaseAction
 	public boolean updateSelection(IStructuredSelection selection)
 	{
 		boolean enable = false;
-		Iterator e = ((IStructuredSelection) selection).iterator();
+		Iterator e = selection.iterator();
 		_selected.clear();
 		while (e.hasNext())
 		{

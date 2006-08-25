@@ -19,7 +19,6 @@ package org.eclipse.rse.files.ui.wizards;
 import java.util.Vector;
 
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.FileResources;
@@ -50,7 +49,6 @@ import org.eclipse.rse.ui.wizards.AbstractSystemWizard;
 
 public class SystemNewFileWizard 
                   extends AbstractSystemWizard 
-                  implements  ISystemMessages 
 {	
 	
 	private SystemNewFileWizardMainPage mainPage;
@@ -79,7 +77,7 @@ public class SystemNewFileWizard
 	{
 	   try {
 	      mainPage = createMainPage();	        
-	      addPage((WizardPage)mainPage);
+	      addPage(mainPage);
 	      //super.addPages();
 	   } catch (Exception exc)
 	   {
@@ -175,12 +173,12 @@ public class SystemNewFileWizard
                 newFile = rfss.createFile(newFilePath);
             } catch (RemoteFileIOException exc ) {
                SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileIOException " );  	
-               msg = (RSEUIPlugin.getPluginMessage(FILEMSG_CREATE_FILE_FAILED_EXIST)).makeSubstitution(absName);
+               msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FILE_FAILED_EXIST)).makeSubstitution(absName);
 	           mainPage.setMessage(msg);
 	           ok = false;
 //DY        } catch (Exception RemoteFileSecurityException)  {
             } catch (RemoteFileSecurityException e)  {
-               msg = (RSEUIPlugin.getPluginMessage(FILEMSG_CREATE_FILE_FAILED)).makeSubstitution(absName);
+               msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FILE_FAILED)).makeSubstitution(absName);
 	           SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileSecurityException ");  	
                //SystemMessage.displayErrorMessage(SystemMessage.getDefaultShell(), msg); 
 	           mainPage.setMessage(msg);	                                                

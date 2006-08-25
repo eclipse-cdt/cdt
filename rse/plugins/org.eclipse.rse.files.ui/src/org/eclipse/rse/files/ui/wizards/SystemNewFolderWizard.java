@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.files.ui.wizards;
 
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.filters.ISystemFilter;
@@ -36,7 +35,6 @@ import org.eclipse.rse.ui.wizards.AbstractSystemWizard;
 
 public class SystemNewFolderWizard 
                   extends AbstractSystemWizard 
-                  implements  ISystemMessages 
 {	
 	
 	private SystemNewFolderWizardMainPage mainPage;
@@ -64,7 +62,7 @@ public class SystemNewFolderWizard
 	{
 	   try {
 	      mainPage = createMainPage();	        
-	      addPage((WizardPage)mainPage);
+	      addPage(mainPage);
 	      //super.addPages();
 	   } catch (Exception exc)
 	   {
@@ -166,14 +164,14 @@ public class SystemNewFolderWizard
                }
                else
                {
-               	msg = (RSEUIPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED_EXIST)).makeSubstitution(absName);
+               	msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FOLDER_FAILED_EXIST)).makeSubstitution(absName);
                }
 	           mainPage.setMessage(msg);
 	           ok = false;
 // DY       } catch (Exception RemoteFileSecurityException)  {
             } catch (RemoteFileSecurityException e)  {
 	           SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileSecurityException ");  	
-               msg = (RSEUIPlugin.getPluginMessage(FILEMSG_CREATE_FOLDER_FAILED)).makeSubstitution(absName);
+               msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FOLDER_FAILED)).makeSubstitution(absName);
                //SystemMessage.displayErrorMessage(SystemMessage.getDefaultShell(), msg); 
 	           mainPage.setMessage(msg);	                                                
 	           ok = false;

@@ -67,7 +67,7 @@ import org.eclipse.rse.filters.SystemFilterReference;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemMessageObject;
 import org.eclipse.rse.model.ISystemRegistry;
-import org.eclipse.rse.model.ISystemResourceChangeEvent;
+import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceSet;
 import org.eclipse.rse.model.SystemMessageObject;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
@@ -131,7 +131,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IElementCollector;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
@@ -143,7 +142,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 public class SystemViewRemoteFileAdapter
 	extends AbstractSystemViewAdapter
 	implements ISystemViewElementAdapter, ISystemRemoteElementAdapter, 
-	ISystemMessages, ISystemPropertyConstants
+	ISystemPropertyConstants
 {
 
 	private String xlatedSize = null;
@@ -733,13 +732,13 @@ public class SystemViewRemoteFileAdapter
 			catch (InterruptedException exc)
 			{
 				children = new SystemMessageObject[1];
-				children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, element);
+				children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, element);
 				//System.out.println("Canceled.");
 			}
 			catch (Exception exc)
 			{
 				children = new SystemMessageObject[1];
-				children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
+				children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
 				SystemBasePlugin.logError("Exception resolving file filter strings", exc);
 			} // message already issued        
 		}
@@ -1502,13 +1501,12 @@ public class SystemViewRemoteFileAdapter
 					Display display = Display.getCurrent();
 					if (display != null)
 					{
-						while (display.readAndDispatch());
-						try
-						{
-							Thread.sleep(100);
-						}
-						catch (Exception e)
-						{						
+						while (display.readAndDispatch()) {
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException e) {
+								break;
+							}
 						}
 					}
 				}
@@ -1518,7 +1516,7 @@ public class SystemViewRemoteFileAdapter
 					{
 						Thread.sleep(100);
 					}
-					catch (Exception e)
+					catch (InterruptedException e)
 					{						
 					}
 				}
@@ -2425,7 +2423,7 @@ public class SystemViewRemoteFileAdapter
 			{
 				// update all tree views showing this remote folder...
 				// Hmm, why do we do this, given SystemView sends a rename event? I think we needed to refresh all child cached references to parent folder name...
-				SystemResourceChangeEvent event = new SystemResourceChangeEvent(file.getParentRemoteFile(), ISystemResourceChangeEvent.EVENT_REFRESH_REMOTE, null);
+				SystemResourceChangeEvent event = new SystemResourceChangeEvent(file.getParentRemoteFile(), ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null);
 				sr.fireEvent(event);
 				//sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, file, file.getParentRemoteFile(), file.getParentRemoteFileSubSystem(), null, null);
 			}		

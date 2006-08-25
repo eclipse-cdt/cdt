@@ -48,7 +48,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 
 public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
-		implements ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemMessages,
+		implements ISystemViewElementAdapter, ISystemRemoteElementAdapter,
 		ISystemProcessPropertyConstants, ISystemProcessRemoteConstants
 {	
 	private SystemCopyToClipboardAction copyClipboardAction;
@@ -180,7 +180,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		catch (Exception exc)
 		{
 			children = new SystemMessageObject[1];
-			children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
+			children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
 			SystemBasePlugin.logError("Exception resolving file filter strings", exc);
 		}
 		return children;

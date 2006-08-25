@@ -69,7 +69,7 @@ public class SystemCommandAction extends SystemBaseAction
 	/**
 	 * The command dialog used when running a command. 
 	 */
-	public class CommandDialog extends SystemPromptDialog implements ISystemMessages
+	public class CommandDialog extends SystemPromptDialog
 	{
 		private Combo _cmdText;
 		private Button _launchNewShellButton;
@@ -187,7 +187,7 @@ public class SystemCommandAction extends SystemBaseAction
 
 			if (theNewName.length() == 0)
 			{
-				_errorMessage = RSEUIPlugin.getPluginMessage(MSG_UCMD_INVOCATION_EMPTY);
+				_errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_UCMD_INVOCATION_EMPTY);
 			}
 
 			if (_errorMessage != null)
@@ -528,7 +528,7 @@ public class SystemCommandAction extends SystemBaseAction
 	{
 		boolean enable = false;
 
-		Iterator e = ((IStructuredSelection) selection).iterator();
+		Iterator e = selection.iterator();
 		Object selected = e.next();
 
 		if (selected != null)

@@ -70,7 +70,7 @@ import org.eclipse.swt.widgets.Shell;
  * To listen for changes, use addSelectionListener().
  */
 public class SystemQualifiedRemoteFolderCombo extends Composite 
-       implements ISystemMessages, ISystemCombo
+       implements ISystemCombo
 {
     public static final char CONNECTION_DELIMITER = IRemoteFile.CONNECTION_DELIMITER;
 	private Label              folderLabel = null;
@@ -570,7 +570,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	ISystemProfile profile = sr.getSystemProfile(profileName);
     	if (profile == null)
     	{
-    	  msg = RSEUIPlugin.getPluginMessage(MSG_ERROR_PROFILE_NOTFOUND);
+    	  msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_PROFILE_NOTFOUND);
     	  msg.makeSubstitution(profileName);
     	  throw new Exception(msg.getLevelOneText());
     	}
@@ -579,7 +579,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	IHost conn = RSEUIPlugin.getTheSystemRegistry().getHost(profile,connName);
     	if (conn == null)
     	{
-    	  msg = RSEUIPlugin.getPluginMessage(MSG_ERROR_CONNECTION_NOTFOUND);
+    	  msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_CONNECTION_NOTFOUND);
     	  msg.makeSubstitution(connName);
     	  throw new Exception(msg.getLevelOneText());
     	}
@@ -594,7 +594,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	
     	if (filesubsystems.length == 0)
     	{
-    	  msg = RSEUIPlugin.getPluginMessage(MSG_ERROR_CONNECTION_NOTFOUND);// hmm, what else to say?
+    	  msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_CONNECTION_NOTFOUND);// hmm, what else to say?
     	  msg.makeSubstitution(connName);
     	  throw new Exception(msg.getLevelOneText());
     	}
@@ -606,12 +606,12 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	     ss.connect(getShell()); // will throw exception if fails.
     	   } catch (InterruptedException exc)
     	   {
-    	     msg = RSEUIPlugin.getPluginMessage(MSG_CONNECT_CANCELLED);
+    	     msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_CANCELLED);
     	     msg.makeSubstitution(conn.getHostName());
     	     throw new Exception(msg.getLevelOneText());    	   	 
     	   } catch (Exception exc)
     	   {
-    	     msg = RSEUIPlugin.getPluginMessage(MSG_CONNECT_FAILED);
+    	     msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED);
     	     msg.makeSubstitution(conn.getHostName());
     	     throw new Exception(msg.getLevelOneText());    	   	 
     	   }     	   

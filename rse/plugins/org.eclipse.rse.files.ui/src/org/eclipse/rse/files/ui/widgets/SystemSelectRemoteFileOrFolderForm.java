@@ -44,7 +44,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.util.SystemRemoteFileMatcher;
 import org.eclipse.rse.ui.ISystemIconConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -99,7 +98,7 @@ import org.eclipse.swt.widgets.Text;
  * </ul>
  */
 public class SystemSelectRemoteFileOrFolderForm 
- 	   implements ISelectionChangedListener, ISystemIconConstants, ISystemMessages
+ 	   implements ISelectionChangedListener, ISystemIconConstants
 {	
 	protected static final int PROMPT_WIDTH = 400; // The maximum width of the dialog's prompt, in pixels.
 	
@@ -286,7 +285,7 @@ public class SystemSelectRemoteFileOrFolderForm
         setSystemConnection(connection);
         setShowNewConnectionPrompt(false);
         setAutoExpandDepth(1);        
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		//ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IRemoteFileSubSystem ss = RemoteFileUtility.getFileSubSystem(connection);
 		IRemoteFileSubSystemConfiguration ssf = ss.getParentRemoteFileSubSystemConfiguration();
 		RemoteFileFilterString rffs = new RemoteFileFilterString(ssf);

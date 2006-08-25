@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.files.ui;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -40,7 +39,7 @@ public class SystemFileTreeAndListGroup extends org.eclipse.ui.internal.ide.dial
 {
 	private Object rootObject = null;
 	private Object lastSelectedElement = null;
-	private ISelectionProvider selectionProvider = null;
+	//private ISelectionProvider selectionProvider = null;
 	// CONSTANTS
     private static final RemoteFileEmpty EMPTYROOT = new RemoteFileEmpty();
     	
@@ -142,7 +141,7 @@ public class SystemFileTreeAndListGroup extends org.eclipse.ui.internal.ide.dial
     {
     	IStructuredSelection selection = (IStructuredSelection) event.getSelection();
     	lastSelectedElement = selection.getFirstElement();
-    	selectionProvider = event.getSelectionProvider();
+    	//selectionProvider = event.getSelectionProvider();
     	super.selectionChanged(event);
     }
 

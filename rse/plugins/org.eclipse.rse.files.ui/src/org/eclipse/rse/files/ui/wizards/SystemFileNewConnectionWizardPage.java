@@ -23,8 +23,6 @@ import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorServerPortInput;
 import org.eclipse.rse.ui.wizards.AbstractSystemNewConnectionWizardPage;
-import org.eclipse.rse.ui.wizards.AbstractSystemWizardPage;
-import org.eclipse.rse.ui.wizards.ISystemWizardPage;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;

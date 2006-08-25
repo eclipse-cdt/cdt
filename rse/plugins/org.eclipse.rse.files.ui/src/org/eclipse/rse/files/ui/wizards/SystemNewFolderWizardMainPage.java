@@ -47,7 +47,6 @@ import org.eclipse.swt.widgets.Text;
 
 public class SystemNewFolderWizardMainPage 
  	   extends AbstractSystemWizardPage
- 	   implements  ISystemMessages	             
 {  
 
 	protected String fileNameStr; 
@@ -107,7 +106,7 @@ public class SystemNewFolderWizardMainPage
 			}
 		);			
     		
-		SystemWidgetHelpers.setCompositeHelp(composite_prompts, RSEUIPlugin.HELPPREFIX+NEW_FOLDER_WIZARD);	
+		SystemWidgetHelpers.setCompositeHelp(composite_prompts, RSEUIPlugin.HELPPREFIX+ISystemMessages.NEW_FOLDER_WIZARD);	
 		
 		return composite_prompts;		
 

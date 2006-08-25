@@ -27,7 +27,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Shell;
@@ -37,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
  * Move selected files and folders action.
  */
 public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
-       implements  ISystemMessages, IValidatorRemoteSelection
+       implements  IValidatorRemoteSelection
 {
 	private SystemMessage targetEqualsSrcMsg = null;
 	private SystemMessage targetDescendsFromSrcMsg = null;
@@ -87,7 +86,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		ok = ss.move(srcFileOrFolder, targetFolder, newName, monitor);
 		if (!ok)
 		{
-		  SystemMessage msg = RSEUIPlugin.getPluginMessage(FILEMSG_MOVE_FILE_FAILED);
+		  SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_FILE_FAILED);
 		  msg.makeSubstitution(srcFileOrFolder.getName());
 		  throw new SystemMessageException(msg); 
 		}
@@ -120,19 +119,19 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
         if (selectedFolder.getAbsolutePath().equals(firstSelectionParent.getAbsolutePath()))
         {
         	if (targetEqualsSrcMsg == null)
-              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(FILEMSG_MOVE_TARGET_EQUALS_SOURCE);
+              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_SOURCE);
             return targetEqualsSrcMsg;
         }
         else if (selectedFolder.getAbsolutePath().equals(firstSelection.getAbsolutePath()))
         {
         	if (targetEqualsSrcMsg == null)
-              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(FILEMSG_MOVE_TARGET_EQUALS_SOURCE); // todo: different msg
+              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_SOURCE); // todo: different msg
             return targetEqualsSrcMsg;
         }
         else if (selectedFolder.isDescendantOf(firstSelection))
         {
         	if (targetDescendsFromSrcMsg == null)
-        	 targetDescendsFromSrcMsg = RSEUIPlugin.getPluginMessage(FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOUCE);
+        	 targetDescendsFromSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOUCE);
         	return targetDescendsFromSrcMsg;
         }
         else

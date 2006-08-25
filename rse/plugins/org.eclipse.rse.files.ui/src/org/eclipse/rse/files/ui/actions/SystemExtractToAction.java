@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Shell;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class SystemExtractToAction extends SystemExtractAction implements IValidatorRemoteSelection, ISystemMessages
+public class SystemExtractToAction extends SystemExtractAction implements IValidatorRemoteSelection
 {	
 	protected static final String[] systemTypes = { IRSESystemType.SYSTEMTYPE_LOCAL,
 													IRSESystemType.SYSTEMTYPE_WINDOWS,
@@ -76,7 +76,7 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 		{
 			currentlyProcessingSelection = i;
 			IRemoteFile selection = (IRemoteFile) _selected.get(i);
-			IRemoteFileSubSystem sourceSS = selection.getParentRemoteFileSubSystem();
+			//IRemoteFileSubSystem sourceSS = selection.getParentRemoteFileSubSystem();
 			String title = FileResources.RESID_EXTRACTTO_TITLE;
 			ExtractToDialog dialog = new ExtractToDialog(getShell(), title);
 			if (dialog == null)
@@ -189,7 +189,7 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 	   if (selectedFolder.isDescendantOf(currentSelection))
 	   {
 		   if (targetDescendsFromSrcMsg == null)
-			targetDescendsFromSrcMsg = RSEUIPlugin.getPluginMessage(FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOUCE);
+			targetDescendsFromSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOUCE);
 		   return targetDescendsFromSrcMsg;
 	   }
 	   else

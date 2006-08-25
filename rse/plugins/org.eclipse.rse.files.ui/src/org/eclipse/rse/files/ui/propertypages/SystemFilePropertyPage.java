@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Label;
  * The plugin.xml file registers this for remote file system objects.
  */
 public class SystemFilePropertyPage extends SystemBasePropertyPage
-       implements ISystemMessages, SelectionListener
+       implements SelectionListener
 {
 	
 	protected Label labelNamePrompt, labelTypePrompt, labelPathPrompt, labelSizePrompt, 

@@ -39,7 +39,6 @@ import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
-import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
@@ -53,7 +52,7 @@ import org.eclipse.swt.widgets.Shell;
  * Copy selected files and folders action.
  */
 public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
-       implements  ISystemMessages, IValidatorRemoteSelection
+       implements  IValidatorRemoteSelection
 {
     protected IRemoteFile targetFolder, targetFileOrFolder = null;
     protected IRemoteFile firstSelection = null;
@@ -107,7 +106,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	public boolean updateSelection(IStructuredSelection selection)
 	{
 		boolean enable = true;
-		Iterator e= ((IStructuredSelection) selection).iterator();		
+		Iterator e = selection.iterator();		
 		while (enable && e.hasNext())
 		{
 			Object selectedObject = e.next();
@@ -194,7 +193,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 			ok = ss.copy(srcFileOrFolder, targetFolder, newName, null);
 			if (!ok)
 			{
-			  SystemMessage msg = RSEUIPlugin.getPluginMessage(FILEMSG_COPY_FILE_FAILED);
+			  SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_COPY_FILE_FAILED);
 			  msg.makeSubstitution(srcFileOrFolder.getName());
 			  throw new SystemMessageException(msg); 
 			}
@@ -399,10 +398,9 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 
 		// refresh all instances of this parent, and all affected filters...
 		ISubSystem fileSS = targetFolder.getParentRemoteFileSubSystem();
-		Viewer originatingViewer = null;
-		if (getViewer() instanceof Viewer)
+		Viewer originatingViewer = getViewer();
+		if (originatingViewer != null)
 		{		
-		  originatingViewer = (Viewer)getViewer();
           if (!targetFolder.getAbsolutePath().equals(firstSelectionParent.getAbsolutePath()))
           {
           	  // we select the first instance of the target folder now so that the copied members will be selected in it
@@ -474,7 +472,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
     {
     	if (files == null)
     	{
-   	      IStructuredSelection selection = (IStructuredSelection)getSelection();
+   	      IStructuredSelection selection = getSelection();
    	      files = new IRemoteFile[selection.size()];
    	      Iterator i = selection.iterator();
    	      int idx=0;

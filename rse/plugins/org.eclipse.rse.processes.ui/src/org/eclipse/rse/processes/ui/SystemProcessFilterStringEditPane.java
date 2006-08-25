@@ -54,7 +54,7 @@ import org.eclipse.swt.widgets.Text;
 
 
 public class SystemProcessFilterStringEditPane extends
-		SystemFilterStringEditPane implements ISystemMessages, ISystemProcessRemoteConstants
+		SystemFilterStringEditPane implements ISystemProcessRemoteConstants
 {
 	
 	// GUI widgets
@@ -475,7 +475,7 @@ public class SystemProcessFilterStringEditPane extends
 			  notUnique = true;
 			if (notUnique)
 			{
-			  errorMessage = RSEUIPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE).makeSubstitution(currFilterString);
+			  errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE).makeSubstitution(currFilterString);
 			}
 			controlInError = txtExeName;
 		}

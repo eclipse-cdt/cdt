@@ -19,7 +19,6 @@ package org.eclipse.rse.files.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -53,7 +52,7 @@ public class SystemNewFileFilterFromFolderAction extends SystemNewFileFilterActi
 	public void run()
 	{
 		IRemoteFileSubSystem fileSubsystem = _selected.getParentRemoteFileSubSystem();
-		ISubSystemConfiguration factory = fileSubsystem.getSubSystemConfiguration();
+		//ISubSystemConfiguration config = fileSubsystem.getSubSystemConfiguration();
 		ISystemFilterPool filterPool = fileSubsystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager().getFirstDefaultSystemFilterPool();
 		setParentFilterPool(filterPool);
 		setAllowFilterPoolSelection(fileSubsystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools());			
@@ -72,7 +71,7 @@ public class SystemNewFileFilterFromFolderAction extends SystemNewFileFilterActi
 	{
 		boolean enable = false;
 
-		Iterator e = ((IStructuredSelection) selection).iterator();
+		Iterator e = selection.iterator();
 		Object selected = e.next();
 
 		if (selected != null && selected instanceof IRemoteFile)

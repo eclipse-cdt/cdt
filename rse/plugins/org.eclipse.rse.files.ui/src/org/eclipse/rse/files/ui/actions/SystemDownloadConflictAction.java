@@ -21,7 +21,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -46,7 +45,7 @@ public class SystemDownloadConflictAction extends SystemBaseAction implements Ru
 	/**
 	 * This is the default dialog used to handle download conflicts
 	 */
-	protected class DownloadConflictDialog extends SystemPromptDialog implements ISystemMessages
+	protected class DownloadConflictDialog extends SystemPromptDialog
 	{
 		private Button _keepLocalButton;
 		private Button _replaceLocalButton;

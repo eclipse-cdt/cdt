@@ -60,7 +60,7 @@ import org.eclipse.swt.widgets.Text;
  * Prompts for the details of a single file filter string.
  */
 public class SystemFileFilterStringEditPane
-	extends SystemFilterStringEditPane implements ISystemMessages
+	extends SystemFilterStringEditPane
 {
 	// GUI widgets
 	protected Button filesOnlyCheckBox;
@@ -482,7 +482,7 @@ public class SystemFileFilterStringEditPane
 			{
 				if (textTypes.getText().trim().length() == 0)
 				{
-				  errorMessage = RSEUIPlugin.getPluginMessage(FILEMSG_ERROR_NOFILETYPES);
+				  errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_ERROR_NOFILETYPES);
 				}
 			}
 			controlInError = textFile;
@@ -495,7 +495,7 @@ public class SystemFileFilterStringEditPane
 			  notUnique = true;
 			if (notUnique)
 			{
-			  errorMessage = RSEUIPlugin.getPluginMessage(FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE).makeSubstitution(currFilterString);
+			  errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE).makeSubstitution(currFilterString);
 			}
 			controlInError = textFile;
 		}		  

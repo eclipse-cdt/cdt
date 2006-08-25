@@ -27,7 +27,8 @@ public interface ISystemPageCompleteListener
 	/**
 	 * The callback method. 
 	 * This is called whenever setPageComplete is called by the form code.
-	 * @see {@link SystemBaseForm#addPageCompleteListener(ISystemPageCompleteListener)} 
+	 * @param complete complete indicator as set by the caller
+	 * @see SystemBaseForm#addPageCompleteListener(ISystemPageCompleteListener) 
 	 */
 	public void setPageComplete(boolean complete);	
 		

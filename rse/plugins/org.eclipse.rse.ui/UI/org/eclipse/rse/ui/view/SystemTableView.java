@@ -806,12 +806,13 @@ public class SystemTableView
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
 		Transfer[] transfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(), EditorInputTransfer.getInstance(), FileTransfer.getInstance()};
 
-		addDragSupport(ops, transfers, new SystemViewDataDragAdapter((ISelectionProvider) this));
+		addDragSupport(ops, transfers, new SystemViewDataDragAdapter(this));
 		addDropSupport(ops | DND.DROP_DEFAULT, transfers, new SystemViewDataDropAdapter(this));
 	}
 
-	/**
+	/** 
 	 * Used to asynchronously update the view whenever properties change.
+	 * @see org.eclipse.rse.model.ISystemResourceChangeListener#systemResourceChanged(org.eclipse.rse.model.ISystemResourceChangeEvent)
 	 */
 	public void systemResourceChanged(ISystemResourceChangeEvent event)
 	{
@@ -913,13 +914,14 @@ public class SystemTableView
 				break;
 				
 			case ISystemResourceChangeEvents.EVENT_REFRESH:
-			{
-				  if (child == RSEUIPlugin.getTheSystemRegistry())
-				  {
-					  // treat this as refresh all
-					  child = _objectInput;
-				  }
-			}
+				{
+					if (child == RSEUIPlugin.getTheSystemRegistry())
+					{
+						// treat this as refresh all
+						child = _objectInput;
+					}
+				}
+				break;
 			default :
 				break;
 
@@ -952,8 +954,8 @@ public class SystemTableView
 
 	/**
 	 * This is the method in your class that will be called when a remote resource
-	 *  changes. You will be called after the resource is changed.
-	 * @see org.eclipse.rse.model.ISystemRemoteChangeEvent
+	 * changes. You will be called after the resource is changed.
+	 * @see org.eclipse.rse.model.ISystemRemoteChangeListener#systemRemoteResourceChanged(org.eclipse.rse.model.ISystemRemoteChangeEvent)
 	 */
 	public void systemRemoteResourceChanged(ISystemRemoteChangeEvent event)
 	{

@@ -2497,12 +2497,12 @@ public final class DataStore
 		{
 			for (int i = 0; i < descriptor.getNestedSize(); i++)
 			{
-				DataElement subDescriptor = (DataElement) descriptor.get(i).dereference();
+				DataElement subDescriptor = descriptor.get(i).dereference();
 				String type = subDescriptor.getType();
 				if (type == null)
 				{
 				}
-				if (type.equals(DE.T_COMMAND_DESCRIPTOR))
+				else if (type.equals(DE.T_COMMAND_DESCRIPTOR))
 				{
 					if (keyName.equals(subDescriptor.getValue()))
 						return subDescriptor;
@@ -2646,7 +2646,7 @@ public final class DataStore
 					return results;
 				}
 
-				if (root != null && root.isDeleted())
+				if (root.isDeleted())
 				{
 					results.add(root);
 				}
@@ -2663,7 +2663,7 @@ public final class DataStore
 						{
 							synchronized (child)
 							{
-								if (child != null && child.isDeleted() && !results.contains(child))
+								if (child.isDeleted() && !results.contains(child))
 								{
 
 									results.add(child);
@@ -2704,7 +2704,7 @@ public final class DataStore
 			// contained relationships
 			for (int i = 0; i < descriptor.getNestedSize(); i++)
 			{
-				DataElement object = ((DataElement) descriptor.get(i)).dereference();
+				DataElement object = descriptor.get(i).dereference();
 
 				String objType = (String) object.getElementProperty(DE.P_TYPE);
 				if (objType.equals(DE.T_RELATION_DESCRIPTOR) || objType.equals(DE.T_ABSTRACT_RELATION_DESCRIPTOR))
@@ -2838,7 +2838,7 @@ public final class DataStore
 		{
 			for (int i = 0; i < root.getNestedSize(); i++)
 			{
-				DataElement child = (DataElement) root.get(i);
+				DataElement child = root.get(i);
 				child = child.dereference();
 				if ((child != null) && !searched.contains(child))
 				{
@@ -3235,27 +3235,23 @@ public final class DataStore
 		if (inFile != null)
 		{
 			BufferedInputStream document = new BufferedInputStream(inFile);
-
-			if (document != null)
+			try
 			{
-				try
+				XMLparser parser = new XMLparser(this);
+				DataElement subRoot = parser.parseDocument(document, null);
+				if (subRoot != null)
 				{
-					XMLparser parser = new XMLparser(this);
-					DataElement subRoot = parser.parseDocument(document, null);
-					if (subRoot != null)
+					root.removeNestedData();
+					List nestedData = subRoot.getNestedData();
+					if (nestedData != null)
 					{
-						root.removeNestedData();
-						List nestedData = subRoot.getNestedData();
-						if (nestedData != null)
-						{
-							root.addNestedData(nestedData, true);
-						}
-						refresh(root);
+						root.addNestedData(nestedData, true);
 					}
+					refresh(root);
 				}
-				catch (IOException e)
-				{
-				}
+			}
+			catch (IOException e)
+			{
 			}
 		}
 
@@ -3320,7 +3316,7 @@ public final class DataStore
 			{
 				for (int i = 0; i < descriptor.getNestedSize(); i++)
 				{
-					if (filter((DataElement) descriptor.get(i), dataElement, depth))
+					if (filter(descriptor.get(i), dataElement, depth))
 					{
 						return true;
 					}
@@ -3361,7 +3357,7 @@ public final class DataStore
 	public boolean isTransient(DataElement commandObject)
 	{
 		boolean isTransient = false;
-		DataElement subject = (DataElement) commandObject.get(0);
+		DataElement subject = commandObject.get(0);
 
 		DataElement subjectDescriptor = subject.getDescriptor();
 		if (subjectDescriptor != null)

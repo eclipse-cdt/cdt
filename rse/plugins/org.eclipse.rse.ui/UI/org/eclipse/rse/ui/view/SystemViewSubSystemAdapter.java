@@ -18,7 +18,6 @@ package org.eclipse.rse.ui.view;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.SystemBasePlugin;
@@ -274,13 +273,13 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	    if (subsys.isConnected()) 
 	    {
 	    	String connectedId = subsys.getConnectorService().getUserId();
-	    	boolean connectedIdIsNull = (connectedId == null); // caused crash! Happens on Local subsystems. Phil.
-	    	if (data.getIsLocal() && !connectedIdIsNull && !connectedId.equals(localUserId)) 
+	    	//On Local subsystems, connectedId==null. Phil.
+	    	if (data.getIsLocal() && connectedId!=null && !connectedId.equals(localUserId)) 
 	    	{
     			data.setLocalValue(connectedId);
     			data.setIsLocal(true);
 	    	}
-	    	else if (!connectedIdIsNull && !connectedId.equals(parentUserId)) 
+	    	else if (connectedId!=null && !connectedId.equals(parentUserId)) 
 	    	{
 				data.setLocalValue(connectedId);
 				data.setIsLocal(true);

@@ -60,7 +60,7 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
 
     protected boolean _networkDown = false;
 
-    protected class FindShell implements Runnable
+    protected static class FindShell implements Runnable
     {
 
         private Shell shell;
@@ -237,9 +237,6 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
 
     }
 
-    /**
-     * @see IDomainListener#getShell()
-     */
     public Shell getShell()
     {
         // dy: DomainNotifier (which calls this method) requires the shell not

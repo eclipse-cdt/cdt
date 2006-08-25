@@ -85,7 +85,10 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
     		case '.':
     		case ':':
     			if (buff.length() > 0) {
-    				patternList.add(Pattern.compile(buff.toString()));
+    				if (isCaseSensitive)
+    					patternList.add(Pattern.compile(buff.toString()));
+    				else
+    					patternList.add(Pattern.compile(buff.toString(),Pattern.CASE_INSENSITIVE));
     				buff = new StringBuffer();
     			}
     			break;
@@ -95,7 +98,12 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
     	}
     	
     	if (buff.length() > 0)
-			patternList.add(Pattern.compile(buff.toString()));
+    	{
+			if (isCaseSensitive)
+				patternList.add(Pattern.compile(buff.toString()));
+			else
+				patternList.add(Pattern.compile(buff.toString(),Pattern.CASE_INSENSITIVE));
+    	}
 	    
     	pattern = (Pattern[])patternList.toArray(new Pattern[patternList.size()]); 
 	}

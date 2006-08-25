@@ -85,7 +85,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
         boolean rc = false;
         // check for multiline commands (ends with '\')
         if (line.endsWith("\\")) { //$NON-NLS-1$
-            sMultiline += line.substring(0, line.length()-1);// + " "; //$NON-NLS-1$
+            sMultiline += line.substring(0, line.length()-1);// + " "; 
             bMultiline = true;
             return rc;
         }

@@ -43,4 +43,29 @@ public class DMCs {
         return null;
     }
     
+    /**
+     * Checks all ancestors for a given DMC to see if the given 
+     * potentialAncestor is in fact an ancestor.
+     * @param dmc DMC who's ancestors to check.
+     * @param potentialAncestor Ancestor DMC to look for.
+     * @return true if a match is found.
+     */
+    public static boolean isAncestorOf(IDataModelContext dmc, IDataModelContext potentialAncestor) {
+        // Check the direct parents for a match.
+        for (IDataModelContext parentDmc : dmc.getParents()) {
+            if (potentialAncestor.equals(parentDmc)) {
+                return true;
+            }
+        }
+
+        // Recursively check the parents' parents for a match.
+        for (IDataModelContext parentDmc : dmc.getParents()) {
+            if (isAncestorOf(parentDmc, potentialAncestor)) {
+                return true;
+            }
+        }
+        
+        // No match.
+        return false;
+    }
 }

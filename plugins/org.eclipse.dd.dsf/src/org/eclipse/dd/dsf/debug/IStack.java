@@ -33,6 +33,7 @@ public interface IStack extends IDataModelService {
      * Stack frame information. 
      */
     public interface IFrameData extends IDataModelData {
+        int getLevel();
         IAddress getAddress();
         String getFile();
         String getFunction();

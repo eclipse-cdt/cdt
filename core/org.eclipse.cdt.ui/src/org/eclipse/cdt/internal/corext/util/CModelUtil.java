@@ -11,15 +11,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.util;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
@@ -114,4 +120,57 @@ public class CModelUtil {
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns the translation unit for the file given or <code>null</code>.
+	 */
+    public static ITranslationUnit findTranslationUnit(IFile file) {
+		if (CoreModel.isTranslationUnit(file)) {
+			ICProject cp= CoreModel.getDefault().getCModel().getCProject(file.getProject().getName());
+			if (cp != null) {
+				ICElement tu;
+				try {
+					tu = cp.findElement(file.getProjectRelativePath());
+					if (tu instanceof ITranslationUnit) {
+						return (ITranslationUnit) tu;
+					}
+				} catch (CModelException e) {
+					CUIPlugin.getDefault().log(e);
+				}
+			}
+		}
+        return null;
+    }
+
+	/**
+	 * Returns the translation unit for the location given or <code>null</code>.
+	 * @throws CModelException 
+	 */
+	public static ITranslationUnit findTranslationUnitForLocation(IPath location, ICProject preferredProject) throws CModelException {
+		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
+		if (files.length > 0) {
+			for (int i = 0; i < files.length; i++) {
+				IFile file = files[i];
+				ITranslationUnit tu= findTranslationUnit(file);
+				if (tu != null) {
+					return tu;
+				}
+			}
+		}
+		else {
+			CoreModel coreModel = CoreModel.getDefault();
+			ITranslationUnit tu= coreModel.createTranslationUnitFrom(preferredProject, location);
+			if (tu == null) {
+				ICProject[] projects= coreModel.getCModel().getCProjects();
+				for (int i = 0; i < projects.length && tu == null; i++) {
+					ICProject project = projects[i];
+					if (!preferredProject.equals(project)) {
+						tu= coreModel.createTranslationUnitFrom(project, location);
+					}
+				}
+			}
+			return tu;
+		}
+		return null;
+	}	
 }

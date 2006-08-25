@@ -11,10 +11,19 @@
 
 package org.eclipse.cdt.internal.ui.missingapi;
 
+import java.util.Comparator;
+
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 public class CIndexReference {
+	public static final Comparator COMPARE_OFFSET = new Comparator() {
+		public int compare(Object o1, Object o2) {
+			CIndexReference r1= (CIndexReference) o1;
+			CIndexReference r2= (CIndexReference) o2;
+			return r1.fOffset - r2.fOffset;
+		}
+	};
 	private int fOffset;
 	private int fLength;
 	private ITranslationUnit fTranslationUnit;

@@ -49,6 +49,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 public class CIndexQueries {
     public static class IPDOMInclude {
@@ -98,11 +99,7 @@ public class CIndexQueries {
 
 	private static ITranslationUnit toTranslationUnit(ICProject cproject, String pathStr) throws CModelException {
 		IPath path= Path.fromOSString(pathStr);
-		ICElement e= cproject.findElement(path);
-		if (e instanceof ITranslationUnit) {
-			return (ITranslationUnit) e;
-		}
-		return null;
+		return CModelUtil.findTranslationUnitForLocation(path, cproject);
 	}
 
 

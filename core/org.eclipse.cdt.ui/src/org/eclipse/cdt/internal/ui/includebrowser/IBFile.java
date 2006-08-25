@@ -13,13 +13,13 @@ package org.eclipse.cdt.internal.ui.includebrowser;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 import org.eclipse.cdt.internal.ui.util.CoreUtility;
 
@@ -40,26 +40,7 @@ public class IBFile {
 	
 	public IBFile(ICProject preferredProject, IPath location) throws CModelException {
 		fLocation= location;
-		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
-		if (files.length > 0) {
-			for (int i = 0; i < files.length && fTU == null; i++) {
-				IFile file = files[i];
-				fTU= IBConversions.fileToTU(file);
-			}
-		}
-		else {
-			CoreModel coreModel = CoreModel.getDefault();
-			fTU= coreModel.createTranslationUnitFrom(preferredProject, location);
-			if (fTU == null) {
-				ICProject[] projects= coreModel.getCModel().getCProjects();
-				for (int i = 0; i < projects.length && fTU == null; i++) {
-					ICProject project = projects[i];
-					if (!preferredProject.equals(project)) {
-						fTU= coreModel.createTranslationUnitFrom(project, location);
-					}
-				}
-			}
-		}
+		fTU= CModelUtil.findTranslationUnitForLocation(location, preferredProject);
 	}
 
 	public IPath getLocation() {

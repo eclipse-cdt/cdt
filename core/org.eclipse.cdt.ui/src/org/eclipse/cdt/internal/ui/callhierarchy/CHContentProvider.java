@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -120,6 +121,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	private CHNode createRefbyNode(CHNode parent, ICElement element, CIndexReference[] refs) {
 		ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
 		CHNode node= new CHNode(parent, tu, refs[0].getTimestamp(), element);
+		Arrays.sort(refs, CIndexReference.COMPARE_OFFSET);
 		for (int i = 0; i < refs.length; i++) {
 			CIndexReference reference = refs[i];
 			node.addReference(new CHReferenceInfo(reference.getOffset(), reference.getLength()));
@@ -130,6 +132,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	private CHNode createReftoNode(CHNode parent, ITranslationUnit tu, ICElement[] elements, CIndexReference[] references) {
 		CIndexReference firstRef= references[0];
 		CHNode node= new CHNode(parent, tu, firstRef.getTimestamp(), elements[0]);
+		Arrays.sort(references, CIndexReference.COMPARE_OFFSET);		
 		for (int i = 0; i < references.length; i++) {
 			CIndexReference reference = references[i];
 			node.addReference(new CHReferenceInfo(reference.getOffset(), reference.getLength()));

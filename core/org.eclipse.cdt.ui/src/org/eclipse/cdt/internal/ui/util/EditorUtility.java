@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
@@ -258,7 +259,7 @@ public class EditorUtility {
 		}
 
 		if (input instanceof IStorage) { 
-			return new ExternalEditorInput((IStorage)input, null);
+			return new ExternalEditorInput((IStorage)input);
 		}
 		return null;
 	}

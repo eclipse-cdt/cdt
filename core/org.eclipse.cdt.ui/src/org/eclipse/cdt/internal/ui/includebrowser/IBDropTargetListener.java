@@ -32,6 +32,8 @@ import org.eclipse.ui.part.ResourceTransfer;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
+
 public class IBDropTargetListener implements DropTargetListener {
     
     private IBViewPart fIncludeBrowser;
@@ -138,7 +140,7 @@ public class IBDropTargetListener implements DropTargetListener {
         for (int i = 0; i < files.length; i++) {
             IResource resource = files[i];
             if (resource.getType() == IResource.FILE) {
-                ITranslationUnit tu= IBConversions.fileToTU((IFile) resource);
+                ITranslationUnit tu= CModelUtil.findTranslationUnit((IFile) resource);
                 if (tu != null) {
                     return tu;
                 }

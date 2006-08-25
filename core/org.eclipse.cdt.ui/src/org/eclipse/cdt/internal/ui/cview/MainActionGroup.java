@@ -192,7 +192,7 @@ public class MainActionGroup extends CViewActionGroup {
 			addSearchMenu(menu, celements);
 			menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
 			menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS + "-end")); //$NON-NLS-1$
-			menu.add(new Separator());
+			menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
 
 			openViewActionGroup.fillContextMenu(menu);
 			crefactoringActionGroup.fillContextMenu(menu);

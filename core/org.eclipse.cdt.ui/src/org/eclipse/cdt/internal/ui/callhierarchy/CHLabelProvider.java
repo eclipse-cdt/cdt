@@ -24,16 +24,18 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
-import org.eclipse.cdt.ui.CElementLabelProvider;
 
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.ImageImageDescriptor;
 
 public class CHLabelProvider extends LabelProvider implements IColorProvider {
-    private CElementLabelProvider fCLabelProvider= new CElementLabelProvider(CElementLabelProvider.SHOW_PARAMETERS);
-//    private Color fColorInactive;
+	private final static int LABEL_OPTIONS_SIMPLE= CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.M_PARAMETER_TYPES;
+	private final static int LABEL_OPTIONS_SHOW_FILES= LABEL_OPTIONS_SIMPLE | CElementLabels.MF_POST_FILE_QUALIFIED;
+	
+    private CUILabelProvider fCLabelProvider= new CUILabelProvider(LABEL_OPTIONS_SIMPLE, 0);
     private CHContentProvider fContentProvider;
     private HashMap fCachedImages= new HashMap();
-    private boolean fShowFiles;
     
     public CHLabelProvider(Display display, CHContentProvider cp) {
 //        fColorInactive= display.getSystemColor(SWT.COLOR_DARK_GRAY);
@@ -57,22 +59,7 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
             CHNode node= (CHNode) element;
             ICElement decl= node.getRepresentedDeclaration();
             if (decl != null) {
-            	String text= fCLabelProvider.getText(decl);
-                if (fShowFiles) {
-                	// mstodo append filenames
-//                	ICElement tu= null;
-//                	while (tu == null && decl != null) {
-//                		if (decl instanceof ITranslationUnit) {
-//                			tu= decl;
-//                		}
-//                		else {
-//                			decl= decl.getParent();
-//                		}
-//                	}
-//                	if (tu != null) {
-//                		
-                }
-            	return text;
+            	return fCLabelProvider.getText(decl);
             }
         }
         return super.getText(element);
@@ -118,16 +105,10 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
     }
 
     public Color getForeground(Object element) {
-//        if (element instanceof CHNode) {
-//            CHNode node= (CHNode) element;
-//            if (!node.isActiveCode()) {
-//                return fColorInactive;
-//            }
-//        }
         return null;
     }
 
     public void setShowFiles(boolean show) {
-        fShowFiles= show;
+        fCLabelProvider.setTextFlags(show ? LABEL_OPTIONS_SHOW_FILES : LABEL_OPTIONS_SIMPLE);
     }
 }

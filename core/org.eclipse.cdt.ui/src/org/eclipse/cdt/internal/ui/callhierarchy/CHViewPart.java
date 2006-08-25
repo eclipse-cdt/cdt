@@ -83,6 +83,7 @@ public class CHViewPart extends ViewPart {
     private static final String KEY_WORKING_SET_FILTER = "workingSetFilter"; //$NON-NLS-1$
     private static final String KEY_FILTER_VARIABLES = "variableFilter"; //$NON-NLS-1$
     private static final String KEY_FILTER_MACROS = "macroFilter"; //$NON-NLS-1$
+    private static final String KEY_SHOW_FILES= "showFilesInLabels"; //$NON-NLS-1$
     
     private IMemento fMemento;
     private boolean fShowsMessage;
@@ -208,11 +209,16 @@ public class CHViewPart extends ViewPart {
         boolean referencedBy= true;
         boolean filterVariables= false;
         boolean filterMacros= false;
+        boolean showFiles= false;
         
         if (fMemento != null) {
             filterVariables= TRUE.equals(fMemento.getString(KEY_FILTER_VARIABLES));
             filterMacros= TRUE.equals(fMemento.getString(KEY_FILTER_MACROS));
+            showFiles= TRUE.equals(fMemento.getString(KEY_SHOW_FILES));
         }
+        
+        fLabelProvider.setShowFiles(showFiles);
+        fShowFilesInLabelsAction.setChecked(showFiles);
         
         fReferencedByAction.setChecked(referencedBy);
         fMakesReferenceToAction.setChecked(!referencedBy);
@@ -237,6 +243,7 @@ public class CHViewPart extends ViewPart {
         }
         memento.putString(KEY_FILTER_MACROS, String.valueOf(fFilterMacrosAction.isChecked()));
         memento.putString(KEY_FILTER_VARIABLES, String.valueOf(fFilterVariablesAction.isChecked()));
+        memento.putString(KEY_SHOW_FILES, String.valueOf(fShowFilesInLabelsAction.isChecked()));
         super.saveState(memento);
     }
 

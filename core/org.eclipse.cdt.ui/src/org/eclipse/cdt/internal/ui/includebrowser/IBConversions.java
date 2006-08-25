@@ -18,27 +18,11 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import org.eclipse.cdt.core.model.*;
-import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 public class IBConversions {
-    public static ITranslationUnit fileToTU(IFile file) {
-		if (CoreModel.isTranslationUnit(file)) {
-			ICProject cp= CoreModel.getDefault().getCModel().getCProject(file.getProject().getName());
-			if (cp != null) {
-				ICElement tu;
-				try {
-					tu = cp.findElement(file.getProjectRelativePath());
-					if (tu instanceof ITranslationUnit) {
-						return (ITranslationUnit) tu;
-					}
-				} catch (CModelException e) {
-					CUIPlugin.getDefault().log(e);
-				}
-			}
-		}
-        return null;
-    }
 
     public static IBNode selectionToNode(ISelection sel) {
         if (sel instanceof IStructuredSelection) {
@@ -79,7 +63,7 @@ public class IBConversions {
             }
             IFile file= (IFile) adaptable.getAdapter(IFile.class);
             if (file != null) {
-                result= fileToTU(file);
+                result= CModelUtil.findTranslationUnit(file);
                 if (result != null) {
                     return result;
                 }

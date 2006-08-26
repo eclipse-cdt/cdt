@@ -45,4 +45,15 @@ public interface ICDITargetConfiguration2 extends ICDITargetConfiguration {
 	 */
 	boolean supportsRuntimeTypeIdentification();
 
+	/**
+	 * Returns whether this target supports having address breakpoints
+	 * enabled when a debug session starts.
+	 * If so this means address breaks will not be disabled on startup.
+	 * 
+	 * @return  whether this target supports having address breakpoints
+	 * enabled when a debug session starts.
+	 * If so this means address breaks will not be disabled on startup.
+	 */
+	boolean supportsAddressBreaksOnStartup();
+
 }

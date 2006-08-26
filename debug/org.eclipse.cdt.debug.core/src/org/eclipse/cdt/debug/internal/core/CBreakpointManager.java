@@ -43,6 +43,8 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
@@ -850,18 +852,25 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	public void setInitialBreakpoints() {
 		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
 		IBreakpoint[] bps = manager.getBreakpoints( CDIDebugModel.getPluginIdentifier() );
-		for( int i = 0; i < bps.length; i++ ) {
-			if ( bps[i] instanceof ICBreakpoint && isTargetBreakpoint( (ICBreakpoint)bps[i] ) && !getBreakpointMap().isRegistered( (ICBreakpoint)bps[i] ) ) {
-				if ( bps[i] instanceof ICAddressBreakpoint ) {
-					// disable address breakpoints to prevent the debugger to insert them prematurely
-					try {
-						bps[i].setEnabled( false );
-					}
-					catch( CoreException e ) {
+
+		ICDITargetConfiguration config = getDebugTarget().getCDITarget().getConfiguration();
+
+		if (!(config instanceof ICDITargetConfiguration2) || !((ICDITargetConfiguration2)config).supportsAddressBreaksOnStartup())
+		{ // Disable address breaks of the target does not support setting them on startup
+			for( int i = 0; i < bps.length; i++ ) {
+				if ( bps[i] instanceof ICBreakpoint && isTargetBreakpoint( (ICBreakpoint)bps[i] ) && !getBreakpointMap().isRegistered( (ICBreakpoint)bps[i] ) ) {
+					if ( bps[i] instanceof ICAddressBreakpoint ) {
+						// disable address breakpoints to prevent the debugger to insert them prematurely
+						try {
+							bps[i].setEnabled( false );
+						}
+						catch( CoreException e ) {
+						}
 					}
 				}
-			}
+			}			
 		}
+		
 		ICBreakpoint[] breakpoints = register( bps );
 		setBreakpointsOnTarget0( breakpoints );
 	}

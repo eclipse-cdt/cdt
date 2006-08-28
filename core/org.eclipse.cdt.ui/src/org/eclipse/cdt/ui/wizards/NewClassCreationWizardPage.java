@@ -1619,7 +1619,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		{
 			if (parent instanceof PDOMBinding)
 			{							
-				buf.insert(0, ((PDOMBinding)parent).getName() + "::");
+				buf.insert(0, ((PDOMBinding)parent).getName() + "::"); //$NON-NLS-1$
 			}
 			parent = parent.getParentNode();
 		}
@@ -1643,7 +1643,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 
         IQualifiedTypeName typeName = new QualifiedTypeName(className);
-        if (typeName.isQualified()) { //$NON-NLS-1$
+        if (typeName.isQualified()) {
             status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.QualifiedClassName")); //$NON-NLS-1$
             return status;
         }

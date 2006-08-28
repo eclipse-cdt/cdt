@@ -15,10 +15,14 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.editors.text.ILocationProvider;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
@@ -55,6 +59,9 @@ public class IBConversions {
         if (object instanceof ITranslationUnit) {
             return (ITranslationUnit) object;
         }
+        if (object instanceof IFile) {
+        	return CModelUtil.findTranslationUnit((IFile) object);
+        }
         if (object instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) object;
             ITranslationUnit result= (ITranslationUnit) adaptable.getAdapter(ITranslationUnit.class);
@@ -63,10 +70,19 @@ public class IBConversions {
             }
             IFile file= (IFile) adaptable.getAdapter(IFile.class);
             if (file != null) {
-                result= CModelUtil.findTranslationUnit(file);
-                if (result != null) {
-                    return result;
-                }
+                return CModelUtil.findTranslationUnit(file);
+            }
+
+            ILocationProvider locProvider= (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
+            if (locProvider != null) {
+            	IPath path= locProvider.getPath(locProvider);
+            	if (path != null) {
+            		try {
+						return CModelUtil.findTranslationUnitForLocation(path, null);
+					} catch (CModelException e) {
+						CUIPlugin.getDefault().log(e);
+					}
+            	}
             }
         }
         return null;

@@ -159,12 +159,15 @@ public class CModelUtil {
 		}
 		else {
 			CoreModel coreModel = CoreModel.getDefault();
-			ITranslationUnit tu= coreModel.createTranslationUnitFrom(preferredProject, location);
+			ITranslationUnit tu= null;
+			if (preferredProject != null) {
+				tu= coreModel.createTranslationUnitFrom(preferredProject, location);
+			}
 			if (tu == null) {
 				ICProject[] projects= coreModel.getCModel().getCProjects();
 				for (int i = 0; i < projects.length && tu == null; i++) {
 					ICProject project = projects[i];
-					if (!preferredProject.equals(project)) {
+					if (!project.equals(preferredProject)) {
 						tu= coreModel.createTranslationUnitFrom(project, location);
 					}
 				}

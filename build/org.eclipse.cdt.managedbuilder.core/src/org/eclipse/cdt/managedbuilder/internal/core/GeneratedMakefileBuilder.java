@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
-import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
@@ -47,7 +46,6 @@ import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -158,58 +156,54 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			IResource resource = delta.getResource();
 			// If the project has changed, then a build is needed and we can stop
 			if (resource != null && resource.getProject() == getProject()) {
-				IResourceDelta[] kids = delta.getAffectedChildren();
-				for (int index = kids.length - 1; index >= 0; --index) {
-					IResource changedResource = kids[index].getResource();
-					if (changedResource instanceof IFolder) {
-						return true;
-					} else {
-						String name = changedResource.getName();						
-						if ((!name.equals(buildGoalName) &&
-							// TODO:  Also need to check for secondary outputs
-							(changedResource.isDerived() || 
-							(isProjectFile(changedResource)) ||
-							(isGeneratedResource(changedResource))))) {
-						     // The resource that changed has attributes which make it uninteresting, 
-							 // so don't do anything
-						    ;							
-					    } 
-						else {
-							//  TODO:  Should we do extra checks here to determine if a build is really needed,
-							//         or do you just do exclusion checks like above?
-							//         We could check for:
-							//         o  The build goal name
-							//         o  A secondary output
-							//         o  An input file to a tool:
-							//            o  Has an extension of a source file used by a tool
-							//            o  Has an extension of a header file used by a tool
-							//            o  Has the name of an input file specified in an InputType via:
-							//               o  An Option
-							//               o  An AdditionalInput
-							//
-							//if (resourceName.equals(buildGoalName) || 
-							//	(buildInfo.buildsFileType(ext) || buildInfo.isHeaderFile(ext))) {
+				switch(resource.getType()){
+				case IResource.FILE:
+					String name = resource.getName();						
+					if ((!name.equals(buildGoalName) &&
+						// TODO:  Also need to check for secondary outputs
+						(resource.isDerived() || 
+						(isProjectFile(resource)) ||
+						(isGeneratedResource(resource))))) {
+					     // The resource that changed has attributes which make it uninteresting, 
+						 // so don't do anything
+					    ;							
+				    } 
+					else {
+						//  TODO:  Should we do extra checks here to determine if a build is really needed,
+						//         or do you just do exclusion checks like above?
+						//         We could check for:
+						//         o  The build goal name
+						//         o  A secondary output
+						//         o  An input file to a tool:
+						//            o  Has an extension of a source file used by a tool
+						//            o  Has an extension of a header file used by a tool
+						//            o  Has the name of an input file specified in an InputType via:
+						//               o  An Option
+						//               o  An AdditionalInput
+						//
+						//if (resourceName.equals(buildGoalName) || 
+						//	(buildInfo.buildsFileType(ext) || buildInfo.isHeaderFile(ext))) {
+						
+							// We need to do an incremental build, at least
+							incrBuildNeeded = true;
+							if (delta.getKind() == IResourceDelta.REMOVED) {
+								// If a meaningful resource was removed, then force a full build
+								// This is required because an incremental build will trigger make to
+								// do nothing for a missing source, since the state after the file 
+								// removal is uptodate, as far as make is concerned
+								// A full build will clean, and ultimately trigger a relink without
+								// the object generated from the deleted source, which is what we want
+								fullBuildNeeded = true;
+								// There is no point in checking anything else since we have
+								// decided to do a full build anyway
+								break;
+							}
 							
-								// We need to do an incremental build, at least
-								incrBuildNeeded = true;
-								if (kids[index].getKind() == IResourceDelta.REMOVED) {
-									// If a meaningful resource was removed, then force a full build
-									// This is required because an incremental build will trigger make to
-									// do nothing for a missing source, since the state after the file 
-									// removal is uptodate, as far as make is concerned
-									// A full build will clean, and ultimately trigger a relink without
-									// the object generated from the deleted source, which is what we want
-									fullBuildNeeded = true;
-									// There is no point in checking anything else since we have
-									// decided to do a full build anyway
-									break;
-								}
-								
-							//}
-						} 
-					}
+						//}
+					} 
+
+					return false;
 				}
-				return false;
 			}
 			return true;
 		}

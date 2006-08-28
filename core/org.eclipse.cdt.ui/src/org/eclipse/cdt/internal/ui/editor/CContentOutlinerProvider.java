@@ -27,8 +27,12 @@ import org.eclipse.cdt.internal.core.model.SourceManipulation;
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -36,6 +40,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
+import org.eclipse.ui.progress.IElementCollector;
+import org.eclipse.ui.progress.PendingUpdateAdapter;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Manages contents of the outliner.
@@ -86,12 +93,66 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		setIncludesGrouping(PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
 		fManager = createContentManager(viewer, site);
 	}
+	
+	/**
+	 * Subclass of DeferredTreeContentManager used to refresh
+	 * the outline when the "group includes" setting is enabled.
+	 */
+	class DeferredTreeCContentManager extends DeferredTreeContentManager {
+
+		public DeferredTreeCContentManager(AbstractTreeViewer viewer, IWorkbenchPartSite site) {
+			super(CContentOutlinerProvider.this, viewer, site);
+		}
+
+		public DeferredTreeCContentManager(AbstractTreeViewer viewer) {
+			super(CContentOutlinerProvider.this, viewer);
+		}
+		
+	    protected IElementCollector createElementCollector(final Object parent,
+	            final PendingUpdateAdapter placeholder) {
+	    	
+	    	// Return a special element collector when the parent
+	    	// is the translation unit. In that case we need to
+	    	// refresh the outline when all the content has become
+	    	// available.
+	    	if (!(parent instanceof ITranslationUnit)) {
+	    		return super.createElementCollector(parent, placeholder);
+	    	}
+	        return new IElementCollector() {
+		            public void add(Object element, IProgressMonitor monitor) {
+	                add(new Object[] { element }, monitor);
+	            }
+
+	            public void add(Object[] elements, IProgressMonitor monitor) {
+	                addChildren(parent, elements, monitor);
+	            }
+
+	            public void done() {
+	            	runClearPlaceholderJob(placeholder);
+	            	// runClearPlaceholderJob uses a WorkbenchJob and contentUpdated
+	            	// executes via asyncExec(). There can be race conditions if we
+	            	// don't wrap contentUpdated in a job.
+	            	if (CContentOutlinerProvider.this.fIncludesGrouping) {
+	            		WorkbenchJob job = new WorkbenchJob("") { //$NON-NLS-1$
+	            			
+	            			public IStatus runInUIThread(IProgressMonitor monitor) {
+	            				contentUpdated();
+	            				return Status.OK_STATUS;
+	            			}
+	            		};
+	            		job.setSystem(true);
+	            		job.schedule();
+	            	}
+	            }
+	        };	
+	    }
+	}
 
 	protected DeferredTreeContentManager createContentManager(TreeViewer viewer, IWorkbenchPartSite site) {
 		if (site == null) {
-			return new DeferredTreeContentManager(this, viewer);
+			return new DeferredTreeCContentManager(viewer);
 		}
-		return new DeferredTreeContentManager(this, viewer, site);
+		return new DeferredTreeCContentManager(viewer, site);
 	}
 
 	/**

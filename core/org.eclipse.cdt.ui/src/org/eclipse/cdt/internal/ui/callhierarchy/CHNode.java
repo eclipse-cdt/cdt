@@ -22,6 +22,8 @@ import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 
+import org.eclipse.cdt.internal.ui.util.CoreUtility;
+
 /**
  * Represents a node in the include browser
  */
@@ -39,7 +41,6 @@ public class CHNode implements IAdaptable {
      * Creates a new node for the include browser
      */
     public CHNode(CHNode parent, ITranslationUnit fileOfReferences, long timestamp, ICElement decl) {
-    	assert decl != null;
         fParent= parent;
         fFileOfReferences= fileOfReferences;
         fReferences= Collections.EMPTY_LIST;
@@ -54,7 +55,9 @@ public class CHNode implements IAdaptable {
         if (fParent != null) {
             hashCode= fParent.hashCode() * 31;
         }
-        hashCode+= fRepresentedDecl.hashCode();
+        if (fRepresentedDecl != null) {
+        	hashCode+= fRepresentedDecl.hashCode();
+        }
         return hashCode;
     }   
 
@@ -72,14 +75,14 @@ public class CHNode implements IAdaptable {
 			return false;
 		}
 
-		return fRepresentedDecl.equals(rhs.fRepresentedDecl);
+		return CoreUtility.safeEquals(fRepresentedDecl, rhs.fRepresentedDecl);
     }
     
     private boolean computeIsRecursive(CHNode parent, ICElement decl) {
         if (parent == null || decl == null) {
             return false;
         }
-        if (decl.equals(parent.getRepresentedDeclaration())) {
+        if (decl.equals(parent.fRepresentedDecl)) {
             return true;
         }
         return computeIsRecursive(parent.fParent, decl);
@@ -146,5 +149,13 @@ public class CHNode implements IAdaptable {
 			return getRepresentedDeclaration();
 		}
 		return null;
+	}
+	
+	public boolean isMultiDef() {
+		return false;
+	}
+
+	public ICElement getOneRepresentedDeclaration() {
+		return getRepresentedDeclaration();
 	}
 }

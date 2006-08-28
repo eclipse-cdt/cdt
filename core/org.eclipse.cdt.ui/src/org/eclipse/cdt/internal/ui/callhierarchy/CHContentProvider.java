@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.ui.missingapi.CIndexReference;
 import org.eclipse.cdt.internal.ui.missingapi.CalledByResult;
 import org.eclipse.cdt.internal.ui.missingapi.CallsToResult;
 import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeContentProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 /** 
  * This is the content provider for the call hierarchy.
@@ -42,6 +43,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 
 	private static final IProgressMonitor NPM = new NullProgressMonitor();
 	private boolean fComputeReferencedBy = true;
+	private WorkingSetFilterUI fFilter;
 
 	/**
 	 * Constructs the content provider.
@@ -63,6 +65,9 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 			ICElement element = (ICElement) parentElement;
 			ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
 			return new Object[] { new CHNode(null, tu, 0, element) };
+		}
+		if (parentElement instanceof CHMultiDefNode) {
+			return ((CHMultiDefNode) parentElement).getChildNodes();
 		}
 		if (parentElement instanceof CHNode) {
 			CHNode node = (CHNode) parentElement;
@@ -103,10 +108,12 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 			for (int i = 0; i < elements.length; i++) {
 				ICElement element = elements[i];
 				if (element != null) {
-					CIndexReference[] refs= calledBy.getReferences(element);
-					if (refs != null && refs.length > 0) {
-						CHNode node = createRefbyNode(parent, element, refs);
-						result.add(node);
+					if (fFilter == null || fFilter.isPartOfWorkingSet(element)) {
+						CIndexReference[] refs= calledBy.getReferences(element);
+						if (refs != null && refs.length > 0) {
+							CHNode node = createRefbyNode(parent, element, refs);
+							result.add(node);
+						}
 					}
 				}
 			}
@@ -130,8 +137,18 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	}
 
 	private CHNode createReftoNode(CHNode parent, ITranslationUnit tu, ICElement[] elements, CIndexReference[] references) {
-		CIndexReference firstRef= references[0];
-		CHNode node= new CHNode(parent, tu, firstRef.getTimestamp(), elements[0]);
+		assert elements.length > 0;
+
+		CHNode node;
+		long timestamp= references[0].getTimestamp();
+		
+		if (elements.length == 1) {
+			node= new CHNode(parent, tu, timestamp, elements[0]);
+		}
+		else {
+			node= new CHMultiDefNode(parent, tu, timestamp, elements);
+		}
+		
 		Arrays.sort(references, CIndexReference.COMPARE_OFFSET);		
 		for (int i = 0; i < references.length; i++) {
 			CIndexReference reference = references[i];
@@ -153,8 +170,11 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 					CElementSet set = elementSets[i];
 					if (!set.isEmpty()) {
 						CIndexReference[] refs= callsTo.getReferences(set);
-						CHNode node = createReftoNode(parent, tu, set.getElements(), refs);
-						result.add(node);
+						ICElement[] elements= set.getElements(fFilter);
+						if (elements.length > 0) {
+							CHNode node = createReftoNode(parent, tu, elements, refs);
+							result.add(node);
+						}
 					}
 				}
 				return result.toArray();
@@ -172,5 +192,10 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 
 	public boolean getComputeReferencedBy() {
 		return fComputeReferencedBy;
+	}
+
+	public void setWorkingSetFilter(WorkingSetFilterUI filterUI) {
+		fFilter= filterUI;
+		recompute();
 	}
 }

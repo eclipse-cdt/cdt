@@ -128,6 +128,7 @@ public class CHViewPart extends ViewPart {
 	private SelectionSearchGroup fSelectionSearchGroup;
 	private CRefactoringActionGroup fRefactoringActionGroup;
 	private Action fOpenElement;
+	private WorkingSetFilterUI fFilterUI;
 
     
     public void setFocus() {
@@ -202,6 +203,10 @@ public class CHViewPart extends ViewPart {
 		if (fRefactoringActionGroup != null) {
 			fRefactoringActionGroup.dispose();
 			fRefactoringActionGroup= null;
+		}
+		if (fFilterUI != null) {
+			fFilterUI.dispose();
+			fFilterUI= null;
 		}
 		super.dispose();
 	}
@@ -307,7 +312,7 @@ public class CHViewPart extends ViewPart {
     	fSelectionSearchGroup= new SelectionSearchGroup(getSite());
     	fRefactoringActionGroup= new CRefactoringActionGroup(this);
     	
-        WorkingSetFilterUI wsFilterUI= new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
+        fFilterUI= new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
             protected void onWorkingSetChange() {
                 updateWorkingSetFilter(this);
             }
@@ -480,7 +485,7 @@ public class CHViewPart extends ViewPart {
 //        tm.add(fNext);
 //        tm.add(fPrevious);
 //        tm.add(new Separator());
-        wsFilterUI.fillActionBars(actionBars);
+        fFilterUI.fillActionBars(actionBars);
         mm.add(fReferencedByAction);
         mm.add(fMakesReferenceToAction);
         mm.add(new Separator());
@@ -500,7 +505,7 @@ public class CHViewPart extends ViewPart {
     	
     	
         if (selectedItem.getData().equals(fNavigationNode)) {
-        	if (forward && fNavigationDetail < fNavigationNode.getReferenceCount()-1) {
+        	if (forward && fNavigationDetail < getReferenceCount(fNavigationNode)-1) {
         		fNavigationDetail++;
         	}
         	else if (!forward && fNavigationDetail > 0) {
@@ -509,21 +514,23 @@ public class CHViewPart extends ViewPart {
         	else {
         		selectedItem= navigator.getNextSibbling(selectedItem, forward);
                 fNavigationNode= selectedItem == null ? null : (CHNode) selectedItem.getData();
-                if (fNavigationNode != null) {
-                	fNavigationDetail= forward ? 0 : fNavigationNode.getReferenceCount()-1;
-                }
+            	initNavigationDetail(forward);
         	}
         }
         else {
         	fNavigationNode= (CHNode) selectedItem.getData();
-        	if (!forward && fNavigationNode != null) {
-        		fNavigationDetail= Math.max(0, fNavigationNode.getReferenceCount()-1);
-        	}
-        	else {
-        		fNavigationDetail= 0;
-        	}
+        	initNavigationDetail(forward);
         }
     }
+
+	private void initNavigationDetail(boolean forward) {
+		if (!forward && fNavigationNode != null) {
+			fNavigationDetail= Math.max(0, getReferenceCount(fNavigationNode) -1);
+		}
+		else {
+			fNavigationDetail= 0;
+		}
+	}
         
 	protected void onShowSelectedReference(ISelection selection) {
 		fNavigationDetail= 0;
@@ -533,7 +540,11 @@ public class CHViewPart extends ViewPart {
 
 	protected void onOpenElement(ISelection selection) {
     	CHNode node= selectionToNode(selection);
-    	if (node != null) {
+    	openElement(node);
+	}
+
+	private void openElement(CHNode node) {
+		if (node != null && !node.isMultiDef()) {
     		ICElement elem= node.getRepresentedDeclaration();
     		if (elem != null) {
     			IWorkbenchPage page= getSite().getPage();
@@ -622,21 +633,7 @@ public class CHViewPart extends ViewPart {
 	}
 
     private void updateWorkingSetFilter(WorkingSetFilterUI filterUI) {
-        if (filterUI.getWorkingSet() == null) {
-            if (fWorkingSetFilter != null) {
-                fTreeViewer.removeFilter(fWorkingSetFilter);
-                fWorkingSetFilter= null;
-            }
-        }
-        else {
-            if (fWorkingSetFilter != null) {
-                fTreeViewer.refresh();
-            }
-            else {
-                fWorkingSetFilter= new CHWorkingSetFilter(filterUI);
-                fTreeViewer.addFilter(fWorkingSetFilter);
-            }
-        }
+    	fContentProvider.setWorkingSetFilter(filterUI);
     }
     
     protected void onSetShowReferencedBy(boolean showReferencedBy) {
@@ -655,11 +652,12 @@ public class CHViewPart extends ViewPart {
 		
 		CHNode node= selectionToNode(fTreeViewer.getSelection());
 		if (node != null) {
-			if (node.getReferenceCount() > 0) {
+			if (getReferenceCount(node) > 0) {
 				menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fShowReference);
 			}
-			menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenElement);
-			
+			if (!node.isMultiDef()) {
+				menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenElement);
+			}
 			if (node.getParent() != null) {
 				final ICElement element= node.getRepresentedDeclaration();
 				if (element != null) {
@@ -670,7 +668,7 @@ public class CHViewPart extends ViewPart {
 							setInput(element);
 						}
 					});
-            	}
+				}
 			}
 		}
 		
@@ -687,34 +685,57 @@ public class CHViewPart extends ViewPart {
     }
     	    
     private void showReference() {
-        if (fNavigationNode != null) {
-            ITranslationUnit file= fNavigationNode.getFileOfReferences();
-    		if (file != null) {
-                IWorkbenchPage page= getSite().getPage();
-                if (fNavigationNode.getReferenceCount() > 0) {
-                	long timestamp= fNavigationNode.getTimestamp();
-                	if (fNavigationDetail < 0) {
-                		fNavigationDetail= 0;
-                	}
-                	else if (fNavigationDetail >= fNavigationNode.getReferenceCount()-1) {
-                		fNavigationDetail= fNavigationNode.getReferenceCount()-1;
-                	}
+    	CHNode node= getReferenceNode();
+        if (node != null) {
+        	ITranslationUnit file= node.getFileOfReferences();
+        	if (file != null) {
+        		IWorkbenchPage page= getSite().getPage();
+        		if (node.getReferenceCount() > 0) {
+        			long timestamp= node.getTimestamp();
+        			if (fNavigationDetail < 0) {
+        				fNavigationDetail= 0;
+        			}
+        			else if (fNavigationDetail >= node.getReferenceCount()-1) {
+        				fNavigationDetail= node.getReferenceCount()-1;
+        			}
 
-                	CHReferenceInfo ref= fNavigationNode.getReference(fNavigationDetail);
-                	Region region= new Region(ref.getOffset(), ref.getLength());
-            		EditorOpener.open(page, file, region, timestamp);
-                }
-                else {
-                	try {
-						EditorOpener.open(page, fNavigationNode.getRepresentedDeclaration());
-					} catch (CModelException e) {
-						CUIPlugin.getDefault().log(e);
-					}
-                }
-            }
+        			CHReferenceInfo ref= node.getReference(fNavigationDetail);
+        			Region region= new Region(ref.getOffset(), ref.getLength());
+        			EditorOpener.open(page, file, region, timestamp);
+        		}
+        		else {
+        			try {
+        				EditorOpener.open(page, node.getRepresentedDeclaration());
+        			} catch (CModelException e) {
+        				CUIPlugin.getDefault().log(e);
+        			}
+        		}
+        	}
         }
     }
     
+	private CHNode getReferenceNode() {
+		if (fNavigationNode != null) {
+			CHNode parent = fNavigationNode.getParent();
+			if (parent instanceof CHMultiDefNode) {
+				return parent;
+			}
+    	}
+		return fNavigationNode;
+	}
+	
+	private int getReferenceCount(CHNode node) {
+		if (node != null) {
+			CHNode parent = node.getParent();
+			if (parent instanceof CHMultiDefNode) {
+				return parent.getReferenceCount();
+			}
+			return node.getReferenceCount();
+    	}
+		return 0;
+	}
+		
+
 	private CHNode selectionToNode(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss= (IStructuredSelection) selection;

@@ -17,6 +17,7 @@ import java.util.Iterator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -36,16 +37,17 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
     private CUILabelProvider fCLabelProvider= new CUILabelProvider(LABEL_OPTIONS_SIMPLE, 0);
     private CHContentProvider fContentProvider;
     private HashMap fCachedImages= new HashMap();
+	private Color fColorInactive;
     
     public CHLabelProvider(Display display, CHContentProvider cp) {
-//        fColorInactive= display.getSystemColor(SWT.COLOR_DARK_GRAY);
+        fColorInactive= display.getSystemColor(SWT.COLOR_DARK_GRAY);
         fContentProvider= cp;
     }
     
     public Image getImage(Object element) {
         if (element instanceof CHNode) {
             CHNode node= (CHNode) element;
-            ICElement decl= node.getRepresentedDeclaration();
+            ICElement decl= node.getOneRepresentedDeclaration();
             if (decl != null) {
             	Image image= fCLabelProvider.getImage(decl);
             	return decorateImage(image, node);
@@ -57,8 +59,15 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
     public String getText(Object element) {
         if (element instanceof CHNode) {
             CHNode node= (CHNode) element;
-            ICElement decl= node.getRepresentedDeclaration();
+            ICElement decl= node.getOneRepresentedDeclaration();
             if (decl != null) {
+            	if (node.isMultiDef()) {
+            		int options= fCLabelProvider.getTextFlags();
+            		fCLabelProvider.setTextFlags(LABEL_OPTIONS_SIMPLE);
+            		String result= fCLabelProvider.getText(decl);
+            		fCLabelProvider.setTextFlags(options);
+            		return result;
+            	}
             	return fCLabelProvider.getText(decl);
             }
         }
@@ -85,7 +94,12 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
                 flags |= CElementImageDescriptor.REFERENCED_BY;
             }
             else {
-                flags |= CElementImageDescriptor.RELATES_TO;
+            	if (node.isMultiDef()) {
+            		flags |= CElementImageDescriptor.RELATES_TO_MULTIPLE;
+            	}
+            	else {
+            		flags |= CElementImageDescriptor.RELATES_TO;
+            	}
             }
         }
 
@@ -105,10 +119,13 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
     }
 
     public Color getForeground(Object element) {
-        return null;
+    	if (element instanceof CHMultiDefNode) {
+    		return fColorInactive;
+    	}
+    	return null;
     }
 
     public void setShowFiles(boolean show) {
-        fCLabelProvider.setTextFlags(show ? LABEL_OPTIONS_SHOW_FILES : LABEL_OPTIONS_SIMPLE);
+		fCLabelProvider.setTextFlags(show ? LABEL_OPTIONS_SHOW_FILES : LABEL_OPTIONS_SIMPLE);
     }
 }

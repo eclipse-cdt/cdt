@@ -214,6 +214,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OVR_VOLATILE= create(T_OVR, "volatile_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_TEMPLATE= create(T_OVR, "template_co.gif"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_OVR_RELATESTO= create(T_OVR, "relatesto_co.gif"); //$NON-NLS-1$
+    public static final ImageDescriptor DESC_OVR_RELATESTOMULTIPLE= create(T_OVR, "relatestoMultiple_co.gif"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_OVR_REFERENCEDBY= create(T_OVR, "referencedby_co.gif"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_OVR_REC_RELATESTO= create(T_OVR, "rec_relatesto_co.gif"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_OVR_REC_REFERENCEDBY= create(T_OVR, "rec_referencedby_co.gif"); //$NON-NLS-1$

@@ -67,14 +67,17 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
     /** Flag to render the 'relates to' adornment (for trees, an arrow down) */
     public final static int RELATES_TO=     0x200;      
 
+    /** Flag to render the 'relates to' adornment (for trees, two arrows down) */
+    public final static int RELATES_TO_MULTIPLE= 0x400;      
+
     /** Flag to render the 'referenced by' adornment (for trees, an arrow up) */
-    public final static int REFERENCED_BY=  0x400;      
+    public final static int REFERENCED_BY=  0x800;      
 
     /** Flag to render the 'recursive relation' adornment (for trees, an arrow pointing back) */
-    public final static int RECURSIVE_RELATION= 0x800;
+    public final static int RECURSIVE_RELATION= 0x1000;
     
     /** Flag to render the 'system include' adornment */
-    public final static int SYSTEM_INCLUDE= 0x1000;      
+    public final static int SYSTEM_INCLUDE= 0x2000;      
 
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
@@ -221,6 +224,11 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
             data= CPluginImages.DESC_OVR_RELATESTO.getImageData();
             x-= data.width;
             drawImage(data, x, size.y-data.height);
+        }
+        else if ((fFlags & RELATES_TO_MULTIPLE) != 0) {
+        	data= CPluginImages.DESC_OVR_RELATESTOMULTIPLE.getImageData();
+        	x-= data.width;
+        	drawImage(data, x, size.y-data.height);
         }
         else if ((fFlags & REFERENCED_BY) != 0) {
             data= CPluginImages.DESC_OVR_REFERENCEDBY.getImageData();

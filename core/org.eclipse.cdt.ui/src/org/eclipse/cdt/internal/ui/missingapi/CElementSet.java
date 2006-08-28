@@ -11,12 +11,15 @@
 
 package org.eclipse.cdt.internal.ui.missingapi;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.core.model.ICElement;
+
+import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 public class CElementSet {
 	private Set fSet= new HashSet();
@@ -70,7 +73,14 @@ public class CElementSet {
 		return fSet.isEmpty();
 	}
 
-	public ICElement[] getElements() {
-		return (ICElement[]) fSet.toArray(new ICElement[fSet.size()]);
+	public ICElement[] getElements(WorkingSetFilterUI filter) {
+		ArrayList result= new ArrayList(fSet.size());
+		for (Iterator iter = fSet.iterator(); iter.hasNext(); ) {
+			ICElement element = (ICElement) iter.next();
+			if (filter == null || filter.isPartOfWorkingSet(element)) {
+				result.add(element);
+			}
+		}
+		return (ICElement[]) result.toArray(new ICElement[result.size()]);
 	}
 }

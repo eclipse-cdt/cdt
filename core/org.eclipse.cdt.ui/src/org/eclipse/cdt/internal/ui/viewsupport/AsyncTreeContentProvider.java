@@ -121,12 +121,14 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
      * computations.
      */
     public void recompute() {
-        fAutoexpand= new HashSet();
-        fAutoexpand.addAll(Arrays.asList(fTreeViewer.getVisibleExpandedElements()));
-        fAutoSelect= null;
-        fAutoSelect= ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
-        clear();
-        refreshViewer();
+    	if (getInput() != null) {
+    		fAutoexpand= new HashSet();
+    		fAutoexpand.addAll(Arrays.asList(fTreeViewer.getVisibleExpandedElements()));
+    		fAutoSelect= null;
+    		fAutoSelect= ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
+    		clear();
+    		refreshViewer();
+    	}
     }
     
     /**

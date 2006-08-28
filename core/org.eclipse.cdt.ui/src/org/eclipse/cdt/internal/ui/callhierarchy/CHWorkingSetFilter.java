@@ -28,13 +28,24 @@ public class CHWorkingSetFilter extends ViewerFilter {
     }
     
     public boolean select(Viewer viewer, Object parentElement, Object element) {
-        if (parentElement instanceof CHNode && element instanceof CHNode) {
-            CHNode node= (CHNode) element;
-            ICElement decl= node.getRepresentedDeclaration();
-            if (decl != null) {
-            	return fWorkingSetFilter.isPartOfWorkingSet(decl);
+        if (parentElement instanceof CHNode) {
+        	if (element instanceof CHMultiDefNode) {
+            	CHNode[] children= ((CHMultiDefNode) element).getChildNodes();
+            	for (int i = 0; i < children.length; i++) {
+					CHNode node = children[i];
+					if (fWorkingSetFilter.isPartOfWorkingSet(node.getRepresentedDeclaration())) {
+						return true;
+					}
+				}
+            	return false;
+        	}
+        	else if (element instanceof CHNode) {
+        		CHNode node= (CHNode) element;
+            	ICElement decl= node.getRepresentedDeclaration();
+            	if (decl != null) {
+            		return fWorkingSetFilter.isPartOfWorkingSet(decl);
+            	}
             }
-            // mstodo in case of an ambigous callees, check the children instead.
         }
         return true;
     }

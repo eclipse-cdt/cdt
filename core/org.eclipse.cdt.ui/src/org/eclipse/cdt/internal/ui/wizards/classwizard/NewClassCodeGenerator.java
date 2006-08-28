@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
@@ -163,7 +164,11 @@ public class NewClassCodeGenerator {
 	            headerWorkingCopy.commit(true, monitor);
 	            monitor.worked(50);
 	
-	            createdClass = headerWorkingCopy.getElement(fClassName.toString());
+	            IQualifiedTypeName className = new QualifiedTypeName(fClassName);
+	            if(fNamespace != null){
+	            	className = fNamespace.append(className);
+	            }
+	            createdClass = headerWorkingCopy.getElement(className.getFullyQualifiedName());
 	            fCreatedClass = createdClass;
 	            fCreatedHeaderTU = headerTU;
             }

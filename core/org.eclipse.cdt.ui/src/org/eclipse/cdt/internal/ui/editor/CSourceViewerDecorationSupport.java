@@ -10,23 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EmptyStackException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Stack;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewerExtension2;
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
@@ -34,23 +20,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.IPositionConverter;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElseStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorEndifStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfndefStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.LineBackgroundPainter;
 
@@ -64,69 +34,10 @@ import org.eclipse.cdt.internal.ui.LineBackgroundPainter;
  * 
  * @since 4.0
  */
-public class CSourceViewerDecorationSupport
-	extends SourceViewerDecorationSupport {
+public class CSourceViewerDecorationSupport extends SourceViewerDecorationSupport {
 
-	/**
-	 * This job takes the current translation unit and produces an
-	 * AST  in the background. Upon completion, {@link #inactiveCodePositionsChanged}
-	 * is called in the display thread.
-	 */
-	private class UpdateJob extends Job {
-
-		/**
-		 * @param name
-		 */
-		public UpdateJob(String name) {
-			super(name);
-			setSystem(true);
-			setPriority(Job.DECORATE);
-		}
-
-		/*
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
-		protected IStatus run(IProgressMonitor monitor) {
-			IStatus result = Status.OK_STATUS;
-			if (fASTTranslationUnit == null && fTranslationUnit != null) {
-				try {
-					fParseTimeStamp = System.currentTimeMillis();
-					int style = ILanguage.AST_SKIP_IF_NO_BUILD_INFO | ILanguage.AST_SKIP_INDEXED_HEADERS;
-					fASTTranslationUnit = fTranslationUnit.getLanguage().getASTTranslationUnit(fTranslationUnit, style);
-				} catch (CoreException exc) {
-					result = exc.getStatus();
-				}
-			}
-			if (monitor.isCanceled() || fViewer == null) {
-				result = Status.CANCEL_STATUS;
-			} else {
-				final List inactiveCodePositions = collectInactiveCodePositions(fASTTranslationUnit);
-				Runnable updater = new Runnable() {
-					public void run() {
-						inactiveCodePositionsChanged(inactiveCodePositions);
-					}
-				};
-				if (fViewer != null && !monitor.isCanceled()) {
-					fViewer.getTextWidget().getDisplay().asyncExec(updater);
-				}
-			}
-			return result;
-		}
-
-	}
-
-	/**
-	 * Implementation of <code>IRegion</code> that can be reused
-	 * by setting the offset and the length.
-	 */
-	private static class ReusableRegion extends Position implements IRegion {
-		public ReusableRegion(int offset, int length) {
-			super(offset, length);
-		}
-		public ReusableRegion(IRegion region) {
-			super(region.getOffset(), region.getLength());
-		}
-	}
+	/** The key to use for the {@link LineBackgroundPainter} */
+	private static final String INACTIVE_CODE_KEY = "inactiveCode"; //$NON-NLS-1$
 
 	/** The preference key for the inactive code highlight color */
 	private String fInactiveCodeColorKey;
@@ -144,14 +55,10 @@ public class CSourceViewerDecorationSupport
 	private String fCLPEnableKey;
 	/** The source viewer (duplicate of private base class member) */
 	protected ISourceViewer fViewer;
-	/** The current translation unit */
-	private ITranslationUnit fTranslationUnit;
-	/** The corresponding AST translation unit */
-	private IASTTranslationUnit fASTTranslationUnit;
-	/** The time stamp when the parsing was initiated */
-	private long fParseTimeStamp;
-	/** The background job doing the AST parsing */
-	private Job fUpdateJob;
+	/** The editor we are associated with */
+	private CEditor fEditor;
+	/** The inactive code highlighting */
+	private InactiveCodeHighlighting fInactiveCodeHighlighting;
 
 	/**
 	 * Inherited constructor.
@@ -162,55 +69,22 @@ public class CSourceViewerDecorationSupport
 	 * @param sharedTextColors
 	 */
 	CSourceViewerDecorationSupport(
+		CEditor editor,
 		ISourceViewer sourceViewer,
 		IOverviewRuler overviewRuler,
 		IAnnotationAccess annotationAccess,
 		ISharedTextColors sharedTextColors) {
 		super(sourceViewer, overviewRuler, annotationAccess, sharedTextColors);
-		// we have to save our own reference, because super class members are all private
+		fEditor = editor;
+		// we have to save our own references, because super class members are all private
 		fViewer = sourceViewer;
 		fSharedColors = sharedTextColors;
-	}
-
-	/**
-	 * Notify that the associated editor got a new input.
-	 * This is currently also used to notify of a reconcilation
-	 * to update the inactive code while editing.
-	 * 
-	 * @param input  the new editor input
-	 */
-	void editorInputChanged(IEditorInput input) {
-		if (fUpdateJob != null) {
-			fUpdateJob.cancel();
-		}
-		fTranslationUnit = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(input);
-		fASTTranslationUnit = null;
-		if (isInactiveCodePositionsActive()) {
-			updateInactiveCodePositions();
-		}
-	}
-
-	/**
-	 * Schedule update of the AST in the background.
-	 */
-	private void updateInactiveCodePositions() {
-		if (fUpdateJob == null) {
-			fUpdateJob = new UpdateJob("Update Inactive Code Positions"); //$NON-NLS-1$
-		}
-		if (fUpdateJob.getState() == Job.NONE) {
-			fUpdateJob.schedule();
-		}
 	}
 
 	/*
 	 * @see org.eclipse.ui.texteditor.SourceViewerDecorationSupport#dispose()
 	 */
 	public void dispose() {
-		if (fUpdateJob != null) {
-			fUpdateJob.cancel();
-		}
-		fTranslationUnit = null;
-		fASTTranslationUnit = null;
 		super.dispose();
 	}
 
@@ -229,7 +103,7 @@ public class CSourceViewerDecorationSupport
 			updateCLPColor();
 		} else if (p.equals(fInactiveCodeEnableKey)) {
 			if (isInactiveCodePositionsActive()) {
-				showInactiveCodePositions();
+				showInactiveCodePositions(true);
 			} else {
 				hideInactiveCodePositions();
 			}
@@ -244,7 +118,7 @@ public class CSourceViewerDecorationSupport
 	 */
 	private void updateInactiveCodeColor() {
 		if (fLineBackgroundPainter != null) {
-			fLineBackgroundPainter.setDefaultColor(getColor(fInactiveCodeColorKey));
+			fLineBackgroundPainter.setBackgroundColor(INACTIVE_CODE_KEY, getColor(fInactiveCodeColorKey));
 			if (isInactiveCodePositionsActive()) {
 				fLineBackgroundPainter.redraw();
 			}
@@ -342,7 +216,7 @@ public class CSourceViewerDecorationSupport
 			showCLP();
 		}
 		if (isInactiveCodePositionsActive()) {
-			showInactiveCodePositions();
+			showInactiveCodePositions(false);
 		}
 	}
 
@@ -350,6 +224,10 @@ public class CSourceViewerDecorationSupport
 	 * @see org.eclipse.ui.texteditor.SourceViewerDecorationSupport#uninstall()
 	 */
 	public void uninstall() {
+		if (fInactiveCodeHighlighting != null) {
+			fInactiveCodeHighlighting.dispose();
+			fInactiveCodeHighlighting= null;
+		}
 		uninstallLineBackgroundPainter();
 		super.uninstall();
 	}
@@ -361,7 +239,7 @@ public class CSourceViewerDecorationSupport
 		if (fLineBackgroundPainter == null) {
 			if (fViewer instanceof ITextViewerExtension2) {
 				fLineBackgroundPainter = new LineBackgroundPainter(fViewer);
-				fLineBackgroundPainter.setDefaultColor(getColor(fInactiveCodeColorKey));
+				fLineBackgroundPainter.setBackgroundColor(INACTIVE_CODE_KEY, getColor(fInactiveCodeColorKey));
 				fLineBackgroundPainter.setCursorLineColor(getColor(fCLPColorKey));
 				fLineBackgroundPainter.enableCursorLine(isCLPActive());
 				((ITextViewerExtension2)fViewer).addPainter(fLineBackgroundPainter);
@@ -385,10 +263,18 @@ public class CSourceViewerDecorationSupport
 
 	/**
 	 * Show inactive code positions.
+	 * 
+	 * @param refresh trigger a refresh of the positions
 	 */
-	private void showInactiveCodePositions() {
+	private void showInactiveCodePositions(boolean refresh) {
 		installLineBackgroundPainter();
-		updateInactiveCodePositions();
+		if (fLineBackgroundPainter != null) {
+			fInactiveCodeHighlighting= new InactiveCodeHighlighting(fLineBackgroundPainter, INACTIVE_CODE_KEY);
+			fInactiveCodeHighlighting.install(fEditor);
+			if (refresh) {
+				fInactiveCodeHighlighting.refresh();
+			}
+		}
 	}
 
 	/**
@@ -396,131 +282,14 @@ public class CSourceViewerDecorationSupport
 	 */
 	private void hideInactiveCodePositions() {
 		if (fLineBackgroundPainter != null) {
+			if (fInactiveCodeHighlighting != null) {
+				fInactiveCodeHighlighting.dispose();
+				fInactiveCodeHighlighting= null;
+			}
 			if (!isCLPActive()) {
 				uninstallLineBackgroundPainter();
-			} else {
-				fLineBackgroundPainter.setHighlightPositions(Collections.EMPTY_LIST);
 			}
 		}
-	}
-
-	private void inactiveCodePositionsChanged(List inactiveCodePositions) {
-		if (fLineBackgroundPainter != null) {
-			if (!inactiveCodePositions.isEmpty()) {
-				IPositionConverter pt = CCorePlugin.getPositionTrackerManager().findPositionConverter(fTranslationUnit.getPath(), fParseTimeStamp);
-				if (pt != null) {
-					List convertedPositions = new ArrayList(inactiveCodePositions.size());
-					for (Iterator iter = inactiveCodePositions.iterator(); iter
-							.hasNext();) {
-						IRegion pos = (IRegion) iter.next();
-						convertedPositions.add(new ReusableRegion(pt.historicToActual(pos)));
-					}
-					inactiveCodePositions = convertedPositions;
-				}
-			}
-			fLineBackgroundPainter.setHighlightPositions(inactiveCodePositions);
-		}
-	}
-
-	/**
-	 * Collect source positions of preprocessor-hidden branches 
-	 * in the given translation unit.
-	 * 
-	 * @param translationUnit  the {@link IASTTranslationUnit}, may be <code>null</code>
-	 * @return a {@link List} of {@link IRegion}s
-	 */
-	private static List collectInactiveCodePositions(IASTTranslationUnit translationUnit) {
-		if (translationUnit == null) {
-			return Collections.EMPTY_LIST;
-		}
-		String fileName = translationUnit.getFilePath();
-		if (fileName == null) {
-			return Collections.EMPTY_LIST;
-		}
-		List positions = new ArrayList();
-		int inactiveCodeStart = -1;
-		boolean inInactiveCode = false;
-		Stack inactiveCodeStack = new Stack();
-		// TLETODO [performance] This does not look very efficient
-		IASTPreprocessorStatement[] preprocStmts = translationUnit.getAllPreprocessorStatements();
-		for (int i = 0; i < preprocStmts.length; i++) {
-			IASTPreprocessorStatement statement = preprocStmts[i];
-			if (!fileName.equals(statement.getContainingFilename())) {
-				// preprocessor directive is from a different file
-				continue;
-			}
-			if (statement instanceof IASTPreprocessorIfStatement) {
-				IASTPreprocessorIfStatement ifStmt = (IASTPreprocessorIfStatement)statement;
-				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
-				if (!ifStmt.taken()) {
-					if (!inInactiveCode) {
-						IASTNodeLocation nodeLocation = ifStmt.getNodeLocations()[0];
-						inactiveCodeStart = nodeLocation.getNodeOffset();
-						inInactiveCode = true;
-					}
-				}
-			} else if (statement instanceof IASTPreprocessorIfdefStatement) {
-				IASTPreprocessorIfdefStatement ifdefStmt = (IASTPreprocessorIfdefStatement)statement;
-				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
-				if (!ifdefStmt.taken()) {
-					if (!inInactiveCode) {
-						IASTNodeLocation nodeLocation = ifdefStmt.getNodeLocations()[0];
-						inactiveCodeStart = nodeLocation.getNodeOffset();
-						inInactiveCode = true;
-					}
-				}
-			} else if (statement instanceof IASTPreprocessorIfndefStatement) {
-				IASTPreprocessorIfndefStatement ifndefStmt = (IASTPreprocessorIfndefStatement)statement;
-				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
-				if (!ifndefStmt.taken()) {
-					if (!inInactiveCode) {
-						IASTNodeLocation nodeLocation = ifndefStmt.getNodeLocations()[0];
-						inactiveCodeStart = nodeLocation.getNodeOffset();
-						inInactiveCode = true;
-					}
-				}
-			} else if (statement instanceof IASTPreprocessorElseStatement) {
-				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement)statement;
-				if (!elseStmt.taken() && !inInactiveCode) {
-					IASTNodeLocation nodeLocation = elseStmt.getNodeLocations()[0];
-					inactiveCodeStart = nodeLocation.getNodeOffset();
-					inInactiveCode = true;
-				} else if (elseStmt.taken() && inInactiveCode) {
-					IASTNodeLocation nodeLocation = elseStmt.getNodeLocations()[0];
-					int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
-					positions.add(new ReusableRegion(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
-					inInactiveCode = false;
-				}
-			} else if (statement instanceof IASTPreprocessorElifStatement) {
-				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement)statement;
-				if (!elifStmt.taken() && !inInactiveCode) {
-					IASTNodeLocation nodeLocation = elifStmt.getNodeLocations()[0];
-					inactiveCodeStart = nodeLocation.getNodeOffset();
-					inInactiveCode = true;
-				} else if (elifStmt.taken() && inInactiveCode) {
-					IASTNodeLocation nodeLocation = elifStmt.getNodeLocations()[0];
-					int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
-					positions.add(new ReusableRegion(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
-					inInactiveCode = false;
-				}
-			} else if (statement instanceof IASTPreprocessorEndifStatement) {
-				IASTPreprocessorEndifStatement endifStmt = (IASTPreprocessorEndifStatement)statement;
-				try {
-					boolean wasInInactiveCode = ((Boolean)inactiveCodeStack.pop()).booleanValue();
-					if (inInactiveCode && !wasInInactiveCode) {
-						IASTNodeLocation nodeLocation = endifStmt.getNodeLocations()[0];
-						int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
-						positions.add(new ReusableRegion(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart));
-					}
-					inInactiveCode = wasInInactiveCode;
-				}
-		 		catch( EmptyStackException e) {}
-			}
-		}
-		if (inInactiveCode) {
-			// handle dangling #if?
-		}
-		return positions;
 	}
 
 	/*
@@ -543,4 +312,5 @@ public class CSourceViewerDecorationSupport
 		fInactiveCodeEnableKey = enableKey;
 		fInactiveCodeColorKey = colorKey;
 	}
+
 }

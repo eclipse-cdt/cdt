@@ -12,6 +12,7 @@
 package org.eclipse.cdt.ui;
 
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -431,6 +432,86 @@ public class PreferenceConstants {
 	 * @since 3.1.1
 	 */
 	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= "PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE"; //$NON-NLS-1$
+
+	/**
+	 * A named preference prefix for semantic highlighting preferences.
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX="semanticHighlighting."; //$NON-NLS-1$
+		
+	/**
+	 * A named preference suffix that controls a semantic highlighting's color.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX=".color"; //$NON-NLS-1$
+
+	/**
+	 * A named preference suffix that controls if semantic highlighting has the text attribute bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>: <code>true</code> if bold.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX=".bold"; //$NON-NLS-1$
+
+	/**
+	 * A named preference suffix that controls if semantic highlighting has the text attribute italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>: <code>true</code> if italic.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX=".italic"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference suffix that controls if semantic highlighting has the text attribute strikethrough.
+	 * <p>
+	 * Value is of type <code>Boolean</code>: <code>true</code> if strikethrough.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX=".strikethrough"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference suffix that controls if semantic highlighting has the text attribute underline.
+	 * <p>
+	 * Value is of type <code>Boolean</code>: <code>true</code> if underline.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX=".underline"; //$NON-NLS-1$
+
+	/**
+	 * A named preference suffix that controls if semantic highlighting is enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>: <code>true</code> if enabled.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX=".enabled"; //$NON-NLS-1$
+
+	/**
+	 * A named preference key that controls if semantic highlighting is enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>: <code>true</code> if enabled.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED= "semanticHighlighting.enabled"; //$NON-NLS-1$
 
 
     /**

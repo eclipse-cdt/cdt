@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -24,15 +25,18 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
+import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
-public class CReconcilingStrategy implements IReconcilingStrategy {
+public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
 	private ITextEditor fEditor;	
 	private IWorkingCopyManager fManager;
 	private IProgressMonitor fProgressMonitor;
 	private String txt = null;
+	// used by tests
+	protected boolean fInitialProcessDone;
 	
 	public CReconcilingStrategy(CEditor editor) {
 		fEditor= editor;
@@ -123,5 +127,16 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 		} catch(CModelException e) {
 				
 		}
- 	}	
+ 	}
+
+	/*
+	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
+	 */
+	public void initialReconcile() {
+		if (fEditor instanceof IReconcilingParticipant) {
+			IReconcilingParticipant p= (IReconcilingParticipant) fEditor;
+			p.reconciled(true);
+		}
+		fInitialProcessDone= true;
+	}	
 }

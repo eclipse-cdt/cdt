@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -33,7 +34,6 @@ import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
-import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
@@ -163,7 +163,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 */
     public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 
-		PresentationReconciler reconciler= new PresentationReconciler();
+		CPresentationReconciler reconciler= new CPresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 
 		RuleBasedScanner scanner = null;
@@ -529,5 +529,14 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         
         return settings;
     }
+
+	/**
+	 * Adapt to the given preference change event.
+	 * 
+	 * @param event
+	 */
+	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
+		fTextTools.adaptToPreferenceChange(event);
+	}
     
 }

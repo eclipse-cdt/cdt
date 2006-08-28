@@ -21,6 +21,8 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -119,6 +121,8 @@ import com.ibm.icu.text.BreakIterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.core.IPositionConverter;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
@@ -131,6 +135,8 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.actions.ShowInCViewAction;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
+
+import org.eclipse.cdt.internal.corext.util.SimplePositionTracker;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
@@ -150,6 +156,7 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.CWordIterator;
 import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
 import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
+import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.util.CUIHelp;
@@ -158,9 +165,8 @@ import org.eclipse.cdt.internal.ui.util.CUIHelp;
 /**
  * C specific text editor.
  */
-public class CEditor extends TextEditor implements ISelectionChangedListener, IShowInSource , IReconcilingParticipant{
+public class CEditor extends TextEditor implements ISelectionChangedListener, IShowInSource, IReconcilingParticipant, ICReconcilingListener {
 
-		
 	/**
 	 * The information provider used to present focusable information
 	 * shells.
@@ -555,6 +561,19 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	private FoldingActionGroup fFoldingGroup;
 
 	/**
+	 * AST reconciling listeners.
+	 * @since 4.0
+	 */
+	private ListenerList fReconcilingListeners= new ListenerList(ListenerList.IDENTITY);
+
+	/**
+	 * Semantic highlighting manager
+	 * @since 4.0
+	 */
+	private SemanticHighlightingManager fSemanticManager;
+
+
+	/**
 	 * Default constructor.
 	 */
 	public CEditor() {
@@ -589,11 +608,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		}
 		if (fCEditorErrorTickUpdater != null) {
 			fCEditorErrorTickUpdater.updateEditorImage(getInputCElement());
-		}
-		
-		if (getSourceViewer() != null) {
-			CSourceViewerDecorationSupport decoSupport = (CSourceViewerDecorationSupport) getSourceViewerDecorationSupport(getSourceViewer());
-			decoSupport.editorInputChanged(input);
 		}
 	}
 
@@ -728,6 +742,16 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 					fProjectionModelUpdater= CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();
 					if (fProjectionModelUpdater != null) {
 						fProjectionModelUpdater.install(this, asv);
+					}
+					return;
+				}
+
+				if (SemanticHighlightings.affectsEnablement(getPreferenceStore(), event)) {
+					if (isSemanticHighlightingEnabled()) {
+						installSemanticHighlighting();
+						fSemanticManager.refresh();
+					} else {
+						uninstallSemanticHighlighting();
 					}
 					return;
 				}
@@ -1211,7 +1235,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 		if (isTabConversionEnabled())
 			startTabConversion();
-			
+
+		if (isSemanticHighlightingEnabled())
+			installSemanticHighlighting();
+
 	}
 
 	/*
@@ -1234,12 +1261,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#getSourceViewerDecorationSupport(org.eclipse.jface.text.source.ISourceViewer)
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#getSourceViewerDecorationSupport(ISourceViewer)
 	 */
 	protected SourceViewerDecorationSupport getSourceViewerDecorationSupport(
 			ISourceViewer viewer) {
 		if (fSourceViewerDecorationSupport == null) {
-			fSourceViewerDecorationSupport= new CSourceViewerDecorationSupport(viewer, getOverviewRuler(), getAnnotationAccess(), getSharedColors());
+			fSourceViewerDecorationSupport= new CSourceViewerDecorationSupport(this, viewer, getOverviewRuler(), getAnnotationAccess(), getSharedColors());
 			configureSourceViewerDecorationSupport(fSourceViewerDecorationSupport);
 		}
 		return fSourceViewerDecorationSupport;
@@ -1557,11 +1584,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 				getOverviewRuler(),
 				isOverviewRulerVisible());
 
-		CSourceViewerDecorationSupport decoSupport = (CSourceViewerDecorationSupport) getSourceViewerDecorationSupport(sourceViewer);
-		decoSupport.editorInputChanged(getEditorInput());
-
 		CUIHelp.setHelp(this, sourceViewer.getTextWidget(), ICHelpContextIds.CEDITOR_VIEW);
 
+		getSourceViewerDecorationSupport(sourceViewer);
+		
 		return sourceViewer;
 	}
 
@@ -1701,16 +1727,36 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	}
 		
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant#reconciled()
 	 */
 	public void reconciled(boolean somethingHasChanged) {
-		// Do nothing the outliner is listener to the
-		// CoreModel WorkingCopy changes instead.
-		// It will allow more fined grained.
-		if (somethingHasChanged && getSourceViewer() != null) {
-			CSourceViewerDecorationSupport decoSupport = (CSourceViewerDecorationSupport) getSourceViewerDecorationSupport(getSourceViewer());
-			decoSupport.editorInputChanged(getEditorInput());
+		if (getSourceViewer() == null) {
+			return;
+		}
+		// this method must be called in a background thread
+		assert getSourceViewer().getTextWidget().getDisplay().getThread() != Thread.currentThread();
+		
+		if (fReconcilingListeners.size() > 0) {
+			// create AST and notify ICReconcilingListeners
+			ICElement cElement= getInputCElement();
+			if (cElement == null) {
+				return;
+			}
+			
+			aboutToBeReconciled();
+
+			// track changes to the document while parsing
+			IDocument doc= getDocumentProvider().getDocument(getEditorInput());
+			SimplePositionTracker positionTracker= new SimplePositionTracker();
+			positionTracker.startTracking(doc);
+			
+			try {
+				IASTTranslationUnit ast= CUIPlugin.getDefault().getASTProvider().createAST(cElement, null);
+				reconciled(ast, positionTracker, null);
+			} finally {
+				positionTracker.stopTracking();
+			}
 		}
 	}
 	
@@ -2099,4 +2145,101 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			}
 		}
 	}
+
+	/*
+	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#aboutToBeReconciled()
+	 * @since 4.0
+	 */
+	public void aboutToBeReconciled() {
+
+		// Notify AST provider
+		CUIPlugin.getDefault().getASTProvider().aboutToBeReconciled(getInputCElement());
+
+		// Notify listeners
+		Object[] listeners = fReconcilingListeners.getListeners();
+		for (int i = 0, length= listeners.length; i < length; ++i) {
+			((ICReconcilingListener)listeners[i]).aboutToBeReconciled();
+		}
+	}
+
+	/*
+	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, IPositionConverter, IProgressMonitor)
+	 * @since 4.0
+	 */
+	public void reconciled(IASTTranslationUnit ast, IPositionConverter positionTracker, IProgressMonitor progressMonitor) {
+
+		CUIPlugin cuiPlugin= CUIPlugin.getDefault();
+		if (cuiPlugin == null)
+			return;
+		
+		// Always notify AST provider
+		cuiPlugin.getASTProvider().reconciled(ast, getInputCElement(), progressMonitor);
+
+		// Notify listeners
+		Object[] listeners = fReconcilingListeners.getListeners();
+		for (int i = 0, length= listeners.length; i < length; ++i) {
+			((ICReconcilingListener)listeners[i]).reconciled(ast, positionTracker, progressMonitor);
+		}
+	
+	}
+
+	/**
+	 * Adds the given listener.
+	 * Has no effect if an identical listener was not already registered.
+	 *
+	 * @param listener	The reconcile listener to be added
+	 * @since 4.0
+	 */
+	final void addReconcileListener(ICReconcilingListener listener) {
+		synchronized (fReconcilingListeners) {
+			fReconcilingListeners.add(listener);
+		}
+	}
+
+	/**
+	 * Removes the given listener.
+	 * Has no effect if an identical listener was not already registered.
+	 *
+	 * @param listener	the reconcile listener to be removed
+	 * @since 4.0
+	 */
+	final void removeReconcileListener(ICReconcilingListener listener) {
+		synchronized (fReconcilingListeners) {
+			fReconcilingListeners.remove(listener);
+		}
+	}
+
+	/**
+	 * @return <code>true</code> if Semantic Highlighting is enabled.
+	 *
+	 * @since 4.0
+	 */
+	private boolean isSemanticHighlightingEnabled() {
+		return SemanticHighlightings.isEnabled(getPreferenceStore());
+	}
+
+	/**
+	 * Install Semantic Highlighting.
+	 *
+	 * @since 4.0
+	 */
+	private void installSemanticHighlighting() {
+		if (fSemanticManager == null) {
+			fSemanticManager= new SemanticHighlightingManager();
+			fSemanticManager.install(this, (CSourceViewer) getSourceViewer(), CUIPlugin.getDefault().getTextTools().getColorManager(), getPreferenceStore());
+		}
+	}
+
+	/**
+	 * Uninstall Semantic Highlighting.
+	 *
+	 * @since 4.0
+	 */
+	private void uninstallSemanticHighlighting() {
+		if (fSemanticManager != null) {
+			fSemanticManager.uninstall();
+			fSemanticManager= null;
+		}
+	}
+
 }

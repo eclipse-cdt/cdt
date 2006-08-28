@@ -127,7 +127,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 
 	/**
 	 * Set highlight positions. It is assumed that all positions
-	 * are up-to-date with respect to the text viewers document.
+	 * are up-to-date with respect to the text viewer document.
 	 * 
 	 * @param positions a list of <code>Position</code>s
 	 */
@@ -137,6 +137,51 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 		fPositions.clear();
 		fPositions.add(fCursorLine);
 		fPositions.addAll(positions);
+		if (isActive) {
+			activate(true);
+		}
+	}
+
+	/**
+	 * Add highlight positions. It is assumed that all positions
+	 * are up-to-date with respect to the text viewer document.
+	 * 
+	 * @param positions a list of <code>Position</code>s
+	 */
+	public void addHighlightPositions(List positions) {
+		boolean isActive= fIsActive;
+		deactivate(isActive);
+		fPositions.addAll(positions);
+		if (isActive) {
+			activate(true);
+		}
+	}
+
+	/**
+	 * Remove highlight positions by identity.
+	 * 
+	 * @param positions a list of <code>Position</code>s
+	 */
+	public void removeHighlightPositions(List positions) {
+		boolean isActive= fIsActive;
+		deactivate(isActive);
+		fPositions.removeAll(positions);
+		if (isActive) {
+			activate(true);
+		}
+	}
+
+	/**
+	 * Replace given highlight positions in one step.
+	 * 
+	 * @param removePositions a list of <code>Position</code>s to remove
+	 * @param addPositions a list of <code>Position</code>s to add
+	 */
+	public void replaceHighlightPositions(List removePositions, List addPositions) {
+		boolean isActive= fIsActive;
+		deactivate(isActive);
+		fPositions.removeAll(removePositions);
+		fPositions.addAll(addPositions);
 		if (isActive) {
 			activate(true);
 		}

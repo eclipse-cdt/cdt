@@ -11,11 +11,14 @@
 package org.eclipse.cdt.ui;
 
 import org.eclipse.cdt.internal.ui.cview.CView;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CParserPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CodeAssistPreferencePage;
+import org.eclipse.cdt.internal.ui.preferences.WorkInProgressPreferencePage;
+
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -41,7 +44,9 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 		CParserPreferencePage.initDefaults(store);
 		CEditorPreferencePage.initDefaults(store);
 		CodeAssistPreferencePage.initDefaults(store);
-
+		SemanticHighlightings.initDefaults(store);
+		WorkInProgressPreferencePage.initDefaults(store);
+		
 		// We need to do this remove any keys that might have been
 		// in the CUIPlugin store prior to the move of the CEditor setting
 		// All of those settings are now in the workbench "All TextEditor" preference Page.

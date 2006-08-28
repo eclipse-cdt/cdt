@@ -68,6 +68,7 @@ import org.eclipse.cdt.internal.ui.ICStatusConstants;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.CustomBufferFactory;
 import org.eclipse.cdt.internal.ui.editor.ExternalSearchDocumentProvider;
@@ -110,9 +111,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private CEditorTextHoverDescriptor[] fCEditorTextHoverDescriptors;
 
 	/**
-	 * The extension point registry for the <code>org.eclipse.jdt.ui.javaFoldingStructureProvider</code>
+	 * The extension point registry for the <code>org.eclipse.cdt.ui.foldingStructureProviders</code>
 	 * extension point.
-	 * 
 	 */
 	private CFoldingStructureProviderRegistry fFoldingStructureProviderRegistry;
 
@@ -338,16 +338,22 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private CElementAdapterFactory fCElementAdapterFactory;
 
 	/** 
-	 * The template context type registry for the java editor. 
+	 * The template context type registry for the C editor. 
 	 * @since 3.0
 	 */
 	private ContributionContextTypeRegistry fContextTypeRegistry;
 
 	/**
-	 * The template store for the java editor. 
+	 * The template store for the C editor. 
 	 * @since 3.0
 	 */
 	private TemplateStore fTemplateStore;
+
+	/**
+	 * The AST provider.
+	 * @since 4.0
+	 */
+	private ASTProvider fASTProvider;
 
 
 	public CUIPlugin() {
@@ -708,9 +714,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the template context type registry for the java plugin.
+	 * Returns the template context type registry for the C plugin.
 	 * 
-	 * @return the template context type registry for the java plugin
+	 * @return the template context type registry for the C plugin
 	 * @since 3.0
 	 */
 	public ContextTypeRegistry getTemplateContextRegistry() {
@@ -722,9 +728,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the template store for the java editor templates.
+	 * Returns the template store for the C editor templates.
 	 * 
-	 * @return the template store for the java editor templates
+	 * @return the template store for the C editor templates
 	 * @since 3.0
 	 */
 	public TemplateStore getTemplateStore() {
@@ -739,4 +745,17 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return fTemplateStore;
 	}
 
+	/**
+	 * Returns the AST provider.
+	 * 
+	 * @return the AST provider
+	 * @since 4.0
+	 */
+	public synchronized ASTProvider getASTProvider() {
+		if (fASTProvider == null)
+			fASTProvider= new ASTProvider();
+		
+		return fASTProvider;
+	}
+		
 }

@@ -872,6 +872,12 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	public void setLinkingEnabled(boolean enable) {
 		CPluginPreferencePage.setLinkingEnabled(enable);
+		if (enable) {
+			IEditorPart editor = this.getSite().getPage().getActiveEditor();
+			if (editor != null) {
+				editorActivated(editor);
+			}
+		}
 	}
 
 	/**

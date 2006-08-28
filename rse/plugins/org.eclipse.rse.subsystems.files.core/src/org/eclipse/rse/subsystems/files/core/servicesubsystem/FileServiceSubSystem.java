@@ -352,7 +352,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * @param fileNameFilter The name pattern to subset the list by, or null to return all files.
 	 * @param context The holder of state information
 	 */
-	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context) 
+	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context) throws SystemMessageException
 	{
 		String parentPath = null;
 		if (parent != null) {
@@ -360,6 +360,13 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		} else {
 			parentPath = "/";
 		}
+		
+		if (!parent.canRead())
+		{
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FOLDER_UNREADABLE).makeSubstitution(parentPath);
+			throw new SystemMessageException(msg);
+		}
+		
 		IHostFile[] results = null;
 		try
 		{
@@ -381,7 +388,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * @param fileNameFilter The name pattern for subsetting the file list when this folder is subsequently expanded
 	 * @param context The holder of state information
 	 */
-	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context) 
+	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context) throws SystemMessageException
 	{
 		String parentPath = null;
 		if (parent != null) {
@@ -389,6 +396,13 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		} else {
 			parentPath = "/";
 		}
+		
+		if (!parent.canRead())
+		{
+			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FOLDER_UNREADABLE).makeSubstitution(parentPath);
+			throw new SystemMessageException(msg);
+		}
+		
 		IHostFile[] results = null;
 		try
 		{

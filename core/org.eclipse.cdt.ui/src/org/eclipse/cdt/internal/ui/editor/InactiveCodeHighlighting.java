@@ -145,8 +145,8 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 	}
 
 	public void dispose() {
-		uninstall();
 		fLineBackgroundPainter= null;
+		uninstall();
 	}
 
 	/**

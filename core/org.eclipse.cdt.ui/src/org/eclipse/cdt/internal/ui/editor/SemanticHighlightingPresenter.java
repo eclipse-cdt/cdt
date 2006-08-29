@@ -653,8 +653,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 		fSourceViewer= sourceViewer;
 		fPresentationReconciler= backgroundPresentationReconciler;
 
-		fSourceViewer.addTextPresentationListener(this);
-//		fSourceViewer.prependTextPresentationListener(this);
+		fSourceViewer.prependTextPresentationListener(this);
 		fSourceViewer.addTextInputListener(this);
 		manageDocument(fSourceViewer.getDocument());
 	}

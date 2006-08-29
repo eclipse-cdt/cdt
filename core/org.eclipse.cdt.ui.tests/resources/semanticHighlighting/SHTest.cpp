@@ -7,7 +7,7 @@ enum Enumeration {
 
 const int globalConstant = 0;
 int globalVariable = 0;
-static int globalStaticVariable;
+static int globalStaticVariable = 0;
 
 void globalFunc(int a);
 static void globalStaticFunc() {
@@ -29,6 +29,7 @@ public:
     static int staticPubMethod(int arg) {
         FUNCTION_MACRO(arg);
         globalFunc(arg);
+        return globalStaticVariable;
     }
     int pubMethod();
 
@@ -71,7 +72,7 @@ private:
 
 };
 
-template<T1,T2> class TemplateClass {
+template<class T1, class T2> class TemplateClass {
     T1 tArg1;
     T2 tArg2;
     TemplateClass(T1 arg1, T2 arg2) {
@@ -80,7 +81,7 @@ template<T1,T2> class TemplateClass {
     }
 };
 
-template<T1> class PartialInstantiatedClass : TemplateClass<T1,Base1> {};
+template<class T1> class PartialInstantiatedClass : TemplateClass<T1, Base1> {};
 
 
 struct CppStruct {
@@ -94,8 +95,10 @@ union CppUnion {
 typedef CppUnion TUnion;
 
 namespace ns {
-    int namespaceField = 0;
+    int namespaceVar = 0;
     int namespaceFunc() {
+	globalStaticFunc();
+	return namespaceVar;
     }
 }
 
@@ -104,17 +107,19 @@ int ClassContainer::protMethod() {
 }
 
 int ClassContainer::pubMethod() {
-    int localVar;
-    return pubField;
+    int localVar = 0;
+    return pubField + localVar;
 }
 
 int ClassContainer::staticPrivMethod() {
-    CppStruct st= new CppStruct();
-    st.structField= 1;
-    CppUnion un= new CppUnion();
+    CppStruct* st= new CppStruct();
+    st->structField= 1;
+    CppUnion un;
     un.unionField= 2;
     staticPubMethod(staticPrivField);
 label:
     FUNCTION_MACRO(0);
+    if (un.unionField < st->structField) goto label;
+    problemMethod();
     return 0;
 }

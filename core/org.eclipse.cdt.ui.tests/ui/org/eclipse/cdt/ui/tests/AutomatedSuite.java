@@ -19,6 +19,7 @@ import org.eclipse.cdt.ui.tests.text.CBreakIteratorTest;
 import org.eclipse.cdt.ui.tests.text.CPartitionerTest;
 import org.eclipse.cdt.ui.tests.text.CWordIteratorTest;
 import org.eclipse.cdt.ui.tests.text.NumberRuleTest;
+import org.eclipse.cdt.ui.tests.text.SemanticHighlightingTest;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionFailedTest_MemberReference_Arrow_Prefix2;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ArgumentType_NoPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ArgumentType_NoPrefix2;
@@ -145,6 +146,10 @@ public class AutomatedSuite extends TestSuite {
 		// Break iterator tests.
 		addTest(CBreakIteratorTest.suite());
 		addTest(CWordIteratorTest.suite());
+
+		// highlighting tests
+		addTest(SemanticHighlightingTest.suite());
+	
 	}
 	
 }

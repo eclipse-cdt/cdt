@@ -18,8 +18,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.DocumentCommand;
+import org.eclipse.jface.text.ITextPresentationListener;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.source.IOverviewRuler;
@@ -220,5 +223,23 @@ public class CSourceViewer extends ProjectionViewer implements ITextViewerExtens
 		} else {
 			super.setRangeIndication(offset, length, false);
 		}
+	}
+
+	/**
+	 * Prepend given listener to the list of presentation listeners
+	 * 
+	 * @param listener  The listener to be added.
+	 * 
+	 * @see TextViewer#addTextPresentationListener(ITextPresentationListener)
+	 * @since 4.0
+	 */
+	public void prependTextPresentationListener(ITextPresentationListener listener) {
+		Assert.isNotNull(listener);
+
+		if (fTextPresentationListeners == null)
+			fTextPresentationListeners= new ArrayList();
+
+		fTextPresentationListeners.remove(listener);
+		fTextPresentationListeners.add(0, listener);
 	}
 }

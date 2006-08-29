@@ -91,6 +91,8 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 	
 	private static SourceViewer fSourceViewer;
 
+	private String fCurrentHighlighting;
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		disableAllSemanticHighlightings();
@@ -112,6 +114,7 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 
 	String toString(Position[] positions) throws BadLocationException {
 		StringBuffer buf= new StringBuffer();
+		buf.append("// "+fCurrentHighlighting+'\n');
 		IDocument document= fSourceViewer.getDocument();
 		buf.append("Position[] expected= new Position[] {\n");
 		for (int i= 0, n= positions.length; i < n; i++) {
@@ -133,6 +136,7 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 	}
 
 	protected void setUpSemanticHighlighting(String semanticHighlighting) {
+		fCurrentHighlighting= semanticHighlighting;
 		enableSemanticHighlighting(semanticHighlighting);
 		EditorTestHelper.forceReconcile(fSourceViewer);
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));

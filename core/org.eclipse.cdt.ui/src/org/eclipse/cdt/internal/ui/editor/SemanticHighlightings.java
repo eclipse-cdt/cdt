@@ -781,7 +781,7 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextStyleBold()
 		 */
 		public boolean isBoldByDefault() {
-			return false;
+			return true;
 		}
 
 		/*
@@ -814,7 +814,7 @@ public class SemanticHighlightings {
 				IASTName name= (IASTName)node;
 				if (name.isDeclaration()) {
 					IBinding binding= token.getBinding();
-					if (binding instanceof IFunction) {
+					if (binding instanceof IFunction && !(binding instanceof ICPPMethod)) {
 						return true;
 					}
 				}
@@ -879,7 +879,9 @@ public class SemanticHighlightings {
 				IASTName name= (IASTName)node;
 				if (name.isReference()) {
 					IBinding binding= token.getBinding();
-					return binding instanceof IFunction;
+					if (binding instanceof IFunction && !(binding instanceof ICPPMethod)) {
+						return true;
+					}
 				}
 			}
 			return false;
@@ -1934,8 +1936,6 @@ public class SemanticHighlightings {
 		if (fgSemanticHighlightings == null)
 			fgSemanticHighlightings= new SemanticHighlighting[] {
 				new MacroSubstitutionHighlighting(),  // before all others!
-				new FunctionDeclarationHighlighting(),
-				new FunctionInvocationHighlighting(),
 				new ClassHighlighting(),
 //				new StaticConstFieldHighlighting(),
 				new StaticFieldHighlighting(),
@@ -1959,6 +1959,8 @@ public class SemanticHighlightings {
 				new EnumHighlighting(),
 // TLETODO [semanticHighlighting] Macro definition highlighting
 //				new MacroDefinitionHighlighting(),
+				new FunctionDeclarationHighlighting(),
+				new FunctionInvocationHighlighting(),
 				new TypedefHighlighting(),
 				new NamespaceHighlighting(),
 				new LabelHighlighting(),

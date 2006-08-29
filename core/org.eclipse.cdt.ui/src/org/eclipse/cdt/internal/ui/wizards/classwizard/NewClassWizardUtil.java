@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 

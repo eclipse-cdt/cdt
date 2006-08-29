@@ -35,7 +35,7 @@ public interface ISystemRemoteResource {
 
 	/**
 	 * Creates and returns the marker of the specified type on this resource.
-	 * @param the marker type
+	 * @param type the marker type
 	 * @return the created marker
 	 */
 	public ISystemRemoteMarker createMarker(String type);
@@ -43,15 +43,15 @@ public interface ISystemRemoteResource {
 	/**
 	 * Deletes all markers on this resource of the given type, and optionally deletes
 	 * such markers from its children. Deletion of markers with subtypes is also possible.
-	 * @param the marker type, or <code>null</code> to indicate all types.
-	 * @param whether or not to consider the subtypes of the given type
+	 * @param type the marker type, or <code>null</code> to indicate all types.
+	 * @param includeSubtypes whether or not to consider the subtypes of the given type
 	 */
 	public void deleteMarkers(String type, boolean includeSubtypes);
 
 	/**
 	 * Returns the marker with the specified id on this resource, or null if there
 	 * is no such marker.
-	 * @param the id of the marker to find
+	 * @param id the id of the marker to find
 	 * @return a marker if found, or <code>null</code>
 	 */
 	public ISystemRemoteMarker findMarker(long id);
@@ -61,15 +61,15 @@ public interface ISystemRemoteResource {
 	 * optionally, on its children. Markers with subtypes of the given type
 	 * can also be found optionally. Returns an empty array if there are
 	 * no matching markers.
-	 * @param the marker type, or <code>null</code> to indicate all types.
-	 * @param whether or not to consider the subtypes of the given type
+	 * @param type the marker type, or <code>null</code> to indicate all types.
+	 * @param includeSubtypes whether or not to consider the subtypes of the given type
 	 * @return an array of markers, or an empty array if no markers are found
 	 */
 	public ISystemRemoteMarker[] findMarkers(String type, boolean includeSubtypes);
 
 	/**
 	 * Gets the marker with the given id. The marker is not guaranteed to exist.
-	 * @param the marker id.
+	 * @param id the marker id.
 	 */
 	public ISystemRemoteMarker getMarker(long id);
 
@@ -156,20 +156,20 @@ public interface ISystemRemoteResource {
 	
 	/**
 	 * Returns the last modified time on the server.
-	 * @param the last modified time on the server
+	 * @return the last modified time on the server
 	 */
 	public boolean getRemoteLastModifiedTime();
 	
 	/**
 	 * Returns the last modified time on the client.
-	 * @param the last modified time on the client.
+	 * @return the last modified time on the client.
 	 */
 	public boolean getLocalLastModifiedTime();
 	
 	/**
 	 * Returns whether the local copy, if there is one, is in sync with the
 	 * remote copy.
-	 * @param true if the local copy is in sync, false otherwise, or if the
+	 * @return true if the local copy is in sync, false otherwise, or if the
 	 * local copy does not exist.
 	 */
 	public boolean isSynchronized();

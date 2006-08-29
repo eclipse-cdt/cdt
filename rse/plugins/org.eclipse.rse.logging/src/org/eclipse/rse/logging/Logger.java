@@ -83,7 +83,7 @@ public class Logger implements IPropertyChangeListener {
 	 * @param systemPlugin The preferences for this plugin will determine the detail 
 	 * logged by this logger. This allows different levels of detail to be logged in the 
 	 * workbench.
-	 * @see LoggerFactory#getInst(Plugin);
+	 * @see LoggerFactory#getLogger(Plugin)
 	 */
 	Logger(Plugin systemPlugin) {
 		this.systemPlugin = systemPlugin;

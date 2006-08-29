@@ -53,7 +53,7 @@ public class ValidatorSpecialChar
 	 * Constructor
 	 * @param specialChars String containing special characters to test for.
 	 * @param isEmptyAllowed true if an empty string is valid
-	 * @param error message when invalid characters entered
+	 * @param msg_Invalid error message when invalid characters entered
 	 */
 	public ValidatorSpecialChar(String specialChars, boolean isEmptyAllowed, SystemMessage msg_Invalid)
 	{
@@ -63,8 +63,8 @@ public class ValidatorSpecialChar
 	 * Constructor
 	 * @param specialChars String containing special characters to test for.
 	 * @param isEmptyAllowed true if an empty string is valid
-	 * @param error message when invalid characters entered
-	 * @param error message when empty string
+	 * @param msg_Invalid error message when invalid characters entered
+	 * @param msg_Empty error message when empty string
 	 */
 	public ValidatorSpecialChar(String specialChars, boolean isEmptyAllowed, SystemMessage msg_Invalid, SystemMessage msg_Empty)
 	{
@@ -75,8 +75,8 @@ public class ValidatorSpecialChar
 	}		
 	/**
 	 * Supply your own error message text. By default, messages from RSEUIPlugin resource bundle are used.
-	 * @param error message when entry field is empty or null if to keep the default
-	 * @param error message when value entered is not valid, or null if to keep the default
+	 * @param msg_Empty error message when entry field is empty or null if to keep the default
+	 * @param msg_Invalid error message when value entered is not valid, or null if to keep the default
 	 */
 	public void setErrorMessages(SystemMessage msg_Empty, SystemMessage msg_Invalid)
 	{

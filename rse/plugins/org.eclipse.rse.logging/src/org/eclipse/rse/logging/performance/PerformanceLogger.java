@@ -145,11 +145,9 @@ public class PerformanceLogger {
 	}
 
 	/**
-	 * public static void enablePerformanceLogging(boolean enable) : enable performance logging
-	 * @param
-	 * 	enable : true or false
-	 * @return
-	 * 	The flag ENABLE_PERFORMANCE_LOGGING is enable(true or false)
+	 * Enable performance logging
+	 * The flag ENABLE_PERFORMANCE_LOGGING is enabled(true or false)
+	 * @param enable : true or false
 	 */
 	public static void enablePerformanceLogging(boolean enable) {
 		if (enable)
@@ -159,9 +157,8 @@ public class PerformanceLogger {
 	}
 
 	/**
-	 * public static boolean isPerformanceLoggingEnabled() : check if logging enabled
-	 * @return
-	 * 	boolean ENABLE_PERFORMANCE_LOGGING
+	 * Check if logging enabled.
+	 * @return boolean ENABLE_PERFORMANCE_LOGGING
 	 */
 	public static boolean isPerformanceLoggingEnabled() {
 		return ENABLE_PERFORMANCE_LOGGING;
@@ -191,14 +188,12 @@ public class PerformanceLogger {
 	}
 
 	/**
-	 * public static String register(String comp_id, String feature, String version) : Registering a component
-	 * @param
-	 * - comp_id: Component to be registered
-	 * - feature: Identifier for Product Feature attribute in XML
-	 * - version: Identifier for Product Version attribute in XML
-	 * @return
-	 * 	- comp_id as the registered key
-	 * 	- An XML file is created by concatenating comp_id, feature and version with time stamp appended
+	 * Registering a component.
+	 * An XML file is created by concatenating comp_id, feature and version with time stamp appended
+	 * @param comp_id Component to be registered
+	 * @param feature Identifier for Product Feature attribute in XML
+	 * @param version Identifier for Product Version attribute in XML
+	 * @return comp_id as the registered key
 	 */
 	public static String register(String comp_id, String feature, String version) {
 
@@ -230,10 +225,9 @@ public class PerformanceLogger {
 	}
 
 	/**
-	 * public static void deRegister(): De-register the default component
-	 * @return
-	 * 	Default component "_PERFORMANCELOGGER_" removed
-	 * 	start() will be disabled
+	 * De-register the default component.
+	 * 	Default component "_PERFORMANCELOGGER_" removed,
+	 * 	start() will be disabled.
 	 */
 	public static void deRegister() {
 		perfLogRegistry.remove(DEFAULT_COMPONENT);
@@ -241,12 +235,10 @@ public class PerformanceLogger {
 	}
 
 	/**
-	 * public static void deRegister(String key): De-register a component
-	 * @param
-	 * 	key : component to be removed
-	 * @return 
-	 * 	component identified by key removed
-	 * 	start(comp_id) will be disabled
+	 * De-register a component.
+	 * 	component identified by key removed,
+	 * 	start(comp_id) will be disabled.
+	 * @param key component to be removed
 	 */
 	public static void deRegister(String key) {
 		perfLogRegistry.remove(key);
@@ -296,10 +288,8 @@ public class PerformanceLogger {
 
 	/**
 	 * public static long start(String comp_id): start timer for component comp_id using default TaskID
-	 * @param : 
-	 * 	comp_id : component registered previously by register(comp_id,..)
-	 * @return
-	 * 	- started time in milliseconds.
+	 * @param comp_id : component registered previously by register(comp_id,..)
+	 * @return started time in milliseconds.
 	 */
 	public static long start(String comp_id) {
 		String methodPath = getMethodName(true);
@@ -399,11 +389,8 @@ public class PerformanceLogger {
 	}
 
 	/**
-	 * private void generateXMLFile(ComponentData cd): create XML file
-	 * @param
-	 * 	cd is the component data for creating the XML 
-	 * @return
-	 * 	- An XML file is created with "Product" and "System" tags.
+	 * Create an XML file with "Product" and "System" tags.
+	 * @param cd component data for creating the XML 
 	 */
 	private static void generateXMLFile(ComponentData cd) {
 		try {
@@ -479,8 +466,7 @@ public class PerformanceLogger {
 	}
 
 	/**
-	 * private void updateXMLFileAtStop(ComponentData cd, StartData td): update XML file with performance measurement info
-	 * @return
+	 * Update XML file with performance measurement info
 	 * 	- A "Task" tag is created in the XML file with the current start and stop timer information.
 	 */
 	private static void updateXMLFileAtStop(ComponentData cd, StartData td) {
@@ -623,16 +609,17 @@ public class PerformanceLogger {
 	}
 
 	/**
-	 * public static  void listSystemProfile(): retrieve the system information.
-	 * @return
-	 *  These values will be retrieved and printed in stdout:
-	 *   java.version
-	 *	java.vm.version
-	 *	java.class.version
-	 *	java.class.path
-	 *	java.library.path
-	 *	os.name
-	 *	os.version
+	 * Retrieve the system information.
+	 * These values will be retrieved and printed in stdout:
+	 * <ul>
+	 *    <li>java.version</li>
+	 *	  <li>java.vm.version</li>
+	 *    <li>java.class.version</li>
+	 *    <li>java.class.path</li>
+	 *    <li>java.library.path</li>
+	 *    <li>os.name</li>
+	 *    <li>os.version</li>
+	 * </ul>
 	 */
 	public static void listSystemProfile() {
 		System.out.println("java version : " + System.getProperty("java.version"));

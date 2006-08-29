@@ -39,7 +39,7 @@ public interface ISignonValidator
 	/**
 	 * Verify if persisted userid and password are still valid
 	 * 
-	 * @param Shell, if null the validator will run headless, if not null then the validator
+	 * @param shell Shell: if null the validator will run headless, if not null then the validator
 	 * may use the shell to prompt the user (for example, if the password has expired.)
 	 * 
 	 * @return true if signonInfo contains a valid signon, false otherwise.

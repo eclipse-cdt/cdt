@@ -142,17 +142,17 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	 * Constructor for SystemConnectionCombo when there is a subsystem factory to restrict the list to.
 	 * @param parent Parent composite
 	 * @param style SWT style flags for overall composite widget. Typically just pass SWT.NULL
-	 * @param subsystemFactory. Only connections with subsystems owned by this factory are returned.
+	 * @param ssConfig Only connections with subsystems owned by this factory are returned.
 	 * @param defaultConnection the system connection to preselect. Pass null to preselect first connection.
 	 * @param showNewButton true if a New... button is to be included in this composite
 	 */
-	public SystemHostCombo(Composite parent, int style, ISubSystemConfiguration ssFactory, IHost defaultConnection, boolean showNewButton)
+	public SystemHostCombo(Composite parent, int style, ISubSystemConfiguration ssConfig, IHost defaultConnection, boolean showNewButton)
 	{
 		super(parent, style);	
-	    restrictSystemTypesTo = ssFactory.getSystemTypes();
+	    restrictSystemTypesTo = ssConfig.getSystemTypes();
 		init(parent, showNewButton);	
-		populateSSFactory = ssFactory;
-	    populateConnectionCombo(connectionCombo, ssFactory, defaultConnection);
+		populateSSFactory = ssConfig;
+	    populateConnectionCombo(connectionCombo, ssConfig, defaultConnection);
         setConnectionToolTipText();
 	    addOurConnectionSelectionListener();
 	}
@@ -163,16 +163,16 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	 * @param parent Parent composite
 	 * @param style SWT style flags for overall composite widget. Typically just pass SWT.NULL
 	 * @param defaultConnection the system connection to preselect. Pass null to preselect first connection.
-	 * @param subsystemFactoryId. Only connections with subsystems owned by this factory are returned. 
+	 * @param ssConfigId Only connections with subsystems owned by this configuration are returned. 
 	 * @param showNewButton true if a New... button is to be included in this composite
 	 */
-	public SystemHostCombo(Composite parent, int style, IHost defaultConnection, String ssFactoryId, boolean showNewButton)
+	public SystemHostCombo(Composite parent, int style, IHost defaultConnection, String ssConfigId, boolean showNewButton)
 	{
 		super(parent, style);	
-	    restrictSystemTypesTo = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfiguration(ssFactoryId).getSystemTypes();
+	    restrictSystemTypesTo = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfiguration(ssConfigId).getSystemTypes();
 		init(parent, showNewButton);	
-		populateSSFactoryId = ssFactoryId;
-	    populateConnectionCombo(connectionCombo, ssFactoryId, defaultConnection);
+		populateSSFactoryId = ssConfigId;
+	    populateConnectionCombo(connectionCombo, ssConfigId, defaultConnection);
         setConnectionToolTipText();
 	    addOurConnectionSelectionListener();
 	}
@@ -185,11 +185,11 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	 * @param style SWT style flags for overall composite widget. Typically just pass SWT.NULL
 	 * @param defaultConnection the system connection to preselect. Pass null to preselect first connection.
 	 * @param showNewButton true if a New... button is to be included in this composite
-	 * @param subsystemFactoryCategory. Only connections with subsystems owned by factories of this category are returned.
+	 * @param ssConfigCategory Only connections with subsystems owned by configurations of this category are returned.
 	 */
-	public SystemHostCombo(Composite parent, int style, IHost defaultConnection, boolean showNewButton, String ssFactoryCategory)
+	public SystemHostCombo(Composite parent, int style, IHost defaultConnection, boolean showNewButton, String ssConfigCategory)
 	{
-		this(parent, style, defaultConnection, showNewButton, ssFactoryCategory, true);
+		this(parent, style, defaultConnection, showNewButton, ssConfigCategory, true);
 	}
 
 	/**
@@ -200,8 +200,8 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	 * @param style SWT style flags for overall composite widget. Typically just pass SWT.NULL
 	 * @param defaultConnection the system connection to preselect. Pass null to preselect first connection.
 	 * @param showNewButton true if a New... button is to be included in this composite
-	 * @param subsystemFactoryCategory. Only connections with subsystems owned by factories of this category are returned.
-	 * @param showLabel. true if a 'Connection' label is to be included in this composite
+	 * @param ssFactoryCategory Only connections with subsystems owned by factories of this category are returned.
+	 * @param showLabel true if a 'Connection' label is to be included in this composite
 	 */
 	public SystemHostCombo(Composite parent, int style, IHost defaultConnection, boolean showNewButton, String ssFactoryCategory, boolean showLabel)
 	{
@@ -912,7 +912,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
     {
 		int type = event.getType();    	   
 		Object src = event.getSource();
-		Object parent = event.getParent();
+		//Object parent = event.getParent();
 		switch ( type )
 		{
 			case EVENT_ADD:
@@ -1009,7 +1009,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 			  	  	}
 		  	  	}		  	  		
 		  	  }
-		  };
+		  }
 	   };
 	   newButton.addSelectionListener(selectionListener);
 	}
@@ -1022,7 +1022,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 		  public void widgetSelected(SelectionEvent event) 
 		  {
 		  	  setConnectionToolTipText();
-		  };
+		  }
 	   };
 	   connectionCombo.addSelectionListener(selectionListener);
 	}

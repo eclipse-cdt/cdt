@@ -50,9 +50,9 @@ public class ValidatorUniqueString
 	
 	/**
 	 * Constructor accepting a Vector. 
-	 * @param A vector containing list of existing strings to compare against.
+	 * @param existingList A vector containing list of existing strings to compare against.
 	 *        Note that toString() is used to get the string from each item.
-	 * @param true if comparisons are to be case sensitive, false if case insensitive.	 
+	 * @param caseSensitive true if comparisons are to be case sensitive, false if case insensitive.	 
 	 */
 	public ValidatorUniqueString(Vector existingList, boolean caseSensitive)
 	{
@@ -64,8 +64,8 @@ public class ValidatorUniqueString
 	}
 	/**
 	 * Constructor accepting an Array. 
-	 * @param An array containing list of existing strings to compare against.
-	 * @param true if comparisons are to be case sensitive, false if case insensitive.
+	 * @param existingList An array containing list of existing strings to compare against.
+	 * @param caseSensitive true if comparisons are to be case sensitive, false if case insensitive.
 	 */
 	public ValidatorUniqueString(String existingList[], boolean caseSensitive)
 	{
@@ -77,10 +77,10 @@ public class ValidatorUniqueString
 	}
 	/**
 	 * Constructor accepting a Vector and another validator to use for the syntax checking.
-	 * @param A vector containing list of existing strings to compare against.
+	 * @param existingList A vector containing list of existing strings to compare against.
 	 *        Note that toString() is used to get the string from each item.	 
-	 * @param true if comparisons are to be case sensitive, false if case insensitive.
-	 * @param Another IInputValidator who does the job of checking the syntax. After
+	 * @param caseSensitive true if comparisons are to be case sensitive, false if case insensitive.
+	 * @param syntaxValidator Another IInputValidator who does the job of checking the syntax. After
 	 *         checking for non-nullness and uniqueness, this validator is used to 
 	 *         check for syntax.
 	 */
@@ -92,9 +92,9 @@ public class ValidatorUniqueString
 	}
 	/**
 	 * Constructor accepting an Array and another validator to use for the syntax checking.
-	 * @param An array containing list of existing strings to compare against.
-	 * @param true if comparisons are to be case sensitive, false if case insensitive.
-	 * @param Another IInputValidator who does the job of checking the syntax. After
+	 * @param existingList An array containing list of existing strings to compare against.
+	 * @param caseSensitive true if comparisons are to be case sensitive, false if case insensitive.
+	 * @param syntaxValidator Another IInputValidator who does the job of checking the syntax. After
 	 *         checking for non-nullness and uniqueness, this validator is used to 
 	 *         check for syntax.
 	 */
@@ -209,8 +209,8 @@ public class ValidatorUniqueString
 	
 	/**
 	 * Supply your own error message text. By default, messages from RSEUIPlugin resource bundle are used.
-	 * @param error message when entry field is empty or null if to keep the default
-	 * @param error message when value entered is not unique or null if to keep the default
+	 * @param msg_Empty error message when entry field is empty or null if to keep the default
+	 * @param msg_NonUnique error message when value entered is not unique or null if to keep the default
 	 */
 	public void setErrorMessages(SystemMessage msg_Empty, SystemMessage msg_NonUnique)
 	{

@@ -57,7 +57,7 @@ public class ValidatorFileUniqueName
 	/**
 	 * Constructor
 	 * @param parentFolder the folder within which the name must be unique.
-	 * @param true if validating a folder name versus a file name
+	 * @param isFolder true if validating a folder name versus a file name
 	 */
 	public ValidatorFileUniqueName(Shell shell, IRemoteFile parentFolder, boolean isFolder)
 	{
@@ -101,9 +101,9 @@ public class ValidatorFileUniqueName
     
 	/**
 	 * Supply your own error message text. By default, messages from RSEUIPlugin resource bundle are used.
-	 * @param error message when entry field is empty
-	 * @param error message when value entered is not unique
-	 * @param error message when syntax is not valid
+	 * @param msg_Empty error message when entry field is empty
+	 * @param msg_NonUnique error message when value entered is not unique
+	 * @param msg_Invalid error message when syntax is not valid
 	 */
 	public void setErrorMessages(SystemMessage msg_Empty, SystemMessage msg_NonUnique, SystemMessage msg_Invalid)
 	{

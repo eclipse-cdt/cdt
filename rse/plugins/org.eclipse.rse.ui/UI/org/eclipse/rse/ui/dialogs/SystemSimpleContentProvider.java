@@ -46,24 +46,27 @@ public class SystemSimpleContentProvider extends LabelProvider
 		super();
 	}
 
-	/**
-	 * @see ITreeContentProvider#getChildren(Object)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(Object)
 	 */
 	public Object[] getChildren(Object element) 
 	{
 		return getElement(element).getChildren();
 	}
 
-	/**
-	 * @see ITreeContentProvider#getParent(Object)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(Object)
 	 */
 	public Object getParent(Object element) 
 	{
 		return getElement(element).getParent();
 	}
 
-	/**
-	 * @see ITreeContentProvider#hasChildren(Object)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) 
 	{
@@ -74,24 +77,27 @@ public class SystemSimpleContentProvider extends LabelProvider
 		  return children.length > 0;
 	}
 
-	/**
-	 * @see IStructuredContentProvider#getElements(Object)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
 	 */
 	public Object[] getElements(Object element) 
 	{
 		return getChildren(element);
 	}
 
-	/**
-	 * @see IContentProvider#dispose()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() 
 	{
 		
 	}
 
-	/**
-	 * @see IContentProvider#inputChanged(Viewer, Object, Object)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(Viewer, Object, Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) 
 	{		

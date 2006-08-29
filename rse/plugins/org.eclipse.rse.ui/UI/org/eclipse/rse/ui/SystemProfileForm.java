@@ -64,9 +64,9 @@ public class SystemProfileForm
 	/**
 	 * Constructor.
 	 * @param msgLine A GUI widget capable of writing error messages to.
-	 * @param caller. The wizardpage or dialog hosting this form.
-	 * @param profile. The existing profile being updated, or null for New action.
-	 * @param showVerbage. Specify true to show first-time-user verbage.
+	 * @param caller The wizardpage or dialog hosting this form.
+	 * @param profile The existing profile being updated, or null for New action.
+	 * @param showVerbage Specify true to show first-time-user verbage.
 	 */
 	public SystemProfileForm(ISystemMessageLine msgLine, Object caller, ISystemProfile profile, boolean showVerbage)
 	{
@@ -172,18 +172,16 @@ public class SystemProfileForm
 		SystemMessage errMsg = null;
 		Control controlInError = null;
 		if (msgLine != null)
-		  msgLine.clearErrorMessage();
+		{
+			msgLine.clearErrorMessage();
+		}
 		errMsg = validateNameInput();
 		if (errMsg != null)
-		  controlInError = profileName;
-		else
 		{
-		}		
-		if (errMsg != null)
-		  {
+			controlInError = profileName;
 		  	controlInError.setFocus();
 		  	showErrorMessage(errMsg);
-		  }
+		}
 		return (errMsg == null);
 	}
     

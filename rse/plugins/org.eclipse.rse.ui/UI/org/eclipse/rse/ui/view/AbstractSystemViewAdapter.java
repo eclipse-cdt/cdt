@@ -333,9 +333,9 @@ public abstract class AbstractSystemViewAdapter
 	/**
 	 * This is your opportunity to add actions to the popup menu for the given selection. 
 	 * <p>
-	 * To put your action into the given menu, use the menu's {@link org.eclipse.rse.ui.SystemMenuManager#add(String,IAction) add} method.
+	 * To put your action into the given menu, use the menu's {@link org.eclipse.rse.ui.SystemMenuManager#add(String,org.eclipse.jface.action.IAction) add} method.
 	 * If you don't care where it goes within the popup, just pass the given <samp>menuGroup</samp> location id,
-	 * otherwise pass one of the GROUP_XXX values from {@link ISystemContextMenuConstants}. If you pass one that
+	 * otherwise pass one of the GROUP_XXX values from {@link org.eclipse.rse.ui.ISystemContextMenuConstants}. If you pass one that
 	 * identifies a pre-defined cascading menu, such as GROUP_OPENWITH, your action will magically appear in that
 	 * cascading menu, even if it was otherwise empty.
 	 * <p>
@@ -350,7 +350,7 @@ public abstract class AbstractSystemViewAdapter
 	 * @param menu the popup menu you can contribute to
 	 * @param selection the current selection in the calling tree or table view
 	 * @param parent the shell of the calling tree or table view
-	 * @param menuGroup the default menu group to place actions into if you don't care where they. Pass this to the SystemMenuManager {@link org.eclipse.rse.ui.SystemMenuManager#add(String,IAction) add} method. 
+	 * @param menuGroup the default menu group to place actions into if you don't care where they. Pass this to the SystemMenuManager {@link org.eclipse.rse.ui.SystemMenuManager#add(String,org.eclipse.jface.action.IAction) add} method. 
 	 * 
 	 * @see org.eclipse.rse.ui.view.ISystemViewElementAdapter#addActions(SystemMenuManager, IStructuredSelection, Shell, String)
 	 */
@@ -642,7 +642,7 @@ public abstract class AbstractSystemViewAdapter
 	 *  user clicks on the column heading. To support this for a numeric property say, return
 	 *  a Long/Integer object if false, versus returning string.
 	 * 
-	 * @param property the name or key of the property as named by its property descriptor
+	 * @param key the name or key of the property as named by its property descriptor
 	 * @param formatted indication of whether to return the value in formatted or raw form
 	 * @return the current value of the given property
 	 */
@@ -1123,7 +1123,7 @@ public abstract class AbstractSystemViewAdapter
 	/**
      * <i><b>Overridable</b> by subclasses, and is iff drag and drop supported.</i><br>
 	 *  Perform drop from the "fromSet" of objects to the "to" object
-	 * @param from the source objects for the drop
+	 * @param fromSet the source objects for the drop
 	 * @param to the target object for the drop
 	 * @param sameSystemType indication of whether the source and target reside of the same type of system
 	 * @param sameSystem indication of whether the source and target are on the same system
@@ -1550,9 +1550,9 @@ public abstract class AbstractSystemViewAdapter
      * <i>Callable by subclasses.</i><br>
 	 * Do message variable substitution. Using you are replacing &1 (say) with
 	 *  a string.
-	 * @param message containing substitution variable. Eg "Connect failed with return code &1"
-	 * @param substitution variable. Eg "%1"
-	 * @param substitution data. Eg "001"
+	 * @param msg message containing substitution variable. Eg "Connect failed with return code &1"
+	 * @param subOld substitution variable. Eg "%1"
+	 * @param subNew substitution data. Eg "001"
 	 * @return message with all occurrences of variable substituted with data.
 	 */
 	public static String sub(String msg, String subOld, String subNew)

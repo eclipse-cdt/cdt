@@ -19,11 +19,15 @@ package org.eclipse.rse.core.servicesubsystem;
 import java.util.Vector;
 
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.subsystems.AbstractConnectorService;
+import org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilter;
 import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
 import org.eclipse.swt.widgets.Shell;
 
@@ -36,17 +40,21 @@ import org.eclipse.swt.widgets.Shell;
  * To use this class, simply subclass it and override the appropriate methods in it, such as:</p>
  * <ul>
  *    <li>any of the supportsXXX() configuration methods you wish to change.
- *    <li>{@link #createSubSystemInternal(SystemConnection)}, to instantiate your subsystem class.
- *    <li>{@link #getAdditionalSubSystemActions(ISubSystem,Shell)}, to supply your own subsystem popup menu actions
- *    <li>{@link #getNewFilterPoolFilterAction(ISystemFilterPool,Shell)}, to supply your own New->Filter popup menu action and
- *    <li>{@link #getChangeFilterAction(ISystemFilter,Shell)}, to supply your own Change Filter popup menu action.
+ *    <li>{@link #createSubSystemInternal(org.eclipse.rse.model.IHost)}, to instantiate your subsystem class.
+ * </ul>
+ * <p>
+ * For additional customization of the subsystem, you may supply a {@link SubSystemConfigurationAdapter},
+ * which allows you to
+ *    <li>supply your own subsystem popup menu actions via {@link SubSystemConfigurationAdapter#getAdditionalSubSystemActions(ISubSystemConfiguration, ISubSystem, Shell)}, 
+ *    <li>supply your own New->Filter popup menu action via {@link SubSystemConfigurationAdapter#getNewFilterPoolFilterAction(ISubSystemConfiguration, ISystemFilterPool, Shell)}, and 
+ *    <li>supply your own Change Filter popup menu action via {@link SubSystemConfigurationAdapter#getChangeFilterAction(ISubSystemConfiguration, ISystemFilter,Shell)}.
  * </ul>
  * <p>
  * This class is typically used together with:</p>
  * <ul>
  *   <li>{@link org.eclipse.rse.core.servicesubsystem.ServiceSubSystem} for the subsystem
- *   <li>{@link org.eclipse.rse.core.internal.subsystems.AbstractSystem} for the system
- *   <li>{@link org.eclipse.rse.core.internal.subsystems.AbstractSystemManager} for the system manager
+ *   <li>{@link AbstractConnectorService} for the connector service
+ *   <li>{@link AbstractConnectorServiceManager} for the connector service manager
  *   <li>{@link org.eclipse.rse.core.subsystems.AbstractResource} for the individual remote resources
  * </ul>
  * <p>
@@ -54,8 +62,8 @@ import org.eclipse.swt.widgets.Shell;
  * this class, and ignore the hundreds in {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration}
  * 
  * @see org.eclipse.rse.core.servicesubsystem.ServiceSubSystem
- * @see org.eclipse.rse.core.internal.subsystems.AbstractSystem
- * @see org.eclipse.rse.core.internal.subsystems.AbstractSystemManager
+ * @see AbstractConnectorService
+ * @see AbstractConnectorServiceManager
  */
 
 public abstract class ServiceSubSystemConfiguration extends SubSystemConfiguration implements IServiceSubSystemConfiguration  
@@ -163,11 +171,12 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
      * 
      * @param subsys - The subsystem that was created via createSubSystemInternal
      * @param yourNewConnectionWizardPages - The wizard pages you supplied to the New Connection wizard, via the
-     *            {@link #getNewConnectionWizardPages(org.eclipse.jface.wizard.IWizard)} method or null if you didn't override this method.
+     *            {@link org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)} 
+     *            method or null if you didn't override this method.
      *            Note there may be more pages than you originally supplied, as you are passed all pages contributed
      *            by this factory object, including subclasses. Null on a clone operation.
      * 
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#getNewConnectionWizardPages(org.eclipse.jface.wizard.IWizard)
+     * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
      */
     protected void initializeSubSystem(ISubSystem subsys,ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages)
     {

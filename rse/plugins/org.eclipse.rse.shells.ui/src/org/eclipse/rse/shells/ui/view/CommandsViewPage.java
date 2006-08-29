@@ -57,7 +57,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -82,12 +81,13 @@ FocusListener
 	{
 		private boolean checkState(Event event)
 		{
+			boolean isEnabled = !_inputEntry.isInCodeAssist();
 			if (event.character == '\r')
 			{
 				_inputEntry.setInCodeAssist(false);
 			}
 			
-			return !_inputEntry.isInCodeAssist();
+			return isEnabled;
 		}
 
 		public void handleEvent(Event e)
@@ -113,7 +113,7 @@ FocusListener
 				}
 				else if (e.stateMask == 262144)
 				{
-					if (((int)e.character) == 3)
+					if (e.character == 3)
 					{
 					    if (_inputEntry.getSelectedText().length() == 0)
 					    {
@@ -254,7 +254,7 @@ FocusListener
 
 			Table table = _viewer.getTable();
 
-			Display display = _viewer.getShell().getDisplay();
+			//Display display = _viewer.getShell().getDisplay();
 			Color bgcolour = _tabFolderPage.getBackground();
 
 			table.setBackground(bgcolour);
@@ -336,7 +336,7 @@ FocusListener
 	}
 	public void updateTheme()
 	{
-	    Display display = getViewer().getControl().getDisplay();
+	    //Display display = getViewer().getControl().getDisplay();
 	    IThemeManager mgr = PlatformUI.getWorkbench().getThemeManager();
 		Color bg = mgr.getCurrentTheme().getColorRegistry().get(REMOTE_COMMANDS_VIEW_BG_COLOR);
 		Color fg = mgr.getCurrentTheme().getColorRegistry().get(REMOTE_COMMANDS_VIEW_FG_COLOR);
@@ -355,7 +355,7 @@ FocusListener
 			return;
 
 		ISystemViewElementAdapter adapter = (ISystemViewElementAdapter) ((IAdaptable) element).getAdapter(ISystemViewElementAdapter.class);
-		boolean alreadyHandled = false;
+		//boolean alreadyHandled = false;
 		if (adapter != null)
 		{
 			if (adapter.hasChildren(element))
@@ -399,12 +399,12 @@ FocusListener
 				}
 				else
 				{
-					alreadyHandled = adapter.handleDoubleClick(element);
+					/*alreadyHandled =*/ adapter.handleDoubleClick(element);
 				}
 			}
 			else
 			{
-				alreadyHandled = adapter.handleDoubleClick(element);
+				/*alreadyHandled =*/ adapter.handleDoubleClick(element);
 			}
 		}
 	}

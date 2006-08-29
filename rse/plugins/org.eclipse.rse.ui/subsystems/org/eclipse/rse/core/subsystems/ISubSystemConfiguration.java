@@ -180,7 +180,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 */
 	public boolean supportsServerLaunchProperties(IHost host);
 	/**
-	 * If {@link #supportsServerLaunchProperties()} returns true, this method may be called by
+	 * If {@link #supportsServerLaunchProperties(IHost)} returns true, this method may be called by
 	 * the server launcher to decide if a given remote server launch type is supported or not.
 	 * <br> We return true by default.
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
@@ -357,7 +357,8 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
      * @param creatingConnection true if we are creating a connection, false if just creating
      *          another subsystem for an existing connection.
      * @param yourNewConnectionWizardPages The wizard pages you supplied to the New Connection wizard, via the
-     *            {@link #getNewConnectionWizardPages(IWizard)} method or null if you didn't override this method.
+     *            {@link org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
+     *             method or null if you didn't override this method.
      */
     public ISubSystem createSubSystem(IHost conn, boolean creatingConnection, ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages);
 
@@ -369,8 +370,6 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	
 	/**
 	 * Find or create a connector service for this host
-	 * @param host
-	 * @return
 	 */
 	public IConnectorService getConnectorService(IHost host);
 	   
@@ -379,7 +378,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 *  for a given subsystem.
 	 * <p>
 	 * Create an instance of ServerLauncher, and add it to the given subsystem.
-	 * When a subsystem is created, and {@link #supportsServerLaunchProperties()}
+	 * When a subsystem is created, and {@link #supportsServerLaunchProperties(IHost)}
 	 * returns true, this method is called to create the server launcher instance
 	 * associated with the subsystem. The default implementation is to create an
 	 * instance of {@link IRemoteServerLauncher}, but override to create your own 
@@ -403,12 +402,12 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
     public void updateSubSystem(Shell shell, ISubSystem subsystem, boolean updateUserId, String userId, boolean updatePort, int port);
 	/**
 	 * Update the port for the given subsystem instance.
-	 * Shortcut to {@link #updateSubSystem(Shell,ISubSystem,boolean,String,boolean,Integer)}
+	 * Shortcut to {@link #updateSubSystem(Shell, ISubSystem, boolean, String, boolean, int)}
 	 */
 	public void setSubSystemPort(Shell shell, ISubSystem subsystem, int port);
 	/**
 	 * Update the user ID for the given subsystem instance.
-	 * Shortcut to {@link #updateSubSystem(Shell,ISubSystem,boolean,String,boolean,Integer)}
+	 * Shortcut to {@link #updateSubSystem(Shell, ISubSystem, boolean, String, boolean, int)}
 	 */
 	public void setSubSystemUserId(Shell shell, ISubSystem subsystem, String userId);
 

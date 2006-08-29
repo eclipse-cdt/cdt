@@ -17,8 +17,6 @@
 package org.eclipse.rse.ui.wizards;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.ui.SystemConnectionForm;
 import org.eclipse.rse.ui.SystemResources;
@@ -28,7 +26,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * A base class for additional pages that are to be appended to the New Connection wizard.
- * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getNewConnectionWizardPages(IWizard)
+ * @see org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
  */
 public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSystemWizardPage 
        implements ISystemNewConnectionWizardPage
@@ -113,8 +111,8 @@ public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSyst
     {
     	RSENewConnectionWizard ourWizard = getNewConnectionWizard();
     	if (ourWizard != null) {
-    	  String[] systemTypes = parentFactory.getSystemTypes();
-    	  IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
+    	  //String[] systemTypes = parentFactory.getSystemTypes();
+    	  //IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
     	  IWizardPage wizardPage = ourWizard.getDelegate().getMainPage();
     	  
     	  if (wizardPage instanceof ISystemNewConnectionWizardMainPage) {
@@ -137,8 +135,8 @@ public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSyst
     {
     	RSENewConnectionWizard ourWizard = getNewConnectionWizard();
     	if (ourWizard != null) {
-      	  String[] systemTypes = parentFactory.getSystemTypes();
-    	  IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
+      	  //String[] systemTypes = parentFactory.getSystemTypes();
+    	  //IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
     	  IWizardPage wizardPage = ourWizard.getDelegate().getMainPage();
     	  
     	  if (wizardPage instanceof RSENewConnectionWizardDefaultDelegateMainPage) {

@@ -23,7 +23,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
  * Interface that all subsystem factory supplied pages contributed to the New Connection wizard 
  *  must implement.
  * @see org.eclipse.rse.ui.wizards.AbstractSystemNewConnectionWizardPage
- * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getNewConnectionWizardPages(IWizard)
+ * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
  */
 public interface ISystemNewConnectionWizardPage extends IWizardPage
 {

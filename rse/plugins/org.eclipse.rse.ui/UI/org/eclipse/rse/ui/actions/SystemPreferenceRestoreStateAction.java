@@ -18,7 +18,6 @@ package org.eclipse.rse.ui.actions;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeEvent;
 import org.eclipse.rse.model.ISystemPreferenceChangeEvents;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
@@ -29,10 +28,9 @@ import org.eclipse.swt.widgets.Shell;
  *   previous state.
  */
 public class SystemPreferenceRestoreStateAction extends SystemBaseAction 
-                                 
 {
-	
-    private ISystemRegistry sr = null;
+    //private ISystemRegistry sr = null;
+
 	/**
 	 * Constructor
 	 */
@@ -41,7 +39,7 @@ public class SystemPreferenceRestoreStateAction extends SystemBaseAction
 		super(SystemResources.ACTION_RESTORE_STATE_PREFERENCE_LABEL,SystemResources.ACTION_RESTORE_STATE_PREFERENCE_TOOLTIP, parent);
         setSelectionSensitive(false);
         allowOnMultipleSelection(true);
-        sr = RSEUIPlugin.getTheSystemRegistry();	        
+        //sr = RSEUIPlugin.getTheSystemRegistry();	        
         setChecked(SystemPreferencesManager.getPreferencesManager().getRememberState());
 
 		setHelp(RSEUIPlugin.HELPPREFIX+"aprefres");

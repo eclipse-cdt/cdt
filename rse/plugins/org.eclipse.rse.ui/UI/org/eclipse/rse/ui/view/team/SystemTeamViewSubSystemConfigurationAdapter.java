@@ -16,11 +16,8 @@
 
 package org.eclipse.rse.ui.view.team;
 
-import java.util.Hashtable;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.model.ISystemProfile;
@@ -40,11 +37,10 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  */
 public class SystemTeamViewSubSystemConfigurationAdapter 
        extends AbstractSystemViewAdapter 
-       implements ISystemViewElementAdapter, ISystemUserIdConstants
+       implements ISystemViewElementAdapter
 {
-
 	private boolean actionsCreated = false;
-	private Hashtable categoriesByProfile = new Hashtable();	
+	//private Hashtable categoriesByProfile = new Hashtable();	
 	private SystemFilterWorkWithFilterPoolsAction wwPoolsAction;
 	
 	// -------------------
@@ -216,24 +212,24 @@ public class SystemTeamViewSubSystemConfigurationAdapter
 	 */
 	public boolean hasChildren(Object element)
 	{
-		SystemTeamViewSubSystemConfigurationNode ssfNode = (SystemTeamViewSubSystemConfigurationNode)element;
-		SystemTeamViewCategoryNode category = ssfNode.getParentCategory();
-		ISystemProfile profile = ssfNode.getProfile();
+		SystemTeamViewSubSystemConfigurationNode ssConfNode = (SystemTeamViewSubSystemConfigurationNode)element;
+		SystemTeamViewCategoryNode category = ssConfNode.getParentCategory();
+		//ISystemProfile profile = ssConfNode.getProfile();
 		String categoryType = category.getMementoHandle();
-		ISubSystemConfiguration ssf = ssfNode.getSubSystemConfiguration();
+		//ISubSystemConfiguration ssConf = ssConfNode.getSubSystemConfiguration();
 		if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_FILTERPOOLS))
 			return true;
 		else  if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_USERACTIONS))
 		{
 			/* FIXME
-			return (profile.getUserActions(ssf).length > 0);
+			return (profile.getUserActions(ssConf).length > 0);
 			*/
 			return false;
 		}
 		else if (categoryType.equals(SystemTeamViewCategoryNode.MEMENTO_COMPILECMDS))
 		{
 			/* FIXME
-			return (profile.getCompileCommandTypes(ssf).length > 0);
+			return (profile.getCompileCommandTypes(ssConf).length > 0);
 			*/
 			return false;
 		}

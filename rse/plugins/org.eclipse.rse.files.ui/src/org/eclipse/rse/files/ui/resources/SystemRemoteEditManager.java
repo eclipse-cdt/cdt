@@ -57,14 +57,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 public class SystemRemoteEditManager
 {
-
-
 	public static final String REMOTE_EDIT_PROJECT_NAME = "RemoteSystemsTempFiles";
 	public static final String REMOTE_EDIT_PROJECT_NATURE_ID = "org.eclipse.rse.ui.remoteSystemsTempNature";
 	public static final String REMOTE_EDIT_PROJECT_BUILDER_ID = "org.eclipse.rse.ui.remoteSystemsTempBuilder";
 
 	private static SystemRemoteEditManager inst;
-	private RSEUIPlugin plugin;
+	//private RSEUIPlugin plugin;
 	private List _mountPathMappers;
 
 	/**
@@ -73,7 +71,7 @@ public class SystemRemoteEditManager
 	private SystemRemoteEditManager()
 	{
 		super();
-		plugin = RSEUIPlugin.getDefault();
+		//plugin = RSEUIPlugin.getDefault();
 		registerMountPathMappers();
 	}
 

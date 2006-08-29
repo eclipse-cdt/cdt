@@ -58,7 +58,7 @@ public class SystemKillDialog extends SystemPromptDialog
     private String warningTip = SystemProcessesResources.RESID_KILL_WARNING_TOOLTIP;
     private String promptLabel;
     private SystemKillTableProvider sktp;
-    private Label prompt;
+    //private Label prompt;
     private Table table;
     private TableViewer tableViewer;    
     private GridData tableData;
@@ -132,19 +132,19 @@ public class SystemKillDialog extends SystemPromptDialog
         		int size = ((IStructuredSelection)input).size();
         		
         		if (size > 1) {
-        			prompt = SystemWidgetHelpers.createLabel(composite, SystemProcessesResources.RESID_KILL_PROMPT, nbrColumns);
+        			/*prompt =*/ SystemWidgetHelpers.createLabel(composite, SystemProcessesResources.RESID_KILL_PROMPT, nbrColumns);
         		}
         		else {
-        			prompt = SystemWidgetHelpers.createLabel(composite, SystemProcessesResources.RESID_KILL_PROMPT_SINGLE, nbrColumns);
+        			/*prompt =*/ SystemWidgetHelpers.createLabel(composite, SystemProcessesResources.RESID_KILL_PROMPT_SINGLE, nbrColumns);
         		}
         	}
         	// should never get here
         	else {
-        		prompt = SystemWidgetHelpers.createLabel(composite, SystemProcessesResources.RESID_KILL_PROMPT, nbrColumns);       		
+        		/*prompt =*/ SystemWidgetHelpers.createLabel(composite, SystemProcessesResources.RESID_KILL_PROMPT, nbrColumns);       		
         	}
         }
 		else {
-			prompt = SystemWidgetHelpers.createVerbiage(composite, promptLabel, nbrColumns, false, 200);
+			/*prompt =*/ SystemWidgetHelpers.createVerbiage(composite, promptLabel, nbrColumns, false, 200);
 		}
 
         // WARNING
@@ -168,7 +168,9 @@ public class SystemKillDialog extends SystemPromptDialog
           if (warningTip != null)
           {
           	warningLabel.setToolTipText(warningTip);
-          	imageLabel.setToolTipText(warningTip);
+          	if (imageLabel!=null) {
+              	imageLabel.setToolTipText(warningTip);
+          	}
           }
           GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
           data.widthHint = 350;

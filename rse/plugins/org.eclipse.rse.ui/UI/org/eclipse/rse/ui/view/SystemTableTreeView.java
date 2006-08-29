@@ -231,7 +231,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		}
 	}
 	private Object _objectInput;
-	private ArrayList _attributeColumns;
+	//private ArrayList _attributeColumns;
 	private TableLayout _layout;
 	protected SystemTableTreeViewProvider _provider;
 	private HeaderSelectionListener _columnSelectionListener;
@@ -291,7 +291,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		{
 			super(tableTree);
 			_messageLine = msgLine;
-			_attributeColumns = new ArrayList();
+			//_attributeColumns = new ArrayList();
 			_layout = new TableLayout();
 
 			_columnManager = new SystemTableViewColumnManager(this);
@@ -862,7 +862,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		int eventType = event.getEventType();
 		Object remoteResourceParent = event.getResourceParent();
 		Object remoteResource = event.getResource();
-		boolean originatedHere = (event.getOriginatingViewer() == this);
+		//boolean originatedHere = (event.getOriginatingViewer() == this);
 		Vector remoteResourceNames = null;
 		if (remoteResource instanceof Vector)
 		{
@@ -1112,10 +1112,9 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
 		RSEUIPlugin.getTheSystemRegistry().removeSystemRemoteChangeListener(this);
 
-		Composite tree = getTableTree();
-		
-		boolean isDisposed = tree.isDisposed();
-		
+		// for debugging
+		//Composite tree = getTableTree();
+		//boolean isDisposed = tree.isDisposed();
 	}
 
 	
@@ -1352,7 +1351,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
-		int selectedCount = selection.size();
+		//int selectedCount = selection.size();
 		Object element = null;
 
 		ISystemViewElementAdapter adapter = null;

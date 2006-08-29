@@ -46,7 +46,8 @@ public class SystemPortPrompt
 {
 	
 	private   Composite              composite_prompts;
-	private   Label                  labelPortPrompt, labelPort;
+	//private   Label                  labelPortPrompt;
+	private   Label                  labelPort;
 	private   InheritableEntryField  textPort;
 	protected SystemMessage          errorMessage;
 
@@ -282,7 +283,7 @@ public class SystemPortPrompt
 		String portRange = " (1-" + ValidatorPortInput.MAXIMUM_PORT_NUMBER + ")";
 		if (wantLabel) {
 			String labelText = SystemWidgetHelpers.appendColon(SystemResources.RESID_SUBSYSTEM_PORT_LABEL + portRange);
-			labelPortPrompt = SystemWidgetHelpers.createLabel(composite_prompts, labelText);
+			/*labelPortPrompt =*/ SystemWidgetHelpers.createLabel(composite_prompts, labelText);
 		}
 	    portApplicable = isPortApplicable();
 	    portEditable = isPortEditable();

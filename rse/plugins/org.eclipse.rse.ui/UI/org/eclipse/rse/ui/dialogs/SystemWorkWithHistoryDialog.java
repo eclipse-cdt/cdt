@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -53,7 +52,7 @@ public class SystemWorkWithHistoryDialog extends SystemPromptDialog implements I
 	private String[] historyInput;
 	private String[] historyOutput;
 	private String[] defaultHistory;
-	private Label verbage;
+	//private Label verbage;
 	private List  historyList;
 	private Button rmvButton, clearButton, mupButton, mdnButton;
 	private Group group;
@@ -127,7 +126,7 @@ public class SystemWorkWithHistoryDialog extends SystemPromptDialog implements I
 		Composite composite = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 		
 		// verbage
-		verbage = SystemWidgetHelpers.createLabel(composite,SystemResources.RESID_WORKWITHHISTORY_VERBAGE, nbrColumns);
+		/*verbage =*/ SystemWidgetHelpers.createLabel(composite,SystemResources.RESID_WORKWITHHISTORY_VERBAGE, nbrColumns);
 		
 		// History list
 		init(composite, nbrColumns);

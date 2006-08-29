@@ -63,7 +63,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
@@ -81,7 +80,7 @@ public class SystemFilterWorkWithFilterPoolsDialog
 {
 	
 	private String promptString;
-	private Label prompt;
+	//private Label prompt;
 	private SystemFilterWorkWithFilterPoolsTreeViewer tree;
 	private ToolBar  toolbar = null;
 	private ToolBarManager toolbarMgr = null;
@@ -136,7 +135,7 @@ public class SystemFilterWorkWithFilterPoolsDialog
 	 */
 	protected ISystemMessageLine createMessageLine(Composite c)
 	{
-		ISystemMessageLine msgLine = super.createMessageLine(c);
+		/*ISystemMessageLine msgLine =*/ super.createMessageLine(c);
 		return fMessageLine;
 	}
 
@@ -177,7 +176,7 @@ public class SystemFilterWorkWithFilterPoolsDialog
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, 1);
 
         // PROMPT
-		prompt = SystemWidgetHelpers.createLabel(composite_prompts, promptString);
+		/*prompt =*/ SystemWidgetHelpers.createLabel(composite_prompts, promptString);
 
         // TOOLBAR
         createToolBar(composite_prompts);
@@ -300,8 +299,8 @@ public class SystemFilterWorkWithFilterPoolsDialog
 	 */
 	public void selectionChanged(SelectionChangedEvent event) 
 	{
-		IStructuredSelection sel = (IStructuredSelection)event.getSelection();
-		SystemSimpleContentElement element = (SystemSimpleContentElement)sel.getFirstElement();		
+		//IStructuredSelection sel = (IStructuredSelection)event.getSelection();
+		//SystemSimpleContentElement element = (SystemSimpleContentElement)sel.getFirstElement();		
 		if (rnmAction != null)
 		  rnmAction.selectionChanged(event);
 	}	
@@ -399,18 +398,17 @@ public class SystemFilterWorkWithFilterPoolsDialog
     public boolean canDelete()
     {
     	SystemSimpleContentElement element = getSelectedElement();
-    	if (element == null)
-    	  return false;
-    	Object elementData = element.getData();
-    	//System.out.println("In SFWWFPsDlg.canDelete: element data class = " + elementData.getClass().getName());
-    	if ((elementData == null) || !(elementData instanceof ISystemFilterPool))
-    	  return false;
-    	ISystemFilterPool pool = (ISystemFilterPool)elementData;
-    	if (pool == null)
-    	  return false;
-    	else
-    	  return (pool.isDeletable() && element.isDeletable());    	     	
+    	if (element != null) {
+          	Object elementData = element.getData();
+          	//System.out.println("In SFWWFPsDlg.canDelete: element data class = " + elementData.getClass().getName());
+          	if (elementData instanceof ISystemFilterPool) {
+              	ISystemFilterPool pool = (ISystemFilterPool)elementData;
+              	return (pool.isDeletable() && element.isDeletable());    	     	
+          	}
+    	}
+    	return false;
     }
+    
     /**
      * Actually do the delete of currently selected items.
      */
@@ -461,26 +459,22 @@ public class SystemFilterWorkWithFilterPoolsDialog
      */
     public boolean canRename()
     {
+    	boolean canRename = false;
     	SystemSimpleContentElement element = getSelectedElement();
-    	if (element == null)
-    	  return false;
-    	Object elementData = element.getData();
-    	//System.out.println("In SFWWFPsDlg.canRename: element data class = " + elementData.getClass().getName());
-    	if ((elementData == null) || !(elementData instanceof ISystemFilterPool))
-    	  return false;
-    	ISystemFilterPool pool = (ISystemFilterPool)elementData;
-    	if (pool == null)
-    	  return false;
-    	else
-    	{
-    	  boolean renamable = (!pool.isNonRenamable() && element.isRenamable());
-    	  if (renamable)
-    	  {
-            //poolNameValidator.setExistingNamesList(pool.getSystemFilterPoolManager().getSystemFilterPoolNamesVector());    	  	
-    	  }
-    	  return renamable;    	     	
+    	if (element != null) {
+        	Object elementData = element.getData();
+        	//System.out.println("In SFWWFPsDlg.canRename: element data class = " + elementData.getClass().getName());
+        	if (elementData instanceof ISystemFilterPool) {
+            	ISystemFilterPool pool = (ISystemFilterPool)elementData;
+            	canRename = (!pool.isNonRenamable() && element.isRenamable());
+            	//if (canRename) {
+                //    poolNameValidator.setExistingNamesList(pool.getSystemFilterPoolManager().getSystemFilterPoolNamesVector());    	  	
+            	//}
+        	}
     	}
+    	return canRename;
     }
+    
     /**
      * Actually do the rename of currently selected items.
      * The array of new names matches the currently selected items.

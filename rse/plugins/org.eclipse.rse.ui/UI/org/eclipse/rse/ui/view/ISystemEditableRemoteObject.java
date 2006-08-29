@@ -56,14 +56,14 @@ public interface ISystemEditableRemoteObject
 
 	/**
 	 * Download the file.
-	 * @param if the shell is null, no progress monitor will be shown
+	 * @param shell if the shell is null, no progress monitor will be shown
 	 * @return true if successful, false if cancelled
 	 */
 	public boolean download(Shell shell) throws Exception;
 
 	/**
 	 * Download the file.
-	 * @param the progress monitor
+	 * @param monitor the progress monitor
 	 * @return true if the operation was successful.  false if the user cancels.
 	 */
 	public boolean download(IProgressMonitor monitor) throws Exception;
@@ -144,20 +144,17 @@ public interface ISystemEditableRemoteObject
 	
 	
 	/**
-	 * Return the absolute path on the remote system
-	 * @return
+	 * Return the absolute path on the remote system.
 	 */
 	public String getAbsolutePath();
 	
 	/**
-	 * Return the subsystem for the edited object
-	 * @return
+	 * Return the subsystem for the edited object.
 	 */
 	public ISubSystem getSubSystem();
 	
 	/**
-	 * Returns whether the edited object exists
-	 * @return
+	 * Returns whether the edited object exists.
 	 */
 	public boolean exists();
 	

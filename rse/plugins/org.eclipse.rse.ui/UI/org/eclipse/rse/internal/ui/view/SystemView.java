@@ -796,7 +796,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	/**
 	 * Helper method to collapse a node in the tree.
 	 * Called when a currently expanded subsystem is disconnected.
-	 * @param true if children should be deleted from memory so re-expand forces refresh.
+	 * @param forceRefresh true if children should be deleted from memory so re-expand forces refresh.
 	 */
 	public void collapseNode(Object element, boolean forceRefresh)
 	{
@@ -1908,7 +1908,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	   	    	      parentItem = findItem(parent);
 	    	   	      if (parentItem == null)
 	    	   	        return Status.OK_STATUS;
-	                  if (multiSource.length > 0 && parentItem != null && parentItem instanceof Item )
+	                  if (multiSource.length > 0 && parentItem instanceof Item )
 	                  {
 			              getControl().setRedraw(false);    	   	        
 	   	    	          collapseNode(parent, true); // collapse and flush gui widgets from memory    	   	        
@@ -2783,7 +2783,6 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 		else if (inputObj instanceof ISystemFilter)
 		{
 		  ISystemFilter filter = (ISystemFilter)inputObj;
-		  if (filter == null) return null;
 		  if (filter.getParentFilter() != null)
 		    return filter.getParentFilter();
 		  else
@@ -3319,7 +3318,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
      *   in order to uniquely find it. If not given this, we expand the first occurrence we find!
      * @param remoteObject - either a remote object or a remote object absolute name
      * @param subsystem - the subsystem that owns the remote objects, to optimize searches. 
-     * @param parentobject - the parent that owns the remote objects, to optimize searches. Can 
+     * @param parentObject - the parent that owns the remote objects, to optimize searches. Can 
      *          be an object or the absolute name of a remote object.
      * @return the tree item of the remote object if found and expanded, else null
      */
@@ -3361,7 +3360,6 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	}
     	else // not given a parent to refine search with. Better have a subsystem!!
     	{
-            remoteItem = null;
     		if (remoteObject instanceof String)
     	      remoteItem = findFirstRemoteItemReference((String)remoteObject, subsystem, (Item)null); 
     	    else 
@@ -3385,7 +3383,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
      * Select a remote object or objects given the parent remote object (can be null) and subsystem (can be null)
      * @param src - either a remote object, a remote object absolute name, or a vector of remote objects or remote object absolute names
      * @param subsystem - the subsystem that owns the remote objects, to optimize searches.
-     * @param parentobject - the parent that owns the remote objects, to optimize searches.
+     * @param parentObject - the parent that owns the remote objects, to optimize searches.
      * @return true if found and selected
      */
     public boolean selectRemoteObjects(Object src, ISubSystem subsystem, Object parentObject)
@@ -4744,7 +4742,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
      * Recursively tries to find all filters affected by a given remote object. 
      * 
      * @param elementName the absolute name of the remote object to which we want to find a filters which result in it.
-     * @param subsystem. The subsystem which owns the remote resource. Necessary to scope the search for impacted filters.
+     * @param subsystem The subsystem which owns the remote resource. Necessary to scope the search for impacted filters.
      * @param matches the vector to populate with hits. Can be null, in which case a new vector is created.
      * 
      * @return Vector of FilterMatch objects for each affected filter
@@ -4768,7 +4766,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
      *  after a remote resource change.
      * @param parent the parent item at which to start the search.
      * @param elementName the absolute name of the remote element that has been created, changed, deleted or renamed.
-     * @param subsystem. The subsystem which owns the remote resource. Necessary to scope the search for impacted filters.
+     * @param subsystem The subsystem which owns the remote resource. Necessary to scope the search for impacted filters.
      * @param occurrences the vector to populate with hits
      * 
      * @return Vector of FilterMatch objects for each affected filter

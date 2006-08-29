@@ -81,20 +81,18 @@ import org.eclipse.ui.part.ViewPart;
 /**
  * This class defines the Remote Search view.
  */
-public class SystemSearchViewPart extends ViewPart implements ISystemResourceChangeListener, 
-                                                              IMenuListener, ISelectionChangedListener, 
-                                                              ISystemMessageLine, IRSEViewPart
+public class SystemSearchViewPart extends ViewPart 
+	implements ISystemResourceChangeListener, 
+               IMenuListener, ISelectionChangedListener, 
+               ISystemMessageLine, IRSEViewPart
 {
-
-
-
 	private PageBook pageBook;
 	private StructuredViewer currentViewer;
 
 	private IActionBars actionBars;
 	private IMenuManager mMgr;
 	private IToolBarManager tbMgr;
-	private IStatusLineManager slMgr;
+	//private IStatusLineManager slMgr;
 	
 	private static final String MENU_HISTORY_GROUP_NAME = "historyGroup";
 	private static final String MENU_CLEAR_HISTORY_GROUP_NAME = "clearHistoryGroup";
@@ -243,7 +241,7 @@ public class SystemSearchViewPart extends ViewPart implements ISystemResourceCha
 		initToolBarActions(tbMgr);
 
 		// get the status line manager
-		slMgr = actionBars.getStatusLineManager();
+		//slMgr = actionBars.getStatusLineManager();
 		
 		// update action bars
 		actionBars.updateActionBars();
@@ -404,7 +402,7 @@ public class SystemSearchViewPart extends ViewPart implements ISystemResourceCha
 
 	/**
 	 * Add a search result set.
-	 * @param the search result set
+	 * @param resultSet the search result set
 	 */
 	public void addSearchResult(IAdaptable resultSet) {
 		
@@ -627,7 +625,7 @@ public class SystemSearchViewPart extends ViewPart implements ISystemResourceCha
 
 	/**
 	 * Show search result with the given index.
-	 * @param the index in the result history list
+	 * @param index the index in the result history list
 	 */
 	public void showSearchResult(int index) {
 		
@@ -884,7 +882,7 @@ public class SystemSearchViewPart extends ViewPart implements ISystemResourceCha
 
 	/**
 	 * Get the adapter for the given object.
-	 * @param the object the object for which I want the adapter.
+	 * @param element the object the object for which I want the adapter.
 	 * @return the adapter for the object.
 	 */
 	public ISystemViewElementAdapter getAdapter(Object element) {

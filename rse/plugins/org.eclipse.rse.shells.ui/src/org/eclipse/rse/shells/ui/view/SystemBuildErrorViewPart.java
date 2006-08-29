@@ -231,12 +231,12 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 				return;
 
 			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter) ((IAdaptable) element).getAdapter(ISystemViewElementAdapter.class);
-			boolean alreadyHandled = false;
+			//boolean alreadyHandled = false;
 			if (adapter != null)
 			{
 				if (!adapter.hasChildren(element))
 				{		
-					alreadyHandled = adapter.handleDoubleClick(element);
+					/*alreadyHandled =*/ adapter.handleDoubleClick(element);
 				}
 			}
 		}
@@ -290,16 +290,12 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 		    if (object instanceof IRemoteOutput)
 		    {
 		        IRemoteOutput output = (IRemoteOutput)object;
-		        if (output != null)
-		        {
-		            _viewer.setInput(output.getParent());
-		            SystemBuildErrorViewProvider provider = (SystemBuildErrorViewProvider)_viewer.getContentProvider();
-		            provider.setOffset(output.getIndex() - 1);
-		        }
+	            _viewer.setInput(output.getParent());
+	            SystemBuildErrorViewProvider provider = (SystemBuildErrorViewProvider)_viewer.getContentProvider();
+	            provider.setOffset(output.getIndex() - 1);
 		    }
 		    else if (object instanceof IRemoteLineReference)
 		    {
-		       
 		        _viewer.setInput(((IRemoteLineReference)object).getParent());
 		    }
 		

@@ -35,7 +35,7 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 	private IValidatorRemoteSelection _selectionValidator;
 	private boolean _multipleSelectionMode;
 	private boolean _showPropertySheet = false;
-	private IHost _outputConnection;
+	//private IHost _outputConnection;
 	private SystemActionViewerFilter _customViewerFilter;
 	private String _message, _tip;
 	
@@ -234,7 +234,7 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 		boolean closeDialog = _form.verify();
 		if (closeDialog)
 		{
-			_outputConnection = _form.getSelectedConnection();
+			//_outputConnection = _form.getSelectedConnection();
 			if (_multipleSelectionMode)
 			  setOutputObject(_form.getSelectedObjects());
 			else

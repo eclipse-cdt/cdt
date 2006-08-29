@@ -79,7 +79,8 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 	
 	public static final boolean COLLISION_MODE = true;
 	
-	private Button overwriteRadio, renameRadio;
+	private Button overwriteRadio;
+	//private Button renameRadio;
 	private boolean overwriteMode = true;
 	
 	private Composite renameGroup;
@@ -200,7 +201,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 	 */
 	protected ISystemMessageLine createMessageLine(Composite c)
 	{
-		ISystemMessageLine msgLine = super.createMessageLine(c);
+		/*ISystemMessageLine msgLine =*/ super.createMessageLine(c);
 		//form.setMessageLine(msgLine);
 		return fMessageLine;
 	}
@@ -243,8 +244,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		{	
 			overwriteRadio = SystemWidgetHelpers.createRadioButton(composite, this, SystemResources.RESID_SIMPLE_RENAME_RADIO_OVERWRITE_LABEL, SystemResources.RESID_SIMPLE_RENAME_RADIO_OVERWRITE_TOOLTIP);			
 			overwriteRadio.setSelection(true);
-			
-			renameRadio = SystemWidgetHelpers.createRadioButton(composite, this, SystemResources.RESID_SIMPLE_RENAME_RADIO_RENAME_LABEL, SystemResources.RESID_SIMPLE_RENAME_RADIO_RENAME_TOOLTIP);
+			/*renameRadio =*/ SystemWidgetHelpers.createRadioButton(composite, this, SystemResources.RESID_SIMPLE_RENAME_RADIO_RENAME_LABEL, SystemResources.RESID_SIMPLE_RENAME_RADIO_RENAME_TOOLTIP);
 		}
  	        
 		int nbrRenameColumns = 2;
@@ -526,12 +526,13 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		Control controlInError = null;
 		clearErrorMessage();				
 		errMsg = validateNameInput(newNameString);
-		if (errMsg != null)
-		  controlInError = newName;
-		else if (isRemote && checkIfWillBeFilteredOut(inputElement, newNameString))
-		  return false;
-		if (errMsg != null)
-		  controlInError.setFocus();
+		if (errMsg != null) {
+			controlInError = newName;
+			controlInError.setFocus();
+		}
+		else if (isRemote && checkIfWillBeFilteredOut(inputElement, newNameString)) {
+			return false;
+		}
 		return (errMsg == null);
 	}
 	

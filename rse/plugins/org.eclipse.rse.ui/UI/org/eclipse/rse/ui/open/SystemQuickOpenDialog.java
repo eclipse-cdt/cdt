@@ -113,7 +113,7 @@ public class SystemQuickOpenDialog extends Dialog implements ISystemQuickOpenPag
 	private Button cancelButton;
 	private Button openButton;
 	
-	private String performActionLabel = JFaceResources.getString("finish");
+	//private String performActionLabel = JFaceResources.getString("finish");
 	
 	// the number of long running operations being executed from the dialog	
 	private long activeRunningOperations;
@@ -469,7 +469,6 @@ public class SystemQuickOpenDialog extends Dialog implements ISystemQuickOpenPag
 	
 	/**
 	 * Gets the minimum size for the tab folder.
-	 * @return
 	 */
 	private Point getMinSize() {
 		
@@ -599,7 +598,7 @@ public class SystemQuickOpenDialog extends Dialog implements ISystemQuickOpenPag
 	 * Shows the progress monitor and disables the dialog.
 	 * @param enableCancelButton <code>true</code> if cancel button should be enabled, <code>false</code> otherwise.
 	 * @return the saved UI state.
-	 * @see #stopped(HashMap);
+	 * @see #stopped(HashMap)
 	 */
 	protected synchronized HashMap aboutToStart(boolean enableCancelButton) {
 		HashMap savedState = null;
@@ -763,7 +762,7 @@ public class SystemQuickOpenDialog extends Dialog implements ISystemQuickOpenPag
 	/**
 	 * Checks if any operations are running. If so, shows a message dialog alerting the user, and returns <code>false</code>
 	 * indicating the dialog should not be closed.
-	 * @param <code>true</code> if it is ok to close the dialog, <code>false</code> otherwise.
+	 * @return <code>true</code> if it is ok to close the dialog, <code>false</code> otherwise.
 	 */
 	public boolean okToClose() {
 		

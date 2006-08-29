@@ -15,7 +15,6 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view.team;
-import java.util.Hashtable;
 import java.util.Vector;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -44,7 +43,7 @@ public class SystemTeamViewCategoryAdapter
 {
 	
 	private boolean actionsCreated = false;
-	private Hashtable categoriesByProfile = new Hashtable();	
+	//private Hashtable categoriesByProfile = new Hashtable();	
 	
 	// -------------------
 	// property descriptors

@@ -29,7 +29,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 
@@ -42,7 +41,7 @@ public class SystemSimpleCopyDialog
                   ISelectionChangedListener
 {
 	private String promptString;
-	private Label prompt;
+	//private Label prompt;
 	private TreeViewer tree;
 	private SystemSimpleContentProvider provider = new SystemSimpleContentProvider();
     private SystemSimpleContentElement copyTreeContent, initialSelection;
@@ -76,7 +75,7 @@ public class SystemSimpleCopyDialog
 	 */
 	protected ISystemMessageLine createMessageLine(Composite c)
 	{
-		ISystemMessageLine msgLine = super.createMessageLine(c);
+		/*ISystemMessageLine msgLine =*/ super.createMessageLine(c);
 		return fMessageLine;
 	}
 
@@ -98,7 +97,7 @@ public class SystemSimpleCopyDialog
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 
         // PROMPT
-		prompt = SystemWidgetHelpers.createLabel(composite_prompts, promptString);
+		/*prompt =*/ SystemWidgetHelpers.createLabel(composite_prompts, promptString);
         
         // WORK-WITH TREE
 		tree = new TreeViewer(new Tree(composite_prompts, SWT.SINGLE | SWT.BORDER));        

@@ -29,7 +29,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 
@@ -38,7 +37,7 @@ import org.eclipse.swt.widgets.Tree;
  * Works in concert with {@link org.eclipse.rse.ui.dialogs.SystemSimpleContentElement}
  * and {@link org.eclipse.rse.ui.dialogs.SystemSimpleContentProvider}.
  * <p>
- * The {@link #setInputObject} method is used to populate the selection tree:
+ * The {@link #setInputObject(SystemSimpleContentElement)} method is used to populate the selection tree:
  * <ul>
  *   <li>The passed object must be of type SystemSimpleContentElement
  *   <li>The method getChildren will be called on that object to get initial visible elements
@@ -63,7 +62,7 @@ public class SystemSimpleSelectDialog extends SystemPromptDialog
                                             ICheckStateListener
 {
 	private String promptString;
-	private Label prompt;
+	//private Label prompt;
 	private CheckboxTreeViewer tree;
 	private SystemSimpleContentProvider provider = new SystemSimpleContentProvider();
 	private SystemSimpleContentElement preSelectedRoot = null;
@@ -92,7 +91,7 @@ public class SystemSimpleSelectDialog extends SystemPromptDialog
 	 */
 	protected ISystemMessageLine createMessageLine(Composite c)
 	{
-		ISystemMessageLine msgLine = super.createMessageLine(c);
+		/*ISystemMessageLine msgLine =*/ super.createMessageLine(c);
 		//form.setMessageLine(msgLine);
 		return fMessageLine;
 	}
@@ -122,7 +121,7 @@ public class SystemSimpleSelectDialog extends SystemPromptDialog
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 
         // PROMPT
-		prompt = SystemWidgetHelpers.createLabel(composite_prompts, promptString);
+		/*prompt =*/ SystemWidgetHelpers.createLabel(composite_prompts, promptString);
         
         // CHECKBOX SELECT TREE	
 		tree = new CheckboxTreeViewer(new Tree(composite_prompts, SWT.CHECK | SWT.BORDER));        

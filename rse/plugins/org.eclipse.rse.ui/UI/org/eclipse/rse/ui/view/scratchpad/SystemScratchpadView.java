@@ -112,19 +112,16 @@ import org.eclipse.ui.part.PluginTransfer;
  * <p>
  */
 public class SystemScratchpadView
-// TODO change TreeViewer to ScratchpadViewer when Eclipse fixes SWT viewer 
-//extends ScratchpadViewer
-extends TreeViewer
-implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelectAllTarget, ISystemResourceChangeListener, ISystemRemoteChangeListener, ISelectionChangedListener, ISelectionProvider
+	// TODO change TreeViewer to ScratchpadViewer when Eclipse fixes SWT viewer 
+//	extends ScratchpadViewer
+	extends TreeViewer
+	implements IMenuListener, ISystemDeleteTarget, 
+			   ISystemRenameTarget, ISystemSelectAllTarget,
+			   ISystemResourceChangeListener, ISystemRemoteChangeListener,
+			   ISelectionChangedListener, ISelectionProvider
 {
-
-
-
-
-	
-
 	private Object _objectInput;
-	private ArrayList _attributeColumns;
+	//private ArrayList _attributeColumns;
 	private TableLayout _layout;
 	private SystemScratchpadViewProvider _provider;
 	private MenuManager _menuManager;
@@ -175,7 +172,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		{
 			super(tableTree);
 			_messageLine = msgLine;
-			_attributeColumns = new ArrayList();
+			//_attributeColumns = new ArrayList();
 			_layout = new TableLayout();
 
 			_provider = new SystemScratchpadViewProvider(this);
@@ -257,10 +254,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			SystemScratchpadViewProvider provider = (SystemScratchpadViewProvider) getContentProvider();
 			Object[] children = provider.getChildren(_objectInput);
 
-
-
 			super.inputChanged(newObject, oldObject);
-
 		}
 		else if (newObject == null)
 		{
@@ -426,7 +420,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		int eventType = event.getEventType();
 		Object remoteResourceParent = event.getResourceParent();
 		Object remoteResource = event.getResource();
-		boolean originatedHere = (event.getOriginatingViewer() == this);
+		//boolean originatedHere = (event.getOriginatingViewer() == this);
 		Vector remoteResourceNames = null;
 		if (remoteResource instanceof Vector)
 		{
@@ -628,11 +622,8 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		RSEUIPlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
 		RSEUIPlugin.getTheSystemRegistry().removeSystemRemoteChangeListener(this);
 
-		Composite tree = getTree();
-		
-		boolean isDisposed = tree.isDisposed();
-		
-
+		//Composite tree = getTree();
+		//boolean isDisposed = tree.isDisposed();
 	}
 
 	/*
@@ -942,7 +933,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
-		int selectedCount = selection.size();
+		//int selectedCount = selection.size();
 		Object element = null;
 
 		ISystemViewElementAdapter adapter = null;

@@ -21,10 +21,8 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.model.ISystemProfileManager;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -49,7 +47,7 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
                                  implements  IRunnableWithProgress
 {	
 	private ISystemProfile profile, newProfile;
-	private ISystemProfileManager mgr;
+	//private ISystemProfileManager mgr;
 	private ISystemRegistry sr;
 	private String oldName,newName;
 	private boolean makeActive;
@@ -63,7 +61,7 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
 		super(SystemResources.ACTION_PROFILE_COPY_LABEL, SystemResources.ACTION_PROFILE_COPY_TOOLTIP,
 			  PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY), 
 			  shell);
-		mgr = SystemProfileManager.getSystemProfileManager();
+		//mgr = SystemProfileManager.getSystemProfileManager();
 		sr = RSEUIPlugin.getTheSystemRegistry();
 		setSelectionSensitive(true);
         allowOnMultipleSelection(false);

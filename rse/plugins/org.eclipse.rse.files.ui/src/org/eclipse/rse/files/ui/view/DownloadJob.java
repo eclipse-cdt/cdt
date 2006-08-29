@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class DownloadJob extends Job
 {
-	public class OpenEditorRunnable implements Runnable
+	public static class OpenEditorRunnable implements Runnable
 	{
 		private ISystemEditableRemoteObject _editable;
 		public OpenEditorRunnable(ISystemEditableRemoteObject editable)

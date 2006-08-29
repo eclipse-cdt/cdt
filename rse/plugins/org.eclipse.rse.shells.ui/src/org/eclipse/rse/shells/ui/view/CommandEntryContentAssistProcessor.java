@@ -45,7 +45,6 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
-import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -107,7 +106,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 	}
 
 	private CommandEntryViewerConfiguration _configurator;
-	private SystemTableViewProvider _provider;
+	//private SystemTableViewProvider _provider;
 	private HashMap _imageMap;
 	private IRemoteCommandShell _remoteCommand;
 	private char _fileSeparator;
@@ -126,7 +125,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 	public CommandEntryContentAssistProcessor(CommandEntryViewerConfiguration configurator)
 	{
 		_configurator = configurator;
-		_provider = new SystemTableViewProvider();
+		//_provider = new SystemTableViewProvider();
 		_imageMap = new HashMap();
 	}
 
@@ -236,7 +235,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset)
 	{
-		String text = viewer.getDocument().get();
+		//String text = viewer.getDocument().get();
 		boolean atFirstToken = isAtFirstToken(viewer.getDocument());
 		String firstToken = getFirstToken(viewer.getDocument());
 		String currentText = getCurrentText(viewer, documentOffset);
@@ -302,11 +301,14 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 			descriptor = adapter.getImageDescriptor(object);
 		}
 
-		image = (Image) _imageMap.get(descriptor);
-		if (image == null)
+		if (descriptor!=null)
 		{
-			image = descriptor.createImage();
-			_imageMap.put(descriptor, image);
+			image = (Image) _imageMap.get(descriptor);
+			if (image == null)
+			{
+				image = descriptor.createImage();
+				_imageMap.put(descriptor, image);
+			}
 		}
 		return image;
 	}
@@ -328,99 +330,96 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 		    Object context =  _remoteCommand.getContext();
 		    if (context instanceof IRemoteFile)
 		    {
-	
 		        IRemoteFile workingDirectory = (IRemoteFile)context;
-				if (workingDirectory != null)
+
+				int separatorIndex = currentText.lastIndexOf(_fileSeparator);
+				int foreignseparatorIndex = currentText.lastIndexOf(_foreignFileSeparator);
+				if (foreignseparatorIndex > separatorIndex)
 				{
-					int separatorIndex = currentText.lastIndexOf(_fileSeparator);
-					int foreignseparatorIndex = currentText.lastIndexOf(_foreignFileSeparator);
-					if (foreignseparatorIndex > separatorIndex)
+					separatorIndex = foreignseparatorIndex;
+				}
+
+				if (separatorIndex > 0)
+				{
+					String previousText = currentText.substring(0, separatorIndex + 1).replace(_foreignFileSeparator, _fileSeparator);
+					String nextText = "";
+					if (separatorIndex < currentText.length())
 					{
-						separatorIndex = foreignseparatorIndex;
+						nextText = currentText.substring(separatorIndex + 1, currentText.length());
 					}
-	
-					if (separatorIndex > 0)
+
+					IRemoteFile contextDirectory = null;
+					String contextPath = null;
+					if (!_isWindows && currentText.charAt(0) == _fileSeparator)
 					{
-						String previousText = currentText.substring(0, separatorIndex + 1).replace(_foreignFileSeparator, _fileSeparator);
-						String nextText = "";
-						if (separatorIndex < currentText.length())
-						{
-							nextText = currentText.substring(separatorIndex + 1, currentText.length());
-						}
-	
-						IRemoteFile contextDirectory = null;
-						String contextPath = null;
-						if (!_isWindows && currentText.charAt(0) == _fileSeparator)
-						{
-							contextPath = previousText;
-						}
-						else
-						{
-							contextPath = workingDirectory.getAbsolutePath() + _fileSeparator + previousText;
-						}
-	
-						if (_lastFolderContext != null && _lastFolderContext.getAbsolutePath().equals(contextPath))
-						{
-							contextDirectory = _lastFolderContext;
-						}
-						else
-						{
-							try
-							{
-								contextDirectory = RemoteFileUtility.getFileSubSystem(_remoteCommand.getCommandSubSystem().getHost()).getRemoteFileObject(contextPath);
-								_lastFolderContext = contextDirectory;
-							}
-							catch (Exception e)
-							{
-							}
-						}
-						getFileCompletions(contextDirectory, previousText, nextText, results, FILES_AND_FOLDERS);
-	
+						contextPath = previousText;
 					}
 					else
 					{
-						if (atFirstToken)
+						contextPath = workingDirectory.getAbsolutePath() + _fileSeparator + previousText;
+					}
+
+					if (_lastFolderContext != null && _lastFolderContext.getAbsolutePath().equals(contextPath))
+					{
+						contextDirectory = _lastFolderContext;
+					}
+					else
+					{
+						try
 						{
-							if (!_isWindows && currentText.length() > 0 && currentText.charAt(0) == _fileSeparator)
-							{
-								getAbsoluteFileCompletions("", currentText, results, FILES_AND_FOLDERS);
-							}
-							else
-							{
-								getFileCompletions(workingDirectory, "", currentText, results, FILES_ONLY);
-								getCommandCompletions(currentText, results);
-							}
+							contextDirectory = RemoteFileUtility.getFileSubSystem(_remoteCommand.getCommandSubSystem().getHost()).getRemoteFileObject(contextPath);
+							_lastFolderContext = contextDirectory;
+						}
+						catch (Exception e)
+						{
+						}
+					}
+					getFileCompletions(contextDirectory, previousText, nextText, results, FILES_AND_FOLDERS);
+
+				}
+				else
+				{
+					if (atFirstToken)
+					{
+						if (!_isWindows && currentText.length() > 0 && currentText.charAt(0) == _fileSeparator)
+						{
+							getAbsoluteFileCompletions("", currentText, results, FILES_AND_FOLDERS);
 						}
 						else
 						{
-							int flag = FILES_AND_FOLDERS;
-	
-							if (firstToken.equals("cd"))
+							getFileCompletions(workingDirectory, "", currentText, results, FILES_ONLY);
+							getCommandCompletions(currentText, results);
+						}
+					}
+					else
+					{
+						int flag = FILES_AND_FOLDERS;
+
+						if (firstToken.equals("cd"))
+						{
+							flag = FOLDERS_ONLY;
+						}
+						else
+						{
+							if (_isWindows)
 							{
-								flag = FOLDERS_ONLY;
-							}
-							else
-							{
-								if (_isWindows)
-								{
-									if (firstToken.equals("set") || currentText.startsWith("%"))
-									{
-										getEnvironmentCompletions(currentText, results);
-										return results;
-									}
-								}
-								else if (firstToken.equals("export") || currentText.startsWith("$"))
+								if (firstToken.equals("set") || currentText.startsWith("%"))
 								{
 									getEnvironmentCompletions(currentText, results);
 									return results;
 								}
 							}
-	
-							getFileCompletions(workingDirectory, "", currentText, results, flag);
+							else if (firstToken.equals("export") || currentText.startsWith("$"))
+							{
+								getEnvironmentCompletions(currentText, results);
+								return results;
+							}
 						}
+
+						getFileCompletions(workingDirectory, "", currentText, results, flag);
 					}
 				}
-		    }
+			}
 		    else
 		    {
 		       getCommandCompletions(currentText, results);

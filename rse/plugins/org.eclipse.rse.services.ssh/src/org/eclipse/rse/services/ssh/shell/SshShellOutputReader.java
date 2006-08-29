@@ -84,6 +84,8 @@ public class SshShellOutputReader extends AbstractHostShellOutputReader
 					break;
 				case 9:
 					//Tab: we count tabs at column 8
+					//TODO Check: SystemViewRemoteOutputAdapter.translateTabs() also translates
+					//Therefore this special handling here might be unnecessary
 					if(theDebugLine!=null) theDebugLine.append((char)ch);
 					int tabIndex = theLine.length() % 8;
 					while (tabIndex < 8) {

@@ -484,8 +484,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * Get the default running command shell for this command subsystem. If no
 	 * such shell exists or is running, a new one is launched.
 	 * 
-	 * @param shell,
-	 *            the window used for notification
+	 * @param shell the window used for notification
 	 * @return the default running command shell
 	 */
 	public IRemoteCommandShell getDefaultShell(Shell shell) throws Exception
@@ -886,13 +885,10 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * Execute a remote command. This is only applicable if the subsystem
 	 * factory reports true for supportsCommands().
 	 * 
-	 * @param command
-	 *            Command to be executed remotely.
-	 * @param Shell
-	 *            parent shell used to show error message. Null means you will
+	 * @param command Command to be executed remotely.
+	 * @param shell parent shell used to show error message. Null means you will
 	 *            handle showing the error message.
-	 * @param Object
-	 *            context context of a command (i.e. working directory). Null is
+	 * @param context context of a command (i.e. working directory). <code>null</code> is
 	 *            valid and means to use the default context.
 	 * @return Array of objects that are the result of running this command.
 	 *         Typically, these are messages logged by the command.
@@ -905,13 +901,10 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	/**
 	 * Send a command as input to a running command shell.
 	 * 
-	 * @param String
-	 *            input the command to invoke in the shell.
-	 * @param Shell
-	 *            parent shell used to show error message. Null means you will
+	 * @param input the command to invoke in the shell.
+	 * @param shell parent shell used to show error message. Null means you will
 	 *            handle showing the error message.
-	 * @param Object
-	 *            commandObject the shell or command to send the invocation to.
+	 * @param commandObject the shell or command to send the invocation to.
 	 */
 	public void sendCommandToShell(String input, Shell shell, Object commandObject) throws Exception
 	{
@@ -948,11 +941,9 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	/**
 	 * Cancel a shell or running command.
 	 * 
-	 * @param Shell
-	 *            parent shell used to show error message. Null means you will
+	 * @param shell parent shell used to show error message. Null means you will
 	 *            handle showing the error message.
-	 * @param Object
-	 *            commandObject the shell or command to cancel.
+	 * @param commandObject the shell or command to cancel.
 	 */
 	public void cancelShell(Shell shell, Object commandObject) throws Exception
 	{
@@ -990,11 +981,9 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	/**
 	 * Remove and Cancel a shell or running command.
 	 * 
-	 * @param Shell
-	 *            parent shell used to show error message. Null means you will
+	 * @param shell parent shell used to show error message. Null means you will
 	 *            handle showing the error message.
-	 * @param Object
-	 *            commandObject the shell or command to cancel.
+	 * @param commandObject the shell or command to cancel.
 	 */
 	public void removeShell(Shell shell, Object commandObject) throws Exception
 	{

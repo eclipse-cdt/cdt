@@ -60,7 +60,7 @@ public class SystemDeleteDialog extends SystemPromptDialog
     private String warningMessage, warningTip;
     private String promptLabel;
     private SystemDeleteTableProvider sdtp;
-    private Label prompt;
+    //private Label prompt;
     private Table table;
     private TableViewer tableViewer;    
     private GridData tableData;
@@ -103,7 +103,7 @@ public class SystemDeleteDialog extends SystemPromptDialog
 	 */
 	protected ISystemMessageLine createMessageLine(Composite c)
 	{
-		ISystemMessageLine msgLine = super.createMessageLine(c);
+		/*ISystemMessageLine msgLine =*/ super.createMessageLine(c);
 		return fMessageLine;
 	}
 	
@@ -150,19 +150,19 @@ public class SystemDeleteDialog extends SystemPromptDialog
         		int size = ((IStructuredSelection)input).size();
         		
         		if (size > 1) {
-        			prompt = SystemWidgetHelpers.createLabel(composite, SystemResources.RESID_DELETE_PROMPT, nbrColumns);
+        			/*prompt =*/ SystemWidgetHelpers.createLabel(composite, SystemResources.RESID_DELETE_PROMPT, nbrColumns);
         		}
         		else {
-        			prompt = SystemWidgetHelpers.createLabel(composite, SystemResources.RESID_DELETE_PROMPT_SINGLE, nbrColumns);
+        			/*prompt =*/ SystemWidgetHelpers.createLabel(composite, SystemResources.RESID_DELETE_PROMPT_SINGLE, nbrColumns);
         		}
         	}
         	// should never get here
         	else {
-        		prompt = SystemWidgetHelpers.createLabel(composite, SystemResources.RESID_DELETE_PROMPT, nbrColumns);       		
+        		/*prompt =*/ SystemWidgetHelpers.createLabel(composite, SystemResources.RESID_DELETE_PROMPT, nbrColumns);       		
         	}
         }
 		else {
-			prompt = SystemWidgetHelpers.createVerbiage(composite, promptLabel, nbrColumns, false, 200);
+			/*prompt =*/ SystemWidgetHelpers.createVerbiage(composite, promptLabel, nbrColumns, false, 200);
 		}
 
         // WARNING
@@ -186,7 +186,9 @@ public class SystemDeleteDialog extends SystemPromptDialog
           if (warningTip != null)
           {
           	warningLabel.setToolTipText(warningTip);
-          	imageLabel.setToolTipText(warningTip);
+          	if (imageLabel!=null) {
+              	imageLabel.setToolTipText(warningTip);
+          	}
           }
           // filler line
           SystemWidgetHelpers.createLabel(composite, "", nbrColumns);

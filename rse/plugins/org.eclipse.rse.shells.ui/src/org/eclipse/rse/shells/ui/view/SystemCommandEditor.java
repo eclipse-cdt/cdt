@@ -159,8 +159,9 @@ public class SystemCommandEditor extends SourceViewer
 							doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 							//e.doit = false;
 							break;
+
+						case 'z' - 'a' + 1 :
 							// CTRL-Z
-						case (int) 'z' - (int) 'a' + 1 :
 							doOperation(ITextOperationTarget.UNDO);
 							//e.doit = false;
 							break;

@@ -35,7 +35,7 @@ import org.eclipse.rse.ui.SystemResources;
 public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSENewConnectionWizard {
 	
 	private HashMap map;
-	private IRSESystemType systemType;
+	//private IRSESystemType systemType;
 	private IRSENewConnectionWizardDelegate delegate;
 	private RSENewConnectionWizardMainPage mainPage;
 	private IRSESystemType[] restrictedSystemTypes;
@@ -80,7 +80,7 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 	 * @see org.eclipse.rse.ui.wizards.IRSENewConnectionWizard#setSelectedSystemType(org.eclipse.rse.core.IRSESystemType)
 	 */
 	public void setSelectedSystemType(IRSESystemType systemType) {
-		this.systemType = systemType;
+		//this.systemType = systemType;
 		setDelegate(systemType);
 	}
 

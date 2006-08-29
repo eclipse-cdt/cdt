@@ -11,10 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -26,9 +24,6 @@ import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.browser.TypeUtil;
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -38,11 +33,7 @@ import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPClassType;
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespace;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkage;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
@@ -1492,108 +1483,34 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 	 	IQualifiedTypeName typeName = new QualifiedTypeName(namespace);
 		ICProject project = getCurrentProject();
+
 		if (project != null) {
-			
-			List patternList = new ArrayList(); //for binding search
-			
-		    if (typeName.isQualified()) {
-			    /* make sure enclosing namespace exists */    	
-		    	String[] enclosingNames = typeName.getEnclosingNames();		    	
-		    	
-		    	if (enclosingNames.length > 0)
-		    	{
-		    		//build the pattern list, for qualified enclosing names
-		    		for (int j = 0; j < enclosingNames.length; j++)
-		    		{
-		    			patternList.add(Pattern.compile(enclosingNames[j]));		    					    		
-		    		}		    		
-		    		Pattern[] patterns = (Pattern[])patternList.toArray(new Pattern[patternList.size()]);
-		    		
-		    		IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
-		    		boolean found = false;
-					try {
-						PDOM pdom = (PDOM)pdomManager.getPDOM(project);	
-						IBinding[] bindings = pdom.findBindings(patterns);
-						
-						//go through the list of bindings found and check if the fully qualified name of each binding
-						//matches the enclosing name
-						for (int i = 0; i < bindings.length; ++i) {
-							PDOMBinding binding = (PDOMBinding)bindings[i];
-							PDOMBinding pdomBinding = pdom.getLinkage(GPPLanguage.getDefault()).adaptBinding(binding);
-							
-							//get the fully qualified name of the binding
-							String fullyQualifiedName = getBindingQualifiedName(pdomBinding);							
-							if (pdomBinding instanceof PDOMCPPNamespace)
-							{
-								if (fullyQualifiedName.equals(new QualifiedTypeName(enclosingNames).getFullyQualifiedName()))
-								{
-									found = true;
-									break;
-								}
-							}							
-						}
-						
-						if (!found)
-						{
-							status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnclosingNamespaceNotExists")); //$NON-NLS-1$
-							return status;
-						}					
-		                
-					} catch (CoreException e) {
-						return e.getStatus();
-					}
-		    	}
-		    }		    
-			    
-		    //look for namespace		    
-			IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
-			try {
-				PDOM pdom = (PDOM)pdomManager.getPDOM(project);	
-				//add the namespace name to the list of patterns
-				patternList.add(Pattern.compile(typeName.getName()));				
-	    		Pattern[] patterns = (Pattern[])patternList.toArray(new Pattern[patternList.size()]);				
-				IBinding[] bindings = pdom.findBindings(patterns);
-				
-				for (int i = 0; i < bindings.length; ++i) {
-					PDOMBinding binding = (PDOMBinding)bindings[i];
-					PDOMBinding pdomBinding = pdom.getLinkage(GPPLanguage.getDefault()).adaptBinding(binding);								
-					
-					//get the fully qualified name of this binding
-					String bindingFullName = getBindingQualifiedName(pdomBinding);
-					
-					if (pdomBinding instanceof PDOMCPPNamespace)
-					{
-						if (bindingFullName.equals(namespace))
-						{
-							status.setOK(); //found an exact match
-						}
-						else
-						{
-							status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.NamespaceExistsDifferentCase")); //$NON-NLS-1$
-						}						
-						return status;
-					}
-					else //a binding is found but it is not a namespace
-					{
-						if (bindingFullName.equals(namespace))
-						{
-							status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExists")); //$NON-NLS-1$
-						}
-						else 
-						{
-				        	status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExistsDifferentCase")); //$NON-NLS-1$
-				        }
-						return status;
-					}
+			/* search for parent name space first */
+			int searchResult;
+			if (typeName.isQualified()) {
+				searchResult = NewClassWizardUtil.searchForCppType(typeName.getEnclosingTypeName(),project, PDOMCPPLinkage.CPPNAMESPACE);
+				if (searchResult != NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT) {
+					status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnclosingNamespaceNotExists")); //$NON-NLS-1$
+					return status;
 				}
-					
-				if (bindings.length == 0)
-				{
-					//no namespaces found with the specified name
-					status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NamespaceNotExists")); //$NON-NLS-1$
-				}
-			} catch (CoreException e) {
-				return e.getStatus();
+			}
+			searchResult = NewClassWizardUtil.searchForCppType(typeName, project, PDOMCPPLinkage.CPPNAMESPACE);
+			switch(searchResult) {
+			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT:
+				status.setOK();
+				return status;				
+			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE:
+				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExists")); //$NON-NLS-1$
+				return status;
+			case NewClassWizardUtil.SEARCH_MATCH_FOUND_ANOTHER_NAMESPACE:
+				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.NamespaceExistsDifferentCase")); //$NON-NLS-1$
+				return status;
+			case NewClassWizardUtil.SEARCH_MATCH_FOUND_ANOTHER_TYPE:
+				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExistsDifferentCase")); //$NON-NLS-1$
+				return status;
+			case NewClassWizardUtil.SEARCH_MATCH_NOTFOUND:
+				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NamespaceNotExists")); //$NON-NLS-1$
+				break;
 			}
 	    }
 
@@ -1603,27 +1520,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			return status;
 		}
 	    return status;
-	}
-	
-	/**
-	 * Get the fully qualified name for a given PDOMBinding
-	 * @param pdomBinding
-	 * @return binding's fully qualified name
-	 * @throws CoreException
-	 */
-	private String getBindingQualifiedName(PDOMBinding pdomBinding) throws CoreException
-	{
-		StringBuffer buf = new StringBuffer(pdomBinding.getName());	
-		PDOMNode parent = pdomBinding.getParentNode();
-		while (parent != null)
-		{
-			if (parent instanceof PDOMBinding)
-			{							
-				buf.insert(0, ((PDOMBinding)parent).getName() + "::");
-			}
-			parent = parent.getParentNode();
-		}
-		return buf.toString();
 	}
 
 	/**
@@ -1667,53 +1563,23 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			        fullyQualifiedName = new QualifiedTypeName(namespace).append(typeName);
 			    }
 			}
-			
-			String fullyQualifiedClassName = fullyQualifiedName.getFullyQualifiedName();
-			
-			//build the pattern list, for qualified enclosing names
-			String[] enclosingNames = fullyQualifiedName.getEnclosingNames();
-    		List patternList = new ArrayList();
-    		for (int j = 0; j < enclosingNames.length; j++)
-    		{
-    			patternList.add(Pattern.compile(enclosingNames[j]));		    					    		
-    		}
-    		//add class name to pattern
-    		patternList.add(Pattern.compile(className));
-    		Pattern[] patterns = (Pattern[])patternList.toArray(new Pattern[patternList.size()]);			
-			
-			//look for conflicting class/struct
-			IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
-			try {
-				PDOM pdom = (PDOM)pdomManager.getPDOM(project);	
-				IBinding[] bindings = pdom.findBindings(patterns);
-				for (int i = 0; i < bindings.length; ++i)
-				{
-					PDOMBinding binding = (PDOMBinding)bindings[i];
-					PDOMBinding pdomBinding = pdom.getLinkage(GPPLanguage.getDefault()).adaptBinding(binding);
-					
-					//get the fully qualified name of this binding
-					String bindingFullName = getBindingQualifiedName(pdomBinding);
-					
-					if (pdomBinding instanceof PDOMCPPClassType)
-					{						
-						if (bindingFullName.equals(fullyQualifiedClassName))
-						{
-							status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExists")); //$NON-NLS-1$
-						}
-						return status;
-					}
-					else //a binding is found but it is not a class/struct
-					{						
-						if (bindingFullName.equals(fullyQualifiedClassName))
-						{
-				        	status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExists")); //$NON-NLS-1$
-				        }
-						return status;
-					}
-				}
-			} catch (CoreException e) {
-				return e.getStatus();
-			}			    
+			int searchResult = NewClassWizardUtil.searchForCppType(fullyQualifiedName, project,PDOMCPPLinkage.CPPCLASSTYPE);
+			switch(searchResult) {
+			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT:
+				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExists")); //$NON-NLS-1$
+				return status;				
+			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE:
+				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExists")); //$NON-NLS-1$
+				return status;
+			case NewClassWizardUtil.SEARCH_MATCH_FOUND_ANOTHER_NAMESPACE:
+				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExistsDifferentCase")); //$NON-NLS-1$
+				return status;
+			case NewClassWizardUtil.SEARCH_MATCH_FOUND_ANOTHER_TYPE:
+				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExistsDifferentCase")); //$NON-NLS-1$
+				return status;
+			case NewClassWizardUtil.SEARCH_MATCH_NOTFOUND:
+				break;
+			}	
 	    }
 		return status;
 	}

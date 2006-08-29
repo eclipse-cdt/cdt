@@ -12,12 +12,17 @@ package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.AllTypesCache;
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -26,6 +31,10 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkage;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
 import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
@@ -35,6 +44,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -342,5 +352,102 @@ public class NewClassWizardUtil {
         }
         return false;
     }
-    
+
+	public static final int SEARCH_MATCH_ERROR = -1;  // some error, search failed
+	public static final int SEARCH_MATCH_NOTFOUND = 0;  // no match found
+	public static final int SEARCH_MATCH_FOUND_EXACT = 1;   // exact match
+	public static final int SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE = 2; // same name found, by different type
+	public static final int SEARCH_MATCH_FOUND_ANOTHER_NAMESPACE = 3; // same type name exits in different scope
+	public static final int SEARCH_MATCH_FOUND_ANOTHER_TYPE = 4; // same name used by another type in different scope
+
+	/**
+	 * Search for the given qualified name of the give
+	 * @param typeName  qualified name of the type to search
+	 * @param project  
+	 * @param pdomNodeType PDOMCPPLinkage type
+	 * @return
+	 */
+	public static int searchForCppType(IQualifiedTypeName typeName, ICProject project, int pdomNodeType) {
+		if(project == null) {
+			return SEARCH_MATCH_ERROR;
+		}
+		
+		String fullyQualifiedTypeName = typeName.getFullyQualifiedName();
+		
+		IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
+		try {
+			PDOM pdom = (PDOM)pdomManager.getPDOM(project);	
+			IBinding[] bindings = pdom.findBindings(Pattern.compile(typeName.getName()));
+			boolean sameTypeNameExists = false;
+			boolean sameNameDifferentTypeExists = false;
+			
+			for (int i = 0; i < bindings.length; ++i)
+			{
+				PDOMBinding binding = (PDOMBinding)bindings[i];
+				PDOMBinding pdomBinding = pdom.getLinkage(GPPLanguage.getDefault()).adaptBinding(binding);
+				
+				//get the fully qualified name of this binding
+				String bindingFullName = getBindingQualifiedName(pdomBinding);
+				
+				int currentNodeType = pdomBinding.getNodeType();
+				// full binding				
+				if (currentNodeType == pdomNodeType)
+				{						
+					if (bindingFullName.equals(fullyQualifiedTypeName))
+					{
+						return SEARCH_MATCH_FOUND_EXACT;
+					} else {
+						// same type , same name , but different name space
+						// see if there is an exact match;
+						sameTypeNameExists = true;
+					}
+				}
+				else if(currentNodeType == PDOMCPPLinkage.CPPCLASSTYPE || 
+						currentNodeType == PDOMCPPLinkage.CPPENUMERATION ||
+						currentNodeType == PDOMCPPLinkage.CPPNAMESPACE ||
+						currentNodeType == PDOMCPPLinkage.CPPTYPEDEF ||
+						currentNodeType == PDOMCPPLinkage.CPPBASICTYPE)
+				{						
+					if (bindingFullName.equals(fullyQualifiedTypeName))
+					{
+			        	return SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE;
+			        } else {
+						// different type , same name , but different name space
+						sameNameDifferentTypeExists = true;
+			        }
+				}
+			}
+			if(sameTypeNameExists){
+				return SEARCH_MATCH_FOUND_ANOTHER_NAMESPACE;
+			}
+			
+			if(sameNameDifferentTypeExists){
+				return SEARCH_MATCH_FOUND_ANOTHER_TYPE;
+			}
+		} catch (CoreException e) {
+			return SEARCH_MATCH_ERROR;
+		}
+		return SEARCH_MATCH_NOTFOUND;
+	}
+
+	/**
+	 * Get the fully qualified name for a given PDOMBinding
+	 * @param pdomBinding
+	 * @return binding's fully qualified name
+	 * @throws CoreException
+	 */
+	public static String getBindingQualifiedName(PDOMBinding pdomBinding) throws CoreException
+	{
+		StringBuffer buf = new StringBuffer(pdomBinding.getName());	
+		PDOMNode parent = pdomBinding.getParentNode();
+		while (parent != null)
+		{
+			if (parent instanceof PDOMBinding)
+			{							
+				buf.insert(0, ((PDOMBinding)parent).getName() + "::");
+			}
+			parent = parent.getParentNode();
+		}
+		return buf.toString();
+	}    
 }

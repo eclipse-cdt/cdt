@@ -20,9 +20,11 @@ import java.util.ArrayList;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-public class CertTableContentProvider implements IStructuredContentProvider {
-	/**
-	 * @see IStructuredContentProvider#getElements(Object)
+public class CertTableContentProvider implements IStructuredContentProvider
+{
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object element) {
 		if (element instanceof ArrayList)
@@ -30,13 +32,16 @@ public class CertTableContentProvider implements IStructuredContentProvider {
 
 		return new Object[0];
 	}
-	/**
-	 * @see IContentProvider#dispose()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
 	}
-	/**
-	 * @see IContentProvider#inputChanged(Viewer, Object, Object)
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}

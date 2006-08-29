@@ -63,7 +63,8 @@ import org.eclipse.ui.IWorkbenchPart;
  * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter
  * @see org.eclipse.rse.ui.dialogs.SystemPromptDialog
  */
-public abstract class SystemAbstractPopupMenuExtensionAction implements IObjectActionDelegate 
+public abstract class SystemAbstractPopupMenuExtensionAction 
+	implements IObjectActionDelegate 
 {
     protected IWorkbenchPart       viewPart = null;
     protected IStructuredSelection sel = null;
@@ -125,7 +126,7 @@ public abstract class SystemAbstractPopupMenuExtensionAction implements IObjectA
      * This is the foreward to us, the actual action. This method's default
      * implementation is to simply call {@link #run()}.
      * 
-	 * @see IActionDelegate#run(IAction)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action)
 	{
@@ -138,7 +139,7 @@ public abstract class SystemAbstractPopupMenuExtensionAction implements IObjectA
      * method calls getEnabled to determine if the proxy action should be enabled
      * or not, then calls setEnabled on that proxy action with the result.
      * 
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection sel) 
 	{

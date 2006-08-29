@@ -427,7 +427,7 @@ public class SystemSelectRemoteFilesForm extends Composite
     			  displayErrorMessage(msg);
     			clearAll();
     		}
-		  };
+		  }
 	   };
 	   dirCombo.addSelectionListener(selectionListener);
 	}
@@ -440,7 +440,7 @@ public class SystemSelectRemoteFilesForm extends Composite
 		  public void widgetSelected(SelectionEvent event) 
 		  {
               handleTypesEditButtonPressed();
-		  };
+		  }
 	   };
 	   selectTypesButton.addSelectionListener(selectionListener);
 	}
@@ -452,7 +452,7 @@ public class SystemSelectRemoteFilesForm extends Composite
 		  public void widgetSelected(SelectionEvent event) 
 		  {
               fileSelector.setAllSelections(true);
-		  };
+		  }
 	   };
 	   selectAllButton.addSelectionListener(selectionListener);
 	}
@@ -464,7 +464,7 @@ public class SystemSelectRemoteFilesForm extends Composite
 		  public void widgetSelected(SelectionEvent event) 
 		  {
               fileSelector.setAllSelections(false);
-		  };
+		  }
 	   };
 	   deselectAllButton.addSelectionListener(selectionListener);
 	}
@@ -525,7 +525,7 @@ public class SystemSelectRemoteFilesForm extends Composite
                     IRemoteFile file = filesList[idx];
                     String extension = file.getExtension();
                     //System.out.println("File extension for " + file.getName() + ": " + extension);
-					if (isExportableExtension(file.getExtension()))
+					if (isExportableExtension(extension))
 					{
 						java.util.List elements = new ArrayList();
 						IRemoteFile parent = file.getParentRemoteFile();

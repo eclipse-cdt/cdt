@@ -33,6 +33,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
@@ -5879,4 +5880,26 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 
 		protected boolean usingElementMap() { return false; }
 		
+		
+		  public void add(Object parentElementOrTreePath, Object[] childElements) {
+		        Assert.isNotNull(parentElementOrTreePath);
+		        assertElementsNotNull(childElements);
+
+		        Vector matches = new Vector();
+		        matches = findAllRemoteItemReferences(parentElementOrTreePath, parentElementOrTreePath, matches);
+		        		        
+		        //Widget[] widgets = internalFindItems(parentElementOrTreePath);
+		        // If parent hasn't been realized yet, just ignore the add.
+		        if (matches.size() == 0) 
+		        {
+		        	super.add(parentElementOrTreePath, childElements);
+					return;
+				}
+
+				for (int i = 0; i < matches.size(); i++) 
+				{
+					Widget match = (Widget)matches.get(i);
+					internalAdd(match, parentElementOrTreePath, childElements);
+				}        
+		    }			
 }

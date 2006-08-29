@@ -35,9 +35,9 @@ import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
 
 
 /**
- * Specialization for file subsystem factories.
- * It is subclassed via use of a Rose model and MOF/EMF, or better yet 
- *  by subclassing {@link org.eclipse.rse.core.servicesubsystem.impl.FileServiceSubSystemConfiguration}.
+ * Specialization for file subsystem configurations.
+ * It is best used by subclassing
+ * {@link org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystemConfiguration}.
  * 
  * @see RemoteFileSubSystem
  */
@@ -429,7 +429,7 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
     /**
      * Populate a new subsystem with our unique attributes, and/or create default filter references.
      * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#initializeSubSystem(ISubSystem,ISystemNewConnectionWizardPage[])
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#getNewConnectionWizardPages(org.eclipse.jface.wizard.IWizard)
+     * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
      */
     protected void initializeSubSystem(ISubSystem ss, ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages)
     {

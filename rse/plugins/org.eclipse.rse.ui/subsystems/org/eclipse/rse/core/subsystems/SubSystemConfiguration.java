@@ -453,7 +453,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	public abstract boolean supportsServerLaunchProperties(IHost host);
 
 	/**
-	 * If {@link #supportsServerLaunchProperties()} returns true, this method may be called by
+	 * If {@link #supportsServerLaunchProperties(IHost)} returns true, this method may be called by
 	 * the server launcher to decide if a given remote server launch type is supported or not.
 	 * <br> We return true by default.
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
@@ -984,7 +984,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 
 	/**
 	 * Return list of all subsystems.
-	 * @param true if we should force all the subsystems to be restored from disk if not already
+	 * @param force true if we should force all the subsystems to be restored from disk if not already
 	 */
 	public ISubSystem[] getSubSystems(boolean force)
 	{
@@ -1025,7 +1025,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * Returns a list of subsystem objects existing for the given connection.
 	 * For performance, the calculated array is cached until something changes.
 	 * @param conn System connection to retrieve subsystems for
-	 * @param true if we should force all the subsystems to be restored from disk if not already
+	 * @param force true if we should force all the subsystems to be restored from disk if not already
 	 */
 	public ISubSystem[] getSubSystems(IHost conn, boolean force)
 	{
@@ -1165,7 +1165,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 *   <li>does initialization of common attributes
 	 *   <li>if {@link #supportsFilters()}, creates a {@link org.eclipse.rse.filters.ISystemFilterPoolReferenceManager} for the
 	 *           subsystem to manage references to filter pools
-	 *   <li>if (@link #supportsServerLaunchProperties()}, calls {@link #createServerLauncher(ISubSystem)}, to create
+	 *   <li>if (@link #supportsServerLaunchProperties()}, calls {@link #createServerLauncher(IConnectorService)}, to create
 	 *           the server launcher instance to associate with this subsystem. This can be subsequently
 	 *           retrieved via calling subsystem's {@link ISubSystem#getRemoteServerLauncher()}.
 	 *   <li>calls {@link #initializeSubSystem(ISubSystem, ISystemNewConnectionWizardPage[])} so subclasses can
@@ -1176,7 +1176,8 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * @param creatingConnection true if we are creating a connection, false if just creating
 	 *          another subsystem for an existing connection.
 	 * @param yourNewConnectionWizardPages The wizard pages you supplied to the New Connection wizard, via the
-	 *            {@link #getNewConnectionWizardPages(IWizard)} method or null if you didn't override this method.
+	 *            {@link org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
+	 *             method or null if you didn't override this method.
 	 *            Note there may be more pages than you originally supplied as it is all pages contributed by 
 	 *            this factory object, including subclasses.
 	 */
@@ -1406,7 +1407,8 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * 
 	 * @param ss - The subsystem that was created via createSubSystemInternal
 	 * @param yourNewConnectionWizardPages - The wizard pages you supplied to the New Connection wizard, via the
-	 *            {@link #getNewConnectionWizardPages(IWizard)} method or null if you didn't override this method.
+	 *            {@link org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
+	 *             method or null if you didn't override this method.
 	 *            Note there may be more pages than you originally supplied, as you are passed all pages contributed
 	 *            by this factory object, including subclasses. This is null when this method is called other than
 	 *            for a New Connection operation.
@@ -1522,7 +1524,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 	/**
 	 * Update the port for the given subsystem instance.
-	 * Shortcut to {@link #updateSubSystem(Shell,ISubSystem,boolean,String,boolean,Integer)}
+	 * Shortcut to {@link #updateSubSystem(Shell, ISubSystem, boolean, String, boolean, int)}
 	 */
 	public void setSubSystemPort(Shell shell, ISubSystem subsystem, int port)
 	{
@@ -1530,7 +1532,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 	/**
 	 * Update the user ID for the given subsystem instance.
-	 * Shortcut to {@link #updateSubSystem(Shell,ISubSystem,boolean,String,boolean,Integer)}
+	 * Shortcut to {@link #updateSubSystem(Shell, ISubSystem, boolean, String, boolean, int)}
 	 */
 	public void setSubSystemUserId(Shell shell, ISubSystem subsystem, String userId)
 	{
@@ -1874,11 +1876,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				SystemBasePlugin.logError("Restore/Creation of SystemFilterPoolManager " + getFilterPoolManagerName(profile) + " failed!", exc);
 				SystemMessageDialog.displayExceptionMessage(null, exc);
 				return null; // something very bad happend!           	  
-			}
-			if (mgr == null)
-			{
-				SystemBasePlugin.logError("Restore/Creation of SystemFilterPoolManager " + getFilterPoolManagerName(profile) + " failed!", null);
-				return null; // something very bad happend!
 			}
 
 			addFilterPoolManager(profile, mgr);
@@ -2633,7 +2630,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 *  for a given subsystem.
 	 * <p>
 	 * Create an instance of ServerLauncher, and add it to the given subsystem.
-	 * When a subsystem is created, and {@link #supportsServerLaunchProperties()}
+	 * When a subsystem is created, and {@link #supportsServerLaunchProperties(IHost)}
 	 * returns true, this method is called to create the server launcher instance
 	 * associated with the subsystem. The default implementation is to create an
 	 * instance of {@link IRemoteServerLauncher}, but override to create your own 
@@ -2659,9 +2656,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 	/**
 	 * Return the form used in the property page, etc for this server launcher.
-	 * Only called if {@link #supportsServerLaunchProperties()} returns true. 
+	 * Only called if {@link #supportsServerLaunchProperties(IHost)} returns true. 
 	 * <p>
-	 * We return {@link org.eclipse.rse.ui.widgets.ServerLauncherForm}.
+	 * We return {@link RemoteServerLauncherForm}.
 	 * Override if appropriate.
 	 */
 	public IServerLauncherForm getServerLauncherForm(Shell shell, ISystemMessageLine msgLine)

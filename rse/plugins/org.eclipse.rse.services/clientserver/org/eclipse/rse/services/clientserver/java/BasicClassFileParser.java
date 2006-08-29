@@ -24,16 +24,16 @@ import java.util.List;
 /**
  * This is a basic class file parser that returns a package name from a class file.
  */
-public class BasicClassFileParser implements IClassFileConstants {
+public class BasicClassFileParser {
 	
-	private long magic;
-	private int minor_version;
-	private int major_version;
+	//private long magic;
+	//private int minor_version;
+	//private int major_version;
 	private int constant_pool_count;
 	private List constant_pool;
-	private int access_flags;
+	//private int access_flags;
 	private int this_class;
-	private int super_class;
+	//private int super_class;
 	private int interfaces_count;
 	private int[] interfaces;
 	private int fields_count;
@@ -44,7 +44,7 @@ public class BasicClassFileParser implements IClassFileConstants {
 	
 	/**
 	 * Constuctor.
-	 * @param the input stream to parse.
+	 * @param stream the input stream to parse.
 	 */
 	public BasicClassFileParser(InputStream stream) {
 		this.stream = stream;
@@ -106,18 +106,18 @@ public class BasicClassFileParser implements IClassFileConstants {
 		
 		EnhancedDataInputStream dataStream = new EnhancedDataInputStream(stream);
 		
-		magic = dataStream.readUnsignedInt();
-		minor_version = dataStream.readUnsignedShort();
-		major_version = dataStream.readUnsignedShort();
+		/*magic = */ dataStream.readUnsignedInt();
+		/*minor_version =*/ dataStream.readUnsignedShort();
+		/*major_version =*/ dataStream.readUnsignedShort();
 		constant_pool_count = dataStream.readUnsignedShort();
 		
 		readConstantPool(dataStream);
 		
-		access_flags = dataStream.readUnsignedShort();
+		/*access_flags =*/ dataStream.readUnsignedShort();
 		
 		this_class = dataStream.readUnsignedShort();
 		
-		super_class = dataStream.readUnsignedShort();
+		/*super_class =*/ dataStream.readUnsignedShort();
 		
 		interfaces_count = dataStream.readUnsignedShort();
 		
@@ -167,53 +167,53 @@ public class BasicClassFileParser implements IClassFileConstants {
 		
 		switch (tag) {
 			
-			case CONSTANT_CLASS: {
+			case IClassFileConstants.CONSTANT_CLASS: {
 				int nameIndex = dataStream.readUnsignedShort();
 				return new ClassInfo(tag, nameIndex);
 			}
-			case CONSTANT_FIELD_REF: {
+			case IClassFileConstants.CONSTANT_FIELD_REF: {
 				int classIndex = dataStream.readUnsignedShort();
 				int nameAndTypeIndex = dataStream.readUnsignedShort();
 				return new FieldRefInfo(tag, classIndex, nameAndTypeIndex);
 			}
-			case CONSTANT_METHOD_REF: {
+			case IClassFileConstants.CONSTANT_METHOD_REF: {
 				int classIndex = dataStream.readUnsignedShort();
 				int nameAndTypeIndex = dataStream.readUnsignedShort();
 				return new MethodRefInfo(tag, classIndex, nameAndTypeIndex);
 			}
-			case CONSTANT_INTERFACE_METHOD_REF: {
+			case IClassFileConstants.CONSTANT_INTERFACE_METHOD_REF: {
 				int classIndex = dataStream.readUnsignedShort();
 				int nameAndTypeIndex = dataStream.readUnsignedShort();
 				return new InterfaceMethodRefInfo(tag, classIndex, nameAndTypeIndex);
 			}
-			case CONSTANT_STRING: {
+			case IClassFileConstants.CONSTANT_STRING: {
 				int stringIndex = dataStream.readUnsignedShort();
 				return new StringInfo(tag, stringIndex);
 			}
-			case CONSTANT_INTEGER: {
+			case IClassFileConstants.CONSTANT_INTEGER: {
 				long bytes = dataStream.readUnsignedInt();
 				return new IntegerInfo(tag, bytes);
 			}
-			case CONSTANT_FLOAT: {
+			case IClassFileConstants.CONSTANT_FLOAT: {
 				long bytes = dataStream.readUnsignedInt();
 				return new FloatInfo(tag, bytes);
 			}
-			case CONSTANT_LONG: {
+			case IClassFileConstants.CONSTANT_LONG: {
 				long highBytes = dataStream.readUnsignedInt();
 				long lowBytes = dataStream.readUnsignedInt();
 				return new LongInfo(tag, highBytes, lowBytes);
 			}
-			case CONSTANT_DOUBLE: {
+			case IClassFileConstants.CONSTANT_DOUBLE: {
 				long highBytes = dataStream.readUnsignedInt();
 				long lowBytes = dataStream.readUnsignedInt();
 				return new DoubleInfo(tag, highBytes, lowBytes);
 			}
-			case CONSTANT_NAME_AND_TYPE: {
+			case IClassFileConstants.CONSTANT_NAME_AND_TYPE: {
 				int nameIndex = dataStream.readUnsignedShort();
 				int descriptorIndex = dataStream.readUnsignedShort();
 				return new NameAndTypeInfo(tag, nameIndex, descriptorIndex);
 			}
-			case CONSTANT_UTF8: {
+			case IClassFileConstants.CONSTANT_UTF8: {
 				int length = dataStream.readUnsignedShort();
 				short[] bytes = new short[length];
 				
@@ -260,9 +260,9 @@ public class BasicClassFileParser implements IClassFileConstants {
 	 * @throws IOException if an I/O error occurs.
 	 */
 	protected FieldInfo readField(EnhancedDataInputStream dataStream) throws IOException {
-		int accessFlags = dataStream.readUnsignedShort();
-		int nameIndex = dataStream.readUnsignedShort();
-		int descriptorIndex = dataStream.readUnsignedShort();
+		/*int accessFlags =    */ dataStream.readUnsignedShort();
+		/*int nameIndex =      */ dataStream.readUnsignedShort();
+		/*int descriptorIndex =*/ dataStream.readUnsignedShort();
 		int attributesCount = dataStream.readUnsignedShort();
 		
 		for (int i = 0; i < attributesCount; i++) {

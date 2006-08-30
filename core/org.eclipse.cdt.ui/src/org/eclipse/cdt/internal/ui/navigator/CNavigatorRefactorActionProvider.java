@@ -22,55 +22,64 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
 
+import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
+
 /**
  * A clone of org.eclipse.ui.internal.navigator.resources.actions.RefactorActionProvider.
  */
 public class CNavigatorRefactorActionProvider extends CommonActionProvider {
 
 	private UndoRedoActionGroup undoRedoGroup;
-
-	private CNavigatorRefactorActionGroup refactorGroup;
+	private CNavigatorRefactorActionGroup resourceRefactorGroup;
+	private CRefactoringActionGroup cElementRefactorGroup;
 
 	private ICommonActionExtensionSite site;
 
 	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
 	 */
-	public void init(ICommonActionExtensionSite anActionSite) {
-		site = anActionSite;
-		refactorGroup = new CNavigatorRefactorActionGroup(site.getViewSite().getShell(), (Tree)site.getStructuredViewer().getControl());
-
-		IUndoContext workspaceContext = (IUndoContext) ResourcesPlugin
-				.getWorkspace().getAdapter(IUndoContext.class);
-		undoRedoGroup = new UndoRedoActionGroup(((ICommonViewerWorkbenchSite) anActionSite.getViewSite()).getSite(),
-				workspaceContext, true);
-	}
+	public void init(ICommonActionExtensionSite actionSite) {
+		site = actionSite;
+		resourceRefactorGroup= new CNavigatorRefactorActionGroup(site.getViewSite().getShell(), (Tree)site.getStructuredViewer().getControl());
+		IUndoContext workspaceContext= (IUndoContext) ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+		ICommonViewerWorkbenchSite workbenchSite = null;
+		if (site.getViewSite() instanceof ICommonViewerWorkbenchSite) {
+			workbenchSite = (ICommonViewerWorkbenchSite) site.getViewSite();
+		}
+		if (workbenchSite != null) {
+			undoRedoGroup = new UndoRedoActionGroup(workbenchSite.getSite(), workspaceContext, true);
+			cElementRefactorGroup= new CRefactoringActionGroup(workbenchSite.getPart());
+		}
+}
 
 	public void dispose() {
 		undoRedoGroup.dispose();
-		refactorGroup.dispose();
+		resourceRefactorGroup.dispose();
+		cElementRefactorGroup.dispose();
 	}
 
 	public void fillActionBars(IActionBars actionBars) {
 		undoRedoGroup.fillActionBars(actionBars);
-		refactorGroup.fillActionBars(actionBars);
+		resourceRefactorGroup.fillActionBars(actionBars);
+		cElementRefactorGroup.fillActionBars(actionBars);
 	}
 
 	public void fillContextMenu(IMenuManager menu) {
 		undoRedoGroup.fillContextMenu(menu);
-		refactorGroup.fillContextMenu(menu);
+		resourceRefactorGroup.fillContextMenu(menu);
+		cElementRefactorGroup.fillContextMenu(menu);
 	}
 
 	public void setContext(ActionContext context) {
 		undoRedoGroup.setContext(context);
-		refactorGroup.setContext(context);
+		resourceRefactorGroup.setContext(context);
+		cElementRefactorGroup.setContext(context);
 	}
 
 	public void updateActionBars() {
 		undoRedoGroup.updateActionBars();
-		refactorGroup.updateActionBars();
+		resourceRefactorGroup.updateActionBars();
+		cElementRefactorGroup.updateActionBars();
 	}
 
 }

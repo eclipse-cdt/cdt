@@ -2031,8 +2031,8 @@ abstract class BaseScanner implements IScanner {
         return contentAssistMode ? eocToken : null;
     }
     
-    static public CharTable ident = new CharTable(1024);
-    static public int idents = 0;
+    protected CharTable ident = new CharTable(1024);
+    protected int idents = 0;
     
     protected IToken scanIdentifier() {
         char[] buffer = bufferStack[bufferStackPos];

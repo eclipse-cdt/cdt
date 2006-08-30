@@ -26,9 +26,11 @@ public class RSEModelResources extends NLS {
 	private static String BUNDLE_NAME = "org.eclipse.rse.core.model.RSEModelResources"; //$NON-NLS-1$
 	
 	public static String RESID_MODELOBJECTS_MODELOBJECT_DESCRIPTION;
+	public static String RESID_MODELOBJECTS_REFERENCINGOBJECT_DESCRIPTION;
 
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, RSEModelResources.class);
 	}
+
 }

@@ -13,5 +13,6 @@ Export-Package: org.eclipse.rse.core,
  org.eclipse.rse.core.filters,
  org.eclipse.rse.core.model,
  org.eclipse.rse.core.persistance,
- org.eclipse.rse.core.references
+ org.eclipse.rse.core.references,
+ org.eclipse.rse.internal.references
 Bundle-Vendor: Eclipse.org

@@ -16,9 +16,9 @@
 
 package org.eclipse.rse.internal.references;
 import org.eclipse.rse.core.model.RSEModelObject;
+import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 import org.eclipse.rse.core.references.IRSEReferencingObject;
-import org.eclipse.rse.ui.SystemResources;
 
 
 /**
@@ -89,7 +89,7 @@ public abstract class SystemReferencingObject extends RSEModelObject implements 
 	
 	public String getDescription()
 	{
-		return SystemResources.RESID_MODELOBJECTS_REFERENCINGOBJECT_DESCRIPTION;
+		return RSEModelResources.RESID_MODELOBJECTS_REFERENCINGOBJECT_DESCRIPTION;
 	}
 	
 	protected final SystemReferencingObjectHelper getHelper() {

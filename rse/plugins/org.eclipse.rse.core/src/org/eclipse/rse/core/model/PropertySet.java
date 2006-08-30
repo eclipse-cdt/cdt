@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - Added Javadoc.
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -21,7 +21,12 @@ import java.util.Map;
 import java.util.Set;
 
 
-
+/**
+ * A Hashmap based implementation of the {@link IPropertySet} interface.
+ * 
+ * Not thread-safe since the underlying {@link java.util.HashMap} is 
+ * not thread-safe.
+ */
 public class PropertySet implements IPropertySet 
 {
 	private String _name;
@@ -29,6 +34,10 @@ public class PropertySet implements IPropertySet
 	
 	protected static IPropertyType _defaultType =  PropertyType.getStringPropertyType();
 	
+	/**
+	 * Construct a new PropertySet based on an existing one (i.e. clone it).
+	 * @param propertySet existing Property Set to clone
+	 */
 	public PropertySet(IPropertySet propertySet)
 	{
 		_name = propertySet.getName();
@@ -43,6 +52,10 @@ public class PropertySet implements IPropertySet
 		}
 	}
 	
+	/**
+	 * Construct a new empty PropertySet.
+	 * @param name of the new PropertySet
+	 */
 	public PropertySet(String name)
 	{
 		_name= name;
@@ -56,7 +69,8 @@ public class PropertySet implements IPropertySet
 	
 	public String getDescription() 
 	{
-		return getPropertyValue("description");
+		//FIXME it would be better to return an empty String ("") in case no description has been set.
+		return getPropertyValue(DESCRIPTION_KEY);
 	}	
 	
 	public String[] getPropertyKeys() 
@@ -73,9 +87,21 @@ public class PropertySet implements IPropertySet
 
 	public void setProperties(Map map) 
 	{
+		//FIXME should clone the map!!
+		//Since the extrnal map might not be writable, or it might be
+		//modified later on
 		_properties = map;
 	}
 	
+	/**
+	 * Add a typed Property to the set.
+	 * 
+	 * In case a Property already exists for the given key, it will be overwritten.
+	 * 
+	 * @param key Key to add
+	 * @param property The Property to add
+	 * @return The added Property
+	 */
 	public IProperty addProperty(String key, IProperty property)
 	{
 		_properties.put(key, property);
@@ -87,6 +113,8 @@ public class PropertySet implements IPropertySet
 		IProperty property = getProperty(key);
 		if (property != null)
 		{
+			//FIXME should throw a NumberFormatException or similar,
+			//if the value does not fit the type of the existing property.
 			property.setValue(value);
 			return property;
 		}
@@ -121,6 +149,7 @@ public class PropertySet implements IPropertySet
 		}
 		return null;		
 	}
+	
 	public IPropertyType getPropertyType(String key)
 	{
 		IProperty property = getProperty(key);

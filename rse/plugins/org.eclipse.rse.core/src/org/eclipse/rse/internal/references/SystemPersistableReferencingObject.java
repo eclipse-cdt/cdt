@@ -83,7 +83,7 @@ public abstract class SystemPersistableReferencingObject extends SystemReferenci
 	 */
 	public String toString() {
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (referencedObjectName: ");
+		result.append(" (referencedObjectName: "); //$NON-NLS-1$
 		result.append(referencedObjectName);
 		result.append(')');
 		return result.toString();

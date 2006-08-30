@@ -55,7 +55,7 @@ public class SystemReferencedObjectHelper implements IRSEBaseReferencedObject
 		int before = referencingObjects.size();
 		referencingObjects.removeElement(ref);
 		int after = referencingObjects.size();
-		assertThis((after == (before - 1)), "removeReference failed for "+ref);
+		assertThis((after == (before - 1)), "removeReference failed for "+ref); //$NON-NLS-1$
 		return referencingObjects.size();
 	}
 
@@ -88,11 +88,12 @@ public class SystemReferencedObjectHelper implements IRSEBaseReferencedObject
 
     /**
      * Little assertion method for debugging purposes
+     * FIXME Move to common place, protected seems not appropriate
      */
     protected void assertThis(boolean assertion, String msg)
     {
     	if (!assertion)
-    	  System.out.println("ASSERTION FAILED IN SystemReferencedObject: " + msg);
+    	  System.out.println("ASSERTION FAILED IN SystemReferencedObject: " + msg); //$NON-NLS-1$
     }
     
 }

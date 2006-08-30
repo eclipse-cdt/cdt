@@ -59,7 +59,7 @@ public interface IRSEBasePersistableReferenceManager
 
 	/**
 	 * Return an array of the referencing objects currently being managed.
-	 * @param array of the referencing objects currently in this list.
+	 * @return array of the referencing objects currently in this list.
 	 */
 	public IRSEBasePersistableReferencingObject[] getReferencingObjects();
 	/**

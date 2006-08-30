@@ -86,7 +86,7 @@ public class SystemPersistableReferenceManager implements IRSEBasePersistableRef
 
 	/**
 	 * Return an array of the referencing objects currently being managed.
-	 * @param array of the referencing objects currently in this list.
+	 * @return array of the referencing objects currently in this list.
 	 */
 	public IRSEBasePersistableReferencingObject[] getReferencingObjects()
 	{
@@ -472,15 +472,11 @@ public class SystemPersistableReferenceManager implements IRSEBasePersistableRef
 		return referencingObjectList;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
+	//FIXME obsolete?
 	public String toStringGen()
 	{
-		
-
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (name: ");
+		result.append(" (name: "); //$NON-NLS-1$
 		result.append(name);
 		result.append(')');
 		return result.toString();

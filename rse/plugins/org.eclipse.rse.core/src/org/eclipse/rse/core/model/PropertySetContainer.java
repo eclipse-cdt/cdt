@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 
-
-
 public class PropertySetContainer implements IPropertySetContainer 
 {
 	private Map _propertySets;
@@ -53,7 +51,7 @@ public class PropertySetContainer implements IPropertySetContainer
 	public IPropertySet createPropertySet(String name, String description) 
 	{
 		IPropertySet newSet = new PropertySet(name);
-		newSet.addProperty("description", description);
+		newSet.addProperty(IPropertySet.DESCRIPTION_KEY, description);
 		_propertySets.put(name, newSet);
 		return newSet;
 	}

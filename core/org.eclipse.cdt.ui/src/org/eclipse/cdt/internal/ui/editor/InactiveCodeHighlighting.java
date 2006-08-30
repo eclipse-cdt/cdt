@@ -43,8 +43,10 @@ import org.eclipse.cdt.internal.ui.LineBackgroundPainter;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 
 /**
- * TLETODO Document InactiveCodeHighlighting.
- *
+ * Paints code lines disabled by preprocessor directives (#ifdef etc.)
+ * with a configurable background color (default light gray).
+ * 
+ * @see LineBackgroundPainter
  * @since 4.0
  */
 public class InactiveCodeHighlighting implements ICReconcilingListener {
@@ -108,13 +110,14 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 				fUpdateJob.setPriority(Job.DECORATE);
 			}
 			if (fUpdateJob.getState() == Job.NONE) {
-				// schedule later if AST is not available yet
 				fUpdateJob.schedule();
 			}
 		}
 	}
 
 	/**
+	 * Install this highlighting on the given editor.
+	 * 
 	 * @param editor
 	 */
 	public void install(CEditor editor) {
@@ -130,7 +133,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 	}
 
 	/**
-	 * 
+	 * Uninstall this highlighting from the editor. Does nothing if already uninstalled.
 	 */
 	public void uninstall() {
 		if (fLineBackgroundPainter != null) {
@@ -145,8 +148,8 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 	}
 
 	public void dispose() {
-		fLineBackgroundPainter= null;
 		uninstall();
+		fLineBackgroundPainter= null;
 	}
 
 	/**
@@ -178,7 +181,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 		}
 		Runnable updater = new Runnable() {
 			public void run() {
-				if (fEditor != null && fLineBackgroundPainter != null) {
+				if (fEditor != null && fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
 					fLineBackgroundPainter.replaceHighlightPositions(fInactiveCodePositions, newInactiveCodePositions);
 					fInactiveCodePositions= newInactiveCodePositions;
 				}
@@ -255,7 +258,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 					inInactiveCode = true;
 				} else if (elseStmt.taken() && inInactiveCode) {
 					IASTNodeLocation nodeLocation = elseStmt.getNodeLocations()[0];
-					int inactiveCodeEnd = nodeLocation.getNodeOffset() - 1;
+					int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 					positions.add(new HighlightPosition(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart, fHighlightKey));
 					inInactiveCode = false;
 				}
@@ -267,7 +270,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 					inInactiveCode = true;
 				} else if (elifStmt.taken() && inInactiveCode) {
 					IASTNodeLocation nodeLocation = elifStmt.getNodeLocations()[0];
-					int inactiveCodeEnd = nodeLocation.getNodeOffset() - 1;
+					int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 					positions.add(new HighlightPosition(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart, fHighlightKey));
 					inInactiveCode = false;
 				}

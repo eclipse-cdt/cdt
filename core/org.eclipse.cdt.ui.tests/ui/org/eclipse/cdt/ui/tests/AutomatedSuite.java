@@ -7,7 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
- * Anton Leherbauer (Wind River Systems) - Fixed bug 48339
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests;
 
@@ -18,6 +18,7 @@ import org.eclipse.cdt.ui.tests.text.CAutoIndentTest;
 import org.eclipse.cdt.ui.tests.text.CBreakIteratorTest;
 import org.eclipse.cdt.ui.tests.text.CPartitionerTest;
 import org.eclipse.cdt.ui.tests.text.CWordIteratorTest;
+import org.eclipse.cdt.ui.tests.text.InactiveCodeHighlightingTest;
 import org.eclipse.cdt.ui.tests.text.NumberRuleTest;
 import org.eclipse.cdt.ui.tests.text.SemanticHighlightingTest;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionFailedTest_MemberReference_Arrow_Prefix2;
@@ -149,7 +150,7 @@ public class AutomatedSuite extends TestSuite {
 
 		// highlighting tests
 		addTest(SemanticHighlightingTest.suite());
-	
+		addTest(InactiveCodeHighlightingTest.suite());
 	}
 	
 }

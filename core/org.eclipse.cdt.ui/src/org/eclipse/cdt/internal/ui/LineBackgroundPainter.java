@@ -242,6 +242,14 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 		fColorMap= null;
 	}
 
+	/**
+	 * Query whether this painter is already disposed.
+	 * @return <code>true</code> if the painter is disposed
+	 */
+	public boolean isDisposed() {
+		return fTextViewer == null;
+	}
+	
 	/*
 	 * @see org.eclipse.jface.text.IPainter#paint(int)
 	 */

@@ -366,7 +366,12 @@ public class NewClassWizardUtil {
 	 * @param typeName  qualified name of the type to search
 	 * @param project  
 	 * @param pdomNodeType PDOMCPPLinkage type
-	 * @return
+	 * @return one of {@link #SEARCH_MATCH_ERROR}, 
+	 * {@link #SEARCH_MATCH_FOUND_ANOTHER_NAMESPACE},
+	 * {@link #SEARCH_MATCH_FOUND_ANOTHER_TYPE}, 
+	 * {@link #SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE},
+	 * {@link #SEARCH_MATCH_FOUND_EXACT} or
+	 * {@link #SEARCH_MATCH_NOTFOUND}.	 
 	 */
 	public static int searchForCppType(IQualifiedTypeName typeName, ICProject project, int pdomNodeType) {
 		if(project == null) {
@@ -445,7 +450,7 @@ public class NewClassWizardUtil {
 		{
 			if (parent instanceof PDOMBinding)
 			{							
-				buf.insert(0, ((PDOMBinding)parent).getName() + "::");
+				buf.insert(0, ((PDOMBinding)parent).getName() + "::"); //$NON-NLS-1$
 			}
 			parent = parent.getParentNode();
 		}

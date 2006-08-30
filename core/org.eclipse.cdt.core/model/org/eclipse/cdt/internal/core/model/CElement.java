@@ -57,26 +57,14 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		if(adapter == IFile.class)
-		{
-			IResource resource = getUnderlyingResource();
-			if(resource instanceof IFile)
-			{
-				return (IFile) resource;
-			}
-			else
-			{
-				return null;
+		// handle all kinds of resources
+		if (IResource.class.isAssignableFrom(adapter)) {
+			IResource r= getResource();
+			if (r != null && adapter.isAssignableFrom(r.getClass())) {
+				return r;
 			}
 		}
-		if(adapter == IResource.class)
-		{
-			return getUnderlyingResource();
-		}
-		else
-		{
-			return super.getAdapter(adapter);
-		}
+		return super.getAdapter(adapter);
 	}
 	
 	

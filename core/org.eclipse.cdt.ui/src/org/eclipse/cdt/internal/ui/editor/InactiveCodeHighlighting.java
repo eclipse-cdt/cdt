@@ -81,10 +81,10 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 	private List fInactiveCodePositions= Collections.EMPTY_LIST;
 
 	/**
-	 * @param lineBackgroundPainter
+	 * Create a highlighter for the given key.
+	 * @param highlightKey
 	 */
-	public InactiveCodeHighlighting(LineBackgroundPainter lineBackgroundPainter, String highlightKey) {
-		fLineBackgroundPainter= lineBackgroundPainter;
+	public InactiveCodeHighlighting(String highlightKey) {
 		fHighlightKey= highlightKey;
 	}
 
@@ -116,13 +116,16 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 	}
 
 	/**
-	 * Install this highlighting on the given editor.
+	 * Install this highlighting on the given editor and line background painter.
 	 * 
 	 * @param editor
+	 * @param lineBackgroundPainter
 	 */
-	public void install(CEditor editor) {
+	public void install(CEditor editor, LineBackgroundPainter lineBackgroundPainter) {
 		assert fEditor == null;
+		assert editor != null && lineBackgroundPainter != null;
 		fEditor= editor;
+		fLineBackgroundPainter= lineBackgroundPainter;
 		fEditor.addReconcileListener(this);
 		ICElement cElement= fEditor.getInputCElement();
 		if (cElement instanceof ITranslationUnit) {
@@ -136,20 +139,21 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 	 * Uninstall this highlighting from the editor. Does nothing if already uninstalled.
 	 */
 	public void uninstall() {
-		if (fLineBackgroundPainter != null) {
+		synchronized (fJobLock) {
+			if (fUpdateJob != null && fUpdateJob.getState() == Job.RUNNING) {
+				fUpdateJob.cancel();
+			}
+		}
+		if (fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
 			fLineBackgroundPainter.removeHighlightPositions(fInactiveCodePositions);
 			fInactiveCodePositions= Collections.EMPTY_LIST;
+			fLineBackgroundPainter= null;
 		}
 		if (fEditor != null) {
 			fEditor.removeReconcileListener(this);
 			fEditor= null;
 			fTranslationUnit= null;
 		}
-	}
-
-	public void dispose() {
-		uninstall();
-		fLineBackgroundPainter= null;
 	}
 
 	/**

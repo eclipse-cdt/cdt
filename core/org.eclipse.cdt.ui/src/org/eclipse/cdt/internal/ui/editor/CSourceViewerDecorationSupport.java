@@ -224,10 +224,6 @@ public class CSourceViewerDecorationSupport extends SourceViewerDecorationSuppor
 	 * @see org.eclipse.ui.texteditor.SourceViewerDecorationSupport#uninstall()
 	 */
 	public void uninstall() {
-		if (fInactiveCodeHighlighting != null) {
-			fInactiveCodeHighlighting.dispose();
-			fInactiveCodeHighlighting= null;
-		}
 		uninstallLineBackgroundPainter();
 		super.uninstall();
 	}
@@ -252,12 +248,16 @@ public class CSourceViewerDecorationSupport extends SourceViewerDecorationSuppor
 	 */
 	private void uninstallLineBackgroundPainter() {
 		if (fLineBackgroundPainter != null) {
+			if (fInactiveCodeHighlighting != null) {
+				fInactiveCodeHighlighting.uninstall();
+				fInactiveCodeHighlighting= null;
+			}
 			if (fViewer instanceof ITextViewerExtension2) {
 				((ITextViewerExtension2)fViewer).removePainter(fLineBackgroundPainter);
-				fLineBackgroundPainter.deactivate(true);
-				fLineBackgroundPainter.dispose();
-				fLineBackgroundPainter = null;
 			}
+			fLineBackgroundPainter.deactivate(true);
+			fLineBackgroundPainter.dispose();
+			fLineBackgroundPainter = null;
 		}
 	}
 
@@ -269,8 +269,8 @@ public class CSourceViewerDecorationSupport extends SourceViewerDecorationSuppor
 	private void showInactiveCodePositions(boolean refresh) {
 		installLineBackgroundPainter();
 		if (fLineBackgroundPainter != null) {
-			fInactiveCodeHighlighting= new InactiveCodeHighlighting(fLineBackgroundPainter, INACTIVE_CODE_KEY);
-			fInactiveCodeHighlighting.install(fEditor);
+			fInactiveCodeHighlighting= new InactiveCodeHighlighting(INACTIVE_CODE_KEY);
+			fInactiveCodeHighlighting.install(fEditor, fLineBackgroundPainter);
 			if (refresh) {
 				fInactiveCodeHighlighting.refresh();
 			}
@@ -283,7 +283,7 @@ public class CSourceViewerDecorationSupport extends SourceViewerDecorationSuppor
 	private void hideInactiveCodePositions() {
 		if (fLineBackgroundPainter != null) {
 			if (fInactiveCodeHighlighting != null) {
-				fInactiveCodeHighlighting.dispose();
+				fInactiveCodeHighlighting.uninstall();
 				fInactiveCodeHighlighting= null;
 			}
 			if (!isCLPActive()) {

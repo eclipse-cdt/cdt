@@ -20,7 +20,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -101,7 +103,8 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	
 	private Object[] asyncronouslyComputeReferencedBy(CHNode parent, ICElement elem) {
 		try {
-			CalledByResult calledBy= CIndexQueries.getInstance().findCalledBy(elem, NPM);
+			ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
+			CalledByResult calledBy= CIndexQueries.getInstance().findCalledBy(scope, elem, NPM);
 			ArrayList result= new ArrayList();
 			
 			ICElement[] elements= calledBy.getElements();
@@ -120,7 +123,6 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 			return result.toArray();
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
-		} catch (InterruptedException e) {
 		}
 		return NO_CHILDREN;
 	}
@@ -163,7 +165,8 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 				ISourceReference sf= (ISourceReference) elem;
 				ITranslationUnit tu= sf.getTranslationUnit();
 				ISourceRange range= sf.getSourceRange();
-				CallsToResult callsTo= CIndexQueries.getInstance().findCallsToInRange(tu, new Region(range.getStartPos(), range.getLength()), NPM);
+				ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
+				CallsToResult callsTo= CIndexQueries.getInstance().findCallsInRange(scope, tu, new Region(range.getStartPos(), range.getLength()), NPM);
 				ArrayList result= new ArrayList();
 				CElementSet[] elementSets= callsTo.getElementSets();
 				for (int i = 0; i < elementSets.length; i++) {
@@ -181,7 +184,6 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 			}
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
-		} catch (InterruptedException e) {
 		}
 		return NO_CHILDREN;
 	}

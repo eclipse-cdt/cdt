@@ -11,16 +11,20 @@
 
 package org.eclipse.cdt.internal.ui.includebrowser;
 
-import org.eclipse.core.runtime.CoreException;
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.missingapi.CIndexQueries;
-import org.eclipse.cdt.internal.ui.missingapi.CIndexQueries.IPDOMInclude;
+import org.eclipse.cdt.internal.ui.missingapi.CIndexIncludeRelation;
 import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeContentProvider;
 
 /** 
@@ -61,48 +65,53 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 		return null;
 	}
 
-	protected Object[] asyncronouslyComputeChildren(Object parentElement,
-			IProgressMonitor monitor) {
+	protected Object[] asyncronouslyComputeChildren(Object parentElement, IProgressMonitor monitor) {
 		if (parentElement instanceof IBNode) {
 			IBNode node = (IBNode) parentElement;
 			ITranslationUnit tu= node.getRepresentedTranslationUnit();
 			if (tu != null) {
-				try {
-					IPDOMInclude[] includes;
-					IBFile directiveFile= null;
-					IBFile targetFile= null;
-					if (fComputeIncludedBy) {
-						includes= CIndexQueries.getInstance().findIncludedBy(tu, NPM);
+				CIndexIncludeRelation[] includes;
+				IBFile directiveFile= null;
+				IBFile targetFile= null;
+				if (fComputeIncludedBy) {
+					ICProject[] projects;
+					try {
+						projects = CoreModel.getDefault().getCModel().getCProjects();
+					} catch (CModelException e) {
+						CUIPlugin.getDefault().log(e);
+						return NO_CHILDREN;
 					}
-					else {
-						includes= CIndexQueries.getInstance().findIncludesTo(tu, NPM);
-						directiveFile= node.getRepresentedFile();
-					}
-					if (includes.length > 0) {
-						IBNode[] result = new IBNode[includes.length];
-						for (int i = 0; i < includes.length; i++) {
-							IPDOMInclude include = includes[i];
+					includes= CIndexQueries.getInstance().findIncludedBy(projects, tu, NPM);
+				}
+				else {
+					includes= CIndexQueries.getInstance().findIncludesTo(tu, NPM);
+					directiveFile= node.getRepresentedFile();
+				}
+				if (includes.length > 0) {
+					ArrayList result= new ArrayList(includes.length);
+					for (int i = 0; i < includes.length; i++) {
+						CIndexIncludeRelation include = includes[i];
+						try {
 							if (fComputeIncludedBy) {
 								directiveFile= targetFile= new IBFile(tu.getCProject(), include.getIncludedBy());
 							}
 							else {
 								targetFile= new IBFile(tu.getCProject(), include.getIncludes());
 							}
-								
+						} catch (CModelException e) {
+							CUIPlugin.getDefault().log(e);
+							targetFile= null;
+						}
+
+						if (targetFile != null) {
 							IBNode newnode= new IBNode(node, targetFile, directiveFile, 
 									include.getName(), include.getOffset(), include.getTimestamp());
 							newnode.setIsActiveCode(include.isActiveCode());
 							newnode.setIsSystemInclude(include.isSystemInclude());
-							result[i]= newnode;
+							result.add(newnode);
 						}
-						return result;
 					}
-				}
-				catch (CoreException e) {
-					CUIPlugin.getDefault().log(e.getStatus());
-				} 
-				catch (InterruptedException e) {
-					CUIPlugin.getDefault().log(e);
+					return result.toArray();
 				}
 			}
 		}

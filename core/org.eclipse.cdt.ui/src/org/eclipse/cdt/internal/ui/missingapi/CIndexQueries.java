@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -28,12 +26,10 @@ import org.eclipse.jface.text.Region;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
@@ -43,99 +39,97 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
+/**
+ * Access to high level queries in the index.
+ * @since 4.0
+ */
 public class CIndexQueries {
-    public static class IPDOMInclude {
-		private PDOMInclude fInclude;
-		
-		public IPDOMInclude(PDOMInclude include) {
-			fInclude= include;
-		}
-		public boolean isSystemInclude() {
-			return false;
-		}
-		public boolean isActiveCode() {
-			return true;
-		}
-		public IPath getIncludedBy() throws CoreException {
-			return Path.fromOSString(fInclude.getIncludedBy().getFileName().getString());
-		}
-		public IPath getIncludes() throws CoreException {
-			return Path.fromOSString(fInclude.getIncludes().getFileName().getString());
-		}
-		public String getName() throws CoreException {
-			return Path.fromOSString(fInclude.getIncludes().getFileName().getString()).lastSegment();
-		}
-		public int getOffset() {
-			return 9;
-		}
-		public long getTimestamp() {
-			return 0;
-		}
-	}
-    
-    private static final IPDOMInclude[] EMPTY_INCLUDES = new IPDOMInclude[0];
+    private static final ICElement[] EMPTY_ELEMENTS = new ICElement[0];
+    private static final CIndexIncludeRelation[] EMPTY_INCLUDES = new CIndexIncludeRelation[0];
     private static final CIndexQueries sInstance= new CIndexQueries();
 	
 	public static CIndexQueries getInstance() {
 		return sInstance;
 	}
 	
-	public static ITranslationUnit toTranslationUnit(ICProject cproject, PDOMFile includedBy) throws CoreException {
-		String name= includedBy.getFileName().getString();
-		return toTranslationUnit(cproject, name);
-	}
-
-	public static ITranslationUnit toTranslationUnit(ICProject cproject, IASTName name) throws CoreException {
-		return toTranslationUnit(cproject, name.getFileLocation().getFileName());
-	}
-
-	private static ITranslationUnit toTranslationUnit(ICProject cproject, String pathStr) throws CModelException {
-		IPath path= Path.fromOSString(pathStr);
-		return CModelUtil.findTranslationUnitForLocation(path, cproject);
-	}
-
-
-	public IPDOMInclude[] findIncludedBy(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException {
+	/**
+	 * Searches for all include-relations that include the given translation unit.
+	 * @param scope the projects to be searched.
+	 * @param tu a translation unit
+	 * @param pm a monitor for reporting progress.
+	 * @return an array of include relations.
+	 * @since 4.0
+	 */
+	public CIndexIncludeRelation[] findIncludedBy(ICProject[] scope, ITranslationUnit tu, IProgressMonitor pm) {
 		HashMap result= new HashMap();
-		LinkedList projects= new LinkedList(Arrays.asList(CoreModel.getDefault().getCModel().getCProjects()));
-		ICProject cproject= tu.getCProject();
-		if (cproject != null) {
-			projects.remove(cproject);
-			projects.addLast(cproject);
+		ICProject projectOfTU= tu.getCProject();
+
+		// mstodo progress monitor
+		for (int i = scope.length-1; i >= 0; i--) {
+			ICProject cproject = scope[i];
+			// prefer the project of the translation unit.
+			if (i != 0) {
+				if (cproject.equals(projectOfTU)) {
+					System.arraycopy(scope, 0, scope, 1, i);
+					scope[0]= projectOfTU;
+					cproject= scope[i];
+				}
+			}
+			CIndexIncludeRelation[] includes= findIncludedBy(cproject, tu);	
+			for (int j = 0; j < includes.length; j++) {
+				CIndexIncludeRelation include = includes[j];
+				result.put(include.getIncludedBy(), include);
+			}
 		}
-		
-		for (Iterator iter = projects.iterator(); iter.hasNext();) {
-			cproject = (ICProject) iter.next();
-			PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(cproject);
+		Collection includes= result.values();
+		return (CIndexIncludeRelation[]) includes.toArray(new CIndexIncludeRelation[includes.size()]);
+	}
+
+	/**
+	 * Searches for all include-relations in a project that include the given translation unit.
+	 * @param project the project to be searched.
+	 * @param tu a translation unit
+	 * @return an array of include relations.
+	 * @since 4.0
+	 */
+	public CIndexIncludeRelation[] findIncludedBy(ICProject project, ITranslationUnit tu) {
+		try {
+			PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
 			if (pdom != null) {
 				pdom.acquireReadLock();
 				try {
 					PDOMFile fileTarget= pdom.getFile(locationForTU(tu));
 					if (fileTarget != null) {
+						ArrayList result= new ArrayList();
 						PDOMInclude include= fileTarget.getFirstIncludedBy();
 						while (include != null) {
-							PDOMFile file= include.getIncludedBy();
-							String path= file.getFileName().getString();
-							result.put(path, new IPDOMInclude(include));
+							try {
+								result.add(new CIndexIncludeRelation(include));
+							} catch (CoreException e) {
+								CUIPlugin.getDefault().log(e);
+							}
 							include= include.getNextInIncludedBy();
 						}
+						return (CIndexIncludeRelation[]) result.toArray(new CIndexIncludeRelation[result.size()]);
 					}
 				}
 				finally {
 					pdom.releaseReadLock();
 				}
-			}	
-		}
-		Collection includes= result.values();
-		return (IPDOMInclude[]) includes.toArray(new IPDOMInclude[includes.size()]);
+			}
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} catch (InterruptedException e) {
+		} 
+		return EMPTY_INCLUDES;
 	}
 
 	private IPath locationForTU(ITranslationUnit tu) {
@@ -146,165 +140,270 @@ public class CIndexQueries {
 		return tu.getPath();
 	}
 	
-	public IPDOMInclude[] findIncludesTo(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException {
+	/**
+	 * Searches for all include-relations defined in the given translation unit.
+	 * @param tu a translation unit.
+	 * @param pm a monitor to report progress.
+	 * @return an array of include relations.
+	 * @since 4.0
+	 */
+	public CIndexIncludeRelation[] findIncludesTo(ITranslationUnit tu, IProgressMonitor pm) {
 		ICProject cproject= tu.getCProject();
 		if (cproject != null) {
-			PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(cproject);
-			if (pdom != null) {
-				pdom.acquireReadLock();
-				try {
-					PDOMFile fileTarget= pdom.getFile(locationForTU(tu));
-					if (fileTarget != null) {
-						ArrayList result= new ArrayList();
-						PDOMInclude include= fileTarget.getFirstInclude();
-						while (include != null) {
-							result.add(new IPDOMInclude(include));
-							include= include.getNextInIncludes();
+			try {
+				PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(cproject);
+				if (pdom != null) {
+					pdom.acquireReadLock();
+					try {
+						PDOMFile fileTarget= pdom.getFile(locationForTU(tu));
+						if (fileTarget != null) {
+							ArrayList result= new ArrayList();
+							PDOMInclude include= fileTarget.getFirstInclude();
+							while (include != null) {
+								try {
+									result.add(new CIndexIncludeRelation(include));
+								} catch (CoreException e) {
+									CUIPlugin.getDefault().log(e);
+								}
+								include= include.getNextInIncludes();
+							}
+							return (CIndexIncludeRelation[]) result.toArray(new CIndexIncludeRelation[result.size()]);
 						}
-						return (IPDOMInclude[]) result.toArray(new IPDOMInclude[result.size()]);
+					}
+					finally {
+						pdom.releaseReadLock();
 					}
 				}
-				finally {
-					pdom.releaseReadLock();
-				}
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+			} catch (InterruptedException e) {
 			}	
 		}		
 		return EMPTY_INCLUDES;
 	}
 
-	public CalledByResult findCalledBy(ICElement callee, IProgressMonitor pm) throws CoreException, InterruptedException {
-		LinkedList projects= new LinkedList(Arrays.asList(CoreModel.getDefault().getCModel().getCProjects()));
-		IASTName name= toASTName(callee);
+	/**
+	 * Searches for functions and methods that call a given element.
+	 * @param scope the projects to be searched
+	 * @param callee a function, method, constant, variable or enumerator.
+	 * @param pm a monitor to report progress
+	 * @return a result object.
+	 * @since 4.0
+	 */
+	public CalledByResult findCalledBy(ICProject[] scope, ICElement callee, IProgressMonitor pm) {
+		IASTName name= astNameForElement(callee);
 		
 		CalledByResult result= new CalledByResult();
 		if (name != null) {
 			// resolve the binding.
 			name.resolveBinding();
 
-			for (Iterator iter = projects.iterator(); iter.hasNext();) {
-				findCalledBy(name, (ICProject) iter.next(), result);	
+			for (int i = 0; i < scope.length; i++) {
+				ICProject project = scope[i];
+				findCalledBy(name, project, result);					
 			}
 		}
 		return result;
 	}
 
-	private IASTName toASTName(ICElement elem) throws CoreException {
-		if (elem instanceof ISourceReference) {
-			ISourceReference sf= (ISourceReference) elem;
-			ISourceRange range = sf.getSourceRange();
-			ITranslationUnit tu = sf.getTranslationUnit();
+	private IASTName astNameForElement(ICElement elem) {
+		try {
+			if (elem instanceof ISourceReference) {
+				ISourceReference sf= (ISourceReference) elem;
+				ISourceRange range= sf.getSourceRange();
+				ITranslationUnit tu= sf.getTranslationUnit();
+				IASTTranslationUnit ast= astUnitForTU(tu);
+				if (ast != null) {
+					ILanguage language = tu.getLanguage();
+					IASTName[] names = language.getSelectedNames(ast, range.getIdStartPos(), range.getIdLength());
+					if (names.length > 0) {
+						return names[names.length-1];
+					}
+					return null;
+				}
+			}
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+		return null;
+	}
+
+	private IASTTranslationUnit astUnitForTU(ITranslationUnit tu) {
+		try {
 			if (tu != null) {
 				ILanguage language = tu.getLanguage();
-				IASTTranslationUnit ast = language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
-				return getASTName(language, ast, range);
+				return language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
 			}
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
 		}
 		return null;
 	}
 
-	private static IASTName getASTName(ILanguage language, IASTTranslationUnit ast, ISourceRange range) {
-		IASTName[] names = language.getSelectedNames(ast, range.getIdStartPos(), range.getIdLength());
-		if (names.length > 0) {
-			return names[names.length-1];
-		}
-		return null;
-	}
-
-	private void findCalledBy(IASTName name, ICProject project, CalledByResult result) throws InterruptedException, CoreException {
-		PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
-		if (pdom != null) {
-			pdom.acquireReadLock();
-			try {
-				IBinding binding= pdom.resolveBinding(name);
-				if (binding != null) {
-					IASTName[] names= pdom.getReferences(binding);
-					for (int i = 0; i < names.length; i++) {
-						IASTName rname = names[i];
-						ITranslationUnit tu= toTranslationUnit(project, rname);
-						CIndexReference ref= new CIndexReference(tu, rname);
-						ICElement elem= findCaller(ref);
-						result.add(elem, ref);
-					}
-				}
-			}
-			finally {
-				pdom.releaseReadLock();
-			}
-		}
-	}
-
-	public CallsToResult findCallsToInRange(ITranslationUnit tu, IRegion range, IProgressMonitor pm) throws CoreException, InterruptedException {
-		CallsToResult result= new CallsToResult();
-		ICProject project = tu.getCProject();
-		PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
-		if (pdom != null) {
-			pdom.acquireReadLock();
-			try {
-				IPath location= locationForTU(tu);
-				PDOMFile file= pdom.getFile(location);
-				if (file != null) {
-					// mstodo use correct timestamp
-					long timestamp= location.toFile().lastModified();
-					IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu.getPath(), timestamp);
-					if (pc != null) {
-						range= pc.historicToActual(range);
-					}
-					PDOMName name= file.getFirstName();
-					while (name != null) {
-						if (name.isReference()) {
-							IASTFileLocation loc= name.getFileLocation();
-							if (encloses(range, loc.getNodeOffset(), loc.getNodeLength())) {
-								ICElement[] defs= findDefinitions(project, name);
-								if (defs != null && defs.length > 0) {
-									CIndexReference ref= new CIndexReference(tu, name);
-									result.add(defs, ref);
-								}
-							}
+	private void findCalledBy(IASTName name, ICProject project, CalledByResult result) {
+		try {
+			PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
+			if (pdom != null) {
+				pdom.acquireReadLock();
+				try {
+					IBinding binding= pdom.resolveBinding(name);
+					if (binding != null) {
+						IASTName[] names= pdom.getReferences(binding);
+						for (int i = 0; i < names.length; i++) {
+							IASTName rname = names[i];
+							ITranslationUnit tu= toTranslationUnit(project, rname);
+							CIndexReference ref= new CIndexReference(tu, rname);
+							ICElement elem = findCalledBy(ref);
+							if (elem != null) {
+								result.add(elem, ref);
+							} 
 						}
-						name= name.getNextInFile();
+					}
+				}
+				finally {
+					pdom.releaseReadLock();
+				}
+			}
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} catch (InterruptedException e) {
+		}
+	}
+	
+	private ICElement findCalledBy(CIndexReference reference) {
+		ITranslationUnit tu= reference.getTranslationUnit();
+		long timestamp= reference.getTimestamp();
+		IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu.getPath(), timestamp);
+		int offset= reference.getOffset();
+		if (pc != null) {
+			offset= pc.historicToActual(new Region(offset, 0)).getOffset();
+		}
+		return findElement(tu, offset, false);
+	}
+
+	private ICElement findElement(ICElement element, int offset, boolean allowVars) {
+		if (element == null || (element instanceof IFunctionDeclaration) || 
+				(allowVars && element instanceof IVariableDeclaration)) {
+			return element;
+		}
+		try {
+			if (element instanceof IParent) {
+				ICElement[] children= ((IParent) element).getChildren();
+				for (int i = 0; i < children.length; i++) {
+					ICElement child = children[i];
+					if (child instanceof ISourceReference) {
+						ISourceRange sr= ((ISourceReference) child).getSourceRange();
+						int startPos= sr.getStartPos();
+						if (startPos <= offset && offset < startPos + sr.getLength()) {
+							return findElement(child, offset, allowVars);
+						}
 					}
 				}
 			}
-			finally {
-				pdom.releaseReadLock();
+		} catch (CModelException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+		return null;
+	}
+	
+	private ITranslationUnit toTranslationUnit(ICProject cproject, IASTName name) {
+		IPath path= Path.fromOSString(name.getFileLocation().getFileName());
+		try {
+			return CModelUtil.findTranslationUnitForLocation(path, cproject);
+		} catch (CModelException e) {
+			CUIPlugin.getDefault().log(e);
+			return null;
+		}
+	}
+
+	/**
+	 * Searches for all calls that are made within a given range.
+	 * @param scope the scope in which the references can be resolved to elements
+	 * @param tu the translation unit where the calls are made
+	 * @param range the range in the translation unit where the calls are made
+	 * @param pm a monitor to report progress
+	 * @return a result object.
+	 * @since 4.0
+	 */
+	public CallsToResult findCallsInRange(ICProject[] scope, ITranslationUnit tu, IRegion range, IProgressMonitor pm) {
+		CallsToResult result= new CallsToResult();
+		IASTTranslationUnit astTU= astUnitForTU(tu);
+		if (astTU != null) {
+			ReferenceVisitor refVisitor= new ReferenceVisitor(astTU.getFilePath(), range.getOffset(), range.getLength());
+			astTU.accept(refVisitor);
+
+			IASTName[] refs = refVisitor.getReferences();
+			for (int i = 0; i < refs.length; i++) {
+				IASTName name = refs[i];
+				ICElement[] defs = findAllDefinitions(scope, name);
+				if (defs.length == 0) {
+					ICElement elem = findAnyDeclaration(scope, name);
+					if (elem != null) {
+						defs = new ICElement[] { elem };
+					}
+				}
+				if (defs != null && defs.length > 0) {
+					CIndexReference ref = new CIndexReference(tu, name);
+					result.add(defs, ref);
+				}
 			}
 		}
 		return result;
 	}
-
-	private ICElement[] findDefinitions(ICProject project, PDOMName name) throws CoreException {
-		ArrayList defs= new ArrayList();
-		PDOMBinding binding= name.getPDOMBinding();
-		if (binding != null) {
-			PDOMName declName= binding.getFirstDefinition();
-			while (declName != null) {
-				ICElement elem= findEnclosingElement(project, declName);
-				if (elem != null) {
-					defs.add(elem);
-				}
-				declName= declName.getNextInBinding();
-			}
-			if (defs.isEmpty()) {
-				declName= binding.getFirstDeclaration();
-				while (declName != null) {
-					ICElement elem= findEnclosingElement(project, declName);
-					if (elem != null) {
-						defs.add(elem);
-					}
-					declName= declName.getNextInBinding();
-				}
-			}		
-		}
-		return (ICElement[]) defs.toArray(new ICElement[defs.size()]);
-	}
-
-	private boolean encloses(IRegion range, int nodeOffset, int nodeLength) {
-		int d1= nodeOffset - range.getOffset();
-		int d2= range.getLength() - nodeLength - d1;
-		return d1 >= 0 && d2 >= 0;
-	}
 	
-	private ICElement findEnclosingElement(ICProject project, PDOMName declName) throws CoreException {
+	public ICElement[] findAllDefinitions(ICProject[] projectsToSearch, IASTName name) {
+		name.resolveBinding();
+		ArrayList result= new ArrayList();
+		for (int i = 0; i < projectsToSearch.length; i++) {
+			ICProject project = projectsToSearch[i];
+			ICElement[] definitions= findAllDefinitions(project, name);
+			if (definitions != null && definitions.length > 0) {
+				result.addAll(Arrays.asList(definitions));
+			}
+		}
+		return (ICElement[]) result.toArray(new ICElement[result.size()]);
+	}
+			
+	public ICElement[] findAllDefinitions(ICProject project, IASTName name) {
+		PDOM pdom;
+		try {
+			pdom = (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
+			if (pdom != null) {
+				pdom.acquireReadLock();
+				try {
+					IBinding binding= pdom.resolveBinding(name);
+					if (binding != null) {
+						return allEnclosingElements(project, pdom.getDefinitions(binding));
+					}
+				}
+				finally {
+					pdom.releaseReadLock();
+				}
+			}
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} catch (InterruptedException e) {
+		}
+
+		return EMPTY_ELEMENTS;
+	}
+
+	private ICElement[] allEnclosingElements(ICProject project, IASTName[] defs) {
+		if (defs != null && defs.length > 0) {
+			ArrayList result= new ArrayList(defs.length);
+			for (int i = 0; i < defs.length; i++) {
+				IASTName defName = defs[i];
+				ICElement elem= findEnclosingElement(project, (PDOMName) defName);
+				if (elem != null) {
+					result.add(elem);
+				}
+			}
+			return (ICElement[]) result.toArray(new ICElement[result.size()]);
+		}
+		return EMPTY_ELEMENTS;
+	}
+
+	private ICElement findEnclosingElement(ICProject project, PDOMName declName) {
 		ITranslationUnit tu= toTranslationUnit(project, declName);
 		if (tu != null) {
 			//	mstodo use correct timestamp			
@@ -320,35 +419,100 @@ public class CIndexQueries {
 		return null;
 	}
 
-	private ICElement findCaller(CIndexReference reference) throws CoreException {
-		ITranslationUnit tu= reference.getTranslationUnit();
-		long timestamp= reference.getTimestamp();
-		IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu.getPath(), timestamp);
-		int offset= reference.getOffset();
-		if (pc != null) {
-			offset= pc.historicToActual(new Region(offset, 0)).getOffset();
+	public ICElement findDefinition(ICProject[] projectsToSearch, IASTName name) {
+		name.resolveBinding();
+		
+		for (int i = 0; i < projectsToSearch.length; i++) {
+			ICProject project = projectsToSearch[i];
+			ICElement definition= findDefinition(project, name);
+			if (definition != null) {
+				return definition;
+			}
 		}
-		return findElement(tu, offset, false);
+		return null;
+	}
+			
+	public ICElement findDefinition(ICProject project, IASTName name) {
+		PDOM pdom;
+		try {
+			pdom = (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
+			if (pdom != null) {
+				pdom.acquireReadLock();
+				try {
+					IBinding binding= pdom.resolveBinding(name);
+					if (binding != null) {
+						ICElement elem= firstEnclosingElement(project, pdom.getDefinitions(binding));
+						if (elem != null) {
+							return elem;
+						}
+					}
+				}
+				finally {
+					pdom.releaseReadLock();
+				}
+			}
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} catch (InterruptedException e) {
+		}
+
+		return null;
 	}
 
-	private ICElement findElement(ICElement element, int offset, boolean allowVars) throws CModelException {
-		if (element == null || (element instanceof IFunctionDeclaration) || 
-				(allowVars && element instanceof IVariableDeclaration)) {
-			return element;
-		}
-		if (element instanceof IParent) {
-			ICElement[] children= ((IParent) element).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				ICElement child = children[i];
-				if (child instanceof ISourceReference) {
-					ISourceRange sr= ((ISourceReference) child).getSourceRange();
-					int startPos= sr.getStartPos();
-					if (startPos <= offset && offset < startPos + sr.getLength()) {
-						return findElement(child, offset, allowVars);
-					}
+	private ICElement firstEnclosingElement(ICProject project, IASTName[] defs) {
+		if (defs != null) {
+			for (int i = 0; i < defs.length; i++) {
+				IASTName defName = defs[i];
+				ICElement elem= findEnclosingElement(project, (PDOMName) defName);
+				if (elem != null) {
+					return elem;
 				}
 			}
 		}
+		return null;
+	}
+
+	public ICElement findAnyDeclaration(ICProject[] projectsToSearch, IASTName name) {
+		name.resolveBinding();
+		
+		for (int i = 0; i < projectsToSearch.length; i++) {
+			ICProject project = projectsToSearch[i];
+			ICElement declaration= findAnyDeclaration(project, name);
+			if (declaration != null) {
+				return declaration;
+			}
+		}
+		return null;
+	}
+			
+	public ICElement findAnyDeclaration(ICProject project, IASTName name) {
+		PDOM pdom;
+		try {
+			pdom = (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
+			if (pdom != null) {
+				pdom.acquireReadLock();
+				try {
+					IBinding binding= pdom.resolveBinding(name);
+					if (binding != null) {
+						ICElement elem= firstEnclosingElement(project, pdom.getDefinitions(binding));
+						if (elem != null) {
+							return elem;
+						}
+						elem= firstEnclosingElement(project, pdom.getDeclarations(binding));
+						if (elem != null) {
+							return elem;
+						}
+					}
+				}
+				finally {
+					pdom.releaseReadLock();
+				}
+			}
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} catch (InterruptedException e) {
+		}
+
 		return null;
 	}
 }

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -283,8 +284,14 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		if (binding == null || binding instanceof IProblemBinding)
 			return null;
 		
-		if (binding instanceof PDOMBinding)
-			return (PDOMBinding)binding;
+		if (binding instanceof PDOMBinding) {
+			// there is no guarantee, that the binding is from the same PDOM object.
+			PDOMBinding pdomBinding = (PDOMBinding) binding;
+			if (pdomBinding.getPDOM() == getPDOM()) {
+				return pdomBinding;
+			}
+			// so if the binding is from another pdom it has to be adapted. 
+		}
 		
 		PDOMNode parent = getParent(binding);
 		if (parent == this) {

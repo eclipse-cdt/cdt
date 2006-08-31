@@ -63,7 +63,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 		fTranslationUnit = tu;
 	}
 	
-	public void executeInludes(IProgressMonitor monitor) throws CoreException {
+	public void executeIncludes(IProgressMonitor monitor) throws CoreException {
 		// Sanity
 		if (fIncludes == null || fIncludes.length == 0) {
 			return;
@@ -199,7 +199,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 		}			
 		try {
 			executeUsings(monitor);
-			executeInludes(monitor);
+			executeIncludes(monitor);
 		} finally {
 			monitor.done();
 		}

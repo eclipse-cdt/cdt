@@ -30,8 +30,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.core.model.ISystemContainer;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
@@ -255,7 +255,7 @@ FocusListener
 
 		
 		
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
 			
 		// global actions
 		Clipboard clipboard = registry.getSystemClipboard();

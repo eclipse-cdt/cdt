@@ -98,7 +98,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 /**
  * Registry for all connections.
  */
-public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents, ISystemViewInputProvider
+public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEvents, ISystemViewInputProvider
 {
 
 	private static Exception lastException = null;

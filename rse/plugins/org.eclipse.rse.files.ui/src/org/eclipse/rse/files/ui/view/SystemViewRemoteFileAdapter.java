@@ -70,6 +70,7 @@ import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.filters.SystemFilterReference;
+import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
@@ -411,7 +412,7 @@ public class SystemViewRemoteFileAdapter
 		//ISubSystem subsys = firstFile.getParentRemoteFileSubSystem();
 
 		// DKM - clipboard based copy actions
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
 		Clipboard clipboard = registry.getSystemClipboard();
 
 		if (pasteClipboardAction == null)

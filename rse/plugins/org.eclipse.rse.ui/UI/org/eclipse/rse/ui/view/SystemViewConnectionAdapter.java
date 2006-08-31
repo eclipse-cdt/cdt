@@ -28,6 +28,7 @@ import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -451,7 +452,7 @@ public class SystemViewConnectionAdapter
         //System.out.println("Inside resetPropertyValue in adapter");    
 		String property = (String)propertyObject;    	
 	    IHost conn = (IHost)propertySourceInput;   	
-	    ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+	    ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
 	    	   
 	    if (property.equals(P_DEFAULTUSERID))
 	    {
@@ -479,7 +480,7 @@ public class SystemViewConnectionAdapter
     	//if (!data.getIsLocal())
     	  //whereToUpdate = USERID_LOCATION_DEFAULT_SYSTEMTYPE;
     	String userId = data.getLocalValue(); // will be "" if !data.getIsLocal(), which results in wiping out local override
-	    ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();    	
+	    ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();    	
 		sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
 		                      conn.getHostName(), conn.getDescription(), userId, whereToUpdate);
     }
@@ -491,7 +492,7 @@ public class SystemViewConnectionAdapter
     {
 		String name = (String)property;    	
 	    IHost conn = (IHost)propertySourceInput;   		   
-	    ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+	    ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
 	       	
 	    if (name.equals(P_DEFAULTUSERID))
 	    {

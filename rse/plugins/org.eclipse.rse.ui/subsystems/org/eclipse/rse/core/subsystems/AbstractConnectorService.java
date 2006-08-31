@@ -30,6 +30,7 @@ import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.logging.LoggerFactory;
+import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -637,7 +638,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		} else { // it seems intuitive to update the connection object. defect 42709. Phil
 			int whereToUpdate = USERID_LOCATION_CONNECTION;
 			IHost conn = subsystem.getHost();
-			ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+			ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
 			sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(), conn.getHostName(), conn.getDescription(), userId, whereToUpdate);
 		}
 	}

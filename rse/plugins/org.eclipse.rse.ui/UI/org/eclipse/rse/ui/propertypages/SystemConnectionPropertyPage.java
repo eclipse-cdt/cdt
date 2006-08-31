@@ -18,8 +18,8 @@ package org.eclipse.rse.ui.propertypages;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.ISystemConnectionFormCaller;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemConnectionForm;
@@ -89,7 +89,7 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 		if (okToClose)
 		{
 		  IHost conn = (IHost)getElement();
-		  ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+		  ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		  sr.updateHost( getShell(),conn,conn.getSystemType(),form.getConnectionName(),
 		                       form.getHostName(), form.getConnectionDescription(),
 		                       form.getDefaultUserId(), form.getUserIdLocation() );

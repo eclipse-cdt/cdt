@@ -27,8 +27,6 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.widgets.Shell;
 
 
 /**
@@ -401,11 +399,6 @@ public interface ISystemRegistry extends ISchedulingRule
      * Return array of previously specified hostnames for a given system type.
      */
     public String[] getHostNames(String systemType);
-
-    /**
-     * Returns the clipboard used for copy actions
-     */
-    public Clipboard getSystemClipboard();
     
     /**
 	 * Returns the list of objects on the system clipboard
@@ -506,33 +499,6 @@ public interface ISystemRegistry extends ISchedulingRule
 	 */
 	public IHost createHost(String systemType, String connectionName, String hostName, String description)
 		throws Exception;
-		
-    /**
-     * Update an existing connection given the new information.
-     * This method:
-     * <ul>
-     *  <li>calls the setXXX methods on the given connection object, updating the information in it.
-     *  <li>save the connection's connection pool to disk
-     *  <li>fires an ISystemResourceChangeEvent event of type EVENT_CHANGE to all registered listeners
-     *  <li>if the systemtype or hostname is changed, calls disconnect on each associated subsystem.
-     *       We must do this because a hostname changes fundamentally affects the connection, 
-     *       rendering any information currently displayed under
-     *       that connection obsolete. That is, the user will have to reconnect.
-     * </ul>
-     * <p>
-     * @param conn SystemConnection to be updated
-     * @param systemType system type matching one of the system type names defined via the
-     *                    systemTypes extension point.
-     * @param connectionName unique connection name.
-     * @param hostName ip name of host.
-     * @param description optional description of the connection. Can be null.
-     * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.ISystemUserIdConstants ISystemUserIdConstants}
-     *   that tells us where to set the user Id
-     * @param defaultUserId userId to use as the default for the subsystems.
-     */
-    public void updateHost(Shell shell, IHost conn, String systemType,
-                                 String connectionName, String hostName,
-                                 String description,String defaultUserId, int defaultUserIdLocation);
                                  
 	/**
 	 * Update the workoffline mode for a connection.

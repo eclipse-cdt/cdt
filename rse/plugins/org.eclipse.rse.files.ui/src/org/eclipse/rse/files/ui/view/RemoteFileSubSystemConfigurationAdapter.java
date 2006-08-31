@@ -28,7 +28,6 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.files.ui.actions.SystemFileUpdateFilterAction;
 import org.eclipse.rse.files.ui.actions.SystemNewFileAction;
@@ -37,6 +36,7 @@ import org.eclipse.rse.files.ui.actions.SystemNewFolderAction;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.files.ui.wizards.SystemFileNewConnectionWizardPage;
+import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
@@ -135,7 +135,7 @@ public class RemoteFileSubSystemConfigurationAdapter extends SubSystemConfigurat
 			// FIXME - can't do this here anymore
 			//_additionalActions.add(new SystemCommandAction(shell, true));
 			
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
 			Clipboard clipboard = registry.getSystemClipboard();
 			_additionalActions.add(new SystemPasteFromClipboardAction(shell, clipboard));
     	}

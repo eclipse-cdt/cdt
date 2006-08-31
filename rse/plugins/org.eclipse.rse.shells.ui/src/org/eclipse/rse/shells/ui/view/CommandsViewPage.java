@@ -27,9 +27,9 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteOutput;
+import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.ShellResources;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -195,7 +195,7 @@ FocusListener
 		_tabFolderPage.setLayout(gridLayout);
 		createControl(_tabFolderPage);
 		
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISystemRegistryUI registry = RSEUIPlugin.getTheSystemRegistry();
 			
 		// global actions
 		Clipboard clipboard = registry.getSystemClipboard();

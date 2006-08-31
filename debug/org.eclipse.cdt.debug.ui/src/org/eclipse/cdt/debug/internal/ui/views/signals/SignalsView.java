@@ -95,14 +95,14 @@ public class SignalsView extends AbstractDebugEventHandlerView
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Viewer createViewer( Composite parent ) {
-		CDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
-		
+
 		// add tree viewer
 		final SignalsViewer vv = new SignalsViewer( parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL );
 		vv.setContentProvider( createContentProvider() );
 		vv.setLabelProvider( new SignalsViewLabelProvider() );
 		vv.setUseHashlookup( true );
 
+		// listen to preference changes
 		CDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
 
 		// listen to selection in debug view

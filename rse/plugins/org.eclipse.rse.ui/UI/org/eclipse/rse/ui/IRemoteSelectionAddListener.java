@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 
 /**
  * <p>

@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.files.ui.widgets;
 import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.ui.widgets.SystemHostCombo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;

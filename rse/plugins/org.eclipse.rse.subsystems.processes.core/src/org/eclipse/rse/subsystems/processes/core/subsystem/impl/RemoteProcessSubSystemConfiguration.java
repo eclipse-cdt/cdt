@@ -19,10 +19,10 @@ package org.eclipse.rse.subsystems.processes.core.subsystem.impl;
 import java.util.Vector;
 
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.services.clientserver.processes.HostProcessFilterImpl;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;
 import org.eclipse.rse.subsystems.processes.core.subsystem.SystemProcessesCoreResources;

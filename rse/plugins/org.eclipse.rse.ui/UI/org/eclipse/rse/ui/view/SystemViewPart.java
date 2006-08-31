@@ -46,18 +46,19 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemElapsedTimer;
 import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.filters.ISystemFilterStringReference;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemPreferenceChangeEvent;
 import org.eclipse.rse.core.model.ISystemPreferenceChangeEvents;
 import org.eclipse.rse.core.model.ISystemPreferenceChangeListener;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.filters.ISystemFilterPoolReference;
-import org.eclipse.rse.filters.ISystemFilterReference;
-import org.eclipse.rse.filters.ISystemFilterStringReference;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -160,24 +161,24 @@ public class SystemViewPart
 	protected SystemPasteFromClipboardAction _pasteAction;
 
 	// Persistence tags.
-	static final String TAG_RELEASE = "release"; //$NON-NLS-1$
-	static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
-	static final String TAG_EXPANDED_TO = "expandedTo"; //$NON-NLS-1$
-	static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
-	static final String TAG_ELEMENT = "element"; //$NON-NLS-1$
-	static final String TAG_PATH = "path"; //$NON-NLS-1$
-	static final String TAG_FILTER = "filter"; //$NON-NLS-1$
-	static final String TAG_INPUT = "svInput"; //$NON-NLS-1$
-	static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
-	static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
-	static final String TAG_SHOWFILTERPOOLS = "showFilterPools"; //$NON-NLS-1$
-	static final String TAG_SHOWFILTERSTRINGS = "showFilterStrings"; //$NON-NLS-1$
-	static final String TAG_LINKWITHEDITOR = "linkWithEditor"; //$NON-NLS-1$
+	static final String TAG_RELEASE = "release";
+	static final String TAG_SELECTION = "selection";
+	static final String TAG_EXPANDED_TO = "expandedTo";
+	static final String TAG_EXPANDED = "expanded";
+	static final String TAG_ELEMENT = "element";
+	static final String TAG_PATH = "path";
+	static final String TAG_FILTER = "filter";
+	static final String TAG_INPUT = "svInput";
+	static final String TAG_VERTICAL_POSITION = "verticalPosition";
+	static final String TAG_HORIZONTAL_POSITION = "horizontalPosition";
+	static final String TAG_SHOWFILTERPOOLS = "showFilterPools";
+	static final String TAG_SHOWFILTERSTRINGS = "showFilterStrings";
+	static final String TAG_LINKWITHEDITOR = "linkWithEditor";
 
-	public static final String MEMENTO_DELIM = "///"; //$NON-NLS-1$
+	public static final String MEMENTO_DELIM = "///";
 
 	// constants			
-	public static final String ID = "org.eclipse.rse.ui.view.systemView"; // matches id in plugin.xml, view tag //$NON-NLS-1$	
+	public static final String ID = "org.eclipse.rse.ui.view.systemView"; // matches id in plugin.xml, view tag	
 
 	/**
 	 * SystemViewPart constructor.
@@ -322,27 +323,27 @@ public class SystemViewPart
 			if (inputObj instanceof IHost)
 			{
 				IHost conn = (IHost) inputObj;
-				setPartName(viewName + " : " + conn.getAliasName()); //$NON-NLS-1$
+				setPartName(viewName + " : " + conn.getAliasName());
 			}
 			else if (inputObj instanceof ISubSystem)
 			{
 				ISubSystem ss = (ISubSystem) inputObj;
-				setPartName(viewName + " : " + ss.getName()); //$NON-NLS-1$
+				setPartName(viewName + " : " + ss.getName());
 			}
 			else if (inputObj instanceof ISystemFilterPoolReference)
 			{
 				ISystemFilterPoolReference sfpr = (ISystemFilterPoolReference) inputObj;
-				setPartName(viewName + " : " + sfpr.getName()); //$NON-NLS-1$
+				setPartName(viewName + " : " + sfpr.getName());
 			}
 			else if (inputObj instanceof ISystemFilterReference)
 			{
 				ISystemFilterReference sfr = (ISystemFilterReference) inputObj;
-				setPartName(viewName + " : " + sfr.getName()); //$NON-NLS-1$
+				setPartName(viewName + " : " + sfr.getName());
 			}
 			else if (inputObj instanceof ISystemFilterStringReference)
 			{
 				ISystemFilterStringReference sfsr = (ISystemFilterStringReference) inputObj;
-				setPartName(viewName + " : " + sfsr.getString()); //$NON-NLS-1$
+				setPartName(viewName + " : " + sfsr.getString());
 			}
 			else
 			{
@@ -388,7 +389,7 @@ public class SystemViewPart
 		}
 
 		// register global edit actions 		
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
 		Clipboard clipboard = registry.getSystemClipboard();
 
@@ -427,7 +428,7 @@ public class SystemViewPart
 		// listen to editor events for linking
 		getSite().getPage().addPartListener(partListener);
 
-		SystemWidgetHelpers.setHelp(parent, RSEUIPlugin.HELPPREFIX + "sysv0000"); //$NON-NLS-1$
+		SystemWidgetHelpers.setHelp(parent, RSEUIPlugin.HELPPREFIX + "sysv0000");
 
 		// ----------------------
 		// Restore previous state
@@ -606,7 +607,7 @@ public class SystemViewPart
 		refreshAction.setSelectionProvider(systemView);
 		toolBarMgr.add(refreshAction);
 
-		toolBarMgr.add(new Separator("Navigate")); //$NON-NLS-1$
+		toolBarMgr.add(new Separator("Navigate"));
 		SystemViewPartGotoActionGroup gotoActions = new SystemViewPartGotoActionGroup(this);
 		gotoActions.fillActionBars(actionBars);
 
@@ -728,31 +729,31 @@ public class SystemViewPart
 			{
 				IHost conn = (IHost) inputObj;
 				inputProvider = new SystemViewAPIProviderForConnections(conn);
-				setPartName(getTitle() + " : " + conn.getAliasName()); //$NON-NLS-1$
+				setPartName(getTitle() + " : " + conn.getAliasName());
 			}
 			else if (inputObj instanceof ISubSystem)
 			{
 				ISubSystem ss = (ISubSystem) inputObj;
 				inputProvider = new SystemViewAPIProviderForSubSystems(ss);
-				setPartName(getTitle() + " : " + ss.getName()); //$NON-NLS-1$
+				setPartName(getTitle() + " : " + ss.getName());
 			}
 			else if (inputObj instanceof ISystemFilterPoolReference)
 			{
 				ISystemFilterPoolReference sfpr = (ISystemFilterPoolReference) inputObj;
 				inputProvider = new SystemViewAPIProviderForFilterPools(sfpr);
-				setPartName(getTitle() + " : " + sfpr.getName()); //$NON-NLS-1$
+				setPartName(getTitle() + " : " + sfpr.getName());
 			}
 			else if (inputObj instanceof ISystemFilterReference)
 			{
 				ISystemFilterReference sfr = (ISystemFilterReference) inputObj;
 				inputProvider = new SystemViewAPIProviderForFilters(sfr);
-				setPartName(getTitle() + " : " + sfr.getName()); //$NON-NLS-1$
+				setPartName(getTitle() + " : " + sfr.getName());
 			}
 			else if (inputObj instanceof ISystemFilterStringReference)
 			{
 				ISystemFilterStringReference sfsr = (ISystemFilterStringReference) inputObj;
 				inputProvider = new SystemViewAPIProviderForFilterStrings(sfsr);
-				setPartName(getTitle() + " : " + sfsr.getString()); //$NON-NLS-1$
+				setPartName(getTitle() + " : " + sfsr.getString());
 			}
 			else
 			{
@@ -948,11 +949,11 @@ public class SystemViewPart
 
 		if (isLinkingEnabled)
 		{
-			memento.putString(TAG_LINKWITHEDITOR, "t"); //$NON-NLS-1$
+			memento.putString(TAG_LINKWITHEDITOR, "t");
 		}
 		else
 		{
-			memento.putString(TAG_LINKWITHEDITOR, "f"); //$NON-NLS-1$
+			memento.putString(TAG_LINKWITHEDITOR, "f");
 		}
 
 		// We record the current release for future in case anything significant changes from release to release
@@ -962,10 +963,10 @@ public class SystemViewPart
 		// We do this to ensure the states match on restore. If they don't we will be in trouble
 		//  restoring expansion state and hence will abandon it.
 
-		memento.putString(TAG_SHOWFILTERPOOLS, SystemPreferencesManager.getPreferencesManager().getShowFilterPools() ? "t" : "f"); //$NON-NLS-1$  //$NON-NLS-2$
+		memento.putString(TAG_SHOWFILTERPOOLS, SystemPreferencesManager.getPreferencesManager().getShowFilterPools() ? "t" : "f");
 		//memento.putString(TAG_SHOWFILTERSTRINGS, SystemPreferencesManager.getPreferencesManager().getShowFilterStrings() ? "t" : "f");       
 
-		String inputMemento = memento.getString("factoryID"); // see IWorkbenchWindow ... this is only clue I can figure out! //$NON-NLS-1$
+		String inputMemento = memento.getString("factoryID"); // see IWorkbenchWindow ... this is only clue I can figure out!
 		if (inputMemento != null)
 		{
 			saveInputState(memento);
@@ -1264,7 +1265,7 @@ public class SystemViewPart
 
 		Vector v = tokenize(memento, MEMENTO_DELIM);
 
-		String elementType = ""; //$NON-NLS-1$
+		String elementType = "";
 		String ssName = null;
 		//String connName = null;
 		//String subsystemName = null;
@@ -1502,7 +1503,7 @@ public class SystemViewPart
 
 		public String toString()
 		{
-			return "Remote object: " + name; //$NON-NLS-1$
+			return "Remote object: " + name;
 		}
 	}
 
@@ -1553,7 +1554,7 @@ public class SystemViewPart
 			String linkWithEditor = memento.getString(TAG_LINKWITHEDITOR);
 			if (linkWithEditor != null)
 			{
-				if (linkWithEditor.equals("t")) //$NON-NLS-1$
+				if (linkWithEditor.equals("t"))
 				{
 					isLinkingEnabled = true;
 					toggleLinkingAction.setChecked(true);
@@ -1568,12 +1569,12 @@ public class SystemViewPart
 
 			String savedValue = memento.getString(TAG_SHOWFILTERPOOLS);
 			if (savedValue != null)
-				showFilterPools = savedValue.equals("t"); //$NON-NLS-1$
+				showFilterPools = savedValue.equals("t");
 			else
 				showFilterPools = SystemPreferencesManager.getPreferencesManager().getShowFilterPools();
 			savedValue = memento.getString(TAG_SHOWFILTERSTRINGS); // historical
 			if (savedValue != null)
-				showFilterStrings = savedValue.equals("t"); //$NON-NLS-1$
+				showFilterStrings = savedValue.equals("t");
 			//else
 			//showFilterStrings = SystemPreferencesManager.getPreferencesManager().getShowFilterStrings();
 
@@ -1672,7 +1673,7 @@ public class SystemViewPart
 						if (doTimings)
 						{
 							timer.setEndTime();
-							System.out.println("Time to restore " + ro.name + ": " + timer); //$NON-NLS-1$  //$NON-NLS-2$
+							System.out.println("Time to restore " + ro.name + ": " + timer);
 						}
 					}
 				}
@@ -1720,7 +1721,7 @@ public class SystemViewPart
 					if (doTimings)
 					{
 						timer.setEndTime();
-						System.out.println("Time to select " + v.size() + " elements: " + timer); //$NON-NLS-1$  //$NON-NLS-2$
+						System.out.println("Time to select " + v.size() + " elements: " + timer);
 					}
 				}
 			}
@@ -1788,13 +1789,13 @@ public class SystemViewPart
 		boolean showFilterStrings = false;
 		String savedValue = memento.getString(TAG_SHOWFILTERPOOLS);
 		if (savedValue != null)
-			showFilterPools = savedValue.equals("t"); //$NON-NLS-1$
+			showFilterPools = savedValue.equals("t");
 		else
 			showFilterPools = SystemPreferencesManager.getPreferencesManager().getShowFilterPools();
 
 		savedValue = memento.getString(TAG_SHOWFILTERSTRINGS);
 		if (savedValue != null)
-			showFilterStrings = savedValue.equals("t"); //$NON-NLS-1$
+			showFilterStrings = savedValue.equals("t");
 		//else
 		//  showFilterStrings = SystemPreferencesManager.getPreferencesManager().getShowFilterStrings();
 
@@ -1819,7 +1820,7 @@ public class SystemViewPart
 	public String getFactoryId()
 	{
 		//System.out.println("INSIDE GETFACTORYID IN SYSTEMVIEWPART");
-		return "org.eclipse.rse.systemview.elementfactory"; //$NON-NLS-1$
+		return "org.eclipse.rse.systemview.elementfactory";
 	}
 
 	/*

@@ -21,10 +21,10 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.ISystemAddFileListener;
 import org.eclipse.rse.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;

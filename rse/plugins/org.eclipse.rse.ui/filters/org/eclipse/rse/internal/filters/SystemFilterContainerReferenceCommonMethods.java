@@ -17,12 +17,12 @@
 package org.eclipse.rse.internal.filters;
 import java.util.Iterator;
 
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterContainer;
+import org.eclipse.rse.core.filters.ISystemFilterContainerReference;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterContainer;
-import org.eclipse.rse.filters.ISystemFilterContainerReference;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.filters.SystemFilterReference;
 
 

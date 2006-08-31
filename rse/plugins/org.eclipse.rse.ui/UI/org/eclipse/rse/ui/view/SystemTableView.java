@@ -46,17 +46,18 @@ import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.filters.ISystemFilterReference;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.model.ISystemRemoteChangeListener;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.services.clientserver.StringCompare;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
@@ -129,7 +130,7 @@ public class SystemTableView
 			Object value = adapter.getPropertyValue(property);
 			if (value == null)
 			{
-				value = ""; //$NON-NLS-1$
+				value = "";
 			}
 			return value;
 		}
@@ -299,7 +300,7 @@ public class SystemTableView
 		_charWidth = table.getFont().getFontData()[0].getHeight() / 2;
 		computeLayout();
 
-		_menuManager = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		_menuManager = new MenuManager("#PopupMenu");
 		_menuManager.setRemoveAllWhenShown(true);
 		_menuManager.addMenuListener(this);
 		Menu menu = _menuManager.createContextMenu(table);
@@ -1406,7 +1407,7 @@ public class SystemTableView
 	 */
 	public boolean doDelete(IProgressMonitor monitor)
 	{
-		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+		SystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		//int selectedCount = selection.size();
@@ -1498,7 +1499,7 @@ public class SystemTableView
 	*/
 	public boolean doRename(String[] newNames)
 	{
-		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
+		SystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
 		int selectedCount = selection.size();

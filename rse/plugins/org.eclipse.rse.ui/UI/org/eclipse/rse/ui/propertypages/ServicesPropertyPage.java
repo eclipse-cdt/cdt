@@ -16,9 +16,9 @@
 
 package org.eclipse.rse.ui.propertypages;
 
-import org.eclipse.rse.core.servicesubsystem.IServiceSubSystem;
-import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.IServiceSubSystem;
+import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.ui.widgets.services.FactoryServiceElement;
 import org.eclipse.rse.ui.widgets.services.RootServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServiceElement;

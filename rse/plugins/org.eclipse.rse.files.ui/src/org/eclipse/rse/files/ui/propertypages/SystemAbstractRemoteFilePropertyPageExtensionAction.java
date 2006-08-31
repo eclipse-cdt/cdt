@@ -15,10 +15,12 @@
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.propertypages;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.ui.propertypages.SystemAbstractPropertyPageExtensionAction;
+import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPropertyPage;

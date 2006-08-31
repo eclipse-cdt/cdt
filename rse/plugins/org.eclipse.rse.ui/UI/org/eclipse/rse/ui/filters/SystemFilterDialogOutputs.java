@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.filters;
 //import org.eclipse.rse.core.ui.actions.*;
-import org.eclipse.rse.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilter;
 
 
 /**

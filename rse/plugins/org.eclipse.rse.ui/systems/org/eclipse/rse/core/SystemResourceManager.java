@@ -27,13 +27,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemHostPool;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.internal.model.SystemProfileManager;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemHostPool;
-import org.eclipse.rse.model.ISystemProfile;
 
 
 /**

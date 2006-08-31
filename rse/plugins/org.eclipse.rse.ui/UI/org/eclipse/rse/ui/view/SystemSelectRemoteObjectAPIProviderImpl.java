@@ -17,14 +17,14 @@
 package org.eclipse.rse.ui.view;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.filters.ISystemFilterStringReference;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterReference;
-import org.eclipse.rse.filters.ISystemFilterStringReference;
 import org.eclipse.rse.filters.SystemFilterSimple;
 import org.eclipse.rse.internal.model.SystemNewConnectionPromptObject;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.swt.widgets.Shell;
 
 

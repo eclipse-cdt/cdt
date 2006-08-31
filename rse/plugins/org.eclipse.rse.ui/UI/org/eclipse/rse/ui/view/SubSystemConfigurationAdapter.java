@@ -42,6 +42,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.SystemFilterPoolWrapperInformation;
@@ -1463,8 +1464,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 
 
 		public PropertyPage getPropertyPage(ISubSystem subsystem, Composite parent) {
-			// TODO Auto-generated method stub
-			return null;
+			return ((SubSystem)subsystem).getPropertyPage(parent);
 		}
 
 

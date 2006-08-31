@@ -18,6 +18,7 @@ package org.eclipse.rse.ui.propertypages;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -134,7 +135,9 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
     {
     	if (portValidator == null)
     	{
-	      portValidator = getSubSystem().getSubSystemConfiguration().getPortValidator();
+    		ISubSystemConfiguration ssFactory = getSubSystem().getSubSystemConfiguration();
+    		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
+	      portValidator = adapter.getPortValidator(ssFactory);
     	}
 	    return portValidator;
     }
@@ -146,7 +149,9 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
 		initDone = true;
 	    ISubSystem ss = getSubSystem();
 	    ISubSystemConfiguration ssFactory = ss.getSubSystemConfiguration();
-	    userIdValidator = ssFactory.getUserIdValidator();
+	    ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
+	    
+	    userIdValidator = adapter.getUserIdValidator(ssFactory);
 	    //getPortValidator();
 	    // vendor    
 	    labelVendor.setText(ssFactory.getVendor());	    
@@ -193,7 +198,9 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
 		initDone = true;
 	    ISubSystem ss = getSubSystem();
 	    ISubSystemConfiguration ssFactory = ss.getSubSystemConfiguration();
-	    userIdValidator = ssFactory.getUserIdValidator();
+		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
+
+	    userIdValidator = adapter.getUserIdValidator(ssFactory);
 
 	    // userId
 	    if (userIdApplicable)

@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.dialogs;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.widgets.SystemRemoteFolderCombo;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;

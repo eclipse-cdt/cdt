@@ -20,8 +20,9 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.rse.core.SystemAdapterHelpers;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.ISystemConnectionFormCaller;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPropertyResources;
@@ -143,7 +144,9 @@ public class SystemConnectionSubSystemsPropertyPage extends SystemBasePropertyPa
 		for (int idx = 0; idx < subsystems.length; idx++)
 		{
 			ISubSystem ss = subsystems[idx];
-			PropertyPage page = ss.getPropertyPage(tabFolder);
+			
+			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ss.getSubSystemConfiguration().getAdapter(ISubSystemConfigurationAdapter.class);
+			PropertyPage page = adapter.getPropertyPage(ss, tabFolder);
 			
 			if (page != null)
 			{
@@ -189,7 +192,9 @@ public class SystemConnectionSubSystemsPropertyPage extends SystemBasePropertyPa
 				ISubSystem ss = (ISubSystem)((IWorkbenchPropertyPage)page).getElement();  	       
 				CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE);
 				tabItem.setText(ss.getName());
-				Image image = ss.getSubSystemConfiguration().getGraphicsImage();
+				
+				ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ss.getSubSystemConfiguration().getAdapter(ISubSystemConfigurationAdapter.class);				
+				Image image = adapter.getGraphicsImage(ss.getSubSystemConfiguration());
 				
 				if (image != null)
 				{

@@ -20,12 +20,12 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemHostPool;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemHostPool;
-import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 
@@ -183,7 +183,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
     
     /**
      * Return the subsystem instances under this connection.<br>
-     * Just a shortcut to {@link org.eclipse.rse.model.ISystemRegistry#getSubSystems(IHost)} 
+     * Just a shortcut to {@link org.eclipse.rse.core.model.ISystemRegistry#getSubSystems(IHost)} 
      */
     public ISubSystem[] getSubSystems()
     {

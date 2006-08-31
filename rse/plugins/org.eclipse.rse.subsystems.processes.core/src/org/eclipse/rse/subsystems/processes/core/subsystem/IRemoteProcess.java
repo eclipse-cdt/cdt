@@ -20,7 +20,7 @@ package org.eclipse.rse.subsystems.processes.core.subsystem;
 
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.services.clientserver.processes.IHostProcess;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 

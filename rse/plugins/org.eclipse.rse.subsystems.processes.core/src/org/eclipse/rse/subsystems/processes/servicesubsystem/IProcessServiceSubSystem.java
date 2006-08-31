@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.subsystems.processes.servicesubsystem;
 
-import org.eclipse.rse.core.servicesubsystem.IServiceSubSystem;
+import org.eclipse.rse.core.subsystems.IServiceSubSystem;
 import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem;
 
 

@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.ISystemViewSupplier;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPropertyPageExtension;
 import org.eclipse.rse.core.SystemResourceManager;
@@ -38,15 +39,15 @@ import org.eclipse.rse.core.comm.SystemCommunicationsDaemon;
 import org.eclipse.rse.core.comm.SystemKeystoreProviderManager;
 import org.eclipse.rse.core.internal.subsystems.SubSystemConfigurationProxy;
 import org.eclipse.rse.core.internal.subsystems.SubSystemConfigurationProxyComparator;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemProfileManager;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.model.SystemProfileManager;
-import org.eclipse.rse.internal.model.SystemRegistry;
 import org.eclipse.rse.internal.persistence.RSEPersistenceManager;
-import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.model.ISystemProfileManager;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.persistence.IRSEPersistenceManager;
@@ -85,10 +86,9 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     
 //    private SystemType[]	            allSystemTypes = null;
     private String                      enabledSystemTypes;
-    private ISystemRegistry              _systemRegistry = null;
+    private SystemRegistry              _systemRegistry = null;
     
     
-    private IRSEPersistenceManager         _persistenceManager = null;
  
 	private ISubSystemConfigurationProxy[]    subsystemConfigurations = null;
  
@@ -477,6 +477,9 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	   	messageFile = getMessageFile("systemmessages.xml"); //$NON-NLS-1$
 	   	defaultMessageFile = getDefaultMessageFile("systemmessages.xml"); //$NON-NLS-1$
         
+		ISystemRegistry registry = getSystemRegistry();
+		
+		RSECorePlugin.getDefault().setSystemRegistry(registry);
     	SystemResourceManager.getRemoteSystemsProject(); // create core folder tree    	
     	try
     	{
@@ -511,7 +514,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	
 		// DKM - 49648 - need to make sure that this is first called on the main thread so
 		// we don't hit an SWT invalid thread exception later when getting the shell
-		ISystemRegistry registry = getSystemRegistry();
+
 	
 	   
 
@@ -798,11 +801,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
      */
     public IRSEPersistenceManager getPersistenceManager()
     {
-    	if (_persistenceManager == null)
-    	{
-    		_persistenceManager = new RSEPersistenceManager();
-    	}
-    	return _persistenceManager;
+    	return RSECorePlugin.getThePersistenceManager();
     }
     
   
@@ -810,35 +809,36 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     /**
      * Return the SystemRegistry singleton
      */
-    public ISystemRegistry getSystemRegistry()
+    public SystemRegistry getSystemRegistry()
     {
     	if (_systemRegistry == null)
         {
     	  String logfilePath = getStateLocation().toOSString();    	
 
-    	  _systemRegistry = SystemRegistry.getSystemRegistry(logfilePath);
+    	  _systemRegistry = (SystemRegistry)SystemRegistry.getSystemRegistry(logfilePath);
 
           ISubSystemConfigurationProxy[] proxies = getSubSystemConfigurationProxies();
           if (proxies != null)
           {
             _systemRegistry.setSubSystemConfigurationProxies(proxies);
           }
+          
         }
-    	return _systemRegistry;
+    	return (SystemRegistry)_systemRegistry;
     }
 
     /**
      * A static version for convenience
 	 * Returns the master registry singleton.
      */
-    public static ISystemRegistry getTheSystemRegistry()
+    public static SystemRegistry getTheSystemRegistry()
     {
     	return getDefault().getSystemRegistry();
     }
     
     public static IRSEPersistenceManager getThePersistenceManager()
     {
-    	return getDefault().getPersistenceManager();
+    	return RSECorePlugin.getThePersistenceManager();
     }
     
   

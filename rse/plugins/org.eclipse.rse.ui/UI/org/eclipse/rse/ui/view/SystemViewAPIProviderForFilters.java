@@ -17,20 +17,20 @@
 package org.eclipse.rse.ui.view;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolReference;
-import org.eclipse.rse.filters.ISystemFilterReference;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -152,7 +152,7 @@ public class SystemViewAPIProviderForFilters
 		        ISystemViewInputProvider inputProvider = this;
 		        if ((sfr != null) && (inputProvider != null) && (inputProvider.getViewer()!=null))
 		        {
-		          ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		          SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		          SystemResourceChangeEvent event = new SystemResourceChangeEvent(sfr, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
                   Viewer v = inputProvider.getViewer();
                   if (v instanceof ISystemResourceChangeListener)
@@ -196,7 +196,7 @@ public class SystemViewAPIProviderForFilters
 		     	children = new SystemMessageObject[1];
 		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED),
 		                                              ISystemMessageObject.MSGTYPE_CANCEL,element);
-		     	SystemBasePlugin.logDebugMessage(this.getClass().getName(),"Filter resolving canceled by user."); //$NON-NLS-1$
+		     	SystemBasePlugin.logDebugMessage(this.getClass().getName(),"Filter resolving canceled by user.");
 		     }
 		     catch (Exception exc)
 		     {

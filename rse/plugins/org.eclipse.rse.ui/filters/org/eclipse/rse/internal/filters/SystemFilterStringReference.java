@@ -17,13 +17,13 @@
 package org.eclipse.rse.internal.filters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.filters.ISystemFilterString;
+import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
-import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
-import org.eclipse.rse.filters.ISystemFilterReference;
-import org.eclipse.rse.filters.ISystemFilterString;
-import org.eclipse.rse.filters.ISystemFilterStringReference;
 import org.eclipse.rse.internal.references.SystemReferencingObjectHelper;
 
 /**

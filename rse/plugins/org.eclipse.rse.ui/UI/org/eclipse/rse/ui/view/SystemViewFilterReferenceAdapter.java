@@ -27,6 +27,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterContainerReference;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemResourceSet;
 import org.eclipse.rse.core.model.SystemChildrenContentsType;
@@ -35,16 +42,9 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterContainerReference;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.filters.ISystemFilterPoolReference;
-import org.eclipse.rse.filters.ISystemFilterReference;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -179,7 +179,7 @@ public class SystemViewFilterReferenceAdapter
 	public String getAbsoluteName(Object element)
 	{
 		ISystemFilter filter = getFilter(element);
-		return filter.getSystemFilterPoolManager().getName() + "." + filter.getParentFilterPool().getName() + "." + filter.getName(); //$NON-NLS-1$  //$NON-NLS-2$
+		return filter.getSystemFilterPoolManager().getName() + "." + filter.getParentFilterPool().getName() + "." + filter.getName();
 	}
 
 	/**
@@ -277,7 +277,7 @@ public class SystemViewFilterReferenceAdapter
 					ISystemViewInputProvider inputProvider = getInput();
 					if ((sfr != null) && (inputProvider != null) && (inputProvider.getViewer() != null))
 					{
-						ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+						SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 						SystemResourceChangeEvent event = new SystemResourceChangeEvent(sfr, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
 						Viewer v = inputProvider.getViewer();
 						if (v instanceof ISystemResourceChangeListener)
@@ -394,7 +394,7 @@ public class SystemViewFilterReferenceAdapter
 				{
 					children = new SystemMessageObject[1];
 					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, element);
-					SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Filter resolving canceled by user."); //$NON-NLS-1$
+					SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Filter resolving canceled by user.");
 				}
 				catch (Exception exc)
 				{
@@ -470,7 +470,7 @@ public class SystemViewFilterReferenceAdapter
 	 */
 	public boolean testAttribute(Object target, String name, String value)
 	{
-		if (name.equalsIgnoreCase("filterType")) //$NON-NLS-1$
+		if (name.equalsIgnoreCase("filterType"))
 		{
 			ISystemFilterReference ref = getFilterReference(target);
 			String type = ref.getReferencedFilter().getType();
@@ -479,11 +479,11 @@ public class SystemViewFilterReferenceAdapter
 			else
 				return value.equals(type);
 		}
-		else if (name.equalsIgnoreCase("showChangeFilterStringPropertyPage")) //$NON-NLS-1$
+		else if (name.equalsIgnoreCase("showChangeFilterStringPropertyPage"))
 		{
 			ISystemFilterReference ref = getFilterReference(target);
 			ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(ref.getReferencedFilter());
-			if ("true".equals(value)) //$NON-NLS-1$
+			if (value.equals("true"))
 				return ssf.showChangeFilterStringsPropertyPage(ref.getReferencedFilter());
 			else
 				return !ssf.showChangeFilterStringsPropertyPage(ref.getReferencedFilter());			 	
@@ -600,7 +600,7 @@ public class SystemViewFilterReferenceAdapter
 
 	/**
 	 * Return a validator for verifying the new name is correct.
-	 * @param element either a filter for a rename action, or a filter pool for a "new" action.
+	 * @param either a filter for a rename action, or a filter pool for a "new" action.
 	 */
 	public ISystemValidator getNameValidator(Object element)
 	{
@@ -663,7 +663,7 @@ public class SystemViewFilterReferenceAdapter
 		ISystemFilterReference fRef = (ISystemFilterReference) element;
 		ISystemFilter filter = fRef.getReferencedFilter();
 		String mgrName = filter.getSystemFilterPoolManager().getName();
-		return (mgrName + "." + filter.getParentFilterPool().getName() + "." + newName).toUpperCase(); //$NON-NLS-1$  //$NON-NLS-2$
+		return (mgrName + "." + filter.getParentFilterPool().getName() + "." + newName).toUpperCase();
 	}
 
 	/**
@@ -709,11 +709,11 @@ public class SystemViewFilterReferenceAdapter
 		ISystemFilterReference fRef = getFilterReference(element);
 		ISystemFilter referencedFilter = fRef.getReferencedFilter();
 		ISystemFilterPool pool = referencedFilter.getParentFilterPool();
-		String handle = pool.getReferenceName() + "="; //$NON-NLS-1$
+		String handle = pool.getReferenceName() + "=";
 		ISystemFilter parentFilter = referencedFilter.getParentFilter();
 		while (parentFilter != null)
 		{
-			handle += parentFilter.getName() + ";"; //$NON-NLS-1$
+			handle += parentFilter.getName() + ";";
 			parentFilter = parentFilter.getParentFilter();
 		}
 		handle += referencedFilter.getName();

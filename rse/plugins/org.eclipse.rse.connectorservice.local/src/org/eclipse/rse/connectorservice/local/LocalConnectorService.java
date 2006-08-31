@@ -16,10 +16,10 @@
 
 package org.eclipse.rse.connectorservice.local;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
-import org.eclipse.rse.model.IHost;
-
+ 
 /**
  * System class required by the remote systems framework.
  * This represents the live connection at tool runtime.

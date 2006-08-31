@@ -18,16 +18,16 @@ package org.eclipse.rse.internal.filters;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterContainer;
+import org.eclipse.rse.core.filters.ISystemFilterContainerReference;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterContainer;
-import org.eclipse.rse.filters.ISystemFilterContainerReference;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.filters.ISystemFilterPoolReference;
-import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
-import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
-import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.internal.references.SystemPersistableReferencingObject;
 
 /**
@@ -37,8 +37,8 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	
 	private SystemFilterContainerReferenceCommonMethods containerHelper = null;
 	private ISystemFilterPoolManager filterPoolManager = null;
-	protected static final String DELIMITER = "___";
-	protected static final int DELIMITER_LENGTH = 3;
+	public static final String DELIMITER = "___";
+	public static final int DELIMITER_LENGTH = 3;
 
 	/**
 	 * Default constructor.

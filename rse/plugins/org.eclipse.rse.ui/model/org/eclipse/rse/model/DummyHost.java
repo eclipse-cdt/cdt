@@ -15,7 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.model;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.ISystemHostPool;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 

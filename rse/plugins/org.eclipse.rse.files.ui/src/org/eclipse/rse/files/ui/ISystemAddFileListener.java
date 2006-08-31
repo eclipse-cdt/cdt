@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.files.ui;
 
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 
 /**

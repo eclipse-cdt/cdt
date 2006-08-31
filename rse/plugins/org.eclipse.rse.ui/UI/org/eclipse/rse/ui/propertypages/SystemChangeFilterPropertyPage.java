@@ -15,13 +15,13 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
-import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
-import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemPageCompleteListener;
 import org.eclipse.rse.ui.RSEUIPlugin;

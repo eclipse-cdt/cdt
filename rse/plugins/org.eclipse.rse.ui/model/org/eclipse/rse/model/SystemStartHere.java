@@ -15,6 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.model;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemProfileManager;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.model.SystemProfileManager;
@@ -61,7 +65,7 @@ public class SystemStartHere
     *  <li>"Local"
     * </ul>
     * @see org.eclipse.rse.core.IRSESystemType
-    * @see org.eclipse.rse.model.ISystemRegistry#getHostsBySystemType(String)
+    * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySystemType(String)
     */
    public static IHost[] getConnectionsBySystemType(String systemType)
    {
@@ -73,7 +77,7 @@ public class SystemStartHere
     * <p>
     * SAME AS: <code>getSystemRegistry().getConnectionsBySubSystemConfiguration(subsystemConfiguration)</code>
     * @param subsystemConfiguration A subsystem configuration object. 
-    * @see org.eclipse.rse.model.ISystemRegistry#getHostsBySubSystemConfiguration(ISubSystemConfiguration)
+    * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfiguration(ISubSystemConfiguration)
     * @see #getConnectionsBySubSystemConfiguration(String)
     */
    public static IHost[] getConnectionsBySubSystemConfiguration(ISubSystemConfiguration subsystemConfiguration)
@@ -98,7 +102,7 @@ public class SystemStartHere
     * <p>
     * SAME AS: <code>getSystemRegistry().getSubSystems(subsystemConfigurationId)</code>
     * @param subsystemConfigurationId The subsystem configuration id as given in its plugin.xml id attribute for the subsystemConfigurations extension point
-    * @see org.eclipse.rse.model.ISystemRegistry#getSubSystems(String)
+    * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystems(String)
     * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getId()
     */
    public static ISubSystem[] getSubSystems(String subsystemConfigurationId)
@@ -111,7 +115,7 @@ public class SystemStartHere
     * SAME AS: <code>getSystemRegistry().getSubSystems(subsystemConfigurationId, connection)</code>
     * @param subsystemConfigurationId The subsystem configuration id as given in its plugin.xml id attribute for the subsystemConfigurations extension point
     * @param connection The connection object you wish to get the subsystems for. Typically there is only one subsystem per object.
-    * @see org.eclipse.rse.model.ISystemRegistry#getSubSystems(String, IHost)
+    * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystems(String, IHost)
     * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getId()
     */
    public static ISubSystem[] getSubSystems(String subsystemConfigurationId, IHost connection)

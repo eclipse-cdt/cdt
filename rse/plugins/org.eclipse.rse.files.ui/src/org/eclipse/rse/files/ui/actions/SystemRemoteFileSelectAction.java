@@ -16,10 +16,10 @@
 
 package org.eclipse.rse.files.ui.actions;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.ISystemAddFileListener;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;

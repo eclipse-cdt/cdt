@@ -794,10 +794,6 @@ Contributors:
 <!-- ================================================================= -->
    <extension-point id="keystoreProviders" name="%extPoint.keystoreProviders" schema="schema/keystoreProviders.exsd"/>
 
-<!-- ================================================================= -->
-<!-- 		Define Persistence Provider extension point -->
-<!-- ================================================================= -->
-   <extension-point id="persistenceProviders" name="%extPoint.persistenceProviders" schema="schema/persistenceProviders.exsd"/>
    <extension-point id="newConnectionWizardDelegates" name="RSE New Connection Wizard Delegate" schema="schema/newConnectionWizardDelegates.exsd"/>
 
 
@@ -900,20 +896,7 @@ Contributors:
    </extension>
    
  
-<!-- ========================================================================= -->
-<!-- Persistence Providers                                                     -->
-<!-- ========================================================================= -->  
- <extension
-       point="org.eclipse.rse.ui.persistenceProviders">
-    <persistenceProvider
-          class="org.eclipse.rse.internal.persistence.SerializingProvider"
-          id="org.eclipse.rse.persistence.SerializingProvider"
-          name="Serializing Persistence Provider"/>
-    <persistenceProvider
-          class="org.eclipse.rse.internal.persistence.PropertyFileProvider"
-          id="org.eclipse.rse.persistence.PropertyFileProvider"
-          name="Property File Persistence Provider"/>
- </extension>
+
 
  	<extension point="org.eclipse.ui.decorators"> 
          <decorator

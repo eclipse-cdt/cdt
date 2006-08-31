@@ -18,7 +18,7 @@ package org.eclipse.rse.ui.filters.dialogs;
 
 import java.util.Vector;
 
-import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.filters.ISystemFilterStringEditPaneListener;
 import org.eclipse.rse.ui.filters.SystemFilterStringEditPane;

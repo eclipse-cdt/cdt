@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.filters;
 //import org.eclipse.rse.core.*;
-import org.eclipse.rse.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 
 

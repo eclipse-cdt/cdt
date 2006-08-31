@@ -14,38 +14,37 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.core.subsystems;
-import org.eclipse.rse.core.model.IRSEModelObject;
+package org.eclipse.rse.model;
 
-
+import org.eclipse.rse.core.model.ISystemContentsType;
 
 /**
- * Implement this interface to provide peristable properties for server launching
- * All properties to be persisted to be are stored and restored from associated 
- * IPropertySets
- *
+ * Represents contents that are children of a container
  */
-public interface IServerLauncherProperties extends IRSEModelObject
+public class SystemFilterStringContentsType implements ISystemContentsType
 {
+    public static String CONTENTS_TYPE_CHILDREN_PARENTS = "contents_children_parents";
+    public static SystemFilterStringContentsType _instance = new SystemFilterStringContentsType();
+    
+    public static SystemFilterStringContentsType getInstance()
+    {
+        return _instance;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.rse.model.IRemoteContentsType#getType()
+     */
+    public String getType()
+    {
+        return CONTENTS_TYPE_CHILDREN_PARENTS;    
+    }
 
-	public IServerLauncherProperties cloneServerLauncher(IServerLauncherProperties newOne);
+    /* (non-Javadoc)
+     * @see org.eclipse.rse.model.IRemoteContentsType#isPersistent()
+     */
+    public boolean isPersistent()
+    {
+        return false;
+    }
 
-	/**
-	 * Returns the connector service
-	 * @return
-	 */
-	public IConnectorService getConnectorService();
-	
-	/**
-	 * Update cached values based on IPropertySets
-	 * 
-	 */
-	public void restoreFromProperties();
-	
-	/**
-	 * Store cached values based on IPropertySets
-	 *
-	 */
-	public void saveToProperties();
-
-} // ServerLauncher
+}

@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.model;
+package org.eclipse.rse.model;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,37 +34,44 @@ import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPerspectiveHelpers;
 import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.filters.ISystemFilterStartHere;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISubSystemConfigurationCategories;
 import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemModelChangeEvent;
 import org.eclipse.rse.core.model.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemModelChangeListener;
+import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.model.ISystemPreferenceChangeEvent;
 import org.eclipse.rse.core.model.ISystemPreferenceChangeListener;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemProfileManager;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemChildrenContentsType;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
-import org.eclipse.rse.core.servicesubsystem.IServiceSubSystem;
-import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.IServiceSubSystem;
+import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
-import org.eclipse.rse.filters.ISystemFilterReference;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemHostPool;
-import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.model.ISystemProfileManager;
-import org.eclipse.rse.model.ISystemRegistry;
-import org.eclipse.rse.model.ISystemRemoteChangeEvent;
-import org.eclipse.rse.model.ISystemRemoteChangeListener;
-import org.eclipse.rse.model.ISystemResourceChangeEvent;
-import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.model.SystemRemoteChangeEvent;
-import org.eclipse.rse.model.SystemResourceChangeEvent;
+import org.eclipse.rse.filters.SystemFilterPool;
+import org.eclipse.rse.filters.SystemFilterStartHere;
+import org.eclipse.rse.internal.model.SystemHostPool;
+import org.eclipse.rse.internal.model.SystemModelChangeEvent;
+import org.eclipse.rse.internal.model.SystemModelChangeEventManager;
+import org.eclipse.rse.internal.model.SystemPostableEventNotifier;
+import org.eclipse.rse.internal.model.SystemPreferenceChangeManager;
+import org.eclipse.rse.internal.model.SystemProfileManager;
+import org.eclipse.rse.internal.model.SystemRemoteChangeEventManager;
+import org.eclipse.rse.internal.model.SystemResourceChangeManager;
+import org.eclipse.rse.internal.model.SystemScratchpad;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -72,10 +79,10 @@ import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.rse.ui.view.SystemDNDTransferRunnable;
 import org.eclipse.rse.ui.view.SystemView;
 import org.eclipse.rse.ui.view.SystemViewDataDropAdapter;
-import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -91,7 +98,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 /**
  * Registry for all connections.
  */
-public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
+public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents, ISystemViewInputProvider
 {
 
 	private static Exception lastException = null;
@@ -1701,7 +1708,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	 *  in its plugin.xml file. Thus, it is effecient as it need not bring to live a 
 	 *  subsystem factory just to test its parent class type.
 	 * 
-	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
+	 * @see ISubSystemConfigurationCategories
 	 */
 	public IHost[] getHostsBySubSystemConfigurationCategory(String factoryCategory)
 	{
@@ -1905,7 +1912,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			}
 		}
 		if ((systemType != null) && (systemType.equals(IRSESystemType.SYSTEMTYPE_LOCAL) && (v.size() == 0)))
-			v.addElement("localhost"); //$NON-NLS-1$
+			v.addElement("localhost");
 		String[] names = new String[v.size()];
 		for (int idx = 0; idx < names.length; idx++)
 			names[idx] = (String) v.elementAt(idx);
@@ -1945,8 +1952,8 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	private Object getObjectFor(String str)
 	{
 		// first extract subsystem id
-		int connectionDelim = str.indexOf(":"); //$NON-NLS-1$
-		int subsystemDelim = str.indexOf(":", connectionDelim + 1); //$NON-NLS-1$
+		int connectionDelim = str.indexOf(":");
+		int subsystemDelim = str.indexOf(":", connectionDelim + 1);
 
 		String subSystemId = str.substring(0, subsystemDelim);
 		String srcKey = str.substring(subsystemDelim + 1, str.length());
@@ -2005,7 +2012,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 				byte[] result = data.getData();
 
 				//StringTokenizer tokenizer = new StringTokenizer(new String(result), SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
-				String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR); //$NON-NLS-1$
+				String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
 				
 				for (int i = 0;i < tokens.length; i++)
 				{
@@ -2036,12 +2043,15 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 			// Local File transfer
 			FileTransfer fileTransfer = FileTransfer.getInstance();
 			object = clipboard.getContents(fileTransfer);
-			if (object instanceof String[])
+			if (object != null)
 			{
 				String[] fileData = (String[]) object;
-				for (int i = 0; i < fileData.length; i++)
+				if (fileData != null)
 				{
-					srcObjects.add(fileData[i]);
+					for (int i = 0; i < fileData.length; i++)
+					{
+						srcObjects.add(fileData[i]);
+					}
 				}
 			}
 		}
@@ -2049,10 +2059,13 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 		{
 			TextTransfer textTransfer = TextTransfer.getInstance();
 			object = clipboard.getContents(textTransfer);
-			if (object instanceof String)
+			if (object != null)
 			{
 				String textData = (String) object;
-				srcObjects.add(textData);
+				if (textData != null)
+				{
+					srcObjects.add(textData);
+				}
 			}
 		}
 		return srcObjects;
@@ -2092,8 +2105,8 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	  	 	localConn = createHost(
 		  			profile.getName(), IRSESystemType.SYSTEMTYPE_LOCAL,
 		  			name, // connection name
-		  			"localhost", // hostname //$NON-NLS-1$
-		  			"", // description //$NON-NLS-1$
+		  			"localhost", // hostname
+		  			"", // description
 		  			// DY:  defect 42101, description cannot be null
 		  			// null, // description
 		  			userId, // default user Id
@@ -2663,7 +2676,7 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 				}
 				catch (InterruptedException exc)
 				{
-					System.out.println("Cancelled");
+					System.out.println("Cacnelled");
 					cancelled = true;
 				}
 				catch (Exception exc)
@@ -3192,5 +3205,14 @@ public class SystemRegistry implements ISystemRegistry, ISystemModelChangeEvents
 	public boolean isConflicting(ISchedulingRule rule)
 	{
 		return rule == this;
+	}
+	public ISystemFilterStartHere getSystemFilterStartHere() {
+		return SystemFilterStartHere.getDefault();
 	} 
+	
+	public ISystemFilterPool getSystemFilterPool()
+	{
+		return SystemFilterPool.getDefault();
+	}
+	
 }//SystemRegistryImpl

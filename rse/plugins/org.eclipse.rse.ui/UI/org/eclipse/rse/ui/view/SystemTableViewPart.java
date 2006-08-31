@@ -43,18 +43,19 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.filters.ISystemFilterReference;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.model.ISystemRemoteChangeListener;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -145,10 +146,10 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	{
 		public ForwardAction()
 		{
-			super(SystemResources.ACTION_HISTORY_MOVEFORWARD_LABEL, getEclipseImageDescriptor("elcl16/forward_nav.gif")); //$NON-NLS-1$
+			super(SystemResources.ACTION_HISTORY_MOVEFORWARD_LABEL, getEclipseImageDescriptor("elcl16/forward_nav.gif"));
 
 			setTitleToolTip(SystemResources.ACTION_HISTORY_MOVEFORWARD_TOOLTIP);
-			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/forward_nav.gif")); //$NON-NLS-1$
+			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/forward_nav.gif"));
 		}
 
 		public void checkEnabledState()
@@ -178,9 +179,9 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	{
 		public BackwardAction()
 		{
-			super(SystemResources.ACTION_HISTORY_MOVEBACKWARD_LABEL, getEclipseImageDescriptor("elcl16/backward_nav.gif")); //$NON-NLS-1$
+			super(SystemResources.ACTION_HISTORY_MOVEBACKWARD_LABEL, getEclipseImageDescriptor("elcl16/backward_nav.gif"));
 			setTitleToolTip(SystemResources.ACTION_HISTORY_MOVEBACKWARD_TOOLTIP);
-			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/backward_nav.gif")); //$NON-NLS-1$
+			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/backward_nav.gif"));
 		}
 
 		public void checkEnabledState()
@@ -211,9 +212,9 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		private IAdaptable _parent;
 		public UpAction()
 		{
-			super(SystemResources.ACTION_MOVEUP_LABEL, getEclipseImageDescriptor("elcl16/up_nav.gif")); //$NON-NLS-1$
+			super(SystemResources.ACTION_MOVEUP_LABEL, getEclipseImageDescriptor("elcl16/up_nav.gif"));
 
-			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/up_nav.gif")); //$NON-NLS-1$
+			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/up_nav.gif"));
 		}
 
 		public void checkEnabledState()
@@ -329,7 +330,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 				((ISystemContainer)inputObject).markStale(true);
 			}
 			((SystemTableViewProvider) _viewer.getContentProvider()).flushCache();
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(inputObject, ISystemResourceChangeEvents.EVENT_REFRESH, inputObject));
 
 			//_viewer.refresh();
@@ -441,7 +442,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 				_cbName = SystemWidgetHelpers.createCombo(c, null);
 				GridData textData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 				_cbName.setLayoutData(textData);
-				_cbName.setText("*"); //$NON-NLS-1$
+				_cbName.setText("*");
 				_cbName.setToolTipText(SystemResources.RESID_TABLE_POSITIONTO_ENTRY_TOOLTIP);
 
 				this.getShell().setText(SystemResources.RESID_TABLE_POSITIONTO_LABEL);
@@ -451,7 +452,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 
 			private void setHelp()
 			{
-				setHelp(RSEUIPlugin.HELPPREFIX + "gnpt0000"); //$NON-NLS-1$
+				setHelp(RSEUIPlugin.HELPPREFIX + "gnpt0000");
 			}
 		}
 
@@ -532,7 +533,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 				_controls[0] = SystemWidgetHelpers.createTextField(c, null);
 				GridData textData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 				_controls[0].setLayoutData(textData);
-				_controls[0].setText("*"); //$NON-NLS-1$
+				_controls[0].setText("*");
 				_controls[0].setToolTipText(SystemResources.RESID_TABLE_SUBSET_ENTRY_TOOLTIP);
 
 				if (histFilters != null)
@@ -550,7 +551,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 					_controls[i + 1] = SystemWidgetHelpers.createTextField(c, null);
 					GridData textData3 = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 					_controls[i + 1].setLayoutData(textData3);
-					_controls[i + 1].setText("*"); //$NON-NLS-1$
+					_controls[i + 1].setText("*");
 					if (histFilters != null)
 					{
 						_controls[i + 1].setText(histFilters[i + 1]);
@@ -564,7 +565,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 
 			private void setHelp()
 			{
-				setHelp(RSEUIPlugin.HELPPREFIX + "gnss0000"); //$NON-NLS-1$
+				setHelp(RSEUIPlugin.HELPPREFIX + "gnss0000");
 			}
 		}
 
@@ -716,7 +717,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 					String columnWidths = memento.getString(TAG_TABLE_VIEW_COLUMN_WIDTHS_ID);
 					if (columnWidths != null)
 					{
-						StringTokenizer tok = new StringTokenizer(columnWidths, ","); //$NON-NLS-1$
+						StringTokenizer tok = new StringTokenizer(columnWidths, ",");
 						int[] colWidths = new int[tok.countTokens()];
 						int t = 0;
 						while (tok.hasMoreTokens())
@@ -1007,7 +1008,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 			
 			private void setHelp()
 			{
-				setHelp(RSEUIPlugin.HELPPREFIX + "gntc0000"); //$NON-NLS-1$
+				setHelp(RSEUIPlugin.HELPPREFIX + "gntc0000");
 			}
 		}
 	    
@@ -1081,20 +1082,20 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	private IStatusLineManager _statusLine = null;
 	
 	// constants			
-	public static final String ID = "org.eclipse.rse.ui.view.systemTableView"; // matches id in plugin.xml, view tag //$NON-NLS-1$	
+	public static final String ID = "org.eclipse.rse.ui.view.systemTableView"; // matches id in plugin.xml, view tag	
 
 	// Restore memento tags
-	public static final String TAG_TABLE_VIEW_PROFILE_ID = "tableViewProfileID"; //$NON-NLS-1$
-	public static final String TAG_TABLE_VIEW_CONNECTION_ID = "tableViewConnectionID"; //$NON-NLS-1$
-	public static final String TAG_TABLE_VIEW_SUBSYSTEM_ID = "tableViewSubsystemID"; //$NON-NLS-1$
-	public static final String TAG_TABLE_VIEW_OBJECT_ID = "tableViewObjectID"; //$NON-NLS-1$
-	public static final String TAG_TABLE_VIEW_FILTER_ID = "tableViewFilterID"; //$NON-NLS-1$
+	public static final String TAG_TABLE_VIEW_PROFILE_ID = "tableViewProfileID";
+	public static final String TAG_TABLE_VIEW_CONNECTION_ID = "tableViewConnectionID";
+	public static final String TAG_TABLE_VIEW_SUBSYSTEM_ID = "tableViewSubsystemID";
+	public static final String TAG_TABLE_VIEW_OBJECT_ID = "tableViewObjectID";
+	public static final String TAG_TABLE_VIEW_FILTER_ID = "tableViewFilterID";
 
 	// Subset memento tags
-	public static final String TAG_TABLE_VIEW_SUBSET = "subset"; //$NON-NLS-1$
+	public static final String TAG_TABLE_VIEW_SUBSET = "subset";
 
 	// layout memento tags
-	public static final String TAG_TABLE_VIEW_COLUMN_WIDTHS_ID = "columnWidths"; //$NON-NLS-1$
+	public static final String TAG_TABLE_VIEW_COLUMN_WIDTHS_ID = "columnWidths";
 
 	public void setFocus()
 	{
@@ -1151,7 +1152,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		_browsePosition = 0;
 
 		// register global edit actions 		
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		Clipboard clipboard = registry.getSystemClipboard();
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
@@ -1168,7 +1169,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		registry.addSystemResourceChangeListener(this);
 		registry.addSystemRemoteChangeListener(this);
 
-		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "sysd0000"); //$NON-NLS-1$
+		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "sysd0000");
 		
 		getSite().registerContextMenu(_viewer.getContextMenuManager(), _viewer);
 	}
@@ -1270,7 +1271,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		try
 		{
 		    Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-			URL installURL = bundle.getEntry("/"); //$NON-NLS-1$
+			URL installURL = bundle.getEntry("/");
 			URL url = new URL(installURL, iconPath + relativePath);
 			return ImageDescriptor.createFromURL(url);
 		}
@@ -1327,9 +1328,9 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	{
 		menuManager.removeAll();
 		menuManager.add(_selectColumnsAction);
-		menuManager.add(new Separator("View")); //$NON-NLS-1$
+		menuManager.add(new Separator("View"));
 		menuManager.add(_selectInputAction);
-		menuManager.add(new Separator("Filter")); //$NON-NLS-1$
+		menuManager.add(new Separator("Filter"));
 		menuManager.add(_positionToAction);
 		menuManager.add(_subsetAction);
 		
@@ -1349,7 +1350,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		toolBarManager.add(_refreshAction);
 	
 		
-		toolBarManager.add(new Separator("Navigate")); //$NON-NLS-1$
+		toolBarManager.add(new Separator("Navigate"));
 		// only support history when we're locked
 		if (_isLocked)
 		{
@@ -1359,7 +1360,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 
 		toolBarManager.add(_upAction);
 
-		toolBarManager.add(new Separator("View")); //$NON-NLS-1$
+		toolBarManager.add(new Separator("View"));
 		toolBarManager.add(_selectColumnsAction);
 	}
 
@@ -1441,7 +1442,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	{
 	    if (object == null)
 	    {
-	        setContentDescription(""); //$NON-NLS-1$
+	        setContentDescription("");
 	    }
 	    else
 	    {
@@ -1452,7 +1453,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 			String name = va.getName(object);
 			//setPartName(type + " " + name);
 			
-			setContentDescription(type + " "+ name); //$NON-NLS-1$
+			setContentDescription(type + " "+ name);
 
 			//SystemTableViewProvider provider = (SystemTableViewProvider) _viewer.getContentProvider();
 			//setTitleImage(provider.getImage(object));
@@ -1729,7 +1730,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 						}
 						else
 						{
-							columnWidths += width + ","; //$NON-NLS-1$
+							columnWidths += width + ",";
 						}
 					}
 					memento.putString(TAG_TABLE_VIEW_COLUMN_WIDTHS_ID, columnWidths);

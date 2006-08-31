@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.view;
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;

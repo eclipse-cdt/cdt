@@ -24,14 +24,15 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterConstants;
+import org.eclipse.rse.core.filters.ISystemFilterContainer;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
+import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.references.IRSEReferencedObject;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterConstants;
-import org.eclipse.rse.filters.ISystemFilterContainer;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.filters.ISystemFilterPoolManagerProvider;
-import org.eclipse.rse.filters.ISystemFilterString;
+import org.eclipse.rse.filters.SystemFilterSimple;
 import org.eclipse.rse.internal.references.SystemReferencedObject;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
@@ -347,7 +348,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
     /**
      * Internal use method
      */
-    protected void initializeFilterStrings()
+    public void initializeFilterStrings()
     {
     	java.util.List filterStrings = getStrings();
     	Iterator i = filterStrings.iterator();

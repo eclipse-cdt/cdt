@@ -31,11 +31,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.FileResources;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
@@ -285,7 +285,7 @@ public class UniversalFileTransferUtility
 							&& !(srcFileOrFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"))) //$NON-NLS-1$
 					{
 						try
-						{
+						{ 
 							tempFolder = compressedCopyRemoteResourceToWorkspace(srcFileOrFolder, monitor);
 						}
 						catch (Exception e)
@@ -448,7 +448,7 @@ public class UniversalFileTransferUtility
 					&& !(srcFileOrFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"))) //$NON-NLS-1$
 			{
 				try
-				{
+				{ 
 					tempFolder = compressedCopyRemoteResourceToWorkspace(srcFileOrFolder, monitor);
 				}
 				catch (Exception e)
@@ -564,13 +564,13 @@ public class UniversalFileTransferUtility
 	 * @param targetFolder the object to be copied to.
 	 * @param monitor the progress monitor
 	 * @return the resulting remote object
-	 */
+	 */ 
 	public static Object copyWorkspaceResourceToRemote(IResource srcFileOrFolder, IRemoteFile targetFolder, IProgressMonitor monitor)
 	{
 		return copyWorkspaceResourceToRemote(srcFileOrFolder, targetFolder, monitor, true);
 	}
 	
-	/**
+/**
 	 * Perform a copy via drag and drop.
 	 * @param workspaceSet the objects to be copied.  If the target and sources are not on the same system, then this is a
 	 * temporary object produced by the doDrag.
@@ -741,7 +741,7 @@ public class UniversalFileTransferUtility
 						newTargetFolder = targetFS.createFolder(newTargetFolder);
 					}
 
-					
+					 
 					boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"); //$NON-NLS-1$
 					boolean destInArchive = (newTargetFolder instanceof IVirtualRemoteFile) || newTargetFolder.isArchive();
 					
@@ -939,7 +939,7 @@ public class UniversalFileTransferUtility
 				}
 
 				directory.refreshLocal(IResource.DEPTH_ONE, monitor);
-				
+				 
 				boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"); //$NON-NLS-1$
 				boolean destInArchive = (newTargetFolder  instanceof IVirtualRemoteFile) || newTargetFolder.isArchive();
 				boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);

@@ -18,9 +18,9 @@ package org.eclipse.rse.subsystems.shells.local;
 
 import org.eclipse.rse.connectorservice.local.LocalConnectorService;
 import org.eclipse.rse.connectorservice.local.LocalConnectorServiceManager;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.local.ILocalService;
 import org.eclipse.rse.services.local.shells.LocalShellService;
 import org.eclipse.rse.services.shells.IHostShell;

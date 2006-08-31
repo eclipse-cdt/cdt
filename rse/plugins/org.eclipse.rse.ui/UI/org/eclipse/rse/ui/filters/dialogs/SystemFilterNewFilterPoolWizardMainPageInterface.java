@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.filters.dialogs;
 
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.ui.filters.SystemFilterPoolDialogOutputs;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.wizards.ISystemWizardPage;

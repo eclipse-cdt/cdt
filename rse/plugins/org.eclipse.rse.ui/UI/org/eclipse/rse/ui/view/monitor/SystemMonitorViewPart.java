@@ -30,13 +30,14 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.model.ISystemContainer;
-import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.model.ISystemRemoteChangeListener;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -72,6 +73,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
+
+
+
 
 
 /**
@@ -136,7 +140,7 @@ public class SystemMonitorViewPart
 				_cbName = SystemWidgetHelpers.createCombo(c, null);
 				GridData textData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 				_cbName.setLayoutData(textData);
-				_cbName.setText("*"); //$NON-NLS-1$
+				_cbName.setText("*");
 				_cbName.setToolTipText(SystemResources.RESID_TABLE_POSITIONTO_ENTRY_TOOLTIP);
 
 				this.getShell().setText(SystemResources.RESID_TABLE_POSITIONTO_LABEL);
@@ -146,7 +150,7 @@ public class SystemMonitorViewPart
 
 			private void setHelp()
 			{
-				setHelp(RSEUIPlugin.HELPPREFIX + "gnpt0000"); //$NON-NLS-1$
+				setHelp(RSEUIPlugin.HELPPREFIX + "gnpt0000");
 			}
 		}
 
@@ -221,7 +225,7 @@ class SubSetAction extends BrowseAction
 				_controls[0] = SystemWidgetHelpers.createTextField(c, null);
 				GridData textData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 				_controls[0].setLayoutData(textData);
-				_controls[0].setText("*"); //$NON-NLS-1$
+				_controls[0].setText("*");
 				_controls[0].setToolTipText(SystemResources.RESID_TABLE_SUBSET_ENTRY_TOOLTIP);
 
 
@@ -236,7 +240,7 @@ class SubSetAction extends BrowseAction
 					_controls[i + 1] = SystemWidgetHelpers.createTextField(c, null);
 					GridData textData3 = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 					_controls[i + 1].setLayoutData(textData3);
-					_controls[i + 1].setText("*"); //$NON-NLS-1$
+					_controls[i + 1].setText("*");
 				}
 
 				setHelp();
@@ -245,7 +249,7 @@ class SubSetAction extends BrowseAction
 
 			private void setHelp()
 			{
-				setHelp(RSEUIPlugin.HELPPREFIX + "gnss0000"); //$NON-NLS-1$
+				setHelp(RSEUIPlugin.HELPPREFIX + "gnss0000");
 			}
 		}
 
@@ -562,7 +566,7 @@ class SubSetAction extends BrowseAction
 			
 			private void setHelp()
 			{
-				setHelp(RSEUIPlugin.HELPPREFIX + "gntc0000"); //$NON-NLS-1$
+				setHelp(RSEUIPlugin.HELPPREFIX + "gntc0000");
 			}
 		}
 	    
@@ -618,7 +622,7 @@ class SubSetAction extends BrowseAction
 	private PositionToAction _positionToAction = null;
 	
 	// constants			
-	public static final String ID = "org.eclipse.rse.ui.view.monitorView"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.rse.ui.view.monitorView";
 	// matches id in plugin.xml, view tag	
 
 	public void setFocus()
@@ -659,9 +663,9 @@ class SubSetAction extends BrowseAction
 		selectionService.addSelectionListener(this);
 		
 
-		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
+		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000");
 
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.addSystemResourceChangeListener(this);
 		registry.addSystemRemoteChangeListener(this);
 
@@ -683,7 +687,7 @@ class SubSetAction extends BrowseAction
 		selectionService.removeSelectionListener(this);
 		_folder.dispose();
 
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.removeSystemResourceChangeListener(this);
 		super.dispose();
 	}
@@ -1021,7 +1025,7 @@ class SubSetAction extends BrowseAction
 	{
 		menuManager.removeAll();
 		menuManager.add(_selectColumnsAction);
-		menuManager.add(new Separator("Filter")); //$NON-NLS-1$
+		menuManager.add(new Separator("Filter"));
 		menuManager.add(_positionToAction);
 		menuManager.add(_subsetAction);		
 	}

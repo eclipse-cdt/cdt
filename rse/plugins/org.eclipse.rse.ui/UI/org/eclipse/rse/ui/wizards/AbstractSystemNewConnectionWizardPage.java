@@ -17,6 +17,7 @@
 package org.eclipse.rse.ui.wizards;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.ui.SystemConnectionForm;
 import org.eclipse.rse.ui.SystemResources;
@@ -29,7 +30,7 @@ import org.eclipse.swt.widgets.Control;
  * @see org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
  */
 public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSystemWizardPage 
-       implements ISystemNewConnectionWizardPage
+       implements ISystemNewConnectionWizardPage, IWizardPage
 {	
 	protected ISubSystemConfiguration parentFactory;
     

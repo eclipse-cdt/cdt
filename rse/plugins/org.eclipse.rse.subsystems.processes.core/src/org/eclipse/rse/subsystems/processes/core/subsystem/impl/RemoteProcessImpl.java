@@ -18,7 +18,7 @@ package org.eclipse.rse.subsystems.processes.core.subsystem.impl;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.processes.IHostProcess;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;

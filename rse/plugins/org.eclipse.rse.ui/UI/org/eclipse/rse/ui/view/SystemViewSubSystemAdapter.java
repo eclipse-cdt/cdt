@@ -21,11 +21,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemResources;
@@ -103,10 +103,11 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		ISubSystemConfiguration ssFactory = RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemConfiguration(ss);
 		if (ssFactory != null)
 		{
+			ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
 		  if (ss.isConnected())
-		    return ssFactory.getLiveImage();
+		    return adapter.getLiveImage(ssFactory);
 		  else
-		    return ssFactory.getImage();
+		    return adapter.getImage(ssFactory);
 		}
 		else
 		{
@@ -419,12 +420,18 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		//original_portData = setPortPropertyData(original_portData,ss);		
 		original_portData = getPortString(ss);
         changed_userId = changed_port = false;
+        
+        ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
         if (userIdDescriptor != null)
-          userIdDescriptor.setValidator(ssFactory.getUserIdValidator());
+        {
+        	
+          userIdDescriptor.setValidator(adapter.getUserIdValidator(ssFactory));
+        }
+        
         //getPortDescriptor().setValidator((ICellEditorValidator)ssFactory.getPortValidator());
         if (propertyPortDescriptor != null)
 	    {
-          propertyPortDescriptor.setValidator(ssFactory.getPortValidator());
+          propertyPortDescriptor.setValidator(adapter.getPortValidator(ssFactory));
 	    }
         ss.getConnectorService().getPort();
 	    port_editable = ssFactory.isPortEditable();

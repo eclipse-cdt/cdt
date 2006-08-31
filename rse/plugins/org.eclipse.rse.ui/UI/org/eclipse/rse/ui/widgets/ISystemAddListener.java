@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 /**
  * This is an interface used by the AS400SelectFieldForm, AS400SelectFieldDialog and 
  *  AS400SelectFieldAction classes to enable the caller to be informed when the user

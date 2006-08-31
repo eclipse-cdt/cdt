@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.subsystems.processes.servicesubsystem;
 
-import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.services.processes.IProcessService;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IHostProcessToRemoteProcessAdapter;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;

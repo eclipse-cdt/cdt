@@ -16,7 +16,8 @@
 
 package org.eclipse.rse.ui;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.rse.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -75,8 +76,11 @@ public class SystemProfileForm
 		this.profile = profile;
 		this.showVerbage = showVerbage;
 		callerInstanceOfWizardPage = (caller instanceof WizardPage);
-		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);		
-		nameValidator = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().getProfileNameValidator(profile);
+		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);	
+		
+		// FIXME cast to SystemProfileManager is temporary to get at api - need to use an adapter for getting validators
+		SystemProfileManager mgr = (SystemProfileManager)RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager();
+		nameValidator = mgr.getProfileNameValidator(profile);
 	}
 	
 	/**

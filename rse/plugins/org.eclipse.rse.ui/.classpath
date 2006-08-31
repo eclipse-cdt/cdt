@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="filters"/>
-	<classpathentry kind="src" path="persistence"/>
 	<classpathentry kind="src" path="model"/>
 	<classpathentry kind="src" path="UI"/>
 	<classpathentry kind="src" path="subsystems"/>

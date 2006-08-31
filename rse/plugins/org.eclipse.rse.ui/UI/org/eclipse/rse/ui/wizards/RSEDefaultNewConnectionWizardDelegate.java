@@ -23,13 +23,14 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPerspectiveHelpers;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.model.DummyHost;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -294,7 +295,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
     	  {
     	  	   ok = subsystemFactorySuppliedWizardPages[idx].performFinish();
     	  	   if (!ok)
-    	  	     getWizard().setPageError(subsystemFactorySuppliedWizardPages[idx]);
+    	  	     getWizard().setPageError((IWizardPage)subsystemFactorySuppliedWizardPages[idx]);
     	  }
 		}
 		if (ok)
@@ -447,7 +448,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
             {
             	ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)factories[idx].getAdapter(ISubSystemConfigurationAdapter.class);
             		
-            	IWizardPage[] pages = adapter.getNewConnectionWizardPages(factories[idx], getWizard());
+            	ISystemNewConnectionWizardPage[] pages = adapter.getNewConnectionWizardPages(factories[idx], getWizard());
             	if (pages != null)
             	{
             		for (int widx=0; widx<pages.length; widx++)
@@ -474,15 +475,15 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
     /**
      * Return the first additional page to show when user presses Next on the main page
      */
-    protected IWizardPage getFirstAdditionalPage()
+    protected ISystemNewConnectionWizardPage getFirstAdditionalPage()
     {
     	if ((subsystemFactorySuppliedWizardPages != null) && (subsystemFactorySuppliedWizardPages.length>0))
     	{
-    	  IWizardPage previousPage = mainPage;
+    	 IWizardPage previousPage = mainPage;
     	  for (int idx=0; idx<subsystemFactorySuppliedWizardPages.length; idx++)
     	  {
-    	  	 subsystemFactorySuppliedWizardPages[idx].setPreviousPage(previousPage);
-    	  	 previousPage = subsystemFactorySuppliedWizardPages[idx];
+    	  	 ((IWizardPage)subsystemFactorySuppliedWizardPages[idx]).setPreviousPage(previousPage);
+    	  	 previousPage = (IWizardPage)subsystemFactorySuppliedWizardPages[idx];
     	  }
     	  return subsystemFactorySuppliedWizardPages[0];
     	}
@@ -508,7 +509,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
 	      if ((index == (subsystemFactorySuppliedWizardPages.length - 1)))
 		    // last page or page not found
 		    return null;
-	      return subsystemFactorySuppliedWizardPages[index + 1];	
+	      return (IWizardPage)subsystemFactorySuppliedWizardPages[index + 1];	
 	    }
     }
 

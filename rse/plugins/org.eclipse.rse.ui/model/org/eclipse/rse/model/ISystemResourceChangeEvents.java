@@ -15,6 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.model;
+
+
+
 /**
  * Interface of event ID constants
  */

@@ -19,8 +19,8 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.ui.SystemResources;
 
 
@@ -42,7 +42,7 @@ public class SystemFilterContainerCommonMethods
 	/**
 	 * Constructor
 	 */
-	protected SystemFilterContainerCommonMethods() 
+	public SystemFilterContainerCommonMethods() 
 	{
 		super();
 	}

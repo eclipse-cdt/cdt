@@ -19,7 +19,7 @@ package org.eclipse.rse.subsystems.processes.servicesubsystem;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.services.IService;
 import org.eclipse.rse.services.processes.IProcessService;
 import org.eclipse.rse.subsystems.processes.core.subsystem.impl.RemoteProcessSubSystemConfiguration;

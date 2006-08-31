@@ -18,9 +18,9 @@ package org.eclipse.rse.subsystems.shells.ssh;
 
 import org.eclipse.rse.connectorservice.ssh.SshConnectorService;
 import org.eclipse.rse.connectorservice.ssh.SshConnectorServiceManager;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.services.ssh.ISshService;

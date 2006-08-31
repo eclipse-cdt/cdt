@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.filters.dialogs;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolSelectionValidator;
-import org.eclipse.rse.filters.ISystemFilterPoolWrapper;
-import org.eclipse.rse.filters.ISystemFilterPoolWrapperInformation;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolSelectionValidator;
+import org.eclipse.rse.core.filters.ISystemFilterPoolWrapper;
+import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.validators.ISystemValidator;

@@ -20,23 +20,26 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.filters.ISystemFilterString;
+import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolReference;
-import org.eclipse.rse.filters.ISystemFilterReference;
-import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.propertypages.ISystemSubSystemPropertyPageCoreForm;
 import org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage;
 import org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage;
+import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
-import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
  * Defines the interface that must be implemented for adapters of for subsystem configurations.
@@ -243,4 +246,39 @@ public interface ISubSystemConfigurationAdapter
 	public ImageDescriptor getSystemFilterStringImage(String filterStringString);
 	
 	public void renameSubSystemProfile(ISubSystemConfiguration factory, String oldProfileName, String newProfileName);
+	
+	/**
+	 * Return the single property page to show in the tabbed notebook for the
+	 *  for SubSystem property of the parent Connection. Return null if no 
+	 *  page is to be contributed for this. You are limited to a single page,
+	 *  so you may have to compress. It is recommended you prompt for the port
+	 *  if applicable since the common base subsystem property page is not shown
+	 *  To help with this you can use the SystemPortPrompt widget.
+	 */
+   public PropertyPage getPropertyPage(ISubSystem subsystem, Composite parent);
+   
+   
+   
+
+	/**
+	 * Return the validator for the userId.
+	 * A default is supplied.
+	 * Note this is only used for the subsystem's properties, so will not
+	 * be used by the connection's default. Thus, is only of limited value.
+	 * <p>
+	 * This must be castable to ICellEditorValidator for the property sheet support.
+	 */
+	public ISystemValidator getUserIdValidator(ISubSystemConfiguration config);
+	/**
+	 * Return the validator for the password which is prompted for at runtime.
+	 * No default is supplied.
+	 */
+	public ISystemValidator getPasswordValidator(ISubSystemConfiguration confi);
+	/**
+	 * Return the validator for the port.
+	 * A default is supplied.
+	 * This must be castable to ICellEditorValidator for the property sheet support.
+	 */
+	public ISystemValidator getPortValidator(ISubSystemConfiguration confi);
+	
 }

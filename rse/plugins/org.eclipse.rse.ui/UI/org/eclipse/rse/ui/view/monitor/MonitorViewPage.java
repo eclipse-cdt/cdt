@@ -30,9 +30,10 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -184,7 +185,7 @@ FocusListener
 						{
 							public void run() 
 							{
-								ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+								SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 								registry.fireEvent(new SystemResourceChangeEvent(_inputObject, ISystemResourceChangeEvents.EVENT_REFRESH, _inputObject));
 								//getViewer().refresh();
 							}
@@ -432,7 +433,7 @@ FocusListener
 		});
 
 		
-		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
+		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "ucmd0000");
 
 		//TableLayout layout = new TableLayout();
 		//tree.setLayout(layout);

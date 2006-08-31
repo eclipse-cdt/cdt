@@ -18,7 +18,7 @@ package org.eclipse.rse.ui.wizards;
 
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 
 /**
  * Interface for RSE new connection wizard delegate.

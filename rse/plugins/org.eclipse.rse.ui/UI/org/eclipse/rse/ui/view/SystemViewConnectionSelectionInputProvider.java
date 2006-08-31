@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.view;
 
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.model.SystemNewConnectionPromptObject;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 
@@ -135,14 +135,14 @@ public class SystemViewConnectionSelectionInputProvider extends SystemAbstractAP
 		return true;
 	}
 	/**
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getConnectionChildren(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getConnectionChildren(org.eclipse.rse.core.model.IHost)
 	 */
 	public Object[] getConnectionChildren(IHost selectedConnection)
 	{
 		return null;
 	}
 	/**
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#hasConnectionChildren(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#hasConnectionChildren(org.eclipse.rse.core.model.IHost)
 	 */
 	public boolean hasConnectionChildren(IHost selectedConnection)
 	{

@@ -19,11 +19,11 @@ package org.eclipse.rse.shells.ui.propertypages;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.model.DummyHost;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;

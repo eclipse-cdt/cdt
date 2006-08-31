@@ -32,20 +32,20 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.filters.ISystemFilterString;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemModelChangeEvents;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.RSEModelObject;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.filters.ISystemFilterPoolReference;
-import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
-import org.eclipse.rse.filters.ISystemFilterPoolReferenceManagerProvider;
-import org.eclipse.rse.filters.ISystemFilterReference;
-import org.eclipse.rse.filters.ISystemFilterString;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -107,7 +107,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 {
 
 
-	protected static final String SUBSYSTEM_FILE_NAME = "subsystem"; //$NON-NLS-1$
+	protected static final String SUBSYSTEM_FILE_NAME = "subsystem";
 
 	//protected transient SubSystemConfiguration parentFactory = null;	
     protected static final int OPERATION_RESOLVE_ABSOLUTE = 0;
@@ -399,7 +399,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * user preferences, so that such things are not shared among the team on a synchronize operation.
      * This is transparent to callers of this method however, as this method resolves from the preferences.
      *
-	 * @see org.eclipse.rse.model.IHost#getDefaultUserId()
+	 * @see org.eclipse.rse.core.model.IHost#getDefaultUserId()
 	 * @see #setUserId(String)
 	 * @see #getLocalUserId()
 	 * @see #clearLocalUserId()
@@ -438,7 +438,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     protected String getPreferencesKey(String profileName, String connectionName)
     {
-   	    String key = profileName + "." + connectionName + "." + getName(); //$NON-NLS-1$  //$NON-NLS-2$
+   	    String key = profileName + "." + connectionName + "." + getName();
    	    //System.out.println("in SubSystemImpl.getPreferencesKey(): Subsystem key name: " + key);
    	    return key;
     }
@@ -467,7 +467,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * To set the local user Id, simply call setUserId(String id). To clear it, call
      * {@link #clearLocalUserId()}.
      * <p>
-	 * @see org.eclipse.rse.model.IHost#getDefaultUserId()
+	 * @see org.eclipse.rse.core.model.IHost#getDefaultUserId()
 	 * @see #clearLocalUserId()
 	 * @see #getUserId()
 	 * @see #setUserId(String)
@@ -482,7 +482,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * return the parent connection's default user Id. Sets the user Id attribute for this
      * subsystem to null.
      * <p>
-	 * @see org.eclipse.rse.model.IHost#getDefaultUserId()
+	 * @see org.eclipse.rse.core.model.IHost#getDefaultUserId()
 	 * @see #getUserId()
 	 * @see #getLocalUserId()
 	 * @see #setUserId(String)
@@ -672,7 +672,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		 * since it names a team sharable resource. Not qualified by the profile
 		 * name since that is implicit by being in a profile.
 		 */
-		String name = "CN-" + connectionName; //$NON-NLS-1$
+		String name = "CN-" + connectionName; // $NON-NLS-1$
 		return name;
 	}
 
@@ -746,7 +746,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	{
     	  for (int idx=0; !would && (idx<strings.length); idx++)
     	  {
-    	  	 if (strings[idx].equals("*")) //$NON-NLS-1$
+    	  	 if (strings[idx].equals("*"))
     	  	   would = true;
     	  	 else
     	       would = doesFilterStringMatch(strings[idx].getString(), remoteObjectAbsoluteName, strings[idx].getParentSystemFilter().areStringsCaseSensitive());
@@ -873,7 +873,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		IPropertySet set = getPropertySet(vendor);
 		if (set == null)
 		{
-			set = createPropertySet(vendor, ""); //$NON-NLS-1$
+			set = createPropertySet(vendor, "");
 		}
 		set.addProperty(attributeName, attributeValue);
 	}
@@ -904,10 +904,10 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 */
 	public void setRemoteAttribute(String attributeName, String attributeValue)
 	{
-		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
+		IPropertySet set = getPropertySet("Remote");
 		if (set == null)
 		{
-			set = createPropertySet("Remote", getDescription()); //$NON-NLS-1$
+			set = createPropertySet("Remote", getDescription());
 		}
 		set.addProperty(attributeName, attributeValue);
 	}
@@ -916,7 +916,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 */
 	public String getRemoteAttribute(String attributeName)
 	{
-		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
+		IPropertySet set = getPropertySet("Remote");
 		if (set != null)
 		{
 			return set.getPropertyValue(attributeName);
@@ -982,7 +982,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		 */
 		public DisplayErrorMessageJob(Shell shell, SystemMessageException msgExc)
 		{
-			super(""); //$NON-NLS-1$
+			super("");
 			this.shell = shell; //FIXME remove this
 			this.msgExc = msgExc;
 		}
@@ -1443,7 +1443,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	    {
     	    	// DKM - we shouldn't be using parent context for filter strings because 
     	    	// now we have multiple contexts for the same resources
-    	    	_filterString = "*"; //$NON-NLS-1$
+    	    	_filterString = "*";
     	    }
     	    msg = getResolvingMessage(_filterString);
 
@@ -1980,7 +1980,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  displaying for you. Just override internalResolveFilterString.</b>
      * <p>
      * @param filterString filter pattern for objects to return.
-     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      */
     public Object[] resolveFilterString(String filterString, Shell shell)
            throws Exception
@@ -2030,7 +2030,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  returning them.
      *
      * @param filterStrings array of filter patterns for objects to return.
-     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Array of objects that are the result of resolving all the filter strings
      */
     public Object[] resolveFilterStrings(String[] filterStrings, Shell shell)
@@ -2288,7 +2288,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * <p>
      * @param parent Object that is being expanded.
      * @param filterString filter pattern for children of parent. Typically just "*".
-     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      */
     public Object[] resolveFilterString(Object parent, String filterString, Shell shell)
            throws Exception
@@ -2345,7 +2345,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * @param subject Identifies which object to get the properties of
      * @param key Identifies property to set
      * @param value Value to set property to
-     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Object interpretable by subsystem. Might be a Boolean, or the might be new value for confirmation.
      */
     public Object setProperty(Object subject, String key, String value, Shell shell)
@@ -2384,7 +2384,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  true for supportsProperties().
      * @param subject Identifies which object to get the properties of
      * @param key Identifies property to get value of
-     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return String The value of the requested key.
      */
     public String getProperty(Object subject, String key, Shell shell)
@@ -2423,9 +2423,9 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  a number of remote environment variables. This is only applicable if the subsystem factory reports
      *  true for supportsProperties().
      * @param subject Identifies which object to get the properties of
-     * @param keys Identifies properties to set
-     * @param values Values to set properties to. One to one mapping to keys by index number
-     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param key Identifies property to set
+     * @param value Values to set properties to. One to one mapping to keys by index number
+     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Object interpretable by subsystem. Might be a Boolean, or the might be new values for confirmation.
      */
     public Object setProperties(Object subject, String[] keys, String[] values, Shell shell)
@@ -2472,7 +2472,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * <p>
      * Override internalConnect if you want, but by default it calls getSystem().connect(IProgressMonitor).
      * 
-     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      */
     public void connect(Shell shell) throws Exception
     {
@@ -2512,7 +2512,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 * <p>
 	 * Override internalConnect if you want, but by default it calls getSystem().connect(IProgressMonitor).
 	 * 
-	 * @param shell parent shell used to show error message. Null means you will handle showing the error message.
+	 * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
 	 * @param forcePrompt Forces the signon prompt to be displayed even if a valid password in cached in memory
 	 * or saved on disk.
 	 */
@@ -2556,7 +2556,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 
     /**
      * A convenience method, fully equivalent to promptForPassword(shell, false).
-     * @param shell parent shell used to show any error messages.
+     * @param Shell parent shell used to show any error messages.
      */
     public boolean promptForPassword(Shell shell) throws Exception
     {
@@ -2568,7 +2568,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * but we have detected the user is not connected so we prompt for password outside
      * of the progress monitor, then set a flag to do the connection within the progress
      * monitor.
-     * @param shell parent shell used to show error messages.
+     * @param Shell parent shell used to show error messages.
      * @param force true if the prompting should be forced, false if prompting can be skipped if credentials have been stored.
      * @return true if the credentials are obtained
      */
@@ -2614,7 +2614,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * <p>
      * Override internalDisconnect if you want, but by default it calls getSystem().disconnect(IProgressMonitor).
      * 
-     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      */
     public void disconnect(Shell shell) throws Exception
     {
@@ -2628,7 +2628,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * <p>
      * Override internalDisconnect if you want, but by default it calls getSystem().disconnect(IProgressMonitor).
      * 
-     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @param collapseTree collapse the tree in the system view
      */
     public void disconnect(Shell shell, boolean collapseTree) throws Exception
@@ -2672,9 +2672,9 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  a remote environment variable. This is only applicable if the subsystem factory reports
      *  true for supportsProperties().
      * @param subject Identifies which object to get the properties of
-     * @param keys Identifies properties to get value of
-     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
-     * @return String[] The values of the requested keys.
+     * @param key Identifies property to get value of
+     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @return Object The values of the requested keys.
      */
     public String[] getProperties(Object subject, String[] keys, Shell shell)
            throws Exception
@@ -2979,7 +2979,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     protected String getFirstParentFilterString(Object parent)
     {
-    	return "*"; //$NON-NLS-1$
+    	return "*";
     }	
 
 

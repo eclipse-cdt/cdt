@@ -19,13 +19,13 @@ package org.eclipse.rse.examples.daytime.subsystems;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.servicesubsystem.ServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.examples.daytime.connectorservice.DaytimeConnectorService;
 import org.eclipse.rse.examples.daytime.connectorservice.DaytimeConnectorServiceManager;
 import org.eclipse.rse.examples.daytime.service.IDaytimeService;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.IService;
 
 /**

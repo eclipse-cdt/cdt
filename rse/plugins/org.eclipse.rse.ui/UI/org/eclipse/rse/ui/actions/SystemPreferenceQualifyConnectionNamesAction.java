@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.actions;
 import org.eclipse.rse.core.model.ISystemPreferenceChangeEvents;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeEvent;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
@@ -44,7 +44,7 @@ public class SystemPreferenceQualifyConnectionNamesAction extends SystemBaseActi
         sr = RSEUIPlugin.getTheSystemRegistry();	        
         setChecked(sr.getQualifiedHostNames());
 
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0008"); //$NON-NLS-1$
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0008");
 	}
 
 	/**

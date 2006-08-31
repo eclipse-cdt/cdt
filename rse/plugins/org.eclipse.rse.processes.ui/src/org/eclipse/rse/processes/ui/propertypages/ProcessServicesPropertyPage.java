@@ -19,10 +19,10 @@ package org.eclipse.rse.processes.ui.propertypages;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;

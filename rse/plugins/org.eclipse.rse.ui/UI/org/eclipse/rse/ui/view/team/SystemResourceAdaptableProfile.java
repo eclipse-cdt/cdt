@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.view.team;
 
-import org.eclipse.rse.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemProfile;
 
 /**
  * This class wrappers a SystemProfile and adapts it to an IResource

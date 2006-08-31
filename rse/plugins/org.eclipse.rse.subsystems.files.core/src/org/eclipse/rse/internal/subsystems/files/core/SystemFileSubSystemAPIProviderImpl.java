@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.internal.subsystems.files.core;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.subsystems.files.core.model.ISystemFileAPIProvider;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 

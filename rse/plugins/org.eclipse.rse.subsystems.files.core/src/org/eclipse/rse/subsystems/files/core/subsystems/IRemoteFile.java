@@ -18,9 +18,9 @@ package org.eclipse.rse.subsystems.files.core.subsystems;
 import java.util.Date;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IRemoteContainer;
 import org.eclipse.rse.core.subsystems.IRemotePropertyHolder;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 

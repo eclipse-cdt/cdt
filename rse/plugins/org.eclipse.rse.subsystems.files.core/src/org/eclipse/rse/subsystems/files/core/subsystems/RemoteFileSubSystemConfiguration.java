@@ -18,20 +18,20 @@ package org.eclipse.rse.subsystems.files.core.subsystems;
 import java.util.Vector;
 
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.subsystems.IFileConstants;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileFilterString;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorFileName;
 import org.eclipse.rse.ui.validators.ValidatorFolderName;
-import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
 
 
 /**

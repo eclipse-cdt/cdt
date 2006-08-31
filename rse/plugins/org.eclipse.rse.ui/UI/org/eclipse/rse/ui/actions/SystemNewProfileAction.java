@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.actions;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.rse.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;

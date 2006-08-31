@@ -16,13 +16,13 @@
 
 package org.eclipse.rse.core.subsystems;
 
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterContainer;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.filters.ISystemFilterPoolReference;
-import org.eclipse.rse.filters.ISystemFilterReference;
-import org.eclipse.rse.model.ISystemProfile;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterContainer;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.model.ISystemProfile;
 
 /**
  * Static helper methods

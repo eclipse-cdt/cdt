@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
-import org.eclipse.rse.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;

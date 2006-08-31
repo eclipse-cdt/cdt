@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.subsystems.files.core.model.ISystemFileAPIProvider;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -33,7 +33,7 @@ public class SystemFileAPIProviderImpl
 {
 
 
-	protected ISystemRegistry sr = null;
+	protected SystemRegistry sr = null;
 	protected boolean directoryMode = false;
 	//protected Object[] emptyList = new Object[0];	
 	

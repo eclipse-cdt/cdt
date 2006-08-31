@@ -19,9 +19,9 @@ package org.eclipse.rse.processes.ui.view;
 import java.util.Vector;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.processes.ui.actions.SystemNewProcessFilterAction;
 import org.eclipse.rse.processes.ui.actions.SystemProcessUpdateFilterAction;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;

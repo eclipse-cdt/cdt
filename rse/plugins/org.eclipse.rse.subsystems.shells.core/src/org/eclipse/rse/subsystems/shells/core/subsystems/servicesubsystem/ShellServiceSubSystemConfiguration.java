@@ -21,8 +21,8 @@ package org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCmdSubSystemConfiguration;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.IService;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;

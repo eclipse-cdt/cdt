@@ -17,8 +17,8 @@
 package samples.subsystems;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
-import org.eclipse.rse.model.IHost;
 
 import samples.RSESamplesPlugin;
 

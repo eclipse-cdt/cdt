@@ -17,9 +17,9 @@
 package org.eclipse.rse.subsystems.files.ftp.connectorservice;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.SystemSignonInformation;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.ftp.FTPService;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;

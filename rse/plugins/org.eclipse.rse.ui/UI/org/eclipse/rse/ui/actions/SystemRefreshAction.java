@@ -19,9 +19,10 @@ import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemContainer;
-import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -48,7 +49,7 @@ public class SystemRefreshAction extends SystemBaseAction
 		      	parent);
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_BUILD);
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0017"); //$NON-NLS-1$
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0017");
 		setAvailableOffline(true);
 	}
 
@@ -68,7 +69,7 @@ public class SystemRefreshAction extends SystemBaseAction
 	 */
 	public void run() 
 	{
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		if (_selection != null)
 		{
 			Iterator iter = _selection.iterator();

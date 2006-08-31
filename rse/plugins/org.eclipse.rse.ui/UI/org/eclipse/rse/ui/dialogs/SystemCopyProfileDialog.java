@@ -17,7 +17,9 @@
 package org.eclipse.rse.ui.dialogs;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemProfileManager;
+import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
@@ -70,7 +72,10 @@ public class SystemCopyProfileDialog extends SystemPromptDialog
 		{		
 		   setInputObject(profile);
 		}
-		nameValidator = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().getProfileNameValidator((String)null);		
+		
+		// FIXME cast to SystemProfileManager is temporary to get at api - need to use an adapter for getting validators
+		SystemProfileManager mgr = (SystemProfileManager)RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager();
+		nameValidator = mgr.getProfileNameValidator((String)null);		
 		//pack();
 		setHelp(RSEUIPlugin.HELPPREFIX+"drnp0000"); //$NON-NLS-1$
 	}

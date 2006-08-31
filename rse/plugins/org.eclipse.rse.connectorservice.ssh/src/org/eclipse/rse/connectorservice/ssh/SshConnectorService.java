@@ -50,13 +50,13 @@ import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemRegistry;
-import org.eclipse.rse.model.SystemSignonInformation;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.ssh.ISshSessionProvider;
 import org.eclipse.rse.ui.ISystemMessages;

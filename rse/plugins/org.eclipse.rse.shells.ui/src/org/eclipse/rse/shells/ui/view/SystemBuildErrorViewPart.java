@@ -27,11 +27,12 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IRemoteLineReference;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
@@ -208,7 +209,7 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 		ISelectionService selectionService = getSite().getWorkbenchWindow().getSelectionService();
 		selectionService.addSelectionListener(this);
 
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
 		registry.addSystemResourceChangeListener(this);
 		
@@ -251,7 +252,7 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 		selectionService.removeSelectionListener(this);
 		_viewer.dispose();
 
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.removeSystemResourceChangeListener(this);
 		super.dispose();
 	}

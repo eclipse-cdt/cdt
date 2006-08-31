@@ -35,12 +35,13 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.shells.ui.ShellResources;
@@ -314,7 +315,7 @@ public class SystemCommandsViewPart
 
 		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
 
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
 
 	
@@ -336,7 +337,7 @@ public class SystemCommandsViewPart
 		selectionService.removeSelectionListener(this);
 		_folder.dispose();
 
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.removeSystemResourceChangeListener(this);
 		super.dispose();
 	}

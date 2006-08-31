@@ -16,9 +16,10 @@
 
 package org.eclipse.rse.ui.actions;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -68,7 +69,7 @@ public class SystemCollapseAllAction extends SystemBaseAction
 	 */
 	public void run() 
 	{
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		if ((viewer != null) && (viewer instanceof ISystemResourceChangeListener))
 		{			
 		  sr.fireEvent((ISystemResourceChangeListener)viewer,

@@ -16,11 +16,16 @@
 
 package org.eclipse.rse.filters;
 import org.eclipse.rse.core.filters.IRSEFilterNamingPolicy;
-import org.eclipse.rse.internal.filters.SystemFilterNamingPolicy;
-import org.eclipse.rse.internal.filters.SystemFilterPoolManager;
-import org.eclipse.rse.internal.filters.SystemFilterPoolReferenceManager;
+import org.eclipse.rse.core.filters.ISystemFilterConstants;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
+import org.eclipse.rse.core.filters.ISystemFilterStartHere;
+import org.eclipse.rse.core.filters.SystemFilterNamingPolicy;
+import org.eclipse.rse.core.filters.SystemFilterPoolManager;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.logging.Logger;
-import org.eclipse.rse.model.ISystemProfile;
 
 
 
@@ -43,13 +48,27 @@ import org.eclipse.rse.model.ISystemProfile;
  * </ul>
  */
 public class SystemFilterStartHere 
-       implements ISystemFilterConstants
+       implements ISystemFilterConstants, ISystemFilterStartHere
 {
+	private static SystemFilterStartHere _instance;
+	public SystemFilterStartHere()
+	{		
+	}
+	
+	public static SystemFilterStartHere getDefault()	
+	{
+		if (_instance == null)
+		{
+			_instance = new SystemFilterStartHere();
+		}
+		return _instance;
+	}
+	
     /**
      * Factory method to return an instance populated with defaults.
      * You can then simply override whatever is desired via setXXX methods.
      */
-    public static IRSEFilterNamingPolicy createSystemFilterNamingPolicy()
+    public IRSEFilterNamingPolicy createSystemFilterNamingPolicy()
     {
     	return SystemFilterNamingPolicy.getNamingPolicy();
     }
@@ -70,7 +89,7 @@ public class SystemFilterStartHere
      *   to allow nested filters. This is the default, but can be overridden at the 
      *   individual filter pool level.
      */
-    public static ISystemFilterPoolManager 
+    public ISystemFilterPoolManager 
                     createSystemFilterPoolManager(ISystemProfile profile, 
                     								Logger logger,
                                                   ISystemFilterPoolManagerProvider caller,
@@ -97,7 +116,7 @@ public class SystemFilterStartHere
      *   used, but you may find a use for it. 
      * @param namingPolicy the naming policy object which will return the name of that one file.
      */
-    public static ISystemFilterPoolReferenceManager createSystemFilterPoolReferenceManager(
+    public ISystemFilterPoolReferenceManager createSystemFilterPoolReferenceManager(
                                                     ISystemFilterPoolReferenceManagerProvider caller,
                                                     ISystemFilterPoolManagerProvider relatedPoolMgrProvider,
                                                     String name, IRSEFilterNamingPolicy namingPolicy)

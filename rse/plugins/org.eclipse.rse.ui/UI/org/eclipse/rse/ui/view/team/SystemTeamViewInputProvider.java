@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemResourceManager;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.widgets.Shell;
 

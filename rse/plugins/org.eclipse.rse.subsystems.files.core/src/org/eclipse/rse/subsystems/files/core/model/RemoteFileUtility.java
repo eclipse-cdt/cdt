@@ -19,10 +19,10 @@ package org.eclipse.rse.subsystems.files.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.ui.RSEUIPlugin;

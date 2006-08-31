@@ -17,7 +17,7 @@
 package org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem;
 
 
-import org.eclipse.rse.core.servicesubsystem.IServiceSubSystem;
+import org.eclipse.rse.core.subsystems.IServiceSubSystem;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 

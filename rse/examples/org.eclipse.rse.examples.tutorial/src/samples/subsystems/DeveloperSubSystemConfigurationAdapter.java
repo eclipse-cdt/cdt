@@ -18,9 +18,9 @@ package samples.subsystems;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.ui.filters.actions.SystemChangeFilterAction;
 import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
@@ -92,7 +92,7 @@ public class DeveloperSubSystemConfigurationAdapter extends
 
 	/**
 	 * Override of parent method for returning the image for filters in our subsystem.
-	 * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getSystemFilterImage(org.eclipse.rse.filters.ISystemFilter)
+	 * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getSystemFilterImage(org.eclipse.rse.core.filters.ISystemFilter)
 	 */
 	public ImageDescriptor getSystemFilterImage(ISystemFilter filter)
 	{

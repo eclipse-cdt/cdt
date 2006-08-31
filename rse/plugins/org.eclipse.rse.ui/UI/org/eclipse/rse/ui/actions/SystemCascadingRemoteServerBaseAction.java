@@ -17,7 +17,7 @@
 package org.eclipse.rse.ui.actions;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.swt.widgets.Shell;
 
 

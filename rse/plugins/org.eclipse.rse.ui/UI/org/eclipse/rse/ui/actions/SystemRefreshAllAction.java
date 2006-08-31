@@ -19,8 +19,9 @@ import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemContainer;
-import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -51,7 +52,7 @@ public class SystemRefreshAllAction extends SystemBaseAction
         //setSelectionSensitive(false);
         setSelectionSensitive(true);// use selection to decide what to invalidate
         
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0009"); //$NON-NLS-1$
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0009");
 	}
 
 	public void setRootObject(Object object)
@@ -96,7 +97,7 @@ public class SystemRefreshAllAction extends SystemBaseAction
 				((ISystemContainer)_rootObject).markStale(true);
 			}
 		}
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		sr.fireEvent(new SystemResourceChangeEvent(sr, ISystemResourceChangeEvents.EVENT_REFRESH, null));
 	}		
 }

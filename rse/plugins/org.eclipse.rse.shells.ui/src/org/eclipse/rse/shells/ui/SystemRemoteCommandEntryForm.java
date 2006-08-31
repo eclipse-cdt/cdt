@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.shells.ui;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISubSystemConfigurationCategories;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.subsystems.files.core.model.ISystemRemoteCommand;

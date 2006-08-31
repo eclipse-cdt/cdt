@@ -18,6 +18,7 @@ package org.eclipse.rse.ui.view;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -30,6 +31,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemResourceSet;
 import org.eclipse.rse.core.model.SystemMessageObject;
@@ -38,7 +40,6 @@ import org.eclipse.rse.core.subsystems.AbstractResource;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemPromptableObject;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -123,15 +124,15 @@ public abstract class AbstractSystemViewAdapter
     /**
      * Message substitution prefix: "&"
      */
-	protected static final String MSG_SUB_PREFIX = "&"; //$NON-NLS-1$
+	protected static final String MSG_SUB_PREFIX = "&";
     /**
      * Message substitution variable 1: "&1"
      */
-	protected static final String MSG_SUB1       = MSG_SUB_PREFIX+"1"; //$NON-NLS-1$
+	protected static final String MSG_SUB1       = MSG_SUB_PREFIX+"1";
     /**
      * Message substitution variable 2: "&2"
      */
-	protected static final String MSG_SUB2       = MSG_SUB_PREFIX+"2"; //$NON-NLS-1$
+	protected static final String MSG_SUB2       = MSG_SUB_PREFIX+"2";
 
     /**
      * Delimiter for each object's key in a memento, used to persist tree view expansion state: "///"

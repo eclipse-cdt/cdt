@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.rse.core.SystemResourceManager;
-import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.core.model.ISystemRegistry;
 
 
 /**

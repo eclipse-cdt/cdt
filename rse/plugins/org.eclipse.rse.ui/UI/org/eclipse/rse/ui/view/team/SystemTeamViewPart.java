@@ -56,16 +56,16 @@ import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemModelChangeEvent;
 import org.eclipse.rse.core.model.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemModelChangeListener;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemProfileManager;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.model.ISystemProfileManager;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -122,7 +122,7 @@ public class SystemTeamViewPart
 {
 
 	private boolean menuListenerAdded;
-	public static final String ID = "org.eclipse.rse.ui.view.teamView"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.rse.ui.view.teamView";
 	
 	private SystemTeamViewInputProvider input = null;
 	private SystemTeamView treeViewer = null;
@@ -150,16 +150,16 @@ public class SystemTeamViewPart
 	// remember-state variables...	
 	private IMemento                 fMemento;
 	// state...
-	static final String TAG_RELEASE= "release"; //$NON-NLS-1$ 
-	static final String TAG_SELECTION= "selection";  //$NON-NLS-1$
-	static final String TAG_EXPANDED_TO= "expandedTo";  //$NON-NLS-1$
-	static final String TAG_EXPANDED= "expanded";  //$NON-NLS-1$
-	static final String TAG_ELEMENT= "element";  //$NON-NLS-1$
-	static final String TAG_PATH= "path";   //$NON-NLS-1$
-	static final String TAG_INPUT= "svInput";  //$NON-NLS-1$
-	static final String TAG_VERTICAL_POSITION= "verticalPosition"; //$NON-NLS-1$ 
-	static final String TAG_HORIZONTAL_POSITION= "horizontalPosition";	 //$NON-NLS-1$
-	static final String MEMENTO_DELIM = "///"; //$NON-NLS-1$
+	static final String TAG_RELEASE= "release"; 
+	static final String TAG_SELECTION= "selection"; 
+	static final String TAG_EXPANDED_TO= "expandedTo"; 
+	static final String TAG_EXPANDED= "expanded"; 
+	static final String TAG_ELEMENT= "element"; 
+	static final String TAG_PATH= "path";  
+	static final String TAG_INPUT= "svInput"; 
+	static final String TAG_VERTICAL_POSITION= "verticalPosition"; 
+	static final String TAG_HORIZONTAL_POSITION= "horizontalPosition";	
+	static final String MEMENTO_DELIM = "///";
 		
 	/**
 	 * Remove a selection change listener
@@ -707,8 +707,8 @@ public class SystemTeamViewPart
 		{
 		  	deleteAction = new SystemCommonDeleteAction(getShell(),this);
 		  	deleteAction.setViewer(getViewer());
-		  	deleteAction.setHelp(RSEUIPlugin.HELPPREFIX+"actndlpr"); //$NON-NLS-1$
-		  	deleteAction.setDialogHelp(RSEUIPlugin.HELPPREFIX+"ddltprfl"); //$NON-NLS-1$
+		  	deleteAction.setHelp(RSEUIPlugin.HELPPREFIX+"actndlpr");
+		  	deleteAction.setDialogHelp(RSEUIPlugin.HELPPREFIX+"ddltprfl");
 		  	deleteAction.setPromptLabel(SystemResources.RESID_DELETE_PROFILES_PROMPT);
 		}
 		deleteAction.setSelection(selection);
@@ -731,7 +731,7 @@ public class SystemTeamViewPart
 	     		//System.out.println("menu item id: " + item.getId());
 	     		if (item.getId()!=null)
 	     		{
-	     			if (!item.getId().equals("team.main") || privateProfileStillExists) //$NON-NLS-1$
+	     			if (!item.getId().equals("team.main") || privateProfileStillExists)
 	     			  menuMgr.remove(item);
 
 	     		}
@@ -762,9 +762,9 @@ public class SystemTeamViewPart
 	public void updateTitle() 
 	{
 		Object input = getTreeViewer().getInput();
-		String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
+		String viewName = getConfigurationElement().getAttribute("name");
 	    setPartName(getTitle());
-		setTitleToolTip(""); //$NON-NLS-1$
+		setTitleToolTip("");
 	}
 
 	/** 
@@ -1110,7 +1110,7 @@ public class SystemTeamViewPart
 		String iconPath = "icons/full/"; //$NON-NLS-1$
 		try {
 			Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-			URL installURL = bundle.getEntry(""); //$NON-NLS-1$
+			URL installURL = bundle.getEntry("");
 			URL url = new URL(installURL, iconPath + relativePath);
 			return ImageDescriptor.createFromURL(url);
 		} catch (MalformedURLException e) {
@@ -1229,14 +1229,14 @@ public class SystemTeamViewPart
 		else if (o instanceof IResource)
 		{
 			if (o instanceof IProject)
-				handle = "Project"; //$NON-NLS-1$
+				handle = "Project";
 			else if (o instanceof IFolder)
-				handle = "Folder"; //$NON-NLS-1$
+				handle = "Folder";
 			else 
-				handle = "File"; //$NON-NLS-1$
+				handle = "File";
 		}
 		else if (o instanceof ISystemProfile)
-			handle = "Profile"; //$NON-NLS-1$
+			handle = "Profile";
 		else if (o instanceof SystemTeamViewCategoryNode)
 			//handle = "Category";
 			handle = null; // decided not to re-expand past profiles 
@@ -1369,7 +1369,7 @@ public class SystemTeamViewPart
 		ISystemProfile  profile = null;
 		IProject       project = null; 
 		SystemTeamViewCategoryNode category = null;
-		String elementType = ""; //$NON-NLS-1$
+		String elementType = "";
 
 		//System.out.println("PARSING MEMENTO: " + memento);
         	
@@ -1402,7 +1402,7 @@ public class SystemTeamViewPart
 			}
 		}
     	
-		if (elementType.equals("Project")) //$NON-NLS-1$
+		if (elementType.equals("Project"))
 		{
 			//System.out.println("...PARSED INTO A PROJECT: " + project.getName());
 		  	return project;
@@ -1412,7 +1412,7 @@ public class SystemTeamViewPart
 			//System.out.println("...PARSED INTO A PROFILE: " + profile.getName());
 			return profile;
 		}
-		if (elementType.equals("Category")) //$NON-NLS-1$
+		if (elementType.equals("Category"))
 		{
 			//System.out.println("...PARSED INTO A CATEGORY: " + category.getLabel());
 			return category;

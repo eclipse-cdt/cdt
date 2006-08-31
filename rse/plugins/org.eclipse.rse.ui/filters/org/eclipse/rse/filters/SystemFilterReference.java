@@ -20,6 +20,15 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterContainer;
+import org.eclipse.rse.core.filters.ISystemFilterContainerReference;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.filters.ISystemFilterString;
+import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemContentsType;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;

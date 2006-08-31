@@ -39,7 +39,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 

@@ -28,12 +28,13 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.extra.internal.extra.DomainEvent;
 import org.eclipse.dstore.extra.internal.extra.IDomainListener;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.dstore.model.DStoreFile;
@@ -54,7 +55,7 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
 
     protected Shell shell;
 
-    protected ISystemRegistry _registry;
+    protected SystemRegistry _registry;
 
     protected IConnectorService system;
 

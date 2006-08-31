@@ -3,9 +3,9 @@ package org.eclipse.rse.subsystems.files.dstore.subsystem;
 import java.util.Vector;
 
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 

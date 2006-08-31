@@ -22,11 +22,11 @@ import java.io.InputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.internal.subsystems.files.core.ILanguageUtilityFactory;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.SystemSearchString;

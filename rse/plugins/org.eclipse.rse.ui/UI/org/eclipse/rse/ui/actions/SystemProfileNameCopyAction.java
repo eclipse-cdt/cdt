@@ -21,9 +21,10 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -119,7 +120,7 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
 	 */
 	protected IRunnableContext getRunnableContext()
 	{
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IRunnableContext irc = sr.getRunnableContext();
 		if (irc == null)
 		  irc = new ProgressMonitorDialog(getShell());

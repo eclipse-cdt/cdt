@@ -23,12 +23,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.RSEModelObject;
+import org.eclipse.rse.core.model.SystemSignonInformation;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.logging.LoggerFactory;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemRegistry;
-import org.eclipse.rse.model.SystemSignonInformation;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -740,7 +741,10 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      */
     public ISystemValidator getUserIdValidator()
     {
-    	return getPrimarySubSystem().getSubSystemConfiguration().getUserIdValidator();
+  		ISubSystemConfiguration ssFactory = getPrimarySubSystem().getSubSystemConfiguration();
+		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
+
+    	return adapter.getUserIdValidator(ssFactory);
     }
 
     /**
@@ -752,7 +756,10 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      */
     public ISystemValidator getPasswordValidator()
     {
-    	return getPrimarySubSystem().getSubSystemConfiguration().getPasswordValidator();
+    	ISubSystemConfiguration ssFactory = getPrimarySubSystem().getSubSystemConfiguration();
+		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssFactory.getAdapter(ISubSystemConfigurationAdapter.class);
+
+    	return adapter.getPasswordValidator(ssFactory);
     }
     /**
      * <i>Optionally overridable, not implemented by default.</i><br>

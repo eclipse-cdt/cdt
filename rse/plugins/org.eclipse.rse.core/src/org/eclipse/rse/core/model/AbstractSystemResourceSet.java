@@ -22,6 +22,8 @@ import java.util.List;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 
+
+
 public class AbstractSystemResourceSet implements ISystemResourceSet
 {
 	private List _resourceSet;
@@ -102,7 +104,7 @@ public class AbstractSystemResourceSet implements ISystemResourceSet
 			buf.append(pathFor(resource));				
 			if (i < _resourceSet.size())
 			{
-				buf.append(", "); //$NON-NLS-1$
+				buf.append(", ");
 			}
 			buf.append('\n');
 		}

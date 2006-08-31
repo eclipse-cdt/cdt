@@ -32,33 +32,35 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterContainer;
+import org.eclipse.rse.core.filters.ISystemFilterContainerReference;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
+import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
+import org.eclipse.rse.core.filters.ISystemFilterString;
+import org.eclipse.rse.core.filters.SystemFilterPoolManager;
 import org.eclipse.rse.core.internal.subsystems.RemoteServerLauncherConstants;
-import org.eclipse.rse.core.internal.subsystems.SubSystemFilterNamingPolicy;
+import org.eclipse.rse.core.internal.subsystems.SubSystemConfigurationProxy;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemModelChangeEvents;
+import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemProfileManager;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterContainer;
-import org.eclipse.rse.filters.ISystemFilterContainerReference;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.filters.ISystemFilterPoolReference;
-import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
-import org.eclipse.rse.filters.ISystemFilterSavePolicies;
-import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.filters.SystemFilterPoolWrapperInformation;
 import org.eclipse.rse.filters.SystemFilterStartHere;
-import org.eclipse.rse.internal.filters.SystemFilterPoolManager;
 import org.eclipse.rse.internal.model.SystemProfileManager;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.model.ISystemProfileManager;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
@@ -73,7 +75,6 @@ import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
 import org.eclipse.rse.ui.widgets.RemoteServerLauncherForm;
 import org.eclipse.rse.ui.wizards.ISubSystemPropertiesWizardPage;
-import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -164,7 +165,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		super();
 		//initSubSystems();
-		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "STARTED SSFACTORY"); //$NON-NLS-1$
+		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "STARTED SSFACTORY");
 	}
 	
 
@@ -497,13 +498,13 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 
 		// Get configured property page extenders
 		IConfigurationElement[] propertyPageExtensions =
-			registry.getConfigurationElementsFor("org.eclipse.ui", "propertyPages"); //$NON-NLS-1$  //$NON-NLS-2$
+			registry.getConfigurationElementsFor("org.eclipse.ui", "propertyPages");
 			
 		for (int i = 0; i < propertyPageExtensions.length; i++)
 		{
 			IConfigurationElement configurationElement = propertyPageExtensions[i];
-			String objectClass = configurationElement.getAttribute("objectClass"); //$NON-NLS-1$
-			String name = configurationElement.getAttribute("name"); //$NON-NLS-1$
+			String objectClass = configurationElement.getAttribute("objectClass");
+			String name = configurationElement.getAttribute("name");
 			Class objCls = null;
 			try
 			{
@@ -519,7 +520,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			{
 				try
 				{
-					PropertyPage page = (PropertyPage) configurationElement.createExecutableExtension("class"); //$NON-NLS-1$
+					PropertyPage page = (PropertyPage) configurationElement.createExecutableExtension("class");
 					page.setTitle(name);
 					propertyPages.add(page);
 				}
@@ -674,7 +675,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public ImageDescriptor getImage()
 	{
-		return proxy.getImage();
+		return ((SubSystemConfigurationProxy)proxy).getImage();
 	}
 	/**
 	 * Return actual graphics Image of this factory.
@@ -707,7 +708,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public ImageDescriptor getLiveImage()
 	{
-		return proxy.getLiveImage();
+		return ((SubSystemConfigurationProxy)proxy).getLiveImage();
 	}
 
 	/**
@@ -826,31 +827,14 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		ISystemValidator userIdValidator =
 			new ValidatorSpecialChar(
-				"=;", //$NON-NLS-1$
+				"=;",
 				false,
 				RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_NOTVALID),
 				RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY));
 		// false => allow empty? No.		
 		return userIdValidator;
 	}
-	/**
-	 * Return the validator for the password which is prompted for at runtime.
-	 * Returns null by default.
-	 */
-	public ISystemValidator getPasswordValidator()
-	{
-		return null;
-	}
-	/**
-	 * Return the validator for the port.
-	 * A default is supplied.
-	 * This must be castable to ICellEditorValidator for the property sheet support.
-	 */
-	public ISystemValidator getPortValidator()
-	{
-		ISystemValidator portValidator = new ValidatorPortInput();
-		return portValidator;
-	}
+	
 
 	/**
 	 * Called by SystemRegistry's renameSystemProfile method to ensure we update our
@@ -1163,7 +1147,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * <ul>
 	 *   <li>calls {@link #createSubSystemInternal(IHost)} to create the subsystem 
 	 *   <li>does initialization of common attributes
-	 *   <li>if {@link #supportsFilters()}, creates a {@link org.eclipse.rse.filters.ISystemFilterPoolReferenceManager} for the
+	 *   <li>if {@link #supportsFilters()}, creates a {@link org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager} for the
 	 *           subsystem to manage references to filter pools
 	 *   <li>if (@link #supportsServerLaunchProperties()}, calls {@link #createServerLauncher(IConnectorService)}, to create
 	 *           the server launcher instance to associate with this subsystem. This can be subsequently
@@ -1200,7 +1184,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				// that are stored with a subsystem.
 				//SystemFilterPoolManager[] relatedFilterPoolManagers =
 				//  getReferencableFilterPoolManagers(conn.getSystemProfile());
-				ISystemFilterPoolReferenceManager fprMgr = SystemFilterStartHere.createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
+				ISystemFilterPoolReferenceManager fprMgr = SystemFilterStartHere.getDefault().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
 				subsys.setFilterPoolReferenceManager(fprMgr);
 				ISystemFilterPoolManager defaultFilterPoolManager = getFilterPoolManager(conn.getSystemProfile());
 				fprMgr.setDefaultSystemFilterPoolManager(defaultFilterPoolManager);
@@ -1291,7 +1275,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				// that are stored with a subsystem.
 				//SystemFilterPoolManager[] relatedFilterPoolManagers =
 				//  getReferencableFilterPoolManagers(newConnection.getSystemProfile());
-				ISystemFilterPoolReferenceManager newRefMgr = SystemFilterStartHere.createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
+				ISystemFilterPoolReferenceManager newRefMgr = SystemFilterStartHere.getDefault().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
 				ISystemFilterPoolManager defaultFilterPoolManager = null;
 				if (copyProfileOperation)
 					defaultFilterPoolManager = getFilterPoolManager(newConnection.getSystemProfile());
@@ -1779,7 +1763,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		//return name.equalsIgnoreCase("private");
 		ISystemProfile profile = getSystemProfile(mgr);
 		//System.out.println("Testing for user private profile for mgr " + mgr.getName() + ": " + profile.isDefaultPrivate());;
-		return profile.isDefaultPrivate() || mgr.getName().equalsIgnoreCase("private"); //$NON-NLS-1$
+		return profile.isDefaultPrivate() || mgr.getName().equalsIgnoreCase("private");
 	}
 
 	/**
@@ -2021,10 +2005,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			if (ss.getSystemProfile() != profile) // if restoring subsystem's profile != found pool's profile
 			{
 				IHost conn = ss.getHost();
-				String connectionName = conn.getSystemProfileName() + "." + conn.getAliasName(); //$NON-NLS-1$
+				String connectionName = conn.getSystemProfileName() + "." + conn.getAliasName();
 				SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED);
 				sysMsg.makeSubstitution(missingPoolMgrName, connectionName);
-				SystemBasePlugin.logWarning(sysMsg.getFullMessageID() + ": " + sysMsg.getLevelOneText()); //$NON-NLS-1$
+				SystemBasePlugin.logWarning(sysMsg.getFullMessageID() + ": " + sysMsg.getLevelOneText());
 				if (brokenReferenceWarningsIssued.get(missingPoolMgrName) == null)
 				{
 					SystemMessageDialog msgDlg = new SystemMessageDialog(null, sysMsg);
@@ -2815,7 +2799,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				// that are stored with a subsystem.
 				//SystemFilterPoolManager[] relatedFilterPoolManagers =
 				//  getReferencableFilterPoolManagers(conn.getSystemProfile());
-				ISystemFilterPoolReferenceManager fprMgr = SystemFilterStartHere.createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
+				ISystemFilterPoolReferenceManager fprMgr = SystemFilterStartHere.getDefault().createSystemFilterPoolReferenceManager(subsys, this, subsys.getName(), filterNamingPolicy);
 				subsys.setFilterPoolReferenceManager(fprMgr);
 				ISystemFilterPoolManager defaultFilterPoolManager = getFilterPoolManager(conn.getSystemProfile());
 				fprMgr.setDefaultSystemFilterPoolManager(defaultFilterPoolManager);
@@ -2936,7 +2920,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		StringBuffer nameBuf = new StringBuffer();
 		nameBuf.append(profileName);
-		nameBuf.append(":"); //$NON-NLS-1$
+		nameBuf.append(":");
 		nameBuf.append(factoryId);
 		/*
 		String name = SystemResources.RESID_DEFAULT_FILTERPOOL;

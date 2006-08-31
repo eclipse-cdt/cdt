@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
 
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.search.IHostSearchConstants;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
@@ -39,7 +39,7 @@ public class OutputRefresh implements Runnable
 		
 		if (searchConfig != null) 
 		{
-			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(searchConfig, ISystemResourceChangeEvents.EVENT_REFRESH, null));
 			
 			if (isDone) 

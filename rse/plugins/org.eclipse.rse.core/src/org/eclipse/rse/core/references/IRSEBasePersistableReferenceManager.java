@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.core.references;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.rse.core.references.IRSEBasePersistableReferencingObject;
 
 
 /**

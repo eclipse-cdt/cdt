@@ -24,27 +24,27 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.internal.ui.launchConfigurations.OrganizeFavoritesAction;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.filters.ISystemFilterString;
+import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.filters.ISystemFilterPoolReference;
-import org.eclipse.rse.filters.ISystemFilterPoolReferenceManager;
-import org.eclipse.rse.filters.ISystemFilterReference;
-import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.filters.SystemFilterPoolWrapperInformation;
-import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -77,12 +77,14 @@ import org.eclipse.rse.ui.propertypages.ISystemSubSystemPropertyPageCoreForm;
 import org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage;
 import org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage;
 import org.eclipse.rse.ui.propertypages.SystemSubSystemPropertyPageCoreForm;
+import org.eclipse.rse.ui.validators.ISystemValidator;
+import org.eclipse.rse.ui.validators.ValidatorPortInput;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
 import org.eclipse.rse.ui.widgets.RemoteServerLauncherForm;
-import org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.ui.wizards.SubSystemServiceWizardPage;
 import org.eclipse.rse.ui.wizards.SystemSubSystemsPropertiesWizardPage;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -339,8 +341,10 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 */
 		public ImageDescriptor getImage(ISubSystemConfiguration factory)
 		{
-			return factory.getImage();
+			// casting for now to allow for 2-phase refactoring - SubSystemConfiguration really shouldn't implement this
+			return ((SubSystemConfiguration)factory).getImage();
 		}
+		
 		/**
 		 * Return actual graphics Image of this factory.
 		 * This is the same as calling getImage().createImage() but the resulting
@@ -366,13 +370,16 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 			return null;
 		}
 
+
+
 		/**
 		 * Return image to use when this susystem is connection.
 		 * This comes from the xml "iconlive" attribute of the extension point.
 		 */
 		public ImageDescriptor getLiveImage(ISubSystemConfiguration factory)
 		{
-			return factory.getLiveImage();
+			// casting for now to allow for 2-phase refactoring - SubSystemConfiguration really shouldn't implement this
+			return ((SubSystemConfiguration)factory).getLiveImage();
 		}
 
 		/**
@@ -1432,6 +1439,38 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 						System.out.println("Unexpected error renaming default filter pool " + SubSystemConfiguration.getDefaultFilterPoolName(newProfileName, factory.getId()) + ": " + exc);
 					}
 			}					
+		}
+
+		/**
+		 * Return the validator for the password which is prompted for at runtime.
+		 * Returns null by default.
+		 */
+		public ISystemValidator getPasswordValidator(ISubSystemConfiguration configuration)
+		{
+			return null;
+		}
+		/**
+		 * Return the validator for the port.
+		 * A default is supplied.
+		 * This must be castable to ICellEditorValidator for the property sheet support.
+		 */
+		public ISystemValidator getPortValidator(ISubSystemConfiguration configuration)
+		{
+			ISystemValidator portValidator = new ValidatorPortInput();
+			return portValidator;
+		}
+
+
+
+		public PropertyPage getPropertyPage(ISubSystem subsystem, Composite parent) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+
+		public ISystemValidator getUserIdValidator(ISubSystemConfiguration config) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 }

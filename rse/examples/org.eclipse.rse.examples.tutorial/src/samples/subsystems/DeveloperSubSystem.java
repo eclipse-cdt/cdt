@@ -19,9 +19,9 @@ package samples.subsystems;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystem;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 
 import samples.model.DeveloperResource;

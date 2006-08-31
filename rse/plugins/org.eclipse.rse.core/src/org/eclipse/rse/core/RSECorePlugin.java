@@ -22,8 +22,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.core.internal.RSECoreRegistry;
+import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.internal.persistence.RSEPersistenceManager;
 import org.eclipse.rse.logging.Logger;
 import org.eclipse.rse.logging.LoggerFactory;
+import org.eclipse.rse.persistence.IRSEPersistenceManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -35,6 +38,24 @@ public class RSECorePlugin extends Plugin {
 	private static RSECorePlugin plugin;
 	private Logger logger = null;
 
+	private ISystemRegistry _registry;
+    private IRSEPersistenceManager         _persistenceManager = null;
+
+    public static IRSEPersistenceManager getThePersistenceManager()
+    {
+    	return getDefault().getPersistenceManager();
+    }
+	  /**
+     * @return the persistence manager used for persisting RSE profiles
+     */
+    public IRSEPersistenceManager getPersistenceManager()
+    {
+    	if (_persistenceManager == null)
+    	{
+    		_persistenceManager = new RSEPersistenceManager(_registry);
+    	}
+    	return _persistenceManager;
+    }
 	/**
 	 * @return the local machine name
 	 */
@@ -66,6 +87,16 @@ public class RSECorePlugin extends Plugin {
 	 */
 	public RSECorePlugin() {
 		plugin = this;
+	}
+	
+	public void setSystemRegistry(ISystemRegistry registry)
+	{
+		_registry = registry;
+	}
+	
+	public ISystemRegistry getSystemRegistry()
+	{
+		return _registry;
 	}
 
 	/*

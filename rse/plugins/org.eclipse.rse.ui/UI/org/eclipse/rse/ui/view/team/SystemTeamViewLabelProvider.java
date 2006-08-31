@@ -28,7 +28,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;

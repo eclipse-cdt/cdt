@@ -16,6 +16,9 @@
 
 package org.eclipse.rse.filters;
 
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolWrapper;
+
 /**
  * The system filter wizard allows callers to pass a list of wrapper objects
  *  for the user to select a filter pool.
@@ -41,7 +44,7 @@ public class SystemFilterPoolWrapper implements ISystemFilterPoolWrapper
 	}
 
 	/**
-	 * @see org.eclipse.rse.filters.ISystemFilterPoolWrapper#getDisplayName()
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolWrapper#getDisplayName()
 	 */
 	public String getDisplayName() 
 	{
@@ -49,7 +52,7 @@ public class SystemFilterPoolWrapper implements ISystemFilterPoolWrapper
 	}
 
 	/**
-	 * @see org.eclipse.rse.filters.ISystemFilterPoolWrapper#getSystemFilterPool()
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolWrapper#getSystemFilterPool()
 	 */
 	public ISystemFilterPool getSystemFilterPool() 
 	{

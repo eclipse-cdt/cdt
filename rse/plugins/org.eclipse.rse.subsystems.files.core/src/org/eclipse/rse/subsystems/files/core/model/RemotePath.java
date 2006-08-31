@@ -17,9 +17,9 @@
 package org.eclipse.rse.subsystems.files.core.model;
 
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.model.ISystemRegistry;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;

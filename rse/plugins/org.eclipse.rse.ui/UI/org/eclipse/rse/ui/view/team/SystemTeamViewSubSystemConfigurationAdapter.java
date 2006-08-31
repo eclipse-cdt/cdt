@@ -18,9 +18,9 @@ package org.eclipse.rse.ui.view.team;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.model.ISystemProfile;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.filters.actions.SystemFilterWorkWithFilterPoolsAction;

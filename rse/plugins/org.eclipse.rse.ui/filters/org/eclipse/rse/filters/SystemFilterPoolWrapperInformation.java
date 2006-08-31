@@ -18,6 +18,10 @@ package org.eclipse.rse.filters;
 
 import java.util.Vector;
 
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolWrapper;
+import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
+
 /**
  * The system filter wizard allows callers to pass a list of wrapper objects
  *  for the user to select a filter pool. Effectively, this prompting for 
@@ -92,7 +96,7 @@ public class SystemFilterPoolWrapperInformation
 	
 
 	/**
-	 * @see org.eclipse.rse.filters.ISystemFilterPoolWrapperInformation#getWrappers()
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation#getWrappers()
 	 */
 	public ISystemFilterPoolWrapper[] getWrappers() 
 	{
@@ -106,7 +110,7 @@ public class SystemFilterPoolWrapperInformation
 	}
 
 	/**
-	 * @see org.eclipse.rse.filters.ISystemFilterPoolWrapperInformation#getPreSelectWrapper()
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation#getPreSelectWrapper()
 	 */
 	public ISystemFilterPoolWrapper getPreSelectWrapper() 
 	{

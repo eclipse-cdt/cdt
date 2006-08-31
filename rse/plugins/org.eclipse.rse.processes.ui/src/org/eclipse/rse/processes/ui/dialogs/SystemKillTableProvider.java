@@ -19,6 +19,7 @@ package org.eclipse.rse.processes.ui.dialogs;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.rse.ui.dialogs.SystemDeleteTableProvider;
 
 

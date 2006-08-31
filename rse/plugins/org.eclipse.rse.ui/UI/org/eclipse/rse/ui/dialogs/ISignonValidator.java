@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.dialogs;
 
-import org.eclipse.rse.model.SystemSignonInformation;
+import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.swt.widgets.Shell;
 

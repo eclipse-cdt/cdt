@@ -17,7 +17,7 @@
 package org.eclipse.rse.ui.view;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.swt.widgets.Shell;
 
 

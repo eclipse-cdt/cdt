@@ -16,17 +16,16 @@
 
 package org.eclipse.rse.core.model;
 
-
 /**
  * The event IDs sent when local resources in the RSE model change.
  * You should monitor for these events in your view if you display any of the resource types listed here.
  * <p>
  * To monitor, implement interface {@link org.eclipse.rse.core.model.ISystemModelChangeListener} and 
- * call {@link org.eclipse.rse.model.ISystemRegistry#addSystemModelChangeListener(ISystemModelChangeListener)}
- * and in your dispose method, call {@link org.eclipse.rse.model.ISystemRegistry#removeSystemModelChangeListener(ISystemModelChangeListener)}.
+ * call {@link org.eclipse.rse.core.model.ISystemRegistry#addSystemModelChangeListener(ISystemModelChangeListener)}
+ * and in your dispose method, call {@link org.eclipse.rse.core.model.ISystemRegistry#removeSystemModelChangeListener(ISystemModelChangeListener)}.
  * <p>
  * If you are interesting in firing model change events, see 
- * {@link org.eclipse.rse.model.ISystemRegistry#fireModelChangeEvent(int, int, Object, String)}.
+ * {@link org.eclipse.rse.core.model.ISystemRegistry#fireModelChangeEvent(int, int, Object, String)}.
  */
 public interface ISystemModelChangeEvents 
 {

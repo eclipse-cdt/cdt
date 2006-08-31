@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.ui.widgets.services;
 
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.graphics.Image;

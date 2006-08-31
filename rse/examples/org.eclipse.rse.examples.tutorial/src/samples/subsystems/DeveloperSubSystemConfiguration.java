@@ -18,13 +18,13 @@ package samples.subsystems;
 
 import java.util.Vector;
 
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.model.IHost;
 
 import samples.RSESamplesPlugin;
 
@@ -43,7 +43,7 @@ public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 
 	/**
 	 * Create an instance of our subsystem.
-	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#createSubSystemInternal(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#createSubSystemInternal(org.eclipse.rse.core.model.IHost)
 	 */
 	public ISubSystem createSubSystemInternal(IHost conn) {
 	   	return new DeveloperSubSystem(conn, getConnectorService(conn));
@@ -85,7 +85,7 @@ public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 	 * sheet for the "type" property when a filter is selected within our subsystem.
 	 *
 	 * Requires this line in rseSamplesResources.properties: property.type.teamfilter=Team filter
-	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#getTranslatedFilterTypeProperty(org.eclipse.rse.filters.ISystemFilter)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#getTranslatedFilterTypeProperty(org.eclipse.rse.core.filters.ISystemFilter)
 	 */
 	public String getTranslatedFilterTypeProperty(ISystemFilter selectedFilter)
 	{

@@ -3,4 +3,26 @@
 <plugin>
    <extension-point id="systemTypes" name="RSE System Types" schema="schema/systemTypes.exsd"/>
 
+<!-- ================================================================= -->
+<!-- 		Define Persistence Provider extension point -->
+<!-- ================================================================= -->
+   <extension-point id="persistenceProviders" name="%extPoint.persistenceProviders" schema="schema/persistenceProviders.exsd"/>
+ 
+
+
+<!-- ========================================================================= -->
+<!-- Persistence Providers                                                     -->
+<!-- ========================================================================= -->  
+ <extension
+       point="org.eclipse.rse.core.persistenceProviders">
+    <persistenceProvider
+          class="org.eclipse.rse.internal.persistence.SerializingProvider"
+          id="org.eclipse.rse.persistence.SerializingProvider"
+          name="Serializing Persistence Provider"/>
+    <persistenceProvider
+          class="org.eclipse.rse.internal.persistence.PropertyFileProvider"
+          id="org.eclipse.rse.persistence.PropertyFileProvider"
+          name="Property File Persistence Provider"/>
+ </extension>
+ 
 </plugin>

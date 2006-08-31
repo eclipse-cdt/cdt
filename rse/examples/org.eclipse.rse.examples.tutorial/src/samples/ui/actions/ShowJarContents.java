@@ -17,8 +17,8 @@
 package samples.ui.actions;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.actions.SystemAbstractRemoteFilePopupMenuExtensionAction;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;

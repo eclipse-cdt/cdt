@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.model;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 
 

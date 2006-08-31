@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
-import org.eclipse.rse.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.swt.widgets.Shell;
 
 

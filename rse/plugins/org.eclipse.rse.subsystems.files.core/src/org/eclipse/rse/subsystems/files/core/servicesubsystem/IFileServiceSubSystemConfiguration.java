@@ -17,9 +17,9 @@
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
 
 
-import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.internal.subsystems.files.core.ILanguageUtilityFactory;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;

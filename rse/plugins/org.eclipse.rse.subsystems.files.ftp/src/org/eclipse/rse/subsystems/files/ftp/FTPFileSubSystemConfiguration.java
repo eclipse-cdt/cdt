@@ -16,10 +16,10 @@
 
 package org.eclipse.rse.subsystems.files.ftp;
 
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.subsystems.files.core.ILanguageUtilityFactory;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.ftp.IFTPService;

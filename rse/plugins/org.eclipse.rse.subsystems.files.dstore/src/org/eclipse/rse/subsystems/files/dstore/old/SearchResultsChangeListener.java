@@ -24,11 +24,12 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.extra.internal.extra.DomainEvent;
 import org.eclipse.dstore.extra.internal.extra.IDomainListener;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
@@ -156,7 +157,7 @@ public class SearchResultsChangeListener implements IDomainListener, ICommunicat
 	}
 
 	private void handleSearchResults() {
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
 		// append new results to existing results
 		List results = _status.getNestedData();
@@ -353,7 +354,7 @@ public class SearchResultsChangeListener implements IDomainListener, ICommunicat
 			_searchConfig.setStatus(IRemoteSearchConstants.DISCONNECTED);
 		}
 
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.fireEvent(new SystemResourceChangeEvent(_searchConfig, ISystemResourceChangeEvents.EVENT_SEARCH_FINISHED, null));
 	}
 

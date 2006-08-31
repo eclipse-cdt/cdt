@@ -17,7 +17,7 @@
 package org.eclipse.rse.ui.actions;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.filters.ISystemFilterReference;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.model.ISystemPromptableObject;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;

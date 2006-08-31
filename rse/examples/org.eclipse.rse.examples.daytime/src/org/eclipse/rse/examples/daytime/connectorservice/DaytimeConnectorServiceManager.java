@@ -16,11 +16,11 @@
 
 package org.eclipse.rse.examples.daytime.connectorservice;
 
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.examples.daytime.subsystems.IDaytimeSubSystem;
-import org.eclipse.rse.model.IHost;
 
 /**
  * This class manages our DaytimeConnectorService objects, so that if we ever

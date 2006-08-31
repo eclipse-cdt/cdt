@@ -27,10 +27,11 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.filters.ISystemFilterReference;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.processes.ui.ProcessesPlugin;
 import org.eclipse.rse.processes.ui.SystemProcessesResources;
@@ -43,6 +44,7 @@ import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSyste
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -145,7 +147,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 	 */
 	protected IRunnableContext getRunnableContext()
 	{
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		IRunnableContext irc = sr.getRunnableContext();
 		if (irc == null)
 		  irc = new ProgressMonitorDialog(getShell());
@@ -239,7 +241,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 		
 		
 		// update the ui
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry  registry = RSEUIPlugin.getTheSystemRegistry();
 		for (int i = 0; i < results.size(); i++)
 		{
 			ISystemFilterReference ref = (ISystemFilterReference)results.get(i);

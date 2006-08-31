@@ -19,8 +19,9 @@ package org.eclipse.rse.ui.view.team;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.model.ISystemProfile;
+import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.SystemResources;
 
 
@@ -82,7 +83,8 @@ public class SystemTeamViewSubSystemConfigurationNode implements IAdaptable
 	 */
 	public ImageDescriptor getImageDescriptor()
 	{
-		return ssf.getImage();
+		ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssf.getAdapter(ISubSystemConfigurationAdapter.class);
+		return adapter.getImage(ssf);
 	}
 
 	/**

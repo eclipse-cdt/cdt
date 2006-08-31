@@ -16,11 +16,11 @@
 
 package org.eclipse.rse.ui.widgets.services;
 
-import org.eclipse.rse.core.servicesubsystem.IServiceSubSystemConfiguration;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
+import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.model.DummyHost;
-import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.services.IService;
 
 

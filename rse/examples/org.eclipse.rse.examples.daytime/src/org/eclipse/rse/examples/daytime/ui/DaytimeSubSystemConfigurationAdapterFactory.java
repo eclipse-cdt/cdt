@@ -2,6 +2,7 @@ package org.eclipse.rse.examples.daytime.ui;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
+
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.examples.daytime.subsystems.DaytimeSubSystemConfiguration;
 

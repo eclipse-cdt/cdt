@@ -19,7 +19,7 @@ package org.eclipse.rse.ui.dialogs;
 import java.util.List;
 
 import org.eclipse.rse.core.PasswordPersistenceManager;
-import org.eclipse.rse.model.SystemSignonInformation;
+import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;

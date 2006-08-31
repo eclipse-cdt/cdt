@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemProfileManager;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.model.SystemProfileManager;
-import org.eclipse.rse.model.ISystemProfile;
-import org.eclipse.rse.model.ISystemProfileManager;
-import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 

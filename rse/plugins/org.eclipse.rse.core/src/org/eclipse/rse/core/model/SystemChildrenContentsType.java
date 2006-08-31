@@ -18,13 +18,12 @@
 package org.eclipse.rse.core.model;
 
 
-
 /**
  * Represents contents that are children of a container
  */
 public class SystemChildrenContentsType implements ISystemContentsType
 {
-    public static String CONTENTS_TYPE_CHILDREN =	"contents_children"; //$NON-NLS-1$
+    public static String CONTENTS_TYPE_CHILDREN =	"contents_children";
     public static SystemChildrenContentsType _instance = new SystemChildrenContentsType();
     
     public static SystemChildrenContentsType getInstance()

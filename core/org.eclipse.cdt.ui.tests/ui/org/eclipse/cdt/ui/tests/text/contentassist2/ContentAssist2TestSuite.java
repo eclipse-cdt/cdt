@@ -16,13 +16,15 @@ import junit.framework.TestSuite;
 /**
  * This suite bundles all tests for the CContentAssistProcessor2
  */
-public class ContentAssistProcessor2_Suite extends TestSuite {
+public class ContentAssist2TestSuite extends TestSuite {
 
 	public static Test suite()  {
-		return new ContentAssistProcessor2_Suite() ;
+		return new ContentAssist2TestSuite() ;
 	}
 	
-	public ContentAssistProcessor2_Suite()  {
+	public ContentAssist2TestSuite()  {
+		super("Tests in package org.eclipse.cdt.ui.tests.text.contentassist2");
+		
 		addTest(CompletionFailedTest_MemberReference_Arrow_Prefix2.suite());
 		addTest(CompletionTest_ArgumentType_NoPrefix.suite());
 		addTest(CompletionTest_ArgumentType_NoPrefix2.suite());

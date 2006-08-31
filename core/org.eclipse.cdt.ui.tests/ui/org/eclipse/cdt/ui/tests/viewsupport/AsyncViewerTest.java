@@ -109,11 +109,13 @@ public class AsyncViewerTest extends TestCase {
     public void testSyncPopulation() {
         TestDialog dlg = createTestDialog(false);
         doTestSyncPopulation(dlg);
+        dlg.close();
     }
 
     public void testSyncPopulationEx() {
         TestDialog dlg = createTestDialog(true);
         doTestSyncPopulation(dlg);
+        dlg.close();
     }
 
     private void doTestSyncPopulation(TestDialog dlg) {
@@ -159,11 +161,13 @@ public class AsyncViewerTest extends TestCase {
     public void testAsyncPopulation() throws InterruptedException {
         TestDialog dlg = createTestDialog(false);
         doTestAsyncPopulation(dlg);        
+        dlg.close();
     }
 
     public void testAsyncPopulationEx() throws InterruptedException {
         TestDialog dlg = createTestDialog(true);
         doTestAsyncPopulation(dlg);        
+        dlg.close();
     }
 
     private void doTestAsyncPopulation(TestDialog dlg) throws InterruptedException {
@@ -265,6 +269,7 @@ public class AsyncViewerTest extends TestCase {
         assertEquals(6, countVisibleItems(dlg.fViewer));
         assertEquals(1, dlg.fViewer.getTree().getSelectionCount());
         assertEquals("c", dlg.fViewer.getTree().getSelection()[0].getText());
+        dlg.close();
     }
 
     private void sleepAndDispatch(int sleep, int count) throws InterruptedException {

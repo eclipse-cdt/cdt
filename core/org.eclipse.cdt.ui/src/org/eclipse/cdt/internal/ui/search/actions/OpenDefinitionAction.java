@@ -7,24 +7,28 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
+
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Open Definition Action (Ctrl+F3).
@@ -70,7 +74,7 @@ public class OpenDefinitionAction extends SelectionParseAction {
 					if (binding != null) {
 						final IASTName[] declNames = ast.getDefinitions(binding);
 						if (declNames.length > 0) {
-							Display.getDefault().asyncExec(new Runnable() {
+							runInUIThread(new Runnable() {
 								public void run() {
 									try {
 										open(declNames[0]);
@@ -97,4 +101,28 @@ public class OpenDefinitionAction extends SelectionParseAction {
 		}
 	}
     
+	/**
+	 * For the purpose of regression testing.
+	 * @since 4.0
+	 */
+	private void runInUIThread(Runnable runnable) {
+		if (Display.getCurrent() != null) {
+			runnable.run();
+		}
+		else {
+			Display.getDefault().asyncExec(runnable);
+		}
+	}
+
+	/**
+	 * For the purpose of regression testing.
+	 * @since 4.0
+	 */
+	public void runSync() {
+		selNode = getSelectedStringFromEditor();
+		if (selNode != null) {
+			new Runner().run(new NullProgressMonitor());
+		}
+	}
+
 }

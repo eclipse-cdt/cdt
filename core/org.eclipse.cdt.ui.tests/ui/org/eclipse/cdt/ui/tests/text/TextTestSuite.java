@@ -9,18 +9,32 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.ui.tests.viewsupport;
+package org.eclipse.cdt.ui.tests.text;
 
 import junit.framework.TestSuite;
 
-public class ViewSupportTestSuite extends TestSuite {
+public class TextTestSuite extends TestSuite {
 
     public static TestSuite suite() {
-        return new ViewSupportTestSuite();
+        return new TextTestSuite();
     }
     
-    public ViewSupportTestSuite() {
-        super("Tests in package org.eclipse.cdt.ui.tests.viewsupport");
-        addTestSuite(AsyncViewerTest.class);
+    public TextTestSuite() {
+        super("Tests in package org.eclipse.cdt.ui.tests.text.text");
+        
+		// Success Tests
+		//addTest(PartitionTokenScannerTest.suite());
+		addTest(NumberRuleTest.suite());
+		addTest(CAutoIndentTest.suite());
+		addTest(CPartitionerTest.suite());
+
+		// Break iterator tests.
+		addTest(CBreakIteratorTest.suite());
+		addTest(CWordIteratorTest.suite());
+
+		// highlighting tests
+		addTest(SemanticHighlightingTest.suite());
+		addTest(InactiveCodeHighlightingTest.suite());
+
     }
 }

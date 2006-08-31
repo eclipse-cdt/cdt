@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,151 +7,350 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
-package org.eclipse.cdt.ui.tests.text.selectiontests;
+package org.eclipse.cdt.ui.tests.text.selection;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.make.core.MakeProjectNature;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.FileManager;
+
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDefinitionAction;
 
 /**
- * Test Ctrl_F3/F3 with the DOM Indexer for a C project.
+ * It is required to test the selection performance independent of the indexer to make sure that the DOM is functioning properly.
+ * 
+ * Indexer bugs can drastically influence the correctness of these tests so the indexer has to be off when performing them.
  * 
  * @author dsteffle
  */
-public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer {
-	private static final String INDEX_TAG = "1161844423.index"; //$NON-NLS-1$
-	IFile 					file;
-	NullProgressMonitor		monitor;
+public class CSelectionTestsNoIndexer extends TestCase {
+    
+	private static final String INDEX_FILE_ID = "2324852323"; //$NON-NLS-1$
+    static NullProgressMonitor      monitor;
+    static IWorkspace               workspace;
+    static IProject                 project;
+	static ICProject				cPrj;
+    static FileManager              fileManager;
+    static boolean                  disabledHelpContributions = false;
+    {
+        //(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
+        monitor = new NullProgressMonitor();
+        
+        workspace = ResourcesPlugin.getWorkspace();
+        
+        try {
+            cPrj = CProjectHelper.createCProject("CSelectionTestsNoIndexerProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+        
+            project = cPrj.getProject();
+			
+			IPath pathLoc = CCorePlugin.getDefault().getStateLocation();
+			File indexFile = new File(pathLoc.append(INDEX_FILE_ID + ".index").toOSString()); //$NON-NLS-1$
+			if (indexFile.exists())
+				indexFile.delete();
+        } catch ( CoreException e ) {
+            /*boo*/
+        }
+        if (project == null)
+            fail("Unable to create project"); //$NON-NLS-1$
 
-	static final String sourceIndexerID = "org.eclipse.cdt.core.domsourceindexer"; //$NON-NLS-1$
-	
-	public CSelectionTestsDOMIndexer(String name) {
-		super(name);
+        //Create file manager
+        fileManager = new FileManager();
+    }
+    public CSelectionTestsNoIndexer()
+    {
+        super();
+    }
+    /**
+     * @param name
+     */
+    public CSelectionTestsNoIndexer(String name)
+    {
+        super(name);
+    }
+    
+    public static Test suite() {
+        TestSuite suite = new TestSuite( CSelectionTestsNoIndexer.class );
+        suite.addTest( new CSelectionTestsNoIndexer("cleanupProject") );    //$NON-NLS-1$
+        return suite;
+    }
+    
+    public void cleanupProject() throws Exception {
+        try{
+            project.delete( true, false, monitor );
+            project = null;
+        } catch( Throwable e ){
+            /*boo*/
+        }
+    }
+    
+    protected void tearDown() throws Exception {
+        if( project == null || !project.exists() ) 
+            return;
+        
+        IResource [] members = project.members();
+        for( int i = 0; i < members.length; i++ ){
+            if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cdtproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+                continue;
+            try{
+                members[i].delete( false, monitor );
+            } catch( Throwable e ){
+                /*boo*/
+            }
+        }
+    }
+    
+    protected IFile importFile(String fileName, String contents ) throws Exception{
+        //Obtain file handle
+        IFile file = project.getProject().getFile(fileName);
+        
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        //Create file input stream
+        if( file.exists() )
+            file.setContents( stream, false, false, monitor );
+        else
+            file.create( stream, false, monitor );
+        
+        fileManager.addFile(file);
+        
+        return file;
+    }
+    
+    protected IFile importFileWithLink(String fileName, String contents) throws Exception{
+        //Obtain file handle
+        IFile file = project.getProject().getFile(fileName);
+        
+        IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); //$NON-NLS-1$
+        
+        File linkFile = new File(location.toOSString());
+        if (!linkFile.exists()) {
+        	linkFile.createNewFile();
+        }
+        
+        file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
+        
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        //Create file input stream
+        if( file.exists() )
+            file.setContents( stream, false, false, monitor );
+        else
+            file.create( stream, false, monitor );
+        
+        fileManager.addFile(file);
+        
+        return file;
+    }
+    
+    protected IFile importFileInsideLinkedFolder(String fileName, String contents, String folderName ) throws Exception{
+    	IFolder linkedFolder = project.getFolder(folderName);
+    	IPath folderLocation = new Path(project.getLocation().toOSString() + File.separator + folderName + "_this_is_linked"); //$NON-NLS-1$
+    	IFolder actualFolder = project.getFolder(folderName + "_this_is_linked"); //$NON-NLS-1$
+    	if (!actualFolder.exists())
+    		actualFolder.create(true, true, monitor);
+    	
+    	linkedFolder.createLink(folderLocation, IResource.NONE, monitor);
+    	
+    	actualFolder.delete(true, false, monitor);
+    	
+    	IFile file = linkedFolder.getFile(fileName);
+    	
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        //Create file input stream
+        if( file.exists() )
+            file.setContents( stream, false, false, monitor );
+        else
+            file.create( stream, false, monitor );
+            	
+        fileManager.addFile(file);
+    	
+        return file;
+    }
+    
+    protected IFile importFileWithLink(String fileName, String contents, IFolder folder) throws Exception{
+        if (!folder.exists())
+        	folder.create(true, true, null);
+    	
+    	//Obtain file handle
+        IFile file = project.getProject().getFile(fileName);
+        
+        IPath location = new Path(folder.getLocation().toOSString() + File.separator + fileName); //$NON-NLS-1$
+        
+        File linkFile = new File(location.toOSString());
+        if (!linkFile.exists()) {
+        	linkFile.createNewFile();
+        }
+        
+        file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
+        
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        //Create file input stream
+        if( file.exists() )
+            file.setContents( stream, false, false, monitor );
+        else
+            file.create( stream, false, monitor );
+        
+        fileManager.addFile(file);
+        
+        return file;
+    }
+    
+    protected IFolder importFolder(String folderName) throws Exception {
+    	IFolder folder = project.getProject().getFolder(folderName);
+		
+		//Create file input stream
+		if( !folder.exists() )
+			folder.create( false, false, monitor );
+		
+		return folder;
+    }
+
+    // TODO Devin remove this commented method
+//    protected IFolder importFolderWithLink(String folderName) throws Exception {
+//    	// create the folder that will be linked
+//    	IFolder folder = project.getProject().getFolder(folderName);
+//    	
+//    	// create the linked folder    	
+//    	IFolder linkedFolder = project.getProject().getFolder(folderName + "linked"); //$NON-NLS-1$
+//    	if (!linkedFolder.exists())
+//    		linkedFolder.create(true, true, null);
+//
+//    	// make the link
+//        folder.createLink(linkedFolder.getLocation(), IResource.ALLOW_MISSING_LOCAL, null);
+//		
+//		return folder;
+//    }
+    
+	protected IASTNode testF3(IFile file, int offset) throws ParserException, CoreException {
+		return testF3(file, offset, 0);
 	}
 	
-	protected void setUp() throws Exception {
-		super.setUp();
+    protected IASTNode testF3(IFile file, int offset, int length) throws ParserException, CoreException {
+		disableIndex();
 		
-		//Create temp project
-		project = createProject("CSelectionTestsDOMIndexerProject"); //$NON-NLS-1$
+		if (offset < 0)
+			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
+		
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        IEditorPart part = null;
+        try {
+            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
+        } catch (PartInitException e) {
+            assertFalse(true);
+        }
+        
+        if (part instanceof AbstractTextEditor) {
+            ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,length));
+            
+            final OpenDeclarationsAction action = (OpenDeclarationsAction) ((AbstractTextEditor)part).getAction("OpenDeclarations"); //$NON-NLS-1$
+            action.runSync();
+        
+            // the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
+            ISelection sel = ((AbstractTextEditor)part).getSelectionProvider().getSelection();
+            
+            if (sel instanceof TextSelection) {
+            	ITextSelection textSel = (ITextSelection)sel;
+            	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
+            	IASTTranslationUnit ast = tu.getLanguage().getASTTranslationUnit(tu, 0);
+                IASTName[] names = tu.getLanguage().getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
+                
+                if (names == null || names.length == 0)
+                    return null;
+
+				return names[0];
+            }
+        }
+        
+        return null;
+    }
+    
+	protected IASTNode testCtrl_F3(IFile file, int offset) throws ParserException, CoreException {
+		return testCtrl_F3(file, offset, 0);
+	}
+	
+    protected IASTNode testCtrl_F3(IFile file, int offset, int length) throws ParserException, CoreException {
+		disableIndex();
+		
+		if (offset < 0)
+			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
+		
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        IEditorPart part = null;
+        try {
+            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
+        } catch (PartInitException e) {
+            assertFalse(true);
+        }
+        
+        if (part instanceof AbstractTextEditor) {
+            ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,length));
+            
+            final OpenDefinitionAction action = (OpenDefinitionAction) ((AbstractTextEditor)part).getAction("OpenDefinition"); //$NON-NLS-1$
+            action.runSync();
+        
+            // the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
+            ISelection sel = ((AbstractTextEditor)part).getSelectionProvider().getSelection();
+            
+            if (sel instanceof TextSelection) {
+            	ITextSelection textSel = (ITextSelection)sel;
+            	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
+            	IASTTranslationUnit ast = tu.getLanguage().getASTTranslationUnit(tu, 0);
+                IASTName[] names = tu.getLanguage().getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
+                
+                if (names == null || names.length == 0)
+                    return null;
+
+				return names[0];
+            }
+        }
+        
+        return null;
+    }
+    
+	private void disableIndex() {
 		IPath pathLoc = CCorePlugin.getDefault().getStateLocation();
-		
-		File indexFile = new File(pathLoc.append(INDEX_TAG).toOSString());
+		File indexFile = new File(pathLoc.append(INDEX_FILE_ID + ".index").toOSString()); //$NON-NLS-1$
 		if (indexFile.exists())
 			indexFile.delete();
-		
-		//Set the id of the source indexer extension point as a session property to allow
-		//index manager to instantiate it
-		
-		//Enable indexing on test project
-
-		if (project==null) fail("Unable to create project");	 //$NON-NLS-1$
-		IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(project.getName());
-		MakeProjectNature.addNature(project, new NullProgressMonitor());
-		ScannerConfigNature.addScannerConfigNature(project);
-		PerProjectSICollector.calculateCompilerBuiltins(project);
-		
-		resetIndexer(sourceIndexerID); // set indexer
-		
-		//indexManager.reset();
-		//Get the indexer used for the test project
-	}
-
-	protected void tearDown() {
-		try {
-			super.tearDown();
-		} catch (Exception e1) {
-		}
-		//Delete project
-		if (project.exists()) {
-			try {
-				System.gc();
-				System.runFinalization();
-				project.delete(true, monitor);
-			} catch (CoreException e) {
-				fail(getMessage(e.getStatus()));
-			}
-		}
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(CSelectionTestsDOMIndexer.class.getName());
-
-		suite.addTest(new CSelectionTestsDOMIndexer("testBug78354")); //$NON-NLS-1$
-		suite.addTest(new CSelectionTestsDOMIndexer("testSimpleOpenDeclaration")); //$NON-NLS-1$
-		suite.addTest(new CSelectionTestsDOMIndexer("testSimpleOpenDeclaration2")); //$NON-NLS-1$
-		suite.addTest(new CSelectionTestsDOMIndexer("testBasicDefinition")); //$NON-NLS-1$
-		suite.addTest(new CSelectionTestsDOMIndexer("testCPPSpecDeclsDefs")); //$NON-NLS-1$
-		suite.addTest(new CSelectionTestsDOMIndexer("testNoDefinitions")); //$NON-NLS-1$
-		suite.addTest(new CSelectionTestsDOMIndexer("testOpenFileDiffDir")); //$NON-NLS-1$
-		suite.addTest(new CSelectionTestsDOMIndexer("testBug101287")); //$NON-NLS-1$
-		suite.addTest(new CSelectionTestsDOMIndexer("testBug103697")); //$NON-NLS-1$
-		suite.addTest(new CSelectionTestsDOMIndexer("testBug76043")); //$NON-NLS-1$
-		
-		return suite;
-	}
-
-	private IProject createProject(String projectName) throws CoreException {
-		ICProject cPrj = CProjectHelper.createCCProject(projectName, "bin"); //$NON-NLS-1$
-		return cPrj.getProject();
 	}
 	
-	public void testSimpleOpenDeclaration() throws Exception {
-		String header = "int x() { return 1; }"; //$NON-NLS-1$
-		importFile("test.h", header); //$NON-NLS-1$
-		String code = "int foo() { \n return x();\n}\n"; //$NON-NLS-1$
-		IFile file = importFile("test.c", code);
-		
-		int offset = code.indexOf("x();\n}\n");
-		IASTNode def = testCtrl_F3(file, offset);
-		assertTrue(def instanceof IASTName);
-		assertEquals(((ASTNode)def).getOffset(), header.indexOf("x")); //$NON-NLS-1$
-		assertEquals(((ASTNode)def).getLength(), "x".length()); //$NON-NLS-1$
-		IASTNode decl = testF3(file, offset);
-		assertTrue(decl instanceof IASTName);
-		assertEquals(((ASTNode)decl).getOffset(), header.indexOf("x")); //$NON-NLS-1$
-		assertEquals(((ASTNode)decl).getLength(), "x".length()); //$NON-NLS-1$
-		
-	}
-
-	public void testSimpleOpenDeclaration2() throws Exception {
-		String header = "int x;\r\n // comment \r\n int y() { return 1; } /* comment */ \r\n int z; \r\n"; //$NON-NLS-1$
-		importFile("testSimpleOpenDeclaration2.h", header); //$NON-NLS-1$
-		String code = "int foo() { \n return y();\n}\n"; //$NON-NLS-1$
-		IFile file = importFile("testSimpleOpenDeclaration2.c", code);
-		
-		int offset = code.indexOf("y();\n}\n");
-		IASTNode def = testCtrl_F3(file, offset);
-		assertTrue(def instanceof IASTName);
-		assertEquals(((ASTNode)def).getOffset(), header.indexOf("y")); //$NON-NLS-1$
-		assertEquals(((ASTNode)def).getLength(), "y".length()); //$NON-NLS-1$
-		IASTNode decl = testF3(file, offset);
-		assertTrue(decl instanceof IASTName);
-		assertEquals(((ASTNode)decl).getOffset(), header.indexOf("y")); //$NON-NLS-1$
-		assertEquals(((ASTNode)decl).getLength(), "y".length()); //$NON-NLS-1$
-		
-	}
-	
-	// perform the tests from CSelectionTestsNoIndexer and make sure they work with an indexer as well:
     public void testBasicDefinition() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("extern int MyInt;       // MyInt is in another file\n"); //$NON-NLS-1$
@@ -524,8 +723,7 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer {
 		offset = code.indexOf("anotherX; // declares anotherX"); //$NON-NLS-1$
         def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
-       	assertNull(def);
-
+        assertNull(def);
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "anotherX"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 471);
@@ -546,8 +744,7 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer {
         int offset = code.indexOf("a1; // declares a"); //$NON-NLS-1$
         IASTNode def = testCtrl_F3(file, offset);
         IASTNode decl = testF3(file, offset);
-       	assertNull(def);
-
+        assertNull(def);
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "a1"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 11);
@@ -556,7 +753,7 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer {
 		offset = code.indexOf("c1; // declares c"); //$NON-NLS-1$
         def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
-       	assertNull(def);
+        assertNull(def);
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "c1"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 46);
@@ -574,7 +771,7 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer {
 		offset = code.indexOf("S1; // declares S"); //$NON-NLS-1$
         def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
-       	assertNull(def);
+        assertNull(def);
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "S1"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 98);
@@ -591,48 +788,6 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer {
 		assertEquals(((IASTName)def).toString(), "Int"); //$NON-NLS-1$
         assertEquals(((ASTNode)def).getOffset(), 128);
         assertEquals(((ASTNode)def).getLength(), 3);
-	}
-	
-	public void testOpenFileDiffDir() throws Exception {
-		importFolder("test"); //$NON-NLS-1$
-		String header = "int x;\r\n // comment \r\n int y(){ return 1; } /* comment */ \r\n int z; \r\n"; //$NON-NLS-1$
-		importFile("test/test.h", header); //$NON-NLS-1$
-		String code = "int foo() { \n return y();\n}\n"; //$NON-NLS-1$
-		IFile file = importFile("test.c", code);
-		
-		int offset = code.indexOf("y();\n}\n");
-		IASTNode def = testCtrl_F3(file, offset);
-		assertTrue(def instanceof IASTName);
-		assertEquals(((ASTNode)def).getOffset(), header.indexOf("y")); //$NON-NLS-1$
-		assertEquals(((ASTNode)def).getLength(), "y".length()); //$NON-NLS-1$
-		IASTNode decl = testF3(file, offset);
-		assertTrue(decl instanceof IASTName);
-		assertEquals(((ASTNode)decl).getOffset(), header.indexOf("y")); //$NON-NLS-1$
-		assertEquals(((ASTNode)decl).getLength(), "y".length()); //$NON-NLS-1$
-		
-	}
-
-	public void testBug101287() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("int abc;\n"); //$NON-NLS-1$
-		buffer.append("int main(int argc, char **argv) {\n"); //$NON-NLS-1$
-		buffer.append("abc\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
-		
-        String code = buffer.toString();
-        IFile file = importFile("testBug101287.c", code); //$NON-NLS-1$
-        
-        int offset = code.indexOf("abc\n"); //$NON-NLS-1$
-        IASTNode def = testCtrl_F3(file, offset);
-        IASTNode decl = testF3(file, offset);
-        assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "abc"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 4);
-        assertEquals(((ASTNode)decl).getLength(), 3);
-        assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "abc"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 4);
-        assertEquals(((ASTNode)decl).getLength(), 3);
 	}
 	
     public void testBug103697() throws Exception {
@@ -682,7 +837,7 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer {
         assertEquals(((ASTNode)decl).getOffset(), 4);
         assertEquals(((ASTNode)decl).getLength(), 1);
     }
-
+    
     public void testBug78354() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("typedef int TestTypeOne;\n"); //$NON-NLS-1$
@@ -703,7 +858,6 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer {
         assertEquals(((IASTName)decl).toString(), "TestTypeOne"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 12);
         assertEquals(((ASTNode)decl).getLength(), 11);
-    }  
-    
-    // REMINDER: see CSelectionTestsDomIndexer#suite() when appending new tests to this suite
+    }
+
 }

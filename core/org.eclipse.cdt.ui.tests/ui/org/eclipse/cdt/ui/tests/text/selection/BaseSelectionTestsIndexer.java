@@ -7,8 +7,9 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
-package org.eclipse.cdt.ui.tests.text.selectiontests;
+package org.eclipse.cdt.ui.tests.text.selection;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -16,17 +17,6 @@ import java.io.InputStream;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICDescriptorOperation;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.testplugin.FileManager;
-import org.eclipse.cdt.internal.core.parser.ParserException;
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -48,6 +38,22 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorOperation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.testplugin.FileManager;
+
+import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDefinitionAction;
 
 /**
  * Base test class for testing Ctrl_F3/F3 with the indexers.
@@ -190,8 +196,8 @@ public class BaseSelectionTestsIndexer extends TestCase {
         if (part instanceof AbstractTextEditor) {
             ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,length));
             
-            final IAction action = ((AbstractTextEditor)part).getAction("OpenDeclarations"); //$NON-NLS-1$
-            action.run();
+            final OpenDeclarationsAction action = (OpenDeclarationsAction) ((AbstractTextEditor)part).getAction("OpenDeclarations"); //$NON-NLS-1$
+            action.runSync();
         
         	// update the file/part to point to the newly opened IFile/IEditorPart
             part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
@@ -278,8 +284,8 @@ public class BaseSelectionTestsIndexer extends TestCase {
         if (part instanceof AbstractTextEditor) {
             ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,length));
             
-            final IAction action = ((AbstractTextEditor)part).getAction("OpenDefinition"); //$NON-NLS-1$
-            action.run();
+            final OpenDefinitionAction action = (OpenDefinitionAction) ((AbstractTextEditor)part).getAction("OpenDefinition"); //$NON-NLS-1$
+            action.runSync();
             
         	// update the file/part to point to the newly opened IFile/IEditorPart
             part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
@@ -328,8 +334,8 @@ public class BaseSelectionTestsIndexer extends TestCase {
         if (part instanceof AbstractTextEditor) {
             ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,length));
             
-            final IAction action = ((AbstractTextEditor)part).getAction("OpenDefinition"); //$NON-NLS-1$
-            action.run();
+            final OpenDefinitionAction action = (OpenDefinitionAction) ((AbstractTextEditor)part).getAction("OpenDefinition"); //$NON-NLS-1$
+            action.runSync();
             
         	// update the file/part to point to the newly opened IFile/IEditorPart
             part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 

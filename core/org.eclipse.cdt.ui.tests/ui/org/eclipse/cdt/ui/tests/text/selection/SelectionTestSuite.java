@@ -9,18 +9,25 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.ui.tests.viewsupport;
+package org.eclipse.cdt.ui.tests.text.selection;
 
 import junit.framework.TestSuite;
 
-public class ViewSupportTestSuite extends TestSuite {
+public class SelectionTestSuite extends TestSuite {
 
     public static TestSuite suite() {
-        return new ViewSupportTestSuite();
+        return new SelectionTestSuite();
     }
     
-    public ViewSupportTestSuite() {
-        super("Tests in package org.eclipse.cdt.ui.tests.viewsupport");
-        addTestSuite(AsyncViewerTest.class);
+    public SelectionTestSuite() {
+        super("Tests in package org.eclipse.cdt.ui.tests.text.selection");
+        
+        // selection tests
+        addTest( CPPSelectionTestsNoIndexer.suite() );
+		addTest( CSelectionTestsNoIndexer.suite() );
+		addTest( CPPSelectionTestsDOMIndexer.suite() );
+		addTest( CSelectionTestsDOMIndexer.suite() );
+		addTest( CPPSelectionTestsCTagsIndexer.suite() );
+		addTest( CSelectionTestsCTagsIndexer.suite() );
     }
 }

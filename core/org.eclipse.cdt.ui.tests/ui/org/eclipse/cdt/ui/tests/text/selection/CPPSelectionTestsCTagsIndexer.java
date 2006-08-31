@@ -7,8 +7,9 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
-package org.eclipse.cdt.ui.tests.text.selectiontests;
+package org.eclipse.cdt.ui.tests.text.selection;
 
 import java.io.File;
 

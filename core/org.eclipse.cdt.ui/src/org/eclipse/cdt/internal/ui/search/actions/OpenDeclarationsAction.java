@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search.actions;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.ITextSelection;
@@ -70,7 +72,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 					if (binding != null && !(binding instanceof IProblemBinding)) {
 						final IASTName[] declNames = ast.getDeclarations(binding);
 						if (declNames.length > 0) {
-							Display.getDefault().asyncExec(new Runnable() {
+							runInUIThread(new Runnable() {
 								public void run() {
 									try {
 										open(declNames[0]);
@@ -111,6 +113,26 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 		selNode = getSelectedStringFromEditor();
 		if (selNode != null) {
 			new Runner().schedule();
+		}
+	}
+
+	private void runInUIThread(Runnable runnable) {
+		if (Display.getCurrent() != null) {
+			runnable.run();
+		}
+		else {
+			Display.getDefault().asyncExec(runnable);
+		}
+	}
+
+	/**
+	 * For the purpose of regression testing.
+	 * @since 4.0
+	 */
+	public void runSync() {
+		selNode = getSelectedStringFromEditor();
+		if (selNode != null) {
+			new Runner().run(new NullProgressMonitor());
 		}
 	}
 }

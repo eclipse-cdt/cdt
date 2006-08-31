@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Anton Leherbauer (Wind River Systems)
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests;
 
@@ -66,6 +67,7 @@ import org.eclipse.cdt.ui.tests.text.selectiontests.CPPSelectionTestsNoIndexer;
 import org.eclipse.cdt.ui.tests.text.selectiontests.CSelectionTestsCTagsIndexer;
 import org.eclipse.cdt.ui.tests.text.selectiontests.CSelectionTestsDOMIndexer;
 import org.eclipse.cdt.ui.tests.text.selectiontests.CSelectionTestsNoIndexer;
+import org.eclipse.cdt.ui.tests.viewsupport.ViewSupportTestSuite;
 
 /**
  * Test all areas of the UI.
@@ -151,6 +153,9 @@ public class AutomatedSuite extends TestSuite {
 		// highlighting tests
 		addTest(SemanticHighlightingTest.suite());
 		addTest(InactiveCodeHighlightingTest.suite());
+		
+		// tests for package viewsupport
+		addTest(ViewSupportTestSuite.suite());
 	}
 	
 }

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: xlC Error Parser Plug-in
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.errorparsers.xlc; singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: org.eclipse.cdt.errorparsers.xlc.Activator
@@ -11,4 +11,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.cdt.errorparsers.xlc
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %providerName

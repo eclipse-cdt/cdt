@@ -345,6 +345,7 @@ public class Target extends SessionObject implements ICDITarget {
 			} else {
 				ids = info.getThreadIds();
 				names = info.getThreadNames();
+				currentThreadId = info.getCurrentThread();
 			}
 			if (ids != null && ids.length > 0) {
 				cthreads = new Thread[ids.length];
@@ -362,7 +363,6 @@ public class Target extends SessionObject implements ICDITarget {
 				// Provide a dummy.
 				cthreads = new Thread[]{new Thread(this, 0)};
 			}
-			currentThreadId = info.getCurrentThread();
 			// FIX: When attaching there is no thread selected
 			// We will choose the first one as a workaround.
 			if (currentThreadId == 0 && cthreads.length > 0) {

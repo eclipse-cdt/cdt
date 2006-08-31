@@ -1,3 +1,8 @@
+2006-08-31 Mikhail Khodjaiants
+	Bug 155816: NPE thrown by info threads
+	Applied patch from James Blackburn (jamesblackburn+eclipse@gmail.com).
+	* Target.java
+
 2006-08-22 Mikhail Khodjaiants
 	Bug 145758: Unable to use the default command factories.
 	* MANIFEST.MF

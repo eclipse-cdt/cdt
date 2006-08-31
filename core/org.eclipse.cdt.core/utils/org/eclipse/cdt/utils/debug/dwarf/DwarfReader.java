@@ -218,7 +218,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 
 		m_leb128Size = 0;
 		while (true) {
-			b = (short) data[offset];
+			b = (short) data[offset++];
 			if (b == -1)
 				break; //throw new IOException("no more data");
 			m_leb128Size++;

@@ -1469,8 +1469,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 
 
 		public ISystemValidator getUserIdValidator(ISubSystemConfiguration config) {
-			// TODO Auto-generated method stub
-			return null;
+			return ((SubSystemConfiguration)config).getUserIdValidator();
 		}
 
 }

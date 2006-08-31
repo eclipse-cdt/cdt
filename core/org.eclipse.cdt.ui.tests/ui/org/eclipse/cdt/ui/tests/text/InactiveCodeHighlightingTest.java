@@ -82,9 +82,11 @@ public class InactiveCodeHighlightingTest extends TestCase {
 		}
 	}
 
-	protected Position createPosition(int line, int column, int length) throws BadLocationException {
+	protected Position createPosition(int startLine, int endLine) throws BadLocationException {
 		IDocument document= fSourceViewer.getDocument();
-		return new Position(document.getLineOffset(line) + column, length);
+		int startOffset= document.getLineOffset(startLine);
+		int endOffset= document.getLineOffset(endLine) + document.getLineLength(endLine) - document.getLineDelimiter(endLine).length();
+		return new Position(startOffset, endOffset - startOffset);
 	}
 
 	String toString(Position[] positions) throws BadLocationException {
@@ -93,9 +95,9 @@ public class InactiveCodeHighlightingTest extends TestCase {
 		buf.append("Position[] expected= new Position[] {\n");
 		for (int i= 0, n= positions.length; i < n; i++) {
 			Position position= positions[i];
-			int line= document.getLineOfOffset(position.getOffset());
-			int column= position.getOffset() - document.getLineOffset(line);
-			buf.append("\tcreatePosition(" + line + ", " + column + ", " + position.getLength() + "),\n");
+			int startLine= document.getLineOfOffset(position.getOffset());
+			int endLine= document.getLineOfOffset(position.getOffset()+position.getLength()-1);
+			buf.append("\tcreatePosition(" + startLine + ", " + endLine + "),\n");
 		}
 		buf.append("};\n");
 		return buf.toString();
@@ -108,17 +110,16 @@ public class InactiveCodeHighlightingTest extends TestCase {
 		return (Position[]) positions.toArray(new Position[positions.size()]);
 	}
 
-	
 	public void testInactiveCodePositions() throws BadLocationException {
 		Position[] actual= getInactiveCodePositions();
 		Position[] expected= new Position[] {
-				createPosition(2, 0, 37),
-				createPosition(11, 0, 37),
-				createPosition(15, 0, 164),
-				createPosition(28, 0, 107),
-				createPosition(39, 0, 50),
-				createPosition(47, 0, 209),
-				createPosition(67, 0, 26),
+				createPosition(2, 4),
+				createPosition(11, 13),
+				createPosition(15, 22),
+				createPosition(28, 34),
+				createPosition(39, 41),
+				createPosition(47, 58),
+				createPosition(67, 69),
 			};
 		if (false) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);

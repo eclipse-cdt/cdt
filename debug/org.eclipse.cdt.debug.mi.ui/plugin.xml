@@ -72,5 +72,15 @@
                tooltip="%VerboseMode.tooltip"/>
       </objectContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="org.eclipse.cdt.debug.mi.ui.console.MiConsolePageParticipant"
+            id="org.eclipse.cdt.debug.mi.ui.console.miConsolePageParticipant">
+         <enablement>
+            <instanceof value="org.eclipse.debug.internal.ui.views.console.ProcessConsole"/>
+         </enablement>
+      </consolePageParticipant>
+   </extension>
 
 </plugin>

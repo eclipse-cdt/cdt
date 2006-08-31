@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.mi.internal.ui.actions; 
 
 import org.eclipse.cdt.debug.mi.core.GDBProcess;
+import org.eclipse.cdt.debug.mi.ui.console.VerboseModeChangedEvent;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -35,6 +36,7 @@ public class VerboseModeActionDelegate extends ActionDelegate implements IObject
 		if ( fProcess != null ) {
 			boolean enabled = fProcess.getTarget().isVerboseModeEnabled();
 			fProcess.getTarget().enableVerboseMode( !enabled );
+			fProcess.getTarget().getMISession().notifyObservers(new VerboseModeChangedEvent(fProcess.getTarget().getMISession(),0));
 		}
 	}
 
@@ -44,7 +46,8 @@ public class VerboseModeActionDelegate extends ActionDelegate implements IObject
 	public void selectionChanged( IAction action, ISelection selection ) {
 		IStructuredSelection s = (IStructuredSelection)selection;
 		fProcess = ( !s.isEmpty() ) ? (GDBProcess)s.getFirstElement() : null;
-		action.setEnabled( fProcess != null );
+		action.setEnabled( fProcess != null && !fProcess.isTerminated());
 		action.setChecked( fProcess != null && fProcess.getTarget().isVerboseModeEnabled() );
 	}
+	
 }

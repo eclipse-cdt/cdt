@@ -42,7 +42,7 @@ public class SystemNewProfileAction extends SystemBaseWizardAction
 		super(SystemResources.ACTION_NEWPROFILE_LABEL, SystemResources.ACTION_NEWPROFILE_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWPROFILE_ID), parent);
         setSelectionSensitive(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);  		  
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0003");		    
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0003"); //$NON-NLS-1$		    
 	}
 	/**
 	 * Constructor for SystemNewProfileAction where you can choose between "New profile..." and "New -> Profile"
@@ -57,7 +57,7 @@ public class SystemNewProfileAction extends SystemBaseWizardAction
 			setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);
 		else  		  
 			setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW_NONCASCADING);
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0003");		    
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0003"); //$NON-NLS-1$		    
 	}
 	
 	/**

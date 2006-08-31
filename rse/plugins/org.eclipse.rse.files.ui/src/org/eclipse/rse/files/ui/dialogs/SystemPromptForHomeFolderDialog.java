@@ -83,7 +83,7 @@ public class SystemPromptForHomeFolderDialog
         boolean readOnly = false;
         folderCombo = new SystemRemoteFolderCombo(composite_prompts, SWT.BORDER, null, readOnly);        
         folderCombo.setSystemConnection(connection);
-        folderCombo.setText("/home/"+connection.getDefaultUserId());
+        folderCombo.setText("/home/"+connection.getDefaultUserId()); //$NON-NLS-1$
 
         // listen for selections
         //folderCombo.addSelectionListener(this);

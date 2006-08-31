@@ -113,7 +113,7 @@ public class SystemSelectRemoteFileOrFolderForm
 	protected ISystemRegistry sr = null;
 	protected String    verbage = null;
 	protected String    treeTip = null;	
-	protected String 	locationPrompt = "";
+	protected String 	locationPrompt = ""; //$NON-NLS-1$
 	protected String    fileTypes;
 	protected boolean   fileMode;
 	protected boolean   valid = true;
@@ -177,8 +177,8 @@ public class SystemSelectRemoteFileOrFolderForm
         // create the input provider that drives the contents of the tree
         inputProvider = getInputProvider();
         
-         String initialFilterString = "*"; // change to "*" for defect 43492
-        inputProvider.setFilterString(fileMode ? initialFilterString : initialFilterString+" /nf");
+         String initialFilterString = "*"; // change to "*" for defect 43492 //$NON-NLS-1$
+        inputProvider.setFilterString(fileMode ? initialFilterString : initialFilterString+" /nf"); //$NON-NLS-1$
         
         // create object matcher
         if (fileMode)
@@ -390,9 +390,9 @@ public class SystemSelectRemoteFileOrFolderForm
 		/**/
 		// it might be a bug, bug when asking for the parent of '/', I get back '/'!!!
 		if ((parentFolder != null) && 
-		    (selection.getAbsolutePath().equals("/") &&
+		    (selection.getAbsolutePath().equals("/") && //$NON-NLS-1$
 		     (parentFolder.getAbsolutePath()!=null) &&
-		     parentFolder.getAbsolutePath().equals("/")))
+		     parentFolder.getAbsolutePath().equals("/"))) //$NON-NLS-1$
           parentFolder = null;		
 		if (parentFolder != null)
 		{
@@ -435,7 +435,7 @@ public class SystemSelectRemoteFileOrFolderForm
 	public void setFileTypes(String fileTypes)
 	{
 		this.fileTypes = fileTypes;
-        inputProvider.setFilterString("/"+ fileTypes);
+        inputProvider.setFilterString("/"+ fileTypes); //$NON-NLS-1$
 	}
     /**
      * Specify the zero-based auto-expand level for the tree. The default is zero, meaning
@@ -651,8 +651,8 @@ public class SystemSelectRemoteFileOrFolderForm
 		((GridData)ps_composite.getLayoutData()).verticalAlignment = GridData.FILL;
 
         // SPACER LINES
-        spacer1 = SystemWidgetHelpers.createLabel(ps_composite, "", 1);
-        spacer2 = SystemWidgetHelpers.createLabel(ps_composite, "", 1);
+        spacer1 = SystemWidgetHelpers.createLabel(ps_composite, "", 1); //$NON-NLS-1$
+        spacer2 = SystemWidgetHelpers.createLabel(ps_composite, "", 1); //$NON-NLS-1$
         // PROPERTY SHEET VIEWER
         ps = new SystemPropertySheetForm(shell, ps_composite, SWT.BORDER, msgLine);			
 	}
@@ -703,7 +703,7 @@ public class SystemSelectRemoteFileOrFolderForm
         //verbageLabel = SystemWidgetHelpers.createLabel(composite_prompts, verbage, gridColumns);
 
         // SPACER LINE
-        SystemWidgetHelpers.createLabel(composite_prompts, "", gridColumns);
+        SystemWidgetHelpers.createLabel(composite_prompts, "", gridColumns); //$NON-NLS-1$
        
         // LOCATION PROMPT
         if (showLocationPrompt)
@@ -848,7 +848,7 @@ public class SystemSelectRemoteFileOrFolderForm
 		if ((selectionSize > 1) && !tree.sameParent() && !allowForMultipleParents)
 		{
 			clearErrorMessage();
-			setNameText("");
+			setNameText(""); //$NON-NLS-1$
 			setPageComplete();
 		    return; // don't enable OK/Add if selections from different parents
 		}
@@ -862,7 +862,7 @@ public class SystemSelectRemoteFileOrFolderForm
 			return;	
 		}
 		clearErrorMessage();
-		setNameText("");
+		setNameText(""); //$NON-NLS-1$
 		setPageComplete();
 		previousSelection = selectedObject;  
 		if (selectedObject != null)

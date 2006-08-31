@@ -276,7 +276,7 @@ public class SystemCommandsViewPart
 	private IStatusLineManager _statusLine = null;
 
 	// constants			
-	public static final String ID = "org.eclipse.rse.shells.ui.view.commandsView";
+	public static final String ID = "org.eclipse.rse.shells.ui.view.commandsView"; //$NON-NLS-1$
 	// matches id in plugin.xml, view tag	
 
 	public void setFocus()
@@ -312,7 +312,7 @@ public class SystemCommandsViewPart
 		selectionService.addSelectionListener(this);
 		
 
-		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000");
+		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
 
 		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
@@ -369,7 +369,7 @@ public class SystemCommandsViewPart
 				}
 				else
 				{
-					_printTableAction.setTableView("", null);
+					_printTableAction.setTableView("", null); //$NON-NLS-1$
 				}
 				
 				_clearAction.checkEnabledState();
@@ -514,7 +514,7 @@ public class SystemCommandsViewPart
 			for (int i = 0; i < connections.length; i++)
 			{
 				IHost connection = connections[i];
-				if (registry.isAnySubSystemConnected(connection) || connection.getSystemType().equals("Local"))
+				if (registry.isAnySubSystemConnected(connection) || connection.getSystemType().equals("Local")) //$NON-NLS-1$
 				{
 					IRemoteCmdSubSystem[] cmdSubSystems = RemoteCommandHelpers.getCmdSubSystems(connection);
 					if (cmdSubSystems.length == 1)
@@ -639,7 +639,7 @@ public class SystemCommandsViewPart
 		for (int i = 0; i < connections.length; i++)
 		{
 			IHost connection = connections[i];
-			if (registry.isAnySubSystemConnected(connection) || connection.getSystemType().equals("Local"))
+			if (registry.isAnySubSystemConnected(connection) || connection.getSystemType().equals("Local")) //$NON-NLS-1$
 			{
 				IRemoteCmdSubSystem[] cmdSubSystems = RemoteCommandHelpers.getCmdSubSystems(connection);
 				if (cmdSubSystems.length > 0)

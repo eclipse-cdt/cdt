@@ -360,31 +360,27 @@ public abstract class SystemAbstractPopupMenuExtensionAction
     	return conn;
     }
 
-
-
-    
-      
 	/**
 	 * Debug method to print out details of given selected object...
 	 */
 	public void printTest() 
 	{
-		System.out.println("Testing. Number of selected objects = "+getSelectionCount());
+		System.out.println("Testing. Number of selected objects = "+getSelectionCount()); //$NON-NLS-1$
         Object obj = getFirstSelectedRemoteObject();
         if (obj == null)
-          System.out.println("selected obj is null");
+          System.out.println("selected obj is null"); //$NON-NLS-1$
         else
         {
           ISystemRemoteElementAdapter adapter = getRemoteAdapter(obj);
           System.out.println();
-          System.out.println("REMOTE INFORMATION FOR FIRST SELECTION");
-          System.out.println("--------------------------------------");
-          System.out.println("Remote object name................: " + getRemoteObjectName(obj,adapter));
-          System.out.println("Remote object subsystem factory id: " + getRemoteObjectSubSystemConfigurationId(obj,adapter));          
-          System.out.println("Remote object type category.......: " + getRemoteObjectTypeCategory(obj,adapter));
-          System.out.println("Remote object type ...............: " + getRemoteObjectType(obj,adapter));
-          System.out.println("Remote object subtype ............: " + getRemoteObjectSubType(obj,adapter));
-          System.out.println("Remote object subsubtype .........: " + getRemoteObjectSubSubType(obj,adapter));
+          System.out.println("REMOTE INFORMATION FOR FIRST SELECTION"); //$NON-NLS-1$
+          System.out.println("--------------------------------------"); //$NON-NLS-1$
+          System.out.println("Remote object name................: " + getRemoteObjectName(obj,adapter)); //$NON-NLS-1$
+          System.out.println("Remote object subsystem factory id: " + getRemoteObjectSubSystemConfigurationId(obj,adapter)); //$NON-NLS-1$          
+          System.out.println("Remote object type category.......: " + getRemoteObjectTypeCategory(obj,adapter)); //$NON-NLS-1$
+          System.out.println("Remote object type ...............: " + getRemoteObjectType(obj,adapter)); //$NON-NLS-1$
+          System.out.println("Remote object subtype ............: " + getRemoteObjectSubType(obj,adapter)); //$NON-NLS-1$
+          System.out.println("Remote object subsubtype .........: " + getRemoteObjectSubSubType(obj,adapter)); //$NON-NLS-1$
           System.out.println();
         }
         System.out.println();

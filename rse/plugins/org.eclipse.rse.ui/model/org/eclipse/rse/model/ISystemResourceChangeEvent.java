@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Item;
 /**
  * Interface of event sent when a remote system resource changes.
  * These events are mainly for internal use. BPs/ISVs should instead 
- *  fire and monitor for {@link org.eclipse.rse.model.ISystemModelChangeEvent}.
+ *  fire and monitor for {@link org.eclipse.rse.core.model.ISystemModelChangeEvent}.
  * @see org.eclipse.rse.model.ISystemResourceChangeEvents
  */
 public interface ISystemResourceChangeEvent extends ISystemResourceChangeEvents

@@ -92,7 +92,7 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 	{
 		checkIsConnected();
 		HostProcessFilterImpl rpfs = new HostProcessFilterImpl();
-		rpfs.setPid("" + pid);
+		rpfs.setPid("" + pid); //$NON-NLS-1$
 		IRemoteProcessContext context = new RemoteProcessContext(this, null, rpfs);
 		IHostProcess process = getProcessService().getProcess(null, pid);
 		return getHostProcessToRemoteProcessAdapter().convertToRemoteProcess(context, null, process);

@@ -45,7 +45,7 @@ public class SystemTeamViewMakeActiveProfileAction extends SystemBaseAction
 		      parent);
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CHANGE);
-		setHelp(RSEUIPlugin.HELPPREFIX+"ActionMakeActive");
+		setHelp(RSEUIPlugin.HELPPREFIX+"ActionMakeActive"); //$NON-NLS-1$
 	}
 
 	/**

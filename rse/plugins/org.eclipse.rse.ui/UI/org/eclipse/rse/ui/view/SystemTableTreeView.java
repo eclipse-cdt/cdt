@@ -138,7 +138,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			Object value = adapter.getPropertyValue(property);
 			if (value == null)
 			{
-				value = "";
+				value = ""; //$NON-NLS-1$
 			}
 			return value;
 		}
@@ -308,7 +308,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			_charWidth = tableTree.getFont().getFontData()[0].getHeight() / 2;
 			computeLayout();
 
-			_menuManager = new MenuManager("#PopupMenu");
+			_menuManager = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 			_menuManager.setRemoveAllWhenShown(true);
 			_menuManager.addMenuListener(this);
 			Menu menu = _menuManager.createContextMenu(tableTree);

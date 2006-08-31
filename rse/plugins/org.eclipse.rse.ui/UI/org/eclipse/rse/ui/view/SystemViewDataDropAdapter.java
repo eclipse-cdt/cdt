@@ -54,7 +54,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter
 
 	protected static final long hoverThreshold = 1500;
 	public static final char CONNECTION_DELIMITER = ':';
-	public static final String RESOURCE_SEPARATOR = "|";
+	public static final String RESOURCE_SEPARATOR = "|"; //$NON-NLS-1$
 
 	protected int _sourceType = SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE;
 	/**
@@ -98,7 +98,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter
 
 		// get the sources	
 		//StringTokenizer tokenizer = new StringTokenizer(new String(result), RESOURCE_SEPARATOR);
-		String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
+		String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR); //$NON-NLS-1$
 		
 
 		ArrayList srcObjects = new ArrayList();
@@ -245,10 +245,10 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter
 	{
 		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		// first extract subsystem id
-		int connectionDelim = str.indexOf(":");
+		int connectionDelim = str.indexOf(":"); //$NON-NLS-1$
 		if (connectionDelim == -1) // not subsystem, therefore likely to be a connection
 		{
-		    int profileDelim = str.indexOf(".");
+		    int profileDelim = str.indexOf("."); //$NON-NLS-1$
 			if (profileDelim != -1) 
 			{
 			    String profileId = str.substring(0, profileDelim);
@@ -259,7 +259,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter
 		}
 		
 		
-		int subsystemDelim = str.indexOf(":", connectionDelim + 1);
+		int subsystemDelim = str.indexOf(":", connectionDelim + 1); //$NON-NLS-1$
 		if (subsystemDelim == -1) // not remote object, therefore likely to be a subsystem
 		{
 		    return registry.getSubSystem(str);

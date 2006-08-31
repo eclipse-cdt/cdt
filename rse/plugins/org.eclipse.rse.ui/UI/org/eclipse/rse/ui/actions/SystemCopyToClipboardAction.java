@@ -66,7 +66,7 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 
 		allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0116");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0116"); //$NON-NLS-1$
 	}
 
 	public void run()
@@ -82,8 +82,8 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 		Iterator iterator = ss.iterator();
 
 		// marshall data
-		StringBuffer textStream = new StringBuffer("");
-		StringBuffer dataStream = new StringBuffer("");
+		StringBuffer textStream = new StringBuffer(""); //$NON-NLS-1$
+		StringBuffer dataStream = new StringBuffer(""); //$NON-NLS-1$
 		ArrayList fileNames = new ArrayList();
 		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 
@@ -109,7 +109,7 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 						String subSystemId = registry.getAbsoluteNameForSubSystem(subSystem);
 
 						dataStream.append(subSystemId);
-						dataStream.append(":");
+						dataStream.append(":"); //$NON-NLS-1$
 
 						String objectId = adapter.getAbsoluteName(dragObject);
 						dataStream.append(objectId);
@@ -165,7 +165,7 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 	 * @return the string to prepend for the selected object.
 	 */
 	protected String getTextTransferPrepend(Object obj, ISystemViewElementAdapter adapter) {
-	    return "";
+	    return ""; //$NON-NLS-1$
 	}
 	
 	/**
@@ -176,7 +176,7 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 	 * @return the string to append for the selected object.
 	 */
 	protected String getTextTransferAppend(Object obj, ISystemViewElementAdapter adapter) {
-	    return System.getProperty("line.separator");
+	    return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
 
 	/**

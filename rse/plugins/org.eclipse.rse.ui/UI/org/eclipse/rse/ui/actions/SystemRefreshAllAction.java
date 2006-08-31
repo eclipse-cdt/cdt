@@ -18,7 +18,7 @@ package org.eclipse.rse.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
@@ -51,7 +51,7 @@ public class SystemRefreshAllAction extends SystemBaseAction
         //setSelectionSensitive(false);
         setSelectionSensitive(true);// use selection to decide what to invalidate
         
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0009");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0009"); //$NON-NLS-1$
 	}
 
 	public void setRootObject(Object object)

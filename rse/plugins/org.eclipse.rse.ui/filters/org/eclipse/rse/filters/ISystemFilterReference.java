@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.filters;
+import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemContentsType;
 import org.eclipse.rse.core.references.IRSEReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.model.ISystemContainer;
-import org.eclipse.rse.model.ISystemContentsType;
 
 
 /**

@@ -17,8 +17,8 @@
 package org.eclipse.rse.internal.model;
 import java.util.Vector;
 
-import org.eclipse.rse.model.ISystemModelChangeEvent;
-import org.eclipse.rse.model.ISystemModelChangeListener;
+import org.eclipse.rse.core.model.ISystemModelChangeEvent;
+import org.eclipse.rse.core.model.ISystemModelChangeListener;
 
 
 /**

@@ -28,15 +28,15 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceSet;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -149,7 +149,7 @@ public class SystemDNDTransferRunnable extends Job
 		
 		String targetPath = targetAdapter.getAbsoluteName(target);
 	    boolean sameSubSystemType = true;
-	    String targetType = "";
+	    String targetType = ""; //$NON-NLS-1$
 	    if (targetSubSystem != null)
 	    {
 	        targetType = targetSubSystem.getName();																		

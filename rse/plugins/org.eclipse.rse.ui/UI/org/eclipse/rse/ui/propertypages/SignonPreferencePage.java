@@ -191,7 +191,7 @@ public final class SignonPreferencePage extends PreferencePage implements IWorkb
 		pwdTable.setLinesVisible(true);
 		pwdTable.setHeaderVisible(true);
 		pwdTable.addListener(SWT.Selection, this);
-		SystemWidgetHelpers.setHelp(pwdTable, RSEUIPlugin.HELPPREFIX + "pwdi0000");
+		SystemWidgetHelpers.setHelp(pwdTable, RSEUIPlugin.HELPPREFIX + "pwdi0000"); //$NON-NLS-1$
 		
 		TableLayout tableLayout = new TableLayout();
 		tableLayout.addColumnData(new ColumnWeightData(100, true));
@@ -235,11 +235,11 @@ public final class SignonPreferencePage extends PreferencePage implements IWorkb
 		changeButton.setEnabled(false);
 		removeButton.setEnabled(false);
 		
-		SystemWidgetHelpers.setHelp(addButton, RSEUIPlugin.HELPPREFIX + "pwdi0000");
-		SystemWidgetHelpers.setHelp(changeButton, RSEUIPlugin.HELPPREFIX + "pwdi0000");
-		SystemWidgetHelpers.setHelp(removeButton, RSEUIPlugin.HELPPREFIX + "pwdi0000");
+		SystemWidgetHelpers.setHelp(addButton, RSEUIPlugin.HELPPREFIX + "pwdi0000"); //$NON-NLS-1$
+		SystemWidgetHelpers.setHelp(changeButton, RSEUIPlugin.HELPPREFIX + "pwdi0000"); //$NON-NLS-1$
+		SystemWidgetHelpers.setHelp(removeButton, RSEUIPlugin.HELPPREFIX + "pwdi0000"); //$NON-NLS-1$
 
-		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "pwdi0000");
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "pwdi0000"); //$NON-NLS-1$
 		SystemWidgetHelpers.setMnemonics(parent);
 		
 		return parent;

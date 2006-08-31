@@ -16,10 +16,10 @@
 
 package org.eclipse.rse.ui.view;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.ISystemMessageObject;
+import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemMessageObject;
-import org.eclipse.rse.model.SystemMessageObject;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 

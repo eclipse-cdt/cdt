@@ -24,9 +24,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.model.ISystemPreferenceChangeEvents;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeEvent;
 import org.eclipse.rse.internal.model.SystemProfileManager;
-import org.eclipse.rse.model.ISystemPreferenceChangeEvents;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
@@ -189,7 +189,7 @@ public class RemoteSystemsPreferencePage
         (new Mnemonics()).setOnPreferencePage(true).setMnemonics(getFieldEditorParent());
         
         // set help
-		SystemWidgetHelpers.setCompositeHelp(getFieldEditorParent(), RSEUIPlugin.HELPPREFIX+"rsep0000");
+		SystemWidgetHelpers.setCompositeHelp(getFieldEditorParent(), RSEUIPlugin.HELPPREFIX+"rsep0000"); //$NON-NLS-1$
 	}
 	
 	// ---------------------------------------------------------
@@ -392,7 +392,7 @@ public class RemoteSystemsPreferencePage
 	    	defaultUserId = "null";
 	    }
 	    
-	    keyValues.put(sysType.getName(), "" + sysTypeAdapter.isEnabled(sysType) + SystemTypeFieldEditor.EACHVALUE_DELIMITER + defaultUserId);
+	    keyValues.put(sysType.getName(), "" + sysTypeAdapter.isEnabled(sysType) + SystemTypeFieldEditor.EACHVALUE_DELIMITER + defaultUserId); //$NON-NLS-1$
 		String s = SystemTypeFieldEditor.createString(keyValues);
 
 		if (s != null)
@@ -482,7 +482,7 @@ public class RemoteSystemsPreferencePage
 	 */
 	protected static Hashtable parseString(String allvalues)
 	{
-		StringTokenizer tokens = new StringTokenizer(allvalues, "=;");
+		StringTokenizer tokens = new StringTokenizer(allvalues, "=;"); //$NON-NLS-1$
 		Hashtable keyValues = new Hashtable(10);
 		int count = 0;
 		String token1=null;
@@ -530,7 +530,7 @@ public class RemoteSystemsPreferencePage
 		if (allvalues == null)
 		  return new String[0];
 		//StringTokenizer tokens = new StringTokenizer(allvalues, ";");
-		String[] tokens = allvalues.split(";");
+		String[] tokens = allvalues.split(";"); //$NON-NLS-1$
 		return tokens;
 		/*
 		Vector v = new Vector();
@@ -590,7 +590,7 @@ public class RemoteSystemsPreferencePage
 		
 		String defaultProfileNames = ISystemPreferencesConstants.DEFAULT_ACTIVEUSERPROFILES;
 		String userProfileName = SystemProfileManager.getDefaultPrivateSystemProfileName();
-		defaultProfileNames += ";" + userProfileName;
+		defaultProfileNames += ";" + userProfileName; //$NON-NLS-1$
 		
 		
 		store.setDefault(ISystemPreferencesConstants.ACTIVEUSERPROFILES,       defaultProfileNames);

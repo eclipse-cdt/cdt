@@ -14,15 +14,15 @@ package org.eclipse.rse.examples.daytime.subsystems;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.rse.core.model.ISystemMessageObject;
+import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.examples.daytime.model.DaytimeResource;
 import org.eclipse.rse.examples.daytime.service.IDaytimeService;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemMessageObject;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.SystemMessageObject;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;

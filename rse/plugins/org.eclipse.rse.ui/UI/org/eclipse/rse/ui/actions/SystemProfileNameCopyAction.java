@@ -35,10 +35,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 
-
-
-
-
 /**
  * A copy profile action. Will copy the profile, and all connections for the profile. 
  * We must first prompt user for a new name for the copied profile.
@@ -65,7 +61,7 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
 		sr = RSEUIPlugin.getTheSystemRegistry();
 		setSelectionSensitive(true);
         allowOnMultipleSelection(false);
-		setHelp(RSEUIPlugin.HELPPREFIX+"actndupr");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actndupr"); //$NON-NLS-1$
 	}
 	
 	/**

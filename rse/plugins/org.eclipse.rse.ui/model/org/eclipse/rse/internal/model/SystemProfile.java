@@ -67,7 +67,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
     
     /**
      * Convenience method for create a new connection within this profile.
-     * Shortcut for {@link ISystemRegistry#createHost(String,String,String,String)}
+     * Shortcut for {@link org.eclipse.rse.model.ISystemRegistry#createHost(String,String,String,String)}
      */
     public IHost createHost(String systemType, String connectionName, String hostName, String description) throws Exception
     {
@@ -138,14 +138,14 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
    	    return Platform.getAdapterManager().getAdapter(this, adapterType);	
     }   
 
-
+    //For debugging
 	public String toString() {
 		String result = getName();
 		if (result == null) {
 			StringBuffer buf = new StringBuffer(super.toString());
-			buf.append("Profile(name: ");
+			buf.append("Profile(name: "); //$NON-NLS-1$
 			buf.append(name);
-			buf.append(", defaultPrivate: ");
+			buf.append(", defaultPrivate: "); //$NON-NLS-1$
 			buf.append(defaultPrivate);
 			buf.append(')');
 			result = buf.toString();

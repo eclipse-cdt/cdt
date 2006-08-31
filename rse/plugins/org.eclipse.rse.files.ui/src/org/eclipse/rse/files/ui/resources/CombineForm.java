@@ -64,7 +64,7 @@ public class CombineForm extends SystemSelectRemoteFileOrFolderForm
 	protected ValidatorFileName validator;
 	protected ValidatorArchiveName arcvalidator;
 	protected boolean prePop;	
-	protected String nameAndTypePrompt = "";
+	protected String nameAndTypePrompt = ""; //$NON-NLS-1$
 	protected String[] disallowedExtensions;
 	 
    /**
@@ -117,12 +117,12 @@ public class CombineForm extends SystemSelectRemoteFileOrFolderForm
 		public void modifyText(ModifyEvent e) {
 			   fileName = fileNameText.getText();
 			   setPageComplete();
-			   if (fileName.indexOf(".") != -1)
+			   if (fileName.indexOf(".") != -1) //$NON-NLS-1$
 			   {
 			   		SystemMessage isValidMsg = arcvalidator.validate(fileName);
 			   		if (isValidMsg == null)
 			   		{
-			   			int i = fileName.lastIndexOf(".");
+			   			int i = fileName.lastIndexOf("."); //$NON-NLS-1$
 						fileType = fileName.substring(i+1);
 			   			fileTypeCombo.setText(fileType);
 			   		}
@@ -225,7 +225,7 @@ public class CombineForm extends SystemSelectRemoteFileOrFolderForm
    	String nameToCheck = null;
    	
    	if (fileName == null) {
-   		nameToCheck = "";
+   		nameToCheck = ""; //$NON-NLS-1$
    	}
    	else {
    		nameToCheck = fileName;
@@ -252,11 +252,11 @@ public class CombineForm extends SystemSelectRemoteFileOrFolderForm
 	
    public String getFileName() {
    	
-   		if (fileName.endsWith("." + fileType)) {
+   		if (fileName.endsWith("." + fileType)) { //$NON-NLS-1$
    			return fileName;
    		}
    		else {
-	   		return fileName + "." + fileType;
+	   		return fileName + "." + fileType; //$NON-NLS-1$
    		}
    }
 	
@@ -339,11 +339,11 @@ public class CombineForm extends SystemSelectRemoteFileOrFolderForm
 		if (prePop)
 		{
 			String file = selection.getName();
-			int i = file.lastIndexOf(".");
+			int i = file.lastIndexOf("."); //$NON-NLS-1$
 			if (i == -1)
 			{
 				fileName = file;
-				fileType = "";
+				fileType = ""; //$NON-NLS-1$
 			}
 			else
 			{
@@ -353,7 +353,7 @@ public class CombineForm extends SystemSelectRemoteFileOrFolderForm
 		}
 		else
 		{
-			fileName = "";
+			fileName = ""; //$NON-NLS-1$
 		}		
 	}
 

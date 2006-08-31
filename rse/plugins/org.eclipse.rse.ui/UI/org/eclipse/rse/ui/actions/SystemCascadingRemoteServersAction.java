@@ -43,7 +43,7 @@ public class SystemCascadingRemoteServersAction extends SystemBaseSubMenuAction 
 		setMenuID(ISystemContextMenuConstants.MENU_STARTSERVER);
         setCreateMenuEachTime(false);
         setPopulateMenuEachTime(false);
-        setHelp(RSEUIPlugin.HELPPREFIX+"actnsrsv");
+        setHelp(RSEUIPlugin.HELPPREFIX+"actnsrsv"); //$NON-NLS-1$
 	}
 
 	/**

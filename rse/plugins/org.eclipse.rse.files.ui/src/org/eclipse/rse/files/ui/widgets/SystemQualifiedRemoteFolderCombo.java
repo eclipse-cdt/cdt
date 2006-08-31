@@ -736,7 +736,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
               IRemoteFile folder = browseAction.getSelectedFolder();
               if (folder != null)
                 setFolder(folder);
-		  };
+		  }
 	   };
 	   browseButton.addSelectionListener(selectionListener);
 	}
@@ -763,9 +763,9 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 	}
 	protected static Button createPushButton(Composite group, ResourceBundle bundle, String key)
 	{
-		String label = bundle.getString(key+"label");
+		String label = bundle.getString(key+"label"); //$NON-NLS-1$
 	    Button button = createPushButton(group,label);
-	    button.setToolTipText(bundle.getString(key+"tooltip"));
+	    button.setToolTipText(bundle.getString(key+"tooltip")); //$NON-NLS-1$
 	    return button;
 	}
 

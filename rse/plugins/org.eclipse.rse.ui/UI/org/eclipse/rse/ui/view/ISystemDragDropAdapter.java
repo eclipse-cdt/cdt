@@ -17,9 +17,9 @@
 package org.eclipse.rse.ui.view;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.model.ISystemResourceSet;
 import org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.model.ISystemResourceSet;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 
 public interface ISystemDragDropAdapter extends IRemoteObjectIdentifier 
@@ -77,7 +77,7 @@ public interface ISystemDragDropAdapter extends IRemoteObjectIdentifier
 	  
 	/**
 	 * Perform drop from the "fromSet" of objects to the "to" object
-	 * @param from the source objects for the drop
+	 * @param fromSet the source objects for the drop
 	 * @param to the target object for the drop
 	 * @param sameSystemType indication of whether the source and target reside of the same type of system
 	 * @param sameSystem indication of whether the source and target are on the same system

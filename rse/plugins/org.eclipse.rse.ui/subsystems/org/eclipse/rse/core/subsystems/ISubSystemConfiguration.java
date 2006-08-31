@@ -274,7 +274,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
     public Image getGraphicsLiveImage();
     /**
      * Return the category this subsystem factory subscribes to.
-     * @see org.eclipse.rse.model.ISubSystemConfigurationCategories
+     * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
      */
     public String getCategory();
     /**

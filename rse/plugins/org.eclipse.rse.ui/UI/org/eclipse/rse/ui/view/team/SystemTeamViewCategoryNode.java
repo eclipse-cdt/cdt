@@ -32,11 +32,11 @@ public class SystemTeamViewCategoryNode implements IAdaptable
 	private String label, mementoHandle, description;
 	private ImageDescriptor imageDescriptor;
 	private ISystemProfile profile;
-	public static final String MEMENTO_CONNECTIONS = "conns"; 
-	public static final String MEMENTO_FILTERPOOLS = "pools";
-	public static final String MEMENTO_USERACTIONS = "actions";
-	public static final String MEMENTO_COMPILECMDS = "cmds";
-	public static final String MEMENTO_TARGETS = "targets";
+	public static final String MEMENTO_CONNECTIONS = "conns"; //$NON-NLS-1$ 
+	public static final String MEMENTO_FILTERPOOLS = "pools"; //$NON-NLS-1$
+	public static final String MEMENTO_USERACTIONS = "actions"; //$NON-NLS-1$
+	public static final String MEMENTO_COMPILECMDS = "cmds"; //$NON-NLS-1$
+	public static final String MEMENTO_TARGETS = "targets"; //$NON-NLS-1$
 		
 	/**
 	 * Constructor

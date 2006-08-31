@@ -106,7 +106,7 @@ public class SystemRenameDialog extends SystemPromptDialog
     private TableViewer tableViewer;    
     private static final int COLUMN_NEWNAME = SystemRenameTableProvider.COLUMN_NEWNAME;
 	private String columnHeaders[] = {
-		"",SystemResources.RESID_RENAME_COLHDG_OLDNAME,
+		"",SystemResources.RESID_RENAME_COLHDG_OLDNAME, //$NON-NLS-1$
 		   SystemResources.RESID_RENAME_COLHDG_NEWNAME,
 		   SystemResources.RESID_RENAME_COLHDG_TYPE		   
 	};
@@ -131,7 +131,7 @@ public class SystemRenameDialog extends SystemPromptDialog
 		public Object getValue(Object element, String property) 
 		{
 			SystemRenameTableRow row = (SystemRenameTableRow)element;
-			String value = "";
+			String value = ""; //$NON-NLS-1$
 			if (property.equals(P_TEXT))
 			  value = row.getName();
 			else
@@ -184,7 +184,7 @@ public class SystemRenameDialog extends SystemPromptDialog
 		super(shell, title);				
 
 		//pack();
-		setHelp(RSEUIPlugin.HELPPREFIX+"drnm0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"drnm0000"); //$NON-NLS-1$
 	}
 	/**
 	 * Set the verbage to show above the table. The default is "Enter new name for each resource"

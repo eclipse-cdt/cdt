@@ -56,7 +56,7 @@ public interface ISubSystemConfigurationProxy
     /**
      * Return value of the <samp>category</samp> xml attribute.
      * Return the category this subsystem configuration subscribes to.
-     * @see org.eclipse.rse.model.ISubSystemConfigurationCategories
+     * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
      */
     public String getCategory();
     /**

@@ -18,7 +18,7 @@ package org.eclipse.rse.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
@@ -48,7 +48,7 @@ public class SystemRefreshAction extends SystemBaseAction
 		      	parent);
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_BUILD);
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0017");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0017"); //$NON-NLS-1$
 		setAvailableOffline(true);
 	}
 

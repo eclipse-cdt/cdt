@@ -127,8 +127,8 @@ public class SystemWidgetHelpers {
 
 	/**
 	 * Creates composite control and sets the default layout data.
-	 * @param GridLayout composite to put the new group composite into.     
-	 * @param Number of columns the new group will contain.     
+	 * @param parent GridLayout composite to put the new group composite into.     
+	 * @param numColumns Number of columns the new group will contain.     
 	 */
 	public static Composite createComposite(Composite parent, int numColumns) {
 		boolean testing = false; //true;
@@ -141,9 +141,9 @@ public class SystemWidgetHelpers {
 	/**
 	 * Creates group composite control and sets the default layout data.
 	 * Group composites show a visible border line and optional text in it.
-	 * @param GridLayout composite to put the new group composite into.     
-	 * @param Number of columns the new group will contain.
-	 * @param Text to display in the group border. Can be null.
+	 * @param parent GridLayout composite to put the new group composite into.     
+	 * @param numColumns Number of columns the new group will contain.
+	 * @param label Text to display in the group border. Can be null.
 	 */
 	public static Group createGroupComposite(Composite parent, int numColumns, String label) {
 		return (Group) createComposite(parent, 1, numColumns, true, label, -1, -1);
@@ -152,8 +152,8 @@ public class SystemWidgetHelpers {
 	/**
 	 * Creates "tight" composite control and sets the default layout data.
 	 * A tight composite is one with no vertical or horizontal spacing, or margin spacing.
-	 * @param GridLayout composite to put the new group composite into.     
-	 * @param Number of columns the new group will contain.     
+	 * @param parent GridLayout composite to put the new group composite into.     
+	 * @param numColumns Number of columns the new group will contain.     
 	 */
 	public static Composite createTightComposite(Composite parent, int numColumns) {
 		return createComposite(parent, 1, numColumns, false, null, 0, 0);
@@ -162,8 +162,8 @@ public class SystemWidgetHelpers {
 	/**
 	 * Creates "flush" composite control and sets the default layout data.
 	 * A flush composite is one with no margin spacing but normal inter-component spacing
-	 * @param GridLayout composite to put the new group composite into.     
-	 * @param Number of columns the new group will contain.     
+	 * @param parent GridLayout composite to put the new group composite into.     
+	 * @param numColumns Number of columns the new group will contain.     
 	 */
 	public static Composite createFlushComposite(Composite parent, int numColumns) {
 		return createComposite(parent, 1, numColumns, false, null, 0, -1);
@@ -178,7 +178,7 @@ public class SystemWidgetHelpers {
 	 */
 	public static Label createRigidFillerLabel(Composite parent, int span, int widthHint) {
 		Label label = new Label(parent, SWT.CENTER);
-		label.setText(" ");
+		label.setText(" "); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalSpan = span;
 		//System.out.println("in createRigidFillerLabel. span = " + span);
@@ -194,8 +194,8 @@ public class SystemWidgetHelpers {
 
 	/**
 	 * Creates a label instance and inserts it into a given GridLayout.
-	 * @param GridLayout composite to put the field into.
-	 * @param Text to display in the label.     
+	 * @param parent GridLayout composite to put the field into.
+	 * @param text Text to display in the label.     
 	 */
 	public static Label createLabel(Composite parent, String text) {
 		return createLabel(parent, text, 1);
@@ -238,7 +238,7 @@ public class SystemWidgetHelpers {
 	/**
 	 * Creates a label instance and inserts it into a given GridLayout. Supports tooltip text
 	 * @param parent GridLayout composite to put the field into.
-	 * @param label
+	 * @param text
 	 * @param tooltip
 	 */
 	public static Label createLabel(Composite parent, String text, String tooltip) 
@@ -285,7 +285,7 @@ public class SystemWidgetHelpers {
 		String text = previousLabel.getText();
 		previousLabel.setText(appendColon(text));
 		((GridData) previousLabel.getLayoutData()).grabExcessHorizontalSpace = false;
-		Label label2 = createLabel(parent, "", 1, wantBorder);
+		Label label2 = createLabel(parent, "", 1, wantBorder); //$NON-NLS-1$
 		((GridData) label2.getLayoutData()).grabExcessHorizontalSpace = true;
 		((GridData) label2.getLayoutData()).widthHint = 100;
 		setToolTipText(label2, tooltip);
@@ -397,8 +397,8 @@ public class SystemWidgetHelpers {
 	/**
 	 * Create a text field and insert it into a GridLayout.
 	 * Assign the listener to the passed in implementer of Listener.
-	 * @param GridLayout composite to put the field into.
-	 * @param Listener object to listen for events. Can be null.
+	 * @param parent GridLayout composite to put the field into.
+	 * @param listener Listener object to listen for events. Can be null.
 	 */
 	public static Text createTextField(Composite parent, Listener listener) {
 		Text text = new Text(parent, SWT.SINGLE | SWT.BORDER);
@@ -419,7 +419,7 @@ public class SystemWidgetHelpers {
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param parent composite to put the field into.
 	 * @param listener object to listen for events. Can be null.
-	 * @param tooltip tooltip text
+	 * @param toolTip tooltip text
 	 */
 	public static Text createTextField(Composite parent, Listener listener, String toolTip) {
 		Text text = createTextField(parent, listener);
@@ -448,7 +448,7 @@ public class SystemWidgetHelpers {
 
 	/**
 	 * Create a readonly text field and insert it into a GridLayout.
-	 * @param GridLayout composite to put the field into.
+	 * @param parent GridLayout composite to put the field into.
 	 */
 	public static Text createReadonlyTextField(Composite parent) {
 		Text text = new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
@@ -467,7 +467,7 @@ public class SystemWidgetHelpers {
 	 * Create a readonly text field and insert it into a GridLayout,
 	 *  and assign tooltip text.
 	 * @param parent composite to put the field into.
-	 * @param tooltip
+	 * @param toolTip
 	 */
 	public static Text createReadonlyTextField(Composite parent, String toolTip) 
 	{
@@ -497,8 +497,8 @@ public class SystemWidgetHelpers {
 	/**
 	 * Create a multiline text field and insert it into a GridLayout.
 	 * Assign the listener to the passed in implementer of Listener.
-	 * @param GridLayout composite to put the field into.
-	 * @param Listener object to listen for events. Can be null.
+	 * @param parent GridLayout composite to put the field into.
+	 * @param listener Listener object to listen for events. Can be null.
 	 */
 	public static Text createMultiLineTextField(Composite parent, Listener listener, int heightHint) {
 		Text text = new Text(parent, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
@@ -868,7 +868,7 @@ public class SystemWidgetHelpers {
 	 * @param parent composite to put the combo into.
 	 * @param listener object to listen for selection events. Can be null.          
 	 *   If you want to listen for modify events, call addListener(SWT.Modify,this) on your own.
-	 * @param tooltip tooltip text 
+	 * @param toolTip tooltip text 
 	 */
 	public static Combo createCombo(Composite parent, Listener listener, String toolTip) 
 	{
@@ -963,7 +963,7 @@ public class SystemWidgetHelpers {
 	 * @param parent composite to put the combo into.
 	 * @param listener object to listen for selection events. Can be null.          
 	 *   If you want to listen for modify events, call addListener(SWT.Modify,this) on your own.
-	 * @param historykey the preferences key (any unique string) to use to persist this combo's history
+	 * @param historyKey the preferences key (any unique string) to use to persist this combo's history
 	 * @param readonly true if this combo is to be readonly, forcing user to select from the history
 	 * @param tooltip the tooltip
 	 */
@@ -1122,8 +1122,8 @@ public class SystemWidgetHelpers {
 	 * <p>
 	 * After creating the widget, call setLocal to set initial state, and setInheritedText/setLocalText to set inherited/local text
 	 * @param parent composite to put the button into.
-	 * @param tooltip text for the toggle. Can be null
-	 * @param tooltip text for the entry field. Can be null
+	 * @param toggleToolTip text for the toggle. Can be null
+	 * @param entryToolTip text for the entry field. Can be null
 	 * @return The text field widget
 	 */
 	public static InheritableEntryField createInheritableTextField(Composite parent, String toggleToolTip, String entryToolTip) 
@@ -1308,7 +1308,7 @@ public class SystemWidgetHelpers {
 	 * Given an SWT Menu, "walk it" and automatically assign unique
 	 * mnemonics for every menu item in it, and then for each 
 	 * submenu, do so for it too.
-	 * @param the menubar to add mnemonics for
+	 * @param menu the menubar to add mnemonics for
 	 */
 	public static void setMnemonics(Menu menu) {
 		Mnemonics mnemonics = new Mnemonics(); // instance of this class to get unique mnemonics FOR THIS MENU ONLY
@@ -1389,7 +1389,7 @@ public class SystemWidgetHelpers {
 		boolean strip = false;
 		Locale currentLocale = Locale.getDefault();
 		String language = currentLocale.getLanguage();
-		boolean cjk = language.equals("zh") || language.equals("ja") || language.equals("ko");
+		boolean cjk = language.equals("zh") || language.equals("ja") || language.equals("ko"); //$NON-NLS-1$  //$NON-NLS-2$
 		int n = result.length();
 		if (n > 0) {
 			char lastCharacter = label.charAt(n - 1);

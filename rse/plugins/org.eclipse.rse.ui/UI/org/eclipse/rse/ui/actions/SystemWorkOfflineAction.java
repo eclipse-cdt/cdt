@@ -45,7 +45,7 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 		super(SystemResources.RESID_OFFLINE_WORKOFFLINE_LABEL, SystemResources.RESID_OFFLINE_WORKOFFLINE_TOOLTIP, shell);
 		allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CONNECTION);
-		setHelp(RSEUIPlugin.HELPPREFIX+"wofa0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"wofa0000"); //$NON-NLS-1$
 	}
 
 	/**

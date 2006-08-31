@@ -106,7 +106,7 @@ public class SystemTeamViewCategoryAdapter
 	public String getAbsoluteName(Object element)
 	{
 		SystemTeamViewCategoryNode category = (SystemTeamViewCategoryNode)element;
-		return category.getProfile() + "." + category.getLabel();
+		return category.getProfile() + "." + category.getLabel(); //$NON-NLS-1$
 	}
 		
 	/**
@@ -124,7 +124,7 @@ public class SystemTeamViewCategoryAdapter
 	public String getStatusLineText(Object element)
 	{
 		SystemTeamViewCategoryNode category = (SystemTeamViewCategoryNode)element;
-		return SystemResources.RESID_TEAMVIEW_CATEGORY_VALUE + ": " + category.getLabel() + " - " + category.getDescription();
+		return SystemResources.RESID_TEAMVIEW_CATEGORY_VALUE + ": " + category.getLabel() + " - " + category.getDescription(); //$NON-NLS-1$  //$NON-NLS-2$
 	}
 			
 	/**
@@ -266,7 +266,7 @@ public class SystemTeamViewCategoryAdapter
 	public String getMementoHandleKey(Object element)
 	{
 		SystemTeamViewCategoryNode category = (SystemTeamViewCategoryNode)element;	
-		return category.getProfile().getName() + "." + category.getLabel(); 
+		return category.getProfile().getName() + "." + category.getLabel(); //$NON-NLS-1$ 
 	}
 
 }

@@ -214,22 +214,22 @@ public abstract class SystemAbstractPropertyPageExtensionAction
         //System.out.println("Remote object subtype ............: " + getRemoteObjectSubType());
         //System.out.println("Remote object subsubtype .........: " + getRemoteObjectSubSubType());
         
-		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object name: ");
+		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object name: "); //$NON-NLS-1$
 		SystemWidgetHelpers.createLabel(composite_prompts, checkForNull(getRemoteObjectName()));
 
-		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object subsystem factory id: ");
+		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object subsystem factory id: "); //$NON-NLS-1$
 		SystemWidgetHelpers.createLabel(composite_prompts, checkForNull(getRemoteObjectSubSystemConfigurationId()));
 
-		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object type category: ");
+		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object type category: "); //$NON-NLS-1$
 		SystemWidgetHelpers.createLabel(composite_prompts, checkForNull(getRemoteObjectTypeCategory()));
 
-		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object type: ");
+		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object type: "); //$NON-NLS-1$
 		SystemWidgetHelpers.createLabel(composite_prompts, checkForNull(getRemoteObjectType()));
 
-		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object subtype: ");
+		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object subtype: "); //$NON-NLS-1$
 		SystemWidgetHelpers.createLabel(composite_prompts, checkForNull(getRemoteObjectSubType()));
 
-		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object subsubtype: ");
+		SystemWidgetHelpers.createLabel(composite_prompts, "Remote object subsubtype: "); //$NON-NLS-1$
 		SystemWidgetHelpers.createLabel(composite_prompts, checkForNull(getRemoteObjectSubSubType()));
 		
 		return composite_prompts;
@@ -241,7 +241,7 @@ public abstract class SystemAbstractPropertyPageExtensionAction
 	private String checkForNull(String input)
 	{
 	   if (input == null)
-	     return "";
+	     return ""; //$NON-NLS-1$
 	   else  
 	     return input;
 	}

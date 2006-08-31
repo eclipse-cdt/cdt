@@ -35,6 +35,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.ISystemMessageObject;
+import org.eclipse.rse.core.model.SystemChildrenContentsType;
+import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -44,9 +47,6 @@ import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemMessageObject;
-import org.eclipse.rse.model.SystemChildrenContentsType;
-import org.eclipse.rse.model.SystemMessageObject;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IClientServerConstants;
@@ -285,11 +285,11 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	{
 		RemoteFileFilterString rffs = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration(), filterString);
 		// ok, this is a tweak: if the absolute name has " -folder" at the end, that means it is a folder...
-		if (remoteObjectAbsoluteName.endsWith(" -folder"))
+		if (remoteObjectAbsoluteName.endsWith(" -folder")) //$NON-NLS-1$
 		{
 			if (!rffs.getShowSubDirs())
 				return false;
-			remoteObjectAbsoluteName = remoteObjectAbsoluteName.substring(0, remoteObjectAbsoluteName.indexOf(" -folder"));
+			remoteObjectAbsoluteName = remoteObjectAbsoluteName.substring(0, remoteObjectAbsoluteName.indexOf(" -folder")); //$NON-NLS-1$
 		}
 		// problem 1: we don't know if the given remote object name represents a file or folder. We have to assume a file,
 		//  since we don't support filtering by folder names.
@@ -301,7 +301,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		if (container == null)
 			return false;
 		
-		if (container.equals("."))
+		if (container.equals(".")) //$NON-NLS-1$
 		{
 		    try 
 		    {
@@ -328,10 +328,10 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		String nameFilter = rffs.getFileOrTypes();
 		if (nameFilter == null)
 			return false;
-		if (!nameFilter.equals("*"))
+		if (!nameFilter.equals("*")) //$NON-NLS-1$
 		{
 			IMatcher matcher = null;
-			if (nameFilter.endsWith(","))
+			if (nameFilter.endsWith(",")) //$NON-NLS-1$
 				matcher = new FileTypeMatcher(FileTypeMatcher.parseTypes(nameFilter), true);
 			else
 				matcher = new NamePatternMatcher(nameFilter, true, caseSensitive);
@@ -468,7 +468,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			RemoteFileFilterString currFS = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration(), allFilterStrings[currFilterStringIndex]);
 			String currPath = currFS.getPath();
 			if (currPath == null)
-				currPath = "";
+				currPath = ""; //$NON-NLS-1$
 			boolean matchingPaths = false;
 			boolean caseSensitive = getParentRemoteFileSubSystemConfiguration().isCaseSensitive();
 			// test if we are listing in the same folder as any previous filter string...
@@ -478,7 +478,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 				RemoteFileFilterString prevFS = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration(), allFilterStrings[idx]);
 				String prevPath = prevFS.getPath();
 				if (prevPath == null)
-					prevPath = "";
+					prevPath = ""; //$NON-NLS-1$
 
 				if ((caseSensitive && prevPath.equals(currPath)) || (!caseSensitive && prevPath.equalsIgnoreCase(currPath)))
 				{
@@ -501,7 +501,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 						IRemoteFile child = (IRemoteFile) childrenForThisFilterString[jdx];
 						String path1 = child.getAbsolutePath();
 						if (path1 == null)
-							path1 = "";
+							path1 = ""; //$NON-NLS-1$
 						IRemoteFile match = null;
 						for (int idx = 0;(match == null) && (idx < allChildrenSoFar.size()); idx++)
 						{
@@ -510,7 +510,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 							{
 								String path2 = ((IRemoteFile) prevChild).getAbsolutePath();
 								if (path2 == null)
-									path2 = "";
+									path2 = ""; //$NON-NLS-1$
 								if (path1.equals(path2))
 									match = (IRemoteFile) prevChild;
 							}
@@ -555,11 +555,11 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		boolean windows = !rfssf.isUnixStyle();
 		if (debugMode)
 			SystemBasePlugin.logInfo("INTERNALRESOLVEFILTERSTRING: INPUT FILTERSTRING: " + filterString);
-		if (filterString.startsWith("/") && windows) // request to list root files?
+		if (filterString.startsWith("/") && windows) // request to list root files? //$NON-NLS-1$
 		{ // convert to request to list drives on Windows
 			int len = filterString.length();
 			if (len == 1)
-				filterString = "*"; // hmm, should never happen
+				filterString = "*"; // hmm, should never happen //$NON-NLS-1$
 			else
 				filterString = filterString.substring(1);
 			if (debugMode)
@@ -701,7 +701,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	{
 		RemoteFileFilterString[] allFilterStrings = ((IRemoteFile) parent).getAllFilterStrings();
 		if ((allFilterStrings == null) || (allFilterStrings.length == 0))
-			return "*";
+			return "*"; //$NON-NLS-1$
 		else
 		{
 			return allFilterStrings[0].getFileOrTypes();
@@ -732,7 +732,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			// this is all for defect 42095. Phil
 			RemoteFileFilterString[] allFilterStrings = ((IRemoteFile) parent).getAllFilterStrings();
 			if (allFilterStrings == null)
-				fs = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration(), "*");
+				fs = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration(), "*"); //$NON-NLS-1$
 			else
 			{
 				boolean onlyOne = (allFilterStrings.length == 1);
@@ -856,7 +856,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	{
 		RemoteFileFilterString filterString = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration());
 		filterString.setPath(parent.getAbsolutePath());
-		filterString.setFile((fileNameFilter == null) ? "*" : fileNameFilter);
+		filterString.setFile((fileNameFilter == null) ? "*" : fileNameFilter); //$NON-NLS-1$
 		filterString.setShowFiles(false);
 		filterString.setShowSubDirs(true);
 		RemoteFileContext context = new RemoteFileContext(this, parent, filterString);
@@ -915,7 +915,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		RemoteFileFilterString filterString = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration());
 		filterString.setPath(parent.getAbsolutePath());
 		if (fileNameFilter == null)
-			fileNameFilter = "*";
+			fileNameFilter = "*"; //$NON-NLS-1$
 		filterString.setFile(fileNameFilter);
 		filterString.setShowFiles(true);
 		filterString.setShowSubDirs(true);
@@ -1105,9 +1105,9 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	protected void setListValues(int includeFilesOrFolders, String nameFilter)
 	{
 		this.includeFilesOrFolders = includeFilesOrFolders;
-		if ((nameFilter != null) && !nameFilter.equals("*"))
+		if ((nameFilter != null) && !nameFilter.equals("*")) //$NON-NLS-1$
 		{
-			if (nameFilter.endsWith(","))
+			if (nameFilter.endsWith(",")) //$NON-NLS-1$
 				matcher = new FileTypeMatcher(FileTypeMatcher.parseTypes(nameFilter), isCaseSensitive());
 			else
 				matcher = new NamePatternMatcher(nameFilter, true, isCaseSensitive());
@@ -1126,7 +1126,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	protected void setListValues(int includeFilesOrFolders, String folderNameFilter, String fileNameFilter)
 	{
 		setListValues(includeFilesOrFolders, fileNameFilter);
-		if ((folderNameFilter != null) && !folderNameFilter.equals("*"))
+		if ((folderNameFilter != null) && !folderNameFilter.equals("*")) //$NON-NLS-1$
 			folderNameMatcher = new NamePatternMatcher(folderNameFilter, true, isCaseSensitive());
 	}
 
@@ -1195,7 +1195,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		 */
 	public void download(IRemoteFile source, String destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
 	{
-		download(source, destination, System.getProperty("file.encoding"), monitor);
+		download(source, destination, System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
 	}
 
 	/**
@@ -1306,7 +1306,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		 */
 	public void upload(String source, IRemoteFile destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
 	{
-		upload(source, destination, System.getProperty("file.encoding"), monitor);
+		upload(source, destination, System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
 		destination.markStale(true);
 	}
 
@@ -1333,7 +1333,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 */
 	public void upload(String source, String destination, IProgressMonitor monitor) throws RemoteFileSecurityException, RemoteFileIOException
 	{
-		upload(source, SystemEncodingUtil.ENCODING_UTF_8, destination, System.getProperty("file.encoding"), monitor);
+		upload(source, SystemEncodingUtil.ENCODING_UTF_8, destination, System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
 	}
 
 	/**
@@ -1570,8 +1570,8 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	{
 		if (_cachedRemoteFiles.size() > 0)
 		{
-	     path = path.replaceAll("//", "/");	    
-	     if (path.endsWith("\\") || (path.endsWith("/") && path.length() > 1))
+	     path = path.replaceAll("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$	    
+	     if (path.endsWith("\\") || (path.endsWith("/") && path.length() > 1)) //$NON-NLS-1$ //$NON-NLS-2$
 	     {
 	         path = path.substring(0, path.length() - 1);
 	     }
@@ -1643,10 +1643,8 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 */
 	public String toString()
 	{
-		
-
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (homeFolder: ");
+		result.append(" (homeFolder: "); //$NON-NLS-1$
 		result.append(homeFolder);
 		result.append(')');
 		return result.toString();

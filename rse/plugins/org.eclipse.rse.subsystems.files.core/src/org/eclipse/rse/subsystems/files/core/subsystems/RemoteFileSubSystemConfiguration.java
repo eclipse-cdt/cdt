@@ -190,10 +190,10 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 	public String getLineSeparator()
 	{
 		if (isUnixStyle()) {
-			return "\n";
+			return "\n"; //$NON-NLS-1$
 		}
 		else {	
-			return "\r\n";
+			return "\r\n"; //$NON-NLS-1$
 		}
 	}    
     // --------------------------------------------
@@ -346,7 +346,7 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 		      filterStrings = new Vector();
 		      RemoteFileFilterString myHomeFilterString = new RemoteFileFilterString(this);
 		      myHomeFilterString.setPath(getSeparator());
-		      filterStrings.add("./*");
+		      filterStrings.add("./*"); //$NON-NLS-1$
 		      ISystemFilter filter = mgr.createSystemFilter(pool, SystemFileResources.RESID_FILTER_MYHOME,filterStrings);
 		      filter.setNonChangable(true);
 		      filter.setSingleFilterStringOnly(true);
@@ -460,7 +460,7 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 	 */
 	public String getEditorProfileID()
 	{
-		return "universal";	
+		return "universal"; //$NON-NLS-1$	
 	}
 	
 	

@@ -23,6 +23,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.model.ISubSystemConfigurationCategories;
+import org.eclipse.rse.core.model.ISystemModelChangeEvent;
+import org.eclipse.rse.core.model.ISystemModelChangeListener;
+import org.eclipse.rse.core.model.ISystemPreferenceChangeEvent;
+import org.eclipse.rse.core.model.ISystemPreferenceChangeListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
@@ -283,14 +288,14 @@ public interface ISystemRegistry extends ISystemViewInputProvider, ISchedulingRu
 
 	/**
 	 * Return the absolute name for the specified subsystem
-	 * @param the subsystem
+	 * @param subsystem the subsystem
 	 * @return the absolute name of the subsystem
 	 */
 	 public String getAbsoluteNameForSubSystem(ISubSystem subsystem);	 
 	 
 	 /**
 	 * Return the absolute name for the specified connection
-	 * @param the connection
+	 * @param connection the connection
 	 * @return the absolute name of the connection
 	 */
 	 public String getAbsoluteNameForConnection(IHost connection);
@@ -314,7 +319,7 @@ public interface ISystemRegistry extends ISystemViewInputProvider, ISchedulingRu
      * This looks for a match on the "category" of the subsystem factory's xml declaration
      *  in its plugin.xml file. 
      * 
-     * @see org.eclipse.rse.model.ISubSystemConfigurationCategories
+     * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
      */
     public ISubSystem[] getSubSystemsBySubSystemConfigurationCategory(String factoryCategory, IHost connection);
 
@@ -368,7 +373,7 @@ public interface ISystemRegistry extends ISystemViewInputProvider, ISchedulingRu
      *  in its plugin.xml file. Thus, it is effecient as it need not bring to life a 
      *  subsystem factory just to test its parent class type.
      * 
-     * @see org.eclipse.rse.model.ISubSystemConfigurationCategories
+     * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
      */
     public IHost[] getHostsBySubSystemConfigurationCategory(String factoryCategory);
     /**

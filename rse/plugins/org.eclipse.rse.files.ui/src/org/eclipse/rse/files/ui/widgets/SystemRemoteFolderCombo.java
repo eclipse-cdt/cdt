@@ -531,7 +531,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
               // we notify even if the suer cancelled and the folder is null so listeners
               // know that the brose dialog was cancelled
               notifyBrowseActionCompleteListeners(folder);
-		  };		 
+		  }		 
 	   };
 	   browseButton.addSelectionListener(selectionListener);
 	}
@@ -559,9 +559,9 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
 	}
 	protected static Button createPushButton(Composite group, ResourceBundle bundle, String key)
 	{
-		String label = bundle.getString(key+"label");
+		String label = bundle.getString(key+"label"); //$NON-NLS-1$
 	    Button button = createPushButton(group,label);
-	    button.setToolTipText(bundle.getString(key+"tooltip"));
+	    button.setToolTipText(bundle.getString(key+"tooltip")); //$NON-NLS-1$
 	    return button;
 	}
 	

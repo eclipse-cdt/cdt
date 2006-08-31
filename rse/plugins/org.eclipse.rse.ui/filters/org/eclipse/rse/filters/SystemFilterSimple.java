@@ -19,9 +19,9 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemContentsType;
 import org.eclipse.rse.internal.filters.SystemFilter;
-import org.eclipse.rse.model.ISystemContainer;
-import org.eclipse.rse.model.ISystemContentsType;
 
 
 /**
@@ -455,14 +455,14 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
     }
     
 	/**
-	 * @see org.eclipse.rse.model.ISystemContainer#getContents(org.eclipse.rse.model.ISystemContentsType)
+	 * @see org.eclipse.rse.core.model.ISystemContainer#getContents(org.eclipse.rse.core.model.ISystemContentsType)
 	 */
 	public Object[] getContents(ISystemContentsType contentsType) {
         return (Object[])cachedContents.get(contentsType);
 	}
 	
 	/**
-	 * @see org.eclipse.rse.model.ISystemContainer#hasContents(org.eclipse.rse.model.ISystemContentsType)
+	 * @see org.eclipse.rse.core.model.ISystemContainer#hasContents(org.eclipse.rse.core.model.ISystemContentsType)
 	 */
 	public boolean hasContents(ISystemContentsType contentsType) {
         
@@ -474,14 +474,14 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	}
 	
 	/**
-	 * @see org.eclipse.rse.model.ISystemContainer#isStale()
+	 * @see org.eclipse.rse.core.model.ISystemContainer#isStale()
 	 */
 	public boolean isStale() {
 		return isStale;
 	}
 	
 	/**
-	 * @see org.eclipse.rse.model.ISystemContainer#markStale(boolean)
+	 * @see org.eclipse.rse.core.model.ISystemContainer#markStale(boolean)
 	 */
 	public void markStale(boolean isStale) 
 	{
@@ -489,7 +489,7 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	}
 	
 	/**
-	 * @see org.eclipse.rse.model.ISystemContainer#markStale(boolean)
+	 * @see org.eclipse.rse.core.model.ISystemContainer#markStale(boolean)
 	 */
 	public void markStale(boolean isStale, boolean clearCache) 
 	{

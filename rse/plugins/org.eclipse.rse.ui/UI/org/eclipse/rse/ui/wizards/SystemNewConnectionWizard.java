@@ -336,7 +336,7 @@ public class      SystemNewConnectionWizard
                   {
                    	 if (sysType.equals(IRSESystemType.SYSTEMTYPE_ISERIES))
                   	 {
-                  		ISubSystem[] objSubSystems = sr.getSubSystemsBySubSystemConfigurationCategory("nativefiles", conn);
+                  		ISubSystem[] objSubSystems = sr.getSubSystemsBySubSystemConfigurationCategory("nativefiles", conn); //$NON-NLS-1$
                   		if ((objSubSystems != null) 
                   		    && (objSubSystems.length>0))// might be in product that doesn't have iSeries plugins
                   		  sr.expandSubSystem(objSubSystems[0]);

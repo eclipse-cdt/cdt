@@ -102,7 +102,7 @@ public class SystemTeamViewProfileAdapter
 	{
 		// activate profile action...
 		// TODO: Delete the activeProfileAction logic when we have another mri rev, and can use the new actions.
-		if (SystemResources.ACTION_PROFILE_MAKEACTIVE_LABEL.equals("test"))
+		if (SystemResources.ACTION_PROFILE_MAKEACTIVE_LABEL.equals("test")) //$NON-NLS-1$
 			activeProfileAction = new SystemTeamViewActiveProfileAction(getShell());
 		else
 		{
@@ -113,14 +113,14 @@ public class SystemTeamViewProfileAdapter
 		copyProfileAction = new SystemProfileNameCopyAction(getShell());		
 
 		deleteAction = new SystemCommonDeleteAction(getShell(),getTeamViewPart());
-		deleteAction.setHelp(RSEUIPlugin.HELPPREFIX+"actndlpr");
-		deleteAction.setDialogHelp(RSEUIPlugin.HELPPREFIX+"ddltprfl");
+		deleteAction.setHelp(RSEUIPlugin.HELPPREFIX+"actndlpr"); //$NON-NLS-1$
+		deleteAction.setDialogHelp(RSEUIPlugin.HELPPREFIX+"ddltprfl"); //$NON-NLS-1$
 		deleteAction.setPromptLabel(SystemResources.RESID_DELETE_PROFILES_PROMPT);
 
 		renameAction = new SystemCommonRenameAction(getShell(),getTeamViewPart());
-		renameAction.setHelp(RSEUIPlugin.HELPPREFIX+"actnrnpr");
-		renameAction.setDialogSingleSelectionHelp(RSEUIPlugin.HELPPREFIX+"drnsprfl");
-		renameAction.setDialogMultiSelectionHelp(RSEUIPlugin.HELPPREFIX+"drnmprfl");
+		renameAction.setHelp(RSEUIPlugin.HELPPREFIX+"actnrnpr"); //$NON-NLS-1$
+		renameAction.setDialogSingleSelectionHelp(RSEUIPlugin.HELPPREFIX+"drnsprfl"); //$NON-NLS-1$
+		renameAction.setDialogMultiSelectionHelp(RSEUIPlugin.HELPPREFIX+"drnmprfl"); //$NON-NLS-1$
 		renameAction.setSingleSelectPromptLabel(SystemResources.RESID_SIMPLE_RENAME_PROFILE_PROMPT_LABEL, 
 												SystemResources.RESID_SIMPLE_RENAME_PROFILE_PROMPT_TIP);
 		renameAction.setMultiSelectVerbage(SystemResources.RESID_MULTI_RENAME_PROFILE_VERBAGE);

@@ -16,14 +16,14 @@
 
 package org.eclipse.rse.core.subsystems;
 
-import org.eclipse.rse.model.ISystemContentsType;
+import org.eclipse.rse.core.model.ISystemContentsType;
 
 /**
  * Represents contents that are children of a container
  */
 public class RemoteChildrenContentsType implements ISystemContentsType
 {
-    public static String CONTENTS_TYPE_CHILDREN = "contents_children";
+    public static String CONTENTS_TYPE_CHILDREN = "contents_children"; //$NON-NLS-1$
     public static RemoteChildrenContentsType _instance = new RemoteChildrenContentsType();
     
     public static RemoteChildrenContentsType getInstance()

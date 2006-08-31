@@ -153,7 +153,7 @@ public class SystemPreferencesManager
    public String[] getConnectionNamesOrder(String profileName)
    {
    	   String[] allConnectionNamesOrder = RemoteSystemsPreferencePage.getConnectionNamesOrder();
-   	   profileName = profileName + ".";
+   	   profileName = profileName + "."; //$NON-NLS-1$
    	   int profileNameLength = profileName.length();
    	   Vector v = new Vector();
    	   for (int idx=0; idx<allConnectionNamesOrder.length; idx++)
@@ -197,7 +197,7 @@ public class SystemPreferencesManager
    	   {
    	     //System.out.println("Saving connection names preference order for all profiles:");
    	     for (int idx=0; idx<names.length; idx++)
-   	        System.out.println("   '" + names[idx]+"'");
+   	        System.out.println("   '" + names[idx]+"'"); //$NON-NLS-1$  //$NON-NLS-2$
    	     System.out.println();
    	   }
    	   RemoteSystemsPreferencePage.setConnectionNamesOrder(names);
@@ -211,7 +211,7 @@ public class SystemPreferencesManager
    	   IHost[] conns = sr.getHosts();
    	   String[] names = new String[conns.length];
        for (int idx=0; idx<names.length; idx++)
-          names[idx] = conns[idx].getSystemProfileName()+"."+conns[idx].getAliasName();
+          names[idx] = conns[idx].getSystemProfileName()+"."+conns[idx].getAliasName(); //$NON-NLS-1$
        setConnectionNamesOrder(names);
    }
 
@@ -362,7 +362,7 @@ public class SystemPreferencesManager
 	 * Parse out list of key-value pairs into a hashtable
 	 */
 	protected static Hashtable parseString(String allvalues) {
-		StringTokenizer tokens = new StringTokenizer(allvalues, "=;");
+		StringTokenizer tokens = new StringTokenizer(allvalues, "=;"); //$NON-NLS-1$
 		Hashtable keyValues = new Hashtable(10);
 		int count = 0;
 		String token1 = null;

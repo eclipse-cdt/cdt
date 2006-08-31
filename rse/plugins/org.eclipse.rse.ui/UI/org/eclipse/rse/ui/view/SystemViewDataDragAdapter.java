@@ -99,7 +99,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 			}
 
 		    String objectId = adapter.getAbsoluteName(dragObject);
-			dataStream.append(":");
+			dataStream.append(":"); //$NON-NLS-1$
 			dataStream.append(objectId);
 		}
 	}
@@ -177,7 +177,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 
 			if (PluginTransfer.getInstance().isSupportedType(event.dataType))
 			{
-				StringBuffer dataStream = new StringBuffer("");
+				StringBuffer dataStream = new StringBuffer(""); //$NON-NLS-1$
 				Iterator iterator = ss.iterator();
 				while (iterator.hasNext())
 				{
@@ -201,7 +201,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 					}
 				}
 
-				PluginTransferData data = new PluginTransferData("org.eclipse.rse.ui.view.DropActions", dataStream.toString().getBytes());
+				PluginTransferData data = new PluginTransferData("org.eclipse.rse.ui.view.DropActions", dataStream.toString().getBytes()); //$NON-NLS-1$
 				event.data = data;
 				if (dataStream.length() > 0)
 				{
@@ -337,6 +337,6 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 	protected IEditorDescriptor getDefaultTextEditor()
 	{
 		IEditorRegistry registry = getEditorRegistry();
-		return registry.findEditor("org.eclipse.ui.DefaultTextEditor");
+		return registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 	}
 }

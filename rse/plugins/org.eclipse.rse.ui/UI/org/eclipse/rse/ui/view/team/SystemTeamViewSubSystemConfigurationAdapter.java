@@ -133,7 +133,7 @@ public class SystemTeamViewSubSystemConfigurationAdapter
 	public String getAbsoluteName(Object element)
 	{
 		SystemTeamViewSubSystemConfigurationNode factory = (SystemTeamViewSubSystemConfigurationNode)element;
-		return factory.getProfile().getName() + "." + factory.getParentCategory().getLabel() + factory.getLabel();
+		return factory.getProfile().getName() + "." + factory.getParentCategory().getLabel() + factory.getLabel(); //$NON-NLS-1$
 	}
 		
 	/**
@@ -150,7 +150,7 @@ public class SystemTeamViewSubSystemConfigurationAdapter
 	public String getStatusLineText(Object element)
 	{
 		SystemTeamViewSubSystemConfigurationNode factory = (SystemTeamViewSubSystemConfigurationNode)element;
-		return SystemResources.RESID_TEAMVIEW_SUBSYSFACTORY_VALUE + ": " + factory.getLabel();
+		return SystemResources.RESID_TEAMVIEW_SUBSYSFACTORY_VALUE + ": " + factory.getLabel(); //$NON-NLS-1$
 	}
 			
 	/**
@@ -299,7 +299,7 @@ public class SystemTeamViewSubSystemConfigurationAdapter
 	public String getMementoHandleKey(Object element)
 	{
 		SystemTeamViewSubSystemConfigurationNode factory = (SystemTeamViewSubSystemConfigurationNode)element;	
-		return factory.getProfile().getName() + "." + factory.getParentCategory().getLabel() + "." + factory.getLabel(); 
+		return factory.getProfile().getName() + "." + factory.getParentCategory().getLabel() + "." + factory.getLabel(); //$NON-NLS-1$  //$NON-NLS-2$ 
 	}
 
 }

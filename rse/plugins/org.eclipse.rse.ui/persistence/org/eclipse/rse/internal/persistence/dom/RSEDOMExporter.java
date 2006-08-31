@@ -195,7 +195,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_DEFAULT, getBooleanString(filterPool.isDefault()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_STRING_CASE_SENSITIVE, getBooleanString(filterPool.isSetStringsCaseSensitive()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS, getBooleanString(filterPool.supportsDuplicateFilterStrings()));
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, "" + filterPool.getRelease());
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, "" + filterPool.getRelease()); //$NON-NLS-1$
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY, getBooleanString(filterPool.isSetSingleFilterStringOnly()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_OWNING_PARENT_NAME, filterPool.getOwningParentName());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_NON_RENAMABLE, getBooleanString(filterPool.isNonRenamable()));
@@ -221,7 +221,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 		if (clean || node.isDirty()) {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_ID, filter.getName());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_NESTED_FILTERS, getBooleanString(filter.isSupportsNestedFilters()));
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELATIVE_ORDER, "" + filter.getRelativeOrder());
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELATIVE_ORDER, "" + filter.getRelativeOrder()); //$NON-NLS-1$
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_DEFAULT, getBooleanString(filter.isDefault()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_STRING_CASE_SENSITIVE, getBooleanString(filter.isSetStringsCaseSensitive()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_PROMPTABLE, getBooleanString(filter.isPromptable()));
@@ -230,7 +230,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_NON_RENAMABLE, getBooleanString(filter.isNonRenamable()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_NON_CHANGEABLE, getBooleanString(filter.isNonChangable()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_STRINGS_NON_CHANGABLE, getBooleanString(filter.isStringsNonChangable()));
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, "" + filter.getRelease());
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, "" + filter.getRelease()); //$NON-NLS-1$
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY, getBooleanString(filter.isSetSingleFilterStringOnly()));
 		}
 

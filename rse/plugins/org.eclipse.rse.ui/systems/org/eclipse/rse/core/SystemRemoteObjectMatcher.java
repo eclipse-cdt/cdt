@@ -52,8 +52,8 @@ import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
  */
 public class SystemRemoteObjectMatcher 
 {
-	public static final String STAR_SYMBOL = "%ast.";
-	public static final String STAR_SYMBOL2 = "%ast;"; // really should have been this I think.
+	public static final String STAR_SYMBOL = "%ast."; //$NON-NLS-1$
+	public static final String STAR_SYMBOL2 = "%ast;"; // really should have been this I think. //$NON-NLS-1$
 	public static final int    STAR_SYMBOL_LEN = 5;
     private String categoryfilter, subsystemfilter,subsystemCategoryFilter, systypesfilter, namefilter,typefilter,subtypefilter,subsubtypefilter;
     private String categoryfilterpart, subsystemfilterpart,subsystemCategoryFilterpart,namefilterpart,typefilterpart,subtypefilterpart,subsubtypefilterpart;
@@ -108,30 +108,30 @@ public class SystemRemoteObjectMatcher
     	this.subsubtypefilter = subsubtypeFilter;
 
     	if ((systypesfilter == null) || (systypesfilter.length()==0))
-    	  systypesfilter = "*";
+    	  systypesfilter = "*"; //$NON-NLS-1$
     	if ((subsystemCategoryFilter == null) || (subsystemCategoryFilter.length()==0))
-    	  subsystemCategoryFilter = "*";
+    	  subsystemCategoryFilter = "*"; //$NON-NLS-1$
     	if (categoryfilter == null)
-    	  categoryfilter = "*";
+    	  categoryfilter = "*"; //$NON-NLS-1$
     	if (namefilter == null)
-    	  namefilter = "*";
+    	  namefilter = "*"; //$NON-NLS-1$
     	if (typefilter == null)
-    	  typefilter = "*";
+    	  typefilter = "*"; //$NON-NLS-1$
     	if (subtypefilter == null)
-    	  subtypefilter = "*";
+    	  subtypefilter = "*"; //$NON-NLS-1$
     	if (subsubtypefilter == null)
-    	  subsubtypefilter = "*";
+    	  subsubtypefilter = "*"; //$NON-NLS-1$
     	if (subsystemfilter == null)
-    	  subsystemfilter = "*";
+    	  subsystemfilter = "*"; //$NON-NLS-1$
 
-    	this.allSSFCategories  = subsystemCategoryFilter.equals("*");
-    	this.allCategories  = categoryfilter.equals("*");
-    	this.allSystemTypes = systypesfilter.equals("*");    	
-    	this.allNames       = namefilter.equals("*");
-    	this.allTypes       = typefilter.equals("*");
-    	this.allSubTypes    = subtypefilter.equals("*");
-    	this.allSubSubTypes = subsubtypefilter.equals("*");
-    	this.allSubSystems  = subsystemfilter.equals("*");
+    	this.allSSFCategories  = subsystemCategoryFilter.equals("*"); //$NON-NLS-1$
+    	this.allCategories  = categoryfilter.equals("*"); //$NON-NLS-1$
+    	this.allSystemTypes = systypesfilter.equals("*"); //$NON-NLS-1$
+    	this.allNames       = namefilter.equals("*"); //$NON-NLS-1$
+    	this.allTypes       = typefilter.equals("*"); //$NON-NLS-1$
+    	this.allSubTypes    = subtypefilter.equals("*"); //$NON-NLS-1$
+    	this.allSubSubTypes = subsubtypefilter.equals("*"); //$NON-NLS-1$
+    	this.allSubSystems  = subsystemfilter.equals("*"); //$NON-NLS-1$
     	
     	// --------------------------------------------------
     	// determine if the name starts or ends with asterisk
@@ -200,7 +200,7 @@ public class SystemRemoteObjectMatcher
      */
     protected boolean startsWithAsterisk(String name)
     {
-    	return name.startsWith("*");
+    	return name.startsWith("*"); //$NON-NLS-1$
     }
     /**
      * Helper method.
@@ -208,7 +208,7 @@ public class SystemRemoteObjectMatcher
      */
     protected boolean endsWithAsterisk(String name)
     {
-    	return name.endsWith("*");
+    	return name.endsWith("*"); //$NON-NLS-1$
     }
     /**
      * Helper method.
@@ -241,7 +241,7 @@ public class SystemRemoteObjectMatcher
     protected String resolveSymbols(String name)
     {
     	// yantzi:5.1.2 workaround for eclipse bug 49312
-    	if (name.startsWith("%%ast.") || name.startsWith("%%ast;"))
+    	if (name.startsWith("%%ast.") || name.startsWith("%%ast;")) //$NON-NLS-1$  //$NON-NLS-2$
     	{
     		// eclipse should have stripped the leading % off but doesn't because of this bug
     		name = name.substring(1);
@@ -255,17 +255,17 @@ public class SystemRemoteObjectMatcher
     	boolean hadSymbols = hasSymbols;
     	boolean debug = false;
     	if (hasSymbols && debug)
-          System.out.println("Before: " + name);
+          System.out.println("Before: " + name); //$NON-NLS-1$
     	while (hasSymbols)
     	{
     		if (symbolIndex == 0)
     		{
               // "&amp.abc"
     		  if (name.length() > symbolLength)
-    		    name = "*" + name.substring(symbolLength);
+    		    name = "*" + name.substring(symbolLength); //$NON-NLS-1$
               // "&amp."
     		  else
-    		    name = "*";
+    		    name = "*"; //$NON-NLS-1$
     		}
     		else if ((symbolIndex+symbolLength) < name.length())
     		{
@@ -273,14 +273,14 @@ public class SystemRemoteObjectMatcher
                 // "01234567890"    			
     			String part1 = name.substring(0,symbolIndex); // up to symbol
     			String part2 = name.substring(symbolIndex+symbolLength); // after symbol 
-    			name = part1 + "*" + part2;
+    			name = part1 + "*" + part2; //$NON-NLS-1$
     		}
     		else
     		{
                 // "abc&amp."
                 // "01234567"    			
     			String part1 = name.substring(0,symbolIndex); // up to symbol
-    			name = part1 + "*";
+    			name = part1 + "*"; //$NON-NLS-1$
     		}
     		symbolIndex = name.indexOf(STAR_SYMBOL);
     		if (symbolIndex == -1)
@@ -288,7 +288,7 @@ public class SystemRemoteObjectMatcher
     		hasSymbols = (symbolIndex != -1);
     	}
     	if (hadSymbols && debug)
-          System.out.println("After: " + name);
+          System.out.println("After: " + name); //$NON-NLS-1$
     	return name;
     }
     
@@ -399,7 +399,7 @@ public class SystemRemoteObjectMatcher
         	{
         		String ssfCategory = subsystem.getSubSystemConfiguration().getCategory();
         		if (ssfCategory == null)
-        		  ssfCategory = "";        		
+        		  ssfCategory = ""; //$NON-NLS-1$        		
         		if (!genericSSFCategoriesStart && !genericSSFCategoriesEnd)        		
         		   ssfCategoryMatch = ssfCategory.equals(subsystemCategoryFilter);
                 else if (genericSSFCategoriesStart)
@@ -576,7 +576,7 @@ public class SystemRemoteObjectMatcher
 	 */
 	private String[] tokenize(String input)
 	{
-          	StringTokenizer tokens = new StringTokenizer(input,";");
+          	StringTokenizer tokens = new StringTokenizer(input,";"); //$NON-NLS-1$
             Vector v = new Vector();
             while (tokens.hasMoreTokens())
               v.addElement(tokens.nextToken());

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,28 +14,21 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
-import java.util.List;
-
-import org.eclipse.core.resources.IResource;
+package org.eclipse.rse.core.model;
+import java.util.EventListener;
 
 
-
-public class SystemWorkspaceResourceSet extends AbstractSystemResourceSet
+/**
+ * Interface that listeners interesting in changes to remote
+ * system preferences can implement and subsequently register 
+ * their interest in via SystemRegistry.
+ */
+public interface ISystemPreferenceChangeListener extends EventListener
 {
-	
-	public SystemWorkspaceResourceSet()
-	{
-		super();
-	}
-	
-	public SystemWorkspaceResourceSet(List resources)
-	{
-		super(resources);
-	}
-	
-	public SystemWorkspaceResourceSet(IResource[] resources)
-	{
-		super(resources);
-	}
+	/**
+	 * This is the method in your class that will be called when a
+	 *  system resource changes.
+	 * @see ISystemPreferenceChangeEvent
+	 */
+    public void systemPreferenceChanged(ISystemPreferenceChangeEvent event);
 }

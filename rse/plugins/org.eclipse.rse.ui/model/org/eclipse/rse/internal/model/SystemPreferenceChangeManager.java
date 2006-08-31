@@ -17,8 +17,8 @@
 package org.eclipse.rse.internal.model;
 import java.util.Vector;
 
-import org.eclipse.rse.model.ISystemPreferenceChangeEvent;
-import org.eclipse.rse.model.ISystemPreferenceChangeListener;
+import org.eclipse.rse.core.model.ISystemPreferenceChangeEvent;
+import org.eclipse.rse.core.model.ISystemPreferenceChangeListener;
 
 
 /**

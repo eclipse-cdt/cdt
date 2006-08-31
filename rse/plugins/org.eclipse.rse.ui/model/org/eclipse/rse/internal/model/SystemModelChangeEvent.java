@@ -16,8 +16,8 @@
 
 package org.eclipse.rse.internal.model;
 
-import org.eclipse.rse.model.ISystemModelChangeEvent;
-import org.eclipse.rse.model.ISystemModelChangeEvents;
+import org.eclipse.rse.core.model.ISystemModelChangeEvent;
+import org.eclipse.rse.core.model.ISystemModelChangeEvents;
 
 /**
  * For listeners interested in model changes with resources in the rse project.
@@ -85,16 +85,16 @@ public class SystemModelChangeEvent implements ISystemModelChangeEvent, ISystemM
 	}
 	
 	/**
-	 * Get the event type, such as {@link org.eclipse.rse.model.ISystemModelChangeEvents#SYSTEM_RESOURCE_ADDED}.
-	 * @see org.eclipse.rse.model.ISystemModelChangeEvents
+	 * Get the event type, such as {@link org.eclipse.rse.core.model.ISystemModelChangeEvents#SYSTEM_RESOURCE_ADDED}.
+	 * @see org.eclipse.rse.core.model.ISystemModelChangeEvents
 	 */
 	public int getEventType()
 	{
 		return eventType;
 	}
 	/**
-	 * Get the resource type, such as {@link org.eclipse.rse.model.ISystemModelChangeEvents#SYSTEM_RESOURCETYPE_CONNECTION}.
-	 * @see org.eclipse.rse.model.ISystemModelChangeEvents
+	 * Get the resource type, such as {@link org.eclipse.rse.core.model.ISystemModelChangeEvents#SYSTEM_RESOURCETYPE_CONNECTION}.
+	 * @see org.eclipse.rse.core.model.ISystemModelChangeEvents
 	 */
 	public int getResourceType()
 	{

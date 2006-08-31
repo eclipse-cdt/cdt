@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,24 +14,23 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
-/**
- * Constants for pre-defined subsystem factory categories.
- * Use these in calls to {@link org.eclipse.rse.model.ISystemRegistry#getHostsBySubSystemConfigurationCategory(String)}.
- */
-public interface ISubSystemConfigurationCategories
-{
-	/**
-	 * Job subsystems 
-	 */
-	public static final String SUBSYSTEM_CATEGORY_JOBS = "jobs";
-	/**
-	 * File subsystems 
-	 */
-	public static final String SUBSYSTEM_CATEGORY_FILES = "files";
-	/**
-	 * Command subsystems 
-	 */
-	public static final String SUBSYSTEM_CATEGORY_CMDS = "commands";
+package org.eclipse.rse.core.model;
 
+import java.util.List;
+
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+
+
+public interface ISystemResourceSet
+{
+	public int size();
+	public Object get(String absoluteName);
+	public String pathFor(Object obj);
+	public Object get(int index);
+	public List getResourceSet();
+	public SystemMessage getMessage();
+	public boolean hasMessage();
+	public boolean hasByteSize();
+	public long byteSize();
+	public void setByteSize(long byteSize);
 }

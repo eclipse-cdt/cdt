@@ -14,36 +14,30 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
+
 /**
- * Interface of event ID constants for preferences changed
+ * A change event passed to you when listening for RSE model changes.
+ * Note these are post-events, sent after the fact.
  */
-public interface ISystemPreferenceChangeEvents
+public interface ISystemModelChangeEvent 
 {
 	/**
-	 * The Show Filter Pools preference has changed
+	 * Get the event type, such as {@link org.eclipse.rse.core.model.ISystemModelChangeEvents#SYSTEM_RESOURCE_ADDED}.
+	 * @see org.eclipse.rse.core.model.ISystemModelChangeEvents
 	 */
-	public static final int EVENT_SHOWFILTERPOOLS = 5;	
+	public int getEventType();
 	/**
-	 * The Show Filter String preference has changed
+	 * Get the resource type, such as {@link org.eclipse.rse.core.model.ISystemModelChangeEvents#SYSTEM_RESOURCETYPE_CONNECTION}.
+	 * @see org.eclipse.rse.core.model.ISystemModelChangeEvents
 	 */
-	public static final int EVENT_SHOWFILTERSTRINGS = 10;
+	public int getResourceType();
 	/**
-	 * The Qualify Connection Names preference has changed
+	 * Get the resource that this event applies to
 	 */
-	public static final int EVENT_QUALIFYCONNECTIONNAMES = 15;
+	public Object getResource();
 	/**
-	 * The Restore State preference has changed
+	 * Get the old name of the resource, in the event of a resource rename. Null for other event types.
 	 */
-	public static final int EVENT_RESTORESTATE = 20;
-	
-	/**
-	 * A connection type has been enabled or disabled
-	 */
-	public static final int EVENT_ENABLED_CONNECTIONS_CHANGED = 25;
-		
-	/**
-	 * The range 10000-10999 is reserved for IBM product use. We'll find a way to 
-	 * register these eventually.
-	 */
+	public String getOldName();	
 }

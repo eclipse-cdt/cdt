@@ -48,8 +48,8 @@ public class SystemCopyConnectionAction extends SystemBaseCopyAction
 	{
 		super(parent, SystemResources.ACTION_COPY_CONNECTION_LABEL, MODE_COPY);
 		sr = RSEUIPlugin.getTheSystemRegistry();
-  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0019"); 
-  	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dccn0000"); 
+  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0019"); //$NON-NLS-1$ 
+  	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dccn0000");  //$NON-NLS-1$
 	}
  
 	/**
@@ -216,7 +216,7 @@ public class SystemCopyConnectionAction extends SystemBaseCopyAction
     protected SystemSimpleContentElement getProfileTreeModel(ISystemProfile profile)
     {
     	SystemSimpleContentElement veryRootElement = 
-    	   new SystemSimpleContentElement("Profiles",
+    	   new SystemSimpleContentElement("Profiles", //$NON-NLS-1$
     	                                  null, null, (Vector)null);	    	
     	veryRootElement.setRenamable(false);
     	veryRootElement.setDeletable(false);

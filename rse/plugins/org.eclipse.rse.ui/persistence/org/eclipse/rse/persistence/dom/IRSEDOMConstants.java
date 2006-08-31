@@ -19,70 +19,70 @@ package org.eclipse.rse.persistence.dom;
 public interface IRSEDOMConstants
 {
 	// node types
-	public static final String TYPE_PROFILE = "Profile";
-	public static final String TYPE_PROPERTY_SET = "PropertySet";
-	public static final String TYPE_PROPERTY = "Property";
-	public static final String TYPE_HOST = "Host";
-	public static final String TYPE_FILTER_POOL = "FilterPool";
-	public static final String TYPE_FILTER = "Filter";
-	public static final String TYPE_FILTER_STRING = "FilterString";
-	public static final String TYPE_FILTER_POOL_REFERENCE = "FilterPoolReference";
-	public static final String TYPE_CONNECTOR_SERVICE = "ConnectorService";
-	public static final String TYPE_SERVER_LAUNCHER = "ServerLauncher";
-	public static final String TYPE_SUBSYSTEM = "SubSystem";
+	public static final String TYPE_PROFILE = "Profile"; //$NON-NLS-1$
+	public static final String TYPE_PROPERTY_SET = "PropertySet"; //$NON-NLS-1$
+	public static final String TYPE_PROPERTY = "Property"; //$NON-NLS-1$
+	public static final String TYPE_HOST = "Host"; //$NON-NLS-1$
+	public static final String TYPE_FILTER_POOL = "FilterPool"; //$NON-NLS-1$
+	public static final String TYPE_FILTER = "Filter"; //$NON-NLS-1$
+	public static final String TYPE_FILTER_STRING = "FilterString"; //$NON-NLS-1$
+	public static final String TYPE_FILTER_POOL_REFERENCE = "FilterPoolReference"; //$NON-NLS-1$
+	public static final String TYPE_CONNECTOR_SERVICE = "ConnectorService"; //$NON-NLS-1$
+	public static final String TYPE_SERVER_LAUNCHER = "ServerLauncher"; //$NON-NLS-1$
+	public static final String TYPE_SUBSYSTEM = "SubSystem"; //$NON-NLS-1$
 	
 	// node attributes
 	
 	// profile attributes
-	public static final String ATTRIBUTE_DEFAULT_PRIVATE="defaultPrivate";
-	public static final String ATTRIBUTE_IS_ACTIVE="isActive";
+	public static final String ATTRIBUTE_DEFAULT_PRIVATE="defaultPrivate"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_IS_ACTIVE="isActive"; //$NON-NLS-1$
 	
 	// subsystem attributes
-	 public static final String ATTRIBUTE_HIDDEN="hidden";
+	 public static final String ATTRIBUTE_HIDDEN="hidden"; //$NON-NLS-1$
 	 
    	 // common attributes
-	 public static final String ATTRIBUTE_NAME="name";
-	 public static final String ATTRIBUTE_TYPE="type";
+	 public static final String ATTRIBUTE_NAME="name"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_TYPE="type"; //$NON-NLS-1$
 	 
 	 // host attributes 
-	public static final String ATTRIBUTE_HOSTNAME = "hostname";
-	public static final String ATTRIBUTE_OFFLINE = "offline";
-	public static final String ATTRIBUTE_DESCRIPTION = "description";
+	public static final String ATTRIBUTE_HOSTNAME = "hostname"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_OFFLINE = "offline"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_DESCRIPTION = "description"; //$NON-NLS-1$
 	 
 	 // ConnectorService attributes
-	 public static final String ATTRIBUTE_GROUP="group";
-	 public static final String ATTRIBUTE_USE_SSL="useSSL";
+	 public static final String ATTRIBUTE_GROUP="group"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_USE_SSL="useSSL"; //$NON-NLS-1$
 	 
 	 // Filter string attributes
-	 public static final String ATTRIBUTE_STRING = "string";
+	 public static final String ATTRIBUTE_STRING = "string"; //$NON-NLS-1$
 	
 	 // filter attributes
-	 public static final String ATTRIBUTE_SUPPORTS_NESTED_FILTERS = "supportsNestedFilters";
-	 public static final String ATTRIBUTE_RELATIVE_ORDER = "relativeOrder";
-	 public static final String ATTRIBUTE_DEFAULT = "default";
-	 public static final String ATTRIBUTE_STRING_CASE_SENSITIVE = "stringsCaseSensitive";
-	 public static final String ATTRIBUTE_PROMPTABLE ="promptable";
-	 public static final String ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS="supportsDuplicateFilterStrings";
-	 public static final String ATTRIBUTE_NON_DELETABLE="nonDeletable";
-	 public static final String ATTRIBUTE_NON_RENAMABLE="nonRenamable";
-	 public static final String ATTRIBUTE_NON_CHANGEABLE="nonChangable";
-	 public static final String ATTRIBUTE_STRINGS_NON_CHANGABLE="stringsNonChangable";
-	 public static final String ATTRIBUTE_RELEASE="release";
-	 public static final String ATTRIBUTE_SINGLE_FILTER_STRING_ONLY="singleFilterStringOnly";
+	 public static final String ATTRIBUTE_SUPPORTS_NESTED_FILTERS = "supportsNestedFilters"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_RELATIVE_ORDER = "relativeOrder"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_DEFAULT = "default"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_STRING_CASE_SENSITIVE = "stringsCaseSensitive"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_PROMPTABLE ="promptable"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS="supportsDuplicateFilterStrings"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_NON_DELETABLE="nonDeletable"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_NON_RENAMABLE="nonRenamable"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_NON_CHANGEABLE="nonChangable"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_STRINGS_NON_CHANGABLE="stringsNonChangable"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_RELEASE="release"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_SINGLE_FILTER_STRING_ONLY="singleFilterStringOnly"; //$NON-NLS-1$
 	
 	 // server launcher attributes
-	 public static final String ATTRIBUTE_REXEC_PORT="rexecPort";
-	 public static final String ATTRIBUTE_DAEMON_PORT="daemonPort";
-	 public static final String ATTRIBUTE_PORT="port";
-	 public static final String ATTRIBUTE_SERVER_PATH="serverPath";
-	 public static final String ATTRIBUTE_SERVER_SCRIPT="serverScript";
-	 public static final String ATTRIBUTE_RESTRICTED_TYPES="restrictedTypes";
+	 public static final String ATTRIBUTE_REXEC_PORT="rexecPort"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_DAEMON_PORT="daemonPort"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_PORT="port"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_SERVER_PATH="serverPath"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_SERVER_SCRIPT="serverScript"; //$NON-NLS-1$
+	 public static final String ATTRIBUTE_RESTRICTED_TYPES="restrictedTypes"; //$NON-NLS-1$
 	 
-	public static final String ATTRIBUTE_VALUE = "value";
-	public static final String ATTRIBUTE_ID = "id";
-	public static final String ATTRIBUTE_OWNING_PARENT_NAME = "owningParentName";
-	public static final String ATTRIBUTE_REF_ID= "refID";
-	public static final String ATTRIBUTE_DELETABLE = "deletable";
-	public static final String ATTRIBUTE_TRUE = "true";
-	public static final String ATTRIBUTE_FALSE = "false";
+	public static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_OWNING_PARENT_NAME = "owningParentName"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_REF_ID= "refID"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_DELETABLE = "deletable"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_TRUE = "true"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_FALSE = "false"; //$NON-NLS-1$
 }

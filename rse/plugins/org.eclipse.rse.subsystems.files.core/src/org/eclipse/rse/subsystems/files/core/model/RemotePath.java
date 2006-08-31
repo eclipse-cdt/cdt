@@ -54,7 +54,7 @@ public class RemotePath implements IRemotePath {
 	 * Sets the profile name, connection name and absolute path on the remote machine
 	 * from the fully qualified path. The fully qualified path is the absolute path on the remote machine,
 	 * prefixed by profile name and connection name. It must be of the form <code>"profileName.connectionName:absolutePath"</code>.
-	 * @param fullyQualifiedName the fully qualified name.
+	 * @param fullyQualifiedPath the fully qualified path.
 	 */
 	public RemotePath(String fullyQualifiedPath) {
 		
@@ -125,7 +125,7 @@ public class RemotePath implements IRemotePath {
 			return null;
 		}
 		else {
-			return profileName + "." + connectionName + ":" + absolutePath;
+			return profileName + "." + connectionName + ":" + absolutePath; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -147,7 +147,7 @@ public class RemotePath implements IRemotePath {
 					return absolutePath.substring(dotIndex+1);
 				}
 				else {
-					return "";
+					return ""; //$NON-NLS-1$
 				}
 			}
 			else {
@@ -165,11 +165,11 @@ public class RemotePath implements IRemotePath {
 			return null;
 		}
 		
-		if (absolutePath.endsWith("/") || absolutePath.endsWith("\\")) {
+		if (absolutePath.endsWith("/") || absolutePath.endsWith("\\")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return this;
 		}
 		else {
-			String newAbsolutePath = absolutePath + "." + extension;
+			String newAbsolutePath = absolutePath + "." + extension; //$NON-NLS-1$
 			return new RemotePath(profileName, connectionName, newAbsolutePath);
 		}
 	}
@@ -183,7 +183,7 @@ public class RemotePath implements IRemotePath {
 			return null;
 		}
 		
-		if (absolutePath.endsWith("/") || absolutePath.endsWith("\\")) {
+		if (absolutePath.endsWith("/") || absolutePath.endsWith("\\")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return this;
 		}
 		else {

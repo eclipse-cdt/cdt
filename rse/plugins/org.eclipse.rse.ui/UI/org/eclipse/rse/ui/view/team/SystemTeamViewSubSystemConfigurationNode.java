@@ -93,7 +93,7 @@ public class SystemTeamViewSubSystemConfigurationNode implements IAdaptable
 	{
 		if (name == null)
 		{
-			name = "";
+			name = ""; //$NON-NLS-1$
 			String[] types = ssf.getSystemTypes();
 			if (ssf.getSubSystemConfigurationProxy().supportsAllSystemTypes())
 			{
@@ -106,10 +106,10 @@ public class SystemTeamViewSubSystemConfigurationNode implements IAdaptable
 					if (idx==0)
 						name += types[idx];
 					else
-						name += ", " + types[idx];
+						name += ", " + types[idx]; //$NON-NLS-1$
 				}
 			}
-			name = ssf.getName() + " ("+name+")";
+			name = ssf.getName() + " ("+name+")"; //$NON-NLS-1$  //$NON-NLS-2$
 			//name = ssf.getName() + ": "+name;
 		}
 		return name;	

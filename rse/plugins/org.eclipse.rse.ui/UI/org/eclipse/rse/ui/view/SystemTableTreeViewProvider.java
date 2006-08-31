@@ -32,7 +32,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
@@ -284,7 +284,7 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 				}
 			}
 
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 
 	}

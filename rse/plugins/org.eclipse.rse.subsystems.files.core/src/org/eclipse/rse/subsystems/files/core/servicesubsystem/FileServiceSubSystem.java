@@ -126,7 +126,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	
 	public String getRemoteEncoding()
 	{
-		return System.getProperty("file.encoding");
+		return System.getProperty("file.encoding"); //$NON-NLS-1$
 	}
 
 	public void setHostFileToRemoteFileAdapter(IHostFileToRemoteFileAdapter hostFileAdapter)
@@ -179,7 +179,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		int j = fofName.indexOf(ArchiveHandlerManager.VIRTUAL_SEPARATOR);
 		if (j == -1)
 		{
-			if (fofName.equals("/")) 
+			if (fofName.equals("/")) //$NON-NLS-1$ 
 			{
 				try
 				{
@@ -191,7 +191,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 				}
 			} 
 			
-			if (fofName.equals(".")) {
+			if (fofName.equals(".")) { //$NON-NLS-1$
 				return getUserHome();
 			}
 
@@ -201,7 +201,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 				fofName = fofName.substring(0, fofName.length() - sep.length());
 			}
 
-			if (fofName.endsWith(":"))
+			if (fofName.endsWith(":")) //$NON-NLS-1$
 			{
 				try
 				{
@@ -223,7 +223,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 				String parentPath = fofName.substring(0, lastSep);
 			
 			
-				if (parentPath.length() == 0) parentPath = "/";
+				if (parentPath.length() == 0) parentPath = "/"; //$NON-NLS-1$
 				String name = fofName.substring(lastSep + 1, fofName.length());
 			
 				IHostFile node = getFile(null, parentPath, name);
@@ -265,13 +265,13 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		{
 			return _userHome;
 		}
-		IRemoteFile root = getCachedRemoteFile(".");
+		IRemoteFile root = getCachedRemoteFile("."); //$NON-NLS-1$
 		if (root != null && !root.isStale()) {
 			return root;
 		}
 		IHostFile userHome = getFileService().getUserHome();
 		IRemoteFile parent = null;
-		if (!userHome.getParentPath().equals("."))
+		if (!userHome.getParentPath().equals(".")) //$NON-NLS-1$
 		{
 		try
 		{
@@ -282,7 +282,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		}
 		root = getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), parent, userHome);
-		cacheRemoteFile(root, ".");
+		cacheRemoteFile(root, "."); //$NON-NLS-1$
 		_userHome = root;
 		return root;
 	}
@@ -328,7 +328,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		if (parent != null) {
 			parentPath = parent.getAbsolutePath();
 		} else { 
-			parentPath = "/";
+			parentPath = "/"; //$NON-NLS-1$
 		}
 		
 		if (!parent.canRead())
@@ -358,7 +358,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		if (parent != null) {
 			parentPath = parent.getAbsolutePath();
 		} else {
-			parentPath = "/";
+			parentPath = "/"; //$NON-NLS-1$
 		}
 		
 		if (!parent.canRead())
@@ -394,7 +394,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		if (parent != null) {
 			parentPath = parent.getAbsolutePath();
 		} else {
-			parentPath = "/";
+			parentPath = "/"; //$NON-NLS-1$
 		}
 		
 		if (!parent.canRead())
@@ -526,7 +526,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 
 		if (!destination.canWrite())
 		{
-			SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEF5003").makeSubstitution(remoteFileName, getHostName());
+			SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEF5003").makeSubstitution(remoteFileName, getHostName()); //$NON-NLS-1$
 			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 			dlg.open();
 			return;

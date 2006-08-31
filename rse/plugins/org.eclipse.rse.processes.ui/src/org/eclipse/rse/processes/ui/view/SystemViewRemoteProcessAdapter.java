@@ -21,10 +21,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.ISystemMessageObject;
+import org.eclipse.rse.core.model.ISystemResourceSet;
+import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.model.ISystemMessageObject;
-import org.eclipse.rse.model.ISystemResourceSet;
-import org.eclipse.rse.model.SystemMessageObject;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.processes.ui.ProcessesPlugin;
 import org.eclipse.rse.processes.ui.actions.SystemKillProcessAction;
@@ -107,13 +107,13 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 	public ImageDescriptor getImageDescriptor(Object element)
 	{
 		//return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROCESS_ID);
-		return ProcessesPlugin.getDefault().getImageDescriptorFromPath("icons/full/obj16/activeprocess_obj.gif");
+		return ProcessesPlugin.getDefault().getImageDescriptorFromPath("icons/full/obj16/activeprocess_obj.gif"); //$NON-NLS-1$
 	}
 
 	public String getText(Object element)
 	{
 		String text = ((IRemoteProcess) element).getLabel();
-		return (text == null) ? "" : text;
+		return (text == null) ? "" : text; //$NON-NLS-1$
 	}
 	
 	/** 
@@ -129,7 +129,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 	public String getAbsoluteName(Object object)
 	{
 		IRemoteProcess process = (IRemoteProcess) object;
-		return "" + process.getPid();
+		return "" + process.getPid(); //$NON-NLS-1$
 	}
 
 	public String getType(Object element)
@@ -259,7 +259,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		{
 			if (formatted)
 			{
-				return "" + process.getGid();
+				return "" + process.getGid(); //$NON-NLS-1$
 			}
 			else
 			{
@@ -274,7 +274,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		{
 			if (formatted)
 			{
-				return "" + process.getPid();
+				return "" + process.getPid(); //$NON-NLS-1$
 			}
 			else
 			{
@@ -285,7 +285,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		{
 			if (formatted)
 			{
-				return "" + process.getPPid();
+				return "" + process.getPPid(); //$NON-NLS-1$
 			}
 			else
 			{
@@ -307,7 +307,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		{
 			if (formatted)
 			{
-				return "" + process.getTgid();
+				return "" + process.getTgid(); //$NON-NLS-1$
 			}
 			else
 			{
@@ -318,7 +318,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		{
 			if (formatted)
 			{
-				return "" + process.getTracerPid();
+				return "" + process.getTracerPid(); //$NON-NLS-1$
 			}
 			else
 			{
@@ -329,7 +329,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		{
 			if (formatted)
 			{
-				return "" + process.getUid();
+				return "" + process.getUid(); //$NON-NLS-1$
 			}
 			else
 			{
@@ -368,18 +368,18 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 	
 	protected String formatState(String state)
 	{
-		if (state == null) return "";
+		if (state == null) return ""; //$NON-NLS-1$
 		state = state.trim();
-		String longState = "";
-		String[] allStates = state.split(",");
+		String longState = ""; //$NON-NLS-1$
+		String[] allStates = state.split(","); //$NON-NLS-1$
 		if (allStates == null) return longState;
 		
 		SystemProcessStatesContentProvider zstates = new SystemProcessStatesContentProvider();		
 		for (int i = 0; i < allStates.length; i++)
 		{
-			longState = longState + allStates[i].charAt(0) + "-" + zstates.getStateString(allStates[i]);
+			longState = longState + allStates[i].charAt(0) + "-" + zstates.getStateString(allStates[i]); //$NON-NLS-1$
 			if (i < allStates.length - 1)
-				longState = longState + ", ";
+				longState = longState + ", "; //$NON-NLS-1$
 		}
 		return longState;
 	}
@@ -392,7 +392,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		IRemoteProcess process = (IRemoteProcess) element;
 		IRemoteProcess parent = process.getParentRemoteProcess();
 		if (parent != null) return parent.getAbsolutePath();
-		else return "/proc/0";
+		else return "/proc/0"; //$NON-NLS-1$
 	}
 
 	/**
@@ -422,8 +422,8 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		String[] pids = EMPTY_STRING_LIST;
 
 		IRemoteProcess process = (IRemoteProcess) element;
-		String parentName = "" + process.getPPid();
-		if (parentName.equals("-1")) // given a root?
+		String parentName = "" + process.getPPid(); //$NON-NLS-1$
+		if (parentName.equals("-1")) // given a root? //$NON-NLS-1$
 			return pids; // not much we can do. Should never happen: you can't rename a root!
 
 		Object[] children = getChildren(process.getParentRemoteProcess());
@@ -432,7 +432,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 
 		pids = new String[children.length];
 		for (int idx = 0; idx < pids.length; idx++)
-			pids[idx] = "" + ((IRemoteProcess) children[idx]).getPid();
+			pids[idx] = "" + ((IRemoteProcess) children[idx]).getPid(); //$NON-NLS-1$
 
 		return pids;
 	}

@@ -17,13 +17,13 @@
 package org.eclipse.rse.internal.model;
 import java.util.EventObject;
 
-import org.eclipse.rse.model.ISystemPreferenceChangeEvent;
+import org.eclipse.rse.core.model.ISystemPreferenceChangeEvent;
 
 
 /**
  * Event object sent to ISystemPreferenceChangeListeners when a
  * remote system preference is changed.
- * @see org.eclipse.rse.model.ISystemPreferenceChangeEvents
+ * @see org.eclipse.rse.core.model.ISystemPreferenceChangeEvents
  */
 public class SystemPreferenceChangeEvent
 	   extends EventObject
@@ -35,7 +35,7 @@ public class SystemPreferenceChangeEvent
 	
 	/**
 	 * Constructor 
-     * @see org.eclipse.rse.model.ISystemPreferenceChangeEvents
+     * @see org.eclipse.rse.core.model.ISystemPreferenceChangeEvents
 	 * @param source The object that was added,deleted,renamed,changed.
 	 * @param type The type of event, one of ISystemChangeEvent constants.
 	 * @param parent The parent of the object that was added or deleted.
@@ -50,7 +50,7 @@ public class SystemPreferenceChangeEvent
 
 	/**
 	 * Return the type of the event 
-     * @see org.eclipse.rse.model.ISystemPreferenceChangeEvents
+     * @see org.eclipse.rse.core.model.ISystemPreferenceChangeEvents
 	 */
 	public int getType()
 	{
@@ -73,7 +73,7 @@ public class SystemPreferenceChangeEvent
 
     /**
      * Set the type
-     * @see org.eclipse.rse.model.ISystemPreferenceChangeEvents
+     * @see org.eclipse.rse.core.model.ISystemPreferenceChangeEvents
      */
     public void setType(int type)
     {

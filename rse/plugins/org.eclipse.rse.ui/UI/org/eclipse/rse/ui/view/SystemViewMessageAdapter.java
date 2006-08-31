@@ -17,7 +17,7 @@
 package org.eclipse.rse.ui.view;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.model.ISystemMessageObject;
+import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -178,7 +178,7 @@ public class SystemViewMessageAdapter
 	 */
 	public String getMementoHandleKey(Object element)
 	{
-		return "Msg";
+		return "Msg"; //$NON-NLS-1$
 	}
 
     /**

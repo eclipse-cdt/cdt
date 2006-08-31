@@ -111,12 +111,12 @@ public class SystemEscapeCharHelper {
 	*/
 
       int intValue = c;
-      String returnStr=""+ESCAPE_CHAR;
+      String returnStr=""+ESCAPE_CHAR; //$NON-NLS-1$
 
       if (intValue < 10)
-         returnStr = returnStr+"00";
+         returnStr = returnStr+"00"; //$NON-NLS-1$
       else if (intValue < 100)
-         returnStr = returnStr+"0";
+         returnStr = returnStr+"0"; //$NON-NLS-1$
 
      return returnStr + intValue;
 
@@ -128,7 +128,7 @@ public class SystemEscapeCharHelper {
 
       char c = (char)Integer.parseInt(s);
 
-      return ""+c;
+      return ""+c; //$NON-NLS-1$
 	}
 
 

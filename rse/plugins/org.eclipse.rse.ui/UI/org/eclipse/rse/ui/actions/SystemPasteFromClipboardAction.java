@@ -72,7 +72,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 
 		allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0117");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0117"); //$NON-NLS-1$
 	}
 
 	public void run()

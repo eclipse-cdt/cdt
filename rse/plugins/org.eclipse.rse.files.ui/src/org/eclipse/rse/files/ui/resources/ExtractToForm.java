@@ -188,7 +188,7 @@ public class ExtractToForm extends SystemSelectRemoteFileOrFolderForm
 			fileName = remoteFile.getName();
 			if (remoteFile.isRoot())
 			{
-				if (fileName.endsWith("\\")) fileName = fileName.substring(0,2);
+				if (fileName.endsWith("\\")) fileName = fileName.substring(0,2); //$NON-NLS-1$
 			}
 		   ISystemRemoteElementAdapter remoteAdapter = getRemoteAdapter(selectedObject);			
 		   if ((remoteAdapter != null))

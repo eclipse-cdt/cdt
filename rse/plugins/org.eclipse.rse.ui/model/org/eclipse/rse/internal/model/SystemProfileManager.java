@@ -40,7 +40,7 @@ public class SystemProfileManager implements ISystemProfileManager
 	private String[]            profileNames = null;
 	private Vector              profileNamesVector = null;
 	private static              ISystemProfileManager singleton = null;
-	private static final String PROFILE_FILE_NAME = "profile";
+	private static final String PROFILE_FILE_NAME = "profile"; //$NON-NLS-1$
 	
 /**
 	 * Default constructor
@@ -74,7 +74,7 @@ public class SystemProfileManager implements ISystemProfileManager
 			}
 		}
 		if (name == null) {
-			name = System.getProperty("user.name");
+			name = System.getProperty("user.name"); //$NON-NLS-1$
 		}
 		return name;
 	}
@@ -215,7 +215,7 @@ public class SystemProfileManager implements ISystemProfileManager
 		  if (!defaultProfileExist)
 		  {
 		  	 // If Team is the only profile - then put a message in the log - do not make Team to be default
-		     if (profiles.size() == 1 && ((ISystemProfile)profiles.get(0)).getName().equalsIgnoreCase("Team"))  
+		     if (profiles.size() == 1 && ((ISystemProfile)profiles.get(0)).getName().equalsIgnoreCase("Team")) //$NON-NLS-1$  
 		     {
 		  	    SystemBasePlugin.logWarning("Only one Profile Team exists - there is no Default Profile");
 		     } 
@@ -599,7 +599,7 @@ public class SystemProfileManager implements ISystemProfileManager
 
 	/**
 	 * Reusable method to return a name validator for renaming a profile.
-	 * @param the current profile name on updates. Can be null for new profiles. Used
+	 * @param profileName the current profile name on updates. Can be null for new profiles. Used
 	 *  to remove from the existing name list the current connection.
 	 */
 	public ISystemValidator getProfileNameValidator(String profileName)
@@ -613,7 +613,7 @@ public class SystemProfileManager implements ISystemProfileManager
 	}	
 	/**
 	 * Reusable method to return a name validator for renaming a profile.
-	 * @param the current profile object on updates. Can be null for new profiles. Used
+	 * @param profile the current profile object on updates. Can be null for new profiles. Used
 	 *  to remove from the existing name list the current connection.
 	 */
 	public ISystemValidator getProfileNameValidator(ISystemProfile profile)

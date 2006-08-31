@@ -179,7 +179,7 @@ public class SystemViewConnectionAdapter
 		if (!qualifyNames)
 		  return conn.getAliasName();
 		else
-		  return conn.getSystemProfileName() + "." + conn.getAliasName(); 
+		  return conn.getSystemProfileName() + "." + conn.getAliasName(); //$NON-NLS-1$ 
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class SystemViewConnectionAdapter
 	public String getAbsoluteName(Object element)
 	{
 		IHost conn = (IHost)element;	
-		return conn.getSystemProfileName() + "." + conn.getAliasName(); 
+		return conn.getSystemProfileName() + "." + conn.getAliasName(); //$NON-NLS-1$ 
 	}
 		
 	/**
@@ -330,7 +330,7 @@ public class SystemViewConnectionAdapter
 		  	userIdDescriptor.setToggleButtonToolTipText(SystemResources.RESID_CONNECTION_DEFAULTUSERID_INHERITBUTTON_TIP);
 		  	userIdDescriptor.setEntryFieldToolTipText(SystemResources.RESID_CONNECTION_DEFAULTUSERID_TIP);
 		  	ICellEditorValidator userIdValidator = 
-					new ValidatorSpecialChar("=;",false,
+					new ValidatorSpecialChar("=;",false, //$NON-NLS-1$
 										 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_NOTVALID),            
 										 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY)); // false => allow empty? No.
 		  	userIdDescriptor.setValidator(userIdValidator);
@@ -601,7 +601,7 @@ public class SystemViewConnectionAdapter
     public String getCanonicalNewName(Object element, String newName)
     {
 		IHost conn = (IHost)element;	
-		return (conn.getSystemProfileName() + "." + newName).toUpperCase(); 
+		return (conn.getSystemProfileName() + "." + newName).toUpperCase(); //$NON-NLS-1$ 
     }
     
 	
@@ -636,7 +636,7 @@ public class SystemViewConnectionAdapter
 	public String getMementoHandle(Object element)
 	{
 		IHost conn = (IHost)element;	
-		return conn.getSystemProfileName() + "." + conn.getAliasName(); 
+		return conn.getSystemProfileName() + "." + conn.getAliasName(); //$NON-NLS-1$ 
 	}
 	/**
 	 * Return a short string to uniquely identify the type of resource. Eg "conn" for connection.

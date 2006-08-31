@@ -64,16 +64,16 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 		{
 			if (getSystemType() == IRSESystemType.SYSTEMTYPE_WINDOWS)
 			{
-				_userHome = "c:\\";
+				_userHome = "c:\\"; //$NON-NLS-1$
 			}
 			else if (getSystemType() == IRSESystemType.SYSTEMTYPE_LOCAL)
 			{
-				_userHome = System.getProperty("user.home");
+				_userHome = System.getProperty("user.home"); //$NON-NLS-1$
 			}
 			else
 			{
 				// Assume UNIX compatible file system
-				_userHome = "/home/" + getUserId();
+				_userHome = "/home/" + getUserId(); //$NON-NLS-1$
 			}
 		}
 		return _userHome;
@@ -87,7 +87,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 
 	protected Object[] internalRunCommand(IProgressMonitor monitor, String cmd, Object context, boolean interpretOutput) throws InvocationTargetException, InterruptedException, SystemMessageException
 	{
-		String cwd = "";
+		String cwd = ""; //$NON-NLS-1$
 		if (context instanceof IRemoteFile)
 		{
 			IRemoteFile file = (IRemoteFile) context;
@@ -98,7 +98,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 			// assume the string is a remote path
 			cwd = (String)context;
 		}
-		if (cwd == null || cwd.equals("null"))
+		if (cwd == null || cwd.equals("null")) //$NON-NLS-1$
 		{
 			cwd = getUserHome();
 		}
@@ -124,7 +124,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 
 	protected IRemoteCommandShell internalRunShell(IProgressMonitor monitor, Object context) throws InvocationTargetException, InterruptedException, SystemMessageException
 	{
-		String cwd = "";
+		String cwd = ""; //$NON-NLS-1$
 		if (context instanceof IRemoteFile)
 		{
 			IRemoteFile file = (IRemoteFile) context;
@@ -135,7 +135,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 			// assume the string is a remote path
 			cwd = (String)context;
 		}
-		if (cwd == null || cwd.equals("null"))
+		if (cwd == null || cwd.equals("null")) //$NON-NLS-1$
 		{
 			cwd = getUserHome();
 		}

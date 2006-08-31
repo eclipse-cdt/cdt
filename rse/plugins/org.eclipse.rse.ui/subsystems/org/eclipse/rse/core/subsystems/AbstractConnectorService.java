@@ -138,7 +138,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      */
     public String getVersionReleaseModification()
     {
-    	return "";
+    	return ""; //$NON-NLS-1$
     }
     /**
      * <i>Not implemented, you should override if possible.</i><br>
@@ -150,7 +150,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      */
     public String getHomeDirectory()
     {
-    	return "";
+    	return ""; //$NON-NLS-1$
     }        
     /**
      * <i>Not implemented, you should override if possible.</i><br>
@@ -162,7 +162,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      */
     public String getTempDirectory()
     {
-    	return "";
+    	return ""; //$NON-NLS-1$
     }    
     
     /**

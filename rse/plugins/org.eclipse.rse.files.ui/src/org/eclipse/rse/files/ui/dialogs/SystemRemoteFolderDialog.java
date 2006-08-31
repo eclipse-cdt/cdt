@@ -50,7 +50,7 @@ public class SystemRemoteFolderDialog extends SystemRemoteFileDialog
 		{
 			_filter = new SystemActionViewerFilter();
 			Class[] types = {IRemoteFile.class};
-			_filter.addFilterCriterion(types, "isDirectory", "true");	
+			_filter.addFilterCriterion(types, "isDirectory", "true"); //$NON-NLS-1$  //$NON-NLS-2$	
 		}
 		return _filter;		
 	}

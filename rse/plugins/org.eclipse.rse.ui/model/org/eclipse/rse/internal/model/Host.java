@@ -175,7 +175,6 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
     
     /**
      * Return all the connector services provided for this host
-     * @return
      */
     public IConnectorService[] getConnectorServices()
     {
@@ -296,7 +295,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
     	  boolean caseSensitiveUID = systemType.equals(IRSESystemType.SYSTEMTYPE_UNIX)
     	                    || systemType.equals(IRSESystemType.SYSTEMTYPE_LINUX)
     	                    || (systemType.equals(IRSESystemType.SYSTEMTYPE_LOCAL) &&
-    	                        !System.getProperty("os.name").toLowerCase().startsWith("windows"));
+    	                        !System.getProperty("os.name").toLowerCase().startsWith("windows")); //$NON-NLS-1$  //$NON-NLS-2$
     	  setForceUserIdToUpperCase(forceUC);
     	  setUserIdCaseSensitive(caseSensitiveUID);
     	}
@@ -432,7 +431,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
      */
     protected String getPreferencesKey(String profileName, String connectionName)
     {
-   	    return profileName + "." + connectionName;
+   	    return profileName + "." + connectionName; //$NON-NLS-1$
     }
     
     
@@ -471,9 +470,9 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
     public boolean compareUserIds(String userId1, String userId2)
     {
     	if (userId1 == null)
-    	  userId1 = "";
+    	  userId1 = ""; //$NON-NLS-1$
     	if (userId2 == null)
-    	  userId2 = "";
+    	  userId2 = ""; //$NON-NLS-1$
     	if (userIdCaseSensitive)
     	  return userId1.equals(userId2);
     	else
@@ -628,26 +627,24 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
 	}
 
 	/**
-	 * @generated This field/method will be replaced during code generation.
+	 * @deprecated This field/method will be replaced during code generation.
 	 */
 	public String toStringGen()
 	{
-		
-
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (systemType: ");
+		result.append(" (systemType: "); //$NON-NLS-1$
 		result.append(systemType);
-		result.append(", aliasName: ");
+		result.append(", aliasName: "); //$NON-NLS-1$
 		result.append(aliasName);
-		result.append(", hostName: ");
+		result.append(", hostName: "); //$NON-NLS-1$
 		result.append(hostName);
-		result.append(", description: ");
+		result.append(", description: "); //$NON-NLS-1$
 		result.append(description);
-		result.append(", defaultUserId: ");
+		result.append(", defaultUserId: "); //$NON-NLS-1$
 		result.append(defaultUserId);
-		result.append(", promptable: ");
+		result.append(", promptable: "); //$NON-NLS-1$
 		result.append(promptable);
-		result.append(", offline: ");
+		result.append(", offline: "); //$NON-NLS-1$
 		result.append(offline);
 		result.append(')');
 		return result.toString();

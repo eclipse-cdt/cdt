@@ -66,7 +66,6 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	
 	/**
 	 * Propagate needs save indicator up to the root
-	 * @param flag
 	 */
 	public void markForSave()
 	{
@@ -103,7 +102,6 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	
 	/**
 	 * Returns the name of this node
-	 * @return
 	 */
 	public String getName()
 	{
@@ -112,7 +110,6 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	
 	/**
 	 * Returns the type of this node
-	 * @return
 	 */
 	public String getType()
 	{
@@ -121,7 +118,6 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	
 	/**
 	 * Returns the parent of this node
-	 * @return
 	 */
 	public RSEDOMNode getParent()
 	{
@@ -130,7 +126,6 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	
 	/**
 	 * Returns all the children of this node
-	 * @return
 	 */
 	public RSEDOMNode[] getChildren()
 	{
@@ -140,7 +135,6 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	/**
 	 * Returns the first attribute found that has the specified key
 	 * @param key
-	 * @return
 	 */
 	public RSEDOMNodeAttribute getAttribute(String key)
 	{
@@ -158,7 +152,6 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	/**
 	 * Returns the immediate children of this node that are of the specified type
 	 * @param type
-	 * @return
 	 */
 	public RSEDOMNode[] getChildren(String type)
 	{
@@ -178,7 +171,6 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	 * Returns the first immediate child of this node that is of the specified type and name
 	 * @param type
 	 * @param name
-	 * @return
 	 */
 	public RSEDOMNode getChild(String type, String name)
 	{
@@ -195,7 +187,6 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	
 	/**
 	 * Returns all the attributes for this node
-	 * @return
 	 */
 	public RSEDOMNodeAttribute [] getAttributes()
 	{

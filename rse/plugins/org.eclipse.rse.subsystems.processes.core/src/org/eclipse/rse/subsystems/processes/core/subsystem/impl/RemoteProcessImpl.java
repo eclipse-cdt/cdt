@@ -155,7 +155,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	 */
 	public String getAbsolutePath()
 	{
-		return "/proc/" + getPid();
+		return "/proc/" + getPid(); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

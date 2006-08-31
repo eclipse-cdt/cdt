@@ -44,7 +44,7 @@ public class SystemUpdateConnectionDialog extends SystemPromptDialog implements 
 	public SystemUpdateConnectionDialog(Shell shell) 
 	{
 		super(shell, SystemResources.RESID_CHGCONN_TITLE);				
-        parentHelpId = RSEUIPlugin.HELPPREFIX + "dcon0000";
+        parentHelpId = RSEUIPlugin.HELPPREFIX + "dcon0000"; //$NON-NLS-1$
 		getForm();		
 		//pack();
 	}

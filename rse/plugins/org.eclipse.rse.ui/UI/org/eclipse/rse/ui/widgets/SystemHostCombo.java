@@ -73,7 +73,7 @@ import org.eclipse.swt.widgets.Shell;
  * <li>By subsystem factory. Only connections with subsystems owned by the given subsystem factory are listed.
  * <li>By subsystem factory category. Only connections which contain subsystems owned by subsystem factories which
  *       are defined in their xml extension point as being of the given category are listed. 
- *       For a list of pre-defined categories, see {@link org.eclipse.rse.model.ISubSystemConfigurationCategories}.
+ *       For a list of pre-defined categories, see {@link org.eclipse.rse.core.model.ISubSystemConfigurationCategories}.
  * </ul>
  */
 public class SystemHostCombo extends Composite implements ISelectionProvider, ISystemCombo,
@@ -686,7 +686,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	{
 		boolean matchFound = false;
 		IHost[] additionalConnections = null;
-        if ( (systemType == null) || (systemType.equals("*")) )        
+        if ( (systemType == null) || (systemType.equals("*")) ) //$NON-NLS-1$        
           additionalConnections = RSEUIPlugin.getTheSystemRegistry().getHosts();
         else
           additionalConnections = RSEUIPlugin.getTheSystemRegistry().getHostsBySystemType(systemType);
@@ -867,7 +867,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
         //connectionName = sub(connectionName,"%2",conn.getSystemProfileName());
         //return connectionName;
 		if (showQualifiedNames)
-		  return conn.getSystemProfileName() + "." + conn.getAliasName();
+		  return conn.getSystemProfileName() + "." + conn.getAliasName(); //$NON-NLS-1$
 		else
 		  return conn.getAliasName();
 	}
@@ -1029,7 +1029,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	
 	protected void setConnectionToolTipText()
 	{
-	   String tooltipText = "";
+	   String tooltipText = ""; //$NON-NLS-1$
        IHost currConn = getHost();
        if (currConn != null)
          tooltipText = currConn.getHostName();

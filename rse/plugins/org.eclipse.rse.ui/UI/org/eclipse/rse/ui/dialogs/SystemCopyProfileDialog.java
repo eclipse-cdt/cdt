@@ -72,7 +72,7 @@ public class SystemCopyProfileDialog extends SystemPromptDialog
 		}
 		nameValidator = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().getProfileNameValidator((String)null);		
 		//pack();
-		setHelp(RSEUIPlugin.HELPPREFIX+"drnp0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"drnp0000"); //$NON-NLS-1$
 	}
 	/**
 	 * Create message line. Intercept so we can set msg line of form.
@@ -120,9 +120,9 @@ public class SystemCopyProfileDialog extends SystemPromptDialog
 
 		// SET HELP CONTEXT IDS...                                                    
 		//SystemWidgetHelpers.setHelp(newName, RSEUIPlugin.HELPPREFIX+"drnp0002", RSEUIPlugin.HELPPREFIX+"drnp0000");
-		SystemWidgetHelpers.setHelp(newName, RSEUIPlugin.HELPPREFIX+"drnp0002");
+		SystemWidgetHelpers.setHelp(newName, RSEUIPlugin.HELPPREFIX+"drnp0002"); //$NON-NLS-1$
 		//SystemWidgetHelpers.setHelp(makeActiveCB, RSEUIPlugin.HELPPREFIX+"drnp0003", RSEUIPlugin.HELPPREFIX+"drnp0000");
-		SystemWidgetHelpers.setHelp(makeActiveCB, RSEUIPlugin.HELPPREFIX+"drnp0003");
+		SystemWidgetHelpers.setHelp(makeActiveCB, RSEUIPlugin.HELPPREFIX+"drnp0003"); //$NON-NLS-1$
 		                  
 	    initialize();
 			

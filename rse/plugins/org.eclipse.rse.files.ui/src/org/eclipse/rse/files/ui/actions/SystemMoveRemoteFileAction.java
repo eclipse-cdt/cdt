@@ -48,8 +48,8 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 	public SystemMoveRemoteFileAction(Shell shell) 
 	{
 		super(shell, MODE_MOVE);
-  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0111");
-  	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dmrf0000"); 
+  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0111"); //$NON-NLS-1$
+  	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dmrf0000");  //$NON-NLS-1$
 	}
  
     // --------------------------

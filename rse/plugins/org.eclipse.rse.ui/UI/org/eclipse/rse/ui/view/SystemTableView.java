@@ -46,10 +46,10 @@ import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
+import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
@@ -129,7 +129,7 @@ public class SystemTableView
 			Object value = adapter.getPropertyValue(property);
 			if (value == null)
 			{
-				value = "";
+				value = ""; //$NON-NLS-1$
 			}
 			return value;
 		}
@@ -299,7 +299,7 @@ public class SystemTableView
 		_charWidth = table.getFont().getFontData()[0].getHeight() / 2;
 		computeLayout();
 
-		_menuManager = new MenuManager("#PopupMenu");
+		_menuManager = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		_menuManager.setRemoveAllWhenShown(true);
 		_menuManager.addMenuListener(this);
 		Menu menu = _menuManager.createContextMenu(table);

@@ -73,7 +73,7 @@ public class LocalConnectorService extends AbstractConnectorService
      */
     public String getVersionReleaseModification()
     {
-    	return System.getProperty("os.version");
+    	return System.getProperty("os.version"); //$NON-NLS-1$
     }	
     /**
      * Return the home directory of the operating system for the current user, if available.
@@ -82,7 +82,7 @@ public class LocalConnectorService extends AbstractConnectorService
      */
     public String getHomeDirectory()
     {
-    	return System.getProperty("user.home");
+    	return System.getProperty("user.home"); //$NON-NLS-1$
     }        
     /**
      * Return the temp directory of the operating system for the current user, if available.
@@ -91,7 +91,7 @@ public class LocalConnectorService extends AbstractConnectorService
      */
     public String getTempDirectory()
     {
-    	return System.getProperty("java.io.tmpdir");
+    	return System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
     }
 
 

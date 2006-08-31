@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2006 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,23 +14,26 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
 
-/*
- * Common interface for representing different contents types of
- * artifacts that can be stored in an IRemoteContainer
+
+/**
+ * Constants for pre-defined subsystem factory categories.
+ * Use these in calls to {@link org.eclipse.rse.model.ISystemRegistry#getHostsBySubSystemConfigurationCategory(String)}.
  */
-public interface ISystemContentsType 
+public interface ISubSystemConfigurationCategories
 {
-    /*
-     * Indicates the type of this contents
-     */
-    public String getType();
-    
-    /*
-     * Indicates whether or not the contents
-     * can be flushed or not when a container becomes
-     * stale.
-     */
-    public boolean isPersistent();
+	/**
+	 * Job subsystems 
+	 */
+	public static final String SUBSYSTEM_CATEGORY_JOBS = "jobs"; //$NON-NLS-1$
+	/**
+	 * File subsystems 
+	 */
+	public static final String SUBSYSTEM_CATEGORY_FILES = "files"; //$NON-NLS-1$
+	/**
+	 * Command subsystems 
+	 */
+	public static final String SUBSYSTEM_CATEGORY_CMDS = "commands"; //$NON-NLS-1$
+
 }

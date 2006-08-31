@@ -83,15 +83,15 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		IRSEPersistenceProvider provider = (IRSEPersistenceProvider) loadedProviders.get(id);
 		if (provider == null) {
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IConfigurationElement[] providerCandidates = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "persistenceProviders");
+			IConfigurationElement[] providerCandidates = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "persistenceProviders"); //$NON-NLS-1$  //$NON-NLS-2$
 			for (int j = 0; j < providerCandidates.length; j++) {
 				IConfigurationElement providerCandidate = providerCandidates[j];
-				if (providerCandidate.getName().equals("persistenceProvider")) {
-					String candidateId = providerCandidate.getAttribute("id");
+				if (providerCandidate.getName().equals("persistenceProvider")) { //$NON-NLS-1$
+					String candidateId = providerCandidate.getAttribute("id"); //$NON-NLS-1$
 					if (candidateId != null) {
 						if (candidateId.equals(id)) {
 							try {
-								provider = (IRSEPersistenceProvider) providerCandidate.createExecutableExtension("class");
+								provider = (IRSEPersistenceProvider) providerCandidate.createExecutableExtension("class"); //$NON-NLS-1$
 							} catch (CoreException e) {
 								logger.logError("Exception loading persistence provider", e); // DWD nls
 							}
@@ -116,7 +116,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 * TODO: need to determine what this is. Having more than one is problematic.
 	 */
 	public IRSEPersistenceProvider getRSEPersistenceProvider() {
-		IRSEPersistenceProvider provider = getRSEPersistenceProvider("org.eclipse.rse.persistence.PropertyFileProvider");
+		IRSEPersistenceProvider provider = getRSEPersistenceProvider("org.eclipse.rse.persistence.PropertyFileProvider"); //$NON-NLS-1$
 		return provider;
 	}
 

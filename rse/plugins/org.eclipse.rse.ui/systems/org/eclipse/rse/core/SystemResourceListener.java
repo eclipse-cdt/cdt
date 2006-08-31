@@ -23,8 +23,8 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.rse.core.model.ISystemModelChangeEvents;
 import org.eclipse.rse.internal.model.SystemModelChangeEvent;
-import org.eclipse.rse.model.ISystemModelChangeEvents;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.SystemPerspectiveLayout;
@@ -52,7 +52,7 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
     private static SystemResourceListener inst = null;
     private IProject remoteSystemsProject = null;
     private boolean ignoreEvents = true;
-    ;
+
     private boolean ensureEventsOnMode = false;
     private boolean sawSyncEvent = false;
     private boolean changesPending = false;
@@ -372,12 +372,12 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
     {
     	switch (type)
     	{
-    		case IResource.ROOT : return "root";
-    		case IResource.PROJECT : return "project";
-    		case IResource.FOLDER : return "folder";
-    		case IResource.FILE : return "file";
+    		case IResource.ROOT : return "root"; //$NON-NLS-1$
+    		case IResource.PROJECT : return "project"; //$NON-NLS-1$
+    		case IResource.FOLDER : return "folder"; //$NON-NLS-1$
+    		case IResource.FILE : return "file"; //$NON-NLS-1$
     	}
-    	return "unknown: "+Integer.toString(type);
+    	return "unknown: "+Integer.toString(type); //$NON-NLS-1$
     }
 
     /**
@@ -397,7 +397,7 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
         if (debug)
         {
             kindString = getKindString(kind);
-            pre = kindString + ": " + indent;
+            pre = kindString + ": " + indent; //$NON-NLS-1$
             SystemBasePlugin.logInfo(pre + delta + ": flags: " + getKindString(flags));
         }
         if (resource == null)
@@ -440,63 +440,63 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
         {
             IResourceDelta[] subdeltas = delta.getAffectedChildren();
             for (int i = 0; !stop && (i < subdeltas.length); i++)
-                stop = !processDelta(indent + "   ", subdeltas[i]);
+                stop = !processDelta(indent + "   ", subdeltas[i]); //$NON-NLS-1$
         }
         return !stop;
     }
 
     public static String getKindString(int kind)
     {
-        String kindString = "Unknown: " + Integer.toString(kind);
+        String kindString = "Unknown: " + Integer.toString(kind); //$NON-NLS-1$
         switch (kind)
         {
             case IResourceDelta.ADDED :
-                kindString = "ADDED";
+                kindString = "ADDED"; //$NON-NLS-1$
                 break;
             case IResourceDelta.ADDED_PHANTOM :
-                kindString = "ADDED_PHANTOM";
+                kindString = "ADDED_PHANTOM"; //$NON-NLS-1$
                 break;
             case IResourceDelta.ALL_WITH_PHANTOMS :
-                kindString = "ALL_WITH_PHANTOMS";
+                kindString = "ALL_WITH_PHANTOMS"; //$NON-NLS-1$
                 break;
             case IResourceDelta.CHANGED :
-                kindString = "CHANGED";
+                kindString = "CHANGED"; //$NON-NLS-1$
                 break;
             case IResourceDelta.CONTENT :
-                kindString = "CONTENT";
+                kindString = "CONTENT"; //$NON-NLS-1$
                 break;
             case IResourceDelta.DESCRIPTION :
-                kindString = "DESCRIPTION";
+                kindString = "DESCRIPTION"; //$NON-NLS-1$
                 break;
             case IResourceDelta.MARKERS :
-                kindString = "ADDED";
+                kindString = "ADDED"; //$NON-NLS-1$
                 break;
             case IResourceDelta.MOVED_FROM :
-                kindString = "MOVED_FROM";
+                kindString = "MOVED_FROM"; //$NON-NLS-1$
                 break;
             case IResourceDelta.MOVED_TO :
-                kindString = "MOVED_TO";
+                kindString = "MOVED_TO"; //$NON-NLS-1$
                 break;
             case IResourceDelta.NO_CHANGE :
-                kindString = "NO_CHANGE";
+                kindString = "NO_CHANGE"; //$NON-NLS-1$
                 break;
             case IResourceDelta.OPEN :
-                kindString = "OPEN";
+                kindString = "OPEN"; //$NON-NLS-1$
                 break;
             case IResourceDelta.REMOVED :
-                kindString = "REMOVED";
+                kindString = "REMOVED"; //$NON-NLS-1$
                 break;
             case IResourceDelta.REMOVED_PHANTOM :
-                kindString = "REMOVED_PHANTOM";
+                kindString = "REMOVED_PHANTOM"; //$NON-NLS-1$
                 break;
             case IResourceDelta.REPLACED :
-                kindString = "REPLACED";
+                kindString = "REPLACED"; //$NON-NLS-1$
                 break;
             case IResourceDelta.SYNC :
-                kindString = "SYNC";
+                kindString = "SYNC"; //$NON-NLS-1$
                 break;
             case IResourceDelta.TYPE :
-                kindString = "TYPE";
+                kindString = "TYPE"; //$NON-NLS-1$
                 break;
         }
         return kindString;
@@ -504,23 +504,23 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
 
     public static String getTypeString(int type)
     {
-        String typeString = "Unknown: " + Integer.toString(type);
+        String typeString = "Unknown: " + Integer.toString(type); //$NON-NLS-1$
         switch (type)
         {
             case IResourceChangeEvent.POST_CHANGE :
-                typeString = "POST_CHANGE";
+                typeString = "POST_CHANGE"; //$NON-NLS-1$
                 break;
             case IResourceChangeEvent.POST_BUILD:
-                typeString = "POST_BUILD";
+                typeString = "POST_BUILD"; //$NON-NLS-1$
                 break;
             case IResourceChangeEvent.PRE_DELETE :
-                typeString = "PRE_DELETE";
+                typeString = "PRE_DELETE"; //$NON-NLS-1$
                 break;
             case IResourceChangeEvent.PRE_CLOSE :
-                typeString = "PRE_CLOSE";
+                typeString = "PRE_CLOSE"; //$NON-NLS-1$
                 break;
             case IResourceChangeEvent.PRE_BUILD :
-                typeString = "PRE_BUILD";
+                typeString = "PRE_BUILD"; //$NON-NLS-1$
                 break;
         }
         return typeString;
@@ -671,7 +671,7 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
         else if (runAction == FIRE_EVENT)
         {
             RSEUIPlugin.getTheSystemRegistry().fireEvent(
-              new SystemModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ALL_RELOADED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_ALL, "dummy"));
+              new SystemModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ALL_RELOADED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_ALL, "dummy")); //$NON-NLS-1$
         }
 
     }

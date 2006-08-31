@@ -35,7 +35,7 @@ public interface IRSEDOMExporter
 	 * Creates the RSE DOM for this profile
 	 * @param profile
 	 * @param clean indicates whether to create from scratch or merger
-	 * @return
+	 * @return RSEDOM
 	 */
 	RSEDOM createRSEDOM(ISystemProfile profile, boolean clean);
 	
@@ -43,14 +43,14 @@ public interface IRSEDOMExporter
 	 * Creates an RSE DOM for use in persistence
 	 * @param dom
 	 * @param profile
-	 * @return
+	 * @return RSEDOM
 	 */
 	public RSEDOM populateRSEDOM(RSEDOM dom, ISystemProfile profile, boolean clean);
 	
 	/**
 	 * Returns the RSEDOM for this profile iff it exists
 	 * @param profile
-	 * @return
+	 * @return RSEDOM
 	 */
 	RSEDOM getRSEDOM(ISystemProfile profile);
 	
@@ -58,7 +58,7 @@ public interface IRSEDOMExporter
 	 * Create a DOM node representing a host
 	 * @param parent
 	 * @param host
-	 * @return
+	 * @return RSEDOMNode
 	 */
 	RSEDOMNode createNode(RSEDOMNode parent, IHost host, boolean clean);
 	
@@ -66,7 +66,7 @@ public interface IRSEDOMExporter
 	 * Creates a DOM node for a connector service
 	 * @param parent
 	 * @param connectorService
-	 * @return
+	 * @return RSEDOMNode
 	 */
 	RSEDOMNode createNode(RSEDOMNode parent, IConnectorService cs, boolean clean);
 	
@@ -74,7 +74,7 @@ public interface IRSEDOMExporter
 	 * Creates a DOM node for a server launcher
 	 * @param parent
 	 * @param serverLauncher
-	 * @return
+	 * @return RSEDOMNode
 	 */
 	RSEDOMNode createNode(RSEDOMNode parent, IServerLauncherProperties sl, boolean clean);
 	
@@ -82,7 +82,7 @@ public interface IRSEDOMExporter
 	 * Creates a DOM node for a subsystem
 	 * @param parent
 	 * @param subSystem
-	 * @return
+	 * @return RSEDOMNode
 	 */
 	RSEDOMNode createNode(RSEDOMNode parent, ISubSystem ss, boolean clean);
 	
@@ -90,7 +90,7 @@ public interface IRSEDOMExporter
 	 * Creates a DOM node for a filter
 	 * @param parent
 	 * @param filter
-	 * @return
+	 * @return RSEDOMNode
 	 */
 	RSEDOMNode createNode(RSEDOMNode parent, ISystemFilter sf, boolean clean);
 	
@@ -98,7 +98,7 @@ public interface IRSEDOMExporter
 	 * Create a DOM node representing a filter pool
 	 * @param parent
 	 * @param filterPool
-	 * @return
+	 * @return RSEDOMNode
 	 */
 	RSEDOMNode createNode(RSEDOMNode parent, ISystemFilterPool fp, boolean clean);
 
@@ -107,7 +107,7 @@ public interface IRSEDOMExporter
 	 * Creates a DOM node for a filter pool reference
 	 * @param parent
 	 * @param filterPoolReference
-	 * @return
+	 * @return RSEDOMNode
 	 */
 	RSEDOMNode createNode(RSEDOMNode parent , ISystemFilterPoolReference fpr, boolean clean);
 	
@@ -115,7 +115,7 @@ public interface IRSEDOMExporter
 	 * Creates a DOM node for a filter string
 	 * @param parent
 	 * @param filterString
-	 * @return
+	 * @return RSEDOMNode
 	 */
 	RSEDOMNode createNode(RSEDOMNode parent, ISystemFilterString fs, boolean clean);
 	
@@ -124,7 +124,7 @@ public interface IRSEDOMExporter
 	 * Creates DOM nodes for each associated property set
 	 * @param parent
 	 * @param modelObject
-	 * @return
+	 * @return RSEDOMNode array
 	 */
 	RSEDOMNode[] createPropertySetNodes(RSEDOMNode parent, IRSEModelObject mo, boolean clean);
 }

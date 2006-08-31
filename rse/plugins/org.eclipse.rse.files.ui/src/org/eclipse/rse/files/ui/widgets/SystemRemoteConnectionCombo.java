@@ -47,7 +47,6 @@ public class SystemRemoteConnectionCombo extends SystemHostCombo {
 	/**
 	 * Constructor when you don't care about the style. Defaults to SWT.NULL.
 	 * @param parent Parent composite.
-	 * @param style SWT style flags for overall composite widget. Typically just pass SWT.NULL.
 	 * @param defaultConnection the system connection to preselect. Pass null to preselect first connection.
 	 * @param showNewButton true if a New... button is to be included in this composite.
 	 */

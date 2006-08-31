@@ -48,7 +48,7 @@ public class SystemMoveUpConnectionAction extends SystemBaseAction
 		      parent);
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORDER);  
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0001");      
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0001"); //$NON-NLS-1$      
 	}
 
 	/**

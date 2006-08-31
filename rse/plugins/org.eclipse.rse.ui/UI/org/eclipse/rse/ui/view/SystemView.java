@@ -56,6 +56,8 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemElapsedTimer;
 import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
 import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.filters.ISystemFilter;
@@ -69,8 +71,6 @@ import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.filters.ISystemFilterStringReference;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemContainer;
-import org.eclipse.rse.model.ISystemMessageObject;
 import org.eclipse.rse.model.ISystemPromptableObject;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
@@ -415,7 +415,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 		// -----------------------------
 		// Enable right-click popup menu
 		// -----------------------------
-		menuMgr = new MenuManager("#PopupMenu");
+		menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 	    menuMgr.setRemoveAllWhenShown(true);
 	    menuMgr.addMenuListener(this);
 		Menu menu = menuMgr.createContextMenu(getTree());
@@ -519,7 +519,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	{
 		if ((event.character == SWT.DEL) && (event.stateMask == 0) && (((IStructuredSelection)getSelection()).size()>0) )
         {	
-          scanSelections("handleKeyPressed");    
+          scanSelections("handleKeyPressed"); //$NON-NLS-1$    
       	/* DKM - 53694
 		  if (showDelete() && canDelete())
 		  {
@@ -859,7 +859,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
           //  WHEN THAT CHANGES, WILL CALL CANDELETE() HERE. THAT IN TURN WILL CALL SCANSELECTIONS.
           //  THIS MEANS SCAN SELECTIONS GETS CALL TWICE ON MOST RIGHT CLICK ACTIONS.
           if (!selectionFlagsUpdated) // might already be called by the global delete action wh
-            scanSelections("fillContextMenu");
+            scanSelections("fillContextMenu"); //$NON-NLS-1$
           
 		  // ADD COMMON ACTIONS...
 
@@ -1189,13 +1189,13 @@ public class SystemView extends TreeViewer implements  ISystemTree,
               return;
             else
 			{
-				logMyDebugMessage(this.getClass().getName(),": -----------------------------------------------------------");
-				logMyDebugMessage(this.getClass().getName(),": REMOTE SSFID.......: " + element.getSubSystemConfigurationId(firstSelection));
-				logMyDebugMessage(this.getClass().getName(),": REMOTE NAME........: " + element.getName(firstSelection));
-				logMyDebugMessage(this.getClass().getName(),": REMOTE TYPECATEGORY: " + element.getRemoteTypeCategory(firstSelection));
-				logMyDebugMessage(this.getClass().getName(),": REMOTE TYPE........: " + element.getRemoteType(firstSelection));
-				logMyDebugMessage(this.getClass().getName(),": REMOTE SUBTYPE.....: " + element.getRemoteSubType(firstSelection));
-				logMyDebugMessage(this.getClass().getName(),": REMOTE SUBSUBTYPE..: " + element.getRemoteSubSubType(firstSelection));
+				logMyDebugMessage(this.getClass().getName(),": -----------------------------------------------------------");  //$NON-NLS-1$
+				logMyDebugMessage(this.getClass().getName(),": REMOTE SSFID.......: " + element.getSubSystemConfigurationId(firstSelection)); //$NON-NLS-1$
+				logMyDebugMessage(this.getClass().getName(),": REMOTE NAME........: " + element.getName(firstSelection)); //$NON-NLS-1$
+				logMyDebugMessage(this.getClass().getName(),": REMOTE TYPECATEGORY: " + element.getRemoteTypeCategory(firstSelection)); //$NON-NLS-1$
+				logMyDebugMessage(this.getClass().getName(),": REMOTE TYPE........: " + element.getRemoteType(firstSelection)); //$NON-NLS-1$
+				logMyDebugMessage(this.getClass().getName(),": REMOTE SUBTYPE.....: " + element.getRemoteSubType(firstSelection)); //$NON-NLS-1$
+				logMyDebugMessage(this.getClass().getName(),": REMOTE SUBSUBTYPE..: " + element.getRemoteSubSubType(firstSelection)); //$NON-NLS-1$
 			}
 		}
 	}
@@ -1204,7 +1204,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 		if (!debugProperties)
 		  return;
 		//RSEUIPlugin.logDebugMessage(prefix, msg);		
-		System.out.println(prefix+" "+msg);
+		System.out.println(prefix+" "+msg); //$NON-NLS-1$
 	}
 
 	/**
@@ -1421,7 +1421,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	if (doTimings && (item instanceof TreeItem) && (((TreeItem)item).getData() != null))
     	{
     		elapsedTime.setEndTime();
-    		System.out.println("Time to expand for " + ((TreeItem)item).getItemCount() + " items: " + elapsedTime);
+    		System.out.println("Time to expand for " + ((TreeItem)item).getItemCount() + " items: " + elapsedTime); //$NON-NLS-1$  //$NON-NLS-2$
     	}
     }
        
@@ -1809,7 +1809,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    	   	  case EVENT_ADD_RELATIVE:
 	    	   	      if (debug)
 	    	   	      {
-	    	   	        logDebugMsg("SV event: EVENT_ADD ");
+	    	   	        logDebugMsg("SV event: EVENT_ADD "); //$NON-NLS-1$
 	    	   	      }
 	    	   	      clearSelection();
 	    	   	      //refresh(parent);
@@ -1850,7 +1850,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    	   	  case EVENT_ADD_MANY:
 	    	   	      if (debug)
 	    	   	      {
-	    	   	        logDebugMsg("SV event: EVENT_ADD_MANY");
+	    	   	        logDebugMsg("SV event: EVENT_ADD_MANY"); //$NON-NLS-1$
 	    	   	      }
 	   	    	      multiSource = _event.getMultiSource();
 	   	    	      clearSelection();
@@ -1892,7 +1892,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	   	    	          for (int idx=0; idx<multiSource.length; idx++)
 	   	    	          {
 	    	   	            if (debug && addingConnections)
-	    	   	              logDebugMsg("... new connection " + ((IHost)multiSource[idx]).getAliasName());
+	    	   	              logDebugMsg("... new connection " + ((IHost)multiSource[idx]).getAliasName()); //$NON-NLS-1$  //$NON-NLS-2$
 	   	    	            createTreeItem(parentItem, multiSource[idx], -1);
 	   	    	          }
 	    	   	          setSelection(new StructuredSelection(multiSource),true);
@@ -1901,7 +1901,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    	   	  case EVENT_REPLACE_CHILDREN:
 	    	   	      if (debug)
 	    	   	      {
-	    	   	        logDebugMsg("SV event: EVENT_REPLACE_CHILDREN");
+	    	   	        logDebugMsg("SV event: EVENT_REPLACE_CHILDREN"); //$NON-NLS-1$
 	    	   	      }
 	   	    	      multiSource = _event.getMultiSource();
 	   	    	        //logDebugMsg("MULTI-SRC LENGTH : " + multiSource.length);
@@ -1933,7 +1933,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    	   	  case EVENT_CHANGE_CHILDREN:
 	    	   	      if (debug)
 	    	   	      {
-	    	   	        logDebugMsg("SV event: EVENT_CHANGE_CHILDREN. src="+src+", parent="+parent);
+	    	   	        logDebugMsg("SV event: EVENT_CHANGE_CHILDREN. src="+src+", parent="+parent); //$NON-NLS-1$  //$NON-NLS-2$
 	    	   	        //Exception e = new Exception();
 	    	   	        //e.fillInStackTrace();
 	    	   	        //e.printStackTrace();
@@ -1961,7 +1961,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	                    }
 	    	   	        //refresh(parent);
 	    	   	        if (debug)
-	    	   	          System.out.println("Found item and it was expanded for "+parent);
+	    	   	          System.out.println("Found item and it was expanded for "+parent); //$NON-NLS-1$
 			            getControl().setRedraw(false);    	   	        
 	   	    	        collapseNode(parent, true); // collapse and flush gui widgets from memory    	   	        
 	   	    	        setExpandedState(parent, true); // expand the parent
@@ -1977,7 +1977,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	   	    	      break;   	    	      
 	   	    	  case EVENT_DELETE:   	    	  
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_DELETE ");
+	    	   	        logDebugMsg("SV event: EVENT_DELETE "); //$NON-NLS-1$
 	   	    	      // are we a secondary perspective, and our input or parent of our input was deleted?
 	    	   	      if (affectsInput(src))
 	    	   	      {
@@ -2002,7 +2002,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 
 	   	    	  case EVENT_DELETE_MANY:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_DELETE_MANY ");  
+	    	   	        logDebugMsg("SV event: EVENT_DELETE_MANY "); //$NON-NLS-1$  
 	   	    	      multiSource = _event.getMultiSource(); 
 	   	    	      // are we a secondary perspective, and our input or parent of our input was deleted?
 	    	   	      if (affectsInput(multiSource))
@@ -2051,7 +2051,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	   	    	  */
 	   	    	  case EVENT_RENAME:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_RENAME ");
+	    	   	        logDebugMsg("SV event: EVENT_RENAME "); //$NON-NLS-1$
 		              properties[0] = IBasicPropertyConstants.P_TEXT;
 		              update(src, properties); // for refreshing non-structural properties in viewer when model changes   	   	      
 	   	    	      updatePropertySheet();
@@ -2068,7 +2068,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	   	    	  */
 	   	    	  case EVENT_ICON_CHANGE:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_ICON_CHANGE ");
+	    	   	        logDebugMsg("SV event: EVENT_ICON_CHANGE "); //$NON-NLS-1$
 	    	   	      
 	    	   	      if (initViewerFilters != null && initViewerFilters.length > 0) 
 	    	   	      {    	   	 
@@ -2099,7 +2099,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	   	    	      //break;
 	   	    	  case EVENT_REFRESH:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_REFRESH ");
+	    	   	        logDebugMsg("SV event: EVENT_REFRESH "); //$NON-NLS-1$
 	    	   	      //if (src != null)
 	   	    	      //  refresh(src); // ONLY VALID WHEN USER TRULY WANTS TO REQUERY CHILDREN FROM HOST
 	   	    	      //else
@@ -2117,7 +2117,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	   	    	  // todo: intelligently re-select previous selections
 	   	    	  case EVENT_REFRESH_SELECTED_PARENT:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_REFRESH_SELECTED_PARENT ");
+	    	   	        logDebugMsg("SV event: EVENT_REFRESH_SELECTED_PARENT "); //$NON-NLS-1$
 	    	   	      TreeItem[] items = getTree().getSelection();    	   	      
 	    	   	      if ((items != null) && (items.length > 0) && (items[0] != null))
 	    	   	      {
@@ -2136,7 +2136,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    	   	      break;
 	   	    	  case EVENT_REFRESH_SELECTED:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_REFRESH_SELECTED ");
+	    	   	        logDebugMsg("SV event: EVENT_REFRESH_SELECTED "); //$NON-NLS-1$
 	    	   	      IStructuredSelection selected = (IStructuredSelection)getSelection();
 	    	   	      Iterator i = selected.iterator();
 	    	   	      // the following is a tweak. Refresh only re-queries the children. If the selected item has no
@@ -2199,7 +2199,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	    	   	      if (doTimings)
 	    	   	      {
 	    	   	         timer.setEndTime();
-	    	   	         System.out.println("Time to refresh selected: " + timer);
+	    	   	         System.out.println("Time to refresh selected: " + timer); //$NON-NLS-1$
 	    	   	      }
 	                  //else
 	                  //{                  	
@@ -2212,7 +2212,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	   	    	      break;
 	   	    	  case EVENT_REFRESH_SELECTED_FILTER:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_REFRESH_SELECTED_FILTER ");
+	    	   	        logDebugMsg("SV event: EVENT_REFRESH_SELECTED_FILTER "); //$NON-NLS-1$
 	    	   	      IStructuredSelection selectedItems= (IStructuredSelection)getSelection();
 	    	   	      Iterator j = selectedItems.iterator();
 	    	   	      // We climb up the tree here until we find a SystemFilterReference data member in the tree.
@@ -2270,19 +2270,19 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	   	    	      break;   	    	      
 	   	    	  case EVENT_REFRESH_REMOTE:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_REFRESH_REMOTE: src = "+src);
+	    	   	        logDebugMsg("SV event: EVENT_REFRESH_REMOTE: src = "+src); //$NON-NLS-1$
 	    	   	      refreshRemoteObject(src, parent, originatedHere);
 	   	    	      break;
 	   	    	  case EVENT_SELECT_REMOTE:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_SELECT_REMOTE: src = "+src);
+	    	   	        logDebugMsg("SV event: EVENT_SELECT_REMOTE: src = "+src); //$NON-NLS-1$
 	                  //remoteItemsToSkip = null; // reset
 	                  selectRemoteObjects(src, (ISubSystem)null, parent);
 	   	    	      break;
 
 	   	    	  case EVENT_MOVE_MANY:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_MOVE_MANY ");   	    	  
+	    	   	        logDebugMsg("SV event: EVENT_MOVE_MANY "); //$NON-NLS-1$   	    	  
 	   	    	      multiSource = _event.getMultiSource();
 	   	    	      if ((multiSource == null) || (multiSource.length == 0))
 	   	    	        return Status.OK_STATUS;
@@ -2300,7 +2300,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	   	    	      break;   	    	      
 	   	    	  case EVENT_PROPERTY_CHANGE:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_PROPERTY_CHANGE ");   	    	  
+	    	   	        logDebugMsg("SV event: EVENT_PROPERTY_CHANGE "); //$NON-NLS-1$   	    	  
 	    	   	      String[] allProps = {IBasicPropertyConstants.P_TEXT,IBasicPropertyConstants.P_IMAGE};
 	                  ISystemRemoteElementAdapter ra = getRemoteAdapter(src);
 	                  if (ra != null) 
@@ -2313,38 +2313,38 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	   	    	      break;
 	   	    	  case EVENT_PROPERTYSHEET_UPDATE:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_PROPERTYSHEET_UPDATE ");   	    	  
+	    	   	        logDebugMsg("SV event: EVENT_PROPERTYSHEET_UPDATE "); //$NON-NLS-1$   	    	  
 	   	    	      updatePropertySheet();
 	   	    	      break;
 	   	    	  case EVENT_MUST_COLLAPSE:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_MUST_COLLAPSE ");   	    	  
+	    	   	        logDebugMsg("SV event: EVENT_MUST_COLLAPSE "); //$NON-NLS-1$   	    	  
 	   	    	      collapseNode(src, true); // collapse and flush gui widgets from memory
 	   	    	      break;   	    	      
 	   	    	  case EVENT_COLLAPSE_ALL:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_COLLAPSE_ALL ");   	    	  
+	    	   	        logDebugMsg("SV event: EVENT_COLLAPSE_ALL "); //$NON-NLS-1$   	    	  
 	   	    	      collapseAll(); // collapse all
-	   	    	      if ((src!=null) && (src instanceof String) && ((String)src).equals("false")) // defect 41203
+	   	    	      if ((src!=null) && (src instanceof String) && ((String)src).equals("false")) // defect 41203 //$NON-NLS-1$
 	   	    	        {}
 	   	    	      else
 	   	    	        refresh(); // flush gui widgets from memory
 	   	    	      break;   	    	      
 	   	    	  case EVENT_COLLAPSE_SELECTED: // defect 41203
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_COLLAPSE_SELECTED ");   	    	  
+	    	   	        logDebugMsg("SV event: EVENT_COLLAPSE_SELECTED "); //$NON-NLS-1$   	    	  
 	   	    	      collapseSelected(); 
 	   	    	      break;   	    	      
 	   	    	  case EVENT_EXPAND_SELECTED: // defect 41203
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_EXPAND_SELECTED ");   	    	  
+	    	   	        logDebugMsg("SV event: EVENT_EXPAND_SELECTED "); //$NON-NLS-1$   	    	  
 	   	    	      expandSelected(); 
 	   	    	      break;   	    	      
 
 
 	              case EVENT_REVEAL_AND_SELECT:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_REVEAL_AND_SELECT "); 	  
+	    	   	        logDebugMsg("SV event: EVENT_REVEAL_AND_SELECT "); //$NON-NLS-1$ 	  
 	    	   	      parentItem = findItem(parent);
 	    	   	      if (parentItem == null)
 	    	   	        return Status.OK_STATUS;
@@ -2378,7 +2378,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	   	    	      break;   	
 	              case EVENT_SELECT:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_SELECT "); 	  
+	    	   	        logDebugMsg("SV event: EVENT_SELECT "); //$NON-NLS-1$ 	  
 	    	   	      item = findItem(src);
 	    	   	      if (item == null) // if not showing item, this is a no-op
 	    	   	        return Status.OK_STATUS;
@@ -2386,7 +2386,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 	   	    	      break;   	
 	              case EVENT_SELECT_EXPAND:
 	    	   	      if (debug)
-	    	   	        logDebugMsg("SV event: EVENT_SELECT_EXPAND "); 	  
+	    	   	        logDebugMsg("SV event: EVENT_SELECT_EXPAND "); //$NON-NLS-1$ 	  
 	    	   	      item = findItem(src);
 	    	   	      if (item == null) // if not showing item, this is a no-op
 	    	   	        return Status.OK_STATUS;
@@ -2830,11 +2830,11 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     protected String printTreeItem(Item item)
     {
     	if (item == null)
-    	  return "";
+    	  return ""; //$NON-NLS-1$
     	else if (item instanceof TreeItem)
     	{
     		TreeItem ti = (TreeItem)item;
-    		return printTreeItem(ti.getParentItem()) + "/" + ti.getText();
+    		return printTreeItem(ti.getParentItem()) + "/" + ti.getText(); //$NON-NLS-1$
     	}
     	else
     	  return item.toString();
@@ -3188,8 +3188,8 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     {
     	if (debug)
     	{
-    	  logDebugMsg("in doOurInternalRefresh on " + getAdapter(element).getName(element));
-    	  logDebugMsg("...current selection is " + getFirstSelectionName(getSelection())); 
+    	  logDebugMsg("in doOurInternalRefresh on " + getAdapter(element).getName(element)); //$NON-NLS-1$
+    	  logDebugMsg("...current selection is " + getFirstSelectionName(getSelection()));  //$NON-NLS-1$
         }
         SystemElapsedTimer timer = null;
         if (doTimings)
@@ -3203,7 +3203,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     		updateItem(widget, element);
     		if (doTimings)
     		{
-    		  System.out.println("doOurInternalRefresh timer 1: time to updatePlus and updateItem:" + timer.setEndTime());
+    		  System.out.println("doOurInternalRefresh timer 1: time to updatePlus and updateItem:" + timer.setEndTime()); //$NON-NLS-1$
     		  timer.setStartTime();
     		}
     	}
@@ -3217,7 +3217,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 		//    		  newChildren = getRawChildren(widget);
     		  if (doTimings)
     		  {
-    		    System.out.println("doOurInternalRefresh timer 2: time to getRawChildren:" + timer.setEndTime());
+    		    System.out.println("doOurInternalRefresh timer 2: time to getRawChildren:" + timer.setEndTime()); //$NON-NLS-1$
     		    timer.setStartTime();
     		  }
 	        }
@@ -3230,7 +3230,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 		
     		if (doTimings)
     		{
-    		    System.out.println("doOurInternalRefresh timer 3: time to updateChildren:" + timer.setEndTime());
+    		    System.out.println("doOurInternalRefresh timer 3: time to updateChildren:" + timer.setEndTime()); //$NON-NLS-1$
     		    timer.setStartTime();
     		}
     	}
@@ -3263,7 +3263,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	}
         if (doTimings)
     	{
-    	   System.out.println("doOurInternalRefresh timer 4: time to recurse children:" + timer.setEndTime());
+    	   System.out.println("doOurInternalRefresh timer 4: time to recurse children:" + timer.setEndTime()); //$NON-NLS-1$
     	   timer.setStartTime();
     	}
     }
@@ -3582,7 +3582,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
                gatherExpandedChildren((fullRefresh ? null : currItem), currItem, expandedChildren);
                wasExpanded[idx] = true;
                if (doTimings)
-                 System.out.println("Refresh Timer 1: time to gatherExpandedChildren: " + timer.setEndTime());
+                 System.out.println("Refresh Timer 1: time to gatherExpandedChildren: " + timer.setEndTime()); //$NON-NLS-1$
             }
             else
               wasExpanded[idx] = false;
@@ -3610,13 +3610,13 @@ public class SystemView extends TreeViewer implements  ISystemTree,
             setExpanded(currItem, false); // collapse node
             if (doTimings)
             {
-              System.out.println("Refresh Timer 2: time to setExpanded(false): " + timer.setEndTime());
+              System.out.println("Refresh Timer 2: time to setExpanded(false): " + timer.setEndTime()); //$NON-NLS-1$
               timer.setStartTime();
             }
         	ourInternalRefresh(currItem, currItem.getData(), true, true, doTimings); // dispose of children, update plus
             if (doTimings)
             {
-              System.out.println("Refresh Timer 3: time to do ourInternalRefresh(...): " + timer.setEndTime());
+              System.out.println("Refresh Timer 3: time to do ourInternalRefresh(...): " + timer.setEndTime()); //$NON-NLS-1$
               timer.setStartTime();
             }
             if (wasExpanded[idx])
@@ -3624,13 +3624,13 @@ public class SystemView extends TreeViewer implements  ISystemTree,
               createChildren(currItem); // re-expand
               if (doTimings)
               {
-                 System.out.println("Refresh Timer 4: time to createChildren(...): " + timer.setEndTime());
+                 System.out.println("Refresh Timer 4: time to createChildren(...): " + timer.setEndTime()); //$NON-NLS-1$
                  timer.setStartTime();
               }
               currItem.setExpanded(true);
               if (doTimings)
               {
-                 System.out.println("Refresh Timer 5: time to setExpanded(true): " + timer.setEndTime());
+                 System.out.println("Refresh Timer 5: time to setExpanded(true): " + timer.setEndTime()); //$NON-NLS-1$
                  timer.setStartTime();
               }
             }
@@ -3660,27 +3660,27 @@ public class SystemView extends TreeViewer implements  ISystemTree,
      	        createChildren(item);
      	        ((TreeItem)item).setExpanded(true);
         	    if (debug)
-    		      System.out.println("Re-Expanded RemoteItem: " + itemToExpand.remoteName);
+    		      System.out.println("Re-Expanded RemoteItem: " + itemToExpand.remoteName); //$NON-NLS-1$
      	      }
      	      else if (debug)
-    		    System.out.println("Re-Expand of RemoteItem '" + itemToExpand.remoteName + "' failed. Not found");
+    		    System.out.println("Re-Expand of RemoteItem '" + itemToExpand.remoteName + "' failed. Not found"); //$NON-NLS-1$  //$NON-NLS-2$
         	}
         	else
         	{
               setExpandedState(itemToExpand.data, true);
               if (debug)
-    		    System.out.println("Re-Expanded non-remote Item: " + itemToExpand.data);
+    		    System.out.println("Re-Expanded non-remote Item: " + itemToExpand.data); //$NON-NLS-1$
         	}
         }        
         if (doTimings)
         {
-           System.out.println("Refresh Timer 6: time to reExpanded expanded subnodes: " + timer.setEndTime());
+           System.out.println("Refresh Timer 6: time to reExpanded expanded subnodes: " + timer.setEndTime()); //$NON-NLS-1$
            timer.setStartTime();
         }
 		getControl().setRedraw(true);  
         if (doTimings)
         {
-           System.out.println("Refresh Timer 7: time to setRedraw(true): " + timer.setEndTime());
+           System.out.println("Refresh Timer 7: time to setRedraw(true): " + timer.setEndTime()); //$NON-NLS-1$
            timer.setStartTime();
         }
     }
@@ -3801,13 +3801,13 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     			  subsystem = remoteAdapter.getSubSystem(data);
                   areAnyRemote = true;
                   if (debug)
-    		        System.out.println("ExpandedRemoteItem added. remoteName = " + remoteName);
+    		        System.out.println("ExpandedRemoteItem added. remoteName = " + remoteName); //$NON-NLS-1$
     			}
     		    else if (debug)
-    		      System.out.println("ExpandedItem added. Data = " + data);
+    		      System.out.println("ExpandedItem added. Data = " + data); //$NON-NLS-1$
     		}
     		else if (debug)
-    		  System.out.println("ExpandedItem added. Data = null");
+    		  System.out.println("ExpandedItem added. Data = null"); //$NON-NLS-1$
     	}
     	boolean isRemote()
     	{
@@ -3901,7 +3901,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	  	   eventType = "EVENT_CHANGE_FILTER_REFERENCE";
     	  	   break;
     	  }
-    	  logDebugMsg("SV event: "+eventType);
+    	  logDebugMsg("SV event: "+eventType); //$NON-NLS-1$
     	}
     	  
     	// STEP 1. ARE WE EVEN SHOWING THE GIVEN SUBSYSTEM?
@@ -3921,7 +3921,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	  if (widget != c && widget instanceof Item) {
 
 			if (debug)
-			  logDebugMsg("...Found ss " + ss);
+			  logDebugMsg("...Found ss " + ss); //$NON-NLS-1$
 			  
 			item = internalFindReferencedItem(widget, filter, SEARCH_INFINITE);
     	  }
@@ -3929,13 +3929,13 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	  else if (widget == c) {
 
 			if (debug)
-			  logDebugMsg("...Din not find ss " + ss);
+			  logDebugMsg("...Din not find ss " + ss); //$NON-NLS-1$
 			  
     	  	item = internalFindReferencedItem(widget, filter, SEARCH_INFINITE);
     	  }
     	  
     	  if (item == null)
-    	    logDebugMsg("......didn't find renamed/updated filter's reference!");
+    	    logDebugMsg("......didn't find renamed/updated filter's reference!"); //$NON-NLS-1$
     	  else
     	  {
     	    // STEP 3: UPDATE THAT FILTER...
@@ -3972,11 +3972,11 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	{
     	  Item ssItem = (Item)item;
     	  if (debug)
-    	    logDebugMsg("...Found ss "+ss);
+    	    logDebugMsg("...Found ss "+ss); //$NON-NLS-1$
     	  // STEP 2: ARE WE SHOWING A REFERENCE TO THE UPDATED FILTER STRING?
     	  item = internalFindReferencedItem(ssItem, filterString, SEARCH_INFINITE);
     	  if (item == null)
-    	    logDebugMsg("......didn't find updated filter string's reference!");
+    	    logDebugMsg("......didn't find updated filter string's reference!"); //$NON-NLS-1$
     	  else
     	  {
     	    // STEP 3: UPDATE THAT FILTER STRING...
@@ -4076,7 +4076,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 
     	  }
     	  if (debug)
-    	    logDebugMsg("SV event: "+eventType);
+    	    logDebugMsg("SV event: "+eventType); //$NON-NLS-1$
         //}
     	//clearSelection();
     	  
@@ -4096,7 +4096,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     		refresh();
     	
     	  if (debug)
-    	    logDebugMsg("...Did not find ss "+ss.getName());
+    	    logDebugMsg("...Did not find ss "+ss.getName()); //$NON-NLS-1$
     	  return;
     	}
     	Item ssItem = (Item)item;
@@ -4107,7 +4107,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	
     	Object parent = event.getParent();
     	if (debug)
-    	  logDebugMsg("...Found ss "+ss);
+    	  logDebugMsg("...Found ss "+ss); //$NON-NLS-1$
 
     	// STEP 2: ARE WE SHOWING A REFERENCE TO THE FILTER's PARENT POOL?
     	Item parentRefItem = null;    	    	
@@ -4132,7 +4132,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	if (parentRefItem != null)
     	{
             if (debug)
-              logDebugMsg("......We are showing reference to parent");
+              logDebugMsg("......We are showing reference to parent"); //$NON-NLS-1$
             // STEP 3... YES, SO REFRESH PARENT... IT WILL RE-GEN THE FILTER REFERENCES FOR EACH CHILD FILTER
             //  ... actually, call off the whole show if that parent is currently not expanded!!
             // HMMM... WE NEED TO REFRESH EVEN IF NOT EXPANDED IF ADDING FIRST CHILD
@@ -4218,18 +4218,18 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	    if (add && isSelected(parentRefItem.getData(),oldSelections))
     	    {
     	   	    if (debug)
-    	   	      logDebugMsg(".........that parent was previously selected");
+    	   	      logDebugMsg(".........that parent was previously selected"); //$NON-NLS-1$
     	        // .... YES, SO SELECT NEW FILTER'S REFERENCE
     	   	    Item filterItem = (Item)internalFindReferencedItem(parentRefItem, afilterstring?(Object)filterstring:(Object)filter, 1); // start at filter's parent, search for filter
     	   	    if (filterItem == null)
     	   	    {
     	   	      if (debug)
-    	   	        logDebugMsg("Hmm, didn't find new filter's reference!");
+    	   	        logDebugMsg("Hmm, didn't find new filter's reference!"); //$NON-NLS-1$
     	   	    }
     	   	    else
     	   	    {
     	   	      if (debug)
-    	   	        logDebugMsg(".........Trying to set selection to " + filterItem.getData());
+    	   	        logDebugMsg(".........Trying to set selection to " + filterItem.getData()); //$NON-NLS-1$
     	   	      setSelection(new StructuredSelection(filterItem.getData()),true);
     	   	    }
     	    }
@@ -4270,7 +4270,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 
         }
     	else if (debug)
-    	  logDebugMsg("Did not find parent ref " + parent);
+    	  logDebugMsg("Did not find parent ref " + parent); //$NON-NLS-1$
     }
     /**
      * Move existing items a given number of positions within the same node.
@@ -4440,7 +4440,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
            //recursiveFindAllRemoteItemReferences(parentItem, remoteObjectName, null, subsystem, matches);    	  
            match = recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, null, subsystem);
            if (debugRemote)
-             System.out.println("Returning " + match + " from findFirstRemoteItemReference(1,2,3)");
+             System.out.println("Returning " + match + " from findFirstRemoteItemReference(1,2,3)"); //$NON-NLS-1$  //$NON-NLS-2$
     	}
     	//if (matches.size() > 0)
     	//  return (Item)matches.elementAt(0);
@@ -4472,7 +4472,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
            //recursiveFindAllRemoteItemReferences(parentItem, remoteObjectName, remoteObject, subsystem, matches); 
            match = recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem);
            if (debugRemote)
-             System.out.println("Returning " + match + " from findFirstRemoteItemReference(1,2)");
+             System.out.println("Returning " + match + " from findFirstRemoteItemReference(1,2)"); //$NON-NLS-1$  //$NON-NLS-2$
     	}
 
     	//if (matches.size() > 0)
@@ -4567,19 +4567,19 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	Item match = null;
     	if (debugRemote)
     	{
-    		System.out.println("Inside internalFindFirstRemoteItemReference for searchString: "+searchString+", subsystem null? " + (subsystem==null) + ", nbr roots = " + roots.length);
+    		System.out.println("Inside internalFindFirstRemoteItemReference for searchString: "+searchString+", subsystem null? " + (subsystem==null) + ", nbr roots = " + roots.length); //$NON-NLS-1$  //$NON-NLS-2$  //$NON-NLS-3$
     	}
     	for (int idx=0; (match==null) && (idx<roots.length); idx++)
     	{
            match = recursiveFindFirstRemoteItemReference(roots[idx], searchString, elementObject, subsystem);
            if (debugRemote)
-    		   System.out.println("...Inside internalFindFirstRemoteItemReference. Result of searching root "+idx+": "+roots[idx].getText()+": " + match);
+    		   System.out.println("...Inside internalFindFirstRemoteItemReference. Result of searching root "+idx+": "+roots[idx].getText()+": " + match); //$NON-NLS-1$  //$NON-NLS-2$ //$NON-NLS-3$
     	}
         if (debugRemote)
         {
-    	  System.out.println("...Inside internalFindFirstRemoteItemReference. Returning " + match);
+    	  System.out.println("...Inside internalFindFirstRemoteItemReference. Returning " + match); //$NON-NLS-1$
     	  if (match != null)
-    	    System.out.println("......set bp here");
+    	    System.out.println("......set bp here"); //$NON-NLS-1$
         }
         return match;
     }    
@@ -4610,18 +4610,18 @@ public class SystemView extends TreeViewer implements  ISystemTree,
             {
 		  	    occurrences.addElement(parent); // found a match!
                 if (debugRemote)
-                   System.out.println("Find All: Remote item binary match found");
+                   System.out.println("Find All: Remote item binary match found"); //$NON-NLS-1$
 			    return occurrences; // no point in checking the kids
             }
             // now test for absolute name match
 	        String fqn = remoteAdapter.getAbsoluteName(rawData);
             if (debugRemote)
-               System.out.println("TESTING FINDALL: '" + fqn + "' vs '" + elementName + "'");
+               System.out.println("TESTING FINDALL: '" + fqn + "' vs '" + elementName + "'"); //$NON-NLS-1$  //$NON-NLS-2$ //$NON-NLS-3$
 		    if ((fqn != null) && fqn.equals(elementName))
 		    {
 		  	   occurrences.addElement(parent); // found a match!
                if (debugRemote)
-                  System.out.println("...and remote item name match found");
+                  System.out.println("...and remote item name match found"); //$NON-NLS-1$
 			   return occurrences; // no point in checking the kids
 		    }
         }
@@ -4681,29 +4681,29 @@ public class SystemView extends TreeViewer implements  ISystemTree,
             if (elementObject == rawData)
             {
                 if (debugRemote)
-                   System.out.println("Remote item binary match found");
+                   System.out.println("Remote item binary match found"); //$NON-NLS-1$
 			    return parent; // return the match
             }
             // now test for absolute name match
 	        String fqn = remoteAdapter.getAbsoluteName(rawData);
             if (debugRemote)
-               System.out.println("TESTING FINDFIRST: '" + fqn + "' vs '" + elementName + "'");
+               System.out.println("TESTING FINDFIRST: '" + fqn + "' vs '" + elementName + "'"); //$NON-NLS-1$  //$NON-NLS-2$ //$NON-NLS-3$
 		    if ((fqn != null) && fqn.equals(elementName))
 		    {
 		       if ((subsystem != null) && (subsystem == remoteAdapter.getSubSystem(rawData)))
 		       {
                   if (debugRemote)
-                     System.out.println("Remote item name match found and subsystems matched");
+                     System.out.println("Remote item name match found and subsystems matched"); //$NON-NLS-1$
 			      return parent; // return the match
 		       }
 		       else if (subsystem == null)
 		       {
                   if (debugRemote)
-                     System.out.println("Remote item name match found and subsystem null");
+                     System.out.println("Remote item name match found and subsystem null"); //$NON-NLS-1$
 		          return parent;
 		       }		          
 		       else if (debugRemote)
-                  System.out.println("Remote item name match found but subsystem mismatch");		       
+                  System.out.println("Remote item name match found but subsystem mismatch"); //$NON-NLS-1$		       
 		    }
         }
         // -------------------------------------------------------------------------
@@ -4791,7 +4791,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
             if (filterRef.getReferencedFilter().isPromptable())
               return occurrences;
             if (debugRemote)
-              System.out.println("Testing filter: " + filterRef.getReferencedFilter().getName());
+              System.out.println("Testing filter: " + filterRef.getReferencedFilter().getName()); //$NON-NLS-1$
             ISubSystem fss = (ISubSystem)filterRef.getProvider();
 		    if (fss != null) // should never happen!!
 		    {
@@ -4800,7 +4800,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 		    	{
 		  	       occurrences.addElement(new FilterMatch((TreeItem)parent, true)); // found a match!
                    if (debugRemote)
-                      System.out.println("...Filter match found for "+elementName+": " + filterRef.getReferencedFilter().getName());
+                      System.out.println("...Filter match found for "+elementName+": " + filterRef.getReferencedFilter().getName()); //$NON-NLS-1$  //$NON-NLS-2$
 			       return occurrences; // no point in checking the kids
 		    	}
 		    	// #2
@@ -4808,11 +4808,11 @@ public class SystemView extends TreeViewer implements  ISystemTree,
 		    	{
 		  	       occurrences.addElement(new FilterMatch((TreeItem)parent, false)); // found a match!
                    if (debugRemote)
-                      System.out.println("...Filter content match found for "+elementName+": " + filterRef.getReferencedFilter().getName());
+                      System.out.println("...Filter content match found for "+elementName+": " + filterRef.getReferencedFilter().getName()); //$NON-NLS-1$  //$NON-NLS-2$
 			       return occurrences; // no point in checking the kids
 		    	}
 		    	else if (debugRemote)
-		    	  System.out.println("... no match on the filter for element name " + elementName);
+		    	  System.out.println("... no match on the filter for element name " + elementName); //$NON-NLS-1$
 		    }
         }
         // ----------------------------------------------------------------------
@@ -5042,7 +5042,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	if (!selectionFlagsUpdated)
     	{
     	  //System.out.println("Inside showDelete. selectFlagsUpdated = false");
-    	  scanSelections("showDelete");
+    	  scanSelections("showDelete"); //$NON-NLS-1$
     	}
     	return selectionShowDeleteAction;
     }
@@ -5056,7 +5056,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     	if (!selectionFlagsUpdated)
     	{
     	  //System.out.println("Inside canDelete. selectFlagsUpdated = false");
-    	  scanSelections("canDelete");
+    	  scanSelections("canDelete"); //$NON-NLS-1$
     	}
     	return selectionEnableDeleteAction;
     }    
@@ -5165,7 +5165,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     public boolean canRename()
     {
     	if (!selectionFlagsUpdated)
-    	  scanSelections("canRename");
+    	  scanSelections("canRename"); //$NON-NLS-1$
     	return selectionEnableRenameAction;
     }    
    
@@ -5228,7 +5228,7 @@ public class SystemView extends TreeViewer implements  ISystemTree,
     protected void logDebugMsg(String msg)
     {
     	//RSEUIPlugin.logDebugMessage(this.getClass().getName(),msg);
-    	msg = this.getClass().getName()+": "+msg;
+    	msg = this.getClass().getName()+": "+msg; //$NON-NLS-1$
     	SystemBasePlugin.logInfo(msg);
     	System.out.println(msg);
     }

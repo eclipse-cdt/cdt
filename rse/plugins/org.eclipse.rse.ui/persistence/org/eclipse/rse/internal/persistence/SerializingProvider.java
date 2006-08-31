@@ -65,7 +65,7 @@ public class SerializingProvider implements IRSEPersistenceProvider
 						IResource child = children[0];
 						if (child.getType() == IResource.FILE) {
 							String profileName = candidateFolder.getName();
-							String domFileName = profileName + ".rsedom";
+							String domFileName = profileName + ".rsedom"; //$NON-NLS-1$
 							String childName = child.getName();
 							if (childName.equals(domFileName)) {
 								names.add(profileName);

@@ -40,6 +40,10 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.ISystemMessageObject;
+import org.eclipse.rse.core.model.ISystemResourceSet;
+import org.eclipse.rse.core.model.SystemMessageObject;
+import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.core.subsystems.SubSystem;
@@ -65,14 +69,10 @@ import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.filters.ISystemFilterReference;
 import org.eclipse.rse.filters.SystemFilterReference;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemMessageObject;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
-import org.eclipse.rse.model.ISystemResourceSet;
-import org.eclipse.rse.model.SystemMessageObject;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
-import org.eclipse.rse.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.services.clientserver.StringCompare;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
@@ -233,10 +233,10 @@ public class SystemViewRemoteFileAdapter
 	 */
 	public void setFilterString(String filterString)
 	{
-		if (filesOnly && (filterString != null) && (filterString.indexOf("/ns") == -1))
-			filterString = filterString + " /ns";
-		else if (foldersOnly && (filterString != null) && (filterString.indexOf("/nf") == -1))
-			filterString = filterString + " /nf";
+		if (filesOnly && (filterString != null) && (filterString.indexOf("/ns") == -1)) //$NON-NLS-1$
+			filterString = filterString + " /ns"; //$NON-NLS-1$
+		else if (foldersOnly && (filterString != null) && (filterString.indexOf("/nf") == -1)) //$NON-NLS-1$
+			filterString = filterString + " /nf"; //$NON-NLS-1$
 		this.filterString = filterString;
 	}
 	
@@ -577,7 +577,7 @@ public class SystemViewRemoteFileAdapter
 	 */
 	public String getStatusLineText(Object element)
 	{
-		return getType(element) + ": " + getAbsoluteName(element);
+		return getType(element) + ": " + getAbsoluteName(element); //$NON-NLS-1$
 	}
 
 	/**
@@ -658,21 +658,21 @@ public class SystemViewRemoteFileAdapter
 		else if (foldersOnly)
 		{
 			if (filterString == null)
-				filter = "* /nf";
+				filter = "* /nf"; //$NON-NLS-1$
 			else
 				filter = filterString;
 		}
 		else if (filesOnly)
 		{
 			if (filterString == null)
-				filter = "* /ns";
+				filter = "* /ns"; //$NON-NLS-1$
 			else
 				filter = filterString;
 		}
 		else
 		{
 			if (filterString == null)
-				filter = "*";
+				filter = "*"; //$NON-NLS-1$
 			else
 				filter = filterString;	
 		}
@@ -967,20 +967,20 @@ public class SystemViewRemoteFileAdapter
 
 			if (debug)
 			{
-				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_PARENTREMOTEFILE");
-				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_PARENTREMOTEFILE");
-				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_PARENT");
-				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_PARENT");
-				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_PARENTNOROOT");
-				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_PARENTNOROOT");
-				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_PARENTNAME");
-				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_PARENTNAME");
-				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_ROOT");
-				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_ROOT");
-				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_ISROOT");
-				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_ISROOT");
-				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_EXISTS");
-				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_EXISTS");
+				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_PARENTREMOTEFILE"); //$NON-NLS-1$
+				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_PARENTREMOTEFILE"); //$NON-NLS-1$
+				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_PARENT"); //$NON-NLS-1$
+				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_PARENT"); //$NON-NLS-1$
+				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_PARENTNOROOT"); //$NON-NLS-1$
+				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_PARENTNOROOT"); //$NON-NLS-1$
+				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_PARENTNAME"); //$NON-NLS-1$
+				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_PARENTNAME"); //$NON-NLS-1$
+				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_ROOT"); //$NON-NLS-1$
+				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_ROOT"); //$NON-NLS-1$
+				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_ISROOT"); //$NON-NLS-1$
+				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_ISROOT"); //$NON-NLS-1$
+				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_EXISTS"); //$NON-NLS-1$
+				briefPropertyDescriptorArray[++briefIdx] = createSimplePropertyDescriptor("DEBUG_EXISTS"); //$NON-NLS-1$
 			}
 			
 			if (isVirtual)
@@ -1069,26 +1069,26 @@ public class SystemViewRemoteFileAdapter
 		}
 		if (debug)
 		{
-			if (name.equals("DEBUG_PARENTREMOTEFILE"))
+			if (name.equals("DEBUG_PARENTREMOTEFILE")) //$NON-NLS-1$
 			{
 				IRemoteFile parent = file.getParentRemoteFile();
 				if (parent == null)
-					return "null";
+					return "null"; //$NON-NLS-1$
 				else
-					return "absPath='" + parent.getAbsolutePath() + "'";
+					return "absPath='" + parent.getAbsolutePath() + "'"; //$NON-NLS-1$  //$NON-NLS-2$
 			}
-			else if (name.equals("DEBUG_PARENT"))
+			else if (name.equals("DEBUG_PARENT")) //$NON-NLS-1$
 				return file.getParentPath();
-			else if (name.equals("DEBUG_PARENTNOROOT"))
+			else if (name.equals("DEBUG_PARENTNOROOT")) //$NON-NLS-1$
 				return file.getParentNoRoot();
-			else if (name.equals("DEBUG_PARENTNAME"))
+			else if (name.equals("DEBUG_PARENTNAME")) //$NON-NLS-1$
 				return file.getParentName();
-			else if (name.equals("DEBUG_ROOT"))
+			else if (name.equals("DEBUG_ROOT")) //$NON-NLS-1$
 				return file.getRoot();
-			else if (name.equals("DEBUG_ISROOT"))
-				return file.isRoot() ? "true" : "false";
-			else if (name.equals("DEBUG_EXISTS"))
-				return file.exists() ? "true" : "false";
+			else if (name.equals("DEBUG_ISROOT")) //$NON-NLS-1$
+				return file.isRoot() ? "true" : "false"; //$NON-NLS-1$  //$NON-NLS-2$
+			else if (name.equals("DEBUG_EXISTS")) //$NON-NLS-1$
+				return file.exists() ? "true" : "false"; //$NON-NLS-1$ //$NON-NLS-2$
 
 		}
 		// 
@@ -1182,7 +1182,7 @@ public class SystemViewRemoteFileAdapter
 		}
 		else if (name.equals(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONMETHOD))
 		{
-			if (!isVirtual) return "";
+			if (!isVirtual) return ""; //$NON-NLS-1$
 			return virtualFile.getCompressionMethod();
 		}
 		else if (name.equals(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONRATIO))
@@ -1368,7 +1368,6 @@ public class SystemViewRemoteFileAdapter
 	 * set.  For optimal performance, this should be overridden.
 	 * 
 	 * @param set the set of objects to copy
-	 * @param sameSystemType indication of whether the source and target reside on the same type of system
 	 * @param monitor the progress monitor
 	 * @return a temporary workspace copies of the object that was copied
 	 * 
@@ -1432,7 +1431,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			IHost connection = connections[i];
 			IRemoteFileSubSystem anFS = RemoteFileUtility.getFileSubSystem(connection);
-			if (anFS.getHost().getSystemType().equals("Local"))
+			if (anFS.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
 			{
 				return anFS;
 			}
@@ -1454,7 +1453,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			FileServiceSubSystem ss = (FileServiceSubSystem)subsys;
 			
-			SystemSearchString searchString = new SystemSearchString("*", false, false, "*", false, false, true);
+			SystemSearchString searchString = new SystemSearchString("*", false, false, "*", false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			for (int i = 0; i < initialResources.size(); i++)
 			{
@@ -1626,8 +1625,8 @@ public class SystemViewRemoteFileAdapter
 	
 	/**
 	 *  Perform drop from the "fromSet" of objects to the "to" object
-	 * @param from the source objects for the drop
-	 * @param to the target object for the drop
+	 * @param fromSet the source objects for the drop
+	 * @param target the target object for the drop
 	 * @param sameSystemType indication of whether the source and target reside of the same type of system
 	 * @param sameSystem indication of whether the source and target are on the same system
 	 * @param srcType the type of objects to be dropped
@@ -1885,7 +1884,7 @@ public class SystemViewRemoteFileAdapter
 	 * temporary object produced by the doDrag.
 	 * @param target the object to be copied to.
 	 * @param sameSystem an indication whether the target and source reside on the same type of system
-	 * @param srcType type of source being transferred
+	 * @param sourceType type of source being transferred
 	 * @param monitor the progress monitor
 	 * @return an indication whether the operation was successful or not.
 	 */
@@ -2356,7 +2355,7 @@ public class SystemViewRemoteFileAdapter
 				for (int i = 0; i < members.length; i++)
 				{
 					IResource member = members[i];
-					moveTempFileProperties(member, ss, remotePath + "/" + member.getName());
+					moveTempFileProperties(member, ss, remotePath + "/" + member.getName()); //$NON-NLS-1$
 				}
 			}
 			catch (Exception e)
@@ -2400,7 +2399,7 @@ public class SystemViewRemoteFileAdapter
 		try
 		{
 			
-			String newRemotePath = file.getParentPath() + "/" + newName;
+			String newRemotePath = file.getParentPath() + "/" + newName; //$NON-NLS-1$
 			IResource localResource = null;
 			if (SystemRemoteEditManager.getDefault().doesRemoteEditProjectExist())
 			{
@@ -2607,9 +2606,9 @@ public class SystemViewRemoteFileAdapter
 		{
 			srcType = file.getExtension();
 			if (srcType == null)
-				srcType = "blank";
+				srcType = "blank"; //$NON-NLS-1$
 			else if (srcType.length() == 0)
-				srcType = "null";
+				srcType = "null"; //$NON-NLS-1$
 		}
 		return srcType;
 	}
@@ -2828,7 +2827,7 @@ public class SystemViewRemoteFileAdapter
 			IRemoteFile remoteFile = (IRemoteFile) object;
 			if (remoteFile.isDirectory())
 			{
-				return remoteFile.getAbsolutePath() + remoteFile.getSeparator() + "*";
+				return remoteFile.getAbsolutePath() + remoteFile.getSeparator() + "*"; //$NON-NLS-1$
 			}
 			else
 			{
@@ -2881,7 +2880,7 @@ public class SystemViewRemoteFileAdapter
 			String inName = name.toLowerCase();
 			
 			
-			if (inName.equals("classification")) 
+			if (inName.equals("classification")) //$NON-NLS-1$ 
 			{
 				String classification = tgt.getClassification();
 				
@@ -2890,7 +2889,7 @@ public class SystemViewRemoteFileAdapter
 					return StringCompare.compare(value, classification, true);
 				}
 			}
-			else if (inName.equals("name"))
+			else if (inName.equals("name")) //$NON-NLS-1$
 			{		
 				boolean caseSensitive = tgt.getParentRemoteFileSubSystem().isCaseSensitive();
 				
@@ -2904,14 +2903,14 @@ public class SystemViewRemoteFileAdapter
 				}
 				
 				// we have a wild card test, and * is the last character in the value
-				if (val.endsWith("*"))  {
+				if (val.endsWith("*"))  { //$NON-NLS-1$
 					return tgtName.startsWith(val.substring(0, val.length()-1));
 				} 
 				else {
 					return val.equals(tgtName);
 				}
 			}
-			else if (inName.equals("absolutePath".toLowerCase())) {
+			else if (inName.equals("absolutePath".toLowerCase())) { //$NON-NLS-1$
 				
 				boolean caseSensitive = tgt.getParentRemoteFileSubSystem().isCaseSensitive();
 				
@@ -2925,14 +2924,14 @@ public class SystemViewRemoteFileAdapter
 				}
 				
 				// we have a wild card test, and * is the last character in the value
-				if (val.endsWith("*"))  {
+				if (val.endsWith("*"))  { //$NON-NLS-1$
 					return tgtPath.startsWith(val.substring(0, val.length()-1));
 				}
 				else {
 					return val.equals(tgtPath);
 				}
 			}
-			else if (inName.equals("extension")) {
+			else if (inName.equals("extension")) { //$NON-NLS-1$
 				
 				boolean caseSensitive = tgt.getParentRemoteFileSubSystem().isCaseSensitive();
 				
@@ -2942,7 +2941,7 @@ public class SystemViewRemoteFileAdapter
 					return false;
 				}
 				
-				StringTokenizer st = new StringTokenizer(value, " \t\n\r\f,");
+				StringTokenizer st = new StringTokenizer(value, " \t\n\r\f,"); //$NON-NLS-1$
 				
 				String val = null;
 				
@@ -2960,7 +2959,7 @@ public class SystemViewRemoteFileAdapter
 
                     // we have a wild card test, and * is the last character in
                     // the value
-                    if (val.endsWith("*")) {
+                    if (val.endsWith("*")) { //$NON-NLS-1$
                         match = tgtExtension.startsWith(val.substring(0, val.length() - 1));
                     }
                     else {
@@ -2976,64 +2975,64 @@ public class SystemViewRemoteFileAdapter
 				// return false if no match
 				return false;
 			}
-			else if (inName.equals("isroot"))
+			else if (inName.equals("isroot")) //$NON-NLS-1$
             {
-				return tgt.isRoot() && value.equals("true") ||
-					!tgt.isRoot() && value.equals("false");				
+				return tgt.isRoot() && value.equals("true") || //$NON-NLS-1$
+					!tgt.isRoot() && value.equals("false");	 //$NON-NLS-1$
 			}
-			else if (inName.equals("isfile"))
+			else if (inName.equals("isfile")) //$NON-NLS-1$
 			{
-				return tgt.isFile() && value.equals("true") ||
-					!tgt.isFile() && value.equals("false");				
+				return tgt.isFile() && value.equals("true") || //$NON-NLS-1$
+					!tgt.isFile() && value.equals("false");	 //$NON-NLS-1$
 			}
-			else if (inName.equals("isdirectory"))
+			else if (inName.equals("isdirectory")) //$NON-NLS-1$
 			{
-				return tgt.isDirectory() && value.equals("true") ||
-					!tgt.isDirectory() && value.equals("false");				
+				return tgt.isDirectory() && value.equals("true") || //$NON-NLS-1$
+					!tgt.isDirectory() && value.equals("false"); //$NON-NLS-1$				
 			}
-			else if (inName.equals("ishidden")) 
+			else if (inName.equals("ishidden"))  //$NON-NLS-1$
 			{
-				return tgt.isHidden() && value.equals("true") ||
-					!tgt.isHidden() && value.equals("false");				
+				return tgt.isHidden() && value.equals("true") || //$NON-NLS-1$
+					!tgt.isHidden() && value.equals("false");	//$NON-NLS-1$
 			}
-			else if (inName.equals("canread")) 
+			else if (inName.equals("canread"))  //$NON-NLS-1$
 			{
-				return tgt.canRead() && value.equals("true") ||
-					!tgt.canRead() && value.equals("false");				
+				return tgt.canRead() && value.equals("true") || //$NON-NLS-1$
+					!tgt.canRead() && value.equals("false");	//$NON-NLS-1$
 			}
-			else if (inName.equals("canwrite")) 
+			else if (inName.equals("canwrite"))  //$NON-NLS-1$
 			{
-				return tgt.canWrite() && value.equals("true") ||
-					!tgt.canWrite() && value.equals("false");				
+				return tgt.canWrite() && value.equals("true") || //$NON-NLS-1$
+					!tgt.canWrite() && value.equals("false");	//$NON-NLS-1$
 			}
-			else if (inName.equals("isbinary")) 
+			else if (inName.equals("isbinary"))  //$NON-NLS-1$
 			{
-				return tgt.isBinary() && value.equals("true") ||
-					!tgt.isBinary() && value.equals("false");				
+				return tgt.isBinary() && value.equals("true") || //$NON-NLS-1$
+					!tgt.isBinary() && value.equals("false");	//$NON-NLS-1$
 			}
-			else if (inName.equals("istext")) 
+			else if (inName.equals("istext"))  //$NON-NLS-1$
 			{
-				return tgt.isText() && value.equals("true") ||
-					!tgt.isText() && value.equals("false");				
+				return tgt.isText() && value.equals("true") || //$NON-NLS-1$
+					!tgt.isText() && value.equals("false");		//$NON-NLS-1$
 			}
 			else if (inName.equals("isarchive")) {
-				return tgt.isArchive() && value.equals("true") ||
-					!tgt.isArchive() && value.equals("false");				
+				return tgt.isArchive() && value.equals("true") || //$NON-NLS-1$
+					!tgt.isArchive() && value.equals("false");	//$NON-NLS-1$
 			}			
-			else if (inName.equals("isvirtual")) 
+			else if (inName.equals("isvirtual"))  //$NON-NLS-1$
 			{
-				return tgt instanceof IVirtualRemoteFile && value.equals("true") ||
-					!(tgt instanceof IVirtualRemoteFile) && value.equals("false");
+				return tgt instanceof IVirtualRemoteFile && value.equals("true") || //$NON-NLS-1$
+					!(tgt instanceof IVirtualRemoteFile) && value.equals("false"); //$NON-NLS-1$
 			}
-			else if (inName.equals("isexecutable")) 
+			else if (inName.equals("isexecutable"))  //$NON-NLS-1$
 			{		
-				return tgt.isExecutable() && value.equals("true") ||
-				 !tgt.isExecutable() && value.equals("false");
+				return tgt.isExecutable() && value.equals("true") || //$NON-NLS-1$
+				 !tgt.isExecutable() && value.equals("false"); //$NON-NLS-1$
 			}
-			else if (inName.equals("islink")) 
+			else if (inName.equals("islink"))  //$NON-NLS-1$
 			{		
-				return tgt.isLink() && value.equals("true") ||
-				 !tgt.isLink() && value.equals("false");
+				return tgt.isLink() && value.equals("true") || //$NON-NLS-1$
+				 !tgt.isLink() && value.equals("false"); //$NON-NLS-1$
 			}
 		}
 		

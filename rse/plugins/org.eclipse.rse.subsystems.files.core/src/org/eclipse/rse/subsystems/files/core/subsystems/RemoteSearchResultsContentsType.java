@@ -16,14 +16,14 @@
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
 
-import org.eclipse.rse.model.ISystemContentsType;
+import org.eclipse.rse.core.model.ISystemContentsType;
 
 /**
  * Represents contents that are children of a container
  */
 public class RemoteSearchResultsContentsType implements ISystemContentsType
 {
-    public static String CONTENTS_TYPE_SEARCH_RESULTS = "contents_search_results";
+    public static String CONTENTS_TYPE_SEARCH_RESULTS = "contents_search_results"; //$NON-NLS-1$
     public static RemoteSearchResultsContentsType _instance = new RemoteSearchResultsContentsType();
     
     public static RemoteSearchResultsContentsType getInstance()

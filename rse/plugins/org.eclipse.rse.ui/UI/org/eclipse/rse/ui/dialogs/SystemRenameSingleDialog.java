@@ -88,7 +88,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
     private Text newName;
     private String promptLabel, promptTip;
     private String newNameString;
-    private String inputName =  "";
+    private String inputName =  ""; //$NON-NLS-1$
     private Label resourceTypePrompt, resourceTypeValue, verbageLabel, renameLabel;
     private SystemMessage errorMessage;
     private ISystemValidator nameValidator;
@@ -119,7 +119,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 
 		//pack();
 		setBlockOnOpen(true);
-		setHelp(RSEUIPlugin.HELPPREFIX+"drns0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"drns0000"); //$NON-NLS-1$
 	}
 
 	/**
@@ -158,17 +158,17 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		{
 			if (this.inputObject != null && this.inputObject instanceof IHost)
 			{
-	  	      	setHelp(RSEUIPlugin.HELPPREFIX+"dccc0000");
+	  	      	setHelp(RSEUIPlugin.HELPPREFIX+"dccc0000"); //$NON-NLS-1$
 			}
 			else
 			{
-				setHelp(RSEUIPlugin.HELPPREFIX+"drns0001");
+				setHelp(RSEUIPlugin.HELPPREFIX+"drns0001"); //$NON-NLS-1$
 			}
   	      	setTitle(SystemResources.RESID_COLLISION_RENAME_TITLE);
 		}
 		else if (this.copyCollisionMode) // from true to false
 		{
-  	      	setHelp(RSEUIPlugin.HELPPREFIX+"drns0000");
+  	      	setHelp(RSEUIPlugin.HELPPREFIX+"drns0000"); //$NON-NLS-1$
 			String singleTitle = SystemResources.RESID_RENAME_SINGLE_TITLE;
 			if (!singleTitle.startsWith("Missing")) // TODO: remove test after next mri rev         	
 				setTitle(singleTitle);							
@@ -230,14 +230,14 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
         if (copyCollisionMode)
         {
           // VERBAGE
-          verbageLabel = SystemWidgetHelpers.createLabel(composite, " ", nbrColumns);
-          SystemWidgetHelpers.createLabel(composite, " ", nbrColumns); //filler
+          verbageLabel = SystemWidgetHelpers.createLabel(composite, " ", nbrColumns); //$NON-NLS-1$
+          SystemWidgetHelpers.createLabel(composite, " ", nbrColumns); //filler //$NON-NLS-1$
         }
        	else if (description != null)
         {
            // VERBAGE
           verbageLabel = SystemWidgetHelpers.createLabel(composite, description, nbrColumns);
-          SystemWidgetHelpers.createLabel(composite, " ", nbrColumns); //filler
+          SystemWidgetHelpers.createLabel(composite, " ", nbrColumns); //filler //$NON-NLS-1$
         }
         
 		if (copyCollisionMode)
@@ -254,7 +254,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
         // RESOURCE TYPE
         resourceTypePrompt = SystemWidgetHelpers.createLabel(
 			renameGroup, SystemResources.RESID_SIMPLE_RENAME_RESOURCEPROMPT_LABEL);
-	    resourceTypeValue = SystemWidgetHelpers.createLabel(renameGroup, "");
+	    resourceTypeValue = SystemWidgetHelpers.createLabel(renameGroup, ""); //$NON-NLS-1$
 	    resourceTypeValue.setToolTipText(SystemResources.RESID_SIMPLE_RENAME_RESOURCEPROMPT_TOOLTIP);
 	
 
@@ -510,7 +510,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
      */
     public static String trimTrailing(String text)
     {
-    	return ("."+text).trim().substring(1);
+    	return ("."+text).trim().substring(1); //$NON-NLS-1$
     }
 	
 	/**

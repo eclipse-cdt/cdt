@@ -30,10 +30,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.ISystemContentsType;
 import org.eclipse.rse.core.subsystems.IRemoteContainer;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.model.IHost;
-import org.eclipse.rse.model.ISystemContentsType;
 import org.eclipse.rse.services.clientserver.StringComparePatternMatcher;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -263,7 +263,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     	if (ssf != null)
     	  return ssf.getLineSeparator();
     	else
-    	  return System.getProperty("line.separator");
+    	  return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
     /**
      * Return if this is a file on Unix, versus windows say
@@ -275,7 +275,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     	if (ssf != null)
     	  return ssf.isUnixStyle();
     	else
-    	  return System.getProperty("os.name").toLowerCase().startsWith("windows");
+    	  return System.getProperty("os.name").toLowerCase().startsWith("windows"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public boolean isLink()
@@ -286,7 +286,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
         {
             return false;
         }
-    	else if (classifyString.indexOf("symbolic link") > -1)
+    	else if (classifyString.indexOf("symbolic link") > -1) //$NON-NLS-1$
     	{
     		return true;
     	}
@@ -302,7 +302,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
         {
             return false;
         }
-    	else if (classifyString.indexOf("executable") > -1)
+    	else if (classifyString.indexOf("executable") > -1) //$NON-NLS-1$
     	{
     		return true;
     	}
@@ -495,7 +495,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	public boolean isAncestorOf(IRemoteFile file) 
 	{
 		String separator = this.getSeparator();
-		if (this instanceof IVirtualRemoteFile) separator = "/";
+		if (this instanceof IVirtualRemoteFile) separator = "/"; //$NON-NLS-1$
 		if (this.isArchive()) separator = ArchiveHandlerManager.VIRTUAL_SEPARATOR;
 
 		return file.getAbsolutePathPlusConnection().startsWith(this.getAbsolutePathPlusConnection() + separator);
@@ -504,7 +504,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	public boolean isDescendantOf(IRemoteFile file) 
 	{
 		String separator = file.getSeparator();
-		if (this instanceof IVirtualRemoteFile) separator = "/";
+		if (this instanceof IVirtualRemoteFile) separator = "/"; //$NON-NLS-1$
 		if (file.isArchive()) separator = ArchiveHandlerManager.VIRTUAL_SEPARATOR;
 		
 		return this.getAbsolutePathPlusConnection().startsWith(file.getAbsolutePathPlusConnection() + separator);
@@ -545,7 +545,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		}
 		
 		if (filter == null) {
-			filter = "*";
+			filter = "*"; //$NON-NLS-1$
 		}
 		
 		boolean result = containsFilterKey(filters, filter);
@@ -603,7 +603,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	 */
 	public Object[] getContents(ISystemContentsType contentsType) 
 	{
-		return getContents(contentsType, "*");
+		return getContents(contentsType, "*"); //$NON-NLS-1$
 	}	  
 	
 	private Object[] combineAndFilterHidden(Object[] set1, Object[] set2)
@@ -755,7 +755,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		}
 		
 		if (filter == null) {
-			filter = "*";
+			filter = "*"; //$NON-NLS-1$
 		}
 		
 		if (filters.containsKey(filter)) 
@@ -861,7 +861,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	public void setContents(ISystemContentsType contentsType, String filter, Object[] con) {
 		
 		if (filter == null) {
-			filter = "*";
+			filter = "*"; //$NON-NLS-1$
 		}
 		
 		if (con != null && con.length > 0) 
@@ -1055,7 +1055,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	
 	public String getComment()
 	{
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	/*

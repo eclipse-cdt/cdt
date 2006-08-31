@@ -58,7 +58,7 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 	public SystemExtractToAction(Shell parent)
 	{
 		super(parent,FileResources.ACTION_EXTRACT_TO_LABEL, FileResources.ACTION_EXTRACT_TO_TOOLTIP);
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0119");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0119"); //$NON-NLS-1$
 		setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXTRACTTO_ID));
 
 	}
@@ -66,7 +66,7 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 	public SystemExtractToAction(Shell parent, String label, String tooltip)
 	{
 		super(parent, label, tooltip);
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0119");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0119"); //$NON-NLS-1$
 		setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXTRACTTO_ID));
 	}
 

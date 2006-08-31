@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
-import org.eclipse.rse.model.ISystemContainer;
-import org.eclipse.rse.model.ISystemContentsType;
+import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemContentsType;
 
 /**
  * @author dmcknigh

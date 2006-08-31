@@ -184,7 +184,7 @@ public class SystemScratchpadView
 
 			//setLabelProvider(_provider);
 
-			_menuManager = new MenuManager("#PopupMenu");
+			_menuManager = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 			_menuManager.setRemoveAllWhenShown(true);
 			_menuManager.addMenuListener(this);
 			Menu menu = _menuManager.createContextMenu(tableTree);

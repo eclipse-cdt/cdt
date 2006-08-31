@@ -141,17 +141,17 @@ public class RemoteCommandHelpers
 	                {
 	                    if (path.indexOf(' ') > 0)
 	                    {
-	                        path = "\"" + path + "\"";
+	                        path = "\"" + path + "\""; //$NON-NLS-1$  //$NON-NLS-2$
 	                    }
 	                    
-						 String cdCmd = "cd " + path;
+						 String cdCmd = "cd " + path; //$NON-NLS-1$
 	                	 if (!fileSSF.isUnixStyle())
 	                	 {                	 
-	                	 	if (path.endsWith(":"))
+	                	 	if (path.endsWith(":")) //$NON-NLS-1$
 	                	 	{
-	                	 		path += "\\";
+	                	 		path += "\\"; //$NON-NLS-1$
 	                	 	}
-	                   		 cdCmd = "cd /d " + path;                  		                    		 
+	                   		 cdCmd = "cd /d " + path; //$NON-NLS-1$                  		                    		 
 	                	 }	 
 	                            
 						cmdSubSystem.sendCommandToShell(cdCmd, shell, defaultShell);				   

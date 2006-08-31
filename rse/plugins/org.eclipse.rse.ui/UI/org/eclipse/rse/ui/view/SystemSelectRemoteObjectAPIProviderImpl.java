@@ -193,7 +193,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 		if (string == null)
 		  return;
 
-		if (string.endsWith(","))
+		if (string.endsWith(",")) //$NON-NLS-1$
 		{
 		   int idx = string.indexOf('/');
 		   if (idx == -1)
@@ -271,7 +271,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 		{
 		  SystemBasePlugin.logDebugMessage(this.getClass().getName(), "*** INPUT FILTER = '" + inputFilterString + "' ***");
 		  String result = inputFilterString;
-		  if (filterSuffix.equals(" /nf"))
+		  if (filterSuffix.equals(" /nf")) //$NON-NLS-1$
 		    result = inputFilterString + filterSuffix;
 		  else
 		  {

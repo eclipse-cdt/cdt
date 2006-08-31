@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -35,7 +35,7 @@ public class SystemMessageObject implements ISystemMessageObject, IAdaptable, Co
      * @param msgObj The system message from which to retrieve text to show in the tree viewer
      * @param type The message severity, dictating the icon. 
      * @param parent The parent node of this within the tree view
-     * @see org.eclipse.rse.model.ISystemMessageObject
+     * @see org.eclipse.rse.core.model.ISystemMessageObject
      */
     public SystemMessageObject(SystemMessage msgObj, int type, Object parent)
     {
@@ -55,7 +55,7 @@ public class SystemMessageObject implements ISystemMessageObject, IAdaptable, Co
     
     /**
      * Message type. 
-     * @see org.eclipse.rse.model.ISystemMessageObject
+     * @see org.eclipse.rse.core.model.ISystemMessageObject
      */
     public int getType()
     {

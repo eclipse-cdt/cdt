@@ -62,30 +62,31 @@ public class RSEDOM extends RSEDOMNode {
 		return _needsSave;
 	}
 
+	//for debugging only
 	public void print(RSEDOMNode node, String indent) {
 		String type = node.getType();
 		String name = node.getName();
 		RSEDOMNodeAttribute[] attributes = node.getAttributes();
 		RSEDOMNode[] children = node.getChildren();
 
-		System.out.println(indent + "RSEDOMNode " + type);
-		System.out.println(indent + "{");
-		String sindent = indent + "  ";
+		System.out.println(indent + "RSEDOMNode " + type); //$NON-NLS-1$
+		System.out.println(indent + "{"); //$NON-NLS-1$
+		String sindent = indent + "  "; //$NON-NLS-1$
 
-		System.out.println(sindent + "name=" + name);
+		System.out.println(sindent + "name=" + name); //$NON-NLS-1$
 		for (int i = 0; i < attributes.length; i++) {
 			RSEDOMNodeAttribute attribute = attributes[i];
 			String key = attribute.getKey();
 			String value = attribute.getValue();
-			System.out.println(sindent + key + "=" + value);
+			System.out.println(sindent + key + "=" + value); //$NON-NLS-1$
 		}
 
-		String cindent = sindent + "    ";
+		String cindent = sindent + "    "; //$NON-NLS-1$
 		for (int c = 0; c < children.length; c++) {
 			RSEDOMNode child = children[c];
 			print(child, cindent);
 		}
-		System.out.println(indent + "}");
+		System.out.println(indent + "}"); //$NON-NLS-1$
 	}
 
 	public Job getSaveJob() {

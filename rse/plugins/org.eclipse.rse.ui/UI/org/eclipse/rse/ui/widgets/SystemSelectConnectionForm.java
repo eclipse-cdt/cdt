@@ -307,8 +307,8 @@ public class SystemSelectConnectionForm extends SystemBaseForm
 		((GridData)ps_composite.getLayoutData()).verticalAlignment = GridData.FILL;
 
         // SPACER LINES
-        spacer1 = SystemWidgetHelpers.createLabel(ps_composite, "", 1);
-        spacer2 = SystemWidgetHelpers.createLabel(ps_composite, "", 1);
+        spacer1 = SystemWidgetHelpers.createLabel(ps_composite, "", 1); //$NON-NLS-1$
+        spacer2 = SystemWidgetHelpers.createLabel(ps_composite, "", 1); //$NON-NLS-1$
         // PROPERTY SHEET VIEWER
         ps = new SystemPropertySheetForm(shell, ps_composite, SWT.BORDER, getMessageLine());			
 	}
@@ -359,7 +359,7 @@ public class SystemSelectConnectionForm extends SystemBaseForm
         //verbageLabel = SystemWidgetHelpers.createLabel(composite_prompts, verbage, gridColumns);
 
         // SPACER LINE
-        SystemWidgetHelpers.createLabel(composite_prompts, "", gridColumns);
+        SystemWidgetHelpers.createLabel(composite_prompts, "", gridColumns); //$NON-NLS-1$
        
         // SELECT OBJECT READONLY TEXT FIELD
         Composite nameComposite = composite_prompts;
@@ -464,7 +464,7 @@ public class SystemSelectConnectionForm extends SystemBaseForm
 		}
 		else
 		{		
-			setNameText("");
+			setNameText(""); //$NON-NLS-1$
 			setPageComplete(false);
 		}
 	}

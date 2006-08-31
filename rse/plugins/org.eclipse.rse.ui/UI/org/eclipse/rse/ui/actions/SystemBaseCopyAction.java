@@ -39,11 +39,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 
-
-
-
-
-
 /**
  * An abstract base class for all copy actions. Defers minimal requirements to 
  *  child classes.

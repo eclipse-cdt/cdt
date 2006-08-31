@@ -93,7 +93,7 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);
 		this.fromPopupMenu = fromPopupMenu;
 		this.sp = sp;
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0000"); //$NON-NLS-1$
 	}
 
 	/**

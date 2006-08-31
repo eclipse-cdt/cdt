@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2004, 2006 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,19 +14,18 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
 
 
 /**
  * Represents contents that are children of a container
  */
-public class SystemChildrenContentsType implements ISystemContentsType
+public class SystemFilterStringContentsType implements ISystemContentsType
 {
-    public static String CONTENTS_TYPE_CHILDREN =	"contents_children";
-    public static SystemChildrenContentsType _instance = new SystemChildrenContentsType();
+    public static String CONTENTS_TYPE_CHILDREN_PARENTS = "contents_children_parents"; //$NON-NLS-1$
+    public static SystemFilterStringContentsType _instance = new SystemFilterStringContentsType();
     
-    public static SystemChildrenContentsType getInstance()
+    public static SystemFilterStringContentsType getInstance()
     {
         return _instance;
     }
@@ -36,7 +35,7 @@ public class SystemChildrenContentsType implements ISystemContentsType
      */
     public String getType()
     {
-        return CONTENTS_TYPE_CHILDREN;    
+        return CONTENTS_TYPE_CHILDREN_PARENTS;    
     }
 
     /* (non-Javadoc)

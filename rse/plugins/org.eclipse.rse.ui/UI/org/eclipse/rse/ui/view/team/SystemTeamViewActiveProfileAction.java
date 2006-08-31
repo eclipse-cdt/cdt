@@ -49,7 +49,7 @@ public class SystemTeamViewActiveProfileAction extends SystemBaseAction
 		      parent);
         allowOnMultipleSelection(true); // as requested by WSDD team
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CHANGE);
-		setHelp(RSEUIPlugin.HELPPREFIX+"actnactp");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actnactp"); //$NON-NLS-1$
 		setChecked(false);
 	}
 

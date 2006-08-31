@@ -31,12 +31,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.model.IHost;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
-import org.eclipse.rse.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
@@ -76,7 +76,6 @@ public class UniversalFileTransferUtility
 	 * @param srcFileOrFolder the file or folder to copy
 	 * @param tgtFolder the folder to copy to
 	 * @param monitor the progress monitor
-	 * @param shell 
 	 */
 	public static void transferRemoteResource(IRemoteFile srcFileOrFolder, IRemoteFile tgtFolder, IProgressMonitor monitor)
 	{
@@ -236,7 +235,6 @@ public class UniversalFileTransferUtility
 	 * Replicates a set of remote files or folders to the workspace
 	 * @param remoteSet the objects which are being copied
 	 * @param monitor a progress monitor 
-	 * @param shell
 	 * @return the temporary objects that was created after the download
 	 */
 	public static SystemWorkspaceResourceSet copyRemoteResourcesToWorkspace(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
@@ -284,7 +282,7 @@ public class UniversalFileTransferUtility
 					IResource tempFolder = null;
 									
 					if (doCompressedTransfer && doSuperTransferProperty && !srcFileOrFolder.isRoot() 
-							&& !(srcFileOrFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local")))
+							&& !(srcFileOrFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"))) //$NON-NLS-1$
 					{
 						try
 						{
@@ -380,7 +378,6 @@ public class UniversalFileTransferUtility
 	 * Replicates a remote file or folder to the workspace
 	 * @param srcFileOrFolder the object which is being copied
 	 * @param monitor a progress monitor 
-	 * @param shell
 	 * @return the temporary object that was created after the download
 	 */
 	public static Object copyRemoteResourceToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
@@ -448,7 +445,7 @@ public class UniversalFileTransferUtility
 			boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
 			
 			if (doCompressedTransfer && doSuperTransferProperty && !srcFileOrFolder.isRoot() 
-					&& !(srcFileOrFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local")))
+					&& !(srcFileOrFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"))) //$NON-NLS-1$
 			{
 				try
 				{
@@ -550,7 +547,7 @@ public class UniversalFileTransferUtility
 		{
 			IHost connection = connections[i];
 			IRemoteFileSubSystem anFS = RemoteFileUtility.getFileSubSystem(connection);
-			if (anFS.getHost().getSystemType().equals("Local"))
+			if (anFS.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
 			{
 				return anFS;
 			}
@@ -562,11 +559,10 @@ public class UniversalFileTransferUtility
 
 	/**
 	 * Perform a copy via drag and drop.
-	 * @param src the object to be copied.  If the target and source are not on the same system, then this is a
+	 * @param srcFileOrFolder the object to be copied.  If the target and source are not on the same system, then this is a
 	 * temporary object produced by the doDrag.
-	 * @param target the object to be copied to.
+	 * @param targetFolder the object to be copied to.
 	 * @param monitor the progress monitor
-	 * @param shell
 	 * @return the resulting remote object
 	 */
 	public static Object copyWorkspaceResourceToRemote(IResource srcFileOrFolder, IRemoteFile targetFolder, IProgressMonitor monitor)
@@ -574,14 +570,13 @@ public class UniversalFileTransferUtility
 		return copyWorkspaceResourceToRemote(srcFileOrFolder, targetFolder, monitor, true);
 	}
 	
-/**
+	/**
 	 * Perform a copy via drag and drop.
 	 * @param workspaceSet the objects to be copied.  If the target and sources are not on the same system, then this is a
 	 * temporary object produced by the doDrag.
-	 * @param target the object to be copied to.
+	 * @param targetFolder the object to be copied to.
 	 * @param monitor the progress monitor
-	 * @param shell
-	 * @param indicates whether to check for colllisions or not
+	 * @param checkForCollisions indicates whether to check for colllisions or not
 	 * @return the resulting remote objects
 	 */
 	public static SystemRemoteResourceSet copyWorkspaceResourcesToRemote(SystemWorkspaceResourceSet workspaceSet, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
@@ -747,7 +742,7 @@ public class UniversalFileTransferUtility
 					}
 
 					
-					boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local");
+					boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"); //$NON-NLS-1$
 					boolean destInArchive = (newTargetFolder instanceof IVirtualRemoteFile) || newTargetFolder.isArchive();
 					
 					if (doCompressedTransfer && doSuperTransferPreference && !destInArchive && !isTargetLocal)
@@ -798,10 +793,9 @@ public class UniversalFileTransferUtility
 	 * Perform a copy via drag and drop.
 	 * @param srcFileOrFolder the object to be copied.  If the target and source are not on the same system, then this is a
 	 * temporary object produced by the doDrag.
-	 * @param target the object to be copied to.
+	 * @param targetFolder the object to be copied to.
 	 * @param monitor the progress monitor
-	 * @param shell
-	 * @param indicates whether to check for colllisions or not
+	 * @param checkForCollisions indicates whether to check for colllisions or not
 	 * @return the result remote object
 	 */
 	public static Object copyWorkspaceResourceToRemote(IResource srcFileOrFolder, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
@@ -946,7 +940,7 @@ public class UniversalFileTransferUtility
 
 				directory.refreshLocal(IResource.DEPTH_ONE, monitor);
 				
-				boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local");
+				boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"); //$NON-NLS-1$
 				boolean destInArchive = (newTargetFolder  instanceof IVirtualRemoteFile) || newTargetFolder.isArchive();
 				boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
 				
@@ -1004,7 +998,7 @@ public class UniversalFileTransferUtility
 		{
 			monitor.beginTask(FileResources.RESID_SUPERTRANSFER_PROGMON_MAIN,IProgressMonitor.UNKNOWN);
 			monitor.subTask(FileResources.RESID_SUPERTRANSFER_PROGMON_SUBTASK_CREATE);
-			destinationArchive = getLocalFileSubSystem().getRemoteFileObject(File.createTempFile("supertransfer", getArchiveExtensionFromProperties()).getAbsolutePath());
+			destinationArchive = getLocalFileSubSystem().getRemoteFileObject(File.createTempFile("supertransfer", getArchiveExtensionFromProperties()).getAbsolutePath()); //$NON-NLS-1$
 			FileServiceSubSystem localSS = (FileServiceSubSystem)getLocalFileSubSystem();
 			try
 			{
@@ -1111,13 +1105,13 @@ public class UniversalFileTransferUtility
 	
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		String archiveType = store.getString(ISystemPreferencesConstants.SUPERTRANSFER_ARC_TYPE);
-		if (archiveType == null || !ArchiveHandlerManager.getInstance().isRegisteredArchive("test." + archiveType))
+		if (archiveType == null || !ArchiveHandlerManager.getInstance().isRegisteredArchive("test." + archiveType)) //$NON-NLS-1$
 		{
-			archiveType = ".zip";
+			archiveType = ".zip"; //$NON-NLS-1$
 		}
 		else
 		{
-			archiveType = "." + archiveType;
+			archiveType = "." + archiveType; //$NON-NLS-1$
 		}
 		//String archiveType = ".zip";
 		return archiveType;
@@ -1135,9 +1129,9 @@ public class UniversalFileTransferUtility
 		{
 			monitor.beginTask(FileResources.RESID_SUPERTRANSFER_PROGMON_MAIN,IProgressMonitor.UNKNOWN);
 			monitor.subTask(FileResources.RESID_SUPERTRANSFER_PROGMON_SUBTASK_CREATE);
-			File file = File.createTempFile("supertransfer", getArchiveExtensionFromProperties());
+			File file = File.createTempFile("supertransfer", getArchiveExtensionFromProperties()); //$NON-NLS-1$
 			file.delete();
-			String separator = "";
+			String separator = ""; //$NON-NLS-1$
 			IRemoteFile destinationParent = directory.getParentRemoteFile();
 			if (!destinationParent.getAbsolutePath().endsWith(directory.getSeparator()))
 				separator = directory.getSeparator();
@@ -1162,7 +1156,7 @@ public class UniversalFileTransferUtility
 			}
 			if (destinationArchive == null)
 			{
-			    String homeFolder = directory.getParentRemoteFileSubSystem().getRemoteFileObject("./").getAbsolutePath();
+			    String homeFolder = directory.getParentRemoteFileSubSystem().getRemoteFileObject("./").getAbsolutePath(); //$NON-NLS-1$
 			    String destArchPath = homeFolder + separator + file.getName();
 				destinationArchive = directory.getParentRemoteFileSubSystem().getRemoteFileObject(destArchPath);
 				if (destinationArchive.exists()) directory.getParentRemoteFileSubSystem().delete(destinationArchive,monitor);
@@ -1353,7 +1347,7 @@ public class UniversalFileTransferUtility
 		path = path.append(separator + actualHost + separator);
 
 		String absolutePath = srcFileOrFolder.getAbsolutePath();
-		if (srcFileOrFolder.getSystemConnection().getSystemType().equals("Local"))
+		if (srcFileOrFolder.getSystemConnection().getSystemType().equals("Local")) //$NON-NLS-1$
 		{
 			absolutePath = editMgr.getWorkspacePathFor(actualHost, srcFileOrFolder.getAbsolutePath());
 		}
@@ -1465,7 +1459,7 @@ public class UniversalFileTransferUtility
 	public static String getActualHostFor(ISubSystem subsystem, String remotePath)
 		{
 			String hostname = subsystem.getHost().getHostName();
-			if (subsystem != null && subsystem.getHost().getSystemType().equals("Local"))
+			if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
 			{
 				String result = SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
 				return result;
@@ -1494,7 +1488,7 @@ public class UniversalFileTransferUtility
 	protected static boolean isRemoteFileMounted(ISubSystem subsystem, String remotePath)
 	{
 		String hostname = subsystem.getHost().getHostName();
-		if (subsystem != null && subsystem.getHost().getSystemType().equals("Local"))
+		if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
 		{
 			String result = SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
 			if (!result.equals(hostname))
@@ -1507,7 +1501,7 @@ public class UniversalFileTransferUtility
 	
 	protected static String getWorkspaceRemotePath(ISubSystem subsystem, String remotePath)
 		{
-			if (subsystem != null && subsystem.getHost().getSystemType().equals("Local"))
+			if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
 			{
 				return SystemRemoteEditManager.getDefault().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
 			}

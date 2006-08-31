@@ -27,9 +27,7 @@ import org.eclipse.swt.widgets.Shell;
  * A selectable profile name action.
  */
 public class SystemProfileNameSelectAction extends SystemBaseAction 
-                                 
 {	
-	
 	private ISystemProfile profile;
 	
 	/**
@@ -43,7 +41,7 @@ public class SystemProfileNameSelectAction extends SystemBaseAction
 		setChecked(mgr.isSystemProfileActive(profile.getName()));
         setSelectionSensitive(false);
         
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0004");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0004"); //$NON-NLS-1$
 	}
 
 

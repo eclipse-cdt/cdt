@@ -130,7 +130,7 @@ public class SystemCommandAction extends SystemBaseAction
 			_cmdText = new Combo(c, SWT.SINGLE | SWT.BORDER);
 			GridData textData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 			_cmdText.setLayoutData(textData);
-			_cmdText.setText("");
+			_cmdText.setText(""); //$NON-NLS-1$
 			_cmdText.setToolTipText(ShellResources.RESID_SHELLS_COMMAND_TOOLTIP);
 
 			// add keystroke listeners...
@@ -173,7 +173,7 @@ public class SystemCommandAction extends SystemBaseAction
 
 		private void setHelp()
 		{
-			setHelp(RSEUIPlugin.HELPPREFIX + "cmdi0000");
+			setHelp(RSEUIPlugin.HELPPREFIX + "cmdi0000"); //$NON-NLS-1$
 		}
 
 		/**
@@ -288,9 +288,9 @@ public class SystemCommandAction extends SystemBaseAction
 		_isShell = isShell;
 		_cmdSubSystem = cmdSubSystem;
 		if (_isShell)
-			setHelp(RSEUIPlugin.HELPPREFIX+"actn0113");
+			setHelp(RSEUIPlugin.HELPPREFIX+"actn0113"); //$NON-NLS-1$
 		else
-			setHelp(RSEUIPlugin.HELPPREFIX+"actn0114");		
+			setHelp(RSEUIPlugin.HELPPREFIX+"actn0114"); //$NON-NLS-1$
 	}
 
 	public void setSubSystem(IRemoteCmdSubSystem ss)
@@ -418,11 +418,11 @@ public class SystemCommandAction extends SystemBaseAction
 							showInView(defaultShell);
 						}
 
-						String cdCmd = "cd " + path;
-						if ((cmdSubSystem.getHost().getSystemType().equals("Local") && System.getProperty("os.name").toLowerCase().startsWith("win"))
-							|| cmdSubSystem.getHost().getSystemType().equals("Windows"))
+						String cdCmd = "cd " + path; //$NON-NLS-1$
+						if ((cmdSubSystem.getHost().getSystemType().equals("Local") && System.getProperty("os.name").toLowerCase().startsWith("win")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							|| cmdSubSystem.getHost().getSystemType().equals("Windows")) //$NON-NLS-1$
 						{
-							cdCmd = "cd /d " + path;
+							cdCmd = "cd /d " + path; //$NON-NLS-1$
 						}
 						cmdSubSystem.sendCommandToShell(cdCmd, shell, defaultShell);
 						cmdSubSystem.sendCommandToShell(cmd, shell, defaultShell);

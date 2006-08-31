@@ -124,7 +124,7 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 		      // Create 'My Home' filter for local (should apply to both _isWindows and linux clients)
 	    	  filterName = SystemFileResources.RESID_FILTER_MYHOME;
 	    	  RemoteFileFilterString myDocsFilterString = new RemoteFileFilterString(this);
-	    	  myDocsFilterString.setPath(System.getProperty("user.home") + getSeparator());
+	    	  myDocsFilterString.setPath(System.getProperty("user.home") + getSeparator()); //$NON-NLS-1$
 	    	  Vector myDocsFilterStrings = new Vector();
 	    	  myDocsFilterStrings.add(myDocsFilterString.toString());
 	    	  mgr.createSystemFilter(pool, filterName, myDocsFilterStrings);

@@ -74,7 +74,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemSearchPage extends DialogPage implements ISearchPage {
 	
-	public static final String SYSTEM_SEARCH_PAGE_ID = "org.eclipse.rse.files.ui.search.searchPage";
+	public static final String SYSTEM_SEARCH_PAGE_ID = "org.eclipse.rse.files.ui.search.searchPage"; //$NON-NLS-1$
 	
 	// search utility
 	private SystemSearchUtil util;
@@ -120,27 +120,27 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 	private boolean initialSearchSubfolders;
 	
 	// constants for storing configuration
-	private static final String REMOTE_SEARCH_PAGE_NAME = "RemoteSearchPage";
-	private static final String STORE_CONFIG_CASE_SENSITIVE = "caseSensitive";
-	private static final String STORE_CONFIG_STRING_REGEX = "stringRegex";
-	private static final String STORE_CONFIG_FILENAME_REGEX = "fileNameRegex";
-	private static final String STORE_CONFIG_INCLUDE_ARCHIVES = "includeArchives";
-	private static final String STORE_CONFIG_INCLUDE_SUBFOLDERS = "includeSubfolders";	
+	private static final String REMOTE_SEARCH_PAGE_NAME = "RemoteSearchPage"; //$NON-NLS-1$
+	private static final String STORE_CONFIG_CASE_SENSITIVE = "caseSensitive"; //$NON-NLS-1$
+	private static final String STORE_CONFIG_STRING_REGEX = "stringRegex"; //$NON-NLS-1$
+	private static final String STORE_CONFIG_FILENAME_REGEX = "fileNameRegex"; //$NON-NLS-1$
+	private static final String STORE_CONFIG_INCLUDE_ARCHIVES = "includeArchives"; //$NON-NLS-1$
+	private static final String STORE_CONFIG_INCLUDE_SUBFOLDERS = "includeSubfolders";	 //$NON-NLS-1$
 	
-	private static final String STORE_CONFIG_DATA_SIZE = "dataSize";
+	private static final String STORE_CONFIG_DATA_SIZE = "dataSize"; //$NON-NLS-1$
 	
 	// constants for storing data
-	private static final String STORE_DATA_PREFIX = REMOTE_SEARCH_PAGE_NAME + ".data";
-	private static final String STORE_DATA_SEARCH_STRING = "searchString";
-	private static final String STORE_DATA_CASE_SENSITIVE = "caseSensitive";
-	private static final String STORE_DATA_STRING_REGEX = "stringRegex";
-	private static final String STORE_DATA_FILE_NAMES = "fileNames";
-	private static final String STORE_DATA_FILE_NAME_REGEX = "fileNameRegex";
-	private static final String STORE_DATA_PROFILE_NAME = "profileName";
-	private static final String STORE_DATA_CONNECTION_NAME = "connectionName";
-	private static final String STORE_DATA_FOLDER_NAME = "folderName";
-	private static final String STORE_DATA_INCLUDE_ARCHIVES = "includeArchives";
-	private static final String STORE_DATA_INCLUDE_SUBFOLDERS = "includeSubfolders";
+	private static final String STORE_DATA_PREFIX = REMOTE_SEARCH_PAGE_NAME + ".data"; //$NON-NLS-1$
+	private static final String STORE_DATA_SEARCH_STRING = "searchString"; //$NON-NLS-1$
+	private static final String STORE_DATA_CASE_SENSITIVE = "caseSensitive"; //$NON-NLS-1$
+	private static final String STORE_DATA_STRING_REGEX = "stringRegex"; //$NON-NLS-1$
+	private static final String STORE_DATA_FILE_NAMES = "fileNames"; //$NON-NLS-1$
+	private static final String STORE_DATA_FILE_NAME_REGEX = "fileNameRegex"; //$NON-NLS-1$
+	private static final String STORE_DATA_PROFILE_NAME = "profileName"; //$NON-NLS-1$
+	private static final String STORE_DATA_CONNECTION_NAME = "connectionName"; //$NON-NLS-1$
+	private static final String STORE_DATA_FOLDER_NAME = "folderName"; //$NON-NLS-1$
+	private static final String STORE_DATA_INCLUDE_ARCHIVES = "includeArchives"; //$NON-NLS-1$
+	private static final String STORE_DATA_INCLUDE_SUBFOLDERS = "includeSubfolders"; //$NON-NLS-1$
 	
 	// a list to hold previous searche data
 	private List previousSearchData = new ArrayList();
@@ -439,7 +439,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			// then we will no longer need to store data in the combo, which is a very inelegant solution
 			// we can simply parse whatever comes out of getText() and get profile name, connection name
 			// and folder path
-			return connectionName + ":" + folderPath;
+			return connectionName + ":" + folderPath; //$NON-NLS-1$
 		}
 		
 		/**
@@ -868,8 +868,8 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		}
 		
 		// if text is null, then make it "*"
-		if (text == null || text.equals("")) {
-			text = "*";
+		if (text == null || text.equals("")) { //$NON-NLS-1$
+			text = "*"; //$NON-NLS-1$
 		}
 		// otherwise, make sure to escape the special characters so that we actually search for the
 		// string with the special characters
@@ -881,7 +881,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		
 		// if the file name is still null, set it to "*"
 		if (fileName == null) {
-			fileName = "*";
+			fileName = "*"; //$NON-NLS-1$
 		}
 		
 		// set the file name
@@ -902,8 +902,8 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 	 */
 	private String insertEscapeChar(String text) {
 		
-		if (text == null || text.equals("")) {
-			return "";
+		if (text == null || text.equals("")) { //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
 		}
 		
 		StringBuffer sbIn = new StringBuffer(text);
@@ -914,7 +914,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			lengthOfFirstLine = reader.readLine().length();
 		}
 		catch (IOException ex) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		
 		StringBuffer sbOut = new StringBuffer(lengthOfFirstLine + 5);
@@ -924,7 +924,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			char ch = sbIn.charAt(i);
 			
 			if (ch == '*' || ch == '?' || ch == '\\') {
-				sbOut.append("\\");
+				sbOut.append("\\"); //$NON-NLS-1$
 			}
 			
 			sbOut.append(ch);
@@ -974,7 +974,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		setControl(main);
 		
 		// set help
-		SystemWidgetHelpers.setHelp(main, RSEUIPlugin.HELPPREFIX + "rsdi0000");
+		SystemWidgetHelpers.setHelp(main, RSEUIPlugin.HELPPREFIX + "rsdi0000"); //$NON-NLS-1$
 	}
 	
 	/**

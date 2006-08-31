@@ -358,7 +358,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * Connect to the remote system.
 	 * In addition to calling getSystem().connect(),this might fire events.
 	 * 
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
 	 */
 	public void connect(Shell shell) throws Exception;	
 	/**
@@ -371,7 +371,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * Connect to the remote system, optionally forcing a signon prompt even if the password
 	 * is cached in memory or on disk.
 	 * 
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
      * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
 	 * in memory.
 	 */
@@ -493,7 +493,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      *  type. Be sure to register your adapter factory.
      *
      * @param filterString filter pattern for objects to return.
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Array of objects that are the result of this filter string
      */
     public Object[] resolveFilterString(String filterString, Shell shell)
@@ -506,7 +506,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      *  filter strings versus a single filter string.
      *
      * @param filterStrings array of filter patterns for objects to return.
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Array of objects that are the result of resolving all the filter strings
      */
     public Object[] resolveFilterStrings(String[] filterStrings, Shell shell)
@@ -535,7 +535,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      *
      * @param parent Object that is being expanded.
      * @param filterString filter pattern for children of parent.
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Array of objects that are the result of this filter string
      */
     public Object[] resolveFilterString(Object parent, String filterString, Shell shell)
@@ -545,7 +545,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      * Execute a remote command. This is only applicable if the subsystem factory reports
      *  true for supportsCommands().
      * @param command Command to be executed remotely.
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
      * @param Object context context of a command (i.e. working directory).  Null is valid and means to use the default context.
      * @return Array of objects that are the result of running this command. Typically, these
      *   are messages logged by the command.
@@ -567,7 +567,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      * @param subject Identifies which object to get the properties of
      * @param key Identifies property to set
      * @param value Value to set property to
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Object interpretable by subsystem. Might be a Boolean, or the might be new value for confirmation.
      */
     public Object setProperty(Object subject, String key, String value, Shell shell)
@@ -579,7 +579,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      *  true for supportsProperties().
      * @param subject Identifies which object to get the properties of
      * @param key Identifies property to get value of
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return String The value of the requested key.
      */
     public String getProperty(Object subject, String key, Shell shell)
@@ -590,9 +590,9 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      *  a number of remote environment variables. This is only applicable if the subsystem factory reports
      *  true for supportsProperties().
      * @param subject Identifies which object to get the properties of
-     * @param key Identifies property to set
-     * @param value Values to set properties to. One to one mapping to keys by index number
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @param keys Identifies properties to set
+     * @param values Values to set properties to. One to one mapping to keys by index number
+     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Object interpretable by subsystem. Might be a Boolean, or the might be new values for confirmation.
      */
     public Object setProperties(Object subject, String[] keys, String[] values, Shell shell)
@@ -603,9 +603,9 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      *  a remote environment variable. This is only applicable if the subsystem factory reports
      *  true for supportsProperties().
      * @param subject Identifies which object to get the properties of
-     * @param key Identifies property to get value of
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
-     * @return Object The values of the requested keys.
+     * @param keys Identifies properties to get value of
+     * @param shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @return String[] The values of the requested keys.
      */
     public String[] getProperties(Object subject, String[] keys, Shell shell)
            throws Exception;
@@ -658,7 +658,6 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * Returns the parent object associated with a filter reference.  It's up to the
 	 * subsystem implementation to decide what "parent object" means for a filter reference.
 	 * @param filterRef the filter reference to determine a target object from.
-	 * @return
 	 */
 	Object getTargetForFilter(ISystemFilterReference filterRef);
 	

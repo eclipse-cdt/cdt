@@ -43,7 +43,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	protected static final String NAME_EDEFAULT = null;
 
     private static Hashtable pools = null;
-    private static String CONNECTION_FILE_NAME = "connection";
+    private static String CONNECTION_FILE_NAME = "connection"; //$NON-NLS-1$
 
 
 	protected String name = NAME_EDEFAULT;
@@ -118,6 +118,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 
     /**
      * Private debug method to print connections, to test restored ok.
+     * @deprecated
      */
     public void printConnections()
     {
@@ -126,18 +127,18 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
         if (!connsList.hasNext())
         {
           System.out.println();
-          System.out.println("No connections");
+          System.out.println("No connections"); //$NON-NLS-1$
         }
         while (connsList.hasNext())
         {
            System.out.println();
            IHost conn = (IHost)connsList.next();
-           System.out.println("  AliasName.....: " + conn.getAliasName());
-           System.out.println("  -----------------------------------------------------");
-           System.out.println("  HostName......: " + conn.getHostName());
-           System.out.println("  SystemType....: " + conn.getSystemType());
-           System.out.println("  Description...: " + conn.getDescription());
-           System.out.println("  UserId........: " + conn.getDefaultUserId());
+           System.out.println("  AliasName.....: " + conn.getAliasName()); //$NON-NLS-1$
+           System.out.println("  -----------------------------------------------------"); //$NON-NLS-1$
+           System.out.println("  HostName......: " + conn.getHostName()); //$NON-NLS-1$
+           System.out.println("  SystemType....: " + conn.getSystemType()); //$NON-NLS-1$
+           System.out.println("  Description...: " + conn.getDescription()); //$NON-NLS-1$
+           System.out.println("  UserId........: " + conn.getDefaultUserId()); //$NON-NLS-1$
         }
     }
 
@@ -417,7 +418,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      * Duplicates a given connection in this list within this list or another list.
      * @param targetPool The SystemConnectionPool to hold the copied connection. Can equal this connection, as long as alias name is unique
      * @param conn SystemConnection object (within our pool) to clone
-     * @param alias New, unique, alias name to give this connection. Clone will fail if this is not unique.
+     * @param aliasName New, unique, alias name to give this connection. Clone will fail if this is not unique.
      */
     public IHost cloneHost(ISystemHostPool targetPool, IHost conn, String aliasName)
        throws Exception
@@ -624,14 +625,12 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	}
 
 	/**
-	 * @generated This field/method will be replaced during code generation.
+	 * @deprecated This field/method will be replaced during code generation.
 	 */
 	public String toStringGen()
 	{
-		
-
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (name: ");
+		result.append(" (name: "); //$NON-NLS-1$
 		result.append(name);
 		result.append(')');
 		return result.toString();

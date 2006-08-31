@@ -70,7 +70,7 @@ public class RSEFileSystemContributor extends FileSystemContributor {
 			String hostName = host.getHostName();
 			try
 			{
-				return new URI("rse", hostName, path, null);
+				return new URI("rse", hostName, path, null); //$NON-NLS-1$
 			}
 			catch (Exception e)
 			{

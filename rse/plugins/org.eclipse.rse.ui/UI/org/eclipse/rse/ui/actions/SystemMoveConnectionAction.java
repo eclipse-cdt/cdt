@@ -51,8 +51,8 @@ public class SystemMoveConnectionAction extends SystemBaseCopyAction
 		super(parent, SystemResources.ACTION_MOVE_CONNECTION_LABEL, MODE_MOVE);
 		//allowOnMultipleSelection(false); // too hard to handle, for now!
 		sr = RSEUIPlugin.getTheSystemRegistry();
-  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0020");
-  	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dmcn0000"); 
+  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0020"); //$NON-NLS-1$
+  	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dmcn0000");  //$NON-NLS-1$
 	}
  
 	/**
@@ -220,7 +220,7 @@ public class SystemMoveConnectionAction extends SystemBaseCopyAction
     protected SystemSimpleContentElement getProfileTreeModel(ISystemProfile profile)
     {
     	SystemSimpleContentElement veryRootElement = 
-    	   new SystemSimpleContentElement("Profiles",
+    	   new SystemSimpleContentElement("Profiles", //$NON-NLS-1$
     	                                  null, null, (Vector)null);	    	
     	veryRootElement.setRenamable(false);
     	veryRootElement.setDeletable(false);

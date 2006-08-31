@@ -23,6 +23,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.model.ISystemMessageObject;
+import org.eclipse.rse.core.model.SystemChildrenContentsType;
+import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemHelpers;
@@ -32,12 +35,9 @@ import org.eclipse.rse.filters.ISystemFilterPool;
 import org.eclipse.rse.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.filters.ISystemFilterString;
 import org.eclipse.rse.filters.SystemFilterSimple;
-import org.eclipse.rse.model.ISystemMessageObject;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
-import org.eclipse.rse.model.SystemChildrenContentsType;
-import org.eclipse.rse.model.SystemMessageObject;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -142,7 +142,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 	public String getAbsoluteName(Object element)
 	{
 		ISystemFilter filter = getFilter(element);
-		return filter.getSystemFilterPoolManager().getName() + "." + filter.getParentFilterPool().getName() + "." + filter.getName();
+		return filter.getSystemFilterPoolManager().getName() + "." + filter.getParentFilterPool().getName() + "." + filter.getName(); //$NON-NLS-1$  //$NON-NLS-2$
 	}	
 	/**
 	 * Return the type label for this object
@@ -456,7 +456,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 	}    	
 	/**
 	 * Return a validator for verifying the new name is correct.
-	 * @param either a filter for a rename action, or a filter pool for a "new" action.
+	 * @param element either a filter for a rename action, or a filter pool for a "new" action.
 	 */
     public ISystemValidator getNameValidator(Object element)
     { 
@@ -503,7 +503,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
     	if (!filter.isTransient())
     	{
     	  String mgrName = filter.getSystemFilterPoolManager().getName();
-    	  return (mgrName + "." + filter.getParentFilterPool().getName() + "." + newName).toUpperCase();
+    	  return (mgrName + "." + filter.getParentFilterPool().getName() + "." + newName).toUpperCase(); //$NON-NLS-1$  //$NON-NLS-2$
     	}
     	else
     	  return newName.toUpperCase();
@@ -536,7 +536,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 	 */
 	public boolean testAttribute(Object target, String name, String value)
 	{
-		if (name.equalsIgnoreCase("filterType"))
+		if (name.equalsIgnoreCase("filterType")) //$NON-NLS-1$
 		{
 			ISystemFilter filter = getFilter(target);
 			String type = filter.getType();
@@ -545,11 +545,11 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 			else
 				return value.equals(type);
 		}
-		else if (name.equalsIgnoreCase("showChangeFilterStringPropertyPage"))
+		else if (name.equalsIgnoreCase("showChangeFilterStringPropertyPage")) //$NON-NLS-1$
 		{			
 			ISystemFilter filter = getFilter(target);
 			ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(filter);
-			if (value.equals("true"))
+			if ("true".equals(value)) //$NON-NLS-1$
 				return ssf.showChangeFilterStringsPropertyPage(filter);
 			else
 				return !ssf.showChangeFilterStringsPropertyPage(filter);			 	

@@ -14,12 +14,14 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
+
+
 /**
  * Interface that listeners interesting in changes to local resources in the RSE model
  *  implement, and subsequently register their interest, via SystemRegistry.
  * <p>
- * If you list any of the resource types defined in {@link org.eclipse.rse.model.ISystemModelChangeEvents}
+ * If you list any of the resource types defined in {@link org.eclipse.rse.core.model.ISystemModelChangeEvents}
  *  you should monitor by implementing this interface, and registering with the 
  *  system registry via {@link org.eclipse.rse.model.ISystemRegistry#addSystemModelChangeListener(ISystemModelChangeListener)}.
  *  In your view's dispose method, you must also de-register by calling

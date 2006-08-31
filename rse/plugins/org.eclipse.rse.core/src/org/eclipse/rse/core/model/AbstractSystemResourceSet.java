@@ -14,14 +14,12 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-
-
 
 
 public class AbstractSystemResourceSet implements ISystemResourceSet
@@ -104,7 +102,7 @@ public class AbstractSystemResourceSet implements ISystemResourceSet
 			buf.append(pathFor(resource));				
 			if (i < _resourceSet.size())
 			{
-				buf.append(", ");
+				buf.append(", "); //$NON-NLS-1$
 			}
 			buf.append('\n');
 		}

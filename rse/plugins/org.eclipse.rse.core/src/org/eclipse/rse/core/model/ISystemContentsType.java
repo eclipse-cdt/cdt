@@ -14,23 +14,23 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
 
-import java.util.List;
-
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-
-
-public interface ISystemResourceSet
+/*
+ * Common interface for representing different contents types of
+ * artifacts that can be stored in an IRemoteContainer
+ */
+public interface ISystemContentsType 
 {
-	public int size();
-	public Object get(String absoluteName);
-	public String pathFor(Object obj);
-	public Object get(int index);
-	public List getResourceSet();
-	public SystemMessage getMessage();
-	public boolean hasMessage();
-	public boolean hasByteSize();
-	public long byteSize();
-	public void setByteSize(long byteSize);
+    /*
+     * Indicates the type of this contents
+     */
+    public String getType();
+    
+    /*
+     * Indicates whether or not the contents
+     * can be flushed or not when a container becomes
+     * stale.
+     */
+    public boolean isPersistent();
 }

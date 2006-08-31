@@ -29,8 +29,8 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
@@ -432,7 +432,7 @@ FocusListener
 		});
 
 		
-		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "ucmd0000");
+		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
 
 		//TableLayout layout = new TableLayout();
 		//tree.setLayout(layout);

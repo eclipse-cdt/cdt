@@ -14,30 +14,32 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
-
+package org.eclipse.rse.core.model;
 /**
- * A change event passed to you when listening for RSE model changes.
- * Note these are post-events, sent after the fact.
+ * Interface of event sent when a remote system preference changes.
+ * @see org.eclipse.rse.core.model.ISystemPreferenceChangeEvents
  */
-public interface ISystemModelChangeEvent 
-{
+public interface ISystemPreferenceChangeEvent
+{	
+
+    /**
+     * Returns the type of the event.
+     * @see org.eclipse.rse.core.model.ISystemPreferenceChangeEvents
+     * @return a type that is one of the constants in this interface
+     */
+    public int getType();
+    /**
+     * Set the type
+     * @see org.eclipse.rse.core.model.ISystemPreferenceChangeEvents
+     */
+    public void setType(int type);	
 	/**
-	 * Get the event type, such as {@link org.eclipse.rse.model.ISystemModelChangeEvents#SYSTEM_RESOURCE_ADDED}.
-	 * @see org.eclipse.rse.model.ISystemModelChangeEvents
+	 * Get the old value. For boolean will be a Boolean object
 	 */
-	public int getEventType();
+	public Object getOldValue();
 	/**
-	 * Get the resource type, such as {@link org.eclipse.rse.model.ISystemModelChangeEvents#SYSTEM_RESOURCETYPE_CONNECTION}.
-	 * @see org.eclipse.rse.model.ISystemModelChangeEvents
+	 * Get the new value. For boolean will be a Boolean object
 	 */
-	public int getResourceType();
-	/**
-	 * Get the resource that this event applies to
-	 */
-	public Object getResource();
-	/**
-	 * Get the old name of the resource, in the event of a resource rename. Null for other event types.
-	 */
-	public String getOldName();	
+	public Object getNewValue();
+	
 }

@@ -24,6 +24,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.internal.ui.launchConfigurations.OrganizeFavoritesAction;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -175,7 +176,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * <ul>
 		 *   <li>The wizard pages must implement ISystemNewConnectionWizardPage, so as to fit into the wizard's framework
 		 *   <li>When the user successfully presses Finish, the createConnection method in the SystemRegistry will call 
-		 *        your {@link #createSubSystem(IHost,boolean, ISystemNewConnectionWizardPage[])} method to create the 
+		 *        your {@link #createSubSystem(org.eclipse.rse.model.IHost,boolean, ISystemNewConnectionWizardPage[])} method to create the 
 		 *        your subsystem for the connection. The same pages you return here are passed back to you so you can 
 		 *        interrogate them for the user-entered data and use it when creating the default subsystem instance.
 		 * </ul>
@@ -223,13 +224,13 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 
 			// Get configured property page extenders
 			IConfigurationElement[] propertyPageExtensions =
-				registry.getConfigurationElementsFor("org.eclipse.ui", "propertyPages");
+				registry.getConfigurationElementsFor("org.eclipse.ui", "propertyPages"); //$NON-NLS-1$  //$NON-NLS-2$
 				
 			for (int i = 0; i < propertyPageExtensions.length; i++)
 			{
 				IConfigurationElement configurationElement = propertyPageExtensions[i];
-				String objectClass = configurationElement.getAttribute("objectClass");
-				String name = configurationElement.getAttribute("name");
+				String objectClass = configurationElement.getAttribute("objectClass"); //$NON-NLS-1$
+				String name = configurationElement.getAttribute("name"); //$NON-NLS-1$
 				Class objCls = null;
 				try
 				{
@@ -245,7 +246,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				{
 					try
 					{
-						PropertyPage page = (PropertyPage) configurationElement.createExecutableExtension("class");
+						PropertyPage page = (PropertyPage) configurationElement.createExecutableExtension("class"); //$NON-NLS-1$
 						page.setTitle(name);
 						propertyPages.add(page);
 					}
@@ -672,10 +673,10 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		{
 			IAction[] actions = new IAction[2];
 			actions[0] = new SystemFilterNewFilterPoolAction(shell);
-			((ISystemAction) actions[0]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0040");
-			((SystemFilterNewFilterPoolAction) actions[0]).setDialogHelp(RSEUIPlugin.HELPPREFIX + "wnfp0000");
+			((ISystemAction) actions[0]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0040"); //$NON-NLS-1$
+			((SystemFilterNewFilterPoolAction) actions[0]).setDialogHelp(RSEUIPlugin.HELPPREFIX + "wnfp0000"); //$NON-NLS-1$
 			actions[1] = new SystemFilterCascadingNewFilterPoolReferenceAction(shell, selectedSubSystem.getSystemFilterPoolReferenceManager());
-			((ISystemAction) actions[1]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0041");
+			((ISystemAction) actions[1]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0041"); //$NON-NLS-1$
 			return actions;
 		}
 		/**
@@ -764,7 +765,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * creating a new filter. In this case, <b>override getNewFilterAction()</b>
 		 * To add additional actions, override {@link #getAdditionalFilterPoolActions(ISystemFilterPool selectedPool, Shell shell)}.
 		 *
-		 * @param pool the currently selected pool
+		 * @param selectedPool the currently selected pool
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
 		public IAction[] getFilterPoolActions(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
@@ -790,12 +791,12 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				filterPoolActions = new IAction[nbr];
 				SystemFilterCopyFilterPoolAction copyAction = new SystemFilterCopyFilterPoolAction(shell);
 				copyAction.setPromptString(SystemResources.RESID_COPY_TARGET_PROFILE_PROMPT);
-				copyAction.setHelp(RSEUIPlugin.HELPPREFIX + "actn0060");
-				copyAction.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dcfp0000");
+				copyAction.setHelp(RSEUIPlugin.HELPPREFIX + "actn0060"); //$NON-NLS-1$
+				copyAction.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dcfp0000"); //$NON-NLS-1$
 				SystemFilterMoveFilterPoolAction moveAction = new SystemFilterMoveFilterPoolAction(shell);
 				moveAction.setPromptString(SystemResources.RESID_MOVE_TARGET_PROFILE_PROMPT);
-				moveAction.setHelp(RSEUIPlugin.HELPPREFIX + "actn0061");
-				moveAction.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dmfp0000");
+				moveAction.setHelp(RSEUIPlugin.HELPPREFIX + "actn0061"); //$NON-NLS-1$
+				moveAction.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dmfp0000"); //$NON-NLS-1$
 				filterPoolActions[0] = copyAction;
 				filterPoolActions[1] = moveAction;
 			}
@@ -855,8 +856,8 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		protected IAction getNewFilterPoolFilterAction(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
 		{
 			SystemNewFilterAction action = new SystemNewFilterAction(shell, selectedPool);
-			action.setHelp(RSEUIPlugin.HELPPREFIX + "actn0042");
-			action.setDialogHelp(RSEUIPlugin.HELPPREFIX + "wnfr0000");
+			action.setHelp(RSEUIPlugin.HELPPREFIX + "actn0042"); //$NON-NLS-1$
+			action.setDialogHelp(RSEUIPlugin.HELPPREFIX + "wnfr0000"); //$NON-NLS-1$
 			return action;
 		}
 		/**
@@ -888,8 +889,8 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				return null;
 			}*/
 			SystemChangeFilterAction action = new SystemChangeFilterAction(shell);
-			action.setHelp(RSEUIPlugin.HELPPREFIX + "actn0081");
-			action.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dufr0000");
+			action.setHelp(RSEUIPlugin.HELPPREFIX + "actn0081"); //$NON-NLS-1$
+			action.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dufr0000"); //$NON-NLS-1$
 			return action;
 		}
 		/**
@@ -905,14 +906,14 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * {@link org.eclipse.rse.ui.filters.dialogs.SystemChangeFilterDialog} you will have to override this method
 		 * and specify the following information for the supplied page (via its setters):
 		 * <ul>
-		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setDuplicateFilterStringErrorMessage(SystemMessage)}
-		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setFilterStringEditPane(SystemFilterStringEditPane)}
-		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setFilterStringValidator(ISystemValidator)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setDuplicateFilterStringErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setFilterStringEditPane(org.eclipse.rse.ui.filters.SystemFilterStringEditPane)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setFilterStringValidator(org.eclipse.rse.ui.validators.ISystemValidator)}
 		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setListLabel(String, String)}
 		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setParentPoolPromptLabel(String, String)}
 		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setNamePromptLabel(String, String)}
 		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setNewListItemText(String)}
-		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setDuplicateFilterStringErrorMessage(SystemMessage)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setDuplicateFilterStringErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)}
 		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setEditable(boolean)}
 		 * 	 <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setSupportsMultipleStrings(boolean)}
 		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setDescription(String)}
@@ -965,10 +966,10 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * {@link org.eclipse.rse.ui.filters.dialogs.SystemChangeFilterDialog} you will have to 
 		 * override this method and specify the following information for the supplied page (via its setters):
 		 * <ul>
-		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setDuplicateFilterStringErrorMessage(SystemMessage)}
-		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setFilterStringEditPane(SystemFilterStringEditPane)}
-		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setFilterStringValidator(ISystemValidator)}
-		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setDuplicateFilterStringErrorMessage(SystemMessage)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setDuplicateFilterStringErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setFilterStringEditPane(org.eclipse.rse.ui.filters.SystemFilterStringEditPane)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setFilterStringValidator(org.eclipse.rse.ui.validators.ISystemValidator)}
+		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setDuplicateFilterStringErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)}
 		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setEditable(boolean)}
 		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setDescription(String)}
 		 * </ul>
@@ -1025,9 +1026,9 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				filterPoolReferenceActions = new IAction[nbr + nbrChildActions];
 				filterPoolReferenceActions[fpIdx++] = getRemoveFilterPoolReferenceAction(factory, selectedPool, shell);
 				filterPoolReferenceActions[fpIdx] = new SystemFilterMoveUpFilterPoolReferenceAction(shell);
-				((ISystemAction) filterPoolReferenceActions[fpIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0063");
+				((ISystemAction) filterPoolReferenceActions[fpIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0063"); //$NON-NLS-1$
 				filterPoolReferenceActions[fpIdx] = new SystemFilterMoveDownFilterPoolReferenceAction(shell);
-				((ISystemAction) filterPoolReferenceActions[fpIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0064");
+				((ISystemAction) filterPoolReferenceActions[fpIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0064"); //$NON-NLS-1$
 			}
 
 			if (childActions != null)
@@ -1059,7 +1060,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		protected IAction getRemoveFilterPoolReferenceAction(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
 		{
 			ISystemAction action = new SystemFilterRemoveFilterPoolReferenceAction(shell);
-			action.setHelp(RSEUIPlugin.HELPPREFIX + "actn0062");
+			action.setHelp(RSEUIPlugin.HELPPREFIX + "actn0062"); //$NON-NLS-1$
 			return action;
 		}
 
@@ -1136,8 +1137,8 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				filterActions = new IAction[additionalActions];
 				SystemFilterCopyFilterAction copyAction = new SystemFilterCopyFilterAction(shell);
 				copyAction.setPromptString(SystemResources.RESID_COPY_TARGET_FILTERPOOL_PROMPT);
-				copyAction.setHelp(RSEUIPlugin.HELPPREFIX + "actn0082");
-				copyAction.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dcfr0000");
+				copyAction.setHelp(RSEUIPlugin.HELPPREFIX + "actn0082"); //$NON-NLS-1$
+				copyAction.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dcfr0000"); //$NON-NLS-1$
 				filterActions[fsIdx++] = copyAction;
 
 				// we want to make sure the order is kept consistent at
@@ -1149,14 +1150,14 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				
 				SystemFilterMoveFilterAction moveAction = new SystemFilterMoveFilterAction(shell);
 				moveAction.setPromptString(SystemResources.RESID_MOVE_TARGET_FILTERPOOL_PROMPT);
-				moveAction.setHelp(RSEUIPlugin.HELPPREFIX + "actn0083");
-				moveAction.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dmfr0000");
+				moveAction.setHelp(RSEUIPlugin.HELPPREFIX + "actn0083"); //$NON-NLS-1$
+				moveAction.setDialogHelp(RSEUIPlugin.HELPPREFIX + "dmfr0000"); //$NON-NLS-1$
 				filterActions[fsIdx++] = moveAction;
 
 				filterActions[fsIdx] = new SystemFilterMoveUpFilterAction(shell);
-				((SystemFilterMoveUpFilterAction) filterActions[fsIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0084");
+				((SystemFilterMoveUpFilterAction) filterActions[fsIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0084"); //$NON-NLS-1$
 				filterActions[fsIdx] = new SystemFilterMoveDownFilterAction(shell);
-				((SystemFilterMoveDownFilterAction) filterActions[fsIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0085");
+				((SystemFilterMoveDownFilterAction) filterActions[fsIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0085"); //$NON-NLS-1$
 			}
 			// add overridable dynamic actions
 			if (factory.supportsNestedFilters())

@@ -89,7 +89,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	private transient DataElement sysInfo = null;
 	private transient DataElement installInfo = null;
 	private transient DataElement clientIP = null;
-	private static String DSTORE_PACKAGE = "org.eclipse.dstore.core";
+	private static String DSTORE_PACKAGE = "org.eclipse.dstore.core"; //$NON-NLS-1$
 	
 	private Exception connectException;
 	//private Hashtable restrictedTypes = null;
@@ -165,7 +165,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			catch (Exception e)
 			{
 				SystemBasePlugin.logError("UniversalSystem.getSystemInfoProperty: error during connect", e);
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 		}
 
@@ -179,7 +179,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			envMinerData = ds.findMinerInformation(EnvironmentMiner.MINER_ID);
 			if (envMinerData != null)
 			{
-				sysInfo = ds.find(envMinerData, DE.A_NAME, "systemInfo", 1);
+				sysInfo = ds.find(envMinerData, DE.A_NAME, "systemInfo", 1); //$NON-NLS-1$
 			}
 		}
 
@@ -191,13 +191,13 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				propertyValue = propertyNode.getSource();
 			}
 			else
-				propertyValue = "";
+				propertyValue = ""; //$NON-NLS-1$
 		}
 		else
 		{
 			SystemBasePlugin.logError("UniversalSystem.getSystemInfoNode:  sysInfo node not found", null);
 			SystemBasePlugin.logError("UniversalSystem.getSystemInfoNode:  miner data = " + envMinerData, null);
-			propertyValue = "";
+			propertyValue = ""; //$NON-NLS-1$
 		}
 
 		return propertyValue;
@@ -211,9 +211,9 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		if (!isConnected())
 			return SystemPropertyResources.RESID_TERM_NOTAVAILABLE;
 
-		StringBuffer buffer = new StringBuffer(getSystemInfoProperty("os.name"));
-		buffer.append(" ");
-		buffer.append(getSystemInfoProperty("os.version"));
+		StringBuffer buffer = new StringBuffer(getSystemInfoProperty("os.name")); //$NON-NLS-1$
+		buffer.append(" "); //$NON-NLS-1$
+		buffer.append(getSystemInfoProperty("os.version")); //$NON-NLS-1$
 
 		return buffer.toString();
 	}
@@ -223,7 +223,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	 */
 	public String getHomeDirectory()
 	{
-		return getSystemInfoProperty("user.home");
+		return getSystemInfoProperty("user.home"); //$NON-NLS-1$
 	}
 
 	public boolean runClassInstanceRemotely(IRemoteClassInstance instance)
@@ -249,7 +249,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	    	}
 	        return installInfo.getAttribute(DE.A_SOURCE);
 	    }
-	    return "";
+	    return ""; //$NON-NLS-1$
 	}
 	
 	/**
@@ -282,7 +282,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	 */
 	public String getTempDirectory()
 	{
-		return getSystemInfoProperty("temp.dir");
+		return getSystemInfoProperty("temp.dir"); //$NON-NLS-1$
 	}
 	
 	protected int getSocketTimeOutValue()
@@ -354,7 +354,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	protected void setPluginPathProperty()
 	{
 		Bundle bundle = RSEUIPlugin.getDefault().getBundle();
-		URL pluginsURL = bundle.getEntry("/");
+		URL pluginsURL = bundle.getEntry("/"); //$NON-NLS-1$
 	
 		try
 		{
@@ -365,7 +365,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			Version v = new Version(version);
 			String versionString = v.toString();
 			String dstorePath = getDStorePath(path, versionString);
-			System.setProperty("A_PLUGIN_PATH", dstorePath);
+			System.setProperty("A_PLUGIN_PATH", dstorePath); //$NON-NLS-1$
 		}
 		catch (IOException e)
 		{
@@ -374,11 +374,11 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	
 	private String getDStorePath(String pluginDir, String version)
 	{
-			File dstorePath = new File(pluginDir + "/" + DSTORE_PACKAGE + "_" + version);
+			File dstorePath = new File(pluginDir + "/" + DSTORE_PACKAGE + "_" + version); //$NON-NLS-1$  //$NON-NLS-2$
 			if (!dstorePath.exists())
 			{
 				// might be in workspace
-				dstorePath = new File(pluginDir + "/" + DSTORE_PACKAGE);
+				dstorePath = new File(pluginDir + "/" + DSTORE_PACKAGE); //$NON-NLS-1$
 			}
 	
 		return dstorePath.getAbsolutePath();
@@ -522,7 +522,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			
 			if(iServerPort != 0)
 			{				
-				clientConnection.setPort("" + iServerPort);
+				clientConnection.setPort("" + iServerPort); //$NON-NLS-1$
 				
 				if (monitor != null)
 				{
@@ -540,7 +540,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 						iServerPort = launchUsingRexec(monitor, info, serverLauncher);
 						if (iServerPort != 0)
 						{
-							clientConnection.setPort("" + iServerPort);
+							clientConnection.setPort("" + iServerPort); //$NON-NLS-1$
 							connectStatus = clientConnection.connect(null, timeout);
 						}
 					}
@@ -842,11 +842,11 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				store.setDefault(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES, IUniversalDStoreConstants.DEFAULT_PREF_CACHE_REMOTE_CLASSES);
 				boolean cacheRemoteClasses = store.getBoolean(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES);
 				
-				dataStore.setPreference(RemoteClassLoader.CACHING_PREFERENCE, cacheRemoteClasses ? "true" : "false");
+				dataStore.setPreference(RemoteClassLoader.CACHING_PREFERENCE, cacheRemoteClasses ? "true" : "false"); //$NON-NLS-1$  //$NON-NLS-2$
 			}
 			else
 			{						
-				dataStore.addMinersLocation(".");
+				dataStore.addMinersLocation("."); //$NON-NLS-1$
 				// older servers initialized in one shot
 				DataElement schemaStatus = dataStore.getSchema();
 		 
@@ -902,7 +902,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				{
 					Throwable exception = launchStatus.getException();
 					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_DAEMON_FAILED_EXCEPTION);
-					msg.makeSubstitution(getHostName(), ""+serverLauncher.getDaemonPort(), exception);
+					msg.makeSubstitution(getHostName(), ""+serverLauncher.getDaemonPort(), exception); //$NON-NLS-1$
 				}
 				else if (launchMsg != null && launchMsg.indexOf(IDataStoreConstants.AUTHENTICATION_FAILED) != -1)
 				{
@@ -1264,10 +1264,10 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			String userid = getPrimarySubSystem().getUserId();
 			if (userid == null)
 			{
-				userid = "remoteuser";
+				userid = "remoteuser"; //$NON-NLS-1$
 			}
 			SystemSignonInformation info = new SystemSignonInformation(getPrimarySubSystem().getHost().getHostName(),
-																	   userid, "", IRSESystemType.SYSTEMTYPE_WINDOWS);
+																	   userid, "", IRSESystemType.SYSTEMTYPE_WINDOWS); //$NON-NLS-1$
 			return info;
 		}
 		else

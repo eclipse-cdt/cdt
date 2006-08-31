@@ -169,7 +169,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 			}
 			else
 			{
-				_connectionCombo = new SystemHostCombo(composite_prompts, SWT.NULL, "*", _inputProvider.getSystemConnection(), _inputProvider.allowNewConnection());	
+				_connectionCombo = new SystemHostCombo(composite_prompts, SWT.NULL, "*", _inputProvider.getSystemConnection(), _inputProvider.allowNewConnection()); //$NON-NLS-1$	
 				
 			}
 			_connectionCombo.addSelectionListener(new SelectionAdapter() 
@@ -462,7 +462,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 		{
 			clearErrorMessage();
 			
-			setPathText("");
+			setPathText(""); //$NON-NLS-1$
 			setPageComplete();
 		    return; // don't enable OK/Add if selections from different parents
 		}
@@ -478,7 +478,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 			return;	
 		}
 		clearErrorMessage();
-		setPathText("");
+		setPathText(""); //$NON-NLS-1$
 		setPageComplete();
 
 		previousSelection = selectedObject;  

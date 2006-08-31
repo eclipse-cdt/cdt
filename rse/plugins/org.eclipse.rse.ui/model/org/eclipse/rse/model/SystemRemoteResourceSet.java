@@ -18,6 +18,7 @@ package org.eclipse.rse.model;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.rse.core.model.AbstractSystemResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.ui.view.ISystemDragDropAdapter;
 

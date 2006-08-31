@@ -21,11 +21,9 @@ package org.eclipse.rse.ui.actions;
  */
 public class SystemBaseDummyAction extends SystemBaseAction 
 {
-
-
     public SystemBaseDummyAction()
     {
-    	super("dummy", null);
+    	super("dummy", null); //$NON-NLS-1$
     	setSelectionSensitive(false);
     }
 }

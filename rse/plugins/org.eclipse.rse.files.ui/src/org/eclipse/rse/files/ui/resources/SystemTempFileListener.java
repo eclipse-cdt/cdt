@@ -526,10 +526,10 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 				IHost connection = fs.getHost();
 
 				// on windows systems, we need to take into account drives and different separators
-				boolean isWindows = connection.getSystemType().equals("Local") || fs.getHost().getSystemType().equals("Windows");
+				boolean isWindows = connection.getSystemType().equals("Local") || fs.getHost().getSystemType().equals("Windows"); //$NON-NLS-1$  //$NON-NLS-2$
 
 				char fileSeparator = isWindows ? '\\' : '/';
-				StringBuffer remotePath = new StringBuffer("");
+				StringBuffer remotePath = new StringBuffer(""); //$NON-NLS-1$
 				for (int i = 3; i < numSegments; i++)
 				{
 					if (i == 3)
@@ -545,7 +545,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 						{
 							if (isWindows)
 							{
-								remotePath.append(":");
+								remotePath.append(":"); //$NON-NLS-1$
 							}
 						}
 

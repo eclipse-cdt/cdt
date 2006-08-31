@@ -243,14 +243,13 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	protected IEditorDescriptor getDefaultTextEditor()
 	{
 		IEditorRegistry registry = getEditorRegistry();
-		return registry.findEditor("org.eclipse.ui.DefaultTextEditor");
+		return registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 	}
 	
 	
 	/**
 	 * Returns an instance of this class given a local copy of a remote file.
 	 * @param file the local file to create it from.
-	 * @return 
 	 */
 	public static SystemEditableRemoteFile getInstance(IFile file) {
 		
@@ -288,10 +287,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				IHost connection = fs.getHost();
 
 				// on windows systems, we need to take into account drives and different separators
-				boolean isWindows = connection.getSystemType().equals("Local") || fs.getHost().getSystemType().equals("Windows");
+				boolean isWindows = connection.getSystemType().equals("Local") || fs.getHost().getSystemType().equals("Windows"); //$NON-NLS-1$  //$NON-NLS-2$
 
 				char fileSeparator = isWindows ? '\\' : '/';
-				StringBuffer tempRemotePath = new StringBuffer("");
+				StringBuffer tempRemotePath = new StringBuffer(""); //$NON-NLS-1$
 				for (int i = 3; i < numSegments; i++)
 				{
 					if (i == 3)
@@ -307,7 +306,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 						{
 							if (isWindows)
 							{
-								tempRemotePath.append(":");
+								tempRemotePath.append(":"); //$NON-NLS-1$
 							}
 						}
 
@@ -434,7 +433,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 	/**
 	 * Download the file.
-	 * @param if the shell is null, no progress monitor will be shown
+	 * @param shell if the shell is null, no progress monitor will be shown
 	 * @return true if successful, false if cancelled
 	 */
 	public boolean download(Shell shell) throws Exception
@@ -491,7 +490,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 	/**
 	 * Download the file.
-	 * @param the progress monitor
+	 * @param monitor the progress monitor
 	 * @return true if the operation was successful.  false if the user cancels.
 	 */
 	public boolean download(IProgressMonitor monitor) throws Exception
@@ -837,7 +836,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		// DKM - now we're using only the hostname to prefix the remote path.  Thus multiple connections to the same place will
 		//       yield the temp files
 		//path = path.append("/" + subsystem.getSystemProfileName() + "/" + subsystem.getSystemConnectionName() + "/");
-		path = path.append("/" + _actualRemoteHost + "/");
+		path = path.append("/" + _actualRemoteHost + "/"); //$NON-NLS-1$  //$NON-NLS-2$
 
 		String absolutePath = getWorkspaceRemotePath(remotePath);
 
@@ -881,7 +880,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	 */
 	public String getWorkspaceRemotePath(String remotePath)
 	{
-		if (subsystem != null && subsystem.getHost().getSystemType().equals("Local"))
+		if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
 		{
 			return SystemRemoteEditManager.getDefault().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
 		}
@@ -891,7 +890,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	public String getActualHostFor(String remotePath)
 	{
 		String hostname = subsystem.getHost().getHostName();
-		if (subsystem != null && subsystem.getHost().getSystemType().equals("Local"))
+		if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
 		{
 			String result = SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
 			if (!result.equals(hostname))
@@ -1292,7 +1291,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		try
 		{
-			if (remoteFile.getSystemConnection().getSystemType().equals("Local"))
+			if (remoteFile.getSystemConnection().getSystemType().equals("Local")) //$NON-NLS-1$
 			{
 				// Open local files "in-place", i.e. don't copy them to the 
 				// RemoteSystemsTempFiles project first

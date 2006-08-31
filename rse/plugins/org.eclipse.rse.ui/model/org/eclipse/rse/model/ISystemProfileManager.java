@@ -103,13 +103,13 @@ public interface ISystemProfileManager {
 
 	/**
 	 * Reusable method to return a name validator for renaming a profile.
-	 * @param the current profile name on updates. Can be null for new profiles. Used
+	 * @param profileName the current profile name on updates. Can be null for new profiles. Used
 	 *  to remove from the existing name list the current connection.
 	 */
 	public ISystemValidator getProfileNameValidator(String profileName);
 	/**
 	 * Reusable method to return a name validator for renaming a profile.
-	 * @param the current profile object on updates. Can be null for new profiles. Used
+	 * @param profile the current profile object on updates. Can be null for new profiles. Used
 	 *  to remove from the existing name list the current connection.
 	 */
 	public ISystemValidator getProfileNameValidator(ISystemProfile profile);

@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
 /**
  * This interface represents a message we wish to display as child node in the tree view.
  * <p>

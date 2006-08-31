@@ -65,14 +65,14 @@ public class LocalProcessSubSystemConfiguration extends ProcessServiceSubSystemC
 	}
 
 	/**
-	 * @return
+	 * @return <code>false</code>
 	 */
 	public boolean supportsSearch() {
 		return false;
 	}
 
 	/**
-	 * @return
+	 * @return <code>false</code>
 	 */
 	public boolean supportsEnvironmentVariablesPropertyPage() {
 		return false;

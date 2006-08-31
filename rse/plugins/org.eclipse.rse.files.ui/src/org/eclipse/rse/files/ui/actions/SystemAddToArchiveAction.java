@@ -67,7 +67,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 		_selected = new ArrayList();
 		_parent = parent;
 		allowOnMultipleSelection(true);
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0122");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0122"); //$NON-NLS-1$
 	}
 
 	public SystemAddToArchiveAction(Shell parent, String label, String tooltip)
@@ -76,7 +76,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 		_selected = new ArrayList();
 		_parent = parent;
 		allowOnMultipleSelection(true);
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0122");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0122"); //$NON-NLS-1$
 	}
 
 	public void run() 
@@ -113,7 +113,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 			IRemoteFile destinationArchive = null;
 			IRemoteFileSubSystem destSS = null;   		       
 			boolean saveFullPathInfo;
-			String relativeTo = "";
+			String relativeTo = ""; //$NON-NLS-1$
 			
 			if (!cancelled)
 			{
@@ -406,6 +406,6 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 				return str1.substring(0, i); 
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 }

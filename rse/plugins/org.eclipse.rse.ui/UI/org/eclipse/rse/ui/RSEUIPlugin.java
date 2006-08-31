@@ -73,8 +73,8 @@ import org.osgi.framework.BundleContext;
  */
 public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvider
 {
-	public static final String PLUGIN_ID  = "org.eclipse.rse.ui"; 	
-	public static final String HELPPREFIX = "org.eclipse.rse.ui.";
+	public static final String PLUGIN_ID  = "org.eclipse.rse.ui"; //$NON-NLS-1$ 	
+	public static final String HELPPREFIX = "org.eclipse.rse.ui."; //$NON-NLS-1$
 	 
     public static final boolean INCLUDE_LOCAL_YES = true;
     public static final boolean INCLUDE_LOCAL_NO = false;
@@ -145,7 +145,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    IExtensionRegistry registry = Platform.getExtensionRegistry();
 	    
 	    // Get configured extenders
-	    IConfigurationElement[] extensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "rseConfigDefaults");
+	    IConfigurationElement[] extensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "rseConfigDefaults"); //$NON-NLS-1$  //$NON-NLS-2$
 
 	    boolean showNewConnPromptPref = ISystemPreferencesConstants.DEFAULT_SHOWNEWCONNECTIONPROMPT;
 	    dontShowLocalConnection = false;
@@ -160,29 +160,29 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    	{
 	    		IConfigurationElement extension = extensions[idx];
 	    		
-	    		String configProductId = extension.getAttribute("productId");
+	    		String configProductId = extension.getAttribute("productId"); //$NON-NLS-1$
 	    		
 	    		if (productId.equals(configProductId)) {
 	    		
-	    			showNewConn = extension.getAttribute("showNewConnectionPrompt");
+	    			showNewConn = extension.getAttribute("showNewConnectionPrompt"); //$NON-NLS-1$
 	    			
 	    			if (showNewConn != null)
-	    				showNewConnPromptPref = showNewConn.equals("true");
+	    				showNewConnPromptPref = showNewConn.equals("true"); //$NON-NLS-1$
 	    			
-	    			showNewConn = extension.getAttribute("showLocalConnection");
+	    			showNewConn = extension.getAttribute("showLocalConnection"); //$NON-NLS-1$
 	    			
 	    			if (showNewConn != null)
-	    				dontShowLocalConnection = showNewConn.equals("false");
+	    				dontShowLocalConnection = showNewConn.equals("false"); //$NON-NLS-1$
 	    			
-	    			enabledSystemTypes = extension.getAttribute("enableSystemTypes");
+	    			enabledSystemTypes = extension.getAttribute("enableSystemTypes"); //$NON-NLS-1$
 	    			
 	    			if ((enabledSystemTypes != null) && (enabledSystemTypes.length() == 0))
 	    				enabledSystemTypes = null;
 	    			
-	    			showProfileInitially = extension.getAttribute("showProfilePage");
+	    			showProfileInitially = extension.getAttribute("showProfilePage"); //$NON-NLS-1$
 	    			
 	    			if (showProfileInitially != null)
-	    				dontShowProfilePageInitially = showProfileInitially.equals("false");
+	    				dontShowProfilePageInitially = showProfileInitially.equals("false"); //$NON-NLS-1$
 	    		}
 	    	}
 	    }
@@ -474,8 +474,8 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
         // call super first
         super.start(context);
         
-	   	messageFile = getMessageFile("systemmessages.xml");
-	   	defaultMessageFile = getDefaultMessageFile("systemmessages.xml");
+	   	messageFile = getMessageFile("systemmessages.xml"); //$NON-NLS-1$
+	   	defaultMessageFile = getDefaultMessageFile("systemmessages.xml"); //$NON-NLS-1$
         
     	SystemResourceManager.getRemoteSystemsProject(); // create core folder tree    	
     	try
@@ -564,7 +564,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 		if (SystemResourceManager.isFirstTime() && !dontShowLocalConnection) {	
 			ISystemProfileManager profileManager = SystemProfileManager.getSystemProfileManager();
 			ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
-			String userName = System.getProperty("user.name");
+			String userName = System.getProperty("user.name"); //$NON-NLS-1$
 			registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
 	    }
     }
@@ -588,7 +588,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     	  // disconnect all active connections
     	  disconnectAll(false); // don't save ?
     	  // collapse and flush all nodes in all views
-    	  _systemRegistry.fireEvent(new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL, null));
+    	  _systemRegistry.fireEvent(new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL, null)); //$NON-NLS-1$
 
           // allow child classes to override
           closeViews();
@@ -914,7 +914,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    IExtensionRegistry registry = Platform.getExtensionRegistry();
 	    // Get configured extenders
 	    IConfigurationElement[] propertyPageExtensions =
-		  registry.getConfigurationElementsFor(PLUGIN_ID,"propertyPages");   	
+		  registry.getConfigurationElementsFor(PLUGIN_ID,"propertyPages"); //$NON-NLS-1$   	
 
 	    return propertyPageExtensions;
     }
@@ -927,7 +927,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		// Get configured extenders
 		IConfigurationElement[] prefPageExtensions =
-		  registry.getConfigurationElementsFor(PLUGIN_ID,"remoteSystemsViewPreferencesActions");   	
+		  registry.getConfigurationElementsFor(PLUGIN_ID,"remoteSystemsViewPreferencesActions"); //$NON-NLS-1$   	
 
 		return prefPageExtensions;
 	}
@@ -949,17 +949,17 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 		  		{
 					SystemShowPreferencesPageAction action = new SystemShowPreferencesPageAction();
 
-					String prefPageId = showPrefPagePlugins[idx].getAttribute("preferencePageId");
+					String prefPageId = showPrefPagePlugins[idx].getAttribute("preferencePageId"); //$NON-NLS-1$
 					if ((prefPageId!=null)&&(prefPageId.length()>0))
 					{
 						action.setPreferencePageID(prefPageId);
 					}
-					String prefPageCategory = showPrefPagePlugins[idx].getAttribute("preferencePageCategory");
+					String prefPageCategory = showPrefPagePlugins[idx].getAttribute("preferencePageCategory"); //$NON-NLS-1$
 					if ((prefPageCategory!=null)&&(prefPageCategory.length()>0))
 					{
 						action.setPreferencePageCategory(prefPageCategory);
 					}
-					String iconFile = showPrefPagePlugins[idx].getAttribute("icon");
+					String iconFile = showPrefPagePlugins[idx].getAttribute("icon"); //$NON-NLS-1$
 					
 					if ((iconFile!=null)&&(iconFile.length()>0))
 					{
@@ -975,17 +975,17 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 							action.setImageDescriptor(id);
 					    }
 					}
-					String label = showPrefPagePlugins[idx].getAttribute("label");
+					String label = showPrefPagePlugins[idx].getAttribute("label"); //$NON-NLS-1$
 					if ((label!=null)&&(label.length()>0))
 					{
 						action.setText(label);				
 					}
-					String tooltip = showPrefPagePlugins[idx].getAttribute("tooltip");
+					String tooltip = showPrefPagePlugins[idx].getAttribute("tooltip"); //$NON-NLS-1$
 					if ((tooltip!=null)&&(tooltip.length()>0))
 					{
 						action.setToolTipText(tooltip);				
 					}
-					String heldId = showPrefPagePlugins[idx].getAttribute("helpContextId");
+					String heldId = showPrefPagePlugins[idx].getAttribute("helpContextId"); //$NON-NLS-1$
 					if ((heldId!=null)&&(heldId.length()>0))
 					{
 						action.setHelp(heldId);				
@@ -1004,7 +1004,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	 * @return The URL to the message file DTD. Null if it is not found.
 	 */
 	public URL getMessageFileDTD() {
-		URL result = getBundle().getEntry("/messageFile.dtd");
+		URL result = getBundle().getEntry("/messageFile.dtd"); //$NON-NLS-1$
 		return result;
 	}
 
@@ -1124,12 +1124,12 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		
 		// Get configured extenders
-		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "archivehandlers");
+		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "archivehandlers"); //$NON-NLS-1$
 		     	
 		for (int i = 0; i < systemTypeExtensions.length; i++) {
-			String ext = systemTypeExtensions[i].getAttribute("fileNameExtension");
-			if (ext.startsWith(".")) ext = ext.substring(1);
-			String handlerType = systemTypeExtensions[i].getAttribute("class");
+			String ext = systemTypeExtensions[i].getAttribute("fileNameExtension"); //$NON-NLS-1$
+			if (ext.startsWith(".")) ext = ext.substring(1); //$NON-NLS-1$
+			String handlerType = systemTypeExtensions[i].getAttribute("class"); //$NON-NLS-1$
 			try
 			{	
 				// get the name space of the declaring extension
@@ -1201,7 +1201,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		
 		// Get configured extenders
-		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "keystoreProviders");
+		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "keystoreProviders"); //$NON-NLS-1$  //$NON-NLS-2$
 		     	
 		for (int i = 0; i < systemTypeExtensions.length; i++) 
 		{
@@ -1210,7 +1210,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 				// get the name space of the declaring extension
 			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespace();
 				
-			    String keystoreProviderType = systemTypeExtensions[i].getAttribute("class");
+			    String keystoreProviderType = systemTypeExtensions[i].getAttribute("class"); //$NON-NLS-1$
 			    
 				// use the name space to get the bundle
 			    Bundle bundle = Platform.getBundle(nameSpace);

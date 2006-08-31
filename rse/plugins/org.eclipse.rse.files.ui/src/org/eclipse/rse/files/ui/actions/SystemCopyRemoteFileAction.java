@@ -75,8 +75,8 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	SystemCopyRemoteFileAction(Shell shell, int mode) 
 	{
 		super(shell, mode);
-  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0110"); 
-  	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dcrf0000"); 
+  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0110"); //$NON-NLS-1$ 
+  	    setDialogHelp(RSEUIPlugin.HELPPREFIX+"dcrf0000");  //$NON-NLS-1$
 	}
 	
 	/**
@@ -212,7 +212,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
    		{
    			IRemoteFileSubSystem targetFS = targetFolder.getParentRemoteFileSubSystem();
    			IRemoteFileSubSystem srcFS    = srcFileOrFolder.getParentRemoteFileSubSystem();
-   			String newPath = targetFolder.getAbsolutePath() + "/" + newName;
+   			String newPath = targetFolder.getAbsolutePath() + "/" + newName; //$NON-NLS-1$
    			if (srcFileOrFolder.isFile())
    			{
    				SystemRemoteEditManager mgr = SystemRemoteEditManager.getDefault();
@@ -221,7 +221,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
    					mgr.getRemoteEditProject();
    				
    				StringBuffer path = new StringBuffer(mgr.getRemoteEditProjectLocation().makeAbsolute().toOSString());
-				path = path.append("/" + srcFS.getSystemProfileName() + "/" + srcFS.getHostAliasName() + "/");
+				path = path.append("/" + srcFS.getSystemProfileName() + "/" + srcFS.getHostAliasName() + "/"); //$NON-NLS-1$  //$NON-NLS-2$  //$NON-NLS-3$
 
 				String absolutePath = srcFileOrFolder.getAbsolutePath();
 			

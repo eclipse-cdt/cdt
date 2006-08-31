@@ -574,7 +574,7 @@ public class SystemBaseAction extends Action implements ISystemAction
     	String label = getText();
     	if (label == null)
     	  return false;
-    	return label.equals("dummy");
+    	return label.equals("dummy"); //$NON-NLS-1$
     }
     
  	/**

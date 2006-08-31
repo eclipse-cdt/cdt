@@ -14,13 +14,14 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
+
 
 /**
  * The event IDs sent when local resources in the RSE model change.
  * You should monitor for these events in your view if you display any of the resource types listed here.
  * <p>
- * To monitor, implement interface {@link org.eclipse.rse.model.ISystemModelChangeListener} and 
+ * To monitor, implement interface {@link org.eclipse.rse.core.model.ISystemModelChangeListener} and 
  * call {@link org.eclipse.rse.model.ISystemRegistry#addSystemModelChangeListener(ISystemModelChangeListener)}
  * and in your dispose method, call {@link org.eclipse.rse.model.ISystemRegistry#removeSystemModelChangeListener(ISystemModelChangeListener)}.
  * <p>

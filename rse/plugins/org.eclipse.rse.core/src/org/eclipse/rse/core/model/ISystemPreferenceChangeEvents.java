@@ -14,32 +14,36 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.model;
+package org.eclipse.rse.core.model;
 /**
- * Interface of event sent when a remote system preference changes.
- * @see org.eclipse.rse.model.ISystemPreferenceChangeEvents
+ * Interface of event ID constants for preferences changed
  */
-public interface ISystemPreferenceChangeEvent extends ISystemResourceChangeEvents
-{	
-
-    /**
-     * Returns the type of the event.
-     * @see org.eclipse.rse.model.ISystemPreferenceChangeEvents
-     * @return a type that is one of the constants in this interface
-     */
-    public int getType();
-    /**
-     * Set the type
-     * @see org.eclipse.rse.model.ISystemPreferenceChangeEvents
-     */
-    public void setType(int type);	
+public interface ISystemPreferenceChangeEvents
+{
 	/**
-	 * Get the old value. For boolean will be a Boolean object
+	 * The Show Filter Pools preference has changed
 	 */
-	public Object getOldValue();
+	public static final int EVENT_SHOWFILTERPOOLS = 5;	
 	/**
-	 * Get the new value. For boolean will be a Boolean object
+	 * The Show Filter String preference has changed
 	 */
-	public Object getNewValue();
+	public static final int EVENT_SHOWFILTERSTRINGS = 10;
+	/**
+	 * The Qualify Connection Names preference has changed
+	 */
+	public static final int EVENT_QUALIFYCONNECTIONNAMES = 15;
+	/**
+	 * The Restore State preference has changed
+	 */
+	public static final int EVENT_RESTORESTATE = 20;
 	
+	/**
+	 * A connection type has been enabled or disabled
+	 */
+	public static final int EVENT_ENABLED_CONNECTIONS_CHANGED = 25;
+		
+	/**
+	 * The range 10000-10999 is reserved for IBM product use. We'll find a way to 
+	 * register these eventually.
+	 */
 }

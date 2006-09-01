@@ -64,12 +64,12 @@ public class MiConsolePageParticipant implements IConsolePageParticipant, IDebug
 
 				// add two new actions: save console content and verbose console mode switcher
 				IActionBars bars = page.getSite().getActionBars();
-				bars.getToolBarManager().appendToGroup(IConsoleConstants.LAUNCH_GROUP, new Separator());
+				bars.getToolBarManager().appendToGroup(IConsoleConstants.OUTPUT_GROUP, new Separator());
 				fSaveConsole = new MiConsoleSaveAction(fConsole);
-				bars.getToolBarManager().appendToGroup(IConsoleConstants.LAUNCH_GROUP, fSaveConsole);
+				bars.getToolBarManager().appendToGroup(IConsoleConstants.OUTPUT_GROUP, fSaveConsole);
 				fVerboseMode = new MiConsoleVerboseModeAction(fConsole);
-				bars.getToolBarManager().appendToGroup(IConsoleConstants.LAUNCH_GROUP, fVerboseMode);
-				bars.getToolBarManager().appendToGroup(IConsoleConstants.LAUNCH_GROUP, new Separator());
+				bars.getToolBarManager().appendToGroup(IConsoleConstants.OUTPUT_GROUP, fVerboseMode);
+				bars.getToolBarManager().appendToGroup(IConsoleConstants.OUTPUT_GROUP, new Separator());
 
 				// add a debug event listener
 				DebugPlugin.getDefault().addDebugEventListener(this);

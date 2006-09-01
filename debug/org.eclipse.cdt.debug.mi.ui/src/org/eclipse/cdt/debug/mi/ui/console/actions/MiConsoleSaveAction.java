@@ -45,6 +45,9 @@ public class MiConsoleSaveAction extends Action{
 		
 		FileDialog fileDialog = new FileDialog(Display.getCurrent().getActiveShell(), SWT.SAVE);
 		fileName = fileDialog.open();
+		if(fileName==null) {
+			return;
+		}
 
 		Runnable saveJob = new Runnable() {
 			public void run() {

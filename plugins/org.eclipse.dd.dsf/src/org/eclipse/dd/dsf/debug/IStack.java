@@ -46,14 +46,13 @@ public interface IStack extends IDataModelService {
      * expression information.  For displaying complete information, 
      * Expressions service should be used.
      */
-    public interface IVariableDMC extends IDataModelContext<VariableData> {}
+    public interface IVariableDMC extends IDataModelContext<IVariableData> {}
 
     /** 
      * Stack frame variable information.
      */
-    public interface VariableData extends IDataModelData {
+    public interface IVariableData extends IDataModelData {
         String getName();
-        String getTypeName();
         String getValue();
     }
 

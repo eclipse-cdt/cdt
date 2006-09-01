@@ -43,7 +43,9 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile.Comparator;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile.Finder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 
 /**
  * The PDOM Database.
@@ -252,17 +254,22 @@ public class PDOM extends PlatformObject
 
 	private static class BindingFinder implements IPDOMVisitor {
 		private final Pattern[] pattern;
+		private final IProgressMonitor monitor;
 		
 		private final IBinding[] match;
 		private int level = 0;
 		private List bindings = new ArrayList();
 		
-		public BindingFinder(Pattern[] pattern) {
+		public BindingFinder(Pattern[] pattern, IProgressMonitor monitor) {
 			this.pattern = pattern;
+			this.monitor = monitor;
 			match = new IBinding[pattern.length];
 		}
 		
 		public boolean visit(IPDOMNode node) throws CoreException {
+			if (monitor.isCanceled())
+				throw new CoreException(Status.OK_STATUS);
+			
 			if (node instanceof IBinding) {
 				IBinding binding = (IBinding)node;
 				if (pattern[level].matcher(binding.getName()).matches()) {
@@ -292,15 +299,22 @@ public class PDOM extends PlatformObject
 		}
 	}
 	
-	public IBinding[] findBindings(Pattern pattern) throws CoreException {
-		return findBindings(new Pattern[] { pattern });
+	public IBinding[] findBindings(Pattern pattern, IProgressMonitor monitor) throws CoreException {
+		return findBindings(new Pattern[] { pattern }, monitor);
 	}
 	
-	public IBinding[] findBindings(Pattern[] pattern) throws CoreException {
-		BindingFinder finder = new BindingFinder(pattern);
+	public IBinding[] findBindings(Pattern[] pattern, IProgressMonitor monitor) throws CoreException {
+		BindingFinder finder = new BindingFinder(pattern, monitor);
 		PDOMLinkage linkage = getFirstLinkage();
 		while (linkage != null) {
-			linkage.accept(finder);
+			try {
+				linkage.accept(finder);
+			} catch (CoreException e) {
+				if (e.getStatus() != Status.OK_STATUS)
+					throw e;
+				else
+					return new IBinding[0];
+			}
 			linkage = linkage.getNextLinkage();
 		}
 		return finder.getBindings();

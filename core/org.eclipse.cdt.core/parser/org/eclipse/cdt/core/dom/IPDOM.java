@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This is the reader interface to the PDOM. It is used by general
@@ -32,7 +33,7 @@ public interface IPDOM extends IAdaptable {
 	 * @return
 	 * @throws CoreException
 	 */
-	public IBinding[] findBindings(Pattern pattern) throws CoreException;
+	public IBinding[] findBindings(Pattern pattern, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Find all bindings whose qualified names match the array of patterns. 
@@ -41,7 +42,7 @@ public interface IPDOM extends IAdaptable {
 	 * @return
 	 * @throws CoreException
 	 */
-	public IBinding[] findBindings(Pattern[] pattern) throws CoreException;
+	public IBinding[] findBindings(Pattern[] pattern, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Recursively visit the nodes in this PDOM using the given visitor.

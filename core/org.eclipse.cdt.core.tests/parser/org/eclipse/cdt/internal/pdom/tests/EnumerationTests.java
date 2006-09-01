@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author Doug Schaefer
@@ -37,7 +38,7 @@ public class EnumerationTests extends PDOMTestBase {
 		// Check bindings
 		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
 		Pattern pattern = Pattern.compile("TestCEnum");
-		IBinding[] bindings = pdom.findBindings(pattern);
+		IBinding[] bindings = pdom.findBindings(pattern, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		IEnumeration enumeration = (IEnumeration)bindings[0];
 		assertEquals("TestCEnum", enumeration.getName());
@@ -70,7 +71,7 @@ public class EnumerationTests extends PDOMTestBase {
 		// Check bindings
 		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
 		Pattern pattern = Pattern.compile("TestCPPEnum");
-		IBinding[] bindings = pdom.findBindings(pattern);
+		IBinding[] bindings = pdom.findBindings(pattern, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		IEnumeration enumeration = (IEnumeration)bindings[0];
 		assertEquals("TestCPPEnum", enumeration.getName());

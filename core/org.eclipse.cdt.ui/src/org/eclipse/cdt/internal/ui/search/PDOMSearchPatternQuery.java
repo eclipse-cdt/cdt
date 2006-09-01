@@ -129,7 +129,7 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 		}
 
 		try {
-			IBinding[] bindings = pdom.findBindings(pattern);
+			IBinding[] bindings = pdom.findBindings(pattern, monitor);
 			for (int i = 0; i < bindings.length; ++i) {
 				PDOMBinding pdomBinding = (PDOMBinding)bindings[i];
 				createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);

@@ -54,6 +54,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -269,7 +270,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 								for (int n = 0; n < cProjectsToSearch.size(); n++)
 								{							
 									PDOM pdom = (PDOM)pdomManager.getPDOM((ICProject) cProjectsToSearch.get(n));
-									IBinding[] bindings = pdom.findBindings(pattern);
+									IBinding[] bindings = pdom.findBindings(pattern, new NullProgressMonitor());
 									
 									for (int i = 0; i < bindings.length; ++i) {
 										PDOMBinding binding = (PDOMBinding)bindings[i];

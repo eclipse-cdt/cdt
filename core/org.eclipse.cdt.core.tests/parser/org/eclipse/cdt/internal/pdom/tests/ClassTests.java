@@ -19,8 +19,11 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author Doug Schaefer
@@ -37,7 +40,7 @@ public class ClassTests extends PDOMTestBase {
 	public void test1() throws Exception {
 		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
 		
-		IBinding[] Bs = pdom.findBindings(Pattern.compile("B"));
+		IBinding[] Bs = pdom.findBindings(Pattern.compile("B"), new NullProgressMonitor());
 		assertEquals(1, Bs.length);
 		ICPPClassType B = (ICPPClassType)Bs[0];
 		ICPPMethod[] Bmethods = B.getAllDeclaredMethods();
@@ -53,7 +56,7 @@ public class ClassTests extends PDOMTestBase {
 	public void testNested() throws Exception {
 		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
 
-		IBinding[] bindings = pdom.findBindings(Pattern.compile("NestedA"));
+		IBinding[] bindings = pdom.findBindings(Pattern.compile("NestedA"), new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		ICPPClassType NestedA = (ICPPClassType)bindings[0];
 		ICPPClassType[] nested = NestedA.getNestedClasses();
@@ -73,5 +76,19 @@ public class ClassTests extends PDOMTestBase {
 		assertEquals(1, refs.length);
 		loc = refs[0].getFileLocation();
 		assertEquals(offset(118, 108), loc.getNodeOffset());
+	}
+	
+	public void failedTest147903() throws Exception {
+		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+		
+		IBinding[] bindings = pdom.findBindings(Pattern.compile("pr147903"), new NullProgressMonitor());
+		assertEquals(1, bindings.length);
+		ICPPNamespaceScope ns = ((ICPPNamespace)bindings[0]).getNamespaceScope();
+		bindings = ns.find("testRef");
+		assertEquals(1, bindings.length);
+		IASTName[] refs = pdom.getReferences(bindings[0]);
+		for (int i = 0; i < refs.length; ++i)
+			System.out.println(refs[i].getFileLocation().getNodeOffset());
+		assertEquals(5, refs.length);
 	}
 }

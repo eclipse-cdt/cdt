@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author Doug Schaefer
@@ -40,7 +41,7 @@ public class TypesTests extends PDOMTestBase {
 		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
 		
 		// Get the binding for A::f
-		IBinding [] CAs = pdom.findBindings(Pattern.compile("CA"));
+		IBinding [] CAs = pdom.findBindings(Pattern.compile("CA"), new NullProgressMonitor());
 		assertEquals(1, CAs.length);
 		ICompositeType CA = (ICompositeType)CAs[0];
 		IField [] CAfields = CA.getFields();
@@ -59,7 +60,7 @@ public class TypesTests extends PDOMTestBase {
 		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
 		
 		// Get the binding for A::f
-		IBinding [] As = pdom.findBindings(Pattern.compile("A"));
+		IBinding [] As = pdom.findBindings(Pattern.compile("A"), new NullProgressMonitor());
 		assertEquals(1, As.length);
 		ICPPClassType A = (ICPPClassType)As[0];
 		ICPPMethod[] Amethods = A.getMethods();
@@ -76,7 +77,7 @@ public class TypesTests extends PDOMTestBase {
 	
 	public void test145351() throws Exception {
 		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
-		IBinding [] bindings = pdom.findBindings(Pattern.compile("spinlock_t"));
+		IBinding [] bindings = pdom.findBindings(Pattern.compile("spinlock_t"), new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		ITypedef spinlock_t = (ITypedef)bindings[0];
 		IASTName [] refs = pdom.getReferences(spinlock_t);

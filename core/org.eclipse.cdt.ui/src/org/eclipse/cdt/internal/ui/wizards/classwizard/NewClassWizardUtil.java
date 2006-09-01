@@ -48,6 +48,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -378,7 +379,7 @@ public class NewClassWizardUtil {
 		IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
 		try {
 			PDOM pdom = (PDOM)pdomManager.getPDOM(project);	
-			IBinding[] bindings = pdom.findBindings(Pattern.compile(typeName.getName()));
+			IBinding[] bindings = pdom.findBindings(Pattern.compile(typeName.getName()), new NullProgressMonitor());
 			boolean sameTypeNameExists = false;
 			boolean sameNameDifferentTypeExists = false;
 			

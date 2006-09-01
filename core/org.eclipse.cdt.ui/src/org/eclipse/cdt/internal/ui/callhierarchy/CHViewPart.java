@@ -122,12 +122,12 @@ public class CHViewPart extends ViewPart {
     private Action fRefreshAction;
 	private Action fHistoryAction;
 	private Action fShowReference;
+	private Action fOpenElement;
 	
 	// action groups
 	private OpenViewActionGroup fOpenViewActionGroup;
 	private SelectionSearchGroup fSelectionSearchGroup;
 	private CRefactoringActionGroup fRefactoringActionGroup;
-	private Action fOpenElement;
 	private WorkingSetFilterUI fFilterUI;
 
     
@@ -461,6 +461,10 @@ public class CHViewPart extends ViewPart {
         // setup action bar
         // global action hooks
         IActionBars actionBars = getViewSite().getActionBars();
+        fRefactoringActionGroup.fillActionBars(actionBars);
+        fOpenViewActionGroup.fillActionBars(actionBars);
+        fSelectionSearchGroup.fillActionBars(actionBars);
+        
         actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fNextAction);
         actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fPreviousAction);
         actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fRefreshAction);

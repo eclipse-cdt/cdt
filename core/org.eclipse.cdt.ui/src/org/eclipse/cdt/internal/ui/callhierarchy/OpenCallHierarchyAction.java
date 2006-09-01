@@ -21,8 +21,12 @@ import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
 
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+
 
 public class OpenCallHierarchyAction extends SelectionDispatchAction {
+
+	private CEditor fEditor;
 
 	public OpenCallHierarchyAction(IWorkbenchSite site) {
 		super(site);
@@ -30,8 +34,14 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 		setToolTipText(CHMessages.OpenCallHierarchyAction_tooltip);
 	}
 	
+	public OpenCallHierarchyAction(CEditor editor) {
+		this(editor.getSite());
+		fEditor= editor;
+		setEnabled(true);
+	}
+
 	public void run(ITextSelection sel) {
-		// mstodo run open call tree on editor.
+		CallHierarchyUI.open(fEditor, sel);
 	}
 	
 	public void run(IStructuredSelection selection) {
@@ -46,7 +56,7 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 
 	public void selectionChanged(ITextSelection sel) {
 	}
-
+			
 	public void selectionChanged(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			setEnabled(false);

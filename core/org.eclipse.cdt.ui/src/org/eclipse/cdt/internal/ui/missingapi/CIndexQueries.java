@@ -393,7 +393,7 @@ public class CIndexQueries {
 			ArrayList result= new ArrayList(defs.length);
 			for (int i = 0; i < defs.length; i++) {
 				IASTName defName = defs[i];
-				ICElement elem= findEnclosingElement(project, (PDOMName) defName);
+				ICElement elem= findEnclosingElement(project, defName);
 				if (elem != null) {
 					result.add(elem);
 				}
@@ -403,16 +403,23 @@ public class CIndexQueries {
 		return EMPTY_ELEMENTS;
 	}
 
-	private ICElement findEnclosingElement(ICProject project, PDOMName declName) {
+	private ICElement findEnclosingElement(ICProject project, IASTName declName) {
 		ITranslationUnit tu= toTranslationUnit(project, declName);
 		if (tu != null) {
-			//	mstodo use correct timestamp			
-			//	PDOMFile file= declName.getFile();
-			long timestamp= tu.getPath().toFile().lastModified();
-			IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu.getPath(), timestamp);
-			int offset= declName.getNodeOffset();
-			if (pc != null) {
-				offset= pc.historicToActual(new Region(offset, 0)).getOffset();
+			int offset= 0;
+			if (declName instanceof PDOMName) {
+				PDOMName pname= (PDOMName) declName;
+				offset= pname.getNodeOffset();
+				//	mstodo use correct timestamp			
+				//	PDOMFile file= pname.getFile();
+				long timestamp= tu.getPath().toFile().lastModified();
+				IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu.getPath(), timestamp);
+				if (pc != null) {
+					offset= pc.historicToActual(new Region(offset, 0)).getOffset();
+				}
+			}
+			else {
+				offset= declName.getFileLocation().getNodeOffset();
 			}
 			return findElement(tu, offset, true);
 		}
@@ -433,6 +440,10 @@ public class CIndexQueries {
 	}
 			
 	public ICElement findDefinition(ICProject project, IASTName name) {
+		if (name.isDefinition()) {
+			return findEnclosingElement(project, name);
+		}
+		
 		PDOM pdom;
 		try {
 			pdom = (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
@@ -463,7 +474,7 @@ public class CIndexQueries {
 		if (defs != null) {
 			for (int i = 0; i < defs.length; i++) {
 				IASTName defName = defs[i];
-				ICElement elem= findEnclosingElement(project, (PDOMName) defName);
+				ICElement elem= findEnclosingElement(project, defName);
 				if (elem != null) {
 					return elem;
 				}

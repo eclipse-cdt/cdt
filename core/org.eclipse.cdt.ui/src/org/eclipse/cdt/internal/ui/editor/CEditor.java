@@ -89,6 +89,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -132,6 +133,7 @@ import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.actions.ShowInCViewAction;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
@@ -510,6 +512,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	private ActionGroup fSelectionSearchGroup;
 	private ActionGroup fTextSearchGroup;
 	private CRefactoringActionGroup fRefactoringActionGroup;
+	private ActionGroup fOpenInViewGroup;
 	
     /** Action which shows selected element in CView. */
 	private ShowInCViewAction fShowInCViewAction;
@@ -985,6 +988,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			fRefactoringActionGroup = null;
 		}
 
+		if (fOpenInViewGroup != null) {
+			fOpenInViewGroup.dispose();
+			fOpenInViewGroup = null;
+		}
+
 		if (fEditorSelectionChangedListener != null)  {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener= null;
@@ -1124,6 +1132,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fTextSearchGroup= new TextSearchGroup(this);
 		fRefactoringActionGroup= new CRefactoringActionGroup(this);
+		fOpenInViewGroup= new OpenViewActionGroup(this);
 	}
 
 	/**
@@ -1157,6 +1166,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		fSelectionSearchGroup.fillContextMenu(menu);
 		fTextSearchGroup.fillContextMenu(menu);
 		fRefactoringActionGroup.fillContextMenu(menu);
+		fOpenInViewGroup.fillContextMenu(menu);
 	}
 
 	/**
@@ -2240,6 +2250,14 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			fSemanticManager.uninstall();
 			fSemanticManager= null;
 		}
+	}
+
+	/**
+	 * Called whenever the editor is activated and allows for registering 
+	 * action handlers.
+	 */ 
+	public void fillActionBars(IActionBars actionBars) {
+		fOpenInViewGroup.fillActionBars(actionBars);
 	}
 
 }

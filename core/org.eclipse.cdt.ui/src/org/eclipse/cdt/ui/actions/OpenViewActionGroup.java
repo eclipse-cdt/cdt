@@ -100,8 +100,9 @@ public class OpenViewActionGroup extends ActionGroup {
 //		fOpenTypeHierarchy.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
 //		part.setAction("OpenTypeHierarchy", fOpenTypeHierarchy); //$NON-NLS-1$
 
-        fOpenCallHierarchy= new OpenCallHierarchyAction(part.getSite());
+        fOpenCallHierarchy= new OpenCallHierarchyAction(part);
         fOpenCallHierarchy.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
+        part.setAction("OpenCallHierarchy", fOpenCallHierarchy); //$NON-NLS-1$
 
 		initialize(part.getEditorSite());
 	}
@@ -168,8 +169,9 @@ public class OpenViewActionGroup extends ActionGroup {
 		}
 //		appendToGroup(menu, fOpenSuperImplementation);
 		IStructuredSelection selection= getStructuredSelection();
-		if (fOpenPropertiesDialog != null && fOpenPropertiesDialog.isEnabled() && selection != null &&fOpenPropertiesDialog.isApplicableForSelection(selection))
+		if (fOpenPropertiesDialog != null && fOpenPropertiesDialog.isEnabled() && selection != null &&fOpenPropertiesDialog.isApplicableForSelection(selection)) {
 			menu.appendToGroup(IContextMenuConstants.GROUP_PROPERTIES, fOpenPropertiesDialog);
+		}
 	}
 
 	/*
@@ -181,7 +183,9 @@ public class OpenViewActionGroup extends ActionGroup {
 //		provider.removeSelectionChangedListener(fOpenExternalJavadoc);
 //		provider.removeSelectionChangedListener(fOpenTypeHierarchy);
 		provider.removeSelectionChangedListener(fOpenCallHierarchy);
-		fOpenPropertiesDialog.dispose();
+		if (fOpenPropertiesDialog != null) {
+			fOpenPropertiesDialog.dispose();
+		}
 		super.dispose();
 	}
 	
@@ -190,7 +194,9 @@ public class OpenViewActionGroup extends ActionGroup {
 //		actionBars.setGlobalActionHandler(JdtActionConstants.OPEN_EXTERNAL_JAVA_DOC, fOpenExternalJavadoc);
 //		actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_TYPE_HIERARCHY, fOpenTypeHierarchy);
         actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_CALL_HIERARCHY, fOpenCallHierarchy);
-		actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), fOpenPropertiesDialog);		
+        if (fOpenPropertiesDialog != null) {
+        	actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), fOpenPropertiesDialog);
+        }
 	}
 	
 	private IStructuredSelection getStructuredSelection() {
@@ -204,8 +210,8 @@ public class OpenViewActionGroup extends ActionGroup {
 	}
 
 	public static boolean canActionBeAdded(ISelection selection) {
-		if(selection instanceof ITextSelection) {
-			return (((ITextSelection)selection).getLength() > 0);
+		if (selection instanceof ITextSelection) {
+			return true;
 		}
 		return getElement(selection) != null;
 	}

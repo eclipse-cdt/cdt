@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -200,6 +201,12 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fAddInclude.setAction(getAction(textEditor, "AddIncludeOnSelection")); //$NON-NLS-1$
 		fOpenOnSelection.setAction(getAction(textEditor, "OpenOnSelection")); //$NON-NLS-1$
 		fFormatter.setAction(getAction(textEditor, "Format")); //$NON-NLS-1$
+		
+		if (part instanceof CEditor) {
+			CEditor cEditor= (CEditor) part;
+			cEditor.fillActionBars(getActionBars());
+		}
+
 	}
 	
 	/*

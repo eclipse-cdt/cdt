@@ -187,7 +187,7 @@ public class AsyncViewerTest extends TestCase {
         assertEquals("...", dlg.fViewer.getTree().getItem(0).getItem(0).getText());
         assertEquals(3, countVisibleItems(dlg.fViewer));
         
-        Thread.sleep(400); dispatch();
+        Thread.sleep(500); dispatch();
         assertEquals(2, countVisibleItems(dlg.fViewer));
         
         // reset the viewer
@@ -199,7 +199,7 @@ public class AsyncViewerTest extends TestCase {
         assertEquals(3, countVisibleItems(dlg.fViewer));
         assertEquals("...", dlg.fViewer.getTree().getItem(1).getItem(0).getText());
 
-        Thread.sleep(400); dispatch();
+        Thread.sleep(500); dispatch();
         assertEquals(4, countVisibleItems(dlg.fViewer));
 
         // reset the viewer
@@ -207,7 +207,7 @@ public class AsyncViewerTest extends TestCase {
         dlg.fViewer.setInput(root); 
 
         // wait until children are computed (for the sake of the +-sign)
-        Thread.sleep(600); dispatch(); 
+        Thread.sleep(700); dispatch(); 
         dlg.fViewer.setExpandedState(a, true); 
         assertEquals(2, countVisibleItems(dlg.fViewer));
         dlg.fViewer.setExpandedState(b, true); 

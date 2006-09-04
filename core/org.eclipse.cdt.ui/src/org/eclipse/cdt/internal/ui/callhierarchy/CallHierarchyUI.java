@@ -36,6 +36,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.missingapi.CIndexQueries;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.FindNameForSelectionVisitor;
 
 public class CallHierarchyUI {
 
@@ -138,11 +139,8 @@ public class CallHierarchyUI {
 		
 		int options= ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX;
 		IASTTranslationUnit ast = workingCopy.getLanguage().getASTTranslationUnit(workingCopy, options);
-		IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
-		
-		if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
-			return selectedNames[0];
-		}
-		return null;
+		FindNameForSelectionVisitor finder= new FindNameForSelectionVisitor(ast.getFilePath(), selectionStart, selectionLength);
+		ast.accept(finder);
+		return finder.getSelectedName();
 	}
 }

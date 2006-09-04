@@ -66,6 +66,10 @@ public class FindNameForSelectionVisitor extends ASTVisitor {
 
 	public int visit(IASTName name) {
 		IASTFileLocation loc= name.getFileLocation();
+		if (loc == null) {
+			return PROCESS_CONTINUE;
+		}
+		
 		if (!loc.getFileName().equals(fFilePath)) {
 			return PROCESS_SKIP;
 		}

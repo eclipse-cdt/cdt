@@ -26,6 +26,7 @@ import org.eclipse.jface.text.Region;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -38,7 +39,6 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -278,12 +278,11 @@ public class CIndexQueries {
 		if (pc != null) {
 			offset= pc.historicToActual(new Region(offset, 0)).getOffset();
 		}
-		return findElement(tu, offset, false);
+		return findEnclosingFunction(tu, offset);
 	}
 
-	private ICElement findElement(ICElement element, int offset, boolean allowVars) {
-		if (element == null || (element instanceof IFunctionDeclaration) || 
-				(allowVars && element instanceof IVariableDeclaration)) {
+	private ICElement findEnclosingFunction(ICElement element, int offset) {
+		if (element == null || (element instanceof IFunctionDeclaration)) {
 			return element;
 		}
 		try {
@@ -295,7 +294,7 @@ public class CIndexQueries {
 						ISourceRange sr= ((ISourceReference) child).getSourceRange();
 						int startPos= sr.getStartPos();
 						if (startPos <= offset && offset < startPos + sr.getLength()) {
-							return findElement(child, offset, allowVars);
+							return findEnclosingFunction(child, offset);
 						}
 					}
 				}
@@ -305,7 +304,41 @@ public class CIndexQueries {
 		}
 		return null;
 	}
-	
+
+	private ICElement findCElementForDeclaration(ICElement element, int offset, int length) {
+		int endoffset= offset+length;
+		if (element == null) {
+			return null;
+		}
+		try {
+			if (element instanceof IParent) {
+				ICElement[] children= ((IParent) element).getChildren();
+				for (int i = 0; i < children.length; i++) {
+					ICElement child = children[i];
+					if (child instanceof ISourceReference) {
+						ISourceRange sr= ((ISourceReference) child).getSourceRange();
+						int offset2= sr.getIdStartPos();
+						int endoffset2= offset2+sr.getIdLength();
+						if (offset <= offset2 && endoffset2 <= endoffset) {
+							return child;
+						}
+						offset2= sr.getStartPos();
+						endoffset2= offset2+sr.getLength();
+						if (offset2 <= offset && endoffset <= endoffset2) {
+							ICElement result= findCElementForDeclaration(child, offset, length);
+							if (result != null) {
+								return result;
+							}
+						}
+					}
+				}
+			}
+		} catch (CModelException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+		return null;
+	}
+
 	private ITranslationUnit toTranslationUnit(ICProject cproject, IASTName name) {
 		IPath path= Path.fromOSString(name.getFileLocation().getFileName());
 		try {
@@ -393,7 +426,7 @@ public class CIndexQueries {
 			ArrayList result= new ArrayList(defs.length);
 			for (int i = 0; i < defs.length; i++) {
 				IASTName defName = defs[i];
-				ICElement elem= findEnclosingElement(project, defName);
+				ICElement elem= findCElementForDeclaration(project, defName);
 				if (elem != null) {
 					result.add(elem);
 				}
@@ -403,25 +436,26 @@ public class CIndexQueries {
 		return EMPTY_ELEMENTS;
 	}
 
-	private ICElement findEnclosingElement(ICProject project, IASTName declName) {
+	private ICElement findCElementForDeclaration(ICProject project, IASTName declName) {
 		ITranslationUnit tu= toTranslationUnit(project, declName);
 		if (tu != null) {
-			int offset= 0;
+			IRegion region= null;
 			if (declName instanceof PDOMName) {
 				PDOMName pname= (PDOMName) declName;
-				offset= pname.getNodeOffset();
+				region= new Region(pname.getNodeOffset(), pname.getNodeLength());
 				//	mstodo use correct timestamp			
 				//	PDOMFile file= pname.getFile();
 				long timestamp= tu.getPath().toFile().lastModified();
 				IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu.getPath(), timestamp);
 				if (pc != null) {
-					offset= pc.historicToActual(new Region(offset, 0)).getOffset();
+					region= pc.historicToActual(region);
 				}
 			}
 			else {
-				offset= declName.getFileLocation().getNodeOffset();
+				IASTFileLocation loc= declName.getFileLocation();
+				region= new Region(loc.getNodeOffset(), loc.getNodeLength());
 			}
-			return findElement(tu, offset, true);
+			return findCElementForDeclaration(tu, region.getOffset(), region.getLength());
 		}
 		return null;
 	}
@@ -441,7 +475,7 @@ public class CIndexQueries {
 			
 	public ICElement findDefinition(ICProject project, IASTName name) {
 		if (name.isDefinition()) {
-			return findEnclosingElement(project, name);
+			return findCElementForDeclaration(project, name);
 		}
 		
 		PDOM pdom;
@@ -474,7 +508,7 @@ public class CIndexQueries {
 		if (defs != null) {
 			for (int i = 0; i < defs.length; i++) {
 				IASTName defName = defs[i];
-				ICElement elem= findEnclosingElement(project, defName);
+				ICElement elem= findCElementForDeclaration(project, defName);
 				if (elem != null) {
 					return elem;
 				}

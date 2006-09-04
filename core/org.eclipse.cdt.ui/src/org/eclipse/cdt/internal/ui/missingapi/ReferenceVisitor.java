@@ -57,12 +57,14 @@ class ReferenceVisitor extends ASTVisitor {
 
 	public int visit(IASTDeclaration declaration) {
 		IASTFileLocation loc= declaration.getFileLocation();
-		if (!loc.getFileName().equals(fFileName)) {
-			return PROCESS_SKIP;
-		}
-		int offset= loc.getNodeOffset();
-		if (offset + loc.getNodeLength() <= fOffset || fEndOffset <= offset) {
-			return PROCESS_SKIP;
+		if (loc != null) {
+			if (!loc.getFileName().equals(fFileName)) {
+				return PROCESS_SKIP;
+			}
+			int offset= loc.getNodeOffset();
+			if (offset + loc.getNodeLength() <= fOffset || fEndOffset <= offset) {
+				return PROCESS_SKIP;
+			}
 		}
 		return PROCESS_CONTINUE;
 	}

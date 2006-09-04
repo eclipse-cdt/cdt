@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchSite;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IEnumeration;
+import org.eclipse.cdt.core.model.IEnumerator;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
@@ -74,8 +76,16 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 	}
 
 	private boolean isValidElement(ICElement elem) {
-		return elem instanceof IFunctionDeclaration ||
-			elem instanceof IVariableDeclaration;
+		if (elem instanceof IFunctionDeclaration) {
+			return true;
+		}
+		if (elem instanceof IVariableDeclaration) {
+			return !(elem instanceof IEnumeration);
+		}
+		if (elem instanceof IEnumerator) {
+			return true;
+		}
+		return false;
 	}
 
 	private Object getAdapter(Object object, Class desiredClass) {

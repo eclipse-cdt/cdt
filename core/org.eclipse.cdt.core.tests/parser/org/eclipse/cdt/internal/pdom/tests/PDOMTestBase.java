@@ -74,6 +74,7 @@ public class PDOMTestBase extends TestCase {
 						return IOverwriteQuery.ALL;
 					}
 				});
+				importOp.setCreateContainerStructure(false);
 				try {
 					importOp.run(monitor);
 				} catch (Exception e) {

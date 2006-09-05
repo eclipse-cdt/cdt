@@ -504,6 +504,10 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
        		SystemMessageDialog dialog = new SystemMessageDialog(shell, msg);
        		dialog.open();
 		}
+		if (shell == null)
+		{
+			shell = RSEUIPlugin.getActiveWorkbenchShell();
+		}
     		
 		if (supportsPassword() || supportsUserId()) {
 			if (shell != null) {

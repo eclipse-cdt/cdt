@@ -39,7 +39,7 @@ public class SimpleCommandOperation
 	
 	public void runCommand(String command) throws Exception
 	{
-		Object[] result =_subsystem.runCommand(command, null, _workingDirectory, false);
+		Object[] result =_subsystem.runCommand(command, _workingDirectory, false);
 		_cmdShell = (IRemoteCommandShell)result[0];
 	}
 
@@ -52,7 +52,7 @@ public class SimpleCommandOperation
 	{
 		if (isActive())
 		{
-			_subsystem.sendCommandToShell(input, null, _cmdShell);
+			_subsystem.sendCommandToShell(input, _cmdShell);
 		}
 	}
 	
@@ -82,7 +82,7 @@ public class SimpleCommandOperation
 	{
 		if (_cmdShell != null && _cmdShell.isActive())
 		{
-			_cmdShell.getCommandSubSystem().cancelShell(null, _cmdShell);
+			_cmdShell.getCommandSubSystem().cancelShell(_cmdShell);
 		}
 	}
 

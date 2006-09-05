@@ -155,7 +155,7 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 			IProcessServiceSubSystemConfiguration factory = (IProcessServiceSubSystemConfiguration)fact;
 			try
 			{
-				disconnect(SystemBasePlugin.getActiveWorkbenchShell());
+				disconnect();
 			}
 			catch (Exception e)
 			{	

@@ -214,7 +214,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 		     	}
 		     	// otherwise, get children and then cache
 		     	else {
-		     		children = checkForNull(ss.resolveFilterStrings(filterStrings,shell), true);
+		     		children = checkForNull(ss.resolveFilterStrings(filterStrings), true);
 		     		
 		     		if (ss.getSubSystemConfiguration().supportsFilterCaching()) {
 		     			simpleFilter.setContents(SystemChildrenContentsType.getInstance(), children);

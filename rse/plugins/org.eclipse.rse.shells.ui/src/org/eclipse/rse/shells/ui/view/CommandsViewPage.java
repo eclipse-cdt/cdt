@@ -443,7 +443,7 @@ FocusListener
 			IRemoteCmdSubSystem commandSubSystem = remoteCommand.getCommandSubSystem();
 			try
 			{
-				commandSubSystem.sendCommandToShell(inputStr, _viewer.getShell(), remoteCommand);
+				commandSubSystem.sendCommandToShell(inputStr, remoteCommand);
 			}
 			catch (Exception e)
 			{
@@ -464,7 +464,7 @@ FocusListener
 			IRemoteCmdSubSystem commandSubSystem = remoteCommand.getCommandSubSystem();
 			try
 			{
-				commandSubSystem.sendCommandToShell("#break", _viewer.getShell(), remoteCommand);
+				commandSubSystem.sendCommandToShell("#break", remoteCommand);
 			}
 			catch (Exception e)
 			{

@@ -107,8 +107,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     	  try
     	  {
     	  	// deduce active shell from display
-            Shell shell = Display.getCurrent().getActiveShell();
-    	    context.getParentRemoteFileSubSystem().connect(shell);
+    	    context.getParentRemoteFileSubSystem().connect();
     	  } catch (Exception exc) {}    	  
     }
 

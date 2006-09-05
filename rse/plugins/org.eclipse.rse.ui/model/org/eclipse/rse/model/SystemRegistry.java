@@ -2382,7 +2382,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 				{
 					try
 					{
-						if (subsystems[idx].isConnected()) subsystems[idx].disconnect(shell); // MJB: added conditional for defect 45754
+						if (subsystems[idx].isConnected()) subsystems[idx].disconnect(); // MJB: added conditional for defect 45754
 						if (defaultUserIdChanged)
 						{
 							subsystems[idx].getConnectorService().clearUserIdCache();
@@ -2669,10 +2669,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 				try
 				{
 					//ss.getConnectorService().disconnect(); defect 40675         	 
-					Shell shell = null;
-					if (Display.getCurrent() != null)
-						shell = Display.getCurrent().getActiveShell();
-					ss.disconnect(shell);
+					ss.disconnect();
 				}
 				catch (InterruptedException exc)
 				{

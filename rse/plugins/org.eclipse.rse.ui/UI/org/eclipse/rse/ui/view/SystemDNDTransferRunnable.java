@@ -515,7 +515,7 @@ public class SystemDNDTransferRunnable extends Job
 				{
 				    try
 				    {
-				        targetSubSystem.connect(SystemBasePlugin.getActiveWorkbenchShell());
+				        targetSubSystem.connect();
 				    }
 				    catch (Exception e)
 				    {

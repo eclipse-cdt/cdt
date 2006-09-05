@@ -925,7 +925,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 						{
 							try
 							{
-								promptForPassword(Display.getDefault().getActiveShell(), true);
+								promptForPassword(true);
 							}
 							catch (InterruptedException e)
 							{
@@ -1037,7 +1037,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 					{
 						try
 						{
-							promptForPassword(Display.getDefault().getActiveShell(), true);
+							promptForPassword(true);
 						}
 						catch (InterruptedException e)
 						{
@@ -1139,7 +1139,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 
 	
 	
-	protected boolean promptForTrusting(Shell shell, X509Certificate cert)
+	protected boolean promptForTrusting( X509Certificate cert)
 	{
 		return true;
 	}

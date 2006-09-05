@@ -200,7 +200,7 @@ public abstract class AbstractConnectorServiceManager implements IConnectorServi
           	 if ( (ss != subsystem) && sharesSystem(ss) )
           	 {
           	   ISubSystemConfiguration ssFactory = ss.getSubSystemConfiguration();
-          	   ssFactory.updateSubSystem(shell, ss, updateUserId, userId, updatePort, port);
+          	   ssFactory.updateSubSystem(ss, updateUserId, userId, updatePort, port);
           	 }
           }
         }    	

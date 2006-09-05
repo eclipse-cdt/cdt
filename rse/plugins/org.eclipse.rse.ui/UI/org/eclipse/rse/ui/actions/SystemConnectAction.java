@@ -65,9 +65,9 @@ public class SystemConnectAction extends SystemBaseAction
 		ISubSystem ss = (ISubSystem)getFirstSelection();
 		try {
 			if (ss.getHost().getSystemType().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
-				ss.connect(getShell());
+				ss.connect();
 			else	
-			  	ss.connect(getShell(), true);
+			  	ss.connect(true);
 		} catch (Exception exc) {} // msg already shown
 	}
 }

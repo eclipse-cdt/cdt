@@ -130,7 +130,7 @@ public class RemoteCommandHelpers
               try
               {              	 
               	
-              	 IRemoteCommandShell defaultShell= cmdSubSystem.getDefaultShell(shell);  
+              	 IRemoteCommandShell defaultShell= cmdSubSystem.getDefaultShell();  
           		
               	 
 					showInView(defaultShell, isCompile, cmdString);   
@@ -154,9 +154,9 @@ public class RemoteCommandHelpers
 	                   		 cdCmd = "cd /d " + path; //$NON-NLS-1$                  		                    		 
 	                	 }	 
 	                            
-						cmdSubSystem.sendCommandToShell(cdCmd, shell, defaultShell);				   
+						cmdSubSystem.sendCommandToShell(cdCmd, defaultShell);				   
 	                }
-                	cmdSubSystem.sendCommandToShell(cmdString, shell, defaultShell);
+                	cmdSubSystem.sendCommandToShell(cmdString, defaultShell);
               	 
               
               }

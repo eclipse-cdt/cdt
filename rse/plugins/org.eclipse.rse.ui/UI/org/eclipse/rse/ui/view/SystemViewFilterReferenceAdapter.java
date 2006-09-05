@@ -360,7 +360,7 @@ public class SystemViewFilterReferenceAdapter
 						if (monitor == null)
 						{
 							Shell shell = getShell();
-						    allChildren = ss.resolveFilterStrings(filterStrings, shell);
+						    allChildren = ss.resolveFilterStrings(filterStrings);
 						}
 						else
 						{

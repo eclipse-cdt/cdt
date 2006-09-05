@@ -468,7 +468,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
         // ambiquity as the parent could be the connnection or the user preferences setting for this
         // system type. Because of this decision, we don't need to tell updateSubSystem(...) where
         // to update, as it always the local subsystem.
-	    ssFactory.updateSubSystem((Shell)null, subsys, true, userId, false, subsys.getConnectorService().getPort()); 		  		                      
+	    ssFactory.updateSubSystem(subsys, true, userId, false, subsys.getConnectorService().getPort()); 		  		                      
     }
     /**
      * Change the subsystem port value
@@ -511,7 +511,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
     	}
     	int portInt = portInteger.intValue();
         ISubSystemConfiguration ssFactory = subsys.getSubSystemConfiguration();	    
-	    ssFactory.updateSubSystem((Shell)null, subsys, false, subsys.getLocalUserId(), true, portInt); 		  		                      
+	    ssFactory.updateSubSystem(subsys, false, subsys.getLocalUserId(), true, portInt); 		  		                      
     }
 
 	

@@ -402,7 +402,7 @@ public class SystemCommandAction extends SystemBaseAction
 
 					if (launchNewShell)
 					{
-						Object[] results = cmdSubSystem.runCommand(cmd, shell, _selected);
+						Object[] results = cmdSubSystem.runCommand(cmd, _selected);
 						Object cmdObject = results[0];
 						if (cmdObject instanceof IRemoteCommandShell)
 						{
@@ -412,7 +412,7 @@ public class SystemCommandAction extends SystemBaseAction
 					else
 					{
 						// run command in shell
-						IRemoteCommandShell defaultShell = cmdSubSystem.getDefaultShell(shell);
+						IRemoteCommandShell defaultShell = cmdSubSystem.getDefaultShell();
 						if (defaultShell != null)
 						{
 							showInView(defaultShell);
@@ -424,8 +424,8 @@ public class SystemCommandAction extends SystemBaseAction
 						{
 							cdCmd = "cd /d " + path; //$NON-NLS-1$
 						}
-						cmdSubSystem.sendCommandToShell(cdCmd, shell, defaultShell);
-						cmdSubSystem.sendCommandToShell(cmd, shell, defaultShell);
+						cmdSubSystem.sendCommandToShell(cdCmd, defaultShell);
+						cmdSubSystem.sendCommandToShell(cmd, defaultShell);
 					}
 				}
 				else
@@ -433,7 +433,7 @@ public class SystemCommandAction extends SystemBaseAction
 					IRemoteCmdSubSystem cmdSubSystem = getCommandSubSystem();
 					if (cmdSubSystem != null)
 					{
-						Object[] results = cmdSubSystem.runCommand(cmd, shell, _selected);
+						Object[] results = cmdSubSystem.runCommand(cmd,  _selected);
 						Object cmdObject = results[0];
 						if (cmdObject instanceof IRemoteCommandShell)
 						{
@@ -483,15 +483,15 @@ public class SystemCommandAction extends SystemBaseAction
 				{
 					SystemCommandsUI commandsUI = SystemCommandsUI.getInstance();
 					SystemCommandsViewPart cmdsPart = commandsUI.activateCommandsView();
-					IRemoteCommandShell cmd = cmdSubSystem.runShell(shell, _selected);
+					IRemoteCommandShell cmd = cmdSubSystem.runShell(_selected);
 					cmdsPart.updateOutput(cmd);
 				}
 				else
 				{
-					cmdSubSystem.connect(shell);
+					cmdSubSystem.connect();
 					SystemCommandsUI commandsUI = SystemCommandsUI.getInstance();
 					SystemCommandsViewPart cmdsPart = commandsUI.activateCommandsView();
-					IRemoteCommandShell cmd = cmdSubSystem.runShell(shell, _selected);
+					IRemoteCommandShell cmd = cmdSubSystem.runShell( _selected);
 					cmdsPart.updateOutput(cmd);
 					//showInView(cmd);
 				}

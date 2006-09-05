@@ -936,7 +936,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		{
 			try
 			{
-				subsystems[idx].disconnect((Shell) null); // be nice if we had a shell to pass!
+				subsystems[idx].disconnect(); // be nice if we had a shell to pass!
 			}
 			catch (Exception exc)
 			{
@@ -1453,14 +1453,13 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * The changes to the subsystem configuration will be saved to disk.
 	 * Further, it will be asked to disconnect as this data affects the connection.
 	 * <p>
-	 * @param shell parent shell needed in case an error message is displayed
 	 * @param subsystem target of the update action
 	 * @param updateUserId true if we are updating the userId, else false to ignore userId
 	 * @param userId new local user Id. Ignored if updateUserId is false
 	 * @param updatePort true if we are updating the port, else false to ignore port
 	 * @param port new local port value. Ignored if updatePort is false
 	 */
-	public void updateSubSystem(Shell shell, ISubSystem subsystem, boolean updateUserId, String userId, boolean updatePort, int port)
+	public void updateSubSystem(ISubSystem subsystem, boolean updateUserId, String userId, boolean updatePort, int port)
 	{
 		// we pushed down the code that checks if this change is real, such that
 		//  in a multi-subsystem environment it will not enter an infinite loop
@@ -1510,17 +1509,17 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * Update the port for the given subsystem instance.
 	 * Shortcut to {@link #updateSubSystem(Shell, ISubSystem, boolean, String, boolean, int)}
 	 */
-	public void setSubSystemPort(Shell shell, ISubSystem subsystem, int port)
+	public void setSubSystemPort(ISubSystem subsystem, int port)
 	{
-		updateSubSystem(shell, subsystem, false, null, true, port);
+		updateSubSystem( subsystem, false, null, true, port);
 	}
 	/**
 	 * Update the user ID for the given subsystem instance.
 	 * Shortcut to {@link #updateSubSystem(Shell, ISubSystem, boolean, String, boolean, int)}
 	 */
-	public void setSubSystemUserId(Shell shell, ISubSystem subsystem, String userId)
+	public void setSubSystemUserId(ISubSystem subsystem, String userId)
 	{
-		updateSubSystem(shell, subsystem, true, userId, false, 0);
+		updateSubSystem(subsystem, true, userId, false, 0);
 	}
 		
 	/**
@@ -1588,7 +1587,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		try
 		{
-			subsystem.disconnect((Shell) null); // just in case.
+			subsystem.disconnect(); // just in case.
 		}
 		catch (Exception exc)
 		{

@@ -119,7 +119,7 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 					  {
 						  try 
 						  {
-							  subsystems[i].disconnect(getShell(), false);
+							  subsystems[i].disconnect(false);
 						  } catch (InterruptedException e) {
 							  // user cancelled disconnect
 							  cancelled = true;

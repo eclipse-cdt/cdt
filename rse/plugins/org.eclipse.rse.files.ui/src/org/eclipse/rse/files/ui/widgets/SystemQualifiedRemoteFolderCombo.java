@@ -603,7 +603,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	{
     	   try 
     	   {
-    	     ss.connect(getShell()); // will throw exception if fails.
+    	     ss.connect(); // will throw exception if fails.
     	   } catch (InterruptedException exc)
     	   {
     	     msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_CANCELLED);

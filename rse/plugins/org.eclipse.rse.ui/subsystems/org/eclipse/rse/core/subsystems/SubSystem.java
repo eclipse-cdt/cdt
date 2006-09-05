@@ -189,7 +189,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 				
 	    		try
 	    		{
-	    			connect(shell);
+	    			connect();
 	    		}
 	    		catch (Exception e)
 	    		{
@@ -515,7 +515,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 					Shell shell = display.getActiveShell();
 					if (shell != null && !shell.isDisposed())
 					{
-						connect(shell);
+						connect();
 					}
 					else
 					{
@@ -1982,12 +1982,12 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * @param filterString filter pattern for objects to return.
      * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      */
-    public Object[] resolveFilterString(String filterString, Shell shell)
+    public Object[] resolveFilterString(String filterString)
            throws Exception
     {
         boolean ok = true;
     	if (!isConnected())
-    	  ok = promptForPassword(shell);
+    	  ok = promptForPassword();
         if (ok)
         {
     	  try
@@ -2033,7 +2033,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Array of objects that are the result of resolving all the filter strings
      */
-    public Object[] resolveFilterStrings(String[] filterStrings, Shell shell)
+    public Object[] resolveFilterStrings(String[] filterStrings)
            throws Exception
     {
         
@@ -2045,7 +2045,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         }
         
     	if (!isConnected()) {
-    	  ok = promptForPassword(shell);
+    	  ok = promptForPassword();
     	}
         
         if (ok)
@@ -2160,7 +2160,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     {
         boolean ok = true;
     	if (!isConnected())
-    	  ok = promptForPassword(shell);
+    	  ok = promptForPassword();
         if (ok)
         {
             Object[] results = internalResolveFilterString(monitor, filterString);
@@ -2202,7 +2202,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     {
         boolean ok = true;
     	if (!isConnected())
-    	  ok = promptForPassword(shell);
+    	  ok = promptForPassword();
         if (ok)
         {
             Object[] results = internalResolveFilterStrings(monitor, filterStrings);
@@ -2245,7 +2245,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     {
 	    boolean ok = true;
 	    if (!isConnected())
-	        ok = promptForPassword(shell);
+	        ok = promptForPassword();
  
 	    if (ok)
 	    {
@@ -2288,14 +2288,13 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * <p>
      * @param parent Object that is being expanded.
      * @param filterString filter pattern for children of parent. Typically just "*".
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      */
-    public Object[] resolveFilterString(Object parent, String filterString, Shell shell)
+    public Object[] resolveFilterString(Object parent, String filterString)
            throws Exception
     {
         boolean ok = true;
     	if (!isConnected())
-    	  ok = promptForPassword(shell);
+    	  ok = promptForPassword();
         if (ok)
         {
 
@@ -2345,15 +2344,14 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * @param subject Identifies which object to get the properties of
      * @param key Identifies property to set
      * @param value Value to set property to
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Object interpretable by subsystem. Might be a Boolean, or the might be new value for confirmation.
      */
-    public Object setProperty(Object subject, String key, String value, Shell shell)
+    public Object setProperty(Object subject, String key, String value)
            throws Exception
     {
         boolean ok = true;
     	if (!isConnected())
-    	  ok = promptForPassword(shell);
+    	  ok = promptForPassword();
         if (ok)
         {
     	  try
@@ -2384,15 +2382,14 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  true for supportsProperties().
      * @param subject Identifies which object to get the properties of
      * @param key Identifies property to get value of
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
-     * @return String The value of the requested key.
+      * @return String The value of the requested key.
      */
-    public String getProperty(Object subject, String key, Shell shell)
+    public String getProperty(Object subject, String key)
            throws Exception
     {
         boolean ok = true;
     	if (!isConnected())
-    	  ok = promptForPassword(shell);
+    	  ok = promptForPassword();
         if (ok)
         {
     	  try
@@ -2425,15 +2422,14 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * @param subject Identifies which object to get the properties of
      * @param key Identifies property to set
      * @param value Values to set properties to. One to one mapping to keys by index number
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Object interpretable by subsystem. Might be a Boolean, or the might be new values for confirmation.
      */
-    public Object setProperties(Object subject, String[] keys, String[] values, Shell shell)
+    public Object setProperties(Object subject, String[] keys, String[] values)
            throws Exception
     {
         boolean ok = true;
     	if (!isConnected())
-    	  ok = promptForPassword(shell);
+    	  ok = promptForPassword();
         if (ok)
         {
     	  try
@@ -2465,19 +2461,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     public abstract void initializeSubSystem(IProgressMonitor monitor);
 
-    /**
-     * Attempt to connect to the remote system.
-     * You do not need to override this, as it does the progress monitor and error message
-     *  displaying for you.
-     * <p>
-     * Override internalConnect if you want, but by default it calls getSystem().connect(IProgressMonitor).
-     * 
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
-     */
-    public void connect(Shell shell) throws Exception
-    {
-    	connect(shell, false);
-    }
+
     /**
      * Attempt to connect to the remote system when a Shell is not available.
      * You do not need to override this, as it does the progress monitor and error message
@@ -2512,11 +2496,10 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 * <p>
 	 * Override internalConnect if you want, but by default it calls getSystem().connect(IProgressMonitor).
 	 * 
-	 * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
 	 * @param forcePrompt Forces the signon prompt to be displayed even if a valid password in cached in memory
 	 * or saved on disk.
 	 */
-	public void connect(Shell shell, boolean forcePrompt) throws Exception {
+	public void connect(boolean forcePrompt) throws Exception {
 		// yantzi: artemis60, (defect 53082) check that the connection has not been deleted before continuing,
 		// this is a defenisve measure to protect against code that stores a handle to subsystems but does 
 		// not do this check
@@ -2542,7 +2525,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			if (runnableContext instanceof ProgressMonitorDialog) {
 				((ProgressMonitorDialog) runnableContext).setCancelable(true);
 			}
-			getConnectorService().promptForPassword(shell, forcePrompt); // prompt for userid and password    
+			getConnectorService().promptForPassword(forcePrompt); // prompt for userid and password    
 			ConnectJob job = new ConnectJob();
 			scheduleJob(job, null, shell != null);
 			IStatus status = job.getResult();
@@ -2555,12 +2538,11 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
  
 
     /**
-     * A convenience method, fully equivalent to promptForPassword(shell, false).
-     * @param Shell parent shell used to show any error messages.
+     * A convenience method, fully equivalent to promptForPassword(false).
      */
-    public boolean promptForPassword(Shell shell) throws Exception
+    public boolean promptForPassword() throws Exception
     {
-    	return promptForPassword(shell, false);
+    	return promptForPassword(false);
     }
 
     /**
@@ -2568,11 +2550,10 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * but we have detected the user is not connected so we prompt for password outside
      * of the progress monitor, then set a flag to do the connection within the progress
      * monitor.
-     * @param Shell parent shell used to show error messages.
      * @param force true if the prompting should be forced, false if prompting can be skipped if credentials have been stored.
      * @return true if the credentials are obtained
      */
-    public boolean promptForPassword(Shell shell, boolean force) throws Exception
+    public boolean promptForPassword(boolean force) throws Exception
     {
     	boolean ok = false;
     	if (!supportsConnecting)
@@ -2592,7 +2573,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	
     	try
     	{
-    	  getConnectorService().promptForPassword(shell, force); // prompt for password
+    	  getConnectorService().promptForPassword(force); // prompt for password
     	  doConnection = true;
     	  ok = true;
     	}
@@ -2614,11 +2595,10 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * <p>
      * Override internalDisconnect if you want, but by default it calls getSystem().disconnect(IProgressMonitor).
      * 
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      */
-    public void disconnect(Shell shell) throws Exception
+    public void disconnect() throws Exception
     {
-    	disconnect(shell, true);
+    	disconnect(true);
     }
 
     /**
@@ -2628,10 +2608,9 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * <p>
      * Override internalDisconnect if you want, but by default it calls getSystem().disconnect(IProgressMonitor).
      * 
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
-     * @param collapseTree collapse the tree in the system view
+      * @param collapseTree collapse the tree in the system view
      */
-    public void disconnect(Shell shell, boolean collapseTree) throws Exception
+    public void disconnect(boolean collapseTree) throws Exception
     {
     	_disconnecting = true;
     	this.shell = shell; //FIXME remove this
@@ -2673,17 +2652,16 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  true for supportsProperties().
      * @param subject Identifies which object to get the properties of
      * @param key Identifies property to get value of
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Object The values of the requested keys.
      */
-    public String[] getProperties(Object subject, String[] keys, Shell shell)
+    public String[] getProperties(Object subject, String[] keys)
            throws Exception
     {
     	this.shell = shell; //FIXME remove this
         boolean ok = true;
        
     	if (!isConnected())
-    	  ok = promptForPassword(shell);
+    	  ok = promptForPassword();
         if (ok)
         {
     	  try

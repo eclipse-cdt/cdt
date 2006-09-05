@@ -148,7 +148,7 @@ public class SystemRemoteCommandEntryForm extends Composite
 				{
 					try
 					{
-						currSubSystem.runCommand(cmd, getShell(), null);
+						currSubSystem.runCommand(cmd, null);
 					}
 					catch ( Exception e )
 					{

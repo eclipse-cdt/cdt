@@ -43,20 +43,18 @@ public interface IRemoteCmdSubSystem extends ISubSystem{
 	 * Execute a remote command. This is only applicable if the subsystem factory reports
 	 *  true for supportsCommands().
 	 * @param command Command to be executed remotely.
-	 * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
 	 * @param Object context context of a command (i.e. working directory).  Null is valid and means to run the 
 	 * 			command as a shell command in the default shell.
 	 * @return Array of objects that are the result of running this command. Typically, these
 	 *   are messages logged by the command.
      * @see org.eclipse.rse.core.subsystems.shells.ui.RemoteCommandHelpers
 	 */
-	public Object[] runCommand(String command, Shell shell, Object context) throws Exception;
+	public Object[] runCommand(String command, Object context) throws Exception;
 	
 	/**
 	 * Execute a remote command. This is only applicable if the subsystem factory reports
 	 *  true for supportsCommands().
 	 * @param command Command to be executed remotely.
-	 * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
 	 * @param Object context context of a command (i.e. working directory).  Null is valid and means to run the 
 	 * 			command as a shell command in the default shell.
 	 * @param interpretOutput whether to interpret the output or not
@@ -64,49 +62,44 @@ public interface IRemoteCmdSubSystem extends ISubSystem{
 	 *   are messages logged by the command.
      * @see org.eclipse.rse.core.subsystems.shells.ui.RemoteCommandHelpers
 	 */
-	public Object[] runCommand(String command, Shell shell, Object context, boolean interpretOutput) throws Exception;
+	public Object[] runCommand(String command, Object context, boolean interpretOutput) throws Exception;
 
 
 	/**
 	 * Launch a new command shell. This is only applicable if the subsystem factory reports
 	 *  true for supportsCommands().
-	 * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
 	 * @param Object context context of a shell (i.e. working directory).  Null is valid and means to use the default context.
 	 * @return An object that represents the command and it's output.
      * @see org.eclipse.rse.core.subsystems.shells.ui.RemoteCommandHelpers
 	 */
-	public IRemoteCommandShell runShell(Shell shell, Object context) throws Exception;
+	public IRemoteCommandShell runShell(Object context) throws Exception;
 
 
 	/**
 	 * Send a command as input to a running command shell. 
 	 * @param String input the command to invoke in the shell.
-	 * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
 	 * @param Object commandObject the shell or command to send the invocation to.
      * @see org.eclipse.rse.core.subsystems.shells.ui.RemoteCommandHelpers
 	 */
-	public void sendCommandToShell(String input, Shell shell, Object commandObject) throws Exception;
+	public void sendCommandToShell(String input, Object commandObject) throws Exception;
 
 	/**
 	 * Cancel a shell or running command.
-	 * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
-	 * @param Object commandObject the shell or command to cancel.
+		 * @param Object commandObject the shell or command to cancel.
 	 */
-	public void cancelShell(Shell shell, Object commandObject) throws Exception;
+	public void cancelShell(Object commandObject) throws Exception;
 
 	/**
 	 * Remove a shell.  If the shell is running cancel it first.
-	 * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
 	 * @param Object commandObject the shell or command to cancel & remove.
 	 */
-	public void removeShell(Shell shell, Object commandObject) throws Exception;
+	public void removeShell(Object commandObject) throws Exception;
 
 	/**
 	* Get the default running command shell for this command subsystem.  If no such shell exists or is running, a new one is launched.
-	* @param shell a window used for notification
 	* @return the default running command shell 
 	*/
-	public IRemoteCommandShell getDefaultShell(Shell shell) throws Exception;
+	public IRemoteCommandShell getDefaultShell() throws Exception;
 
 	/**
 	 * Get all command shells and transient commands that have been run or are running for this command subsystem.

@@ -213,7 +213,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 			IShellServiceSubSystemConfiguration factory = (IShellServiceSubSystemConfiguration)fact;
 			try
 			{
-				disconnect(SystemBasePlugin.getActiveWorkbenchShell());
+				disconnect();
 			}
 			catch (Exception e)
 			{	

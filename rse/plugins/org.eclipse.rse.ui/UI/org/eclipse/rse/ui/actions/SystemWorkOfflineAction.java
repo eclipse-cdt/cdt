@@ -91,7 +91,7 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 				{
 					try 
 					{
-						subsystems[i].disconnect(getShell(), false);
+						subsystems[i].disconnect(false);
 					} catch (InterruptedException e) {
 						// user cancelled disconnect
 						cancelled = true;

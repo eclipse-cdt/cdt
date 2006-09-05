@@ -18,7 +18,6 @@ package org.eclipse.rse.core.subsystems;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IRSEModelObject;
-import org.eclipse.swt.widgets.Shell;
 
 
 /**
@@ -175,7 +174,7 @@ public interface IConnectorService extends IRSEModelObject
      * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
 	 * in memory.
      */
-    public void promptForPassword(Shell shell, boolean forcePrompt)
+    public void promptForPassword(boolean forcePrompt)
            throws InterruptedException;
     /**
      * Set the password if you got it from somewhere

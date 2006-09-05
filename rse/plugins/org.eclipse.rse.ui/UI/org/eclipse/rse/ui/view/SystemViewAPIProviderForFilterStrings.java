@@ -136,7 +136,7 @@ public class SystemViewAPIProviderForFilterStrings
         Object[] children = null;
 		try
 		{
-			children = ss.resolveFilterString(filterStringReference.getString(),getShell());
+			children = ss.resolveFilterString(filterStringReference.getString());
 			if ((children == null) || (children.length==0))
 			{
 		      children = new SystemMessageObject[1];

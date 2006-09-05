@@ -35,7 +35,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  */
 public class DaytimeSubSystem extends SubSystem {
 
-	private IDaytimeService fDaytimeService;
+	private IDaytimeService fDaytimeService; 
 	
 	public DaytimeSubSystem(IHost host, IConnectorService connectorService, IDaytimeService daytimeService) {
 		super(host, connectorService);

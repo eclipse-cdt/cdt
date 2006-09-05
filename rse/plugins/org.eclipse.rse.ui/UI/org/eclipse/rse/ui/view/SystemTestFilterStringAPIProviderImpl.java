@@ -89,7 +89,7 @@ public class SystemTestFilterStringAPIProviderImpl
 		  return children;
 		try
 		{
-	 	   children = subsystem.resolveFilterString(filterString, shell);
+	 	   children = subsystem.resolveFilterString(filterString);
 	 	   if ((children == null) || (children.length==0))
 	 	   {
 	 	   	 if (nullObject == null)

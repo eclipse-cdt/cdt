@@ -365,7 +365,7 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
         // ambiquity as the parent could be the connnection or the user preferences setting for this
         // system type. Because of this decision, we don't need to tell updateSubSystem(...) where
         // to update, as it always the local subsystem.
-	    ssFactory.updateSubSystem(getShell(), subsys, true, userId, false, subsys.getConnectorService().getPort()); 		  		                      
+	    ssFactory.updateSubSystem(subsys, true, userId, false, subsys.getConnectorService().getPort()); 		  		                      
     }
     /**
      * Change the subsystem port value
@@ -382,7 +382,7 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
     	 */
     	int portInteger = portPrompt.getPort();
         ISubSystemConfiguration ssFactory = subsys.getSubSystemConfiguration();	    
-	    ssFactory.updateSubSystem(getShell(), subsys, false, subsys.getLocalUserId(), true, portInteger); 		  		                      
+	    ssFactory.updateSubSystem(subsys, false, subsys.getLocalUserId(), true, portInteger); 		  		                      
     }
 
 	/**

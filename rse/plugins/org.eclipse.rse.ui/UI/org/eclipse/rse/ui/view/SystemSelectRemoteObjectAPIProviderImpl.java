@@ -579,7 +579,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 		Object[] children = null;
 		try
 		{
-	 	     children = subsystem.resolveFilterString(filterString, shell);	 	     
+	 	     children = subsystem.resolveFilterString(filterString);	 	     
 		} catch (InterruptedException exc)
 		{
 		     if (canceledObject == null)

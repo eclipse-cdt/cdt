@@ -488,12 +488,12 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * @param shell the window used for notification
 	 * @return the default running command shell
 	 */
-	public IRemoteCommandShell getDefaultShell(Shell shell) throws Exception
+	public IRemoteCommandShell getDefaultShell() throws Exception
 	{
 		IRemoteCommandShell[] shells = getShells();
 		if (shells == null || shells.length == 0)
 		{
-			return runShell(shell, null);
+			return runShell( null);
 		}
 		else
 		{
@@ -809,7 +809,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	/**
 	 * overridden so that for universal we don't need to do in modal thread
 	 */
-	public Object[] runCommand(String command, Shell shell, Object context, boolean interpretOutput) throws Exception
+	public Object[] runCommand(String command, Object context, boolean interpretOutput) throws Exception
 	{
 		if (shell != null)
 			this.shell = shell;
@@ -845,7 +845,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	/**
 	 * overridden so that for universal we don't need to do in modal thread
 	 */
-	public IRemoteCommandShell runShell(Shell shell, Object context) throws Exception
+	public IRemoteCommandShell runShell(Object context) throws Exception
 	{
 		if (shell != null)
 			this.shell = shell;
@@ -887,31 +887,27 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * factory reports true for supportsCommands().
 	 * 
 	 * @param command Command to be executed remotely.
-	 * @param shell parent shell used to show error message. Null means you will
-	 *            handle showing the error message.
 	 * @param context context of a command (i.e. working directory). <code>null</code> is
 	 *            valid and means to use the default context.
 	 * @return Array of objects that are the result of running this command.
 	 *         Typically, these are messages logged by the command.
 	 */
-	public Object[] runCommand(String command, Shell shell, Object context) throws Exception
+	public Object[] runCommand(String command, Object context) throws Exception
 	{
-		return runCommand(command, shell, context, true);
+		return runCommand(command,  context, true);
 	}
 
 	/**
 	 * Send a command as input to a running command shell.
 	 * 
 	 * @param input the command to invoke in the shell.
-	 * @param shell parent shell used to show error message. Null means you will
-	 *            handle showing the error message.
 	 * @param commandObject the shell or command to send the invocation to.
 	 */
-	public void sendCommandToShell(String input, Shell shell, Object commandObject) throws Exception
+	public void sendCommandToShell(String input,  Object commandObject) throws Exception
 	{
 		boolean ok = true;
 		if (!isConnected())
-			ok = promptForPassword(shell);
+			ok = promptForPassword();
 		if (ok)
 		{
 			try
@@ -942,11 +938,9 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	/**
 	 * Cancel a shell or running command.
 	 * 
-	 * @param shell parent shell used to show error message. Null means you will
-	 *            handle showing the error message.
 	 * @param commandObject the shell or command to cancel.
 	 */
-	public void cancelShell(Shell shell, Object commandObject) throws Exception
+	public void cancelShell(Object commandObject) throws Exception
 	{
 		if (isConnected())
 		{
@@ -956,7 +950,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		{
 			boolean ok = true;
 			if (!isConnected())
-				ok = promptForPassword(shell);
+				ok = promptForPassword();
 			if (ok)
 			{
 				try
@@ -986,7 +980,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 *            handle showing the error message.
 	 * @param commandObject the shell or command to cancel.
 	 */
-	public void removeShell(Shell shell, Object commandObject) throws Exception
+	public void removeShell(Object commandObject) throws Exception
 	{
 		if (isConnected())
 		{
@@ -996,7 +990,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		{
 			boolean ok = true;
 			if (!isConnected())
-				ok = promptForPassword(shell);
+				ok = promptForPassword();
 			if (ok)
 			{
 				try

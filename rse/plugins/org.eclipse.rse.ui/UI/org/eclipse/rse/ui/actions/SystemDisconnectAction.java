@@ -63,7 +63,7 @@ public class SystemDisconnectAction extends SystemBaseAction
 	{		  
 		ISubSystem ss = (ISubSystem)getFirstSelection();
 		try {
-		  ss.disconnect(getShell());
+		  ss.disconnect();
 		} catch (Exception exc) {} // msg already shown		
 	}
 }

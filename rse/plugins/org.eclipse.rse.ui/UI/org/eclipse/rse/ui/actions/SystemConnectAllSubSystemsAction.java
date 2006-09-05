@@ -85,7 +85,7 @@ public class SystemConnectAllSubSystemsAction extends SystemBaseAction
 		        {
 		            try
 		            {
-		                subsystem.connect(shell, false);
+		                subsystem.connect(false);
 		            }
 		            catch (Exception e) 
 		            {	

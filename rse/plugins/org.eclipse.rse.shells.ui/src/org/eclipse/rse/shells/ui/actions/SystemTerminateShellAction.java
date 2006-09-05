@@ -81,7 +81,7 @@ public class SystemTerminateShellAction extends SystemBaseShellAction
 			IRemoteCmdSubSystem cmdSubSystem = command.getCommandSubSystem();
 			if (cmdSubSystem != null)
 			{
-				cmdSubSystem.cancelShell(getShell(), command);
+				cmdSubSystem.cancelShell(command);
 			}
 		}
 		catch (Exception e)

@@ -49,7 +49,7 @@ public class SystemTerminateRemoveShellAction extends SystemTerminateShellAction
 			IRemoteCmdSubSystem cmdSubSystem = command.getCommandSubSystem();
 			if (cmdSubSystem != null)
 			{
-				cmdSubSystem.removeShell(getShell(), command);
+				cmdSubSystem.removeShell(command);
 			}
 		}
 		catch (Exception e)

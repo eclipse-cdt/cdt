@@ -28,7 +28,6 @@ import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.swt.widgets.Shell;
 
 
 
@@ -340,13 +339,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 *  by all subsystems in which case this will always return false.
 	 */
 	public boolean isOffline();
-	/**
-	 * Connect to the remote system.
-	 * In addition to calling getSystem().connect(),this might fire events.
-	 * 
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
-	 */
-	public void connect(Shell shell) throws Exception;	
+
 	/**
 	 * Connect to the remote system.
 	 * This uses Display.syncExec to get an active Shell and then calls connect(Shell)
@@ -357,11 +350,10 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * Connect to the remote system, optionally forcing a signon prompt even if the password
 	 * is cached in memory or on disk.
 	 * 
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
-     * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
+      * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
 	 * in memory.
 	 */
-	public void connect(Shell shell, boolean forcePrompt) throws Exception;	
+	public void connect(boolean forcePrompt) throws Exception;	
 	
 
 	/**
@@ -369,15 +361,15 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * In addition to calling getSystem().disconnect(),this must fire an
 	 *  event to collapse the expanded nodes in the tree under this node.
 	 */
-	public void disconnect(Shell shell) throws Exception;
-	
+	public void disconnect() throws Exception;
+	 
 	/**
 	 * Disconnect from the remote system.
 	 * In addition to calling getSystem().disconnect(),this may fire an
 	 * event to collapse the expanded nodes in the tree under this node
 	 * depending on the value of collapseTree.
 	 */
-	public void disconnect(Shell shell, boolean collapseTree) throws Exception;
+	public void disconnect(boolean collapseTree) throws Exception;
 	
 	
 	
@@ -479,10 +471,9 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      *  type. Be sure to register your adapter factory.
      *
      * @param filterString filter pattern for objects to return.
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Array of objects that are the result of this filter string
      */
-    public Object[] resolveFilterString(String filterString, Shell shell)
+    public Object[] resolveFilterString(String filterString)
            throws Exception;
     /**
      * Resolve multiple absolute filter strings. This is only applicable if the subsystem
@@ -492,10 +483,9 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      *  filter strings versus a single filter string.
      *
      * @param filterStrings array of filter patterns for objects to return.
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
-     * @return Array of objects that are the result of resolving all the filter strings
+      * @return Array of objects that are the result of resolving all the filter strings
      */
-    public Object[] resolveFilterStrings(String[] filterStrings, Shell shell)
+    public Object[] resolveFilterStrings(String[] filterStrings)
            throws Exception;
 
     /**
@@ -521,10 +511,9 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      *
      * @param parent Object that is being expanded.
      * @param filterString filter pattern for children of parent.
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
-     * @return Array of objects that are the result of this filter string
+     *  @return Array of objects that are the result of this filter string
      */
-    public Object[] resolveFilterString(Object parent, String filterString, Shell shell)
+    public Object[] resolveFilterString(Object parent, String filterString)
            throws Exception;
 
     /*
@@ -553,10 +542,9 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      * @param subject Identifies which object to get the properties of
      * @param key Identifies property to set
      * @param value Value to set property to
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Object interpretable by subsystem. Might be a Boolean, or the might be new value for confirmation.
      */
-    public Object setProperty(Object subject, String key, String value, Shell shell)
+    public Object setProperty(Object subject, String key, String value)
            throws Exception;
 
     /**
@@ -565,10 +553,9 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      *  true for supportsProperties().
      * @param subject Identifies which object to get the properties of
      * @param key Identifies property to get value of
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return String The value of the requested key.
      */
-    public String getProperty(Object subject, String key, Shell shell)
+    public String getProperty(Object subject, String key)
            throws Exception;
 
     /**
@@ -578,10 +565,9 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      * @param subject Identifies which object to get the properties of
      * @param key Identifies property to set
      * @param value Values to set properties to. One to one mapping to keys by index number
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Object interpretable by subsystem. Might be a Boolean, or the might be new values for confirmation.
      */
-    public Object setProperties(Object subject, String[] keys, String[] values, Shell shell)
+    public Object setProperties(Object subject, String[] keys, String[] values)
            throws Exception;
 
     /**
@@ -590,10 +576,9 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      *  true for supportsProperties().
      * @param subject Identifies which object to get the properties of
      * @param key Identifies property to get value of
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Object The values of the requested keys.
      */
-    public String[] getProperties(Object subject, String[] keys, Shell shell)
+    public String[] getProperties(Object subject, String[] keys)
            throws Exception;
            
   	/**

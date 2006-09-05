@@ -450,13 +450,12 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
      * <li>If password not known then look in the password store and verify that it is still valid.
      * <li>If a valid password is not found then prompt the user.
      * </ol>
-     * Must be run in the UI thread.
-     * @param shell parent for the prompt dialog if needed. 
+     * Must be run in the UI thread. 
      * Can be null if the password is known to exist in either this class or in the password store.
      * @param forcePrompt if true then present the prompt even if the password was found and is valid.
      * @throws InterruptedException if user is prompted and user cancels that prompt or if isSuppressSignonPrompt is true.
      */
-    public void promptForPassword(Shell shell, boolean forcePrompt) throws InterruptedException {
+    public void promptForPassword(boolean forcePrompt) throws InterruptedException {
 		// dy:  March 24, 2003:  check if prompting is temporarily suppressed by a tool
 		// vendor, this should only be suppressed if the user cancelled a previous signon
 		// dialog (or some other good reason)
@@ -634,7 +633,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		String ssLocalUserId = subsystem.getLocalUserId(); 
 		if (ssLocalUserId != null) { // defect 42709
 			ISubSystemConfiguration ssc = subsystem.getSubSystemConfiguration(); 
-			ssc.updateSubSystem(shell, subsystem, true, userId, false, 0);
+			ssc.updateSubSystem(subsystem, true, userId, false, 0);
 		} else { // it seems intuitive to update the connection object. defect 42709. Phil
 			int whereToUpdate = USERID_LOCATION_CONNECTION;
 			IHost conn = subsystem.getHost();

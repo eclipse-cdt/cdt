@@ -570,8 +570,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 					// if not, attemp to connect to it
 					if (!fs.isConnected())
 					{
-						Shell theShell = SystemBasePlugin.getActiveWorkbenchShell();						
-						fs.connect(theShell);
+						fs.connect();
 					}
 				}
 				catch (Exception e)

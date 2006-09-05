@@ -24,7 +24,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
-import org.eclipse.swt.widgets.Shell;
+
 
 
 public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvider, IRSEPersistableContainer
@@ -344,24 +344,23 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
      *  disconnect.
      * <p>
      * The subsystem will be saved to disk.
-     * @param shell parent shell needed in case an error message is displayed
      * @param subsystem target of the update action
      * @param updateUserId true if we are updating the userId, else false to ignore userId
      * @param userId new local user Id. Ignored if updateUserId is false
      * @param updatePort true if we are updating the port, else false to ignore port
      * @param port new local port value. Ignored if updatePort is false
      */
-    public void updateSubSystem(Shell shell, ISubSystem subsystem, boolean updateUserId, String userId, boolean updatePort, int port);
+    public void updateSubSystem(ISubSystem subsystem, boolean updateUserId, String userId, boolean updatePort, int port);
 	/**
 	 * Update the port for the given subsystem instance.
 	 * Shortcut to {@link #updateSubSystem(Shell, ISubSystem, boolean, String, boolean, int)}
 	 */
-	public void setSubSystemPort(Shell shell, ISubSystem subsystem, int port);
+	public void setSubSystemPort(ISubSystem subsystem, int port);
 	/**
 	 * Update the user ID for the given subsystem instance.
 	 * Shortcut to {@link #updateSubSystem(Shell, ISubSystem, boolean, String, boolean, int)}
 	 */
-	public void setSubSystemUserId(Shell shell, ISubSystem subsystem, String userId);
+	public void setSubSystemUserId(ISubSystem subsystem, String userId);
 
     /**
      * Returns true if this factory allows users to delete instances of subsystem objects.

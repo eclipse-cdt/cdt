@@ -129,10 +129,9 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		
 		public void run()
 		{
-			Shell shell = Display.getCurrent().getActiveShell();
 			try
 			{
-				_ss.promptForPassword(shell);
+				_ss.promptForPassword();
 			}
 			catch (Exception e)
 			{

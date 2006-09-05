@@ -115,7 +115,7 @@ public class RSEFileSystem extends FileSystem
 				
 				try
 				{
-					ss.connect(shell);
+					ss.connect();
 				}
 				catch (Exception e)
 				{			
@@ -138,26 +138,8 @@ public class RSEFileSystem extends FileSystem
 					if (!fs.isConnected())
 					{
 						
-						Shell shell = null;
-						try
-						{
-							//if (PlatformUI.isWorkbenchRunning())
-							{
-								//shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-				
-								shell = SystemBasePlugin.getActiveWorkbenchShell();
-							}
-						}
-						catch (Exception e)
-						{							
-						}
-												
-						if (shell == null)
-						{
-							shell = new Shell();
-						}
 					
-						fs.getConnectorService().promptForPassword(shell, false);
+						fs.getConnectorService().promptForPassword(false);
 						fs.getConnectorService().connect(new NullProgressMonitor());
 						//fs.connect(shell);
 					}

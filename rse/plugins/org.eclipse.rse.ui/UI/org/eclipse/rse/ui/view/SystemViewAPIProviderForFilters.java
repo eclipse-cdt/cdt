@@ -182,7 +182,7 @@ public class SystemViewAPIProviderForFilters
     	     String[] filterStrings = referencedFilter.getFilterStrings();    	   	 
 		     try
 		     {
-		     	Object[] allChildren = ss.resolveFilterStrings(filterStrings,getShell());
+		     	Object[] allChildren = ss.resolveFilterStrings(filterStrings);
                 int nbrNestedFilters = (nestedFilterReferences==null) ? 0: nestedFilterReferences.length;
                 children = new Object[nbrNestedFilters + allChildren.length];
                 int idx = 0;

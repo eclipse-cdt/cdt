@@ -58,8 +58,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
     	  try
     	  {
     	  	// deduce active shell from display
-            Shell shell = Display.getCurrent().getActiveShell();
-    	    context.getParentRemoteProcessSubSystem().connect(shell);
+    	    context.getParentRemoteProcessSubSystem().connect();
     	  } catch (Exception exc) {}
     	  
     	  _underlyingProcess = process;

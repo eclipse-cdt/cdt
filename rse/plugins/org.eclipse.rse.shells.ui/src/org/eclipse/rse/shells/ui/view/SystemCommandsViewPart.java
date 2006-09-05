@@ -147,7 +147,7 @@ public class SystemCommandsViewPart
 		{
 			try
 			{
-				IRemoteCommandShell cmd = _cmdSubSystem.runShell(getShell(), null);
+				IRemoteCommandShell cmd = _cmdSubSystem.runShell( null);
 				if (cmd != null)
 				{
 					showInView(cmd);

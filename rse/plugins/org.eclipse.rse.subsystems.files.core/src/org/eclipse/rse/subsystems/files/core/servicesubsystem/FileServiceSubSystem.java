@@ -820,7 +820,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			try
 			{
 				_cachedRemoteFiles.clear();
-				disconnect(SystemBasePlugin.getActiveWorkbenchShell());
+				disconnect();
 			}
 			catch (Exception e)
 			{	

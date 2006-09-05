@@ -720,7 +720,7 @@ public class SystemViewRemoteFileAdapter
 			    }
 			    else
 			    {
-			        children = ss.resolveFilterString(file, filter, getShell());
+			        children = ss.resolveFilterString(file, filter);
 			    }
 				if ((children == null) || (children.length == 0))
 				{

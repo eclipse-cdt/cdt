@@ -121,6 +121,10 @@ public class DStoreHostFile implements IHostFile
 			{
 				return true;
 			}
+			else if (isRoot())
+			{
+				return false;
+			}
 			else
 			{
 				String str = getAttribute(_element.getSource(), ATTRIBUTE_IS_HIDDEN);

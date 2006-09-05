@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
@@ -55,7 +56,7 @@ public class PDOMCLinkage extends PDOMLinkage {
 	}
 
 	public PDOMCLinkage(PDOM pdom) throws CoreException {
-		super(pdom, GCCLanguage.ID, "C".toCharArray());
+		super(pdom, GCCLanguage.ID, "C".toCharArray()); //$NON-NLS-1$
 	}
 	
 	public int getNodeType() {
@@ -225,8 +226,14 @@ public class PDOMCLinkage extends PDOMLinkage {
 	}
 	
 	public PDOMBinding adaptBinding(IBinding binding) throws CoreException {
-		if (binding instanceof PDOMBinding)
-			return (PDOMBinding)binding;
+		if (binding instanceof PDOMBinding) {
+			// there is no guarantee, that the binding is from the same PDOM object.
+			PDOMBinding pdomBinding = (PDOMBinding) binding;
+			if (pdomBinding.getPDOM() == getPDOM()) {
+				return pdomBinding;
+			}
+			// so if the binding is from another pdom it has to be adapted. 
+		}
 		
 		PDOMNode parent = getParent(binding);
 		if (parent == this) {

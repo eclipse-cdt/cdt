@@ -39,7 +39,12 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.FindNameForSelectionVisitor;
 
 public class CallHierarchyUI {
+	private static boolean sIsJUnitTest= false;
 
+	public static void setIsJUnitTest(boolean val) {
+		sIsJUnitTest= val;
+	}
+	
 	public static CHViewPart open(ICElement input, IWorkbenchWindow window) {
         if (input != null) {
         	return openInViewPart(window, input);
@@ -68,6 +73,9 @@ public class CallHierarchyUI {
 			elem = input[0];
 			break;
 		default:
+			if (sIsJUnitTest) {
+				throw new RuntimeException("ambigous input"); //$NON-NLS-1$
+			}
 			elem = OpenActionUtil.selectCElement(input, window.getShell(),
 					CHMessages.CallHierarchyUI_label, CHMessages.CallHierarchyUI_selectMessage,
 					CElementLabels.ALL_DEFAULT | CElementLabels.MF_POST_FILE_QUALIFIED, 0);
@@ -85,49 +93,72 @@ public class CallHierarchyUI {
 			final IEditorInput editorInput = editor.getEditorInput();
 			final Display display= Display.getCurrent();
 			
-			Job job= new Job(CHMessages.CallHierarchyUI_label) {
-				protected IStatus run(IProgressMonitor monitor) {
-					try {
-						final ICElement[] elems= findDefinitions();
-						if (elems != null && elems.length > 0) {
-							display.asyncExec(new Runnable() {
-								public void run() {
-									openInViewPart(editor.getSite().getWorkbenchWindow(), elems);
-								}});
-						}
-						return Status.OK_STATUS;
-					} 
-					catch (CoreException e) {
-						return e.getStatus();
-					}
-				}
-
-				private ICElement[] findDefinitions() throws CoreException {
-					CIndexQueries index= CIndexQueries.getInstance();
-					IASTName name= getSelectedName(editorInput, sel);
-					if (name != null) {
-						if (name.isDefinition()) {
-							ICElement elem= index.findDefinition(project, name);
-							if (elem != null) {
-								return new ICElement[]{elem};
+			if (!sIsJUnitTest) {
+				Job job= new Job(CHMessages.CallHierarchyUI_label) {
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							final ICElement[] elems= findDefinitions(project, editorInput, sel);
+							if (elems != null && elems.length > 0) {
+								display.asyncExec(new Runnable() {
+									public void run() {
+										openInViewPart(editor.getSite().getWorkbenchWindow(), elems);
+									}});
 							}
-						}
-						else {
-							ICElement[] elems= index.findAllDefinitions(project, name);
-							if (elems.length == 0) {
-								ICProject[] allProjects= CoreModel.getDefault().getCModel().getCProjects();
-								elems= index.findAllDefinitions(allProjects, name);
-							}
-							return elems;
+							return Status.OK_STATUS;
+						} 
+						catch (CoreException e) {
+							return e.getStatus();
 						}
 					}
-					return null;
+				};
+				job.setUser(true);
+				job.schedule();
+			}
+			else {
+				ICElement[] elems;
+				try {
+					elems = findDefinitions(project, editorInput, sel);
+					if (elems != null && elems.length > 0) {
+						openInViewPart(editor.getSite().getWorkbenchWindow(), elems);
+					}
+				} catch (CoreException e) {
+					CUIPlugin.getDefault().log(e);
 				}
-			};
-			job.setUser(true);
-			job.schedule();
+			}
 		}
     }
+    
+	private static ICElement[] findDefinitions(ICProject project, IEditorInput editorInput, ITextSelection sel) throws CoreException {
+		CIndexQueries index= CIndexQueries.getInstance();
+		IASTName name= getSelectedName(editorInput, sel);
+		if (name != null) {
+			if (name.isDefinition()) {
+				ICElement elem= index.findDefinition(project, name);
+				if (elem != null) {
+					return new ICElement[]{elem};
+				}
+			}
+			else {
+				ICElement[] elems= index.findAllDefinitions(project, name);
+				if (elems.length == 0) {
+					ICProject[] allProjects= CoreModel.getDefault().getCModel().getCProjects();
+					elems= index.findAllDefinitions(allProjects, name);
+					if (elems.length == 0) {
+						ICElement elem= index.findAnyDeclaration(project, name);
+						if (elem == null) {
+							elem= index.findAnyDeclaration(allProjects, name);
+						}
+						if (elem != null) {
+							elems= new ICElement[] {elem};
+						}
+					}
+				}
+				return elems;
+			}
+		}
+		return null;
+	}
+
 
 	private static IASTName getSelectedName(IEditorInput editorInput, ITextSelection selection) throws CoreException {
 		int selectionStart = selection.getOffset();

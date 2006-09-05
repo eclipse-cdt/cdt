@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -772,5 +773,9 @@ public class CHViewPart extends ViewPart {
         	return (ITranslationUnit) input;
         }
         return null;
+	}
+
+	public TreeViewer getTreeViewer() {
+		return fTreeViewer;
 	}
 }

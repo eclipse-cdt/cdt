@@ -44,6 +44,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
@@ -246,7 +247,7 @@ public class CIndexQueries {
 			if (pdom != null) {
 				pdom.acquireReadLock();
 				try {
-					IBinding binding= pdom.resolveBinding(name);
+					IBinding binding= getPDOMBinding(pdom, name);
 					if (binding != null) {
 						IASTName[] names= pdom.getReferences(binding);
 						for (int i = 0; i < names.length; i++) {
@@ -404,7 +405,7 @@ public class CIndexQueries {
 			if (pdom != null) {
 				pdom.acquireReadLock();
 				try {
-					IBinding binding= pdom.resolveBinding(name);
+					IBinding binding= getPDOMBinding(pdom, name);
 					if (binding != null) {
 						return allEnclosingElements(project, pdom.getDefinitions(binding));
 					}
@@ -419,6 +420,20 @@ public class CIndexQueries {
 		}
 
 		return EMPTY_ELEMENTS;
+	}
+
+	private IBinding getPDOMBinding(PDOM pdom, IASTName name) {
+		IBinding binding= name.resolveBinding();
+		IASTTranslationUnit tu= name.getTranslationUnit();
+		ILanguage lang= tu.getLanguage();
+		PDOMLinkage linkage;
+		try {
+			linkage = pdom.getLinkage(lang);
+			return linkage.adaptBinding(binding);
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+		return null;
 	}
 
 	private ICElement[] allEnclosingElements(ICProject project, IASTName[] defs) {
@@ -484,7 +499,7 @@ public class CIndexQueries {
 			if (pdom != null) {
 				pdom.acquireReadLock();
 				try {
-					IBinding binding= pdom.resolveBinding(name);
+					IBinding binding= getPDOMBinding(pdom, name);
 					if (binding != null) {
 						ICElement elem= firstEnclosingElement(project, pdom.getDefinitions(binding));
 						if (elem != null) {
@@ -537,7 +552,7 @@ public class CIndexQueries {
 			if (pdom != null) {
 				pdom.acquireReadLock();
 				try {
-					IBinding binding= pdom.resolveBinding(name);
+					IBinding binding= getPDOMBinding(pdom, name);
 					if (binding != null) {
 						ICElement elem= firstEnclosingElement(project, pdom.getDefinitions(binding));
 						if (elem != null) {

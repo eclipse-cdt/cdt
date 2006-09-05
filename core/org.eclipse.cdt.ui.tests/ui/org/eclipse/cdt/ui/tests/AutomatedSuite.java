@@ -15,6 +15,7 @@ package org.eclipse.cdt.ui.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.ui.tests.callhierarchy.CallHierarchyTestSuite;
 import org.eclipse.cdt.ui.tests.text.TextTestSuite;
 import org.eclipse.cdt.ui.tests.text.contentassist.ContentAssistTestSuite;
 import org.eclipse.cdt.ui.tests.viewsupport.ViewSupportTestSuite;
@@ -40,9 +41,12 @@ public class AutomatedSuite extends TestSuite {
 		// tests from package org.eclipse.cdt.ui.tests.text
 		addTest(TextTestSuite.suite());
 
-		// tests for package viewsupport
+		// tests for package org.eclipse.cdt.ui.tests.viewsupport
 		addTest(ViewSupportTestSuite.suite());
 
+		// tests for package org.eclipse.cdt.ui.tests.callhierarchy
+		addTest(CallHierarchyTestSuite.suite());
+		
 		// tests from package org.eclipse.cdt.ui.tests.text.contentAssist
 		addTest(ContentAssistTestSuite.suite());
 

@@ -382,7 +382,7 @@ abstract class BaseScanner implements IScanner {
 
         private long multiplicativeExpression() throws EvalException {
             long r1 = unaryExpression();
-            for (int t = LA(); t == tMULT || t == tDIV; t = LA()) {
+            for (int t = LA(); t == tMULT || t == tDIV || t == tMOD; t = LA()) {
                 int position = pos; // for IProblem /0 below, need position
                                     // before
                 // consume()
@@ -390,9 +390,12 @@ abstract class BaseScanner implements IScanner {
                 long r2 = unaryExpression();
                 if (t == tMULT)
                     r1 = r1 * r2;
-                else if (r2 != 0)// t == tDIV;
-                    r1 = r1 / r2;
-                else {
+                else if (r2 != 0) {
+                	if (t == tDIV)
+                		r1 = r1 / r2;
+                	else
+                		r1 = r1 % r2;	//tMOD
+                } else {
                     handleProblem(IProblem.SCANNER_DIVIDE_BY_ZERO, position);
                     throw new EvalException("Divide by 0 encountered"); //$NON-NLS-1$
                 }
@@ -2640,12 +2643,12 @@ abstract class BaseScanner implements IScanner {
                             definitions,
                             getLineNumber(bufferPos[bufferStackPos]),
                             getCurrentFilename()) == 0) {
-                    	processIf(pos, bufferPos[bufferStackPos], true);
+                    	processIf(pos, bufferPos[bufferStackPos], false);
                         skipOverConditionalCode(true);
                         if (isLimitReached())
                             handleInvalidCompletion();
                     } else {
-                    	processIf(pos, bufferPos[bufferStackPos], false);
+                    	processIf(pos, bufferPos[bufferStackPos], true);
                     }
                     return;
                 case ppElse:

@@ -2414,4 +2414,15 @@ public class Scanner2Test extends BaseScanner2Test
        initializeScanner(buffer.toString(), ParserLanguage.CPP);
        fullyTokenize();
    }
+   
+   public void testBug156137() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer.append("#if (3 % 2 == 1)                              \n");
+       buffer.append("C                                             \n");
+       buffer.append("#endif                                        \n");
+       
+       initializeScanner(buffer.toString());
+       validateIdentifier("C");
+       validateEOF();
+   }
 }

@@ -15,6 +15,7 @@ package org.eclipse.cdt.ui.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.refactoring.tests.RenameRegressionTests;
 import org.eclipse.cdt.ui.tests.callhierarchy.CallHierarchyTestSuite;
 import org.eclipse.cdt.ui.tests.text.TextTestSuite;
 import org.eclipse.cdt.ui.tests.text.contentassist.ContentAssistTestSuite;
@@ -50,6 +51,8 @@ public class AutomatedSuite extends TestSuite {
 		// tests from package org.eclipse.cdt.ui.tests.text.contentAssist
 		addTest(ContentAssistTestSuite.suite());
 
+		// tests from the refactoring plugin
+		addTest(RenameRegressionTests.suite());
 		// tests from package org.eclipse.cdt.ui.tests.text.contentAssist2
 		// commented out because they are failing pretty badly
 		// addTest(ContentAssist2TestSuite.suite());

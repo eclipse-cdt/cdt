@@ -13,6 +13,9 @@ package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import java.io.IOException;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbenchPage;
@@ -20,6 +23,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
+import org.eclipse.cdt.core.tests.FailingTest;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
@@ -30,6 +34,21 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 	public BasicCallHierarchyTest(String name) {
 		super(name);
+	}
+
+	public static Test getFailingTests() {
+		TestSuite suite= new TestSuite("Failing Tests of BasicCallHierarchyTest");
+        suite.addTest(getFailingTest("_testAnonymousEnumeratorC"));
+        suite.addTest(getFailingTest("_testAnonymousEnumeratorCpp"));
+        suite.addTest(getFailingTest("_testAnonymousStructMembersC"));
+        suite.addTest(getFailingTest("_testAnonymousStructMembersCpp"));
+        suite.addTest(getFailingTest("_testAnonymousUnionMembersC"));
+        suite.addTest(getFailingTest("_testAnonymousUnionMembersCpp"));
+        return suite;
+	}
+
+	private static FailingTest getFailingTest(String name) {
+		return new FailingTest(new BasicCallHierarchyTest(name));
 	}
 
 	public void testFunctionsC() throws Exception {
@@ -141,11 +160,11 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		doTestEnumerator("enumerator.cpp", "testEnumerator");
 	}
 
-	public void failing_testAnonymousEnumeratorC() throws Exception {
+	public void _testAnonymousEnumeratorC() throws Exception {
 		doTestEnumerator("enumerator.c", "testAnonymousEnumerator");
 	}
 	
-	public void failing_testAnonymousEnumeratorCpp() throws Exception {
+	public void _testAnonymousEnumeratorCpp() throws Exception {
 		doTestEnumerator("enumerator.cpp", "testAnonymousEnumerator");
 	}
 
@@ -287,11 +306,11 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, 0, "main()");
 	}
 
-	public void failing_testAnonymousStructMembersC() throws Exception {
+	public void _testAnonymousStructMembersC() throws Exception {
 		doTestAnonymousStructMembers("anon_struct_member.c");
 	}
 	
-	public void failing_testAnonymousStructMembersCpp() throws Exception {
+	public void _testAnonymousStructMembersCpp() throws Exception {
 		doTestAnonymousStructMembers("anon_struct_member.cpp");
 	}
 	
@@ -327,6 +346,150 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "s4::(anon)::mem5");
+		checkTreeNode(tree, 0, 0, "main()");
+	}
+	
+	
+	public void testUnionMembersC() throws Exception {
+		doTestUnionMembers("union_member.c");
+	}
+	
+	public void testUnionMembersCpp() throws Exception {
+		doTestUnionMembers("union_member.cpp");
+	}
+
+	// {testUnionMembers}
+	// union u1 {
+	//    int mem1;
+	//    char c;
+	// };
+	// typedef union u2 {
+	//    int mem2;
+	//    char c;
+	// } t2;
+	// typedef union {
+	//    int mem3;
+	//    char c;
+	// } t3;
+	// union u4 {
+	//    union {
+	//       int mem5;
+	//       char c;
+	//    } mem4;
+	//    char c;
+	// };
+	//
+	// void main() {
+	//    union u1 vs1;
+	//	  union u2 vs2;
+	//	  union u4 vs4;
+	//	  t2 vt2;
+	//	  t3 vt3;
+	//    int i;
+	//    i= vs1.mem1; //ref
+	//    i= vs2.mem2; //ref
+	//    i= vs4.mem4.mem5; //ref
+	//    i= vt2.mem2; //ref
+	//    i= vt3.mem3; //ref
+	// };
+	private void doTestUnionMembers(String filename) throws Exception {
+		String content = readTaggedComment("testUnionMembers");
+		IFile file= createFile(getProject(), filename, content);
+		waitForIndexer(file, 1000);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+
+		editor.selectAndReveal(content.indexOf("mem1"), 0);
+		openCallHierarchy(editor);
+		runEventQueue(EVENT_QUEUE_MILLIS);
+		Tree tree = getCHTree(page);
+		checkTreeNode(tree, 0, "u1::mem1");
+		checkTreeNode(tree, 0, 0, "main()");
+
+		editor.selectAndReveal(content.indexOf("mem2"), 0);
+		openCallHierarchy(editor);
+		runEventQueue(EVENT_QUEUE_MILLIS);
+		checkTreeNode(tree, 0, "u2::mem2");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem3"), 0);
+		openCallHierarchy(editor);
+		runEventQueue(EVENT_QUEUE_MILLIS);
+		checkTreeNode(tree, 0, "(anon)::mem3");
+
+		editor.selectAndReveal(content.indexOf("mem4"), 0);
+		openCallHierarchy(editor);
+		runEventQueue(EVENT_QUEUE_MILLIS);
+		checkTreeNode(tree, 0, "u4::mem4");
+		checkTreeNode(tree, 0, 0, "main()");
+
+		editor.selectAndReveal(content.indexOf("mem5"), 0);
+		openCallHierarchy(editor);
+		runEventQueue(EVENT_QUEUE_MILLIS);
+		checkTreeNode(tree, 0, "u4::(anon)::mem5");
+
+		editor.selectAndReveal(content.indexOf("mem1; //ref"), 0);
+		openCallHierarchy(editor);
+		runEventQueue(EVENT_QUEUE_MILLIS);
+		tree = getCHTree(page);
+		checkTreeNode(tree, 0, "u1::mem1");
+		checkTreeNode(tree, 0, 0, "main()");
+
+		editor.selectAndReveal(content.indexOf("mem2; //ref"), 0);
+		openCallHierarchy(editor);
+		runEventQueue(EVENT_QUEUE_MILLIS);
+		tree = getCHTree(page);
+		checkTreeNode(tree, 0, "u2::mem2");
+		checkTreeNode(tree, 0, 0, "main()");
+
+		editor.selectAndReveal(content.indexOf("mem4."), 0);
+		openCallHierarchy(editor);
+		runEventQueue(EVENT_QUEUE_MILLIS);
+		tree = getCHTree(page);
+		checkTreeNode(tree, 0, "u4::mem4");
+		checkTreeNode(tree, 0, 0, "main()");
+	}
+
+	public void _testAnonymousUnionMembersC() throws Exception {
+		doTestAnonymousUnionMembers("anon_union_member.c");
+	}
+	
+	public void _testAnonymousUnionMembersCpp() throws Exception {
+		doTestAnonymousUnionMembers("anon_union_member.cpp");
+	}
+	
+	private void doTestAnonymousUnionMembers(String filename) throws Exception {
+		String content = readTaggedComment("testUnionMembers");
+		IFile file= createFile(getProject(), filename, content);
+		waitForIndexer(file, 1000);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+
+		editor.selectAndReveal(content.indexOf("mem3"), 0);
+		openCallHierarchy(editor);
+		runEventQueue(EVENT_QUEUE_MILLIS);
+		Tree tree = getCHTree(page);
+		checkTreeNode(tree, 0, "(anon)::mem3");
+		checkTreeNode(tree, 0, 0, "main()");
+
+		editor.selectAndReveal(content.indexOf("mem5"), 0);
+		openCallHierarchy(editor);
+		runEventQueue(EVENT_QUEUE_MILLIS);
+		checkTreeNode(tree, 0, "u4::(anon)::mem5");
+		checkTreeNode(tree, 0, 0, "main()");
+
+		editor.selectAndReveal(content.indexOf("mem3; //ref"), 0);
+		openCallHierarchy(editor);
+		runEventQueue(EVENT_QUEUE_MILLIS);
+		tree = getCHTree(page);
+		checkTreeNode(tree, 0, "(anon)::mem3");
+		checkTreeNode(tree, 0, 0, "main()");
+
+		editor.selectAndReveal(content.indexOf("mem5; //ref"), 0);
+		openCallHierarchy(editor);
+		runEventQueue(EVENT_QUEUE_MILLIS);
+		tree = getCHTree(page);
+		checkTreeNode(tree, 0, "u4::(anon)::mem5");
 		checkTreeNode(tree, 0, 0, "main()");
 	}
 }

@@ -71,8 +71,8 @@ abstract public class BaseTestFramework extends TestCase {
         }
 	}
         
-    public void disableIndexing(){
-    	// TODO turn off PDOM indexing?
+    public void disableIndexing() throws CoreException {
+    	CCorePlugin.getPDOMManager().setIndexerId(cproject, "org.eclipse.cdt.core.nullindexer");
     }
     
     public BaseTestFramework()

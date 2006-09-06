@@ -39,10 +39,15 @@ public class CallHierarchyBaseTest extends BaseTestCase {
 	private ICProject fCProject;
 	private PDOM fPdom;
 
+	public CallHierarchyBaseTest(String name) {
+		super(name);
+	}
+
 	protected void setUp() throws CoreException {
 		fCProject= CProjectHelper.createCProject("__chTest__", "bin");
 		CCorePlugin.getPDOMManager().setIndexerId(fCProject, "org.eclipse.cdt.core.fastIndexer");
 		fPdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(fCProject);
+		fPdom.clear();
 	}
 	
 	protected void tearDown() throws CoreException {
@@ -100,7 +105,7 @@ public class CallHierarchyBaseTest extends BaseTestCase {
 			root= tree.getItem(i0);
 		}
 		catch (IllegalArgumentException e) {
-			assertTrue("Tree node " + i0 + " does not exist!", false);
+			assertTrue("Tree node " + label + "{" + i0 + "} does not exist!", false);
 		}
 		assertEquals(label, root.getText());
 	}
@@ -112,7 +117,7 @@ public class CallHierarchyBaseTest extends BaseTestCase {
 			item= root.getItem(i1);
 		}
 		catch (IllegalArgumentException e) {
-			assertTrue("Tree node " + i0 + "," + i1 + " does not exist!", false);
+			assertTrue("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!", false);
 		}
 		assertEquals(label, item.getText());
 	}

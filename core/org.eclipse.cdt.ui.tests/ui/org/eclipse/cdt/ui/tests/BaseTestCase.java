@@ -29,7 +29,14 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 public class BaseTestCase extends TestCase {
+	public BaseTestCase() {
+		super();
+	}
 	
+	public BaseTestCase(String name) {
+		super(name);
+	}
+
 	/**
 	 * Reads a section in comments form the source of the given class. The section
 	 * is started with '// {tag}' and ends with the first line not started by '//' 

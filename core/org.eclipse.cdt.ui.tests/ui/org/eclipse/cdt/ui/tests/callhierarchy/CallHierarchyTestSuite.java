@@ -13,6 +13,8 @@ package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.tests.FailingTest;
+
 public class CallHierarchyTestSuite extends TestSuite {
 
     public static TestSuite suite() {
@@ -21,6 +23,10 @@ public class CallHierarchyTestSuite extends TestSuite {
     
     public CallHierarchyTestSuite() {
         super("Tests in package org.eclipse.cdt.ui.tests.callhierarchy");
-        addTestSuite(OpenCallHierarchyFromEditorTest.class);
+        addTestSuite(BasicCallHierarchyTest.class);
+        addTest(new FailingTest(new BasicCallHierarchyTest("failing_testAnonymousEnumeratorC")));;
+        addTest(new FailingTest(new BasicCallHierarchyTest("failing_testAnonymousEnumeratorCpp")));;
+        addTest(new FailingTest(new BasicCallHierarchyTest("failing_testAnonymousStructMembersC")));;
+        addTest(new FailingTest(new BasicCallHierarchyTest("failing_testAnonymousStructMembersCpp")));;
     }
 }

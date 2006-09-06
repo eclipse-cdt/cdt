@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -26,6 +27,7 @@ import org.eclipse.jface.text.Region;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -53,7 +55,8 @@ import org.eclipse.cdt.internal.corext.util.CModelUtil;
  * @since 4.0
  */
 public class CIndexQueries {
-    private static final ICElement[] EMPTY_ELEMENTS = new ICElement[0];
+    private static final int ASTTU_OPTIONS = ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX;
+	private static final ICElement[] EMPTY_ELEMENTS = new ICElement[0];
     private static final CIndexIncludeRelation[] EMPTY_INCLUDES = new CIndexIncludeRelation[0];
     private static final CIndexQueries sInstance= new CIndexQueries();
 	
@@ -192,53 +195,52 @@ public class CIndexQueries {
 	 * @since 4.0
 	 */
 	public CalledByResult findCalledBy(ICProject[] scope, ICElement callee, IProgressMonitor pm) {
-		IASTName name= astNameForElement(callee);
-		
 		CalledByResult result= new CalledByResult();
-		if (name != null) {
-			// resolve the binding.
-			name.resolveBinding();
-
+		try {
+			findCalledBy(scope, callee, pm, result);
+		}
+		catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} 
+		catch (InterruptedException e) {
+		}
+		return result;
+	}
+	
+	private void findCalledBy(ICProject[] scope, ICElement callee, IProgressMonitor pm, CalledByResult result) 
+			throws CoreException, InterruptedException {
+		if (! (callee instanceof ISourceReference)) {
+			return;
+		}
+		ISourceReference sf= (ISourceReference) callee;
+		ISourceRange range;
+		range = sf.getSourceRange();
+		ITranslationUnit tu= sf.getTranslationUnit();
+		IPDOM pdom= CCorePlugin.getPDOMManager().getPDOM(tu.getCProject());
+		if (pdom != null) {
+			pdom.acquireReadLock();
+		} 
+		try {
+			ILanguage language = tu.getLanguage();
+			IASTTranslationUnit ast= language.getASTTranslationUnit(tu, ASTTU_OPTIONS);
+			if (ast == null) {
+				return;
+			}
+			IASTName[] names = language.getSelectedNames(ast, range.getIdStartPos(), range.getIdLength());
+			if (names == null || names.length == 0) {
+				return;
+			}
+			IASTName name= names[names.length-1];
 			for (int i = 0; i < scope.length; i++) {
 				ICProject project = scope[i];
 				findCalledBy(name, project, result);					
 			}
 		}
-		return result;
-	}
-
-	private IASTName astNameForElement(ICElement elem) {
-		try {
-			if (elem instanceof ISourceReference) {
-				ISourceReference sf= (ISourceReference) elem;
-				ISourceRange range= sf.getSourceRange();
-				ITranslationUnit tu= sf.getTranslationUnit();
-				IASTTranslationUnit ast= astUnitForTU(tu);
-				if (ast != null) {
-					ILanguage language = tu.getLanguage();
-					IASTName[] names = language.getSelectedNames(ast, range.getIdStartPos(), range.getIdLength());
-					if (names.length > 0) {
-						return names[names.length-1];
-					}
-					return null;
-				}
+		finally {
+			if (pdom != null) {
+				pdom.releaseReadLock();
 			}
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
 		}
-		return null;
-	}
-
-	private IASTTranslationUnit astUnitForTU(ITranslationUnit tu) {
-		try {
-			if (tu != null) {
-				ILanguage language = tu.getLanguage();
-				return language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
-			}
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		}
-		return null;
 	}
 
 	private void findCalledBy(IASTName name, ICProject project, CalledByResult result) {
@@ -252,7 +254,7 @@ public class CIndexQueries {
 						IASTName[] names= pdom.getReferences(binding);
 						for (int i = 0; i < names.length; i++) {
 							IASTName rname = names[i];
-							ITranslationUnit tu= toTranslationUnit(project, rname);
+							ITranslationUnit tu= getTranslationUnit(project, rname);
 							CIndexReference ref= new CIndexReference(tu, rname);
 							ICElement elem = findCalledBy(ref);
 							if (elem != null) {
@@ -271,6 +273,20 @@ public class CIndexQueries {
 		}
 	}
 	
+	private IBinding getPDOMBinding(PDOM pdom, IASTName name) {
+		IBinding binding= name.resolveBinding();
+		IASTTranslationUnit tu= name.getTranslationUnit();
+		ILanguage lang= tu.getLanguage();
+		PDOMLinkage linkage;
+		try {
+			linkage = pdom.getLinkage(lang);
+			return linkage.adaptBinding(binding);
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+		return null;
+	}
+
 	private ICElement findCalledBy(CIndexReference reference) {
 		ITranslationUnit tu= reference.getTranslationUnit();
 		long timestamp= reference.getTimestamp();
@@ -306,41 +322,8 @@ public class CIndexQueries {
 		return null;
 	}
 
-	private ICElement findCElementForDeclaration(ICElement element, int offset, int length) {
-		int endoffset= offset+length;
-		if (element == null) {
-			return null;
-		}
-		try {
-			if (element instanceof IParent) {
-				ICElement[] children= ((IParent) element).getChildren();
-				for (int i = 0; i < children.length; i++) {
-					ICElement child = children[i];
-					if (child instanceof ISourceReference) {
-						ISourceRange sr= ((ISourceReference) child).getSourceRange();
-						int offset2= sr.getIdStartPos();
-						int endoffset2= offset2+sr.getIdLength();
-						if (offset <= offset2 && endoffset2 <= endoffset) {
-							return child;
-						}
-						offset2= sr.getStartPos();
-						endoffset2= offset2+sr.getLength();
-						if (offset2 <= offset && endoffset <= endoffset2) {
-							ICElement result= findCElementForDeclaration(child, offset, length);
-							if (result != null) {
-								return result;
-							}
-						}
-					}
-				}
-			}
-		} catch (CModelException e) {
-			CUIPlugin.getDefault().log(e);
-		}
-		return null;
-	}
 
-	private ITranslationUnit toTranslationUnit(ICProject cproject, IASTName name) {
+	private ITranslationUnit getTranslationUnit(ICProject cproject, IASTName name) {
 		IPath path= Path.fromOSString(name.getFileLocation().getFileName());
 		try {
 			return CModelUtil.findTranslationUnitForLocation(path, cproject);
@@ -361,32 +344,55 @@ public class CIndexQueries {
 	 */
 	public CallsToResult findCallsInRange(ICProject[] scope, ITranslationUnit tu, IRegion range, IProgressMonitor pm) {
 		CallsToResult result= new CallsToResult();
-		IASTTranslationUnit astTU= astUnitForTU(tu);
-		if (astTU != null) {
-			ReferenceVisitor refVisitor= new ReferenceVisitor(astTU.getFilePath(), range.getOffset(), range.getLength());
-			astTU.accept(refVisitor);
-
-			IASTName[] refs = refVisitor.getReferences();
-			for (int i = 0; i < refs.length; i++) {
-				IASTName name = refs[i];
-				ICElement[] defs = findAllDefinitions(scope, name);
-				if (defs.length == 0) {
-					ICElement elem = findAnyDeclaration(scope, name);
-					if (elem != null) {
-						defs = new ICElement[] { elem };
-					}
-				}
-				if (defs != null && defs.length > 0) {
-					CIndexReference ref = new CIndexReference(tu, name);
-					result.add(defs, ref);
-				}
-			}
+		try {
+			findCallsInRange(scope, tu, range, pm, result);
+		}
+		catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} 
+		catch (InterruptedException e) {
 		}
 		return result;
 	}
 	
+	private void findCallsInRange(ICProject[] scope, ITranslationUnit tu, IRegion range, IProgressMonitor pm, CallsToResult result) 
+			throws CoreException, InterruptedException {
+		IPDOM pdom= CCorePlugin.getPDOMManager().getPDOM(tu.getCProject());
+		if (pdom != null) {
+			pdom.acquireReadLock();
+		} 
+		try {
+			ILanguage language = tu.getLanguage();
+			IASTTranslationUnit astTU= language.getASTTranslationUnit(tu, ASTTU_OPTIONS);
+			if (astTU != null) {
+				ReferenceVisitor refVisitor= new ReferenceVisitor(astTU.getFilePath(), range.getOffset(), range.getLength());
+				astTU.accept(refVisitor);
+
+				IASTName[] refs = refVisitor.getReferences();
+				for (int i = 0; i < refs.length; i++) {
+					IASTName name = refs[i];
+					ICElement[] defs = findAllDefinitions(scope, name);
+					if (defs.length == 0) {
+						ICElement elem = findAnyDeclaration(scope, name);
+						if (elem != null) {
+							defs = new ICElement[] { elem };
+						}
+					}
+					if (defs != null && defs.length > 0) {
+						CIndexReference ref = new CIndexReference(tu, name);
+						result.add(defs, ref);
+					}
+				}
+			}
+		}
+		finally {
+			if (pdom != null) {
+				pdom.releaseReadLock();
+			}
+		}
+	}
+	
 	public ICElement[] findAllDefinitions(ICProject[] projectsToSearch, IASTName name) {
-		name.resolveBinding();
 		ArrayList result= new ArrayList();
 		for (int i = 0; i < projectsToSearch.length; i++) {
 			ICProject project = projectsToSearch[i];
@@ -407,7 +413,7 @@ public class CIndexQueries {
 				try {
 					IBinding binding= getPDOMBinding(pdom, name);
 					if (binding != null) {
-						return allEnclosingElements(project, pdom.getDefinitions(binding));
+						return getCElementsForNames(project, pdom.getDefinitions(binding));
 					}
 				}
 				finally {
@@ -422,26 +428,13 @@ public class CIndexQueries {
 		return EMPTY_ELEMENTS;
 	}
 
-	private IBinding getPDOMBinding(PDOM pdom, IASTName name) {
-		IBinding binding= name.resolveBinding();
-		IASTTranslationUnit tu= name.getTranslationUnit();
-		ILanguage lang= tu.getLanguage();
-		PDOMLinkage linkage;
-		try {
-			linkage = pdom.getLinkage(lang);
-			return linkage.adaptBinding(binding);
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		}
-		return null;
-	}
-
-	private ICElement[] allEnclosingElements(ICProject project, IASTName[] defs) {
+	private ICElement[] getCElementsForNames(ICProject project, IASTName[] defs) {
 		if (defs != null && defs.length > 0) {
-			ArrayList result= new ArrayList(defs.length);
+			HashSet result= new HashSet(defs.length);
 			for (int i = 0; i < defs.length; i++) {
 				IASTName defName = defs[i];
-				ICElement elem= findCElementForDeclaration(project, defName);
+				assert !defName.isReference();
+				ICElement elem= getCElementForName(project, defName);
 				if (elem != null) {
 					result.add(elem);
 				}
@@ -451,8 +444,9 @@ public class CIndexQueries {
 		return EMPTY_ELEMENTS;
 	}
 
-	private ICElement findCElementForDeclaration(ICProject project, IASTName declName) {
-		ITranslationUnit tu= toTranslationUnit(project, declName);
+	private ICElement getCElementForName(ICProject project, IASTName declName) {
+		assert !declName.isReference();
+		ITranslationUnit tu= getTranslationUnit(project, declName);
 		if (tu != null) {
 			IRegion region= null;
 			if (declName instanceof PDOMName) {
@@ -470,9 +464,48 @@ public class CIndexQueries {
 				IASTFileLocation loc= declName.getFileLocation();
 				region= new Region(loc.getNodeOffset(), loc.getNodeLength());
 			}
-			return findCElementForDeclaration(tu, region.getOffset(), region.getLength());
+			return getCElementWithRangeOfID(tu, region.getOffset(), region.getLength());
 		}
 		return null;
+	}
+
+	private ICElement getCElementWithRangeOfID(ICElement element, int offset, int length) {
+		if (element == null) {
+			return null;
+		}
+		try {
+			if (element instanceof IParent) {
+				ICElement[] children= ((IParent) element).getChildren();
+				for (int i = 0; i < children.length; i++) {
+					ICElement child = children[i];
+					if (child instanceof ISourceReference) {
+						ISourceRange sr= ((ISourceReference) child).getSourceRange();
+						if (surrounds(offset, length, sr.getIdStartPos(), sr.getIdLength())) {
+							return child;
+						}
+						int childOffset= sr.getStartPos();
+						if (childOffset > offset) {
+							return null;
+						}
+						if (surrounds(childOffset, sr.getLength(), offset, length)) {
+							ICElement result= getCElementWithRangeOfID(child, offset, length);
+							if (result != null) {
+								return result;
+							}
+						}
+					}
+				}
+			}
+		} catch (CModelException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+		return null;
+	}
+
+	private boolean surrounds(int offset1, int length1, int offset2, int length2) {
+		int deltaOffset= offset2-offset1;
+		int deltaEndoffset= deltaOffset + length2 - length1;
+		return deltaOffset >= 0 && deltaEndoffset <= 0;
 	}
 
 	public ICElement findDefinition(ICProject[] projectsToSearch, IASTName name) {
@@ -490,7 +523,7 @@ public class CIndexQueries {
 			
 	public ICElement findDefinition(ICProject project, IASTName name) {
 		if (name.isDefinition()) {
-			return findCElementForDeclaration(project, name);
+			return getCElementForName(project, name);
 		}
 		
 		PDOM pdom;
@@ -501,7 +534,7 @@ public class CIndexQueries {
 				try {
 					IBinding binding= getPDOMBinding(pdom, name);
 					if (binding != null) {
-						ICElement elem= firstEnclosingElement(project, pdom.getDefinitions(binding));
+						ICElement elem= getFirstCElementForNames(project, pdom.getDefinitions(binding));
 						if (elem != null) {
 							return elem;
 						}
@@ -519,11 +552,11 @@ public class CIndexQueries {
 		return null;
 	}
 
-	private ICElement firstEnclosingElement(ICProject project, IASTName[] defs) {
+	private ICElement getFirstCElementForNames(ICProject project, IASTName[] defs) {
 		if (defs != null) {
 			for (int i = 0; i < defs.length; i++) {
 				IASTName defName = defs[i];
-				ICElement elem= findCElementForDeclaration(project, defName);
+				ICElement elem= getCElementForName(project, defName);
 				if (elem != null) {
 					return elem;
 				}
@@ -554,11 +587,11 @@ public class CIndexQueries {
 				try {
 					IBinding binding= getPDOMBinding(pdom, name);
 					if (binding != null) {
-						ICElement elem= firstEnclosingElement(project, pdom.getDefinitions(binding));
+						ICElement elem= getFirstCElementForNames(project, pdom.getDefinitions(binding));
 						if (elem != null) {
 							return elem;
 						}
-						elem= firstEnclosingElement(project, pdom.getDeclarations(binding));
+						elem= getFirstCElementForNames(project, pdom.getDeclarations(binding));
 						if (elem != null) {
 							return elem;
 						}

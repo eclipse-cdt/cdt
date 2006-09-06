@@ -55,7 +55,7 @@ import org.eclipse.cdt.internal.corext.util.CModelUtil;
  * @since 4.0
  */
 public class CIndexQueries {
-    private static final int ASTTU_OPTIONS = ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX;
+    private static final int ASTTU_OPTIONS = ILanguage.AST_SKIP_INDEXED_HEADERS | ILanguage.AST_USE_INDEX;
 	private static final ICElement[] EMPTY_ELEMENTS = new ICElement[0];
     private static final CIndexIncludeRelation[] EMPTY_INCLUDES = new CIndexIncludeRelation[0];
     private static final CIndexQueries sInstance= new CIndexQueries();
@@ -231,6 +231,10 @@ public class CIndexQueries {
 				return;
 			}
 			IASTName name= names[names.length-1];
+			IASTName[] a= ast.getReferences(name.resolveBinding());
+			if (a.length > 0) {
+				a[0]= null;
+			}
 			for (int i = 0; i < scope.length; i++) {
 				ICProject project = scope[i];
 				findCalledBy(name, project, result);					
@@ -274,7 +278,7 @@ public class CIndexQueries {
 	}
 	
 	private IBinding getPDOMBinding(PDOM pdom, IASTName name) {
-		IBinding binding= name.resolveBinding();
+		IBinding binding= name.resolveBinding();		
 		IASTTranslationUnit tu= name.getTranslationUnit();
 		ILanguage lang= tu.getLanguage();
 		PDOMLinkage linkage;

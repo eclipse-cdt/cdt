@@ -22,6 +22,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -130,30 +132,45 @@ public class CallHierarchyUI {
     
 	private static ICElement[] findDefinitions(ICProject project, IEditorInput editorInput, ITextSelection sel) throws CoreException {
 		CIndexQueries index= CIndexQueries.getInstance();
-		IASTName name= getSelectedName(editorInput, sel);
-		if (name != null) {
-			if (name.isDefinition()) {
-				ICElement elem= index.findDefinition(project, name);
-				if (elem != null) {
-					return new ICElement[]{elem};
-				}
+		IPDOM pdom= CCorePlugin.getPDOMManager().getPDOM(project);
+		if (pdom != null) {
+			try {
+				pdom.acquireReadLock();
+			} catch (InterruptedException e) {
+				return null;
 			}
-			else {
-				ICElement[] elems= index.findAllDefinitions(project, name);
-				if (elems.length == 0) {
-					ICProject[] allProjects= CoreModel.getDefault().getCModel().getCProjects();
-					elems= index.findAllDefinitions(allProjects, name);
-					if (elems.length == 0) {
-						ICElement elem= index.findAnyDeclaration(project, name);
-						if (elem == null) {
-							elem= index.findAnyDeclaration(allProjects, name);
-						}
-						if (elem != null) {
-							elems= new ICElement[] {elem};
-						}
+		}
+		try {
+			IASTName name= getSelectedName(editorInput, sel);
+			if (name != null) {
+				if (name.isDefinition()) {
+					ICElement elem= index.findDefinition(project, name);
+					if (elem != null) {
+						return new ICElement[]{elem};
 					}
 				}
-				return elems;
+				else {
+					ICElement[] elems= index.findAllDefinitions(project, name);
+					if (elems.length == 0) {
+						ICProject[] allProjects= CoreModel.getDefault().getCModel().getCProjects();
+						elems= index.findAllDefinitions(allProjects, name);
+						if (elems.length == 0) {
+							ICElement elem= index.findAnyDeclaration(project, name);
+							if (elem == null) {
+								elem= index.findAnyDeclaration(allProjects, name);
+							}
+							if (elem != null) {
+								elems= new ICElement[] {elem};
+							}
+						}
+					}
+					return elems;
+				}
+			}
+		}
+		finally {
+			if (pdom != null) {
+				pdom.releaseReadLock();
 			}
 		}
 		return null;
@@ -168,7 +185,7 @@ public class CallHierarchyUI {
 		if (workingCopy == null)
 			return null;
 		
-		int options= ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX;
+		int options= ILanguage.AST_SKIP_INDEXED_HEADERS | ILanguage.AST_USE_INDEX;
 		IASTTranslationUnit ast = workingCopy.getLanguage().getASTTranslationUnit(workingCopy, options);
 		FindNameForSelectionVisitor finder= new FindNameForSelectionVisitor(ast.getFilePath(), selectionStart, selectionLength);
 		ast.accept(finder);

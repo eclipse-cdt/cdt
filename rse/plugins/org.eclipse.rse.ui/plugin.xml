@@ -571,7 +571,7 @@ Contributors:
             id="org.eclipse.rse.SubSystemsPropertyPage">
       </page>
       <page
-            objectClass="org.eclipse.rse.model.IHost"
+            objectClass="org.eclipse.rse.core.model.IHost"
             name="%PropertyPage.Connection"
             class="org.eclipse.rse.ui.propertypages.SystemConnectionPropertyPage"
             id="org.eclipse.rse.SystemPropertyPage">
@@ -585,57 +585,57 @@ Contributors:
       </page>
       -->
       <page
-            objectClass="org.eclipse.rse.model.IHost"
+            objectClass="org.eclipse.rse.core.model.IHost"
             name="%PropertyPage.Connection.ConnectorServices"
             class="org.eclipse.rse.ui.propertypages.SystemConnectorServicesPropertyPage"
             id="org.eclipse.rse.ui.propertypages.SystemConnectorServicesPropertyPage">
       </page>
       <page
-            objectClass="org.eclipse.rse.filters.ISystemFilterPool"
+            objectClass="org.eclipse.rse.core.filters.ISystemFilterPool"
             name="%PropertyPage.FilterPool"
             class="org.eclipse.rse.ui.propertypages.SystemFilterPoolPropertyPage"
             id="org.eclipse.rse.SystemFilterPoolPropertyPage">
       </page>
       <page
-            objectClass="org.eclipse.rse.filters.ISystemFilterPoolReference"
+            objectClass="org.eclipse.rse.core.filters.ISystemFilterPoolReference"
             name="%PropertyPage.Reference"
             class="org.eclipse.rse.ui.propertypages.SystemFilterPoolReferencePropertyPage"
             id="org.eclipse.rse.SystemFilterPoolReferencePropertyPage">
       </page>
       <page
-            objectClass="org.eclipse.rse.filters.ISystemFilterPoolReference"
+            objectClass="org.eclipse.rse.core.filters.ISystemFilterPoolReference"
             name="%PropertyPage.ReferencedFilterPool"
             class="org.eclipse.rse.ui.propertypages.SystemFilterPoolPropertyPage"
             id="org.eclipse.rse.SystemFilterPoolReferencePropertyPage2">
       </page>
       <page
-            objectClass="org.eclipse.rse.filters.ISystemFilter"
+            objectClass="org.eclipse.rse.core.filters.ISystemFilter"
             name="%PropertyPage.Filter"
             class="org.eclipse.rse.ui.propertypages.SystemFilterPropertyPage"
             id="org.eclipse.rse.SystemFilterPropertyPage">
       </page>
       <page
-            objectClass="org.eclipse.rse.filters.ISystemFilterReference"
+            objectClass="org.eclipse.rse.core.filters.ISystemFilterReference"
             name="%PropertyPage.Filter"
             class="org.eclipse.rse.ui.propertypages.SystemFilterPropertyPage"
             id="org.eclipse.rse.SystemFilterReferencePropertyPage">
       </page>
       <page
-            objectClass="org.eclipse.rse.filters.ISystemFilter"
+            objectClass="org.eclipse.rse.core.filters.ISystemFilter"
             name="%PropertyPage.ChangeFilter"
             class="org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage"
             id="org.eclipse.rse.SystemChangeFilterPropertyPage">
             <filter name="showChangeFilterStringPropertyPage" value="true"/>
       </page>
       <page
-            objectClass="org.eclipse.rse.filters.ISystemFilterReference"
+            objectClass="org.eclipse.rse.core.filters.ISystemFilterReference"
             name="%PropertyPage.ChangeFilter"
             class="org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage"
             id="org.eclipse.rse.SystemChangeFilterReferencePropertyPage">
             <filter name="showChangeFilterStringPropertyPage" value="true"/>
       </page>
       <page
-            objectClass="org.eclipse.rse.filters.ISystemFilterString"
+            objectClass="org.eclipse.rse.core.filters.ISystemFilterString"
             name="%PropertyPage.FilterString"
             class="org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage"
             id="org.eclipse.rse.SystemFilterStringPropertyPage">
@@ -647,7 +647,7 @@ Contributors:
             id="org.eclipse.rse.SystemTeamViewCategoryPropertyPage">
       </page>
       <page
-            objectClass="org.eclipse.rse.model.ISystemProfile"
+            objectClass="org.eclipse.rse.core.model.ISystemProfile"
             name="%PropertyPage.Profile"
             class="org.eclipse.rse.ui.propertypages.SystemTeamViewProfilePropertyPage"
             id="org.eclipse.rse.SystemProfilePropertyPage">

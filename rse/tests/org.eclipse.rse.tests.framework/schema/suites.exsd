@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.rse.tests.framework">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.rse.tests.framework" id="suites" name="Test Suites"/>
+      </appInfo>
+      <documentation>
+         Use this extension point to tell the test framework about the existence of your test suite classes.  Only test suites that use this extension point show up in the Test Suites view.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <documentation>
+            Use this element to register a list of test suites with the framework.  There are two ways to register, using extensions of &lt;code&gt;junit.framework.TestSuite&lt;/code&gt; or using an implementer of &lt;code&gt;org.eclipse.rse.tests.framework.ITestSuiteProvider&lt;/code&gt;.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <choice>
+               <element ref="suite"/>
+               <element ref="type"/>
+            </choice>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the extension point you are extending.  This should be &lt;code&gt;org.eclipse.rse.tests.framework.suites&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  The id of this particular extension.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  The external translatable name of this particular extension.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="suite">
+      <annotation>
+         <documentation>
+            Use this element to describe the existence of a test suite to the framework.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="arg"/>
+         </sequence>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class of the test suite.  This must be an extension of &lt;code&gt;junit.framework.TestSuite&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  This is the name of the test suite that will appear in the test suite view.  If it is not present then the suite provider will be asked for the suite&apos;s name, but that may cause activation of the plugin that contains the suite.  To delay this activation use this attribute.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="arg">
+      <annotation>
+         <documentation>
+            Use this element to describe an argument to the creator of the test suite.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Provide an argument to the &lt;code&gt;getSuite(String)&lt;/code&gt; method of the provider.  This argument can be used to control the generation of the test suite by the provider.  If no argument is provided here then &lt;code&gt;null&lt;/code&gt; is passed.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="type">
+      <annotation>
+         <documentation>
+            Use this element to describe a test suite type and the class that will process it.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.rse.tests.framework.DelegatingTestSuiteHolder"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         Version 1.0.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The framework comes supplied with an example in the plugin &lt;code&gt;org.eclipse.rse.tests.framework.examples&lt;/code&gt;. This example enables several JUnit test suites using both &lt;code&gt;suite&lt;/code&gt; and &lt;code&gt;suiteProvider&lt;/code&gt; declarations. Some suites exhibit failures and some exhibit errors. The rest succeed completely.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         There is no API other than the JUnit API associated with this framework. One only needs to register a test suite with this extension point to have it appear and be runnable from within the Test Suites view.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         Not applicable.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         (c) Copyright IBM Corporation 2004, 2006.
+      </documentation>
+   </annotation>
+
+</schema>

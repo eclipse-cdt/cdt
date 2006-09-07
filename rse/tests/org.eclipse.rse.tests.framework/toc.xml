@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="The Artemis Test Framework">
+	<topic label="Purpose"  href="html/purpose.html"/> 
+	<topic label="Using The Test Suite View"  href="html/view.html"/> 
+	<topic label="Plugging in"  href="html/plugging.html"/> 
+	<topic label="Future Items"  href="html/futures.html"/> 
+</toc>

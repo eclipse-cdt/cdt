@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.resources.ACBuilder;
+import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -31,6 +32,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 public class ErrorParserManager extends OutputStream {
 
@@ -58,6 +60,10 @@ public class ErrorParserManager extends OutputStream {
 	
 	private boolean hasErrors = false;
 
+	// Cygpath helpers
+	private CygPath cygpath;
+	private boolean cygpathInstalled = Platform.getOS().equals(Platform.OS_WIN32);
+	
 	public ErrorParserManager(ACBuilder builder) {
 		this(builder.getProject(), builder);
 	}
@@ -294,6 +300,26 @@ public class ErrorParserManager extends OutputStream {
 		} catch (Exception e) {
 		}
 
+		// That didn't work, see if it is a cygpath
+		if (file == null && cygpathInstalled) {
+			try {
+				if (cygpath == null)
+					cygpath = new CygPath();
+				fp = new Path(cygpath.getFileName(filePath));
+				if (fBaseDirectory.isPrefixOf(fp)) {
+					int segments = fBaseDirectory.matchingFirstSegments(fp);
+					path = fp.removeFirstSegments(segments);
+				} else {
+					path = fp;
+				}
+				file = findFileInWorkspace(path);
+			} catch (IOException e) {
+				// cygpath must not be installed, don't try this again
+				cygpathInstalled = false;
+			} catch (Exception e) {
+			}
+		}
+		
 		// We have to do another try, on Windows for cases like "TEST.C" vs "test.c"
 		// We use the java.io.File canonical path.
 		if (file == null || !file.exists()) {

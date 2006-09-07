@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Service Discovery View Plug-in
+Bundle-SymbolicName: org.eclipse.tm.discovery.view;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.tm.discovery.view.Activator
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui.forms,
+ org.eclipse.tm.discovery.engine,
+ org.eclipse.tm.discovery.model,
+ org.eclipse.tm.discovery.model.edit,
+ org.eclipse.core.resources,
+ org.eclipse.emf.edit.ui;bundle-version="2.2.0",
+ org.eclipse.tm.discovery.wizard,
+ org.eclipse.ui.ide
+Eclipse-LazyStart: false
+Import-Package: org.eclipse.emf.common.ui,
+ org.eclipse.emf.common.util,
+ org.eclipse.tm.discovery.engine,
+ org.eclipse.tm.discovery.model.provider,
+ org.eclipse.tm.discovery.model.util
+Export-Package: org.eclipse.tm.discovery.view
+Bundle-Vendor: Symbian

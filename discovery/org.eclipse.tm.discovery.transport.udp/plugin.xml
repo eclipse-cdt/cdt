@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.tm.discovery.engine.discoveryTransport">
+      <transport
+            class="org.eclipse.tm.discovery.transport.udp.UDPTransport"
+            name="UDP"/>
+   </extension>
+</plugin>

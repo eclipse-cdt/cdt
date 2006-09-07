@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Service Discovery RSE Plug-in
+Bundle-SymbolicName: org.eclipse.rse.discovery;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.rse.discovery.Activator
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.rse.ui,
+ org.eclipse.rse.core,
+ org.eclipse.emf.ecore;bundle-version="2.2.0",
+ org.eclipse.tm.discovery.wizard,
+ org.eclipse.tm.discovery.model
+Eclipse-LazyStart: true
+Bundle-Vendor: Symbian

@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Service Discovery Wizard Pages Plug-in
+Bundle-SymbolicName: org.eclipse.tm.discovery.wizard
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.tm.discovery.wizard.Activator
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.emf.ecore.edit;bundle-version="2.2.0",
+ org.eclipse.emf.edit.ui;bundle-version="2.2.0",
+ org.eclipse.core.runtime,
+ org.eclipse.tm.discovery.engine,
+ org.eclipse.tm.discovery.model,
+ org.eclipse.tm.discovery.model.edit
+Eclipse-LazyStart: true
+Export-Package: org.eclipse.tm.discovery.wizard
+Bundle-Vendor: Symbian

@@ -32,6 +32,10 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -375,16 +379,19 @@ public class CIndexQueries {
 				IASTName[] refs = refVisitor.getReferences();
 				for (int i = 0; i < refs.length; i++) {
 					IASTName name = refs[i];
-					ICElement[] defs = findAllDefinitions(scope, name);
-					if (defs.length == 0) {
-						ICElement elem = findAnyDeclaration(scope, name);
-						if (elem != null) {
-							defs = new ICElement[] { elem };
+					IBinding binding= name.resolveBinding();
+					if (isRelevantForCallHierarchy(binding)) {
+						ICElement[] defs = findAllDefinitions(scope, name);
+						if (defs.length == 0) {
+							ICElement elem = findAnyDeclaration(scope, name);
+							if (elem != null) {
+								defs = new ICElement[] { elem };
+							}
 						}
-					}
-					if (defs != null && defs.length > 0) {
-						CIndexReference ref = new CIndexReference(tu, name);
-						result.add(defs, ref);
+						if (defs != null && defs.length > 0) {
+							CIndexReference ref = new CIndexReference(tu, name);
+							result.add(defs, ref);
+						}
 					}
 				}
 			}
@@ -396,6 +403,16 @@ public class CIndexQueries {
 		}
 	}
 	
+	public boolean isRelevantForCallHierarchy(IBinding binding) {
+		if (binding instanceof ICExternalBinding ||
+				binding instanceof IEnumerator ||
+				binding instanceof IFunction ||
+				binding instanceof IVariable) {
+			return true;
+		}
+		return false;
+	}
+
 	public ICElement[] findAllDefinitions(ICProject[] projectsToSearch, IASTName name) {
 		ArrayList result= new ArrayList();
 		for (int i = 0; i < projectsToSearch.length; i++) {

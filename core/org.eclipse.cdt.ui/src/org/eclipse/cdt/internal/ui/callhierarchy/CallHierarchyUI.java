@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -143,28 +144,31 @@ public class CallHierarchyUI {
 		try {
 			IASTName name= getSelectedName(editorInput, sel);
 			if (name != null) {
-				if (name.isDefinition()) {
-					ICElement elem= index.findDefinition(project, name);
-					if (elem != null) {
-						return new ICElement[]{elem};
-					}
-				}
-				else {
-					ICElement[] elems= index.findAllDefinitions(project, name);
-					if (elems.length == 0) {
-						ICProject[] allProjects= CoreModel.getDefault().getCModel().getCProjects();
-						elems= index.findAllDefinitions(allProjects, name);
-						if (elems.length == 0) {
-							ICElement elem= index.findAnyDeclaration(project, name);
-							if (elem == null) {
-								elem= index.findAnyDeclaration(allProjects, name);
-							}
-							if (elem != null) {
-								elems= new ICElement[] {elem};
-							}
+				IBinding binding= name.resolveBinding();
+				if (index.isRelevantForCallHierarchy(binding)) {
+					if (name.isDefinition()) {
+						ICElement elem= index.findDefinition(project, name);
+						if (elem != null) {
+							return new ICElement[]{elem};
 						}
 					}
-					return elems;
+					else {
+						ICElement[] elems= index.findAllDefinitions(project, name);
+						if (elems.length == 0) {
+							ICProject[] allProjects= CoreModel.getDefault().getCModel().getCProjects();
+							elems= index.findAllDefinitions(allProjects, name);
+							if (elems.length == 0) {
+								ICElement elem= index.findAnyDeclaration(project, name);
+								if (elem == null) {
+									elem= index.findAnyDeclaration(allProjects, name);
+								}
+								if (elem != null) {
+									elems= new ICElement[] {elem};
+								}
+							}
+						}
+						return elems;
+					}
 				}
 			}
 		}
@@ -175,7 +179,6 @@ public class CallHierarchyUI {
 		}
 		return null;
 	}
-
 
 	private static IASTName getSelectedName(IEditorInput editorInput, ITextSelection selection) throws CoreException {
 		int selectionStart = selection.getOffset();

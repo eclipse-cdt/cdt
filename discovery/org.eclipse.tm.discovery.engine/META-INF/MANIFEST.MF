@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Service Discovery Engine Plug-in
+Bundle-SymbolicName: org.eclipse.tm.discovery.engine;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.tm.discovery.engine.Activator
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.emf.ecore.xmi,
+ org.eclipse.tm.discovery.model
+Eclipse-LazyStart: true
+Export-Package: org.eclipse.tm.discovery.engine,
+ org.eclipse.tm.discovery.protocol,
+ org.eclipse.tm.discovery.transport
+Import-Package: org.eclipse.tm.discovery.model,
+ org.eclipse.tm.discovery.model.util
+Bundle-Vendor: Symbian

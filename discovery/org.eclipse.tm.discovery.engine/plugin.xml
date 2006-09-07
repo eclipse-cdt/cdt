@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+	<extension-point id="discoveryTransport" name="discoveryTransport" schema="schema/discoveryTransport.exsd"/>
+	<extension-point id="discoveryProtocol" name="discoveryProtocol" schema="schema/discoveryProtocol.exsd"/>
+</plugin>

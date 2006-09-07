@@ -77,6 +77,7 @@ public class CallHierarchyBaseTest extends BaseTestCase {
 			
 			Thread.sleep(50);
 		} while (System.currentTimeMillis() < endTime);
+		throw new Exception("Indexer did not complete in time!");
 	}
 
 	protected void openCallHierarchy(CEditor editor) {

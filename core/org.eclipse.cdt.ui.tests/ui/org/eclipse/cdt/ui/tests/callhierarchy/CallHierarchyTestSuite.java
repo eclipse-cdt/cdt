@@ -21,7 +21,7 @@ public class CallHierarchyTestSuite extends TestSuite {
     
     public CallHierarchyTestSuite() {
         super("Tests in package org.eclipse.cdt.ui.tests.callhierarchy");
-        addTestSuite(BasicCallHierarchyTest.class);
-        addTest(BasicCallHierarchyTest.getFailingTests());
+        addTest(BasicCallHierarchyTest.getSuite());
+        addTest(BasicCppCallHierarchyTest.getSuite());
     }
 }

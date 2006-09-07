@@ -36,8 +36,15 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		super(name);
 	}
 
-	public static Test getFailingTests() {
-		TestSuite suite= new TestSuite("Failing Tests of BasicCallHierarchyTest");
+	public static Test getSuite() {
+		TestSuite suite= new TestSuite("BasicCallHierarchyTest");
+		suite.addTestSuite(BasicCallHierarchyTest.class);
+		suite.addTest(getFailingTests());
+		return suite;
+	}
+
+	private static Test getFailingTests() {
+		TestSuite suite= new TestSuite("Failing Tests");
         suite.addTest(getFailingTest("_testAnonymousEnumeratorC"));
         suite.addTest(getFailingTest("_testAnonymousEnumeratorCpp"));
         suite.addTest(getFailingTest("_testAnonymousStructMembersC"));

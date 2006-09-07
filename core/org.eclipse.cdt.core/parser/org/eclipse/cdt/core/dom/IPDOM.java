@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
 
@@ -71,8 +72,26 @@ public interface IPDOM extends IAdaptable {
 	
 	public ICodeReaderFactory getCodeReaderFactory(IWorkingCopy root);
 	
+	/**
+	 * When accessing a PDOM and working with its objects it's neccessary to hold
+	 * a read-lock on the PDOM. Make sure to release it: <pre> 
+	 * pdom.acquireReadLock(); 
+	 * try {
+	 *     // do what you have to do.
+	 * }
+	 * finally {
+	 *     pdom.releaseReadLock();
+	 * } </pre>
+	 * @throws InterruptedException
+	 * @since 4.0
+	 */
 	public void acquireReadLock() throws InterruptedException;
 	public void releaseReadLock();
+	
+	/**
+	 * You must not hold any other lock on any PDOM when acquiring a write lock.
+	 * Failing to do so may lead to dead-locks.
+	 */
 	public void acquireWriteLock() throws InterruptedException;
 	public void releaseWriteLock();
 	

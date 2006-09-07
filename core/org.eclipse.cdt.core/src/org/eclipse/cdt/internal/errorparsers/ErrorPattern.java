@@ -125,13 +125,10 @@ public class ErrorPattern {
 		IFile file = null;
 		if (fileName != null) {
 			file = eoParser.findFileName(fileName);
-			if (file != null) {
-				if (eoParser.isConflictingName(fileName)) {
-					file = null;
-				}
-			} else {
+			if (file == null || eoParser.isConflictingName(fileName)) {
 				file = eoParser.findFilePath(fileName);
 			}
+			
 			if (file == null) {
 				desc = fileName + " " + desc; //$NON-NLS-1$
 			}

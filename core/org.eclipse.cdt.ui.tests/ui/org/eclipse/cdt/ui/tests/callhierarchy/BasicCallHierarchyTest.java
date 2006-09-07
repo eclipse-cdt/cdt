@@ -23,20 +23,18 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import org.eclipse.cdt.core.tests.FailingTest;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 
 public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	
-	private static final int EVENT_QUEUE_MILLIS = 100;
-
 	public BasicCallHierarchyTest(String name) {
 		super(name);
 	}
 
-	public static Test getSuite() {
+	public static Test suite() {
 		TestSuite suite= new TestSuite("BasicCallHierarchyTest");
 		suite.addTestSuite(BasicCallHierarchyTest.class);
 		suite.addTest(getFailingTests());
@@ -54,8 +52,10 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
         return suite;
 	}
 
-	private static FailingTest getFailingTest(String name) {
-		return new FailingTest(new BasicCallHierarchyTest(name));
+	private static Test getFailingTest(String name) {
+		BaseTestCase failingTest= new BasicCallHierarchyTest(name);
+		failingTest.setExpectFailure(0);
+		return failingTest;
 	}
 
 	public void testFunctionsC() throws Exception {
@@ -77,33 +77,29 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestFunctions(String filename) throws IOException, Exception, PartInitException {
 		String content = readTaggedComment("testFunctions");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(file, 1000);
+		waitForIndexer(fPdom, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("proto"), 5);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		Tree tree = getCHTree(page);
 		checkTreeNode(tree, 0, "proto()");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("func"), 2);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "func()");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("proto(); //ref"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "proto()");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("func(); //ref"), 7);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "func()");
 		checkTreeNode(tree, 0, 0, "main()");
@@ -127,33 +123,29 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestVariables(String filename) throws Exception {
 		String content = readTaggedComment("testVariables");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(file, 1000);
+		waitForIndexer(fPdom, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("extern_var"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		Tree tree = getCHTree(page);
 		checkTreeNode(tree, 0, "extern_var");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("global_var"), 2);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "global_var");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("extern_var; //ref"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "extern_var");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("global_var; //ref"), 7);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "global_var");
 		checkTreeNode(tree, 0, 0, "main()");
@@ -189,32 +181,28 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestEnumerator(String filename, String contentTag) throws Exception {
 		String content = readTaggedComment(contentTag);
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(file, 1000);
+		waitForIndexer(fPdom, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("enumerator"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		Tree tree = getCHTree(page);
 		checkTreeNode(tree, 0, "enumerator");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("main"), 2);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("enumerator; //ref"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "enumerator");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("main"), 2);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "main()");
 	}
 	
@@ -258,56 +246,48 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestStructMembers(String filename) throws Exception {
 		String content = readTaggedComment("testStructMembers");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(file, 1000);
+		waitForIndexer(fPdom, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		Tree tree = getCHTree(page);
 		checkTreeNode(tree, 0, "s1::mem1");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem2"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "s2::mem2");
 		checkTreeNode(tree, 0, 0, "main()");
 		
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "(anon)::mem3");
 
 		editor.selectAndReveal(content.indexOf("mem4"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "s4::mem4");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "s4::(anon)::mem5");
 
 		editor.selectAndReveal(content.indexOf("mem1; //ref"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "s1::mem1");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem2; //ref"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "s2::mem2");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "s4::mem4");
 		checkTreeNode(tree, 0, 0, "main()");
@@ -324,33 +304,29 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestAnonymousStructMembers(String filename) throws Exception {
 		String content = readTaggedComment("testStructMembers");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(file, 1000);
+		waitForIndexer(fPdom, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		Tree tree = getCHTree(page);
 		checkTreeNode(tree, 0, "(anon)::mem3");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "s4::(anon)::mem5");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem3; //ref"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "(anon)::mem3");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem5; //ref"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "s4::(anon)::mem5");
 		checkTreeNode(tree, 0, 0, "main()");
@@ -402,56 +378,48 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestUnionMembers(String filename) throws Exception {
 		String content = readTaggedComment("testUnionMembers");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(file, 1000);
+		waitForIndexer(fPdom, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		Tree tree = getCHTree(page);
 		checkTreeNode(tree, 0, "u1::mem1");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem2"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "u2::mem2");
 		checkTreeNode(tree, 0, 0, "main()");
 		
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "(anon)::mem3");
 
 		editor.selectAndReveal(content.indexOf("mem4"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "u4::mem4");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "u4::(anon)::mem5");
 
 		editor.selectAndReveal(content.indexOf("mem1; //ref"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "u1::mem1");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem2; //ref"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "u2::mem2");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "u4::mem4");
 		checkTreeNode(tree, 0, 0, "main()");
@@ -468,33 +436,29 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestAnonymousUnionMembers(String filename) throws Exception {
 		String content = readTaggedComment("testUnionMembers");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(file, 1000);
+		waitForIndexer(fPdom, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		Tree tree = getCHTree(page);
 		checkTreeNode(tree, 0, "(anon)::mem3");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		checkTreeNode(tree, 0, "u4::(anon)::mem5");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem3; //ref"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "(anon)::mem3");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem5; //ref"), 0);
 		openCallHierarchy(editor);
-		runEventQueue(EVENT_QUEUE_MILLIS);
 		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "u4::(anon)::mem5");
 		checkTreeNode(tree, 0, 0, "main()");

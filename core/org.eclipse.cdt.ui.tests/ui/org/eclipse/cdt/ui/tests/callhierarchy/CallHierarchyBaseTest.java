@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -28,7 +27,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseTestCase;
 
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 
 import org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart;
 import org.eclipse.cdt.internal.ui.callhierarchy.CallHierarchyUI;
@@ -37,7 +35,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 public class CallHierarchyBaseTest extends BaseTestCase {
 	
 	private ICProject fCProject;
-	private PDOM fPdom;
+	public PDOM fPdom;
 
 	public CallHierarchyBaseTest(String name) {
 		super(name);
@@ -60,32 +58,14 @@ public class CallHierarchyBaseTest extends BaseTestCase {
 		return fCProject.getProject();
 	}
 	
-	protected void waitForIndexer(IFile file, int maxmillis) throws Exception {
-		long endTime= System.currentTimeMillis() + maxmillis;
-		do {
-			fPdom.acquireReadLock();
-			try {
-				PDOMFile pfile= fPdom.getFile(file.getLocation());
-				// mstodo check timestamp
-				if (pfile != null) {
-					return;
-				}
-			}
-			finally {
-				fPdom.releaseReadLock();
-			}
-			
-			Thread.sleep(50);
-		} while (System.currentTimeMillis() < endTime);
-		throw new Exception("Indexer did not complete in time!");
-	}
-
 	protected void openCallHierarchy(CEditor editor) {
 		CallHierarchyUI.setIsJUnitTest(true);
 		CallHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
+		runEventQueue(0);
 	}
 
 	protected Tree getCHTree(IWorkbenchPage page) {
+		runEventQueue(0);
 		CHViewPart ch= (CHViewPart)page.findView(CUIPlugin.ID_CALL_HIERARCHY);
 		assertNotNull(ch);
 		Tree tree= ch.getTreeViewer().getTree();
@@ -103,7 +83,13 @@ public class CallHierarchyBaseTest extends BaseTestCase {
 	protected void checkTreeNode(Tree tree, int i0, String label) {
 		TreeItem root= null;
 		try {
-			root= tree.getItem(i0);
+			for (int i=0; i<20; i++) {
+				root= tree.getItem(i0);
+				if (!"...".equals(root.getText())) {
+					break;
+				}
+				runEventQueue(50);
+			}
 		}
 		catch (IllegalArgumentException e) {
 			assertTrue("Tree node " + label + "{" + i0 + "} does not exist!", false);
@@ -112,14 +98,19 @@ public class CallHierarchyBaseTest extends BaseTestCase {
 	}
 
 	protected void checkTreeNode(Tree tree, int i0, int i1, String label) {
-		TreeItem item= null;
 		try {
 			TreeItem root= tree.getItem(i0);
-			item= root.getItem(i1);
+			TreeItem item= root.getItem(i1);
+			for (int i=0; i<20; i++) {
+				if (!"...".equals(item.getText())) {
+					break;
+				}
+				runEventQueue(50);
+			}
+			assertEquals(label, item.getText());
 		}
 		catch (IllegalArgumentException e) {
 			assertTrue("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!", false);
 		}
-		assertEquals(label, item.getText());
 	}
 }

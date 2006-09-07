@@ -235,10 +235,6 @@ public class CIndexQueries {
 				return;
 			}
 			IASTName name= names[names.length-1];
-			IASTName[] a= ast.getReferences(name.resolveBinding());
-			if (a.length > 0) {
-				a[0]= null;
-			}
 			for (int i = 0; i < scope.length; i++) {
 				ICProject project = scope[i];
 				findCalledBy(name, project, result);					

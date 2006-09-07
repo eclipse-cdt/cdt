@@ -17,18 +17,34 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+import junit.framework.TestFailure;
+import junit.framework.TestResult;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
+
 public class BaseTestCase extends TestCase {
+	private boolean fExpectFailure= false;
+	private int fBugnumber= 0;
+	
 	public BaseTestCase() {
 		super();
 	}
@@ -36,6 +52,39 @@ public class BaseTestCase extends TestCase {
 	public BaseTestCase(String name) {
 		super(name);
 	}
+
+    public void run( TestResult result ) {
+    	if (!fExpectFailure) {
+    		super.run(result);
+    		return;
+    	}
+    	
+        result.startTest( this );
+        
+        TestResult r = new TestResult();
+        super.run( r );
+        if (r.failureCount() == 1) {
+        	TestFailure failure= (TestFailure) r.failures().nextElement();
+        	String msg= failure.exceptionMessage();
+        	if (msg != null && msg.startsWith("Method \"" + getName() + "\"")) {
+        		result.addFailure(this, new AssertionFailedError(msg));
+        	}
+        }
+        else if( r.errorCount() == 0 && r.failureCount() == 0 )
+        {
+            String err = "Unexpected success"; //$NON-NLS-1$
+            if( fBugnumber != -1 )
+                err += ", bug #" + fBugnumber; //$NON-NLS-1$
+            result.addFailure( this, new AssertionFailedError( err ) );
+        }
+        
+        result.endTest( this );
+    }
+    
+    public void setExpectFailure(int bugnumber) {
+    	fExpectFailure= true;
+    	fBugnumber= bugnumber;
+    }
 
 	/**
 	 * Reads a section in comments form the source of the given class. The section
@@ -119,4 +168,37 @@ public class BaseTestCase extends TestCase {
     protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {
     	return createFile(container, new Path(fileName), contents);
     }
+    
+    protected IASTTranslationUnit createPDOMBasedAST(ICProject project, IFile file) throws CModelException, CoreException {
+    	ICElement elem= project.findElement(file.getFullPath());
+    	if (elem instanceof ITranslationUnit) {
+    		ITranslationUnit tu= (ITranslationUnit) elem;
+    		if (tu != null) {
+    			return tu.getLanguage().getASTTranslationUnit(tu, ILanguage.AST_SKIP_INDEXED_HEADERS |ILanguage.AST_USE_INDEX);
+    		}
+    	}
+    	fail("Could not create ast for " + file.getFullPath());
+    	return null;
+    }
+
+	protected void waitForIndexer(PDOM pdom, IFile file, int maxmillis) throws Exception {
+		long endTime= System.currentTimeMillis() + maxmillis;
+		do {
+			pdom.acquireReadLock();
+			try {
+				PDOMFile pfile= pdom.getFile(file.getLocation());
+				// mstodo check timestamp
+				if (pfile != null) {
+					return;
+				}
+			}
+			finally {
+				pdom.releaseReadLock();
+			}
+			
+			Thread.sleep(50);
+		} while (System.currentTimeMillis() < endTime);
+		throw new Exception("Indexer did not complete in time!");
+	}
+
 }

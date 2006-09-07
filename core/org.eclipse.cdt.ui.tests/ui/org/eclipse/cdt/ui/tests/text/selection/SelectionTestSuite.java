@@ -23,6 +23,7 @@ public class SelectionTestSuite extends TestSuite {
         super("Tests in package org.eclipse.cdt.ui.tests.text.selection");
         
         // selection tests
+        addTest( ResolveBindingTests.suite() );
         addTest( CPPSelectionTestsNoIndexer.suite() );
 		addTest( CSelectionTestsNoIndexer.suite() );
 		addTest( CPPSelectionTestsDOMIndexer.suite() );

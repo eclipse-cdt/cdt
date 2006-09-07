@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: DNS Service Discovery Plug-in
+Bundle-SymbolicName: org.eclipse.tm.discovery.protocol.dnssd;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.tm.discovery.protocol.dnssd.Activator
+Bundle-Vendor: Symbian
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.tm.discovery.engine,
+ org.eclipse.tm.discovery.model,
+ org.eclipse.emf.ecore;bundle-version="2.2.0"
+Eclipse-LazyStart: true

@@ -111,6 +111,10 @@ public class BasicTokenDuple implements ITokenDuple {
 			if( token.getType() == IToken.tLT )
 				token = TokenFactory.consumeTemplateIdArguments( token, last );
 			if( token.getType() == IToken.tCOLONCOLON  ){
+				if( startOfSegment == token ){
+					//an empty segment, prev is not valid (and neither is the code)
+					prev = null;
+				}
 			    ITokenDuple d = TokenFactory.createTokenDuple( startOfSegment, ( prev == null ) ? startOfSegment : prev );
 			    r.add( d );
 			    startOfSegment = token.getNext();

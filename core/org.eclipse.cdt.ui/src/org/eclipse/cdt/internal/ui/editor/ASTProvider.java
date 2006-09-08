@@ -28,6 +28,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
@@ -93,12 +94,10 @@ public final class ASTProvider {
 	 */
 	public static final WAIT_FLAG WAIT_NO= new WAIT_FLAG("don't wait"); //$NON-NLS-1$
 
-	public static int PARSE_MODE_FULL= ILanguage.AST_SKIP_IF_NO_BUILD_INFO;
-	public static int PARSE_MODE_FAST= ILanguage.AST_SKIP_IF_NO_BUILD_INFO | ILanguage.AST_SKIP_INDEXED_HEADERS;
-	public static int PARSE_MODE_FAST_INDEX= ILanguage.AST_SKIP_IF_NO_BUILD_INFO | ILanguage.AST_SKIP_INDEXED_HEADERS | ILanguage.AST_USE_INDEX;
-	public static int PARSE_MODE_INDEX= ILanguage.AST_SKIP_IF_NO_BUILD_INFO | ILanguage.AST_USE_INDEX;
-
-	public static int PARSE_MODE= PARSE_MODE_FULL;
+	/** Full parse mode (no PDOM) */
+	public static int PARSE_MODE_FULL= 0;
+	/** Fast parse mode (use PDOM) */
+	public static int PARSE_MODE_FAST= ILanguage.AST_SKIP_INDEXED_HEADERS | ILanguage.AST_USE_INDEX;
 	
 	/**
 	 * Tells whether this class is in debug mode.
@@ -232,6 +231,7 @@ public final class ASTProvider {
 
 	private ICElement fReconcilingCElement;
 	private ICElement fActiveCElement;
+	private IPositionConverter fActivePositionConverter;
 	private IASTTranslationUnit fAST;
 	private ActivationListener fActivationListener;
 	private Object fReconcileLock= new Object();
@@ -239,7 +239,8 @@ public final class ASTProvider {
 	private boolean fIsReconciling;
 	private IWorkbenchPart fActiveEditor;
 
-	
+	protected int fParseMode= PARSE_MODE_FAST;
+
 	/**
 	 * Returns the C plug-in's AST provider.
 	 * 
@@ -280,7 +281,7 @@ public final class ASTProvider {
 		synchronized (this) {
 			fActiveEditor= editor;
 			fActiveCElement= cElement;
-			cache(null, cElement);
+			cache(null, null, cElement);
 		}
 
 		if (DEBUG)
@@ -337,7 +338,7 @@ public final class ASTProvider {
 			fIsReconciling= true;
 			fReconcilingCElement= cElement;
 		}
-		cache(null, cElement);
+		cache(null, null, cElement);
 	}
 
 	/**
@@ -353,7 +354,7 @@ public final class ASTProvider {
 
 		fAST= null;
 
-		cache(null, null);
+		cache(null, null, null);
 	}
 
 	/**
@@ -393,7 +394,7 @@ public final class ASTProvider {
 	 * @param ast
 	 * @param cElement
 	 */
-	private synchronized void cache(IASTTranslationUnit ast, ICElement cElement) {
+	private synchronized void cache(IASTTranslationUnit ast, IPositionConverter converter, ICElement cElement) {
 
 		if (fActiveCElement != null && !fActiveCElement.equals(cElement)) {
 			if (DEBUG && cElement != null) // don't report call from disposeAST()
@@ -408,6 +409,7 @@ public final class ASTProvider {
 			disposeAST();
 
 		fAST= ast;
+		fActivePositionConverter= converter;
 
 		// Signal AST change
 		synchronized (fWaitLock) {
@@ -502,9 +504,9 @@ public final class ASTProvider {
 				if (fAST != null) {
 					if (DEBUG)
 						System.out.println(getThreadName() + " - " + DEBUG_PREFIX + "Ignore created AST for " + cElement.getElementName() + "- AST from reconciler is newer"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					reconciled(fAST, cElement, null);
+					reconciled(fAST, fActivePositionConverter, cElement, null);
 				} else
-					reconciled(ast, cElement, null);
+					reconciled(ast, null, cElement, null);
 			}
 		}
 
@@ -550,7 +552,7 @@ public final class ASTProvider {
 					if (progressMonitor != null && progressMonitor.isCanceled()) {
 						root[0]= null;
 					} else {
-						root[0]= tu.getLanguage().getASTTranslationUnit(tu, PARSE_MODE);
+						root[0]= tu.getLanguage().getASTTranslationUnit(tu, fParseMode);
 					}
 				} catch (OperationCanceledException ex) {
 					root[0]= null;
@@ -601,9 +603,9 @@ public final class ASTProvider {
 	}
 
 	/*
-	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(org.eclipse.cdt.core.dom.IASTTranslationUnit)
+	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled()
 	 */
-	void reconciled(IASTTranslationUnit ast, ICElement cElement, IProgressMonitor progressMonitor) {
+	void reconciled(IASTTranslationUnit ast, IPositionConverter converter, ICElement cElement, IProgressMonitor progressMonitor) {
 
 		if (DEBUG)
 			System.out.println(getThreadName() + " - " + DEBUG_PREFIX + "reconciled: " + toString(cElement) + ", AST: " + toString(ast)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -624,7 +626,7 @@ public final class ASTProvider {
 				return;
 			}
 
-			cache(ast, cElement);
+			cache(ast, converter, cElement);
 		}
 	}
 
@@ -634,6 +636,17 @@ public final class ASTProvider {
 			return name;
 		else
 			return Thread.currentThread().toString();
+	}
+
+	/**
+	 * @param element
+	 * @return the position converter for the AST of the active element or <code>null</code>
+	 */
+	public IPositionConverter getActivePositionConverter(ICElement element) {
+		if (fActiveCElement == element) {
+			return fActivePositionConverter;
+		}
+		return null;
 	}
 	
 }

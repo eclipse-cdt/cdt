@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     IBM Corp. - Rational Software
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -435,6 +436,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 			}
 		};
 		CCorePlugin.getDefault().getDOM().setWorkingCopyProvider(workingCopyProvider);
+		
+		// init ast provider
+		getASTProvider();
 	}
 
 	/* (non-Javadoc)

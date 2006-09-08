@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -400,6 +401,56 @@ public class PreferenceConstants {
 	public static final String EDITOR_FOLDING_MACROS= "editor_folding_default_macros"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that stores the value for comment folding for the default folding provider.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_FOLDING_COMMENTS= "editor_folding_default_comments"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that stores the value for header comment folding for the default folding provider.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_FOLDING_HEADERS= "editor_folding_default_headers"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that stores the value for inactive code folding for the default folding provider.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_FOLDING_INACTIVE_CODE= "editor_folding_default_inactive"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether folding of preprocessor branches is enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED= "editor_folding_preprocessor_enabled"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether folding of comments is enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_FOLDING_COMMENTS_ENABLED= "editor_folding_comments_enabled"; //$NON-NLS-1$
+	
+	/**
 	 * A named preference that controls if templates are formatted when applied.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -545,6 +596,11 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_STRUCTURES, true);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_METHODS, false);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_MACROS, true);
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_COMMENTS, false);
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_HEADERS, true);
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, true);
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_COMMENTS_ENABLED, false);
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, false);
 
 		store.setDefault(PreferenceConstants.EDITOR_CLOSE_STRINGS, true);
 		store.setDefault(PreferenceConstants.EDITOR_CLOSE_BRACKETS, true);

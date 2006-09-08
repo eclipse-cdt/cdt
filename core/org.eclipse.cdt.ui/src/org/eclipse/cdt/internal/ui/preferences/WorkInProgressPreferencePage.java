@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,7 +84,10 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 		result.setLayout(layout);
 
 		// Add your controls here
-		addCheckBox(result, "Semantic Highlighting", PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED); //$NON-NLS-1$
+		addCheckBox(result, "Enable semantic highlighting", PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED); //$NON-NLS-1$	
+		addCheckBox(result, "Enable folding of preprocessor branches (#if/#endif)", PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED); //$NON-NLS-1$	
+		addCheckBox(result, "Enable comment folding", PreferenceConstants.EDITOR_FOLDING_COMMENTS_ENABLED); //$NON-NLS-1$	
+		
 		applyDialogFont(result);
 		return result;
 	}

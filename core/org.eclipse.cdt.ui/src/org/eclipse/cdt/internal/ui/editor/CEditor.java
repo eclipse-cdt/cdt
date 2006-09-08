@@ -2183,7 +2183,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			return;
 		
 		// Always notify AST provider
-		cuiPlugin.getASTProvider().reconciled(ast, getInputCElement(), progressMonitor);
+		cuiPlugin.getASTProvider().reconciled(ast, positionTracker, getInputCElement(), progressMonitor);
 
 		// Notify listeners
 		Object[] listeners = fReconcilingListeners.getListeners();
@@ -2200,10 +2200,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * @param listener	The reconcile listener to be added
 	 * @since 4.0
 	 */
-	final void addReconcileListener(ICReconcilingListener listener) {
-		synchronized (fReconcilingListeners) {
-			fReconcilingListeners.add(listener);
-		}
+	final public void addReconcileListener(ICReconcilingListener listener) {
+		fReconcilingListeners.add(listener);
 	}
 
 	/**
@@ -2213,10 +2211,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * @param listener	the reconcile listener to be removed
 	 * @since 4.0
 	 */
-	final void removeReconcileListener(ICReconcilingListener listener) {
-		synchronized (fReconcilingListeners) {
-			fReconcilingListeners.remove(listener);
-		}
+	final public void removeReconcileListener(ICReconcilingListener listener) {
+		fReconcilingListeners.remove(listener);
 	}
 
 	/**

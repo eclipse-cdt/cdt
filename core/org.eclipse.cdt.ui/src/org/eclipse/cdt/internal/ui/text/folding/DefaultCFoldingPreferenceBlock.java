@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.folding;
@@ -64,6 +65,9 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_FUNCTIONS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_METHODS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_STRUCTURES));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_COMMENTS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_HEADERS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE));
 		
 		return (OverlayKey[]) overlayKeys.toArray(new OverlayKey[overlayKeys.size()]);
 	}
@@ -88,6 +92,9 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 		addCheckBox(inner, FoldingMessages.getString("DefaultCFoldingPreferenceBlock.functions"), PreferenceConstants.EDITOR_FOLDING_FUNCTIONS, 0); //$NON-NLS-1$
 		addCheckBox(inner, FoldingMessages.getString("DefaultCFoldingPreferenceBlock.methods"), PreferenceConstants.EDITOR_FOLDING_METHODS, 0); //$NON-NLS-1$
 		addCheckBox(inner, FoldingMessages.getString("DefaultCFoldingPreferenceBlock.structures"), PreferenceConstants.EDITOR_FOLDING_STRUCTURES, 0); //$NON-NLS-1$
+		addCheckBox(inner, FoldingMessages.getString("DefaultCFoldingPreferenceBlock.comments"), PreferenceConstants.EDITOR_FOLDING_COMMENTS, 0); //$NON-NLS-1$
+		addCheckBox(inner, FoldingMessages.getString("DefaultCFoldingPreferenceBlock.headers"), PreferenceConstants.EDITOR_FOLDING_HEADERS, 0); //$NON-NLS-1$
+		addCheckBox(inner, FoldingMessages.getString("DefaultCFoldingPreferenceBlock.inactive_code"), PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, 0); //$NON-NLS-1$
 		
 		return inner;
 	}

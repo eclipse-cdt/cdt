@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -154,7 +155,7 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     public String getDefaultIndexerId() {
     	IPreferencesService prefService = Platform.getPreferencesService();
     	return prefService.getString(CCorePlugin.PLUGIN_ID, INDEXER_ID_KEY,
-    			PDOMNullIndexer.ID, null);
+    			CCorePlugin.DEFAULT_INDEXER, null);
     }
     
     public void setDefaultIndexerId(String indexerId) {

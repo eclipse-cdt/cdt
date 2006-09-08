@@ -416,8 +416,8 @@ public class IndexerBlock extends AbstractCOptionPage {
 		initialSelected = indexerID;
 		
 		if (selectedIndexerId == null){
-			CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, PDOMNullIndexer.ID);
-			selectedIndexerId = PDOMNullIndexer.ID;
+			CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, CCorePlugin.DEFAULT_INDEXER);
+			selectedIndexerId = CCorePlugin.DEFAULT_INDEXER;
 		}
 		
 		//Set the appropriate indexer in the combo box

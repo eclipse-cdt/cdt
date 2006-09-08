@@ -40,6 +40,7 @@ import org.eclipse.cdt.internal.core.model.DeltaProcessor;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
+import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -82,7 +83,8 @@ public class CCorePlugin extends Plugin {
 	
 	public static final String INDEXER_SIMPLE_ID = "CIndexer"; //$NON-NLS-1$
 	public static final String INDEXER_UNIQ_ID = PLUGIN_ID + "." + INDEXER_SIMPLE_ID; //$NON-NLS-1$
-	public final static String PREF_INDEXER = "indexer"; //$NON-NLS-1$
+	public static final String PREF_INDEXER = "indexer"; //$NON-NLS-1$
+	public static final String DEFAULT_INDEXER = PDOMFastIndexer.ID;
 	
 	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
 

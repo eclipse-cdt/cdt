@@ -135,7 +135,7 @@ public class ServiceDiscoveryWizardDisplayPage extends WizardPage {
 		//load all service id's from the extension point registry
 		//this id will be used to filter the supported services in the view
 		
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.ui","subsystemConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.ui","subsystemConfigurations"); //$NON-NLS-1$ //$NON-NLS-2$
 		IConfigurationElement[] ce = ep.getConfigurationElements();
 		for (int i = 0; i < ce.length; i++) {
 			String id = ce[i].getAttribute("id"); //$NON-NLS-1$

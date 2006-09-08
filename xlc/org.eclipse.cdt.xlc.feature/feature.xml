@@ -3,7 +3,8 @@
       id="org.eclipse.cdt.xlc.feature"
       label="%featureName"
       version="1.0.0"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      image="eclipse_update_120.jpg">
 
    <description>
       %description

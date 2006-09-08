@@ -27,6 +27,8 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	
+	private static final int MAX_TIME_INDEXER = 2000;
+
 	public BasicCppCallHierarchyTest(String name) {
 		super(name);
 	}
@@ -40,15 +42,15 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 
 	private static Test getFailingTests() {
 		TestSuite suite= new TestSuite("Failing Tests");
-		suite.addTest(getFailingTest("_testAutomaticConstructor"));
-		suite.addTest(getFailingTest("_testDestructor"));
-		suite.addTest(getFailingTest("_testNamespacePart2"));
+		suite.addTest(getFailingTest("_testAutomaticConstructor", 156668));
+		suite.addTest(getFailingTest("_testDestructor", 156669));
+		suite.addTest(getFailingTest("_testNamespacePart2", 156519));
         return suite;
 	}
 
-	private static Test getFailingTest(String name) {
+	private static Test getFailingTest(String name, int bugzilla) {
 		BaseTestCase failingTest= new BasicCppCallHierarchyTest(name);
-		failingTest.setExpectFailure(0);
+		failingTest.setExpectFailure(bugzilla);
 		return failingTest;
 	}
 
@@ -75,7 +77,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testMethods() throws Exception {
 		String content = readTaggedComment("testMethods");
 		IFile file= createFile(getProject(), "testMethods.cpp", content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -159,7 +161,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testStaticMethods() throws Exception {
 		String content = readTaggedComment("testStaticMethods");
 		IFile file= createFile(getProject(), "testStaticMethods.cpp", content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -248,7 +250,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testFields() throws Exception {
 		String content = readTaggedComment("testFields");
 		IFile file= createFile(getProject(), "testFields.cpp", content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -323,7 +325,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void _testAutomaticConstructor() throws Exception {
 		String content = readTaggedComment("testAutomaticConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -353,7 +355,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testConstructor() throws Exception {
 		String content = readTaggedComment("testConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -367,7 +369,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void _testDestructor() throws Exception {
 		String content = readTaggedComment("testConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -403,7 +405,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testNamespace() throws Exception {
 		String content = readTaggedComment("testNamespace");
 		IFile file= createFile(getProject(), "testNamespace.cpp", content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -461,7 +463,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void _testNamespacePart2() throws Exception {
 		String content = readTaggedComment("testNamespace");
 		IFile file= createFile(getProject(), "testNamespace.cpp", content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 

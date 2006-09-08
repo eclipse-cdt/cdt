@@ -43,18 +43,18 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 	private static Test getFailingTests() {
 		TestSuite suite= new TestSuite("Failing Tests");
-        suite.addTest(getFailingTest("_testAnonymousEnumeratorC"));
-        suite.addTest(getFailingTest("_testAnonymousEnumeratorCpp"));
-        suite.addTest(getFailingTest("_testAnonymousStructMembersC"));
-        suite.addTest(getFailingTest("_testAnonymousStructMembersCpp"));
-        suite.addTest(getFailingTest("_testAnonymousUnionMembersC"));
-        suite.addTest(getFailingTest("_testAnonymousUnionMembersCpp"));
+        suite.addTest(getFailingTest("_testAnonymousEnumeratorC", 156671));
+        suite.addTest(getFailingTest("_testAnonymousEnumeratorCpp", 156671));
+        suite.addTest(getFailingTest("_testAnonymousStructMembersC", 156671));
+        suite.addTest(getFailingTest("_testAnonymousStructMembersCpp", 156671));
+        suite.addTest(getFailingTest("_testAnonymousUnionMembersC", 156671));
+        suite.addTest(getFailingTest("_testAnonymousUnionMembersCpp", 156671));
         return suite;
 	}
 
-	private static Test getFailingTest(String name) {
+	private static Test getFailingTest(String name, int bugzilla) {
 		BaseTestCase failingTest= new BasicCallHierarchyTest(name);
-		failingTest.setExpectFailure(0);
+		failingTest.setExpectFailure(bugzilla);
 		return failingTest;
 	}
 

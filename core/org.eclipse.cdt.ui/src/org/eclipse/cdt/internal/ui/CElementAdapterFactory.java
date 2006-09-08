@@ -8,16 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -25,6 +21,9 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.views.properties.FilePropertySource;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.ResourcePropertySource;
+
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
 
 /**
  * Implements basic UI support for C elements.
@@ -36,8 +35,6 @@ public class CElementAdapterFactory implements IAdapterFactory {
 		IResource.class,
 		IWorkbenchAdapter.class,
 		IDeferredWorkbenchAdapter.class,
-		IProject.class,
-		IWorkspaceRoot.class,
 		IActionFilter.class 
 	};
 	
@@ -58,12 +55,12 @@ public class CElementAdapterFactory implements IAdapterFactory {
 		
 		if (IPropertySource.class.equals(key)) {
 			return getPropertySource(celem);
-		} else if (IWorkspaceRoot.class.equals(key)) {
-			return getWorkspaceRoot(celem);
-		} else if (IProject.class.equals(key)) {
-			return getProject(celem);
-		} else if (IResource.class.equals(key)) {
-			return getResource(celem);
+		} else if (IResource.class.isAssignableFrom(key)) {
+			IResource resource= getResource(celem);
+			if (resource != null && key.isAssignableFrom(resource.getClass())) {
+				return resource;
+			}
+			return null;
 		} else if (IDeferredWorkbenchAdapter.class.equals(key)) {
 			return getDeferredWorkbenchAdapter(celem);
 		} else if (IWorkbenchAdapter.class.equals(key)) {
@@ -86,22 +83,6 @@ public class CElementAdapterFactory implements IAdapterFactory {
 			return new ResourcePropertySource(res);
 		}
 		return new CElementPropertySource(celement);		
-	}
-
-	private IWorkspaceRoot getWorkspaceRoot(ICElement celement) {
-		IResource res = celement.getUnderlyingResource();
-		if (res != null) {
-			return res.getWorkspace().getRoot();
-		}
-		return null;
-	}
-
-	private IProject getProject(ICElement celement) {
-		ICProject cProject = celement.getCProject();
-		if (cProject != null) {
-			return cProject.getProject();
-		}
-		return null;
 	}
 
 	private IResource getResource(ICElement celement) {

@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.navigator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -43,6 +44,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
@@ -74,7 +76,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			DropTargetEvent event, Object target) {
 
 		// special case: drop in C source folder
-		if (target instanceof ICContainer) {
+		if (target instanceof ICContainer || target instanceof ICProject) {
 			final Object data= event.data;
 			if (data == null) {
 				return Status.CANCEL_STATUS;
@@ -150,7 +152,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			TransferData transferType) {
 
 		// special case: drop in C source folder
-		if (target instanceof ICContainer) {
+		if (target instanceof ICContainer || target instanceof ICProject) {
 			IContainer destination= getDestination(target);
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
 				IResource[] selectedResources= getSelectedResources();
@@ -224,9 +226,12 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
 			ICElement[] cElements= getCElements(selection);
 			
-			if (!canMoveElements(cElements))
+			if (Arrays.asList(cElements).contains(target)) {
 				return Status.CANCEL_STATUS;	
-	
+			}
+			if (!canMoveElements(cElements)) {
+				return Status.CANCEL_STATUS;	
+			}
 			if (target instanceof ISourceReference) {
 				return Status.OK_STATUS;
 			}

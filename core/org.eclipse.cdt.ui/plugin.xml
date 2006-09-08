@@ -28,9 +28,6 @@
                type="org.eclipse.core.resources.IResource">
          </adapter>
          <adapter
-               type="org.eclipse.core.resources.IProject">
-         </adapter>
-         <adapter
                type="org.eclipse.ui.model.IWorkbenchAdapter">
          </adapter>
          <adapter
@@ -38,7 +35,6 @@
          </adapter>
          <adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
          <adapter type="org.eclipse.ui.IActionFilter"/>
-         <adapter type="org.eclipse.core.resources.IWorkspaceRoot"/>
       </factory>
    </extension>
 

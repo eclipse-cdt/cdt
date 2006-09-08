@@ -15,16 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.index.AbstractIndexerPage;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -41,6 +31,17 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.index.AbstractIndexerPage;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
+
+import org.eclipse.cdt.internal.ui.CUIMessages;
 
 /**
  * @author Bogdan Gheorghe
@@ -401,8 +402,8 @@ public class IndexerBlock extends AbstractCOptionPage {
 		initialSelected = indexerID;
 		
 		if (selectedIndexerId == null){
-			CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, PDOMNullIndexer.ID);
-			selectedIndexerId = PDOMNullIndexer.ID;
+			CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, CCorePlugin.DEFAULT_INDEXER);
+			selectedIndexerId = CCorePlugin.DEFAULT_INDEXER;
 		}
 		
 		//Set the appropriate indexer in the combo box

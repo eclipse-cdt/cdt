@@ -1,0 +1,50 @@
+/*******************************************************************************
+ * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
+
+package org.eclipse.cdt.ui.tests.callhierarchy;
+
+import junit.framework.Test;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+
+public class InitializersInCallHierarchyTest extends CallHierarchyBaseTest {
+
+	public InitializersInCallHierarchyTest(String name) {
+		super(name);
+	}
+
+	public static Test suite() {
+		return suite(InitializersInCallHierarchyTest.class);
+	}	
+	
+	// {intvar}
+	// enum Enum{a= 12};
+	// int b= a;
+	public void testCIntVarInitializer() throws Exception {
+		String content = readTaggedComment("intvar");
+		IFile file= createFile(getProject(), "intvar.c", content);
+		waitForIndexer(fPdom, file, 1000);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+
+		editor.selectAndReveal(content.indexOf("a"), 5);
+		openCallHierarchy(editor);
+		Tree tree = getCHTree(page);
+		checkTreeNode(tree, 0, "a");
+		checkTreeNode(tree, 0, 0, "{init b}()");
+	}
+}

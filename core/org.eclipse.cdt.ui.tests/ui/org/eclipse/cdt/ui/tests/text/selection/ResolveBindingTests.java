@@ -12,7 +12,6 @@
 package org.eclipse.cdt.ui.tests.text.selection;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -40,22 +39,7 @@ public class ResolveBindingTests extends BaseTestCase  {
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite("ResolveBindingTests");
-		suite.addTestSuite(ResolveBindingTests.class);
-		suite.addTest(getFailingTests());
-		return suite;
-	}
-
-	private static Test getFailingTests() {
-		TestSuite suite= new TestSuite("Failing Tests");
-        suite.addTest(getFailingTest("_testNamespaceVarBinding2", 156519));
-        return suite;
-	}
-	
-	private static Test getFailingTest(String name, int bug) {
-		BaseTestCase failingTest= new ResolveBindingTests(name);
-		failingTest.setExpectFailure(bug);
-		return failingTest;
+		return suite(ResolveBindingTests.class);
 	}
 
 	protected void setUp() throws Exception {
@@ -118,7 +102,7 @@ public class ResolveBindingTests extends BaseTestCase  {
 		checkBinding(name, IVariable.class);
 	}
 
-	public void _testNamespaceVarBinding2() throws Exception {
+	public void _testNamespaceVarBinding_156519() throws Exception {
 		String content = readTaggedComment("namespace-var-test");
 		IFile file= createFile(fCProject.getProject(), "nsvar.cpp", content);
 		waitForIndexer(fPdom, file, 2000);
@@ -132,5 +116,4 @@ public class ResolveBindingTests extends BaseTestCase  {
 		name= getSelectedName(astTU, content.indexOf("var; // r2"), 3);
 		checkBinding(name, IVariable.class);
 	}
-
 }

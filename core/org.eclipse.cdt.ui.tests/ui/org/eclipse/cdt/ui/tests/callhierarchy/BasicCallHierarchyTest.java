@@ -14,7 +14,6 @@ package org.eclipse.cdt.ui.tests.callhierarchy;
 import java.io.IOException;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Tree;
@@ -22,8 +21,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-
-import org.eclipse.cdt.ui.tests.BaseTestCase;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
@@ -35,27 +32,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite("BasicCallHierarchyTest");
-		suite.addTestSuite(BasicCallHierarchyTest.class);
-		suite.addTest(getFailingTests());
-		return suite;
-	}
-
-	private static Test getFailingTests() {
-		TestSuite suite= new TestSuite("Failing Tests");
-        suite.addTest(getFailingTest("_testAnonymousEnumeratorC", 156671));
-        suite.addTest(getFailingTest("_testAnonymousEnumeratorCpp", 156671));
-        suite.addTest(getFailingTest("_testAnonymousStructMembersC", 156671));
-        suite.addTest(getFailingTest("_testAnonymousStructMembersCpp", 156671));
-        suite.addTest(getFailingTest("_testAnonymousUnionMembersC", 156671));
-        suite.addTest(getFailingTest("_testAnonymousUnionMembersCpp", 156671));
-        return suite;
-	}
-
-	private static Test getFailingTest(String name, int bugzilla) {
-		BaseTestCase failingTest= new BasicCallHierarchyTest(name);
-		failingTest.setExpectFailure(bugzilla);
-		return failingTest;
+		return suite(BasicCallHierarchyTest.class);
 	}
 
 	public void testFunctionsC() throws Exception {
@@ -159,11 +136,11 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		doTestEnumerator("enumerator.cpp", "testEnumerator");
 	}
 
-	public void _testAnonymousEnumeratorC() throws Exception {
+	public void _testAnonymousEnumeratorC_156671() throws Exception {
 		doTestEnumerator("enumerator.c", "testAnonymousEnumerator");
 	}
 	
-	public void _testAnonymousEnumeratorCpp() throws Exception {
+	public void _testAnonymousEnumeratorCpp_156671() throws Exception {
 		doTestEnumerator("enumerator.cpp", "testAnonymousEnumerator");
 	}
 
@@ -293,11 +270,11 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, 0, "main()");
 	}
 
-	public void _testAnonymousStructMembersC() throws Exception {
+	public void _testAnonymousStructMembersC_156671() throws Exception {
 		doTestAnonymousStructMembers("anon_struct_member.c");
 	}
 	
-	public void _testAnonymousStructMembersCpp() throws Exception {
+	public void _testAnonymousStructMembersCpp_156671() throws Exception {
 		doTestAnonymousStructMembers("anon_struct_member.cpp");
 	}
 	
@@ -425,11 +402,11 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, 0, "main()");
 	}
 
-	public void _testAnonymousUnionMembersC() throws Exception {
+	public void _testAnonymousUnionMembersC_156671() throws Exception {
 		doTestAnonymousUnionMembers("anon_union_member.c");
 	}
 	
-	public void _testAnonymousUnionMembersCpp() throws Exception {
+	public void _testAnonymousUnionMembersCpp_156671() throws Exception {
 		doTestAnonymousUnionMembers("anon_union_member.cpp");
 	}
 	

@@ -12,15 +12,12 @@
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-
-import org.eclipse.cdt.ui.tests.BaseTestCase;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
@@ -34,24 +31,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite("BasicCppCallHierarchyTest");
-		suite.addTestSuite(BasicCppCallHierarchyTest.class);
-		suite.addTest(getFailingTests());
-		return suite;
-	}
-
-	private static Test getFailingTests() {
-		TestSuite suite= new TestSuite("Failing Tests");
-		suite.addTest(getFailingTest("_testAutomaticConstructor", 156668));
-		suite.addTest(getFailingTest("_testDestructor", 156669));
-		suite.addTest(getFailingTest("_testNamespacePart2", 156519));
-        return suite;
-	}
-
-	private static Test getFailingTest(String name, int bugzilla) {
-		BaseTestCase failingTest= new BasicCppCallHierarchyTest(name);
-		failingTest.setExpectFailure(bugzilla);
-		return failingTest;
+		return suite(BasicCppCallHierarchyTest.class);
 	}
 
 	// {testMethods}
@@ -322,7 +302,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	//  void automatic() {
 	//    MyClass m;
 	//  }		
-	public void _testAutomaticConstructor() throws Exception {
+	public void _testAutomaticConstructor_156668() throws Exception {
 		String content = readTaggedComment("testAutomaticConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
 		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
@@ -366,7 +346,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, 0, "heap()");
 	}
 	
-	public void _testDestructor() throws Exception {
+	public void _testDestructor_156669() throws Exception {
 		String content = readTaggedComment("testConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
 		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
@@ -460,7 +440,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, 2, "ns::func()");
 	}
 
-	public void _testNamespacePart2() throws Exception {
+	public void _testNamespacePart2_156519() throws Exception {
 		String content = readTaggedComment("testNamespace");
 		IFile file= createFile(getProject(), "testNamespace.cpp", content);
 		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);

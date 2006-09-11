@@ -16,11 +16,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Vector;
 
 import junit.framework.AssertionFailedError;
+import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestFailure;
 import junit.framework.TestResult;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -53,6 +58,50 @@ public class BaseTestCase extends TestCase {
 		super(name);
 	}
 
+	protected static TestSuite suite(Class clazz) {
+		return suite(clazz, null);
+	}
+	
+	protected static TestSuite suite(Class clazz, String failingTestPrefix) {
+		TestSuite suite= new TestSuite(clazz);
+		Test failing= getFailingTests(clazz, failingTestPrefix);
+		if (failing != null) {
+			suite.addTest(failing);
+		}
+		return suite;
+	}
+
+	private static Test getFailingTests(Class clazz, String prefix) {
+		TestSuite suite= new TestSuite("Failing Tests");
+		Vector names= new Vector();
+		if (Test.class.isAssignableFrom(clazz)) {
+			Method[] methods= clazz.getDeclaredMethods();
+			for (int i= 0; i < methods.length; i++) {
+				addFailingMethod(suite, methods[i], clazz, prefix);
+			}
+		}
+		if (suite.countTestCases() == 0) {
+			return null;
+		}
+		return suite;
+	}
+
+	private static void addFailingMethod(TestSuite suite, Method m, Class clazz, String prefix) {
+		String name= m.getName();
+		if (name.startsWith("test") || (prefix != null && !name.startsWith(prefix))) {
+			return;
+		}
+		if (Modifier.isPublic(m.getModifiers())) {
+			Class[] parameters= m.getParameterTypes();
+			Class returnType= m.getReturnType();
+			if (parameters.length == 0 && returnType.equals(Void.TYPE)) {
+				Test test= TestSuite.createTest(clazz, name);
+				((BaseTestCase) test).setExpectFailure(0);
+				suite.addTest(test);
+			}
+		}
+	}
+
     public void run( TestResult result ) {
     	if (!fExpectFailure) {
     		super.run(result);
@@ -72,9 +121,10 @@ public class BaseTestCase extends TestCase {
         }
         else if( r.errorCount() == 0 && r.failureCount() == 0 )
         {
-            String err = "Unexpected success"; //$NON-NLS-1$
-            if( fBugnumber != -1 )
-                err += ", bug #" + fBugnumber; //$NON-NLS-1$
+            String err = "Unexpected success of " + getName();
+            if( fBugnumber > 0 ) {
+                err += ", bug #" + fBugnumber; 
+            }
             result.addFailure( this, new AssertionFailedError( err ) );
         }
         
@@ -200,5 +250,4 @@ public class BaseTestCase extends TestCase {
 		} while (System.currentTimeMillis() < endTime);
 		throw new Exception("Indexer did not complete in time!");
 	}
-
 }

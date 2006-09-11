@@ -496,12 +496,15 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( !canTerminate() ) {
 			return;
 		}
-		changeState( CDebugElementState.TERMINATING );
+		final CDebugElementState newState = CDebugElementState.TERMINATING;		
+		changeState( newState );
 		try {
 			getCDITarget().terminate();
 		}
 		catch( CDIException e ) {
-			restoreOldState();
+			if ( getState() == newState ) {
+				restoreOldState();
+			}
 			targetRequestFailed( e.getMessage(), null );
 		}
 	}
@@ -545,12 +548,15 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public void resume() throws DebugException {
 		if ( !canResume() )
 			return;
-		changeState( CDebugElementState.RESUMING );
+		final CDebugElementState newState = CDebugElementState.RESUMING; 
+		changeState( newState );
 		try {
 			getCDITarget().resume( false );
 		}
 		catch( CDIException e ) {
-			restoreOldState();
+			if ( getState() == newState ) {
+				restoreOldState();
+			}
 			targetRequestFailed( e.getMessage(), null );
 		}
 	}
@@ -561,12 +567,15 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public void suspend() throws DebugException {
 		if ( !canSuspend() )
 			return;
-		changeState( CDebugElementState.SUSPENDING );
+		final CDebugElementState newState = CDebugElementState.SUSPENDING; 
+		changeState( newState );
 		try {
 			getCDITarget().suspend();
 		}
 		catch( CDIException e ) {
-			restoreOldState();
+			if ( getState() == newState ) {
+				restoreOldState();
+			}
 			targetRequestFailed( e.getMessage(), null );
 		}
 	}
@@ -697,12 +706,15 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( isDisconnecting() ) {
 			return;
 		}
-		changeState( CDebugElementState.DISCONNECTING );
+		final CDebugElementState newState = CDebugElementState.DISCONNECTING;		
+		changeState( newState );
 		try {
 			getCDITarget().disconnect();
 		}
 		catch( CDIException e ) {
-			restoreOldState();
+			if ( getState() == newState ) {
+				restoreOldState();
+			}
 			targetRequestFailed( e.getMessage(), null );
 		}
 	}
@@ -896,12 +908,15 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		}
 		ICDILocation location = getCDITarget().createFunctionLocation( "", mainSymbol ); //$NON-NLS-1$
 		setInternalTemporaryBreakpoint( location );
-		changeState( CDebugElementState.RESTARTING );
+		final CDebugElementState newState = CDebugElementState.RESTARTING;
+		changeState( newState );
 		try {
 			getCDITarget().restart();
 		}
 		catch( CDIException e ) {
-			restoreOldState();
+			if ( getState() == newState ) {
+				restoreOldState();
+			}
 			targetRequestFailed( e.getMessage(), e );
 		}
 	}
@@ -1403,12 +1418,15 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public void resumeWithoutSignal() throws DebugException {
 		if ( !canResume() )
 			return;
-		changeState( CDebugElementState.RESUMING );
+		final CDebugElementState newState = CDebugElementState.RESUMING;
+		changeState( newState );
 		try {
 			getCDITarget().resume( false );
 		}
 		catch( CDIException e ) {
-			restoreOldState();
+			if ( getState() == newState ) {
+				restoreOldState();
+			}
 			targetRequestFailed( e.getMessage(), e );
 		}
 	}

@@ -66,6 +66,8 @@ public class FoldingTest extends TestCase {
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_ENABLED, true);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_COMMENTS_ENABLED, true);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, true);
+		store.setValue(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, false);
+		store.setValue(PreferenceConstants.EDITOR_FOLDING_HEADERS, false);
 
 		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(fTestFilename), true);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
@@ -82,6 +84,8 @@ public class FoldingTest extends TestCase {
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED);
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_COMMENTS_ENABLED);
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED);
+		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE);
+		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_HEADERS);
 
 		super.tearDown();
 	}
@@ -98,7 +102,7 @@ public class FoldingTest extends TestCase {
 	protected Position createPosition(int startLine, int endLine) throws BadLocationException {
 		IDocument document= fSourceViewer.getDocument();
 		int startOffset= document.getLineOffset(startLine);
-		int endOffset= document.getLineOffset(endLine) + document.getLineLength(endLine) - document.getLineDelimiter(endLine).length();
+		int endOffset= document.getLineOffset(endLine) + document.getLineLength(endLine);
 		return new Position(startOffset, endOffset - startOffset);
 	}
 
@@ -155,12 +159,11 @@ public class FoldingTest extends TestCase {
 				createPosition(42, 46),
 				createPosition(48, 55),
 				createPosition(51, 53),
-				createPosition(51, 53),
 				createPosition(57, 59),
 				createPosition(61, 63),
 				createPosition(65, 67),
 		};
-		if (false) System.out.println(toString(actual));
+		if (true) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);
 	}
 	

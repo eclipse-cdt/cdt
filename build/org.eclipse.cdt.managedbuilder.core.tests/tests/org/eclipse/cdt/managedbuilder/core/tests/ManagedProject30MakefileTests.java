@@ -81,6 +81,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		suite.addTest(new ManagedProject30MakefileTests("TestATO"));
 		suite.addTest(new ManagedProject30MakefileTests("testMacroSupportInBuildDefinitions"));
 		suite.addTest(new ManagedProject30MakefileTests("testSpaces"));
+		suite.addTest(new ManagedProject30MakefileTests("testInputTypeOption"));
 		return suite;
 	}
 
@@ -619,6 +620,22 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 Path.fromOSString("sub folder with spaces/subdir.mk"),
 				 Path.fromOSString("sub folder with spaces/foo with spaces.d")};
 		IProject[] projects = createProjects("test with spaces", null, null, true);
+		buildProjects(projects, makefiles);
+	}
+	
+	/**
+	 * (non-Javadoc)
+	 * tests managed build system with a project which has resources with spaces in their paths
+	 */
+	public void testInputTypeOption()
+	{
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("subdir.mk"),
+		};
+		IProject[] projects = createProjects("inputTypeOption", null, null, true);
 		buildProjects(projects, makefiles);
 	}
 }

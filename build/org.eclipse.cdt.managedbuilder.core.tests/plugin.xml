@@ -6240,5 +6240,72 @@
 
       </projectType>
 
+     <projectType
+           id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest"
+           isAbstract="false"
+           isTest="false"
+           name="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest"
+           superClass="cdt.managedbuild.target.gnu30.exe">
+        <configuration
+              id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest"
+              name="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest"
+              parent="cdt.managedbuild.config.testgnu30.exe.release">
+           <toolChain
+                 id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.toolChain"
+                 isAbstract="false"
+                 name="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.toolChain"
+                 superClass="cdt.managedbuild.toolchain.testgnu30.exe.release"
+                 unusedChildren="cdt.managedbuild.tool.testgnu30.c.compiler.exe.release;cdt.managedbuild.tool.testgnu30.cpp.compiler.exe.release;cdt.managedbuild.tool.testgnu30.c.linker.exe.release;cdt.managedbuild.tool.testgnu30.cpp.linker.exe.release">
+              <tool 
+                    id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.compiler"
+                    isAbstract="false"
+                    name="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.compiler"
+                    superClass="cdt.managedbuild.tool.testgnu30.c.compiler.exe.release">
+                 <optionCategory
+                       id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.optionCategory1"
+                       name="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.optionCategory1"
+                       owner="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.compiler"/>
+                  <option
+                        browseType="file"
+                        category="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.optionCategory1"
+                        command="--compilerInputTypeOption="
+                        id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.compiler.inputTypeOption"
+                        isAbstract="false"
+                        name="inputTypeOption1"
+                        resourceFilter="all"
+                        valueType="stringList"/>
+                 <inputType
+                       id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.compiler.inputType2"
+                       name="inputTypeOption1"
+                       option="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.compiler.inputTypeOption"/>
+              </tool>
+              <tool
+                    id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.linker"
+                    isAbstract="false"
+                    name="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.linker"
+                    superClass="cdt.managedbuild.tool.testgnu30.c.linker.exe.release">
+                 <optionCategory
+                       id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.optionCategory2"
+                       name="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.optionCategory2"
+                       owner="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.linker"/>
+                  <option
+                        browseType="file"
+                        category="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.optionCategory2"
+                        command="--linkerInputTypeOption="
+                        id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.linker.inputTypeOption"
+                        isAbstract="false"
+                        name="inputTypeOption2"
+                        resourceFilter="all"
+                        valueType="stringList"/>
+                 <inputType
+                       id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.linker.inputType2"
+                       name="inputTypeOption2"
+                       option="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.linker.inputTypeOption"/>
+              </tool>
+           </toolChain>
+        </configuration>
+     </projectType>
+     
+
    </extension>
 </plugin>

@@ -917,7 +917,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			valueList = (List)entry.getValue();
 			Iterator valueIter = valueList.iterator();
 			while (valueIter.hasNext()) {
-	 			macroBuffer.append(WHITESPACE + (String)valueIter.next());
+	 			macroBuffer.append(WHITESPACE + ensurePathIsGNUMakeTargetRuleCompatibleSyntax((String)valueIter.next()));
 			}
 			if (iterator.hasNext()) macroBuffer.append(NEWLINE + NEWLINE);
 		}
@@ -1658,7 +1658,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			Vector enumeratedPrimaryOutputs, Vector enumeratedSecondaryOutputs, 
 			Vector outputVariables, Vector additionalTargets,	
 			boolean bTargetTool, Vector managedProjectOutputs) {
-		
+		 
 		//  Get the information regarding the tool's inputs and outputs from the objects
 		//  created by calculateToolInputsOutputs
 		IManagedBuildGnuToolInfo toolInfo = null;
@@ -1676,7 +1676,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		enumeratedPrimaryOutputs.addAll(toolInfo.getEnumeratedPrimaryOutputs());
 		enumeratedSecondaryOutputs.addAll(toolInfo.getEnumeratedSecondaryOutputs());
 		outputVariables.addAll(toolInfo.getOutputVariables());
-		dependencies.addAll(toolInfo.getCommandDependencies());
+		Vector unprocessedDependencies = toolInfo.getCommandDependencies();
+		for(Iterator i = unprocessedDependencies.iterator(); i.hasNext(); ) {
+			String path = (String) i.next();
+			dependencies.add(ensurePathIsGNUMakeTargetRuleCompatibleSyntax(path));
+		}
 		additionalTargets.addAll(toolInfo.getAdditionalTargets());
 		
 		if (bTargetTool && managedProjectOutputs != null) {
@@ -2305,14 +2309,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			IPath addlPath = addlDepPaths[i];
 			if (!(addlPath.toString().startsWith("$("))) {		//$NON-NLS-1$
 				if (!addlPath.isAbsolute()) {
-					IPath tempPath = project.getLocation().append(addlPath);
+					IPath tempPath = project.getLocation().append(new Path(ensureUnquoted(addlPath.toString())));
 					if (tempPath != null) {
 						addlPath = ManagedBuildManager.calculateRelativePath(getTopBuildDir(), tempPath);
 					}
 				}
 			}
-			buildRuleDependencies += WHITESPACE + escapeWhitespaces(addlPath.toString());
-			patternBuildRuleDependencies += WHITESPACE + escapeWhitespaces(addlPath.toString());
+			String suitablePath = ensurePathIsGNUMakeTargetRuleCompatibleSyntax(addlPath.toString());
+			buildRuleDependencies += WHITESPACE + suitablePath;
+			patternBuildRuleDependencies += WHITESPACE + suitablePath;
 		}
 
 		buildRule += COLON + WHITESPACE + (patternRule ? patternBuildRuleDependencies : buildRuleDependencies);
@@ -4321,4 +4326,33 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		return project.getLocation().append(getBuildWorkingDir());
 	}
 
+	/**
+	 * Process a String denoting a filepath in a way compatible for GNU Make rules, handling
+	 * windows drive letters and whitespace appropriately.
+	 * <p><p>
+	 * The context these paths appear in is on the right hand side of a rule header. i.e.
+	 * <p><p>
+	 * target : dep1 dep2 dep3
+	 * <p>
+	 * @param path the String denoting the path to process
+	 * @throws NullPointerException is path is null
+	 * @return a suitable Make rule compatible path
+	 */
+	/* see https://bugs.eclipse.org/bugs/show_bug.cgi?id=129782 */
+	public String ensurePathIsGNUMakeTargetRuleCompatibleSyntax(String path) {
+		return escapeWhitespaces(ensureUnquoted(path));
+	}
+
+	/**
+	 * Strips outermost quotes of Strings of the form "a" and 'a' or returns the original
+	 * string if the input is not of this form. 
+	 * @param path
+	 * @throws NullPointerException if path is null
+	 * @return a String without the outermost quotes (if the input has them)
+	 */
+	public static String ensureUnquoted(String path) {
+		boolean doubleQuoted = path.startsWith("\"") && path.endsWith("\"");
+		boolean singleQuoted = path.startsWith("'") && path.endsWith("'");
+		return doubleQuoted || singleQuoted ? path.substring(1,path.length()-1) : path; 
+	}
 }

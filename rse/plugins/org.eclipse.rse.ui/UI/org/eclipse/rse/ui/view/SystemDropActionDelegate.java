@@ -16,10 +16,19 @@
 
 package org.eclipse.rse.ui.view;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.part.IDropActionDelegate;
@@ -69,6 +78,43 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 		
 		if (localPath != null)
 		{
+			
+			if (data instanceof byte[])
+			{
+				byte[] result = (byte[]) data;
+
+				// get the sources	
+				//StringTokenizer tokenizer = new StringTokenizer(new String(result), SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
+				String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
+				ArrayList srcObjects = new ArrayList();
+				ArrayList rulesList = new ArrayList();
+				int j = 0;
+				//while (tokenizer.hasMoreTokens())
+				for (int i = 0; i <tokens.length; i++)  
+				{
+					String srcStr = tokens[i];
+
+					Object srcObject = getObjectFor(srcStr);
+					srcObjects.add(srcObject);
+				}
+				
+				SystemDNDTransferRunnable runnable = new SystemDNDTransferRunnable(target, srcObjects, null, SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE);
+				
+				runnable.schedule();
+				
+				if (resource != null)
+				{
+					try
+					{
+						resource.refreshLocal(IResource.DEPTH_INFINITE, null);
+					}
+					catch (CoreException e)
+					{
+					}
+				}
+				RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();
+			}
+
 			/** FIXME - IREmoteFile is systems.core independent now
 			IRemoteFileSubSystem localFS = getLocalFileSubSystem();
 			try
@@ -145,6 +191,76 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 		
 		return false;
 	}
+		/**
+		 * Method for decoding an source object ID to the actual source object.
+		 * We determine the profile, connection and subsystem, and then
+		 * we use the SubSystem.getObjectWithKey() method to get at the
+		 * object.
+		 *
+		 */
+		private Object getObjectFor(String str)
+		{
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			// first extract subsystem id
+			int connectionDelim = str.indexOf(":"); //$NON-NLS-1$
+			if (connectionDelim == -1) // not subsystem, therefore likely to be a connection
+			{
+			    int profileDelim = str.indexOf("."); //$NON-NLS-1$
+				if (profileDelim != -1) 
+				{
+				    String profileId = str.substring(0, profileDelim);
+				    String connectionId = str.substring(profileDelim + 1, str.length());
+				    ISystemProfile profile = registry.getSystemProfile(profileId);
+				    return registry.getHost(profile, connectionId);
+				}
+			}
+			
+			
+			int subsystemDelim = str.indexOf(":", connectionDelim + 1); //$NON-NLS-1$
+			if (subsystemDelim == -1) // not remote object, therefore likely to be a subsystem
+			{
+			    return registry.getSubSystem(str);
+			}
+			else
+			{
+				String subSystemId = str.substring(0, subsystemDelim);
+				String srcKey = str.substring(subsystemDelim + 1, str.length());
+		
+			
+				ISubSystem subSystem = registry.getSubSystem(subSystemId);
+				if (subSystem != null)
+				{
+					Object result = null;
+					try
+					{
+						result = subSystem.getObjectWithAbsoluteName(srcKey);
+					}
+					catch (SystemMessageException e)
+					{
+						return e.getSystemMessage();
+					}
+					catch (Exception e)
+					{
+					}
+					if (result != null)
+					{
+						return result;
+					}
+					else
+					{
+						SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
+						msg.makeSubstitution(srcKey, subSystem.getHostAliasName());
+						return msg;
+					}
+				}
+				else
+				{
+					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_CONNECTION_NOTFOUND);
+					msg.makeSubstitution(subSystemId);
+					return msg;
+				}
+			}
+		}
 
 	protected IRunnableContext getRunnableContext(Shell shell)
 	{

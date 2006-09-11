@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -273,6 +274,43 @@ public class SystemDNDTransferRunnable extends Job
 		}
 		
 		return _ok;
+	}
+	
+	protected boolean transferRSEResourcesToEclipseResource(IProgressMonitor monitor, IResource target, ISubSystem targetSubSystem)
+	{
+		for (int i = 0; i < _srcObjects.size() && _ok; i++)
+		{
+			Object srcObject = _srcObjects.get(i);
+
+			_resultSrcObjects.add(srcObject);
+
+			if (srcObject instanceof SystemMessage)
+			{
+				operationFailed(monitor);
+				showErrorMessage((SystemMessage) srcObject);
+			}
+			else if (srcObject != null)
+			{
+				ISystemDragDropAdapter srcAdapter = (ISystemDragDropAdapter) ((IAdaptable) srcObject).getAdapter(ISystemDragDropAdapter.class);
+				Object tempFile = srcAdapter.doDrag(srcObject, true, monitor);
+				if (tempFile instanceof IResource)
+				{
+					IResource res = (IResource)tempFile;
+					try
+					{
+						IPath destPath = target.getFullPath();
+						destPath = destPath.append(res.getName());
+						res.copy(destPath, false, monitor);
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		return true;
 	}
 	
 	protected boolean transferNonRSEResources(IProgressMonitor monitor, Object target, ISubSystem targetSubSystem, ISystemDragDropAdapter targetAdapter)
@@ -534,6 +572,10 @@ public class SystemDNDTransferRunnable extends Job
 				{
 					transferNonRSEResources(monitor, target, targetSubSystem, targetAdapter);
 				}
+			}
+			else if (target instanceof IResource)
+			{
+				transferRSEResourcesToEclipseResource(monitor, (IResource)target, targetSubSystem);
 			}
 		}
 

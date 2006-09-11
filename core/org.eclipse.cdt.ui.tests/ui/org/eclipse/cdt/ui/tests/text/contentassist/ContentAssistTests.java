@@ -19,27 +19,11 @@ import java.io.InputStream;
 import java.io.StringWriter;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.FileManager;
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
-
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -49,34 +33,43 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
+
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
+
 /**
  * @author aniefer
  */
-public class ContentAssistTests extends TestCase {
-    static NullProgressMonitor		monitor;
-    static IWorkspace 				workspace;
+public class ContentAssistTests extends BaseTestCase {
+    private NullProgressMonitor		monitor= new NullProgressMonitor();
     static IProject 				project;
-    static FileManager 				fileManager;
     static boolean 					disabledHelpContributions = false;
-    {
+    
+    public void setUp() {
 		//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
-		monitor = new NullProgressMonitor();
-		
-		workspace = ResourcesPlugin.getWorkspace();
-		
-		ICProject cPrj; 
-        try {
-            cPrj = CProjectHelper.createCCProject("ContentAssistTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
-        
-            project = cPrj.getProject();
-        } catch ( CoreException e ) {
-            /*boo*/
-        }
-		if (project == null)
-			fail("Unable to create project"); //$NON-NLS-1$
+    	
+    	if (project == null) {
+    		ICProject cPrj; 
+    		try {
+    			cPrj = CProjectHelper.createCCProject("ContentAssistTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		//Create file manager
-		fileManager = new FileManager();
+    			project = cPrj.getProject();
+    		} catch ( CoreException e ) {
+    			/*boo*/
+    		}
+    		if (project == null)
+    			fail("Unable to create project"); //$NON-NLS-1$
+    	}
 	}
     public ContentAssistTests()
     {
@@ -105,7 +98,7 @@ public class ContentAssistTests extends TestCase {
     }
     
     public static Test suite() {
-        TestSuite suite = new TestSuite( ContentAssistTests.class );
+        TestSuite suite= suite(ContentAssistTests.class, "_");
         suite.addTest( new ContentAssistTests("cleanupProject") );    //$NON-NLS-1$
 	    return suite;
     }
@@ -133,6 +126,7 @@ public class ContentAssistTests extends TestCase {
                 /*boo*/
             }
         }
+        project= null;
 	}
     
     protected IFile importFile(String fileName, String contents ) throws Exception{
@@ -145,8 +139,6 @@ public class ContentAssistTests extends TestCase {
 		    file.setContents( stream, false, false, monitor );
 		else
 			file.create( stream, false, monitor );
-		
-		fileManager.addFile(file);
 		
 		return file;
 	}
@@ -176,7 +168,7 @@ public class ContentAssistTests extends TestCase {
 		return results ;
     }
     
-    public void testBug69334() throws Exception {
+    public void _testBug69334() throws Exception {
         importFile( "test.h", "class Test{ public : Test( int ); }; \n" );  //$NON-NLS-1$//$NON-NLS-2$
         StringWriter writer = new StringWriter();
         writer.write( "#include \"test.h\"                \n"); //$NON-NLS-1$
@@ -193,8 +185,8 @@ public class ContentAssistTests extends TestCase {
         assertEquals( 1, results.length );
         assertEquals( "veryLongName : int", results[0].getDisplayString() ); //$NON-NLS-1$
     }
-    
-    public void testBug72824() throws Exception {
+
+    public void _testBug72824() throws Exception {
         StringWriter writer = new StringWriter();
         writer.write( "class Strategy {                             \n"); //$NON-NLS-1$
         writer.write( "public :                                     \n"); //$NON-NLS-1$

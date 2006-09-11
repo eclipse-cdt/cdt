@@ -20,7 +20,7 @@ import org.eclipse.cdt.internal.ui.text.CWordIterator;
 public class CWordIteratorTest extends BreakIteratorTest {
 
 	public static Test suite() {
-		return new TestSuite(CBreakIteratorTest.class);
+		return new TestSuite(CWordIteratorTest.class);
 	}
 
 	/*

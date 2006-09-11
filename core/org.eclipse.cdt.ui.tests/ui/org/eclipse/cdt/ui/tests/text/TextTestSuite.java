@@ -36,5 +36,7 @@ public class TextTestSuite extends TestSuite {
 		addTest(SemanticHighlightingTest.suite());
 		addTest(InactiveCodeHighlightingTest.suite());
 
+		// folding tests
+		addTest(FoldingTest.suite());
     }
 }

@@ -61,13 +61,14 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 		}
 
 		protected String getTestFilename() {
-			return "/SHTest/src/SHTest.cpp";
+			return fTestFilename;
 		}
 
 		protected void tearDown () throws Exception {
 			EditorTestHelper.closeEditor(fEditor);
 			
 			IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+			store.setToDefault(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED);
 			
 			SemanticHighlighting[] semanticHighlightings= SemanticHighlightings.getSemanticHighlightings();
 			for (int i= 0, n= semanticHighlightings.length; i < n; i++) {

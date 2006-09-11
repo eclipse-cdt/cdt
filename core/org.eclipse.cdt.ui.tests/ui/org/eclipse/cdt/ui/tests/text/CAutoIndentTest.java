@@ -306,9 +306,8 @@ public class CAutoIndentTest extends TestCase {
 		assertEquals(" */", tester.getLine()); //$NON-NLS-1$
 		tester.type('\n');
 		assertEquals(3, tester.getCaretLine());
-		// TODO: indent is one space - should be no indent
-//		assertEquals("", tester.getLine()); //$NON-NLS-1$
-//		assertEquals(0, tester.getCaretColumn());
+		assertEquals("", tester.getLine()); //$NON-NLS-1$
+		assertEquals(0, tester.getCaretColumn());
 	}
 
 }

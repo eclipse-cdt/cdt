@@ -1,3 +1,7 @@
+2006-09-11 Mikhail Khodjaiants
+	Bugzilla Bug 156707: A failed operation (e.g., resume) can leave the CDebugTarget in an invalid run state.
+	* CDebugTarget.java
+
 2006-08-29 Mikhail Khodjaiants
 	Bug 155275: Exception when stepping.
 	* CThread.java

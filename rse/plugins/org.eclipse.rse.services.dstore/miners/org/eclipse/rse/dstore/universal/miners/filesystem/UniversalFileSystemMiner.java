@@ -1127,13 +1127,21 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	
 	private DataElement handleDeleteBatch(DataElement theElement, DataElement status)
 	{
+		DataElement substatus = _dataStore.createObject(null, "status", "substatus");
 		int numOfSources = theElement.getNestedSize() - 2;
 		for (int i = 0; i < numOfSources; i++)
 		{
 			DataElement subject = getCommandArgument(theElement, i+1);
-			handleDelete(subject, status, false);
-			if (!status.getSource().startsWith(SUCCESS)) return statusDone(status);
+			handleDelete(subject, substatus, false);
+			/*
+			if (!substatus.getSource().startsWith(SUCCESS)) 
+			{
+				status.setAttribute(DE.A_SOURCE, substatus.getSource());
+				return statusDone(status);
+			}
+			*/
 		}
+		status.setAttribute(DE.A_SOURCE, substatus.getSource());
 		return statusDone(status);
 	}
 

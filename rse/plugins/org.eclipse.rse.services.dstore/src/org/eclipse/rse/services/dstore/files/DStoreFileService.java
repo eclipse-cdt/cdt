@@ -900,8 +900,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}	
 		DataElement status = dsStatusCommand(monitor, (DataElement) dataElements.get(0), dataElements, C_DELETE_BATCH);
 		if (status == null) return false;
-		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) return true;
-		else throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));	
+		if (FileSystemMessageUtil.getSourceMessage(status).startsWith(IServiceConstants.FAILED))
+			throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));
+		else return true;
 	}
 
 	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName) throws SystemMessageException

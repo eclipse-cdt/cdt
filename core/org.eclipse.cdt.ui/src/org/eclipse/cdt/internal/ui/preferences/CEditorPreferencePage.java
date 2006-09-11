@@ -180,13 +180,13 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		store.setDefault(ICColorConstants.C_DEFAULT + "_bold", false); //$NON-NLS-1$
 
         PreferenceConverter.setDefault(store, ICColorConstants.C_OPERATOR, new RGB(0, 0, 0));
-        store.setDefault(ICColorConstants.C_DEFAULT + "_bold", false); //$NON-NLS-1$
+        store.setDefault(ICColorConstants.C_OPERATOR + "_bold", false); //$NON-NLS-1$
 
         PreferenceConverter.setDefault(store, ICColorConstants.C_BRACES, new RGB(0, 0, 0));
-        store.setDefault(ICColorConstants.C_DEFAULT + "_bold", false); //$NON-NLS-1$
+        store.setDefault(ICColorConstants.C_BRACES + "_bold", false); //$NON-NLS-1$
 
         PreferenceConverter.setDefault(store, ICColorConstants.C_NUMBER, new RGB(0, 0, 0));
-        store.setDefault(ICColorConstants.C_DEFAULT + "_bold", false); //$NON-NLS-1$
+        store.setDefault(ICColorConstants.C_NUMBER + "_bold", false); //$NON-NLS-1$
 
 	}
 

@@ -36,6 +36,7 @@ public class CHNode implements IAdaptable {
     private int fHashCode;
     private boolean fIsRecursive;
     private long fTimestamp;
+	private boolean fIsInitializer;
 
     /**
      * Creates a new node for the include browser
@@ -157,5 +158,13 @@ public class CHNode implements IAdaptable {
 
 	public ICElement getOneRepresentedDeclaration() {
 		return getRepresentedDeclaration();
+	}
+
+	public boolean isInitializer() {
+		return fIsInitializer;
+	}
+
+	public void setInitializer(boolean isInitializer) {
+		fIsInitializer = isInitializer;
 	}
 }

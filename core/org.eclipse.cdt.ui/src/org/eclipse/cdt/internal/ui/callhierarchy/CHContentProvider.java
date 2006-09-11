@@ -20,12 +20,14 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
@@ -76,9 +78,15 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 			if (node.isRecursive() || node.getRepresentedDeclaration() == null) {
 				return NO_CHILDREN;
 			}
-			if (!fComputeReferencedBy && (node.isVariable() || node.isMacro())) { 
+			if (fComputeReferencedBy) {
+				if (node.isInitializer()) {
+					return NO_CHILDREN;
+				}
+			}
+			else if (node.isVariable() || node.isMacro()) { 
 				return NO_CHILDREN;
 			}
+			
 		}
 		// allow for async computation
 		return null;
@@ -130,6 +138,9 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	private CHNode createRefbyNode(CHNode parent, ICElement element, CIndexReference[] refs) {
 		ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
 		CHNode node= new CHNode(parent, tu, refs[0].getTimestamp(), element);
+		if (element instanceof IVariable || element instanceof IEnumerator) {
+			node.setInitializer(true);
+		}
 		Arrays.sort(refs, CIndexReference.COMPARE_OFFSET);
 		for (int i = 0; i < refs.length; i++) {
 			CIndexReference reference = refs[i];

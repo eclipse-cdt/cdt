@@ -25,7 +25,9 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
+import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.ImageImageDescriptor;
@@ -47,9 +49,18 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
     public Image getImage(Object element) {
         if (element instanceof CHNode) {
             CHNode node= (CHNode) element;
-            ICElement decl= node.getOneRepresentedDeclaration();
-            if (decl != null) {
-            	Image image= fCLabelProvider.getImage(decl);
+            Image image= null;
+            if (node.isInitializer()) {
+    			ImageDescriptor desc= CElementImageProvider.getFunctionImageDescriptor();
+    			image= CUIPlugin.getImageDescriptorRegistry().get(desc);
+            }
+            else {
+            	ICElement decl= node.getOneRepresentedDeclaration();
+            	if (decl != null) {
+            		image= fCLabelProvider.getImage(decl);
+            	}
+            }
+            if (image != null) {
             	return decorateImage(image, node);
             }
         }
@@ -68,13 +79,35 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
             		fCLabelProvider.setTextFlags(options);
             		return result;
             	}
-            	return fCLabelProvider.getText(decl);
+            	String label= fCLabelProvider.getText(decl);
+            	if (node.isInitializer()) {
+            		label= addInitializerDecoration(label);
+            	}
+            	return label;
             }
         }
         return super.getText(element);
     }
     
-    public void dispose() {
+    private String addInitializerDecoration(String label) {
+    	int i= 0;
+    	char[] content= label.toCharArray();
+    	for (i = 0; i < content.length; i++) {
+			char c = content[i];
+			if (c == '-' || Character.isWhitespace(c)) {
+				break;
+			}
+		}
+    	StringBuffer buf= new StringBuffer(label.length() + 10);
+    	buf.append("{init "); //$NON-NLS-1$
+    	buf.append(content, 0, i);
+    	buf.append("}()"); //$NON-NLS-1$
+    	buf.append(content, i, content.length-i);
+
+    	return buf.toString();
+	}
+
+	public void dispose() {
         fCLabelProvider.dispose();
         for (Iterator iter = fCachedImages.values().iterator(); iter.hasNext();) {
             Image image = (Image) iter.next();

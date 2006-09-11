@@ -39,7 +39,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRange;
@@ -303,8 +302,14 @@ public class CIndexQueries {
 	}
 
 	private ICElement findEnclosingFunction(ICElement element, int offset) {
-		if (element == null || (element instanceof IFunctionDeclaration)) {
+		if (element == null || element instanceof org.eclipse.cdt.core.model.IFunctionDeclaration) {
 			return element;
+		}
+		if (element instanceof org.eclipse.cdt.core.model.IVariable) {
+			// bug 156844
+			if (!(element instanceof org.eclipse.cdt.core.model.IEnumeration)) {
+				return element;
+			}
 		}
 		try {
 			if (element instanceof IParent) {

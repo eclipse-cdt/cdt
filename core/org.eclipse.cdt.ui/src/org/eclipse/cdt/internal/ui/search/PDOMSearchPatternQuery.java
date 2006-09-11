@@ -20,9 +20,15 @@ import java.util.regex.PatternSyntaxException;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCStructure;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPClassType;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkage;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
 
@@ -132,7 +138,159 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 			IBinding[] bindings = pdom.findBindings(pattern, monitor);
 			for (int i = 0; i < bindings.length; ++i) {
 				PDOMBinding pdomBinding = (PDOMBinding)bindings[i];
-				createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+				
+				//check for the element type of this binding and create matches if 
+				//the element type checkbox is checked in the C/C++ Search Page
+				
+				//TODO search for macro
+				
+				if ((flags & FIND_ALL_TYPES) == FIND_ALL_TYPES)
+				{
+					createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+				}
+				else
+				{					
+					//C++
+					if (pdomBinding.getLinkage() instanceof PDOMCPPLinkage)
+					{
+						switch (pdomBinding.getNodeType()) {
+						case PDOMCPPLinkage.CPPCLASSTYPE:
+						{
+							switch (((PDOMCPPClassType)pdomBinding).getKey())
+							{
+								case ICPPClassType.k_class:
+								case ICompositeType.k_struct:
+									if (((flags & FIND_CLASS_STRUCT) == FIND_CLASS_STRUCT))
+									{
+										createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+									}
+									break;
+								case ICompositeType.k_union:
+									if ((flags & FIND_UNION) == FIND_UNION)
+									{
+										createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+									}
+									break;
+								default:
+									break;
+							}
+							break;
+						}
+						case PDOMCPPLinkage.CPPENUMERATION:	
+							if ((flags & FIND_ENUM) == FIND_ENUM)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						case PDOMCPPLinkage.CPPENUMERATOR:	
+							if ((flags & FIND_ENUMERATOR) == FIND_ENUMERATOR)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						case PDOMCPPLinkage.CPPFIELD:	
+							if ((flags & FIND_FIELD) == FIND_FIELD)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						case PDOMCPPLinkage.CPPFUNCTION:
+							if ((flags & FIND_FUNCTION) == FIND_FUNCTION)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						case PDOMCPPLinkage.CPPMETHOD:	
+							if ((flags & FIND_METHOD) == FIND_METHOD)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						case PDOMCPPLinkage.CPPNAMESPACE:
+						case PDOMCPPLinkage.CPPNAMESPACEALIAS:	
+							if ((flags & FIND_NAMESPACE) == FIND_NAMESPACE)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						case PDOMCPPLinkage.CPPTYPEDEF:	
+							if ((flags & FIND_TYPEDEF) == FIND_TYPEDEF)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						case PDOMCPPLinkage.CPPVARIABLE:	
+							if ((flags & FIND_VARIABLE) == FIND_VARIABLE)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						default:
+							break;
+						}
+					}
+					//C
+					else if (pdomBinding.getLinkage() instanceof PDOMCLinkage)
+					{
+						switch (pdomBinding.getNodeType()) {
+						case PDOMCLinkage.CSTRUCTURE:
+							switch (((PDOMCStructure)pdomBinding).getKey())
+							{
+								case ICompositeType.k_struct:
+									if (((flags & FIND_CLASS_STRUCT) == FIND_CLASS_STRUCT))
+									{
+										createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+									}
+									break;
+								case ICompositeType.k_union:
+									if ((flags & FIND_UNION) == FIND_UNION)
+									{
+										createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+									}
+									break;
+							}
+							break;
+						case PDOMCLinkage.CENUMERATION:	
+							if ((flags & FIND_ENUM) == FIND_ENUM)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						case PDOMCLinkage.CENUMERATOR:	
+							if ((flags & FIND_ENUMERATOR) == FIND_ENUMERATOR)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						case PDOMCLinkage.CFIELD:	
+							if ((flags & FIND_FIELD) == FIND_FIELD)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						case PDOMCLinkage.CFUNCTION:
+							if ((flags & FIND_FUNCTION) == FIND_FUNCTION)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						case PDOMCLinkage.CTYPEDEF:	
+							if ((flags & FIND_TYPEDEF) == FIND_TYPEDEF)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						case PDOMCLinkage.CVARIABLE:	
+							if ((flags & FIND_VARIABLE) == FIND_VARIABLE)
+							{
+								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+							}
+							break;
+						default:
+							break;
+						}
+					}
+				}
 			}
 		} finally {
 			pdom.releaseReadLock();

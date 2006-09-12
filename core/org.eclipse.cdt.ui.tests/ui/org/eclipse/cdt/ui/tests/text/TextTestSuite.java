@@ -20,13 +20,13 @@ public class TextTestSuite extends TestSuite {
     }
     
     public TextTestSuite() {
-        super("Tests in package org.eclipse.cdt.ui.tests.text.text");
+        super("Tests in package org.eclipse.cdt.ui.tests.text");
         
-		// Success Tests
 		//addTest(PartitionTokenScannerTest.suite());
 		addTest(NumberRuleTest.suite());
 		addTest(CAutoIndentTest.suite());
 		addTest(CPartitionerTest.suite());
+		addTest(PairMatcherTest.suite());
 
 		// Break iterator tests.
 		addTest(CBreakIteratorTest.suite());

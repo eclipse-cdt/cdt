@@ -23,6 +23,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.actions.SystemRefreshAllAction;
 import org.eclipse.tm.discovery.model.Pair;
 import org.eclipse.tm.discovery.model.Service;
 import org.eclipse.tm.discovery.model.ServiceType;
@@ -78,6 +79,8 @@ public class ServiceDiscoveryWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 
+		SystemRefreshAllAction systemRefreshAllAction = new SystemRefreshAllAction(null);
+		
 		String[] addresses = serviceDiscoveryPage.getAddresses();
 		for (int i = 0; i < addresses.length; i++) {
 
@@ -94,24 +97,28 @@ public class ServiceDiscoveryWizard extends Wizard {
 
 				try {
 					conn = RSEUIPlugin.getDefault().getSystemRegistry().createHost(sysTypeString, service.getName() + "@" + hostName, hostName, "Discovered "+sysTypeString+" server in "+hostName); //$NON-NLS-1$ //$NON-NLS-2$
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				if (conn != null) {
-					//copy discovered properties to RSE model
-					IPropertySet ps = conn.getConnectorServices()[0].createPropertySet(Messages.ServiceDiscoveryWizard_DiscoveryPropertySet);
-					Iterator pairIterator = service.getPair().iterator();
-					while (pairIterator.hasNext()) {
-						Pair pair = (Pair) pairIterator.next();
-						ps.addProperty(pair.getKey(), pair.getValue());
-
-						//add port to the RSE connection
-						if (pair.getKey().equalsIgnoreCase(Messages.ServiceDiscoveryWizard_Port)) {
-							conn.getConnectorServices()[0].setPort(Integer.parseInt(pair.getValue()));
+				
+					if (conn != null) {
+						//copy discovered properties to RSE model
+						IPropertySet ps = conn.getConnectorServices()[0].createPropertySet(Messages.ServiceDiscoveryWizard_DiscoveryPropertySet);
+						Iterator pairIterator = service.getPair().iterator();
+						while (pairIterator.hasNext()) {
+							Pair pair = (Pair) pairIterator.next();
+							ps.addProperty(pair.getKey(), pair.getValue());
+	
+							//add port to the RSE connection
+							if (pair.getKey().equalsIgnoreCase(Messages.ServiceDiscoveryWizard_Port)) {
+								conn.getConnectorServices()[0].setPort(Integer.parseInt(pair.getValue()));
+							}
 						}
+						RSEUIPlugin.getDefault().getSystemRegistry().expandHost(conn);
 					}
-					RSEUIPlugin.getDefault().getSystemRegistry().expandHost(conn);
+				} catch (Exception e) {
+					if (conn != null) {
+						RSEUIPlugin.getDefault().getSystemRegistry().deleteHost(conn);
+					}
+				} finally {
+					systemRefreshAllAction.run();
 				}
 			}
 

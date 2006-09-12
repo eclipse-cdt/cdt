@@ -19,8 +19,30 @@ Contributors:
    	  		class="org.eclipse.rse.discovery.ServiceDiscoveryWizardDelegate"
     		systemType="org.eclipse.rse.systemtype.discovery"/>
    </extension>
-
-   
+  
+   <extension
+         point="org.eclipse.rse.core.systemTypes">
+	   <systemType id="org.eclipse.rse.systemtype.discovery"
+            name="Discovery"
+			description="Discovery"
+			iconLive=""/>
+	</extension>
+    
+    <extension
+         point="org.eclipse.rse.ui.subsystemConfigurations">
+      <configuration
+            systemTypes="Discovery"
+            name="Discovery"
+            description="Service Discovery Wizard"
+            iconlive=""
+            icon=""
+            class="org.eclipse.rse.discovery.ServiceDiscoverySubSystemConfiguration"
+            vendor="Eclipse.org"
+            priority="100"
+            id="Discovery">
+      </configuration>
+      </extension>
+    
 </plugin>
 
 

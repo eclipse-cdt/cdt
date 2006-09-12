@@ -262,7 +262,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 					inInactiveCode = true;
 				} else if (elseStmt.taken() && inInactiveCode) {
 					IASTNodeLocation nodeLocation = elseStmt.getNodeLocations()[0];
-					int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
+					int inactiveCodeEnd = nodeLocation.getNodeOffset();
 					positions.add(new HighlightPosition(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart, fHighlightKey));
 					inInactiveCode = false;
 				}
@@ -274,7 +274,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 					inInactiveCode = true;
 				} else if (elifStmt.taken() && inInactiveCode) {
 					IASTNodeLocation nodeLocation = elifStmt.getNodeLocations()[0];
-					int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
+					int inactiveCodeEnd = nodeLocation.getNodeOffset();
 					positions.add(new HighlightPosition(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart, fHighlightKey));
 					inInactiveCode = false;
 				}

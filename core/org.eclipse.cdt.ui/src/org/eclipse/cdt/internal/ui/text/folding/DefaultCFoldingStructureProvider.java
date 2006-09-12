@@ -1139,7 +1139,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				Branch branch= (Branch)branchStack.pop();
 				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement)statement;
 				branchStack.push(new Branch(stmtLocation.getNodeOffset(), elseStmt.taken()));
-				branch.setEndOffset(stmtLocation.getNodeOffset() + stmtLocation.getNodeLength());
+				branch.setEndOffset(stmtLocation.getNodeOffset() - 1);
 				IRegion converted= converter != null ? converter.historicToActual(branch) : branch;
 				branches.add(new Branch(converted.getOffset(), converted.getLength(), branch.taken()));
 			} else if (statement instanceof IASTPreprocessorElifStatement) {
@@ -1150,7 +1150,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				Branch branch= (Branch)branchStack.pop();
 				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement) statement;
 				branchStack.push(new Branch(stmtLocation.getNodeOffset(), elifStmt.taken()));
-				branch.setEndOffset(stmtLocation.getNodeOffset() + stmtLocation.getNodeLength());
+				branch.setEndOffset(stmtLocation.getNodeOffset() - 1);
 				IRegion converted= converter != null ? converter.historicToActual(branch) : branch;
 				branches.add(new Branch(converted.getOffset(), converted.getLength(), branch.taken()));
 			} else if (statement instanceof IASTPreprocessorEndifStatement) {

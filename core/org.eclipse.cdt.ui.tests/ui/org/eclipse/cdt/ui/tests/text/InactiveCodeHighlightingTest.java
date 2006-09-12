@@ -73,19 +73,24 @@ public class InactiveCodeHighlightingTest extends TestCase {
 		super.tearDown();
 	}
 	
-	protected void assertEqualPositions(Position[] expected, Position[] actual) {
+	protected void assertEqualPositions(Position[] expected, Position[] actual) throws BadLocationException {
 		assertEquals(expected.length, actual.length);
+		IDocument document= fSourceViewer.getDocument();
 		for (int i= 0, n= expected.length; i < n; i++) {
+			int expectedStartLine= document.getLineOfOffset(expected[i].getOffset());
+			int expectedEndLine= document.getLineOfOffset(expected[i].getOffset()+expected[i].getLength());
+			int actualStartLine= document.getLineOfOffset(actual[i].getOffset());
+			int actualEndLine= document.getLineOfOffset(actual[i].getOffset()+expected[i].getLength());
 			assertEquals(expected[i].isDeleted(), actual[i].isDeleted());
-			assertEquals(expected[i].getOffset(), actual[i].getOffset());
-			assertEquals(expected[i].getLength(), actual[i].getLength());
+			assertEquals(expectedStartLine, actualStartLine);
+			assertEquals(expectedEndLine, actualEndLine);
 		}
 	}
 
 	protected Position createPosition(int startLine, int endLine) throws BadLocationException {
 		IDocument document= fSourceViewer.getDocument();
 		int startOffset= document.getLineOffset(startLine);
-		int endOffset= document.getLineOffset(endLine) + document.getLineLength(endLine) - document.getLineDelimiter(endLine).length();
+		int endOffset= document.getLineOffset(endLine) + document.getLineLength(endLine);
 		return new Position(startOffset, endOffset - startOffset);
 	}
 
@@ -96,7 +101,7 @@ public class InactiveCodeHighlightingTest extends TestCase {
 		for (int i= 0, n= positions.length; i < n; i++) {
 			Position position= positions[i];
 			int startLine= document.getLineOfOffset(position.getOffset());
-			int endLine= document.getLineOfOffset(position.getOffset()+position.getLength()-1);
+			int endLine= document.getLineOfOffset(position.getOffset()+position.getLength());
 			buf.append("\tcreatePosition(" + startLine + ", " + endLine + "),\n");
 		}
 		buf.append("};\n");
@@ -116,9 +121,9 @@ public class InactiveCodeHighlightingTest extends TestCase {
 				createPosition(2, 4),
 				createPosition(11, 13),
 				createPosition(15, 22),
-				createPosition(28, 34),
+				createPosition(28, 33),
 				createPosition(39, 41),
-				createPosition(47, 58),
+				createPosition(47, 57),
 				createPosition(67, 69),
 			};
 		if (false) System.out.println(toString(actual));

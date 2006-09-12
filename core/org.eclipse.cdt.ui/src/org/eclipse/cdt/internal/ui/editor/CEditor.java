@@ -723,6 +723,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 				}
 
 				if (SPACES_FOR_TABS.equals(property)) {
+					SourceViewerConfiguration configuration = getSourceViewerConfiguration();
+					String[] types = configuration.getConfiguredContentTypes(asv);
+					for (int i = 0; i < types.length; i++) {
+						asv.setIndentPrefixes(configuration.getIndentPrefixes(asv, types[i]), types[i]);
+					}
 					if (isTabConversionEnabled())
 						startTabConversion();
 					else
@@ -730,6 +735,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 					return;
 				}
 				
+				if (PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS.equals(property))
+					updateHoverBehavior();
+
 				// Not implemented ... for the future.
 				if (TRANSLATION_TASK_TAGS.equals(event.getProperty())) {
 					ISourceViewer sourceViewer= getSourceViewer();
@@ -767,6 +775,39 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			}
 		} finally {
 			super.handlePreferenceStoreChanged(event);
+		}
+	}
+
+	/*
+	 * Update the hovering behavior depending on the preferences.
+	 */
+	private void updateHoverBehavior() {
+		SourceViewerConfiguration configuration= getSourceViewerConfiguration();
+		String[] types= configuration.getConfiguredContentTypes(getSourceViewer());
+
+		for (int i= 0; i < types.length; i++) {
+
+			String t= types[i];
+
+			ISourceViewer sourceViewer= getSourceViewer();
+			if (sourceViewer instanceof ITextViewerExtension2) {
+				// Remove existing hovers
+				((ITextViewerExtension2)sourceViewer).removeTextHovers(t);
+
+				int[] stateMasks= configuration.getConfiguredTextHoverStateMasks(getSourceViewer(), t);
+
+				if (stateMasks != null) {
+					for (int j= 0; j < stateMasks.length; j++)	{
+						int stateMask= stateMasks[j];
+						ITextHover textHover= configuration.getTextHover(sourceViewer, t, stateMask);
+						((ITextViewerExtension2)sourceViewer).setTextHover(textHover, t, stateMask);
+					}
+				} else {
+					ITextHover textHover= configuration.getTextHover(sourceViewer, t);
+					((ITextViewerExtension2)sourceViewer).setTextHover(textHover, t, ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK);
+				}
+			} else
+				sourceViewer.setTextHover(configuration.getTextHover(sourceViewer, t), t);
 		}
 	}
 

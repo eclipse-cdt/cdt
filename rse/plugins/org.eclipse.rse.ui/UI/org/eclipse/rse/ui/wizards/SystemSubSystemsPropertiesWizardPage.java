@@ -103,44 +103,59 @@ public class SystemSubSystemsPropertiesWizardPage
 	{
 		int nbrColumns = 2;
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
-
-		_folder = new CTabFolder(composite_prompts, SWT.NONE);
-		_folder.setLayout(new TabFolderLayout());
-
 		int numAdded = 0;
-		for (int i = 0; i < _propertyPages.size(); i++)
+		if (_propertyPages.size() == 1)
 		{
-			PropertyPage page = (PropertyPage)_propertyPages.get(i);
+			PropertyPage page = (PropertyPage)_propertyPages.get(0);
 			if (page != null && page instanceof ISystemConnectionWizardPropertyPage)
 			{
 			    ISystemConnectionWizardPropertyPage cpage = (ISystemConnectionWizardPropertyPage)page;
 				cpage.setSubSystemConfiguration(parentFactory);
-				
-				CTabItem titem = new CTabItem(_folder, SWT.NULL, numAdded);
-				titem.setData(page);
-				page.createControl(_folder);
-				titem.setText(page.getTitle());
-				try
-				{
-					titem.setControl(page.getControl());
-		
-				}
-				catch (Exception e)
-				{
-					// TODO why does the tabfolder hit exception the
-					// first tiem setcontrol is called?
-				}
+				page.createControl(composite_prompts);
+
 				
 				//set the hostname for the page in case it's required
 				cpage.setHostname(getMainPage().getHostName());
-				cpage.setSystemType(getMainPage().getSystemType());
 				
 				numAdded++;
 			}			
+		}
+		else
+		{
+			_folder = new CTabFolder(composite_prompts, SWT.NONE);
+			_folder.setLayout(new TabFolderLayout());
+	
 
+			for (int i = 0; i < _propertyPages.size(); i++)
+			{
+				PropertyPage page = (PropertyPage)_propertyPages.get(i);
+				if (page != null && page instanceof ISystemConnectionWizardPropertyPage)
+				{
+				    ISystemConnectionWizardPropertyPage cpage = (ISystemConnectionWizardPropertyPage)page;
+					cpage.setSubSystemConfiguration(parentFactory);
+					
+					CTabItem titem = new CTabItem(_folder, SWT.NULL, numAdded);
+					titem.setData(page);
+					page.createControl(_folder);
+					titem.setText(page.getTitle());
+					try
+					{
+						titem.setControl(page.getControl());
+			
+					}
+					catch (Exception e)
+					{
+						// TODO why does the tabfolder hit exception the
+						// first tiem setcontrol is called?
+					}
+					
+					//set the hostname for the page in case it's required
+					cpage.setHostname(getMainPage().getHostName());
+					
+					numAdded++;
+				}			
 			}
-		
-		
+		}
 		if (numAdded == 0)
 		{
 			

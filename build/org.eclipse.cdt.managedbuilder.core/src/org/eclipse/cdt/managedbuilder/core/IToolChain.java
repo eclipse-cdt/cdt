@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -376,4 +376,10 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	 * @return IConfigurationBuildMacroSupplier
 	 */
 	public IConfigurationBuildMacroSupplier getBuildMacroSupplier();
+
+	/**
+	 * Returns an IOptionPathConverter implementation for this toolchain
+	 * or null, if no conversion is required
+	 */
+	public IOptionPathConverter getOptionPathConverter() ;
 }

@@ -26,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
+import org.eclipse.cdt.managedbuilder.core.IOptionPathConverter;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
@@ -1264,4 +1265,16 @@ public class ToolReference implements IToolReference {
 	 */
 	public void setRebuildState(boolean rebuild) {
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getPathConverter()
+	 */
+	public IOptionPathConverter getOptionPathConverter() {
+		if (parent!=null)  {
+			return parent.getOptionPathConverter();
+		}
+		return null;
+	}
+	
+	
 }

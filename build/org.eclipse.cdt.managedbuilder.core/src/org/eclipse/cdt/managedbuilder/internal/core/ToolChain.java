@@ -26,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
+import org.eclipse.cdt.managedbuilder.core.IOptionPathConverter;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ITool;
@@ -83,6 +84,8 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	private IConfigurationEnvironmentVariableSupplier environmentVariableSupplier = null;
 	private IConfigurationElement buildMacroSupplierElement = null;
 	private IConfigurationBuildMacroSupplier buildMacroSupplier = null;
+	private IConfigurationElement pathconverterElement = null ;
+	private IOptionPathConverter optionPathConverter = null ;
 
 	//  Miscellaneous
 	private boolean isExtensionToolChain = false;
@@ -309,6 +312,9 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		buildMacroSupplierElement = toolChain.buildMacroSupplierElement;
 		buildMacroSupplier = toolChain.buildMacroSupplier;
 
+		pathconverterElement = toolChain.pathconverterElement ;
+		optionPathConverter = toolChain.optionPathConverter ;
+
 		//  Clone the children in superclass
 		super.copyChildren(toolChain);
 		//  Clone the children
@@ -466,6 +472,11 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			buildMacroSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		}
 
+		// optionPathConverter
+		String pathconverterTypeName = element.getAttribute(ITool.OPTIONPATHCONVERTER);
+		if (pathconverterTypeName != null && element instanceof DefaultManagedConfigElement) {
+			pathconverterElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+		}
 	}
 	
 	
@@ -562,6 +573,14 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 				}
 			}
 		}
+		
+		// Note: optionPathConverter cannot be specified in a project file because
+		//       an IConfigurationElement is needed to load it!
+		if (pathconverterElement != null) {
+			//  TODO:  issue warning?
+		}
+
+
 	}
 
 	/**
@@ -689,6 +708,12 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 				userDefinedMacros.serialize(doc,macrosElement);
 			}
 			
+			// Note: optionPathConverter cannot be specified in a project file because
+			//       an IConfigurationElement is needed to load it!
+			if (pathconverterElement != null) {
+				//  TODO:  issue warning?
+			}
+
 			if(userDefinedEnvironment != null)
 				EnvironmentVariableProvider.fUserSupplier.storeEnvironment(getParent(),true);
 
@@ -1240,7 +1265,40 @@ public class ToolChain extends HoldsOptions implements IToolChain {
             setDirty(true);
         }
     }
-	
+
+	/**
+	 * @return the pathconverterElement
+	 */
+	public IConfigurationElement getPathconverterElement() {
+		return pathconverterElement;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getPathConverter()
+	 */
+	public IOptionPathConverter getOptionPathConverter() {
+		if (optionPathConverter != null) {
+			return optionPathConverter ;
+		}
+		IConfigurationElement element = getPathconverterElement();
+		if (element != null) {
+			try {
+				if (element.getAttribute(ITool.OPTIONPATHCONVERTER) != null) {
+					optionPathConverter = (IOptionPathConverter) element.createExecutableExtension(ITool.OPTIONPATHCONVERTER);
+					return optionPathConverter;
+				}
+			} catch (CoreException e) {}
+		}  else  {
+			if (getSuperClass() instanceof IToolChain) {
+				IToolChain superTool = (IToolChain) getSuperClass();
+				return superTool.getOptionPathConverter() ;
+			}
+		}
+		return null ;
+	}
+
+    
+    
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */

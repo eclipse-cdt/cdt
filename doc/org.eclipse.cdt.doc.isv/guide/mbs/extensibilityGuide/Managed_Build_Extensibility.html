@@ -1534,6 +1534,24 @@ the schema table below.</p>
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">no</td>
     </tr>
+    <tr>
+      <td style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">optionPathConverter
+      </td>
+      <td style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <p class="MsoNormal">The name of a class that implements 
+		IOptionPathConverter. Some tools like Cygwin on Windows understand non-standard paths, e.g. "/usr/local/include"
+		which are not valid on the platform itself and cannot be understood by CDT's PathEntry framework.
+		The path converter will be called each time when a tool's include or library path settings
+		are evaluated for use by PathEntry and can change the given path to a platform-compatible format. <br>
+		An optionPathConverter can be defined globally per toolchain or per tool. 
+		When path translation is required the tool is asked for it's optionPathConverter. 
+		If a converter is defined for the tool it will be used and override any toolchain settings.
+		If a converter is not defined on the tool, the tool will ask it's toolchain for a converter.
+	  </td>
+	  <td style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">no</td>
   </tbody>
 </table>
 <p class="subsection"><a name="_TocSectionGrammar_6">3.6 Builder</a></p>
@@ -2585,6 +2603,33 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
       <p>no</p>
       </td>
     </tr>
+
+    <tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <p>optionPathConverter</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <p class="MsoNormal">The name of a class that implements 
+		IOptionPathConverter. Some tools like Cygwin on Windows understand non-standard paths, e.g. "/usr/local/include"
+		which are not valid on the platform itself and cannot be understood by CDT's PathEntry framework.
+		The path converter will be called each time when a tool's include or library path settings
+		are evaluated for use by PathEntry and can change the given path to a platform-compatible format. <br>
+		If a path converter is not defined on the tool, the tool will also ask it's toolchain for a path converter.
+	  </td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <p>no</p>
+      </td>
+    </tr>
+
+
+
+
   </tbody>
 </table>
 <p class="subsection"><a name="_TocSectionGrammar_9">3.9 

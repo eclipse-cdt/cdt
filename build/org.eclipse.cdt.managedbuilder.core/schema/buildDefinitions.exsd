@@ -423,6 +423,18 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="optionPathConverter" type="string">
+            <annotation>
+               <documentation>
+                  Toolchains like Cygwin based Gnu tools can accept paths which are not valid for the OS platform. E.g. &quot;/usr/include&quot; is well difined for a Cygwin gcc compiler while it is not a meaningful path for a java.io.File. Therefore toolchains can specify a pathConverter which will be applied to include and library paths configured in the Managed Build System.
+
+The pathConverter of a toolchain applies for all tools of the toolchain except if a tool defines it&apos;s own pathConverter. In this case the pathConverter supplied by the toolchain is ignored.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IPathConverter"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -689,6 +701,16 @@
                <documentation>
                   The identifier of a tool, that tools loaded using this definition should be converted to. MBS will invoke a proper converter.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="optionPathConverter" type="string">
+            <annotation>
+               <documentation>
+                  Tools like Cygwin based Gnu tools can accept paths which are not valid for the OS platform. E.g. &quot;/usr/include&quot; is well difined for a Cygwin gcc compiler while it is not a meaningful path for a java.io.File. Therefore tools can specify a pathConverter which will be applied to include and library paths configured in the Managed Build System.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IPathConverter"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

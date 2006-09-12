@@ -14,6 +14,7 @@ package org.eclipse.cdt.managedbuilder.ui.tests.util;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
+import org.eclipse.cdt.managedbuilder.core.IOptionPathConverter;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
@@ -263,5 +264,15 @@ public class TestToolchain extends HoldsOptions implements IToolChain {
 	{
 		this.id = id;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getPathConverter()
+	 */
+	public IOptionPathConverter getOptionPathConverter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 	
 }

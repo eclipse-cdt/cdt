@@ -32,12 +32,15 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
+import org.eclipse.cdt.managedbuilder.core.IOptionPathConverter;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
@@ -1143,6 +1146,17 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 					String  paths[] = ManagedBuildManager.getBuildMacroProvider().resolveStringListValue(path, EMPTY, " ", context, obj); //$NON-NLS-1$
 					if (paths != null) {
 						for(int i = 0; i < paths.length; i++){
+							// Check for registered path converter
+							if (obj instanceof OptionContextData) {
+								OptionContextData optionContext = (OptionContextData) obj;
+								IBuildObject buildObject = optionContext.getParent() ;
+								IOptionPathConverter optionPathConverter = getPathConverter(buildObject);
+								if (null!=optionPathConverter) {
+									IPath platformPath = optionPathConverter
+											.convertToPlatformLocation(paths[i], null, null);
+									paths[i] = platformPath.toOSString();
+								}								
+							}
 							list.add(checkPath(paths[i]));
 						}
 					}
@@ -1155,6 +1169,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return list;
 	}
 	
+	private IOptionPathConverter getPathConverter(IBuildObject buildObject)  {
+		IOptionPathConverter converter = null ;
+		if (buildObject instanceof ITool) {
+			ITool tool = (ITool) buildObject;
+			converter = tool.getOptionPathConverter() ;
+		}
+		return converter ;
+	}
 	private String checkPath(String p){
 		final String QUOTE = "\""; //$NON-NLS-1$
 		final String EMPTY = "";   //$NON-NLS-1$

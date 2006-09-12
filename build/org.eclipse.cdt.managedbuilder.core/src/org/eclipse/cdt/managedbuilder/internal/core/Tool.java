@@ -35,6 +35,7 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
+import org.eclipse.cdt.managedbuilder.core.IOptionPathConverter;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
@@ -122,7 +123,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	private IManagedCommandLineGenerator commandLineGenerator = null;
 	private IConfigurationElement dependencyGeneratorElement = null;
 	private IManagedDependencyGeneratorType dependencyGenerator = null;
-	private URL iconPathURL;	
+	private URL iconPathURL;
+	private IConfigurationElement pathconverterElement = null ;
+	private IOptionPathConverter optionPathConverter = null ;
 	//  Miscellaneous
 	private boolean isExtensionTool = false;
 	private boolean isDirty = false;
@@ -383,7 +386,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		commandLineGenerator = tool.commandLineGenerator; 
 		dependencyGeneratorElement = tool.dependencyGeneratorElement; 
 		dependencyGenerator = tool.dependencyGenerator; 
-
+		pathconverterElement = tool.pathconverterElement ;
+		optionPathConverter = tool.optionPathConverter ;
+		
 		if(tool.envVarBuildPathList != null)
 			envVarBuildPathList = new ArrayList(tool.envVarBuildPathList);
 		
@@ -559,6 +564,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		    String icon = element.getAttribute(IOptionCategory.ICON);
 			iconPathURL = ManagedBuildManager.getURLInBuildDefinitions( (DefaultManagedConfigElement)element, new Path(icon) );
 		}		
+		
+		// optionPathConverter
+		String pathconverterTypeName = element.getAttribute(ITool.OPTIONPATHCONVERTER);
+		if (pathconverterTypeName != null && element instanceof DefaultManagedConfigElement) {
+			pathconverterElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -718,6 +729,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 				iconPathURL = null;
 			}
 		}
+		
 	}
 
 	/**
@@ -880,6 +892,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 			if (iconPathURL != null) {
 				// Save as URL in string form
 				element.setAttribute(IOptionCategory.ICON, iconPathURL.toString());
+			}
+
+			// Note: optionPathConverter cannot be specified in a project file because
+			//       an IConfigurationElement is needed to load it!
+			if (pathconverterElement != null) {
+				//  TODO:  issue warning?
 			}
 
 			saveRebuildState();
@@ -2347,7 +2365,61 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		}
 		return false;
 	}
+	
 
+	
+	/**
+	 * @return the pathconverterElement
+	 */
+	public IConfigurationElement getPathconverterElement() {
+		return pathconverterElement;
+	}
+
+	public IOptionPathConverter getOptionPathConverter()  {
+		// Use existing converter
+		if (optionPathConverter != null) {
+			return optionPathConverter ;
+		}
+		if (optionPathConverter==null) {
+			// If there is not yet a optionPathConverter try to construct from configuration element
+			IConfigurationElement element = getPathconverterElement();
+			if (element != null) {
+				try {
+					if (element.getAttribute(ITool.OPTIONPATHCONVERTER) != null) {
+						optionPathConverter = (IOptionPathConverter) element
+								.createExecutableExtension(ITool.OPTIONPATHCONVERTER);
+					}
+				} catch (CoreException e) {
+				}
+			} 
+			if (optionPathConverter==null)  {
+				// If there is still no optionPathConverter, ask superclass of this tool whether it has a converter
+				if (getSuperClass() instanceof ITool) {
+					ITool superTool = (ITool) getSuperClass();
+					optionPathConverter = superTool.getOptionPathConverter();
+				}
+			}
+			// If there is still no converter, ask the toolchain for a
+			// global converter
+			if ((optionPathConverter==null)&&(getParent() instanceof IResourceConfiguration))  {
+				// The tool belongs to a resource configuration
+				IResourceConfiguration resourceConfiguration = (IResourceConfiguration) getParent();
+				IConfiguration configuration = resourceConfiguration.getParent();
+				if (null!=configuration)  {
+					IToolChain toolchain = configuration.getToolChain();
+					optionPathConverter = toolchain.getOptionPathConverter();
+				}
+			}
+			if ((optionPathConverter==null)&&(getParent() instanceof IToolChain)) {
+				// The tool belongs to a toolchain
+				IToolChain toolchain = (IToolChain) getParent();
+				optionPathConverter = toolchain.getOptionPathConverter();
+			}
+		}		
+		return optionPathConverter ;
+	}
+	
+	
 /*
  *  O B J E C T   S T A T E   M A I N T E N A N C E
  */

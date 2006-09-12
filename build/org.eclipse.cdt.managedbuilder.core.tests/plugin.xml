@@ -6308,4 +6308,169 @@
      
 
    </extension>
+   
+   <!-- The following buildDefinitions support the test in org.eclipse.cdt.managedbuilder.core.tests.PathConverterTest -->
+   <extension
+         point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
+      <managedBuildRevision fileVersion="3.1.0"/>
+      <toolChain
+            id="pathconvertertest.convertingtoolchain"
+            isAbstract="false"
+            name="path converting toolchain"
+            optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.TestPathConverter1"/>
+      <toolChain
+            id="pathconvertertest.nonconvertingtoolchain"
+            isAbstract="false"
+            name="non path converting toolchain"
+            />
+      <tool
+            id="pathconvertertest.convertingtool"
+            isAbstract="false"
+            name="path converting tool"
+            optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.TestPathConverter2">
+                  <option
+                        id="pathconvertertest.convertingtool.includeOption"
+                        isAbstract="false"
+                        name="Include Paths"
+                        resourceFilter="all"
+                        valueType="includePath">
+                     <listOptionValue value="file:///usr/local/include"/>
+                  </option>
+             </tool>
+      <tool
+            id="pathconvertertest.nonconvertingtool"
+            isAbstract="false"
+            name="non path converting tool"
+            />
+      <projectType
+            id="pathconvertertest.projecttype"
+            isAbstract="false"
+            name="pathconvertertest">
+         <configuration
+               id="pathconvertertest.tcnn.tonn"
+               name="config toolchain-nn, tool-nn">
+            <toolChain
+                  id="pathconvertertest.config.tcnn.tonn.toolchain"
+                  isAbstract="false"
+                  name="toolchain tcnn tonn"
+                  superClass="pathconvertertest.nonconvertingtoolchain">
+               <builder
+                     id="pathconvertertest.config.tcnn.tonn.toolchain.builder"
+                     isAbstract="false"
+                     isVariableCaseSensitive="false"
+                     name="builder tcnn tonn"/>
+               <targetPlatform
+                     id="pathconvertertest.config.tcnn.tonn.toolchain.targetplatform"
+                     isAbstract="false"
+                     name="targetplatform tcnn tonn"/>
+               <tool
+                     id="pathconvertertest.config.tcnn.tonn.toolchain.tool"
+                     isAbstract="false"
+                     name="tool tcnn tonn"
+                     superClass="pathconvertertest.nonconvertingtool">
+               </tool>
+            </toolChain>
+         </configuration>
+         <configuration
+               id="pathconvertertest.tcny.tonn"
+               name="config toolchain-ny, tool-nn">
+            <toolChain
+                  id="pathconvertertest.config.tcny.tonn.toolchain"
+                  isAbstract="false"
+                  name="toolchain tcny tonn"
+                  superClass="pathconvertertest.convertingtoolchain">
+               <builder
+                     id="pathconvertertest.config.tcny.tonn.toolchain.builder"
+                     isAbstract="false"
+                     isVariableCaseSensitive="false"
+                     name="builder tcny tonn"/>
+               <targetPlatform
+                     id="pathconvertertest.config.tcny.tonn.toolchain.targetplatform"
+                     isAbstract="false"
+                     name="targetplatform tcny tonn"/>
+               <tool
+                     id="pathconvertertest.config.tcny.tonn.toolchain.tool"
+                     isAbstract="false"
+                     name="tool tcny tonn"
+                     superClass="pathconvertertest.nonconvertingtool"/>
+            </toolChain>
+         </configuration>
+         <configuration
+               id="pathconvertertest.tcyy.tonn"
+               name="config toolchain-yy, tool-nn">
+            <toolChain
+                  id="pathconvertertest.config.tcyy.tonn.toolchain"
+                  isAbstract="false"
+                  name="toolchain tcyy tonn"
+                  optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.TestPathConverter3"
+                  superClass="pathconvertertest.convertingtoolchain">
+               <builder
+                     id="pathconvertertest.config.tcyy.tonn.toolchain.builder"
+                     isAbstract="false"
+                     isVariableCaseSensitive="false"
+                     name="builder tcyy tonn"/>
+               <targetPlatform
+                     id="pathconvertertest.config.tcyy.tonn.toolchain.targetplatform"
+                     isAbstract="false"
+                     name="targetplatform tcyy tonn"/>
+               <tool
+                     id="pathconvertertest.config.tcyy.tonn.toolchain.tool"
+                     isAbstract="false"
+                     name="tool tcyy tonn"
+                     superClass="pathconvertertest.nonconvertingtool"/>
+            </toolChain>
+         </configuration>
+         <configuration
+               id="pathconvertertest.tcyy.tony"
+               name="config toolchain-yy, tool-ny">
+            <toolChain
+                  id="pathconvertertest.config.tcyy.tony.toolchain"
+                  isAbstract="false"
+                  name="toolchain tcyy tony"
+                  optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.TestPathConverter3"
+                  superClass="pathconvertertest.convertingtoolchain">
+               <builder
+                     id="pathconvertertest.config.tcyy.tony.toolchain.builder"
+                     isAbstract="false"
+                     isVariableCaseSensitive="false"
+                     name="builder tcyy tony"/>
+               <targetPlatform
+                     id="pathconvertertest.config.tcyy.tony.toolchain.targetplatform"
+                     isAbstract="false"
+                     name="targetplatform tcyy tony"/>
+               <tool
+                     id="pathconvertertest.config.tcyy.tony.toolchain.tool"
+                     isAbstract="false"
+                     name="tool tcyy tony"
+                     superClass="pathconvertertest.convertingtool"/>
+            </toolChain>
+         </configuration>
+         <configuration
+               id="pathconvertertest.tcyy.toyy"
+               name="config toolchain-yy, tool-yy">
+            <toolChain
+                  id="pathconvertertest.config.tcyy.toyy.toolchain"
+                  isAbstract="false"
+                  name="toolchain tcyy toyy"
+                  optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.TestPathConverter3"
+                  superClass="pathconvertertest.convertingtoolchain">
+               <builder
+                     id="pathconvertertest.config.tcyy.toyy.toolchain.builder"
+                     isAbstract="false"
+                     isVariableCaseSensitive="false"
+                     name="builder tcyy toyy"/>
+               <targetPlatform
+                     id="pathconvertertest.config.tcyy.toyy.toolchain.targetplatform"
+                     isAbstract="false"
+                     name="targetplatform tcyy toyy"/>
+               <tool
+                     id="pathconvertertest.config.tcyy.toyy.toolchain.tool"
+                     isAbstract="false"
+                     name="tool tcyy toyy"
+                     optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.TestPathConverter4"
+                     superClass="pathconvertertest.convertingtool"/>
+            </toolChain>
+         </configuration>
+      </projectType>
+   </extension>
 </plugin>

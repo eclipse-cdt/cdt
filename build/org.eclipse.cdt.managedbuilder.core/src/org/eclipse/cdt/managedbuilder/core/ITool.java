@@ -46,7 +46,8 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	
 	public static final String VERSIONS_SUPPORTED = "versionsSupported";	//$NON-NLS-1$
 	public static final String CONVERT_TO_ID = "convertToId";				//$NON-NLS-1$
-	
+	public static final String OPTIONPATHCONVERTER = "optionPathConverter";				//$NON-NLS-1$
+
 	public static final int FILTER_C = 0;
 	public static final int FILTER_CC = 1;
 	public static final int FILTER_BOTH = 2;
@@ -723,4 +724,10 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	 * @return IEnvVarBuildPath[]
 	 */
 	public IEnvVarBuildPath[] getEnvVarBuildPaths();
+	
+	/**
+	 * Returns an IOptionPathConverter implementation for this tool
+	 * or null, if no conversion is required
+	 */
+	public IOptionPathConverter getOptionPathConverter() ;
 }

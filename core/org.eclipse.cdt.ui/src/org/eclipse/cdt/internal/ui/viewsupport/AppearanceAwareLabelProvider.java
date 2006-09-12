@@ -21,8 +21,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class AppearanceAwareLabelProvider extends CUILabelProvider implements IPropertyChangeListener {
 
-	public final static int DEFAULT_TEXTFLAGS= CElementLabels.ROOT_VARIABLE | CElementLabels.M_PARAMETER_TYPES |  
-		CElementLabels.M_APP_RETURNTYPE | CElementLabels.REFERENCED_ROOT_POST_QUALIFIED;
+	public final static int DEFAULT_TEXTFLAGS= CElementLabels.ROOT_VARIABLE | CElementLabels.M_PARAMETER_TYPES | CElementLabels.REFERENCED_ROOT_POST_QUALIFIED;
 	public final static int DEFAULT_IMAGEFLAGS= CElementImageProvider.OVERLAY_ICONS;
 	
 	private int fTextFlagMask;

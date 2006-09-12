@@ -11,23 +11,12 @@
 /*
  * COutlineInformationControl.java 2004-12-14 / 08:17:41
 
- * $Revision: 1.4 $ $Date: 2005/01/24 17:24:14 $
+ * $Revision: 1.5 $ $Date: 2005/06/23 16:01:24 $
  *
  * @author P.Tomaszewski
  */
 package org.eclipse.cdt.internal.ui.text;
 
-import org.eclipse.cdt.internal.core.model.CElement;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
-import org.eclipse.cdt.internal.ui.editor.CContentOutlinerProvider;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
-import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.StandardCElementLabelProvider;
-import org.eclipse.cdt.ui.CElementGrouping;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
@@ -86,6 +75,22 @@ import org.eclipse.swt.widgets.Tracker;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import org.eclipse.cdt.ui.CElementGrouping;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+
+import org.eclipse.cdt.internal.core.model.CElement;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.editor.CContentOutlinerProvider;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.StandardCElementLabelProvider;
+
 /**
  * Control which shows outline information in C/C++ editor. Based on
  * AbstracInformationContol/JavaOutlineInformationControl from JDT.
@@ -110,6 +115,8 @@ public class COutlineInformationControl implements IInformationControl,
     private static final int RIGHT_MARGIN = 3;
     /** Minimum width set by setSizeConstrains to tree viewer. */
     private static final int MIN_WIDTH = 300;
+	private static final int TEXT_FLAGS = AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS | CElementLabels.F_APP_TYPE_SIGNATURE | CElementLabels.M_APP_RETURNTYPE;
+	private static final int IMAGE_FLAGS = AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS;
 
     /** Source viewer which shows this control. */
     CEditor fEditor;
@@ -427,7 +434,7 @@ public class COutlineInformationControl implements IInformationControl,
             fTreeViewer.setSorter(fSorter);
         }
         fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(
-                new StandardCElementLabelProvider(), true));
+                new StandardCElementLabelProvider(TEXT_FLAGS, IMAGE_FLAGS), true));
         fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
         fTreeViewer.setInput(manager.getWorkingCopy(fEditor.getEditorInput()));
         tree.addKeyListener(createKeyListenerForTreeViewer());

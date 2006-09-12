@@ -1252,18 +1252,20 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				comments.add(new Tuple(new CProjectionAnnotation(collapse, doc.get(projection.offset, Math.min(16, projection.length)), true), projection));
 			}
 		}
-		// first comment is header comment
-		Iterator iter = comments.iterator();
-		Tuple tuple = (Tuple) iter.next();
-		if (ctx.collapseHeaderComments()) {
-			tuple.annotation.markCollapsed();
-		} else {
-			tuple.annotation.markExpanded();
-		}
-		ctx.addProjectionRange(tuple.annotation, tuple.position);
-		while (iter.hasNext()) {
-			tuple = (Tuple) iter.next();
+		if (!comments.isEmpty()) {
+			// first comment is header comment
+			Iterator iter = comments.iterator();
+			Tuple tuple = (Tuple) iter.next();
+			if (ctx.collapseHeaderComments()) {
+				tuple.annotation.markCollapsed();
+			} else {
+				tuple.annotation.markExpanded();
+			}
 			ctx.addProjectionRange(tuple.annotation, tuple.position);
+			while (iter.hasNext()) {
+				tuple = (Tuple) iter.next();
+				ctx.addProjectionRange(tuple.annotation, tuple.position);
+			}
 		}
 	}
 

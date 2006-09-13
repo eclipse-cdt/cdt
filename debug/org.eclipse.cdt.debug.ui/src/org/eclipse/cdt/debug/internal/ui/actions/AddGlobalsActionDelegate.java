@@ -282,6 +282,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 			if ( info != null && gvm != null ) {
 				fGlobals = info.getGlobals();
 				ListSelectionDialog dlg = createDialog();
+				dlg.setTitle(ActionMessages.getString("AddGlobalsActionDelegate.title"));
 				dlg.setInitialSelections( gvm.getDescriptors() );
 				if ( dlg.open() == Window.OK ) {
 					List list = Arrays.asList( dlg.getResult() );

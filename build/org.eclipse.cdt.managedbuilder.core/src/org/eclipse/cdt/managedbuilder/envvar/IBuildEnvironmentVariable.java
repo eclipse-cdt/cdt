@@ -52,7 +52,7 @@ public interface IBuildEnvironmentVariable{
 	 * The Environment Variable Provider will also remove the duplicates of "sub-values" 
 	 * in the resulting value. 
 	 * For example:
-	 * If the current value is "string1:string2:string3", the getDelimiter() method returns “:” 
+	 * If the current value is "string1:string2:string3", the getDelimiter() method returns ":" 
 	 * and getValue() method returns "string4:string2" the new value will contain:
 	 * For the "prepend" operation: "string4:string2:string1:string3"
 	 * For the "append" operation: "string1:string3:string4:string2"

@@ -241,7 +241,7 @@ public class SemanticHighlightings {
 //		 */
 //		public boolean consumes(SemanticToken token) {
 //			IBinding binding= token.getBinding();
-//			if (binding instanceof ICPPField) {
+//			if (binding instanceof ICPPField && !(binding instanceof IProblemBinding)) {
 //				ICPPField field= (ICPPField)binding;
 //				try {
 //					// TLETODO [semanticHighlighting] need access to const storage class
@@ -308,7 +308,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof IField) {
+			if (binding instanceof IField && !(binding instanceof IProblemBinding)) {
 				try {
 					return ((IField)binding).isStatic();
 				} catch (DOMException exc) {
@@ -373,7 +373,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof IField) {
+			if (binding instanceof IField && !(binding instanceof IProblemBinding)) {
 				try {
 					return !((IField)binding).isStatic();
 				} catch (DOMException exc) {
@@ -443,7 +443,7 @@ public class SemanticHighlightings {
 				IASTName name= (IASTName)node;
 				if (name.isDeclaration() || name.isDefinition()) {
 					IBinding binding= token.getBinding();
-					if (binding instanceof ICPPMethod) {
+					if (binding instanceof ICPPMethod && !(binding instanceof IProblemBinding)) {
 						return true;
 					}
 				}
@@ -704,7 +704,7 @@ public class SemanticHighlightings {
 				IASTName name= (IASTName)node;
 				if (name.isReference()) {
 					IBinding binding= token.getBinding();
-					if (binding instanceof ICPPMethod) {
+					if (binding instanceof ICPPMethod && !(binding instanceof IProblemBinding)) {
 						return true;
 					}
 				}
@@ -814,7 +814,9 @@ public class SemanticHighlightings {
 				IASTName name= (IASTName)node;
 				if (name.isDeclaration()) {
 					IBinding binding= token.getBinding();
-					if (binding instanceof IFunction && !(binding instanceof ICPPMethod)) {
+					if (binding instanceof IFunction 
+							&& !(binding instanceof ICPPMethod)
+							&& !(binding instanceof IProblemBinding)) {
 						return true;
 					}
 				}
@@ -879,7 +881,9 @@ public class SemanticHighlightings {
 				IASTName name= (IASTName)node;
 				if (name.isReference()) {
 					IBinding binding= token.getBinding();
-					if (binding instanceof IFunction && !(binding instanceof ICPPMethod)) {
+					if (binding instanceof IFunction 
+							&& !(binding instanceof ICPPMethod)
+							&& !(binding instanceof IProblemBinding)) {
 						return true;
 					}
 				}
@@ -946,7 +950,8 @@ public class SemanticHighlightings {
 					IBinding binding= token.getBinding();
 					if (binding instanceof IVariable
 							&& !(binding instanceof IField)
-							&& !(binding instanceof IParameter)) {
+							&& !(binding instanceof IParameter)
+							&& !(binding instanceof IProblemBinding)) {
 						try {
 							IScope scope= binding.getScope();
 							if (LocalVariableHighlighting.isLocalScope(scope)) {
@@ -1023,7 +1028,8 @@ public class SemanticHighlightings {
 					IBinding binding= token.getBinding();
 					if (binding instanceof IVariable
 							&& !(binding instanceof IField)
-							&& !(binding instanceof IParameter)) {
+							&& !(binding instanceof IParameter)
+							&& !(binding instanceof IProblemBinding)) {
 						try {
 							IScope scope= binding.getScope();
 							if (isLocalScope(scope)) {
@@ -1111,7 +1117,8 @@ public class SemanticHighlightings {
 			IBinding binding= token.getBinding();
 			if (binding instanceof IVariable
 					&& !(binding instanceof IField)
-					&& !(binding instanceof IParameter)) {
+					&& !(binding instanceof IParameter)
+					&& !(binding instanceof IProblemBinding)) {
 				try {
 					IScope scope= binding.getScope();
 					if (!LocalVariableHighlighting.isLocalScope(scope)) {
@@ -1179,7 +1186,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof IParameter) {
+			if (binding instanceof IParameter && !(binding instanceof IProblemBinding)) {
 				return true;
 			}
 			return false;
@@ -1240,7 +1247,7 @@ public class SemanticHighlightings {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IBinding binding= token.getBinding();
-				if (binding instanceof ICPPTemplateParameter) {
+				if (binding instanceof ICPPTemplateParameter && !(binding instanceof IProblemBinding)) {
 					return true;
 				}
 				// template parameters are resolved as problems??
@@ -1308,7 +1315,7 @@ public class SemanticHighlightings {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IBinding binding= token.getBinding();
-				if (binding instanceof ICPPClassType) {
+				if (binding instanceof ICPPClassType && !(binding instanceof IProblemBinding)) {
 					IASTName name= (IASTName)node;
 					if (name.isReference()) {
 						if (node.getParent() instanceof ICPPASTQualifiedName) {
@@ -1380,7 +1387,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof IEnumeration) {
+			if (binding instanceof IEnumeration && !(binding instanceof IProblemBinding)) {
 				return true;
 			}
 			return false;
@@ -1619,7 +1626,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof ITypedef) {
+			if (binding instanceof ITypedef && !(binding instanceof IProblemBinding)) {
 				return true;
 			}
 			return false;
@@ -1678,7 +1685,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof ICPPNamespace) {
+			if (binding instanceof ICPPNamespace && !(binding instanceof IProblemBinding)) {
 				return true;
 			}
 			return false;
@@ -1737,7 +1744,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof ILabel) {
+			if (binding instanceof ILabel && !(binding instanceof IProblemBinding)) {
 				return true;
 			}
 			return false;
@@ -1796,7 +1803,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof IEnumerator) {
+			if (binding instanceof IEnumerator && !(binding instanceof IProblemBinding)) {
 				return true;
 			}
 			return false;
@@ -1939,9 +1946,9 @@ public class SemanticHighlightings {
 				new ClassHighlighting(),
 //				new StaticConstFieldHighlighting(),
 				new StaticFieldHighlighting(),
-				new FieldHighlighting(),
+				new FieldHighlighting(),  // after all other fields
 				new MethodDeclarationHighlighting(),
-//				 TLETODO [semanticHighlighting] Static method invocations
+// TLETODO [semanticHighlighting] Static method invocations
 //				new StaticMethodInvocationHighlighting(),
 // TLETODO [semanticHighlighting] Virtual method invocations
 //				new VirtualMethodInvocationHighlighting(),

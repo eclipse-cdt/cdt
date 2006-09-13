@@ -111,7 +111,7 @@ public interface IOutputType extends IBuildObject {
 	/**
 	 * Returns the id of the option that is associated with this
 	 * output type on the command line. The default is to use the Tool 
-	 * “outputFlag” attribute if primaryOutput is True.  If option is not 
+	 * "outputFlag" attribute if primaryOutput is True.  If option is not 
 	 * specified, and primaryOutput is False, then the output file(s) of 
 	 * this outputType are not added to the command line.  
 	 * When specified, the namePattern, nameProvider and outputNames are ignored.

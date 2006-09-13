@@ -53,7 +53,7 @@ public interface IInputOrder {
 	 * In most cases, only a single integer value will be specified.  A list is supported 
 	 * for the case where a single input file needs to be specified multiple times on the 
 	 * command line.  The order numbers begin at 1.  Not all values need to be specified.  
-	 * Unordered resources will fill the first “gap”.  For example:
+	 * Unordered resources will fill the first "gap".  For example:
 	 *   •	To specify the first input file, use 1.
 	 *   •	To specify the last input file, without specifying an order for any other input file, use 2.
 	 *   •	To specify only the first two input files and last input file, use 1, 2 & 4.

@@ -27,12 +27,14 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -58,45 +60,45 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
+    Font font = parent.getFont();
+    Composite comp = new Composite(parent, SWT.NONE);
+    GridLayout layout = new GridLayout(1, true);
+    comp.setLayout(layout);
+    comp.setFont(font);
 
-		Composite comp = new Composite(parent, SWT.NONE);
-		setControl(comp);
-		
+    GridData gd = new GridData(GridData.FILL_BOTH);
+    comp.setLayoutData(gd);
+    setControl(comp);
+    
 		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ARGUMNETS_TAB);
 		
-		GridLayout topLayout = new GridLayout();
-		comp.setLayout(topLayout);
-
-		createVerticalSpacer(comp, 1);
 		createArgumentComponent(comp, 1);
-		createVerticalSpacer(comp, 1);
 
 		fWorkingDirectoryBlock.createControl(comp);
 	}
 
-	protected void createArgumentComponent(Composite comp, int i) {
-		Composite argsComp = new Composite(comp, SWT.NONE);
-		GridLayout projLayout = new GridLayout();
-		projLayout.numColumns = 1;
-		projLayout.marginHeight = 0;
-		projLayout.marginWidth = 0;
-		argsComp.setLayout(projLayout);		
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = i;
-		argsComp.setLayoutData(gd);
-
-		fPrgmArgumentsLabel = new Label(argsComp, SWT.NONE);
-		fPrgmArgumentsLabel.setText(LaunchMessages.getString("CArgumentsTab.C/C++_Program_Arguments")); //$NON-NLS-1$
-		fPrgmArgumentsText = new Text(argsComp, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+	protected void createArgumentComponent(Composite comp, int horizontalSpan) {
+    Font font = comp.getFont();
+    Group group = new Group(comp, SWT.NONE);
+    group.setFont(font);
+    group.setLayout(new GridLayout());
+    GridData gd = new GridData(GridData.FILL_BOTH);
+    gd.horizontalSpan = horizontalSpan;
+    group.setLayoutData(gd);
+    
+		group.setText(LaunchMessages.getString("CArgumentsTab.C/C++_Program_Arguments")); //$NON-NLS-1$
+		fPrgmArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+    gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
+    gd.widthHint = 100;
 		fPrgmArgumentsText.setLayoutData(gd);
+    fPrgmArgumentsText.setFont(font);
 		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		fArgumentVariablesButton= createPushButton(argsComp, LaunchMessages.getString("CArgumentsTab.Variables"), null); //$NON-NLS-1$
+		fArgumentVariablesButton= createPushButton(group, LaunchMessages.getString("CArgumentsTab.Variables"), null); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		fArgumentVariablesButton.setLayoutData(gd);
 		fArgumentVariablesButton.addSelectionListener(new SelectionAdapter() {

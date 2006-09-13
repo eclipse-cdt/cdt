@@ -145,7 +145,7 @@ public class CallHierarchyUI {
 			IASTName name= getSelectedName(editorInput, sel);
 			if (name != null) {
 				IBinding binding= name.resolveBinding();
-				if (index.isRelevantForCallHierarchy(binding)) {
+				if (CIndexQueries.isRelevantForCallHierarchy(binding)) {
 					if (name.isDefinition()) {
 						ICElement elem= index.findDefinition(project, name);
 						if (elem != null) {

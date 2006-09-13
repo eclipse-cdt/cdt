@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -51,6 +50,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.PageBook;
@@ -106,11 +106,11 @@ public class CHViewPart extends ViewPart {
     private ExtendedTreeViewer fTreeViewer;
 
     // filters, sorter
-    private CHWorkingSetFilter fWorkingSetFilter;
     private ViewerFilter fVariableFilter;
     private ViewerFilter fMacroFilter;
     private ViewerComparator fSorterAlphaNumeric;
     private ViewerComparator fSorterReferencePosition;
+	private WorkingSetFilterUI fWorkingSetFilterUI;
 
     // actions
     private Action fReferencedByAction;
@@ -129,7 +129,6 @@ public class CHViewPart extends ViewPart {
 	private OpenViewActionGroup fOpenViewActionGroup;
 	private SelectionSearchGroup fSelectionSearchGroup;
 	private CRefactoringActionGroup fRefactoringActionGroup;
-	private WorkingSetFilterUI fFilterUI;
 
     
     public void setFocus() {
@@ -205,9 +204,9 @@ public class CHViewPart extends ViewPart {
 			fRefactoringActionGroup.dispose();
 			fRefactoringActionGroup= null;
 		}
-		if (fFilterUI != null) {
-			fFilterUI.dispose();
-			fFilterUI= null;
+		if (fWorkingSetFilterUI != null) {
+			fWorkingSetFilterUI.dispose();
+			fWorkingSetFilterUI= null;
 		}
 		super.dispose();
 	}
@@ -245,8 +244,8 @@ public class CHViewPart extends ViewPart {
 
 
     public void saveState(IMemento memento) {
-        if (fWorkingSetFilter != null) {
-            fWorkingSetFilter.getUI().saveState(memento, KEY_WORKING_SET_FILTER);
+        if (fWorkingSetFilterUI != null) {
+        	fWorkingSetFilterUI.saveState(memento, KEY_WORKING_SET_FILTER);
         }
         memento.putString(KEY_FILTER_MACROS, String.valueOf(fFilterMacrosAction.isChecked()));
         memento.putString(KEY_FILTER_VARIABLES, String.valueOf(fFilterVariablesAction.isChecked()));
@@ -313,7 +312,7 @@ public class CHViewPart extends ViewPart {
     	fSelectionSearchGroup= new SelectionSearchGroup(getSite());
     	fRefactoringActionGroup= new CRefactoringActionGroup(this);
     	
-        fFilterUI= new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
+    	fWorkingSetFilterUI= new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
             protected void onWorkingSetChange() {
                 updateWorkingSetFilter(this);
             }
@@ -490,7 +489,7 @@ public class CHViewPart extends ViewPart {
 //        tm.add(fNext);
 //        tm.add(fPrevious);
 //        tm.add(new Separator());
-        fFilterUI.fillActionBars(actionBars);
+        fWorkingSetFilterUI.fillActionBars(actionBars);
         mm.add(fReferencedByAction);
         mm.add(fMakesReferenceToAction);
         mm.add(new Separator());
@@ -602,28 +601,32 @@ public class CHViewPart extends ViewPart {
     private void updateDescription() {
         String message= ""; //$NON-NLS-1$
         if (!fShowsMessage) {
-        	ITranslationUnit tu= getInput();
-            if (tu != null) {
-                IPath path= tu.getPath();
-                if (path != null) {
-                    String format, file, scope;
-                    
-                    file= path.lastSegment() + "(" + path.removeLastSegments(1) + ")";  //$NON-NLS-1$//$NON-NLS-2$
-                    if (fWorkingSetFilter == null) {
-                        scope= CHMessages.CHViewPart_WorkspaceScope;
-                    }
-                    else {
-                        scope= fWorkingSetFilter.getLabel();
-                    }
-                    
-                    if (fReferencedByAction.isChecked()) {
-                        format= CHMessages.CHViewPart_Title_callers;
-                    }
-                    else {
-                        format= CHMessages.CHViewPart_Title_callees;
-                    }
-                    message= Messages.format(format, file, scope);
-                }
+        	ICElement elem= getInput();
+            if (elem != null) {
+                String format, scope, label;
+            	
+                // label
+                label= CElementLabels.getElementLabel(elem, CHHistoryAction.LABEL_OPTIONS);
+            	
+                // scope
+                IWorkingSet workingSet= fWorkingSetFilterUI.getWorkingSet();
+            	if (workingSet == null) {	
+            		scope= CHMessages.CHViewPart_WorkspaceScope;
+            	}
+            	else {
+            		scope= workingSet.getLabel();
+            	}
+                
+            	// format
+            	if (fReferencedByAction.isChecked()) {
+            		format= CHMessages.CHViewPart_Title_callers;
+            	}
+            	else {
+            		format= CHMessages.CHViewPart_Title_callees;
+            	}
+            	
+            	// message
+            	message= Messages.format(format, label, scope);
             }
         }
         message= "The Call Hierarchy is work in progress! - " + message; //$NON-NLS-1$
@@ -767,10 +770,10 @@ public class CHViewPart extends ViewPart {
 		fHistoryEntries.addAll(Arrays.asList(remaining));
 	}
 
-	public ITranslationUnit getInput() {
+	public ICElement getInput() {
         Object input= fTreeViewer.getInput();
-        if (input instanceof ITranslationUnit) {
-        	return (ITranslationUnit) input;
+        if (input instanceof ICElement) {
+        	return (ICElement) input;
         }
         return null;
 	}

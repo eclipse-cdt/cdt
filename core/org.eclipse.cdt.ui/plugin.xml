@@ -1130,7 +1130,6 @@
                label="%OpenCallHierarchy.label"
                menubarPath="navigate/open.ext"
                retarget="true"
-               toolbarPath="org.eclipse.search.searchActionSet/Search"
                tooltip="%OpenCallHierarchy.tooltip">
          </action>
         <!--action

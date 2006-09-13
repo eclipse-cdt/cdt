@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.model.ICElement;
 
+import org.eclipse.cdt.internal.ui.missingapi.CIndexQueries;
+
 public class CHDropTargetListener implements DropTargetListener {
     
     private CHViewPart fCallHierarchy;
@@ -44,8 +46,9 @@ public class CHDropTargetListener implements DropTargetListener {
         if (event.detail != DND.DROP_NONE) {
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(event.currentDataType)) {
 				fInput= checkLocalSelection();
-				if (fInput == null) {
+				if (!CIndexQueries.isRelevantForCallHierarchy(fInput)) {
 					event.detail= DND.DROP_NONE;
+					fInput= null;
 				}
         	}
         }

@@ -67,6 +67,41 @@ public class CIndexQueries {
 		return sInstance;
 	}
 	
+	public static boolean isRelevantForCallHierarchy(IBinding binding) {
+		if (binding instanceof ICExternalBinding ||
+				binding instanceof IEnumerator ||
+				binding instanceof IFunction ||
+				binding instanceof IVariable) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isRelevantForCallHierarchy(ICElement elem) {
+		if (elem == null) {
+			return false;
+		}
+		switch (elem.getElementType()) {
+		case ICElement.C_CLASS_CTOR:
+		case ICElement.C_CLASS_DTOR:
+		case ICElement.C_ENUMERATOR:
+		case ICElement.C_FIELD:
+		case ICElement.C_FUNCTION:
+		case ICElement.C_FUNCTION_DECLARATION:
+		case ICElement.C_METHOD:
+		case ICElement.C_METHOD_DECLARATION:
+		case ICElement.C_TEMPLATE_FUNCTION:
+		case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
+		case ICElement.C_TEMPLATE_METHOD:
+		case ICElement.C_TEMPLATE_METHOD_DECLARATION:
+		case ICElement.C_TEMPLATE_VARIABLE:
+		case ICElement.C_VARIABLE:
+		case ICElement.C_VARIABLE_DECLARATION:
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Searches for all include-relations that include the given translation unit.
 	 * @param scope the projects to be searched.
@@ -404,16 +439,6 @@ public class CIndexQueries {
 		}
 	}
 	
-	public boolean isRelevantForCallHierarchy(IBinding binding) {
-		if (binding instanceof ICExternalBinding ||
-				binding instanceof IEnumerator ||
-				binding instanceof IFunction ||
-				binding instanceof IVariable) {
-			return true;
-		}
-		return false;
-	}
-
 	public ICElement[] findAllDefinitions(ICProject[] projectsToSearch, IASTName name) {
 		ArrayList result= new ArrayList();
 		for (int i = 0; i < projectsToSearch.length; i++) {

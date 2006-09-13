@@ -141,16 +141,41 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 		}
 	    
 		// Get reference to the plug-in registry
-	    IExtensionRegistry registry = Platform.getExtensionRegistry();
+	    // IExtensionRegistry registry = Platform.getExtensionRegistry();
 	    
 	    // Get configured extenders
-	    IConfigurationElement[] extensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "rseConfigDefaults"); //$NON-NLS-1$  //$NON-NLS-2$
+	    // IConfigurationElement[] extensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "rseConfigDefaults"); //$NON-NLS-1$  //$NON-NLS-2$
 
 	    boolean showNewConnPromptPref = ISystemPreferencesConstants.DEFAULT_SHOWNEWCONNECTIONPROMPT;
 	    dontShowLocalConnection = false;
 	    dontShowProfilePageInitially = false;
 	    
-	    if ( (extensions != null) && (extensions.length > 0))
+	    
+	    String showNewConn = System.getProperty("rse.showNewConnectionPrompt");
+		
+	    if (showNewConn != null) {
+	    	showNewConnPromptPref = showNewConn.equals("true");
+	    }
+	    
+	    String showLocalConn = System.getProperty("rse.showLocalConnection");
+	    
+		if (showLocalConn != null) {
+			dontShowLocalConnection = showNewConn.equals("false");
+		}
+		
+		enabledSystemTypes = System.getProperty("enableSystemTypes");
+		
+		if ((enabledSystemTypes != null) && (enabledSystemTypes.length() == 0)) {
+			enabledSystemTypes = null;
+		}
+		
+		String showProfileInitially = System.getProperty("showProfilePage");
+		
+		if (showProfileInitially != null) {
+			dontShowProfilePageInitially = showProfileInitially.equals("false");
+		}
+	    
+/*	    if ( (extensions != null) && (extensions.length > 0))
 	    {
 	    	String showNewConn;
 	    	String showProfileInitially;
@@ -163,10 +188,10 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    		
 	    		if (productId.equals(configProductId)) {
 	    		
-	    			showNewConn = extension.getAttribute("showNewConnectionPrompt"); //$NON-NLS-1$
+	    			showNewConn = extension.getAttribute("showNewConnectionPrompt");
 	    			
 	    			if (showNewConn != null)
-	    				showNewConnPromptPref = showNewConn.equals("true"); //$NON-NLS-1$
+	    				showNewConnPromptPref = showNewConn.equals("true");
 	    			
 	    			showNewConn = extension.getAttribute("showLocalConnection"); //$NON-NLS-1$
 	    			
@@ -184,7 +209,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    				dontShowProfilePageInitially = showProfileInitially.equals("false"); //$NON-NLS-1$
 	    		}
 	    	}
-	    }
+	    }*/
 	    
 		RemoteSystemsPreferencePage.initDefaults(getPreferenceStore(), showNewConnPromptPref);
 		SystemCommunicationsPreferencePage.initDefaults(getPreferenceStore());

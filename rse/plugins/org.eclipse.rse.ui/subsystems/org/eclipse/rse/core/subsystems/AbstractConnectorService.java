@@ -506,7 +506,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		}
 		if (shell == null)
 		{
-			shell = RSEUIPlugin.getActiveWorkbenchShell();
+			shell = SystemBasePlugin.getActiveWorkbenchShell();
 		}
     		
 		if (supportsPassword() || supportsUserId()) {

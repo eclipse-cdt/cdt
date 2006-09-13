@@ -163,13 +163,13 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 			dontShowLocalConnection = showNewConn.equals("false");
 		}
 		
-		enabledSystemTypes = System.getProperty("enableSystemTypes");
+		enabledSystemTypes = System.getProperty("rse.enableSystemTypes");
 		
 		if ((enabledSystemTypes != null) && (enabledSystemTypes.length() == 0)) {
 			enabledSystemTypes = null;
 		}
 		
-		String showProfileInitially = System.getProperty("showProfilePage");
+		String showProfileInitially = System.getProperty("rse.showProfilePage");
 		
 		if (showProfileInitially != null) {
 			dontShowProfilePageInitially = showProfileInitially.equals("false");

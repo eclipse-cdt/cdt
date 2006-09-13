@@ -38,6 +38,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
@@ -94,33 +95,35 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 
-		Composite comp = new Composite(parent, SWT.NONE);
+    Group group = new Group(parent, SWT.NONE);
 		//		WorkbenchHelp.setHelp(group,
 		// IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);
 		GridLayout workingDirLayout = new GridLayout();
 		workingDirLayout.numColumns = 2;
 		workingDirLayout.makeColumnsEqualWidth = false;
-		comp.setLayout(workingDirLayout);
+		group.setLayout(workingDirLayout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		comp.setLayoutData(gd);
-		comp.setFont(font);
-		setControl(comp);
+		group.setLayoutData(gd);
+		group.setFont(font);
+		setControl(group);
 
-		fWorkingDirText = new Text(comp, SWT.SINGLE | SWT.BORDER);
+    group.setText(LaunchMessages.getString("WorkingDirectoryBlock.Working_directory")); 
+
+    fWorkingDirText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fWorkingDirText.setLayoutData(gd);
 		fWorkingDirText.setFont(font);
 		fWorkingDirText.addModifyListener(fListener);
 
-		fUseDefaultWorkingDirButton = new Button(comp, SWT.CHECK);
-		fUseDefaultWorkingDirButton.setText(LaunchMessages.getString("WorkingDirectoryBlock.Use_de&fault_working_directory_4")); //$NON-NLS-1$
+		fUseDefaultWorkingDirButton = new Button(group, SWT.CHECK);
+		fUseDefaultWorkingDirButton.setText(LaunchMessages.getString("WorkingDirectoryBlock.Use_default")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fUseDefaultWorkingDirButton.setLayoutData(gd);
 		fUseDefaultWorkingDirButton.setFont(font);
 		fUseDefaultWorkingDirButton.addSelectionListener(fListener);
 
-		Composite buttonComp = new Composite(comp, SWT.NONE);
+		Composite buttonComp = new Composite(group, SWT.NONE);
 		GridLayout layout = new GridLayout(3, false);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;

@@ -55,13 +55,19 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	private static final String NULL_VALUE_STRING = "null";
 	private static final String PROPERTIES_FILE_NAME = "node.properties";
 
-	/* Metatype names */
-	private static final String MT_ATTRIBUTE_TYPE = "attr-type";
-	private static final String MT_ATTRIBUTE = "attr";
-	private static final String MT_CHILD = "child";
-	private static final String MT_NODE_TYPE = "n-type";
-	private static final String MT_NODE_NAME = "n-name";
-	private static final String MT_REFERENCE = "ref";
+	/* 
+	 * Metatype names 
+	 * each entry is an array. The first is the preferred name.
+	 * The other names are acceptable alternates.
+	 * Names must not contain periods or whitespace.
+	 * Lowercase letters, numbers and dashes (-) are preferred.
+	 */
+	private static final String[] MT_ATTRIBUTE_TYPE = new String[] {"04-attr-type", "attr-type"};
+	private static final String[] MT_ATTRIBUTE = new String[] {"03-attr", "attr"};
+	private static final String[] MT_CHILD = new String[] {"06-child", "child"};
+	private static final String[] MT_NODE_TYPE = new String[] {"01-type", "01-node-type", "n-type"};
+	private static final String[] MT_NODE_NAME = new String[] {"00-name", "00-node-name", "n-name"};
+	private static final String[] MT_REFERENCE = new String[] {"05-ref", "ref"};
 
 	/* Type abbreviations */
 	private static final String AB_SUBSYSTEM = "SS";
@@ -147,7 +153,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			RSEDOMNode child = children[i];
 			String index = getIndexString(i);
 			if (!isNodeEmbedded(child)) {
-				String key = combine(MT_REFERENCE, index);
+				String key = combine(MT_REFERENCE[0], index);
 				String childFolderName = saveNode(child, nodeFolder, monitor);
 				if (childFolderName != null) properties.put(key, childFolderName);
 				childFolderNames.add(childFolderName);
@@ -289,10 +295,10 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @return true if the node is to be embedded.
 	 */
 	private boolean isNodeEmbedded(RSEDOMNode node) {
-		boolean result = false;
-		if (node.getType().equals(IRSEDOMConstants.TYPE_FILTER_STRING)) {
-			result = true;
-		}
+		Set embeddedTypes = new HashSet();
+		embeddedTypes.add(IRSEDOMConstants.TYPE_FILTER);
+		embeddedTypes.add(IRSEDOMConstants.TYPE_CONNECTOR_SERVICE);
+		boolean result = embeddedTypes.contains(node.getType());
 		return result;
 	}
 
@@ -370,15 +376,15 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 */
 	private Properties getProperties(RSEDOMNode node, boolean force, IProgressMonitor monitor) {
 		Properties properties = new Properties();
-		properties.put(MT_NODE_NAME, node.getName());
-		properties.put(MT_NODE_TYPE, node.getType());
+		properties.put(MT_NODE_NAME[0], node.getName());
+		properties.put(MT_NODE_TYPE[0], node.getType());
 		properties.putAll(getAttributes(node));
 		RSEDOMNode[] children = node.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			RSEDOMNode child = children[i];
 			String index = getIndexString(i);
 			if (force || isNodeEmbedded(child)) {
-				String prefix = combine(MT_CHILD, index);
+				String prefix = combine(MT_CHILD[0], index);
 				Properties childProperties = getProperties(child, true, monitor); 
 				Enumeration e = childProperties.keys();
 				while (e.hasMoreElements()) {
@@ -407,11 +413,11 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		for (int i = 0; i < attributes.length; i++) {
 			RSEDOMNodeAttribute attribute = attributes[i];
 			String attributeName = attribute.getKey();
-			String propertyKey = combine(MT_ATTRIBUTE, attributeName);
+			String propertyKey = combine(MT_ATTRIBUTE[0], attributeName);
 			properties.put(propertyKey, fixValue(attribute.getValue()));
 			String attributeType = attribute.getType();
 			if (attributeType != null) {
-				propertyKey = combine(MT_ATTRIBUTE_TYPE, attributeName);
+				propertyKey = combine(MT_ATTRIBUTE_TYPE[0], attributeName);
 				properties.put(propertyKey, attributeType);
 			} 
 		}
@@ -542,8 +548,8 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @return the newly created DOM node and its children.
 	 */
 	private RSEDOMNode makeNode(RSEDOMNode parent, IFolder nodeFolder, Properties properties, IProgressMonitor monitor) {
-		String nodeType = properties.getProperty(MT_NODE_TYPE);
-		String nodeName = properties.getProperty(MT_NODE_NAME);
+		String nodeType = getProperty(properties, MT_NODE_TYPE);
+		String nodeName = getProperty(properties, MT_NODE_NAME);
 		RSEDOMNode node = (parent == null) ? new RSEDOM(nodeName) : new RSEDOMNode(parent, nodeType, nodeName);
 		node.setRestoring(true);
 		Set keys = properties.keySet();
@@ -551,21 +557,21 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		Map attributeTypes = new HashMap();
 		Map childPropertiesMap = new HashMap();
 		Set childNames = new TreeSet(); // child names are 5 digit strings, a tree set is used to maintain ordering
-		Set referenceNames = new TreeSet(); // ditto for reference names
+		Set referenceKeys = new TreeSet(); // ditto for reference keys, "<reference-metatype>.<index>"
+		// since the properties are in no particular  order, we make a first pass to gather info on what's there
 		for (Iterator z = keys.iterator(); z.hasNext();) {
 			String key = (String) z.next();
 			String[] words = split(key, 2);
 			String metatype = words[0];
-			if (metatype.equals(MT_ATTRIBUTE)) {
+			if (find(metatype, MT_ATTRIBUTE)) {
 				String value = properties.getProperty(key);
 				attributes.put(words[1], value);
-			} else if (metatype.equals(MT_ATTRIBUTE_TYPE)) {
+			} else if (find(metatype, MT_ATTRIBUTE_TYPE)) {
 				String type = properties.getProperty(key);
 				attributeTypes.put(words[1], type);
-			} else if (metatype.equals(MT_REFERENCE)) {
-				String referenceName = words[1];
-				referenceNames.add(referenceName);
-			} else if (metatype.equals(MT_CHILD)) {
+			} else if (find(metatype, MT_REFERENCE)) {
+				referenceKeys.add(key);
+			} else if (find(metatype, MT_CHILD)) {
 				String value = properties.getProperty(key);
 				words = split(words[1], 2);
 				String childName = words[0];
@@ -588,15 +594,43 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			Properties p = getProperties(childPropertiesMap, childName);
 			makeNode(node, nodeFolder, p, monitor);
 		}
-		for (Iterator z = referenceNames.iterator(); z.hasNext();) {
-			String referenceName = (String) z.next();
-			String key = combine(MT_REFERENCE, referenceName);
+		for (Iterator z = referenceKeys.iterator(); z.hasNext();) {
+			String key = (String) z.next();
 			String childFolderName = properties.getProperty(key);
 			IFolder childFolder = getFolder(nodeFolder, childFolderName);
 			loadNode(node, childFolder, monitor);
 		}
 		node.setRestoring(false);
 		return node;
+	}
+	
+	/**
+	 * Gets a property given a "multi-key"
+	 * @param properties The properties object to search
+	 * @param keys the "multi-key" for that property
+	 * @return The first property found using one of the elements of the multi-key.
+	 */
+	private String getProperty(Properties properties, String[] keys) {
+		String result = null;
+		for (int i = 0; i < keys.length && result == null; i++) {
+			String key = keys[i];
+			result = properties.getProperty(key);
+		}
+		return result;
+	}
+	
+	/**
+	 * Finds a key (needle) in an array of values (the haystack)
+	 * @param needle The value to look for
+	 * @param haystack the values to search
+	 * @return true if the value was found
+	 */
+	private boolean find(String needle, String[] haystack) {
+		for (int i = 0; i < haystack.length; i++) {
+			String value = haystack[i];
+			if (value.equals(needle)) return true;
+		}
+		return false;
 	}
 
 	/**

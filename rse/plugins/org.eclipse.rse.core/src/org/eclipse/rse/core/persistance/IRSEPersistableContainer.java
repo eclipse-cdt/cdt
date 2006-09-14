@@ -18,11 +18,42 @@ package org.eclipse.rse.core.persistance;
 
 public interface IRSEPersistableContainer
 {
+	/**
+	 * An object is dirty if a change has been made to it that requires
+	 * it to be persisted.
+	 * @return true if the object is dirty
+	 */
 	public boolean isDirty();
+
+	/**
+	 * An object is dirty if a change has been made to it that requires
+	 * it to be persisted. Objects should usually mark themselves dirty
+	 * when a persistable change is made. However, there may be a need
+	 * to mark related objects dirty as well.
+	 * Setting this value to false should be done only in the persistence
+	 * manager after the object has been written to the DOM.
+	 * @param flag true if the object must be persisted.
+	 */
 	public void setDirty(boolean flag);
 	
+	/**
+	 * Request a persistence manager to persist this object.
+	 * @return true if the object was persisted.
+	 */
 	public boolean commit();
 	
+	/**
+	 * An object was restored if it originated from a persistent form.
+	 * @return true if the object was created from its persistent form,
+	 * false if the object has never been persisted.
+	 */
 	public boolean wasRestored();
+	
+	/**
+	 * The the "restored" state of the object. Only persistence managers 
+	 * should do this.
+	 * @param flag true if the object was restored.
+	 */
 	public void setWasRestored(boolean flag);
+	
 }

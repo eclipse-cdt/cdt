@@ -323,7 +323,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
     	  newId = newId.toUpperCase();
 
     	if ((newId == null) || (newId.length()==0)) // a "clear" request?
-        {          
+        {  
           clearLocalDefaultUserId();
         }
     	else
@@ -543,6 +543,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
 	 */
 	public void setDescription(String newDescription)
 	{
+		setDirty(!compareStrings(description, newDescription));
 		description = newDescription;
 	}
 
@@ -559,6 +560,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
 	 */
 	public void setPromptable(boolean newPromptable)
 	{
+		setDirty(promptable != newPromptable);
 		promptable = newPromptable;
 	}
 
@@ -583,6 +585,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
 	 */
 	public void setOffline(boolean newOffline)
 	{
+		setDirty(offline != newOffline);
 		offline = newOffline;
 	}
 
@@ -591,6 +594,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
 	 */
 	public void setSystemTypeGen(String newSystemType)
 	{
+		setDirty(!compareStrings(systemType, newSystemType));
 		systemType = newSystemType;
 	}
 
@@ -599,6 +603,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
 	 */
 	public void setAliasNameGen(String newAliasName)
 	{
+		setDirty(!compareStrings(aliasName, newAliasName));
 		aliasName = newAliasName;
 	}
 
@@ -607,6 +612,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
 	 */
 	public void setHostNameGen(String newHostName)
 	{
+		setDirty(!compareStrings(hostName, newHostName));
 		hostName = newHostName;
 	}
 
@@ -623,6 +629,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
 	 */
 	public void setDefaultUserIdGen(String newDefaultUserId)
 	{
+		setDirty(!compareStrings(defaultUserId, newDefaultUserId));
 		defaultUserId = newDefaultUserId;
 	}
 
@@ -649,6 +656,17 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
 		result.append(')');
 		return result.toString();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.RSEModelObject#setDirty(boolean)
+	 */
+	public void setDirty(boolean flag) {
+		super.setDirty(flag);
+		ISystemHostPool myPool = getHostPool();
+		if (myPool != null && flag) {
+			myPool.setDirty(true);
+		}
+	};
 	
 	public boolean commit() 
 	{

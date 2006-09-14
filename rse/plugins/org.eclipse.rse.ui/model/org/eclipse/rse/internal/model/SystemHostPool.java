@@ -387,7 +387,6 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     public void deleteHost(IHost conn)
     {
     	conn.deletingHost(); // let connection do any necessary cleanup
-	
         getHostList().remove(conn);
         setDirty(true);
         RSEUIPlugin.getThePersistenceManager().commit(conn.getSystemProfile());
@@ -409,7 +408,6 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     {
         conn.setAliasName(newName);
         invalidateCache();
-        conn.setDirty(true);
    	    commit(conn);
     }
 

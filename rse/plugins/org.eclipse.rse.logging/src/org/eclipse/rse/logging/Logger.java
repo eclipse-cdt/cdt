@@ -71,6 +71,15 @@ import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
  * 
  */
 public class Logger implements IPropertyChangeListener {
+	
+	/**
+	 * Constant can be used to surround debugging code. Optimizing
+	 * compilers have the possibility of removing the code from 
+	 * a production copy.
+	 * 
+	 * Should be set false normally. Only set to true when testing.
+	 */
+	public static final boolean DEBUG = false;
 
 	private ILog systemsPluginLog = null;
 	private RemoteSystemLogListener logListener = null;
@@ -121,7 +130,7 @@ public class Logger implements IPropertyChangeListener {
 	 * need to be localized to proper local.<br>
 	 */
 	public synchronized void logDebugMessage(String className, String message) {
-		if (debug_level >= IRemoteSystemsLogging.LOG_DEBUG) {
+		if (Logger.DEBUG && debug_level >= IRemoteSystemsLogging.LOG_DEBUG) {
 			MultiStatus debugStatus = new MultiStatus(pluginId, IStatus.OK, className, null);
 			Status infoStatus = new Status(IStatus.OK, pluginId, IStatus.OK, message, null);
 			debugStatus.add(infoStatus);

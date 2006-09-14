@@ -25,6 +25,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.rse.logging.IRemoteSystemsLogging;
+import org.eclipse.rse.logging.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -94,8 +95,10 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 		radioButton1 = createRadioButton(composite1_radioButton, LabelUtil.assignMnemonic(text, used));
 		text = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_INFO_DEBUG;
 		radioButton2 = createRadioButton(composite1_radioButton, LabelUtil.assignMnemonic(text, used));
-		text = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_FULL_DEBUG;
-		radioButton3 = createRadioButton(composite1_radioButton, LabelUtil.assignMnemonic(text, used));
+		if (Logger.DEBUG) {
+			text = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_FULL_DEBUG;
+			radioButton3 = createRadioButton(composite1_radioButton, LabelUtil.assignMnemonic(text, used));
+		}
 		initializeValues();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.rse.logging.rsel0000");
 		return new Composite(parent, SWT.NULL);

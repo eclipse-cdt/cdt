@@ -41,6 +41,7 @@ public class SystemSearchRemoveSelectedMatchesAction extends SystemBaseAction {
 			  shell);
 			  
 		this.searchView = searchView;
+		RSEUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, RSEUIPlugin.HELPPREFIX + "search_remove_selected");
 	}
 
 	/**

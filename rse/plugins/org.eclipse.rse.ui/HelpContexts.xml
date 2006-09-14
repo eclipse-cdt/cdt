@@ -866,6 +866,28 @@ The list on the left shows the existing compile commands:
 <!-- Remote Search View -->
 <context id="srch0000">
 <description>This view shows you the results of a remote file search.</description>
+</context>
+
+<context id="search_cancel">
+<description>This action cancels the search operation. If the search is not complete, partial results may be shown in
+the view.</description>
+</context>
+
+<context id="search_remove_selected">
+<description>This action removes the selected matches from the view. If files are selected in the view, then all
+selected matches in that file will also be removed from the view.</description>
+</context>
+
+<context id="search_remove_all">
+<description>This action removes all matches from the view.</description>
+</context>
+
+<context id="search_history">
+<description>This action will bring up results for a previous search in the view.</description>
+</context>
+
+<context id="search_clear_history">
+<description>This action will remove the results of all searches from the view.</description>
 </context>	
 
 <!-- Remote Shell View -->

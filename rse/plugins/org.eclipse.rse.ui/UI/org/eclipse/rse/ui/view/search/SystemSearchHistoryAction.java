@@ -18,6 +18,7 @@ package org.eclipse.rse.ui.view.search;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
  * This is the history action for the remote system search view.
@@ -41,6 +42,7 @@ public class SystemSearchHistoryAction extends Action {
 		setToolTipText(text);
 		this.searchView = searchView;
 		this.index = index;
+		RSEUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, RSEUIPlugin.HELPPREFIX + "search_history");
 	}
 	
 	/**

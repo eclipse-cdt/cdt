@@ -40,7 +40,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemAdapterHelpers;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
@@ -157,6 +156,7 @@ public class SystemSearchViewPart extends ViewPart
 		public CancelAction() {
 			super(SystemResources.ACTION_CANCEL_SEARCH_LABEL, RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_STOP_ID));
 			setToolTipText(SystemResources.ACTION_CANCEL_SEARCH_TOOLTIP);
+			RSEUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, RSEUIPlugin.HELPPREFIX + "search_cancel");
 		}
 
 		public void run() {

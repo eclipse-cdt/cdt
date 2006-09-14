@@ -103,7 +103,17 @@ public class DStoreHostFile implements IHostFile
 		}
 		else
 		{
-			return _element.getValue();
+			if (_element.getName().length() == 0)
+			{
+				// derive from value
+				String fullPath = _element.getValue();
+				int sep = fullPath.lastIndexOf('/');
+				return fullPath.substring(0, sep);
+			}
+			else
+			{	
+				return _element.getValue();
+			}
 		}
 	}
 
@@ -193,9 +203,14 @@ public class DStoreHostFile implements IHostFile
 
 
 	public String getAbsolutePath()
-	{
-		String parentPath = getParentPath();
+	{			
 		String name = _element.getName();
+		if (name.length() == 0)
+		{
+			return _element.getValue();
+		}
+		String parentPath = getParentPath();
+
 		
 		String type = _element.getType();
 		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))

@@ -339,7 +339,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 		}
 		if (_lastObject instanceof ISystemContainer)
 		{
-			((ISystemContainer)_lastObject).markStale(true);
+		//	((ISystemContainer)_lastObject).markStale(true);
 		}
 		
 		_lastResults = null;

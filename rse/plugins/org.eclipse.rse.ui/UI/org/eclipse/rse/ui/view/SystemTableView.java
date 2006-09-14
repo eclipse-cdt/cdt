@@ -935,8 +935,8 @@ public class SystemTableView
 			if (provider != null)
 			{
 				if (!madeChange)
-				{
-					provider.flushCache();
+				{		
+					provider.flushCache();			
 					madeChange = true;
 				}
 

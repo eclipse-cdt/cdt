@@ -84,6 +84,13 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			if (!fFilePath.equals(declaration.getContainingFilename())) {
 				return PROCESS_SKIP;
 			}
+			IASTNodeLocation[] nodeLocations= declaration.getNodeLocations();
+			if (nodeLocations.length > 0 && nodeLocations[0] instanceof IASTMacroExpansion) {
+				if (visitNode(declaration)) {
+					return PROCESS_SKIP;
+				}
+				return PROCESS_SKIP;
+			}
 			return PROCESS_CONTINUE;
 		}
 
@@ -99,6 +106,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				if (visitNode(expression)) {
 					return PROCESS_SKIP;
 				}
+				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;
 		}

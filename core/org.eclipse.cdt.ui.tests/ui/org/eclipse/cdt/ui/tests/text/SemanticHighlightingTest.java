@@ -186,7 +186,6 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 		Position[] expected= new Position[] {
 				createPosition(11, 20, 1),
 				createPosition(28, 35, 3),
-				createPosition(29, 8, 19),
 				createPosition(30, 19, 3),
 				createPosition(77, 21, 4),
 				createPosition(77, 30, 4),
@@ -291,10 +290,8 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 		setUpSemanticHighlighting(SemanticHighlightings.FUNCTION_INVOCATION);
 		Position[] actual= getSemanticHighlightingPositions();
 		Position[] expected= new Position[] {
-				createPosition(29, 8, 19),
 				createPosition(30, 8, 10),
-				createPosition(99, 1, 16),
-				createPosition(120, 4, 17),
+				createPosition(99, 1, 16)
 			};
 		if (PRINT_POSITIONS) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);

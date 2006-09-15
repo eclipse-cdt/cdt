@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
+
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemRegistry;
@@ -30,53 +30,42 @@ import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Shell;
 
-
 /**
  * The action allows users to expand the selected nodes in the Remote Systems Explorer tree view
  */
-public class SystemExpandAction extends SystemBaseAction 
-                                 
-{
-	
-	// see defect 41203
-	
+public class SystemExpandAction extends SystemBaseAction {
+
 	/**
 	 * Constructor
+	 * @param parent the shell that employs this action
 	 */
-	public SystemExpandAction(Shell parent) 
-	{
-		super(SystemResources.ACTION_EXPAND_SELECTED_LABEL,SystemResources.ACTION_EXPAND_SELECTED_TOOLTIP,
-		      parent);
-        allowOnMultipleSelection(true);
+	public SystemExpandAction(Shell parent) {
+		super(SystemResources.ACTION_EXPAND_SELECTED_LABEL, SystemResources.ACTION_EXPAND_SELECTED_TOOLTIP, parent);
+		allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_EXPAND);
 		setAccelerator('+');
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0025");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0025");
 		setAvailableOffline(true);
-}
+	}
 
 	/**
 	 * <p>
 	 * We intercept to ensure at least one selected item is expandable
-     *
+	 *
 	 * @see SystemBaseAction#updateSelection(IStructuredSelection)
 	 */
-	public boolean updateSelection(IStructuredSelection selection)
-	{
+	public boolean updateSelection(IStructuredSelection selection) {
 		boolean enable = false;
-		if ((viewer != null) && (viewer instanceof ISystemTree))
-		{
-			return ((ISystemTree)viewer).areAnySelectedItemsExpandable();
+		if ((viewer != null) && (viewer instanceof ISystemTree)) {
+			return ((ISystemTree) viewer).areAnySelectedItemsExpandable();
 		}
-		Iterator e = selection.iterator();		
+		Iterator e = selection.iterator();
 		ISystemViewElementAdapter adapter = null;
-		while (!enable && e.hasNext())
-		{
+		while (!enable && e.hasNext()) {
 			Object selectedObject = e.next();
 			adapter = getAdapter(selectedObject);
-			if (adapter != null)
-			{
-				if (adapter.hasChildren(selectedObject))
-				  enable = true;
+			if (adapter != null) {
+				if (adapter.hasChildren(selectedObject)) enable = true;
 			}
 		}
 		return enable;
@@ -86,17 +75,12 @@ public class SystemExpandAction extends SystemBaseAction
 	 * This is the method called when the user selects this action.
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
-	public void run() 
-	{
+	public void run() {
 		//System.out.println("Inside run of SystemRefreshAction");
 		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
-		if ((viewer != null) && (viewer instanceof ISystemResourceChangeListener))
-		{			
-		  sr.fireEvent((ISystemResourceChangeListener)viewer,
-		               new SystemResourceChangeEvent("dummy", 
-		                    ISystemResourceChangeEvents.EVENT_EXPAND_SELECTED, null));
-		}
-		else
-		  sr.fireEvent(new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_EXPAND_SELECTED, null));
-	}		
+		if ((viewer != null) && (viewer instanceof ISystemResourceChangeListener)) {
+			sr.fireEvent((ISystemResourceChangeListener) viewer, new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_EXPAND_SELECTED, null));
+		} else
+			sr.fireEvent(new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_EXPAND_SELECTED, null));
+	}
 }

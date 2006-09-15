@@ -34,9 +34,6 @@ import org.eclipse.swt.widgets.Shell;
  * The action allows users to collapse the selected nodes in the Remote Systems Explorer tree view
  */
 public class SystemCollapseAction extends SystemBaseAction {
-
-	// see defect 41203
-
 	/**
 	 * Constructor
 	 * @param parent the parent shell for this action

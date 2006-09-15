@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemRegistry;
@@ -28,38 +28,30 @@ import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
-
 /**
  * The action allows users to collapse the entire Remote Systems Explorer tree view.
  */
-public class SystemCollapseAllAction extends SystemBaseAction 
-                                 //
-{
-	
-    // See defect 41203
-	
+public class SystemCollapseAllAction extends SystemBaseAction {
 	/**
 	 * Constructor
+	 * @param parent the shell that is employing this action
 	 */
-	public SystemCollapseAllAction(Shell parent) 
-	{
-		super(SystemResources.ACTION_COLLAPSE_ALL_LABEL, SystemResources.ACTION_COLLAPSE_ALL_TOOLTIP,
-				RSEUIPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_COLLAPSEALL_ID), // D54577
-		      	parent);
+	public SystemCollapseAllAction(Shell parent) {
+		super(SystemResources.ACTION_COLLAPSE_ALL_LABEL, SystemResources.ACTION_COLLAPSE_ALL_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptorFromIDE(ISystemIconConstants.ICON_IDE_COLLAPSEALL_ID), // D54577
+				parent);
 		setHoverImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptorFromIDE("elcl16/collapseall.gif")); //$NON-NLS-1$		      	
-        allowOnMultipleSelection(true);
+		allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_EXPAND); // should never be used       
-        setSelectionSensitive(false);
-        
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0023");
+		setSelectionSensitive(false);
+
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0023");
 		setAccelerator(SWT.CTRL | '-');
 	}
 
 	/**
 	 * @see SystemBaseAction#updateSelection(IStructuredSelection)
 	 */
-	public boolean updateSelection(IStructuredSelection selection)
-	{
+	public boolean updateSelection(IStructuredSelection selection) {
 		return true;
 	}
 
@@ -67,16 +59,11 @@ public class SystemCollapseAllAction extends SystemBaseAction
 	 * This is the method called when the user selects this action.
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
-	public void run() 
-	{
+	public void run() {
 		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
-		if ((viewer != null) && (viewer instanceof ISystemResourceChangeListener))
-		{			
-		  sr.fireEvent((ISystemResourceChangeListener)viewer,
-		               new SystemResourceChangeEvent("false", 
-		                    ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL, null));
-		}
-		else
-		  sr.fireEvent(new SystemResourceChangeEvent("false", ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL, null));
-	}		
+		if ((viewer != null) && (viewer instanceof ISystemResourceChangeListener)) {
+			sr.fireEvent((ISystemResourceChangeListener) viewer, new SystemResourceChangeEvent("false", ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL, null));
+		} else
+			sr.fireEvent(new SystemResourceChangeEvent("false", ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL, null));
+	}
 }

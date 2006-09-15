@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
+
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemRegistry;
@@ -30,53 +30,42 @@ import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Shell;
 
-
 /**
  * The action allows users to collapse the selected nodes in the Remote Systems Explorer tree view
  */
-public class SystemCollapseAction extends SystemBaseAction 
-                                 
-{
-	
+public class SystemCollapseAction extends SystemBaseAction {
+
 	// see defect 41203
-	
+
 	/**
 	 * Constructor
+	 * @param parent the parent shell for this action
 	 */
-	public SystemCollapseAction(Shell parent) 
-	{
-		super(SystemResources.ACTION_COLLAPSE_SELECTED_LABEL, SystemResources.ACTION_COLLAPSE_SELECTED_TOOLTIP,
-		      parent);
-        allowOnMultipleSelection(true);
+	public SystemCollapseAction(Shell parent) {
+		super(SystemResources.ACTION_COLLAPSE_SELECTED_LABEL, SystemResources.ACTION_COLLAPSE_SELECTED_TOOLTIP, parent);
+		allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_EXPAND);
 		setAccelerator('-');
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0024");
-		setAvailableOffline(true);		
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0024");
+		setAvailableOffline(true);
 	}
 
 	/**
-	 * <p>
 	 * We intercept to ensure at least one selected item is collapsable
-     *
 	 * @see SystemBaseAction#updateSelection(IStructuredSelection)
 	 */
-	public boolean updateSelection(IStructuredSelection selection)
-	{
+	public boolean updateSelection(IStructuredSelection selection) {
 		boolean enable = false;
-		if ((viewer != null) && (viewer instanceof ISystemTree))
-		{
-			return ((ISystemTree)viewer).areAnySelectedItemsExpanded();
+		if ((viewer != null) && (viewer instanceof ISystemTree)) {
+			return ((ISystemTree) viewer).areAnySelectedItemsExpanded();
 		}
-		Iterator e = selection.iterator();		
+		Iterator e = selection.iterator();
 		ISystemViewElementAdapter adapter = null;
-		while (!enable && e.hasNext())
-		{
+		while (!enable && e.hasNext()) {
 			Object selectedObject = e.next();
 			adapter = getAdapter(selectedObject);
-			if (adapter != null)
-			{
-				if (adapter.hasChildren(selectedObject))
-				  enable = true;
+			if (adapter != null) {
+				if (adapter.hasChildren(selectedObject)) enable = true;
 			}
 		}
 		return enable;
@@ -86,17 +75,12 @@ public class SystemCollapseAction extends SystemBaseAction
 	 * This is the method called when the user selects this action.
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
-	public void run() 
-	{
+	public void run() {
 		//System.out.println("Inside run of SystemRefreshAction");
 		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
-		if ((viewer != null) && (viewer instanceof ISystemResourceChangeListener))
-		{			
-		  sr.fireEvent((ISystemResourceChangeListener)viewer,
-		               new SystemResourceChangeEvent("dummy", 
-		                    ISystemResourceChangeEvents.EVENT_COLLAPSE_SELECTED, null));
-		}
-		else
-		  sr.fireEvent(new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_COLLAPSE_SELECTED, null));
-	}		
+		if ((viewer != null) && (viewer instanceof ISystemResourceChangeListener)) {
+			sr.fireEvent((ISystemResourceChangeListener) viewer, new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_COLLAPSE_SELECTED, null));
+		} else
+			sr.fireEvent(new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_COLLAPSE_SELECTED, null));
+	}
 }

@@ -223,6 +223,17 @@
    <topic href="reference/cdt_u_sprop_indexer.htm"
    	label="Indexer"/>
 </context>
+<context id ="std_prop_allprojtabs">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_sprop_mbuild.htm"
+   	label="Make Builder"/>
+   <topic href="reference/cdt_u_sprop_merror.htm"
+   	label="Error Parser"/>
+   <topic href="reference/cdt_u_sprop_mbinary.htm"
+   	label="Binary Parser"/>
+   <topic href="reference/cdt_u_sprop_mdiscovery.htm"
+   	label="Discovery Options"/>
+</context>
 <context id ="std_prop_build">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_sprop_mbuild.htm"
@@ -242,6 +253,19 @@
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_sprop_mdiscovery.htm"
    	label="Discovery Options"/>
+</context>
+<context id ="std_prop_allpathtabs">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_sprop_psource.htm"
+   	label="Source"/>
+   <topic href="reference/cdt_u_sprop_poutput.htm"
+   	label="Output"/>
+   <topic href="reference/cdt_u_sprop_pproj.htm"
+   	label="Projects"/>
+   <topic href="reference/cdt_u_sprop_plib.htm"
+   	label="Libraries"/>
+   <topic href="reference/cdt_u_sprop_pcontainers.htm"
+   	label="Path Containers"/>
 </context>
 <context id ="std_prop_source">
    <description>Click below to see help.</description>
@@ -372,6 +396,11 @@
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_search.htm"
    	label="C/C++ search page"/>
+</context>
+<context id ="documentation_property_page_context">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_mprop_documentation.htm"
+   	label="C/C++ Documentation"/>
 </context>
 
 </contexts>

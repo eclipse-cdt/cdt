@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 
 public class BuildOptionComboFieldEditor extends FieldEditor {
 
@@ -46,13 +47,15 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	 * @param name
 	 * @param label
 	 * @param tooltip
+	 * @param contextId
 	 * @param opts
 	 * @param sel
 	 * @param parent
 	 */
-	public BuildOptionComboFieldEditor(String name, String label, String tooltip, String [] opts, String sel, Composite parent) {
+	public BuildOptionComboFieldEditor(String name, String label, String tooltip, String contextId, String [] opts, String sel, Composite parent) {
 		this(name, label, opts, sel, parent);
 		setToolTip(tooltip);
+		if (!contextId.equals("")) PlatformUI.getWorkbench().getHelpSystem().setHelp(optionSelector, contextId);
 	}
 
 	/**

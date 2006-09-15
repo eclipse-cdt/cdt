@@ -61,16 +61,18 @@ public class MakeProjectOptionBlock extends TabFolderOptionBlock {
 			if( optionContainer != null && optionContainer instanceof MakePropertyPage )
 				switch( i ){
 					case 0 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_BUILDER_SETTINGS); break;
-					case 1 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_ERROR_PARSER );    break;
-					case 2 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_BINARY_PARSER );   break;
-					case 3 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_DISCOVERY );       break;
+					// case 1: the discovery page!
+					case 2 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_ERROR_PARSER );    break;
+					case 3 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_BINARY_PARSER );   break;
+					case 4 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_DISCOVERY );       break;
 				}
 			else 
 				switch( i ){
 					case 0 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_BUILDER_SETTINGS);             break;
-					case 1 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PREF_ERROR_PARSER );           break;
-					case 2 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PREF_BINARY_PARSER );          break;
-					case 3 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.SCANNER_CONFIG_DISCOVERY_OPTIONS ); break;
+					// case 1: the discovery page!
+					case 2 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PREF_ERROR_PARSER );           break;
+					case 3 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PREF_BINARY_PARSER );          break;
+					case 4 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.SCANNER_CONFIG_DISCOVERY_OPTIONS ); break;
 				}
 		}
 

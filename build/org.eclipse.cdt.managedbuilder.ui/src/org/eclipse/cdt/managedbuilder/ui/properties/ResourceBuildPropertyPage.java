@@ -58,7 +58,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 
 public class ResourceBuildPropertyPage extends AbstractBuildPropertyPage implements
@@ -151,6 +151,8 @@ public class ResourceBuildPropertyPage extends AbstractBuildPropertyPage impleme
 		    noContent(composite,ManagedBuilderUIMessages.getResourceString(NOTMBSFILE_LABEL));
 		}
 		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ManagedBuilderHelpContextIds.MAN_PROJ_BUILD_PROP);
+		
 		return composite;
 	}
 	
@@ -227,8 +229,6 @@ public class ResourceBuildPropertyPage extends AbstractBuildPropertyPage impleme
 		//	Update the contents of the configuration widget
 		populateConfigurations();
 		fOptionBlock.createContents(tabGroup, getElement());
-
-		WorkbenchHelp.setHelp(composite,ManagedBuilderHelpContextIds.MAN_PROJ_BUILD_PROP);
 	}
 	
 	protected void noContent(Composite composite, String message) {

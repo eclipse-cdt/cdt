@@ -58,7 +58,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWorkbenchPropertyPage, 
 					IPreferencePageContainer, ICOptionContainer {
@@ -138,6 +138,7 @@ public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWor
 			contentForClosedProject(composite);
 		} else {
 			contentForCProject(composite);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ManagedBuilderHelpContextIds.MAN_PROJ_BUILD_PROP);
 		}
 
 		return composite;
@@ -226,8 +227,6 @@ public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWor
 
 		// Do not call this until the widgets are constructed		
 		handleProjectTypeSelection();
-		
-		WorkbenchHelp.setHelp(parent, ManagedBuilderHelpContextIds.MAN_PROJ_BUILD_PROP);
 	}
 
 	private IProjectType[] getProjectTypes() {

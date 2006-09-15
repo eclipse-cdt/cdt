@@ -170,7 +170,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		fUseProject.setSelection(custom);
 		fPrefsBlock.setEnabled(custom);
 	
-		PlatformUI.getWorkbench().getHelpSystem().setHelp( topPane, ICHelpContextIds.FILE_TYPES_STD_PAGE );
+		PlatformUI.getWorkbench().getHelpSystem().setHelp( getControl(), ICHelpContextIds.FILE_TYPES_STD_PAGE );
 		return topPane;
 	}
 	

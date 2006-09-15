@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Class that implements the project type and configuration selection page in the new 
@@ -197,7 +197,7 @@ public class CProjectPlatformPage extends WizardPage {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Setup the help information
-		WorkbenchHelp.setHelp(composite, ManagedBuilderHelpContextIds.MAN_PROJ_PLATFORM_HELP);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ManagedBuilderHelpContextIds.MAN_PROJ_PLATFORM_HELP);
 
 		// Create the widgets
 		createTypeSelectGroup(composite);

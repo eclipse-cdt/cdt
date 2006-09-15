@@ -301,6 +301,13 @@ public class OptionReference implements IOption {
 	public String getToolTip() {
 		return option.getToolTip();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getContextID()
+	 */
+	public String getContextId() {
+		return option.getContextId();
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefinedSymbols()
@@ -762,6 +769,12 @@ public class OptionReference implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#setToolTip(String)
 	 */
 	public void setToolTip(String tooltip) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#setContextId(String)
+	 */
+	public void setContextId(String contextId) {
 	}
 
 	public PluginVersionIdentifier getVersion() {

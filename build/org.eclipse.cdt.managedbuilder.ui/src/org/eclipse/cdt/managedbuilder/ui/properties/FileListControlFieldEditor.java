@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Field editor that uses FileListControl for user input.
@@ -76,11 +77,13 @@ public class FileListControlFieldEditor extends FieldEditor {
 		String name,
 		String labelText,
 		String tooltip,
+		String contextId,
 		Composite parent,
 		int type) {
 		this(name, labelText, parent, type);
 		// can't use setToolTip(tooltip) as label not created yet 
 		getLabelControl(parent).setToolTipText(tooltip);
+		if (!contextId.equals("")) PlatformUI.getWorkbench().getHelpSystem().setHelp(list.getListControl(), contextId);
 	}
 
 	/**

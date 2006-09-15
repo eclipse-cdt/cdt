@@ -25,7 +25,7 @@ import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizardOptionPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.jface.wizard.IWizardPage;
 
 public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
@@ -81,7 +81,7 @@ public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 				} else if (page instanceof IndexerBlock) {
 					id = ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_INDEXER_TAB;
 				}
-				WorkbenchHelp.setHelp(page.getControl(), id);	
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(page.getControl(), id);	
 				
 			}
 		}

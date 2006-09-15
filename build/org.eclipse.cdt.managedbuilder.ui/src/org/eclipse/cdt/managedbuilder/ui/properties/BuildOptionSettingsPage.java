@@ -36,6 +36,7 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 
 public class BuildOptionSettingsPage extends BuildSettingsPage {
 	private Map fieldsMap = new HashMap();
@@ -139,19 +140,21 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 
 							stringField.getTextControl(fieldEditorParent).setToolTipText(opt.getToolTip());
 							stringField.getLabelControl(fieldEditorParent).setToolTipText(opt.getToolTip());
+							PlatformUI.getWorkbench().getHelpSystem().setHelp(stringField.getTextControl(fieldEditorParent), opt.getContextId());
 	
 							fieldEditor = stringField;
 						} break;
 						
 						case IOption.BOOLEAN: {
 							class TooltipBooleanFieldEditor extends BooleanFieldEditor {
-								public TooltipBooleanFieldEditor(String name, String labelText, String tooltip, Composite parent) {
+								public TooltipBooleanFieldEditor(String name, String labelText, String tooltip, Composite parent, String contextId) {
 									super(name, labelText, parent);
 									getChangeControl(parent).setToolTipText(tooltip);
+									if (!contextId.equals("")) PlatformUI.getWorkbench().getHelpSystem().setHelp(getChangeControl(parent), contextId);
 								}
 							}
 							
-							fieldEditor = new TooltipBooleanFieldEditor(prefName, opt.getName(), opt.getToolTip(), fieldEditorParent);
+							fieldEditor = new TooltipBooleanFieldEditor(prefName, opt.getName(), opt.getToolTip(), fieldEditorParent, opt.getContextId());
 						} break;
 						
 						case IOption.ENUMERATED: {
@@ -173,7 +176,7 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 							String[] enumValidNames = new String[enumValidList.size()];
 							enumValidList.copyInto(enumValidNames);
 	
-							fieldEditor = new BuildOptionComboFieldEditor(prefName, opt.getName(), opt.getToolTip(), enumValidNames, sel, fieldEditorParent);
+							fieldEditor = new BuildOptionComboFieldEditor(prefName, opt.getName(), opt.getToolTip(), opt.getContextId(), enumValidNames, sel, fieldEditorParent);
 						} break;
 						
 						case IOption.INCLUDE_PATH:
@@ -181,7 +184,7 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 						case IOption.PREPROCESSOR_SYMBOLS:
 						case IOption.LIBRARIES:
 						case IOption.OBJECTS: {
-							fieldEditor = new FileListControlFieldEditor(prefName, opt.getName(), opt.getToolTip(), fieldEditorParent, opt.getBrowseType());
+							fieldEditor = new FileListControlFieldEditor(prefName, opt.getName(), opt.getToolTip(), opt.getContextId(), fieldEditorParent, opt.getBrowseType());
 						} break;
 						
 						default:

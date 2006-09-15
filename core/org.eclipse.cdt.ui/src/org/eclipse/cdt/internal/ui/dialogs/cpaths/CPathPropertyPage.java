@@ -17,6 +17,8 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
@@ -67,6 +69,9 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 			result = createWithCProject(parent, project);
 		}
 		Dialog.applyDialogFont(result);
+		
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(parent, ICHelpContextIds.PROJECT_PATHS_ALLPATHTABS);	
+
 		return result;
 	}
 

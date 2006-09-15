@@ -12,9 +12,11 @@ package org.eclipse.cdt.make.internal.ui.properties;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeProjectOptionBlock;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -55,6 +57,8 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 		} else {
 			contentForCProject(composite);
 		}
+
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(parent, ICHelpContextIds.PROJECT_PATHS_ALLPROJTABS);	
 
 		return composite;
 	}

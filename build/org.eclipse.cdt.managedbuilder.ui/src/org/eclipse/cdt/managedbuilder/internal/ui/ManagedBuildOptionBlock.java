@@ -27,7 +27,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 
@@ -139,7 +139,7 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 		//if (getToolsSettingsBlock() != null)
 		//	WorkbenchHelp.setHelp(getToolsSettingsBlock().getControl(), ManagedBuilderHelpContextIds.MAN_PROJ_ERROR_PARSER);
 		if (getErrorParserBlock() != null)
-			WorkbenchHelp.setHelp(getErrorParserBlock().getControl(), ManagedBuilderHelpContextIds.MAN_PROJ_ERROR_PARSER);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(getErrorParserBlock().getControl(), ManagedBuilderHelpContextIds.MAN_PROJ_ERROR_PARSER);
 
 		return control;
 	}	

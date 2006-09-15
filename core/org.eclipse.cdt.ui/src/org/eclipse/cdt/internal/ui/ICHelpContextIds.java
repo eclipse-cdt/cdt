@@ -69,9 +69,12 @@ public interface ICHelpContextIds {
 
 	public static final String TODO_TASK_PROPERTY_PAGE = PREFIX + "tasktags_property_page_context"; //$NON-NLS-1$
 	public static final String TODO_TASK_PREFERENCE_PAGE = PREFIX + "tasktags_preference_page_context"; //$NON-NLS-1$
+	public static final String PROJECT_DOCUMENTATION = PREFIX + "documentation_property_page_context"; //$NON-NLS-1$
 
+	public static final String PROJECT_PATHS_ALLPROJTABS = PREFIX + "std_prop_allprojtabs"; //$NON-NLS-1$
 	public static final String BINARY_PARSER_PAGE = PREFIX + "newproj_parser_binary"; //$NON-NLS-1$
 	public static final String ERROR_PARSERS_PAGE = PREFIX + "newproj_parser_error"; //$NON-NLS-1$
+	public static final String PROJECT_PATHS_ALLPATHTABS = PREFIX + "std_prop_allpathtabs"; //$NON-NLS-1$
 	public static final String PROJECT_PATHS_SOURCE = PREFIX + "std_prop_source"; //$NON-NLS-1$
 	public static final String PROJECT_PATHS_OUTPUT = PREFIX + "std_prop_output"; //$NON-NLS-1$
 	public static final String PROJECT_PATHS_PROJECTS = PREFIX + "std_prop_projects"; //$NON-NLS-1$

@@ -41,7 +41,7 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 		composite.setLayout(new FillLayout());
 
 		optionPage.createControl(composite);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_INDEXER_PROPERTIES);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.PROJECT_INDEXER_PROPERTIES);	
 		initialize();
 		
 		return composite;

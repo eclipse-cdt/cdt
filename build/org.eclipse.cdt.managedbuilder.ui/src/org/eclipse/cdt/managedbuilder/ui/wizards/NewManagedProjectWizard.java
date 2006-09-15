@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 
 public class NewManagedProjectWizard extends NewCProjectWizard {
@@ -104,7 +104,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 			for (int i = 0; i < pages.length; i++) {
 				IWizardPage page = pages[i];
 				if (page instanceof NewCProjectWizardPage) {
-					WorkbenchHelp.setHelp(page.getControl(), ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_NAME_PAGE);
+					PlatformUI.getWorkbench().getHelpSystem().setHelp(page.getControl(), ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_NAME_PAGE);
 				}
 				else if (page instanceof NewManagedProjectOptionPage) {
 					NewManagedProjectOptionPage optionPage = (NewManagedProjectOptionPage) page;

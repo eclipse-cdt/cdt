@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
@@ -36,6 +37,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
@@ -90,6 +92,10 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 			fCHelpBookList.setUncheckAllButtonIndex(1);
 		}
 		
+		/**
+		 * @param parent
+		 * @return
+		 */
 		public Control createControl(Composite parent){
 			PixelConverter converter= new PixelConverter(parent);
 			
@@ -100,6 +106,8 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 
 			int buttonBarWidth= converter.convertWidthInCharsToPixels(24);
 			fCHelpBookList.setButtonsMinWidth(buttonBarWidth);
+
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.PROJECT_DOCUMENTATION);	
 			
 			return composite;
 		}

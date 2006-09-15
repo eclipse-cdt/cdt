@@ -19,6 +19,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
@@ -70,6 +72,9 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 		}
 		Dialog.applyDialogFont(result);
 		noDefaultAndApplyButton();
+		
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(parent, ICHelpContextIds.PROJECT_INCLUDE_PATHS_SYMBOLS);
+
 		return result;
 	}
 

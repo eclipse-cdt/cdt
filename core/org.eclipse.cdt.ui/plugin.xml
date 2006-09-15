@@ -215,6 +215,8 @@
          <showInPart id="org.eclipse.cdt.ui.includeBrowser"/>
          <showInPart id="org.eclipse.cdt.ui.CView"/>
          <actionSet id="org.eclipse.cdt.ui.CEditorPresentationActionSet"/>
+         <showInPart id="org.eclipse.ui.navigator.ProjectExplorer"/>
+         <viewShortcut id="org.eclipse.ui.navigator.ProjectExplorer"/>
          <!--perspectiveShortcut
                id="org.eclipse.cdt.ui.CBrowsingPerspective">
          </perspectiveShortcut-->

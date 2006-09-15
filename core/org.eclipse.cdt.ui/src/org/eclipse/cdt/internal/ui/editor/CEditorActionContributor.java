@@ -9,20 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -31,83 +28,38 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
-import org.eclipse.ui.texteditor.TextEditorAction;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 
 public class CEditorActionContributor extends TextEditorActionContributor {
-
-	protected static class SelectionAction extends TextEditorAction implements ISelectionChangedListener {
-		
-		protected int fOperationCode;
-		protected ITextOperationTarget fOperationTarget= null;
-		
-		
-		public SelectionAction(String prefix, int operation) {
-			super(CEditorMessages.getResourceBundle(), prefix, null);
-			fOperationCode= operation;
-			setEnabled(false);
-		}
-		
-		/**
-		 * @see TextEditorAction#setEditor(ITextEditor)
-		 */
-		public void setEditor(ITextEditor editor) {
-			if (getTextEditor() != null) {
-				ISelectionProvider p= getTextEditor().getSelectionProvider();
-				if (p != null) p.removeSelectionChangedListener(this);
-			}
-				
-			super.setEditor(editor);
-			
-			if (editor != null) {
-				ISelectionProvider p= editor.getSelectionProvider();
-				if (p != null) p.addSelectionChangedListener(this);
-				fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
-			} else {
-				fOperationTarget= null;
-			}
-				
-			selectionChanged(null);
-		}
-		
-		/**
-		 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
-		 */
-		public void selectionChanged(SelectionChangedEvent event) {
-			boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
-			setEnabled(isEnabled);
-		}
-
-		/*
-		 * @see org.eclipse.jface.action.Action#run()
-		 */
-		public void run() {
-			if (fOperationCode != -1 && fOperationTarget != null)
-				fOperationTarget.doOperation(fOperationCode);
-		}
-	}
-
+	
 	protected CEditor fCEditor;
 	protected RetargetTextEditorAction fContentAssist;
 	protected RetargetTextEditorAction fFormatter;
 	protected RetargetTextEditorAction fAddInclude;
-	protected RetargetTextEditorAction fOpenOnSelection;
-	protected SelectionAction fShiftLeft;
-	protected SelectionAction fShiftRight;
+//	protected RetargetTextEditorAction fOpenOnSelection;
+	protected RetargetTextEditorAction fShiftLeft;
+	protected RetargetTextEditorAction fShiftRight;
 	private TogglePresentationAction fTogglePresentation;
 	private GotoAnnotationAction fPreviousAnnotation;
 	private GotoAnnotationAction fNextAnnotation;
-	
+	private RetargetTextEditorAction fGotoMatchingBracket;
+	private RetargetTextEditorAction fGotoNextMemberAction;
+	private RetargetTextEditorAction fGotoPreviousMemberAction;
+	private RetargetTextEditorAction fToggleInsertModeAction;
 	
 	public CEditorActionContributor() {
 		super();
 		
 		ResourceBundle bundle = CEditorMessages.getResourceBundle();
 	
-		fShiftRight= new SelectionAction("ShiftRight.", ITextOperationTarget.SHIFT_RIGHT);		 //$NON-NLS-1$
+		fShiftRight= new RetargetTextEditorAction(bundle, "ShiftRight.", ITextOperationTarget.SHIFT_RIGHT);		 //$NON-NLS-1$
 		fShiftRight.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_RIGHT);
 		CPluginImages.setImageDescriptors(fShiftRight, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_RIGHT);
 
-		fShiftLeft= new SelectionAction("ShiftLeft.", ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
+		fShiftLeft= new RetargetTextEditorAction(bundle, "ShiftLeft.", ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
 		fShiftLeft.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_LEFT);
 		CPluginImages.setImageDescriptors(fShiftLeft, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_LEFT);
 		
@@ -120,7 +72,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fAddInclude = new RetargetTextEditorAction(bundle, "AddIncludeOnSelection."); //$NON-NLS-1$
 		fAddInclude.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);
 
-		fOpenOnSelection = new RetargetTextEditorAction(bundle, "OpenOnSelection."); //$NON-NLS-1$
+//		fOpenOnSelection = new RetargetTextEditorAction(bundle, "OpenOnSelection."); //$NON-NLS-1$
 
 		// actions that are "contributed" to editors, they are considered belonging to the active editor
 		fTogglePresentation= new TogglePresentationAction();
@@ -131,7 +83,16 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fPreviousAnnotation= new GotoAnnotationAction("PreviousAnnotation.", false); //$NON-NLS-1$
 		fNextAnnotation= new GotoAnnotationAction("NextAnnotation.", true); //$NON-NLS-1$
 
-		//fToggleTextHover= new ToggleTextHoverAction();
+		fGotoMatchingBracket= new RetargetTextEditorAction(bundle, "GotoMatchingBracket."); //$NON-NLS-1$
+		fGotoMatchingBracket.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_MATCHING_BRACKET);
+
+		fGotoNextMemberAction= new RetargetTextEditorAction(bundle, "GotoNextMember."); //$NON-NLS-1$
+		fGotoNextMemberAction.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_NEXT_MEMBER);
+		fGotoPreviousMemberAction= new RetargetTextEditorAction(bundle, "GotoPreviousMember."); //$NON-NLS-1$
+		fGotoPreviousMemberAction.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_PREVIOUS_MEMBER);
+
+		fToggleInsertModeAction= new RetargetTextEditorAction(bundle, "ToggleInsertMode.", IAction.AS_CHECK_BOX); //$NON-NLS-1$
+		fToggleInsertModeAction.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_INSERT_MODE);
 	}	
 
 
@@ -142,24 +103,26 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		
 		super.contributeToMenu(menu);
 		
-		/*
-		 * Hook in the code assist
-		 */
-		
 		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null) {	
 			editMenu.add(fShiftRight);
 			editMenu.add(fShiftLeft);
-					 		
-//			editMenu.add(new Separator(IContextMenuConstants.GROUP_OPEN));
-//			editMenu.add(fNextError);
-//			editMenu.add(fPreviousError);
-			
+
 			editMenu.add(new Separator(IContextMenuConstants.GROUP_GENERATE));
 			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fContentAssist);
 			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fAddInclude);
 			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fFormatter);
-			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fOpenOnSelection);
+//			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fOpenOnSelection);
+
+			editMenu.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fToggleInsertModeAction);
+
+			IMenuManager gotoMenu= menu.findMenuUsingPath("navigate/goTo"); //$NON-NLS-1$
+			if (gotoMenu != null) {
+				gotoMenu.add(new Separator("additions2"));  //$NON-NLS-1$
+				gotoMenu.appendToGroup("additions2", fGotoPreviousMemberAction); //$NON-NLS-1$
+				gotoMenu.appendToGroup("additions2", fGotoNextMemberAction); //$NON-NLS-1$
+				gotoMenu.appendToGroup("additions2", fGotoMatchingBracket); //$NON-NLS-1$
+			}
 		}
 	}
 	
@@ -189,19 +152,24 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		if (part instanceof ITextEditor)
 			textEditor= (ITextEditor) part;
 		
-		fShiftRight.setEditor(textEditor);
-		fShiftLeft.setEditor(textEditor);
+		fShiftRight.setAction(getAction(textEditor, ITextEditorActionConstants.SHIFT_RIGHT));
+		fShiftLeft.setAction(getAction(textEditor, ITextEditorActionConstants.SHIFT_LEFT));
+
 		fTogglePresentation.setEditor(textEditor);
 		fPreviousAnnotation.setEditor(textEditor);
 		fNextAnnotation.setEditor(textEditor);
 
-		//caAction.setEditor(textEditor);
-		//caAction.update();
 		fContentAssist.setAction(getAction(textEditor, "ContentAssistProposal")); //$NON-NLS-1$
 		fAddInclude.setAction(getAction(textEditor, "AddIncludeOnSelection")); //$NON-NLS-1$
-		fOpenOnSelection.setAction(getAction(textEditor, "OpenOnSelection")); //$NON-NLS-1$
+//		fOpenOnSelection.setAction(getAction(textEditor, "OpenOnSelection")); //$NON-NLS-1$
 		fFormatter.setAction(getAction(textEditor, "Format")); //$NON-NLS-1$
+
+		fGotoMatchingBracket.setAction(getAction(textEditor, GotoMatchingBracketAction.GOTO_MATCHING_BRACKET));
+		fGotoNextMemberAction.setAction(getAction(textEditor, GoToNextPreviousMemberAction.NEXT_MEMBER));
+		fGotoPreviousMemberAction.setAction(getAction(textEditor, GoToNextPreviousMemberAction.PREVIOUS_MEMBER));
 		
+		fToggleInsertModeAction.setAction(getAction(textEditor, ITextEditorActionConstants.TOGGLE_INSERT_MODE));
+
 		if (part instanceof CEditor) {
 			CEditor cEditor= (CEditor) part;
 			cEditor.fillActionBars(getActionBars());

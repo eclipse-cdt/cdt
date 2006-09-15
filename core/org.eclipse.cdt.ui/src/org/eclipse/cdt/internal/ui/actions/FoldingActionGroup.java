@@ -7,35 +7,65 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
-import org.eclipse.jface.action.IMenuManager;
+import java.util.ResourceBundle;
 
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.source.projection.IProjectionListener;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
-
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.editors.text.IFoldingCommandIds;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.ResourceAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 
 /**
- * Groups the JDT folding actions.
+ * Groups the CDT folding actions.
  *  
  * @since 3.0
  */
 public class FoldingActionGroup extends ActionGroup {
+
+	private static abstract class PreferenceAction extends ResourceAction implements IUpdate {
+		PreferenceAction(ResourceBundle bundle, String prefix, int style) {
+			super(bundle, prefix, style);
+		}
+	}
+	
+	private class FoldingAction extends PreferenceAction {
+
+		FoldingAction(ResourceBundle bundle, String prefix) {
+			super(bundle, prefix, IAction.AS_PUSH_BUTTON);
+		}
+
+		public void update() {
+			setEnabled(FoldingActionGroup.this.isEnabled() && fViewer.isProjectionMode());
+		}
+		
+	}
+	
 	private ProjectionViewer fViewer;
+	private IProjectionListener fProjectionListener;
 	
 	private TextOperationAction fToggle;
 	private TextOperationAction fExpand;
 	private TextOperationAction fCollapse;
 	private TextOperationAction fExpandAll;
+	
+	// since 4.0
+	private TextOperationAction fCollapseAll;
+	private PreferenceAction fRestoreDefaults;
 
-	private IProjectionListener fProjectionListener;
+
 	
 	/**
 	 * Creates a new projection action group for <code>editor</code>. If the
@@ -45,40 +75,64 @@ public class FoldingActionGroup extends ActionGroup {
 	 * @param editor the text editor to operate on
 	 * @param viewer the viewer of the editor
 	 */
-	public FoldingActionGroup(ITextEditor editor, ITextViewer viewer) {
-		if (viewer instanceof ProjectionViewer) {
-			fViewer= (ProjectionViewer) viewer;
-			
-			fProjectionListener= new IProjectionListener() {
-
-				public void projectionEnabled() {
-					update();
-				}
-
-				public void projectionDisabled() {
-					update();
-				}
-			};
-			
-			fViewer.addProjectionListener(fProjectionListener);
-			
-			fToggle= new TextOperationAction(ActionMessages.getResourceBundle(), "Projection.Toggle.", editor, ProjectionViewer.TOGGLE, true); //$NON-NLS-1$
-			fToggle.setChecked(true);
-			fToggle.setActionDefinitionId(IFoldingCommandIds.FOLDING_TOGGLE);
-			editor.setAction("FoldingToggle", fToggle); //$NON-NLS-1$
-			
-			fExpandAll= new TextOperationAction(ActionMessages.getResourceBundle(), "Projection.ExpandAll.", editor, ProjectionViewer.EXPAND_ALL, true); //$NON-NLS-1$
-			fExpandAll.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND_ALL);
-			editor.setAction("FoldingExpandAll", fExpandAll); //$NON-NLS-1$
-			
-			fExpand= new TextOperationAction(ActionMessages.getResourceBundle(), "Projection.Expand.", editor, ProjectionViewer.EXPAND, true); //$NON-NLS-1$
-			fExpand.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND);
-			editor.setAction("FoldingExpand", fExpand); //$NON-NLS-1$
-			
-			fCollapse= new TextOperationAction(ActionMessages.getResourceBundle(), "Projection.Collapse.", editor, ProjectionViewer.COLLAPSE, true); //$NON-NLS-1$
-			fCollapse.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE);
-			editor.setAction("FoldingCollapse", fCollapse); //$NON-NLS-1$
+	public FoldingActionGroup(final ITextEditor editor, ITextViewer viewer) {
+		if (!(viewer instanceof ProjectionViewer)) {
+			fToggle= null;
+			fExpand= null;
+			fCollapse= null;
+			fExpandAll= null;
+			fCollapseAll= null;
+			fRestoreDefaults= null;
+			fProjectionListener= null;
+			return;
 		}
+		
+		fViewer= (ProjectionViewer) viewer;
+		
+		fProjectionListener= new IProjectionListener() {
+
+			public void projectionEnabled() {
+				update();
+			}
+
+			public void projectionDisabled() {
+				update();
+			}
+		};
+		
+		fViewer.addProjectionListener(fProjectionListener);
+		
+		fToggle= new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.Toggle.", editor, ProjectionViewer.TOGGLE, true); //$NON-NLS-1$
+		fToggle.setChecked(true);
+		fToggle.setActionDefinitionId(IFoldingCommandIds.FOLDING_TOGGLE);
+		editor.setAction("FoldingToggle", fToggle); //$NON-NLS-1$
+		
+		fExpandAll= new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.ExpandAll.", editor, ProjectionViewer.EXPAND_ALL, true); //$NON-NLS-1$
+		fExpandAll.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND_ALL);
+		editor.setAction("FoldingExpandAll", fExpandAll); //$NON-NLS-1$
+		
+		fCollapseAll= new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.CollapseAll.", editor, ProjectionViewer.COLLAPSE, true); //$NON-NLS-1$
+		fCollapseAll.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
+		editor.setAction("FoldingCollapseAll", fCollapseAll); //$NON-NLS-1$
+
+		fExpand= new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.Expand.", editor, ProjectionViewer.EXPAND, true); //$NON-NLS-1$
+		fExpand.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND);
+		editor.setAction("FoldingExpand", fExpand); //$NON-NLS-1$
+		
+		fCollapse= new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.Collapse.", editor, ProjectionViewer.COLLAPSE, true); //$NON-NLS-1$
+		fCollapse.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE);
+		editor.setAction("FoldingCollapse", fCollapse); //$NON-NLS-1$
+
+		fRestoreDefaults= new FoldingAction(FoldingMessages.getResourceBundle(), "Projection.Restore.") { //$NON-NLS-1$
+			public void run() {
+				if (editor instanceof CEditor) {
+					CEditor cEditor= (CEditor) editor;
+					cEditor.resetProjection();
+				}
+			}
+		};
+		fRestoreDefaults.setActionDefinitionId(IFoldingCommandIds.FOLDING_RESTORE);
+		editor.setAction("FoldingRestore", fRestoreDefaults); //$NON-NLS-1$
 	}
 	
 	/**
@@ -114,6 +168,8 @@ public class FoldingActionGroup extends ActionGroup {
 			fExpand.update();
 			fExpandAll.update();
 			fCollapse.update();
+			fCollapseAll.update();
+			fRestoreDefaults.update();
 		}
 	}
 	
@@ -129,6 +185,8 @@ public class FoldingActionGroup extends ActionGroup {
 			manager.add(fExpandAll);
 			manager.add(fExpand);
 			manager.add(fCollapse);
+			manager.add(fCollapseAll);
+			manager.add(fRestoreDefaults);
 		}
 	}
 	

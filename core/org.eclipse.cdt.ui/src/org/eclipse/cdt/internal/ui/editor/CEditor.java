@@ -24,10 +24,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -97,6 +98,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.EditorActionBarContributor;
@@ -133,6 +135,7 @@ import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.actions.GenerateActionGroup;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.actions.ShowInCViewAction;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -140,6 +143,7 @@ import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
 import org.eclipse.cdt.internal.corext.util.SimplePositionTracker;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
@@ -513,7 +517,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	private ActionGroup fTextSearchGroup;
 	private CRefactoringActionGroup fRefactoringActionGroup;
 	private ActionGroup fOpenInViewGroup;
-	
+
+	/** Generate action group filling the "Source" submenu */
+	private GenerateActionGroup fGenerateActionGroup;
+
     /** Action which shows selected element in CView. */
 	private ShowInCViewAction fShowInCViewAction;
 	
@@ -1034,6 +1041,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			fOpenInViewGroup = null;
 		}
 
+		if (fGenerateActionGroup != null) {
+			fGenerateActionGroup.dispose();
+			fGenerateActionGroup= null;
+		}
+		
 		if (fEditorSelectionChangedListener != null)  {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener= null;
@@ -1094,7 +1106,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(resAction2, ICHelpContextIds.SHOW_TOOLTIP_ACTION);
 		
 		// Default text editing menu items
-		Action action= new GotoMatchingBracketAction(this);
+		IAction action= new GotoMatchingBracketAction(this);
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_MATCHING_BRACKET);				
 		setAction(GotoMatchingBracketAction.GOTO_MATCHING_BRACKET, action);
 		
@@ -1136,10 +1148,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
 		setAction("ContentAssistTip", action); //$NON-NLS-1$
 
-		action = new AddIncludeOnSelectionAction(this);
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);
-		setAction("AddIncludeOnSelection", action); //$NON-NLS-1$
-	
 		action = new OpenDeclarationsAction(this);
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
 		setAction("OpenDeclarations", action); //$NON-NLS-1$
@@ -1163,17 +1171,29 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
         
         action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoNextMember.", this, true); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_NEXT_MEMBER);
-        setAction("GotoNextMember", action); //$NON-NLS-1$*/
+        setAction(GoToNextPreviousMemberAction.PREVIOUS_MEMBER, action);
 
-        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoPrevMember.", this, false); //$NON-NLS-1$
+        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoPreviousMember.", this, false); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_PREVIOUS_MEMBER);
-        setAction("GotoPrevMember", action); //$NON-NLS-1$*/
+        setAction(GoToNextPreviousMemberAction.NEXT_MEMBER, action);
 
         //Assorted action groupings
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fTextSearchGroup= new TextSearchGroup(this);
-		fRefactoringActionGroup= new CRefactoringActionGroup(this);
+		fRefactoringActionGroup= new CRefactoringActionGroup(this, ITextEditorActionConstants.GROUP_EDIT);
 		fOpenInViewGroup= new OpenViewActionGroup(this);
+		fGenerateActionGroup= new GenerateActionGroup(this, ITextEditorActionConstants.GROUP_EDIT);
+
+		action = getAction(ITextEditorActionConstants.SHIFT_RIGHT);
+		if (action != null) {
+			action.setId(ITextEditorActionConstants.SHIFT_RIGHT);
+			CPluginImages.setImageDescriptors(action, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_RIGHT);
+		}
+		action = getAction(ITextEditorActionConstants.SHIFT_LEFT);
+		if (action != null) {
+			action.setId(ITextEditorActionConstants.SHIFT_LEFT);
+			CPluginImages.setImageDescriptors(action, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_LEFT);
+		}
 	}
 
 	/**
@@ -1181,33 +1201,45 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 */
 	public void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
+		// remove shift actions added by base class
+		menu.remove(ITextEditorActionConstants.SHIFT_LEFT);
+		menu.remove(ITextEditorActionConstants.SHIFT_RIGHT);
 
-		addGroup(menu, ITextEditorActionConstants.GROUP_EDIT, IContextMenuConstants.GROUP_REORGANIZE);
-		addGroup(menu, ITextEditorActionConstants.GROUP_EDIT, IContextMenuConstants.GROUP_GENERATE);
-		addGroup(menu, ITextEditorActionConstants.GROUP_EDIT, IContextMenuConstants.GROUP_NEW);
+		menu.insertAfter(IContextMenuConstants.GROUP_OPEN, new GroupMarker(IContextMenuConstants.GROUP_SHOW));
 
-		// Code formatting menu items -- only show in C perspective
-		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "ToggleComment"); //$NON-NLS-1$
-		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "AddBlockComment"); //$NON-NLS-1$
-		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "RemoveBlockComment"); //$NON-NLS-1$
+		addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenDeclarations"); //$NON-NLS-1$
+        addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenDefinition"); //$NON-NLS-1$
+		addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenTypeHierarchy"); //$NON-NLS-1$
 
-		addAction(menu, ITextEditorActionConstants.GROUP_FIND, "OpenDeclarations"); //$NON-NLS-1$
-        addAction(menu, ITextEditorActionConstants.GROUP_FIND, "OpenDefinition"); //$NON-NLS-1$
+		addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenOutline"); //$NON-NLS-1$
 
-		addAction(menu, ITextEditorActionConstants.GROUP_FIND, "OpenTypeHierarchy"); //$NON-NLS-1$
-        addAction(menu, ITextEditorActionConstants.GROUP_FIND, "GotoNextMember"); //$NON-NLS-1$
-        addAction(menu, ITextEditorActionConstants.GROUP_FIND, "GotoPrevMember"); //$NON-NLS-1$
-
-		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ContentAssistProposal"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "AddIncludeOnSelection"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "Format"); //$NON-NLS-1$
-		
-		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ShowInCView"); //$NON-NLS-1$
+		ActionContext context= new ActionContext(getSelectionProvider().getSelection());
+		fGenerateActionGroup.setContext(context);
+		fGenerateActionGroup.fillContextMenu(menu);
+		fGenerateActionGroup.setContext(null);
 
 		fSelectionSearchGroup.fillContextMenu(menu);
 		fTextSearchGroup.fillContextMenu(menu);
 		fRefactoringActionGroup.fillContextMenu(menu);
 		fOpenInViewGroup.fillContextMenu(menu);
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 */
+	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
+		super.rulerContextMenuAboutToShow(menu);
+		IMenuManager foldingMenu= new MenuManager(CEditorMessages.getString("CEditor.menu.folding"), "projection"); //$NON-NLS-1$ //$NON-NLS-2$
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
+
+		IAction action= getAction("FoldingToggle"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action= getAction("FoldingExpandAll"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action= getAction("FoldingCollapseAll"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action= getAction("FoldingRestore"); //$NON-NLS-1$
+		foldingMenu.add(action);
 	}
 
 	/**
@@ -2296,6 +2328,27 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	public void fillActionBars(IActionBars actionBars) {
 		fOpenInViewGroup.fillActionBars(actionBars);
 		fRefactoringActionGroup.fillActionBars(actionBars);
+		fGenerateActionGroup.fillActionBars(actionBars);
 	}
 
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#updateStateDependentActions()
+	 */
+	protected void updateStateDependentActions() {
+		super.updateStateDependentActions();
+		fGenerateActionGroup.editorStateChanged();
+	}
+
+	/**
+	 * Resets the foldings structure according to the folding
+	 * preferences.
+	 * 
+	 * @since 4.0
+	 */
+	public void resetProjection() {
+		if (fProjectionModelUpdater != null) {
+			fProjectionModelUpdater.initialize();
+		}
+	}
+	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * 	P.Tomaszewski
+ *  Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.actions;
@@ -15,16 +16,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.internal.core.model.WorkingCopy;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 /**
  * Gives possibility to move fast between member elements of the c/c++ source.
@@ -33,7 +36,10 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  */
 public class GoToNextPreviousMemberAction extends TextEditorAction {
 
-    /** Determines should action take user to the next member or to the previous one. */
+    public static final String NEXT_MEMBER = "GotoNextMember"; //$NON-NLS-1$
+	public static final String PREVIOUS_MEMBER = "GotoPrevMember"; //$NON-NLS-1$
+	
+	/** Determines should action take user to the next member or to the previous one. */
     private boolean fGotoNext;
     
     /**
@@ -63,14 +69,22 @@ public class GoToNextPreviousMemberAction extends TextEditorAction {
         fGotoNext = gotoNext;
     }
 
-    /**
+    /*
+	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
+	 */
+	public void update() {
+        final ITextEditor editor = getTextEditor();
+		setEnabled(editor instanceof CEditor && ((CEditor)editor).getInputCElement() != null);
+	}
+
+	/**
      * @see org.eclipse.jface.action.Action#run()
      */
     public void run() {
         final CEditor editor = (CEditor) getTextEditor();
         final ITextSelection selection = (ITextSelection) editor.getSelectionProvider().getSelection();
         final IEditorInput editorInput = editor.getEditorInput();
-        final WorkingCopy workingCopy =  (WorkingCopy) CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
+        final IWorkingCopy workingCopy =  CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
         try {
             final ICElement[] elements =  workingCopy.getChildren();
             final Integer[] elementOffsets = createSourceIndexes(elements);

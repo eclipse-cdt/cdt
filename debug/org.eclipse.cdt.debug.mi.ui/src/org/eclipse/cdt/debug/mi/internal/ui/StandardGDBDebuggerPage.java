@@ -13,6 +13,7 @@
 package org.eclipse.cdt.debug.mi.internal.ui;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Observable;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.debug.mi.ui.IMILaunchConfigurationComponent;
 import org.eclipse.cdt.debug.mi.ui.MIUIUtils;
 import org.eclipse.cdt.debug.ui.AbstractCDebuggerPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.cdt.utils.Platform;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -71,6 +73,10 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 	private CommandFactoryDescriptor[] fCommandFactoryDescriptors;
 
 	private boolean fIsInitializing = false;
+	
+	private static boolean gdb64ExistsIsCached = false;
+	
+	private static boolean cachedGdb64Exists;
 
 	public void createControl( Composite parent ) {
 		Composite comp = new Composite( parent, SWT.NONE );
@@ -84,14 +90,60 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 	}
 
 	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) {
-		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT );
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand());
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT );
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_COMMAND_FACTORY, MIPlugin.getDefault().getCommandFactoryManager().getDefaultDescriptor( getDebuggerIdentifier() ).getIdentifier() );
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, IMILaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT );
 		if ( fSolibBlock != null )
 			fSolibBlock.setDefaults( configuration );
 	}
+	
+	private static String defaultGdbCommand() {
+		String gdbCommand = null;
 
+		if (Platform.getOS().equals(Platform.OS_LINUX) &&
+				Platform.getOSArch().equals("ppc64")) {
+			// On SLES 9 and 10 for ppc64 arch, there is a separate
+			// 64-bit capable gdb called gdb64.  It can
+			// also debug 32-bit executables, so let's see if it exists.
+			if (!gdb64ExistsIsCached) {
+				Process unameProcess;
+				int interruptedRetryCount = 5;
+
+				String cmd[] = {"gdb64", "--version"};
+
+				gdb64ExistsIsCached = true;
+
+				while (interruptedRetryCount >= 0) {
+					try {
+						unameProcess = Runtime.getRuntime().exec(cmd);
+						int exitStatus = unameProcess.waitFor();
+
+						cachedGdb64Exists = (exitStatus == 0);
+						break;
+					} catch (IOException e) {
+						cachedGdb64Exists = false;
+						break;
+					} catch (InterruptedException e) {
+						// Never should get here, really.  The chances of the command being interrupted
+						// are very small
+						cachedGdb64Exists = false;
+						interruptedRetryCount--;
+					}
+				}
+			}
+			if (cachedGdb64Exists) {
+				gdbCommand = "gdb64"; //$NON-NLS-1$
+			} else {
+				gdbCommand = IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT;
+			}
+		} else {
+			gdbCommand = IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT;
+		}
+		return gdbCommand;
+	}
+
+	
 	public boolean isValid( ILaunchConfiguration launchConfig ) {
 		boolean valid = fGDBCommandText.getText().length() != 0;
 		if ( valid ) {
@@ -107,10 +159,10 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 
 	public void initializeFrom( ILaunchConfiguration configuration ) {
 		setInitializing( true );
-		String gdbCommand = IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT;
+		String gdbCommand = defaultGdbCommand();
 		String gdbInit = IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT;
 		try {
-			gdbCommand = configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT );
+			gdbCommand = configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand());
 		}
 		catch( CoreException e ) {
 		}
@@ -121,7 +173,6 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		}
 		if ( fSolibBlock != null )
 			fSolibBlock.initializeFrom( configuration );
-		fGDBCommandText.setText( gdbCommand );
 		fGDBInitText.setText( gdbInit );
 		
 		String debuggerID = getDebuggerIdentifier();

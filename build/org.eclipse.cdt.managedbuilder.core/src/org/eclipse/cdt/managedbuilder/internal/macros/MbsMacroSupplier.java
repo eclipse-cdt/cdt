@@ -33,12 +33,12 @@ import org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues;
 import org.eclipse.cdt.managedbuilder.macros.IFileContextData;
 import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.utils.Platform;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.osgi.framework.Bundle;
 

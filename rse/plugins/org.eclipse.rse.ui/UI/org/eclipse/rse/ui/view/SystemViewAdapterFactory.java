@@ -40,155 +40,138 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-
 /**
  * This factory maps requests for an adapter object from a given
  *  element object.
  */
-public class SystemViewAdapterFactory implements IAdapterFactory 
-{
+public class SystemViewAdapterFactory implements IAdapterFactory {
 
-	private SystemViewRootInputAdapter     rootAdapter  = new SystemViewRootInputAdapter();
-	private SystemViewConnectionAdapter    connectionAdapter= new SystemViewConnectionAdapter();
-	private SystemViewSubSystemAdapter     subsystemAdapter = new SystemViewSubSystemAdapter();	
-	private SystemViewFilterPoolAdapter    filterPoolAdapter= new SystemViewFilterPoolAdapter();			
-	private SystemViewFilterAdapter        filterAdapter    = new SystemViewFilterAdapter();		
-	private SystemViewFilterPoolReferenceAdapter   filterPoolReferenceAdapter= new SystemViewFilterPoolReferenceAdapter();		
-	private SystemViewFilterReferenceAdapter       filterReferenceAdapter    = new SystemViewFilterReferenceAdapter();	
-	private SystemViewMessageAdapter               msgAdapter = new SystemViewMessageAdapter();
-	private SystemViewPromptableAdapter            promptAdapter = new SystemViewPromptableAdapter();
-	private SystemViewNewConnectionPromptAdapter   newConnPromptAdapter = new SystemViewNewConnectionPromptAdapter();
-	private SystemTeamViewProfileAdapter           profileAdapter= new SystemTeamViewProfileAdapter();
-	private SystemTeamViewCategoryAdapter          categoryAdapter;
-	private SystemTeamViewSubSystemConfigurationAdapter  subsysFactoryAdapter;
-	
-	private SystemViewFilterStringAdapter          filterStringAdapter       = new SystemViewFilterStringAdapter();	
+	private SystemViewRootInputAdapter rootAdapter = new SystemViewRootInputAdapter();
+	private SystemViewConnectionAdapter connectionAdapter = new SystemViewConnectionAdapter();
+	private SystemViewSubSystemAdapter subsystemAdapter = new SystemViewSubSystemAdapter();
+	private SystemViewFilterPoolAdapter filterPoolAdapter = new SystemViewFilterPoolAdapter();
+	private SystemViewFilterAdapter filterAdapter = new SystemViewFilterAdapter();
+	private SystemViewFilterPoolReferenceAdapter filterPoolReferenceAdapter = new SystemViewFilterPoolReferenceAdapter();
+	private SystemViewFilterReferenceAdapter filterReferenceAdapter = new SystemViewFilterReferenceAdapter();
+	private SystemViewMessageAdapter msgAdapter = new SystemViewMessageAdapter();
+	private SystemViewPromptableAdapter promptAdapter = new SystemViewPromptableAdapter();
+	private SystemViewNewConnectionPromptAdapter newConnPromptAdapter = new SystemViewNewConnectionPromptAdapter();
+	private SystemTeamViewProfileAdapter profileAdapter = new SystemTeamViewProfileAdapter();
+	private SystemTeamViewCategoryAdapter categoryAdapter;
+	private SystemTeamViewSubSystemConfigurationAdapter subsysFactoryAdapter;
+
+	private SystemViewFilterStringAdapter filterStringAdapter = new SystemViewFilterStringAdapter();
 
 	/**
 	 * @see IAdapterFactory#getAdapterList()
 	 */
-	public Class[] getAdapterList() 
-	{		
-	    return new Class[] {
-	            ISystemViewElementAdapter.class, 
-	            ISystemDragDropAdapter.class, 
-	            IPropertySource.class, 
-	            IWorkbenchAdapter.class, 
-	            IActionFilter.class,
-	            IDeferredWorkbenchAdapter.class
-	            };		
+	public Class[] getAdapterList() {
+		return new Class[] { ISystemViewElementAdapter.class, ISystemDragDropAdapter.class, IPropertySource.class, IWorkbenchAdapter.class, IActionFilter.class, IDeferredWorkbenchAdapter.class };
 	}
+
 	/**
 	 * Called by our plugin's startup method to register our adaptable object types 
 	 * with the platform. We prefer to do it here to isolate/encapsulate all factory
 	 * logic in this one place.
+	 * @param manager the adapter manager controlling this factory
 	 */
-	public void registerWithManager(IAdapterManager manager)
-	{
-	    manager.registerAdapters(this, ISystemViewInputProvider.class);	    	
-	    manager.registerAdapters(this, ISystemProfile.class);	    
+	public void registerWithManager(IAdapterManager manager) {
+		manager.registerAdapters(this, ISystemViewInputProvider.class);
+		manager.registerAdapters(this, ISystemProfile.class);
 		manager.registerAdapters(this, IHost.class);
-	    manager.registerAdapters(this, ISubSystem.class);	    
-	    manager.registerAdapters(this, ISystemFilter.class);	    
-	    manager.registerAdapters(this, ISystemFilterPool.class);
-	    manager.registerAdapters(this, ISystemFilterPoolReference.class); 	    
-	    manager.registerAdapters(this, ISystemFilterReference.class);
-	    manager.registerAdapters(this, ISystemFilterString.class);
-        manager.registerAdapters(this, ISystemMessageObject.class);
-        manager.registerAdapters(this, ISystemPromptableObject.class);
-        manager.registerAdapters(this, SystemTeamViewCategoryNode.class);
-		manager.registerAdapters(this, SystemTeamViewSubSystemConfigurationNode.class);	
-		
+		manager.registerAdapters(this, ISubSystem.class);
+		manager.registerAdapters(this, ISystemFilter.class);
+		manager.registerAdapters(this, ISystemFilterPool.class);
+		manager.registerAdapters(this, ISystemFilterPoolReference.class);
+		manager.registerAdapters(this, ISystemFilterReference.class);
+		manager.registerAdapters(this, ISystemFilterString.class);
+		manager.registerAdapters(this, ISystemMessageObject.class);
+		manager.registerAdapters(this, ISystemPromptableObject.class);
+		manager.registerAdapters(this, SystemTeamViewCategoryNode.class);
+		manager.registerAdapters(this, SystemTeamViewSubSystemConfigurationNode.class);
+
 		// FIXME - UDAs no longer in core
 		//manager.registerAdapters(this, SystemTeamViewCompileTypeNode.class);
 		//manager.registerAdapters(this, SystemTeamViewCompileCommandNode.class);	
 		//manager.registerAdapters(this, SystemUDActionElement.class);
 	}
+
 	/**
 	 * @see IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
-	public Object getAdapter(Object adaptableObject, Class adapterType) 
-	{
-	      Object adapter = null;
-	      if (adaptableObject instanceof ISystemViewElementAdapter)
-	        adapter = adaptableObject; 
-		  else if (adaptableObject instanceof ISystemDragDropAdapter)
-		  	adapter = adaptableObject; 
-	      else if (adaptableObject instanceof ISystemViewInputProvider)
-	        adapter = rootAdapter; 	        
-		  else if (adaptableObject instanceof ISystemProfile)
-		  	adapter = profileAdapter; 	        	        	      
-	      else if (adaptableObject instanceof IHost)
-	        adapter = connectionAdapter; 	        	        
-	      else if (adaptableObject instanceof ISubSystem)
-	        adapter = subsystemAdapter;	        
-	      else if (adaptableObject instanceof ISystemFilterPoolReference)
-	        adapter = filterPoolReferenceAdapter;
-	      else if (adaptableObject instanceof ISystemFilterPool)
-	        adapter = filterPoolAdapter;	        
-	      else if (adaptableObject instanceof ISystemFilterReference)
-	        adapter = filterReferenceAdapter;	        
-	      else if (adaptableObject instanceof ISystemFilterString)
-	        adapter = filterStringAdapter;	 
-	      else if (adaptableObject instanceof ISystemFilter)
-	        adapter = filterAdapter;
-	      else if (adaptableObject instanceof ISystemMessageObject)
-	        adapter = msgAdapter;
-	      else if (adaptableObject instanceof ISystemPromptableObject) {
-	      	
-	      	if (adaptableObject instanceof SystemNewConnectionPromptObject) {
-	      		adapter = newConnPromptAdapter;
-	      	}
-	      	else {
-	      		adapter = promptAdapter;
-	      	}
-	      }
-		  else if (adaptableObject instanceof SystemTeamViewCategoryNode)
-		  	adapter = getCategoryAdapter();
-		  else if (adaptableObject instanceof SystemTeamViewSubSystemConfigurationNode)
-		    adapter = getSubSystemConfigurationAdapter();
-	      
-	      /** FIXME - UDAs no longer in core
-		  else if (adaptableObject instanceof SystemTeamViewCompileTypeNode)
-		    adapter = getCompileTypeAdapter();
-		  else if (adaptableObject instanceof SystemTeamViewCompileCommandNode)
-		    adapter = getCompileCommandAdapter();	      	      
-		  else if (adaptableObject instanceof SystemUDActionElement)
-		    adapter = getUserActionAdapter();
-		    */
-		  	        	        
-	      if ((adapter != null) && (adapterType == IPropertySource.class))
-	      {	
-	        ((ISystemViewElementAdapter)adapter).setPropertySourceInput(adaptableObject);
-	      }		
-	      else if (adapter == null)
-	      {
-	      	SystemBasePlugin.logWarning("No adapter found for object of type: " + adaptableObject.getClass().getName());
-	      }	     	    
+	public Object getAdapter(Object adaptableObject, Class adapterType) {
+		Object adapter = null;
+		if (adaptableObject instanceof ISystemViewElementAdapter)
+			adapter = adaptableObject;
+		else if (adaptableObject instanceof ISystemDragDropAdapter)
+			adapter = adaptableObject;
+		else if (adaptableObject instanceof ISystemViewInputProvider)
+			adapter = rootAdapter;
+		else if (adaptableObject instanceof ISystemProfile)
+			adapter = profileAdapter;
+		else if (adaptableObject instanceof IHost)
+			adapter = connectionAdapter;
+		else if (adaptableObject instanceof ISubSystem)
+			adapter = subsystemAdapter;
+		else if (adaptableObject instanceof ISystemFilterPoolReference)
+			adapter = filterPoolReferenceAdapter;
+		else if (adaptableObject instanceof ISystemFilterPool)
+			adapter = filterPoolAdapter;
+		else if (adaptableObject instanceof ISystemFilterReference)
+			adapter = filterReferenceAdapter;
+		else if (adaptableObject instanceof ISystemFilterString)
+			adapter = filterStringAdapter;
+		else if (adaptableObject instanceof ISystemFilter)
+			adapter = filterAdapter;
+		else if (adaptableObject instanceof ISystemMessageObject)
+			adapter = msgAdapter;
+		else if (adaptableObject instanceof ISystemPromptableObject) {
+
+			if (adaptableObject instanceof SystemNewConnectionPromptObject) {
+				adapter = newConnPromptAdapter;
+			} else {
+				adapter = promptAdapter;
+			}
+		} else if (adaptableObject instanceof SystemTeamViewCategoryNode)
+			adapter = getCategoryAdapter();
+		else if (adaptableObject instanceof SystemTeamViewSubSystemConfigurationNode) adapter = getSubSystemConfigurationAdapter();
+
+		/** FIXME - UDAs no longer in core
+		 else if (adaptableObject instanceof SystemTeamViewCompileTypeNode)
+		 adapter = getCompileTypeAdapter();
+		 else if (adaptableObject instanceof SystemTeamViewCompileCommandNode)
+		 adapter = getCompileCommandAdapter();	      	      
+		 else if (adaptableObject instanceof SystemUDActionElement)
+		 adapter = getUserActionAdapter();
+		 */
+
+		if ((adapter != null) && (adapterType == IPropertySource.class)) {
+			((ISystemViewElementAdapter) adapter).setPropertySourceInput(adaptableObject);
+		} else if (adapter == null) {
+			SystemBasePlugin.logWarning("No adapter found for object of type: " + adaptableObject.getClass().getName());
+		}
 		return adapter;
 	}
 
-    /**
-     * Because we use singletons for our adapters, it is possible to speed up 
-     * access to them by simply returning them from here.
-     * <p>
-     * This method returns the RSE adapter for root inputs to the RSE
-	 * @return SystemViewRootInputAdapter
-     */
-    public SystemViewRootInputAdapter getRootInputAdapter()
-    {
-    	return rootAdapter;
-    }
-    
 	/**
-     * Because we use singletons for our adapters, it is possible to speed up 
-     * access to them by simply returning them from here.
-     * <p>
-     * This method returns the RSE adapter for connection objects
+	 * Because we use singletons for our adapters, it is possible to speed up 
+	 * access to them by simply returning them from here.
+	 * <p>
+	 * This method returns the RSE adapter for root inputs to the RSE
+	 * @return SystemViewRootInputAdapter
+	 */
+	public SystemViewRootInputAdapter getRootInputAdapter() {
+		return rootAdapter;
+	}
+
+	/**
+	 * Because we use singletons for our adapters, it is possible to speed up 
+	 * access to them by simply returning them from here.
+	 * <p>
+	 * This method returns the RSE adapter for connection objects
 	 * @return SystemViewConnectionAdapter
 	 */
-	public SystemViewConnectionAdapter getConnectionAdapter()
-	{
+	public SystemViewConnectionAdapter getConnectionAdapter() {
 		return connectionAdapter;
 	}
 
@@ -199,155 +182,143 @@ public class SystemViewAdapterFactory implements IAdapterFactory
 	 * This method returns the RSE adapter for profile objects
 	 * @return SystemViewProfileAdapter
 	 */
-	public SystemTeamViewProfileAdapter getProfileAdapter()
-	{
+	public SystemTeamViewProfileAdapter getProfileAdapter() {
 		return profileAdapter;
 	}
-	
+
 	/**
-     * Because we use singletons for our adapters, it is possible to speed up 
-     * access to them by simply returning them from here.
-     * <p>
-     * This method returns the RSE adapter for filters
+	 * Because we use singletons for our adapters, it is possible to speed up 
+	 * access to them by simply returning them from here.
+	 * <p>
+	 * This method returns the RSE adapter for filters
 	 * @return SystemViewFilterAdapter
 	 */
-	public SystemViewFilterAdapter getFilterAdapter()
-	{
+	public SystemViewFilterAdapter getFilterAdapter() {
 		return filterAdapter;
 	}
 
 	/**
-     * Because we use singletons for our adapters, it is possible to speed up 
-     * access to them by simply returning them from here.
-     * <p>
-     * This method returns the RSE adapter for filter pools
+	 * Because we use singletons for our adapters, it is possible to speed up 
+	 * access to them by simply returning them from here.
+	 * <p>
+	 * This method returns the RSE adapter for filter pools
 	 * @return SystemViewFilterPoolAdapter
 	 */
-	public SystemViewFilterPoolAdapter getFilterPoolAdapter()
-	{
+	public SystemViewFilterPoolAdapter getFilterPoolAdapter() {
 		return filterPoolAdapter;
 	}
 
 	/**
-     * Because we use singletons for our adapters, it is possible to speed up 
-     * access to them by simply returning them from here.
-     * <p>
-     * This method returns the RSE adapter for filter pool references, which
-     * are what we actually see in the RSE.
+	 * Because we use singletons for our adapters, it is possible to speed up 
+	 * access to them by simply returning them from here.
+	 * <p>
+	 * This method returns the RSE adapter for filter pool references, which
+	 * are what we actually see in the RSE.
 	 * @return SystemViewFilterPoolReferenceAdapter
 	 */
-	public SystemViewFilterPoolReferenceAdapter getFilterPoolReferenceAdapter()
-	{
+	public SystemViewFilterPoolReferenceAdapter getFilterPoolReferenceAdapter() {
 		return filterPoolReferenceAdapter;
 	}
 
 	/**
-     * Because we use singletons for our adapters, it is possible to speed up 
-     * access to them by simply returning them from here.
-     * <p>
-     * This method returns the RSE adapter for filter references, which are
-     *  what we actually see in the RSE
+	 * Because we use singletons for our adapters, it is possible to speed up 
+	 * access to them by simply returning them from here.
+	 * <p>
+	 * This method returns the RSE adapter for filter references, which are
+	 *  what we actually see in the RSE
 	 * @return SystemViewFilterReferenceAdapter
 	 */
-	public SystemViewFilterReferenceAdapter getFilterReferenceAdapter()
-	{
+	public SystemViewFilterReferenceAdapter getFilterReferenceAdapter() {
 		return filterReferenceAdapter;
 	}
 
 	/**
-     * Because we use singletons for our adapters, it is possible to speed up 
-     * access to them by simply returning them from here.
-     * <p>
-     * This method returns the RSE adapter for messages shown in the RSE as child objects
+	 * Because we use singletons for our adapters, it is possible to speed up 
+	 * access to them by simply returning them from here.
+	 * <p>
+	 * This method returns the RSE adapter for messages shown in the RSE as child objects
 	 * @return SystemViewMessageAdapter
 	 */
-	public SystemViewMessageAdapter getMsgAdapter()
-	{
+	public SystemViewMessageAdapter getMsgAdapter() {
 		return msgAdapter;
 	}
 
 	/**
-     * Because we use singletons for our adapters, it is possible to speed up 
-     * access to them by simply returning them from here.
-     * <p>
-     * This method returns the RSE adapter for promptable objects the run an action when expanded
+	 * Because we use singletons for our adapters, it is possible to speed up 
+	 * access to them by simply returning them from here.
+	 * <p>
+	 * This method returns the RSE adapter for promptable objects the run an action when expanded
 	 * @return SystemViewPromptableAdapter
 	 */
-	public SystemViewPromptableAdapter getPromptAdapter()
-	{
+	public SystemViewPromptableAdapter getPromptAdapter() {
 		return promptAdapter;
 	}
 
 	/**
-     * Because we use singletons for our adapters, it is possible to speed up 
-     * access to them by simply returning them from here.
-     * <p>
-     * This method returns the RSE adapter for subsystems
+	 * Because we use singletons for our adapters, it is possible to speed up 
+	 * access to them by simply returning them from here.
+	 * <p>
+	 * This method returns the RSE adapter for subsystems
 	 * @return SystemViewSubSystemAdapter
 	 */
-	public SystemViewSubSystemAdapter getSubSystemAdapter()
-	{
+	public SystemViewSubSystemAdapter getSubSystemAdapter() {
 		return subsystemAdapter;
 	}
-	
+
 	/**
-	 * Return adapter for category nodes in team view
-	 */	
-	public SystemTeamViewCategoryAdapter getCategoryAdapter()
-	{
-		if (categoryAdapter == null)
-			categoryAdapter = new SystemTeamViewCategoryAdapter();
+	 * @return adapter for category nodes in team view
+	 */
+	public SystemTeamViewCategoryAdapter getCategoryAdapter() {
+		if (categoryAdapter == null) categoryAdapter = new SystemTeamViewCategoryAdapter();
 		return categoryAdapter;
 	}
+
 	/**
-	 * Return adapter for subsystem factory nodes in team view
-	 */	
-	public SystemTeamViewSubSystemConfigurationAdapter getSubSystemConfigurationAdapter()
-	{
-		if (subsysFactoryAdapter == null)
-			subsysFactoryAdapter = new SystemTeamViewSubSystemConfigurationAdapter();
+	 * @return adapter for subsystem factory nodes in team view
+	 */
+	public SystemTeamViewSubSystemConfigurationAdapter getSubSystemConfigurationAdapter() {
+		if (subsysFactoryAdapter == null) subsysFactoryAdapter = new SystemTeamViewSubSystemConfigurationAdapter();
 		return subsysFactoryAdapter;
 	}
-	
-// FIXME user actions and compile commands no longer coupled with core	
-//	/**
-//	 * Return adapter for user actions nodes in team view
-//	 */	
-//	public SystemTeamViewUserActionAdapter getUserActionAdapter()
-//	{
-//		if (userActionAdapter == null)
-//			userActionAdapter = new SystemTeamViewUserActionAdapter();
-//		return userActionAdapter;
-//	}
-//
-//	/**
-//	 * Return adapter for compile type nodes in team view
-//	 */	
-//	public SystemTeamViewCompileTypeAdapter getCompileTypeAdapter()
-//	{
-//		if (compileTypeAdapter == null)
-//			compileTypeAdapter = new SystemTeamViewCompileTypeAdapter();
-//		return compileTypeAdapter;
-//	}
-//	/**
-//	 * Return adapter for compile command nodes in team view
-//	 */	
-//	public SystemTeamViewCompileCommandAdapter getCompileCommandAdapter()
-//	{
-//		if (compileCmdAdapter == null)
-//			compileCmdAdapter = new SystemTeamViewCompileCommandAdapter();
-//		return compileCmdAdapter;
-//	}
-	
+
+	// FIXME user actions and compile commands no longer coupled with core	
+	//	/**
+	//	 * Return adapter for user actions nodes in team view
+	//	 */	
+	//	public SystemTeamViewUserActionAdapter getUserActionAdapter()
+	//	{
+	//		if (userActionAdapter == null)
+	//			userActionAdapter = new SystemTeamViewUserActionAdapter();
+	//		return userActionAdapter;
+	//	}
+	//
+	//	/**
+	//	 * Return adapter for compile type nodes in team view
+	//	 */	
+	//	public SystemTeamViewCompileTypeAdapter getCompileTypeAdapter()
+	//	{
+	//		if (compileTypeAdapter == null)
+	//			compileTypeAdapter = new SystemTeamViewCompileTypeAdapter();
+	//		return compileTypeAdapter;
+	//	}
+	//	/**
+	//	 * Return adapter for compile command nodes in team view
+	//	 */	
+	//	public SystemTeamViewCompileCommandAdapter getCompileCommandAdapter()
+	//	{
+	//		if (compileCmdAdapter == null)
+	//			compileCmdAdapter = new SystemTeamViewCompileCommandAdapter();
+	//		return compileCmdAdapter;
+	//	}
+
 	/**
-     * Because we use singletons for our adapters, it is possible to speed up 
-     * access to them by simply returning them from here.
-     * <p>
-     * This method returns the RSE adapter for filter strings
+	 * Because we use singletons for our adapters, it is possible to speed up 
+	 * access to them by simply returning them from here.
+	 * <p>
+	 * This method returns the RSE adapter for filter strings
 	 * @return SystemViewFilterStringAdapter
 	 */
-	public SystemViewFilterStringAdapter getFilterStringAdapter()
-	{
+	public SystemViewFilterStringAdapter getFilterStringAdapter() {
 		return filterStringAdapter;
 	}
 }

@@ -189,7 +189,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 				
 	    		try
 	    		{
-	    			connect();
+	    			connect(false);
 	    		}
 	    		catch (Exception e)
 	    		{

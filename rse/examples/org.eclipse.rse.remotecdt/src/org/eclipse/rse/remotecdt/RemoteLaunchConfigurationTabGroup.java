@@ -28,6 +28,7 @@ public class RemoteLaunchConfigurationTabGroup extends
          ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
                  new RemoteCMainTab(true),
                  new CArgumentsTab(),
+     			 new RemoteCDebuggerTab(false),
                  new SourceLookupTab(),
                  new CommonTab()
          };

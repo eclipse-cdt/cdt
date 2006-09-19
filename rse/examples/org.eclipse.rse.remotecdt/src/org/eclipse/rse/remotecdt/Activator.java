@@ -19,7 +19,7 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends Plugin {
 
-	//The shared instance.
+	/* The shared instance */
 	private static Activator plugin;
 	
 	/**

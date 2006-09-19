@@ -10,27 +10,27 @@
  *******************************************************************************/
 
 
-
 package org.eclipse.rse.remotecdt;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.File;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.ICDIDebugger2;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.mi.core.GDBServerCDIDebugger;
+import org.eclipse.cdt.debug.mi.core.GDBServerCDIDebugger2;
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
-import org.eclipse.cdt.utils.spawner.Spawner;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
@@ -40,16 +40,21 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.services.IService;
+import org.eclipse.rse.services.files.IFileService;
+import org.eclipse.rse.services.shells.IHostShell;
+import org.eclipse.rse.services.shells.IShellService;
+import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
+import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
-
+import org.eclipse.swt.widgets.Display;
 
 public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	
-	private final static String REMOTE_GDBSERVER_COMMAND = "gdbserver"; //$NON-NLS-1$
-	private final static String SFTP_COMMAND = "sftp"; //$NON-NLS-1$
-	private final static String SFTP_COMMAND_ARGS = "-b -"; //$NON-NLS-1$
-	private final static String SSH_COMMAND = "ssh"; //$NON-NLS-1$
-	private final static String SYSTEM_TYPE = "Ssh/Gdbserver"; //$NON-NLS-1$
+	private final static String SHELL_SERVICE = "shell.service";  //$NON-NLS-1$
+	private final static String FILE_SERVICE = "file.service";  //$NON-NLS-1$
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch
@@ -65,49 +70,51 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		}
 
 		String arguments = getProgramArguments(config);
-		String remoteExePath = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,
-				 ""); //$NON-NLS-1$
+		String remoteExePath = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH, ""); //$NON-NLS-1$
 		
 		if(mode.equals(ILaunchManager.DEBUG_MODE)){
 			setDefaultSourceLocator(launch, config);			
-			ICDISession dsession = null;
 			String debugMode = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 			if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-				/* Download the binary to the remote before debugging using the scp program*/
-				remoteSftpDownload(config, launch, exePath.toString(), remoteExePath);
-				
-				/* Default to using the GDBServerCDIDebugger. */
-				GDBServerCDIDebugger debugger = new GDBServerCDIDebugger();
-				
-				/* Automatically start up the gdbserver to be used by the GDBServerCDIDebugger on the remote
-				 * using ssh.
-				 */
-				String command_arguments = ":" + IRemoteConnectionConfigurationConstants.ATTR_TCP_PORT + " " + remoteExePath; //$NON-NLS-1$ //$NON-NLS-2$
-				if(arguments != null && !arguments.equals("")) //$NON-NLS-1$
-					command_arguments += " " + arguments; //$NON-NLS-1$
-				Process sshProcess = remoteSshExec(config, REMOTE_GDBSERVER_COMMAND, command_arguments);
-				DebugPlugin.newProcess(launch, sshProcess, renderProcessLabel(REMOTE_GDBSERVER_COMMAND));
-				/* Pre-set configuration constants for the GDBSERVERCDIDebugger to indicate how the gdbserver
-				 * was automatically started on the remote.  GDBServerCDIDebugger uses these to figure out how
-				 * to connect to the remote gdbserver.
-				 */
-				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-				wc.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
-				wc.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, getRemoteHostname(config)); 
-				wc.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, 
-						IRemoteConnectionConfigurationConstants.ATTR_TCP_PORT);
-				
-				dsession = debugger.createLaunchSession(wc.doSave(), exeFile, new SubProgressMonitor(monitor, 8));
-						
+				Process remoteShellProcess = null;
+				ICDISession dsession = null;
 				try {
-					/* Assume that stopInMain is true until the Debugger tab is added */
-					boolean stopInMain = true;
+					// Download the binary to the remote before debugging.
+					remoteFileDownload(config, launch, exePath.toString(), remoteExePath);
+				
+					// Automatically start up the gdbserver.  In the future this should be expanded to launch
+					// an arbitrary remote damon.
+					String command_arguments = ":" + IRemoteConnectionConfigurationConstants.ATTR_DEFAULT_PORT + " "  //$NON-NLS-1$ //$NON-NLS-2$
+												+ spaceEscapify(remoteExePath);
+					if(arguments != null && !arguments.equals("")) //$NON-NLS-1$
+						command_arguments += " " + arguments; //$NON-NLS-1$
+					remoteShellProcess = remoteShellExec(config, IRemoteConnectionConfigurationConstants.ATTR_REMOTE_DEBUGGER_COMMAND,
+														 command_arguments);
+					DebugPlugin.newProcess(launch, remoteShellProcess, "Remote Shell"); //$NON-NLS-1$
+				
+					// Pre-set configuration constants for the GDBSERVERCDIDebugger to indicate how the gdbserver
+					// was automatically started on the remote.  GDBServerCDIDebugger uses these to figure out how
+					// to connect to the remote gdbserver.
+					ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+					wc.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
+					wc.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, getRemoteHostname(config)); 
+					wc.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, 
+						IRemoteConnectionConfigurationConstants.ATTR_DEFAULT_PORT);
+					wc.doSave();
+
+					// Default to using the GDBServerCDIDebugger.
+					GDBServerCDIDebugger2 debugger = new GDBServerCDIDebugger2();
+					dsession = ((ICDIDebugger2)debugger).createSession(launch, exePath.toFile(), 
+																	   new SubProgressMonitor(monitor, 8));
+
+					boolean stopInMain = config
+					.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
 					String stopSymbol = null;
 					if ( stopInMain )
-						stopSymbol = launch.getLaunchConfiguration().
-									    getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, 
-									    			  ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
+						stopSymbol = launch.getLaunchConfiguration().getAttribute( 
+								ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, 
+								ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
 
 					ICDITarget[] targets = dsession.getTargets();
 					for (int i = 0; i < targets.length; i++) {
@@ -118,12 +125,15 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 										renderProcessLabel(exePath.toOSString()), getDefaultProcessMap());
 						} 
 						CDIDebugModel.newDebugTarget(launch, project.getProject(), targets[i], 
-										renderProcessLabel("gdbserver debugger"),
+										renderProcessLabel("gdbserver debugger"), //$NON-NLS-1$
 										iprocess, exeFile, true, false, stopSymbol, true);
 					}
 				} catch (CoreException e) {
 					try {
-						dsession.terminate();
+						if(dsession != null)
+							dsession.terminate();
+						if(remoteShellProcess != null)
+							remoteShellProcess.destroy();
 					} catch (CDIException e1) {
 						// ignore
 					}
@@ -132,24 +142,24 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			}
 
 		} else if(mode.equals(ILaunchManager.RUN_MODE)) {
-			/* Download the binary to the remote before debugging */
-			remoteSftpDownload(config, launch, exePath.toString(),remoteExePath );
-			
-			/* Use ssh to launch the binary on the remote */
-			Process process = remoteSshExec(config, remoteExePath, arguments);
-			DebugPlugin.newProcess(launch, process, renderProcessLabel(exePath.toOSString()));
+			Process remoteProcess = null;
+			try {
+				// Download the binary to the remote before debugging.
+				remoteFileDownload(config, launch, exePath.toString(),remoteExePath );
+				// Use a remote shell to launch the binary.
+				remoteProcess = remoteShellExec(config, remoteExePath, arguments);
+				DebugPlugin.newProcess(launch, remoteProcess, renderProcessLabel(exePath.toOSString()));
+			} catch (CoreException e) {
+				if(remoteProcess != null)
+					remoteProcess.destroy();
+				throw e;
+			}
 			
 		} else {
 			IStatus status = new Status(IStatus.ERROR, getPluginID(),
-								 IStatus.OK, "Unidentified mode " + mode + " passed to RemoteRunLaunchDelegate", null);
+								 IStatus.OK, "Unidentified mode " + mode + " passed to RemoteRunLaunchDelegate", null); //$NON-NLS-1$ //$NON-NLS-2$
 			throw new CoreException(status);
 		}		
-	}
-	
-	private String quotify(String inputString) {
-		if(inputString == null)
-			return null;
-		return '"' + inputString + '"';
 	}
 	
 	private String spaceEscapify(String inputString) {
@@ -159,109 +169,116 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		return inputString.replaceAll(" ", "\\\\ "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	protected Process remoteSftpDownload(ILaunchConfiguration config,  ILaunch launch, String localExePath, String remoteExePath)
-		throws CoreException {
-		boolean skipDownload = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
-		 false);
-		
-		if(skipDownload)
-			//Nothing to do.  Download is skipped.
-			return null;
+	protected IHost getCurrentConnection(ILaunchConfiguration config) throws CoreException {
+		String remoteConnection = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION, ""); //$NON-NLS-1$
 
-		String arguments = SFTP_COMMAND_ARGS + " " + getRemoteHostname(config); //$NON-NLS-1$
-		Process p = null;
-		try {
-			p = execLocal(SFTP_COMMAND, arguments);
-			DebugPlugin.newProcess(launch, p, renderProcessLabel(SFTP_COMMAND));
-			OutputStream outStream = p.getOutputStream();
-			String putCommand = "put " + quotify(localExePath) + " "  + quotify(remoteExePath) + "\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			String exitCommand = "exit\n"; //$NON-NLS-1$
-			// Execute the put and then the exit command.
-			outStream.write(putCommand.getBytes());
-			outStream.write(exitCommand.getBytes());
-			if(p.waitFor() != 0) {
-				IStatus status = new Status(IStatus.ERROR, getPluginID(),
-						 IStatus.OK, "Couldn't download program to remote. See console for reason.", null);
-				throw new CoreException(status);
-			}
-		} catch (InterruptedException e) {
-		} catch (IOException e) {
-		}
-		
-		return null;
-	}
-	
-	protected String getRemoteHostname(ILaunchConfiguration config) throws CoreException{
-		String remoteConnection = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
-		 ""); //$NON-NLS-1$
-
-		IHost[] connections = RSEUIPlugin.getTheSystemRegistry().getHostsBySystemType(SYSTEM_TYPE);
+		IHost[] connections = RSEUIPlugin.getTheSystemRegistry().getHosts();
 		int i = 0;
 		for(i = 0; i < connections.length; i++)
 			if(connections[i].getAliasName().equals(remoteConnection))
 				break;
 		if(i >= connections.length) {
-			IStatus status = new Status(IStatus.ERROR, getPluginID(),
-					 IStatus.OK, "Internal Error: Could not find the remote connection.\n", null);
-			throw new CoreException(status);
+			abort("Could not find the remote connection.", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 		}
-		return connections[i].getHostName();
+		return connections[i];
 	}
 	
-	protected Process remoteSshExec(ILaunchConfiguration config, String remoteCommandPath,
+	protected IService getConnectedRemoteService(ILaunchConfiguration config, String kindOfService)
+		throws CoreException {
+		
+		// Check that the service requested is file or shell.
+		if(!kindOfService.equals(SHELL_SERVICE) && !kindOfService.equals(FILE_SERVICE))
+			abort("Wrong service requested.", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
+		
+		IHost currentConnection = getCurrentConnection(config);
+		
+		ISubSystem[] subSystems = currentConnection.getSubSystems();
+		int i = 0;
+		for(i = 0; i < subSystems.length; i++) {
+			if(subSystems[i] instanceof IShellServiceSubSystem && kindOfService.equals(SHELL_SERVICE))
+				break;
+			if(subSystems[i] instanceof IFileServiceSubSystem && kindOfService.equals(FILE_SERVICE))
+				break;
+		}
+		if(i >= subSystems.length)
+			abort("No subsystem found.\n", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
+
+		// Need to run this in the UI thread
+
+		final ISubSystem  subsystem = subSystems[i];
+		Display.getDefault().syncExec(new Runnable()
+		{
+			public void run()
+			{	try {
+				subsystem.connect(false);
+				} catch (Exception e) {
+					// Ignore
+				}
+			}
+		});
+		
+		if(!subsystem.isConnected())
+			abort("Could not connection to the remote system.", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
+		
+		if(kindOfService.equals(SHELL_SERVICE))
+			return  ((IShellServiceSubSystem) subsystem).getShellService();
+		else
+			return  ((IFileServiceSubSystem) subsystem).getFileService();
+	}
+	
+	protected Process remoteFileDownload(ILaunchConfiguration config,  ILaunch launch,
+			String localExePath, String remoteExePath) throws CoreException {
+		
+		boolean skipDownload = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET, false);
+		
+		if(skipDownload)
+			// Nothing to do.  Download is skipped.
+			return null;
+
+		IFileService fileService = (IFileService) getConnectedRemoteService(config, FILE_SERVICE);
+		File file = new File(localExePath);
+		Path remotePath = new Path(remoteExePath);
+		try {
+			fileService.upload(new NullProgressMonitor(), file, remotePath.removeLastSegments(1).toString(),
+					remotePath.lastSegment(), true, null, null);
+			// Need to change the permissions to match the original file permissions because of a bug in upload
+			Process p = remoteShellExec(config, "chmod", "+x " + spaceEscapify(remotePath.toString())); //$NON-NLS-1$ //$NON-NLS-2$
+			Thread.sleep(500);
+			p.destroy();
+		} catch (Exception e) {
+			abort("Error during file upload.", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR ); //$NON-NLS-1$
+		}	
+		return null;
+	}
+	
+	protected String getRemoteHostname(ILaunchConfiguration config) throws CoreException {
+		IHost currentConnection = getCurrentConnection(config);
+		return currentConnection.getHostName();
+	}
+	
+	protected Process remoteShellExec(ILaunchConfiguration config, String remoteCommandPath,
 			String arguments) throws CoreException {
 		String remote_command = arguments == null ? spaceEscapify(remoteCommandPath) :
 												    spaceEscapify(remoteCommandPath) + " " + arguments; //$NON-NLS-1$
-		String ssh_arguments = getRemoteHostname(config) + " " + remote_command; //$NON-NLS-1$
+		IShellService shellService = (IShellService) getConnectedRemoteService(config, SHELL_SERVICE);
 		
-		Process p = execLocal(SSH_COMMAND, ssh_arguments);
-		return p;
+		// This is necessary because runCommand does not actually run the command right now.
+		IHostShell hostShell = shellService.launchShell(new NullProgressMonitor(), "",null); //$NON-NLS-1$
+		hostShell.writeToShell(remote_command);
 		
-		/* In the future the Shell subsystem from RSE should be used instead of invoking ssh and scp 
-		 * directly.  The code to accomplish this might look like below.
-		 */
-		
-		/*ISubSystem[] subSystems = connections[i].getSubSystems();
-		for(i = 0; i < subSystems.length; i++)
-			if(subSystems[i] instanceof IShellServiceSubSystem)
-				break;
-		if(i >= subSystems.length)
-			abort("Internal Error: No shell subsystem found.\n", null, 0);
-		IShellServiceSubSystem shellSubSystem = (IShellServiceSubSystem) subSystems[i];
-		IShellService shellService = shellSubSystem.getShellService();
-		String command = arguments == null ? file.toOSString() : file.toOSString() + " " + arguments;
-		
-		IHostShell hostShell = shellService.runCommand(null, file.removeLastSegments(1).toOSString(),command, null);
-	
 		Process p = null;
 		try {
-			p = new HostShellProcess(hostShell);
+			p = new HostShellAdapter(hostShell);
 		} catch (Exception e) {
 			if (p != null) {
 				p.destroy();
 			}
-			abort("Internal Error: Could not create the hostShellProcess.\n", null, 0);
+			abort("Could not create the hostShellProcess.\n", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 		}
-	    */
+		return p;
+	
 	}
 	
-	protected Process execLocal(String file, String arguments) throws CoreException {
-		Process p = null;
-		String command = file + " " + arguments; //$NON-NLS-1$
-		try {
-			p = new Spawner(command, false);
-		} catch (Exception e) {
-			if (p != null) {
-				p.destroy();
-			}
-			IStatus status = new Status(IStatus.ERROR, getPluginID(),
-					 IStatus.OK, "Internal Error: Could not execute command.\n", null);
-			throw new CoreException(status);
-		}
-
-		return p;
-	}
-
 	protected String getPluginID() {
 		return "org.eclipse.rse.remotecdt"; //$NON-NLS-1$
 	}

@@ -38,12 +38,11 @@ import org.eclipse.swt.widgets.Text;
 
 public class RemoteCMainTab extends CMainTab {
  
-	private static final String[]  SYSTEM_TYPE = {"Ssh/Gdbserver"}; //$NON-NLS-1$
 	/* Labels and Error Messages */
-	private static final String REMOTE_PROG_LABEL_TEXT = "Remote Path for C/C++ Application:";
-	private static final String SKIP_DOWNLOAD_BUTTON_TEXT = "Skip download to target path.";
-	private static final String REMOTE_PROG_TEXT_ERROR = "Remote executable path is not specified.";
-	private static final String CONNECTION_TEXT_ERROR = "Remote Connection must be selected.";
+	private static final String REMOTE_PROG_LABEL_TEXT = "Remote Path for C/C++ Application:"; //$NON-NLS-1$
+	private static final String SKIP_DOWNLOAD_BUTTON_TEXT = "Skip download to target path."; //$NON-NLS-1$
+	private static final String REMOTE_PROG_TEXT_ERROR = "Remote executable path is not specified."; //$NON-NLS-1$
+	private static final String CONNECTION_TEXT_ERROR = "Remote Connection must be selected."; //$NON-NLS-1$
 	
 	/* Defaults */
 	private static final String REMOTE_PATH_DEFAULT = EMPTY_STRING;
@@ -57,7 +56,6 @@ public class RemoteCMainTab extends CMainTab {
 	protected Button skipDownloadButton;
 	protected Button useLocalPathButton;
 	
-	private boolean initialized = false;
 	SystemNewConnectionAction action = null;
 	
 	public RemoteCMainTab(boolean terminalOption) {
@@ -92,10 +90,7 @@ public class RemoteCMainTab extends CMainTab {
 		fProgText.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent evt) {
-				if(initialized)
-					setLocalPathForRemotePath();
-				else
-					initialized = true;
+				setLocalPathForRemotePath();
 			}
 		});
 		
@@ -139,7 +134,7 @@ public class RemoteCMainTab extends CMainTab {
 		projComp.setLayoutData(gd);
 
 		connectionLabel = new Label(projComp, SWT.NONE);
-		connectionLabel.setText("Connection:"); 
+		connectionLabel.setText("Connection:");  //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 1;
 		connectionLabel.setLayoutData(gd);
@@ -157,7 +152,7 @@ public class RemoteCMainTab extends CMainTab {
 		});
 		updateConnectionPulldown();
 
-		newRemoteConnectionButton = createPushButton(projComp, "New", null);
+		newRemoteConnectionButton = createPushButton(projComp, "New", null); //$NON-NLS-1$
 		newRemoteConnectionButton.addSelectionListener(new SelectionAdapter() {
 
 		public void widgetSelected(SelectionEvent evt) {
@@ -244,7 +239,7 @@ public class RemoteCMainTab extends CMainTab {
 			remoteConnection = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
 						 ""); //$NON-NLS-1$
 		} catch (CoreException ce) {
-			/* default to doing nothing */
+			// Ignore
 		}
 		
 		String[] items = connectionCombo.getItems();
@@ -269,24 +264,24 @@ public class RemoteCMainTab extends CMainTab {
 		{
 		  action = new SystemNewConnectionAction(getControl().getShell(), false, false, null);
 		}
-		action.restrictSystemTypes(SYSTEM_TYPE);
 		
 		try 
 		{
 		  action.run();
-		} catch (Exception exc)
+		} catch (Exception e)
 		{
-			/* Ignore for now */
+			// Ignore
 		}
 	}
 	
 	protected void updateConnectionPulldown() {
 		connectionCombo.removeAll();
-		IHost[] connections = RSEUIPlugin.getTheSystemRegistry().getHostsBySystemType(SYSTEM_TYPE[0]);
+		IHost[] connections = RSEUIPlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory("shells"); //$NON-NLS-1$
 		for(int i = 0; i < connections.length; i++)
 			connectionCombo.add(connections[i].getAliasName());
+		
 		if(connections.length > 0)
-			connectionCombo.select(0);
+			connectionCombo.select(connections.length - 1);
 	}
     
 	protected void updateTargetProgFromConfig(ILaunchConfiguration config) {
@@ -294,8 +289,8 @@ public class RemoteCMainTab extends CMainTab {
 		try {
 			targetPath = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,
 						 REMOTE_PATH_DEFAULT);
-		} catch (CoreException ce) {
-			/* Ignore for now */
+		} catch (CoreException e) {
+			// Ignore
 		}
 		remoteProgText.setText(targetPath);
 	}
@@ -306,7 +301,7 @@ public class RemoteCMainTab extends CMainTab {
 			downloadToTarget = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET, 
 							   SKIP_DOWNLOAD_TO_REMOTE_DEFAULT);
 		} catch (CoreException e) {
-			/* Ignore for now */
+			// Ignore for now
 		}
 		skipDownloadButton.setSelection(downloadToTarget);
 	}
@@ -317,12 +312,13 @@ public class RemoteCMainTab extends CMainTab {
 	 * local executable path.
 	 */
 	private void setLocalPathForRemotePath() {
-		String name = fProgText.getText().trim();
-		if (name.length() != 0) {
+		String programName = fProgText.getText().trim();
+		String remoteName = remoteProgText.getText().trim();
+		if (programName.length() != 0 && remoteName.length() == 0) {
 			IProject project = getCProject().getProject();
-			IPath exePath = new Path(name);
+			IPath exePath = new Path(programName);
 			if (!exePath.isAbsolute()) {
-				exePath = project.getFile(name).getLocation();
+				exePath = project.getFile(programName).getLocation();
 			}
 			String path = exePath.toString();
 			remoteProgText.setText(path);

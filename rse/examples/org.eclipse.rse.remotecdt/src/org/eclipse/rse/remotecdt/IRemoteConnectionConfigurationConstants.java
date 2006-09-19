@@ -12,19 +12,19 @@
 
 package org.eclipse.rse.remotecdt;
 
-import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
+import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.debug.core.DebugPlugin;
 
 public interface IRemoteConnectionConfigurationConstants extends
-		IMILaunchConfigurationConstants {
+		IGDBServerMILaunchConfigurationConstants {
 	
 	public static final String ATTR_REMOTE_CONNECTION = 
 				DebugPlugin.getUniqueIdentifier() + ".REMOTE_TCP"; //$NON-NLS-1$
 
-	/*
-	 * ATTR_TCP_PORT: gdbserver port.
-	 */  
-	public static final String ATTR_TCP_PORT = "2345"; //$NON-NLS-1$
+ 
+	public static final String ATTR_DEFAULT_PORT = "2345"; //$NON-NLS-1$
+	
+	public static final String ATTR_REMOTE_DEBUGGER_COMMAND = "gdbserver"; //$NON-NLS-1$
 	
 	/*
 	 * Generic Remote Path and Download options

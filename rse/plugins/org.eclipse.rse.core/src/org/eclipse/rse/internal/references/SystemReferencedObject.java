@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.references;
+
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.core.references.IRSEReferencedObject;
-
 
 /**
  * A class to encapsulate the operations required of an object which
@@ -33,58 +33,57 @@ import org.eclipse.rse.core.references.IRSEReferencedObject;
 /** 
  * @lastgen class SystemReferencedObjectImpl Impl implements SystemReferencedObject, EObject {}
  */
-public abstract class SystemReferencedObject extends RSEModelObject implements IRSEReferencedObject
-{
-    protected SystemReferencedObjectHelper helper = null;
-	
+public abstract class SystemReferencedObject extends RSEModelObject implements IRSEReferencedObject {
+	protected SystemReferencedObjectHelper helper = null;
+
 	/**
 	 * Default constructor. Typically called by EMF factory method.
 	 */
-	protected SystemReferencedObject() 
-	{
+	protected SystemReferencedObject() {
 		super();
 		helper = new SystemReferencedObjectHelper();
 	}
+
 	// ----------------------------------
 	// IRSEReferencedObject methods...
 	// ----------------------------------
 	/**
 	 * Add a reference, increment reference count, return new count
+	 * @param ref the referencing object
 	 * @return new count of how many referencing objects reference this object.
 	 */
-	public int addReference(IRSEBaseReferencingObject ref)
-	{
+	public int addReference(IRSEBaseReferencingObject ref) {
 		return helper.addReference(ref);
 	}
+
 	/**
 	 * Remove a reference, decrement reference count, return new count
+	 * @param ref the referencing object
 	 * @return new count of how many referencing objects reference this object.
 	 */
-	public int removeReference(IRSEBaseReferencingObject ref)
-	{
+	public int removeReference(IRSEBaseReferencingObject ref) {
 		return helper.removeReference(ref);
 	}
+
 	/**
-	 * Return a count of how many referencing objects reference this object.
+	 * @return a count of how many referencing objects reference this object.
 	 */
-	public int getReferenceCount()
-	{
+	public int getReferenceCount() {
 		return helper.getReferenceCount();
 	}
+
 	/**
 	 * Clear the list of referenced objects.
 	 */
-	public void removeAllReferences()
-	{
-		helper.removeAllReferences();		
+	public void removeAllReferences() {
+		helper.removeAllReferences();
 	}
+
 	/**
-	 * Return a list of all referencing objects of this object
+	 * @return a list of all referencing objects of this object
 	 */
-	public IRSEBaseReferencingObject[] getReferencingObjects()
-	{
+	public IRSEBaseReferencingObject[] getReferencingObjects() {
 		return helper.getReferencingObjects();
 	}
-	
-	
+
 }

@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.references;
+
 import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
 
 /**
@@ -24,36 +25,31 @@ import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
  * so unique that it can be used after restoration from disk to resolve a pointer to this
  * specific object, in memory.
  */
-public class SystemPersistableReferencedObjectHelper 
-       extends SystemReferencedObjectHelper
-       implements IRSEBasePersistableReferencedObject 
-{
+public class SystemPersistableReferencedObjectHelper extends SystemReferencedObjectHelper implements IRSEBasePersistableReferencedObject {
 	private String referenceName;
-		
+
 	/**
 	 * Constructor for SystemPersistableReferencedObjectHelper
 	 * @param referenceName The unique name that can be stored to identify this object.
 	 */
-	protected SystemPersistableReferencedObjectHelper(String referenceName) 
-	{
+	protected SystemPersistableReferencedObjectHelper(String referenceName) {
 		super();
 		setReferenceName(referenceName);
 	}
-	
+
 	/**
-	 * Return the unique reference name of this object, as set in the constructor
+	 * @return the unique reference name of this object, as set in the constructor
 	 */
-	public String getReferenceName()
-	{
+	public String getReferenceName() {
 		return referenceName;
 	}
-	
+
 	/**
 	 * Set the unique reference name of this object. Overrides what was set in
 	 * the constructor. Typically called on rename operation.
+	 * @param name the name of this particular reference.
 	 */
-	public void setReferenceName(String name)
-	{
+	public void setReferenceName(String name) {
 		this.referenceName = name;
 	}
 

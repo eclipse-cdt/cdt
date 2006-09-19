@@ -15,11 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.references;
+
 import java.util.Vector;
 
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
-
 
 /**
  * This is a class that implements all the methods in the IRSEReferencedObject.
@@ -27,22 +27,20 @@ import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
  * The easiest use of this class is to subclass it, but since that is not
  * always possible, it is not abstract and hence can be leveraged via containment.
  */
-public class SystemReferencedObjectHelper implements IRSEBaseReferencedObject 
-{
+public class SystemReferencedObjectHelper implements IRSEBaseReferencedObject {
 	private Vector referencingObjects = new Vector();
+
 	/**
 	 * Constructor for SystemReferencedObjectHelper
 	 */
-	public SystemReferencedObjectHelper() 
-	{
+	public SystemReferencedObjectHelper() {
 		super();
 	}
 
 	/**
 	 * @see IRSEBaseReferencedObject#addReference(IRSEBaseReferencingObject)
 	 */
-	public int addReference(IRSEBaseReferencingObject ref) 
-	{
+	public int addReference(IRSEBaseReferencingObject ref) {
 		referencingObjects.addElement(ref);
 		return referencingObjects.size();
 	}
@@ -50,50 +48,46 @@ public class SystemReferencedObjectHelper implements IRSEBaseReferencedObject
 	/**
 	 * @see IRSEBaseReferencedObject#removeReference(IRSEBaseReferencingObject)
 	 */
-	public int removeReference(IRSEBaseReferencingObject ref) 
-	{
+	public int removeReference(IRSEBaseReferencingObject ref) {
 		int before = referencingObjects.size();
 		referencingObjects.removeElement(ref);
 		int after = referencingObjects.size();
-		assertThis((after == (before - 1)), "removeReference failed for "+ref); //$NON-NLS-1$
+		assertThis((after == (before - 1)), "removeReference failed for " + ref); //$NON-NLS-1$
 		return referencingObjects.size();
 	}
 
 	/**
 	 * @see IRSEBaseReferencedObject#getReferenceCount()
 	 */
-	public int getReferenceCount() 
-	{
+	public int getReferenceCount() {
 		return referencingObjects.size();
 	}
 
 	/**
 	 * Clear the list of referenced objects.
 	 */
-	public void removeAllReferences()
-	{
+	public void removeAllReferences() {
 		referencingObjects.removeAllElements();
 	}
 
 	/**
 	 * @see IRSEBaseReferencedObject#getReferencingObjects()
 	 */
-	public IRSEBaseReferencingObject[] getReferencingObjects() 
-	{
+	public IRSEBaseReferencingObject[] getReferencingObjects() {
 		IRSEBaseReferencingObject[] references = new IRSEBaseReferencingObject[referencingObjects.size()];
-		for (int idx=0; idx<referencingObjects.size(); idx++)
-		   references[idx] = (IRSEBaseReferencingObject)referencingObjects.elementAt(idx);
+		for (int idx = 0; idx < referencingObjects.size(); idx++)
+			references[idx] = (IRSEBaseReferencingObject) referencingObjects.elementAt(idx);
 		return references;
 	}
 
-    /**
-     * Little assertion method for debugging purposes
-     * FIXME Move to common place, protected seems not appropriate
-     */
-    protected void assertThis(boolean assertion, String msg)
-    {
-    	if (!assertion)
-    	  System.out.println("ASSERTION FAILED IN SystemReferencedObject: " + msg); //$NON-NLS-1$
-    }
-    
+	/**
+	 * Assertion method for debugging purposes. All instances of assertion failure should be removed by 
+	 * release.
+	 * @param assertion a boolean (usually an expression) that is to be tested
+	 * @param msg the message printed on System.out
+	 */
+	protected void assertThis(boolean assertion, String msg) {
+		if (!assertion) System.out.println("ASSERTION FAILED IN SystemReferencedObject: " + msg); //$NON-NLS-1$
+	}
+
 }

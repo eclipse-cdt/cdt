@@ -39,10 +39,10 @@ import org.eclipse.swt.widgets.Text;
 public class RemoteCMainTab extends CMainTab {
  
 	/* Labels and Error Messages */
-	private static final String REMOTE_PROG_LABEL_TEXT = "Remote Path for C/C++ Application:"; //$NON-NLS-1$
-	private static final String SKIP_DOWNLOAD_BUTTON_TEXT = "Skip download to target path."; //$NON-NLS-1$
-	private static final String REMOTE_PROG_TEXT_ERROR = "Remote executable path is not specified."; //$NON-NLS-1$
-	private static final String CONNECTION_TEXT_ERROR = "Remote Connection must be selected."; //$NON-NLS-1$
+	private static final String REMOTE_PROG_LABEL_TEXT = Messages.RemoteCMainTab_Program;
+	private static final String SKIP_DOWNLOAD_BUTTON_TEXT = Messages.RemoteCMainTab_SkipDownload;
+	private static final String REMOTE_PROG_TEXT_ERROR = Messages.RemoteCMainTab_ErrorNoProgram;
+	private static final String CONNECTION_TEXT_ERROR = Messages.RemoteCMainTab_ErrorNoConnection;
 	
 	/* Defaults */
 	private static final String REMOTE_PATH_DEFAULT = EMPTY_STRING;
@@ -134,7 +134,7 @@ public class RemoteCMainTab extends CMainTab {
 		projComp.setLayoutData(gd);
 
 		connectionLabel = new Label(projComp, SWT.NONE);
-		connectionLabel.setText("Connection:");  //$NON-NLS-1$
+		connectionLabel.setText(Messages.RemoteCMainTab_Connection);
 		gd = new GridData();
 		gd.horizontalSpan = 1;
 		connectionLabel.setLayoutData(gd);
@@ -152,7 +152,7 @@ public class RemoteCMainTab extends CMainTab {
 		});
 		updateConnectionPulldown();
 
-		newRemoteConnectionButton = createPushButton(projComp, "New", null); //$NON-NLS-1$
+		newRemoteConnectionButton = createPushButton(projComp, Messages.RemoteCMainTab_New, null);
 		newRemoteConnectionButton.addSelectionListener(new SelectionAdapter() {
 
 		public void widgetSelected(SelectionEvent evt) {

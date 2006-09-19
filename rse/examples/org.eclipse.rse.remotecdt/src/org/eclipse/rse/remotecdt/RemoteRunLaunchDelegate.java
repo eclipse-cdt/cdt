@@ -39,6 +39,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.IService;
@@ -91,7 +92,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 						command_arguments += " " + arguments; //$NON-NLS-1$
 					remoteShellProcess = remoteShellExec(config, IRemoteConnectionConfigurationConstants.ATTR_REMOTE_DEBUGGER_COMMAND,
 														 command_arguments);
-					DebugPlugin.newProcess(launch, remoteShellProcess, "Remote Shell"); //$NON-NLS-1$
+					DebugPlugin.newProcess(launch, remoteShellProcess, Messages.RemoteRunLaunchDelegate_RemoteShell);
 				
 					// Pre-set configuration constants for the GDBSERVERCDIDebugger to indicate how the gdbserver
 					// was automatically started on the remote.  GDBServerCDIDebugger uses these to figure out how
@@ -157,7 +158,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			
 		} else {
 			IStatus status = new Status(IStatus.ERROR, getPluginID(),
-								 IStatus.OK, "Unidentified mode " + mode + " passed to RemoteRunLaunchDelegate", null); //$NON-NLS-1$ //$NON-NLS-2$
+								 IStatus.OK, NLS.bind(Messages.RemoteRunLaunchDelegate_1, mode), null);
 			throw new CoreException(status);
 		}		
 	}
@@ -188,7 +189,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		
 		// Check that the service requested is file or shell.
 		if(!kindOfService.equals(SHELL_SERVICE) && !kindOfService.equals(FILE_SERVICE))
-			abort("Wrong service requested.", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
+			abort(Messages.RemoteRunLaunchDelegate_3, null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		
 		IHost currentConnection = getCurrentConnection(config);
 		
@@ -201,7 +202,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 				break;
 		}
 		if(i >= subSystems.length)
-			abort("No subsystem found.\n", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
+			abort(Messages.RemoteRunLaunchDelegate_4, null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 
 		// Need to run this in the UI thread
 
@@ -218,7 +219,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		});
 		
 		if(!subsystem.isConnected())
-			abort("Could not connection to the remote system.", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
+			abort(Messages.RemoteRunLaunchDelegate_5, null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		
 		if(kindOfService.equals(SHELL_SERVICE))
 			return  ((IShellServiceSubSystem) subsystem).getShellService();
@@ -246,7 +247,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			Thread.sleep(500);
 			p.destroy();
 		} catch (Exception e) {
-			abort("Error during file upload.", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR ); //$NON-NLS-1$
+			abort(Messages.RemoteRunLaunchDelegate_6, e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR );
 		}	
 		return null;
 	}
@@ -273,7 +274,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			if (p != null) {
 				p.destroy();
 			}
-			abort("Could not create the hostShellProcess.\n", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
+			abort(Messages.RemoteRunLaunchDelegate_7, null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
 		return p;
 	

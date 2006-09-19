@@ -71,6 +71,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemPromptableObject;
@@ -82,6 +83,7 @@ import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemRemoteElementResourceSet;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
@@ -104,6 +106,7 @@ import org.eclipse.rse.ui.actions.SystemRemotePropertiesAction;
 import org.eclipse.rse.ui.actions.SystemShowInMonitorAction;
 import org.eclipse.rse.ui.actions.SystemShowInTableAction;
 import org.eclipse.rse.ui.actions.SystemSubMenuManager;
+import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.SWT;
@@ -142,7 +145,7 @@ import org.eclipse.ui.views.framelist.GoIntoAction;
  * to access remote objects in the remote system.
  */
 /*
- * Used to implement the following as well: MenuListener, IDoubleClickListener, ArmListener, IWireEventTarget
+ * At one time implemented the following as well: MenuListener, IDoubleClickListener, ArmListener, IWireEventTarget
  */
 public class SystemView extends TreeViewer implements ISystemTree, ISystemResourceChangeListener, ISystemRemoteChangeListener, IMenuListener,
 		ISelectionChangedListener, ISelectionProvider, ITreeViewerListener, ISystemResourceChangeEvents, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelectAllTarget
@@ -293,6 +296,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 
 	/**
 	 * Set the input provider. Sometimes this is delayed, or can change.
+	 * @param inputProvider the input provider for this view.
 	 */
 	public void setInputProvider(ISystemViewInputProvider inputProvider) {
 		this.inputProvider = inputProvider;
@@ -600,7 +604,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	}
 
 	/**
-	 * Return the collapse action
+	 * @return the collapse action. Lazily creates it.
 	 */
 	public IAction getCollapseAction() {
 		if (collapseAction == null) collapseAction = new SystemCollapseAction(getShell());
@@ -608,7 +612,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	}
 
 	/**
-	 * Return the expand action
+	 * @return the expand action. Lazily creates it.
 	 */
 	public IAction getExpandAction() {
 		if (expandAction == null) expandAction = new SystemExpandAction(getShell());
@@ -1166,36 +1170,18 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	}
 
 	/**
-	 *	Called after tree item collapsed
+	 * Called after tree item collapsed. Updates the children of the tree item being
+	 * collapsed by removing the widgets associated with any transient message objects
+	 * that were in the tree.
+	 * @param event the event that caused the collapse. The event data will include the
+	 * tree element being collapsed.
 	 */
 	public void treeCollapsed(TreeExpansionEvent event) {
-		//if (true)
-		//return;
 		final Object element = event.getElement(); // get parent node being collapsed
-		Widget widget = findItem(element); // find GUI widget for this node		
-		if ((widget != null) && (widget instanceof Item)) {
-			Item ti = (Item) widget;
-			Item[] items = getItems(ti);
-
-			//D51021 if ((items!=null) && (items.length==1))
-			if (items != null) {
-				for (int i = 0; i < items.length; i++) {
-					Object data = items[i].getData();
-					if ((data != null) && (data instanceof ISystemMessageObject)) {
-						if (((ISystemMessageObject) data).isTransient()) {
-							disassociate(items[i]);
-							items[i].dispose();
-						}
-					}
-				}
-				// append a dummy so there is a plus
-				if (getItemCount(ti) == 0) newItem(ti, SWT.NULL, -1);
-			}
-		}
 		// we always allow adapters opportunity to show a different icon depending on collapsed state
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				String[] allProps = { IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE };
+				String[] allProps = {IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE};
 				update(element, allProps); // for refreshing non-structural properties in viewer when model changes   	   	          	    
 			}
 		});
@@ -1204,10 +1190,10 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	/**
 	 *	Called after tree item expanded.
 	 *  We need this hook to potentially undo user expand request.
+	 *  @param event the SWT TreeExpansionEvent that caused the expansion.
 	 */
 	public void treeExpanded(TreeExpansionEvent event) {
 		expandingTreeOnly = true;
-		//System.out.println("tree expanded");
 		final Object element = event.getElement();
 		// we always allow adapters opportunity to show a different icon depending on expanded state
 		getShell().getDisplay().asyncExec(new Runnable() {
@@ -1218,36 +1204,45 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 			}
 		});
 	}
+	
+	/* (non-Javadoc)
+	 * Here only for observability.
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#handleTreeCollapse(org.eclipse.swt.events.TreeEvent)
+	 */
+	protected void handleTreeCollapse(TreeEvent event) {
+		super.handleTreeCollapse(event);
+	}
 
-	/**
-	 * Handles a tree expand event from the SWT widget.
-	 * An interception of parent method to set the cursor to busy if the user is expanding a connection.
-	 *
-	 * @param event the SWT tree event
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#handleTreeExpand(org.eclipse.swt.events.TreeEvent)
 	 */
 	protected void handleTreeExpand(TreeEvent event) {
-		Widget item = event.item;
-		boolean cursorSet = false;
-		Shell shell = getShell();
-		if ((item instanceof TreeItem) && (((TreeItem) item).getData() != null)) {
-			if (doTimings) elapsedTime.setStartTime();
-			if (item.getData() instanceof IHost) {
-				//getShell().setCursor(busyCursor);
-				IHost con = (IHost) item.getData();
-				if (con.isOffline()) {
-					org.eclipse.rse.ui.dialogs.SystemPromptDialog.setDisplayCursor(shell, busyCursor);
-					cursorSet = true;
+		TreeItem item = (TreeItem) event.item;
+		// Remove any transient messages prior to finding children. They will be regenerated if they are needed.
+		Item[] children = getItems(item);
+		if (children != null) {
+			for (int i = 0; i < children.length; i++) {
+				Item child = children[i];
+				Object data = child.getData();
+				if (data instanceof ISystemMessageObject) {
+					ISystemMessageObject message = (ISystemMessageObject) data;
+					if (message.isTransient()) {
+						remove(message);
+					}
 				}
 			}
 		}
+		Shell shell = getShell();
+		Object data = item.getData();
+		boolean isTiming = (data != null) && doTimings;
+		boolean showBusy = (data instanceof IHost) && ((IHost)data).isOffline();
+		if (isTiming) elapsedTime.setStartTime();
+		if (showBusy) SystemPromptDialog.setDisplayCursor(shell, busyCursor);
 		super.handleTreeExpand(event);
-		if (cursorSet) {
-			//getShell().setCursor(null);
-			org.eclipse.rse.ui.dialogs.SystemPromptDialog.setDisplayCursor(shell, null);
-		}
-		if (doTimings && (item instanceof TreeItem) && (((TreeItem) item).getData() != null)) {
+		if (showBusy) SystemPromptDialog.setDisplayCursor(shell, null);
+		if (isTiming) {
 			elapsedTime.setEndTime();
-			System.out.println("Time to expand for " + ((TreeItem) item).getItemCount() + " items: " + elapsedTime);
+			System.out.println("Time to expand for " + item.getItemCount() + " items: " + elapsedTime);
 		}
 	}
 

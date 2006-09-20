@@ -17,33 +17,31 @@
 package org.eclipse.rse.core.references;
 
 /**
- * Referenced objects are objects that have shadow objects of them.
- * Typically, shadows are created to enable a GUI which does not allow the same 
- * real object to appear multiple times. In these cases, a unique shadow object 
+ * Referenced objects are objects that have shadow objects (referencing objects) of them.
+ * Typically, references are created to enable a UI which does not allow the same 
+ * real object to appear multiple times. In these cases, a unique reference object 
  * is created for each unique instance of the real object.
  * <p>
  * The parent interface IRSEReferencedObject captures the simple set of methods 
- * an object that supports such a shadow must implement.
+ * an object that supports such a real object implement.
  * <p>
- * This interface specializes that for the case of objects which support references 
+ * This interface specializes that for the case of real objects that support references 
  * that must be persisted.
- * Typically, we build the references in memory at runtime just to satisfy the GUI.
+ * Typically, we build the references in memory at runtime to satisfy the UI.
  * However, occassionally we build the list of references for a more permanent reason,
  * such as when we let a user choose a subset from a master list.
  * <p>
  * When we persist such a reference, we can't persist the memory reference to the master
- * object. Instead, we persist the unique name or key of that object, and upon restoring
+ * object. Instead, we persist the unique name of that object, and upon restoring
  * from disk we then resolve that into a runtime reference to a real memory object.
  * <p>
- * This interface captures the method to allow a shadow or referencing object to
- * query that unique name or key from this referencable master object.
+ * This interface supplies the method to allow a referencing object to
+ * query that unique name or key from this real object.
  */
-public interface IRSEBasePersistableReferencedObject
-	   extends IRSEBaseReferencedObject
-{
-	
-    /**
-     * Query the unique name or key of this master object to record in the referencing object.
-     */
-    public String getReferenceName();	
+public interface IRSEBasePersistableReferencedObject extends IRSEBaseReferencedObject {
+
+	/**
+	 * @return the unique name or key of this master object to record in the referencing object.
+	 */
+	public String getReferenceName();
 }

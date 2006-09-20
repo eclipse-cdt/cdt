@@ -21,9 +21,6 @@ import java.util.Vector;
 /**
  * A class that manages a list of SystemProfile objects.
  */
-/**
- * @lastgen interface SystemProfileManager  {}
- */
 
 public interface ISystemProfileManager {
 

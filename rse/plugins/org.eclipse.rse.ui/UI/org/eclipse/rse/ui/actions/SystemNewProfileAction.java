@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
+
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.model.SystemStartHere;
@@ -26,86 +27,80 @@ import org.eclipse.rse.ui.view.team.SystemTeamView;
 import org.eclipse.rse.ui.wizards.SystemNewProfileWizard;
 import org.eclipse.swt.widgets.Shell;
 
-
 /**
  * The action that displays the New Profile wizard
  */
-public class SystemNewProfileAction extends SystemBaseWizardAction 
-                                 
-{
-	
+public class SystemNewProfileAction extends SystemBaseWizardAction {
+
 	/**
 	 * Constructor for SystemNewProfileAction for "New -> Profile..."
+	 * @param parent the parent shell in which this action executes
 	 */
-	public SystemNewProfileAction(Shell parent) 
-	{
+	public SystemNewProfileAction(Shell parent) {
 		super(SystemResources.ACTION_NEWPROFILE_LABEL, SystemResources.ACTION_NEWPROFILE_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWPROFILE_ID), parent);
-        setSelectionSensitive(false);
-		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);  		  
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0003"); //$NON-NLS-1$		    
+		setSelectionSensitive(false);
+		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0003"); //$NON-NLS-1$		    
 	}
+
 	/**
 	 * Constructor for SystemNewProfileAction where you can choose between "New profile..." and "New -> Profile"
+	 * @param parent the parent shell in which this action executes
+	 * @param cascading if true then use the "New -> Profile" style, else use the "New profile..." style.
 	 */
-	public SystemNewProfileAction(Shell parent, boolean cascading) 
-	{
-		super(cascading ? SystemResources.ACTION_NEWPROFILE_LABEL : SystemResources.ACTION_NEW_PROFILE_LABEL, 
-				cascading ? SystemResources.ACTION_NEWPROFILE_TOOLTIP : SystemResources.ACTION_NEW_PROFILE_TOOLTIP,
-				RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWPROFILE_ID), parent);
+	public SystemNewProfileAction(Shell parent, boolean cascading) {
+		super(cascading ? SystemResources.ACTION_NEWPROFILE_LABEL : SystemResources.ACTION_NEW_PROFILE_LABEL, cascading ? SystemResources.ACTION_NEWPROFILE_TOOLTIP
+				: SystemResources.ACTION_NEW_PROFILE_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWPROFILE_ID), parent);
 		setSelectionSensitive(false);
 		if (cascading)
 			setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);
-		else  		  
+		else
 			setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW_NONCASCADING);
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0003"); //$NON-NLS-1$		    
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0003"); //$NON-NLS-1$		    
 	}
-	
+
 	/**
 	 * Refresh the enabled state
 	 */
-	public void refreshEnablement()
-	{
+	public void refreshEnablement() {
 		setEnabled(isEnabled());
 	}
 
 	/**
 	 * We disable this action if it is a new workspace and the user has yet to create
-	 *  their first connection, and hence rename their default profile.
+	 * their first connection, and hence rename their default profile.
+	 * @return true if the action is enabled
 	 */
-	public boolean isEnabled()
-	{
+	public boolean isEnabled() {
 		// defect 43428...
-	    ISystemProfile defaultProfile = SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile();
-	    if (defaultProfile != null)
-	      return false;
-	    else
-	      return true;
+		ISystemProfile defaultProfile = SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile();
+		if (defaultProfile != null)
+			return false;
+		else
+			return true;
 	}
+
 	/**
-	 * The default processing for the run method calls createDialog, which
-	 *  in turn calls this method to return an instance of our wizard.
-	 * <p>
-	 * Our default implementation is to call SystemNewProfileWizard.
+	 * @return a new Wizard object for creating a profile.
 	 */
-	protected IWizard createWizard()
-	{
-		return new SystemNewProfileWizard();		
+	protected IWizard createWizard() {
+		return new SystemNewProfileWizard();
 	}
 
 	/**
 	 * Typically, the wizard's performFinish method does the work required by
-	 *  a successful finish of the wizard. However, often we also want to be
-	 *  able to extract user-entered data from the wizard, by calling getters
-	 *  in this action. To enable this, override this method to populate your
-	 *  output instance variables from the completed wizard, which is passed
-	 *  as a parameter. This is only called after successful completion of the
-	 *  wizard.
+	 * a successful finish of the wizard. However, often we also want to be
+	 * able to extract user-entered data from the wizard, by calling getters
+	 * in this action. To enable this, override this method to populate your
+	 * output instance variables from the completed wizard, which is passed
+	 * as a parameter. This is only called after successful completion of the
+	 * wizard.
+	 * @param wizard the wizard that was just completed
 	 */
-	protected void postProcessWizard(IWizard wizard)
-	{
-		if (getViewer() instanceof SystemTeamView)
-		{
+	protected void postProcessWizard(IWizard wizard) {
+		if (getViewer() instanceof SystemTeamView) {
 			getViewer().refresh();
 		}
-	}	
+		
+	}
 }

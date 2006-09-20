@@ -62,7 +62,6 @@ public class SystemReferencingObjectHelper {
 
 	/**
 	 * Get the object which is referenced. May be null if the reference is not set or has not been resolved.
-	 * Attempt to resolve the reference.
 	 * @return the referenced object.
 	 */
 	public IRSEBaseReferencedObject getReferencedObject() {

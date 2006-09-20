@@ -59,8 +59,8 @@ public class ProcessesPlugin extends SystemBasePlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-	   	messageFile = getMessageFile("systemmessages.xml");
-	   	defaultMessageFile = getDefaultMessageFile("systemmessages.xml");
+	   	messageFile = getMessageFile("processmessages.xml");
+	   	defaultMessageFile = getDefaultMessageFile("processmessages.xml");
 
 	    IAdapterManager manager = Platform.getAdapterManager();
 		svpaf = new SystemViewProcessAdapterFactory();

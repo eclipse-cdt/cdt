@@ -152,11 +152,24 @@ public class TarFile implements ITarConstants {
 			// if header is not null, we add it to our list of headers
 			if (header != null) {
 
-				// add header 
-				blockHeaders.add(header);
-
 				// determine how many blocks make up the contents of the file
-				long fileSize = header.getSize();
+				long fileSize = 0;
+				
+				// Bug 139207: Browsing into some tar archives failed
+				// The reason was that the last entry in the file did not necessarily have an empty string as the name
+				// of the entry and so the header is not null. The tar format does not guarantee an empty name.
+				// Instead we get a NumberFormatException when reading the size. We assume that the entries
+				// are not valid in such cases.
+				try {
+					fileSize = header.getSize();
+				}
+				catch (NumberFormatException e) {
+					break;
+				}
+				
+				// add header only if the size is valid
+				blockHeaders.add(header);
+				
 				int numFileBlocks = (int)(fileSize / BLOCK_SIZE);
 				numFileBlocks += (fileSize % BLOCK_SIZE) > 0 ? 1 : 0;
 
@@ -299,7 +312,19 @@ public class TarFile implements ITarConstants {
 			// if header is not null, we add it to our list of headers
 			if (header != null) {
 				
-				long fileSize = header.getSize();
+				long fileSize = 0;
+				
+				// Bug 139207: Browsing into some tar archives failed
+				// The reason was that the last entry in the file did not necessarily have an empty string as the name
+				// of the entry and so the header is not null. The tar format does not guarantee an empty name.
+				// Instead we get a NumberFormatException when reading the size. We assume that the entries
+				// are not valid in such cases.
+				try {
+					fileSize = header.getSize();
+				}
+				catch (NumberFormatException e) {
+					break;
+				}
 
 				// if the header name does not match the entry name
 				if (!header.getName().equals(entry.getName())) {

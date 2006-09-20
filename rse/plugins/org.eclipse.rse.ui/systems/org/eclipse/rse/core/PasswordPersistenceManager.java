@@ -140,63 +140,12 @@ public class PasswordPersistenceManager {
 	 */
 	private void initExtensions()
 	{
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IRSESystemType[] sysTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+		systemTypes = new RegisteredSystemType[sysTypes.length];
 		
-		IExtensionPoint point = registry.getExtensionPoint("org.eclipse.rse.ui.passwordPersistence");
-		
-		if (point != null) 
-		{
-      		IExtension[] extensions = point.getExtensions();  		
-      		systemTypes = new RegisteredSystemType[extensions.length];
-      		
-			int count = 0;      		
-      		String systemType, caseSensitiveAsString;
-      		boolean caseSensitive;
-      		
-			for (int i = 0; i < extensions.length; i++) 
-			{
-				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-				if (elements != null && elements.length > 0)
-				{
-				    if ("provider".equals(elements[0].getName())) 
-				    {
-				    	// Make sure that all attributes are available
-				    	systemType = elements[0].getAttribute("systemType");
-				    	caseSensitiveAsString = elements[0].getAttribute("caseSensitive");
-				    	if (caseSensitiveAsString != null && caseSensitiveAsString.equals("false"))
-				    	{
-				    		caseSensitive = false;
-				    	}
-				    	else
-				    	{
-				    		caseSensitive = true;
-				    	}
-				    	
-						systemTypes[count] = new RegisteredSystemType(systemType, caseSensitive);
-						count++;
-				    }
-				}
-				else
-				{
-					SystemBasePlugin.logError("PasswordPersistenceManager.init:  Invalid extension point", null);
-				}
-			}
-
-			// Resize array if one or more of the extension points was invalid
-			if (count != extensions.length)
-			{
-				RegisteredSystemType[] temp = new RegisteredSystemType[count];
-	      		for (int i = 0; i < count; i++)
-	      		{
-	      			temp[i] = systemTypes[i];
-	      		}
-				systemTypes = temp;				
-			}
+		for (int i = 0; i < sysTypes.length; i++) {
+			systemTypes[i] = new RegisteredSystemType(sysTypes[i].getName(), true);
 		}
-		else
-		{	
-			SystemBasePlugin.logError("PasswordPersistenceManager.init:  extension point not found", null);
-		}   		
 	}
 		
 	/**

@@ -93,7 +93,8 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	public boolean supportsCPU(String cpu) {
 		String nativeCPU = Platform.getOSArch();
 		boolean ret = false;
-		if ( nativeCPU.startsWith(cpu) ) {
+		if ( nativeCPU.startsWith(cpu) ||
+				nativeCPU.equalsIgnoreCase("powerpc") && cpu.equalsIgnoreCase("ppc")) {
 			ret = getCPUs().contains(CPU_NATIVE);
 		}
 		return ret || getCPUs().contains(cpu) || getCPUs().contains("*"); //$NON-NLS-1$

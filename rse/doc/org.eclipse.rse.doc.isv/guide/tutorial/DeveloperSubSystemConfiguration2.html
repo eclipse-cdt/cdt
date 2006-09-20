@@ -19,11 +19,11 @@ import java.util.Vector;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.filters.ISystemFilterPool;
-import org.eclipse.rse.filters.ISystemFilterPoolManager;
-import org.eclipse.rse.filters.ISystemFilter;
-import org.eclipse.rse.model.IHost;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.model.IHost;
 
 import samples.RSESamplesPlugin;
 
@@ -48,7 +48,7 @@ public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getConnectorService(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getConnectorService(org.eclipse.rse.core.model.IHost)
 	 */
 	public IConnectorService getConnectorService(IHost host) {
 		return DeveloperConnectorServiceManager.getTheDeveloperConnectorServiceManager()
@@ -100,7 +100,7 @@ public class DeveloperSubSystemConfiguration extends SubSystemConfiguration {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchProperties(org.eclipse.rse.model.IHost)
+	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchProperties(org.eclipse.rse.core.model.IHost)
 	 */
 	public boolean supportsServerLaunchProperties(IHost host) {
 		return false;

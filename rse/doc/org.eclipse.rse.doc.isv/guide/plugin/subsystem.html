@@ -25,7 +25,7 @@ as it has only one element, <b><samp>&lt;configuration&gt;</samp></b>, with only
 <ul>
 <li><b>id</b>. Unique id for the extension, as required for all extensions. However, in this case it is used to create
 folders within the <samp>RemoteSystemsConnections</samp> project, where all Remote Systems Explorer data is stored.
-There is also a way to <A href="../../reference/api/org/eclipse/rse/model/ISystemRegistry.html#getSubSystemConfiguration(java.lang.String)">query</A> a subsystem configuration
+There is also a way to <A href="../../reference/api/org/eclipse/rse/core/model/ISystemRegistry.html#getSubSystemConfiguration(java.lang.String)">query</A> a subsystem configuration
 object via its ID.<li><b>vendor</b>. Your company name, shown in properties dialog for subsystems created by this subsystem configuration.
 <li><b>icon</b>. The icon displayed in the Remote Systems view for each subsystem created by this subsystem configuration.
 <li><b>iconlive</b>. The icon used when the subsystem is physically connected to its remote system.
@@ -225,11 +225,11 @@ following summarizes the minimum set of classes you will be creating in order to
             <samp><a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemChangeFilterAction.html#configureFilterDialog(org.eclipse.rse.ui.filters.dialogs.SystemChangeFilterDialog)">configureFilterDialog</a></samp>
             and in it calling <samp><a href="../../reference/api/org/eclipse/rse/ui/filters/dialogs/SystemChangeFilterDialog.html#setFilterStringEditPane(org.eclipse.rse.ui.filters.SystemFilterStringEditPane)">setFilterStringEditPane</a></samp>
             on the given dialog.
-      <li type="i">Override the <samp><a href="../../reference/api/org/eclipse/rse/core/subsystems/util/ISubsystemConfigurationAdapter.html#getNewFilterPoolFilterAction(org.eclipse.rse.filters.ISystemFilterPool, org.eclipse.swt.widgets.Shell)">getNewFilterPoolFilterAction(SystemFilterPool, Shell)</a></samp>
+      <li type="i">Override the <samp><a href="../../reference/api/org/eclipse/rse/core/subsystems/util/ISubsystemConfigurationAdapter.html#getNewFilterPoolFilterAction(org.eclipse.rse.core.filters.ISystemFilterPool, org.eclipse.swt.widgets.Shell)">getNewFilterPoolFilterAction(SystemFilterPool, Shell)</a></samp>
             method in your subsystem factory, to return an instance of your new-filter action.
             You can actually avoid creating an action subclass if you choose, by calling the configuration methods
             in the RSE-supplied <a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemNewFilterAction.html">new-filter action class</a>.
-      <li type="i">Override the <samp><a href="../../reference/api/org/eclipse/rse/core/subsystems/util/ISubsystemConfigurationAdapter.html#getChangeFilterAction(org.eclipse.rse.filters.ISystemFilter, org.eclipse.swt.widgets.Shell)">getChangeFilterAction(SystemFilter, Shell)</a></samp>
+      <li type="i">Override the <samp><a href="../../reference/api/org/eclipse/rse/core/subsystems/util/ISubsystemConfigurationAdapter.html#getChangeFilterAction(org.eclipse.rse.core.filters.ISystemFilter, org.eclipse.swt.widgets.Shell)">getChangeFilterAction(SystemFilter, Shell)</a></samp>
             method in your subsystem factory, to return an instance of your change-filter action.
             You can actually avoid creating an action subclass if you choose, by calling the configuration methods
             in the RSE-supplied <a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemChangeFilterAction.html">change-filter action class</a>.

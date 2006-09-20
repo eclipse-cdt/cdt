@@ -89,7 +89,7 @@ methods required for uniqueness validation:
 <p>The third validator interface is <samp><A href="../../../reference/api/org/eclipse/rse/ui/validators/IValidatorRemoteSelection.html">IValidatorRemoteSelection</A></samp>, which is specifically intended to be used
 in the remote resource selection dialogs supplied by the RSE. It allows you to decide when to enable the OK button, based on what
 is selected. It contains only the following method:</p>
-<samp>public SystemMessage <A href="../../../reference/api/org/eclipse/rse/ui/validators/IValidatorRemoteSelection.html#isValid(org.eclipse.rse.model.IHost, java.lang.Object[], org.eclipse.rse.ui.view.ISystemRemoteElementAdapter[])">isValid(SystemConnection selectedConnection, Object[] selectedObjects, ISystemRemoteElementAdapter[] remoteAdaptersForSelectedObject)</A>;</samp>
+<samp>public SystemMessage <A href="../../../reference/api/org/eclipse/rse/ui/validators/IValidatorRemoteSelection.html#isValid(org.eclipse.rse.core.model.IHost, java.lang.Object[], org.eclipse.rse.ui.view.ISystemRemoteElementAdapter[])">isValid(SystemConnection selectedConnection, Object[] selectedObjects, ISystemRemoteElementAdapter[] remoteAdaptersForSelectedObject)</A>;</samp>
 <p>You typically won't implement this interface directly, but rather sublcass <samp>ValidatorRemoteSelection</samp>.</p>
 
 <h3>Validator Samples</h3>

@@ -16,20 +16,20 @@
 		<p>At runtime, the model takes a slightly different form:</p>
 		<ul>
 <li>
-<A href="../reference/api/org/eclipse/rse/model/ISystemProfile.html">Profiles</A> are managed by a 
-<A href="../reference/api/org/eclipse/rse/model/ISystemProfileManager.html">profile manager</A>, and contain:
+<A href="../reference/api/org/eclipse/rse/core/model/ISystemProfile.html">Profiles</A> are managed by a 
+<A href="../reference/api/org/eclipse/rse/core/model/ISystemProfileManager.html">profile manager</A>, and contain:
 </li>
 <ul>
-<li><A href="../reference/api/org/eclipse/rse/model/ISystemHostPool.html">Host Pools</A>, one per profile, which contain</li>
+<li><A href="../reference/api/org/eclipse/rse/core/model/ISystemHostPool.html">Host Pools</A>, one per profile, which contain</li>
 <ul>
-<li><A href="../reference/api/org/eclipse/rse/model/IHost.html">Hosts</A></li>
+<li><A href="../reference/api/org/eclipse/rse/core/model/IHost.html">Hosts</A></li>
 </ul>
-<li><A href="../reference/api/org/eclipse/rse/filters/ISystemFilterPool.html">Filter pools</A>, keyed by Subsystem Configuration, and managed by a <A href="../reference/api/org/eclipse/rse/filters/ISystemFilterPoolManager.html">filter pool manager</A>
+<li><A href="../reference/api/org/eclipse/rse/core/filters/ISystemFilterPool.html">Filter pools</A>, keyed by Subsystem Configuration, and managed by a <A href="../reference/api/org/eclipse/rse/core/filters/ISystemFilterPoolManager.html">filter pool manager</A>
 which contain</li>
 <ul>
-<li><A href="../reference/api/org/eclipse/rse/filters/ISystemFilter.html">Filters</A>, which contain</li>
+<li><A href="../reference/api/org/eclipse/rse/core/filters/ISystemFilter.html">Filters</A>, which contain</li>
 <ul>
-<li><A href="../reference/api/org/eclipse/rse/filters/ISystemFilterString.html">Filter strings</A></li>
+<li><A href="../reference/api/org/eclipse/rse/core/filters/ISystemFilterString.html">Filter strings</A></li>
 </ul>
 </ul>
 <!--
@@ -44,8 +44,8 @@ which contain</li>
 <ul>
 <li><A href="../reference/api/org/eclipse/rse/core/subsystems/SubSystem.html">Subsystems</A>, keyed by host, which contain</li>
 <ul>
-<li><i><A href="../reference/api/org/eclipse/rse/filters/ISystemFilterPoolReference.html">References</A></i>
-to <A href="../reference/api/org/eclipse/rse/filters/ISystemFilterPool.html">filter pools</A>, which are managed by <A href="../reference/api/org/eclipse/rse/filters/ISystemFilterPoolManager.html">filter pool managers</A></li>
+<li><i><A href="../reference/api/org/eclipse/rse/core/filters/ISystemFilterPoolReference.html">References</A></i>
+to <A href="../reference/api/org/eclipse/rse/core/filters/ISystemFilterPool.html">filter pools</A>, which are managed by <A href="../reference/api/org/eclipse/rse/core/filters/ISystemFilterPoolManager.html">filter pool managers</A></li>
 </ul>
 <!--
 <li><A href="../reference/api/org/eclipse/rse/ui/uda/SystemUDTypeElement.html">Named types</A></li>

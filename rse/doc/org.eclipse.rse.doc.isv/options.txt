@@ -4,6 +4,7 @@
 -sourcepath "../org.eclipse.rse.connectorservice.dstore/src
 ;../org.eclipse.rse.connectorservice.local/src
 ;../org.eclipse.rse.connectorservice.ssh/src
+;../org.eclipse.rse.core/persistence
 ;../org.eclipse.rse.core/src
 ;../org.eclipse.rse.dstore.security/src
 ;../org.eclipse.rse.eclipse.filesystem/src
@@ -31,7 +32,6 @@
 ;../org.eclipse.rse.subsystems.shells.local/src
 ;../org.eclipse.rse.subsystems.shells.ssh/src
 ;../org.eclipse.rse.ui/filters
-;../org.eclipse.rse.ui/persistence
 ;../org.eclipse.rse.ui/model
 ;../org.eclipse.rse.ui/UI
 ;../org.eclipse.rse.ui/subsystems
@@ -66,6 +66,8 @@ org.eclipse.rse.connectorservice.local
 org.eclipse.rse.connectorservice.ssh
 org.eclipse.rse.core
 org.eclipse.rse.core.comm
+org.eclipse.rse.core.filters
+org.eclipse.rse.core.model
 org.eclipse.rse.core.servicesubsystem
 org.eclipse.rse.core.subsystems
 org.eclipse.rse.core.subsystems.util

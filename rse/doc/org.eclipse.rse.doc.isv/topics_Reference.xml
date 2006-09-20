@@ -41,8 +41,9 @@
 			<topic label="org.eclipse.rse.logging.performance" href="reference/api/org/eclipse/rse/logging/performance/package-summary.html"/>
 	    </topic>
 		<topic label="Model and Persistence">
+			<topic label="org.eclipse.rse.core.model" href="reference/api/org/eclipse/rse/core/model/package-summary.html"/>
 			<topic label="org.eclipse.rse.model" href="reference/api/org/eclipse/rse/model/package-summary.html"/>
-			<topic label="org.eclipse.rse.filters" href="reference/api/org/eclipse/rse/filters/package-summary.html"/>
+			<topic label="org.eclipse.rse.core.filters" href="reference/api/org/eclipse/rse/core/filters/package-summary.html"/>
 			<topic label="org.eclipse.rse.references" href="reference/api/org/eclipse/rse/references/package-summary.html"/>
 			<topic label="org.eclipse.rse.persistence" href="reference/api/org/eclipse/rse/persistence/package-summary.html"/>
 			<topic label="org.eclipse.rse.persistence.dom" href="reference/api/org/eclipse/rse/persistence/dom/package-summary.html"/>

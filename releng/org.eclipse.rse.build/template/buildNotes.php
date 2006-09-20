@@ -52,14 +52,44 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>The <b>subsystemConfiguration</b> extension point has been renamed to 
-  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_subsystemConfigurations.html">
+<li><b>Renamed</b> the <b>org.eclipse.rse.ui.subsystemConfiguration</b> extension point 
+  to <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_subsystemConfigurations.html">
   subsystemConfigurations</a> 
   in order to better match the standard naming scheme used by the Platform.</li>
-<li>The <b>newConnectionWizardDelegate</b> extension point has been renamed to 
-  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_newConnectionWizardDelegates.html">
+<li><b>Renamed</b> the <b>org.eclipse.rse.ui.newConnectionWizardDelegate</b> extension point
+  to <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_newConnectionWizardDelegates.html">
   newConnectionWizardDelegates</a> 
   in order to better match the standard naming scheme used by the Platform.</li>
+<li><b>Removed</b> the <b>org.eclipse.rse.ui.rseConfigDefaults</b> extension point.
+  Use Java Properties instead, as described in the documentation.</li>
+<li><b>Removed</b> the <b>org.eclipse.rse.ui.passwordPersistence</b> extension point.
+  The same functionality is achieved by using the data known from the
+  subsystemConfigurations extension point.</li>
+<li><b>Moved</b> several <b>RSE Model Objects and Interfaces</b> from org.eclipse.rse.ui to core:
+  <ul>
+    <li>(UI) <code>org.eclipse.rse.model</code> --&gt; <code>org.eclipse.rse.core.model</code></li>
+    <li>(UI) <code>org.eclipse.rse.filters</code> --&gt; <code>org.eclipse.rse.core.filters</code></li>
+    <li>(UI) <code>org.eclipse.rse.subsystems.servicesubsystem</code> --&gt; <code>org.eclipse.rse.core.subsystems</code></li>
+  </ul> 
+  Client code can be adapted to the new locations easily by invoking "Organize Imports" except for
+  the following additional changes that need to be made:
+  <ul>
+    <li><b>Event handling methods</b> for <code>ISystemResourceChangeEvent</code>, 
+      <code>ISystemPreferenceChangeEvent</code>,
+      <code>ISystemModelChangeEvent</code>,
+      <code>ISystemRemoteChangeEvent</code> have been removed from 
+      <b>ISystemRegistry</b>, such that they are available only in the 
+      <b>SystemRegistry</b> implementation. This applies to the fireEvent(),
+      postEvent() and corresponding add...Listener() methods. The simplest
+      fix in user code is to get the SystemRegistry from RSEUIPlugin 
+      instead of SystemRegistry as described below.</li>
+    <li>Use <code>RSEUIPlugin.getTheSystemRegistry()</code> instead of <code>SystemRegistry.getSystemRegistry()</code></li>
+  </ul>
+  Note that wherever possible, client code should only refer to the model object
+  interfaces in <code>org.eclipse.rse.core.*</code> and not use the actual 
+  implementations which still reside in the UI plugin (these will be moved
+  to core eventually, too).
+</li>
 </ul>
 </td></tr></tbody></table>
 
@@ -98,7 +128,7 @@ be informed in case the APIs should change.</p>
    local subsystems (these do not define any new APIs anyways).</li>
   <li>The <tt>IConnectorService</tt> interface may be slightly modified
    in order to allow for better UI / Non-UI separation.</li>
-  <li>Some RSE Model classes may be moved from the UI plugin to the 
+  <li>Some more RSE Model classes may be moved from the UI plugin to the 
    non-UI core plugin.</li>
 </ul>
 If you want to start programming against RSE APIs now, best let us know
@@ -134,11 +164,7 @@ deliverables did not make it into this build:
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=150949">bug 150949</a> - maj - RSE gets unusable when full logging is enabled</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143462">bug 143462</a> - maj - [updating] Dirty remote editors do not get notified</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143292">bug 143292</a> - maj - [mac] Move Resource dialog causes hang/crash</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=139207">bug 139207</a> - maj - Browsing into some remote tar archives fails, and may crash the dstore server<br/>
-      -- This problem was only observed with invalid tar archives.</li>
 </ul>
 Click 
 <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=RSE&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">here</a>

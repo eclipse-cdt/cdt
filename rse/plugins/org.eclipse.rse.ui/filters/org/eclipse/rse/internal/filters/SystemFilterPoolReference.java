@@ -69,18 +69,15 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 		setReferencedObjectName(filterPoolName);
 	}
 
-	/**
-	 * Return the reference manager which is managing this filter reference
-	 * framework object.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolReference#getFilterPoolReferenceManager()
 	 */
 	public ISystemFilterPoolReferenceManager getFilterPoolReferenceManager() {
 		return (ISystemFilterPoolReferenceManager) getParentReferenceManager();
 	}
 
-	/**
-	 * Return the object which instantiated the pool reference manager object.
-	 * Makes it easy to get back to the point of origin, given any filter reference
-	 * framework object
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolReference#getProvider()
 	 */
 	public ISystemFilterPoolReferenceManagerProvider getProvider() {
 		ISystemFilterPoolReferenceManager mgr = getFilterPoolReferenceManager();
@@ -90,19 +87,15 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 			return null;
 	}
 
-	/**
-	 * This is the method required by the IAdaptable interface.
-	 * Given an adapter class type, return an object castable to the type, or
-	 *  null if this is not possible.
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapterType) {
 		return Platform.getAdapterManager().getAdapter(this, adapterType);
 	}
 
-	/**
-	 * Return name of the filter pool we reference
-	 * The name is stored qualified by the manager name,
-	 * so we first have to strip that off.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolReference#getReferencedFilterPoolName()
 	 */
 	public String getReferencedFilterPoolName() {
 		String savedName = super.getReferencedObjectName();
@@ -115,10 +108,8 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 		return poolName;
 	}
 
-	/**
-	 * Return name of the filter pool manager containing the pool we reference.
-	 * The pool name is stored qualified by the manager name,
-	 *  so we get it from there.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolReference#getReferencedFilterPoolManagerName()
 	 */
 	public String getReferencedFilterPoolManagerName() {
 		String savedName = super.getReferencedObjectName();
@@ -131,25 +122,22 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 		return mgrName;
 	}
 
-	/**
-	 * Reset the name of the filter pool we reference. 
-	 * Called on filter pool rename operations
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolReference#resetReferencedFilterPoolName(java.lang.String)
 	 */
 	public void resetReferencedFilterPoolName(String newName) {
 		super.setReferencedObjectName(newName);
 	}
 
-	/**
-	 * Set the filter pool that we reference.
-	 * This also calls addReference(this) on that pool!
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolReference#setReferenceToFilterPool(org.eclipse.rse.core.filters.ISystemFilterPool)
 	 */
 	public void setReferenceToFilterPool(ISystemFilterPool pool) {
 		super.setReferencedObject(pool);
 	}
 
-	/**
-	 * Return referenced filter pool object. If the reference is unresolved it will
-	 * attempt to resolve it.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolReference#getReferencedFilterPool()
 	 */
 	public ISystemFilterPool getReferencedFilterPool() {
 		ISystemFilterPool filterPool = (ISystemFilterPool) getReferencedObject();
@@ -169,80 +157,67 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	// Methods common with SystemFilterPoolReferenceImpl, and hence
 	//  abstracted out into SystemFilterContainerReference...
 	// -------------------------------------------------------------
-	/**
-	 * Return the object to which we hold a reference. This is either
-	 * SystemFilter or SystemFilterPool. Since both implement 
-	 * SystemFilterContainer, that is what we return.
-	 * <p>
-	 * Of course, this is a generic method, and in our case it is always
-	 * true that we only hold a SystemFilter. Hence, this is the same
-	 * as calling getReferenceFilter and casting the result.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterContainerReference#getReferencedSystemFilterContainer()
 	 */
 	public ISystemFilterContainer getReferencedSystemFilterContainer() {
 		return getReferencedFilterPool();
 	}
 
-	/**
-	 * Build and return an array of SystemFilterReference objects.
-	 * Each object is created new. There is one for each of the filters
-	 * in the reference SystemFilter or SystemFilterPool.
-	 * For performance reasons, we will cache this array and only 
-	 * return a fresh one if something changes in the underlying 
-	 * filter list.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterContainerReference#getSystemFilterReferences(org.eclipse.rse.core.subsystems.ISubSystem)
 	 */
 	public ISystemFilterReference[] getSystemFilterReferences(ISubSystem subSystem) {
 		return containerHelper.getSystemFilterReferences(subSystem);
 	}
 
-	/**
-	 * Create a single filter refererence to a given filter. 
-	 * If there already is a reference to this filter, it is returned.
-	 * If not, a new reference is created and appended to the end of the existing filter reference array.
-	 * @see #getExistingSystemFilterReference(ISystemFilter)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterContainerReference#getSystemFilterReference(org.eclipse.rse.core.subsystems.ISubSystem, org.eclipse.rse.core.filters.ISystemFilter)
 	 */
 	public ISystemFilterReference getSystemFilterReference(ISubSystem subSystem, ISystemFilter filter) {
 		//return containerHelper.generateFilterReference(filter);
 		return containerHelper.generateAndRecordFilterReference(subSystem, filter);
 	}
 
-	/**
-	 * Return an existing reference to a given system filter. 
-	 * If no reference currently exists to this filter, returns null.
-	 * @see #getSystemFilterReference(ISystemFilter)
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterContainerReference#getExistingSystemFilterReference(org.eclipse.rse.core.subsystems.ISubSystem, org.eclipse.rse.core.filters.ISystemFilter)
 	 */
 	public ISystemFilterReference getExistingSystemFilterReference(ISubSystem subSystem, ISystemFilter filter) {
 		return containerHelper.getExistingSystemFilterReference(subSystem, filter);
 	}
 
-	/**
-	 * Return true if the referenced pool or filter has filters.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterContainerReference#hasFilters()
 	 */
 	public boolean hasFilters() {
 		return containerHelper.hasFilters();
 	}
 
-	/**
-	 * Return count of the number of filters in the referenced pool or filter
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterContainerReference#getFilterCount()
 	 */
 	public int getFilterCount() {
 		return containerHelper.getFilterCount();
 	}
 
-	/**
-	 * Return the name of the SystemFilter or SystemFilterPool that we reference.
-	 * For such objects this is what we show in the GUI.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEModelObject#getName()
 	 */
 	public String getName() {
 		return getReferencedFilterPoolName();
 	}
 
-	/**
-	 * Return fully qualified name that includes the filter pool managers name
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilterPoolReference#getFullName()
 	 */
 	public String getFullName() {
 		return super.getReferencedObjectName();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.persistance.IRSEPersistableContainer#commit()
+	 */
 	public boolean commit() {
 		return false;
 		//	return RSEUIPlugin.getThePersistenceManager().commit(getProvider().);

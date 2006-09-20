@@ -20,11 +20,14 @@
 		<topic label="org.eclipse.rse.ui.popupMenus" href="reference/extension-points/org_eclipse_rse_ui_popupMenus.html" />
 		<topic label="org.eclipse.rse.ui.propertyPages" href="reference/extension-points/org_eclipse_rse_ui_propertyPages.html" />
 		<topic label="org.eclipse.rse.ui.remoteSystemsViewPreferencesActions" href="reference/extension-points/org_eclipse_rse_ui_remoteSystemsViewPreferencesActions.html" />
-		<topic label="org.eclipse.rse.ui.rseConfigDefaults" href="reference/extension-points/org_eclipse_rse_ui_rseConfigDefaults.html" />
 		<topic label="org.eclipse.rse.ui.subsystemConfigurations" href="reference/extension-points/org_eclipse_rse_ui_subsystemConfigurations.html" />
 		<anchor id="rse-extension-points-ref" />
 	</topic>
-
+	
+	<topic label="Other reference information">
+		<topic label="Runtime options" href="reference/misc/runtime-options.html" />
+	</topic>
+	
 	<topic label="Remote Systems API Reference By Topic">
 		<topic label="Core">
 			<topic label="org.eclipse.rse.core" href="reference/api/org/eclipse/rse/core/package-summary.html" />

@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2005, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page.">
+<meta name="Author" content="IBM">
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link REL="STYLESHEET" HREF="../../book.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<title>Remote System Explorer runtime options</title>
+</head>
+
+<body>
+
+<h1>Remote System Explorer runtime options</h1>
+<p>Version 1.0 - Last revised September 20, 2006</p>
+<p>The Remote System Explorer (RSE) is configurable through System properties. Many of these
+properties can be used to specify initial RSE settings.</p>
+
+<h2>System properties</h2>
+<p>The following System properties are used by RSE.</p>
+<p>Properties can be set in the following ways:</p>
+<ul>
+  <li>use -DpropName=propValue as a VM argument to the Java VM</li>
+  <li>set the desired property in the config.ini file in the appropriate configuration
+    area</li>
+</ul>
+<dl>
+  <dt><a name="showNewConnectionPrompt" id="showNewConnectionPrompt"></a>rse.showNewConnectionPrompt</dt>
+  <dd>whether to show the New Connection prompt in RSE views by default. "True" or "false".</dd>
+  
+  <dt><a name="showLocalConnection" id="showLocalConnection"></a>rse.showLocalConnection</dt>
+  <dd>whether to create and show a Local connection by default when RSE starts with a new worspace. "True" or "false".</dd>
+  
+  <dt><a name="enableSystemTypes" id="enableSystemTypes"></a>rse.enableSystemTypes</dt>
+  <dd>a comma-separated list of system types to enable by default. This property can be used to limit the system types in RSE.</dd>
+  
+  <dt><a name="showProfilePage" id="showProfilePage"></a>rse.showProfilePage</dt>
+  <dd>whether to show a New Profile wizard by default when creating a new connection for the first time. "True" or "false". If this is "false", a new profile with the hostname is created without asking the user.</dd>
+</dl>
+</body>
+</html>

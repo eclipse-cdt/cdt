@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %plugin.name
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.ui.RSEUIPlugin
@@ -47,4 +47,4 @@ Export-Package: org.eclipse.rse.core,
  org.eclipse.rse.ui.widgets,
  org.eclipse.rse.ui.widgets.services,
  org.eclipse.rse.ui.wizards
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %providerName

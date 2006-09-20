@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %plugin.name
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.files.dstore;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.subsystems.files.dstore.Activator
@@ -20,4 +20,4 @@ Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.subsystems.files.dstore,
  org.eclipse.rse.subsystems.files.dstore.model,
  org.eclipse.rse.subsystems.files.dstore.subsystem
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %providerName

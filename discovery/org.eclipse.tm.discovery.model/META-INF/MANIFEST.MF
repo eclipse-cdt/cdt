@@ -13,3 +13,4 @@ Eclipse-LazyStart: true
 Export-Package: org.eclipse.tm.discovery.model,
  org.eclipse.tm.discovery.model.impl,
  org.eclipse.tm.discovery.model.util
+Bundle-Vendor: %providerName

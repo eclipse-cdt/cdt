@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %plugin.name
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.files.core
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.subsystems.files.core.Activator
@@ -18,4 +18,4 @@ Export-Package: org.eclipse.rse.internal.subsystems.files.core,
  org.eclipse.rse.subsystems.files.core.servicesubsystem,
  org.eclipse.rse.subsystems.files.core.subsystems,
  org.eclipse.rse.subsystems.files.core.util
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %providerName

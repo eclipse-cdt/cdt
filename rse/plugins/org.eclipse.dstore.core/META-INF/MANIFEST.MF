@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %plugin.name
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.dstore.core
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.dstore.core.Activator
@@ -18,4 +18,4 @@ Export-Package: org.eclipse.dstore.core,
  org.eclipse.dstore.core.server,
  org.eclipse.dstore.core.util,
  org.eclipse.dstore.core.util.ssl
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %providerName

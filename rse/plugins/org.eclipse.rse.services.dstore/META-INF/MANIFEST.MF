@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %plugin.name
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.services.dstore
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.services.dstore.Activator
@@ -24,4 +24,4 @@ Export-Package: org.eclipse.rse.dstore.universal.miners,
  org.eclipse.rse.services.dstore.search,
  org.eclipse.rse.services.dstore.shells,
  org.eclipse.rse.services.dstore.util
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %providerName

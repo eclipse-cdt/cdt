@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %plugin.name
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.logging;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.logging.RemoteSystemsLoggingPlugin
@@ -11,4 +11,4 @@ Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.logging,
  org.eclipse.rse.logging.performance,
  org.eclipse.rse.logging.ui
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %providerName

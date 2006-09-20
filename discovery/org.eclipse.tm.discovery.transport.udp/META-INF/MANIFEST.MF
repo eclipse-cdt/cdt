@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: UDP Transport Plug-in
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.discovery.transport.udp;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: org.eclipse.tm.discovery.transport.udp.Activator
-Bundle-Vendor: Symbian
+Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

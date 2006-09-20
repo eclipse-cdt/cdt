@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Service Discovery View Plug-in
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.discovery.view;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: org.eclipse.tm.discovery.view.Activator
@@ -21,4 +21,4 @@ Import-Package: org.eclipse.emf.common.ui,
  org.eclipse.tm.discovery.model.provider,
  org.eclipse.tm.discovery.model.util
 Export-Package: org.eclipse.tm.discovery.view
-Bundle-Vendor: Symbian
+Bundle-Vendor: %providerName

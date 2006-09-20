@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %plugin.name
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.files.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.files.ui.Activator
@@ -31,4 +31,4 @@ Export-Package: org.eclipse.rse.files.ui,
  org.eclipse.rse.files.ui.view,
  org.eclipse.rse.files.ui.widgets,
  org.eclipse.rse.files.ui.wizards
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %providerName

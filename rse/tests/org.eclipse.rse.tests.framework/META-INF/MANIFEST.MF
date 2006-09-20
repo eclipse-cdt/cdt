@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: RSE Test Framework
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.tests.framework;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.tests.framework.TestFrameworkPlugin
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.rse.tests.framework,
  org.eclipse.rse.tests.framework.scripting

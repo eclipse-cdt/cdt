@@ -15,31 +15,37 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.references;
+
 /**
  * Interface that any master object that is referenced must implement.
  */
-public interface IRSEBaseReferencedObject
-{
+public interface IRSEBaseReferencedObject {
 	/**
 	 * Add a reference, increment reference count, return new count
+	 * @param ref the referencing object from which this object will now be referenced.
 	 * @return new count of how many referencing objects reference this object.
 	 */
-	public int addReference(IRSEBaseReferencingObject ref);		
+	public int addReference(IRSEBaseReferencingObject ref);
+
 	/**
 	 * Remove a reference, decrement reference count, return new count
+	 * @param ref the referencing object from which this object is no longer referenced.
 	 * @return new count of how many referencing objects reference this object.
 	 */
-	public int removeReference(IRSEBaseReferencingObject ref);	
+	public int removeReference(IRSEBaseReferencingObject ref);
+
 	/**
-	 * Return a count of how many referencing objects reference this object.
+	 * @return a count of how many referencing objects reference this object.
 	 */
 	public int getReferenceCount();
+
 	/**
 	 * Clear the list of referenced objects.
 	 */
 	public void removeAllReferences();
+
 	/**
-	 * Return a list of all referencing objects of this object
+	 * @return a list of all referencing objects of this object
 	 */
 	public IRSEBaseReferencingObject[] getReferencingObjects();
-} 
+}

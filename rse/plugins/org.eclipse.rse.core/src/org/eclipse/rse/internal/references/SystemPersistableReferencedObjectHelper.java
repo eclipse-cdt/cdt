@@ -26,14 +26,16 @@ import org.eclipse.rse.core.references.IRSEBasePersistableReferencedObject;
  * specific object, in memory.
  */
 public class SystemPersistableReferencedObjectHelper extends SystemReferencedObjectHelper implements IRSEBasePersistableReferencedObject {
+
 	private String referenceName;
 
 	/**
 	 * Constructor for SystemPersistableReferencedObjectHelper
+	 * @param parent the SystemPersistableReferencedObject that uses this helper.
 	 * @param referenceName The unique name that can be stored to identify this object.
 	 */
-	protected SystemPersistableReferencedObjectHelper(String referenceName) {
-		super();
+	protected SystemPersistableReferencedObjectHelper(IRSEBasePersistableReferencedObject parent, String referenceName) {
+		super(parent);
 		setReferenceName(referenceName);
 	}
 

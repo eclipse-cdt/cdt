@@ -92,7 +92,7 @@ public class SystemFilterString extends RSEModelObject implements ISystemFilterS
 	protected SystemFilterString() 
 	{
 		super();
-		helper = new SystemReferencedObjectHelper();
+		helper = new SystemReferencedObjectHelper(this);
 	}
 	/**
 	 * This is the method required by the IAdaptable interface.

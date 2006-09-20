@@ -29,19 +29,18 @@ import org.eclipse.rse.core.references.IRSEReferencedObject;
  * <p>
  * These references are not persistent. Persistent references are managed
  * by the subclass SystemPersistableReferencedObject.
- */
-/** 
- * @lastgen class SystemReferencedObjectImpl Impl implements SystemReferencedObject, EObject {}
+ * <p>
+ * SystemFilter is a known concrete subclass.
  */
 public abstract class SystemReferencedObject extends RSEModelObject implements IRSEReferencedObject {
+
 	protected SystemReferencedObjectHelper helper = null;
 
 	/**
 	 * Default constructor. Typically called by EMF factory method.
 	 */
 	protected SystemReferencedObject() {
-		super();
-		helper = new SystemReferencedObjectHelper();
+		helper = new SystemReferencedObjectHelper(this);
 	}
 
 	// ----------------------------------

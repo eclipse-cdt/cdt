@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
@@ -169,6 +170,10 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		}
 		if (selection.equals("")) { //$NON-NLS-1$
 			ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
+			if (dc == null) {
+				CDebugCorePlugin.getDefault().saveDefaultDebugConfiguration("org.eclipse.cdt.debug.mi.core.CDebuggerNew");
+				dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
+			}
 			if (dc != null)
 				selection = dc.getID();
 		}

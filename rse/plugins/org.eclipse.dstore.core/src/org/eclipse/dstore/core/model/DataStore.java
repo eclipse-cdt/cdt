@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - 146326 fixed erroneously disconnected dstore elements.
+ * Michael Berger (IBM) - 145799 added refresh() method with depth parameter.
  ********************************************************************************/
 
 package org.eclipse.dstore.core.model;

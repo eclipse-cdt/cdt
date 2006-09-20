@@ -15,20 +15,18 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.references;
+
 /**
- * A class to encapsulate the operations required of an object which
- * supports references to it by other objects (SystemReferencingObject).
+ * An interface to encapsulate the operations required of an object which
+ * supports references to it by other objects (IRSEReferencingObject).
  * This type of class needs to support maintaining an in-memory list of
  * all who reference it so that list can be following on delete and
  * rename operations.
  * <p>
  * These references are not persistent. Persistent references are managed
- * by the subclass SystemPersistableReferencedObject.
- */
-/**
- * @lastgen interface SystemReferencedObject  {}
+ * by the subtype IRSEPersistableReferencedObject.
  */
 
-public interface IRSEReferencedObject extends IRSEBaseReferencedObject{
+public interface IRSEReferencedObject extends IRSEBaseReferencedObject {
 
 }

@@ -173,6 +173,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		}
 		if ( fSolibBlock != null )
 			fSolibBlock.initializeFrom( configuration );
+		fGDBCommandText.setText( gdbCommand );
 		fGDBInitText.setText( gdbInit );
 		
 		String debuggerID = getDebuggerIdentifier();

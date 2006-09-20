@@ -1525,6 +1525,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 
 		public ResourceChangedJob(ISystemResourceChangeEvent event, SystemView originatingViewer) {
 			super("Resource Changed...");
+			_originatingViewer = originatingViewer;
 			_event = event;
 		}
 

@@ -169,6 +169,10 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		}
 		if (selection.equals("")) { //$NON-NLS-1$
 			ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
+			if (dc == null) {
+				CDebugCorePlugin.getDefault().saveDefaultDebugConfiguration("org.eclipse.cdt.debug.mi.core.CDebuggerNew");
+				dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
+			}
 			if (dc != null)
 				selection = dc.getID();
 		}

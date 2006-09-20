@@ -124,32 +124,10 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	 * Initializes default preferences.
 	 */
 	public void initializeDefaultPreferences() {
-		
-		String productId = null;
-		
-		// get product
-		IProduct product = Platform.getProduct();
-		
-		// get product ID if there is a product
-		if (product != null) {
-			productId = product.getId();
-		}
-		else {
-			// DKM - why would we return just because there's no product id?
-			// letting this continue
-			//return;
-		}
-	    
-		// Get reference to the plug-in registry
-	    // IExtensionRegistry registry = Platform.getExtensionRegistry();
-	    
-	    // Get configured extenders
-	    // IConfigurationElement[] extensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "rseConfigDefaults"); //$NON-NLS-1$  //$NON-NLS-2$
 
 	    boolean showNewConnPromptPref = ISystemPreferencesConstants.DEFAULT_SHOWNEWCONNECTIONPROMPT;
 	    dontShowLocalConnection = false;
 	    dontShowProfilePageInitially = false;
-	    
 	    
 	    String showNewConn = System.getProperty("rse.showNewConnectionPrompt");
 		
@@ -174,42 +152,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 		if (showProfileInitially != null) {
 			dontShowProfilePageInitially = showProfileInitially.equals("false");
 		}
-	    
-/*	    if ( (extensions != null) && (extensions.length > 0))
-	    {
-	    	String showNewConn;
-	    	String showProfileInitially;
-	    	
-	    	for (int idx = 0; idx < extensions.length; idx++)
-	    	{
-	    		IConfigurationElement extension = extensions[idx];
-	    		
-	    		String configProductId = extension.getAttribute("productId"); //$NON-NLS-1$
-	    		
-	    		if (productId.equals(configProductId)) {
-	    		
-	    			showNewConn = extension.getAttribute("showNewConnectionPrompt");
-	    			
-	    			if (showNewConn != null)
-	    				showNewConnPromptPref = showNewConn.equals("true");
-	    			
-	    			showNewConn = extension.getAttribute("showLocalConnection"); //$NON-NLS-1$
-	    			
-	    			if (showNewConn != null)
-	    				dontShowLocalConnection = showNewConn.equals("false"); //$NON-NLS-1$
-	    			
-	    			enabledSystemTypes = extension.getAttribute("enableSystemTypes"); //$NON-NLS-1$
-	    			
-	    			if ((enabledSystemTypes != null) && (enabledSystemTypes.length() == 0))
-	    				enabledSystemTypes = null;
-	    			
-	    			showProfileInitially = extension.getAttribute("showProfilePage"); //$NON-NLS-1$
-	    			
-	    			if (showProfileInitially != null)
-	    				dontShowProfilePageInitially = showProfileInitially.equals("false"); //$NON-NLS-1$
-	    		}
-	    	}
-	    }*/
 	    
 		RemoteSystemsPreferencePage.initDefaults(getPreferenceStore(), showNewConnPromptPref);
 		SystemCommunicationsPreferencePage.initDefaults(getPreferenceStore());

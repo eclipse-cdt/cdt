@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.references;
+
 /**
  * Referencing objects are shadows of real objects. Typically, shadows are created
  * to enable a GUI which does not allow the same real object to appear multiple times.
@@ -23,16 +24,18 @@ package org.eclipse.rse.core.references;
  * <p>
  * This interface captures the simple set of methods such a shadow must implement.
  */
-public interface IRSEBaseReferencingObject
-{
+public interface IRSEBaseReferencingObject {
 	/**
 	 * Set the object to which we reference
+	 * @param obj the object to reference
 	 */
 	public void setReferencedObject(IRSEBaseReferencedObject obj);
+
 	/**
-	 * Get the object which we reference
+	 * @return the object which we reference
 	 */
 	public IRSEBaseReferencedObject getReferencedObject();
+
 	/**
 	 * Fastpath to getReferencedObject().removeReference(this).
 	 * @return new reference count of master object
@@ -40,12 +43,13 @@ public interface IRSEBaseReferencingObject
 	public int removeReference();
 
 	/**
-	 * Set to true if this reference is currently broken/unresolved
+	 * @param broken true if this reference is currently broken/unresolved
 	 */
 	public void setReferenceBroken(boolean broken);
-	
+
 	/**
-	 * Return true if this reference is currently broken/unresolved
+	 * @return true if this reference is currently broken/unresolved
 	 */
-	public boolean isReferenceBroken();	
+	public boolean isReferenceBroken();
+	
 }

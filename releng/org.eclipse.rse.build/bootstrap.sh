@@ -1,3 +1,4 @@
+#!/bin/sh
 #*******************************************************************************
 # Copyright (c) 2005, 2006 IBM Corporation and others.
 # All rights reserved. This program and the accompanying materials

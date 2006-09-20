@@ -17,8 +17,6 @@
 package org.eclipse.rse.ui.actions;
 
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -66,18 +64,26 @@ public class SystemNewProfileAction extends SystemBaseWizardAction {
 		setEnabled(isEnabled());
 	}
 
-	/**
-	 * We disable this action if it is a new workspace and the user has yet to create
-	 * their first connection, and hence rename their default profile.
-	 * @return true if the action is enabled
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.actions.SystemBaseAction#isEnabled()
 	 */
 	public boolean isEnabled() {
-		// defect 43428...
-		ISystemProfile defaultProfile = SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile();
-		if (defaultProfile != null)
-			return false;
-		else
-			return true;
+		return true;
+		/*
+		 * From the old javadoc:
+		 * We disable this action if it is a new workspace and the user has yet to create
+		 * their first connection, and hence rename their default profile.
+		 * @return true if the action is enabled
+		 * 
+		 * defect 43428 was an early RSE defect whose fix prevented the creation of profiles until the first 
+		 * connection was created. However, new default profiles are created when RSE is initially activated
+		 * so there is no need to inhibit profile creation. 
+		 */
+//		ISystemProfile defaultProfile = SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile();
+//		if (defaultProfile != null)
+//			return false;
+//		else
+//			return true;
 	}
 
 	/**

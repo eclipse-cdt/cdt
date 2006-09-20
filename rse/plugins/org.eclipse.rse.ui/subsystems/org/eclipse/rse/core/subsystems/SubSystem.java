@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -128,7 +129,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     protected ISubSystemConfiguration parentSubSystemConfiguration;
     protected String           previousUserIdKey;
 	
-    protected Shell shell;
+    protected Shell shell = null;
     protected boolean supportsConnecting = true;
     protected boolean sortResults = true;
     protected boolean runInThread = true;
@@ -155,6 +156,12 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 */
 	protected ISystemFilterPoolReferenceManager filterPoolReferenceManager = null;
 
+	private class NullRunnableContext implements IRunnableContext {
+		public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+			IProgressMonitor monitor = new NullProgressMonitor();
+			runnable.run(monitor);
+		}
+	}
 
 	/**
 	 * Inner class which extends UIJob to connect this connection
@@ -185,8 +192,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 				}	
 				if (shell == null)
 					shell = SystemBasePlugin.getActiveWorkbenchShell();
-			
-				
 	    		try
 	    		{
 	    			connect(false);
@@ -1992,7 +1997,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         {
     	  try
     	  {
-    	    this.shell = shell; //FIXME remove this   	    	  	
+//dwd   	    this.shell = shell; //FIXME remove this   	    	  	
     	    ResolveAbsoluteJob job = new ResolveAbsoluteJob(filterString);
     	    
     	    IStatus status = scheduleJob(job, null, shell != null);
@@ -2052,7 +2057,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         {
     	  try
     	  {
-    	    this.shell = shell; //FIXME remove this	
+//dwd    	    this.shell = shell; //FIXME remove this	
     	    ResolveAbsolutesJob job = new ResolveAbsolutesJob(filterStrings[0], filterStrings);
     	      	    
     	    IStatus status = scheduleJob(job, null, true);
@@ -2077,7 +2082,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     
     protected IStatus scheduleJob(SubSystemOperationJob job, ISchedulingRule rule, boolean synch) throws InterruptedException
     {
-    	IRunnableContext context = getRunnableContext(shell);
+    	IRunnableContext context = getRunnableContext(/*shell*/); // dwd needed for side effect or for prompt?
     	if (context instanceof SystemPromptDialog)
     	{
     		IStatus status = job.runInContext(context);
@@ -2300,7 +2305,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 
     	  try
     	  {    	    	  	
-    	    this.shell = shell; //FIXME remove this
+ //dwd   	    this.shell = shell; //FIXME remove this
   		
     	    ResolveRelativeJob job = new ResolveRelativeJob(filterString, parent);
     	    
@@ -2356,7 +2361,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         {
     	  try
     	  {
-    	    this.shell = shell; //FIXME remove this
+//dwd    	    this.shell = shell; //FIXME remove this
     	    SetPropertyJob job = new SetPropertyJob(subject, key, value);
     	    
     	    IStatus status = scheduleJob(job, null, true);
@@ -2394,7 +2399,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         {
     	  try
     	  {
-    	    this.shell = shell; //FIXME remove this   	
+//dwd    	    this.shell = shell; //FIXME remove this   	
     	    GetPropertyJob job = new GetPropertyJob(subject, key);
     	    scheduleJob(job, null, true);
     	    
@@ -2434,7 +2439,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         {
     	  try
     	  {
-    	    this.shell = shell; //FIXME remove this   	
+//dwd    	    this.shell = shell; //FIXME remove this   	
     	    SetPropertiesJob job = new SetPropertiesJob(subject, keys, values);
     	    
     	    IStatus status = scheduleJob(job, null, true);
@@ -2512,7 +2517,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			msg.makeSubstitution(hostName);
 			throw new SystemMessageException(msg);
 		}
-		this.shell = shell; //FIXME remove this
+//dwd		this.shell = shell; //FIXME remove this
 		// yantzi: artemis 6.0, offline support
 		if (isOffline()) {
 			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OFFLINE_CANT_CONNECT);
@@ -2521,10 +2526,11 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		}
 		//DY operation = OPERATION_CONNECT;
 		if (!isConnected() && supportsConnecting) {
-			IRunnableContext runnableContext = getRunnableContext(shell);
-			if (runnableContext instanceof ProgressMonitorDialog) {
-				((ProgressMonitorDialog) runnableContext).setCancelable(true);
-			}
+			getRunnableContext(/*shell*/); // dwd needed only for side effect of setting shell to the shell for the active workbench window
+//dwd			IRunnableContext runnableContext = getRunnableContext(shell);
+//dwd			if (runnableContext instanceof ProgressMonitorDialog) {
+//dwd				((ProgressMonitorDialog) runnableContext).setCancelable(true);
+//dwd			}
 			getConnectorService().promptForPassword(forcePrompt); // prompt for userid and password    
 			ConnectJob job = new ConnectJob();
 			scheduleJob(job, null, shell != null);
@@ -2613,7 +2619,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     public void disconnect(boolean collapseTree) throws Exception
     {
     	_disconnecting = true;
-    	this.shell = shell; //FIXME remove this
+ //dwd   	this.shell = shell; //FIXME remove this
     	if (!isConnected() || !supportsConnecting)
     	{
     	    // disconnected but may not have notified viewers (i.e. network problem)
@@ -2657,7 +2663,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     public String[] getProperties(Object subject, String[] keys)
            throws Exception
     {
-    	this.shell = shell; //FIXME remove this
+//dwd    	this.shell = shell; //FIXME remove this
         boolean ok = true;
        
     	if (!isConnected())
@@ -3040,51 +3046,42 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 
 
 
-     /**
-      * Get the progress monitor dialog for this operation. We try to 
-      *  use one for all phases of a single operation, such as connecting
-      *  and resolving.
-      */
-     protected IRunnableContext getRunnableContext(Shell rshell)
-     {
-     	// for wizards and dialogs, use the specified context
-    	IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
-     	if (irc != null)
-     	{
-     		SystemBasePlugin.logInfo("Got runnable context from system registry");
-     		return irc;
-     	}
-        else
-        {
-        	
-        	// for other cases, use statusbar
-        	IWorkbenchWindow win = SystemBasePlugin.getActiveWorkbenchWindow();
-        	if (win != null)
-        	{
-        		Shell winShell = getActiveWorkbenchShell();
-        		if (winShell != null && !winShell.isDisposed() && winShell.isVisible())
-        		{
-        			SystemBasePlugin.logInfo("Using active workbench window as runnable context");
-        			shell = winShell;
-        			return win;	
-        		}	
-        		else
-        		{
-        			win = null;	
-        		}
-        	}	  
-     
-        	if (shell == null || shell.isDisposed() || !shell.isVisible()) 
-        	{
-        		SystemBasePlugin.logInfo("Using progress monitor dialog with given shell as parent");
-        		shell = rshell;	
-        	}
-        	
-      		    							
-	      	IRunnableContext dlg =  new ProgressMonitorDialog(rshell);           
-			return dlg; 
-        }
-     }
+	 /**
+	 * Get the progress monitor dialog for this operation. We try to 
+	 *  use one for all phases of a single operation, such as connecting
+	 *  and resolving.
+	 */
+	protected IRunnableContext getRunnableContext(/*Shell rshell*/) {
+		if (Display.getCurrent() == null) {
+			return new NullRunnableContext();
+		}
+		// for wizards and dialogs use the specified context that was placed in the registry
+		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
+		if (irc != null) {
+			SystemBasePlugin.logInfo("Got runnable context from system registry");
+			return irc;
+		} else {
+			// for other cases, use statusbar
+			IWorkbenchWindow win = SystemBasePlugin.getActiveWorkbenchWindow();
+			if (win != null) {
+				Shell winShell = getActiveWorkbenchShell();
+				if (winShell != null && !winShell.isDisposed() && winShell.isVisible()) {
+					SystemBasePlugin.logInfo("Using active workbench window as runnable context");
+					shell = winShell;
+					return win;
+//dwd				} else {
+//dwd					win = null;
+				}
+			}
+//dwd			if (shell == null || shell.isDisposed() || !shell.isVisible()) {
+//dwd				SystemBasePlugin.logInfo("Using progress monitor dialog with given shell as parent");
+//dwd				shell = rshell;
+//dwd			}
+//dwd			IRunnableContext dlg = new ProgressMonitorDialog(rshell);
+			IRunnableContext dlg = new ProgressMonitorDialog(shell);
+			return dlg;
+		}
+	}
    
      /**
       * Return the shell for the current operation

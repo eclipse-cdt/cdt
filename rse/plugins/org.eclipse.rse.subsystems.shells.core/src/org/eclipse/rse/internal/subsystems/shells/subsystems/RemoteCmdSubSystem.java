@@ -811,8 +811,8 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 */
 	public Object[] runCommand(String command, Object context, boolean interpretOutput) throws Exception
 	{
-		if (shell != null)
-			this.shell = shell;
+//dwd		if (shell != null)
+//dwd			this.shell = shell;
 		if (isConnected())
 		{
 			return internalRunCommand(null, command, context, interpretOutput);
@@ -821,7 +821,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		{
 			try
 			{
-				this.shell = shell; // FIXME remove this
+//dwd				this.shell = shell; // FIXME remove this
 
 				RunCommandJob job = new RunCommandJob(command, context, interpretOutput);
 
@@ -847,8 +847,8 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 */
 	public IRemoteCommandShell runShell(Object context) throws Exception
 	{
-		if (shell != null)
-			this.shell = shell;
+//dwd		if (shell != null)
+//dwd			this.shell = shell;
 		IRemoteCommandShell cmdShell = null;
 		if (isConnected())
 		{
@@ -858,7 +858,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		{
 			try
 			{
-				this.shell = shell; // FIXME remove this
+//dwd				this.shell = shell; // FIXME remove this
 				RunShellJob job = new RunShellJob(context);
 
 				IStatus status = scheduleJob(job, null, true);
@@ -912,7 +912,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		{
 			try
 			{
-				this.shell = shell; // FIXME remove this
+//dwd				this.shell = shell; // FIXME remove this
 				SendCommandToShellJob job = new SendCommandToShellJob(input, commandObject);
 
 				IStatus status = scheduleJob(job, null, true);
@@ -955,7 +955,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			{
 				try
 				{
-					this.shell = shell; // FIXME remove this
+//dwd					this.shell = shell; // FIXME remove this
 					CancelShellJob job = new CancelShellJob(commandObject);
 					scheduleJob(job, null, false);
 				}
@@ -995,7 +995,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			{
 				try
 				{
-					this.shell = shell; // FIXME remove this
+//dwd					this.shell = shell; // FIXME remove this
 					RemoveShellJob job = new RemoveShellJob(commandObject);
 					scheduleJob(job, null, false);
 				}

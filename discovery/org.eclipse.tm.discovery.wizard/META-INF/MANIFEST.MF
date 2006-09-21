@@ -6,8 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.tm.discovery.wizard.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
- org.eclipse.emf.ecore.edit;bundle-version="2.2.0",
- org.eclipse.emf.edit.ui;bundle-version="2.2.0",
+ org.eclipse.emf.ecore.edit;bundle-version="[2.2.0,2.3.0)",
+ org.eclipse.emf.edit.ui;bundle-version="[2.2.0,2.3.0)",
  org.eclipse.core.runtime,
  org.eclipse.tm.discovery.engine,
  org.eclipse.tm.discovery.model,

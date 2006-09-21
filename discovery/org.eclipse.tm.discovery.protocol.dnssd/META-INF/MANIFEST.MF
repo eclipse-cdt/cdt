@@ -10,5 +10,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.tm.discovery.engine,
  org.eclipse.tm.discovery.model,
- org.eclipse.emf.ecore;bundle-version="2.2.0"
+ org.eclipse.emf.ecore;bundle-version="[2.2.0,2.3.0)"
 Eclipse-LazyStart: true

@@ -35,17 +35,17 @@ public interface RemoteServerLauncherConstants
 	/**
 	 * Default REXEC path, "/opt/rseserver/".
 	 */
-	public static final String DEFAULT_REXEC_PATH = "/opt/rseserver/";
+	public static final String DEFAULT_REXEC_PATH = "/opt/rseserver/"; //$NON-NLS-1$
 	
 	/**
 	 * Linux REXEC script command, "perl ./server.pl".
 	 */
-	public static final String LINUX_REXEC_SCRIPT = "perl ./server.pl";
+	public static final String LINUX_REXEC_SCRIPT = "sh -c \"PATH=/opt/j2sdk1.4.2/bin:$PATH; export PATH; perl ./server.pl\""; //$NON-NLS-1$
 	
 	/**
 	 * Unix REXEC script command, "./server.sh".
 	 */
-	public static final String UNIX_REXEC_SCRIPT = "./server.sh";
+	public static final String UNIX_REXEC_SCRIPT = "sh -c \"PATH=/opt/j2sdk1.4.2/bin:$PATH; export PATH; sh server.sh\""; //$NON-NLS-1$
 	
 	/**
 	 * Default REXEC script command. TIt is equivalent to <code>LINUX_REXEC_SCRIPT</code>.

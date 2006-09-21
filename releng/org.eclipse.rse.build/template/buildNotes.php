@@ -31,6 +31,11 @@
   <a href="http://download.eclipse.org/dsdp/tm/updates/">http://download.eclipse.org/dsdp/tm/updates/</a>.
   We encourage users to update frequently, since we expect
   RSE quality to improve more and more as we are approaching our 1.0 release.</li>
+<li>Persistent storage of connection and filter data has been streamlined to
+  use <b>fewer files and directories</b>, resulting in simplification of team support
+  and improved perfomance.</li>
+<li>Windows dstore daemon can now be started by simply double clicking on daemon.bat
+  (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142952">Bug 142952</a>)</li>
 <li>Numerous bugs have been fixed, and we consider RSE safe now for 
   all kinds of data transfer, even if it's done in multiple background sessions
   (except <b>FTP</b>, which will be enhanced as soon as the Jakarta Commons Net library

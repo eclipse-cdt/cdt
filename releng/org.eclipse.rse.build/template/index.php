@@ -150,6 +150,9 @@
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-local-@buildId@.zip">RSE-runtime-local-@buildId@.zip</a></td></tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
         <td>All</td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-remotecdt-@buildId@.zip">RSE-runtime-remotecdt-@buildId@.zip</a></td></tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+        <td>All</td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-ssh-@buildId@.zip">RSE-runtime-ssh-@buildId@.zip</a></td></tr>
 </table>
 
@@ -168,15 +171,55 @@
 <table border="0" cellspacing="2" cellpadding="0" width="100%">
 	<tr>
 		<td align="RIGHT" valign="TOP" width="7%">
-		<div align="left">
-			<b>Status</b></div>
+		   <div align="left"><b>Status</b></div>
 		</td>
 		<td width="34%"><b>Platform</b></td>
 		<td width="59%"><b>Download</b></td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-<td>All</td><td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-examples-@buildId@.zip">RSE-examples-@buildId@.zip</a></td>
-</tr>
+            <td>All</td>
+            <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-examples-@buildId@.zip">RSE-examples-@buildId@.zip</a></td>
+        </tr>
+	</tr>
+</table>
 
+<table border="0" cellspacing="5" cellpadding="2" width="100%">
+	<tr>
+		<td colspan="2">&nbsp;</td>
+	</tr>
+</table>
+<table border="0" cellspacing="5" cellpadding="2" width="100%">
+	<tr>
+		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
+		<font face="Arial,Helvetica" color="#FFFFFF">Experimental add-ons (includes source)</font></b>
+		</td>
+	</tr>
+	<tr>
+	    <td>Experimental add-ons are not yet fully supported.
+	    <ul><li>RSE-efs is an experimental Eclipse Filesystem (EFS) provider, which
+	       uses RSE contributed file services.</li>
+	    <li>TM-discovery is an experimental API and DNS-SD / Zeroconf based 
+	       implementation of remote network service discovery. TM-discovery
+	       requires EMF 2.2.0 or later to run. It can run stand-alone or
+	       integrated with RSE.</li>
+	    </ul>
+       </td>
+	</tr>
+</table>
+<table border="0" cellspacing="2" cellpadding="0" width="100%">
+	<tr>
+		<td align="RIGHT" valign="TOP" width="7%">
+		   <div align="left"><b>Status</b></div>
+		</td>
+		<td width="34%"><b>Platform</b></td>
+		<td width="59%"><b>Download</b></td>
+		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+            <td>All</td>
+            <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-efs-@buildId@.zip">RSE-efs-@buildId@.zip</a></td>
+        </tr>
+		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+            <td>All</td>
+            <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-discovery-@buildId@.zip">TM-discovery-@buildId@.zip</a></td>
+        </tr>
 	</tr>
 </table>
 

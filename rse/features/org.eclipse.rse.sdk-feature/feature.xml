@@ -51,6 +51,10 @@
          version="0.0.0"/>
 
    <includes
+         id="org.apache.commons_net.source"
+         version="0.0.0"/>
+
+   <includes
          id="org.eclipse.rse.local.source"
          version="0.0.0"/>
 

@@ -1,3 +1,19 @@
+/********************************************************************************
+ * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Initial Contributors:
+ * The following IBM employees contributed to the Remote System Explorer
+ * component that contains this file: David McKnight, Kushal Munir, 
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+ * 
+ * Contributors:
+ * {Name} (company) - description of contribution.
+ ********************************************************************************/
+
 package org.eclipse.rse.subsystems.shells.dstore.model;
 
 import org.eclipse.dstore.core.model.DataElement;
@@ -50,23 +66,20 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 			if (lineObj instanceof DataElement)
 			{
 				DataElement line = (DataElement)lineObj;
-				if (line != null)
+				String type = line.getType();
+				if (event.isError())
 				{
-					String type = line.getType();
-					if (event.isError())
-					{
-						output = new RemoteError(this, type);									
-					}
-					else
-					{
-						output = new RemoteOutput(this, type);
-					}
-					output.setText(line.getName());
-					output.setAbsolutePath(line.getSource());	
-		
-					addOutput(output);
-					outputs[i] = output;
+					output = new RemoteError(this, type);									
 				}
+				else
+				{
+					output = new RemoteOutput(this, type);
+				}
+				output.setText(line.getName());
+				output.setAbsolutePath(line.getSource());	
+	
+				addOutput(output);
+				outputs[i] = output;
 			}
 		}
 		if (_lastRefreshJob == null || _lastRefreshJob.isComplete())

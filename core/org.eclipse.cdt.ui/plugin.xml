@@ -2,19 +2,18 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-     <extension-point id="CHelpProvider" name="%cHelpProviderName" schema="schema/CHelpProvider.exsd"/>
+   <extension-point id="CHelpProvider" name="%cHelpProviderName" schema="schema/CHelpProvider.exsd"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
    <extension-point id="BinaryParserPage" name="%binaryParserPage"/>
    <extension-point id="PathContainerPage" name="%pathContainerPage" schema="schema/PathContainerPage.exsd"/>
-   <extension-point id="foldingStructureProviders" name="%foldingStructureProvidersExtensionPoint"/>
-   <!--extension-point id="foldingStructureProviders" name="%foldingStructureProvidersExtensionPoint" schema="schema/foldingStructureProviders.exsd"/-->
+   <extension-point id="foldingStructureProviders" name="%foldingStructureProvidersExtensionPoint" schema="schema/foldingStructureProviders.exsd"/>
    
 <!-- =========================================================================== -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
 <!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
 <!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- =========================================================================== -->
-   <extension-point id="textHovers" name="%textHoversName"/>
+   <extension-point id="textHovers" name="%textHoversName" schema="schema/textHovers.exsd"/>
    <extension-point id="IndexerPage" name="%indexerPage.name" schema="schema/IndexerPage.exsd"/>
    <extension-point id="completionContributors" name="%completionContributors" schema="schema/completionContributors.exsd"/>
    <extension-point id="ProposalFilter" name="%proposalFilter.name" schema="schema/ProposalFilter.exsd"/>

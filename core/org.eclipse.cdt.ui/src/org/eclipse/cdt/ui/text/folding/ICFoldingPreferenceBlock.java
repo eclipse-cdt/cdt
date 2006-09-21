@@ -15,9 +15,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * Contributors to the <code>org.eclipse.jdt.ui.foldingStructureProvider</code> extension point
- * can specify an implementation of this interface to be displayed on the C &gt; Editor &gt; Folding
- * preference page.
+ * Contributors to the <code>org.eclipse.cdt.ui.foldingStructureProvider</code> extension point
+ * can specify an implementation of this interface to be displayed on the C/C++ &gt; Editor &gt; 
+ * Folding preference page.
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Control;
 public interface ICFoldingPreferenceBlock {
 
 	/**
-	 * Creates the control that will be displayed on the C &gt; Editor &gt; Folding
+	 * Creates the control that will be displayed on the C/C++ &gt; Editor &gt; Folding
 	 * preference page.
 	 * 
 	 * @param parent the parent composite to which to add the preferences control
@@ -59,6 +59,5 @@ public interface ICFoldingPreferenceBlock {
 	 * free any resources they are holding on to.
 	 */
 	void dispose();
-
 
 }

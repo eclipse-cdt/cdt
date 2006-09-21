@@ -1072,35 +1072,30 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     // -------------------------------
     // FILTER POOL REFERENCE EVENTS...
     // -------------------------------
-    /**
-     * A new filter pool reference has been created
-     */
-    public void filterEventFilterPoolReferenceCreated(ISystemFilterPoolReference newPoolRef)
-    {
-    	if (getSubSystemConfiguration().showFilterPools())
-    	{
-    	  	fireEvent(newPoolRef, EVENT_ADD, this);
-          	fireEvent(newPoolRef, EVENT_REVEAL_AND_SELECT, this);
-    	}
-    	else if (newPoolRef.getReferencedFilterPool().getSystemFilterCount()>0)
-    	{    	
-    	  	ISystemFilterReference[] filterRefs = newPoolRef.getSystemFilterReferences(this);
-    	  	fireEvent(filterRefs, EVENT_ADD_MANY, this, -1); // -1 means append to end
-    	}
-        try {
-    	   	//System.out.println("   calling saveSubSystem(this)...");
-           	getSubSystemConfiguration().saveSubSystem(this);
-    	   	//System.out.println("   Back and done!");
 
-		   	// fire model change event in case any BP code is listening...
-		   	RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOLREF, newPoolRef, null);		
-        }
-        catch (Exception exc)
-        {
-           SystemBasePlugin.logError("Error saving subsystem "+getName(),exc);
-        }
-    }
     /**
+	 * A new filter pool reference has been created. Fire the appropriate events for this.
+	 */
+	public void filterEventFilterPoolReferenceCreated(ISystemFilterPoolReference newPoolRef) {
+		if (getSubSystemConfiguration().showFilterPools()) {
+			fireEvent(newPoolRef, EVENT_ADD, this);
+			fireEvent(newPoolRef, EVENT_REVEAL_AND_SELECT, this);
+		} else {
+			ISystemFilterPool pool = newPoolRef.getReferencedFilterPool();
+			if (pool != null && pool.getSystemFilterCount() > 0) {
+				ISystemFilterReference[] filterRefs = newPoolRef.getSystemFilterReferences(this);
+				fireEvent(filterRefs, EVENT_ADD_MANY, this, -1); // -1 means append to end
+			}
+		}
+		try {
+			getSubSystemConfiguration().saveSubSystem(this);
+			RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOLREF, newPoolRef, null);
+		} catch (Exception exc) {
+			SystemBasePlugin.logError("Error saving subsystem " + getName(), exc);
+		}
+	}
+
+	/**
      * A filter pool reference has been deleted
      */
     public void filterEventFilterPoolReferenceDeleted(ISystemFilterPoolReference filterPoolRef)

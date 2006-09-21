@@ -542,13 +542,12 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 		return filterPoolReference;
 	}
 
-	// DWD Working - the method above and this one can be combined?
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.filters.ISystemFilterPoolReferenceManager#addReferenceToSystemFilterPool(org.eclipse.rse.filters.ISystemFilterPoolManager, java.lang.String)
 	 */
 	public ISystemFilterPoolReference addReferenceToSystemFilterPool(ISystemFilterPoolManager filterPoolManager, String filterPoolName) {
 		ISystemFilterPoolReference filterPoolReference = createSystemFilterPoolReference(filterPoolManager, filterPoolName);
-		addReferencingObject(filterPoolReference); // DWD - should be done in addReferencingObject?
+		addReferencingObject(filterPoolReference);
 		filterPoolReference.setParentReferenceManager(this);
 		invalidateFilterPoolReferencesCache();
 		quietSave();

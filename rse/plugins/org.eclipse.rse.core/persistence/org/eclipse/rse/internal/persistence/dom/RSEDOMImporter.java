@@ -481,20 +481,13 @@ public class RSEDOMImporter implements IRSEDOMImporter
 			/*
 			 * DWD filterpool can be null when restoring since there can be forward references. 
 			 * A profile may be being restored that has references to a filter pool in a profile that doesn't yet exist. 
-			 * Need to create an "unresolved" reference instead of a null object and then patch them up 
-			 * at the end.
+			 * Need to create an "unresolved" reference instead of a null object and then patch them up on first access.
 			 */
 			// create reference to the filterpool
 			if (filterPool != null) {
 				filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPool);
 			} else {
-				try {
-					filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPoolManager, filterPoolName);
-				} catch(NullPointerException e) {
-					//TODO Workaround for bug 153253 -- should be fixed properly
-					System.err.println("TODO: Fix bug 153253 - NPE reading connection-private filter pools");
-					e.printStackTrace();
-				}
+				filterPoolReference = referenceManager.addReferenceToSystemFilterPool(filterPoolManager, filterPoolName);
 			}
 		}
 		return filterPoolReference;

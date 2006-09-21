@@ -140,15 +140,22 @@ public class SystemViewFilterPoolReferenceAdapter
 
 	
 	/**
-	 * Return the label for this object. Uses getName() on the filter pool object.
+	 * @param element the filter pool reference masquerading as an object
+	 * @return the label for this filter pool reference.
 	 */
-	public String getText(Object element)
-	{
-		boolean qualifyNames = RSEUIPlugin.getTheSystemRegistry().getQualifiedHostNames();		
-		if (!qualifyNames)
-		  return getFilterPool(element).getName();
-		else
-		  return SubSystemHelpers.getParentSystemProfile(getFilterPool(element))+"." + getFilterPool(element).getName(); 
+	public String getText(Object element) {
+		String result = "unknown"; // $NON-NLS-1$
+		ISystemFilterPool pool = getFilterPool(element);
+		if (pool != null) {
+			result = pool.getName();
+// the following looks like it was copied from the host adapter and not really needed here.
+//			boolean qualifyNames = RSEUIPlugin.getTheSystemRegistry().getQualifiedHostNames();
+//			if (qualifyNames) {
+//				String prefix = SubSystemHelpers.getParentSystemProfile(pool).getName();
+//				result =  prefix + "." + result;
+//			}
+		}
+		return result;
 	}
 	/**
 	 * Return the name of this object, which may be different than the display text ({#link #getText(Object)}.

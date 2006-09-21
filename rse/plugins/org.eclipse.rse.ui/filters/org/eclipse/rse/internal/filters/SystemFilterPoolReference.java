@@ -16,6 +16,9 @@
 
 package org.eclipse.rse.internal.filters;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -27,8 +30,10 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.references.SystemPersistableReferencingObject;
+import org.eclipse.rse.model.SystemRegistry;
 
 /**
  * A reference to a filter pool. A reference may be "resolved" or "unresolved".
@@ -144,12 +149,26 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 		if (filterPool == null) {
 			String filterPoolName = getReferencedFilterPoolName();
 			filterPool = filterPoolManager.getSystemFilterPool(filterPoolName);
+			if (filterPool == null) {
+				Pattern p = Pattern.compile("(^.*):");
+				Matcher m = p.matcher(filterPoolName);
+				if (m.find()) {
+					String profileName = m.group(1);
+					ISystemProfile profile = SystemRegistry.getSystemRegistry().getSystemProfile(profileName);
+					if (profile != null) {
+						ISystemFilterPool[] pools = profile.getFilterPools();
+						for (int i = 0; i < pools.length && filterPool == null; i++) {
+							ISystemFilterPool pool = pools[i];
+							if (filterPoolName.equals(pool.getName())) filterPool = pool;
+						}
+					}
+				}
+			}
 			if (filterPool != null) {
 				setReferenceToFilterPool(filterPool);
-			} else {
-				this.setReferenceBroken(true);
 			}
 		}
+		setReferenceBroken(filterPool == null);
 		return filterPool;
 	}
 

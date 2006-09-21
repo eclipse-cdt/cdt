@@ -859,6 +859,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			}
 		}
 
+		String os = System.getProperty("os.name").toLowerCase();
+		if (!os.startsWith("win"))
+			absolutePath = absolutePath.replace('\\', '/');
+		
 		// DY:  We should only be escaping the remote portion of the path
 		IPath remote = new Path(absolutePath);
 		absolutePath = SystemFileNameHelper.getEscapedPath(remote.toOSString());

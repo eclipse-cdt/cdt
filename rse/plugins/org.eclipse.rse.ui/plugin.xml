@@ -381,31 +381,6 @@ Contributors:
 	
 	<extension-point id="remoteSystemsViewPreferencesActions" name="%extPoint.remoteSystemsViewPreferencesActions" schema="schema/remoteSystemsViewPreferencesActions.exsd"/>
 	
-<!-- ================================================================================== -->
-<!-- EXTENSION POINT: org.eclipse.rse.ui.showNewConnectionPrompt               -->
-<!-- ================================================================================== -->
-<!-- This extension point is for products that include RSE, which want to affect some   -->
-<!--  of the out of box defaults for preferences. The preferences currently supported   -->
-<!--  are:                                                                              -->
-<!--     showNewConnectionPrompt -> specify false to not see the New Connection prompt  -->
-<!--                                  in the Remote Systems view.                       -->
-<!--     showLocalConnection -> specify false to not pre-create a Local connection      -->
-<!--     enableSystemTypes -> specify the system types to enable, semicolon-separated. All  -->
-<!--                       others are disabled, but can be re-enabled via preferences.  -->
-<!-- Usually, these settings can still be overridden by users via preferences.          -->
-<!--                                                                                    -->
-<!-- Example usage:                                                                     -->
-<!--   <extension point="org.eclipse.rse.ui.rseConfigDefaults">                -->
-<!--        <defaults id="xyz"                                                          -->
-<!--			  productId="com.mycompany.myproduct"                                   -->
-<!--              showNewConnectionPrompt="false" showLocalConnection="false"           -->
-<!--              enableSystemTypes="Local;Linux;Unix">                                 -->
-<!--        </defaults>                                                                 -->
-<!--   </extension>                                                                     -->
-<!-- See the extension point reference for more details.                                -->
-
-	<extension-point id="rseConfigDefaults" name="%extPoint.rseConfigDefaults" schema="schema/rseConfigDefaults.exsd"/>     	
-	
 <!-- ============================================ -->
 <!-- Define a RemoteSystems project nature        -->
 <!-- ============================================ -->

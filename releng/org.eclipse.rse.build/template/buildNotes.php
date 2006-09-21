@@ -61,10 +61,14 @@
   newConnectionWizardDelegates</a> 
   in order to better match the standard naming scheme used by the Platform.</li>
 <li><b>Removed</b> the <b>org.eclipse.rse.ui.rseConfigDefaults</b> extension point.
-  Use Java Properties instead, as described in the documentation.</li>
+  Use Java Properties instead, as described in the 
+  <a href="http://dsdp.eclipse.org/help/latest/index.jsp?topic=/org.eclipse.rse.doc.isv/reference/misc/runtime-options.html">
+  runtime-options documentation</a>.</li>
 <li><b>Removed</b> the <b>org.eclipse.rse.ui.passwordPersistence</b> extension point.
   The same functionality is achieved by using the data known from the
-  subsystemConfigurations extension point.</li>
+  IConnectorService implementations of a systemType (supportsUserId(), supportsPassword()).
+  As long as a subsystem supports user id and password, the password can also be persisted.
+  Persistence is always done case sensitive; Persistence cannot be disabled for system types.</li>
 <li><b>Moved</b> several <b>RSE Model Objects and Interfaces</b> from org.eclipse.rse.ui to core:
   <ul>
     <li>(UI) <code>org.eclipse.rse.model</code> --&gt; <code>org.eclipse.rse.core.model</code></li>

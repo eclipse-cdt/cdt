@@ -13,6 +13,7 @@ Martin Oberhuber - initial API and implementation
       id="org.eclipse.rse.remotecdt"
       label="%featureName"
       version="1.0.0.qualifier"
+      image="eclipse_update_120.jpg"
       provider-name="%providerName">
 
    <description>

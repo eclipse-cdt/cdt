@@ -79,6 +79,10 @@ public class DStoreHostFile implements IHostFile
 			String path = _element.getName();
 			return getNameFromPath(path);
 		}
+		else if (isRoot())
+		{
+			return _element.getValue();
+		}
 		else
 		{
 			String name = _element.getName();
@@ -86,7 +90,8 @@ public class DStoreHostFile implements IHostFile
 			if (name.length() == 0 && 
 					(parentPath.equals("/")  || parentPath.endsWith(":\\")))
 			{
-				return getParentPath();
+				
+				return parentPath;
 			}
 			return name;
 		}
@@ -108,6 +113,11 @@ public class DStoreHostFile implements IHostFile
 				// derive from value
 				String fullPath = _element.getValue();
 				int sep = fullPath.lastIndexOf('/');
+				if (sep == -1)
+					sep = fullPath.lastIndexOf('\\');
+				
+				if (sep == -1)
+					return fullPath;
 				return fullPath.substring(0, sep);
 			}
 			else
@@ -157,7 +167,7 @@ public class DStoreHostFile implements IHostFile
 
 	public boolean isRoot()
 	{
-		String parentPath = getParentPath();
+		String parentPath = _element.getValue();
 		String name = _element.getName();
 		if (parentPath == null || parentPath.length() == 0 || 
 				(name.length() == 0 && (parentPath.equals("/") || parentPath.endsWith(":\\")))

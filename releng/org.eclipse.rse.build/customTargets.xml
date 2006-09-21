@@ -441,7 +441,7 @@
 		<copy todir="${working}/collector">
 			<fileset dir="${working}/scripts/${os}" includes="*"/>
 		</copy>
-		<chmod perm="+x">
+		<chmod perm="755">
 			<fileset dir="${working}/collector" includes="*"/>
 		</chmod>
 		<copy todir="${working}/collector">
@@ -455,8 +455,8 @@
 		<copy todir="${working}/collector">
 			<fileset dir="${working}/jars" includes="*"/>
 		</copy>
-		<chmod perm="+x">
-			<fileset dir="${working}/collector" includes="*.jar"/>
+		<chmod perm="755">
+			<fileset dir="${working}/collector" includes="*.pl,*.sh"/>
 		</chmod>
 	</target>
 

@@ -71,24 +71,10 @@ public class SystemClearPasswordAction extends SystemBaseAction
 		ISubSystem ss = (ISubSystem)getFirstSelection();
 		try {
 			IConnectorService system = ss.getConnectorService();
-			
-			// get the user id
-			String userId = system.getUserId();
-			
-			// clear userid/password from memory and fire event
-			//DKM and disk now
 			system.clearPasswordCache(true);
 			RSEUIPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(ss, 
 					ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, 
 					ss.getHost()));
-			
-			/* DKM - this is now done in clearPasswordCache
-			 * 
-			// now get rid of userid/password from disk
-			String systemType = ss.getSystem().getSystemType();
-			String hostName = system.getHostName();
-			PasswordPersistenceManager.getInstance().remove(systemType, hostName, userId);
-			*/
 		}
 		catch (Exception exc) {
 			// msg already shown

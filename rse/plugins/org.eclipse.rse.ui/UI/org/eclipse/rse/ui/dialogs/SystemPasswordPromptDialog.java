@@ -237,7 +237,6 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	protected Control getInitialFocusControl() {
 		okButton.setEnabled(true);
 		processUserIdField();
-		processPasswordField();
 		if (textUserId != null) {
 			if (userId.length() == 0 || textPassword == null) {
 				return textUserId;
@@ -311,14 +310,15 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	 * @see #setUserIdValidator(ISystemValidator)	
 	 */
 	private void processUserIdField() {
-		internalGetUserId();
-		internalGetPassword();
+		clearErrorMessage();
 		SystemMessage m = checkUserId();
 		if (m == null) {
 			m = checkPassword();
 		}
+		if (m != null) {
+			setErrorMessage(m);
+		}
 		okButton.setEnabled(m == null);
-		setErrorMessage(m);
 		if (userId == null || originalUserId == null) {
 			userIdChanged = (userId != originalUserId);
 		} else {
@@ -335,6 +335,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	 * @return the message returned by the validator or null.
 	 */
 	private SystemMessage checkUserId() {
+		internalGetUserId();
 		SystemMessage m = null;
 		if (connectorService.supportsUserId() && validate) {
 			if (userIdValidator != null) {
@@ -354,14 +355,15 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	 * @see #setPasswordValidator(ISystemValidator)	
 	 */
 	private void processPasswordField() {
-		internalGetUserId();
-		internalGetPassword();
+		clearErrorMessage();
 		SystemMessage m = checkPassword();
 		if (m == null) {
 			m = checkUserId();
 		}
+		if (m != null) {
+			setErrorMessage(m);
+		}
 		okButton.setEnabled(m == null);
-		setErrorMessage(m);
 		if (savePasswordCB != null) {
 			savePasswordCB.setEnabled(!(connectorService.requiresPassword() && password.length() == 0));
 		}
@@ -371,6 +373,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	 * Checks the value of the password instance variable.
 	 */
 	private SystemMessage checkPassword() {
+		internalGetPassword();
 		SystemMessage m = null;
 		if (connectorService.supportsPassword() && validate) {
 			if (passwordValidator != null) {

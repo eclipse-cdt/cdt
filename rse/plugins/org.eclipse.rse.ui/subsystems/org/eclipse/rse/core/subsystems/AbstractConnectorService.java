@@ -338,22 +338,21 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * change his userId.  
 	 * 
 	 * @param onDisk if this is true, clear the password from the disk cache as well
-	 * @see #clearUserIdCache(boolean)
+	 * @see #clearUserIdCache()
 	 */
 	final public void clearPasswordCache(boolean onDisk) {
 		setPasswordInformation(null);
-
+		String userId = getUserId();
 		if (onDisk) {
 			//  now get rid of userid/password from disk
 			String systemType = getHostType();
 			String hostName = getHostName();
-			if (_userId != null)
-				PasswordPersistenceManager.getInstance().remove(systemType, hostName, _userId);
+			if (userId != null)
+				PasswordPersistenceManager.getInstance().remove(systemType, hostName, userId);
 		}
-
 		if (shareUserPasswordWithConnection()) {
 			// clear this uid/password with other ISystems in connection
-			clearPasswordForOtherSystemsInConnection(_userId, onDisk);
+			clearPasswordForOtherSystemsInConnection(userId, onDisk);
 		}
 	}
 
@@ -533,6 +532,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 			    	  		logException(e);
 			    	  	}
 			    	  	if (dialog.wasCancelled()) {
+			    	  		_passwordInfo = null;
 			    	  		throw new InterruptedException();
 			    	  	}
 			    	  	String userId = dialog.getUserId();

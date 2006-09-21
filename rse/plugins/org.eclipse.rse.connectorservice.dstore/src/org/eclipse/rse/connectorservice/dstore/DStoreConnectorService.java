@@ -1315,5 +1315,15 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	{
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#requiresPassword()
+	 */
+	public boolean requiresPassword() {
+		IHost host = getHost();
+		String systemType = host.getSystemType();
+		boolean requiresPassword = !systemType.equals("Windows");
+		return requiresPassword;
+	}
 
 }

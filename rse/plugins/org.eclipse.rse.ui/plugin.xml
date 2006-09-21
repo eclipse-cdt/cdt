@@ -308,31 +308,6 @@ Contributors:
    <extension-point id="popupMenus" name="%extPoint.popupMenus" schema="schema/popupMenus.exsd"/>
 
 <!-- ================================================================================== -->
-<!-- EXTENSION POINT: org.eclipse.rse.ui.passwordPersistence		            -->
-<!-- ================================================================================== -->
-<!-- Extension point for adding a system type to the Remote Systems password registry   -->
-<!--                                                                                    -->
-<!-- Example of extension configuration:                                                -->
-<!--   <extension point="org.eclipse.rse.ui.passwordPersistence">              -->
-<!--      <provider                                                                     -->
-<!--            id="com.acme.iseries.passwordpersistence"                               -->
-<!--            systemType="iSeries"                                                    -->
-<!--            caseSensitive="false">                                                  -->
-<!--      </provider>                                                                   -->
-<!--   </extension>                                                                     -->
-<!--                                                                                    -->
-<!-- <provider> tag attributes:                                                         -->
-<!-- ================================================================================== -->
-<!--  id          => unique id for this extension point. 								-->
-<!--  systemType  => System type that saved passwords are used for.  This will be       -->
-<!--                 displayed in the Add Password Information dialog's system type     -->
-<!--                 drop down.                                                         -->
-<!--  caseSensitive => [optional] If the user ID is case sensitive [ true | false ]     -->
-<!-- ================================================================================== -->
-
-   <extension-point id="passwordPersistence" name="%extPoint.password" schema="schema/passwordPersistence.exsd"/>
-
-<!-- ================================================================================== -->
 <!-- EXTENSION POINT: org.eclipse.rse.ui.compile                        		-->
 <!-- ================================================================================== -->
 <!-- Extension point for defining compile commands.                                     -->
@@ -916,17 +891,6 @@ Contributors:
      </extension>
 
 
-<!-- ================================================================= -->
-<!-- Add Linux and Unix system types to the Remote Systems password    -->
-<!-- registry 														   -->
-<!-- ================================================================= -->
-   <extension point="org.eclipse.rse.ui.passwordPersistence">
-      <provider systemType="Linux"
-            id="org.eclipse.rse.universal.passwordPersistence.Linux"/>
-      <provider systemType="Unix"
-            id="org.eclipse.rse.universal.passwordPersistence.Unix"/>
-   </extension>
-   
 <!-- ================================================================= -->
 <!-- RSE Creation Wizards from File -> New 							   -->
 <!-- ================================================================= -->

@@ -38,8 +38,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
  * PasswordPersistenceManager manages the saving and retreiving of user ID / passwords
- * to the Eclipse keyring for registered system types.  Registration is done via the
- * org.eclipse.rse.core.passwordPersistence extension point.
+ * to the Eclipse keyring for registered system types.
  * 
  * @author yantzi
  */

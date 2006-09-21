@@ -13,11 +13,16 @@ Martin Oberhuber - initial API and implementation
       id="org.eclipse.rse.efs"
       label="%featureName"
       version="1.0.0.qualifier"
+      image="eclipse_update_120.jpg"
       provider-name="%providerName">
 
    <description>
       %description
    </description>
+
+   <copyright>
+      %copyright
+   </copyright>
 
    <license url="%licenseURL">
       %license
@@ -31,11 +36,6 @@ Martin Oberhuber - initial API and implementation
 
    <requires>
       <import feature="org.eclipse.rse.core"/>
-      <import plugin="org.eclipse.rse.files.ui"/>
-      <import plugin="org.eclipse.rse.ui"/>
-      <import plugin="org.eclipse.rse.core"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core"/>
-      <import plugin="org.eclipse.rse.services"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.filesystem"/>
@@ -49,5 +49,9 @@ Martin Oberhuber - initial API and implementation
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.efs.source"
+         version="0.0.0"/>
 
 </feature>

@@ -6,8 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.examples.daytime.Activator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.rse.subsystems.files.ftp,
- org.eclipse.rse.ui,
+Require-Bundle: org.eclipse.rse.ui,
  org.eclipse.rse.services,
  org.eclipse.rse.core,
  org.eclipse.ui,

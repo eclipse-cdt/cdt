@@ -11,19 +11,20 @@ Martin Oberhuber (Wind River) - initial API and implementation
 -->
 <?eclipse version="3.1"?>
 <plugin>
-	<!-- Register a System that will only show FTP and Daytime subsystems -->
+	<!-- Register a System that will only show Daytime subsystems -->
 	<extension point="org.eclipse.rse.core.systemTypes">
-		<systemType id="org.eclipse.rse.examples.daytime.systemtype.ftp"
-			name="FTP-Daytime"
-			description="%FTPDaytimeSystemDescription"
+		<systemType id="org.eclipse.rse.examples.daytime.systemtype"
+			name="Daytime"
+			description="%DaytimeSystemDescription"
 			icon="icons/full/obj16/daytime_obj.gif"
 			iconLive="icons/full/obj16/daytimelive_obj.gif"/>
 	</extension>
 	<!-- Instantiate the FTP subsystem by referencing it from the external implementation -->
+	<!-- Disabled to avoid hard dependency to the FTP plugin
 	<extension
 		point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
-			systemTypes="FTP-Daytime"
+			systemTypes="Daytime"
 			name="%Files"
 			description="%FilesDescription"
 			iconlive="icons/full/obj16/systemfileslive_obj.gif"
@@ -35,11 +36,12 @@ Martin Oberhuber (Wind River) - initial API and implementation
 			id="ftp.files">
 		</configuration>
 	</extension>
+	-->
 	<!-- Instantiate the Daytime subsystem from our own plugin -->
 	<extension
 		point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
-			systemTypes="FTP-Daytime;Unix"
+			systemTypes="Daytime;Unix"
 			name="%DaytimeSubsystemName"
 			description="%DaytimeDescription"
 			iconlive="icons/full/obj16/daytimelive_obj.gif"

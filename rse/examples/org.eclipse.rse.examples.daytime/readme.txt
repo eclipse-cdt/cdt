@@ -18,7 +18,7 @@ to import the example archive.
 
 __Usage:__
 The daytime service must be enabled on the remote system (see below).
-* Start RSE, create a new system of type "FTP-Daytime".
+* Start RSE, create a new system of type "Daytime".
 * Select the Daytime Subsystem and choose Contextmenu > Connect.
 * Enter any username and password (this is not checked).
 * Select the Daytime Subsystem and choose Refresh, or Contextmenu > Monitor.

@@ -9,6 +9,11 @@
 			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.sdk" />
 		</ant>
+		<!--
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
+			<property name="id" value="org.apache.commons_net" />
+		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.core" />
@@ -31,15 +36,16 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.remotecdt" />
+		</ant>
+		-->
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.examples" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.efs" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.remotecdt" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
@@ -282,7 +288,7 @@
 	<target name="postBuild" depends="myInit">
 		<mkdir dir="${packageDirectory}/${dropDir}" />
 		<move todir="${packageDirectory}/${dropDir}">
-			<fileset dir="${buildDirectory}/${buildLabel}" includes="RSE-*.zip"/>
+			<fileset dir="${buildDirectory}/${buildLabel}" includes="RSE-*.zip,TM-*.zip"/>
 		</move>
 		<move todir="${packageDirectory}/${dropDir}">
 			<fileset dir="${buildDirectory}/${buildLabel}" includes="rseserver-*"/>

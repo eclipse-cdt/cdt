@@ -5,27 +5,36 @@
       This is the Target Management Project Update Site for the Remote Systems Explorer (RSE).
    </description>
    <feature url="features/org.eclipse.rse.core_1.0.0.qualifier.jar" id="org.eclipse.rse.core" version="1.0.0.qualifier">
-      <category name="Remote System Explorer (Runtime Only)"/>
+      <category name="RSE Runtime only"/>
    </feature>
    <feature url="features/org.eclipse.rse.dstore_1.0.0.qualifier.jar" id="org.eclipse.rse.dstore" version="1.0.0.qualifier">
-      <category name="Remote System Explorer (Runtime Only)"/>
+      <category name="RSE Runtime only"/>
    </feature>
    <feature url="features/org.eclipse.rse.ftp_1.0.0.qualifier.jar" id="org.eclipse.rse.ftp" version="1.0.0.qualifier">
-      <category name="Remote System Explorer (Runtime Only)"/>
+      <category name="RSE Runtime only"/>
    </feature>
    <feature url="features/org.eclipse.rse.local_1.0.0.qualifier.jar" id="org.eclipse.rse.local" version="1.0.0.qualifier">
-      <category name="Remote System Explorer (Runtime Only)"/>
+      <category name="RSE Runtime only"/>
    </feature>
    <feature url="features/org.eclipse.rse.sdk_1.0.0.qualifier.jar" id="org.eclipse.rse.sdk" version="1.0.0.qualifier">
       <category name="Remote System Explorer (RSE)"/>
    </feature>
    <feature url="features/org.eclipse.rse.ssh_1.0.0.qualifier.jar" id="org.eclipse.rse.ssh" version="1.0.0.qualifier">
-      <category name="Remote System Explorer (Runtime Only)"/>
+      <category name="RSE Runtime only"/>
    </feature>
    <feature url="features/org.eclipse.rse.examples_1.0.0.qualifier.jar" id="org.eclipse.rse.examples" version="1.0.0.qualifier">
       <category name="Remote System Explorer (RSE)"/>
    </feature>
-   <category-def name="Remote System Explorer (Runtime Only)" label="RSE_Runtime">
+   <feature url="features/org.eclipse.rse.remotecdt_1.0.0.qualifier.jar" id="org.eclipse.rse.remotecdt" version="1.0.0.qualifier">
+      <category name="RSE Runtime only"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.efs_1.0.0.qualifier.jar" id="org.eclipse.rse.efs" version="1.0.0.qualifier">
+      <category name="RSE Experimental Add-ons"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.discovery_1.0.0.qualifier.jar" id="org.eclipse.tm.discovery" version="1.0.0.qualifier">
+      <category name="RSE Experimental Add-ons"/>
+   </feature>
+   <category-def name="RSE Runtime only" label="RSE_Runtime">
       <description>
          RSE Runtime-only features: no developer documentation or sources.
       </description>
@@ -33,6 +42,11 @@
    <category-def name="Remote System Explorer (RSE)" label="RSE_SDK">
       <description>
          Remote System Explorer (RSE) with developer documentation and sources..
+      </description>
+   </category-def>
+   <category-def name="RSE Experimental Add-ons" label="RSE Experimental Add-ons">
+      <description>
+         Experimental add-ons for RSE
       </description>
    </category-def>
 </site>

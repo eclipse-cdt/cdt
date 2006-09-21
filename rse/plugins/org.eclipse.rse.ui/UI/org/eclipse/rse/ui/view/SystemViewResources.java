@@ -233,6 +233,8 @@ public class SystemViewResources extends NLS {
 
 	public static String    RESID_SCRATCHPAD;
 	public static String    RESID_REMOTE_SCRATCHPAD;
+	
+	public static String    RESID_FETCHING;
 
 	static {
 		// load message values from bundle file

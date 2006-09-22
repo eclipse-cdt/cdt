@@ -259,7 +259,7 @@ public abstract class AbstractSystemWizardPage
 // dwd		parentComposite = parent;
 		Composite myComposite = new Composite(parent, SWT.NONE);
 		myComposite.setLayout(new GridLayout(1, false));
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, GridData.VERTICAL_ALIGN_BEGINNING, true, false);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, GridData.VERTICAL_ALIGN_BEGINNING, true, true);
 		myComposite.setLayoutData(gd);
 		parentComposite = myComposite;
 		Control c = createContents(myComposite);
@@ -278,7 +278,6 @@ public abstract class AbstractSystemWizardPage
 		}		
 // dwd		configureMessageLine();
 		msgLine = new SystemMessageLine(myComposite);
-		msgLine.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 		if (pendingMessage!=null)
 		  setMessage(pendingMessage);
 		if (pendingErrorMessage!=null)

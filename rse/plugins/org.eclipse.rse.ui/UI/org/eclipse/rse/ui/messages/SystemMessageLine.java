@@ -187,7 +187,7 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 		 * @see org.eclipse.rse.ui.messages.SystemMessageLine.MyMessage#getTooltip()
 		 */
 		String getTooltip() {
-			return message.getFullMessageID() + ": " + getText();
+			return message.getFullMessageID() + ": " + getText(); //$NON-NLS-1$
 		}
 
 		/* (non-Javadoc)
@@ -244,7 +244,7 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	private class MyImpromptuMessage extends MyMessage {
 
 		private int type = NONE;
-		private String text1 = "";
+		private String text1 = ""; //$NON-NLS-1$
 		private String text2 = null;
 
 		/**
@@ -335,10 +335,15 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	}
 
 	/**
-	 * Creates a new message line as a child of the given parent.
+	 * Creates a new message line as a child of the given parent. If the parent
+	 * uses a grid layout then the layout data is set. If not then the layout data
+	 * must be set by the creator to match the layout of the parent composite.
 	 */
 	public SystemMessageLine(Composite parent) {
 		super(parent, SWT.NONE);
+		if (parent.getLayout() instanceof GridLayout) {
+			setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		}
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.verticalSpacing = 0;
@@ -431,27 +436,36 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#getErrorMessage()
 	 */
 	public String getErrorMessage() {
+		String result = null;
 		MyMessage message = getTopMessage();
-		if (message != null && message.isError()) return message.getText();
-		return null;
+		if (message != null && message.isError()) {
+			result = message.getText();
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#getMessage()
 	 */
 	public String getMessage() {
+		String result = null;
 		MyMessage message = getTopMessage();
-		if (message != null && !message.isError()) return message.getText();
-		return null;
+		if (message != null && !message.isError()) {
+			result = message.getText();
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#getSystemErrorMessage()
 	 */
 	public SystemMessage getSystemErrorMessage() {
+		SystemMessage result = null;
 		MyMessage message = getTopMessage();
-		if (message != null && message.isError()) return message.toSystemMessage();
-		return null;
+		if (message != null && message.isError()) {
+			result = message.toSystemMessage();
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -459,7 +473,7 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	 */
 	public void setErrorMessage(String message) {
 		MyMessage temp = new MyImpromptuMessage(ERROR, message);
-		pushMessage(temp);
+		setErrorMessage(temp);
 	}
 
 	/* (non-Javadoc)
@@ -467,8 +481,21 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	 */
 	public void setErrorMessage(SystemMessage message) {
 		MyMessage temp = new MySystemMessage(message);
-		pushMessage(temp);
+		setErrorMessage(temp);
 		logMessage(message);
+	}
+	
+	/**
+	 * Place an error message on the stack. Removes the previous error message if one
+	 * is on the top of the stack. Leaves any other messages on the stack.
+	 * @param message
+	 */
+	private void setErrorMessage(MyMessage message) {
+		MyMessage top = getTopMessage();
+		if (top != null && top.getType() == ERROR) {
+			popMessage();
+		}
+		pushMessage(message);
 	}
 
 	/* (non-Javadoc)
@@ -480,27 +507,39 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 		setErrorMessage(message);
 	}
 
-	/**
-	 * Set the message text. If the message line currently displays an error,
-	 * the message is stored and will be shown after a call to clearErrorMessage.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setMessage(java.lang.String)
 	 */
 	public void setMessage(String message) {
 		MyMessage temp = new MyImpromptuMessage(INFO, message);
-		pushMessage(temp);
+		setMessage(temp);
 	}
 
-	/**
-	 * Set the non-error message text, using a SystemMessage object. 
-	 * If the message line currently displays an error,
-	 * the message is stored and will be shown after a call to clearMessage.
-	 * The SystemMessage text is always shown as a "non-error". 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)
 	 */
 	public void setMessage(SystemMessage message) {
 		MyMessage temp = new MySystemMessage(message);
 		if (temp.isError()) {
 			temp = new MyImpromptuMessage(NONE, message.getLevelOneText(), message.getLevelTwoText());
 		}
-		pushMessage(temp);
+		setMessage(temp);
+	}
+	
+	/**
+	 * Sets the non-error message for the message line. If there is an error message on the top of the stack
+	 * then this is placed "underneath" that message. If there is a non-error message on the top then
+	 * it replaces that message.
+	 * @param message
+	 */
+	private void setMessage(MyMessage message) {
+		MyMessage top = getTopMessage();
+		messageStack.clear();
+		if (top.getType() == ERROR) {
+			messageStack.push(message);
+			message = top;
+		}
+		pushMessage(message);
 	}
 
 	/**
@@ -516,7 +555,9 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	 * Pops a message off the message stack and shows the new top message.
 	 */
 	private void popMessage() {
-		if (!messageStack.isEmpty()) messageStack.pop();
+		if (!messageStack.isEmpty()) {
+			messageStack.pop();
+		}
 		showTopMessage();
 	}
 
@@ -525,8 +566,11 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	 * @return A MyMessage or null if the stack is empty.
 	 */
 	private MyMessage getTopMessage() {
-		if (messageStack.isEmpty()) return null;
-		return (MyMessage) messageStack.peek();
+		MyMessage result = null;
+		if (!messageStack.isEmpty()) {
+			result = (MyMessage) messageStack.peek();
+		}
+		return result;
 	}
 
 	/**
@@ -555,7 +599,7 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	 * @param message the message from which to get the text.
 	 */
 	private void setText(MyMessage message) {
-		String text = "";
+		String text = ""; //$NON-NLS-1$
 		String toolTip = null;
 		Color color = null;
 		if (message != null) {
@@ -597,13 +641,13 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 			if (gc.stringExtent(text).x > maxWidth) {
 				StringBuffer head = new StringBuffer(text);
 				int n = head.length();
-				head.append("...");
+				head.append("..."); //$NON-NLS-1$
 				while (n > 0) {
 					text = head.toString();
 					if (gc.stringExtent(text).x <= maxWidth) break;
 					head.deleteCharAt(--n);
 				}
-				if (n == 0) text = "";
+				if (n == 0) text = ""; //$NON-NLS-1$
 			}
 			widget.setText(text);
 		}
@@ -621,9 +665,9 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 			Object object = data[i];
 			StringBuffer buffer = new StringBuffer(200);
 			buffer.append(m.getID());
-			buffer.append(": SUB#");
+			buffer.append(": SUB#"); //$NON-NLS-1$
 			buffer.append(Integer.toString(i));
-			buffer.append(":");
+			buffer.append(":"); //$NON-NLS-1$
 			buffer.append(object.toString());
 			logMessage(m.getType(), buffer.toString(), false);
 		}
@@ -640,7 +684,7 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	private void logMessage(int type, String text, boolean stackTrace) {
 		switch (type) {
 		case ERROR:
-			Exception e = stackTrace ? new Exception("Stack Trace") : null;
+			Exception e = stackTrace ? new Exception("Stack Trace") : null; //$NON-NLS-1$
 			SystemBasePlugin.logError(text, e);
 			break;
 		case WARNING:

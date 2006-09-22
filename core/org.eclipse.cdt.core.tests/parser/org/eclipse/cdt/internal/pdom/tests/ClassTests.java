@@ -31,15 +31,21 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  */
 public class ClassTests extends PDOMTestBase {
 
-	protected ICProject project;
-	
+	protected PDOM pdom;
+
 	protected void setUp() throws Exception {
-		project = createProject("classTests");
+		if (pdom == null) {
+			ICProject project = createProject("classTests");
+			pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+		}
+		pdom.acquireReadLock();
 	}
 
+	protected void tearDown() throws Exception {
+		pdom.releaseReadLock();
+	}
+	
 	public void test1() throws Exception {
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
-		
 		IBinding[] Bs = pdom.findBindings(Pattern.compile("B"), new NullProgressMonitor());
 		assertEquals(1, Bs.length);
 		ICPPClassType B = (ICPPClassType)Bs[0];
@@ -54,8 +60,6 @@ public class ClassTests extends PDOMTestBase {
 	}
 	
 	public void testNested() throws Exception {
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
-
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("NestedA"), new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		ICPPClassType NestedA = (ICPPClassType)bindings[0];
@@ -79,8 +83,6 @@ public class ClassTests extends PDOMTestBase {
 	}
 	
 	public void failedTest147903() throws Exception {
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
-		
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("pr147903"), new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		ICPPNamespaceScope ns = ((ICPPNamespace)bindings[0]).getNamespaceScope();

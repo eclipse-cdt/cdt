@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;

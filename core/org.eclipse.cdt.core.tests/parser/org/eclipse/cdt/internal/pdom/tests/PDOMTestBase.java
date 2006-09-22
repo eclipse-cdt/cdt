@@ -17,10 +17,12 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer;
 import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastReindex;
+import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -53,6 +55,15 @@ public class PDOMTestBase extends TestCase {
 		final ICProject cprojects[] = new ICProject[1];
 		workspace.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
+				IPDOMManager manager = CCorePlugin.getPDOMManager(); 
+				// Make sure the default is no indexer
+				String oldDefault = manager.getDefaultIndexerId();
+				if (!PDOMNullIndexer.ID.equals(oldDefault))
+					manager.setDefaultIndexerId(PDOMNullIndexer.ID);
+				else
+					oldDefault = null;
+				
+				// Create the project
 				IProject project = workspace.getRoot().getProject(projectName);
 				project.create(monitor);
 				project.open(monitor);
@@ -89,6 +100,10 @@ public class PDOMTestBase extends TestCase {
 				indexer.setProject(cproject);
 				PDOMFastReindex reindex = new PDOMFastReindex(indexer);
 				reindex.run(monitor);
+				
+				// Set the default indexer back
+				if (oldDefault != null)
+					manager.setDefaultIndexerId(oldDefault);
 
 				cprojects[0] = cproject;
 			}

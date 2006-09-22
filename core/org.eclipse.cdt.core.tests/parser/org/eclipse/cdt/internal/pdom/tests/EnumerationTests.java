@@ -28,15 +28,22 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  */
 public class EnumerationTests extends PDOMTestBase {
 
-	protected ICProject project;
-	
+	protected PDOM pdom;
+
 	protected void setUp() throws Exception {
-		project = createProject("enumerationTests");
+		if (pdom == null) {
+			ICProject project = createProject("enumerationTests");
+			pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+		}
+		pdom.acquireReadLock();
+	}
+
+	protected void tearDown() throws Exception {
+		pdom.releaseReadLock();
 	}
 	
 	public void testC() throws Exception {
 		// Check bindings
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
 		Pattern pattern = Pattern.compile("TestCEnum");
 		IBinding[] bindings = pdom.findBindings(pattern, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
@@ -69,7 +76,6 @@ public class EnumerationTests extends PDOMTestBase {
 
 	public void testCPP() throws Exception {
 		// Check bindings
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
 		Pattern pattern = Pattern.compile("TestCPPEnum");
 		IBinding[] bindings = pdom.findBindings(pattern, new NullProgressMonitor());
 		assertEquals(1, bindings.length);

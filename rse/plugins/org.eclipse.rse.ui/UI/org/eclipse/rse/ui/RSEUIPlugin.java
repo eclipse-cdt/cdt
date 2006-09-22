@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
@@ -97,6 +96,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     private SystemTeamViewResourceAdapterFactory svraf; // for fastpath
 	private SystemShowPreferencesPageAction[] showPrefPageActions = null;
 	private boolean dontShowLocalConnection, dontShowProfilePageInitially;
+	private boolean loggingSystemMessageLine = false;
 	    		
 	/**
 	 * Constructor for SystemsPlugin
@@ -124,7 +124,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	 * Initializes default preferences.
 	 */
 	public void initializeDefaultPreferences() {
-
+		
 	    boolean showNewConnPromptPref = ISystemPreferencesConstants.DEFAULT_SHOWNEWCONNECTIONPROMPT;
 	    dontShowLocalConnection = false;
 	    dontShowProfilePageInitially = false;
@@ -163,6 +163,24 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	 */
 	public boolean getShowProfilePageInitially() {
 		return !dontShowProfilePageInitially;
+	}
+	
+	/**
+	 * Set whether or not to log the messages shown on the system message line for dialogs
+	 * and wizards. These message are typically validation messages for fields. 
+	 * These are logged using the RSE logging settings. The default is to not log
+	 * these messages.
+	 * @param flag true if logging of these messages is desired, false otherwise.
+	 */
+	public void setLoggingSystemMessageLine(boolean flag) {
+		loggingSystemMessageLine = flag;
+	}
+	
+	/**
+	 * @return true if we are logging messages displayed on the system message line.
+	 */
+	public boolean getLoggingSystemMessageLine() {
+		return loggingSystemMessageLine;
 	}
 	
     /* (non-Javadoc)

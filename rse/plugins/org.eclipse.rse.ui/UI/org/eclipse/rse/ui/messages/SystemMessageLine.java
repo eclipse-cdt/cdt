@@ -675,25 +675,27 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	}
 
 	/**
-	 * Sends a text message to the log.
+	 * Sends a text message to the log. Will log messages only if the RSEUIPlugin has been 
+	 * set to log these.
 	 * @param type The type of the message - NONE, INFO, WARNING or ERROR.
 	 * @param text The text to log.
 	 * @param stackTrace If true then generate a stack trace in the log. Ignored if the 
 	 * type is not ERROR.
 	 */
 	private void logMessage(int type, String text, boolean stackTrace) {
-		switch (type) {
-		case ERROR:
-			Exception e = stackTrace ? new Exception("Stack Trace") : null; //$NON-NLS-1$
-			SystemBasePlugin.logError(text, e);
-			break;
-		case WARNING:
-			SystemBasePlugin.logWarning(text);
-			break;
-		case INFO:
-		case NONE:
-		default:
-			SystemBasePlugin.logInfo(text);
+		boolean logging = RSEUIPlugin.getDefault().getLoggingSystemMessageLine();
+		if (logging) {
+			switch (type) {
+			case ERROR:
+				Exception e = stackTrace ? new Exception("Stack Trace") : null; //$NON-NLS-1$
+				SystemBasePlugin.logError(text, e);
+				break;
+			case WARNING:
+				SystemBasePlugin.logWarning(text);
+				break;
+			default:
+				SystemBasePlugin.logInfo(text);
+			}
 		}
 	}
 

@@ -53,20 +53,17 @@ import org.eclipse.ui.PlatformUI;
  * Setting an error message hides a currently displayed message until
  * <code>clearErrorMessage</code> is called.
  */
-public class SystemMessageLine
-       extends Composite
-       implements ISystemMessageLine
-{
-	
+public class SystemMessageLine extends Composite implements ISystemMessageLine {
+
 	private Button moreButton;
 	private Label image;
-    private Text widget;
+	private Text widget;
 	private Stack messageStack = new Stack();
 	private static final int ERROR = 3;
 	private static final int WARNING = 2;
 	private static final int INFO = 1;
 	private static final int NONE = 0;
-	
+
 	private abstract class MyMessage {
 		/**
 		 * @return The Image of the message based on its type.
@@ -74,61 +71,60 @@ public class SystemMessageLine
 		Image getImage() {
 			int type = getType();
 			switch (type) {
-				case ERROR:
-					return JFaceResources.getImage(org.eclipse.jface.dialogs.Dialog.DLG_IMG_MESSAGE_ERROR);
-				case WARNING:
-					return JFaceResources.getImage(org.eclipse.jface.dialogs.Dialog.DLG_IMG_MESSAGE_WARNING);
-				case INFO:
-					return JFaceResources.getImage(org.eclipse.jface.dialogs.Dialog.DLG_IMG_MESSAGE_INFO);
-				default:
-					return JFaceResources.getImage(org.eclipse.jface.dialogs.Dialog.DLG_IMG_MESSAGE_INFO);
+			case ERROR:
+				return JFaceResources.getImage(org.eclipse.jface.dialogs.Dialog.DLG_IMG_MESSAGE_ERROR);
+			case WARNING:
+				return JFaceResources.getImage(org.eclipse.jface.dialogs.Dialog.DLG_IMG_MESSAGE_WARNING);
+			case INFO:
+				return JFaceResources.getImage(org.eclipse.jface.dialogs.Dialog.DLG_IMG_MESSAGE_INFO);
+			default:
+				return JFaceResources.getImage(org.eclipse.jface.dialogs.Dialog.DLG_IMG_MESSAGE_INFO);
 			}
 		}
-		
+
 		Color getColor() {
 			int type = getType();
 			switch (type) {
-				case ERROR:
-					return getColor(ISystemThemeConstants.MESSAGE_ERROR_COLOR);
-				case WARNING:
-					return getColor(ISystemThemeConstants.MESSAGE_WARNING_COLOR);
-				case INFO:
-					return getColor(ISystemThemeConstants.MESSAGE_INFORMATION_COLOR);
-				default: 
-					return getColor(ISystemThemeConstants.MESSAGE_INFORMATION_COLOR);
+			case ERROR:
+				return getColor(ISystemThemeConstants.MESSAGE_ERROR_COLOR);
+			case WARNING:
+				return getColor(ISystemThemeConstants.MESSAGE_WARNING_COLOR);
+			case INFO:
+				return getColor(ISystemThemeConstants.MESSAGE_INFORMATION_COLOR);
+			default:
+				return getColor(ISystemThemeConstants.MESSAGE_INFORMATION_COLOR);
 			}
 		}
-		
+
 		/**
 		 * @param symbolicName the name of the color in the current theme's color registry.
 		 * @return an SWT Color or null.
 		 */
-		private Color getColor(String symbolicName)
-		{
+		private Color getColor(String symbolicName) {
 			ColorRegistry registry = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
 			Color result = registry.get(symbolicName);
 			return result;
 		}
-		
+
 		boolean isError() {
 			return getType() == ERROR;
 		}
-		
+
 		/**
 		 * @return The id of the message or null if there is none.
 		 */
 		abstract String getID();
-		
+
 		/**
 		 * @return The full text of the message to be shown in the message line.
 		 */
 		abstract String getText();
-		
+
 		/**
 		 * @return The tooltip for the message, to be shown when hovering over the message line.
 		 */
 		abstract String getTooltip();
-		
+
 		/**
 		 * @return true if there is more text that can be shown in a message details pane.
 		 */
@@ -138,25 +134,25 @@ public class SystemMessageLine
 		 * @return The SystemMessage version of the message.
 		 */
 		abstract SystemMessage toSystemMessage();
-		
+
 		/**
 		 * @return The type of the message. One of NONE, INFO, WARNING, or ERROR.
 		 */
 		abstract int getType();
-		
+
 		/**
 		 * @return The data values associated with this message.
 		 */
 		abstract Object[] getData();
-		
+
 		/**
 		 * @return true if the message resulted form a strange occurence.
 		 */
 		abstract boolean isStrange();
 	}
-	
+
 	private class MySystemMessage extends MyMessage {
-		
+
 		private SystemMessage message = null;
 
 		/**
@@ -172,7 +168,7 @@ public class SystemMessageLine
 		SystemMessage toSystemMessage() {
 			return message;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.ui.messages.SystemMessageLine.MyMessage#getID()
 		 */
@@ -193,7 +189,7 @@ public class SystemMessageLine
 		String getTooltip() {
 			return message.getFullMessageID() + ": " + getText();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.ui.messages.SystemMessageLine.MyMessage#hasMore()
 		 */
@@ -201,14 +197,14 @@ public class SystemMessageLine
 			String text2 = message.getLevelTwoText();
 			return (text2 != null) && (text2.length() > 0);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.ui.messages.SystemMessageLine.MyMessage#wasStrange()
 		 */
 		boolean isStrange() {
 			return message.getIndicator() == SystemMessage.UNEXPECTED;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.ui.messages.SystemMessageLine.MyMessage#getData()
 		 */
@@ -225,31 +221,32 @@ public class SystemMessageLine
 			int result = NONE;
 			if (message != null) {
 				switch (message.getIndicator()) {
-					case SystemMessage.COMPLETION:
-					case SystemMessage.INFORMATION:
-					case SystemMessage.INQUIRY:
-						result = INFO;
-						break;
-					case SystemMessage.ERROR:
-					case SystemMessage.UNEXPECTED:
-						result = ERROR;
-						break;
-					case SystemMessage.WARNING:
-						result = WARNING;
-						break;
-					default: result = NONE;
+				case SystemMessage.COMPLETION:
+				case SystemMessage.INFORMATION:
+				case SystemMessage.INQUIRY:
+					result = INFO;
+					break;
+				case SystemMessage.ERROR:
+				case SystemMessage.UNEXPECTED:
+					result = ERROR;
+					break;
+				case SystemMessage.WARNING:
+					result = WARNING;
+					break;
+				default:
+					result = NONE;
 				}
 			}
 			return result;
 		}
 	}
-	
+
 	private class MyImpromptuMessage extends MyMessage {
-		
+
 		private int type = NONE;
 		private String text1 = "";
 		private String text2 = null;
-		
+
 		/**
 		 * @param type The type of the message.
 		 * @param text1 The first-level text of the message.
@@ -258,7 +255,7 @@ public class SystemMessageLine
 			this.type = type;
 			this.text1 = text1;
 		}
-		
+
 		/**
 		 * @param type The type of the message.
 		 * @param text1 The first-level text of the message.
@@ -269,7 +266,7 @@ public class SystemMessageLine
 			this.text1 = text1;
 			this.text2 = text2;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.ui.messages.SystemMessageLine.MyMessage#toSystemMessage()
 		 */
@@ -278,57 +275,57 @@ public class SystemMessageLine
 			Object[] data = null;
 			if (text2 == null) {
 				id = isError() ? ISystemMessages.MSG_GENERIC_E : ISystemMessages.MSG_GENERIC_I;
-				data = new Object[] {text1};
+				data = new Object[] { text1 };
 			} else {
 				id = isError() ? ISystemMessages.MSG_GENERIC_E_HELP : ISystemMessages.MSG_GENERIC_I_HELP;
-				data = new Object[] {text1, text2};
+				data = new Object[] { text1, text2 };
 			}
 			SystemMessage result = RSEUIPlugin.getPluginMessage(id, data);
 			return result;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.ui.messages.SystemMessageLine.MyMessage#getID()
 		 */
 		String getID() {
 			return null;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.ui.messages.SystemMessageLine.MyMessage#getText()
 		 */
 		String getText() {
 			return text1;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.ui.messages.SystemMessageLine.MyMessage#getTooltip()
 		 */
 		String getTooltip() {
 			return text1;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.ui.messages.SystemMessageLine.MyMessage#hasMore()
 		 */
 		boolean hasMore() {
 			return text2 != null;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.ui.messages.SystemMessageLine.MyMessage#wasStrange()
 		 */
 		boolean isStrange() {
 			return false;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.ui.messages.SystemMessageLine.MyMessage#getData()
 		 */
 		Object[] getData() {
 			return new Object[0];
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.rse.ui.messages.SystemMessageLine.MyMessage#getType()
 		 */
@@ -336,12 +333,11 @@ public class SystemMessageLine
 			return type;
 		}
 	}
-	
+
 	/**
 	 * Creates a new message line as a child of the given parent.
 	 */
-	public SystemMessageLine(Composite parent)
-	{
+	public SystemMessageLine(Composite parent) {
 		super(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -350,15 +346,15 @@ public class SystemMessageLine
 		layout.marginHeight = 2;
 		layout.marginWidth = 3;
 		setLayout(layout);
-		
+
 		image = new Label(this, SWT.NONE);
 		image.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		
+
 		//  this is a read-only text field so it is tab enabled and readable by a screen reader.
 		widget = new Text(this, SWT.READ_ONLY | SWT.SINGLE);
 		widget.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
 		widget.setBackground(parent.getBackground());
-		
+
 		moreButton = new Button(this, SWT.NONE);
 		moreButton.setImage(RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_HELP_ID));
 		moreButton.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
@@ -377,36 +373,38 @@ public class SystemMessageLine
 					}
 				}
 			}
-		});	
+		});
 		// add accessibility information to the "more" button
 		moreButton.setToolTipText(SystemResources.RESID_MSGLINE_TIP);
 		moreButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
 				getHelp(e);
 			}
+
 			public void getHelp(AccessibleEvent e) {
 				e.result = moreButton.getToolTipText();
 			}
 		});
-		
+
 		addControlListener(new ControlListener() {
 			public void controlMoved(ControlEvent e) {
 			}
+
 			public void controlResized(ControlEvent e) {
 				adjustText();
 				layout();
 			}
 		});
-        addDisposeListener(new DisposeListener() {
+		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				widget.dispose();
 				moreButton.dispose();
 				image.dispose();
 			}
 		});
-        
-		showTopMessage(); 
-			
+
+		showTopMessage();
+
 	}
 
 	/* (non-Javadoc)
@@ -418,7 +416,7 @@ public class SystemMessageLine
 			popMessage();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#clearMessage()
 	 */
@@ -428,7 +426,7 @@ public class SystemMessageLine
 			popMessage();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#getErrorMessage()
 	 */
@@ -437,7 +435,7 @@ public class SystemMessageLine
 		if (message != null && message.isError()) return message.getText();
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#getMessage()
 	 */
@@ -455,7 +453,7 @@ public class SystemMessageLine
 		if (message != null && message.isError()) return message.toSystemMessage();
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setErrorMessage(java.lang.String)
 	 */
@@ -463,7 +461,7 @@ public class SystemMessageLine
 		MyMessage temp = new MyImpromptuMessage(ERROR, message);
 		pushMessage(temp);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)
 	 */
@@ -472,18 +470,17 @@ public class SystemMessageLine
 		pushMessage(temp);
 		logMessage(message);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setErrorMessage(java.lang.Throwable)
 	 */
-	public void setErrorMessage(Throwable throwable)
-	{
+	public void setErrorMessage(Throwable throwable) {
 		SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
 		message.makeSubstitution(throwable);
 		setErrorMessage(message);
 	}
-	
-    /**
+
+	/**
 	 * Set the message text. If the message line currently displays an error,
 	 * the message is stored and will be shown after a call to clearErrorMessage.
 	 */
@@ -505,7 +502,7 @@ public class SystemMessageLine
 		}
 		pushMessage(temp);
 	}
-	
+
 	/**
 	 * Pushes a new message onto the stack and shows it.
 	 * @param message The MyMessage to push on the stack.
@@ -514,7 +511,7 @@ public class SystemMessageLine
 		messageStack.push(message);
 		showTopMessage();
 	}
-	
+
 	/**
 	 * Pops a message off the message stack and shows the new top message.
 	 */
@@ -522,7 +519,7 @@ public class SystemMessageLine
 		if (!messageStack.isEmpty()) messageStack.pop();
 		showTopMessage();
 	}
-	
+
 	/**
 	 * Retrieves the top MyMessage from the stack
 	 * @return A MyMessage or null if the stack is empty.
@@ -531,7 +528,7 @@ public class SystemMessageLine
 		if (messageStack.isEmpty()) return null;
 		return (MyMessage) messageStack.peek();
 	}
-	
+
 	/**
 	 * Shows the top message on the stack. If the stack is empty it will "show" nothing.
 	 */
@@ -582,7 +579,7 @@ public class SystemMessageLine
 		boolean visible = message != null && message.hasMore();
 		moreButton.setVisible(visible);
 	}
-	
+
 	/**
 	 * Adjusts the text in the widget. The full text is stored in the data field of the
 	 * Text widget. The partial text is shown if the width of the containing control 
@@ -632,7 +629,7 @@ public class SystemMessageLine
 		}
 		logMessage(m.getType(), m.getID(), m.isStrange());
 	}
-	
+
 	/**
 	 * Sends a text message to the log.
 	 * @param type The type of the message - NONE, INFO, WARNING or ERROR.
@@ -642,18 +639,18 @@ public class SystemMessageLine
 	 */
 	private void logMessage(int type, String text, boolean stackTrace) {
 		switch (type) {
-			case ERROR:
-				Exception e = stackTrace ? new Exception("Stack Trace") : null;
-				SystemBasePlugin.logError(text, e);
-				break;
-			case WARNING:
-				SystemBasePlugin.logWarning(text);
-				break;
-			case INFO:
-			case NONE:
-			default:
-				SystemBasePlugin.logInfo(text);
+		case ERROR:
+			Exception e = stackTrace ? new Exception("Stack Trace") : null;
+			SystemBasePlugin.logError(text, e);
+			break;
+		case WARNING:
+			SystemBasePlugin.logWarning(text);
+			break;
+		case INFO:
+		case NONE:
+		default:
+			SystemBasePlugin.logInfo(text);
 		}
 	}
-	
+
 }

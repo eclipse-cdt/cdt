@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -26,13 +23,21 @@ import org.eclipse.core.runtime.IPath;
 public class IncludesTests extends PDOMTestBase {
 
 	protected ICProject project;
-	
+	protected PDOM pdom;
+
 	protected void setUp() throws Exception {
-		project = createProject("includesTests");
+		if (pdom == null) {
+			project = createProject("includesTests");
+			pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+		}
+		pdom.acquireReadLock();
 	}
 
+	protected void tearDown() throws Exception {
+		pdom.releaseReadLock();
+	}
+	
 	public void test1() throws Exception {
-		PDOM pdom = (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
 		IPath loc = project.getProject().getLocation().append("I2.h");
 		PDOMFile file = pdom.getFile(loc.toOSString());
 		assertNotNull(file);

@@ -25,6 +25,7 @@ public class PDOMTests extends TestSuite {
 		suite.addTestSuite(EnumerationTests.class);
 		suite.addTestSuite(ClassTests.class);
 		suite.addTestSuite(TypesTests.class);
+		suite.addTestSuite(IncludesTests.class);
 		
 		return suite;
 	}

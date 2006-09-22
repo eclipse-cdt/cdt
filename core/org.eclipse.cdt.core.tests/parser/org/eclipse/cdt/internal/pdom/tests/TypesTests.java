@@ -31,15 +31,21 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  */
 public class TypesTests extends PDOMTestBase {
 
-	protected ICProject project;
-	
+	protected PDOM pdom;
+
 	protected void setUp() throws Exception {
-		project = createProject("types");
+		if (pdom == null) {
+			ICProject project = createProject("types");
+			pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+		}
+		pdom.acquireReadLock();
 	}
 
+	protected void tearDown() throws Exception {
+		pdom.releaseReadLock();
+	}
+	
 	public void testC() throws Exception {
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
-		
 		// Get the binding for A::f
 		IBinding [] CAs = pdom.findBindings(Pattern.compile("CA"), new NullProgressMonitor());
 		assertEquals(1, CAs.length);
@@ -57,8 +63,6 @@ public class TypesTests extends PDOMTestBase {
 	}
 
 	public void testCPP() throws Exception {
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
-		
 		// Get the binding for A::f
 		IBinding [] As = pdom.findBindings(Pattern.compile("A"), new NullProgressMonitor());
 		assertEquals(1, As.length);
@@ -76,7 +80,6 @@ public class TypesTests extends PDOMTestBase {
 	}
 	
 	public void test145351() throws Exception {
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
 		IBinding [] bindings = pdom.findBindings(Pattern.compile("spinlock_t"), new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		ITypedef spinlock_t = (ITypedef)bindings[0];

@@ -76,8 +76,9 @@
   Persistence is always done case sensitive; Persistence cannot be disabled for system types.</li>
 <li><b>Moved</b> several <b>RSE Model Objects and Interfaces</b> from org.eclipse.rse.ui to core:
   <ul>
-    <li>(UI) <code>org.eclipse.rse.model</code> --&gt; <code>org.eclipse.rse.core.model</code></li>
     <li>(UI) <code>org.eclipse.rse.filters</code> --&gt; <code>org.eclipse.rse.core.filters</code></li>
+    <li>(UI) <code>org.eclipse.rse.model</code> --&gt; <code>org.eclipse.rse.core.model</code></li>
+    <li>(UI) <code>org.eclipse.rse.references</code> --&gt; <code>org.eclipse.rse.core.references</code></li>
     <li>(UI) <code>org.eclipse.rse.subsystems.servicesubsystem</code> --&gt; <code>org.eclipse.rse.core.subsystems</code></li>
   </ul> 
   Client code can be adapted to the new locations easily by invoking "Organize Imports" except for

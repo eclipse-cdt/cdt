@@ -68,6 +68,7 @@ org.eclipse.rse.core
 org.eclipse.rse.core.comm
 org.eclipse.rse.core.filters
 org.eclipse.rse.core.model
+org.eclipse.rse.core.references
 org.eclipse.rse.core.servicesubsystem
 org.eclipse.rse.core.subsystems
 org.eclipse.rse.core.subsystems.util
@@ -106,7 +107,6 @@ org.eclipse.rse.processes.ui.actions
 org.eclipse.rse.processes.ui.dialogs
 org.eclipse.rse.processes.ui.propertypages
 org.eclipse.rse.processes.ui.view
-org.eclipse.rse.references
 org.eclipse.rse.services
 org.eclipse.rse.services.clientserver
 org.eclipse.rse.services.clientserver.archiveutils

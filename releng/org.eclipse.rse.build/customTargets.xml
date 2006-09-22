@@ -428,7 +428,10 @@
 	</target>
 
 	<target name="rseserver-os-tar" depends="rseserver-os-collect">
-		<tar destfile="${buildDirectory}/${buildLabel}/rseserver-${buildId}-${os}.tar" basedir="${working}/collector" includes="*"/>
+		<tar destfile="${buildDirectory}/${buildLabel}/rseserver-${buildId}-${os}.tar">
+			<tarfileset dir="${working}/collector" mode="755" includes="*.pl,*.sh" />
+			<tarfileset dir="${working}/collector" mode="644" excludes="*.pl,*.sh" />
+		</tar>
 		<delete dir="${working}/collector" />
 	</target>
 	<target name="rseserver-os-zip" depends="rseserver-os-collect">
@@ -441,9 +444,6 @@
 		<copy todir="${working}/collector">
 			<fileset dir="${working}/scripts/${os}" includes="*"/>
 		</copy>
-		<chmod perm="755">
-			<fileset dir="${working}/collector" includes="*"/>
-		</chmod>
 		<copy todir="${working}/collector">
 			<fileset dir="${working}/data" includes="*"/>
 		</copy>
@@ -455,9 +455,6 @@
 		<copy todir="${working}/collector">
 			<fileset dir="${working}/jars" includes="*"/>
 		</copy>
-		<chmod perm="755">
-			<fileset dir="${working}/collector" includes="*.pl,*.sh"/>
-		</chmod>
 	</target>
 
 	<!-- =====================================================================

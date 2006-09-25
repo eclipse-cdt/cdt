@@ -278,6 +278,7 @@ public abstract class AbstractSystemWizardPage
 		}		
 // dwd		configureMessageLine();
 		msgLine = new SystemMessageLine(myComposite);
+		msgLine.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		if (pendingMessage!=null)
 		  setMessage(pendingMessage);
 		if (pendingErrorMessage!=null)

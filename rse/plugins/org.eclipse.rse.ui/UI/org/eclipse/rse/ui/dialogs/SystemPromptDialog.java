@@ -781,6 +781,7 @@ public abstract class SystemPromptDialog
 	{
 		//System.out.println("INSIDE CREATEMESSAGELINE");		
 		fMessageLine= new SystemMessageLine(c);
+		fMessageLine.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		Display.getCurrent().asyncExec(this);
 		return fMessageLine;
 	}

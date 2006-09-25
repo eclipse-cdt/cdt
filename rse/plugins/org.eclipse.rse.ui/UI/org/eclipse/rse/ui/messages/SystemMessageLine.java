@@ -16,8 +16,6 @@
 
 package org.eclipse.rse.ui.messages;
 
-import java.util.Stack;
-
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.rse.core.SystemBasePlugin;
@@ -58,7 +56,8 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	private Button moreButton;
 	private Label image;
 	private Text widget;
-	private Stack messageStack = new Stack();
+	private MyMessage infoMessage = null;
+	private MyMessage errorMessage = null;
 	private static final int ERROR = 3;
 	private static final int WARNING = 2;
 	private static final int INFO = 1;
@@ -341,9 +340,6 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	 */
 	public SystemMessageLine(Composite parent) {
 		super(parent, SWT.NONE);
-		if (parent.getLayout() instanceof GridLayout) {
-			setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		}
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.verticalSpacing = 0;
@@ -369,7 +365,7 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 
 			public void widgetSelected(SelectionEvent e) {
 				if (e.getSource().equals(moreButton)) {
-					MyMessage message = getTopMessage();
+					MyMessage message = getCurrentMessage();
 					if (message != null) {
 						SystemMessage m = message.toSystemMessage();
 						Shell shell = getShell();
@@ -407,97 +403,61 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 				image.dispose();
 			}
 		});
-
-		showTopMessage();
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#clearErrorMessage()
-	 */
-	public void clearErrorMessage() {
-		MyMessage message = getTopMessage();
-		if (message != null && message.isError()) {
-			popMessage();
-		}
+		showCurrentMessage();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#clearMessage()
 	 */
 	public void clearMessage() {
-		MyMessage message = getTopMessage();
-		if (message != null && !message.isError()) {
-			popMessage();
-		}
+		infoMessage = null;
+		showCurrentMessage();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#getErrorMessage()
+	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#clearErrorMessage()
 	 */
-	public String getErrorMessage() {
-		String result = null;
-		MyMessage message = getTopMessage();
-		if (message != null && message.isError()) {
-			result = message.getText();
-		}
-		return result;
+	public void clearErrorMessage() {
+		errorMessage = null;
+		showCurrentMessage();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#getMessage()
+	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)
 	 */
-	public String getMessage() {
-		String result = null;
-		MyMessage message = getTopMessage();
-		if (message != null && !message.isError()) {
-			result = message.getText();
+	public void setMessage(SystemMessage message) {
+		infoMessage = new MySystemMessage(message);
+		if (infoMessage.isError()) {
+			infoMessage = new MyImpromptuMessage(NONE, message.getLevelOneText(), message.getLevelTwoText());
 		}
-		return result;
+		showCurrentMessage();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#getSystemErrorMessage()
+	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setMessage(java.lang.String)
 	 */
-	public SystemMessage getSystemErrorMessage() {
-		SystemMessage result = null;
-		MyMessage message = getTopMessage();
-		if (message != null && message.isError()) {
-			result = message.toSystemMessage();
-		}
-		return result;
+	public void setMessage(String message) {
+		infoMessage = new MyImpromptuMessage(INFO, message);
+		showCurrentMessage();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setErrorMessage(java.lang.String)
 	 */
 	public void setErrorMessage(String message) {
-		MyMessage temp = new MyImpromptuMessage(ERROR, message);
-		setErrorMessage(temp);
+		errorMessage = new MyImpromptuMessage(ERROR, message);
+		showCurrentMessage();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)
 	 */
 	public void setErrorMessage(SystemMessage message) {
-		MyMessage temp = new MySystemMessage(message);
-		setErrorMessage(temp);
 		logMessage(message);
+		errorMessage = new MySystemMessage(message);
+		showCurrentMessage();
 	}
 	
-	/**
-	 * Place an error message on the stack. Removes the previous error message if one
-	 * is on the top of the stack. Leaves any other messages on the stack.
-	 * @param message
-	 */
-	private void setErrorMessage(MyMessage message) {
-		MyMessage top = getTopMessage();
-		if (top != null && top.getType() == ERROR) {
-			popMessage();
-		}
-		pushMessage(message);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setErrorMessage(java.lang.Throwable)
 	 */
@@ -508,79 +468,41 @@ public class SystemMessageLine extends Composite implements ISystemMessageLine {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setMessage(java.lang.String)
+	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#getMessage()
 	 */
-	public void setMessage(String message) {
-		MyMessage temp = new MyImpromptuMessage(INFO, message);
-		setMessage(temp);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)
-	 */
-	public void setMessage(SystemMessage message) {
-		MyMessage temp = new MySystemMessage(message);
-		if (temp.isError()) {
-			temp = new MyImpromptuMessage(NONE, message.getLevelOneText(), message.getLevelTwoText());
-		}
-		setMessage(temp);
-	}
-	
-	/**
-	 * Sets the non-error message for the message line. If there is an error message on the top of the stack
-	 * then this is placed "underneath" that message. If there is a non-error message on the top then
-	 * it replaces that message.
-	 * @param message
-	 */
-	private void setMessage(MyMessage message) {
-		MyMessage top = getTopMessage();
-		messageStack.clear();
-		if (top.getType() == ERROR) {
-			messageStack.push(message);
-			message = top;
-		}
-		pushMessage(message);
-	}
-
-	/**
-	 * Pushes a new message onto the stack and shows it.
-	 * @param message The MyMessage to push on the stack.
-	 */
-	private void pushMessage(MyMessage message) {
-		messageStack.push(message);
-		showTopMessage();
-	}
-
-	/**
-	 * Pops a message off the message stack and shows the new top message.
-	 */
-	private void popMessage() {
-		if (!messageStack.isEmpty()) {
-			messageStack.pop();
-		}
-		showTopMessage();
-	}
-
-	/**
-	 * Retrieves the top MyMessage from the stack
-	 * @return A MyMessage or null if the stack is empty.
-	 */
-	private MyMessage getTopMessage() {
-		MyMessage result = null;
-		if (!messageStack.isEmpty()) {
-			result = (MyMessage) messageStack.peek();
-		}
+	public String getMessage() {
+		String result = infoMessage != null ? infoMessage.getText() : null;
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#getErrorMessage()
+	 */
+	public String getErrorMessage() {
+		String result = errorMessage != null ? errorMessage.getText() : null;
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#getSystemErrorMessage()
+	 */
+	public SystemMessage getSystemErrorMessage() {
+		SystemMessage result = errorMessage != null ? errorMessage.toSystemMessage() : null;
+		return result;
+	}
+
+	private MyMessage getCurrentMessage() {
+		return errorMessage != null ? errorMessage : infoMessage;
+	}
+	
 	/**
 	 * Shows the top message on the stack. If the stack is empty it will "show" nothing.
 	 */
-	private void showTopMessage() {
-		MyMessage message = getTopMessage();
+	private void showCurrentMessage() {
+		MyMessage message = getCurrentMessage();
 		setIcon(message);
 		setText(message);
-		setMoreButton(message);
+		setMoreButton(message);		
 		layout();
 	}
 

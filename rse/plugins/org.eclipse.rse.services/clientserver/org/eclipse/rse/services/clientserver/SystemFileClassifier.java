@@ -151,7 +151,7 @@ public class SystemFileClassifier {
     	String args[] = new String[3];
     	args[0] = "sh";
     	args[1] = "-c";
-    	args[2] = "file " + absolutePath;
+    	args[2] = "file \"" + absolutePath + "\"";
     		
     	BufferedReader poutReader = null;
     	
@@ -205,14 +205,15 @@ public class SystemFileClassifier {
     	// default type
     	String type = "file";
     	
-    	// look for colon
+    	String name = line;
+    	String fulltype = "";
+    	
+    	// Look for colon. Name appears before colon. Full type appears after the colon
     	int colon = line.indexOf(':');
-    	
-    	// name appears before colon
-    	String name = line.substring(0, colon);
-    	
-    	// the full type appears after the colon
-    	String fulltype = line.substring(colon + 1, line.length()).trim();
+    	if (colon >= 0) {
+        	name = line.substring(0, colon);
+        	fulltype = line.substring(colon + 1, line.length()).trim();
+    	}
     	
     	// if it is a *.class file, then we look for main method and qulaified class name
     	// as part of the classification

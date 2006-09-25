@@ -77,6 +77,7 @@ import org.eclipse.rse.ui.actions.SystemSubMenuManager;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -767,7 +768,22 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	 */
 	public void systemResourceChanged(ISystemResourceChangeEvent event)
 	{
-
+		try
+		{
+			Tree tree = getTree();
+			boolean isDisposed = tree.isDisposed();
+			if (isDisposed)
+			{
+				dispose();
+				System.out.println("disposed");
+				return;
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
 		boolean madeChange = false;
 		Object parent = event.getParent();
 		Object child = event.getSource();

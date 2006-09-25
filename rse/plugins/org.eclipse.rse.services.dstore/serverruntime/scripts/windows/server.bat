@@ -9,8 +9,8 @@ setlocal
 set PORT=%1
 set TIMEOUT=%2
 set TICKET=%3
-if xxx%1 == xxx set PORT=4033
-if xxx%2 == xxx set TIMEOUT=120000
+if "%1" == "" set PORT=4033
+if "%2" == "" set TIMEOUT=120000
 
 if "%1" == "?" goto usage
 if "%1" == "/?" goto usage
@@ -28,7 +28,7 @@ GOTO done
 CALL setup.bat
 
 :doneSetup
-if xxx%3 == xxx goto runNoTicket
+if "%3" == "" goto runNoTicket
 @echo on
 java -DA_PLUGIN_PATH=%A_PLUGIN_PATH% -DDSTORE_SPIRIT_ON=true org.eclipse.dstore.core.server.Server %PORT% %TIMEOUT% %TICKET%
 goto done

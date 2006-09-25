@@ -27,7 +27,7 @@ java -DA_PLUGIN_PATH=%A_PLUGIN_PATH% org.eclipse.dstore.core.server.ServerLaunch
 GOTO Done
 
 :usage
-@echo Usage: daemon.bat [^<port^> ^| ^<low port^>-^<high port^>] [ ^<low server port^>-^<high server port^>]
+@echo Usage: daemon.bat [^<port^> ^| ^<low port^>-^<high port^>] [^<low server port^>-^<high server port^>]
 pause
 
 :Done

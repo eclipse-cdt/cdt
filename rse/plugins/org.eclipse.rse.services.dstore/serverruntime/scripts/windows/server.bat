@@ -8,7 +8,8 @@ setlocal
 
 IF NOT "%1" == "/user" GOTO noUserRestriction
 set USER_RESTRICTION=-Dclient.username=%2
-shift 2
+shift
+shift
 :noUserRestriction
 set PORT=%1
 set TIMEOUT=%2

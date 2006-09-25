@@ -9,6 +9,7 @@ IF NOT "%1"=="" SET DaemonPort=%1
 IF NOT "%2"=="" SET ServerPortRange=%2
 
 if "%1" == "?" goto usage
+if "%1" == "/?" goto usage
 if "%1" == "/h" goto usage
 if "%1" == "help" goto usage
 if "%1" == "/help" goto usage

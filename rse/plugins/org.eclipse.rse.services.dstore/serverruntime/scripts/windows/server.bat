@@ -9,13 +9,14 @@ setlocal
 set PORT=%1
 set TIMEOUT=%2
 set TICKET=%3
+if xxx%1 == xxx set PORT=4033
+if xxx%2 == xxx set TIMEOUT=120000
 
 if "%1" == "?" goto usage
+if "%1" == "/?" goto usage
 if "%1" == "/h" goto usage
 if "%1" == "help" goto usage
 if "%1" == "/help" goto usage
-if xxx%1 == xxx set PORT=4033
-if xxx%2 == xxx set TIMEOUT=120000
 
 IF NOT "%A_PLUGIN_PATH%"=="" GOTO doneSetup
 IF EXIST setup.bat GOTO HaveSetup

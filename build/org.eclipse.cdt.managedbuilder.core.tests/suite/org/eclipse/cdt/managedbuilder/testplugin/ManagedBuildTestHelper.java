@@ -178,7 +178,7 @@ public class ManagedBuildTestHelper {
 			try {
 				workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, monitor);
 			} catch (CoreException e2) {
-				Assert.assertTrue(false);
+				Assert.fail("failed to remove the project: " + e2.getLocalizedMessage());
 			}
 		}
 	}
@@ -351,7 +351,16 @@ public class ManagedBuildTestHelper {
 			StringBuffer testBuffer = readContentsStripLineEnds(project, testFile);
 			StringBuffer benchmarkBuffer = readContentsStripLineEnds(project, benchmarkFile);
 			if (!testBuffer.toString().equals(benchmarkBuffer.toString())) {
-				Assert.fail("File " + testFile.lastSegment() + " does not match its benchmark.");
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("File ").append(testFile.lastSegment()).append(" does not match its benchmark.\n ");
+				buffer.append("expected:\n ");
+				buffer.append("\"").append(benchmarkBuffer).append("\"");
+				buffer.append("\n\n ");
+				buffer.append("but was:\n ");
+				buffer.append("\"").append(testBuffer).append("\"");
+				buffer.append("\n\n ");
+						
+				Assert.fail(buffer.toString());
 			} 
 		}
 		return true;

@@ -51,14 +51,6 @@ team sharing), but you are free to use any directory.</li>
 server code from the package appropriate to your operating system. For linux this command is:
 <pre>tar -xf rseserver-1.0-linux.tar</pre>
 </li>
-<li>Still in the /opt/rseserver directory, run the following configuration
-commands:
-<pre>
-chmod 755 server.pl
-chmod 755 daemon.pl
-chmod 755 auth.pl
-</pre>
-</li>
 </ol>
 </div>
 
@@ -83,20 +75,23 @@ to the java command in /usr/bin by running the following command:<pre>ln -s  /op
 not run under root, it will be unable to authenticate connecting users.) Run
 the following commands:<pre>su -l root
 cd /opt/rseserver
-perl ./daemon.pl</pre>
+perl ./daemon.pl [daemonPort] [serverPortRange]</pre>
 </li>
 </ol>
-Note that the server daemon runs on port 4035. You can also start the
-daemon.unix in the same way.<br></br>
+Note that the server daemon runs on port 4035 by default. You can pass the optional
+daemonPort argument to force a different port if you want.<br/>
+If your daemon runs behind a firewall, you may want to specify the optional
+<i>serverPortRange</i> argument to restrict selected server ports to the
+range given:<pre>
+perl ./daemon.pl 4035 10000-10010</pre>
+
 <p><b>To start the server manually</b></p>
 <div class="p">If you do not have root access on a remote machine, you can
 start the server manually for your particular user id only. Run
 the following commands:<pre>cd /opt/rseserver
 perl ./server.pl [port]</pre>
 These commands run the server.pl
-script located in the /opt/rseserver directory. If this does not work, try
-changing the permission attributes on server.pl (for example, enter <samp class="codeph">chmod
-755 server.pl</samp>. The port parameter to the server.pl script is
+script located in the /opt/rseserver directory. The port parameter to the server.pl script is
 optional. If you do not specify a port, then the server will pick the first
 one available and print the port number to standard out. By default, it is
 usually 4033. If you would like to use a different port, you will then have
@@ -104,6 +99,11 @@ to enter this port number in port property for the Files subsystem for your
 connection in the Remote System Explorer (see <span class="uicontrol">Connecting to the
 Remote Server</span>, below). Otherwise, you do not need to change this
 property.</div>
+<div class="p"><div class="note">
+Note: When you connect RSE to the server, the server will terminate as 
+soon as you disconnect the client. The daemon, however, will not terminate.
+</div></div>
+
 <p><b>Rexec Server Launcher</b></p>
 <div class="p">If you have Rexec access enabled to your remote system, you
 can also have the server started automatically by an Rexec command from the

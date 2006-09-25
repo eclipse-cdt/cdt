@@ -39,42 +39,53 @@ for Windows.</li>
 </div>
 <p><b>Starting the server</b></p>
 <p>You can start the RSE communications server with the server manually, or with a daemon.</p>
-<div class="p">To start the server manually:
+
+<div class="p"><b>To start the server with a the server daemon:</b>
 <ol>
-<li>Configure your CLASSPATH and then start the communications server. In a command prompt, enter:
+<li>Simply double click the <code>daemon.bat</code> program to start a server daemon.</li>
+<li>You can edit the <code>daemon.bat</code> file to change properties for the daemon,
+like a specific daemon port to use or to force a port range for the server
+(in order to comply with firewalls).</li>
+</ol>
+<blockquote>
+<p>Note that the server daemon <b>does not</b> enforce any user
+authentication. If you run the server daemon, any user can connect to the machine, work
+with the file system and run commands.
+<span style="font-weight: bold;">Use of the server daemon on Windows systems is not recommended</span>.
+</p>
+The server daemon runs on port 4035 by default. You can pass the optional
+daemonPort argument to force a different port if you want.<br/>
+If your daemon runs behind a firewall, you may want to specify the optional
+<i>serverPortRange</i> argument to restrict selected server ports to the
+range given:<pre>
+daemon.bat 4035 10000-10010</pre>
+</blockquote>
+</div>
+
+<div class="p"><b>To start the server manually:</b>
+<ol>
+<li>Simply double click on the <code>server.bat</code> program to start a
+dstore server. The server will pick the first port available and print 
+the port number. By default, it is usually 4033. 
+You will then have to enter this port number in port property for the 
+Files subsystem for your connection in the Remote System Explorer.</li>
+<li>For security reasons, the server will only wait a limited time
+until a client connects (12000 seconds by default).</li>
+<li>In order to start the server with an exactly specified port or
+timeout, open a Windows command prompt and enter:
 <pre>
 c:<br/>
 cd \rseserver<br/>
-setup.bat<br/>
-server.bat [port]
+server.bat [port] [timeout]
 </pre>
-The port parameter to the server.bat program is optional. If
-you do not specify a port, the server will pick the first port
-available and print the port number to standard out. By default, it is usually 4033.
-You will then have to enter this port number in the port property for the
-Files subsystem for your connection in the Remote System Explorer (see
-Connecting below).
 </li>
-</ol>
-</div>
-<div class="p">To start the server with a the server daemon:
-<ol>
-<li>First, you need to configure your CLASSPATH and then start the
-server daemon. In a command prompt, enter:
-<pre>
-c:<br/>
-cd:\rseserver<br/>
-setup.bat<br/>
-daemon.bat
-</pre>
-Note that the server daemon <b>does not</b> enforce any user
-authentication. If you run the server daemon, any user can connect to the machine, work
-with the file system and run commands.
-<span style="font-weight: bold;">Use of the server daemon on Windows systems is not recommended</span>.</li>
+<li>When you connect RSE to the server, the server will terminate as soon as you
+disconnect the client. The daemon, however, will not terminate.</li>
 </ol>
 </div>
 </div>
-<div class="p">To connect to a remote Windows server:</div>
+
+<div class="p"><b>To connect to a remote Windows server:</b>
 <ol>
 <li><span>Switch to the Remote System Explorer perspective.</span></li>
 <li><span>In the Remote Systems view, <b>New Connection</b> is
@@ -91,6 +102,8 @@ the <b>Host Name</b> field, for example, jsandler.</span></li>
 appears in the Properties view after the connection is created.</span></li>
 <li><span>Click <b>Finish</b> to define your system. </span></li>
 </ol>
+</div>
+
 <div class="p">
 <div class="note"><span class="notetitle">Note: </span>To check your
 port number, right-click your connection or subsystem

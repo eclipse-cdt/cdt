@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -36,7 +37,9 @@ public interface ICColorConstants {
     String C_BRACES = "c_braces"; //$NON-NLS-1$
     /** The color key for numbers. */
     String C_NUMBER = "c_numbers"; //$NON-NLS-1$
-	/* The color key for everthing in C code for which no other color is specified. */
+    /** The color key for headers. */
+    String C_HEADER = "c_header"; //$NON-NLS-1$
+    /* The color key for everthing in C code for which no other color is specified. */
 	String C_DEFAULT= "c_default"; //$NON-NLS-1$
     
     /**

@@ -47,6 +47,7 @@ public final class CCodeScanner extends AbstractCScanner {
         ICColorConstants.C_OPERATOR,
         ICColorConstants.C_BRACES,
         ICColorConstants.C_NUMBER,
+        ICColorConstants.C_HEADER,
 		ICColorConstants.C_DEFAULT,
 	};
 	
@@ -100,6 +101,10 @@ public final class CCodeScanner extends AbstractCScanner {
         token = getToken(ICColorConstants.C_NUMBER);
         NumberRule numberRule = new NumberRule(token);
         rules.add(numberRule);
+        
+        token = getToken(ICColorConstants.C_HEADER);
+        CHeaderRule headerRule = new CHeaderRule(token);
+        rules.add(headerRule);
         
         token = getToken(ICColorConstants.C_OPERATOR);
         COperatorRule opRule = new COperatorRule(token);

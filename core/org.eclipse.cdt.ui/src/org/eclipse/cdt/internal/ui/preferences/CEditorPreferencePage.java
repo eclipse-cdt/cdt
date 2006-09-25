@@ -68,6 +68,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
         PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.operators"), ICColorConstants.C_OPERATOR }, { //$NON-NLS-1$
         PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.braces"), ICColorConstants.C_BRACES }, { //$NON-NLS-1$            
         PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.numbers"), ICColorConstants.C_NUMBER }, { //$NON-NLS-1$            
+        PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.headers"), ICColorConstants.C_HEADER }, { //$NON-NLS-1$            
 		PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.others"), ICColorConstants.C_DEFAULT }, { //$NON-NLS-1$
         PreferencesMessages.getString("CEditorPreferencePage.syntaxPage.cCommentTaskTags"), PreferenceConstants.EDITOR_TASK_TAG_COLOR } //$NON-NLS-1$
 	};
@@ -120,6 +121,8 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_NUMBER + "_bold")); //$NON-NLS-1$
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_OPERATOR));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_OPERATOR + "_bold")); //$NON-NLS-1$
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_HEADER));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_HEADER + "_bold")); //$NON-NLS-1$
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.SUB_WORD_NAVIGATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.MATCHING_BRACKETS_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.MATCHING_BRACKETS));
@@ -184,6 +187,9 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
         PreferenceConverter.setDefault(store, ICColorConstants.C_BRACES, new RGB(0, 0, 0));
         store.setDefault(ICColorConstants.C_BRACES + "_bold", false); //$NON-NLS-1$
+
+		PreferenceConverter.setDefault(store, ICColorConstants.C_HEADER, new RGB(42, 0, 255));
+		store.setDefault(ICColorConstants.C_HEADER + "_bold", false); //$NON-NLS-1$
 
         PreferenceConverter.setDefault(store, ICColorConstants.C_NUMBER, new RGB(0, 0, 0));
         store.setDefault(ICColorConstants.C_NUMBER + "_bold", false); //$NON-NLS-1$

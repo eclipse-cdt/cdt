@@ -1222,6 +1222,13 @@ Additional special types exist to flag options of special relevance to the build
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="contextId" type="string">
+            <annotation>
+               <documentation>
+                  specify a fully qualified context id for supplying context sensitive help for an option.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="valueHandler" type="string">
             <annotation>
                <documentation>

@@ -775,7 +775,6 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			if (isDisposed)
 			{
 				dispose();
-				System.out.println("disposed");
 				return;
 			}
 		}

@@ -3,6 +3,8 @@ REM
 REM Start an RSE Windows Daemon
 REM Usage: daemon.bat [<port> | <low port>-<high port>] [ <low server port>-<high server port>]
 REM
+setlocal
+
 SET DaemonPort=4035
 SET ServerPortRange=
 IF NOT "%1"=="" SET DaemonPort=%1
@@ -33,3 +35,4 @@ GOTO Done
 pause
 
 :Done
+endlocal

@@ -689,6 +689,10 @@ class SubSetAction extends BrowseAction
 
 		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.removeSystemResourceChangeListener(this);
+		registry.removeSystemRemoteChangeListener(this);
+		
+		SystemTableTreeView viewer = (SystemTableTreeView)getRSEViewer();
+		viewer.dispose();
 		super.dispose();
 	}
 

@@ -37,11 +37,13 @@ if "%3" == "" goto runNoTicket
 REM The ticket parameter may be used internally by the daemon for starting a server
 @echo on
 java %USER_RESTRICTION% -DA_PLUGIN_PATH=%A_PLUGIN_PATH% -DDSTORE_SPIRIT_ON=true org.eclipse.dstore.core.server.Server %PORT% %TIMEOUT% %TICKET%
+@echo off
 goto done
 
 :runNoTicket
 @echo on
 java %USER_RESTRICTION% -DA_PLUGIN_PATH=%A_PLUGIN_PATH% -DDSTORE_SPIRIT_ON=true org.eclipse.dstore.core.server.Server %PORT% %TIMEOUT%
+@echo off
 goto done
 
 :usage

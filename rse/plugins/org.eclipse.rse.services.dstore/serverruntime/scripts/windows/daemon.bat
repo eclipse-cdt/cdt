@@ -23,7 +23,9 @@ GOTO Done
 :HaveSetup
 CALL setup.bat
 :DoneSetup
+@echo on
 java -DA_PLUGIN_PATH=%A_PLUGIN_PATH% org.eclipse.dstore.core.server.ServerLauncher %DaemonPort% %ServerPortRange%
+@echo off
 GOTO Done
 
 :usage

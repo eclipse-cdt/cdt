@@ -1,11 +1,15 @@
 @echo off
 REM
 REM Start an RSE Windows Server
-REM Usage: server.bat [<port>] [<timeout>] [<clientUserID>]
+REM Usage: server.bat [/user <id>] [<port>] [<timeout>]
 REM
 
 setlocal
 
+IF NOT "%1" == "/user" GOTO noUserRestriction
+set USER_RESTRICTION=-Dclient.username=%2
+shift 2
+:noUserRestriction
 set PORT=%1
 set TIMEOUT=%2
 set TICKET=%3
@@ -29,17 +33,18 @@ CALL setup.bat
 
 :doneSetup
 if "%3" == "" goto runNoTicket
+REM The ticket parameter may be used internally by the daemon for starting a server
 @echo on
-java -DA_PLUGIN_PATH=%A_PLUGIN_PATH% -DDSTORE_SPIRIT_ON=true org.eclipse.dstore.core.server.Server %PORT% %TIMEOUT% %TICKET%
+java %USER_RESTRICTION% -DA_PLUGIN_PATH=%A_PLUGIN_PATH% -DDSTORE_SPIRIT_ON=true org.eclipse.dstore.core.server.Server %PORT% %TIMEOUT% %TICKET%
 goto done
 
 :runNoTicket
 @echo on
-java -DA_PLUGIN_PATH=%A_PLUGIN_PATH% -DDSTORE_SPIRIT_ON=true org.eclipse.dstore.core.server.Server %PORT% %TIMEOUT%
+java %USER_RESTRICTION% -DA_PLUGIN_PATH=%A_PLUGIN_PATH% -DDSTORE_SPIRIT_ON=true org.eclipse.dstore.core.server.Server %PORT% %TIMEOUT%
 goto done
 
 :usage
-@echo Usage: server.bat ^<port^> ^<timeout^>  
+@echo Usage: server.bat [/user ^<id^>] [^<port^>] [^<timeout^>]
 pause
 
 :done

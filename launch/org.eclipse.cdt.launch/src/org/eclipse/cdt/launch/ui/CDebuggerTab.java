@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
@@ -130,6 +131,12 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 
 	public CDebuggerTab(boolean attachMode) {
 		fAttachMode = attachMode;
+		// If the default debugger has not been set, use the MI debugger.
+		// The MI plug-in also does this, but it may not have been loaded yet. Bug 158391.
+		ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDefaultDebugConfiguration();
+		if (dc == null) {
+			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault(ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE, "org.eclipse.cdt.debug.mi.core.CDebuggerNew"); //$NON-NLS-1$
+		}
 	}
 
 	public void createControl(Composite parent) {
@@ -214,6 +221,10 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		}
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, false);
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING, false);
+		ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
+		if (dc != null) {
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, dc.getID());
+		}
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) {

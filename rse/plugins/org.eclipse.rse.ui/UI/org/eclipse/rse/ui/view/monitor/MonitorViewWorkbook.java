@@ -52,12 +52,13 @@ public class MonitorViewWorkbook extends Composite
 
 	public void dispose()
 	{
-		if (!_folder.isDisposed())
+		
+		//if (!_folder.isDisposed())
 		{
 			for (int i = 0; i < _folder.getItemCount(); i++)
 			{
 				CTabItem item = _folder.getItem(i);
-				if (!item.isDisposed())
+				//if (!item.isDisposed())
 				{
 					MonitorViewPage page = (MonitorViewPage) item.getData();
 					page.dispose();

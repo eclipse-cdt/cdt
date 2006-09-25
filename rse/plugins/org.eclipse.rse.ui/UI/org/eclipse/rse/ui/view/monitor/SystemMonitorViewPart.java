@@ -691,8 +691,7 @@ class SubSetAction extends BrowseAction
 		registry.removeSystemResourceChangeListener(this);
 		registry.removeSystemRemoteChangeListener(this);
 		
-		SystemTableTreeView viewer = (SystemTableTreeView)getRSEViewer();
-		viewer.dispose();
+
 		super.dispose();
 	}
 

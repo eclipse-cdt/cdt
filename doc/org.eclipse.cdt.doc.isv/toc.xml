@@ -7,9 +7,9 @@
 	<topic label="Programmer&apos;s Guide" href="guide/index.html">
 		<link toc="topics_Guide.xml" />
 	</topic>
-	<topic label="Reference">
+	<!--topic label="Reference">
 		<link toc="topics_Reference.xml" />
-	</topic>
+	</topic-->
 	<topic label="Examples Guide">
 		<link toc="topics_Samples.xml" />
 	</topic>

@@ -75,6 +75,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.ui.actions.TextSearchGroup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
@@ -151,6 +152,7 @@ import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.JoinLinesAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.dnd.TextEditorDropAdapter;
 import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
@@ -171,7 +173,7 @@ import org.eclipse.cdt.internal.ui.util.CUIHelp;
 /**
  * C specific text editor.
  */
-public class CEditor extends TextEditor implements ISelectionChangedListener, IShowInSource, IReconcilingParticipant, ICReconcilingListener {
+public class CEditor extends TextEditor implements ISelectionChangedListener, IReconcilingParticipant, ICReconcilingListener {
 
 	/**
 	 * The information provider used to present focusable information
@@ -690,6 +692,22 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 				}
 
 			};
+		}
+		if (required == IShowInSource.class) {
+			ICElement ce= null;
+			try {
+				ce= SelectionConverter.getElementAtOffset(this);
+			} catch (CModelException ex) {
+				ce= null;
+			}
+			if (ce != null) { 
+				final ISelection selection= new StructuredSelection(ce);
+				return new IShowInSource() {
+					public ShowInContext getShowInContext() {
+						return new ShowInContext(getEditorInput(), selection);
+					}
+				};
+			}
 		}
 		if (ProjectionAnnotationModel.class.equals(required)) {
 			if (fProjectionSupport != null) {
@@ -1464,15 +1482,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		}
 		
 		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
-	 *
-	 * This is required by the IShowInSource interface for the "ShowIn"
- 	 * navigation menu generalized in Eclipse.
-	 */
-	public ShowInContext getShowInContext() {
-		return new ShowInContext( getEditorInput(), null );
 	}
 
 	/*

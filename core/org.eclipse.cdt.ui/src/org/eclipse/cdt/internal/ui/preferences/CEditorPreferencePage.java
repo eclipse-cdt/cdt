@@ -200,8 +200,8 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	 * @see PreferencePage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICHelpContextIds.C_EDITOR_PREF_PAGE);
+		super.createControl(parent);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.C_EDITOR_PREF_PAGE);
 	}
 
 	protected void handleListSelection() {

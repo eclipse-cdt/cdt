@@ -1530,7 +1530,8 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		File fileobj = null;
 		boolean isVirtual = false;
 		String fullName = subject.getValue();
-		if (queryType.equals(UNIVERSAL_FILTER_DESCRIPTOR)) {
+		if (queryType.equals(UNIVERSAL_FILTER_DESCRIPTOR)) 
+		{
 			isVirtual = ArchiveHandlerManager.isVirtual(fullName);
 			String filterValue = subject.getValue();
 			// . translates to home dir
@@ -1541,7 +1542,27 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			}
 			if (!isVirtual)
 				fileobj = new File(filterValue);
-		} else {
+		} 
+		else if (queryType.equals(UNIVERSAL_FILE_DESCRIPTOR))
+		{
+			String name = subject.getName();
+			String path = subject.getValue();
+			fileobj = new File(path, name);			
+		}
+		else if (queryType.equals(UNIVERSAL_FOLDER_DESCRIPTOR))
+		{
+			String name = subject.getName();			
+			String path = subject.getValue();
+			if (name.length() == 0)
+			{
+				fileobj = new File(path);
+			}
+			else
+			{
+				fileobj = new File(path, name);		
+			}
+		}
+		else {
 			UniversalServerUtilities.logError(CLASSNAME,
 					"Invalid query type to handleQueryGetRemoteObject", null);
 			return statusDone(status);
@@ -1585,6 +1606,8 @@ private DataElement createDataElementFromLSString(DataElement subject,
 
 			// DKM - do basic property stuff here
 			subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
+			System.out.println("got file:");
+			System.out.println(subject);
 
 			/*
 			// classify the file too 

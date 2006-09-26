@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CModelException;
@@ -249,5 +250,13 @@ public class BaseTestCase extends TestCase {
 			Thread.sleep(50);
 		} while (System.currentTimeMillis() < endTime);
 		throw new Exception("Indexer did not complete in time!");
+	}
+	
+	protected void runEventQueue(int time) {
+		long endTime= System.currentTimeMillis()+time;
+		do {
+			while (Display.getCurrent().readAndDispatch());
+		}
+		while(System.currentTimeMillis() < endTime);
 	}
 }

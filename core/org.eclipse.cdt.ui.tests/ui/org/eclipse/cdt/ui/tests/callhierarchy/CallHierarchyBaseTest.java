@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
@@ -70,14 +69,6 @@ public class CallHierarchyBaseTest extends BaseTestCase {
 		assertNotNull(ch);
 		Tree tree= ch.getTreeViewer().getTree();
 		return tree;
-	}
-
-	protected void runEventQueue(int time) {
-		long endTime= System.currentTimeMillis()+time;
-		do {
-			while (Display.getCurrent().readAndDispatch());
-		}
-		while(System.currentTimeMillis() < endTime);
 	}
 
 	protected void checkTreeNode(Tree tree, int i0, String label) {

@@ -19,7 +19,7 @@ public class GLDErrorParser extends AbstractErrorParser {
 
 	private static final ErrorPattern[] patterns = {
 		new ErrorPattern("(.*)\\(\\.text\\+.*\\): (.*)", 1, 0, 2, 0, IMarkerGenerator.SEVERITY_ERROR_RESOURCE), //$NON-NLS-1
-		new ErrorPattern("ld(\\.exe)?: ([Ww]arning .*)", 2, IMarkerGenerator.SEVERITY_WARNING), //$NON-NLS-1
+		new ErrorPattern("ld(\\.exe)?: ([Ww]arning(:)? .*)", 2, IMarkerGenerator.SEVERITY_WARNING), //$NON-NLS-1
 		new ErrorPattern("ld(\\.exe)?: (.*)", 0, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
 			public String getDesc(Matcher matcher) {
 				// add in the name of the link command to give it some context

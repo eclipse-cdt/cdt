@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.tests.BaseTestCase;
@@ -31,6 +32,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 
 public class ResolveBindingTests extends BaseTestCase  {
 
+	private static final int WAIT_FOR_INDEXER = 5000;
 	private ICProject fCProject;
 	private PDOM fPdom;
 
@@ -88,7 +90,7 @@ public class ResolveBindingTests extends BaseTestCase  {
 	public void testNamespaceVarBinding() throws Exception {
 		String content = readTaggedComment("namespace-var-test");
 		IFile file= createFile(fCProject.getProject(), "nsvar.cpp", content);
-		waitForIndexer(fPdom, file, 2000);
+		waitForIndexer(fPdom, file, WAIT_FOR_INDEXER);
 		
 		IASTTranslationUnit astTU= createPDOMBasedAST(fCProject, file);
 		IASTName name= getSelectedName(astTU, content.indexOf("var"), 3);
@@ -105,7 +107,7 @@ public class ResolveBindingTests extends BaseTestCase  {
 	public void _testNamespaceVarBinding_156519() throws Exception {
 		String content = readTaggedComment("namespace-var-test");
 		IFile file= createFile(fCProject.getProject(), "nsvar.cpp", content);
-		waitForIndexer(fPdom, file, 2000);
+		waitForIndexer(fPdom, file, WAIT_FOR_INDEXER);
 		
 		IASTTranslationUnit astTU= createPDOMBasedAST(fCProject, file);
 
@@ -116,4 +118,45 @@ public class ResolveBindingTests extends BaseTestCase  {
 		name= getSelectedName(astTU, content.indexOf("var; // r2"), 3);
 		checkBinding(name, IVariable.class);
 	}
+	
+	// {testMethods.h}
+	// class MyClass {
+	// public:
+	//    void method();
+	// };
+	
+	// {testMethods.cpp}
+	// #include "testMethods.h"
+	// void MyClass::method() {
+	//    method(); // r1
+	// }
+	//
+	// void func() {
+    //	   MyClass m, *n;
+    //	   m.method(); // r2
+    //	   n->method(); // r3
+    // }
+	public void _testMethodBinding_158735() throws Exception {
+		String content = readTaggedComment("testMethods.h");
+		IFile hfile= createFile(fCProject.getProject(), "testMethods.h", content);
+		content = readTaggedComment("testMethods.cpp");
+		IFile cppfile= createFile(fCProject.getProject(), "testMethods.cpp", content);
+		waitForIndexer(fPdom, hfile, WAIT_FOR_INDEXER);
+		
+		IASTTranslationUnit astTU= createPDOMBasedAST(fCProject, cppfile);
+
+		IASTName name= getSelectedName(astTU, content.indexOf("method"), 6);
+		IBinding binding= name.resolveBinding();
+		checkBinding(name, ICPPMethod.class);
+
+		name= getSelectedName(astTU, content.indexOf("method(); // r1"), 6);
+		checkBinding(name, ICPPMethod.class);
+
+		name= getSelectedName(astTU, content.indexOf("method(); // r2"), 6);
+		checkBinding(name, ICPPMethod.class);
+
+		name= getSelectedName(astTU, content.indexOf("method(); // r3"), 6);
+		checkBinding(name, ICPPMethod.class);
+	}
+
 }

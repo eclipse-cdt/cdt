@@ -6345,6 +6345,7 @@
       <projectType
             id="pathconvertertest.projecttype"
             isAbstract="false"
+            isTest="true"
             name="pathconvertertest">
          <configuration
                id="pathconvertertest.tcnn.tonn"

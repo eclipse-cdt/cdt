@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.pdom.db;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel.MapMode;
 
@@ -23,16 +24,35 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class Chunk {
 
-	private MappedByteBuffer buffer;
+	private ByteBuffer buffer;
 	
 	// Cache info
 	private Database db;
 	int index;
 	
 	Chunk(RandomAccessFile file, int offset) throws CoreException {
+		index = offset / Database.CHUNK_SIZE;
 		try {
-			index = offset / Database.CHUNK_SIZE;
 			buffer = file.getChannel().map(MapMode.READ_WRITE, offset, Database.CHUNK_SIZE);
+		} catch (IOException e) {
+			try {
+				buffer = ByteBuffer.allocateDirect(Database.CHUNK_SIZE);
+				file.seek(offset);
+				file.getChannel().read(buffer);
+			} catch (IOException e2) {			
+				throw new CoreException(new DBStatus(e2));
+			}
+		}
+	}
+
+	public boolean save() throws CoreException {
+		// if we're not memory mapped, write the buffer out to the file
+		if (buffer instanceof MappedByteBuffer)
+			return false;
+		try {
+			db.file.seek(index * Database.CHUNK_SIZE);
+			db.file.getChannel().write(buffer);
+			return true;
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}

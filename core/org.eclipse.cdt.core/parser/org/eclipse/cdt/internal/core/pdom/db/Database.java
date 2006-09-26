@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.Status;
  */
 public class Database {
 
-	private final RandomAccessFile file;
+	final RandomAccessFile file;
 	Chunk[] toc;
 	
 	private long malloced;
@@ -81,6 +81,21 @@ public class Database {
 			addBlock(getChunk(block), CHUNK_SIZE, block); 
 		}
 		malloced = freed = 0;
+	}
+	
+	/**
+	 * This saves the chunks to the file. Normally this isn't necessary.
+	 * However if the memory map fails, direct byte buffers are used instead
+	 * and need to be saved back to disk.
+	 * @throws CoreException
+	 */
+	public boolean save() throws CoreException {
+		if (!toc[0].save())
+			return false;
+		for (int i = 1; i < toc.length; ++i)
+			if (toc[i] != null)
+				toc[i].save();
+		return true;
 	}
 	
 	/**

@@ -56,6 +56,7 @@ public class PDOM extends PlatformObject
 		implements IPDOM, IPDOMResolver, IPDOMWriter {
 
 	private Database db;
+	private boolean needSave = true;
 	
 	public static final int VERSION = 11;
 	// 0 - the beginning of it all
@@ -416,6 +417,13 @@ public class PDOM extends PlatformObject
 	
 	public void releaseWriteLock() {
 		synchronized (mutex) {
+			// save the database
+			try {
+				if (needSave)
+					needSave = db.save();
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
 			if (lockCount < 0)
 				++lockCount;
 			mutex.notifyAll();

@@ -17,7 +17,6 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer;
@@ -55,14 +54,6 @@ public class PDOMTestBase extends TestCase {
 		final ICProject cprojects[] = new ICProject[1];
 		workspace.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IPDOMManager manager = CCorePlugin.getPDOMManager(); 
-				// Make sure the default is no indexer
-				String oldDefault = manager.getDefaultIndexerId();
-				if (!PDOMNullIndexer.ID.equals(oldDefault))
-					manager.setDefaultIndexerId(PDOMNullIndexer.ID);
-				else
-					oldDefault = null;
-				
 				// Create the project
 				IProject project = workspace.getRoot().getProject(projectName);
 				project.create(monitor);
@@ -78,6 +69,12 @@ public class PDOMTestBase extends TestCase {
 				description.setNatureIds(newNatures);
 				project.setDescription(description, monitor);
 
+				ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
+
+				// Set the indexer to the null indexer
+				// We'll invoke the fast indexer manually later
+				CCorePlugin.getPDOMManager().setIndexerId(cproject, PDOMNullIndexer.ID);
+				
 				// Import the files at the root
 				ImportOperation importOp = new ImportOperation(project.getFullPath(),
 						rootDir, FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
@@ -93,7 +90,6 @@ public class PDOMTestBase extends TestCase {
 							CTestPlugin.PLUGIN_ID, 0, "Import Interrupted", e));
 				}
 				
-				ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
 
 				// Index the project
 				PDOMFastIndexer indexer = new PDOMFastIndexer();
@@ -101,10 +97,7 @@ public class PDOMTestBase extends TestCase {
 				PDOMFastReindex reindex = new PDOMFastReindex(indexer);
 				reindex.run(monitor);
 				
-				// Set the default indexer back
-				if (oldDefault != null)
-					manager.setDefaultIndexerId(oldDefault);
-
+				// Return the project
 				cprojects[0] = cproject;
 			}
 		}, null);

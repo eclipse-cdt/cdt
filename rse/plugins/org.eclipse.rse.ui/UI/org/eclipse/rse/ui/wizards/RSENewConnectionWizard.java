@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Javier Montalvo Orus (Symbian) - Bug 158555 - newConnectionWizardDelegates can only be used once
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -92,7 +92,7 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_POINT_ID);
 		
 		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[0];
+			IConfigurationElement element = elements[i];
 			
 			if (element.getName().equals(NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_CONFIG_NAME)) {
 				String systemTypeID = element.getAttribute(NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_CONFIG_ATTRIBUTE_SYSTEMTYPE);

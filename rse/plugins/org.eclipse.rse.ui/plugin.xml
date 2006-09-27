@@ -819,7 +819,7 @@ Contributors:
       <colorDefinition
             label="%RemoteCommandsForeground.label"
             categoryId="org.eclipse.rse.ui.remotecommandsview.presentation"
-            value="COLOR_WHITE"
+            value="COLOR_BLACK"
             id="REMOTE_COMMANDS_VIEW_FG_COLOR">
          <description>
             %RemoteCommandsForeground.description
@@ -828,7 +828,7 @@ Contributors:
        <colorDefinition
             label="%RemoteCommandsBackground.label"
             categoryId="org.eclipse.rse.ui.remotecommandsview.presentation"
-            value="COLOR_BLACK"
+            value="COLOR_WHITE"
             id="REMOTE_COMMANDS_VIEW_BG_COLOR">
          <description>
             %RemoteCommandsBackground.description

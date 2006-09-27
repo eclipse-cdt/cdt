@@ -1205,44 +1205,55 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		ModifiableRegion commentRange = new ModifiableRegion();
 		for (int i = 0; i < partitions.length; i++) {
 			ITypedRegion partition = partitions[i];
-			// TLETODO [folding] add support for Cppdoc comment?
-			boolean singleLine = ICPartitions.C_SINGLE_LINE_COMMENT.equals(partition.getType());
-			if (singleLine || ICPartitions.C_MULTI_LINE_COMMENT.equals(partition.getType())) {
-				Position position= singleLine ? null : createCommentPosition(alignRegion(partition, ctx));
+			boolean singleLine= false;
+			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(partition.getType())) {
+				Position position= createCommentPosition(alignRegion(partition, ctx));
 				if (position != null) {
+					if (startLine >= 0 && endLine - startLine >= fMinCommentLines) {
+						Position projection = createCommentPosition(alignRegion(commentRange, ctx));
+						if (projection != null) {
+							comments.add(new Tuple(new CProjectionAnnotation(collapse, doc.get(projection.offset, Math.min(16, projection.length)), true), projection));
+						}
+						startLine= -1;
+					}
 					comments.add(new Tuple(new CProjectionAnnotation(collapse, doc.get(position.offset, Math.min(16, position.length)), true), position));
 				} else {
-					// if comment starts at column 0 and spans only one line
-					// and is adjacent to a previous line comment, add it
-					// to the commentRange
-					int lineNr = doc.getLineOfOffset(partition.getOffset());
-					IRegion lineRegion = doc.getLineInformation(lineNr);
-					boolean isLineStart = partition.getOffset() == lineRegion.getOffset();
-					if (!isLineStart) {
+					singleLine= true;
+				}
+			} else {
+				singleLine= ICPartitions.C_SINGLE_LINE_COMMENT.equals(partition.getType());
+			}
+			if (singleLine) {
+				// if comment starts at column 0 and spans only one line
+				// and is adjacent to a previous line comment, add it
+				// to the commentRange
+				int lineNr = doc.getLineOfOffset(partition.getOffset());
+				IRegion lineRegion = doc.getLineInformation(lineNr);
+				boolean isLineStart = partition.getOffset() == lineRegion.getOffset();
+				if (!isLineStart) {
+					continue;
+				}
+				if (!singleLine) {
+					singleLine = lineRegion.getOffset() + lineRegion.getLength() >= partition.getOffset() + partition.getLength();
+					if (!singleLine) {
 						continue;
 					}
-					if (!singleLine) {
-						singleLine = lineRegion.getOffset() + lineRegion.getLength() >= partition.getOffset() + partition.getLength();
-						if (!singleLine) {
-							continue;
+				}
+				if (startLine < 0 || lineNr - endLine > 1) {
+					if (startLine >= 0 && endLine - startLine >= fMinCommentLines) {
+						Position projection = createCommentPosition(alignRegion(commentRange, ctx));
+						if (projection != null) {
+							comments.add(new Tuple(new CProjectionAnnotation(collapse, doc.get(projection.offset, Math.min(16, projection.length)), true), projection));
 						}
 					}
-					if (startLine < 0 || lineNr - endLine > 1) {
-						if (startLine >= 0 && endLine - startLine >= fMinCommentLines) {
-							Position projection = createCommentPosition(alignRegion(commentRange, ctx));
-							if (projection != null) {
-								comments.add(new Tuple(new CProjectionAnnotation(collapse, doc.get(projection.offset, Math.min(16, projection.length)), true), projection));
-							}
-						}
-						startLine = lineNr;
-						endLine = lineNr;
-						commentRange.offset = lineRegion.getOffset();
-						commentRange.length = lineRegion.getLength();
-					} else {
-						endLine = lineNr;
-						int delta = lineRegion.getOffset() + lineRegion.getLength() - commentRange.offset - commentRange.length;
-						commentRange.length += delta;
-					}
+					startLine = lineNr;
+					endLine = lineNr;
+					commentRange.offset = lineRegion.getOffset();
+					commentRange.length = lineRegion.getLength();
+				} else {
+					endLine = lineNr;
+					int delta = lineRegion.getOffset() + lineRegion.getLength() - commentRange.offset - commentRange.length;
+					commentRange.length += delta;
 				}
 			}
 		}
@@ -1253,13 +1264,16 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			}
 		}
 		if (!comments.isEmpty()) {
-			// first comment is header comment
+			// first comment starting before line 10 is considered the header comment
 			Iterator iter = comments.iterator();
 			Tuple tuple = (Tuple) iter.next();
-			if (ctx.collapseHeaderComments()) {
-				tuple.annotation.markCollapsed();
-			} else {
-				tuple.annotation.markExpanded();
+			int lineNr = doc.getLineOfOffset(tuple.position.getOffset());
+			if (lineNr < 10) {
+				if (ctx.collapseHeaderComments()) {
+					tuple.annotation.markCollapsed();
+				} else {
+					tuple.annotation.markExpanded();
+				}
 			}
 			ctx.addProjectionRange(tuple.annotation, tuple.position);
 			while (iter.hasNext()) {

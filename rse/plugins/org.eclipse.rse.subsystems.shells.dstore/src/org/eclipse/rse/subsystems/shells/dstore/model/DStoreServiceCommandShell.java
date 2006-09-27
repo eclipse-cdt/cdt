@@ -82,11 +82,18 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 				outputs[i] = output;
 			}
 		}
-		if (_lastRefreshJob == null || _lastRefreshJob.isComplete())
+		//if (_lastRefreshJob == null || _lastRefreshJob.isComplete())
 		{
 			_lastRefreshJob = new OutputRefreshJob(this, outputs, false);
 			_lastRefreshJob.schedule();
 		}
+		/*
+		else
+		{
+			_lastRefreshJob.addOutputs(outputs);
+			_lastRefreshJob.schedule();
+		}
+		*/
 	}
 	
 }

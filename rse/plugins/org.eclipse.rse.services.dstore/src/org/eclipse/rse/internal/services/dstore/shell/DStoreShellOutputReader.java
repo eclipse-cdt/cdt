@@ -50,10 +50,11 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 		if (_status != null && _keepRunning)
 		{
 			int newSize = _status.getNestedSize();
+
 			while (newSize > _statusOffset)
 			{
 				DataElement line = _status.get(_statusOffset++);
-				
+
 			
 				
 				String type = line.getType();

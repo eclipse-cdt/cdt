@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text;
@@ -106,11 +107,11 @@ public class CHeaderRule implements IRule {
 
 		int current = unread(scanner);
 		lookBehind++;
-		if (Character.isWhitespace(current)) {
+		if (Character.isWhitespace((char) current)) {
 			do {
 				current = unread(scanner);
 				lookBehind++;
-			} while (Character.isWhitespace(current));
+			} while (Character.isWhitespace((char) current));
 			scanner.read();
 
 			if (searchBackwards(scanner, "#include")) { //$NON-NLS-1$

@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -353,10 +354,10 @@ public abstract class OptionsConfigurationBlock {
 					monitor.beginTask("", 1); //$NON-NLS-1$
 					try {
 						if (fProject != null) {
-							monitor.setTaskName(PreferencesMessages.getFormattedString("OptionsConfigurationBlock.buildproject.taskname", fProject.getElementName())); //$NON-NLS-1$
+							monitor.setTaskName(NLS.bind(PreferencesMessages.OptionsConfigurationBlock_buildproject_taskname, fProject.getElementName())); 
 							fProject.getProject().build(IncrementalProjectBuilder.FULL_BUILD, new SubProgressMonitor(monitor,1));
 						} else {
-							monitor.setTaskName(PreferencesMessages.getString("OptionsConfigurationBlock.buildall.taskname")); //$NON-NLS-1$
+							monitor.setTaskName(PreferencesMessages.OptionsConfigurationBlock_buildall_taskname); 
 							CUIPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new SubProgressMonitor(monitor,1));
 						}
 					} catch (CoreException e) {
@@ -369,8 +370,8 @@ public abstract class OptionsConfigurationBlock {
 		} catch (InterruptedException e) {
 			// cancelled by user
 		} catch (InvocationTargetException e) {
-			String title= PreferencesMessages.getString("OptionsConfigurationBlock.builderror.title"); //$NON-NLS-1$
-			String message= PreferencesMessages.getString("OptionsConfigurationBlock.builderror.message"); //$NON-NLS-1$
+			String title= PreferencesMessages.OptionsConfigurationBlock_builderror_title; 
+			String message= PreferencesMessages.OptionsConfigurationBlock_builderror_message; 
 			ExceptionHandler.handle(e, getShell(), title, message);
 		}
 	}
@@ -383,10 +384,10 @@ public abstract class OptionsConfigurationBlock {
 					monitor.beginTask("", 1); //$NON-NLS-1$
 					
 					if (fProject != null) {
-						monitor.setTaskName(PreferencesMessages.getFormattedString("OptionsConfigurationBlock.parseproject.taskname", fProject.getElementName())); //$NON-NLS-1$
+						monitor.setTaskName(NLS.bind(PreferencesMessages.OptionsConfigurationBlock_parseproject_taskname, fProject.getElementName())); 
 						reParseHierarchy(fProject.getResource(), monitor);
 					} else {
-						monitor.setTaskName(PreferencesMessages.getString("OptionsConfigurationBlock.parseall.taskname")); //$NON-NLS-1$
+						monitor.setTaskName(PreferencesMessages.OptionsConfigurationBlock_parseall_taskname); 
 						reParseHierarchy(CUIPlugin.getWorkspace().getRoot(), monitor);
 					}
 					
@@ -396,8 +397,8 @@ public abstract class OptionsConfigurationBlock {
 		} catch (InterruptedException e) {
 			// cancelled by user
 		} catch (InvocationTargetException e) {
-			String title= PreferencesMessages.getString("OptionsConfigurationBlock.parseerror.title"); //$NON-NLS-1$
-			String message= PreferencesMessages.getString("OptionsConfigurationBlock.parseerror.message"); //$NON-NLS-1$
+			String title= PreferencesMessages.OptionsConfigurationBlock_parseerror_title; 
+			String message= PreferencesMessages.OptionsConfigurationBlock_parseerror_message; 
 			ExceptionHandler.handle(e, getShell(), title, message);
 		}
 	}	

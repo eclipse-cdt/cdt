@@ -25,6 +25,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
+/**
+ * @deprecated Use {@link org.eclipse.cdt.internal.ui.editor.CSourceViewer} instead.
+ */
 class PreviewSourceViewer extends SourceViewer implements IPropertyChangeListener {
 
 	/**

@@ -18,10 +18,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.ITextPresentationListener;
-import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.information.IInformationPresenter;
@@ -29,11 +30,19 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.ide.ResourceUtil;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
@@ -46,10 +55,9 @@ import org.eclipse.cdt.internal.ui.editor.CEditor.ITextConverter;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 
 /**
- * Adapted source viewer for CEditor
+ * Source viewer for C/C++ et al.
  */
-
-public class CSourceViewer extends ProjectionViewer implements ITextViewerExtension {
+public class CSourceViewer extends ProjectionViewer implements IPropertyChangeListener {
 
     /** Show outline operation id. */
     public static final int SHOW_OUTLINE = 101;
@@ -60,7 +68,40 @@ public class CSourceViewer extends ProjectionViewer implements ITextViewerExtens
     private IInformationPresenter fOutlinePresenter;
 
     private List fTextConverters;
-    
+
+	/**
+	 * This viewer's foreground color.
+	 * @since 4.0
+	 */
+	private Color fForegroundColor;
+	/**
+	 * The viewer's background color.
+	 * @since 4.0
+	 */
+	private Color fBackgroundColor;
+	/**
+	 * This viewer's selection foreground color.
+	 * @since 4.0
+	 */
+	private Color fSelectionForegroundColor;
+	/**
+	 * The viewer's selection background color.
+	 * @since 4.0
+	 */
+	private Color fSelectionBackgroundColor;
+	/**
+	 * The preference store.
+	 *
+	 * @since 4.0
+	 */
+	private IPreferenceStore fPreferenceStore;
+	/**
+	 * Is this source viewer configured?
+	 *
+	 * @since 4.0
+	 */
+	private boolean fIsConfigured;
+
 	/**
      * Creates new source viewer. 
      * @param editor
@@ -80,11 +121,35 @@ public class CSourceViewer extends ProjectionViewer implements ITextViewerExtens
         this.editor = editor;
 	}
     
+	/**
+     * Creates new source viewer. 
+     * @param parent
+	 * @param ruler
+	 * @param overviewRuler
+	 * @param isOverviewRulerShowing
+	 * @param styles
+	 * @param store
+	 */
+    public CSourceViewer(
+    		Composite parent,
+    		IVerticalRuler ruler,
+    		IOverviewRuler overviewRuler,
+    		boolean isOverviewRulerShowing,
+    		int styles,
+    		IPreferenceStore store) {
+		super(parent, ruler, overviewRuler, isOverviewRulerShowing, styles);
+		this.editor= null;
+        setPreferenceStore(store);
+	}
+    
 	public IContentAssistant getContentAssistant() {
 		return fContentAssistant;
 	}
     
 	public ILanguage getLanguage() {
+		if (editor == null) {
+			return null;
+		}
 		ICElement element = editor.getInputCElement();
 		if (element instanceof ITranslationUnit) {
 			try {
@@ -125,12 +190,112 @@ public class CSourceViewer extends ProjectionViewer implements ITextViewerExtens
      */
     public void configure(SourceViewerConfiguration configuration)
     {
+		/*
+		 * Prevent access to colors disposed in unconfigure(), see:
+		 *   https://bugs.eclipse.org/bugs/show_bug.cgi?id=53641
+		 *   https://bugs.eclipse.org/bugs/show_bug.cgi?id=86177
+		 */
+		StyledText textWidget= getTextWidget();
+		if (textWidget != null && !textWidget.isDisposed()) {
+			Color foregroundColor= textWidget.getForeground();
+			if (foregroundColor != null && foregroundColor.isDisposed())
+				textWidget.setForeground(null);
+			Color backgroundColor= textWidget.getBackground();
+			if (backgroundColor != null && backgroundColor.isDisposed())
+				textWidget.setBackground(null);
+		}
+
         super.configure(configuration);
         if (configuration instanceof CSourceViewerConfiguration)
         {            
             fOutlinePresenter = ((CSourceViewerConfiguration) configuration).getOutlinePresenter(editor);
             fOutlinePresenter.install(this);
         }
+
+		if (fPreferenceStore != null) {
+			fPreferenceStore.addPropertyChangeListener(this);
+			initializeViewerColors();
+		}
+
+		fIsConfigured= true;
+    }
+
+	protected void initializeViewerColors() {
+		if (fPreferenceStore != null) {
+
+			StyledText styledText= getTextWidget();
+
+			// ----------- foreground color --------------------
+			Color color= fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT)
+			? null
+			: createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, styledText.getDisplay());
+			styledText.setForeground(color);
+
+			if (fForegroundColor != null)
+				fForegroundColor.dispose();
+
+			fForegroundColor= color;
+
+			// ---------- background color ----------------------
+			color= fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)
+			? null
+			: createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
+			styledText.setBackground(color);
+
+			if (fBackgroundColor != null)
+				fBackgroundColor.dispose();
+
+			fBackgroundColor= color;
+
+			// ----------- selection foreground color --------------------
+			color= fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR)
+				? null
+				: createColor(fPreferenceStore, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, styledText.getDisplay());
+			styledText.setSelectionForeground(color);
+
+			if (fSelectionForegroundColor != null)
+				fSelectionForegroundColor.dispose();
+
+			fSelectionForegroundColor= color;
+
+			// ---------- selection background color ----------------------
+			color= fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR)
+				? null
+				: createColor(fPreferenceStore, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, styledText.getDisplay());
+			styledText.setSelectionBackground(color);
+
+			if (fSelectionBackgroundColor != null)
+				fSelectionBackgroundColor.dispose();
+
+			fSelectionBackgroundColor= color;
+		}
+    }
+
+    /**
+     * Creates a color from the information stored in the given preference store.
+     * Returns <code>null</code> if there is no such information available.
+     *
+     * @param store the store to read from
+     * @param key the key used for the lookup in the preference store
+     * @param display the display used create the color
+     * @return the created color according to the specification in the preference store
+     */
+    private Color createColor(IPreferenceStore store, String key, Display display) {
+
+        RGB rgb= null;
+
+        if (store.contains(key)) {
+
+            if (store.isDefault(key))
+                rgb= PreferenceConverter.getDefaultColor(store, key);
+            else
+                rgb= PreferenceConverter.getColor(store, key);
+
+            if (rgb != null)
+                return new Color(display, rgb);
+        }
+
+        return null;
     }
 
     /**
@@ -142,9 +307,60 @@ public class CSourceViewer extends ProjectionViewer implements ITextViewerExtens
             fOutlinePresenter.uninstall();  
             fOutlinePresenter= null;
         }
-        super.unconfigure();
+		if (fForegroundColor != null) {
+			fForegroundColor.dispose();
+			fForegroundColor= null;
+		}
+		if (fBackgroundColor != null) {
+			fBackgroundColor.dispose();
+			fBackgroundColor= null;
+		}
+
+		if (fPreferenceStore != null)
+			fPreferenceStore.removePropertyChangeListener(this);
+
+       super.unconfigure();
+
+		fIsConfigured= false;
     }
-    
+
+	/*
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		String property = event.getProperty();
+		if (AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND.equals(property)
+				|| AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT.equals(property)
+				|| AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND.equals(property)
+				|| AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property)
+				|| AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR.equals(property)
+				|| AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR.equals(property)
+				|| AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR.equals(property)
+				|| AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR.equals(property))
+		{
+			initializeViewerColors();
+		}
+	}
+
+	/**
+	 * Sets the preference store on this viewer.
+	 *
+	 * @param store the preference store
+	 *
+	 * @since 4.0
+	 */
+	public void setPreferenceStore(IPreferenceStore store) {
+		if (fIsConfigured && fPreferenceStore != null)
+			fPreferenceStore.removePropertyChangeListener(this);
+
+		fPreferenceStore= store;
+
+		if (fIsConfigured && fPreferenceStore != null) {
+			fPreferenceStore.addPropertyChangeListener(this);
+			initializeViewerColors();
+		}
+	}
+	
 	/**
      * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
 	 */
@@ -209,19 +425,6 @@ public class CSourceViewer extends ProjectionViewer implements ITextViewerExtens
 		if (fTextConverters != null) {
 			for (Iterator e = fTextConverters.iterator(); e.hasNext();)
 				 ((ITextConverter) e.next()).customizeDocumentCommand(getDocument(), command);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.ISourceViewer#setRangeIndication(int, int, boolean)
-	 */
-	public void setRangeIndication(int offset, int length, boolean moveCursor) {
-		// Fixin a bug in the ProjectViewer implemenation
-		// PR: https://bugs.eclipse.org/bugs/show_bug.cgi?id=72914
-		if (isProjectionMode()) {
-			super.setRangeIndication(offset, length, moveCursor);
-		} else {
-			super.setRangeIndication(offset, length, false);
 		}
 	}
 

@@ -38,6 +38,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -63,7 +64,7 @@ import org.eclipse.ui.PlatformUI;
  * CEditorHoverConfigurationBlock
  */
 public class CEditorHoverConfigurationBlock {
-	static final String DELIMITER= PreferencesMessages.getString("CEditorHoverConfigurationBlock.delimiter"); //$NON-NLS-1$
+	static final String DELIMITER= PreferencesMessages.CEditorHoverConfigurationBlock_delimiter; 
 
 	private static final int ENABLED_PROP= 0;
 	private static final int MODIFIER_PROP= 1;
@@ -204,7 +205,7 @@ public class CEditorHoverConfigurationBlock {
 		
 		// Disable/enable editor problem annotaion checkbox
 		fShowEditorAnnotationCheckbox = new Button(hoverComposite, SWT.CHECK);
-		fShowEditorAnnotationCheckbox.setText(PreferencesMessages.getString("CEditorPreferencePage.behaviourPage.EnableEditorProblemAnnotation")); //$NON-NLS-1$
+		fShowEditorAnnotationCheckbox.setText(PreferencesMessages.CEditorPreferencePage_behaviourPage_EnableEditorProblemAnnotation); 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= 0;
 		gd.horizontalSpan= 2;
@@ -213,7 +214,7 @@ public class CEditorHoverConfigurationBlock {
 		addFiller(hoverComposite);
 
 		Label label= new Label(hoverComposite, SWT.NONE);
-		label.setText(PreferencesMessages.getString("CEditorHoverConfigurationBlock.hoverPreferences")); //$NON-NLS-1$
+		label.setText(PreferencesMessages.CEditorHoverConfigurationBlock_hoverPreferences); 
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
@@ -245,11 +246,11 @@ public class CEditorHoverConfigurationBlock {
 		fHoverTable.setLayout(tableLayout);
 
 		fNameColumn= new TableColumn(fHoverTable, SWT.NONE);
-		fNameColumn.setText(PreferencesMessages.getString("CEditorHoverConfigurationBlock.nameColumnTitle")); //$NON-NLS-1$
+		fNameColumn.setText(PreferencesMessages.CEditorHoverConfigurationBlock_nameColumnTitle); 
 		fNameColumn.setResizable(true);
 		
 		fModifierColumn= new TableColumn(fHoverTable, SWT.NONE);
-		fModifierColumn.setText(PreferencesMessages.getString("CEditorHoverConfigurationBlock.modifierColumnTitle")); //$NON-NLS-1$
+		fModifierColumn.setText(PreferencesMessages.CEditorHoverConfigurationBlock_modifierColumnTitle); 
 		fModifierColumn.setResizable(true);
 
 		fHoverTableViewer= new CheckboxTableViewer(fHoverTable);
@@ -283,7 +284,7 @@ public class CEditorHoverConfigurationBlock {
 		
 		// Text field for modifier string
 		label= new Label(hoverComposite, SWT.LEFT);
-		label.setText(PreferencesMessages.getString("CEditorHoverConfigurationBlock.keyModifier")); //$NON-NLS-1$
+		label.setText(PreferencesMessages.CEditorHoverConfigurationBlock_keyModifier); 
 		fModifierEditor= new Text(hoverComposite, SWT.BORDER);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		fModifierEditor.setLayoutData(gd);
@@ -313,11 +314,11 @@ public class CEditorHoverConfigurationBlock {
 					String insertString;
 
 					if (needsPrefixDelimiter && needsPostfixDelimiter)
-						insertString= PreferencesMessages.getFormattedString("CEditorHoverConfigurationBlock.insertDelimiterAndModifierAndDelimiter", new String[] {Action.findModifierString(e.stateMask)}); //$NON-NLS-1$
+						insertString= NLS.bind(PreferencesMessages.CEditorHoverConfigurationBlock_insertDelimiterAndModifierAndDelimiter, new String[] {Action.findModifierString(e.stateMask)}); 
 					else if (needsPrefixDelimiter)
-						insertString= PreferencesMessages.getFormattedString("CEditorHoverConfigurationBlock.insertDelimiterAndModifier", new String[] {Action.findModifierString(e.stateMask)}); //$NON-NLS-1$
+						insertString= NLS.bind(PreferencesMessages.CEditorHoverConfigurationBlock_insertDelimiterAndModifier, new String[] {Action.findModifierString(e.stateMask)}); 
 					else if (needsPostfixDelimiter)
-						insertString= PreferencesMessages.getFormattedString("CEditorHoverConfigurationBlock.insertModifierAndDelimiter", new String[] {Action.findModifierString(e.stateMask)}); //$NON-NLS-1$
+						insertString= NLS.bind(PreferencesMessages.CEditorHoverConfigurationBlock_insertModifierAndDelimiter, new String[] {Action.findModifierString(e.stateMask)}); 
 					else
 						insertString= Action.findModifierString(e.stateMask);
 
@@ -335,7 +336,7 @@ public class CEditorHoverConfigurationBlock {
 
 		// Description
 		Label descriptionLabel= new Label(hoverComposite, SWT.LEFT);
-		descriptionLabel.setText(PreferencesMessages.getString("CEditorHoverConfigurationBlock.description")); //$NON-NLS-1$
+		descriptionLabel.setText(PreferencesMessages.CEditorHoverConfigurationBlock_description); 
 		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		gd.horizontalSpan= 2;
 		descriptionLabel.setLayoutData(gd);
@@ -496,7 +497,7 @@ public class CEditorHoverConfigurationBlock {
 		fHoverConfigs[i].fModifierString= modifiers;
 		fHoverConfigs[i].fStateMask= CEditorTextHoverDescriptor.computeStateMask(modifiers);
 		if (fHoverConfigs[i].fIsEnabled && fHoverConfigs[i].fStateMask == -1)
-			fStatus= new StatusInfo(IStatus.ERROR, PreferencesMessages.getFormattedString("CEditorHoverConfigurationBlock.modifierIsNotValid", fHoverConfigs[i].fModifierString)); //$NON-NLS-1$
+			fStatus= new StatusInfo(IStatus.ERROR, NLS.bind(PreferencesMessages.CEditorHoverConfigurationBlock_modifierIsNotValid, fHoverConfigs[i].fModifierString)); 
 		else
 			fStatus= new StatusInfo();
 		
@@ -532,7 +533,7 @@ public class CEditorHoverConfigurationBlock {
 
 	void updateStatus(HoverConfig hoverConfig) {
 		if (hoverConfig != null && hoverConfig.fIsEnabled && hoverConfig.fStateMask == -1)
-			fStatus= new StatusInfo(IStatus.ERROR, PreferencesMessages.getFormattedString("CEditorHoverConfigurationBlock.modifierIsNotValid", hoverConfig.fModifierString)); //$NON-NLS-1$
+			fStatus= new StatusInfo(IStatus.ERROR, NLS.bind(PreferencesMessages.CEditorHoverConfigurationBlock_modifierIsNotValid, hoverConfig.fModifierString)); 
 		else
 			fStatus= new StatusInfo();
 
@@ -543,9 +544,9 @@ public class CEditorHoverConfigurationBlock {
 				String label= getContributedHovers()[i].getLabel();
 				Integer stateMask= new Integer(fHoverConfigs[i].fStateMask);
 				if (fHoverConfigs[i].fStateMask == -1)
-					fStatus= new StatusInfo(IStatus.ERROR, PreferencesMessages.getFormattedString("CEditorHoverConfigurationBlock.modifierIsNotValidForHover", new String[] {fHoverConfigs[i].fModifierString, label})); //$NON-NLS-1$
+					fStatus= new StatusInfo(IStatus.ERROR, NLS.bind(PreferencesMessages.CEditorHoverConfigurationBlock_modifierIsNotValidForHover, new String[] {fHoverConfigs[i].fModifierString, label})); 
 				else if (stateMasks.containsKey(stateMask))
-					fStatus= new StatusInfo(IStatus.ERROR, PreferencesMessages.getFormattedString("CEditorHoverConfigurationBlock.duplicateModifier", new String[] {label, (String)stateMasks.get(stateMask)})); //$NON-NLS-1$
+					fStatus= new StatusInfo(IStatus.ERROR, NLS.bind(PreferencesMessages.CEditorHoverConfigurationBlock_duplicateModifier, new String[] {label, (String)stateMasks.get(stateMask)})); 
 				else
 					stateMasks.put(stateMask, label);
 			}

@@ -69,17 +69,17 @@ public class TodoTaskPropertyPage extends PropertyPage {
 		
 		fUseWorkspaceSettings= new SelectionButtonDialogField(SWT.RADIO);
 		fUseWorkspaceSettings.setDialogFieldListener(listener);
-		fUseWorkspaceSettings.setLabelText(PreferencesMessages.getString("TodoTaskPropertyPage.useworkspacesettings.label")); //$NON-NLS-1$
+		fUseWorkspaceSettings.setLabelText(PreferencesMessages.TodoTaskPropertyPage_useworkspacesettings_label); 
 
 		fChangeWorkspaceSettings= new SelectionButtonDialogField(SWT.PUSH);
-		fChangeWorkspaceSettings.setLabelText(PreferencesMessages.getString("TodoTaskPropertyPage.useworkspacesettings.change")); //$NON-NLS-1$
+		fChangeWorkspaceSettings.setLabelText(PreferencesMessages.TodoTaskPropertyPage_useworkspacesettings_change); 
 		fChangeWorkspaceSettings.setDialogFieldListener(listener);
 	
 		fUseWorkspaceSettings.attachDialogField(fChangeWorkspaceSettings);
 
 		fUseProjectSettings= new SelectionButtonDialogField(SWT.RADIO);
 		fUseProjectSettings.setDialogFieldListener(listener);
-		fUseProjectSettings.setLabelText(PreferencesMessages.getString("TodoTaskPropertyPage.useprojectsettings.label")); //$NON-NLS-1$
+		fUseProjectSettings.setLabelText(PreferencesMessages.TodoTaskPropertyPage_useprojectsettings_label); 
 	}
 
 	/*

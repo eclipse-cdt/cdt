@@ -132,9 +132,9 @@ public class CFileTypesPreferenceBlock {
 						
 					case COL_STATUS:
 						if (assoc.isUserDefined()) {
-							return PreferencesMessages.getString("CFileTypesPreferencePage.userDefined"); //$NON-NLS-1$
+							return PreferencesMessages.CFileTypesPreferencePage_userDefined; 
 						} else if (assoc.isPredefined()) {
-							return PreferencesMessages.getString("CFileTypesPreferencePage.preDefined"); //$NON-NLS-1$
+							return PreferencesMessages.CFileTypesPreferencePage_preDefined; 
 						}
 						return new String();
 				}
@@ -223,13 +223,13 @@ public class CFileTypesPreferenceBlock {
 		table.setLinesVisible(true);		
 		
 		col = new TableColumn(table, SWT.LEFT);
-		col.setText(PreferencesMessages.getString("CFileTypesPreferencePage.colTitlePattern")); //$NON-NLS-1$
+		col.setText(PreferencesMessages.CFileTypesPreferencePage_colTitlePattern); 
 		
 		col = new TableColumn(table, SWT.LEFT);
-		col.setText(PreferencesMessages.getString("CFileTypesPreferencePage.colTitleDescription")); //$NON-NLS-1$
+		col.setText(PreferencesMessages.CFileTypesPreferencePage_colTitleDescription); 
 		
 		col = new TableColumn(table, SWT.LEFT);
-		col.setText(PreferencesMessages.getString("CFileTypesPreferencePage.colTitleStatus")); //$NON-NLS-1$
+		col.setText(PreferencesMessages.CFileTypesPreferencePage_colTitleStatus); 
 
 		// Create the button pane
 
@@ -245,7 +245,7 @@ public class CFileTypesPreferenceBlock {
 		// New button
 		
 		fBtnNew		= new Button(buttonPane, SWT.PUSH);
-		fBtnNew.setText(PreferencesMessages.getString("CFileTypesPreferenceBlock.New..."));  //$NON-NLS-1$
+		fBtnNew.setText(PreferencesMessages.CFileTypesPreferenceBlock_New___);  
 		
 		gridData	= new GridData(GridData.FILL_HORIZONTAL);
 		gridData.widthHint	= SWTUtil.getButtonWidthHint(fBtnNew);
@@ -260,7 +260,7 @@ public class CFileTypesPreferenceBlock {
 		// Remove button
 		
 		fBtnRemove 	= new Button(buttonPane, SWT.PUSH);
-		fBtnRemove.setText(PreferencesMessages.getString("CFileTypesPreferenceBlock.Remove"));  //$NON-NLS-1$
+		fBtnRemove.setText(PreferencesMessages.CFileTypesPreferenceBlock_Remove);  
 		
 		gridData	= new GridData(GridData.FILL_HORIZONTAL);
 		gridData.widthHint	= SWTUtil.getButtonWidthHint(fBtnRemove);
@@ -508,7 +508,7 @@ public class CFileTypesPreferenceBlock {
 				settings= assoc.getContentType().getSettings(new ProjectScope(fInput));
 			} catch (CoreException e) {
 				ErrorDialog.openError(fBtnNew.getParent().getShell(),
-						PreferencesMessages.getString("CFileTypesPreferenceBlock.addAssociationError.title"), //$NON-NLS-1$
+						PreferencesMessages.CFileTypesPreferenceBlock_addAssociationError_title, 
 						null, e.getStatus());
 				return false;
 			}
@@ -538,8 +538,8 @@ public class CFileTypesPreferenceBlock {
 
 	private void reportDuplicateAssociation(CFileTypeAssociation assoc) {
 		MessageDialog.openError(fBtnNew.getParent().getShell(),
-				PreferencesMessages.getString("CFileTypesPreferenceBlock.addAssociationError.title"), //$NON-NLS-1$
-				Messages.format(PreferencesMessages.getString("CFileTypesPreferenceBlock.addAssociationErrorMessage"),  //$NON-NLS-1$
+				PreferencesMessages.CFileTypesPreferenceBlock_addAssociationError_title, 
+				Messages.format(PreferencesMessages.CFileTypesPreferenceBlock_addAssociationErrorMessage,  
 						assoc.getPattern(), assoc.getContentType().getName()));
 	}
 

@@ -50,7 +50,7 @@ public class CodeFormatterBlock {
 	private static final String ATTR_ID="id"; //$NON-NLS-1$
 	// This is a hack until we have a default Formatter.
 	// For now it is comment out in the plugin.xml
-	private static final String NONE=PreferencesMessages.getString("CodeFormatterPreferencePage.emptyName"); //$NON-NLS-1$
+	private static final String NONE=PreferencesMessages.CodeFormatterPreferencePage_emptyName; 
 
 
 	public CodeFormatterBlock(Preferences prefs) {
@@ -105,7 +105,7 @@ public class CodeFormatterBlock {
 
 		ControlFactory.createEmptySpace(control, 2);
 
-		Label label = ControlFactory.createLabel(control, PreferencesMessages.getString("CodeFormatterPreferencePage.selectionName")); //$NON-NLS-1$
+		Label label = ControlFactory.createLabel(control, PreferencesMessages.CodeFormatterPreferencePage_selectionName); 
 		label.setLayoutData(new GridData());
 		fFormatterCombo = new Combo(control, SWT.DROP_DOWN | SWT.READ_ONLY);
 		GridData gd = new GridData(GridData.GRAB_HORIZONTAL);

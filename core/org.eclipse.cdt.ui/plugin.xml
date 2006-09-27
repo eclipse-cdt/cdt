@@ -573,6 +573,11 @@
             id="org.eclipse.cdt.ui.preferences.CodeAssistPreferencePage">
       </page>
       <page
+            name="%ColoringPreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.CEditorColoringPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.CEditorColoringPreferencePage"/>
+      <page
             name="%CPluginTemplatePreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CTemplatePreferencePage"

@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
+
+import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 
 /**
  * Preference constants used in the CDT-UI preference store. Clients should only read the
@@ -33,21 +33,376 @@ public class PreferenceConstants {
 	private PreferenceConstants() {
 	}
     
-    /**
-     * Preference key suffix for bold text style preference keys.
-     */
-    public static final String EDITOR_BOLD_SUFFIX= "_bold"; //$NON-NLS-1$
+	/**
+	 * Preference key suffix for bold text style preference keys.
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_BOLD_SUFFIX= "_bold"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls if comment stubs will be added
-	 * automatically to newly created types and methods.
+	 * Preference key suffix for italic text style preference keys.
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_ITALIC_SUFFIX= "_italic"; //$NON-NLS-1$
+	
+	/**
+	 * Preference key suffix for strikethrough text style preference keys.
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_STRIKETHROUGH_SUFFIX= "_strikethrough"; //$NON-NLS-1$
+	
+	/**
+	 * Preference key suffix for underline text style preference keys.
+	 * 
+	 * @since 4.0
+	 */
+	public static final String EDITOR_UNDERLINE_SUFFIX= "_underline"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that holds the color used to render multi-line comments.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public final static String EDITOR_MULTI_LINE_COMMENT_COLOR= ICColorConstants.C_MULTI_LINE_COMMENT;
+
+	/**
+	 * A named preference that controls whether multi-line comments are rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code> multi-line comments are rendered
+	 * in bold. If <code>false</code> the are rendered using no font style attribute.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_MULTI_LINE_COMMENT_BOLD= ICColorConstants.C_MULTI_LINE_COMMENT + EDITOR_BOLD_SUFFIX; 
+
+	/**
+	 * A named preference that controls whether multi-line comments are rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code> multi-line comments are rendered
+	 * in italic. If <code>false</code> the are rendered using no italic font style attribute.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_MULTI_LINE_COMMENT_ITALIC= ICColorConstants.C_MULTI_LINE_COMMENT + EDITOR_ITALIC_SUFFIX;
+	
+	/**
+	 * A named preference that holds the color used to render single line comments.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public final static String EDITOR_SINGLE_LINE_COMMENT_COLOR= ICColorConstants.C_SINGLE_LINE_COMMENT;
+
+	/**
+	 * A named preference that controls whether single line comments are rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code> single line comments are rendered
+	 * in bold. If <code>false</code> the are rendered using no font style attribute.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_SINGLE_LINE_COMMENT_BOLD= ICColorConstants.C_SINGLE_LINE_COMMENT + EDITOR_BOLD_SUFFIX; 
+
+	/**
+	 * A named preference that controls whether single line comments are rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code> single line comments are rendered
+	 * in italic. If <code>false</code> the are rendered using no italic font style attribute.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_SINGLE_LINE_COMMENT_ITALIC= ICColorConstants.C_SINGLE_LINE_COMMENT + EDITOR_ITALIC_SUFFIX;
+	
+	/**
+	 * A named preference that holds the color used to render C/C++ keywords.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_KEYWORD_COLOR= ICColorConstants.C_KEYWORD;
+
+	/**
+	 * A named preference that controls whether keywords are rendered in bold.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * @since 2.1
+	 * 
+	 * @since 4.0
 	 */
-	public static final String CODEGEN_ADD_COMMENTS= "org.eclipse.cdt.ui.javadoc"; //$NON-NLS-1$
+	public final static String EDITOR_C_KEYWORD_BOLD= ICColorConstants.C_KEYWORD + EDITOR_BOLD_SUFFIX;
+
+	/**
+	 * A named preference that controls whether keywords are rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_KEYWORD_ITALIC= ICColorConstants.C_KEYWORD + EDITOR_ITALIC_SUFFIX;
 	
+	/**
+	 * A named preference that holds the color used to render builtin types.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_BUILTIN_TYPE_COLOR= ICColorConstants.C_TYPE;
+
+	/**
+	 * A named preference that controls whether builtin types are rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_BUILTIN_TYPE_BOLD= ICColorConstants.C_TYPE + EDITOR_BOLD_SUFFIX;
+
+	/**
+	 * A named preference that controls whether builtin types are rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_BUILTIN_TYPE_ITALIC= ICColorConstants.C_TYPE + EDITOR_ITALIC_SUFFIX;
+	
+	/**
+	 * A named preference that holds the color used to render string constants.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_STRING_COLOR= ICColorConstants.C_STRING;
+
+	/**
+	 * A named preference that controls whether string constants are rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_STRING_BOLD= ICColorConstants.C_STRING + EDITOR_BOLD_SUFFIX;
+
+	/**
+	 * A named preference that controls whether string constants are rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_STRING_ITALIC= ICColorConstants.C_STRING + EDITOR_ITALIC_SUFFIX;
+	
+	/**
+	 * A named preference that holds the color used to render operators.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_OPERATOR_COLOR= ICColorConstants.C_OPERATOR;	
+ 
+	/**
+	 * A named preference that controls whether operators are rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_OPERATOR_BOLD= ICColorConstants.C_OPERATOR + EDITOR_BOLD_SUFFIX;
+	
+	/**
+	 * A named preference that controls whether operators are rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_OPERATOR_ITALIC= ICColorConstants.C_OPERATOR + EDITOR_ITALIC_SUFFIX;
+	
+	/**
+	 * A named preference that holds the color used to render numbers.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_NUMBER_COLOR= ICColorConstants.C_NUMBER;	
+
+	/**
+	 * A named preference that controls whether number are rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_NUMBER_BOLD= ICColorConstants.C_NUMBER + EDITOR_BOLD_SUFFIX;
+
+	/**
+	 * A named preference that controls whether number are rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_NUMBER_ITALIC= ICColorConstants.C_NUMBER + EDITOR_ITALIC_SUFFIX;
+	
+	/**
+	 * A named preference that holds the color used to render headers.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_HEADER_COLOR= ICColorConstants.C_HEADER;	
+
+	/**
+	 * A named preference that controls whether headers are rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_HEADER_BOLD= ICColorConstants.C_HEADER + EDITOR_BOLD_SUFFIX;
+
+	/**
+	 * A named preference that controls whether number are rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_HEADER_ITALIC= ICColorConstants.C_HEADER + EDITOR_ITALIC_SUFFIX;
+	
+	/**
+	 * A named preference that holds the color used to render braces.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_BRACES_COLOR= ICColorConstants.C_BRACES;	
+
+	/**
+	 * A named preference that controls whether braces are rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_BRACES_BOLD= ICColorConstants.C_BRACES + EDITOR_BOLD_SUFFIX;
+
+	/**
+	 * A named preference that controls whether braces are rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_BRACES_ITALIC= ICColorConstants.C_BRACES + EDITOR_ITALIC_SUFFIX;
+	
+	/**
+	 * A named preference that holds the color used to render C/C++ default text.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_DEFAULT_COLOR= ICColorConstants.C_DEFAULT;
+
+	/**
+	 * A named preference that controls whether C/C++ default text is rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_DEFAULT_BOLD= ICColorConstants.C_DEFAULT + EDITOR_BOLD_SUFFIX;
+
+	/**
+	 * A named preference that controls whether C/C++ default text is rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_C_DEFAULT_ITALIC= ICColorConstants.C_DEFAULT + EDITOR_ITALIC_SUFFIX;
+
+	/**
+	 * The symbolic font name for the C/C++ editor text font 
+	 * (value <code>"org.eclipse.cdt.ui.editors.textfont"</code>).
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_TEXT_FONT= "org.eclipse.cdt.ui.editors.textfont"; //$NON-NLS-1$
+
 	/**
 	 * A named preference that controls whether the cview's selection is linked to the active editor.
 	 * <p>
@@ -99,39 +454,16 @@ public class PreferenceConstants {
      * </p>
      */
     public final static String EDITOR_TASK_TAG_BOLD= ICColorConstants.TASK_TAG + EDITOR_BOLD_SUFFIX;
-    
+     
     /**
-     * A named preference that controls whether the editor shows task indicators in text (squiggly lines). 
+     * A named preference that controls whether task tags are rendered in italic.
      * <p>
      * Value is of type <code>Boolean</code>.
      * </p>
      */
-    public final static String EDITOR_TASK_INDICATION= "taskIndication"; //$NON-NLS-1$
+    public final static String EDITOR_TASK_TAG_ITALIC= ICColorConstants.TASK_TAG + EDITOR_ITALIC_SUFFIX;
 
     /**
-     * A named preference that holds the color used to render task indicators.
-     * <p>
-     * Value is of type <code>String</code>. A RGB color value encoded as a string
-     * using class <code>PreferenceConverter</code>
-     * </p>
-     * 
-     * @see #EDITOR_TASK_INDICATION
-     * @see org.eclipse.jface.resource.StringConverter
-     * @see org.eclipse.jface.preference.PreferenceConverter
-     */
-    public final static String EDITOR_TASK_INDICATION_COLOR= "taskIndicationColor"; //$NON-NLS-1$
-    
-    /**
-     * A named preference that controls whether the overview ruler shows task
-     * indicators.
-     * <p>
-     * Value is of type <code>Boolean</code>.
-     * </p>
-     * @since 2.1
-     */
-    public final static String EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER= "taskIndicationInOverviewRuler"; //$NON-NLS-1$ 
- 
-	/**
 	 * A named preference that controls if correction indicators are shown in the UI.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -209,7 +541,7 @@ public class PreferenceConstants {
 
 	/**
 	 * The id of the best match hover contributed for extension point
-	 * <code>javaEditorTextHovers</code>.
+	 * <code>org.eclipse.cdt.ui.textHovers</code>.
 	 *
 	 * @since 2.1
 	 */
@@ -571,12 +903,6 @@ public class PreferenceConstants {
      * @param store the preference store to be initialized
      */
     public static void initializeDefaultValues(IPreferenceStore store) {
-        store.setDefault(PreferenceConstants.EDITOR_TASK_INDICATION, false);
-        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_TASK_INDICATION_COLOR, new RGB(0, 128, 255));
-        store.setDefault(PreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER, true);
-        
-        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_TASK_TAG_COLOR, new RGB(127, 159, 191));
-        store.setDefault(PreferenceConstants.EDITOR_TASK_TAG_BOLD, true);
 
 		store.setDefault(PreferenceConstants.EDITOR_CORRECTION_INDICATION, false);
 		
@@ -588,6 +914,51 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + SWT.MOD1); //$NON-NLS-1$
 		
 		store.setDefault(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
+
+		// coloring
+		PreferenceConverter.setDefault(store, EDITOR_MULTI_LINE_COMMENT_COLOR, new RGB(63, 127, 95));
+		store.setDefault(EDITOR_MULTI_LINE_COMMENT_BOLD, false);
+		store.setDefault(EDITOR_MULTI_LINE_COMMENT_ITALIC, false);
+
+		PreferenceConverter.setDefault(store, EDITOR_SINGLE_LINE_COMMENT_COLOR, new RGB(63, 125, 95));
+		store.setDefault(EDITOR_SINGLE_LINE_COMMENT_BOLD, false);
+		store.setDefault(EDITOR_SINGLE_LINE_COMMENT_ITALIC, false);
+
+        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_TASK_TAG_COLOR, new RGB(127, 159, 191));
+        store.setDefault(PreferenceConstants.EDITOR_TASK_TAG_BOLD, true);
+        store.setDefault(PreferenceConstants.EDITOR_TASK_TAG_ITALIC, false);
+
+        PreferenceConverter.setDefault(store, EDITOR_C_KEYWORD_COLOR, new RGB(127, 0, 85));
+		store.setDefault(EDITOR_C_KEYWORD_BOLD, true);
+		store.setDefault(EDITOR_C_KEYWORD_ITALIC, false);
+
+		PreferenceConverter.setDefault(store, EDITOR_C_BUILTIN_TYPE_COLOR, new RGB(127, 0, 85));
+		store.setDefault(EDITOR_C_BUILTIN_TYPE_BOLD, true);
+		store.setDefault(EDITOR_C_BUILTIN_TYPE_ITALIC, false);
+
+		PreferenceConverter.setDefault(store, EDITOR_C_STRING_COLOR, new RGB(42, 0, 255));
+		store.setDefault(EDITOR_C_STRING_BOLD, false);
+		store.setDefault(EDITOR_C_STRING_ITALIC, false);
+
+		PreferenceConverter.setDefault(store, EDITOR_C_DEFAULT_COLOR, new RGB(0, 0, 0));
+		store.setDefault(EDITOR_C_DEFAULT_BOLD, false);
+		store.setDefault(EDITOR_C_DEFAULT_ITALIC, false);
+
+        PreferenceConverter.setDefault(store, EDITOR_C_OPERATOR_COLOR, new RGB(0, 0, 0));
+        store.setDefault(EDITOR_C_OPERATOR_BOLD, false);
+        store.setDefault(EDITOR_C_OPERATOR_ITALIC, false);
+
+        PreferenceConverter.setDefault(store, EDITOR_C_BRACES_COLOR, new RGB(0, 0, 0));
+        store.setDefault(EDITOR_C_BRACES_BOLD, false);
+        store.setDefault(EDITOR_C_BRACES_ITALIC, false);
+
+        PreferenceConverter.setDefault(store, EDITOR_C_NUMBER_COLOR, new RGB(0, 0, 0));
+        store.setDefault(EDITOR_C_NUMBER_BOLD, false);
+        store.setDefault(EDITOR_C_NUMBER_ITALIC, false);
+
+        PreferenceConverter.setDefault(store, EDITOR_C_HEADER_COLOR, new RGB(42, 0, 255));
+        store.setDefault(EDITOR_C_HEADER_BOLD, false);
+        store.setDefault(EDITOR_C_HEADER_ITALIC, false);
 
 		// folding
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED, false);

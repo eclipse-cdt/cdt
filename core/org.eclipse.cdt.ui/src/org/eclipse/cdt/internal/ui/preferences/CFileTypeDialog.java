@@ -45,7 +45,7 @@ public class CFileTypeDialog extends Dialog {
 	
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(PreferencesMessages.getString("CFileTypeDialog.title")); //$NON-NLS-1$
+		newShell.setText(PreferencesMessages.CFileTypeDialog_title); 
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -63,7 +63,7 @@ public class CFileTypeDialog extends Dialog {
 		
 		Label pattern = new Label(composite, SWT.NONE);
 				
-		pattern.setText(PreferencesMessages.getString("CFileTypeDialog.patternLabel")); //$NON-NLS-1$
+		pattern.setText(PreferencesMessages.CFileTypeDialog_patternLabel); 
 
 		fTextPattern = new Text(composite, SWT.BORDER | SWT.SINGLE);
 		
@@ -83,7 +83,7 @@ public class CFileTypeDialog extends Dialog {
 		
 		Label type = new Label(composite, SWT.NONE);
 		
-		type.setText(PreferencesMessages.getString("CFileTypeDialog.typeLabel")); //$NON-NLS-1$
+		type.setText(PreferencesMessages.CFileTypeDialog_typeLabel); 
 		
 		fComboType = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SINGLE);
 

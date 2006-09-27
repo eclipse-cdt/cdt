@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
 
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -22,13 +22,17 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
 
+import org.eclipse.cdt.ui.PreferenceConstants;
+
+import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
+
 public class CSourcePreviewerUpdater {
 
 	private CSourcePreviewerUpdater() {
 	}
 
 	/**
-	 * Creates a Java source preview updater for the given viewer, configuration and preference store.
+	 * Creates a source preview updater for the given viewer, configuration and preference store.
 	 *
 	 * @param viewer the viewer
 	 * @param configuration the configuration
@@ -43,8 +47,8 @@ public class CSourcePreviewerUpdater {
 			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(JFaceResources.TEXT_FONT)) {
-					Font font= JFaceResources.getTextFont();
+				if (event.getProperty().equals(PreferenceConstants.EDITOR_TEXT_FONT)) {
+					Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
 					viewer.getTextWidget().setFont(font);
 				}
 			}

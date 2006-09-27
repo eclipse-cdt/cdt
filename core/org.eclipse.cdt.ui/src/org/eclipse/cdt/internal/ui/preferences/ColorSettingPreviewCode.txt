@@ -1,10 +1,23 @@
-/*
- * This is sample C code
- */
-#include <stdio.h>
-unsigned static myfunc(int a, char b,)  {
-	/* This comment may span multiple lines. */
-	int integer= 0;
-	// This comment may span only this line
-	if(integer == 0) printf("zero");
+/* This is sample C++ code */
+#include <iostream>
+#define MACRO(x) x
+using namespace std;
+// This comment may span only this line
+typedef unsigned int uint;
+int static myfunc(uint parameter) {
+  if (parameter == 0) out << "zero" << endl;
+  return parameter - 1;
 }
+class MyClass {
+public:
+  enum Number { ZERO, ONE, TWO };
+  static char staticField;
+  int field;
+  virtual Number vmethod();
+  void method(Number n) const {
+    int local= (int)n;
+label: myfunc(local, MACRO('\0'));
+    vmethod();
+    problem();
+  }
+};

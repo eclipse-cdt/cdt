@@ -37,7 +37,7 @@ public class CodeFormatterPreferencePage extends PreferencePage implements IWork
 	public CodeFormatterPreferencePage() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		// only used when page is shown programatically
-		setTitle(PreferencesMessages.getString("CodeFormatterPreferencePage.title"));		 //$NON-NLS-1$
+		setTitle(PreferencesMessages.CodeFormatterPreferencePage_title);		 
 		//setDescription(PreferencesMessages.getString("CodeFormatterPreferencePage.description")); //$NON-NLS-1$
 		fCodeFormatterBlock= new CodeFormatterBlock(CUIPlugin.getDefault().getPluginPreferences());
 	}

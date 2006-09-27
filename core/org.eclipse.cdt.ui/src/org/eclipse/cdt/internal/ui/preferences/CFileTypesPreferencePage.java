@@ -33,7 +33,7 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 	private CFileTypesPreferenceBlock fPrefsBlock;
 
 	public CFileTypesPreferencePage() {
-		setDescription(PreferencesMessages.getString("CFileTypesPreferencePage.description")); //$NON-NLS-1$
+		setDescription(PreferencesMessages.CFileTypesPreferencePage_description); 
 		noDefaultAndApplyButton();
 	}
 

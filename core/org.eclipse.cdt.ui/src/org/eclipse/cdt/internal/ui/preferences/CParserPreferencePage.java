@@ -76,9 +76,9 @@ public class CParserPreferencePage extends PreferencePage implements
 		Group bufferGroup= new Group(result, SWT.NONE);
 		bufferGroup.setLayout(new GridLayout());
 		bufferGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		bufferGroup.setText(PreferencesMessages.getString("CBufferPreferences.CodeReaderBuffer.CodeReaderBufferGroup")); //$NON-NLS-1$
+		bufferGroup.setText(PreferencesMessages.CBufferPreferences_CodeReaderBuffer_CodeReaderBufferGroup); 
 	
-		bufferTextControl = (Text) addTextField( bufferGroup, PreferencesMessages.getString("CBufferPreferences.CodeReaderBuffer.Size"),6,0); //$NON-NLS-1$ 
+		bufferTextControl = (Text) addTextField( bufferGroup, PreferencesMessages.CBufferPreferences_CodeReaderBuffer_Size,6,0); 
 		
 		initialize(); 
 		

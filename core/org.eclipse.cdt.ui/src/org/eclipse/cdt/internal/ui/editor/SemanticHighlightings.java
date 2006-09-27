@@ -47,7 +47,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 
 /**
  * Semantic highlightings.
- * Cloned from JDT.
+ * Derived from JDT.
  * 
  * @since 4.0
  */
@@ -96,9 +96,9 @@ public class SemanticHighlightings {
 	public static final String FUNCTION_DECLARATION="functionDeclaration"; //$NON-NLS-1$
 
 	/**
-	 * A named preference part that controls the highlighting of static method invocations.
+	 * A named preference part that controls the highlighting of functions.
 	 */
-	public static final String FUNCTION_INVOCATION="functionInvocation"; //$NON-NLS-1$
+	public static final String FUNCTION="function"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of local variables.
@@ -106,7 +106,7 @@ public class SemanticHighlightings {
 	public static final String LOCAL_VARIABLE_DECLARATION="localVariableDeclaration"; //$NON-NLS-1$
 
 	/**
-	 * A named preference part that controls the highlighting of local variables.
+	 * A named preference part that controls the highlighting of local variable references.
 	 */
 	public static final String LOCAL_VARIABLE="localVariable"; //$NON-NLS-1$
 
@@ -126,9 +126,9 @@ public class SemanticHighlightings {
 	public static final String TEMPLATE_PARAMETER="templateParameter"; //$NON-NLS-1$
 
 	/**
-	 * A named preference part that controls the highlighting of method invocations.
+	 * A named preference part that controls the highlighting of methods.
 	 */
-	public static final String METHOD_INVOCATION="method"; //$NON-NLS-1$
+	public static final String METHOD="method"; //$NON-NLS-1$
 
 	/**
 	 * A named preference part that controls the highlighting of classes.
@@ -374,13 +374,6 @@ public class SemanticHighlightings {
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
 			if (binding instanceof IField && !(binding instanceof IProblemBinding)) {
-				try {
-					return !((IField)binding).isStatic();
-				} catch (DOMException exc) {
-					CUIPlugin.getDefault().log(exc.getStatus());
-				} catch (Error e) /* PDOMNotImplementedError */ {
-					// ignore
-				}
 				return true;
 			}
 			return false;
@@ -424,7 +417,7 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
 		public boolean isEnabledByDefault() {
-			return false;
+			return true;
 		}
 
 		/*
@@ -649,15 +642,15 @@ public class SemanticHighlightings {
 //	}
 
 	/**
-	 * Semantic highlighting for method invocations.
+	 * Semantic highlighting for methods.
 	 */
-	private static final class MethodInvocationHighlighting extends SemanticHighlighting {
+	private static final class MethodHighlighting extends SemanticHighlighting {
 
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getPreferenceKey()
 		 */
 		public String getPreferenceKey() {
-			return METHOD_INVOCATION;
+			return METHOD;
 		}
 
 		/*
@@ -701,12 +694,9 @@ public class SemanticHighlightings {
 		public boolean consumes(SemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName)node;
-				if (name.isReference()) {
-					IBinding binding= token.getBinding();
-					if (binding instanceof ICPPMethod && !(binding instanceof IProblemBinding)) {
-						return true;
-					}
+				IBinding binding= token.getBinding();
+				if (binding instanceof ICPPMethod && !(binding instanceof IProblemBinding)) {
+					return true;
 				}
 			}
 			return false;
@@ -795,7 +785,7 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
 		public boolean isEnabledByDefault() {
-			return false;
+			return true;
 		}
 
 		/*
@@ -826,15 +816,15 @@ public class SemanticHighlightings {
 	}
 
 	/**
-	 * Semantic highlighting for function invocations.
+	 * Semantic highlighting for functions.
 	 */
-	private static final class FunctionInvocationHighlighting extends SemanticHighlighting {
+	private static final class FunctionHighlighting extends SemanticHighlighting {
 
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getPreferenceKey()
 		 */
 		public String getPreferenceKey() {
-			return FUNCTION_INVOCATION;
+			return FUNCTION;
 		}
 
 		/*
@@ -869,7 +859,7 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDisplayName()
 		 */
 		public String getDisplayName() {
-			return CEditorMessages.getString("SemanticHighlighting_functionInvocation"); //$NON-NLS-1$
+			return CEditorMessages.getString("SemanticHighlighting_function"); //$NON-NLS-1$
 		}
 
 		/*
@@ -878,14 +868,11 @@ public class SemanticHighlightings {
 		public boolean consumes(SemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
-				IASTName name= (IASTName)node;
-				if (name.isReference()) {
-					IBinding binding= token.getBinding();
-					if (binding instanceof IFunction 
-							&& !(binding instanceof ICPPMethod)
-							&& !(binding instanceof IProblemBinding)) {
-						return true;
-					}
+				IBinding binding= token.getBinding();
+				if (binding instanceof IFunction 
+						&& !(binding instanceof ICPPMethod)
+						&& !(binding instanceof IProblemBinding)) {
+					return true;
 				}
 			}
 			return false;
@@ -1298,7 +1285,7 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
 		public boolean isEnabledByDefault() {
-			return false;
+			return true;
 		}
 
 		/*
@@ -1611,7 +1598,7 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
 		public boolean isEnabledByDefault() {
-			return false;
+			return true;
 		}
 		
 		/*
@@ -1767,7 +1754,7 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
 		 */
 		public RGB getDefaultTextColor() {
-			return RGB_BLACK;
+			return new RGB(0, 0, 192);
 		}
 		
 		/*
@@ -1781,14 +1768,14 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isItalicByDefault()
 		 */
 		public boolean isItalicByDefault() {
-			return false;
+			return true;
 		}
 		
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
 		public boolean isEnabledByDefault() {
-			return false;
+			return true;
 		}
 		
 		/*
@@ -1840,7 +1827,7 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isStrikethroughByDefault()
 		 */
 		public boolean isStrikethroughByDefault() {
-			return true;
+			return false;
 		}
 
 		/*
@@ -1854,7 +1841,7 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
 		public boolean isEnabledByDefault() {
-			return DEBUG;
+			return false;
 		}
 		
 		/*
@@ -1960,14 +1947,14 @@ public class SemanticHighlightings {
 				new GlobalVariableHighlighting(),
 // TLETODO [semanticHighlighting] Template parameter highlighting
 				new TemplateParameterHighlighting(), // before template arguments!
-				new MethodInvocationHighlighting(), // before types to get ctors
+				new MethodHighlighting(), // before types to get ctors
 // TLETODO [semanticHighlighting] Template argument highlighting
 //				new TemplateArgumentHighlighting(), // before other types
 				new EnumHighlighting(),
 // TLETODO [semanticHighlighting] Macro definition highlighting
 //				new MacroDefinitionHighlighting(),
 				new FunctionDeclarationHighlighting(),
-				new FunctionInvocationHighlighting(),
+				new FunctionHighlighting(),
 				new TypedefHighlighting(),
 				new NamespaceHighlighting(),
 				new LabelHighlighting(),

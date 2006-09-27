@@ -200,8 +200,7 @@ public class PathEntryVariablesGroup {
 		
 		// layout the table & its buttons
 		variableLabel = new Label(pageComponent, SWT.LEFT);
-		variableLabel.setText(PreferencesMessages
-				.getString("PathEntryVariablesBlock.variablesLabel")); //$NON-NLS-1$
+		variableLabel.setText(PreferencesMessages.PathEntryVariablesBlock_variablesLabel); 
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalSpan = 2;
@@ -336,8 +335,7 @@ public class PathEntryVariablesGroup {
 		groupComponent.setFont(font);
 		
 		addButton = new Button(groupComponent, SWT.PUSH);
-		addButton.setText(PreferencesMessages
-				.getString("PathEntryVariablesBlock.addVariableButton")); //$NON-NLS-1$
+		addButton.setText(PreferencesMessages.PathEntryVariablesBlock_addVariableButton); 
 		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addNewVariable();
@@ -347,8 +345,7 @@ public class PathEntryVariablesGroup {
 		setButtonLayoutData(addButton);
 		
 		editButton = new Button(groupComponent, SWT.PUSH);
-		editButton.setText(PreferencesMessages
-				.getString("PathEntryVariablesBlock.editVariableButton")); //$NON-NLS-1$
+		editButton.setText(PreferencesMessages.PathEntryVariablesBlock_editVariableButton); 
 		editButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				editSelectedVariable();
@@ -358,8 +355,7 @@ public class PathEntryVariablesGroup {
 		setButtonLayoutData(editButton);
 		
 		removeButton = new Button(groupComponent, SWT.PUSH);
-		removeButton.setText(PreferencesMessages
-				.getString("PathEntryVariablesBlock.removeVariableButton")); //$NON-NLS-1$
+		removeButton.setText(PreferencesMessages.PathEntryVariablesBlock_removeVariableButton); 
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				removeSelectedVariables();

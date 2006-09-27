@@ -121,7 +121,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		radioPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fUseWorkspace = new Button(radioPane, SWT.RADIO);
-		fUseWorkspace.setText(PreferencesMessages.getString("CFileTypesPropertyPage.useWorkspaceSettings")); //$NON-NLS-1$
+		fUseWorkspace.setText(PreferencesMessages.CFileTypesPropertyPage_useWorkspaceSettings); 
 		fUseWorkspace.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				if (fUseWorkspace.getSelection()) {
@@ -135,7 +135,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		boolean custom = CCorePlugin.usesProjectSpecificContentTypes(project);
 
 		fUseProject = new Button(radioPane, SWT.RADIO);
-		fUseProject.setText(PreferencesMessages.getString("CFileTypesPropertyPage.useProjectSettings")); //$NON-NLS-1$
+		fUseProject.setText(PreferencesMessages.CFileTypesPropertyPage_useProjectSettings); 
 		fUseProject.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				if (fUseProject.getSelection()) {

@@ -80,7 +80,7 @@ public class ProposalFilterPreferencesUtil {
 	 */
 	public static String getProposalFilternamesAsString() {
 		StringBuffer filterNames = new StringBuffer("0;"); //$NON-NLS-1$
-		filterNames.append("<Default Filter>"); // TODO: NP externalize this! //$NON-NLS-1$
+		filterNames.append(PreferencesMessages.ProposalFilterPreferencesUtil_defaultFilterName);
 		String[] names = getProposalFilterNames();
 		for (int i = 0; i < names.length; i++) {
 			String name = names[i];

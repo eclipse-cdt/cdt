@@ -49,7 +49,6 @@ public interface ICHelpContextIds {
 	// Preference/property pages
 	public static final String C_PREF_PAGE = PREFIX + "c_pref"; //$NON-NLS-1$
 	public static final String C_EDITOR_PREF_PAGE = PREFIX + "c_editor_gen"; //$NON-NLS-1$
-	public static final String C_EDITOR_ANNOTATIONS_PREF_PAGE = PREFIX + "new_c_editor_annotations_pref_page_context"; //$NON-NLS-1$
 	public static final String C_EDITOR_COLORS_PREF_PAGE = PREFIX + "c_editor_color"; //$NON-NLS-1$
 	public static final String C_EDITOR_CONTENT_ASSIST_PREF_PAGE = PREFIX + "c_editor_con_assist"; //$NON-NLS-1$
 	public static final String C_EDITOR_NAVIGATION_PAGE = PREFIX + "c_editor_navigation"; //$NON-NLS-1$

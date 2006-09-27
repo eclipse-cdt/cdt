@@ -80,54 +80,54 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// The following three radio buttons are grouped together
-		String label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupTitle"); //$NON-NLS-1$
+		String label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupTitle; 
 		Group searchGroup = addGroupBox(contentAssistComposite, label, 2);
 		
-		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupCurrentFileOption"); //$NON-NLS-1$
+		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupCurrentFileOption; 
 		addRadioButton(searchGroup, label, ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, 0);
 		
-		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupCurrentProjectOption"); //$NON-NLS-1$
+		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupCurrentProjectOption; 
 		addRadioButton(searchGroup, label, ContentAssistPreference.PROJECT_SEARCH_SCOPE, 0);
 		
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.insertionGroupTitle"); //$NON-NLS-1$
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_insertionGroupTitle; 
 		Group insertionGroup = addGroupBox(contentAssistComposite, label, 2);
 		
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.insertSingleProposalAutomatically"); //$NON-NLS-1$
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_insertSingleProposalAutomatically; 
 		addCheckBox(insertionGroup, label, ContentAssistPreference.AUTOINSERT, 0);
 
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.insertCommonProposalAutomatically"); //$NON-NLS-1$
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_insertCommonProposalAutomatically; 
 		addCheckBox(insertionGroup, label, ContentAssistPreference.CODEASSIST_PREFIX_COMPLETION, 0);
 		
-		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.showProposalsInAlphabeticalOrder"); //$NON-NLS-1$
+		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_showProposalsInAlphabeticalOrder; 
 		addCheckBox(insertionGroup, label, ContentAssistPreference.ORDER_PROPOSALS, 0);
 
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.timeoutDelay"); //$NON-NLS-1$
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_timeoutDelay; 
 		addTextField(insertionGroup, label, ContentAssistPreference.TIMEOUT_DELAY, 6, 0, true);
 
 
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// The following items are grouped for Auto Activation
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationGroupTitle"); //$NON-NLS-1$
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_autoActivationGroupTitle; 
 		Group enableGroup = addGroupBox(contentAssistComposite, label, 2);
 		
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationEnableDot"); //$NON-NLS-1$
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_autoActivationEnableDot; 
 		addCheckBox(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT, 0);
 
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationEnableArrow"); //$NON-NLS-1$
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_autoActivationEnableArrow; 
 		addCheckBox(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW, 0);
 		
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationEnableDoubleColon"); //$NON-NLS-1$
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_autoActivationEnableDoubleColon; 
 		addCheckBox(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON, 0);
 		
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationDelay"); //$NON-NLS-1$
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_autoActivationDelay; 
 		addTextField(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_DELAY, 4, 0, true);
 
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&		
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.completionProposalBackgroundColor"); //$NON-NLS-1$
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_completionProposalBackgroundColor; 
 		addColorButton(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_BACKGROUND, 0);
 
-		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.completionProposalForegroundColor"); //$NON-NLS-1$
+		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_completionProposalForegroundColor; 
 		addColorButton(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_FOREGROUND, 0);
 
 //		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.parameterBackgroundColor"); 
@@ -136,7 +136,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 //		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.parameterForegroundColor");
 //		addColorButton(contentAssistComposite, label, ContentAssistPreference.PARAMETERS_FOREGROUND, 0);
 
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.proposalFilterSelect") ; //$NON-NLS-1$
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_proposalFilterSelect ; 
 		addComboBox(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_FILTER, 20, 0);
     	
 		initializeFields();

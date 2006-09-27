@@ -156,7 +156,7 @@ class FoldingConfigurationBlock {
 		
 		/* check box for new editors */
 		fFoldingCheckbox= new Button(composite, SWT.CHECK);
-		fFoldingCheckbox.setText(PreferencesMessages.getString("FoldingConfigurationBlock.enable")); //$NON-NLS-1$
+		fFoldingCheckbox.setText(PreferencesMessages.FoldingConfigurationBlock_enable); 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 		fFoldingCheckbox.setLayoutData(gd);
 		fFoldingCheckbox.addSelectionListener(new SelectionListener() {
@@ -184,7 +184,7 @@ class FoldingConfigurationBlock {
 		Label comboLabel= new Label(comboComp, SWT.CENTER);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_CENTER);
 		comboLabel.setLayoutData(gd);
-		comboLabel.setText(PreferencesMessages.getString("FoldingConfigurationBlock.combo_caption")); //$NON-NLS-1$
+		comboLabel.setText(PreferencesMessages.FoldingConfigurationBlock_combo_caption); 
 		
 		label= new Label(composite, SWT.CENTER);
 		gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
@@ -273,7 +273,7 @@ class FoldingConfigurationBlock {
 		
 		if (desc == null) {
 			// safety in case there is no such descriptor
-			String message= PreferencesMessages.getString("FoldingConfigurationBlock.error.not_exist"); //$NON-NLS-1$
+			String message= PreferencesMessages.FoldingConfigurationBlock_error_not_exist; 
 			CUIPlugin.getDefault().log(new Status(IStatus.WARNING, CUIPlugin.getPluginId(), IStatus.OK, message, null));
 			prefs= new ErrorPreferences(message);
 		} else {
@@ -293,7 +293,7 @@ class FoldingConfigurationBlock {
 		if (control == null) {
 			control= prefs.createControl(fGroup);
 			if (control == null) {
-				String message= PreferencesMessages.getString("FoldingConfigurationBlock.info.no_preferences"); //$NON-NLS-1$
+				String message= PreferencesMessages.FoldingConfigurationBlock_info_no_preferences; 
 				control= new ErrorPreferences(message).createControl(fGroup);
 			} else {
 				fProviderControls.put(id, control);

@@ -53,7 +53,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 	
 	public AppearancePreferencePage() {
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());
-		setDescription(PreferencesMessages.getString("AppearancePreferencePage.description")); //$NON-NLS-1$
+		setDescription(PreferencesMessages.AppearancePreferencePage_description); 
 	
 		IDialogFieldListener listener= new IDialogFieldListener() {
 			public void dialogFieldChanged(DialogField field) {
@@ -63,19 +63,19 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 
 		fShowTUChildren= new SelectionButtonDialogField(SWT.CHECK);
 		fShowTUChildren.setDialogFieldListener(listener);
-		fShowTUChildren.setLabelText(PreferencesMessages.getString("AppearancePreferencePage.showTUChildren.label")); //$NON-NLS-1$
+		fShowTUChildren.setLabelText(PreferencesMessages.AppearancePreferencePage_showTUChildren_label); 
 
 		fOutlineGroupIncludes= new SelectionButtonDialogField(SWT.CHECK);
 		fOutlineGroupIncludes.setDialogFieldListener(listener);
-		fOutlineGroupIncludes.setLabelText(PreferencesMessages.getString("AppearancePreferencePage.outlineGroupIncludes.label")); //$NON-NLS-1$
+		fOutlineGroupIncludes.setLabelText(PreferencesMessages.AppearancePreferencePage_outlineGroupIncludes_label); 
 
 		fOutlineGroupNamespaces= new SelectionButtonDialogField(SWT.CHECK);
 		fOutlineGroupNamespaces.setDialogFieldListener(listener);
-		fOutlineGroupNamespaces.setLabelText(PreferencesMessages.getString("AppearancePreferencePage.outlineGroupNamespaces.label")); //$NON-NLS-1$
+		fOutlineGroupNamespaces.setLabelText(PreferencesMessages.AppearancePreferencePage_outlineGroupNamespaces_label); 
 
 		fCViewGroupIncludes= new SelectionButtonDialogField(SWT.CHECK);
 		fCViewGroupIncludes.setDialogFieldListener(listener);
-		fCViewGroupIncludes.setLabelText(PreferencesMessages.getString("AppearancePreferencePage.cviewGroupIncludes.label")); //$NON-NLS-1$
+		fCViewGroupIncludes.setLabelText(PreferencesMessages.AppearancePreferencePage_cviewGroupIncludes_label); 
 		
 	}	
 
@@ -119,8 +119,8 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		
 		new Separator().doFillIntoGrid(result, nColumns);
 		
-		String noteTitle= PreferencesMessages.getString("AppearancePreferencePage.note"); //$NON-NLS-1$
-		String noteMessage= PreferencesMessages.getString("AppearancePreferencePage.preferenceOnlyEffectiveForNewPerspectives"); //$NON-NLS-1$
+		String noteTitle= PreferencesMessages.AppearancePreferencePage_note; 
+		String noteMessage= PreferencesMessages.AppearancePreferencePage_preferenceOnlyEffectiveForNewPerspectives; 
 		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), result, noteTitle, noteMessage);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;

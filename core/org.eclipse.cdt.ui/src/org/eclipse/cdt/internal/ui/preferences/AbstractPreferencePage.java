@@ -224,14 +224,14 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	private IStatus validatePositiveNumber(String number) {
 		StatusInfo status = new StatusInfo();
 		if (number.length() == 0) {
-			status.setError(PreferencesMessages.getString("CEditorPreferencePage.empty_input")); //$NON-NLS-1$
+			status.setError(PreferencesMessages.CEditorPreferencePage_empty_input); 
 		} else {
 			try {
 				int value = Integer.parseInt(number);
 				if (value < 0)
-					status.setError(PreferencesMessages.getString("CEditorPreferencePage.invalid_input")); //$NON-NLS-1$
+					status.setError(PreferencesMessages.CEditorPreferencePage_invalid_input); 
 			} catch (NumberFormatException e) {
-				status.setError(PreferencesMessages.getString("CEditorPreferencePage.invalid_input")); //$NON-NLS-1$
+				status.setError(PreferencesMessages.CEditorPreferencePage_invalid_input); 
 			}
 		}
 		return status;

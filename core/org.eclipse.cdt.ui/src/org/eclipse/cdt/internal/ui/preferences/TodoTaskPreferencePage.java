@@ -41,7 +41,7 @@ public class TodoTaskPreferencePage extends PreferencePage implements IWorkbench
 		//setDescription(PreferencesMessages.getString("TodoTaskPreferencePage.description")); //$NON-NLS-1$
 		
 		// only used when page is shown programatically
-		setTitle(PreferencesMessages.getString("TodoTaskPreferencePage.title")); //$NON-NLS-1$
+		setTitle(PreferencesMessages.TodoTaskPreferencePage_title); 
 
 		fConfigurationBlock= new TodoTaskConfigurationBlock(this, null);
 	}

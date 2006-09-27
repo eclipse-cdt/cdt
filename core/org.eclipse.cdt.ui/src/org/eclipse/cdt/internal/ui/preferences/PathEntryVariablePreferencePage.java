@@ -67,7 +67,7 @@ implements IWorkbenchPreferencePage {
 		
 		
 		topLabel = new Label(pageComponent, SWT.NONE);
-		topLabel.setText(PreferencesMessages.getString("PathEntryVariablePreference.explanation")); //$NON-NLS-1$
+		topLabel.setText(PreferencesMessages.PathEntryVariablePreference_explanation); 
 		data = new GridData();
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;

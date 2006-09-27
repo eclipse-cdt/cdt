@@ -41,7 +41,7 @@ public class IndexerPreferencePage extends PreferencePage implements
 	
 	public IndexerPreferencePage(){
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
-		setDescription(PreferencesMessages.getString("IndexerPrefs.description"));  //$NON-NLS-1$
+		setDescription(PreferencesMessages.IndexerPrefs_description);  
 		fOptionBlock = new IndexerBlock();
 	}
 	

@@ -72,18 +72,26 @@ public class CTextTools {
 	 * and initializes all members of this collection.
 	 */
     public CTextTools(IPreferenceStore store) {
-        this(store, null);
+        this(store, null, true);
+    }
+    
+	/**
+	 * Creates a new C text tools collection and eagerly creates 
+	 * and initializes all members of this collection.
+	 */
+    public CTextTools(IPreferenceStore store, Preferences coreStore) {
+        this(store, coreStore, true);
     }
     
     /**
      * Creates a new C text tools collection and eagerly creates 
      * and initializes all members of this collection.
      */
-	public CTextTools(IPreferenceStore store, Preferences coreStore) {
+	public CTextTools(IPreferenceStore store, Preferences coreStore, boolean autoDisposeOnDisplayDispose) {
 		if(store == null) {
 			store = CUIPlugin.getDefault().getPreferenceStore();
 		}
-		fColorManager= new CColorManager();
+		fColorManager= new CColorManager(autoDisposeOnDisplayDispose);
 		fCodeScanner= new CCodeScanner(fColorManager, store);
 		fCppCodeScanner= new CppCodeScanner(fColorManager, store);
 		fPartitionScanner= new FastCPartitionScanner();

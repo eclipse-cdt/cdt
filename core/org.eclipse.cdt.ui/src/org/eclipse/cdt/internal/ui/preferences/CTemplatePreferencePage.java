@@ -12,11 +12,7 @@
 
 package org.eclipse.cdt.internal.ui.preferences;
 
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -30,6 +26,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
+import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 /**
  * CTemplatePreferencePage
@@ -70,8 +74,8 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected SourceViewer createViewer(Composite parent) {
-		PreviewSourceViewer viewer= new PreviewSourceViewer(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		viewer.setPreferenceStore(CUIPlugin.getDefault().getCombinedPreferenceStore());
+		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
+		CSourceViewer viewer= new CSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL, store);
 		CTextTools tools= CUIPlugin.getDefault().getTextTools();
 		CSourceViewerConfiguration configuration = new CSourceViewerConfiguration(tools, null);
 		IDocument document = new Document();
@@ -90,7 +94,7 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	
 		control.getAccessible().addAccessibleListener(new AccessibleAdapter() {			
 			public void getName(AccessibleEvent e) {
-				e.result = PreferencesMessages.getString("TemplatePreferencePage.preview"); //$NON-NLS-1$
+				e.result = PreferencesMessages.TemplatePreferencePage_Viewer_preview; 
 		}});
 		
 		CSourcePreviewerUpdater.registerPreviewer(viewer, configuration, CUIPlugin.getDefault().getCombinedPreferenceStore());

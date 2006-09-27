@@ -61,27 +61,27 @@ public class TodoTaskInputDialog extends StatusDialog {
 		}
 		
 		if (task == null) {
-			setTitle(PreferencesMessages.getString("TodoTaskInputDialog.new.title")); //$NON-NLS-1$
+			setTitle(PreferencesMessages.TodoTaskInputDialog_new_title); 
 		} else {
-			setTitle(PreferencesMessages.getString("TodoTaskInputDialog.edit.title")); //$NON-NLS-1$
+			setTitle(PreferencesMessages.TodoTaskInputDialog_edit_title); 
 		}
 
 		CompilerTodoTaskInputAdapter adapter= new CompilerTodoTaskInputAdapter();
 
 		fNameDialogField= new StringDialogField();
-		fNameDialogField.setLabelText(PreferencesMessages.getString("TodoTaskInputDialog.name.label")); //$NON-NLS-1$
+		fNameDialogField.setLabelText(PreferencesMessages.TodoTaskInputDialog_name_label); 
 		fNameDialogField.setDialogFieldListener(adapter);
 		
 		fNameDialogField.setText((task != null) ? task.name : ""); //$NON-NLS-1$
 		
 		String[] items= new String[] {
-			PreferencesMessages.getString("TodoTaskInputDialog.priority.high"), //$NON-NLS-1$
-			PreferencesMessages.getString("TodoTaskInputDialog.priority.normal"), //$NON-NLS-1$
-			PreferencesMessages.getString("TodoTaskInputDialog.priority.low") //$NON-NLS-1$
+			PreferencesMessages.TodoTaskInputDialog_priority_high, 
+			PreferencesMessages.TodoTaskInputDialog_priority_normal, 
+			PreferencesMessages.TodoTaskInputDialog_priority_low
 		};
 		
 		fPriorityDialogField= new ComboDialogField(SWT.READ_ONLY);
-		fPriorityDialogField.setLabelText(PreferencesMessages.getString("TodoTaskInputDialog.priority.label")); //$NON-NLS-1$
+		fPriorityDialogField.setLabelText(PreferencesMessages.TodoTaskInputDialog_priority_label); 
 		fPriorityDialogField.setItems(items);
 		if (task != null) {
 			if (CCorePlugin.TRANSLATION_TASK_PRIORITY_HIGH.equals(task.priority)) {
@@ -139,14 +139,14 @@ public class TodoTaskInputDialog extends StatusDialog {
 		StatusInfo status= new StatusInfo();
 		String newText= fNameDialogField.getText();
 		if (newText.length() == 0) {
-			status.setError(PreferencesMessages.getString("TodoTaskInputDialog.error.enterName")); //$NON-NLS-1$
+			status.setError(PreferencesMessages.TodoTaskInputDialog_error_enterName); 
 		} else {
 			if (newText.indexOf(',') != -1) {
-				status.setError(PreferencesMessages.getString("TodoTaskInputDialog.error.comma")); //$NON-NLS-1$
+				status.setError(PreferencesMessages.TodoTaskInputDialog_error_comma); 
 			} else if (fExistingNames.contains(newText)) {
-				status.setError(PreferencesMessages.getString("TodoTaskInputDialog.error.entryExists")); //$NON-NLS-1$
+				status.setError(PreferencesMessages.TodoTaskInputDialog_error_entryExists); 
 			} else if (Character.isWhitespace(newText.charAt(0)) ||  Character.isWhitespace(newText.charAt(newText.length() - 1))) {
-				status.setError(PreferencesMessages.getString("TodoTaskInputDialog.error.noSpace")); //$NON-NLS-1$
+				status.setError(PreferencesMessages.TodoTaskInputDialog_error_noSpace); 
 			}
 		}
 		updateStatus(status);

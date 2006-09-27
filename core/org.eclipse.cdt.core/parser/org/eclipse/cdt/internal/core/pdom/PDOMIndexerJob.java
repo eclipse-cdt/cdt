@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -59,6 +60,8 @@ public class PDOMIndexerJob extends Job {
 				}
 				currentTask.run(monitor);
 				synchronized (taskMutex) {
+					// mschorn: currentTask must be set to null, otherwise cancelJobs() waits forever.
+					currentTask= null;
 					if (isCancelling) {
 						// TODO chance for confusion here is user cancels
 						// while project is getting deletes.
@@ -78,7 +81,7 @@ public class PDOMIndexerJob extends Job {
 		String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 				+ "/debug/pdomtimings"); //$NON-NLS-1$
 		if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
-			System.out.println("PDOM Indexer Job Time: " + (System.currentTimeMillis() - start));
+			System.out.println("PDOM Indexer Job Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
 
 		return Status.OK_STATUS;
 	}

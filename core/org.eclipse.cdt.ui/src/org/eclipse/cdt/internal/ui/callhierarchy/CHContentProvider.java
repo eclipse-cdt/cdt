@@ -98,15 +98,6 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 			CHNode node = (CHNode) parentElement;
 			ICElement elem= node.getRepresentedDeclaration();
 			if (elem != null) {
-				// mstodo !! for demo only !!
-				if (elem.getElementName().equals("slow")) { //$NON-NLS-1$
-					try {
-						Thread.sleep(3000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				// mstodo !! for demo only !!
 				if (fComputeReferencedBy) {
 					return asyncronouslyComputeReferencedBy(node, elem);
 				}

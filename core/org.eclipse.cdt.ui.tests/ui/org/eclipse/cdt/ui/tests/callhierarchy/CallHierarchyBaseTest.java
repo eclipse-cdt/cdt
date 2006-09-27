@@ -49,7 +49,7 @@ public class CallHierarchyBaseTest extends BaseTestCase {
 	
 	protected void tearDown() throws CoreException {
 		if (fCProject != null) {
-			fCProject.getProject().delete(IProject.FORCE | IProject.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			CProjectHelper.delete(fCProject);
 		}
 	}
 	

@@ -45,6 +45,8 @@ import org.eclipse.rse.ui.GenericMessages;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 
 
@@ -674,10 +676,26 @@ public class SystemDNDTransferRunnable extends Job
 
 	private void showErrorMessage(SystemMessage errorMessage)
 	{
-		SystemMessageDialog dlg = new SystemMessageDialog(SystemMessageDialog.getDefaultShell(), errorMessage);
-		dlg.open();
+		Display.getDefault().asyncExec(new ShowErrorRunnable(errorMessage));
 	}
 
+	public class ShowErrorRunnable implements Runnable
+	{
+		SystemMessage _errorMessage;
+		public ShowErrorRunnable(SystemMessage errorMessage)
+		{
+			_errorMessage = errorMessage;
+		}
+		
+		public void run()
+		{
+			Shell shell = SystemBasePlugin.getActiveWorkbenchShell();
+			SystemMessageDialog dlg = new SystemMessageDialog(shell, _errorMessage);
+			dlg.open();
+		}
+		
+	}
+	
 	public boolean dropOkay()
 	{
 		return _ok;

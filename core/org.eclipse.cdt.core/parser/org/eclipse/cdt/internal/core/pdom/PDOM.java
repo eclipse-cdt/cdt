@@ -57,7 +57,7 @@ public class PDOM extends PlatformObject
 
 	private Database db;
 	
-	public static final int VERSION = 11;
+	public static final int VERSION = 12;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
@@ -70,6 +70,7 @@ public class PDOM extends PlatformObject
 	// 9 - base classes
 	// 10 - typedefs, types on C++ variables
 	// 11 - changed how members work
+	// 12 - one more change for members (is-a list -> has-a list)
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;

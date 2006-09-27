@@ -11,12 +11,12 @@
 
 package org.eclipse.cdt.core.browser;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -29,11 +29,11 @@ import org.eclipse.core.runtime.Path;
  */
 public class PDOMTypeReference implements ITypeReference {
 	
-	private final PDOMName name;
+	private final IASTName name;
 	private final ICProject project;
 	private final IPath path; 
 	
-	public PDOMTypeReference(PDOMName name, ICProject project) {
+	public PDOMTypeReference(IASTName name, ICProject project) {
 		this.name = name;
 		this.project = project;
 		this.path = new Path(name.getFileLocation().getFileName());

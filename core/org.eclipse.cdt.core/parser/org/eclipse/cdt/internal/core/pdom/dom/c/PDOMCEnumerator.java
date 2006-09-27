@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
+class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 
 	private static final int ENUMERATION = PDOMBinding.RECORD_SIZE + 0;
 	private static final int NEXT_ENUMERATOR = PDOMBinding.RECORD_SIZE + 4;

@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCFunction extends PDOMBinding implements IFunction {
+class PDOMCFunction extends PDOMBinding implements IFunction {
 
 	public PDOMCFunction(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name);

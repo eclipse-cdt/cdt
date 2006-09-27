@@ -45,10 +45,10 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -59,7 +59,7 @@ import org.eclipse.core.runtime.Status;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPLinkage extends PDOMLinkage {
+class PDOMCPPLinkage extends PDOMLinkage {
 
 	public PDOMCPPLinkage(PDOM pdom, int record) {
 		super(pdom, record);
@@ -139,12 +139,12 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 				if (!(binding.getScope() instanceof CPPBlockScope))
 					pdomBinding = new PDOMCPPVariable(pdom, parent, name);
 			} else if (binding instanceof ICPPMethod && parent instanceof PDOMCPPClassType) {
-				pdomBinding = new PDOMCPPMethod(pdom, (PDOMCPPClassType)parent, name);
+				pdomBinding = new PDOMCPPMethod(pdom, parent, name);
 			} else if (binding instanceof CPPImplicitMethod && parent instanceof PDOMCPPClassType) {
 				if(!name.isReference()) {
 					//because we got the implicit method off of an IASTName that is not a reference,
 					//it is no longer completly implicit and it should be treated as a normal method.
-					pdomBinding = new PDOMCPPMethod(pdom, (PDOMCPPClassType)parent, name);
+					pdomBinding = new PDOMCPPMethod(pdom, parent, name);
 				}
 			} else if (binding instanceof ICPPFunction) {
 				pdomBinding = new PDOMCPPFunction(pdom, parent, name);
@@ -298,9 +298,9 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			FindBinding visitor = new FindBinding(pdom, binding.getNameCharArray(), getBindingType(binding));
 			getIndex().accept(visitor);
 			return visitor.pdomBinding;
-		} else if (parent instanceof PDOMMemberOwner) {
+		} else if (parent instanceof IPDOMMemberOwner) {
 			FindBinding2 visitor = new FindBinding2(binding.getNameCharArray(), getBindingType(binding));
-			PDOMMemberOwner owner = (PDOMMemberOwner)parent;
+			IPDOMMemberOwner owner = (IPDOMMemberOwner)parent;
 			try {
 				owner.accept(visitor);
 			} catch (CoreException e) {

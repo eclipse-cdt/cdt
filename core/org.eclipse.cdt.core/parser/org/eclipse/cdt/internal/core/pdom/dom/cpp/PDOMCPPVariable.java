@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMCPPBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -29,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPVariable extends PDOMBinding implements ICPPVariable {
+class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 
 	private static final int TYPE_OFFSET = PDOMBinding.RECORD_SIZE + 0;
 	
@@ -90,17 +91,4 @@ public class PDOMCPPVariable extends PDOMBinding implements ICPPVariable {
 	public boolean isStatic() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
-
-	public String[] getQualifiedName() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public char[][] getQualifiedNameCharArray() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isGloballyQualified() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
 }	

@@ -29,6 +29,7 @@ import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBindingsInBTree;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMCPPBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -38,7 +39,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPNamespace extends PDOMBinding
+class PDOMCPPNamespace extends PDOMCPPBinding
 		implements ICPPNamespace, ICPPNamespaceScope {
 
 	private static final int INDEX_OFFSET = PDOMBinding.RECORD_SIZE + 0;
@@ -70,7 +71,7 @@ public class PDOMCPPNamespace extends PDOMBinding
 		getIndex().accept(new IBTreeVisitor() {
 			public int compare(int record) throws CoreException {
 				return 1;
-			};
+			}
 			public boolean visit(int record) throws CoreException {
 				PDOMBinding binding = pdom.getBinding(record);
 				if (binding != null) {
@@ -79,24 +80,12 @@ public class PDOMCPPNamespace extends PDOMBinding
 					visitor.leave(binding);
 				}
 				return true;
-			};
+			}
 		});
 	}
 	
 	public void addChild(PDOMNamedNode child) throws CoreException {
 		getIndex().insert(child.getRecord(), child.getIndexComparator());
-	}
-
-	public String[] getQualifiedName() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public char[][] getQualifiedNameCharArray() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isGloballyQualified() throws DOMException {
-		throw new PDOMNotImplementedError();
 	}
 
 	public IBinding[] getMemberBindings() throws DOMException {

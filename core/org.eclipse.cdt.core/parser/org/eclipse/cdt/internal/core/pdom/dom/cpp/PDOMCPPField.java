@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMCPPBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPField extends PDOMBinding implements ICPPField {
+class PDOMCPPField extends PDOMCPPBinding implements ICPPField {
 
 	public PDOMCPPField(PDOM pdom, PDOMCPPClassType parent, IASTName name)
 			throws CoreException {
@@ -57,14 +57,6 @@ public class PDOMCPPField extends PDOMBinding implements ICPPField {
 	
 	public String[] getQualifiedName() throws DOMException {
         return CPPVisitor.getQualifiedName( this );
-	}
-
-	public char[][] getQualifiedNameCharArray() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isGloballyQualified() throws DOMException {
-		throw new PDOMNotImplementedError();
 	}
 
 	public int getVisibility() throws DOMException {

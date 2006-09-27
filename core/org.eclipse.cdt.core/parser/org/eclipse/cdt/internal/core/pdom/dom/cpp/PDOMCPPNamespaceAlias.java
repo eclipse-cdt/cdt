@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMCPPBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPNamespaceAlias extends PDOMBinding implements
+class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements
 		ICPPNamespaceAlias {
 
 	public PDOMCPPNamespaceAlias(PDOM pdom, PDOMNode parent,
@@ -51,18 +51,6 @@ public class PDOMCPPNamespaceAlias extends PDOMBinding implements
 	}
 
 	public IBinding[] getMemberBindings() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public String[] getQualifiedName() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public char[][] getQualifiedNameCharArray() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isGloballyQualified() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
 

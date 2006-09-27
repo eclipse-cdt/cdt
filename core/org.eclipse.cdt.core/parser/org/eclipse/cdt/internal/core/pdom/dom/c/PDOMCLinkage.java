@@ -36,10 +36,10 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -49,7 +49,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * @author Doug Schaefer
  */
-public class PDOMCLinkage extends PDOMLinkage {
+class PDOMCLinkage extends PDOMLinkage {
 
 	public PDOMCLinkage(PDOM pdom, int record) {
 		super(pdom, record);
@@ -124,8 +124,8 @@ public class PDOMCLinkage extends PDOMLinkage {
 			if (binding instanceof IParameter)
 				return null; // skip parameters
 			else if (binding instanceof IField) { // must be before IVariable
-				if (parent instanceof PDOMMemberOwner)
-					pdomBinding = new PDOMCField(pdom, (PDOMMemberOwner)parent, name);
+				if (parent instanceof IPDOMMemberOwner)
+					pdomBinding = new PDOMCField(pdom, (IPDOMMemberOwner)parent, name);
 			} else if (binding instanceof IVariable)
 				pdomBinding = new PDOMCVariable(pdom, parent, name);
 			else if (binding instanceof IFunction)
@@ -240,9 +240,9 @@ public class PDOMCLinkage extends PDOMLinkage {
 			FindBinding visitor = new FindBinding(pdom, binding.getNameCharArray(), getBindingType(binding));
 			getIndex().accept(visitor);
 			return visitor.pdomBinding;
-		} else if (parent instanceof PDOMMemberOwner) {
+		} else if (parent instanceof IPDOMMemberOwner) {
 			FindBinding2 visitor = new FindBinding2(binding.getNameCharArray(), getBindingType(binding));
-			PDOMMemberOwner owner = (PDOMMemberOwner)parent;
+			IPDOMMemberOwner owner = (IPDOMMemberOwner)parent;
 			try {
 				owner.accept(visitor);
 			} catch (CoreException e) {

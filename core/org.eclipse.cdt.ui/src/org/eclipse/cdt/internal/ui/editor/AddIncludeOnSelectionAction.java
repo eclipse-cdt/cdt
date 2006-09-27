@@ -17,38 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.browser.IQualifiedTypeName;
-import org.eclipse.cdt.core.browser.PathUtil;
-import org.eclipse.cdt.core.browser.QualifiedTypeName;
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IEnumeration;
-import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
-import org.eclipse.cdt.internal.ui.codemanipulation.AddIncludesOperation;
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IFunctionSummary;
-import org.eclipse.cdt.ui.IRequiredInclude;
-import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
@@ -71,6 +39,41 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
+import org.eclipse.cdt.core.browser.PathUtil;
+import org.eclipse.cdt.core.browser.QualifiedTypeName;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IFunctionSummary;
+import org.eclipse.cdt.ui.IRequiredInclude;
+import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
+
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
+import org.eclipse.cdt.internal.ui.codemanipulation.AddIncludesOperation;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 // TODO this is a big TODO. 
 public class AddIncludeOnSelectionAction extends Action implements IUpdate {
@@ -286,7 +289,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 								{
 									PDOMBinding pdomBinding = (PDOMBinding) pdomBindings.get(i);
 									
-									if (pdomBinding instanceof PDOMMemberOwner //class or struct
+									if (pdomBinding instanceof IPDOMMemberOwner //class or struct
 											|| pdomBinding instanceof IEnumeration)
 									{
 										PDOMName currentDef = pdomBinding.getFirstDefinition();

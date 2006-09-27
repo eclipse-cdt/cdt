@@ -18,8 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMCPPBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -27,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Doug Schaefer
  */
-public class PDOMCPPEnumeration extends PDOMBinding implements IEnumeration {
+class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, ICPPBinding {
 
 	private static final int FIRST_ENUMERATOR = PDOMBinding.RECORD_SIZE + 0;
 	

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMCPPBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -36,7 +37,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction, ICPPFunctionType {
+class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFunctionType {
 
 	public static final int NUM_PARAMS = PDOMBinding.RECORD_SIZE + 0;
 	public static final int FIRST_PARAM = PDOMBinding.RECORD_SIZE + 4;
@@ -137,18 +138,6 @@ public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction, ICPPFu
 	public boolean takesVarArgs() throws DOMException {
 		// TODO
 		return false;
-	}
-
-	public String[] getQualifiedName() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public char[][] getQualifiedNameCharArray() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isGloballyQualified() throws DOMException {
-		throw new PDOMNotImplementedError();
 	}
 
 	public IType[] getParameterTypes() throws DOMException {

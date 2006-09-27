@@ -704,7 +704,7 @@ public class CPPVisitor {
 					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
 					if( dtor.getNestedDeclarator() == null ) {
 						while( parent.getParent() instanceof IASTDeclarator )
-						    parent = (IASTDeclarator) parent.getParent();
+						    parent = parent.getParent();
 						ASTNodeProperty prop = parent.getPropertyInParent();
 						if( prop == IASTSimpleDeclaration.DECLARATOR )
 						    return dtor.getFunctionScope();
@@ -765,7 +765,7 @@ public class CPPVisitor {
 	    	        n = ns[ ns.length - 1 ];
 	    	    }
 	    	    
-		        return (ICPPScope) CPPVisitor.getContainingScope( n );
+		        return CPPVisitor.getContainingScope( n );
 		    }
 		    node = node.getParent();
 		}
@@ -1985,6 +1985,20 @@ public class CPPVisitor {
 		}
 		
 		return found;
+	}
+	
+	/**
+	 * Return the qualified name by concatenating component names with the 
+	 * Scope resolution operator ::
+	 * @param qn the component names
+	 * @return the qualified name
+	 */
+	public static String renderQualifiedName(String[] qn) {
+		StringBuffer result = new StringBuffer();
+		for(int i=0; i<qn.length; i++) {
+			result.append(qn[i] + (i+1<qn.length ? "::" : ""));  //$NON-NLS-1$//$NON-NLS-2$
+		}
+		return result.toString();
 	}
 	
 	public static String [] getQualifiedName( IBinding binding ){

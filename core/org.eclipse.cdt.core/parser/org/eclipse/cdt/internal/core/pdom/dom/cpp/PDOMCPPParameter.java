@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Doug Schaefer
  */
-public class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
+class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 
 	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE + 0;
 	private static final int TYPE = PDOMNamedNode.RECORD_SIZE + 4;

@@ -16,8 +16,9 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
@@ -25,10 +26,10 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCField extends PDOMBinding implements IField {
+class PDOMCField extends PDOMBinding implements IField {
 
-	public PDOMCField(PDOM pdom, PDOMMemberOwner parent, IASTName name) throws CoreException {
-		super(pdom, parent, name);
+	public PDOMCField(PDOM pdom, IPDOMMemberOwner parent, IASTName name) throws CoreException {
+		super(pdom, (PDOMNode) parent, name);
 	}
 
 	public PDOMCField(PDOM pdom, int record) {

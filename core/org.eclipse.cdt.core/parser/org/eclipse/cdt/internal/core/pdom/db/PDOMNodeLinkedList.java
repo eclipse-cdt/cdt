@@ -9,31 +9,31 @@
  * QNX - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.pdom.dom;
+package org.eclipse.cdt.internal.core.pdom.db;
 
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.db.ListItem;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
+ * Represents a linked list
  * @author Doug Schaefer
  *
  */
-public abstract class PDOMMemberOwner extends PDOMBinding {
-
-	private static final int FIRST_MEMBER = PDOMBinding.RECORD_SIZE + 0;
+public class PDOMNodeLinkedList {
+	PDOM pdom;
+	int offset;
+	PDOMLinkage linkage;
 	
-	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
+	private static final int FIRST_MEMBER = 0;
+	protected static final int RECORD_SIZE = 4;
 
-	public PDOMMemberOwner(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name);
-	}
-
-	public PDOMMemberOwner(PDOM pdom, int record) {
-		super(pdom, record);
+	public PDOMNodeLinkedList(PDOM pdom, int offset, PDOMLinkage linkage) {
+		this.pdom = pdom;
+		this.offset = offset;
+		this.linkage = linkage;
 	}
 
 	protected int getRecordSize() {
@@ -41,12 +41,10 @@ public abstract class PDOMMemberOwner extends PDOMBinding {
 	}
 	
 	public void accept(IPDOMVisitor visitor) throws CoreException {
-		super.accept(visitor);
 		ListItem firstItem = getFirstMemberItem();
 		if (firstItem == null)
 			return;
 		
-		PDOMLinkage linkage = getLinkage();
 		ListItem item = firstItem;
 		do {
 			PDOMNode node = linkage.getNode(item.getItem());
@@ -59,7 +57,7 @@ public abstract class PDOMMemberOwner extends PDOMBinding {
 	
 	private ListItem getFirstMemberItem() throws CoreException {
 		Database db = pdom.getDB();
-		int item = db.getInt(record + FIRST_MEMBER);
+		int item = db.getInt(offset + FIRST_MEMBER);
 		return item != 0 ? new ListItem(db, item) : null;
 	}
 	
@@ -71,7 +69,7 @@ public abstract class PDOMMemberOwner extends PDOMBinding {
 			firstMember.setItem(member.getRecord());
 			firstMember.setNext(firstMember);
 			firstMember.setPrev(firstMember);
-			db.putInt(record + FIRST_MEMBER, firstMember.getRecord());
+			db.putInt(offset + FIRST_MEMBER, firstMember.getRecord());
 		} else {
 			ListItem newMember = new ListItem(db);
 			newMember.setItem(member.getRecord());
@@ -82,5 +80,4 @@ public abstract class PDOMMemberOwner extends PDOMBinding {
 			newMember.setNext(firstMember);
 		}
 	}
-
 }

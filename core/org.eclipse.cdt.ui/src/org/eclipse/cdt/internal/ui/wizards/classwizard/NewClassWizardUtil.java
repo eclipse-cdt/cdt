@@ -15,31 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.browser.AllTypesCache;
-import org.eclipse.cdt.core.browser.IQualifiedTypeName;
-import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.ITypeReference;
-import org.eclipse.cdt.core.browser.TypeSearchScope;
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkage;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
-import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -48,7 +23,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -56,6 +30,38 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.browser.AllTypesCache;
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.browser.TypeSearchScope;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.model.ITypeDef;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
+import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class NewClassWizardUtil {
 
@@ -366,7 +372,7 @@ public class NewClassWizardUtil {
 	 * Search for the given qualified name of the give
 	 * @param typeName  qualified name of the type to search
 	 * @param project  
-	 * @param pdomNodeType PDOMCPPLinkage type
+	 * @param queryType Class of interface type to search for (e.g. ICPPClassType.class)
 	 * @return one of {@link #SEARCH_MATCH_ERROR}, 
 	 * {@link #SEARCH_MATCH_FOUND_ANOTHER_NAMESPACE},
 	 * {@link #SEARCH_MATCH_FOUND_ANOTHER_TYPE}, 
@@ -374,7 +380,7 @@ public class NewClassWizardUtil {
 	 * {@link #SEARCH_MATCH_FOUND_EXACT} or
 	 * {@link #SEARCH_MATCH_NOTFOUND}.	 
 	 */
-	public static int searchForCppType(IQualifiedTypeName typeName, ICProject project, int pdomNodeType) {
+	public static int searchForCppType(IQualifiedTypeName typeName, ICProject project, Class queryType) {
 		if(project == null) {
 			return SEARCH_MATCH_ERROR;
 		}
@@ -388,35 +394,29 @@ public class NewClassWizardUtil {
 			boolean sameTypeNameExists = false;
 			boolean sameNameDifferentTypeExists = false;
 			
-			for (int i = 0; i < bindings.length; ++i)
-			{
-				PDOMBinding binding = (PDOMBinding)bindings[i];
-				PDOMBinding pdomBinding = pdom.getLinkage(GPPLanguage.getDefault()).adaptBinding(binding);
+			for (int i = 0; i < bindings.length; ++i) {
+				ICPPBinding binding = (ICPPBinding)bindings[i];
 				
 				//get the fully qualified name of this binding
-				String bindingFullName = getBindingQualifiedName(pdomBinding);
+				String bindingFullName = CPPVisitor.renderQualifiedName(binding.getQualifiedName());
 				
-				int currentNodeType = pdomBinding.getNodeType();
+				Class currentNodeType = binding.getClass();
 				// full binding				
-				if (currentNodeType == pdomNodeType)
-				{						
-					if (bindingFullName.equals(fullyQualifiedTypeName))
-					{
+				if (queryType.isAssignableFrom(currentNodeType)) {						
+					if (bindingFullName.equals(fullyQualifiedTypeName)) {
 						return SEARCH_MATCH_FOUND_EXACT;
 					} else {
 						// same type , same name , but different name space
 						// see if there is an exact match;
 						sameTypeNameExists = true;
 					}
-				}
-				else if(currentNodeType == PDOMCPPLinkage.CPPCLASSTYPE || 
-						currentNodeType == PDOMCPPLinkage.CPPENUMERATION ||
-						currentNodeType == PDOMCPPLinkage.CPPNAMESPACE ||
-						currentNodeType == PDOMCPPLinkage.CPPTYPEDEF ||
-						currentNodeType == PDOMCPPLinkage.CPPBASICTYPE)
+				} else if(ICPPClassType.class.isAssignableFrom(currentNodeType) || 
+						IEnumeration.class.isAssignableFrom(currentNodeType) || // TODO - this should maybe be ICPPEnumeration
+						ICPPNamespace.class.isAssignableFrom(currentNodeType) ||
+						ITypeDef.class.isAssignableFrom(currentNodeType) ||
+						ICPPBasicType.class.isAssignableFrom(currentNodeType))
 				{						
-					if (bindingFullName.equals(fullyQualifiedTypeName))
-					{
+					if (bindingFullName.equals(fullyQualifiedTypeName))	{
 			        	return SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE;
 			        } else {
 						// different type , same name , but different name space
@@ -436,25 +436,4 @@ public class NewClassWizardUtil {
 		}
 		return SEARCH_MATCH_NOTFOUND;
 	}
-
-	/**
-	 * Get the fully qualified name for a given PDOMBinding
-	 * @param pdomBinding
-	 * @return binding's fully qualified name
-	 * @throws CoreException
-	 */
-	public static String getBindingQualifiedName(PDOMBinding pdomBinding) throws CoreException
-	{
-		StringBuffer buf = new StringBuffer(pdomBinding.getName());	
-		PDOMNode parent = pdomBinding.getParentNode();
-		while (parent != null)
-		{
-			if (parent instanceof PDOMBinding)
-			{							
-				buf.insert(0, ((PDOMBinding)parent).getName() + "::"); //$NON-NLS-1$
-			}
-			parent = parent.getParentNode();
-		}
-		return buf.toString();
-	}    
 }

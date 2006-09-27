@@ -13,11 +13,15 @@
 package org.eclipse.cdt.core.browser;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.IPDOMResolver;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
@@ -27,11 +31,11 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMTypeInfo implements ITypeInfo {
 
-	private final PDOMBinding binding;
+	private final IBinding binding;
 	private final int elementType;
 	private final ICProject project;
 
-	public PDOMTypeInfo(PDOMBinding binding, int elementType, ICProject project) {
+	public PDOMTypeInfo(IBinding binding, int elementType, ICProject project) {
 		this.binding = binding;
 		this.elementType = elementType;
 		this.project = project;
@@ -95,21 +99,19 @@ public class PDOMTypeInfo implements ITypeInfo {
 	}
 
 	public IQualifiedTypeName getQualifiedTypeName() {
-		StringBuffer buf = new StringBuffer(binding.getName());	
-		try {
-			PDOMNode parent = binding.getParentNode();
-			while (parent != null)
-			{
-				if (parent instanceof PDOMBinding)
-				{							
-					buf.insert(0, ((PDOMBinding)parent).getName() + "::");
-				}
-				parent = parent.getParentNode();
+		String qn;
+		if(binding instanceof ICPPBinding) {
+			try {
+				qn = CPPVisitor.renderQualifiedName(((ICPPBinding)binding).getQualifiedName());
+			} catch(DOMException de) {
+				CCorePlugin.log(de); // can't happen when (binding instanceof PDOMBinding)
+				return null;
 			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		}		
-		return new QualifiedTypeName(buf.toString());
+		} else {
+			qn = binding.getName();
+		}
+		
+		return new QualifiedTypeName(qn);
 	}
 
 	public ITypeReference[] getReferences() {
@@ -118,8 +120,10 @@ public class PDOMTypeInfo implements ITypeInfo {
 
 	public ITypeReference getResolvedReference() {
 		try {
-			PDOMName name = binding.getFirstDefinition();
-			return name != null ? new PDOMTypeReference(name, project) : null;
+			IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
+			IPDOMResolver resolver = (IPDOMResolver) pdom.getAdapter(IPDOMResolver.class);
+			IASTName[] names= resolver.getDefinitions(binding);
+			return names != null && names.length > 0 ? new PDOMTypeReference(names[0], project) : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

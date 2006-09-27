@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Doug Schaefer
  */
-public class PDOMCPPBase implements ICPPBase {
+class PDOMCPPBase implements ICPPBase {
 
 	private static final int BASECLASS = 0;
 	private static final int NEXTBASE = 4;

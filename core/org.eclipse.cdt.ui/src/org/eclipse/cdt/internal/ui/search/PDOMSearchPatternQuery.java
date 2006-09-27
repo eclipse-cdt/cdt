@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * IBM Corporation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
@@ -17,26 +18,32 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCStructure;
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPClassType;
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkage;
-
-import org.eclipse.cdt.internal.ui.util.Messages;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+
+import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * @author Doug Schaefer
@@ -144,152 +151,48 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 				
 				//TODO search for macro
 				
-				if ((flags & FIND_ALL_TYPES) == FIND_ALL_TYPES)
-				{
-					createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+				boolean matches= false;
+				if ((flags & FIND_ALL_TYPES) == FIND_ALL_TYPES) {
+					matches= true;
 				}
-				else
-				{					
-					//C++
-					if (pdomBinding.getLinkage() instanceof PDOMCPPLinkage)
-					{
-						switch (pdomBinding.getNodeType()) {
-						case PDOMCPPLinkage.CPPCLASSTYPE:
-						{
-							switch (((PDOMCPPClassType)pdomBinding).getKey())
-							{
-								case ICPPClassType.k_class:
-								case ICompositeType.k_struct:
-									if (((flags & FIND_CLASS_STRUCT) == FIND_CLASS_STRUCT))
-									{
-										createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-									}
-									break;
-								case ICompositeType.k_union:
-									if ((flags & FIND_UNION) == FIND_UNION)
-									{
-										createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-									}
-									break;
-								default:
-									break;
-							}
-							break;
-						}
-						case PDOMCPPLinkage.CPPENUMERATION:	
-							if ((flags & FIND_ENUM) == FIND_ENUM)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						case PDOMCPPLinkage.CPPENUMERATOR:	
-							if ((flags & FIND_ENUMERATOR) == FIND_ENUMERATOR)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						case PDOMCPPLinkage.CPPFIELD:	
-							if ((flags & FIND_FIELD) == FIND_FIELD)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						case PDOMCPPLinkage.CPPFUNCTION:
-							if ((flags & FIND_FUNCTION) == FIND_FUNCTION)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						case PDOMCPPLinkage.CPPMETHOD:	
-							if ((flags & FIND_METHOD) == FIND_METHOD)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						case PDOMCPPLinkage.CPPNAMESPACE:
-						case PDOMCPPLinkage.CPPNAMESPACEALIAS:	
-							if ((flags & FIND_NAMESPACE) == FIND_NAMESPACE)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						case PDOMCPPLinkage.CPPTYPEDEF:	
-							if ((flags & FIND_TYPEDEF) == FIND_TYPEDEF)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						case PDOMCPPLinkage.CPPVARIABLE:	
-							if ((flags & FIND_VARIABLE) == FIND_VARIABLE)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						default:
-							break;
-						}
+				else if (pdomBinding instanceof ICompositeType) {
+					ICompositeType ct= (ICompositeType) pdomBinding;
+					switch (ct.getKey()) {
+					case ICompositeType.k_struct:
+					case ICPPClassType.k_class:
+						matches= (flags & FIND_CLASS_STRUCT) != 0;
+						break;
+					case ICompositeType.k_union:
+						matches= (flags & FIND_UNION) != 0;
+						break;
 					}
-					//C
-					else if (pdomBinding.getLinkage() instanceof PDOMCLinkage)
-					{
-						switch (pdomBinding.getNodeType()) {
-						case PDOMCLinkage.CSTRUCTURE:
-							switch (((PDOMCStructure)pdomBinding).getKey())
-							{
-								case ICompositeType.k_struct:
-									if (((flags & FIND_CLASS_STRUCT) == FIND_CLASS_STRUCT))
-									{
-										createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-									}
-									break;
-								case ICompositeType.k_union:
-									if ((flags & FIND_UNION) == FIND_UNION)
-									{
-										createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-									}
-									break;
-							}
-							break;
-						case PDOMCLinkage.CENUMERATION:	
-							if ((flags & FIND_ENUM) == FIND_ENUM)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						case PDOMCLinkage.CENUMERATOR:	
-							if ((flags & FIND_ENUMERATOR) == FIND_ENUMERATOR)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						case PDOMCLinkage.CFIELD:	
-							if ((flags & FIND_FIELD) == FIND_FIELD)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						case PDOMCLinkage.CFUNCTION:
-							if ((flags & FIND_FUNCTION) == FIND_FUNCTION)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						case PDOMCLinkage.CTYPEDEF:	
-							if ((flags & FIND_TYPEDEF) == FIND_TYPEDEF)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						case PDOMCLinkage.CVARIABLE:	
-							if ((flags & FIND_VARIABLE) == FIND_VARIABLE)
-							{
-								createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
-							}
-							break;
-						default:
-							break;
-						}
-					}
+				}
+				else if (pdomBinding instanceof IEnumeration) {
+					matches= (flags & FIND_ENUM) != 0;
+				}
+				else if (pdomBinding instanceof IEnumerator) {
+					matches= (flags & FIND_ENUMERATOR) != 0;
+				}
+				else if (pdomBinding instanceof IField) {
+					matches= (flags & FIND_FIELD) != 0;
+				}
+				else if (pdomBinding instanceof ICPPMethod) {
+					matches= (flags & FIND_METHOD) != 0;
+				}
+				else if (pdomBinding instanceof IVariable) {
+					matches= (flags & FIND_VARIABLE) != 0;
+				}
+				else if (pdomBinding instanceof IFunction) {
+					matches= (flags & FIND_FUNCTION) != 0;
+				}
+				else if (pdomBinding instanceof ICPPNamespace || pdomBinding instanceof ICPPNamespaceAlias) {
+					matches= (flags & FIND_NAMESPACE) != 0;
+				}
+				else if (pdomBinding instanceof ITypedef) {
+					matches= (flags & FIND_TYPEDEF) != 0;
+				}
+				if (matches) {
+					createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
 				}
 			}
 		} finally {

@@ -18,7 +18,11 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -28,9 +32,6 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCStructure;
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPClassType;
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespace;
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespaceAlias;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -88,7 +89,7 @@ public class AllTypesCache {
 				return;
 			case ICElement.C_STRUCT:
 				if (node instanceof PDOMCStructure)
-					types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
+					types.add(new PDOMTypeInfo((IBinding)node, kind, project));
 				return;
 			case ICElement.C_UNION:
 				return;
@@ -109,25 +110,28 @@ public class AllTypesCache {
 			try {
 				switch (kind) {
 				case ICElement.C_NAMESPACE:
-					if (node instanceof PDOMCPPNamespace || node instanceof PDOMCPPNamespaceAlias)
+					if (node instanceof ICPPNamespace || node instanceof ICPPNamespaceAlias)
 						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
 					return;
 				case ICElement.C_CLASS:
-					if (node instanceof PDOMCPPClassType
-							&& ((PDOMCPPClassType)node).getKey() == ICPPClassType.k_class)
+					if (node instanceof ICPPClassType
+							&& ((ICPPClassType)node).getKey() == ICPPClassType.k_class)
 						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
 					return;
 				case ICElement.C_STRUCT:
-					if (node instanceof PDOMCPPClassType
-							&& ((PDOMCPPClassType)node).getKey() == ICPPClassType.k_struct)
+					if (node instanceof ICPPClassType
+							&& ((ICPPClassType)node).getKey() == ICPPClassType.k_struct)
 						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
 					return;
 				case ICElement.C_UNION:
-					if (node instanceof PDOMCPPClassType
-							&& ((PDOMCPPClassType)node).getKey() == ICPPClassType.k_union)
+					if (node instanceof ICPPClassType
+							&& ((ICPPClassType)node).getKey() == ICPPClassType.k_union)
 						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
 					return;
 				case ICElement.C_ENUMERATION:
+					if (node instanceof IEnumeration
+							/*&& node instanceof ICPPBinding*/)
+							types.add(new PDOMTypeInfo((IEnumeration)node, kind, project));
 					return;
 				case ICElement.C_TYPEDEF:
 					return;

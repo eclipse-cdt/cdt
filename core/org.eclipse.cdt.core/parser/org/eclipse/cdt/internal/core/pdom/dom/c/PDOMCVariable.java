@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCVariable extends PDOMBinding implements IVariable {
+class PDOMCVariable extends PDOMBinding implements IVariable {
 
 	public PDOMCVariable(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name);

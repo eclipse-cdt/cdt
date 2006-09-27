@@ -50,8 +50,8 @@ public abstract class PDOMNode implements IPDOMNode{
 		
 		// parent
 		db.putInt(record + PARENT, parent != null ? parent.getRecord() : 0);
-		if (parent instanceof PDOMMemberOwner)
-			((PDOMMemberOwner)parent).addMember(this);
+		if (parent instanceof IPDOMMemberOwner)
+			((IPDOMMemberOwner)parent).addMember(this);
 	}
 
 	protected abstract int getRecordSize();

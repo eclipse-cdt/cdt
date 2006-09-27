@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType {
+class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType {
 
 	public static final int TYPE_ID = PDOMNode.RECORD_SIZE + 0; // short
 	public static final int FLAGS = PDOMNode.RECORD_SIZE + 2;   // short

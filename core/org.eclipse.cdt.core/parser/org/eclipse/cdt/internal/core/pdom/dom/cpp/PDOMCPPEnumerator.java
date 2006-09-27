@@ -16,8 +16,10 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMCPPBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -25,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPEnumerator extends PDOMBinding implements IEnumerator {
+class PDOMCPPEnumerator extends PDOMCPPBinding implements IEnumerator, ICPPBinding {
 
 	private static final int ENUMERATION = PDOMBinding.RECORD_SIZE + 0;
 	private static final int NEXT_ENUMERATOR = PDOMBinding.RECORD_SIZE + 4;

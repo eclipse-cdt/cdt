@@ -34,9 +34,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMCPPBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -45,13 +47,14 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  * 
  */
-public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
-		ICPPClassScope {
+class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
+		ICPPClassScope, IPDOMMemberOwner {
 
-	private static final int FIRSTBASE = PDOMMemberOwner.RECORD_SIZE + 0;
-	private static final int KEY = PDOMMemberOwner.RECORD_SIZE + 4; // byte
-
-	protected static final int RECORD_SIZE = PDOMMemberOwner.RECORD_SIZE + 5;
+	private static final int FIRSTBASE = PDOMCPPBinding.RECORD_SIZE + 0;
+	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 4; // byte
+	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 8;
+	
+	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 12;
 
 	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, IASTName name)
 			throws CoreException {
@@ -62,8 +65,14 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 		if (binding instanceof ICPPClassType) // not sure why it wouldn't
 			key = ((ICPPClassType) binding).getKey();
 		pdom.getDB().putByte(record + KEY, (byte) key);
+		// linked list is initialized by storage being zero'd by malloc
 	}
-
+	
+	public void addMember(PDOMNode member) throws CoreException {
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkage());
+		list.addMember(member);
+	}
+	
 	public PDOMCPPClassType(PDOM pdom, int bindingRecord) {
 		super(pdom, bindingRecord);
 	}
@@ -122,6 +131,12 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 		}
 	}
 
+	public void accept(IPDOMVisitor visitor) throws CoreException {
+		super.accept(visitor);
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkage());
+		list.accept(visitor);
+	}
+	
 	public ICPPConstructor[] getConstructors() throws DOMException {
 		// TODO
 		return new ICPPConstructor[0];
@@ -261,15 +276,7 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType,
 			return ICPPClassType.k_class; // or something
 		}
 	}
-
-	public String[] getQualifiedName() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public char[][] getQualifiedNameCharArray() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
+	
 	public boolean isGloballyQualified() throws DOMException {
 		try {
 			return getParentNode() instanceof PDOMLinkage;

@@ -24,7 +24,9 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
+import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -34,16 +36,28 @@ import org.eclipse.core.runtime.Status;
  * @author Doug Schaefer
  *
  */
-public class PDOMCStructure extends PDOMMemberOwner implements ICompositeType {
-
+public class PDOMCStructure extends PDOMBinding implements ICompositeType, IPDOMMemberOwner {
+	private static final int MEMBERLIST = PDOMBinding.RECORD_SIZE;
+	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
+	
 	public PDOMCStructure(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name);
+		// linked list is initialized by malloc zeroing allocated storage
 	}
 
 	public PDOMCStructure(PDOM pdom, int record) {
 		super(pdom, record);
 	}
 
+	public void accept(IPDOMVisitor visitor) throws CoreException {
+		super.accept(visitor);
+		new PDOMNodeLinkedList(pdom, record+MEMBERLIST, getLinkage()).accept(visitor);
+	}
+	
+	public void addMember(PDOMNode member) throws CoreException {
+		new PDOMNodeLinkedList(pdom, record+MEMBERLIST, getLinkage()).addMember(member);
+	}
+	
 	public int getNodeType() {
 		return PDOMCLinkage.CSTRUCTURE;
 	}
@@ -129,4 +143,7 @@ public class PDOMCStructure extends PDOMMemberOwner implements ICompositeType {
 			return false;
 	}
 
+	protected int getRecordSize() {
+		return RECORD_SIZE;
+	}
 }

@@ -54,6 +54,8 @@ import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.browser.TypeUtil;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -64,8 +66,6 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkage;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
@@ -1488,13 +1488,13 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			/* search for parent name space first */
 			int searchResult;
 			if (typeName.isQualified()) {
-				searchResult = NewClassWizardUtil.searchForCppType(typeName.getEnclosingTypeName(),project, PDOMCPPLinkage.CPPNAMESPACE);
+				searchResult = NewClassWizardUtil.searchForCppType(typeName.getEnclosingTypeName(),project, ICPPNamespace.class);
 				if (searchResult != NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT) {
 					status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnclosingNamespaceNotExists")); //$NON-NLS-1$
 					return status;
 				}
 			}
-			searchResult = NewClassWizardUtil.searchForCppType(typeName, project, PDOMCPPLinkage.CPPNAMESPACE);
+			searchResult = NewClassWizardUtil.searchForCppType(typeName, project, ICPPNamespace.class);
 			switch(searchResult) {
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT:
 				status.setOK();
@@ -1563,7 +1563,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			        fullyQualifiedName = new QualifiedTypeName(namespace).append(typeName);
 			    }
 			}
-			int searchResult = NewClassWizardUtil.searchForCppType(fullyQualifiedName, project,PDOMCPPLinkage.CPPCLASSTYPE);
+			int searchResult = NewClassWizardUtil.searchForCppType(fullyQualifiedName, project, ICPPClassType.class);
 			switch(searchResult) {
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT:
 				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExists")); //$NON-NLS-1$

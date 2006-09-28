@@ -33,6 +33,10 @@
          id="org.apache.commons_net"
          version="0.0.0"/>
 
+   <includes
+         id="org.apache.oro"
+         version="0.0.0"/>
+
    <plugin
          id="org.eclipse.rse.services.files.ftp"
          download-size="0"

@@ -3,7 +3,8 @@
       id="org.eclipse.rse.sdk"
       label="%featureName"
       version="1.0.0.qualifier"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      plugin="org.eclipse.rse.sdk">
 
    <description>
       %description
@@ -17,12 +18,6 @@
       <update label="%updateSiteName" url="http://download.eclipse.org/dsdp/tm/updates"/>
       <discovery label="%updateSiteName" url="http://download.eclipse.org/dsdp/tm/updates"/>
    </url>
-
-   <!--
-   <includes
-         id="org.apache.commons_net"
-         version="0.0.0"/>
-   -->
 
    <includes
          id="org.eclipse.rse.core"
@@ -52,6 +47,10 @@
 
    <includes
          id="org.apache.commons_net.source"
+         version="0.0.0"/>
+
+   <includes
+         id="org.apache.oro.source"
          version="0.0.0"/>
 
    <includes

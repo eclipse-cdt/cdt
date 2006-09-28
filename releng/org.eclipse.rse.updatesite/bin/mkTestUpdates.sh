@@ -61,10 +61,10 @@ if [ `basename $SITE` = testUpdates ]; then
 else
     echo "Working on official update site"
 fi
-FEATURES=`grep 'features/[^ ]*\.qualifier\.jar' site.xml | sed -e 's,^[^"]*"features/\([^_]*_[0-9.]*\).*$,\1,g'`
+FEATURES=`grep 'features/[^ ]*\.qualifier\.jar' site.xml | sed -e 's,^[^"]*"features/\([^0-9]*[0-9][0-9.]*\).*$,\1,g'`
 for feature in $FEATURES ; do
   #list newest ones first
-  TAG=`ls -t features/${feature}*.jar | head -1 | sed -e 's,[^_]*_[0-9]*\.[0-9]*\.[0-9]*\.\([^.]*\).jar,\1,'`
+  TAG=`ls -t features/${feature}*.jar | head -1 | sed -e 's,[^0-9]*[0-9][0-9]*\.[0-9]*\.[0-9]*\.\([^.]*\).jar,\1,'`
   if [ "$TAG" != "" ]; then
     echo "$feature : $TAG"
     sed -e "/$feature/s/qualifier/$TAG/g" site.xml > site.xml.new

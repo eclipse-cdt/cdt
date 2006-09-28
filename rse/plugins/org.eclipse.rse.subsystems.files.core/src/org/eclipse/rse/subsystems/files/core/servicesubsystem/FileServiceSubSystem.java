@@ -628,7 +628,9 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		catch (SystemMessageException e)
 		{
 			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
-			dlg.open();
+			SystemMessageDialogRunnable runnable = new SystemMessageDialogRunnable(dlg);
+			Display.getDefault().asyncExec(runnable);
+			
 			return null;
 		}
 		return getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), fileToCreate.getParentRemoteFile(), newFile);

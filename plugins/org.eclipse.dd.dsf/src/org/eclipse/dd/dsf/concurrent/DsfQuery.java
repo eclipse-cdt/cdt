@@ -25,7 +25,6 @@ import org.eclipse.dd.dsf.DsfPlugin;
  * data at end of Callable#call method.
  * 
  * @see java.util.concurrent.Callable
- * FIXME: make this class implement the Future<V> interface.
  */
 abstract public class DsfQuery<V> {
     
@@ -66,7 +65,7 @@ abstract public class DsfQuery<V> {
             if (!fWaiting) {
                 fFuture = fExecutor.submit(new DsfRunnable() {
                     public void run() {
-                        // TODO: not sure if this try-catch is desirable.  It might encourage
+                        // Note: not sure if this try-catch is desirable.  It might encourage
                         // implementors to not catch its own exceptions.  If the query code takes
                         // more than one dispatch, then this code will not be helpful anyway.
                         try {

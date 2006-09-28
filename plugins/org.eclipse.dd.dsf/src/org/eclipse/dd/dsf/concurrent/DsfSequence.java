@@ -38,18 +38,11 @@ import org.eclipse.dd.dsf.DsfPlugin;
  * if progress reporting, cancellability, and roll-back ability is required, it
  * has to be re-implemented every time.  The Sequence class tries to address
  * this problem by containing this pattern in a single class. 
- * 
- * <br>TODO: should a sequence be re-entrant.  I.e. should the arguments be 
- * passed in through a map, and the return values returned back in the done?
- * <br>FIXME: convert to implement Future interface 
  */
 abstract public class DsfSequence {
 
     /**
      * The abstract class that each step has to implement
-     * <br>FIXME: convert execute() and rollBacl() to take "done" as an argument.
-     * This way we can make step a static class, and make its paradigm
-     * more consistent with rest of DSF. 
      */
     abstract public class Step {
         public void execute() { stepFinished(); }
@@ -165,9 +158,7 @@ abstract public class DsfSequence {
         invokeLater();
         try {
             wait();
-        } catch (InterruptedException e) {
-            // TODO: error handling?
-        }
+        } catch (InterruptedException e) {}
     }
 
     private void doInvoke() {

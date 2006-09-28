@@ -53,7 +53,7 @@ public interface IExpressions extends IDataModelService {
         String getBinaryValue();
         String getStringValue();
         IAddress getAddress();
-        IRegisters.RegisterDMC getRegister();
+        IRegisters.IRegisterDMC getRegister();
         Map<String,String> getEnumerations();
     }
 

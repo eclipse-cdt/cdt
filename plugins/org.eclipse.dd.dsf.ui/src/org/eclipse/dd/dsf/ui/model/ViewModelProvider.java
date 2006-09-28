@@ -108,6 +108,14 @@ public class ViewModelProvider extends AbstractModelProxy
         }    
     }
     
+    private boolean isOurSchemaNode(IViewModelSchemaNode schemaNode, IViewModelSchemaNode[] nodesToSearch) {
+    	for (IViewModelSchemaNode node : nodesToSearch) {
+    		if (node == schemaNode) return true;
+    		if (isOurSchemaNode(schemaNode, node.getChildNodes())) return true;
+    	}
+    	return false;
+    }
+    
     /** 
      * Performs the query to determine if given VNC is a container. 
      * Note: this method must be called on the provider's dispatch thread.
@@ -122,7 +130,7 @@ public class ViewModelProvider extends AbstractModelProxy
         // collect the list of children.  Otherwise, get the child schema nodes 
         // out of VMC's schema node.
         IViewModelSchemaNode[] childSchemaNodes;
-        if (vmc == fRootVMC) {
+        if (vmc == fRootVMC || !isOurSchemaNode(vmc.getSchemaNode(), fRootSchemaNodes)) {
             childSchemaNodes = fRootSchemaNodes;
         } else {
             childSchemaNodes = vmc.getSchemaNode().getChildNodes();
@@ -161,7 +169,7 @@ public class ViewModelProvider extends AbstractModelProxy
 
         // Get the child nodes as in isContainer().
         IViewModelSchemaNode[] childSchemaNodes;
-        if (vmc == fRootVMC) {
+        if (vmc == fRootVMC || !isOurSchemaNode(vmc.getSchemaNode(), fRootSchemaNodes)) {
             childSchemaNodes = fRootSchemaNodes;
         } else {
             childSchemaNodes = vmc.getSchemaNode().getChildNodes();

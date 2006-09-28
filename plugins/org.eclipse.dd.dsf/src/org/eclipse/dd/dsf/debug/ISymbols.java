@@ -23,12 +23,12 @@ import org.eclipse.dd.dsf.model.IDataModelService;
  * @see IModules
  */
 public interface ISymbols extends IDataModelService {
-    public interface SymbolObjectDMC extends IDataModelContext<SymbolObjectData> {}
+    public interface ISymbolObjectDMC extends IDataModelContext<ISymbolObjectData> {}
     
     /**
      * Data about a debug symbol.  
      */
-    public interface SymbolObjectData extends IDataModelData {
+    public interface ISymbolObjectData extends IDataModelData {
         String getName();
         String getTypeName();
         String getFilepath();
@@ -41,10 +41,8 @@ public interface ISymbols extends IDataModelService {
      * even while it's still parsing.  This event may be issued periodically
      * by the service to indicate that a section of debug symbols has been 
      * parsed.
-     * TODO: This is not an IModelEvent because the context of this event is 
-     * the whole service.  This needs to be fixed.
      */
-    public interface SymbolDataChanged extends IDataModelEvent<IModules.ISymbolDMC> {}
+    public interface ISymbolDataChanged extends IDataModelEvent<IModules.ISymbolDMC> {}
     
     /**
      * Retrieves the list of symbols.
@@ -52,5 +50,5 @@ public interface ISymbols extends IDataModelService {
      * @param done Return token.  The return value is an iterator (rather than 
      * array) since there could be a very large number of symbols returned.
      */
-    public void getSymbols(IModules.ISymbolDMC symCtx, GetDataDone<Iterable<SymbolObjectDMC>> done);
+    public void getSymbols(IModules.ISymbolDMC symCtx, GetDataDone<Iterable<ISymbolObjectDMC>> done);
 }

@@ -16,6 +16,9 @@ import org.eclipse.core.runtime.IStatus;
  * Convenience extension to GetDataDone, which handles posting of the client's
  * <code>Done</code> upon the completion of this <code>GetDataDone</code>.
  * @param <V> Class type of data.
+ * @deprecated This class has been replaced with the 
+ * {@link Done#propagateErrorToClient(DsfExecutor, Done, int, String)}
+ * method.
  */
 public abstract class GetDataDoneWithClientDone<V> extends GetDataDone<V> {
     private DsfExecutor fExecutor;

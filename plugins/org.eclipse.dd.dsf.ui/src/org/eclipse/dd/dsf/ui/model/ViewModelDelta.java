@@ -18,9 +18,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
  * This delta class mostly just duplicates the ModelDelta implemention, but
  * it allows clients to modify the flags after the original object is 
  * constructed. 
- * <p>
- * TODO: This class derives from ModelDelta as opposed to just implementing IModelDelta
- * because of a reference in IModelDelta to ModelDelta.  Need to file a bug on it.
+ *
  * @see IModelDelta#getNodes()
  */
 @SuppressWarnings("restriction")

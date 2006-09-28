@@ -12,8 +12,6 @@ package org.eclipse.dd.dsf.model;
 
 /**
  * Base implementation of the IDataModelContext interface.
- * <p>
- * TODO: consider merging the event interface with this class.
  */
 public class DataModelEvent<V extends IDataModelContext> implements IDataModelEvent<V> {
 

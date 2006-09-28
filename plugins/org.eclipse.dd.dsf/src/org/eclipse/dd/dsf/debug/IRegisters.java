@@ -22,24 +22,25 @@ import org.eclipse.dd.dsf.model.IDataModelService;
 public interface IRegisters extends IDataModelService {
 
     /** Register group context */
-    public interface RegisterGroupDMC extends IDataModelContext<RegisterGroupData> {}
+    public interface IRegisterGroupDMC extends IDataModelContext<IRegisterGroupData> {}
     
     /** 
      * Register groups only have a name.  Sub groups and registered are retrieved
      * through the service interface. 
      */
-    public interface RegisterGroupData extends IDataModelData {
+    public interface IRegisterGroupData extends IDataModelData {
         public String getName();
+        public String getDescription();
     }
 
     /** Register context */
-    public interface RegisterDMC extends IDataModelContext<RegisterData> {}
+    public interface IRegisterDMC extends IDataModelContext<IRegisterData> {}
     
     /** Event indicating register value changed. */
-    public interface RegisterChangedEvent extends IDataModelEvent<RegisterDMC> {}
+    public interface IRegisterChangedEvent extends IDataModelEvent<IRegisterDMC> {}
         
     /** Register information */
-    public interface RegisterData extends IDataModelData, NumericalValue {
+    public interface IRegisterData extends IDataModelData, INumericalValue {
         String getName();
         String getDescription();
         boolean isReadable();
@@ -52,13 +53,13 @@ public interface IRegisters extends IDataModelService {
     }
 
     /** Bit field context */
-    public interface BitFieldDMC extends IDataModelContext<BitFieldData> {}
+    public interface IBitFieldDMC extends IDataModelContext<IBitFieldData> {}
 
     /** 
      * Bitfield data, big groups and mnemonics are retrieved at the same 
      * time as rest of bit field data 
      */
-    public interface BitFieldData extends IDataModelData, NumericalValue {
+    public interface IBitFieldData extends IDataModelData, INumericalValue {
         String getName();
         String getDescription();
         boolean isReadable();
@@ -68,18 +69,18 @@ public interface IRegisters extends IDataModelService {
         boolean hasSideEffects();
         boolean isZeroBasedNumbering();
         boolean isZeroBitLeftMost();
-        BitGroup[] getBitGroup();
-        Mnemonic[] getMnemonics();
+        IBitGroup[] getBitGroup();
+        IMnemonic[] getMnemonics();
     }
 
     /** Bit group definition */
-    public interface BitGroup {
+    public interface IBitGroup {
         int startBit();
         int bitCount();
     }
  
     /** Bit field mnemonic */
-    public interface Mnemonic extends NumericalValue {
+    public interface IMnemonic extends INumericalValue {
         String getShortName();
         String getLongName();
     }
@@ -88,7 +89,7 @@ public interface IRegisters extends IDataModelService {
      * Common interface for describing a number value for various register 
      * data objects 
      */
-    public interface NumericalValue {
+    public interface INumericalValue {
         String getNaturalValue();
         String getHexValue();
         String getOctalValue();
@@ -101,14 +102,14 @@ public interface IRegisters extends IDataModelService {
      * @param frameCtx Stack frame DMC, this is optional and may be null.
      * @param done Return token.
      */
-    void getRegisterGroups(IRunControl.IExecutionDMC execCtx, IStack.IFrameDMC frameCtx, GetDataDone<RegisterGroupDMC[]> done);
+    void getRegisterGroups(IRunControl.IExecutionDMC execCtx, IStack.IFrameDMC frameCtx, GetDataDone<IRegisterGroupDMC[]> done);
     
     /** Retrieves list of sub-groups of given register group. */
-    void getRegisterSubGroups(RegisterGroupDMC groupCtx, GetDataDone<RegisterGroupDMC[]> done);
+    void getRegisterSubGroups(IRegisterGroupDMC groupCtx, GetDataDone<IRegisterGroupDMC[]> done);
     
     /** Retrieves registers in given register group. */
-    void getRegisters(RegisterGroupDMC groupCtx, GetDataDone<RegisterDMC[]> done);
+    void getRegisters(IRegisterGroupDMC groupCtx, GetDataDone<IRegisterDMC[]> done);
     
     /** Retrieves bit fields for given register */
-    void getBitFields(RegisterDMC regCtx, GetDataDone<BitFieldDMC[]> done);
+    void getBitFields(IRegisterDMC regCtx, GetDataDone<IBitFieldDMC[]> done);
 }

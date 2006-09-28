@@ -10,10 +10,17 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.concurrent;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.DsfPlugin;
 
@@ -25,6 +32,14 @@ import org.eclipse.dd.dsf.DsfPlugin;
 public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor 
     implements DsfExecutor 
 {
+    // debug tracing flags
+    public static boolean DEBUG_EXECUTOR = false;
+    static {
+        DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+            Platform.getDebugOption("org.eclipse.dd.dsf/debug/executor")); //$NON-NLS-1$
+    }  
+
+    
     static class DsfThreadFactory implements ThreadFactory {
         Thread fThread;
         public Thread newThread(Runnable r) {
@@ -34,8 +49,6 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         }
     }
 
-    
-    
     public DefaultDsfExecutor() {
         super(1, new DsfThreadFactory());
     }
@@ -45,16 +58,36 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     }
 
     @Override
-    protected void afterExecute(Runnable r, Throwable t) {
-        // FIXME: Unfortunately this is not enough to catch runnable exceptions, because 
-        // FutureTask implementation swallows exceptions when they're thrown by runnables.
-        // Need to override the FutureTask class, and the AbstractExecutorService.submit() 
-        // methods in order to provide access to these exceptions.
+    protected void beforeExecute(Thread t, Runnable r) { 
+        System.out.println("");
+        
+        
+    }
 
-        super.afterExecute(r, t);
-        if (t != null) {
-            DsfPlugin.getDefault().getLog().log(new Status(
-                IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Uncaught exception in dispatch thread.", t));
+    @Override
+    protected void afterExecute(Runnable r, Throwable t) {
+        if (r instanceof Future) {
+            Future future = (Future)r;
+            try {
+                future.get();
+            } catch (InterruptedException e) { // Ignore
+            } catch (CancellationException e) { // Ignore also
+            } catch (ExecutionException e) {
+                if (e.getCause() != null) {
+                    DsfPlugin.getDefault().getLog().log(new Status(
+                        IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Uncaught exception in DSF executor thread", e.getCause()));
+                    if (DEBUG_EXECUTOR) {
+                        ByteArrayOutputStream outStream = new ByteArrayOutputStream(512);
+                        PrintStream printStream = new PrintStream(outStream);
+                        try {
+                            printStream.write("Uncaught exception in session executor thread: ".getBytes());
+                        } catch (IOException e2) {}
+                        e.getCause().printStackTrace(new PrintStream(outStream));
+                        DsfPlugin.debug(outStream.toString());
+                    }
+                }
+            }
         }
     }
+    
 }

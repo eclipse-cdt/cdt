@@ -34,8 +34,6 @@ import java.lang.annotation.Target;
  * will be called every time one of the sub-class events is invoked.  
  * If a listener declares a handler for an event AND a superclass of that event,
  * both handlers will be invoked when the event is dispatched. 
- * 
- * <br>TODO: Handling of second argument is not yet implemented.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

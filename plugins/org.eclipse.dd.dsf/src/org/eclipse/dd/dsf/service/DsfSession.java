@@ -136,11 +136,12 @@ public class DsfSession
      * thread, but the session-started listeners will be called using the session's 
      * executor.
      * @param executor The DSF executor to use for this session.
+     * @param ownerId ID (plugin ID preferably) of the owner of this session
      * @return instance object of the new session
      */
-    public static DsfSession startSession(DsfExecutor executor) {
+    public static DsfSession startSession(DsfExecutor executor, String ownerId) {
         synchronized(fgActiveSessions) {
-            final DsfSession newSession = new DsfSession(executor, Integer.toString(fgSessionIdCounter++));
+            final DsfSession newSession = new DsfSession(executor, ownerId, Integer.toString(fgSessionIdCounter++));
             fgActiveSessions.add(newSession);
             executor.submit( new DsfRunnable() { public void run() {
                 SessionStartedListener[] listeners = fSessionStartedListeners.toArray(
@@ -191,6 +192,9 @@ public class DsfSession
         public int hashCode() { return fListener.hashCode(); }
     }
 
+    /** ID (plugin ID preferably) of the owner of this session */
+    private String fOwnerId;
+    
     /** Session ID of this session. */
     private String fId;
     
@@ -210,6 +214,8 @@ public class DsfSession
      */
     private Map<Class,Object> fAdapters = Collections.synchronizedMap(new HashMap<Class,Object>());
 
+    /** Returns the owner ID of this session */
+    public String getOwnerId() { return fOwnerId; }    
     
     /** Returns the ID of this session */
     public String getId() { return fId; }
@@ -256,10 +262,7 @@ public class DsfSession
      */
     public void dispatchEvent(final Object event, final Dictionary serviceProperties) {
         getExecutor().submit(new DsfRunnable() { public void run() {
-        	// TED added FIXME otherwise no way to detect!!!
-        	try { 
             doDispatchEvent(event, serviceProperties);
-        	} catch(Throwable e) { e.printStackTrace(); } 
         }});
     }
     
@@ -387,8 +390,9 @@ public class DsfSession
     /**
      * Class to be instanciated only using startSession()
      */
-    private DsfSession(DsfExecutor executor, String id) {
+    private DsfSession(DsfExecutor executor, String ownerId, String id) {
         fId = id;
+        fOwnerId = ownerId;
         fExecutor = executor;
     }
     

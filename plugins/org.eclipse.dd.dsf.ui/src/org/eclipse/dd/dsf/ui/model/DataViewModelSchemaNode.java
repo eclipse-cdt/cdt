@@ -65,7 +65,7 @@ abstract public class DataViewModelSchemaNode implements IViewModelSchemaNode {
         }
      
         public String toString() {
-            return fParent.toString() + "\n" + fDmc.toString();
+            return fParent.toString() + "->" + fDmc.toString();
         }
     }
 
@@ -127,7 +127,7 @@ abstract public class DataViewModelSchemaNode implements IViewModelSchemaNode {
             fExecutor.execute(done);
         }};
 
-        // TODO: Note this is pretty inefficient: for one the below loop could 
+        // Note: this is pretty inefficient. For one the below loop could 
         // potentially retrieve the elements for this node several times, but 
         // beyond that it may be possible to optimize this code based on what's
         // visible in the view.
@@ -222,7 +222,6 @@ abstract public class DataViewModelSchemaNode implements IViewModelSchemaNode {
     }
     
     public void sessionDispose() {
-        // FIXME: should track when disposed and avoid issuing model deltas
         fServices.dispose();
         for (IViewModelSchemaNode childNode : getChildNodes()) {
             childNode.sessionDispose();

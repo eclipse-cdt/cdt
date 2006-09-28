@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
@@ -24,7 +25,11 @@ public class DsfPlugin extends Plugin {
 	// The shared instance
 	private static DsfPlugin fgPlugin;
 
+    // BundleContext of this plugin
     private static BundleContext fgBundleContext; 
+
+    // Debugging flag
+    public static boolean DEBUG = false;
 
 	/**
 	 * The constructor
@@ -40,7 +45,8 @@ public class DsfPlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
         fgBundleContext = context;
 		super.start(context);
-	}
+        DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.debug.ui/debug"));  //$NON-NLS-1$//$NON-NLS-2$
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -64,5 +70,12 @@ public class DsfPlugin extends Plugin {
     public static BundleContext getBundleContext() {
         return fgBundleContext;
     }
+    
+    public static void debug(String message) {
+        if (DEBUG) {
+            System.out.println(message);
+        }
+    }
+
 
 }

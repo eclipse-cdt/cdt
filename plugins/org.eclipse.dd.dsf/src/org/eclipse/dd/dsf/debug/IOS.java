@@ -21,9 +21,7 @@ import org.eclipse.dd.dsf.model.IDataModelService;
  * manipulate those objects.  This is a much more extensive interface than
  * the NativeProcesses service but for simple debugging, it serves the same 
  * purpose:  to list/create/terminate processes and attach debugger to them.
- * <p>
- * TODO: need methods for performing actions on objects (create, terminate, 
- * etc).
+ *
  * @see INativeProcesses
  */
 public interface IOS extends IDataModelService {

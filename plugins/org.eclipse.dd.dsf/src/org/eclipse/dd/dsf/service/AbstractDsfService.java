@@ -87,8 +87,6 @@ abstract public class AbstractDsfService
     
     /**
      * Registers this service.
-     * <br> FIXME: Move registering call to default initialize()/shutdown().  Add a new 
-     * protected method calcProperties() to get the initial list of properties.
      */
     @SuppressWarnings("unchecked")
     protected void register(String[] classes, Dictionary properties) {

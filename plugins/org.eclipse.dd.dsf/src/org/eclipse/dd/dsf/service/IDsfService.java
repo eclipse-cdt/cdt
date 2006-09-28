@@ -32,8 +32,6 @@ import org.eclipse.dd.dsf.concurrent.DsfExecutor;
  * service exposes a method that is to be called on non-dispatch thread, it should 
  * be documented so. 
  *  
- * TODO: Add IStatus error code constants for common service related failures. 
- *   
  * @see org.osgi.framework.BundleContext#registerService(String[], Object, Dictionary)
  */
 public interface IDsfService {
@@ -52,10 +50,6 @@ public interface IDsfService {
     
     /**
      * Returns the map of properties that this service was registered with.
-     * <br>
-     * TODO: is returning the properties and service filter redundant?  Should
-     * getServiceFilter() be removed from the interface since it can be generated
-     * from the properties? 
      */
     Dictionary getProperties();
     

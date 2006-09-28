@@ -45,14 +45,14 @@ public interface IViewModelSchemaNode {
      * current level.
      * @param done The data return token.
      */
-    public void getElements(final IViewModelContext parentVmc, GetDataDone<IViewModelContext[]> done);
+    public void getElements(IViewModelContext parentVmc, GetDataDone<IViewModelContext[]> done);
     
     /**
      * Retrieves the label for the given element. 
      * @param vmc Element for which to retrieve label information.
      * @param result Monitor which accepts the data.
      */
-    public void retrieveLabel(IViewModelContext vmc, final ILabelRequestMonitor result);
+    public void retrieveLabel(IViewModelContext vmc, ILabelRequestMonitor result);
     
     /**
      * Returns the list of child schema nodes which are configured for this node.

@@ -58,10 +58,6 @@ public interface IStack extends IDataModelService {
 
     /**
      * Returns whether the stack frames can be retrieved for given thread.
-     * <br>
-     * TODO: I'm not sure if this method should be async.  It assumes that the 
-     * implementation can determine if stack is available based on process
-     * state information. 
      */
     boolean isStackAvailable(IRunControl.IExecutionDMC execContext);
     

@@ -47,7 +47,8 @@ tagMaps=""
 tag=""
 
 #Basebuilder for Eclipse 3.2.1 maintenance
-buildProjectTags=v20060529
+#buildProjectTags=v20060529
+buildProjectTags=r321_v20060830
 
 #updateSite property setting
 updateSite=""

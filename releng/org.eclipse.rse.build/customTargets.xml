@@ -5,16 +5,17 @@
 	<!-- Add on <ant> task for each top level element being built. -->
 	<!-- ===================================================================== -->
 	<target name="allElements">
+		<!--
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.sdk" />
 		</ant>
-		<!--
+		-->
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
 			<property name="id" value="org.apache.commons_net" />
 		</ant>
-		-->
+		<!--
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.core" />
@@ -51,6 +52,7 @@
 			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.tm.discovery" />
 		</ant>
+		-->
 	</target>
 
 	<!-- ===================================================================== -->
@@ -116,6 +118,12 @@
 
 	<target name="assemble.org.eclipse.tm.discovery">
 		<property name="archiveName" value="TM-discovery-${buildId}.zip"/>
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
+	</target>
+
+	<target name="assemble.org.apache.commons_net">
+		<property name="archiveName" value="TM-apache-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
@@ -268,8 +276,6 @@
 	<!-- Steps to do before running assemble. -->
 	<!-- ===================================================================== -->
 	<target name="preAssemble">
-		<antcall target="serverruntime" />
-		<antcall target="hideServerStuff" />
 		<antcall target="allElements">
 			<param name="target" value="gatherSources" />
 		</antcall>
@@ -279,7 +285,6 @@
 	<!-- Steps to do after  running assemble. -->
 	<!-- ===================================================================== -->
 	<target name="postAssemble">
-		<antcall target="revealServerStuff" />
 	</target>
 
 	<!-- ===================================================================== -->

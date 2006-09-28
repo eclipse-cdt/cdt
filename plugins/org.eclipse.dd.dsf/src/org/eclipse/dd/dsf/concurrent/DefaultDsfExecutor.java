@@ -58,13 +58,6 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     }
 
     @Override
-    protected void beforeExecute(Thread t, Runnable r) { 
-        System.out.println("");
-        
-        
-    }
-
-    @Override
     protected void afterExecute(Runnable r, Throwable t) {
         if (r instanceof Future) {
             Future future = (Future)r;

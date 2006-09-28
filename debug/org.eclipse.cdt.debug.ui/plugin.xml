@@ -112,50 +112,29 @@
                id="org.eclipse.cdt.debug.ui.actions.ResumeAtLine"
               class="org.eclipse.cdt.debug.internal.ui.actions.RetargetResumeAtLineAction"
                disabledIcon="icons/dlcl16/jump_co.gif"
-               enablesFor="1"
                icon="icons/elcl16/jump_co.gif"
                helpContextId="jump_to_line_action_context"
                label="%GlobalJumpToLineAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
          </action>
          <action
                id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
                class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
                disabledIcon="icons/dlcl16/signal0_co.gif"
-               enablesFor="1"
                icon="icons/elcl16/signal0_co.gif"
                helpContextId="resume_without_signal_action_context"
                label="%SignalZeroAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup"
                tooltip="%SignalZeroAction.tooltip">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
          </action>
          <action
                id="org.eclipse.cdt.debug.ui.internal.actions.RestartActionDelegate"
                class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
                disabledIcon="icons/dlcl16/restart.gif"
-               enablesFor="1"
                icon="icons/elcl16/restart.gif"
                helpContextId="restart_action_context"
                label="%RestartAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
          </action>
       </actionSet>
    </extension>

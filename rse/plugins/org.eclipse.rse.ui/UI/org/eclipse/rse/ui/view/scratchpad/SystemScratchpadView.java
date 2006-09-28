@@ -181,7 +181,8 @@ public class SystemScratchpadView
 
 			setContentProvider(_provider);
 			
-			setLabelProvider(new DecoratingLabelProvider(_provider, RSEUIPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));	
+			IWorkbench wb = PlatformUI.getWorkbench();
+			setLabelProvider(new DecoratingLabelProvider(_provider, wb.getDecoratorManager().getLabelDecorator()));	
 
 			//setLabelProvider(_provider);
 

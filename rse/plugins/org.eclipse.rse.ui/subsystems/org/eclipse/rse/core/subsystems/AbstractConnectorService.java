@@ -42,6 +42,7 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -508,7 +509,12 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 			shell = SystemBasePlugin.getActiveWorkbenchShell();
 		}
     		
-		if (supportsPassword() || supportsUserId()) {
+		if (supportsPassword() || supportsUserId()) 
+		{
+			if (shell == null)
+			{
+				shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			}
 			if (shell != null) {
 				boolean passwordNeeded = supportsPassword() && _passwordInfo.getPassword() == null;
 				boolean userIdNeeded = supportsUserId() && _passwordInfo.getUserid() == null;

@@ -123,6 +123,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			}
 		}
 		FileInfo info = new FileInfo(getName());
+		boolean exists = _remoteFile.exists();
 		/*
 		if (_remoteFile.getName().equals(".project") && _remoteFile.getLength() == 0)
 		{
@@ -131,19 +132,22 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		else
 		*/
 		{
-			info.setExists(_remoteFile.exists());
+			info.setExists(exists);
 		}
-		info.setLastModified(_remoteFile.getLastModified());
-		boolean isDir = _remoteFile.isDirectory();
-		info.setDirectory(isDir);
-		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, !_remoteFile.canWrite());
-		info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, _remoteFile.isExecutable());
-		info.setAttribute(EFS.ATTRIBUTE_ARCHIVE, _remoteFile.isArchive());
-		info.setAttribute(EFS.ATTRIBUTE_HIDDEN, _remoteFile.isHidden());
-
-		if (!isDir)
+		if (exists)
 		{
-			info.setLength(_remoteFile.getLength());
+			info.setLastModified(_remoteFile.getLastModified());
+			boolean isDir = _remoteFile.isDirectory();
+			info.setDirectory(isDir);
+			info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, !_remoteFile.canWrite());
+			info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, _remoteFile.isExecutable());
+			info.setAttribute(EFS.ATTRIBUTE_ARCHIVE, _remoteFile.isArchive());
+			info.setAttribute(EFS.ATTRIBUTE_HIDDEN, _remoteFile.isHidden());
+
+			if (!isDir)
+			{
+				info.setLength(_remoteFile.getLength());
+			}
 		}
 		
 		info.setName(getName());

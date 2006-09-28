@@ -222,14 +222,21 @@ public class CommandMiner extends Miner
 	{
 		//First Check to make sure that there are no "zombie" threads
 		Iterator iter = _threads.keySet().iterator();
-		while (iter.hasNext())
+		try
 		{
-			String threadName = (String) iter.next();
-			CommandMinerThread theThread = (CommandMinerThread) _threads.get(threadName);
-			if ((theThread == null) || (!theThread.isAlive()))
+			while (iter.hasNext())
 			{
-				_threads.remove(threadName);
+				String threadName = (String) iter.next();
+				CommandMinerThread theThread = (CommandMinerThread) _threads.get(threadName);
+				if ((theThread == null) || (!theThread.isAlive()))
+				{
+					_threads.remove(threadName);
+				}
 			}
+		}
+		catch (Exception e)
+		{
+			_dataStore.trace(e);
 		}
 		CommandMinerThread newCommand = new CommandMinerThread(subject, invocation, status, getPatterns(), _descriptors);
 		_threads.put(status.getAttribute(DE.A_ID), newCommand);

@@ -128,7 +128,15 @@ public class CommandMinerThread extends MinerThread
 			File theDirectory = new File(_cwdStr);
 			if (!theDirectory.isDirectory())
 				theDirectory = theDirectory.getParentFile();
-			_cwdStr = theDirectory.getAbsolutePath();
+			try
+			{
+				_cwdStr = theDirectory.getAbsolutePath();
+			}
+			catch (Exception e)
+			{
+				_cwdStr = System.getProperty("user.home");
+			}
+
 
 			String theShell = null;
 			if (!_isWindows)

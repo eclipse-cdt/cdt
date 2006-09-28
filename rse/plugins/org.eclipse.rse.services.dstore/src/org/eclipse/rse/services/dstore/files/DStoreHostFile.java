@@ -93,6 +93,14 @@ public class DStoreHostFile implements IHostFile
 				
 				return parentPath;
 			}
+			if (name.length() == 0)
+			{
+				String path = _element.getValue();
+				int lastSep = path.lastIndexOf('/');
+				name = path.substring(lastSep + 1);
+				return name;
+			}
+			
 			return name;
 		}
 	}

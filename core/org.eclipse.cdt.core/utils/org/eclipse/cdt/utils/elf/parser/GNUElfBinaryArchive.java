@@ -11,7 +11,6 @@
 package org.eclipse.cdt.utils.elf.parser;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
@@ -21,24 +20,15 @@ import org.eclipse.core.runtime.IPath;
 
 public class GNUElfBinaryArchive extends ElfBinaryArchive {
 
-	/**
-	 * @param parser
-	 * @param p
-	 * @throws IOException
-	 */
 	public GNUElfBinaryArchive(IBinaryParser parser, IPath p) throws IOException {
 		super(parser, p);
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.elf.parser.BinaryArchive#addArchiveMembers(org.eclipse.cdt.utils.elf.AR.ARHeader[], java.util.ArrayList)
-	 */
-	protected void addArchiveMembers(ARHeader[] headers, ArrayList children2) {
+	protected IBinaryObject[] createArchiveMembers(ARHeader[] headers) {
+		IBinaryObject[] result= new IBinaryObject[headers.length];
 		for (int i = 0; i < headers.length; i++) {
-			IBinaryObject bin = new GNUElfBinaryObject(getBinaryParser(), getPath(), headers[i]);
-			children.add(bin);
+			result[i] = new GNUElfBinaryObject(getBinaryParser(), getPath(), headers[i]);
 		}
+		return result;
 	}
-
 }

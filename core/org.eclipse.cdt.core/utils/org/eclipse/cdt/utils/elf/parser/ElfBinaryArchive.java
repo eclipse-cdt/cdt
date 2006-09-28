@@ -12,6 +12,7 @@ package org.eclipse.cdt.utils.elf.parser;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
  */
 public class ElfBinaryArchive extends BinaryFile implements IBinaryArchive {
 
-	ArrayList children;
+	private ArrayList children;
 
 	public ElfBinaryArchive(IBinaryParser parser, IPath p) throws IOException {
 		super(parser, p, IBinaryFile.ARCHIVE);
@@ -44,7 +45,8 @@ public class ElfBinaryArchive extends BinaryFile implements IBinaryArchive {
 			try {
 				ar = new AR(getPath().toOSString());
 				AR.ARHeader[] headers = ar.getHeaders();
-				addArchiveMembers(headers, children);
+				IBinaryObject[] bobjs= createArchiveMembers(headers);
+				children.addAll(Arrays.asList(bobjs));
 			} catch (IOException e) {
 				//e.printStackTrace();
 			}
@@ -56,14 +58,21 @@ public class ElfBinaryArchive extends BinaryFile implements IBinaryArchive {
 		return (IBinaryObject[]) children.toArray(new IBinaryObject[0]);
 	}
 
+	protected IBinaryObject[] createArchiveMembers(ARHeader[] headers) {
+		IBinaryObject[] result= new IBinaryObject[headers.length];
+		for (int i = 0; i < headers.length; i++) {
+			result[i]= new ElfBinaryObject(getBinaryParser(), getPath(), headers[i]);
+		}
+		return result;
+	}
+	
 	/**
 	 * @param headers
 	 * @param children2
+	 * @deprecated use {@link ElfBinaryArchive#createArchiveMembers(ARHeader[])} 
 	 */
-	protected void addArchiveMembers(ARHeader[] headers, ArrayList children2) {
-		for (int i = 0; i < headers.length; i++) {
-			IBinaryObject bin = new ElfBinaryObject(getBinaryParser(), getPath(), headers[i]);
-			children.add(bin);
-		}
+	protected void addArchiveMembers(ARHeader[] headers, ArrayList children) {
+		IBinaryObject[] bobjs= createArchiveMembers(headers);
+		children.addAll(Arrays.asList(bobjs));
 	}
 }

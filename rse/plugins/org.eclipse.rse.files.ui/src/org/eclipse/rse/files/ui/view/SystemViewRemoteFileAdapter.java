@@ -1946,7 +1946,7 @@ public class SystemViewRemoteFileAdapter
 						return e.getSystemMessage();
 					}
 
-					return doDrop(srcFileOrFolder, target, sameSystemType, sameSystem, SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE, monitor);
+					return doDrop(srcFileOrFolder, target, true, sameSystem, SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE, monitor);
 				}
 			}
 			if (sourceType == SystemDNDTransferRunnable.SRC_TYPE_TEXT)

@@ -50,11 +50,9 @@
          id="org.eclipse.rse.ssh"
          version="0.0.0"/>
 
-   <!--
    <includes
          id="org.apache.commons_net.source"
          version="0.0.0"/>
-   -->
 
    <includes
          id="org.eclipse.rse.core.source"

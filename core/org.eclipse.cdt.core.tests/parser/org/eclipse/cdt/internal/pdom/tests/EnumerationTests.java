@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -65,13 +66,13 @@ public class EnumerationTests extends PDOMTestBase {
 		IName[] enumRefs = pdom.getReferences(enumeration);
 		assertEquals(1, enumRefs.length);
 		loc = enumRefs[0].getFileLocation();
-		assertEquals(offset(46, 40), loc.getNodeOffset());
+		assertEquals(offset("enumTest.c", "TestCEnum test"), loc.getNodeOffset());
 		
 		// Reference to a
 		IName[] aRefs = pdom.getReferences(enumerators[0]);
 		assertEquals(1, aRefs.length);
 		loc = aRefs[0].getFileLocation();
-		assertEquals(offset(74, 67), loc.getNodeOffset());
+		assertEquals(offset("enumTest.c", "ca;"), loc.getNodeOffset());
 	}
 
 	public void testCPP() throws Exception {
@@ -97,13 +98,13 @@ public class EnumerationTests extends PDOMTestBase {
 		IName[] enumRefs = pdom.getReferences(enumeration);
 		assertEquals(1, enumRefs.length);
 		loc = enumRefs[0].getFileLocation();
-		assertEquals(offset(49, 43), loc.getNodeOffset());
+		assertEquals(offset("enumTest.cpp", "TestCPPEnum test"), loc.getNodeOffset());
 		
 		// Reference to a
 		IName[] aRefs = pdom.getReferences(enumerators[0]);
 		assertEquals(1, aRefs.length);
 		loc = aRefs[0].getFileLocation();
-		assertEquals(offset(79, 72), loc.getNodeOffset());
+		assertEquals(offset("enumTest.cpp", "cppa;"), loc.getNodeOffset());
 	}
 	
 }

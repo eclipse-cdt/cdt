@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -59,7 +60,7 @@ public class TypesTests extends PDOMTestBase {
 		IName[] xRefs = pdom.getReferences(x);
 		assertEquals(1, xRefs.length);
 		IASTFileLocation loc = xRefs[0].getFileLocation();
-		assertEquals(offset(85, 77), loc.getNodeOffset());
+		assertEquals(offset("typedef.c", "x->x") + 3, loc.getNodeOffset());
 	}
 
 	public void testCPP() throws Exception {
@@ -76,7 +77,7 @@ public class TypesTests extends PDOMTestBase {
 		IName[] fRefs = pdom.getReferences(f);
 		assertEquals(1, fRefs.length);
 		IASTFileLocation loc = fRefs[0].getFileLocation();
-		assertEquals(offset(84, 74), loc.getNodeOffset());
+		assertEquals(offset("typedef.cpp", "x->f") + 3, loc.getNodeOffset());
 	}
 	
 	public void test145351() throws Exception {
@@ -86,7 +87,7 @@ public class TypesTests extends PDOMTestBase {
 		IName [] refs = pdom.getReferences(spinlock_t);
 		assertEquals(1, refs.length);
 		IASTFileLocation loc = refs[0].getFileLocation();
-		assertEquals(offset(44, 40), loc.getNodeOffset());
+		assertEquals(offset("bug145351.c", "spinlock_t global_bh_lock"), loc.getNodeOffset());
 	}
 	
 }

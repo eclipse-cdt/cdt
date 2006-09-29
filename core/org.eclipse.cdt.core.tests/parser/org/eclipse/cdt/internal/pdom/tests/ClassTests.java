@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -56,7 +57,7 @@ public class ClassTests extends PDOMTestBase {
 		IName [] Bf_refs = pdom.getReferences(Bf);
 		assertEquals(1, Bf_refs.length);
 		IASTFileLocation loc = Bf_refs[0].getFileLocation();
-		assertEquals(offset(95, 84), loc.getNodeOffset());
+		assertEquals(offset("class.cpp", "b.f()") + 2, loc.getNodeOffset());
 	}
 	
 	public void testNested() throws Exception {
@@ -74,12 +75,12 @@ public class ClassTests extends PDOMTestBase {
 		IName[] refs = pdom.getReferences(NestedB);
 		assertEquals(1, refs.length);
 		IASTFileLocation loc = refs[0].getFileLocation();
-		assertEquals(offset(96, 87), loc.getNodeOffset());
+		assertEquals(offset("nested.cpp", "::NestedB") + 2, loc.getNodeOffset());
 		
 		refs = pdom.getReferences(NestedB_x);
 		assertEquals(1, refs.length);
 		loc = refs[0].getFileLocation();
-		assertEquals(offset(118, 108), loc.getNodeOffset());
+		assertEquals(offset("nested.cpp", "x.x") + 2, loc.getNodeOffset());
 	}
 	
 	public void failedTest147903() throws Exception {

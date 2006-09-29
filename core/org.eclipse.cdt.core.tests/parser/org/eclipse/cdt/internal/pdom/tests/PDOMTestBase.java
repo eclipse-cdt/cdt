@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -20,6 +21,7 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer;
 import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastReindex;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
@@ -33,8 +35,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
@@ -45,11 +47,12 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 public class PDOMTestBase extends TestCase {
 
 	static IPath rootPath = new Path("resources/pdomtests");
+	private String projectName= null;
 
 	protected ICProject createProject(String folderName) throws CoreException {
 		
 		// Create the project
-		final String projectName = "ProjTest_" + System.currentTimeMillis();
+		projectName = "ProjTest_" + System.currentTimeMillis();
 		final File rootDir = CTestPlugin.getDefault().getFileInPlugin(rootPath.append(folderName));
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final ICProject cprojects[] = new ICProject[1];
@@ -112,15 +115,8 @@ public class PDOMTestBase extends TestCase {
 		return cprojects[0];
 	}
 
-	/**
-	 * Use to pick the right offset depending on what platform we're
-	 * running. Windows has the extra character for new lines.
-	 * 
-	 * @param winNum
-	 * @param nixNum
-	 * @return
-	 */
-	protected int offset(int winNum, int nixNum) {
-		return Platform.getOS().equals(Platform.OS_WIN32) ? winNum : nixNum;
+	protected int offset(String projectRelativePath, String lookfor) throws BadLocationException, CoreException {
+		Path path= new Path(projectName + "/" + projectRelativePath);
+		return TestSourceReader.indexOfInFile(lookfor, path);
 	}
 }

@@ -53,7 +53,7 @@ else
   if [ -d org.eclipse.rse.build ]; then
     rm -rf org.eclipse.rse.build
   fi
-  cvs -d :pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp co org.eclipse.tm.rse/releng/org.eclipse.rse.build
+  cvs -d :pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp co -Rd org.eclipse.rse.build org.eclipse.tm.rse/releng/org.eclipse.rse.build
 fi
 
 # prepare directories for the build

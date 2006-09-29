@@ -2496,15 +2496,15 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals(s[0], "RED"); //$NON-NLS-1$
         assertTrue(((ICPPBinding) RED).isGloballyQualified());
 
-        IASTName[] decls = tu.getDeclarations(enum_x);
+        IASTName[] decls = tu.getDeclarationsInAST(enum_x);
         assertEquals(decls.length, 1);
         assertSame(decls[0], col.getName(3));
 
-        decls = tu.getDeclarations(x_ref);
+        decls = tu.getDeclarationsInAST(x_ref);
         assertEquals(decls.length, 1);
         assertSame(decls[0], col.getName(1));
 
-        decls = tu.getDeclarations(RED);
+        decls = tu.getDeclarationsInAST(RED);
         assertEquals(decls.length, 1);
         assertSame(decls[0], col.getName(6));
     }
@@ -2592,7 +2592,7 @@ public class AST2CPPTests extends AST2BaseTest {
         ICPPFunction f2 = (ICPPFunction) col.getName(5).resolveBinding();
         assertSame(f1, f2);
 
-        IASTName[] decls = tu.getDeclarations(f2);
+        IASTName[] decls = tu.getDeclarationsInAST(f2);
         assertEquals(decls.length, 2);
         assertSame(decls[0], col.getName(2));
         assertSame(decls[1], col.getName(5));
@@ -2671,7 +2671,7 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame(refs[0], col.getName(2));
         assertSame(refs[1], col.getName(4));
 
-        IASTName[] decls = tu.getDeclarations(ns);
+        IASTName[] decls = tu.getDeclarationsInAST(ns);
         assertEquals(decls.length, 1);
         assertSame(decls[0], col.getName(0));
 
@@ -2679,7 +2679,7 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals(refs.length, 1);
         assertSame(refs[0], col.getName(6));
 
-        decls = tu.getDeclarations(alias);
+        decls = tu.getDeclarationsInAST(alias);
         assertEquals(decls.length, 3);
         assertSame(decls[0], col.getName(1));
         assertSame(decls[1], col.getName(3));
@@ -2701,7 +2701,7 @@ public class AST2CPPTests extends AST2BaseTest {
         ICPPUsingDeclaration u = (ICPPUsingDeclaration) col.getName(7)
                 .resolveBinding();
 
-        IASTName[] decls = tu.getDeclarations(u);
+        IASTName[] decls = tu.getDeclarationsInAST(u);
         assertEquals(decls.length, 2);
         assertSame(decls[0], col.getName(1));
         assertSame(decls[1], col.getName(3));
@@ -2709,11 +2709,11 @@ public class AST2CPPTests extends AST2BaseTest {
         ICPPDelegate[] delegates = u.getDelegates();
         assertEquals(delegates.length, 2);
 
-        decls = tu.getDeclarations(delegates[0]);
+        decls = tu.getDeclarationsInAST(delegates[0]);
         assertEquals(decls.length, 1);
         assertSame(decls[0], col.getName(7));
 
-        decls = tu.getDeclarations(delegates[0].getBinding());
+        decls = tu.getDeclarationsInAST(delegates[0].getBinding());
         assertEquals(decls.length, 1);
         assertSame(decls[0], col.getName(1));
     }
@@ -2776,7 +2776,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         ICPPUsingDeclaration comp = (ICPPUsingDeclaration) col.getName(7)
                 .resolveBinding();
-        IASTName[] decls = tu.getDeclarations(comp);
+        IASTName[] decls = tu.getDeclarationsInAST(comp);
         assertEquals(decls.length, 2);
         assertSame(decls[0], col.getName(1));
         assertSame(decls[1], col.getName(2));

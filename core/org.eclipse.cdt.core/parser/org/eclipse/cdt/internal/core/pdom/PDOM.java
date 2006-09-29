@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -21,6 +22,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMResolver;
@@ -52,8 +54,7 @@ import org.eclipse.core.runtime.Status;
  * 
  * @author Doug Schaefer
  */
-public class PDOM extends PlatformObject
-		implements IPDOM, IPDOMResolver, IPDOMWriter {
+public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMWriter {
 
 	private Database db;
 	
@@ -201,7 +202,7 @@ public class PDOM extends PlatformObject
 		return new PDOMCodeReaderFactory(this, root);
 	}
 
-	public IASTName[] getDeclarations(IBinding binding) throws CoreException {
+	public IName[] getDeclarations(IBinding binding) throws CoreException {
 		if (binding instanceof PDOMBinding) {
 			List names = new ArrayList();
 			for (PDOMName name = ((PDOMBinding)binding).getFirstDeclaration();
@@ -213,33 +214,33 @@ public class PDOM extends PlatformObject
 					name != null;
 					name = name.getNextInBinding())
 				names.add(name);
-			return (IASTName[])names.toArray(new IASTName[names.size()]);
+			return (IName[])names.toArray(new IName[names.size()]);
 		}
-		return new IASTName[0];
+		return IName.EMPTY_NAME_ARRAY;
 	}
 
-	public IASTName[] getDefinitions(IBinding binding) throws CoreException {
+	public IName[] getDefinitions(IBinding binding) throws CoreException {
 		if (binding instanceof PDOMBinding) {
 			List names = new ArrayList();
 			for (PDOMName name = ((PDOMBinding)binding).getFirstDefinition();
 					name != null;
 					name = name.getNextInBinding())
 				names.add(name);
-			return (IASTName[])names.toArray(new IASTName[names.size()]);
+			return (IName[])names.toArray(new IName[names.size()]);
 		}
-		return new IASTName[0];
+		return IName.EMPTY_NAME_ARRAY;
 	}
 	
-	public IASTName[] getReferences(IBinding binding) throws CoreException {
+	public IName[] getReferences(IBinding binding) throws CoreException {
 		if (binding instanceof PDOMBinding) {
 			List names = new ArrayList();
 			for (PDOMName name = ((PDOMBinding)binding).getFirstReference();
 					name != null;
 					name = name.getNextInBinding())
 				names.add(name);
-		return (IASTName[])names.toArray(new IASTName[names.size()]);
+			return (IName[])names.toArray(new IName[names.size()]);
 		}
-		return new IASTName[0];
+		return IName.EMPTY_NAME_ARRAY;
 	}
 	
 	public IBinding resolveBinding(IASTName name) {
@@ -377,7 +378,7 @@ public class PDOM extends PlatformObject
 		if (record == 0)
 			return null;
 		else {
-			PDOMNode node = PDOMLinkage.getLinkage(this, record).getNode(record);
+			PDOMNode node = PDOMNode.getLinkage(this, record).getNode(record);
 			return node instanceof PDOMBinding ? (PDOMBinding)node : null;
 		}
 	}

@@ -12,6 +12,7 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -100,7 +101,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		PDOMNode parent = this;
 		IScope scope = binding.getScope();
 		if (scope != null) {
-			IASTName scopeName = scope.getScopeName();
+			IName scopeName = scope.getScopeName();
 			if (scopeName != null) {
 				IBinding scopeBinding = scopeName.resolveBinding();
 				PDOMBinding scopePDOMBinding = adaptBinding(scopeBinding);

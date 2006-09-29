@@ -7,10 +7,12 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -121,15 +123,8 @@ public class CASTTranslationUnit extends CASTNode implements
 	 * 
 	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations(org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
-	public IASTName[] getDeclarations(IBinding binding) {
-		if( binding instanceof IMacroBinding )
-        {
-            if( resolver == null )
-                return EMPTY_NAME_ARRAY;
-            return resolver.getDeclarations( (IMacroBinding)binding );
-        }
-		IASTName[] names = CVisitor.getDeclarations(this, binding);
-		
+	public IName[] getDeclarations(IBinding binding) {
+    	IName[] names= getDeclarationsInAST(binding);
         if (names.length == 0 && pdom != null) {
         	try {
         		binding = ((PDOM)pdom).getLinkage(getLanguage()).adaptBinding(binding);
@@ -143,26 +138,24 @@ public class CASTTranslationUnit extends CASTNode implements
 
 		return names;
 	}
-    
+
+	public IASTName[] getDeclarationsInAST(IBinding binding) {
+		if( binding instanceof IMacroBinding )
+        {
+            if( resolver == null )
+                return EMPTY_NAME_ARRAY;
+            return resolver.getDeclarations( (IMacroBinding)binding );
+        }
+		return CVisitor.getDeclarations(this, binding);
+	}
+
     /*
      * (non-Javadoc)
      * 
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDefinitions(org.eclipse.cdt.core.dom.ast.IBinding)
      */
-    public IASTName[] getDefinitions(IBinding binding) {
-    	if (binding instanceof IMacroBinding) {
-    		if( resolver == null )
-    			return EMPTY_NAME_ARRAY;
-    		return resolver.getDeclarations((IMacroBinding)binding);
-        }
-        
-        IASTName[] names = CVisitor.getDeclarations(this, binding);
-        for (int i = 0; i < names.length; i++) {
-            if (!names[i].isDefinition())
-                names[i] = null;
-        }
-        names = (IASTName[])ArrayUtil.removeNulls(IASTName.class, names);
-        
+    public IName[] getDefinitions(IBinding binding) {
+    	IName[] names= getDefinitionsInAST(binding);
         if (names.length == 0 && pdom != null) {
         	try {
         		binding = ((PDOM)pdom).getLinkage(getLanguage()).adaptBinding(binding);
@@ -173,20 +166,34 @@ public class CASTTranslationUnit extends CASTNode implements
         		return names;
         	}
         }
-        
         return names;
     }
 
+    public IASTName[] getDefinitionsInAST(IBinding binding) {   
+    	if (binding instanceof IMacroBinding) {
+        	if (resolver != null) {
+        		return resolver.getDeclarations((IMacroBinding)binding);
+            }
+        	return IASTName.EMPTY_NAME_ARRAY;
+    	}
+    	IName[] names = CVisitor.getDeclarations(this, binding);
+    	for (int i = 0; i < names.length; i++) {
+    		if (!names[i].isDefinition())
+    			names[i] = null;
+    	}
+    	return (IASTName[])ArrayUtil.removeNulls(IASTName.class, names);
+    }
+    
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getReferences(org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
 	public IASTName[] getReferences(IBinding binding) {
-        if( binding instanceof IMacroBinding )
+        if (binding instanceof IMacroBinding)
         {
             if( resolver == null )
-                return EMPTY_NAME_ARRAY;
+        		  return EMPTY_NAME_ARRAY;
             return resolver.getReferences( (IMacroBinding)binding );
         }
 		return CVisitor.getReferences(this, binding);

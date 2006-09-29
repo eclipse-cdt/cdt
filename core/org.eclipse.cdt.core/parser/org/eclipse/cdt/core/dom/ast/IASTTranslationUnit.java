@@ -7,9 +7,11 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -65,26 +67,48 @@ public interface IASTTranslationUnit extends IASTNode {
 
 	/**
 	 * Returns the list of declarations in this translation unit for the given
-	 * binding. The list contains the IASTName nodes that declare the binding.
+	 * binding. The list contains the IName nodes that declare the binding.
+	 * These may be part of the AST or are pulled in from the index.
 	 * 
 	 * @param binding
-	 * @return List of IASTName nodes for the binding's declaration
+	 * @return Array of IName nodes for the binding's declaration
 	 */
-	public IASTName[] getDeclarations(IBinding binding);
+	public IName[] getDeclarations(IBinding binding);
     
-    /**
+	/**
+	 * Returns the list of declarations in this translation unit for the given
+	 * binding. The list contains the IASTName nodes that declare the binding.
+	 * These are part of the AST no declarations are pulled in from the index.
+	 * 
+	 * @param binding
+	 * @return Array of IASTName nodes for the binding's declaration
+	 */
+	public IASTName[] getDeclarationsInAST(IBinding binding);
+
+	/**
      * Returns the array of definitions in this translation unit for the given binding.
-     * The array contains the IASTName nodes that define the binding.
+     * The array contains the IName nodes that define the binding.
+	 * These may be part of the AST or are pulled in from the index.
      *  
      * @param binding
      * @return the definition of the IBinding
      */
-    public IASTName[] getDefinitions(IBinding binding);
+    public IName[] getDefinitions(IBinding binding);
+
+	/**
+     * Returns the array of definitions in this translation unit for the given binding.
+     * The array contains the IASTName nodes that define the binding.
+	 * These are part of the AST no definitions are pulled in from the index.
+	 * 
+	 * @param binding
+	 * @return Array of IASTName nodes for the binding's declaration
+	 */
+	public IASTName[] getDefinitionsInAST(IBinding binding);
 
 	/**
 	 * Returns the list of references in this translation unit to the given
-	 * binding. This list contains the IASTName nodes that represent a use of
-	 * the binding.
+	 * binding. This list contains the IName nodes that represent a use of
+	 * the binding. They may be part of the AST or pulled in from the index.
 	 * 
 	 * @param binding
 	 * @return List of IASTName nodes representing uses of the binding

@@ -228,28 +228,28 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(var_x, name_ref_x.resolveBinding());
         assertEquals(var_y, name_ref_y.resolveBinding());
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(name_x.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(name_x.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_x);
 
-        decls = tu.getDeclarations(name_f.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_f.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_f);
 
-        decls = tu.getDeclarations(name_y.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_y.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_y);
 
-        decls = tu.getDeclarations(name_z.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_z.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_z);
 
-        decls = tu.getDeclarations(name_ref_x.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_ref_x.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_x);
 
-        decls = tu.getDeclarations(name_ref_y.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_ref_y.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_y);
 
@@ -375,33 +375,33 @@ public class AST2Tests extends AST2BaseTest {
         IField field_x = (IField) name_x.resolveBinding();
         assertEquals(field_x, fieldref.getFieldName().resolveBinding());
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(name_struct.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(name_struct.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_struct);
 
-        decls = tu.getDeclarations(name_x.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_x.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_x);
 
-        decls = tu.getDeclarations(def_f.getDeclarator().getName()
+        decls = tu.getDeclarationsInAST(def_f.getDeclarator().getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], def_f.getDeclarator().getName());
 
-        decls = tu.getDeclarations(name_S.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_S.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_S);
 
-        decls = tu.getDeclarations(name_myS.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_myS.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_myS);
 
-        decls = tu.getDeclarations(ref_myS.getName().resolveBinding());
+        decls = tu.getDeclarationsInAST(ref_myS.getName().resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_myS);
 
-        decls = tu.getDeclarations(fieldref.getFieldName().resolveBinding());
+        decls = tu.getDeclarationsInAST(fieldref.getFieldName().resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_x);
     }
@@ -491,12 +491,12 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(name1.resolveBinding().getName(), "r"); //$NON-NLS-1$
         assertEquals(name2.resolveBinding().getName(), "s"); //$NON-NLS-1$
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(name1.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(name1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name1);
 
-        decls = tu.getDeclarations(name2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name2);
     }
@@ -562,25 +562,25 @@ public class AST2Tests extends AST2BaseTest {
         assertSame(str2, str3);
         assertSame(str3, str4);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(nameA1.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(nameA1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], nameA1);
 
-        decls = tu.getDeclarations(fndef.getDeclarator().getName()
+        decls = tu.getDeclarationsInAST(fndef.getDeclarator().getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], fndef.getDeclarator().getName());
 
-        decls = tu.getDeclarations(nameA2.resolveBinding());
+        decls = tu.getDeclarationsInAST(nameA2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], nameA2);
 
-        decls = tu.getDeclarations(nameA3.resolveBinding());
+        decls = tu.getDeclarationsInAST(nameA3.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], nameA2);
 
-        decls = tu.getDeclarations(namea.resolveBinding());
+        decls = tu.getDeclarationsInAST(namea.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], namea);
     }
@@ -631,21 +631,21 @@ public class AST2Tests extends AST2BaseTest {
         assertSame(str1, str2);
         assertSame(str2, str3);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(nameA1.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(nameA1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], nameA1);
 
-        decls = tu.getDeclarations(fndef.getDeclarator().getName()
+        decls = tu.getDeclarationsInAST(fndef.getDeclarator().getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], fndef.getDeclarator().getName());
 
-        decls = tu.getDeclarations(nameA2.resolveBinding());
+        decls = tu.getDeclarationsInAST(nameA2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], nameA1);
 
-        decls = tu.getDeclarations(namea.resolveBinding());
+        decls = tu.getDeclarationsInAST(namea.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], namea);
     }
@@ -726,40 +726,40 @@ public class AST2Tests extends AST2BaseTest {
         assertSame(structA_2, structA_3);
         assertSame(structA_3, structA_4);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(name_A1.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(name_A1.resolveBinding());
         assertEquals(decls.length, 2);
         assertEquals(decls[0], name_A1);
         assertEquals(decls[1], name_Adef);
 
-        decls = tu.getDeclarations(name_A2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_A2.resolveBinding());
         assertEquals(decls.length, 2);
         assertEquals(decls[0], name_A1);
         assertEquals(decls[1], name_Adef);
 
-        decls = tu.getDeclarations(name_a.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_a.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_a);
 
-        decls = tu.getDeclarations(name_Adef.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_Adef.resolveBinding());
         assertEquals(decls.length, 2);
         assertEquals(decls[0], name_A1);
         assertEquals(decls[1], name_Adef);
 
-        decls = tu.getDeclarations(name_i.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_i.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_i);
 
-        decls = tu.getDeclarations(fndef.getDeclarator().getName()
+        decls = tu.getDeclarationsInAST(fndef.getDeclarator().getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], fndef.getDeclarator().getName());
 
-        decls = tu.getDeclarations(name_aref.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_aref.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_a);
 
-        decls = tu.getDeclarations(name_iref.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_iref.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_i);
     }
@@ -807,25 +807,25 @@ public class AST2Tests extends AST2BaseTest {
         IASTDeclarator decl_i = declaration2.getDeclarators()[0];
         decl_i.getName().resolveBinding(); // add i's binding to the scope
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(x_1.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(x_1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], x_1);
 
-        decls = tu.getDeclarations(fdef.getDeclarator().getName()
+        decls = tu.getDeclarationsInAST(fdef.getDeclarator().getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], fdef.getDeclarator().getName());
 
-        decls = tu.getDeclarations(x_2.resolveBinding());
+        decls = tu.getDeclarationsInAST(x_2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], x_2);
 
-        decls = tu.getDeclarations(x_3.resolveBinding());
+        decls = tu.getDeclarationsInAST(x_3.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], x_1);
 
-        decls = tu.getDeclarations(declaration2.getDeclarators()[0].getName()
+        decls = tu.getDeclarationsInAST(declaration2.getDeclarators()[0].getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], declaration2.getDeclarators()[0].getName());
@@ -922,23 +922,23 @@ public class AST2Tests extends AST2BaseTest {
         assertSame(param_2, param_3);
         assertSame(f_1, f_2);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(f_name1.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(f_name1.resolveBinding());
         assertEquals(decls.length, 2);
         assertEquals(decls[0], f_name1);
         assertEquals(decls[1], f_name2);
 
-        decls = tu.getDeclarations(name_param1.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_param1.resolveBinding());
         assertEquals(decls.length, 2);
         assertEquals(decls[0], name_param1);
         assertEquals(decls[1], name_param2);
 
-        decls = tu.getDeclarations(f_name2.resolveBinding());
+        decls = tu.getDeclarationsInAST(f_name2.resolveBinding());
         assertEquals(decls.length, 2);
         assertEquals(decls[0], f_name1);
         assertEquals(decls[1], f_name2);
 
-        decls = tu.getDeclarations(name_param2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_param2.resolveBinding());
         assertEquals(decls.length, 2);
         assertEquals(decls[0], name_param1);
         assertEquals(decls[1], name_param2);
@@ -974,16 +974,16 @@ public class AST2Tests extends AST2BaseTest {
         assertSame(params[0], param_a);
         assertSame(params[1], param_b);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(fName.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(fName.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], fName);
 
-        decls = tu.getDeclarations(name_a.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_a.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_a);
 
-        decls = tu.getDeclarations(name_b.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_b.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_b);
     }
@@ -1036,23 +1036,23 @@ public class AST2Tests extends AST2BaseTest {
         assertSame(function_1, function_2);
         assertSame(function_2, function_3);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(name_f.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(name_f.resolveBinding());
         assertEquals(decls.length, 2);
         assertEquals(decls[0], name_f);
         assertEquals(decls[1], name_fdef);
 
-        decls = tu.getDeclarations(gdef.getDeclarator().getName()
+        decls = tu.getDeclarationsInAST(gdef.getDeclarator().getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], gdef.getDeclarator().getName());
 
-        decls = tu.getDeclarations(name_fcall.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_fcall.resolveBinding());
         assertEquals(decls.length, 2);
         assertEquals(decls[0], name_f);
         assertEquals(decls[1], name_fdef);
 
-        decls = tu.getDeclarations(name_fdef.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_fdef.resolveBinding());
         assertEquals(decls.length, 2);
         assertEquals(decls[0], name_f);
         assertEquals(decls[1], name_fdef);
@@ -1112,25 +1112,25 @@ public class AST2Tests extends AST2BaseTest {
         assertSame(var_2, var_3);
         assertSame(var_3, var_4);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(fdef.getDeclarator().getName()
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(fdef.getDeclarator().getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], fdef.getDeclarator().getName());
 
-        decls = tu.getDeclarations(name_i.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_i.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_i);
 
-        decls = tu.getDeclarations(name_i2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_i2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_i);
 
-        decls = tu.getDeclarations(name_i3.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_i3.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_i);
 
-        decls = tu.getDeclarations(name_i4.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_i4.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_i);
     }
@@ -1166,17 +1166,17 @@ public class AST2Tests extends AST2BaseTest {
         assertNotNull(x1);
         assertSame(x1, x2);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(compType.getName()
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(compType.getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], compType.getName());
 
-        decls = tu.getDeclarations(name_x1.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_x1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_x1);
 
-        decls = tu.getDeclarations(fdef.getDeclarator().getName()
+        decls = tu.getDeclarationsInAST(fdef.getDeclarator().getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], fdef.getDeclarator().getName());
@@ -1185,12 +1185,12 @@ public class AST2Tests extends AST2BaseTest {
                 .getExpression()).getFieldOwner()).getOperand();
         IASTElaboratedTypeSpecifier elaboratedTypeSpecifier = ((IASTElaboratedTypeSpecifier) castExpression
                 .getTypeId().getDeclSpecifier());
-        decls = tu.getDeclarations(elaboratedTypeSpecifier.getName()
+        decls = tu.getDeclarationsInAST(elaboratedTypeSpecifier.getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], compType.getName());
 
-        decls = tu.getDeclarations(name_x2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_x2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_x1);
     }
@@ -1218,17 +1218,17 @@ public class AST2Tests extends AST2BaseTest {
         assertNotNull(label_1);
         assertEquals(label_1, label_2);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(collector.getName(0)
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(collector.getName(0)
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], collector.getName(0));
 
-        decls = tu.getDeclarations(collector.getName(1).resolveBinding());
+        decls = tu.getDeclarationsInAST(collector.getName(1).resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], collector.getName(2));
 
-        decls = tu.getDeclarations(collector.getName(2).resolveBinding());
+        decls = tu.getDeclarationsInAST(collector.getName(2).resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], collector.getName(2));
     }
@@ -1238,7 +1238,7 @@ public class AST2Tests extends AST2BaseTest {
         buffer.append("int f( X x );"); //$NON-NLS-1$
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
 
-        // test tu.getDeclarations(IBinding)
+        // test tu.getDeclarationsInAST(IBinding)
         IASTSimpleDeclaration decl1 = (IASTSimpleDeclaration) tu
                 .getDeclarations()[0];
         IASTSimpleDeclaration decl2 = (IASTSimpleDeclaration) tu
@@ -1252,19 +1252,19 @@ public class AST2Tests extends AST2BaseTest {
                 .getDeclarators()[0]).getParameters()[0].getDeclarator()
                 .getName();
 
-        IASTName[] decls = tu.getDeclarations(name_X1.resolveBinding());
+        IASTName[] decls = tu.getDeclarationsInAST(name_X1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_X1);
 
-        decls = tu.getDeclarations(name_f.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_f.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_f);
 
-        decls = tu.getDeclarations(name_X2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_X2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_X1);
 
-        decls = tu.getDeclarations(name_x.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_x.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_x);
     }
@@ -1272,12 +1272,12 @@ public class AST2Tests extends AST2BaseTest {
     public void testLongLong() throws ParserException {
         IASTTranslationUnit tu = parse("long long x;\n", ParserLanguage.C); //$NON-NLS-1$
 
-        // test tu.getDeclarations(IBinding)
+        // test tu.getDeclarationsInAST(IBinding)
         IASTSimpleDeclaration decl1 = (IASTSimpleDeclaration) tu
                 .getDeclarations()[0];
         IASTName name_x = decl1.getDeclarators()[0].getName();
 
-        IASTName[] decls = tu.getDeclarations(name_x.resolveBinding());
+        IASTName[] decls = tu.getDeclarationsInAST(name_x.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_x);
     }
@@ -1377,61 +1377,61 @@ public class AST2Tests extends AST2BaseTest {
         assertSame(cp, cp3);
         assertSame(red, red2);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(name_hue.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(name_hue.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_hue);
 
-        decls = tu.getDeclarations(e1.getName().resolveBinding());
+        decls = tu.getDeclarationsInAST(e1.getName().resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], e1.getName());
 
-        decls = tu.getDeclarations(e2.getName().resolveBinding());
+        decls = tu.getDeclarationsInAST(e2.getName().resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], e2.getName());
 
-        decls = tu.getDeclarations(e3.getName().resolveBinding());
+        decls = tu.getDeclarationsInAST(e3.getName().resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], e3.getName());
 
-        decls = tu.getDeclarations(name_hue2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_hue2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_hue);
 
-        decls = tu.getDeclarations(name_col.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_col.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_col);
 
-        decls = tu.getDeclarations(name_cp.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_cp.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_cp);
 
-        decls = tu.getDeclarations(fn.getDeclarator().getName()
+        decls = tu.getDeclarationsInAST(fn.getDeclarator().getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], fn.getDeclarator().getName());
 
-        decls = tu.getDeclarations(r_col.resolveBinding());
+        decls = tu.getDeclarationsInAST(r_col.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_col);
 
-        decls = tu.getDeclarations(r_blue.resolveBinding());
+        decls = tu.getDeclarationsInAST(r_blue.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], e2.getName());
 
-        decls = tu.getDeclarations(r_cp.resolveBinding());
+        decls = tu.getDeclarationsInAST(r_cp.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_cp);
 
-        decls = tu.getDeclarations(r_col2.resolveBinding());
+        decls = tu.getDeclarationsInAST(r_col2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_col);
 
-        decls = tu.getDeclarations(r_cp2.resolveBinding());
+        decls = tu.getDeclarationsInAST(r_cp2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_cp);
 
-        decls = tu.getDeclarations(r_red.resolveBinding());
+        decls = tu.getDeclarationsInAST(r_red.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], e1.getName());
     }
@@ -1449,8 +1449,8 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue(f.getPointerOperators().length == 0);
         assertFalse(f.getNestedDeclarator().getPointerOperators().length == 0);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(f.getNestedDeclarator().getName()
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(f.getNestedDeclarator().getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], f.getNestedDeclarator().getName());
@@ -1609,37 +1609,37 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue(t_AP instanceof IPointerType);
         assertSame(((IPointerType) t_AP).getType(), A);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(compSpec.getName()
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(compSpec.getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], compSpec.getName());
 
-        decls = tu.getDeclarations(name_a1.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_a1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_a1);
 
-        decls = tu.getDeclarations(name_A2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_A2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], compSpec.getName());
 
-        decls = tu.getDeclarations(name_AP.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_AP.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_AP);
 
-        decls = tu.getDeclarations(name_A3.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_A3.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], compSpec.getName());
 
-        decls = tu.getDeclarations(name_a2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_a2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_a2);
 
-        decls = tu.getDeclarations(name_AP2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_AP2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_AP);
 
-        decls = tu.getDeclarations(name_a3.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_a3.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_a3);
     }
@@ -1699,16 +1699,16 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue(t_c_6 instanceof IBasicType);
         assertEquals(((IBasicType) t_c_6).getType(), IBasicType.t_char);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(name_a.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(name_a.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_a);
 
-        decls = tu.getDeclarations(name_b.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_b.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_b);
 
-        decls = tu.getDeclarations(name_c.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_c.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_c);
     }
@@ -1812,36 +1812,36 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(h_ps.length, 1);
         assertTrue(h_ps[0] instanceof IBasicType);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(name_A1.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(name_A1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_A1);
 
-        decls = tu.getDeclarations(name_f.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_f.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_f);
 
-        decls = tu.getDeclarations(name_i.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_i.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_i);
 
-        decls = tu.getDeclarations(name_c.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_c.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_c);
 
-        decls = tu.getDeclarations(name_g.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_g.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_g);
 
-        decls = tu.getDeclarations(name_A2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_A2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_A1);
 
-        decls = tu.getDeclarations(name_h.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_h.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_h);
 
-        decls = tu.getDeclarations(name_A3.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_A3.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_A1);
 
@@ -1927,45 +1927,45 @@ public class AST2Tests extends AST2BaseTest {
             assertNotNull(fieldDesignator.getName().toString());
         }
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(name_Coord2.resolveBinding());
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(name_Coord2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_Coord);
 
-        decls = tu.getDeclarations(name_xy.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_xy.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_xy);
 
-        decls = tu.getDeclarations(name_y2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_y2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_y);
 
-        decls = tu.getDeclarations(name_x2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_x2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_x);
 
-        decls = tu.getDeclarations(name_Point2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_Point2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_Point);
 
-        decls = tu.getDeclarations(name_point.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_point.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_point);
 
-        decls = tu.getDeclarations(name_width2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_width2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_width);
 
-        decls = tu.getDeclarations(name_pos2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_pos2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_pos);
 
-        decls = tu.getDeclarations(name_xy2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_xy2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_xy);
     }
 
-    public void testMoreGetDeclarations1() throws Exception {
+    public void testMoregetDeclarationsInAST1() throws Exception {
         StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
         buffer.append("struct S {\n"); //$NON-NLS-1$
         buffer.append(" int a;\n"); //$NON-NLS-1$
@@ -1998,16 +1998,16 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(a1.resolveBinding(), a2.resolveBinding());
         assertEquals(b1.resolveBinding(), b2.resolveBinding());
 
-        IASTName[] decls = tu.getDeclarations(a1.resolveBinding());
+        IASTName[] decls = tu.getDeclarationsInAST(a1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(a1, decls[0]);
 
-        decls = tu.getDeclarations(b1.resolveBinding());
+        decls = tu.getDeclarationsInAST(b1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(b1, decls[0]);
     }
 
-    public void testMoreGetDeclarations2() throws Exception {
+    public void testMoregetDeclarationsInAST2() throws Exception {
         StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
         buffer.append(" struct S { \n"); //$NON-NLS-1$
         buffer.append(" int a; \n"); //$NON-NLS-1$
@@ -2034,16 +2034,16 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(a1.resolveBinding(), a2.resolveBinding());
         assertEquals(b1.resolveBinding(), b2.resolveBinding());
 
-        IASTName[] decls = tu.getDeclarations(a1.resolveBinding());
+        IASTName[] decls = tu.getDeclarationsInAST(a1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(a1, decls[0]);
 
-        decls = tu.getDeclarations(b1.resolveBinding());
+        decls = tu.getDeclarationsInAST(b1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(b1, decls[0]);
     }
 
-    public void testMoreGetDeclarations3() throws Exception {
+    public void testMoregetDeclarationsInAST3() throws Exception {
         StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
         buffer.append(" typedef struct S { \n"); //$NON-NLS-1$
         buffer.append(" int a; \n"); //$NON-NLS-1$
@@ -2075,11 +2075,11 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(a1.resolveBinding(), a2.resolveBinding());
         assertEquals(b1.resolveBinding(), b2.resolveBinding());
 
-        IASTName[] decls = tu.getDeclarations(a1.resolveBinding());
+        IASTName[] decls = tu.getDeclarationsInAST(a1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(a1, decls[0]);
 
-        decls = tu.getDeclarations(b1.resolveBinding());
+        decls = tu.getDeclarationsInAST(b1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(b1, decls[0]);
     }
@@ -2098,8 +2098,8 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue(((IPointerType) ft.getReturnType()).getType() instanceof IFunctionType);
         assertEquals(ft.getParameterTypes().length, 1);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(def.getDeclarator()
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(def.getDeclarator()
                 .getNestedDeclarator().getName().resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], def.getDeclarator().getNestedDeclarator()
@@ -2124,11 +2124,11 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue(ft.getParameterTypes()[0] instanceof IPointerType);
         assertTrue(((IPointerType) ft.getParameterTypes()[0]).isConst());
 
-        // test tu.getDeclarations(IBinding)
+        // test tu.getDeclarationsInAST(IBinding)
         IASTName name_parm = ((IASTStandardFunctionDeclarator) def
                 .getDeclarators()[0]).getParameters()[0].getDeclarator()
                 .getName();
-        IASTName[] decls = tu.getDeclarations(name_parm.resolveBinding());
+        IASTName[] decls = tu.getDeclarationsInAST(name_parm.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_parm);
     }
@@ -2164,18 +2164,18 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue(((IFunctionType) ((IPointerType) ft3.getReturnType())
                 .getType()).getReturnType() instanceof IBasicType);
 
-        // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(def1.getDeclarator().getName()
+        // test tu.getDeclarationsInAST(IBinding)
+        IASTName[] decls = tu.getDeclarationsInAST(def1.getDeclarator().getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], def1.getDeclarator().getName());
 
-        decls = tu.getDeclarations(def2.getDeclarator().getName()
+        decls = tu.getDeclarationsInAST(def2.getDeclarator().getName()
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], def2.getDeclarator().getName());
 
-        decls = tu.getDeclarations(def3.getDeclarator().getNestedDeclarator()
+        decls = tu.getDeclarationsInAST(def3.getDeclarator().getNestedDeclarator()
                 .getName().resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], def3.getDeclarator().getNestedDeclarator()
@@ -2206,14 +2206,14 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue(gt_parm instanceof IBasicType);
         assertEquals(((IBasicType) gt_parm).getType(), IBasicType.t_void);
 
-        // test tu.getDeclarations(IBinding)
+        // test tu.getDeclarationsInAST(IBinding)
         assertTrue(def.getDeclarator() instanceof IASTStandardFunctionDeclarator);
         IASTName name_g = ((IASTStandardFunctionDeclarator) def.getDeclarator())
                 .getParameters()[0].getDeclarator().getName();
         IASTName name_g_call = ((IASTIdExpression) ((IASTFunctionCallExpression) ((IASTReturnStatement) ((IASTCompoundStatement) def
                 .getBody()).getStatements()[0]).getReturnValue())
                 .getFunctionNameExpression()).getName();
-        IASTName[] decls = tu.getDeclarations(name_g_call.resolveBinding());
+        IASTName[] decls = tu.getDeclarationsInAST(name_g_call.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_g);
     }
@@ -2249,9 +2249,9 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue(vpt_2_2 instanceof IBasicType);
         assertEquals(((IBasicType) vpt_2_2).getType(), IBasicType.t_int);
 
-        // test tu.getDeclarations(IBinding)
+        // test tu.getDeclarationsInAST(IBinding)
         IASTName[] decls = tu
-                .getDeclarations(((IASTStandardFunctionDeclarator) decl
+                .getDeclarationsInAST(((IASTStandardFunctionDeclarator) decl
                         .getDeclarators()[0]).getNestedDeclarator().getName()
                         .resolveBinding());
         assertEquals(decls.length, 1);
@@ -2296,20 +2296,20 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue(signal_ret3 instanceof IBasicType);
         assertEquals(((IBasicType) signal_ret3).getType(), IBasicType.t_void);
 
-        // test tu.getDeclarations(IBinding)
+        // test tu.getDeclarationsInAST(IBinding)
         IASTName name_DWORD = decl1.getDeclarators()[0].getName();
         IASTName name_v = decl2.getDeclarators()[0].getName();
 
-        IASTName[] decls = tu.getDeclarations(name_DWORD.resolveBinding());
+        IASTName[] decls = tu.getDeclarationsInAST(name_DWORD.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_DWORD);
 
-        decls = tu.getDeclarations(((IASTNamedTypeSpecifier) decl2
+        decls = tu.getDeclarationsInAST(((IASTNamedTypeSpecifier) decl2
                 .getDeclSpecifier()).getName().resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_DWORD);
 
-        decls = tu.getDeclarations(((IASTNamedTypeSpecifier) decl3
+        decls = tu.getDeclarationsInAST(((IASTNamedTypeSpecifier) decl3
                 .getDeclSpecifier()).getName().resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_v);
@@ -2385,7 +2385,7 @@ public class AST2Tests extends AST2BaseTest {
                 IBasicType.t_void);
         assertTrue(((ITypedef) signal_parm_t2_ret_1).getName().equals("DWORD")); //$NON-NLS-1$
 
-        // test tu.getDeclarations(IBinding)
+        // test tu.getDeclarationsInAST(IBinding)
         IASTName name_pfv = decl2.getDeclarators()[0].getNestedDeclarator()
                 .getName();
         IASTName name_pfv1 = ((IASTNamedTypeSpecifier) decl3.getDeclSpecifier())
@@ -2394,11 +2394,11 @@ public class AST2Tests extends AST2BaseTest {
                 .getDeclarators()[0]).getParameters()[1].getDeclSpecifier())
                 .getName();
 
-        IASTName[] decls = tu.getDeclarations(name_pfv1.resolveBinding());
+        IASTName[] decls = tu.getDeclarationsInAST(name_pfv1.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_pfv);
 
-        decls = tu.getDeclarations(name_pfv2.resolveBinding());
+        decls = tu.getDeclarationsInAST(name_pfv2.resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_pfv);
     }
@@ -2895,7 +2895,7 @@ public class AST2Tests extends AST2BaseTest {
         assertInstances(col, x1, 1);
         assertInstances(col, x2, 2);
 
-        IASTName[] ds = tu.getDeclarations(x2);
+        IASTName[] ds = tu.getDeclarationsInAST(x2);
         assertEquals(ds.length, 1);
         assertSame(ds[0], col.getName(11));
     }

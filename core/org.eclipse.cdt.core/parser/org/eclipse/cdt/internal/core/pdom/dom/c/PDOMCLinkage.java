@@ -12,6 +12,7 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -86,7 +87,7 @@ class PDOMCLinkage extends PDOMLinkage {
 		else if (scopeNode instanceof IASTTranslationUnit)
 			return this;
 		else {
-			IASTName scopeName = scope.getScopeName();
+			IName scopeName = scope.getScopeName();
 			if (scopeName != null) {
 				IBinding scopeBinding = scopeName.resolveBinding();
 				PDOMBinding scopePDOMBinding = adaptBinding(scopeBinding);

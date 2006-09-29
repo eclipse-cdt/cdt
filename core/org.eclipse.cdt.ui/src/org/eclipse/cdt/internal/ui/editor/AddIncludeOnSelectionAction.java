@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -44,12 +45,14 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -65,7 +68,6 @@ import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
@@ -164,9 +166,9 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 	 */
 	private class DisplayName extends Object 
 	{
-		private PDOMName name;
+		private IIndexName name;
 		
-		public DisplayName(PDOMName name) {
+		public DisplayName(IIndexName name) {
 			this.name = name;
 		}
 
@@ -186,7 +188,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			}
 		}
 		
-		public PDOMName getPDOMName()
+		public IIndexName getPDOMName()
 		{
 			return name;
 		}
@@ -268,7 +270,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 								
 								cProjectsToSearch.add(cProj); //current project
 								Pattern pattern = Pattern.compile(name);
-								List pdomBindings = new ArrayList();
+								List pdomNames = new ArrayList();
 								//search the projects and get name matching bindings
 								for (int n = 0; n < cProjectsToSearch.size(); n++)
 								{							
@@ -278,38 +280,25 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 									for (int i = 0; i < bindings.length; ++i) {
 										PDOMBinding binding = (PDOMBinding)bindings[i];
 										PDOMBinding pdomBinding = pdom.getLinkage(getTranslationUnit().getLanguage()).adaptBinding(binding);
-										pdomBindings.add(pdomBinding);
+										
+										IName[] defs= null;
+										if (pdomBinding instanceof IPDOMMemberOwner //class or struct
+												|| pdomBinding instanceof IEnumeration)
+										{
+											defs= pdom.getDefinitions(pdomBinding);
+										}
+										else if (pdomBinding instanceof ITypedef || pdomBinding instanceof IFunction)
+										{
+											defs= pdom.getDeclarations(pdomBinding);
+										}
+										if (defs != null) {
+											for (int j = 0; j < defs.length; j++) {
+												pdomNames.add(new DisplayName((IIndexName)defs[j]));
+											}
+										}
 									}
 								}
-								
-								List pdomNames = new ArrayList();
-								
-								//get all the declarations/definitions of the pdomBindings found
-								for (int i = 0; i < pdomBindings.size(); ++i)
-								{
-									PDOMBinding pdomBinding = (PDOMBinding) pdomBindings.get(i);
-									
-									if (pdomBinding instanceof IPDOMMemberOwner //class or struct
-											|| pdomBinding instanceof IEnumeration)
-									{
-										PDOMName currentDef = pdomBinding.getFirstDefinition();
-										while(currentDef != null) //get all the definitions of the file to include
-										{
-											pdomNames.add(new DisplayName(currentDef));
-											currentDef = currentDef.getNextInBinding();
-										}
-									}
-									if (pdomBinding instanceof ITypedef || pdomBinding instanceof IFunction)
-									{
-										PDOMName currentDec = pdomBinding.getFirstDeclaration();
-										while(currentDec != null) //get all the declarations of the file to include
-										{
-											pdomNames.add(new DisplayName(currentDec));
-											currentDec = currentDec.getNextInBinding();
-										}
-									}
-								}				
-								
+																
 								if (pdomNames.size() > 1)
 								{				
 									ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_TYPE_ONLY));

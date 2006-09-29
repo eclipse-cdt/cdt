@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Nov 29, 2004
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -107,7 +109,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    
 	    //copy assignment operator: A& operator = ( const A & ) 
 	    IType refType = new CPPReferenceType( clsType );
-	    m = new CPPImplicitMethod( this, ICPPASTOperatorName.OPERATOR_ASSIGN, refType, ps ); //$NON-NLS-1$
+	    m = new CPPImplicitMethod( this, ICPPASTOperatorName.OPERATOR_ASSIGN, refType, ps ); 
 	    implicits[2] = m;
 	    addBinding( m );
 	    
@@ -343,7 +345,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
      */
-    public IASTName getScopeName() {
+    public IName getScopeName() {
         IASTNode node = getPhysicalNode();
         if( node instanceof ICPPASTCompositeTypeSpecifier ){
             return ((ICPPASTCompositeTypeSpecifier)node).getName();

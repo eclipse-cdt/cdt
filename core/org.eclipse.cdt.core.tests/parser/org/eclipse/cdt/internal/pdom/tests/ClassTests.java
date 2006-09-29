@@ -13,8 +13,8 @@ package org.eclipse.cdt.internal.pdom.tests;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -53,7 +53,7 @@ public class ClassTests extends PDOMTestBase {
 		assertEquals(1, Bmethods.length);
 		ICPPMethod Bf = Bmethods[0];
 		assertEquals("f", Bf.getName());
-		IASTName [] Bf_refs = pdom.getReferences(Bf);
+		IName [] Bf_refs = pdom.getReferences(Bf);
 		assertEquals(1, Bf_refs.length);
 		IASTFileLocation loc = Bf_refs[0].getFileLocation();
 		assertEquals(offset(95, 84), loc.getNodeOffset());
@@ -71,7 +71,7 @@ public class ClassTests extends PDOMTestBase {
 		assertEquals(1, fields.length);
 		IField NestedB_x = fields[0];
 		
-		IASTName[] refs = pdom.getReferences(NestedB);
+		IName[] refs = pdom.getReferences(NestedB);
 		assertEquals(1, refs.length);
 		IASTFileLocation loc = refs[0].getFileLocation();
 		assertEquals(offset(96, 87), loc.getNodeOffset());
@@ -88,7 +88,7 @@ public class ClassTests extends PDOMTestBase {
 		ICPPNamespaceScope ns = ((ICPPNamespace)bindings[0]).getNamespaceScope();
 		bindings = ns.find("testRef");
 		assertEquals(1, bindings.length);
-		IASTName[] refs = pdom.getReferences(bindings[0]);
+		IName[] refs = pdom.getReferences(bindings[0]);
 		for (int i = 0; i < refs.length; ++i)
 			System.out.println(refs[i].getFileLocation().getNodeOffset());
 		assertEquals(5, refs.length);

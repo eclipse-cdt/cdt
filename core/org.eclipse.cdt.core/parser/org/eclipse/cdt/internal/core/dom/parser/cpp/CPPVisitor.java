@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Nov 29, 2004
@@ -14,6 +15,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -2009,7 +2011,7 @@ public class CPPVisitor {
             	if( scope instanceof ICPPTemplateScope )
             		scope = (ICPPScope) scope.getParent();
             	
-            	IASTName n = scope.getScopeName();
+            	IName n = scope.getScopeName();
             	if( n == null )
             		break;
                 if( scope instanceof ICPPBlockScope || scope instanceof ICPPFunctionScope ) 
@@ -2039,7 +2041,7 @@ public class CPPVisitor {
             	if( scope instanceof ICPPTemplateScope )
             		scope = (ICPPScope) scope.getParent();
             	
-            	IASTName n = scope.getScopeName();
+            	IName n = scope.getScopeName();
             	if( n == null )
             		break;
                 if( scope instanceof ICPPBlockScope || scope instanceof ICPPFunctionScope ) 

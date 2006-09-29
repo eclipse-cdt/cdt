@@ -12,15 +12,6 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -29,6 +20,19 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 
 public class OpenDeclarationsAction extends SelectionParseAction {
 	public static final IASTName[] BLANK_NAME_ARRAY = new IASTName[0];
@@ -70,7 +74,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 		
 					IBinding binding = searchName.resolveBinding();
 					if (binding != null && !(binding instanceof IProblemBinding)) {
-						final IASTName[] declNames = ast.getDeclarations(binding);
+						final IName[] declNames = ast.getDeclarations(binding);
 						if (declNames.length > 0) {
 							runInUIThread(new Runnable() {
 								public void run() {
@@ -83,11 +87,11 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 							});
 						} else if (binding instanceof PDOMBinding) {
 							PDOMBinding pdomBinding = (PDOMBinding)binding;
-							IASTName name = pdomBinding.getFirstDefinition();
+							IName name = pdomBinding.getFirstDefinition();
 							if (name == null)
 								name = pdomBinding.getFirstDeclaration();
 							if (name != null) {
-								final IASTName dname = name;
+								final IName dname = name;
 								Display.getDefault().asyncExec(new Runnable() {
 									public void run() {
 										try {

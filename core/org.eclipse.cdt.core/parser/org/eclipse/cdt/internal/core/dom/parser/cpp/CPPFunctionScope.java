@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Dec 1, 2004
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -121,7 +123,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
      */
-    public IASTName getScopeName() {
+    public IName getScopeName() {
         IASTNode node = getPhysicalNode();
         if( node instanceof ICPPASTFunctionDeclarator ){
             return ((ICPPASTFunctionDeclarator)node).getName();

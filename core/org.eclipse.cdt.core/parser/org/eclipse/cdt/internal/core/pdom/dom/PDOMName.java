@@ -7,18 +7,15 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
@@ -27,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMName implements IASTName, IASTFileLocation {
+public class PDOMName implements IIndexName, IASTFileLocation {
 
 	private final PDOM pdom;
 	private final int record;
@@ -175,18 +172,6 @@ public class PDOMName implements IASTName, IASTFileLocation {
 		}
 	}
 
-	public IBinding getBinding() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public void setBinding(IBinding binding) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public IBinding[] resolvePrefix() {
-		throw new PDOMNotImplementedError();
-	}
-
 	public char[] toCharArray() {
 		try {
 			Database db = pdom.getDB();
@@ -233,49 +218,8 @@ public class PDOMName implements IASTName, IASTFileLocation {
 		}
 	}
 
-	public IASTTranslationUnit getTranslationUnit() {
-		// TODO Bug 115367 this is dumb - only need for validation checks
-		return new PDOMTranslationUnit();
-	}
-
-	public IASTNodeLocation[] getNodeLocations() {
-		throw new PDOMNotImplementedError();
-	}
-
 	public IASTFileLocation getFileLocation() {
 		return this;
-	}
-
-	public String getContainingFilename() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public IASTNode getParent() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public void setParent(IASTNode node) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public ASTNodeProperty getPropertyInParent() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public void setPropertyInParent(ASTNodeProperty property) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean accept(ASTVisitor visitor) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public String getRawSignature() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public int getEndingLineNumber() {
-		throw new PDOMNotImplementedError();
 	}
 
 	public String getFileName() {
@@ -289,11 +233,15 @@ public class PDOMName implements IASTName, IASTFileLocation {
 	}
 
 	public int getStartingLineNumber() {
-		throw new PDOMNotImplementedError();
+		return 0;
+	}
+
+	public int getEndingLineNumber() {
+		return 0;
 	}
 
 	public IASTFileLocation asFileLocation() {
-		throw new PDOMNotImplementedError();
+		return this;
 	}
 
 	public int getNodeLength() {

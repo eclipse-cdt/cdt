@@ -11,7 +11,7 @@
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.DOMSearchUtil;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -53,11 +53,11 @@ public class DOMSelectionParseBaseTest extends DOMFileBasePluginTest {
 		return null;
 	}
 	
-	protected IASTName[] getDeclarationOffTU(IASTName name) {
+	protected IName[] getDeclarationOffTU(IASTName name) {
         return DOMSearchUtil.getNamesFromDOM(name, DOMSearchUtil.DECLARATIONS);
 	}
     
-    protected IASTName[] getReferencesOffTU(IASTName name) {
+    protected IName[] getReferencesOffTU(IASTName name) {
         return DOMSearchUtil.getNamesFromDOM(name, DOMSearchUtil.REFERENCES);
     }
 }

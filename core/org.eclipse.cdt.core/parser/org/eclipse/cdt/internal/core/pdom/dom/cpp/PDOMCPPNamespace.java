@@ -7,11 +7,13 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -201,7 +203,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		throw new PDOMNotImplementedError();
 	}
 
-	public IASTName getScopeName() throws DOMException {
+	public IName getScopeName() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
 

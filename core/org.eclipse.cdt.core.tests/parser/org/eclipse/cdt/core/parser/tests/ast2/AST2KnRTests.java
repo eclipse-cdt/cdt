@@ -80,8 +80,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	assertEquals( x2, x3 );
     	assertEquals( x3, x4 );
     	
-		// test tu.getDeclarations(IBinding)
-		IASTName[] decls = tu.getDeclarations(x1);
+		// test tu.getDeclarationsInAST(IBinding)
+		IASTName[] decls = tu.getDeclarationsInAST(x1);
 		assertEquals( decls.length, 2 );
 		assertEquals( decls[0], ((IASTStandardFunctionDeclarator)f1.getDeclarators()[0]).getParameters()[0].getDeclarator().getName() );
 		assertEquals( decls[1], ((IASTSimpleDeclaration)((ICASTKnRFunctionDeclarator)f2.getDeclarator()).getParameterDeclarations()[0]).getDeclarators()[0].getName() );
@@ -116,8 +116,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	assertEquals( x2, x3 );
     	assertEquals( x3, x4 );
     	
-		// test tu.getDeclarations(IBinding)
-		IASTName[] decls = tu.getDeclarations(x2); 
+		// test tu.getDeclarationsInAST(IBinding)
+		IASTName[] decls = tu.getDeclarationsInAST(x2); 
 		assertEquals( decls.length, 1 );
 		assertEquals( decls[0], ((IASTSimpleDeclaration)((ICASTKnRFunctionDeclarator)f2.getDeclarator()).getParameterDeclarations()[0]).getDeclarators()[0].getName() );
 
@@ -188,8 +188,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	assertEquals( y_parm, y_parm2 );
     	assertEquals( ret_x.resolveBinding(), x_parm );
 
-		// test tu.getDeclarations(IBinding)
-		IASTName[] decls = tu.getDeclarations(ret_x.resolveBinding()); 
+		// test tu.getDeclarationsInAST(IBinding)
+		IASTName[] decls = tu.getDeclarationsInAST(ret_x.resolveBinding()); 
 		assertEquals( decls.length, 1 );
 		assertEquals( decls[0], x1.getName() );
 
@@ -247,8 +247,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	assertTrue(c1_t.getType() instanceof IBasicType);
     	assertEquals(((IBasicType)c1_t.getType()).getType(), IBasicType.t_char);
     	
-		// test tu.getDeclarations(IBinding)
-		IASTName[] decls = tu.getDeclarations(x3.resolveBinding()); 
+		// test tu.getDeclarationsInAST(IBinding)
+		IASTName[] decls = tu.getDeclarationsInAST(x3.resolveBinding()); 
 		assertEquals( decls.length, 1 );
 		assertEquals( decls[0], x2 );
 		
@@ -301,8 +301,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	assertTrue(((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand2() instanceof IASTLiteralExpression);
     	assertEquals(((IASTLiteralExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand2()).toString(), "0"); //$NON-NLS-1$
 
-		// test tu.getDeclarations(IBinding)
-		IASTName[] decls = tu.getDeclarations(((IASTIdExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand1()).getName().resolveBinding()); 
+		// test tu.getDeclarationsInAST(IBinding)
+		IASTName[] decls = tu.getDeclarationsInAST(((IASTIdExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand1()).getName().resolveBinding()); 
 		assertEquals( decls.length, 0 );
     }
 
@@ -349,8 +349,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	assertEquals(y1_parm, y2_parm);
     	assertEquals(z1_parm, z2_parm);
     	
-		// test tu.getDeclarations(IBinding)
-		IASTName[] decls = tu.getDeclarations(((IASTIdExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand1()).getName().resolveBinding()); 
+		// test tu.getDeclarationsInAST(IBinding)
+		IASTName[] decls = tu.getDeclarationsInAST(((IASTIdExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand1()).getName().resolveBinding()); 
 		assertEquals( decls.length, 1 );
 		assertEquals( decls[0], x2 );
 		
@@ -376,8 +376,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	assertTrue(((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand2() instanceof IASTLiteralExpression);
     	assertEquals(((IASTLiteralExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand2()).toString(), "0"); //$NON-NLS-1$
     	
-		// test tu.getDeclarations(IBinding)
-		IASTName[] decls = tu.getDeclarations(((IASTIdExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand1()).getName().resolveBinding()); 
+		// test tu.getDeclarationsInAST(IBinding)
+		IASTName[] decls = tu.getDeclarationsInAST(((IASTIdExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand1()).getName().resolveBinding()); 
 		assertEquals( decls.length, 0 );    	
     }
     
@@ -496,8 +496,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	IParameter[] f1_parms = f_fun1.getParameters();
     	assertEquals( f1_parms.length, 1 );
 
-		// test tu.getDeclarations(IBinding)
-		IASTName[] decls = tu.getDeclarations(x2.resolveBinding()); 
+		// test tu.getDeclarationsInAST(IBinding)
+		IASTName[] decls = tu.getDeclarationsInAST(x2.resolveBinding()); 
 		assertEquals( decls.length, 1 );
 		assertEquals( decls[0], x2 );
 		
@@ -544,12 +544,12 @@ public class AST2KnRTests extends AST2BaseTest {
     	assertNull( list.getArrayModifiers()[0].getConstantExpression() );
     	assertEquals( list.getPointerOperators().length, 1 );
     	
-		// test tu.getDeclarations(IBinding)
-		IASTName[] decls = tu.getDeclarations(list3.resolveBinding()); 
+		// test tu.getDeclarationsInAST(IBinding)
+		IASTName[] decls = tu.getDeclarationsInAST(list3.resolveBinding()); 
 		assertEquals( decls.length, 1 );
 		assertEquals( decls[0], list2 );
     	
-		decls = tu.getDeclarations(prompt1.resolveBinding()); 
+		decls = tu.getDeclarationsInAST(prompt1.resolveBinding()); 
 		assertEquals( decls.length, 1 );
 		assertEquals( decls[0], prompt2 );
     }

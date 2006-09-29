@@ -13,8 +13,8 @@ package org.eclipse.cdt.internal.pdom.tests;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -56,19 +56,19 @@ public class EnumerationTests extends PDOMTestBase {
 		assertEquals("cc", enumerators[2].getName());
 		
 		// Declaration of TestEnum 
-		IASTName[] enumDecls = pdom.getDeclarations(enumeration);
+		IName[] enumDecls = pdom.getDeclarations(enumeration);
 		assertEquals(1, enumDecls.length);
 		IASTFileLocation loc = enumDecls[0].getFileLocation();
 		assertEquals(5, loc.getNodeOffset());
 		
 		// Reference to TestEnum
-		IASTName[] enumRefs = pdom.getReferences(enumeration);
+		IName[] enumRefs = pdom.getReferences(enumeration);
 		assertEquals(1, enumRefs.length);
 		loc = enumRefs[0].getFileLocation();
 		assertEquals(offset(46, 40), loc.getNodeOffset());
 		
 		// Reference to a
-		IASTName[] aRefs = pdom.getReferences(enumerators[0]);
+		IName[] aRefs = pdom.getReferences(enumerators[0]);
 		assertEquals(1, aRefs.length);
 		loc = aRefs[0].getFileLocation();
 		assertEquals(offset(74, 67), loc.getNodeOffset());
@@ -88,19 +88,19 @@ public class EnumerationTests extends PDOMTestBase {
 		assertEquals("cppc", enumerators[2].getName());
 		
 		// Declaration of TestEnum 
-		IASTName[] enumDecls = pdom.getDeclarations(enumeration);
+		IName[] enumDecls = pdom.getDeclarations(enumeration);
 		assertEquals(1, enumDecls.length);
 		IASTFileLocation loc = enumDecls[0].getFileLocation();
 		assertEquals(5, loc.getNodeOffset());
 		
 		// Reference to TestEnum
-		IASTName[] enumRefs = pdom.getReferences(enumeration);
+		IName[] enumRefs = pdom.getReferences(enumeration);
 		assertEquals(1, enumRefs.length);
 		loc = enumRefs[0].getFileLocation();
 		assertEquals(offset(49, 43), loc.getNodeOffset());
 		
 		// Reference to a
-		IASTName[] aRefs = pdom.getReferences(enumerators[0]);
+		IName[] aRefs = pdom.getReferences(enumerators[0]);
 		assertEquals(1, aRefs.length);
 		loc = aRefs[0].getFileLocation();
 		assertEquals(offset(79, 72), loc.getNodeOffset());

@@ -13,8 +13,8 @@ package org.eclipse.cdt.internal.pdom.tests;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -56,7 +56,7 @@ public class TypesTests extends PDOMTestBase {
 		assertEquals("x", x.getName());
 		
 		// Make sure that there is a reference in g();
-		IASTName[] xRefs = pdom.getReferences(x);
+		IName[] xRefs = pdom.getReferences(x);
 		assertEquals(1, xRefs.length);
 		IASTFileLocation loc = xRefs[0].getFileLocation();
 		assertEquals(offset(85, 77), loc.getNodeOffset());
@@ -73,7 +73,7 @@ public class TypesTests extends PDOMTestBase {
 		assertEquals("f", f.getName());
 		
 		// Make sure that there is a reference in g();
-		IASTName[] fRefs = pdom.getReferences(f);
+		IName[] fRefs = pdom.getReferences(f);
 		assertEquals(1, fRefs.length);
 		IASTFileLocation loc = fRefs[0].getFileLocation();
 		assertEquals(offset(84, 74), loc.getNodeOffset());
@@ -83,7 +83,7 @@ public class TypesTests extends PDOMTestBase {
 		IBinding [] bindings = pdom.findBindings(Pattern.compile("spinlock_t"), new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		ITypedef spinlock_t = (ITypedef)bindings[0];
-		IASTName [] refs = pdom.getReferences(spinlock_t);
+		IName [] refs = pdom.getReferences(spinlock_t);
 		assertEquals(1, refs.length);
 		IASTFileLocation loc = refs[0].getFileLocation();
 		assertEquals(offset(44, 40), loc.getNodeOffset());

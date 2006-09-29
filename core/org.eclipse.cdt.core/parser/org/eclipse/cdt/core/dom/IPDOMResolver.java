@@ -26,10 +26,10 @@ public interface IPDOMResolver extends IAdaptable {
 
 	public IBinding resolveBinding(IASTName name);
 	
-	public IASTName[] getDeclarations(IBinding binding) throws CoreException;
+	public IName[] getDeclarations(IBinding binding) throws CoreException;
 	
-	public IASTName[] getDefinitions(IBinding binding) throws CoreException;
+	public IName[] getDefinitions(IBinding binding) throws CoreException;
 	
-	public IASTName[] getReferences(IBinding binding) throws CoreException;
+	public IName[] getReferences(IBinding binding) throws CoreException;
 
 }

@@ -9,12 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-package org.eclipse.cdt.core.dom;
+package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -27,10 +30,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentType;
 
@@ -152,8 +153,8 @@ public class DOMSearchUtil {
      * ( CSearchPattern.DECLARATION | CSearchPattern.REFERENCES | CSearchPattern.ALL_OCCURRENCES ) 
      * @return IASTName[] declarations, references, or both depending on limitTo that correspond to the IASTName searchName searched for
      */
-    public static IASTName[] getNamesFromDOM(IASTName searchName, int limitTo) {
-		IASTName[] names = null;
+    public static IName[] getNamesFromDOM(IASTName searchName, int limitTo) {
+		IName[] names = null;
 		IASTTranslationUnit tu = searchName.getTranslationUnit();
 		
 		if (tu == null) {
@@ -162,24 +163,20 @@ public class DOMSearchUtil {
 		
 		IBinding binding = searchName.resolveBinding();
 		if (binding instanceof PDOMBinding) {
-			try { 
-				ArrayList pdomNames = new ArrayList();
-				// First decls
-				PDOMName name = ((PDOMBinding)binding).getFirstDeclaration();
-				while (name != null) {
-					pdomNames.add(name);
-					name = name.getNextInBinding();
-				}
-				// Next defs
-				name = ((PDOMBinding)binding).getFirstDefinition();
-				while (name != null) {
-					pdomNames.add(name);
-					name = name.getNextInBinding();
-				}
-				names = (IASTName[])pdomNames.toArray(new IASTName[pdomNames.size()]);
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
+			Assert.fail("Not implemented");
+//			try { 
+//				ArrayList pdomNames = new ArrayList();
+//				IPDOMResolver pdom= ((PDOMBinding) binding).getPDOM();
+//				// First decls
+//				names= pdom.getDeclarations(binding);
+//				pdomNames.addAll(Arrays.asList(names));
+//				// Next defs
+//				names= pdom.getDefinitions(binding);
+//				pdomNames.addAll(Arrays.asList(names));
+//				names = (IName[])pdomNames.toArray(new IName[pdomNames.size()]);
+//			} catch (CoreException e) {
+//				CCorePlugin.log(e);
+//			}
 		} else {
 			names = getNames(tu, binding, limitTo);
 			
@@ -202,16 +199,16 @@ public class DOMSearchUtil {
         IASTName[] names = null;
 		if (limitTo == DECLARATIONS ||
 			limitTo == DECLARATIONS_DEFINITIONS) {
-            names = tu.getDeclarations(binding);
+            names = tu.getDeclarationsInAST(binding);
         } else if (limitTo == REFERENCES) {
             names = tu.getReferences(binding);
         } else if (limitTo == DEFINITIONS) {
-            names = tu.getDefinitions(binding);
+            names = tu.getDefinitionsInAST(binding);
         } else if (limitTo == ALL_OCCURRENCES){
-            names = tu.getDeclarations(binding);
+            names = tu.getDeclarationsInAST(binding);
             names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
         } else {  // assume ALL
-            names = tu.getDeclarations(binding);
+            names = tu.getDeclarationsInAST(binding);
             names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
         }
 		

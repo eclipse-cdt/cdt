@@ -27,6 +27,7 @@ import org.eclipse.jface.text.Region;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -36,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -50,7 +52,6 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 /**
@@ -289,9 +290,9 @@ public class CIndexQueries {
 				try {
 					IBinding binding= getPDOMBinding(pdom, name);
 					if (binding != null) {
-						IASTName[] names= pdom.getReferences(binding);
+						IName[] names= pdom.getReferences(binding);
 						for (int i = 0; i < names.length; i++) {
-							IASTName rname = names[i];
+							IName rname = names[i];
 							ITranslationUnit tu= getTranslationUnit(project, rname);
 							CIndexReference ref= new CIndexReference(tu, rname);
 							ICElement elem = findCalledBy(ref);
@@ -367,7 +368,7 @@ public class CIndexQueries {
 	}
 
 
-	private ITranslationUnit getTranslationUnit(ICProject cproject, IASTName name) {
+	private ITranslationUnit getTranslationUnit(ICProject cproject, IName name) {
 		IPath path= Path.fromOSString(name.getFileLocation().getFileName());
 		try {
 			return CModelUtil.findTranslationUnitForLocation(path, cproject);
@@ -475,11 +476,11 @@ public class CIndexQueries {
 		return EMPTY_ELEMENTS;
 	}
 
-	private ICElement[] getCElementsForNames(ICProject project, IASTName[] defs) {
+	private ICElement[] getCElementsForNames(ICProject project, IName[] defs) {
 		if (defs != null && defs.length > 0) {
 			HashSet result= new HashSet(defs.length);
 			for (int i = 0; i < defs.length; i++) {
-				IASTName defName = defs[i];
+				IName defName = defs[i];
 				assert !defName.isReference();
 				ICElement elem= getCElementForName(project, defName);
 				if (elem != null) {
@@ -491,13 +492,13 @@ public class CIndexQueries {
 		return EMPTY_ELEMENTS;
 	}
 
-	private ICElement getCElementForName(ICProject project, IASTName declName) {
+	private ICElement getCElementForName(ICProject project, IName declName) {
 		assert !declName.isReference();
 		ITranslationUnit tu= getTranslationUnit(project, declName);
 		if (tu != null) {
 			IRegion region= null;
-			if (declName instanceof PDOMName) {
-				PDOMName pname= (PDOMName) declName;
+			if (declName instanceof IIndexName) {
+				IIndexName pname= (IIndexName) declName;
 				region= new Region(pname.getNodeOffset(), pname.getNodeLength());
 				//	mstodo use correct timestamp			
 				//	PDOMFile file= pname.getFile();
@@ -599,10 +600,10 @@ public class CIndexQueries {
 		return null;
 	}
 
-	private ICElement getFirstCElementForNames(ICProject project, IASTName[] defs) {
+	private ICElement getFirstCElementForNames(ICProject project, IName[] defs) {
 		if (defs != null) {
 			for (int i = 0; i < defs.length; i++) {
-				IASTName defName = defs[i];
+				IName defName = defs[i];
 				ICElement elem= getCElementForName(project, defName);
 				if (elem != null) {
 					return elem;

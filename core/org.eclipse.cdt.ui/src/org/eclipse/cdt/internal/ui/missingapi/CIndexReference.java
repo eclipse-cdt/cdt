@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.ui.missingapi;
 
 import java.util.Comparator;
 
-import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 public class CIndexReference {
@@ -28,7 +28,7 @@ public class CIndexReference {
 	private int fLength;
 	private ITranslationUnit fTranslationUnit;
 	
-	public CIndexReference(ITranslationUnit tu, IASTName name) {
+	public CIndexReference(ITranslationUnit tu, IName name) {
 		fTranslationUnit= tu;
 		fOffset= name.getFileLocation().getNodeOffset();
 		fLength= name.getFileLocation().getNodeLength();

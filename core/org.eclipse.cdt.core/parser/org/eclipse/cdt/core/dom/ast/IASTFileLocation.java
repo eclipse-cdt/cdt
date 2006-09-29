@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,16 +25,18 @@ public interface IASTFileLocation extends IASTNodeLocation {
 	public String getFileName();
     
     /**
-     * Get the starting line number.
+     * Get the starting line number. Locations obtained via the index do not have line numbers
+     * and return <code>0</code>.
      * 
-     * @return in representing line number
+     * @return int representing line number or <code>0</code> if not applicable
      */
     public int getStartingLineNumber();
     
     /**
-     * Get the ending line number. 
+     * Get the ending line number. Locations obtained via the index do not have line numbers
+     * and return <code>0</code>.
      * 
-     * @return int representing line number
+     * @return int representing line number or <code>0</code> if not applicable
      */
     public int getEndingLineNumber();
 }

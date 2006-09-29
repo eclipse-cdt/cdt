@@ -283,7 +283,7 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             assertNotNull( binding2 );
             assertNotSame( binding1, binding2 );
             IASTName [] firstReferences = tu.getReferences( binding1 );
-            IASTName [] firstDeclarations = tu.getDeclarations( binding1 );
+            IASTName [] firstDeclarations = tu.getDeclarationsInAST( binding1 );
             assertEquals( firstReferences.length, 2 );
             assertEquals( firstReferences[0].getPropertyInParent(), IASTTranslationUnit.EXPANSION_NAME );
             assertEquals( firstReferences[0].getParent(), tu );
@@ -292,7 +292,7 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             assertEquals( firstDeclarations.length, 1 );
             assertSame( ABC1.getName(), firstDeclarations[0] );
             IASTName [] secondReferences = tu.getReferences(binding2);
-            IASTName [] secondDeclarations = tu.getDeclarations( binding2 );
+            IASTName [] secondDeclarations = tu.getDeclarationsInAST( binding2 );
             assertEquals( 1, secondReferences.length );
             assertEquals( secondReferences[0].getPropertyInParent(), IASTTranslationUnit.EXPANSION_NAME );
             assertEquals( secondReferences[0].getParent(), tu );

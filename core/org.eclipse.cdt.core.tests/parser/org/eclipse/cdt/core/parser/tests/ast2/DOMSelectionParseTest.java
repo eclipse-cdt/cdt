@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -55,7 +56,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IVariable );
 		assertEquals( ((IASTName)node).toString(), "x" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "x" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 15);
@@ -71,7 +72,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IFunction );
 		assertEquals( ((IASTName)node).toString(), "x" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "x" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 4);
@@ -95,7 +96,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IFunction );
 		assertEquals( ((IASTName)node).toString(), "x" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "x" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 4);
@@ -135,7 +136,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IParameter );
 		assertEquals( ((IASTName)node).toString(), "argc" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "argc" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 14);
@@ -170,7 +171,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 			assertTrue( node instanceof IASTName );
 			assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPMethod );
 			assertEquals( ((IASTName)node).toString(), "playHorn" ); //$NON-NLS-1$
-			IASTName[] decls = getDeclarationOffTU((IASTName)node);
+			IName[] decls = getDeclarationOffTU((IASTName)node);
 			assertEquals(decls.length, 2);
 			assertEquals( decls[0].toString(), "playHorn" ); //$NON-NLS-1$
 			assertEquals( ((ASTNode)decls[0]).getOffset(), 28);
@@ -209,7 +210,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPNamespace );
 		assertEquals( ((IASTName)node).toString(), "Muppets" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "Muppets" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 10);
@@ -244,7 +245,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPClassType );
 		assertEquals( ((IASTName)node).toString(), "Foo" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "Foo" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 6);
@@ -288,7 +289,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 			assertTrue( node instanceof IASTName );
 			assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPMethod );
 			IBinding binding = ((IASTName)node).resolveBinding();
-			IASTName[] decls = null;
+			IName[] decls = null;
 			switch( i )
 			{
 				case 0:
@@ -339,7 +340,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPMethod );
 		assertEquals( ((IASTName)node).toString(), "getAnswer" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "getAnswer" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 29);
@@ -354,7 +355,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPConstructor );
 		assertEquals( ((IASTName)node).toString(), "ABC" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 2);
 		assertEquals( decls[0].toString(), "ABC" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 20);
@@ -427,7 +428,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPField );
 		assertEquals( ((IASTName)node).toString(), "stInt" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 2);
 		assertEquals( decls[0].toString(), "stInt" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 37);
@@ -466,7 +467,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPClassType );
 		assertEquals( ((IASTName)node).toString(), "Squaw" ); //$NON-NLS-1$
 		assertEquals( ((ICPPClassType)((IASTName)node).resolveBinding()).getKey(), ICompositeType.k_union );
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "Squaw" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 6);
@@ -490,7 +491,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IVariable );
 		assertEquals( ((IASTName)node).toString(), "FOUND_ME" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "FOUND_ME" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 10);
@@ -511,7 +512,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPConstructor );
 		assertEquals( ((IASTName)node).toString(), "ABC" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "ABC" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 21);
@@ -532,7 +533,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPMethod );
 		assertEquals( ((IASTName)node).toString(), "f_SD" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 2);
 		assertEquals( decls[0].toString(), "f_SD" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 71);
@@ -556,7 +557,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IFunction );
 		assertEquals( ((IASTName)node).toString(), "f_SD" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 2);
 		assertEquals( decls[0].toString(), "f_SD" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 109);
@@ -574,7 +575,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPMethod );
 		assertEquals( ((IASTName)node).toString(), "initialize" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 2);
 		assertEquals( decls[0].toString(), "initialize" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 17);
@@ -592,7 +593,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPConstructor );
 		assertEquals( ((IASTName)node).toString(), "B" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "B" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 17);
@@ -612,7 +613,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPClassType );
 		assertEquals( ((IASTName)node).toString(), "A" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "A" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 6);
@@ -633,7 +634,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPClassType );
 		assertEquals( ((IASTName)node).toString(), "AAA" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "AAA" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 75);
@@ -668,7 +669,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPField );
 		assertEquals( ((IASTName)node).toString(), "rank" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "rank" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 36);
@@ -701,7 +702,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IFunction );
 		assertEquals( ((IASTName)node).toString(), "rank" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)node).getOffset(), index);
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "rank" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 4);
@@ -938,7 +939,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPNamespace );
 		assertEquals( ((IASTName)node).toString(), "N" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)node).getOffset(), index);
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "N" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 10);
@@ -957,7 +958,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IParameter );
 		assertEquals( ((IASTName)node).toString(), "itself" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)node).getOffset(), index);
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "itself" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 36);
@@ -977,7 +978,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICompositeType );
 		assertEquals( ((IASTName)node).toString(), "Data" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)node).getOffset(), index);
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "Data" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 36);
@@ -1019,7 +1020,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPField );
 		assertEquals( ((IASTName)node).toString(), "bar" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "bar" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 33);
@@ -1044,7 +1045,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IMacroBinding );
 		assertEquals( ((IASTName)node).toString(), "UINT32" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "UINT32" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 8);
@@ -1103,7 +1104,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPConstructor );
 		assertEquals( ((IASTName)node).toString(), "Point" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "Point" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 53);
@@ -1126,7 +1127,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IMacroBinding );
 		assertEquals( ((IASTName)node).toString(), "koo" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "koo" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 19);
@@ -1157,7 +1158,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPMethod );
 		assertEquals( ((IASTName)node).toString(), "operator =" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "operator =" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 51);
@@ -1183,7 +1184,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IMacroBinding );
 		assertEquals( ((IASTName)node).toString(), "swap" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "swap" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 58);
@@ -1209,7 +1210,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPMethod );
 		assertEquals( ((IASTName)node).toString(), "method1" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "method1" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 41);
@@ -1233,7 +1234,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPConstructor );
 		assertEquals( ((IASTName)node).toString(), "A" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "A" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 29);
@@ -1258,7 +1259,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPMethod );
 		assertEquals( ((IASTName)node).toString(), "method1" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "method1" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 21);
@@ -1277,7 +1278,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IVariable );
 		assertEquals( ((IASTName)node).toString(), "i" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "i" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 4);
@@ -1305,7 +1306,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPMethod );
 		assertEquals( ((IASTName)node).toString(), "bar" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "bar" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 34);
@@ -1333,7 +1334,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPField );
 		assertEquals( ((IASTName)node).toString(), "bar" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "bar" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 33);
@@ -1357,7 +1358,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IVariable );
 		assertEquals( ((IASTName)node).toString(), "x" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "x" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 17);
@@ -1379,7 +1380,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IParameter );
 		assertEquals( ((IASTName)node).toString(), "argc" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "argc" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 13);
@@ -1405,7 +1406,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IVariable );
 		assertEquals( ((IASTName)node).toString(), "x" ); //$NON-NLS-1$
 		
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "x" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 19);
@@ -1454,7 +1455,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
         assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPFunction );
         assertEquals( ((IASTName)node).toString(), "g" ); //$NON-NLS-1$
         
-        IASTName[] decls = getDeclarationOffTU((IASTName)node);
+        IName[] decls = getDeclarationOffTU((IASTName)node);
         assertEquals(decls.length, 1);
         assertEquals( decls[0].toString(), "g" ); //$NON-NLS-1$
         assertEquals( ((ASTNode)decls[0]).getOffset(), 89);
@@ -1478,7 +1479,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
         assertTrue( ((IASTName)node).resolveBinding() instanceof IEnumeration );
         assertEquals( ((IASTName)node).toString(), "E" ); //$NON-NLS-1$
         
-        IASTName[] decls = getReferencesOffTU((IASTName)node);
+        IName[] decls = getReferencesOffTU((IASTName)node);
         assertEquals(decls.length, 1);
         assertEquals( decls[0].toString(), "E" ); //$NON-NLS-1$
         assertEquals( ((ASTNode)decls[0]).getOffset(), 76);
@@ -1508,7 +1509,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
         assertTrue( ((IASTName)node).resolveBinding() instanceof IMacroBinding );
         assertEquals( ((IASTName)node).toString(), "HANDLE" ); //$NON-NLS-1$
         
-        IASTName[] decls = getDeclarationOffTU((IASTName)node);
+        IName[] decls = getDeclarationOffTU((IASTName)node);
         assertEquals(decls.length, 1);
         assertEquals( decls[0].toString(), "HANDLE" ); //$NON-NLS-1$
         assertEquals( ((ASTNode)decls[0]).getOffset(), 36);
@@ -1551,13 +1552,13 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
         assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPMethod );
         assertEquals( ((IASTName)node).toString(), "setColor" ); //$NON-NLS-1$
         
-        IASTName[] decls = getDeclarationOffTU((IASTName)node);
+        IName[] decls = getDeclarationOffTU((IASTName)node);
         assertEquals(decls.length, 1);
         assertEquals( decls[0].toString(), "setColor" ); //$NON-NLS-1$
         assertEquals( ((ASTNode)decls[0]).getOffset(), 67);
         assertEquals( ((ASTNode)decls[0]).getLength(), 8);
         
-        IASTName[] refs = getReferencesOffTU((IASTName)node);
+        IName[] refs = getReferencesOffTU((IASTName)node);
         assertEquals(refs.length, 1);
         assertEquals( refs[0].toString(), "setColor" ); //$NON-NLS-1$
         assertEquals( ((ASTNode)refs[0]).getOffset(), 162);
@@ -1581,7 +1582,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
         assertTrue( ((IASTName)node).resolveBinding() instanceof IVariable );
         assertEquals( ((IASTName)node).toString(), "c" ); //$NON-NLS-1$
         
-        IASTName[] decls = getDeclarationOffTU((IASTName)node);
+        IName[] decls = getDeclarationOffTU((IASTName)node);
         assertEquals(decls.length, 1);
         assertEquals( decls[0].toString(), "c" ); //$NON-NLS-1$
         assertEquals( ((ASTNode)decls[0]).getOffset(), 42);
@@ -1619,7 +1620,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
         assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPField );
         assertEquals( ((IASTName)node).toString(), "i" ); //$NON-NLS-1$
         
-        IASTName[] decls = getDeclarationOffTU((IASTName)node);
+        IName[] decls = getDeclarationOffTU((IASTName)node);
         assertEquals(decls.length, 1);
         assertEquals( decls[0].toString(), "i" ); //$NON-NLS-1$
         assertEquals( ((ASTNode)decls[0]).getOffset(), 39);
@@ -1647,7 +1648,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPNamespace );
 		assertEquals( ((IASTName)node).toString(), "Foo" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 2);
 		assertEquals( decls[0].toString(), "Foo" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 10);
@@ -1670,7 +1671,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof IMacroBinding );
 		assertEquals( ((IASTName)node).toString(), "MyChicken" ); //$NON-NLS-1$
-		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "MyChicken" ); //$NON-NLS-1$
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 38);
@@ -1696,7 +1697,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
         assertTrue( node instanceof IASTName );
         assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPVariable );
         assertEquals( ((IASTName)node).toString(), "c" ); //$NON-NLS-1$
-        IASTName[] decls = getDeclarationOffTU((IASTName)node);
+        IName[] decls = getDeclarationOffTU((IASTName)node);
         assertEquals(decls.length, 1);
         assertEquals( decls[0].toString(), "c" ); //$NON-NLS-1$
         assertEquals( ((ASTNode)decls[0]).getOffset(), 86);
@@ -1707,7 +1708,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
         assertNotNull( node );
         assertTrue( node instanceof IASTName );
         assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPVariable );
-        IASTName[] refs = getReferencesOffTU((IASTName)node);
+        IName[] refs = getReferencesOffTU((IASTName)node);
         assertEquals(refs.length, 1);
         assertEquals( refs[0].toString(), "c" ); //$NON-NLS-1$
         assertEquals( ((ASTNode)refs[0]).getOffset(), 168);
@@ -1729,7 +1730,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
         assertTrue( node instanceof IASTName );
         assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPTemplateInstance );
         assertEquals( ((IASTName)node).toString(), "AAA" ); //$NON-NLS-1$
-        IASTName[] decls = getDeclarationOffTU((IASTName)node);
+        IName[] decls = getDeclarationOffTU((IASTName)node);
         assertEquals(decls.length, 1);
         assertEquals( decls[0].toString(), "AAA" ); //$NON-NLS-1$
         assertEquals( ((ASTNode)decls[0]).getOffset(), 53);

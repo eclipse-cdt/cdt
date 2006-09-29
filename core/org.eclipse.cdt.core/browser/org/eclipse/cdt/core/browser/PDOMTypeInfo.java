@@ -13,10 +13,10 @@
 package org.eclipse.cdt.core.browser;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.model.ICProject;
@@ -122,7 +122,7 @@ public class PDOMTypeInfo implements ITypeInfo {
 		try {
 			IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
 			IPDOMResolver resolver = (IPDOMResolver) pdom.getAdapter(IPDOMResolver.class);
-			IASTName[] names= resolver.getDefinitions(binding);
+			IName[] names= resolver.getDefinitions(binding);
 			return names != null && names.length > 0 ? new PDOMTypeReference(names[0], project) : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

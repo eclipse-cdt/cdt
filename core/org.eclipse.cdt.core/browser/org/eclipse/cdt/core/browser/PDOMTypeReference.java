@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.core.browser;
 
-import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -29,11 +29,11 @@ import org.eclipse.core.runtime.Path;
  */
 public class PDOMTypeReference implements ITypeReference {
 	
-	private final IASTName name;
+	private final IName name;
 	private final ICProject project;
 	private final IPath path; 
 	
-	public PDOMTypeReference(IASTName name, ICProject project) {
+	public PDOMTypeReference(IName name, ICProject project) {
 		this.name = name;
 		this.project = project;
 		this.path = new Path(name.getFileLocation().getFileName());

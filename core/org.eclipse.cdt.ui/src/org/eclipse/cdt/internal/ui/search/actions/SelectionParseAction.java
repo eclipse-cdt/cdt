@@ -36,8 +36,8 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.resources.FileStorage;
@@ -454,7 +454,7 @@ public class SelectionParseAction extends Action {
      * 
      * @param name
      */
-    protected void open(IASTName name) throws CoreException {
+    protected void open(IName name) throws CoreException {
     	IASTFileLocation fileloc = name.getFileLocation();
     	if (fileloc == null)
     		// no source location - TODO spit out an error in the status bar

@@ -7,10 +7,12 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -175,19 +177,18 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         } catch (DOMException de) {}
 	}
 	
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations(org.eclipse.cdt.core.dom.ast.IBinding)
-     */
-    public IASTName[] getDeclarations(IBinding b) {
+    public IASTName[] getDeclarationsInAST(IBinding b) {
         if( b instanceof IMacroBinding )
         {
             if( resolver == null )
                 return EMPTY_NAME_ARRAY;
             return resolver.getDeclarations( (IMacroBinding)b );
         }
-        IASTName[] names = CPPVisitor.getDeclarations( this, b );
+        return CPPVisitor.getDeclarations( this, b );
+    }
+
+    public IName[] getDeclarations(IBinding b) {
+        IName[] names = getDeclarationsInAST(b);
         if (names.length == 0 && pdom != null) {
         	try {
         		b = ((PDOM)pdom).getLinkage(getLanguage()).adaptBinding(b);
@@ -202,25 +203,23 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         return names;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDefinitions(org.eclipse.cdt.core.dom.ast.IBinding)
-     */
-    public IASTName[] getDefinitions(IBinding binding) {
+    public IASTName[] getDefinitionsInAST(IBinding binding) {
     	if (binding instanceof IMacroBinding) {
     		if( resolver == null )
     			return EMPTY_NAME_ARRAY;
     		return resolver.getDeclarations((IMacroBinding)binding);
         }
         
-        IASTName[] names = CPPVisitor.getDeclarations(this, binding);
+    	IASTName[] names = CPPVisitor.getDeclarations(this, binding);
         for (int i = 0; i < names.length; i++) {
             if (!names[i].isDefinition())
                 names[i] = null;
         }
-        names = (IASTName[])ArrayUtil.removeNulls(IASTName.class, names);
-        
+        return (IASTName[])ArrayUtil.removeNulls(IASTName.class, names);
+    }
+
+    public IName[] getDefinitions(IBinding binding) {
+    	IName[] names = getDefinitionsInAST(binding);
         if (names.length == 0 && pdom != null) {
         	try {
         		binding = ((PDOM)pdom).getLinkage(getLanguage()).adaptBinding(binding);
@@ -234,7 +233,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         
         return names;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -244,10 +243,10 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         if( b instanceof IMacroBinding )
         {
             if( resolver == null )
-                return EMPTY_NAME_ARRAY;
+        		  return EMPTY_NAME_ARRAY;
             return resolver.getReferences( (IMacroBinding)b );
         }
-    	return CPPVisitor.getReferences(this, b);
+        return CPPVisitor.getReferences(this, b);
     }
     
     /*

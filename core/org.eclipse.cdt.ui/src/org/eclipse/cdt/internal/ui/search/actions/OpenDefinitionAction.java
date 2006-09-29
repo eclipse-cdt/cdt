@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -72,7 +73,7 @@ public class OpenDefinitionAction extends SelectionParseAction {
 		
 					IBinding binding = searchName.resolveBinding();
 					if (binding != null) {
-						final IASTName[] declNames = ast.getDefinitions(binding);
+						final IName[] declNames = ast.getDefinitions(binding);
 						if (declNames.length > 0) {
 							runInUIThread(new Runnable() {
 								public void run() {

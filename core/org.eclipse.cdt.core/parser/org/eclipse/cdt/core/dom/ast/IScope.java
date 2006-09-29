@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,11 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
+
+import org.eclipse.cdt.core.dom.IName;
 
 
 /**
@@ -18,11 +21,11 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IScope {
 
 	/**
-     * Get the IASTName for this scope, may be null 
+     * Get the IName for this scope, may be null 
      * @return
      * @throws DOMException
      */
-    public IASTName getScopeName() throws DOMException;
+    public IName getScopeName() throws DOMException;
     
 	/**
 	 * Scopes are arranged hierarchically. Lookups will generally
@@ -42,13 +45,12 @@ public interface IScope {
 	 * @return List of IBinding
 	 */
 	public IBinding[] find(String name) throws DOMException;
-
+    
     /**
      * Return the physical IASTNode that this scope was created for
      * @return
      */
     public IASTNode getPhysicalNode() throws DOMException;
-    
     
     /**
      * The IScope serves as a mechanism for caching IASTNames and bindings to

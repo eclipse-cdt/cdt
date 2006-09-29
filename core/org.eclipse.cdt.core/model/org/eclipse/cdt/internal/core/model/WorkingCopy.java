@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -16,7 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
@@ -225,8 +225,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#getOriginalElement()
 	 */
 	public ITranslationUnit getOriginalElement() {
-		String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), getElementName());
-		return new TranslationUnit(getParent(), getFile(), id);
+		return new TranslationUnit(getParent(), getFile(), getContentTypeId());
 	}
 
 	/**

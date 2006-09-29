@@ -46,9 +46,9 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
  */
 public class TranslationUnit extends Openable implements ITranslationUnit {
 
-	IPath location = null;
-	String contentTypeId;
-	ILanguage language;
+	private IPath location = null;
+	private String contentTypeId;
+	private ILanguage language;
 
 	/**
 	 * If set, this is the problem requestor which will be used to notify problems
@@ -686,11 +686,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			
 			// Special magic for C/C++ header files
 			if (language == null && isHeaderUnit()) {
-				if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER)) {
-					language= computeLanguage(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
-				}
-				else {
+				if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(contentTypeId)) {
 					language= computeLanguage(CCorePlugin.CONTENT_TYPE_CSOURCE);
+				}
+				else if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(contentTypeId)) {
+					language= computeLanguage(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 				}
 			}
 		}
@@ -703,7 +703,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		// content type string
 		IContentTypeManager manager = Platform.getContentTypeManager(); 
 		IContentType contentType = manager.getContentType(contentTypeId);
-		return LanguageManager.getInstance().getLanguage(contentType);
+		if (contentType != null) {
+			return LanguageManager.getInstance().getLanguage(contentType);
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)

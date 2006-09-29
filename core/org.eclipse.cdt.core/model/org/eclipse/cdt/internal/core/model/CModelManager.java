@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     James Blackburn - Modified patch for 149428
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -413,10 +414,13 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				IIncludeReference[] includeReferences = cproject.getIncludeReferences();
 				for (int i = 0; i < includeReferences.length; i++) {
 					if (includeReferences[i].isOnIncludeEntry(path)) {
-						String id = CoreModel.getRegistedContentTypeId(cproject.getProject(), path.lastSegment());
+						IProject project= cproject.getProject();
+						String id = CoreModel.getRegistedContentTypeId(project, path.lastSegment());
 						if (id == null) {
-							// fallback to C Header
-							id = CCorePlugin.CONTENT_TYPE_CHEADER;
+							// happens, when a translation unit for a file on the path is created, but
+							// the content-type is not registered for any language:
+							// fallback to C or C++ Header
+							id = CoreModel.hasCCNature(project) ? CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;
 						}
 						return new ExternalTranslationUnit(includeReferences[i], path, id);
 					}

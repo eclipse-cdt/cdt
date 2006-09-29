@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -27,12 +28,6 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 
 	private EnumerationInfo getEnumerationInfo() throws CModelException{
 		return (EnumerationInfo) getElementInfo();
-	}
-	/**
-	 * @see org.eclipse.cdt.core.model.IVariable#getInitializer()
-	 */
-	public String getInitializer() {
-		return null;
 	}
 
 	/**

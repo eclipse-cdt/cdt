@@ -342,10 +342,7 @@ public class CIndexQueries {
 			return element;
 		}
 		if (element instanceof org.eclipse.cdt.core.model.IVariable) {
-			// bug 156844
-			if (!(element instanceof org.eclipse.cdt.core.model.IEnumeration)) {
-				return element;
-			}
+			return element;
 		}
 		try {
 			if (element instanceof IParent) {

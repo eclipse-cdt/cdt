@@ -163,7 +163,106 @@ public class PreferenceConstants {
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_KEYWORD_ITALIC= ICColorConstants.C_KEYWORD + EDITOR_ITALIC_SUFFIX;
+
+	/**
+	 * A named preference that holds the color used to render preprocessor directives.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public final static String EDITOR_PP_DIRECTIVE_COLOR= ICColorConstants.PP_DIRECTIVE;
+
+	/**
+	 * A named preference that controls whether preprocessor directives are rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_PP_DIRECTIVE_BOLD= ICColorConstants.PP_DIRECTIVE + EDITOR_BOLD_SUFFIX;
+
+	/**
+	 * A named preference that controls whether preprocessor directives are rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_PP_DIRECTIVE_ITALIC= ICColorConstants.PP_DIRECTIVE + EDITOR_ITALIC_SUFFIX;
+
+	/**
+	 * A named preference that holds the color used to render headers.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public final static String EDITOR_PP_HEADER_COLOR= ICColorConstants.PP_HEADER;	
+
+	/**
+	 * A named preference that controls whether headers are rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_PP_HEADER_BOLD= ICColorConstants.PP_HEADER + EDITOR_BOLD_SUFFIX;
+
+	/**
+	 * A named preference that controls whether number are rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_PP_HEADER_ITALIC= ICColorConstants.PP_HEADER + EDITOR_ITALIC_SUFFIX;
 	
+	/**
+	 * A named preference that holds the color used to render preprocessor text.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 4.0
+	 */
+	public final static String EDITOR_PP_DEFAULT_COLOR= ICColorConstants.PP_DEFAULT;
+
+	/**
+	 * A named preference that controls whether preprocessor text is rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_PP_DEFAULT_BOLD= ICColorConstants.PP_DEFAULT + EDITOR_BOLD_SUFFIX;
+
+	/**
+	 * A named preference that controls whether preprocessor text is rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public final static String EDITOR_PP_DEFAULT_ITALIC= ICColorConstants.PP_DEFAULT + EDITOR_ITALIC_SUFFIX;
+
 	/**
 	 * A named preference that holds the color used to render builtin types.
 	 * <p>
@@ -295,39 +394,6 @@ public class PreferenceConstants {
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_NUMBER_ITALIC= ICColorConstants.C_NUMBER + EDITOR_ITALIC_SUFFIX;
-	
-	/**
-	 * A named preference that holds the color used to render headers.
-	 * <p>
-	 * Value is of type <code>String</code>. A RGB color value encoded as a string
-	 * using class <code>PreferenceConverter</code>
-	 * </p>
-	 * 
-	 * @see org.eclipse.jface.resource.StringConverter
-	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 * @since 4.0
-	 */
-	public final static String EDITOR_C_HEADER_COLOR= ICColorConstants.C_HEADER;	
-
-	/**
-	 * A named preference that controls whether headers are rendered in bold.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 * 
-	 * @since 4.0
-	 */
-	public final static String EDITOR_C_HEADER_BOLD= ICColorConstants.C_HEADER + EDITOR_BOLD_SUFFIX;
-
-	/**
-	 * A named preference that controls whether number are rendered in italic.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 * 
-	 * @since 4.0
-	 */
-	public final static String EDITOR_C_HEADER_ITALIC= ICColorConstants.C_HEADER + EDITOR_ITALIC_SUFFIX;
 	
 	/**
 	 * A named preference that holds the color used to render braces.
@@ -956,9 +1022,17 @@ public class PreferenceConstants {
         store.setDefault(EDITOR_C_NUMBER_BOLD, false);
         store.setDefault(EDITOR_C_NUMBER_ITALIC, false);
 
-        PreferenceConverter.setDefault(store, EDITOR_C_HEADER_COLOR, new RGB(42, 0, 255));
-        store.setDefault(EDITOR_C_HEADER_BOLD, false);
-        store.setDefault(EDITOR_C_HEADER_ITALIC, false);
+        PreferenceConverter.setDefault(store, EDITOR_PP_DIRECTIVE_COLOR, new RGB(127, 0, 85));
+		store.setDefault(EDITOR_PP_DIRECTIVE_BOLD, true);
+		store.setDefault(EDITOR_PP_DIRECTIVE_ITALIC, false);
+
+        PreferenceConverter.setDefault(store, EDITOR_PP_HEADER_COLOR, new RGB(42, 0, 255));
+        store.setDefault(EDITOR_PP_HEADER_BOLD, false);
+        store.setDefault(EDITOR_PP_HEADER_ITALIC, false);
+
+        PreferenceConverter.setDefault(store, EDITOR_PP_DEFAULT_COLOR, new RGB(0, 0, 0));
+        store.setDefault(EDITOR_PP_DEFAULT_BOLD, false);
+        store.setDefault(EDITOR_PP_DEFAULT_ITALIC, false);
 
 		// folding
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED, false);

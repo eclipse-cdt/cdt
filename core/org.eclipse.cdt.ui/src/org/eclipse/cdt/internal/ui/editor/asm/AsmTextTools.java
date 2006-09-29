@@ -51,7 +51,8 @@ public class AsmTextTools {
 	private CCommentScanner fSinglelineCommentScanner;
 	/** The ASM string scanner */
 	private SingleTokenCScanner fStringScanner;
-	
+	/** The ASM preprocessor scanner */
+	private AsmPreprocessorScanner fPreprocessorScanner;
 	
 	/** The preference store */
 	private IPreferenceStore fPreferenceStore;
@@ -80,7 +81,8 @@ public class AsmTextTools {
         
 		fColorManager= new CColorManager();
 		fCodeScanner= new AsmCodeScanner(fColorManager, store);
-				
+		fPreprocessorScanner= new AsmPreprocessorScanner(fColorManager, store);
+
         fMultilineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_MULTI_LINE_COMMENT);
         fSinglelineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
 		fStringScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_STRING);
@@ -145,33 +147,41 @@ public class AsmTextTools {
 	}
 		
 	/**
-	 * Returns a scanner which is configured to scan Java multiline comments.
+	 * Returns a scanner which is configured to scan multiline comments.
 	 *
-	 * @return a Java multiline comment scanner
+	 * @return a multiline comment scanner
 	 */
 	public RuleBasedScanner getMultilineCommentScanner() {
 		return fMultilineCommentScanner;
 	}
 
 	/**
-	 * Returns a scanner which is configured to scan Java singleline comments.
+	 * Returns a scanner which is configured to scan singleline comments.
 	 *
-	 * @return a Java singleline comment scanner
+	 * @return a singleline comment scanner
 	 */
 	public RuleBasedScanner getSinglelineCommentScanner() {
 		return fSinglelineCommentScanner;
 	}
 	
 	/**
-	 * Returns a scanner which is configured to scan Java strings.
+	 * Returns a scanner which is configured to scan strings.
 	 *
-	 * @return a Java string scanner
+	 * @return a string scanner
 	 */
 	public RuleBasedScanner getStringScanner() {
 		return fStringScanner;
 	}
 
-	
+	/**
+	 * Returns a scanner which is configured to scan Asm preprocessor directives.
+	 *
+	 * @return an Asm preprocessor directives scanner
+	 */
+	public RuleBasedScanner getPreprocessorScanner() {
+		return fPreprocessorScanner;
+	}
+
 	/**
 	 * Determines whether the preference change encoded by the given event
 	 * changes the behavior of one its contained components.
@@ -183,7 +193,8 @@ public class AsmTextTools {
 		return  fCodeScanner.affectsBehavior(event) ||
 					fMultilineCommentScanner.affectsBehavior(event) ||
 					fSinglelineCommentScanner.affectsBehavior(event) ||
-					fStringScanner.affectsBehavior(event);
+					fStringScanner.affectsBehavior(event) ||
+					fPreprocessorScanner.affectsBehavior(event);
 	}
 	
 	/**
@@ -201,6 +212,8 @@ public class AsmTextTools {
 			fSinglelineCommentScanner.adaptToPreferenceChange(event);
 		if (fStringScanner.affectsBehavior(event))
 			fStringScanner.adaptToPreferenceChange(event);
+		if (fPreprocessorScanner.affectsBehavior(event))
+			fPreprocessorScanner.adaptToPreferenceChange(event);
 	}
 		
 }

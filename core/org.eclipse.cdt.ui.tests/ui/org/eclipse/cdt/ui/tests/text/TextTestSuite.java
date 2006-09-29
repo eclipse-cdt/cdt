@@ -22,7 +22,7 @@ public class TextTestSuite extends TestSuite {
     public TextTestSuite() {
         super("Tests in package org.eclipse.cdt.ui.tests.text");
         
-		//addTest(PartitionTokenScannerTest.suite());
+		addTest(PartitionTokenScannerTest.suite());
 		addTest(NumberRuleTest.suite());
 		addTest(CAutoIndentTest.suite());
 		addTest(CPartitionerTest.suite());

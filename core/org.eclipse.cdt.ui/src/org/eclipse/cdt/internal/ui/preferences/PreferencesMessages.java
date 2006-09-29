@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -88,11 +89,14 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorColoringConfigurationBlock_operators;
 	public static String CEditorColoringConfigurationBlock_braces;
 	public static String CEditorColoringConfigurationBlock_numbers;
-	public static String CEditorColoringConfigurationBlock_headers;
 	public static String CEditorColoringConfigurationBlock_others;
+	public static String CEditorColoringConfigurationBlock_ppDirectives;
+	public static String CEditorColoringConfigurationBlock_ppOthers;
+	public static String CEditorColoringConfigurationBlock_ppHeaders;
 	public static String CEditorColoringConfigurationBlock_cCommentTaskTags;
 	public static String CEditorColoringConfigurationBlock_coloring_category_code;
 	public static String CEditorColoringConfigurationBlock_coloring_category_comments;
+	public static String CEditorColoringConfigurationBlock_coloring_category_preprocessor;
 	public static String CEditorColoringConfigurationBlock_coloring_element;
 	public static String CEditorColoringConfigurationBlock_link;
 	public static String CEditorColoringConfigurationBlock_enable;

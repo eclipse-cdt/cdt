@@ -22,6 +22,8 @@ import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.ui.text.PartitionDamager;
+
 
 public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
@@ -62,7 +64,15 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		return fAsmTextTools.getStringScanner();
 	}
 
-	
+	/**
+	 * Returns the ASM preprocessor scanner for this configuration.
+	 *
+	 * @return the ASM preprocessor scanner
+	 */
+	protected RuleBasedScanner getPreprocessorScanner() {
+		return fAsmTextTools.getPreprocessorScanner();
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
 	 */
@@ -98,6 +108,10 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		reconciler.setDamager(dr, ICPartitions.C_CHARACTER);
 		reconciler.setRepairer(dr, ICPartitions.C_CHARACTER);
 
+		dr= new DefaultDamagerRepairer(getPreprocessorScanner());		
+		reconciler.setDamager(new PartitionDamager(), ICPartitions.C_PREPROCESSOR);
+		reconciler.setRepairer(dr, ICPartitions.C_PREPROCESSOR);
+
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 		return reconciler;
 	}
@@ -111,7 +125,8 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 				ICPartitions.C_MULTI_LINE_COMMENT,
 				ICPartitions.C_SINGLE_LINE_COMMENT,
 				ICPartitions.C_STRING,
-				ICPartitions.C_CHARACTER };
+				ICPartitions.C_CHARACTER,
+				ICPartitions.C_PREPROCESSOR};
 	}
 
 

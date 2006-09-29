@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.ui.text;
 
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
@@ -24,9 +25,9 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * This scanner recognizes the C multi line comments, C single line comments,
- * C strings and C characters.
+ * C strings, C characters and C preprocessor directives.
  */
-public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitions {
+public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitions {
 
 	// states
 	private static final int CCODE= 0;	
@@ -34,17 +35,19 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 	private static final int MULTI_LINE_COMMENT= 2;
 	private static final int CHARACTER= 3;
 	private static final int STRING= 4;
+	private static final int PREPROCESSOR= 5;
+	private static final int PREPROCESSOR_MULTI_LINE_COMMENT= 6;
 	
 	// beginning of prefixes and postfixes
 	private static final int NONE= 0;
-	private static final int BACKSLASH= 1; // postfix for STRING and CHARACTER
+	private static final int BACKSLASH= 1; // postfix for STRING, CHARACTER and SINGLE_LINE_COMMENT
 	private static final int SLASH= 2; // prefix for SINGLE_LINE or MULTI_LINE
 	private static final int SLASH_STAR= 3; // prefix for MULTI_LINE_COMMENT
 	private static final int STAR= 4; // postfix for MULTI_LINE_COMMENT
 	private static final int CARRIAGE_RETURN=5; // postfix for STRING, CHARACTER and SINGLE_LINE_COMMENT
+	private static final int BACKSLASH_CR= 6; // postfix for STRING, CHARACTER and SINGLE_LINE_COMMENT
 	
 	/** The scanner. */
-//	private final BufferedRuleBasedScanner fScanner= new BufferedRuleBasedScanner(1000);
 	private final BufferedDocumentScanner fScanner= new BufferedDocumentScanner(1000);	// faster implementation
 	
 	/** The offset of the last returned token. */
@@ -58,62 +61,213 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 	private int fLast;
 	/** The amount of characters already read on first call to nextToken(). */
 	private int fPrefixLength;
+	/** Indicate whether current char is first non-whitespace char on the line*/
+	private boolean fFirstCharOnLine= true;
+
+	// emulate CPartitionScanner
+	private boolean fEmulate= false;
+	private int fCCodeOffset;
+	private int fCCodeLength;
 	
 	private final IToken[] fTokens= new IToken[] {
 		new Token(null),
 		new Token(C_SINGLE_LINE_COMMENT),
 		new Token(C_MULTI_LINE_COMMENT),
 		new Token(C_CHARACTER),
-		new Token(C_STRING)
+		new Token(C_STRING),
+		new Token(C_PREPROCESSOR),
+		new Token(C_PREPROCESSOR)
 	};
+
+	public FastCPartitionScanner(boolean emulate) {
+	    fEmulate= emulate;
+	}
+
+	public FastCPartitionScanner() {
+	    this(false);
+	}
 
 	/*
 	 * @see org.eclipse.jface.text.rules.ITokenScanner#nextToken()
 	 */
 	public IToken nextToken() {
+
+		// emulate CPartitionScanner
+		if (fEmulate) {
+			if (fCCodeOffset != -1 && fTokenOffset + fTokenLength != fCCodeOffset + fCCodeLength) {
+				fTokenOffset += fTokenLength;
+				return fTokens[CCODE];
+			} else {
+				fCCodeOffset= -1;
+				fCCodeLength= 0;
+			}
+		}
+
 		fTokenOffset += fTokenLength;
 		fTokenLength= fPrefixLength;
 
-		final char[][] delimiters = fScanner.getLegalLineDelimiters();
-
 		while (true) {
 			final int ch= fScanner.read();
-
-			if (ch == ICharacterScanner.EOF) {
+			
+			final boolean isFirstCharOnLine= fFirstCharOnLine;
+			if (fFirstCharOnLine && ch != ' ' && ch != '\t') {
+				fFirstCharOnLine= false;
+			}
+			// characters
+	 		switch (ch) {
+	 		case ICharacterScanner.EOF:
 		 		if (fTokenLength > 0) {
 		 			fLast= NONE; // ignore last
 		 			return preFix(fState, CCODE, NONE, 0);
 
+		 		} else {
+		 			fLast= NONE;
+		 			fPrefixLength= 0;
+					return Token.EOF;
 		 		}
-		 		fLast= NONE;
-		 		fPrefixLength= 0;
-		 		return Token.EOF;
-			}
-			
-			// detect if we're at the end of the line
-			final int delim = detectLineDelimiter(ch, fScanner, delimiters);
-			if (delim != -1) {
-				final int len = delimiters[delim].length;
-				if (len > 1) {
-					// adjust the token length if the delimiter was 2 or more chars
-					fTokenLength += (len - 1);
-				}
+
+	 		case '\r':
+	 			fFirstCharOnLine= true;
+	 			if (!fEmulate && fLast == BACKSLASH) {
+	 				fLast= BACKSLASH_CR;
+					fTokenLength++;
+ 					continue;
+	 			} else if (!fEmulate && fLast != CARRIAGE_RETURN) {
+						fLast= CARRIAGE_RETURN;
+						fTokenLength++;
+	 					continue;
+	 			} else {
+	 				// fEmulate || fLast == CARRIAGE_RETURN
+					switch (fState) {
+					case SINGLE_LINE_COMMENT:
+					case CHARACTER:
+					case STRING:
+					case PREPROCESSOR:
+						if (fTokenLength > 0) {
+							IToken token= fTokens[fState];
+
+				 			// emulate CPartitionScanner
+							if (fEmulate) {
+								fTokenLength++;
+								fLast= NONE;
+								fPrefixLength= 0;
+							} else {
+								fLast= CARRIAGE_RETURN;
+								fPrefixLength= 1;
+							}
+
+							fState= CCODE;
+							return token;
+
+						} else {
+							consume();
+							continue;
+						}
+
+					default:
+						consume();
+						continue;
+					}
+	 			}
+
+	 		case '\\':
+	 			if (fLast == BACKSLASH) {
+	 				consume();
+	 				continue;
+	 			}
+	 			break;
+
+	 		case '\n':
+	 			fFirstCharOnLine= true;
 				switch (fState) {
 				case SINGLE_LINE_COMMENT:
 				case CHARACTER:
 				case STRING:
+				case PREPROCESSOR:
 					// assert(fTokenLength > 0);
 					// if last char was a backslash then we have an escaped line
-					if (fLast != BACKSLASH) {
+					if (fLast != BACKSLASH && fLast != BACKSLASH_CR) {
 						return postFix(fState);
 					}
-					// FALLTHROUGH
 
 				default:
 					consume();
 					continue;
 				}
 
+			default:
+				if (!fEmulate && fLast == CARRIAGE_RETURN) {
+					switch (fState) {
+					case SINGLE_LINE_COMMENT:
+					case CHARACTER:
+					case STRING:
+
+						int last;
+						int newState;
+						switch (ch) {
+						case '/':
+							last= SLASH;
+							newState= CCODE;
+							break;
+
+						case '*':
+							last= STAR;
+							newState= CCODE;
+							break;
+
+						case '\'':
+							last= NONE;
+							newState= CHARACTER;
+							break;
+
+						case '"':
+							last= NONE;
+							newState= STRING;
+							break;
+
+						case '\r':
+							last= CARRIAGE_RETURN;
+							newState= CCODE;
+							break;
+
+						case '\\':
+							last= BACKSLASH;
+							newState= CCODE;
+							break;
+
+						default:
+							last= NONE;
+							newState= CCODE;
+							break;
+						}
+
+						fLast= NONE; // ignore fLast
+						return preFix(fState, newState, last, 1);
+
+					case CCODE:
+						if (ch == '#' && isFirstCharOnLine) {
+							fLast= NONE; // ignore fLast
+							int column= fScanner.getColumn() - 1;
+							fTokenLength -= column;
+							if (fTokenLength > 0) {
+								return preFix(fState, PREPROCESSOR, NONE, column + 1);
+							} else {
+								preFix(fState, PREPROCESSOR, NONE, column + 1);
+								fTokenOffset += fTokenLength;
+								fTokenLength= fPrefixLength;
+								break;
+							}
+						}
+						break;
+
+					case PREPROCESSOR:
+						fLast= NONE; // ignore fLast
+						return preFix(fState, CCODE, NONE, 1);
+						
+					default:
+						break;
+					}
+				}
 			}
 
 			// states	 
@@ -124,69 +278,143 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 					if (fLast == SLASH) {
 						if (fTokenLength - getLastLength(fLast) > 0) {
 							return preFix(CCODE, SINGLE_LINE_COMMENT, NONE, 2);
-						}							
-						preFix(CCODE, SINGLE_LINE_COMMENT, NONE, 2);
-						fTokenOffset += fTokenLength;
-						fTokenLength= fPrefixLength;
-						break;
+						} else {
+							preFix(CCODE, SINGLE_LINE_COMMENT, NONE, 2);
+							fTokenOffset += fTokenLength;
+							fTokenLength= fPrefixLength;
+							break;
+						}
 	
+					} else {
+						fTokenLength++;
+						fLast= SLASH;
+						break;
 					}
-					fTokenLength++;
-					fLast= SLASH;
-					break;
 	
 				case '*':
 					if (fLast == SLASH) {
-						if (fTokenLength - getLastLength(fLast) > 0)
+						if (fTokenLength - getLastLength(fLast) > 0) {
 							return preFix(CCODE, MULTI_LINE_COMMENT, SLASH_STAR, 2);
-			
-						preFix(CCODE, MULTI_LINE_COMMENT, SLASH_STAR, 2);
-						fTokenOffset += fTokenLength;
-						fTokenLength= fPrefixLength;
-						break;
+						} else {
+							preFix(CCODE, MULTI_LINE_COMMENT, SLASH_STAR, 2);
+							fTokenOffset += fTokenLength;
+							fTokenLength= fPrefixLength;
+							break;
+						}
 
+					} else {
+						consume();
+						break;
 					}
-					consume();
-					break;
 					
 				case '\'':
 					fLast= NONE; // ignore fLast
 					if (fTokenLength > 0) {
 						return preFix(CCODE, CHARACTER, NONE, 1);
+					} else {
+						preFix(CCODE, CHARACTER, NONE, 1);
+						fTokenOffset += fTokenLength;
+						fTokenLength= fPrefixLength;
+						break;
 					}
-					preFix(CCODE, CHARACTER, NONE, 1);
-					fTokenOffset += fTokenLength;
-					fTokenLength= fPrefixLength;
-					break;
 
 				case '"':
 					fLast= NONE; // ignore fLast				
 					if (fTokenLength > 0 ) {
 						return preFix(CCODE, STRING, NONE, 1);
+					} else {
+						preFix(CCODE, STRING, NONE, 1);
+						fTokenOffset += fTokenLength;
+						fTokenLength= fPrefixLength;
+						break;
 					}
-					preFix(CCODE, STRING, NONE, 1);
-					fTokenOffset += fTokenLength;
-					fTokenLength= fPrefixLength;
-					break;
-
+					
+				case '#':
+					if (!fEmulate && isFirstCharOnLine) {
+						int column= fScanner.getColumn() - 1;
+						fTokenLength -= column;
+						if (fTokenLength > 0) {
+							return preFix(fState, PREPROCESSOR, NONE, column + 1);
+						} else {
+							preFix(fState, PREPROCESSOR, NONE, column + 1);
+							fTokenOffset += fTokenLength;
+							fTokenLength= fPrefixLength;
+							break;
+						}
+					}
+					// fallthrough
 				default:
 					consume();
 					break;
 				}
 				break;
-	
+
 	 		case SINGLE_LINE_COMMENT:
-				switch (ch) {
-				case '\\':
+	 			switch (ch) {
+	 			case '\\':
 					fLast= (fLast == BACKSLASH) ? NONE : BACKSLASH;
 					fTokenLength++;
 					break;
+					
+		 		default:
+					consume();
+	 				break;
+	 			}
+	 			break;
+
+	 		case PREPROCESSOR:
+	 			switch (ch) {
+	 			case '\\':
+					fLast= (fLast == BACKSLASH) ? NONE : BACKSLASH;
+					fTokenLength++;
+					break;
+
+				case '/':
+					if (fLast == SLASH) {
+						consume();
+						break;
+					} else {
+						fTokenLength++;
+						fLast= SLASH;
+						break;
+					}
+	
+				case '*':
+					if (fLast == SLASH) {
+						fState= PREPROCESSOR_MULTI_LINE_COMMENT;
+						consume();
+						break;
+					} else {
+						consume();
+						break;
+					}
+					
+		 		default:
+					consume();
+	 				break;
+	 			}
+	 			break;
+
+	 		case PREPROCESSOR_MULTI_LINE_COMMENT:
+				switch (ch) {
+				case '*':
+					fTokenLength++;
+					fLast= STAR;
+					break;
+	
+				case '/':
+					if (fLast == STAR) {
+						fState= PREPROCESSOR;
+						consume();
+					}
+					break;
+	
 				default:
 					consume();
-					break;
+					break;			
 				}
 				break;
-	
+				
 	 		case MULTI_LINE_COMMENT:
 				switch (ch) {
 				case '*':
@@ -197,9 +425,10 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 				case '/':
 					if (fLast == STAR) {
 						return postFix(MULTI_LINE_COMMENT);
+					} else {
+						consume();
+						break;
 					}
-					consume();
-					break;
 	
 				default:
 					consume();
@@ -218,9 +447,10 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 	 				if (fLast != BACKSLASH) {
 	 					return postFix(STRING);
 
+		 			} else {
+		 				consume();
+		 				break;
 		 			}
-	 				consume();
-	 				break; 					
 		 		
 		 		default:
 					consume();
@@ -239,9 +469,10 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 	 				if (fLast != BACKSLASH) {
 	 					return postFix(CHARACTER);
 	
+	 				} else {
+		 				consume();
+		 				break;
 	 				}
-	 				consume();
-	 				break;
 	
 	 			default:
 					consume();
@@ -252,46 +483,6 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 		} 
  	}		
 
-	/**
-	 * returns index of longest matching element in delimiters
-	 */
-	private static final int detectLineDelimiter(final int ch, final ICharacterScanner scanner, final char[][] delimiters) {
-		int longestDelimiter = -1;
-		int maxLen = 0;
-		for (int i = 0; i < delimiters.length; i++) {
-			final char[] delim = delimiters[i];
-			if (ch == delim[0]) {
-				final int len = delim.length;
-				if (len > maxLen && (len == 1 || sequenceDetected(scanner, delim, 1, len))) {
-					maxLen = len;
-					longestDelimiter = i;
-				}
-			}
-		}
-		return longestDelimiter;
-	}
-	
-	/**
-	 * <code>true</code> if sequence matches between beginIndex (inclusive) and endIndex (exclusive)
-	 */
-	private static final boolean sequenceDetected(final ICharacterScanner scanner, final char[] sequence, final int beginIndex, final int endIndex) {
-		int charsRead = 0;
-		for (int i = beginIndex; i < endIndex; ++i) {
-			final int c = scanner.read();
-			if (c != ICharacterScanner.EOF) {
-				++charsRead;
-			}
-			if (c != sequence[i]) {
-				// Non-matching character detected, rewind the scanner back to the start.
-				for (; charsRead > 0; --charsRead) {
-					scanner.unread();
-				}
-				return false;
-			}
-		}
-		return true;
-	}
-	
 	private static final int getLastLength(int last) {
 		switch (last) {
 		default:
@@ -307,6 +498,7 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 			return 1;
 
 		case SLASH_STAR:
+		case BACKSLASH_CR:
 			return 2;
 
 		}	
@@ -326,12 +518,25 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 	}
 
 	private final IToken preFix(int state, int newState, int last, int prefixLength) {
-		fTokenLength -= getLastLength(fLast);
-		fLast= last;
-		fPrefixLength= prefixLength;
-		IToken token= fTokens[state];		
-		fState= newState;
-		return token;
+		// emulate CPartitionScanner
+		if (fEmulate && state == CCODE && (fTokenLength - getLastLength(fLast) > 0)) {
+			fTokenLength -= getLastLength(fLast);
+			fCCodeOffset= fTokenOffset;
+			fCCodeLength= fTokenLength;
+			fTokenLength= 1;
+			fState= newState;
+			fPrefixLength= prefixLength;
+			fLast= last;
+			return fTokens[state];
+
+		} else {
+			fTokenLength -= getLastLength(fLast);
+			fLast= last;
+			fPrefixLength= prefixLength;
+			IToken token= fTokens[state];
+			fState= newState;
+			return token;
+		}
 	}
 
 	private static int getState(String contentType) {
@@ -350,6 +555,9 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 
 		else if (contentType.equals(C_CHARACTER))
 			return CHARACTER;
+
+		else if (contentType.equals(C_PREPROCESSOR))
+			return PREPROCESSOR;
 			
 		else
 			return CCODE;
@@ -373,6 +581,18 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 			fState= getState(contentType);			
 		}
 
+		try {
+			int column= fScanner.getColumn();
+			fFirstCharOnLine= column == 0 || document.get(offset-column, column).trim().length() == 0;
+		} catch (BadLocationException exc) {
+			fFirstCharOnLine= true;
+		}
+		
+		// emulate CPartitionScanner
+		if (fEmulate) {
+			fCCodeOffset= -1;
+			fCCodeLength= 0;
+		}
 	}
 
 	/*
@@ -387,6 +607,18 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 		fLast= NONE;
 		fState= CCODE;
 
+		try {
+			int column= fScanner.getColumn();
+			fFirstCharOnLine= column == 0 || document.get(offset-column, column).trim().length() == 0;
+		} catch (BadLocationException exc) {
+			fFirstCharOnLine= true;
+		}
+		
+		// emulate CPartitionScanner
+		if (fEmulate) {
+			fCCodeOffset= -1;
+			fCCodeLength= 0;
+		}
 	}
 
 	/*

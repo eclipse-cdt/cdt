@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text;
@@ -43,11 +44,12 @@ public class CHeaderRule implements IRule {
 		int lookAhead = 1;
 		int contentLength = 0;
 
-		if (current == '<') {
+		if (current == '<' || current == '"') {
+			int expected = current == '<' ? '>' : current;
 			do {
 				current = scanner.read();
 				lookAhead++;
-				if (current == '>') {
+				if (current == expected) {
 					if (contentLength < 1) {
 						break;
 					}
@@ -113,8 +115,8 @@ public class CHeaderRule implements IRule {
 				lookBehind++;
 			} while (Character.isWhitespace((char) current));
 			scanner.read();
-
-			if (searchBackwards(scanner, "#include")) { //$NON-NLS-1$
+			--lookBehind;
+			if (searchBackwards(scanner, "include")) { //$NON-NLS-1$
 				result = true;
 			}
 		}

@@ -210,7 +210,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return new String[] {fCodeCategory, fCommentsCategory};
+			return new String[] {fCodeCategory, fCommentsCategory, fPreprocessorCategory};
 		}
 	
 		/*
@@ -229,9 +229,11 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			if (parentElement instanceof String) {
 				String entry= (String) parentElement;
 				if (fCodeCategory.equals(entry))
-					return fListModel.subList(3, fListModel.size()).toArray();
+					return fListModel.subList(6, fListModel.size()).toArray();
 				if (fCommentsCategory.equals(entry))
 					return fListModel.subList(0, 3).toArray();
+				if (fPreprocessorCategory.equals(entry))
+					return fListModel.subList(3, 6).toArray();
 			}
 			return new Object[0];
 		}
@@ -240,8 +242,10 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			if (element instanceof String)
 				return null;
 			int index= fListModel.indexOf(element);
-			if (index >= 3)
+			if (index >= 6)
 				return fCodeCategory;
+			if (index >= 3)
+				return fPreprocessorCategory;
 			return fCommentsCategory;
 		}
 
@@ -274,6 +278,9 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_MultiLine, PreferenceConstants.EDITOR_MULTI_LINE_COMMENT_COLOR }, 
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_singleLine, PreferenceConstants.EDITOR_SINGLE_LINE_COMMENT_COLOR }, 
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_cCommentTaskTags, PreferenceConstants.EDITOR_TASK_TAG_COLOR }, 
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppDirectives, PreferenceConstants.EDITOR_PP_DIRECTIVE_COLOR }, 
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppOthers, PreferenceConstants.EDITOR_PP_DEFAULT_COLOR }, 
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppHeaders, PreferenceConstants.EDITOR_PP_HEADER_COLOR }, 
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_keywords, PreferenceConstants.EDITOR_C_KEYWORD_COLOR }, 
 //			{ PreferencesMessages.CEditorColoringConfigurationBlock_returnKeyword, PreferenceConstants.EDITOR_C_KEYWORD_RETURN_COLOR }, 
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_builtInTypes, PreferenceConstants.EDITOR_C_BUILTIN_TYPE_COLOR }, 
@@ -281,12 +288,12 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_strings, PreferenceConstants.EDITOR_C_STRING_COLOR }, 
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_braces, PreferenceConstants.EDITOR_C_BRACES_COLOR }, 
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_numbers, PreferenceConstants.EDITOR_C_NUMBER_COLOR }, 
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_headers, PreferenceConstants.EDITOR_C_HEADER_COLOR }, 
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_others, PreferenceConstants.EDITOR_C_DEFAULT_COLOR }, 
 	};
 	
 	private final String fCodeCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_code; 
 	private final String fCommentsCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_comments; 
+	private final String fPreprocessorCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_preprocessor; 
 	
 	private ColorSelector fSyntaxForegroundColorEditor;
 	private Label fColorEditorLabel;
@@ -560,6 +567,8 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 					return 0;
 				if (fCommentsCategory.equals(element))
 					return 2;
+				if (fPreprocessorCategory.equals(element))
+					return 3;
 				// to sort semantic settings after partition based ones:
 //				if (element instanceof SemanticHighlightingColorListItem)
 //					return 1;

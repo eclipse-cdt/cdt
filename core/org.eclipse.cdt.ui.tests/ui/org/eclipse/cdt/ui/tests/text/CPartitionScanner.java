@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.text;
+package org.eclipse.cdt.ui.tests.text;
 
 import java.util.ArrayList;
 import java.util.List;

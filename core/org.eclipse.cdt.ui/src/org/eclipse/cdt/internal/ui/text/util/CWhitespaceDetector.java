@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.util;
 
@@ -15,14 +16,22 @@ import org.eclipse.jface.text.rules.IWhitespaceDetector;
 
 
 /**
- * A C aware white space detector.
+ * A simple white space detector.
  */
 public class CWhitespaceDetector implements IWhitespaceDetector {
 
-	/**
-	 * @see IWhitespaceDetector#isWhitespace
+	/*
+	 * @see IWhitespaceDetector#isWhitespace(char)
 	 */
 	public boolean isWhitespace(char c) {
-		return Character.isWhitespace(c);
+		switch (c) {
+		case ' ':
+		case '\t':
+		case '\r':
+		case '\n':
+			return true;
+		default:
+			return Character.isWhitespace(c);
+		}
 	}
 }

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -51,12 +52,16 @@ public class CTextTools {
 	private CppCodeScanner fCppCodeScanner;
 	/** The C partitions scanner */
 	private FastCPartitionScanner fPartitionScanner;
-	/** The Java multiline comment scanner */
+	/** The C multiline comment scanner */
 	private CCommentScanner fMultilineCommentScanner;
-	/** The Java singleline comment scanner */
+	/** The C singleline comment scanner */
 	private CCommentScanner fSinglelineCommentScanner;
-	/** The Java string scanner */
+	/** The C string scanner */
 	private SingleTokenCScanner fStringScanner;
+	/** The C preprocessor scanner */
+	private CPreprocessorScanner fCPreprocessorScanner;
+	/** The C++ preprocessor scanner */
+	private CPreprocessorScanner fCppPreprocessorScanner;
 
 	/** The preference store */
 	private IPreferenceStore fPreferenceStore;
@@ -99,6 +104,8 @@ public class CTextTools {
 		fMultilineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_MULTI_LINE_COMMENT);
 		fSinglelineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
 		fStringScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_STRING);
+		fCPreprocessorScanner= new CPreprocessorScanner(fColorManager, store, false);
+		fCppPreprocessorScanner= new CPreprocessorScanner(fColorManager, store, true);
 
 		fPreferenceStore = store;
 		fPreferenceStore.addPropertyChangeListener(fPreferenceListener);
@@ -190,7 +197,8 @@ public class CTextTools {
 			ICPartitions.C_MULTI_LINE_COMMENT,
 			ICPartitions.C_SINGLE_LINE_COMMENT,
 			ICPartitions.C_STRING,
-			ICPartitions.C_CHARACTER
+			ICPartitions.C_CHARACTER,
+			ICPartitions.C_PREPROCESSOR
 		};
 		
 		return new FastPartitioner(getPartitionScanner(), types);
@@ -215,14 +223,31 @@ public class CTextTools {
 	}
 	
 	/**
-	 * Returns a scanner which is configured to scan Java strings.
+	 * Returns a scanner which is configured to scan C strings.
 	 *
-	 * @return a Java string scanner
+	 * @return a C string scanner
 	 */
 	public RuleBasedScanner getStringScanner() {
 		return fStringScanner;
 	}
 
+	/**
+	 * Returns a scanner which is configured to scan C preprocessor directives.
+	 *
+	 * @return a C preprocessor directives scanner
+	 */
+	public RuleBasedScanner getCPreprocessorScanner() {
+		return fCPreprocessorScanner;
+	}
+
+	/**
+	 * Returns a scanner which is configured to scan C++ preprocessor directives.
+	 *
+	 * @return a C++ preprocessor directives scanner
+	 */
+	public RuleBasedScanner getCppPreprocessorScanner() {
+		return fCppPreprocessorScanner;
+	}
 	
 	/**
 	 * Determines whether the preference change encoded by the given event
@@ -236,7 +261,8 @@ public class CTextTools {
 					fCppCodeScanner.affectsBehavior(event) ||
 					fMultilineCommentScanner.affectsBehavior(event) ||
 					fSinglelineCommentScanner.affectsBehavior(event) ||
-					fStringScanner.affectsBehavior(event);
+					fStringScanner.affectsBehavior(event) ||
+					fCPreprocessorScanner.affectsBehavior(event);
 	}
 	
 	/**
@@ -256,6 +282,10 @@ public class CTextTools {
 			fSinglelineCommentScanner.adaptToPreferenceChange(event);
 		if (fStringScanner.affectsBehavior(event))
 			fStringScanner.adaptToPreferenceChange(event);
+		if (fCPreprocessorScanner.affectsBehavior(event)) {
+			fCPreprocessorScanner.adaptToPreferenceChange(event);
+			fCppPreprocessorScanner.adaptToPreferenceChange(event);
+		}
 	}
 
 	/**

@@ -7,15 +7,15 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
 import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IWordDetector;
-import org.eclipse.jface.text.rules.WordRule;
-import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.WordRule;
 
 /**
  * Implementation of <code>IRule</code> for C/C++ preprocessor scanning.
@@ -23,9 +23,10 @@ import org.eclipse.jface.text.rules.Token;
  * at the beginning of the string, then '#' sign, then 0 or more whitespaces
  * again, and then directive itself.
  */
-public class PreprocessorRule extends WordRule implements IRule {
+public class PreprocessorRule extends WordRule {
 
 	private StringBuffer fBuffer = new StringBuffer();
+	private IToken fMalformedToken;
 
 	/**
 	 * Creates a rule which, with the help of a word detector, will return the token
@@ -56,6 +57,33 @@ public class PreprocessorRule extends WordRule implements IRule {
 		super(detector, defaultToken);
 	}
 
+	/**
+	 * Creates a rule which, with the help of an word detector, will return the token
+	 * associated with the detected word. If no token has been associated, the
+	 * specified default token will be returned.
+	 *
+	 * @param detector the word detector to be used by this rule, may not be <code>null</code>
+	 * @param defaultToken the default token to be returned on success 
+	 *  if nothing else is specified, may not be <code>null</code>
+	 * @param malformedToken  the token to be returned if the directive is malformed
+	 * 
+	 * @see WordRule#addWord
+	 */
+	public PreprocessorRule(IWordDetector detector, IToken defaultToken, IToken malformedToken) {
+		super(detector, defaultToken);
+		fMalformedToken= malformedToken;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.rules.WordRule#addWord(java.lang.String, org.eclipse.jface.text.rules.IToken)
+	 */
+	public void addWord(String word, IToken token) {
+		if (word.charAt(0) == '#') {
+			word= word.substring(1);
+		}
+		super.addWord(word, token);
+	}
+
 	/*
 	 * @see IRule#evaluate
 	 */
@@ -64,14 +92,10 @@ public class PreprocessorRule extends WordRule implements IRule {
 		int nCharsToRollback = 0;
 		boolean hashSignDetected = false;
 
-		if (scanner.getColumn() > 0)
-			return Token.UNDEFINED;
-
 		do {
 			c = scanner.read();
 			nCharsToRollback++;
-		} while (Character.isWhitespace((char) c));
-		
+		} while (c == ' ' || c == '\t');
 		
 		// Di- and trigraph support
 		if (c == '#') {
@@ -98,20 +122,29 @@ public class PreprocessorRule extends WordRule implements IRule {
 
 			do {
 				c = scanner.read();
-			} while (Character.isWhitespace((char) c));
+			} while (c == ' ' || c == '\t');
 
 			fBuffer.setLength(0);
-
-			do {
-				fBuffer.append((char) c);
-				c = scanner.read();
-			} while (Character.isJavaIdentifierPart((char) c));
-
-			scanner.unread();
-
-			IToken token = (IToken) fWords.get("#" + fBuffer.toString()); //$NON-NLS-1$
+			
+			if (c != '#') {
+				if (fDetector.isWordStart((char) c)) {
+					do {
+						fBuffer.append((char) c);
+						c = scanner.read();
+					} while (fDetector.isWordPart((char) c));
+				}
+				scanner.unread();
+			}
+			IToken token = (IToken) fWords.get(fBuffer.toString());
 			if (token != null)
 				return token;
+			
+			if (fMalformedToken != null) {
+				do {
+					c = scanner.read();
+				} while (c != ICharacterScanner.EOF);
+				return fMalformedToken;
+			}
 
 			return fDefaultToken;
 

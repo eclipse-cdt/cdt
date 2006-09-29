@@ -41,4 +41,9 @@ public interface ICPartitions {
 	 * The identifier of the C character partition content type.
 	 */
 	String C_CHARACTER= "__c_character";  //$NON-NLS-1$
+
+	/**
+	 * The identifier of the C preprocessor partition content type.
+	 */
+	String C_PREPROCESSOR= "__c_preprocessor";  //$NON-NLS-1$
 }

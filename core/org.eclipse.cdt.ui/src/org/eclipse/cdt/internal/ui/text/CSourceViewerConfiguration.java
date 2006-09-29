@@ -119,6 +119,24 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	}	
 	
 	/**
+	 * Returns the C preprocessor scanner for this configuration.
+	 *
+	 * @return the C preprocessor scanner
+	 */
+	protected RuleBasedScanner getCPreprocessorScanner() {
+		return fTextTools.getCPreprocessorScanner();
+	}	
+	
+	/**
+	 * Returns the C++ preprocessor scanner for this configuration.
+	 *
+	 * @return the C++ preprocessor scanner
+	 */
+	protected RuleBasedScanner getCppPreprocessorScanner() {
+		return fTextTools.getCppPreprocessorScanner();
+	}	
+	
+	/**
 	 * Returns the color manager for this configuration.
 	 *
 	 * @return the color manager
@@ -153,6 +171,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         presenter.setInformationProvider(provider, ICPartitions.C_SINGLE_LINE_COMMENT);
         presenter.setInformationProvider(provider, ICPartitions.C_STRING);
         presenter.setInformationProvider(provider, ICPartitions.C_CHARACTER);
+        presenter.setInformationProvider(provider, ICPartitions.C_PREPROCESSOR);
         presenter.setSizeConstraints(20, 20, true, false);
         presenter.setRestoreInformationControlBounds(getSettings("outline_presenter_bounds"), true, true); //$NON-NLS-1$        
         return presenter;
@@ -167,8 +186,9 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 
 		RuleBasedScanner scanner = null;
+		ILanguage language= null;
 		if(sourceViewer instanceof CSourceViewer) {
-			ILanguage language = ((CSourceViewer)sourceViewer).getLanguage();
+			language = ((CSourceViewer)sourceViewer).getLanguage();
 			if (language instanceof GPPLanguage) {
 				scanner = fTextTools.getCppCodeScanner();
 			} else if (language instanceof GCCLanguage) {
@@ -205,6 +225,18 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		dr= new DefaultDamagerRepairer(getStringScanner());
 		reconciler.setDamager(dr, ICPartitions.C_CHARACTER);
 		reconciler.setRepairer(dr, ICPartitions.C_CHARACTER);
+		
+		if (language instanceof GPPLanguage) {
+			dr= new DefaultDamagerRepairer(getCppPreprocessorScanner());
+		} else if (language instanceof GCCLanguage) {
+			dr= new DefaultDamagerRepairer(getCPreprocessorScanner());
+		} else {
+			dr= null;
+		}
+		if (dr != null) {
+			reconciler.setDamager(new PartitionDamager(), ICPartitions.C_PREPROCESSOR);
+			reconciler.setRepairer(dr, ICPartitions.C_PREPROCESSOR);
+		}
 		
 		return reconciler;
 	}
@@ -400,7 +432,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 				ICPartitions.C_MULTI_LINE_COMMENT,
 				ICPartitions.C_SINGLE_LINE_COMMENT,
 				ICPartitions.C_STRING,
-				ICPartitions.C_CHARACTER};
+				ICPartitions.C_CHARACTER,
+				ICPartitions.C_PREPROCESSOR};
 	}
 	
 	/**

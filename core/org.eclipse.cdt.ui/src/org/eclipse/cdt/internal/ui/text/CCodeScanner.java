@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
+import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 
 
@@ -43,11 +45,9 @@ public final class CCodeScanner extends AbstractCScanner {
 	private static String[] fgTokenProperties= {
 		ICColorConstants.C_KEYWORD,
 		ICColorConstants.C_TYPE,
-		ICColorConstants.C_STRING,
         ICColorConstants.C_OPERATOR,
         ICColorConstants.C_BRACES,
         ICColorConstants.C_NUMBER,
-        ICColorConstants.C_HEADER,
 		ICColorConstants.C_DEFAULT,
 	};
 	
@@ -78,7 +78,7 @@ public final class CCodeScanner extends AbstractCScanner {
 		Token token;
 		
 		// Add generic white space rule.
-		//rules.add(new WhitespaceRule(new CWhitespaceDetector()));
+		rules.add(new WhitespaceRule(new CWhitespaceDetector()));
 
 		// Add word rule for keywords, types, and constants.
 		token= getToken(ICColorConstants.C_DEFAULT);
@@ -102,10 +102,6 @@ public final class CCodeScanner extends AbstractCScanner {
         NumberRule numberRule = new NumberRule(token);
         rules.add(numberRule);
         
-        token = getToken(ICColorConstants.C_HEADER);
-        CHeaderRule headerRule = new CHeaderRule(token);
-        rules.add(headerRule);
-        
         token = getToken(ICColorConstants.C_OPERATOR);
         COperatorRule opRule = new COperatorRule(token);
         rules.add(opRule);
@@ -114,15 +110,6 @@ public final class CCodeScanner extends AbstractCScanner {
         CBraceRule braceRule = new CBraceRule(token);
         rules.add(braceRule);
         
-        token = getToken(ICColorConstants.C_TYPE);
-		PreprocessorRule preprocessorRule = new PreprocessorRule(new CWordDetector(), token);
-		
-		i = ParserFactory.getKeywordSet( KeywordSetKey.PP_DIRECTIVE, ParserLanguage.C ).iterator();
-		while( i.hasNext() )
-			preprocessorRule.addWord((String) i.next(), token);
-		
-		rules.add(preprocessorRule);
-		
 		setDefaultReturnToken(getToken(ICColorConstants.C_DEFAULT));
 		return rules;
 	}

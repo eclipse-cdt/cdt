@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.actions;
@@ -159,7 +160,8 @@ public class AddBlockCommentAction extends BlockCommentAction {
 	private boolean isSpecialPartition(String partType) {
 		return partType == ICPartitions.C_CHARACTER
 				|| partType == ICPartitions.C_STRING
-				|| partType == ICPartitions.C_SINGLE_LINE_COMMENT;
+				|| partType == ICPartitions.C_SINGLE_LINE_COMMENT
+				|| partType == ICPartitions.C_PREPROCESSOR;
 	}
 
 	/*

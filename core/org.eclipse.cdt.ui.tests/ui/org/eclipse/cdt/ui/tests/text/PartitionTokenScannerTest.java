@@ -19,7 +19,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.internal.ui.text.CPartitionScanner;
 import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -42,10 +41,10 @@ public class PartitionTokenScannerTest extends TestCase {
 
 	protected void setUp() {
 		fReference= new CPartitionScanner();
-		fTestee= new FastCPartitionScanner();
+		fTestee= new FastCPartitionScanner(true);
 	}
 
-	// read sample java file
+	// read sample C file
 	private IDocument getDocument(String name, String lineDelimiter) {
 		try {
 			InputStream stream= getClass().getResourceAsStream(name);

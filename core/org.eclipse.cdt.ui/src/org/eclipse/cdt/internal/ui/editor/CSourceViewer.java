@@ -22,7 +22,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.DocumentCommand;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextPresentationListener;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.information.IInformationPresenter;
@@ -32,6 +34,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -445,4 +448,24 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 		fTextPresentationListeners.remove(listener);
 		fTextPresentationListeners.add(0, listener);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * Performance optimization: since we know at this place
+	 * that none of the clients expects the given range to be
+	 * untouched we reuse the given range as return value.
+	 * </p>
+	 */
+	protected StyleRange modelStyleRange2WidgetStyleRange(StyleRange range) {
+		IRegion region= modelRange2WidgetRange(new Region(range.start, range.length));
+		if (region != null) {
+			// don't clone the style range, but simply reuse it.
+			range.start= region.getOffset();
+			range.length= region.getLength();
+			return range;
+		}
+		return null;
+	}
+
 }

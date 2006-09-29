@@ -246,7 +246,14 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			}
 			if (!file.isSynchronized(IResource.DEPTH_ZERO) && !_remoteFile.getName().equals(".project"))
 			{
-				file.refreshLocal(IResource.DEPTH_ONE, monitor);
+				try
+				{
+					file.refreshLocal(IResource.DEPTH_ZERO, monitor);
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 			if (file != null)
 			{

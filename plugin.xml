@@ -5,7 +5,7 @@
     <renderingType 
         name="Traditional"
         id="org.eclipse.dsdp.debug.memory.renderings.MemoryRenderingTraditional"
-        class="org.eclipse.dsdp.debug.memory.renderings.MemoryRenderingTypeDelegate">
+        class="org.eclipse.dd.debug.memory.renderings.MemoryRenderingTypeDelegate">
     </renderingType>
     <renderingBindings
         renderingIds="org.eclipse.dsdp.debug.memory.renderings.MemoryRenderingTraditional"

@@ -32,7 +32,7 @@ fi
 if [ ! -f eclipse/plugins/org.eclipse.emf_2.2.0.v200606271057.jar ]; then
   # EMF 2.2.0 Runtime
   wget "http://download.eclipse.org/tools/emf/downloads/drops/2.2.0/R200606271057/emf-sdo-runtime-2.2.0.zip"
-  unzip emf-sdo-runtime-2.2.0.zip
+  unzip -o emf-sdo-runtime-2.2.0.zip
   rm emf-sdo-runtime-2.2.0.zip 
 fi
 

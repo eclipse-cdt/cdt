@@ -6,6 +6,13 @@
 #
 # This must be run in $HOME/ws in order for the mkTestUpdateSite.sh
 # script to find the published packages
+#
+# Bootstrapping: Get this script by
+# wget -O setup.sh "http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.rse/releng/org.eclipse.rse.build/setup.sh?rev=HEAD&cvsroot=DSDP_Project&content-type=text/plain"
+# sh setup.sh
+# ./doit_ibuild.sh
+# cd testUpdates/bin
+# mkTestUpdates.sh
 
 curdir=`pwd`
 

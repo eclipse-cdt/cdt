@@ -20,27 +20,55 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 
 /**
- * A class that only allows keys representing numeric values to be entered.
+ * A class that only allows keys representing numeric values to be entered. It can be turned off if necessary.
  */
 public class SystemNumericVerifyListener implements VerifyListener {
+	
+	private boolean isOff;
+	
+	/**
+	 * Constructor. The verifier is on by default.
+	 */
+	public SystemNumericVerifyListener() {
+		isOff = false;
+	}
 
 	/**
+	 * Verifies the event text if it is not turned off.
 	 * @see org.eclipse.swt.events.VerifyListener#verifyText(org.eclipse.swt.events.VerifyEvent)
 	 */
 	public void verifyText(VerifyEvent e) {
 		
-		String text = e.text;
-		boolean doit = true;
-		
-		for (int i = 0; i < text.length(); i++) {
-			char c = text.charAt(i);
-			
-			if (!Character.isDigit(c)) {
-				doit = false;
-				break;
+		if (!isOff) {
+			String text = e.text;
+			boolean doit = true;
+
+			for (int i = 0; i < text.length(); i++) {
+				char c = text.charAt(i);
+
+				if (!Character.isDigit(c)) {
+					doit = false;
+					break;
+				}
 			}
+
+			e.doit = doit;
 		}
-		
-		e.doit = doit;
+	}
+	
+	/**
+	 * Turns the verifier on or off.
+	 * @param isOff <code>true</code> to turn the verifier off, <code>false</code> to turn it on.
+	 */
+	public void setOff(boolean isOff) {
+		this.isOff = isOff;
+	}
+	
+	/**
+	 * Returns whether the verifier is on or off.
+	 * @return <code>true</code> if the verifier is off, <code>false</code> if it is on.
+	 */
+	public boolean isOff() {
+		return isOff;
 	}
 }

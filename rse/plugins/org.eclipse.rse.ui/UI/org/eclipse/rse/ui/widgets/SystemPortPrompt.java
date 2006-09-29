@@ -57,7 +57,37 @@ public class SystemPortPrompt
 	// validators
 	protected ISystemValidator       portValidator;	
 	// Inputs from caller
-	protected ISystemMessageLine     msgLine;    
+	protected ISystemMessageLine     msgLine;
+	
+	/**
+	 * A listener for state changes to the port entry inheritable field.
+	 */
+	private class PortFieldStateChangeListener implements IInheritableEntryFieldStateChangeListener {
+		
+		private SystemNumericVerifyListener verifyListener;
+		
+		/**
+		 * Constructor.
+		 * @param verifyListener the verify listener for the port field.
+		 */
+		private PortFieldStateChangeListener(SystemNumericVerifyListener verifyListener) {
+			this.verifyListener = verifyListener;
+		}
+
+		/**
+		 * Turns the verifier off if the state of the inheritable entry field is not local, turns it on otherwise.
+		 * @see org.eclipse.rse.ui.widgets.IInheritableEntryFieldStateChangeListener#stateChanged(org.eclipse.rse.ui.widgets.InheritableEntryField)
+		 */
+		public void stateChanged(InheritableEntryField field) {
+			
+			if (field.isLocal()) {
+				verifyListener.setOff(false);
+			}
+			else {
+				verifyListener.setOff(true);
+			}
+		}
+	}
 	
     /**
      * Constructor when you want a new composite to hold the child controls
@@ -258,8 +288,9 @@ public class SystemPortPrompt
 				}
 			});
 		  
-		  textPort.getTextField().addVerifyListener(new SystemNumericVerifyListener());
-	      //textPort.addSelectionListener(this); Removed for defect 44132
+		  SystemNumericVerifyListener verifyListener = new SystemNumericVerifyListener();
+		  textPort.getTextField().addVerifyListener(verifyListener);
+		  textPort.addStateChangeListener(new PortFieldStateChangeListener(verifyListener));
 		}
 	}
 

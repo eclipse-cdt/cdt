@@ -16,6 +16,10 @@
 
 package org.eclipse.rse.ui.widgets;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -57,6 +61,7 @@ public class InheritableEntryField extends Composite implements KeyListener {
 	private String localValue = "";
 	private boolean isLocal = true;
 	private boolean allowEditOfInherited = false;
+	private List listeners;
 
 	/**
 	 * Constructor
@@ -88,6 +93,10 @@ public class InheritableEntryField extends Composite implements KeyListener {
 	 */
 	public InheritableEntryField(Composite parent, int style, int buttonStyle, int textStyle, boolean showToggleButton) {
 		super(parent, style);
+		
+		// must initialize list of listeners before anything else
+		listeners = new Vector();
+		
 		prepareComposite(2);
 		if (showToggleButton) {
 			createToggleButton(this, buttonStyle);
@@ -103,6 +112,11 @@ public class InheritableEntryField extends Composite implements KeyListener {
 	public void setLocal(boolean local) {
 		boolean wasLocal = isLocal;
 		isLocal = local;
+		
+		if (isLocal != wasLocal) {
+			notifyStateChangeListeners();
+		}
+		
 		if (isLocal) { // from inherit to local
 			if (allowEditOfInherited && !wasLocal) inheritValue = entryField.getText();
 			entryField.setEnabled(true);
@@ -340,6 +354,37 @@ public class InheritableEntryField extends Composite implements KeyListener {
 			setLocal(false);
 		} else if ((e.stateMask == SWT.CTRL) && (e.keyCode == SWT.ARROW_RIGHT) && !isLocal()) {
 			setLocal(true);
+		}
+	}
+	
+	/**
+	 * Adds a state change listener. If the listener was already added, it will not be added again.
+	 * @param l the listener to add.
+	 */
+	public void addStateChangeListener(IInheritableEntryFieldStateChangeListener l) {
+		
+		if (!listeners.contains(l)) {
+			listeners.add(l);
+		}
+	}
+	
+	/**
+	 * Removes a state change listener.
+	 * @param l the listener to remove.
+	 */
+	public void removeStateChangeListener(IInheritableEntryFieldStateChangeListener l) {
+		listeners.remove(l);
+	}
+	
+	/**
+	 * Notifies all state change listeners.
+	 */
+	private void notifyStateChangeListeners() {
+		Iterator iter = listeners.iterator();
+		
+		while (iter.hasNext()) {
+			IInheritableEntryFieldStateChangeListener listener = (IInheritableEntryFieldStateChangeListener)(iter.next());
+			listener.stateChanged(this);
 		}
 	}
 }

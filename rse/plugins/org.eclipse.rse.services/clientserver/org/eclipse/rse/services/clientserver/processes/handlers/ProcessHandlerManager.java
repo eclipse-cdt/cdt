@@ -42,6 +42,7 @@ public class ProcessHandlerManager
 		if (osName.startsWith("linux")) return new UniversalLinuxProcessHandler();
 		else if (osName.startsWith("aix")) return new UniversalAIXProcessHandler();
 		else if (osName.startsWith("z/os")) return new UniversalZOSProcessHandler();
+		else if (osName.startsWith("mac os x")) return new UniversalMacOSXProcessHandler();
 		else return null;
 	}
 }

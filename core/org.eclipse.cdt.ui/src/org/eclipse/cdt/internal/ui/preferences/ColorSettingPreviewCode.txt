@@ -5,7 +5,7 @@ using namespace std;
 // This comment may span only this line
 typedef unsigned int uint;
 int static myfunc(uint parameter) {
-  if (parameter == 0) out << "zero" << endl;
+  if (parameter == 0) cout << "zero" << endl;
   return parameter - 1;
 }
 class MyClass {

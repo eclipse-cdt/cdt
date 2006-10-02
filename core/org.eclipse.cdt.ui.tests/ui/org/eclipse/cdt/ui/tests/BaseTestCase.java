@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
@@ -136,7 +137,7 @@ public class BaseTestCase extends TestCase {
 	 * @since 4.0
 	 */
     protected String readTaggedComment(final String tag) throws IOException {
-    	return TestSourceReader.readTaggedComment(getClass(), tag);
+    	return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), getClass(), tag);
     }
     
     protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {

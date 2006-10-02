@@ -116,9 +116,10 @@ public class DNSSDProtocol implements IProtocol {
 	private final  String LEGACY_SERVICE_DISCOVERY_COMMAND = Messages.getString("DNSSDProtocol.legacyServiceDiscoveryCommand"); //$NON-NLS-1$
 
 	// Patterns to parse service name and service type
-	private final Pattern serviceNamePattern = Pattern.compile("^_?(\\w+)\\..+"); //$NON-NLS-1$
-	private final Pattern serviceTypeNamePattern = Pattern.compile("^[^\\.]+\\._?(\\w+)\\..+"); //$NON-NLS-1$
-
+	
+	private final Pattern srvPattern = Pattern.compile("^(.+)\\._(.+)._.+\\.local."); //$NON-NLS-1$
+	private final Pattern ptrPattern = Pattern.compile("^_(.+)._.+\\.local."); //$NON-NLS-1$
+	
 	private Resource resource = null;
 	private ITransport transport = null;
 	private String query = null;
@@ -381,11 +382,10 @@ public class DNSSDProtocol implements IProtocol {
 		//parse the service type name
 		if(!(serviceTypeName.equals(SERVICE_DISCOVERY_COMMAND) || serviceTypeName.equals(LEGACY_SERVICE_DISCOVERY_COMMAND)))
 		{
-			Matcher matcher = serviceNamePattern.matcher(name);
-		  		if (matcher.matches()) 
+			Matcher matcher = ptrPattern.matcher(name);
+		  		if (matcher.matches())
 		  			serviceTypeName = matcher.group(1);
 		}
-		
 		
 		//find if we have a serviceType with this name...
 		Iterator serviceTypeIterator = device.getServiceType().iterator();
@@ -416,7 +416,7 @@ public class DNSSDProtocol implements IProtocol {
 			else
 			{
 				//parse the service type name
-				Matcher matcher = serviceNamePattern.matcher(ptrDataName);
+				Matcher matcher = srvPattern.matcher(ptrDataName);
 		  			if (matcher.matches()) 
 		  				serviceName = matcher.group(1);
 			}
@@ -459,13 +459,18 @@ public class DNSSDProtocol implements IProtocol {
 			e.printStackTrace();
 		}
 
-		//find if we have a serviceType with this name...
-		String serviceTypeName = null; //name.substring(name.indexOf('.') + 1);
+		String serviceTypeName = null;
+		String serviceName = null;
 
-		//parse the service type name
-		Matcher matcher = serviceTypeNamePattern.matcher(name);
-	  		if (matcher.matches()) 
-	  			serviceTypeName = matcher.group(1);
+		//parse the service type name and the service name
+		Matcher matcher = srvPattern.matcher(name);
+		if (matcher.matches()) 
+		{
+			serviceTypeName = matcher.group(2);
+			serviceName = matcher.group(1);
+		}
+	  	
+		//	find if we have a serviceType with this name...
 		
 		Iterator serviceTypeIterator = device.getServiceType().iterator();
 		boolean found = false;
@@ -485,12 +490,6 @@ public class DNSSDProtocol implements IProtocol {
 		}
 
 		//find if we have a service with this name...
-		String serviceName = null;
-		
-		Matcher matcher2 = serviceNamePattern.matcher(name);
-  		if (matcher2.matches()) 
-  			serviceName = matcher2.group(1);
-		
 		Iterator serviceIterator = serviceType.getService().iterator();
 		found = false;
 		while (serviceIterator.hasNext()) {
@@ -553,13 +552,18 @@ public class DNSSDProtocol implements IProtocol {
 			e.printStackTrace();
 		}
 
-		// Find if we have a serviceType with this name...
+		String serviceName = null;
 		String serviceTypeName = null;
 		
-		Matcher matcher1 = serviceTypeNamePattern.matcher(recordName);
-	  		if (matcher1.matches()) 
-	  			serviceTypeName = matcher1.group(1);
+		// Find if we have a serviceType with this name...
 		
+		Matcher matcher = srvPattern.matcher(recordName);
+			if (matcher.matches())
+			{
+				serviceName = matcher.group(1);
+				serviceTypeName = matcher.group(2);
+			}
+	
 		
 	  	Iterator serviceTypeIterator = device.getServiceType().iterator();
 		boolean found = false;
@@ -581,13 +585,7 @@ public class DNSSDProtocol implements IProtocol {
 		}
 
 		// Find if we have a service with this name...
-		String serviceName = null;
-		
-		Matcher matcher2 = serviceNamePattern.matcher(recordName);
-  		if (matcher2.matches()) 
-  			serviceName = matcher2.group(1);
-		
-		
+			
 		Iterator serviceIterator = serviceType.getService().iterator();
 		found = false;
 		while (serviceIterator.hasNext()) {
@@ -608,60 +606,61 @@ public class DNSSDProtocol implements IProtocol {
 		}
 		
 		//process "key=value" pairs
-		//only alfanumeric key/value allowed
+		
 		StringBuffer dataBuffer = new StringBuffer();
-		for (int j = 0; j < dataLength; j++) {
-			if (data[j] >= '0') {
-				dataBuffer.append((char) data[j]);
+		int entryLength = 0;
+		
+		for (int j = 0; j < dataLength; j += entryLength + 1) {
+
+			dataBuffer.setLength(0);
+
+			entryLength = data[j];
+
+			for (int k = 1; k <= entryLength; k++)
+				dataBuffer.append((char) data[j + k]);
+
+			StringTokenizer stk = new StringTokenizer(dataBuffer.toString(),"="); //$NON-NLS-1$
+
+			String key = stk.nextToken();
+
+			// DNS-Based Service Discovery
+			// 6.4 Rules for Names in DNS-SD Name/Value Pairs
+			// If a key has no value, assume "true"
+			String value = "true"; //$NON-NLS-1$
+
+			try {
+				value = stk.nextToken();
+			} catch (Exception e) {
+				// no value, assume "true"
 			}
 
-			if (!(j == 0) && (data[j] < '0' || j == dataLength - 1)) {
-				StringTokenizer stk = new StringTokenizer(dataBuffer.toString(), "="); //$NON-NLS-1$
-
-				String key = stk.nextToken();
-
-				//DNS-Based Service Discovery 
-				//6.4 Rules for Names in DNS-SD Name/Value Pairs 
-				//If a key has no value, assume "true"
-				String value = "true"; //$NON-NLS-1$
-
-				try {
-					value = stk.nextToken();
-				} catch (Exception e) {
-				//no value, assume "true"	
-				}
-
-				//find if we are updating the value of a key...
-				Pair text = null;
-				Iterator pairIterator = service.getPair().iterator();
-				found = false;
-				while (pairIterator.hasNext()) {
-					Pair aPair = (Pair) pairIterator.next();
-					if (aPair != null)
-					{
-						if (aPair.getKey().equals(key)) {
-							String current = aPair.getValue();
-							if (!current.equals(value))
-								aPair.setValue(value);
-							found = true;
-							break;
-						}
+			// find if we are updating the value of a key...
+			Pair text = null;
+			Iterator pairIterator = service.getPair().iterator();
+			found = false;
+			while (pairIterator.hasNext()) {
+				Pair aPair = (Pair) pairIterator.next();
+				if (aPair != null) {
+					if (aPair.getKey().equals(key)) {
+						String current = aPair.getValue();
+						if (!current.equals(value))
+							aPair.setValue(value);
+						found = true;
+						break;
 					}
 				}
+			}
 
-				if (!found) {
-					text = ModelFactory.eINSTANCE.createPair();
-					text.setKey(key);
-					text.setValue(value);
-					service.getPair().add(text);
-				}
-
-				dataBuffer = new StringBuffer();
+			if (!found) {
+				text = ModelFactory.eINSTANCE.createPair();
+				text.setKey(key);
+				text.setValue(value);
+				service.getPair().add(text);
 			}
 		}
 	}
 
-	// returns the name, that can be compressed using DNS compression 
+	// returns the name, that can be compressed using DNS compression
 	// For more information about DNS compression: RFC 1035 (4.1.4. Message compression)
 	private String getName(ByteArrayInputStream packetInputStream, byte[] packet) {
 		StringBuffer buffer = new StringBuffer();

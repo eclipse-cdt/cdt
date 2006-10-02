@@ -584,6 +584,12 @@
             id="org.eclipse.cdt.ui.preferences.TemplatePreferencePage">
       </page>
       <page
+            name="%SmartTypingPreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.SmartTypingPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.SmartTypingPreferencePage">
+      </page>
+      <page
             name="%CodeFormatterPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CodeFormatterPreferencePage"
@@ -882,6 +888,11 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.remove.block.comment"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>   
+      <key
+            sequence="M1+I"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.indent"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
             sequence="M1+M3+H"
             contextId="org.eclipse.cdt.ui.cEditorScope"
@@ -990,6 +1001,12 @@
             description="%ActionDefinition.removeBlockComment.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.remove.block.comment">
+      </command>
+      <command
+            name="%ActionDefinition.indent.name"
+            description="%ActionDefinition.indent.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.indent">
       </command>
       <command
             name="%ActionDefinition.joinLines.name"

@@ -15,30 +15,35 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ToolFactory;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
-import org.eclipse.cdt.core.formatter.CodeFormatterConstants;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.Position;
 import org.eclipse.text.edits.TextEdit;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 public class CodeFormatterUtil {
 
-//	/**
-//	 * Creates a string that represents the given number of indents (can be spaces or tabs..)
-//	 */
-//	public static String createIndentString(int indent) {
-//		String str= format(CodeFormatter.K_EXPRESSION, "x", indent, null, "", (Map) null); //$NON-NLS-1$ //$NON-NLS-2$
-//		return str.substring(0, str.indexOf('x'));
-//	} 
-
+	/**
+	 * Creates a string that represents the given number of indentation units.
+	 * The returned string can contain tabs and/or spaces depending on the core
+	 * formatter preferences.
+	 * 
+	 * @param indentationUnits the number of indentation units to generate
+	 * @param project the project from which to get the formatter settings,
+	 *        <code>null</code> if the workspace default should be used
+	 * @return the indent string
+	 */
+	public static String createIndentString(int indentationUnits, ICProject project) {
+		Map options= project != null ? project.getOptions(true) : CCorePlugin.getOptions();		
+		return ToolFactory.createDefaultCodeFormatter(options).createIndentationString(indentationUnits);
+	} 
+		
 	/**
 	 * Gets the current tab width.
 	 * 
@@ -55,10 +60,10 @@ public class CodeFormatterUtil {
 		 * that case.
 		 */
 		String key;
-		if (CCorePlugin.SPACE.equals(getCoreOption(project, CodeFormatterConstants.FORMATTER_TAB_CHAR)))
-			key= CodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
+		if (CCorePlugin.SPACE.equals(getCoreOption(project, DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR)))
+			key= DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
 		else
-			key= CodeFormatterConstants.FORMATTER_TAB_SIZE;
+			key= DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
 		
 		return getCoreOption(project, key, 4);
 	}
@@ -72,10 +77,10 @@ public class CodeFormatterUtil {
 	 */
 	public static int getIndentWidth(ICProject project) {
 		String key;
-		if (CodeFormatterConstants.MIXED.equals(getCoreOption(project, CodeFormatterConstants.FORMATTER_TAB_CHAR)))
-			key= CodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
+		if (DefaultCodeFormatterConstants.MIXED.equals(getCoreOption(project, DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR)))
+			key= DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE;
 		else
-			key= CodeFormatterConstants.FORMATTER_TAB_SIZE;
+			key= DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
 		
 		return getCoreOption(project, key, 4);
 	}
@@ -131,7 +136,7 @@ public class CodeFormatterUtil {
 			return doc.get();
 		} catch (BadLocationException e) {
 			CUIPlugin.getDefault().log(e); // bug in the formatter
-			Assert.isTrue(false, "Fromatter created edits with wrong positions: " + e.getMessage()); //$NON-NLS-1$
+			Assert.isTrue(false, "Formatter created edits with wrong positions: " + e.getMessage()); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -213,9 +218,10 @@ public class CodeFormatterUtil {
 		return doc;
 	}
 	
+	/**
+	 * @return The formatter tab width on workspace level.
+	 */
 	public static int getTabWidth() {
-		IPreferenceStore store = CUIPlugin.getDefault().getCombinedPreferenceStore();
-		return store.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
+		return getTabWidth(null);
 	}
-
 }

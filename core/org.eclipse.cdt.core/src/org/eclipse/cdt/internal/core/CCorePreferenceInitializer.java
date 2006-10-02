@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.formatter.CodeFormatterConstants;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 //import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
@@ -35,7 +35,7 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
         HashSet optionNames = CModelManager.OptionNames;
     
 		// Formatter settings
-		Map defaultOptionsMap = CodeFormatterConstants.getEclipseDefaultSettings(); // code formatter defaults
+		Map defaultOptionsMap = DefaultCodeFormatterConstants.getEclipseDefaultSettings(); // code formatter defaults
 
 		// Compiler settings
 		defaultOptionsMap.put(CCorePreferenceConstants.TRANSLATION_TASK_TAGS, CCorePreferenceConstants.DEFAULT_TASK_TAG); 

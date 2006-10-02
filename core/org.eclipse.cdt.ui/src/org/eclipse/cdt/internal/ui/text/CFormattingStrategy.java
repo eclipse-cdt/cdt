@@ -16,7 +16,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
-import org.eclipse.cdt.core.formatter.CodeFormatterConstants;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
@@ -142,8 +142,8 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 		} else
             preferences= new HashMap(CCorePlugin.getOptions());
 
-        preferences.put(CodeFormatterConstants.FORMATTER_LANGUAGE, language);
-		preferences.put(CodeFormatterConstants.FORMATTER_CURRENT_FILE, activeFile);
+        preferences.put(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE, language);
+		preferences.put(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE, activeFile);
 	          
 		context.storeToMap(CUIPlugin.getDefault().getPreferenceStore(), preferences, false);
         context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, preferences);

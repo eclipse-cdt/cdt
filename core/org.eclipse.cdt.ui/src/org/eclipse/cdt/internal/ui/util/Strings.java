@@ -147,29 +147,38 @@ public class Strings {
 	 * 
 	 * @param line the text line
 	 * @param tabWidth the width of the '\t' character.
+	 * @return the indentation level of the given string
+	 * 
+	 * @deprecated use {@link #computeIndent(String, int, int)} instead.
 	 */
 	public static int computeIndent(String line, int tabWidth) {
+		return computeIndent(line, tabWidth, tabWidth);
+	}
+
+	/**
+	 * Returns the indent level of the given string.
+	 * 
+	 * @param line the text line
+	 * @param tabWidth the width of the '\t' character.
+	 * @param indentSize the space-equivalent of an indent level
+	 * @return the indentation level of the given string
+	 */
+	public static int computeIndent(String line, int tabWidth, int indentSize) {
 		int result= 0;
-		int blanks= 0;
 		int size= line.length();
 		for (int i= 0; i < size; i++) {
 			char c= line.charAt(i);
 			if (c == '\t') {
-				result++;
-				blanks= 0;
+				result+= tabWidth;
 			} else if (isIndentChar(c)) {
-				blanks++;
-				if (blanks == tabWidth) {
-					result++;
-					blanks= 0;
-				}
+				result++;
 			} else {
-				return result;
+				break;
 			}
 		}
-		return result;
+		return result / indentSize;
 	}
-	
+
 	/**
 	 * Removes the given number of idents from the line. Asserts that the given line 
 	 * has the requested number of indents. If <code>indentsToRemove <= 0</code>

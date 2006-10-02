@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Sergey Prigogin, Google
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.tests.text;
@@ -107,12 +108,13 @@ public class CAutoIndentTest extends TestCase {
 		}
 
 		public void backspace(int n) throws BadLocationException {
-			for (int i=0; i<n; ++i) {
+			for (int i = 0; i < n; ++i) {
 				backspace();
 			}
 		}
+		
 		public void backspace() throws BadLocationException {
-			TestDocumentCommand command = new TestDocumentCommand(fCaretOffset-1, 1, ""); //$NON-NLS-1$
+			TestDocumentCommand command = new TestDocumentCommand(fCaretOffset - 1, 1, ""); //$NON-NLS-1$
 			customizeDocumentCommand(command);
 			fCaretOffset = command.exec(fDoc);
 		}
@@ -139,6 +141,19 @@ public class CAutoIndentTest extends TestCase {
 		public int moveCaret(int shift) {
 			return setCaretOffset(fCaretOffset + shift);
 		}
+		
+		public int goTo(int line) throws BadLocationException {
+			fCaretOffset = fDoc.getLineOffset(line);
+			return fCaretOffset;
+		}
+
+		public int goTo(int line, int column) throws BadLocationException {
+			if (column < 0 || column > fDoc.getLineLength(line)) {
+				throw new BadLocationException("No column " + column + " in line " + line); //$NON-NLS-1$ $NON-NLS-2$
+			}
+			fCaretOffset = fDoc.getLineOffset(line) + column;
+			return fCaretOffset;
+		}
 
 		public int getCaretLine() throws BadLocationException {
 			return fDoc.getLineOfOffset(fCaretOffset);
@@ -162,7 +177,7 @@ public class CAutoIndentTest extends TestCase {
 		}
 
 		public String getLine(int i) throws BadLocationException {
-			IRegion region = fDoc.getLineInformation(getCaretLine()+i);
+			IRegion region = fDoc.getLineInformation(getCaretLine() + i);
 			return fDoc.get(region.getOffset(), region.getLength());
 		}
 
@@ -171,7 +186,7 @@ public class CAutoIndentTest extends TestCase {
 		}
 
 		public String getContentType(int i) throws BadLocationException {
-			return TextUtilities.getContentType(fDoc, fPartitioning, fCaretOffset+i, false);
+			return TextUtilities.getContentType(fDoc, fPartitioning, fCaretOffset + i, false);
 		}
 	}
 
@@ -269,6 +284,33 @@ public class CAutoIndentTest extends TestCase {
 		assertEquals(2, tester.getCaretColumn());
         // No auto closing brace since the braces are already balanced.
 		assertEquals("\t\tint x = 5;", tester.getLine(1)); //$NON-NLS-1$
+	}
+
+	public void testPasteAutoIndent() throws IOException, CoreException, BadLocationException {
+		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		tester.type("class A {\n"); //$NON-NLS-1$
+		tester.goTo(1, 0);
+		tester.paste("class B {\n" +
+				     "protected:\n" +
+				     "\tB();\n" +
+				     "public:\n" +
+				     "\tint getX() const {\n" +
+				     "\t\treturn x_;\n" +
+				     "\t}\n" +
+				     "private:\n" +
+				     "\tint x_;\n" +
+				     "};\n"); //$NON-NLS-1$
+		tester.goTo(1, 0);
+		assertEquals("\tclass B {", tester.getLine(0)); //$NON-NLS-1$
+		assertEquals("\tprotected:", tester.getLine(1)); //$NON-NLS-1$
+		assertEquals("\t\tB();", tester.getLine(2)); //$NON-NLS-1$
+		assertEquals("\tpublic:", tester.getLine(3)); //$NON-NLS-1$
+		assertEquals("\t\tint getX() const {", tester.getLine(4)); //$NON-NLS-1$
+		assertEquals("\t\t\treturn x_;", tester.getLine(5)); //$NON-NLS-1$
+		assertEquals("\t\t}", tester.getLine(6)); //$NON-NLS-1$
+		assertEquals("\tprivate:", tester.getLine(7)); //$NON-NLS-1$
+		assertEquals("\t\tint x_;", tester.getLine(8)); //$NON-NLS-1$
+		assertEquals("\t};", tester.getLine(9)); //$NON-NLS-1$
 	}
 
 	public void testDefaultAutoIndent() throws IOException, CoreException, BadLocationException {

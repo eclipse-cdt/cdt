@@ -13,13 +13,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentCommand;
+import org.eclipse.jface.text.DocumentRewriteSession;
+import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.texteditor.ITextEditorExtension3;
@@ -29,11 +34,15 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+
 /**
  * Auto indent strategy sensitive to brackets.
  */
 public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	private static final String MULTILINE_COMMENT_CLOSE = "*/"; //$NON-NLS-1$
+	/** The line comment introducer. Value is "{@value}" */
+	private static final String LINE_COMMENT= "//"; //$NON-NLS-1$
 //	private static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = new GCCScannerExtensionConfiguration();
 
 	private static class CompilationUnitInfo {
@@ -65,11 +74,8 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
 	// evaluate the line with the opening bracket that matches the closing bracket on the given line
 	protected int findMatchingOpenBracket(IDocument d, int line, int end, int closingBracketIncrease) throws BadLocationException {
-
-
 		int start = d.getLineOffset(line);
 		int brackcount = getBracketCount(d, start, end, false) - closingBracketIncrease;
-
 
 		// sum up the brackets counts of each line (closing brackets count negative, 
 		// opening positive) until we find a line the brings the count to zero
@@ -84,7 +90,6 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		}
 		return line;
 	}
-
 
 	private int getBracketCount(IDocument d, int start, int end, boolean ignoreCloseBrackets) throws BadLocationException {
 		int bracketcount = 0;
@@ -135,7 +140,6 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
 	// ----------- bracket counting ------------------------------------------------------
 
-
 	private int getCommentEnd(IDocument d, int pos, int end) throws BadLocationException {
 		while (pos < end) {
 			char curr = d.getChar(pos);
@@ -183,7 +187,6 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			int start = d.getLineOffset(line);
 			int whiteend = findEndOfWhiteSpace(d, start, c.offset);
 
-
 			// shift only when line does not contain any text up to the closing bracket
 			if (whiteend == c.offset) {
 				// evaluate the line with the opening bracket that matches out closing bracket
@@ -221,7 +224,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			// shift only when line does not contain any text up to the closing bracket
 			if (whiteend == c.offset) {
 				// evaluate the line with the opening bracket that matches out closing bracket
-				int reference = indenter.findReferencePosition(c.offset, false, true, false, false);
+				int reference = indenter.findReferencePosition(c.offset, false, true, false, false, false);
 				int indLine = d.getLineOfOffset(reference);
 				if (indLine != -1 && indLine != line) {
 					// take the indent of the found line
@@ -257,13 +260,13 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			if (d.get(lineOffset, p - lineOffset).trim().length() != 0)
 				return;
 
-			// line of last javacode
+			// Line of last C code
 			int pos = scanner.findNonWhitespaceBackward(p, CHeuristicScanner.UNBOUND);
 			if (pos == -1)
 				return;
 			int lastLine = d.getLineOfOffset(pos);
 
-			// only shift if the last java line is further up and is a braceless block candidate
+			// Only shift if the last C line is further up and is a braceless block candidate
 			if (lastLine < line) {
 				CIndenter indenter = new CIndenter(d, scanner, fProject);
 				StringBuffer indent = indenter.computeIndentation(p, true);
@@ -405,7 +408,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	 * Finds a closing parenthesis to the left of <code>position</code> in document, where that parenthesis is only
 	 * separated by whitespace from <code>position</code>. If no such parenthesis can be found, <code>position</code> is returned.
 	 *
-	 * @param scanner the java heuristic scanner set up on the document
+	 * @param scanner the C heuristic scanner set up on the document
 	 * @param position the first character position in <code>document</code> to be considered
 	 * @return the position of a closing parenthesis left to <code>position</code> separated only by whitespace, or <code>position</code> if no parenthesis can be found
 	 */
@@ -519,6 +522,448 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		return false;
 	}
 
+	/**
+	 * Installs a C partitioner with <code>document</code>.
+	 *
+	 * @param document the document
+	 */
+	private static void installCPartitioner(Document document) {
+		String[] types= new String[] {
+		    ICPartitions.C_MULTI_LINE_COMMENT,
+			ICPartitions.C_SINGLE_LINE_COMMENT,
+			ICPartitions.C_STRING,
+			ICPartitions.C_CHARACTER,
+			IDocument.DEFAULT_CONTENT_TYPE
+		};
+		FastPartitioner partitioner= new FastPartitioner(new FastCPartitionScanner(), types);
+		partitioner.connect(document);
+		document.setDocumentPartitioner(ICPartitions.C_PARTITIONING, partitioner);
+	}
+
+	/**
+	 * Installs a C partitioner with <code>document</code>.
+	 *
+	 * @param document the document
+	 */
+	private static void removeCPartitioner(Document document) {
+		document.setDocumentPartitioner(ICPartitions.C_PARTITIONING, null);
+	}
+	
+	private void smartPaste(IDocument document, DocumentCommand command) {
+		int newOffset= command.offset;
+		int newLength= command.length;
+		String newText= command.text;
+
+		try {
+			CHeuristicScanner scanner= new CHeuristicScanner(document);
+			CIndenter indenter= new CIndenter(document, scanner, fProject);
+			int offset= newOffset;
+
+			// reference position to get the indent from
+			int refOffset= indenter.findReferencePosition(offset);
+			if (refOffset == CHeuristicScanner.NOT_FOUND)
+				return;
+			int peerOffset= getPeerPosition(document, command);
+			peerOffset= indenter.findReferencePosition(peerOffset);
+			refOffset= Math.min(refOffset, peerOffset);
+
+			// eat any WS before the insertion to the beginning of the line
+			int firstLine= 1; // don't format the first line per default, as it has other content before it
+			IRegion line= document.getLineInformationOfOffset(offset);
+			String notSelected= document.get(line.getOffset(), offset - line.getOffset());
+			if (notSelected.trim().length() == 0) {
+				newLength += notSelected.length();
+				newOffset= line.getOffset();
+				firstLine= 0;
+			}
+
+			// prefix: the part we need for formatting but won't paste
+			IRegion refLine= document.getLineInformationOfOffset(refOffset);
+			String prefix= document.get(refLine.getOffset(), newOffset - refLine.getOffset());
+
+			// handle the indentation computation inside a temporary document
+			Document temp= new Document(prefix + newText);
+			DocumentRewriteSession session= temp.startRewriteSession(DocumentRewriteSessionType.STRICTLY_SEQUENTIAL);
+			scanner= new CHeuristicScanner(temp);
+			indenter= new CIndenter(temp, scanner, fProject);
+			installCPartitioner(temp);
+
+			// indent the first and second line
+			// compute the relative indentation difference from the second line
+			// (as the first might be partially selected) and use the value to
+			// indent all other lines.
+			boolean isIndentDetected= false;
+			StringBuffer addition= new StringBuffer();
+			int insertLength= 0;
+			int first= document.computeNumberOfLines(prefix) + firstLine; // don't format first line
+			int lines= temp.getNumberOfLines();
+			boolean changed= false;
+
+			for (int l= first; l < lines; l++) { // we don't change the number of lines while adding indents
+				IRegion r= temp.getLineInformation(l);
+				int lineOffset= r.getOffset();
+				int lineLength= r.getLength();
+
+				if (lineLength == 0) // don't modify empty lines
+					continue;
+
+				if (!isIndentDetected) {
+					// indent the first pasted line
+					String current= getCurrentIndent(temp, l);
+					StringBuffer correct= indenter.computeIndentation(lineOffset);
+					if (correct == null)
+						return; // bail out
+
+					insertLength= subtractIndent(correct, current, addition);
+					if (l != first && temp.get(lineOffset, lineLength).trim().length() != 0) {
+						isIndentDetected= true;
+						if (insertLength == 0) {
+							 // no adjustment needed, bail out
+							if (firstLine == 0) {
+								// but we still need to adjust the first line
+								command.offset= newOffset;
+								command.length= newLength;
+								if (changed)
+									break; // still need to get the leading indent of the first line
+							}
+							return;
+						}
+						removeCPartitioner(temp);
+					} else {
+						changed= insertLength != 0;
+					}
+				}
+
+				// relatively indent all pasted lines
+				if (insertLength > 0)
+					addIndent(temp, l, addition);
+				else if (insertLength < 0)
+					cutIndent(temp, l, -insertLength);
+			}
+
+			temp.stopRewriteSession(session);
+			newText= temp.get(prefix.length(), temp.getLength() - prefix.length());
+
+			command.offset= newOffset;
+			command.length= newLength;
+			command.text= newText;
+		} catch (BadLocationException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+	}
+
+	/**
+	 * Returns the indentation of the line <code>line</code> in <code>document</code>.
+	 * The returned string may contain pairs of leading slashes that are considered
+	 * part of the indentation. The space before the asterix in a javadoc-like
+	 * comment is not considered part of the indentation.
+	 *
+	 * @param document the document
+	 * @param line the line
+	 * @return the indentation of <code>line</code> in <code>document</code>
+	 * @throws BadLocationException if the document is changed concurrently
+	 */
+	private static String getCurrentIndent(Document document, int line) throws BadLocationException {
+		IRegion region= document.getLineInformation(line);
+		int from= region.getOffset();
+		int endOffset= region.getOffset() + region.getLength();
+
+		// go behind line comments
+		int to= from;
+		while (to < endOffset - 2 && document.get(to, 2).equals(LINE_COMMENT))
+			to += 2;
+
+		while (to < endOffset) {
+			char ch= document.getChar(to);
+			if (!Character.isWhitespace(ch))
+				break;
+			to++;
+		}
+
+		// don't count the space before javadoc like, asterix-style comment lines
+		if (to > from && to < endOffset - 1 && document.get(to - 1, 2).equals(" *")) { //$NON-NLS-1$
+			String type= TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, to, true);
+			if (type.equals(ICPartitions.C_MULTI_LINE_COMMENT))
+				to--;
+		}
+
+		return document.get(from, to - from);
+	}
+
+	/**
+	 * Computes the difference of two indentations and returns the difference in
+	 * length of current and correct. If the return value is positive, <code>addition</code>
+	 * is initialized with a substring of that length of <code>correct</code>.
+	 *
+	 * @param correct the correct indentation
+	 * @param current the current indentation (migth contain non-whitespace)
+	 * @param difference a string buffer - if the return value is positive, it will be cleared and set to the substring of <code>current</code> of that length
+	 * @return the difference in lenght of <code>correct</code> and <code>current</code>
+	 */
+	private int subtractIndent(CharSequence correct, CharSequence current, StringBuffer difference) {
+		int c1= computeVisualLength(correct);
+		int c2= computeVisualLength(current);
+		int diff= c1 - c2;
+		if (diff <= 0)
+			return diff;
+
+		difference.setLength(0);
+		int len= 0, i= 0;
+		while (len < diff) {
+			char c= correct.charAt(i++);
+			difference.append(c);
+			len += computeVisualLength(c);
+		}
+
+		return diff;
+	}
+
+	/**
+	 * Indents line <code>line</code> in <code>document</code> with <code>indent</code>.
+	 * Leaves leading comment signs alone.
+	 *
+	 * @param document the document
+	 * @param line the line
+	 * @param indent the indentation to insert
+	 * @throws BadLocationException on concurrent document modification
+	 */
+	private static void addIndent(Document document, int line, CharSequence indent) throws BadLocationException {
+		IRegion region= document.getLineInformation(line);
+		int insert= region.getOffset();
+		int endOffset= region.getOffset() + region.getLength();
+
+		// go behind line comments
+		while (insert < endOffset - 2 && document.get(insert, 2).equals(LINE_COMMENT))
+			insert += 2;
+
+		// insert indent
+		document.replace(insert, 0, indent.toString());
+	}
+
+	/**
+	 * Cuts the visual equivalent of <code>toDelete</code> characters out of the
+	 * indentation of line <code>line</code> in <code>document</code>. Leaves
+	 * leading comment signs alone.
+	 *
+	 * @param document the document
+	 * @param line the line
+	 * @param toDelete the number of space equivalents to delete.
+	 * @throws BadLocationException on concurrent document modification
+	 */
+	private void cutIndent(Document document, int line, int toDelete) throws BadLocationException {
+		IRegion region= document.getLineInformation(line);
+		int from= region.getOffset();
+		int endOffset= region.getOffset() + region.getLength();
+
+		// go behind line comments
+		while (from < endOffset - 2 && document.get(from, 2).equals(LINE_COMMENT))
+			from += 2;
+
+		int to= from;
+		while (toDelete > 0 && to < endOffset) {
+			char ch= document.getChar(to);
+			if (!Character.isWhitespace(ch))
+				break;
+			toDelete -= computeVisualLength(ch);
+			if (toDelete >= 0)
+				to++;
+			else
+				break;
+		}
+
+		document.replace(from, to - from, null);
+	}
+
+	/**
+	 * Returns the visual length of a given <code>CharSequence</code> taking into
+	 * account the visual tabulator length.
+	 *
+	 * @param seq the string to measure
+	 * @return the visual length of <code>seq</code>
+	 */
+	private int computeVisualLength(CharSequence seq) {
+		int size= 0;
+		int tablen= getVisualTabLengthPreference();
+
+		for (int i= 0; i < seq.length(); i++) {
+			char ch= seq.charAt(i);
+			if (ch == '\t') {
+				if (tablen != 0)
+					size += tablen - size % tablen;
+				// else: size stays the same
+			} else {
+				size++;
+			}
+		}
+		return size;
+	}
+
+	/**
+	 * Returns the visual length of a given character taking into
+	 * account the visual tabulator length.
+	 *
+	 * @param ch the character to measure
+	 * @return the visual length of <code>ch</code>
+	 */
+	private int computeVisualLength(char ch) {
+		if (ch == '\t')
+			return getVisualTabLengthPreference();
+		else
+			return 1;
+	}
+
+	/**
+	 * The preference setting for the visual tabulator display.
+	 *
+	 * @return the number of spaces displayed for a tabulator in the editor
+	 */
+	private int getVisualTabLengthPreference() {
+		return CodeFormatterUtil.getTabWidth(fProject);
+	}
+
+	private int getPeerPosition(IDocument document, DocumentCommand command) {
+		if (document.getLength() == 0)
+			return 0;
+    	/*
+    	 * Search for scope closers in the pasted text and find their opening peers
+    	 * in the document.
+    	 */
+    	Document pasted= new Document(command.text);
+    	installCPartitioner(pasted);
+    	int firstPeer= command.offset;
+
+    	CHeuristicScanner pScanner= new CHeuristicScanner(pasted);
+    	CHeuristicScanner dScanner= new CHeuristicScanner(document);
+
+    	// add scope relevant after context to peer search
+    	int afterToken= dScanner.nextToken(command.offset + command.length, CHeuristicScanner.UNBOUND);
+    	try {
+			switch (afterToken) {
+			case Symbols.TokenRBRACE:
+				pasted.replace(pasted.getLength(), 0, "}"); //$NON-NLS-1$
+				break;
+			case Symbols.TokenRPAREN:
+				pasted.replace(pasted.getLength(), 0, ")"); //$NON-NLS-1$
+				break;
+			case Symbols.TokenRBRACKET:
+				pasted.replace(pasted.getLength(), 0, "]"); //$NON-NLS-1$
+				break;
+			}
+		} catch (BadLocationException e) {
+			// cannot happen
+			Assert.isTrue(false);
+		}
+
+    	int pPos= 0; // paste text position (increasing from 0)
+    	int dPos= Math.max(0, command.offset - 1); // document position (decreasing from paste offset)
+    	while (true) {
+    		int token= pScanner.nextToken(pPos, CHeuristicScanner.UNBOUND);
+   			pPos= pScanner.getPosition();
+    		switch (token) {
+    			case Symbols.TokenLBRACE:
+    			case Symbols.TokenLBRACKET:
+    			case Symbols.TokenLPAREN:
+    				pPos= skipScope(pScanner, pPos, token);
+    				if (pPos == CHeuristicScanner.NOT_FOUND)
+    					return firstPeer;
+    				break; // closed scope -> keep searching
+    			case Symbols.TokenRBRACE:
+    				int peer= dScanner.findOpeningPeer(dPos, '{', '}');
+    				dPos= peer - 1;
+    				if (peer == CHeuristicScanner.NOT_FOUND)
+    					return firstPeer;
+    				firstPeer= peer;
+    				break; // keep searching
+    			case Symbols.TokenRBRACKET:
+    				peer= dScanner.findOpeningPeer(dPos, '[', ']');
+    				dPos= peer - 1;
+    				if (peer == CHeuristicScanner.NOT_FOUND)
+    					return firstPeer;
+    				firstPeer= peer;
+    				break; // keep searching
+    			case Symbols.TokenRPAREN:
+    				peer= dScanner.findOpeningPeer(dPos, '(', ')');
+    				dPos= peer - 1;
+    				if (peer == CHeuristicScanner.NOT_FOUND)
+    					return firstPeer;
+    				firstPeer= peer;
+    				break; // keep searching
+    				
+    			case Symbols.TokenCASE:
+    			case Symbols.TokenDEFAULT:
+    			    {
+    					CIndenter indenter= new CIndenter(document, dScanner, fProject);
+    					peer= indenter.findReferencePosition(dPos, false, false, false, true, false);
+    					if (peer == CHeuristicScanner.NOT_FOUND)
+    						return firstPeer;
+    					firstPeer= peer;
+    				}
+    				break; // keep searching
+
+    			case Symbols.TokenPUBLIC:
+    			case Symbols.TokenPROTECTED:
+    			case Symbols.TokenPRIVATE:
+				    {
+						CIndenter indenter= new CIndenter(document, dScanner, fProject);
+						peer= indenter.findReferencePosition(dPos, false, false, false, false, true);
+						if (peer == CHeuristicScanner.NOT_FOUND)
+							return firstPeer;
+						firstPeer= peer;
+					}
+    				break; // keep searching
+    				
+    			case Symbols.TokenEOF:
+    				return firstPeer;
+    			default:
+    				// keep searching
+    		}
+    	}
+    }
+
+    /**
+     * Skips the scope opened by <code>token</code> in <code>document</code>,
+     * returns either the position of the
+     * @param pos
+     * @param token
+     * @return the position after the scope
+     */
+    private static int skipScope(CHeuristicScanner scanner, int pos, int token) {
+    	int openToken= token;
+    	int closeToken;
+    	switch (token) {
+    		case Symbols.TokenLPAREN:
+    			closeToken= Symbols.TokenRPAREN;
+    			break;
+    		case Symbols.TokenLBRACKET:
+    			closeToken= Symbols.TokenRBRACKET;
+    			break;
+    		case Symbols.TokenLBRACE:
+    			closeToken= Symbols.TokenRBRACE;
+    			break;
+    		default:
+    			Assert.isTrue(false);
+    			return -1; // dummy
+    	}
+
+    	int depth= 1;
+    	int p= pos;
+
+    	while (true) {
+    		int tok= scanner.nextToken(p, CHeuristicScanner.UNBOUND);
+    		p= scanner.getPosition();
+
+    		if (tok == openToken) {
+    			depth++;
+    		} else if (tok == closeToken) {
+    			depth--;
+    			if (depth == 0)
+    				return p + 1;
+    		} else if (tok == Symbols.TokenEOF) {
+    			return CHeuristicScanner.NOT_FOUND;
+    		}
+    	}
+    }
+
 	private void smartIndentOnKeypress(IDocument document, DocumentCommand command) {
 		switch (command.text.charAt(0)) {
 			case '}':
@@ -530,42 +975,44 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			case 'e':
 				smartIndentUponE(document, command);
 				break;
+			case ':':
+				smartIndentAfterColumn(document, command);
+				break;
 		}
 	}
 
-	private void smartIndentUponE(IDocument d, DocumentCommand c) {
-		if (c.offset < 4 || d.getLength() == 0)
+	private void smartIndentUponE(IDocument doc, DocumentCommand c) {
+		if (c.offset < 4 || doc.getLength() == 0)
 			return;
 
 		try {
-			String content = d.get(c.offset - 3, 3);
+			String content = doc.get(c.offset - 3, 3);
 			if (content.equals("els")) { //$NON-NLS-1$
-				CHeuristicScanner scanner = new CHeuristicScanner(d);
+				CHeuristicScanner scanner = new CHeuristicScanner(doc);
 				int p = c.offset - 3;
 
 				// current line
-				int line = d.getLineOfOffset(p);
-				int lineOffset = d.getLineOffset(line);
+				int line = doc.getLineOfOffset(p);
+				int lineOffset = doc.getLineOffset(line);
 
 				// make sure we don't have any leading comments etc.
-				if (d.get(lineOffset, p - lineOffset).trim().length() != 0)
+				if (doc.get(lineOffset, p - lineOffset).trim().length() != 0)
 					return;
 
-				// line of last javacode
+				// Line of last C code
 				int pos = scanner.findNonWhitespaceBackward(p - 1, CHeuristicScanner.UNBOUND);
 				if (pos == -1)
 					return;
-				int lastLine = d.getLineOfOffset(pos);
+				int lastLine = doc.getLineOfOffset(pos);
 
-				// only shift if the last java line is further up and is a braceless block candidate
+				// Only shift if the last C line is further up and is a braceless block candidate
 				if (lastLine < line) {
-
-					CIndenter indenter = new CIndenter(d, scanner, fProject);
-					int ref = indenter.findReferencePosition(p, true, false, false, false);
+					CIndenter indenter = new CIndenter(doc, scanner, fProject);
+					int ref = indenter.findReferencePosition(p, true, false, false, false, false);
 					if (ref == CHeuristicScanner.NOT_FOUND)
 						return;
-					int refLine = d.getLineOfOffset(ref);
-					String indent = getIndentOfLine(d, refLine);
+					int refLine = doc.getLineOfOffset(ref);
+					String indent = getIndentOfLine(doc, refLine);
 
 					if (indent != null) {
 						c.text = indent.toString() + "else"; //$NON-NLS-1$
@@ -578,35 +1025,34 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			}
 
 			if (content.equals("cas")) { //$NON-NLS-1$
-				CHeuristicScanner scanner = new CHeuristicScanner(d);
+				CHeuristicScanner scanner = new CHeuristicScanner(doc);
 				int p = c.offset - 3;
 
 				// current line
-				int line = d.getLineOfOffset(p);
-				int lineOffset = d.getLineOffset(line);
+				int line = doc.getLineOfOffset(p);
+				int lineOffset = doc.getLineOffset(line);
 
 				// make sure we don't have any leading comments etc.
-				if (d.get(lineOffset, p - lineOffset).trim().length() != 0)
+				if (doc.get(lineOffset, p - lineOffset).trim().length() != 0)
 					return;
 
-				// line of last javacode
+				// Line of last C code
 				int pos = scanner.findNonWhitespaceBackward(p - 1, CHeuristicScanner.UNBOUND);
 				if (pos == -1)
 					return;
-				int lastLine = d.getLineOfOffset(pos);
+				int lastLine = doc.getLineOfOffset(pos);
 
-				// only shift if the last java line is further up and is a braceless block candidate
+				// Only shift if the last C line is further up and is a braceless block candidate
 				if (lastLine < line) {
-
-					CIndenter indenter = new CIndenter(d, scanner, fProject);
-					int ref = indenter.findReferencePosition(p, false, false, false, true);
+					CIndenter indenter = new CIndenter(doc, scanner, fProject);
+					int ref = indenter.findReferencePosition(p, false, false, false, true, false);
 					if (ref == CHeuristicScanner.NOT_FOUND)
 						return;
-					int refLine = d.getLineOfOffset(ref);
+					int refLine = doc.getLineOfOffset(ref);
 					int nextToken = scanner.nextToken(ref, CHeuristicScanner.UNBOUND);
 					String indent;
 					if (nextToken == Symbols.TokenCASE || nextToken == Symbols.TokenDEFAULT)
-						indent = getIndentOfLine(d, refLine);
+						indent = getIndentOfLine(doc, refLine);
 					else // at the brace of the switch
 						indent = indenter.computeIndentation(p).toString();
 
@@ -619,6 +1065,72 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
 				return;
 			}
+		} catch (BadLocationException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+	}
+
+	private void smartIndentAfterColumn(IDocument doc, DocumentCommand c) {
+		try {
+			int offset = c.offset;
+			// Current line
+			int line = doc.getLineOfOffset(offset);
+			IRegion startLine = doc.getLineInformationOfOffset(offset);
+			int lineOffset = startLine.getOffset();
+
+			CHeuristicScanner scanner = new CHeuristicScanner(doc);
+			int prevToken = scanner.previousToken(offset - 1, lineOffset);
+			switch (prevToken) {
+				case Symbols.TokenDEFAULT:
+				case Symbols.TokenPUBLIC:
+				case Symbols.TokenPROTECTED:
+				case Symbols.TokenPRIVATE:
+					break;
+					
+				default:
+					return;
+			}
+			
+			int p = scanner.getPosition() + 1;
+
+			// Make sure we don't have any leading comments etc.
+			if (doc.get(lineOffset, p - lineOffset).trim().length() != 0)
+				return;
+			
+			// Line of last C code
+			int pos = scanner.findNonWhitespaceBackward(p - 1, CHeuristicScanner.UNBOUND);
+			if (pos == -1)
+				return;
+			int lastLine = doc.getLineOfOffset(pos);
+
+			// Only shift if the last C line is further up and is a braceless block candidate
+			if (lastLine < line) {
+				CIndenter indenter = new CIndenter(doc, scanner, fProject);
+				int ref;
+				if (prevToken == Symbols.TokenDEFAULT)
+					ref = indenter.findReferencePosition(p, false, false, false, true, false);
+				else
+					ref = indenter.findReferencePosition(p, false, false, false, false, true);
+				if (ref == CHeuristicScanner.NOT_FOUND)
+					return;
+				int refLine = doc.getLineOfOffset(ref);
+				int nextToken = scanner.nextToken(ref, CHeuristicScanner.UNBOUND);
+				String indent;
+				if (nextToken == Symbols.TokenCASE || nextToken == Symbols.TokenDEFAULT ||
+						nextToken == Symbols.TokenPUBLIC || nextToken == Symbols.TokenPROTECTED ||
+						nextToken == Symbols.TokenPRIVATE)
+					indent = getIndentOfLine(doc, refLine);
+				else // at the brace of the switch or the class
+					indent = indenter.computeIndentation(p).toString();
+
+				if (indent != null) {
+					c.text = indent.toString() + doc.get(p, offset - p) + c.text;
+					c.length += c.offset - lineOffset;
+					c.offset = lineOffset;
+				}
+			}
+
+			return;
 		} catch (BadLocationException e) {
 			CUIPlugin.getDefault().log(e);
 		}
@@ -649,9 +1161,8 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			CCommentAutoIndentStrategy.commentIndentForCommentEnd(d, c);
 		} else if (c.text.length() == 1) {
 			smartIndentOnKeypress(d, c);
-// TODO Support smart paste.
-//		} else if (c.text.length() > 1 && getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SMART_PASTE)) {
-//			smartPaste(d, c); // no smart backspace for paste
+		} else if (c.text.length() > 1 && getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SMART_PASTE)) {
+			smartPaste(d, c); // no smart backspace for paste
 		}
 	}
 	

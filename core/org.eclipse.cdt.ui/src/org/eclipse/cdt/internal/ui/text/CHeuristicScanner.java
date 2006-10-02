@@ -268,7 +268,7 @@ public final class CHeuristicScanner implements Symbols {
 	}
 
 	/**
-	 * Calls <code>this(document, IJavaPartitions.JAVA_PARTITIONING, IDocument.DEFAULT_CONTENT_TYPE)</code>.
+	 * Calls <code>this(document, ICPartitions.JAVA_PARTITIONING, IDocument.DEFAULT_CONTENT_TYPE)</code>.
 	 *
 	 * @param document the document to scan.
 	 */
@@ -473,17 +473,28 @@ public final class CHeuristicScanner implements Symbols {
 					return TokenWHILE;
 				break;
 			case 6:
+				if ("delete".equals(s)) //$NON-NLS-1$
+					return TokenDELETE;
+				if ("public".equals(s)) //$NON-NLS-1$
+					return TokenPUBLIC;
 				if ("return".equals(s)) //$NON-NLS-1$
 					return TokenRETURN;
 				if ("static".equals(s)) //$NON-NLS-1$
 					return TokenSTATIC;
+				if ("struct".equals(s)) //$NON-NLS-1$
+					return TokenSTRUCT;
 				if ("switch".equals(s)) //$NON-NLS-1$
 					return TokenSWITCH;
 				break;
 			case 7:
 				if ("default".equals(s)) //$NON-NLS-1$
 					return TokenDEFAULT;
+				if ("private".equals(s)) //$NON-NLS-1$
+					return TokenPRIVATE;
 				break;
+			case 9:
+				if ("protected".equals(s)) //$NON-NLS-1$
+					return TokenPROTECTED;
 		}
 		return TokenIDENT;
 	}

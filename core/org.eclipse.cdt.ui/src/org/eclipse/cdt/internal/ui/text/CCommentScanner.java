@@ -82,6 +82,10 @@ public class CCommentScanner extends AbstractCScanner
     private String fDefaultTokenProperty;
     private String[] fTokenProperties;
 
+    public CCommentScanner(IColorManager manager, IPreferenceStore store, String defaultTokenProperty) {
+        this(manager, store, null, defaultTokenProperty, new String[] { defaultTokenProperty, TASK_TAG });
+    }
+
     public CCommentScanner(IColorManager manager, IPreferenceStore store, Preferences coreStore, String defaultTokenProperty) {
         this(manager, store, coreStore, defaultTokenProperty, new String[] { defaultTokenProperty, TASK_TAG });
     }

@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.formatter.align.Alignment;
 
 /**
  */
-public class CodeFormatterConstants {
+public class DefaultCodeFormatterConstants {
 
 	/**
 	 * <pre>
@@ -494,75 +494,63 @@ public class CodeFormatterConstants {
 	 */
 	public static final String FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.brace_position_for_type_declaration";	//$NON-NLS-1$
 
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to control whether blank lines are cleared inside comments
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.clear_blank_lines"
-//	 *     - possible values:   { TRUE, FALSE }
-//	 *     - default:           FALSE
-//	 * </pre>
-//	 * @see #TRUE
-//	 * @see #FALSE
-//	 */	
-//	public final static String FORMATTER_COMMENT_CLEAR_BLANK_LINES = CCorePlugin.PLUGIN_ID + ".formatter.comment.clear_blank_lines"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to control whether blank lines are cleared inside comments
+	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.clear_blank_lines"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           FALSE
+	 * </pre>
+	 * @see #TRUE
+	 * @see #FALSE
+	 */	
+	public final static String FORMATTER_COMMENT_CLEAR_BLANK_LINES = CCorePlugin.PLUGIN_ID + ".formatter.comment.clear_blank_lines"; //$NON-NLS-1$
 	
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to control whether comments are formatted
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.format_comments"
-//	 *     - possible values:   { TRUE, FALSE }
-//	 *     - default:           TRUE
-//	 * </pre>
-//	 * @see #TRUE
-//	 * @see #FALSE
-//	 */	
-//	public final static String FORMATTER_COMMENT_FORMAT = CCorePlugin.PLUGIN_ID + ".formatter.comment.format_comments"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to control whether comments are formatted
+	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.format_comments"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           TRUE
+	 * </pre>
+	 * @see #TRUE
+	 * @see #FALSE
+	 */	
+	public final static String FORMATTER_COMMENT_FORMAT = CCorePlugin.PLUGIN_ID + ".formatter.comment.format_comments"; //$NON-NLS-1$
 
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to control whether the header comment of a C/C++ source file is formatted
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.format_header"
-//	 *     - possible values:   { TRUE, FALSE }
-//	 *     - default:           FALSE
-//	 * </pre>
-//	 * @see #TRUE
-//	 * @see #FALSE
-//	 */	
-//	public final static String FORMATTER_COMMENT_FORMAT_HEADER = CCorePlugin.PLUGIN_ID + ".formatter.comment.format_header"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to control whether the header comment of a C/C++ source file is formatted
+	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.format_header"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           FALSE
+	 * </pre>
+	 * @see #TRUE
+	 * @see #FALSE
+	 */	
+	public final static String FORMATTER_COMMENT_FORMAT_HEADER = CCorePlugin.PLUGIN_ID + ".formatter.comment.format_header"; //$NON-NLS-1$
 
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to control whether HTML tags are formatted.
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.format_html"
-//	 *     - possible values:   { TRUE, FALSE }
-//	 *     - default:           TRUE
-//	 * </pre>
-//	 * @see #TRUE
-//	 * @see #FALSE
-//	 */	
-//	public final static String FORMATTER_COMMENT_FORMAT_HTML = CCorePlugin.PLUGIN_ID + ".formatter.comment.format_html"; //$NON-NLS-1$
-
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to control whether code snippets are formatted in comments
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.format_source_code"
-//	 *     - possible values:   { TRUE, FALSE }
-//	 *     - default:           TRUE
-//	 * </pre>
-//	 * @see #TRUE
-//	 * @see #FALSE
-//	 */	
-//	public final static String FORMATTER_COMMENT_FORMAT_SOURCE = CCorePlugin.PLUGIN_ID + ".formatter.comment.format_source_code"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to control whether code snippets are formatted in comments
+	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.format_source_code"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           TRUE
+	 * </pre>
+	 * @see #TRUE
+	 * @see #FALSE
+	 */	
+	public final static String FORMATTER_COMMENT_FORMAT_SOURCE = CCorePlugin.PLUGIN_ID + ".formatter.comment.format_source_code"; //$NON-NLS-1$
 	
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to specify the line length for comments.
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.line_length"
-//	 *     - possible values:   "&lt;n&gt;", where n is zero or a positive integer
-//	 *     - default:           "80"
-//	 * </pre>
-//	 */	
-//	public final static String FORMATTER_COMMENT_LINE_LENGTH = CCorePlugin.PLUGIN_ID + ".formatter.comment.line_length"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to specify the line length for comments.
+	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.line_length"
+	 *     - possible values:   "&lt;n&gt;", where n is zero or a positive integer
+	 *     - default:           "80"
+	 * </pre>
+	 */	
+	public final static String FORMATTER_COMMENT_LINE_LENGTH = CCorePlugin.PLUGIN_ID + ".formatter.comment.line_length"; //$NON-NLS-1$
 
 //	/**
 //	 * <pre>
@@ -627,17 +615,28 @@ public class CodeFormatterConstants {
 	 * @see #FALSE
 	 */
 	public static final String FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ENUM_DECLARATION_HEADER = CCorePlugin.PLUGIN_ID + ".formatter.indent_body_declarations_compare_to_enum_declaration_header";	//$NON-NLS-1$
+  /**
+   * <pre>
+   * FORMATTER / Option to indent body declarations compare to its enclosing type header
+   *     - option id:         "org.eclipse.cdt.core.formatter.indent_access_specifier_compare_to_type_header"
+   *     - possible values:   { TRUE, FALSE }
+   *     - default:           FALSE
+   * </pre>
+   * @see #TRUE
+   * @see #FALSE
+   */
+  public static final String FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER = CCorePlugin.PLUGIN_ID + ".formatter.indent_access_specifier_compare_to_type_header";  //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to indent body declarations compare to its enclosing type header
-	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_body_declarations_compare_to_type_header"
+	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_body_declarations_compare_to_access_specifier"
 	 *     - possible values:   { TRUE, FALSE }
 	 *     - default:           TRUE
 	 * </pre>
 	 * @see #TRUE
 	 * @see #FALSE
 	 */
-	public static final String FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_TYPE_HEADER = CCorePlugin.PLUGIN_ID + ".formatter.indent_body_declarations_compare_to_type_header";	//$NON-NLS-1$
+	public static final String FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER = CCorePlugin.PLUGIN_ID + ".formatter.indent_body_declarations_compare_to_access_specifier";	//$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to indent breaks compare to cases
@@ -1119,7 +1118,7 @@ public class CodeFormatterConstants {
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to insert a space after the comma in the arguments of an explicit constructor call
-//	 *     - option id:         "org.eclipse.jdt.core.formatter.insert_space_after_comma_in_explicitconstructorcall_arguments"
+//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_explicitconstructorcall_arguments"
 //	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 //	 *     - default:           INSERT
 //	 * </pre>

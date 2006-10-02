@@ -7,9 +7,10 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Sergey Prigogin, Google
  *******************************************************************************/
 
-package org.eclipse.cdt.ui.dialogs;
+package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,24 +37,23 @@ import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 
 /**
  * 
  */
-public class CodeFormatterBlock {
+public class CustomCodeFormatterBlock {
 
 	private HashMap idMap = new HashMap();
 	Preferences fPrefs;
 	protected Combo fFormatterCombo;
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
-	private static final String ATTR_ID="id"; //$NON-NLS-1$
+	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	// This is a hack until we have a default Formatter.
 	// For now it is comment out in the plugin.xml
-	private static final String NONE=PreferencesMessages.CodeFormatterPreferencePage_emptyName; 
+	private static final String NONE = FormatterMessages.CustomCodeFormatterBlock_no_formatter;
 
 
-	public CodeFormatterBlock(Preferences prefs) {
+	public CustomCodeFormatterBlock(Preferences prefs) {
 		fPrefs = prefs;
 		initializeFormatters();
 	}
@@ -96,21 +96,19 @@ public class CodeFormatterBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
-	public Control createControl(Composite parent) {
-		Composite control = ControlFactory.createComposite(parent, 2);
-		((GridLayout) control.getLayout()).makeColumnsEqualWidth = false;
-		((GridLayout) control.getLayout()).marginWidth = 5;
+	public Control createContents(Composite parent) {
+		Composite composite = ControlFactory.createComposite(parent, 1);
+		((GridLayout)composite.getLayout()).marginWidth = 0;
+		((GridData)composite.getLayoutData()).horizontalSpan = 2;
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, ICHelpContextIds.CODEFORMATTER_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.CODEFORMATTER_PREFERENCE_PAGE);
 
-		ControlFactory.createEmptySpace(control, 2);
+		ControlFactory.createEmptySpace(composite, 1);
 
-		Label label = ControlFactory.createLabel(control, PreferencesMessages.CodeFormatterPreferencePage_selectionName); 
-		label.setLayoutData(new GridData());
-		fFormatterCombo = new Combo(control, SWT.DROP_DOWN | SWT.READ_ONLY);
-		GridData gd = new GridData(GridData.GRAB_HORIZONTAL);
-		gd.grabExcessHorizontalSpace = true;
-		fFormatterCombo.setLayoutData(gd);
+		Label label = ControlFactory.createLabel(composite, FormatterMessages.CustomCodeFormatterBlock_formatter_name);
+		fFormatterCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
+		fFormatterCombo.setFont(parent.getFont());
+		fFormatterCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fFormatterCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleFormatterChanged();
@@ -121,16 +119,24 @@ public class CodeFormatterBlock {
 			fFormatterCombo.add((String) items.next());
 		}
 
+		label = ControlFactory.createLabel(parent, FormatterMessages.CustomCodeFormatterBlock_contributed_formatter_warning);
+		((GridData)label.getLayoutData()).horizontalSpan = 5;
+		
 		initDefault();
 		handleFormatterChanged();
-		return control;
+		
+		if (getNumberOfAvailableFormatters() == 0) {
+			composite.setVisible(false);
+			label.setVisible(false);
+		}
+		return composite;
 	}
 
-	public void handleFormatterChanged() {	
+	private void handleFormatterChanged() {	
 		// TODO: UI part.
 	}
 
-	public void initDefault() {
+	private void initDefault() {
 		boolean init = false;
 		String selection = CCorePlugin.getOption(CCorePreferenceConstants.CODE_FORMATTER);
 		if (selection != null) {
@@ -164,5 +170,8 @@ public class CodeFormatterBlock {
 			}
 		}
 	}
-
+	
+	private final int getNumberOfAvailableFormatters() {
+		return idMap.size() - 1;
+	}
 }

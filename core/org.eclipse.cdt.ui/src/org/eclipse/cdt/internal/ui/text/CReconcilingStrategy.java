@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
@@ -38,7 +37,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 	// used by tests
 	protected boolean fInitialProcessDone;
 	
-	public CReconcilingStrategy(CEditor editor) {
+	public CReconcilingStrategy(ITextEditor editor) {
 		fEditor= editor;
 		fManager= CUIPlugin.getDefault().getWorkingCopyManager();
 	}
@@ -48,7 +47,6 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 	 */
 	public void setDocument(IDocument document) {
 	}	
-
 
 	/*
 	 * @see IReconcilingStrategyExtension#setProgressMonitor(IProgressMonitor)

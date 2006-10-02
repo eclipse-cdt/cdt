@@ -21,6 +21,8 @@ import org.eclipse.text.edits.TextEdit;
  */
 public abstract class CodeFormatter {
 
+  public static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
 	/**
 	 * Unknown kind
 	 */
@@ -45,6 +47,15 @@ public abstract class CodeFormatter {
 	 * Kind used to format a compilation unit
 	 */
 	public static final int K_COMPILATION_UNIT = 0x08;
+
+	/**
+	 * Kind used to format a single-line comment
+	 */
+	public static final int K_SINGLE_LINE_COMMENT = 0x10;
+	/**
+	 * Kind used to format a multi-line comment
+	 */
+	public static final int K_MULTI_LINE_COMMENT = 0x20;
 
 	/** 
 	 * Format <code>source</code>,
@@ -75,4 +86,19 @@ public abstract class CodeFormatter {
 	 * @param options - general formatter options
 	 */
 	public abstract void setOptions(Map options);
+  
+  /**
+   * Answers the string that corresponds to the indentation to the given indentation level or an empty string
+   * if the indentation cannot be computed.
+   * <p>This method needs to be overriden in a subclass.</p>
+   * 
+   * <p>The default implementation returns an empty string.</p>
+   * 
+   * @param indentationLevel the given indentation level
+   * @return the string corresponding to the right indentation level
+   * @exception IllegalArgumentException if the given indentation level is lower than zero
+   */
+  public String createIndentationString(int indentationLevel) {
+    return EMPTY_STRING;
+  }
 }

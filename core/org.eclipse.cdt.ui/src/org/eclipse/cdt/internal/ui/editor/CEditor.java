@@ -16,8 +16,13 @@ package org.eclipse.cdt.internal.ui.editor;
 
 
 import java.text.CharacterIterator;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Stack;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -32,35 +37,53 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentCommand;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ILineTracker;
+import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.formatter.FormattingContextProperties;
+import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.jface.text.information.InformationPresenter;
+import org.eclipse.jface.text.link.ILinkedModeListener;
+import org.eclipse.jface.text.link.LinkedModeModel;
+import org.eclipse.jface.text.link.LinkedModeUI;
+import org.eclipse.jface.text.link.LinkedPosition;
+import org.eclipse.jface.text.link.LinkedPositionGroup;
+import org.eclipse.jface.text.link.LinkedModeUI.ExitFlags;
+import org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationHoverExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.ILineRange;
+import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension3;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -80,12 +103,14 @@ import org.eclipse.search.ui.actions.TextSearchGroup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -106,7 +131,6 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
@@ -119,6 +143,7 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextEditorAction;
 import org.eclipse.ui.texteditor.TextNavigationAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
+import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import com.ibm.icu.text.BreakIterator;
@@ -127,8 +152,10 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -142,6 +169,7 @@ import org.eclipse.cdt.ui.actions.ShowInCViewAction;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 import org.eclipse.cdt.internal.corext.util.SimplePositionTracker;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -150,6 +178,7 @@ import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
 import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
+import org.eclipse.cdt.internal.ui.actions.IndentAction;
 import org.eclipse.cdt.internal.ui.actions.JoinLinesAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
@@ -158,6 +187,7 @@ import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDefinitionAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
+import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.CPairMatcher;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
@@ -165,7 +195,9 @@ import org.eclipse.cdt.internal.ui.text.CWordIterator;
 import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
 import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
+import org.eclipse.cdt.internal.ui.text.Symbols;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
+import org.eclipse.cdt.internal.ui.text.comment.CommentFormattingContext;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.util.CUIHelp;
 
@@ -175,14 +207,612 @@ import org.eclipse.cdt.internal.ui.util.CUIHelp;
  */
 public class CEditor extends TextEditor implements ISelectionChangedListener, IReconcilingParticipant, ICReconcilingListener {
 
+	interface ITextConverter {
+		void customizeDocumentCommand(IDocument document, DocumentCommand command);
+	}
+
+	class AdaptedSourceViewer extends CSourceViewer  {
+
+		private List fTextConverters;
+		private boolean fIgnoreTextConverters= false;
+
+		public AdaptedSourceViewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler,
+				                   boolean showAnnotationsOverview, int styles) {
+			super(parent, verticalRuler, overviewRuler, showAnnotationsOverview, styles);
+		}
+
+		public IContentAssistant getContentAssistant() {
+			return fContentAssistant;
+		}
+
+		/*
+		 * @see ITextOperationTarget#doOperation(int)
+		 */
+		public void doOperation(int operation) {
+
+			if (getTextWidget() == null)
+				return;
+
+			switch (operation) {
+				case CONTENTASSIST_PROPOSALS:
+//					long time= CODE_ASSIST_DEBUG ? System.currentTimeMillis() : 0;
+					String msg= fContentAssistant.showPossibleCompletions();
+//					if (CODE_ASSIST_DEBUG) {
+//						long delta= System.currentTimeMillis() - time;
+//						System.err.println("Code Assist (total): " + delta); //$NON-NLS-1$
+//					}
+					setStatusLineErrorMessage(msg);
+					return;
+				case QUICK_ASSIST:
+					/*
+					 * XXX: We can get rid of this once the SourceViewer has a way to update the status line
+					 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=133787
+					 */
+					msg= fQuickAssistAssistant.showPossibleQuickAssists();
+					setStatusLineErrorMessage(msg);
+					return;
+				case UNDO:
+					fIgnoreTextConverters= true;
+					super.doOperation(operation);
+					fIgnoreTextConverters= false;
+					return;
+				case REDO:
+					fIgnoreTextConverters= true;
+					super.doOperation(operation);
+					fIgnoreTextConverters= false;
+					return;
+			}
+
+			super.doOperation(operation);
+		}
+
+		public void insertTextConverter(ITextConverter textConverter, int index) {
+			throw new UnsupportedOperationException();
+		}
+
+		public void addTextConverter(ITextConverter textConverter) {
+			if (fTextConverters == null) {
+				fTextConverters= new ArrayList(1);
+				fTextConverters.add(textConverter);
+			} else if (!fTextConverters.contains(textConverter))
+				fTextConverters.add(textConverter);
+		}
+
+		public void removeTextConverter(ITextConverter textConverter) {
+			if (fTextConverters != null) {
+				fTextConverters.remove(textConverter);
+				if (fTextConverters.size() == 0)
+					fTextConverters= null;
+			}
+		}
+
+		/*
+		 * @see TextViewer#customizeDocumentCommand(DocumentCommand)
+		 */
+		protected void customizeDocumentCommand(DocumentCommand command) {
+			super.customizeDocumentCommand(command);
+			if (!fIgnoreTextConverters && fTextConverters != null) {
+				for (Iterator e = fTextConverters.iterator(); e.hasNext();)
+					((ITextConverter) e.next()).customizeDocumentCommand(getDocument(), command);
+			}
+		}
+
+		public void updateIndentationPrefixes() {
+			SourceViewerConfiguration configuration= getSourceViewerConfiguration();
+			String[] types= configuration.getConfiguredContentTypes(this);
+			for (int i= 0; i < types.length; i++) {
+				String[] prefixes= configuration.getIndentPrefixes(this, types[i]);
+				if (prefixes != null && prefixes.length > 0)
+					setIndentPrefixes(prefixes, types[i]);
+			}
+
+			StyledText textWidget= getTextWidget();
+			int tabWidth= configuration.getTabWidth(this);
+			if (textWidget.getTabs() != tabWidth)
+				textWidget.setTabs(tabWidth);
+		}
+
+		/*
+		 * @see IWidgetTokenOwner#requestWidgetToken(IWidgetTokenKeeper)
+		 */
+		public boolean requestWidgetToken(IWidgetTokenKeeper requester) {
+			if (PlatformUI.getWorkbench().getHelpSystem().isContextHelpDisplayed())
+				return false;
+			return super.requestWidgetToken(requester);
+		}
+
+		/*
+		 * @see IWidgetTokenOwnerExtension#requestWidgetToken(IWidgetTokenKeeper, int)
+		 * @since 3.0
+		 */
+		public boolean requestWidgetToken(IWidgetTokenKeeper requester, int priority) {
+			if (PlatformUI.getWorkbench().getHelpSystem().isContextHelpDisplayed())
+				return false;
+			return super.requestWidgetToken(requester, priority);
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.source.SourceViewer#createFormattingContext()
+		 * @since 3.0
+		 */
+		public IFormattingContext createFormattingContext() {
+			IFormattingContext context= new CommentFormattingContext();
+
+			Map preferences;
+			ICElement inputCElement= getInputCElement();
+			ICProject cProject= inputCElement != null ? inputCElement.getCProject() : null;
+			if (cProject == null)
+				preferences= new HashMap(CCorePlugin.getOptions());
+			else
+				preferences= new HashMap(cProject.getOptions(true));
+
+			context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, preferences);
+
+			return context;
+		}
+	}
+
+	static class TabConverter implements ITextConverter {
+		private int fTabRatio;
+		private ILineTracker fLineTracker;
+		
+		public TabConverter() {
+		}
+		
+		public void setNumberOfSpacesPerTab(int ratio) {
+			fTabRatio = ratio;
+		}
+		
+		public void setLineTracker(ILineTracker lineTracker) {
+			fLineTracker = lineTracker;
+		}
+		
+		private int insertTabString(StringBuffer buffer, int offsetInLine) {
+			
+			if (fTabRatio == 0)
+				return 0;
+				
+			int remainder = offsetInLine % fTabRatio;
+			remainder = fTabRatio - remainder;
+			for (int i = 0; i < remainder; i++)
+				buffer.append(' ');
+			return remainder;
+		}
+		
+		public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
+			String text = command.text;
+			if (text == null)
+				return;
+				
+			int index = text.indexOf('\t');
+			if (index > -1) {
+				StringBuffer buffer = new StringBuffer();
+				
+				fLineTracker.set(command.text);
+				int lines = fLineTracker.getNumberOfLines();
+				
+				try {
+					for (int i = 0; i < lines; i++) {
+						int offset = fLineTracker.getLineOffset(i);
+						int endOffset = offset + fLineTracker.getLineLength(i);
+						String line = text.substring(offset, endOffset);
+						
+						int position = 0;
+						if (i == 0) {
+							IRegion firstLine = document.getLineInformationOfOffset(command.offset);
+							position = command.offset - firstLine.getOffset();	
+						}
+						
+						int length = line.length();
+						for (int j = 0; j < length; j++) {
+							char c = line.charAt(j);
+							if (c == '\t') {
+								int oldPosition = position;
+								position += insertTabString(buffer, position);
+								if (command.caretOffset > command.offset + oldPosition) {
+									command.caretOffset += position - oldPosition - 1;
+								}
+							} else {
+								buffer.append(c);
+								++position;
+							}
+						}
+					}
+						
+					command.text = buffer.toString();
+				} catch (BadLocationException x) {
+				}
+			}
+		}
+	}
+
+	private class ExitPolicy implements IExitPolicy {
+
+		final char fExitCharacter;
+		final char fEscapeCharacter;
+		final Stack fStack;
+		final int fSize;
+
+		public ExitPolicy(char exitCharacter, char escapeCharacter, Stack stack) {
+			fExitCharacter = exitCharacter;
+			fEscapeCharacter = escapeCharacter;
+			fStack = stack;
+			fSize = fStack.size();
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.link.LinkedModeUI$IExitPolicy#doExit(org.eclipse.jface.text.link.LinkedModeModel, org.eclipse.swt.events.VerifyEvent, int, int)
+		 */
+		public ExitFlags doExit(LinkedModeModel model, VerifyEvent event, int offset, int length) {
+
+			if (fSize == fStack.size() && !isMasked(offset)) {
+				if (event.character == fExitCharacter) {
+					BracketLevel level = (BracketLevel) fStack.peek();
+					if (level.fFirstPosition.offset > offset || level.fSecondPosition.offset < offset)
+						return null;
+					if (level.fSecondPosition.offset == offset && length == 0)
+						// don't enter the character if if its the closing peer
+						return new ExitFlags(ILinkedModeListener.UPDATE_CARET, false);
+				}
+				// when entering an anonymous class between the parenthesis', we don't want
+				// to jump after the closing parenthesis when return is pressed
+				if (event.character == SWT.CR && offset > 0) {
+					IDocument document = getSourceViewer().getDocument();
+					try {
+						if (document.getChar(offset - 1) == '{')
+							return new ExitFlags(ILinkedModeListener.EXIT_ALL, true);
+					} catch (BadLocationException e) {
+					}
+				}
+			}
+			return null;
+		}
+
+		private boolean isMasked(int offset) {
+			IDocument document = getSourceViewer().getDocument();
+			try {
+				return fEscapeCharacter == document.getChar(offset - 1);
+			} catch (BadLocationException e) {
+			}
+			return false;
+		}
+	}
+
+	private static class BracketLevel {
+		int fOffset;
+		int fLength;
+		LinkedModeUI fUI;
+		Position fFirstPosition;
+		Position fSecondPosition;
+	}
+
 	/**
-	 * The information provider used to present focusable information
-	 * shells.
+	 * Position updater that takes any changes at the borders of a position to not belong to the position.
+	 *
+	 * @since 4.0
 	 */
-	private InformationPresenter fInformationPresenter;
-	
+	private static class ExclusivePositionUpdater implements IPositionUpdater {
+
+		/** The position category. */
+		private final String fCategory;
+
+		/**
+		 * Creates a new updater for the given <code>category</code>.
+		 *
+		 * @param category the new category.
+		 */
+		public ExclusivePositionUpdater(String category) {
+			fCategory = category;
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IPositionUpdater#update(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void update(DocumentEvent event) {
+
+			int eventOffset = event.getOffset();
+			int eventOldLength = event.getLength();
+			int eventNewLength = event.getText() == null ? 0 : event.getText().length();
+			int deltaLength = eventNewLength - eventOldLength;
+
+			try {
+				Position[] positions = event.getDocument().getPositions(fCategory);
+
+				for (int i = 0; i != positions.length; i++) {
+
+					Position position = positions[i];
+
+					if (position.isDeleted())
+						continue;
+
+					int offset = position.getOffset();
+					int length = position.getLength();
+					int end = offset + length;
+
+					if (offset >= eventOffset + eventOldLength)
+						// position comes
+						// after change - shift
+						position.setOffset(offset + deltaLength);
+					else if (end <= eventOffset) {
+						// position comes way before change -
+						// leave alone
+					} else if (offset <= eventOffset && end >= eventOffset + eventOldLength) {
+						// event completely internal to the position - adjust length
+						position.setLength(length + deltaLength);
+					} else if (offset < eventOffset) {
+						// event extends over end of position - adjust length
+						int newEnd = eventOffset;
+						position.setLength(newEnd - offset);
+					} else if (end > eventOffset + eventOldLength) {
+						// event extends from before position into it - adjust offset
+						// and length
+						// offset becomes end of event, length adjusted accordingly
+						int newOffset = eventOffset + eventNewLength;
+						position.setOffset(newOffset);
+						position.setLength(end - newOffset);
+					} else {
+						// event consumes the position - delete it
+						position.delete();
+					}
+				}
+			} catch (BadPositionCategoryException e) {
+				// ignore and return
+			}
+		}
+
+		/**
+		 * Returns the position category.
+		 *
+		 * @return the position category
+		 */
+		public String getCategory() {
+			return fCategory;
+		}
+	}
+
+	private class BracketInserter implements VerifyKeyListener, ILinkedModeListener {
+
+		private boolean fCloseBrackets = true;
+		private boolean fCloseStrings = true;
+		private boolean fCloseAngularBrackets = true;
+		private final String CATEGORY = toString();
+		private IPositionUpdater fUpdater = new ExclusivePositionUpdater(CATEGORY);
+		private Stack fBracketLevelStack = new Stack();
+
+		public void setCloseBracketsEnabled(boolean enabled) {
+			fCloseBrackets = enabled;
+		}
+
+		public void setCloseStringsEnabled(boolean enabled) {
+			fCloseStrings = enabled;
+		}
+
+		public void setCloseAngularBracketsEnabled(boolean enabled) {
+			fCloseAngularBrackets = enabled;
+		}
+
+		private boolean isAngularIntroducer(String identifier) {
+			return identifier.length() > 0
+				&& (Character.isUpperCase(identifier.charAt(0))
+					|| identifier.equals("template") //$NON-NLS-1$
+					|| identifier.equals("vector") //$NON-NLS-1$
+					|| identifier.equals("list") //$NON-NLS-1$
+					|| identifier.equals("slist") //$NON-NLS-1$
+					|| identifier.equals("map") //$NON-NLS-1$
+					|| identifier.equals("set") //$NON-NLS-1$
+					|| identifier.equals("multimap") //$NON-NLS-1$
+					|| identifier.equals("multiset") //$NON-NLS-1$
+					|| identifier.equals("hash_map") //$NON-NLS-1$
+					|| identifier.equals("hash_set") //$NON-NLS-1$
+					|| identifier.equals("hash_multimap") //$NON-NLS-1$
+					|| identifier.equals("hash_multiset") //$NON-NLS-1$
+					|| identifier.equals("pair") //$NON-NLS-1$
+					|| identifier.endsWith("_ptr") //$NON-NLS-1$
+					|| identifier.endsWith("include")); //$NON-NLS-1$
+		}
+
+		/*
+		 * @see org.eclipse.swt.custom.VerifyKeyListener#verifyKey(org.eclipse.swt.events.VerifyEvent)
+		 */
+		public void verifyKey(VerifyEvent event) {
+
+			// early pruning to slow down normal typing as little as possible
+			if (!event.doit || getInsertMode() != SMART_INSERT)
+				return;
+			switch (event.character) {
+				case '(':
+				case '<':
+				case '[':
+				case '\'':
+				case '\"':
+					break;
+				default:
+					return;
+			}
+
+			final ISourceViewer sourceViewer = getSourceViewer();
+			IDocument document = sourceViewer.getDocument();
+
+			final Point selection = sourceViewer.getSelectedRange();
+			final int offset = selection.x;
+			final int length = selection.y;
+
+			try {
+				IRegion startLine = document.getLineInformationOfOffset(offset);
+				IRegion endLine = document.getLineInformationOfOffset(offset + length);
+
+				CHeuristicScanner scanner = new CHeuristicScanner(document);
+				int nextToken = scanner.nextToken(offset + length, endLine.getOffset() + endLine.getLength());
+				String next = nextToken == Symbols.TokenEOF ? null : document.get(offset, scanner.getPosition() - offset).trim();
+				int prevToken = scanner.previousToken(offset - 1, startLine.getOffset());
+				int prevTokenOffset = scanner.getPosition() + 1;
+				String previous = prevToken == Symbols.TokenEOF ? null : document.get(prevTokenOffset, offset - prevTokenOffset).trim();
+
+				switch (event.character) {
+					case '(':
+						if (!fCloseBrackets
+								|| nextToken == Symbols.TokenLPAREN
+								|| nextToken == Symbols.TokenIDENT
+								|| next != null && next.length() > 1)
+							return;
+						break;
+
+					case '<':
+						if (!(fCloseAngularBrackets && fCloseBrackets)
+								|| nextToken == Symbols.TokenLESSTHAN
+								|| 		   prevToken != Symbols.TokenLBRACE
+										&& prevToken != Symbols.TokenRBRACE
+										&& prevToken != Symbols.TokenSEMICOLON
+										&& prevToken != Symbols.TokenSTATIC
+										&& (prevToken != Symbols.TokenIDENT || !isAngularIntroducer(previous))
+										&& prevToken != Symbols.TokenEOF)
+							return;
+						break;
+
+					case '[':
+						if (!fCloseBrackets
+								|| nextToken == Symbols.TokenIDENT
+								|| next != null && next.length() > 1)
+							return;
+						break;
+
+					case '\'':
+					case '"':
+						if (!fCloseStrings
+								|| nextToken == Symbols.TokenIDENT
+								|| next != null && next.length() > 1
+								|| (!("include".equals(previous) && event.character == '"') //$NON-NLS-1$
+										&& (prevToken == Symbols.TokenIDENT
+												|| previous != null && previous.length() > 1)))
+							return;
+						break;
+
+					default:
+						return;
+				}
+
+				ITypedRegion partition = TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, true);
+				if (!IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType()))
+					return;
+
+				if (!validateEditorInputState())
+					return;
+
+				final char character = event.character;
+				final char closingCharacter = getPeerCharacter(character);
+				final StringBuffer buffer = new StringBuffer();
+				buffer.append(character);
+				buffer.append(closingCharacter);
+				if (closingCharacter == '>' && nextToken != Symbols.TokenEOF
+						&& document.getChar(offset + length) == '>') {
+					// Insert a space to avoid two consequtive closing angular brackets. 
+					buffer.append(' ');
+				}
+
+				document.replace(offset, length, buffer.toString());
+
+				BracketLevel level = new BracketLevel();
+				fBracketLevelStack.push(level);
+
+				LinkedPositionGroup group = new LinkedPositionGroup();
+				group.addPosition(new LinkedPosition(document, offset + 1, 0, LinkedPositionGroup.NO_STOP));
+
+				LinkedModeModel model = new LinkedModeModel();
+				model.addLinkingListener(this);
+				model.addGroup(group);
+				model.forceInstall();
+
+				level.fOffset = offset;
+				level.fLength = 2;
+
+				// set up position tracking for our magic peers
+				if (fBracketLevelStack.size() == 1) {
+					document.addPositionCategory(CATEGORY);
+					document.addPositionUpdater(fUpdater);
+				}
+				level.fFirstPosition = new Position(offset, 1);
+				level.fSecondPosition = new Position(offset + 1, 1);
+				document.addPosition(CATEGORY, level.fFirstPosition);
+				document.addPosition(CATEGORY, level.fSecondPosition);
+
+				level.fUI = new EditorLinkedModeUI(model, sourceViewer);
+				level.fUI.setSimpleMode(true);
+				level.fUI.setExitPolicy(new ExitPolicy(closingCharacter, getEscapeCharacter(closingCharacter), fBracketLevelStack));
+				level.fUI.setExitPosition(sourceViewer, offset + 2, 0, Integer.MAX_VALUE);
+				level.fUI.setCyclingMode(LinkedModeUI.CYCLE_NEVER);
+				level.fUI.enter();
+
+				IRegion newSelection = level.fUI.getSelectedRegion();
+				sourceViewer.setSelectedRange(newSelection.getOffset(), newSelection.getLength());
+
+				event.doit = false;
+
+			} catch (BadLocationException e) {
+				CUIPlugin.getDefault().log(e);
+			} catch (BadPositionCategoryException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.link.ILinkedModeListener#left(org.eclipse.jface.text.link.LinkedModeModel, int)
+		 */
+		public void left(LinkedModeModel environment, int flags) {
+
+			final BracketLevel level = (BracketLevel) fBracketLevelStack.pop();
+
+			if (flags != ILinkedModeListener.EXTERNAL_MODIFICATION)
+				return;
+
+			// remove brackets
+			final ISourceViewer sourceViewer = getSourceViewer();
+			final IDocument document = sourceViewer.getDocument();
+			if (document instanceof IDocumentExtension) {
+				IDocumentExtension extension = (IDocumentExtension) document;
+				extension.registerPostNotificationReplace(null, new IDocumentExtension.IReplace() {
+
+					public void perform(IDocument d, IDocumentListener owner) {
+						if ((level.fFirstPosition.isDeleted || level.fFirstPosition.length == 0)
+								&& !level.fSecondPosition.isDeleted
+								&& level.fSecondPosition.offset == level.fFirstPosition.offset)
+						{
+							try {
+								document.replace(level.fSecondPosition.offset,
+												 level.fSecondPosition.length,
+												 null);
+							} catch (BadLocationException e) {
+								CUIPlugin.getDefault().log(e);
+							}
+						}
+
+						if (fBracketLevelStack.size() == 0) {
+							document.removePositionUpdater(fUpdater);
+							try {
+								document.removePositionCategory(CATEGORY);
+							} catch (BadPositionCategoryException e) {
+								CUIPlugin.getDefault().log(e);
+							}
+						}
+					}
+				});
+			}
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.link.ILinkedModeListener#suspend(org.eclipse.jface.text.link.LinkedModeModel)
+		 */
+		public void suspend(LinkedModeModel environment) {
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.link.ILinkedModeListener#resume(org.eclipse.jface.text.link.LinkedModeModel, int)
+		 */
+		public void resume(LinkedModeModel environment, int flags) {
+		}
+	}
+
 	/**
-	 * Updates the Java outline page selection and this editor's range indicator.
+	 * Updates the C outline page selection and this editor's range indicator.
 	 * 
 	 * @since 3.0
 	 */
@@ -236,7 +866,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		/*
 		 * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer,
 		 *      org.eclipse.jface.text.IRegion)
-		 * @since 3.2
 		 */
 		public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 			return fHoverInfo;
@@ -499,1385 +1128,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 			} catch (IllegalArgumentException e) {
 				return -1;
 			}
-
 		}
 	}
 	
-	/**
-	 * The editor selection changed listener.
-	 * 
-	 * @since 3.0
-	 */
-	private EditorSelectionChangedListener fEditorSelectionChangedListener;
-	
-
-	/** The outline page */
-	protected CContentOutlinePage fOutlinePage;
-	
-	/** Search actions **/
-	private ActionGroup fSelectionSearchGroup;
-	private ActionGroup fTextSearchGroup;
-	private CRefactoringActionGroup fRefactoringActionGroup;
-	private ActionGroup fOpenInViewGroup;
-
-	/** Generate action group filling the "Source" submenu */
-	private GenerateActionGroup fGenerateActionGroup;
-
-    /** Action which shows selected element in CView. */
-	private ShowInCViewAction fShowInCViewAction;
-	
-	/** Activity Listeners **/
-	protected ISelectionChangedListener fStatusLineClearer;
-    protected ISelectionChangedListener fSelectionUpdateListener;
-	
-	/** Pairs of brackets, used to match. */
-    protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
-
-	/** Matches the brackets. */
-    protected CPairMatcher fBracketMatcher = new CPairMatcher(BRACKETS);
-
-	/** The editor's tab converter */
-	private TabConverter fTabConverter;
-
-	/** Listener to annotation model changes that updates the error tick in the tab image */
-	private CEditorErrorTickUpdater fCEditorErrorTickUpdater;
-
-	/** Preference key for sub-word navigation, aka smart caret positioning */
-	public final static String SUB_WORD_NAVIGATION= "subWordNavigation"; //$NON-NLS-1$
-	/** Preference key for matching brackets */
-	public final static String MATCHING_BRACKETS = "matchingBrackets"; //$NON-NLS-1$
-	/** Preference key for matching brackets color */
-	public final static String MATCHING_BRACKETS_COLOR = "matchingBracketsColor"; //$NON-NLS-1$
-	/** Preference key for inactive code painter enablement */
-	public static final String INACTIVE_CODE_ENABLE = "inactiveCodeEnable"; //$NON-NLS-1$
-	/** Preference key for inactive code painter color */
-	public static final String INACTIVE_CODE_COLOR = "inactiveCodeColor"; //$NON-NLS-1$
-	/** Preference key for inserting spaces rather than tabs */
-	public final static String SPACES_FOR_TABS = "spacesForTabs"; //$NON-NLS-1$
-
-    /** Preference key for compiler task tags */
-    private final static String TRANSLATION_TASK_TAGS= CCorePreferenceConstants.TRANSLATION_TASK_TAGS;
-
-	/** 
-	 * This editor's projection support 
-	 */
-	private ProjectionSupport fProjectionSupport;
-	/** 
-	 * This editor's projection model updater 
-	 */
-	private ICFoldingStructureProvider fProjectionModelUpdater;
-
-	/**
-	 * The action group for folding.
-	 */
-	private FoldingActionGroup fFoldingGroup;
-
-	/**
-	 * AST reconciling listeners.
-	 * @since 4.0
-	 */
-	private ListenerList fReconcilingListeners= new ListenerList(ListenerList.IDENTITY);
-
-	/**
-	 * Semantic highlighting manager
-	 * @since 4.0
-	 */
-	private SemanticHighlightingManager fSemanticManager;
-
-
-	/**
-	 * Default constructor.
-	 */
-	public CEditor() {
-		super();
-	}
-
-	/**
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
-	 */
-	protected void initializeEditor() {
-		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
-		setSourceViewerConfiguration(new CSourceViewerConfiguration(textTools, this));
-		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
-	
-		setEditorContextMenuId("#CEditorContext"); //$NON-NLS-1$
-		setRulerContextMenuId("#CEditorRulerContext"); //$NON-NLS-1$
-		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
-
-		setPreferenceStore(CUIPlugin.getDefault().getCombinedPreferenceStore());
-		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);          
-	}
-
-	/**
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSetInput(org.eclipse.ui.IEditorInput)
-	 */
-	protected void doSetInput(IEditorInput input) throws CoreException {
-		super.doSetInput(input);
-		setOutlinePageInput(fOutlinePage, input);
-
-		if (fProjectionModelUpdater != null) {
-			fProjectionModelUpdater.initialize();
-		}
-		if (fCEditorErrorTickUpdater != null) {
-			fCEditorErrorTickUpdater.updateEditorImage(getInputCElement());
-		}
-	}
-
-	/**
-	 * Update the title image.
-     * @param image Title image.
-	 */
-	public void updatedTitleImage(Image image) {
-		setTitleImage(image);
-	}
-
-	/**
-	 * Returns the C element wrapped by this editors input.
-	 *
-	 * @return the C element wrapped by this editors input.
-	 * @since 3.0
-	 */
-	public ICElement getInputCElement () {
-		return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(getEditorInput());
-	}
-
-	/**
-	 * Gets the current IFile input.
-	 * This method will be remove after cdt-3.0.
-	 * We can not guaranty that the input is an IFile, it may
-	 * an external file.  Clients should test for <code>null<code> or use getInputCElement()
-	 * @deprecated use <code>CEditor.getInputCElement()</code>.
-     * @return IFile Input file or null if input is not and IFileEditorInput.
-	 */
-	public IFile getInputFile() {		
-		IEditorInput editorInput = getEditorInput();
-		if (editorInput != null) {
-			if ((editorInput instanceof IFileEditorInput)) {
-				return ((IFileEditorInput) editorInput).getFile();
-			}
-		}
-		return null;
-	}
-
-	/**
-     * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
-	 */
-    public boolean isSaveAsAllowed() {
-		return true;
-	}
-	/**
-	 * Gets the outline page of the c-editor.
-     * @return Outline page.
-	 */
-	public CContentOutlinePage getOutlinePage() {
-		if (fOutlinePage == null) {
-			fOutlinePage = new CContentOutlinePage(this);
-			fOutlinePage.addSelectionChangedListener(this);
-		}
-		setOutlinePageInput(fOutlinePage, getEditorInput());
-		return fOutlinePage;
-	}
-
-	/**
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class required) {
-		if (IContentOutlinePage.class.equals(required)) {
-			return getOutlinePage();
-		}
-		if (required == IShowInTargetList.class) {
-			return new IShowInTargetList() {
-				public String[] getShowInTargetIds() {
-					return new String[] { CUIPlugin.CVIEW_ID, IPageLayout.ID_OUTLINE, IPageLayout.ID_RES_NAV };
-				}
-
-			};
-		}
-		if (required == IShowInSource.class) {
-			ICElement ce= null;
-			try {
-				ce= SelectionConverter.getElementAtOffset(this);
-			} catch (CModelException ex) {
-				ce= null;
-			}
-			if (ce != null) { 
-				final ISelection selection= new StructuredSelection(ce);
-				return new IShowInSource() {
-					public ShowInContext getShowInContext() {
-						return new ShowInContext(getEditorInput(), selection);
-					}
-				};
-			}
-		}
-		if (ProjectionAnnotationModel.class.equals(required)) {
-			if (fProjectionSupport != null) {
-				Object adapter= fProjectionSupport.getAdapter(getSourceViewer(), required);
-				if (adapter != null)
-					return adapter;
-			}
-		}
-		return super.getAdapter(required);
-	}
-	/**
-	 * Handles a property change event describing a change
-	 * of the editor's preference store and updates the preference
-	 * related editor properties.
-	 * 
-	 * @param event the property change event
-	 */
-	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		CSourceViewer asv = (CSourceViewer) getSourceViewer();
-
-		try {
-			if (asv != null) {
-
-				String property = event.getProperty();
-
-				if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
-					SourceViewerConfiguration configuration = getSourceViewerConfiguration();
-					String[] types = configuration.getConfiguredContentTypes(asv);
-					for (int i = 0; i < types.length; i++) {
-						asv.setIndentPrefixes(configuration.getIndentPrefixes(asv, types[i]), types[i]);
-					}
-
-					if (fTabConverter != null) {
-						fTabConverter.setNumberOfSpacesPerTab(configuration.getTabWidth(asv));
-					}
-					// the super class handles the reset of the tabsize.
-					return;
-				}
-
-				if (SPACES_FOR_TABS.equals(property)) {
-					SourceViewerConfiguration configuration = getSourceViewerConfiguration();
-					String[] types = configuration.getConfiguredContentTypes(asv);
-					for (int i = 0; i < types.length; i++) {
-						asv.setIndentPrefixes(configuration.getIndentPrefixes(asv, types[i]), types[i]);
-					}
-					if (isTabConversionEnabled())
-						startTabConversion();
-					else
-						stopTabConversion();
-					return;
-				}
-				
-				if (PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS.equals(property))
-					updateHoverBehavior();
-
-				// Not implemented ... for the future.
-				if (TRANSLATION_TASK_TAGS.equals(event.getProperty())) {
-					ISourceViewer sourceViewer= getSourceViewer();
-					if (sourceViewer != null && affectsTextPresentation(event))
-						sourceViewer.invalidateTextPresentation();
-				}
-
-				if (PreferenceConstants.EDITOR_FOLDING_PROVIDER.equals(property)) {
-					if (fProjectionModelUpdater != null) {
-						fProjectionModelUpdater.uninstall();
-					}
-					// either freshly enabled or provider changed
-					fProjectionModelUpdater= CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();
-					if (fProjectionModelUpdater != null) {
-						fProjectionModelUpdater.install(this, asv);
-					}
-					return;
-				}
-
-				if (SemanticHighlightings.affectsEnablement(getPreferenceStore(), event)) {
-					if (isSemanticHighlightingEnabled()) {
-						installSemanticHighlighting();
-						fSemanticManager.refresh();
-					} else {
-						uninstallSemanticHighlighting();
-					}
-					return;
-				}
-
-				IContentAssistant c= asv.getContentAssistant();
-				if (c instanceof ContentAssistant) {
-					ContentAssistPreference.changeConfiguration((ContentAssistant) c, getPreferenceStore(), event);
-				}
-				
-			}
-		} finally {
-			super.handlePreferenceStoreChanged(event);
-		}
-	}
-
-	/*
-	 * Update the hovering behavior depending on the preferences.
-	 */
-	private void updateHoverBehavior() {
-		SourceViewerConfiguration configuration= getSourceViewerConfiguration();
-		String[] types= configuration.getConfiguredContentTypes(getSourceViewer());
-
-		for (int i= 0; i < types.length; i++) {
-
-			String t= types[i];
-
-			ISourceViewer sourceViewer= getSourceViewer();
-			if (sourceViewer instanceof ITextViewerExtension2) {
-				// Remove existing hovers
-				((ITextViewerExtension2)sourceViewer).removeTextHovers(t);
-
-				int[] stateMasks= configuration.getConfiguredTextHoverStateMasks(getSourceViewer(), t);
-
-				if (stateMasks != null) {
-					for (int j= 0; j < stateMasks.length; j++)	{
-						int stateMask= stateMasks[j];
-						ITextHover textHover= configuration.getTextHover(sourceViewer, t, stateMask);
-						((ITextViewerExtension2)sourceViewer).setTextHover(textHover, t, stateMask);
-					}
-				} else {
-					ITextHover textHover= configuration.getTextHover(sourceViewer, t);
-					((ITextViewerExtension2)sourceViewer).setTextHover(textHover, t, ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK);
-				}
-			} else
-				sourceViewer.setTextHover(configuration.getTextHover(sourceViewer, t), t);
-		}
-	}
-
-	/**
-	 * React to changed selection.
-	 * 
-	 * @since 3.0
-	 */
-	protected void selectionChanged() {
-		if (getSelectionProvider() == null)
-			return;
-		updateStatusLine();
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		ISelection sel = event.getSelection();
-		if (sel instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection) sel;
-			Object obj = selection.getFirstElement();
-			if (obj instanceof ISourceReference) {
-				try {
-					ISourceRange range = ((ISourceReference) obj).getSourceRange();
-					if (range != null) {
-						setSelection(range, !isActivePart());
-					}
-				} catch (CModelException e) {
-                    // Selection change not applied.
-				}
-			}
-		}
-	}
-
-	/**
-     * Sets selection for C element. 
-     * @param element Element to select.
-	 */
-    public void setSelection(ICElement element) {
-
-		if (element == null || element instanceof ITranslationUnit) {
-			/*
-			 * If the element is an ITranslationUnit this unit is either the input
-			 * of this editor or not being displayed. In both cases, nothing should
-			 * happened.
-			 */
-			return;
-		}
-		if (element instanceof ISourceReference) {
-			ISourceReference reference = (ISourceReference) element;
-			// set hightlight range
-			setSelection(reference, true);
-		}
-	}
-
-    /**
-     * Sets selection for source reference.
-     * @param element Source reference to set.
-     * @param moveCursor Should cursor be moved.
-     */
-    public void setSelection(ISourceReference element, boolean moveCursor) {
-		if (element != null) {
-			StyledText  textWidget= null;
-			
-			ISourceViewer sourceViewer= getSourceViewer();
-			if (sourceViewer != null)
-				textWidget= sourceViewer.getTextWidget();
-			
-			if (textWidget == null)
-				return;
-
-			try {
-				setSelection(element.getSourceRange(), moveCursor);
-			} catch (CModelException e) {
-                // Selection not applied.
-			}
-		}
-	}
-
-	/**
-	 * Sets the current editor selection to the source range. Optionally
-	 * sets the current editor position.
-	 *
-	 * @param element the source range to be shown in the editor, can be null.
-	 * @param moveCursor if true the editor is scrolled to show the range.
-	 */
-	public void setSelection(ISourceRange element, boolean moveCursor) {
-
-		if (element == null) {
-			return;
-		}
-
-		try {
-			IRegion alternateRegion = null;
-			int start = element.getStartPos();
-			int length = element.getLength();
-
-			// Sanity check sometimes the parser may throw wrong numbers.
-			if (start < 0 || length < 0) {
-				start = 0;
-				length = 0;
-			}
-
-			// 0 length and start and non-zero start line says we know
-			// the line for some reason, but not the offset.
-			if (length == 0 && start == 0 && element.getStartLine() > 0) {
-				// We have the information in term of lines, we can work it out.
-				// Binary elements return the first executable statement so we have to substract -1
-				start = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(element.getStartLine() - 1);
-				if (element.getEndLine() > 0) {
-					length = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(element.getEndLine()) - start;
-				} else {
-					length = start;
-				}
-				// create an alternate region for the keyword highlight.
-				alternateRegion = getDocumentProvider().getDocument(getEditorInput()).getLineInformation(element.getStartLine() - 1);
-				if (start == length || length < 0) {
-					if (alternateRegion != null) {
-						start = alternateRegion.getOffset();
-						length = alternateRegion.getLength();
-					}
-				}
-			}
-			setHighlightRange(start, length, moveCursor);
-
-			if (moveCursor) {
-				start = element.getIdStartPos();
-				length = element.getIdLength();
-				if (start == 0 && length == 0 && alternateRegion != null) {
-					start = alternateRegion.getOffset();
-					length = alternateRegion.getLength();
-				}
-				if (start > -1 && getSourceViewer() != null) {
-					getSourceViewer().revealRange(start, length);
-					getSourceViewer().setSelectedRange(start, length);
-				}
-				updateStatusField(CTextEditorActionConstants.STATUS_CURSOR_POS);
-			}
-			return;
-		} catch (IllegalArgumentException x) {
-            // No information to the user
-		} catch (BadLocationException e) {
-            // No information to the user
-		}
-
-		if (moveCursor)
-			resetHighlightRange();
-	}
-
-	/**
-     * Checks is the editor active part. 
-     * @return <code>true</code> if editor is the active part of the workbench.
-	 */
-    private boolean isActivePart() {
-		IWorkbenchWindow window = getSite().getWorkbenchWindow();
-		IPartService service = window.getPartService();
-		return (this == service.getActivePart());
-	}
-
-    /**
-     * @see org.eclipse.ui.IWorkbenchPart#dispose()
-     */
-    public void dispose() {
-
-		if (fProjectionModelUpdater != null) {
-			fProjectionModelUpdater.uninstall();
-			fProjectionModelUpdater= null;
-		}
-		
-		if (fProjectionSupport != null) {
-			fProjectionSupport.dispose();
-			fProjectionSupport= null;
-		}
-
-		if (fCEditorErrorTickUpdater != null) {
-			fCEditorErrorTickUpdater.dispose();
-			fCEditorErrorTickUpdater = null;
-		}
-		
-        if (fSelectionUpdateListener != null) {
-			getSelectionProvider().addSelectionChangedListener(fSelectionUpdateListener);
-			fSelectionUpdateListener = null;
-        }
-        
-       	if (fStatusLineClearer != null) {
-			ISelectionProvider provider = getSelectionProvider();
-       		provider.removeSelectionChangedListener(fStatusLineClearer);
-			fStatusLineClearer = null;
-		}
-        
-        if (fBracketMatcher != null) {
-			fBracketMatcher.dispose();
-			fBracketMatcher = null;
-		}
-		
-		if (fOutlinePage != null) {
-			fOutlinePage.dispose();
-			fOutlinePage = null;
-		}
-		
-		if (fShowInCViewAction != null) {
-			fShowInCViewAction.dispose();
-			fShowInCViewAction = null;
-		}
-		
-		if (fSelectionSearchGroup != null) {
-			fSelectionSearchGroup.dispose();
-			fSelectionSearchGroup = null;
-		}
-
-		if (fTextSearchGroup != null) {
-			fTextSearchGroup.dispose();
-			fTextSearchGroup = null;
-		}
-
-		if (fRefactoringActionGroup != null) {
-			fRefactoringActionGroup.dispose();
-			fRefactoringActionGroup = null;
-		}
-
-		if (fOpenInViewGroup != null) {
-			fOpenInViewGroup.dispose();
-			fOpenInViewGroup = null;
-		}
-
-		if (fGenerateActionGroup != null) {
-			fGenerateActionGroup.dispose();
-			fGenerateActionGroup= null;
-		}
-		
-		if (fEditorSelectionChangedListener != null)  {
-			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
-			fEditorSelectionChangedListener= null;
-		}
-
-		stopTabConversion();
-		
-		super.dispose();
-	}
-
-	/**
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#canHandleMove(org.eclipse.ui.IEditorInput, org.eclipse.ui.IEditorInput)
-	 */
-	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {
-		String oldLanguage = ""; //$NON-NLS-1$
-		if (originalElement instanceof IFileEditorInput) {
-			IFile file= ((IFileEditorInput) originalElement).getFile();
-			if (file != null) {
-				IContentType type = CCorePlugin.getContentType(file.getProject(), file.getName());
-				if (type != null) {
-					oldLanguage = type.getId();
-				}
-				if (oldLanguage == null) {
-					return false;
-				}
-			}
-		}
-
-		String newLanguage = ""; //$NON-NLS-1$
-		if (movedElement instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput) movedElement).getFile();
-			if (file != null) {
-				IContentType type = CCorePlugin.getContentType(file.getProject(), file.getName());
-				if (type != null) {
-					newLanguage = type.getId();
-				}
-				if (newLanguage == null) {
-					return false;
-				}
-			}
-		}
-		return oldLanguage.equals(newLanguage);
-	}
-
-	/**
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
-	 */
-	protected void createActions() {
-		super.createActions();
-
-		fFoldingGroup= new FoldingActionGroup(this, getSourceViewer());
-
-		// Sticky hover support
-		ResourceAction resAction= new TextOperationAction(CEditorMessages.getResourceBundle(), "ShowToolTip.", this, ISourceViewer.INFORMATION, true); //$NON-NLS-1$
-		ResourceAction resAction2= new InformationDispatchAction(CEditorMessages.getResourceBundle(), "ShowToolTip.", (TextOperationAction) resAction); //$NON-NLS-1$
-		resAction2.setActionDefinitionId(ICEditorActionDefinitionIds.SHOW_TOOLTIP);
-		setAction("ShowToolTip", resAction2); //$NON-NLS-1$
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(resAction2, ICHelpContextIds.SHOW_TOOLTIP_ACTION);
-		
-		// Default text editing menu items
-		IAction action= new GotoMatchingBracketAction(this);
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_MATCHING_BRACKET);				
-		setAction(GotoMatchingBracketAction.GOTO_MATCHING_BRACKET, action);
-		
-		action = new JoinLinesAction(CEditorMessages.getResourceBundle(), "JoinLines.", this); //$NON-NLS-1$
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.JOIN_LINES);
-		setAction("Join Lines", action); //$NON-NLS-1$
-		
-		action= new ToggleCommentAction(CEditorMessages.getResourceBundle(), "ToggleComment.", this); //$NON-NLS-1$
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_COMMENT);
-		setAction("ToggleComment", action); //$NON-NLS-1$
-		markAsStateDependentAction("ToggleComment", true); //$NON-NLS-1$
-		configureToggleCommentAction();
-		
-		action= new AddBlockCommentAction(CEditorMessages.getResourceBundle(), "AddBlockComment.", this);  //$NON-NLS-1$
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_BLOCK_COMMENT);		
-		setAction("AddBlockComment", action); //$NON-NLS-1$
-		markAsStateDependentAction("AddBlockComment", true); //$NON-NLS-1$
-		markAsSelectionDependentAction("AddBlockComment", true); //$NON-NLS-1$		
-		//WorkbenchHelp.setHelp(action, ICHelpContextIds.ADD_BLOCK_COMMENT_ACTION);
-
-		action= new RemoveBlockCommentAction(CEditorMessages.getResourceBundle(), "RemoveBlockComment.", this);  //$NON-NLS-1$
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.REMOVE_BLOCK_COMMENT);		
-		setAction("RemoveBlockComment", action); //$NON-NLS-1$
-		markAsStateDependentAction("RemoveBlockComment", true); //$NON-NLS-1$
-		markAsSelectionDependentAction("RemoveBlockComment", true); //$NON-NLS-1$		
-		//WorkbenchHelp.setHelp(action, ICHelpContextIds.REMOVE_BLOCK_COMMENT_ACTION);
-
-		action = new TextOperationAction(CEditorMessages.getResourceBundle(), "Format.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);
-		setAction("Format", action); //$NON-NLS-1$
-		markAsStateDependentAction("Format", true); //$NON-NLS-1$
-
-		action = new ContentAssistAction(CEditorMessages.getResourceBundle(), "ContentAssistProposal.", this); //$NON-NLS-1$
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		setAction("ContentAssistProposal", action); //$NON-NLS-1$
-		markAsStateDependentAction("ContentAssistProposal", true); //$NON-NLS-1$
-
-		action = new TextOperationAction(CEditorMessages.getResourceBundle(), "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION); //$NON-NLS-1$
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
-		setAction("ContentAssistTip", action); //$NON-NLS-1$
-
-		action = new OpenDeclarationsAction(this);
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
-		setAction("OpenDeclarations", action); //$NON-NLS-1$
-
-        action = new OpenDefinitionAction(this);
-        action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DEF);
-        setAction("OpenDefinition", action); //$NON-NLS-1$
-        
-//		action = new OpenTypeHierarchyAction(this);
-//		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
-//		setAction("OpenTypeHierarchy", action); //$NON-NLS-1$
-
-		fShowInCViewAction = new ShowInCViewAction(this);
-		action = fShowInCViewAction;
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CVIEW);
-		setAction("ShowInCView", action); //$NON-NLS-1$
-        
-        action = new TextOperationAction(CEditorMessages.getResourceBundle(), "OpenOutline.", this, CSourceViewer.SHOW_OUTLINE, true); //$NON-NLS-1$
-        action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_OUTLINE);
-        setAction("OpenOutline", action); //$NON-NLS-1$*/
-        
-        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoNextMember.", this, true); //$NON-NLS-1$
-        action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_NEXT_MEMBER);
-        setAction(GoToNextPreviousMemberAction.PREVIOUS_MEMBER, action);
-
-        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoPreviousMember.", this, false); //$NON-NLS-1$
-        action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_PREVIOUS_MEMBER);
-        setAction(GoToNextPreviousMemberAction.NEXT_MEMBER, action);
-
-        //Assorted action groupings
-		fSelectionSearchGroup = new SelectionSearchGroup(this);
-		fTextSearchGroup= new TextSearchGroup(this);
-		fRefactoringActionGroup= new CRefactoringActionGroup(this, ITextEditorActionConstants.GROUP_EDIT);
-		fOpenInViewGroup= new OpenViewActionGroup(this);
-		fGenerateActionGroup= new GenerateActionGroup(this, ITextEditorActionConstants.GROUP_EDIT);
-
-		action = getAction(ITextEditorActionConstants.SHIFT_RIGHT);
-		if (action != null) {
-			action.setId(ITextEditorActionConstants.SHIFT_RIGHT);
-			CPluginImages.setImageDescriptors(action, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_RIGHT);
-		}
-		action = getAction(ITextEditorActionConstants.SHIFT_LEFT);
-		if (action != null) {
-			action.setId(ITextEditorActionConstants.SHIFT_LEFT);
-			CPluginImages.setImageDescriptors(action, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_LEFT);
-		}
-	}
-
-	/**
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 */
-	public void editorContextMenuAboutToShow(IMenuManager menu) {
-		super.editorContextMenuAboutToShow(menu);
-		// remove shift actions added by base class
-		menu.remove(ITextEditorActionConstants.SHIFT_LEFT);
-		menu.remove(ITextEditorActionConstants.SHIFT_RIGHT);
-
-		menu.insertAfter(IContextMenuConstants.GROUP_OPEN, new GroupMarker(IContextMenuConstants.GROUP_SHOW));
-
-		addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenDeclarations"); //$NON-NLS-1$
-        addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenDefinition"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenTypeHierarchy"); //$NON-NLS-1$
-
-		addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenOutline"); //$NON-NLS-1$
-
-		ActionContext context= new ActionContext(getSelectionProvider().getSelection());
-		fGenerateActionGroup.setContext(context);
-		fGenerateActionGroup.fillContextMenu(menu);
-		fGenerateActionGroup.setContext(null);
-
-		fSelectionSearchGroup.fillContextMenu(menu);
-		fTextSearchGroup.fillContextMenu(menu);
-		fRefactoringActionGroup.fillContextMenu(menu);
-		fOpenInViewGroup.fillContextMenu(menu);
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 */
-	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
-		super.rulerContextMenuAboutToShow(menu);
-		IMenuManager foldingMenu= new MenuManager(CEditorMessages.getString("CEditor.menu.folding"), "projection"); //$NON-NLS-1$ //$NON-NLS-2$
-		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
-
-		IAction action= getAction("FoldingToggle"); //$NON-NLS-1$
-		foldingMenu.add(action);
-		action= getAction("FoldingExpandAll"); //$NON-NLS-1$
-		foldingMenu.add(action);
-		action= getAction("FoldingCollapseAll"); //$NON-NLS-1$
-		foldingMenu.add(action);
-		action= getAction("FoldingRestore"); //$NON-NLS-1$
-		foldingMenu.add(action);
-	}
-
-	/**
-     * Sets an input for the outline page.
-	 * @param page Page to set the input.
-	 * @param input Input to set.
-	 */
-	public static void setOutlinePageInput(CContentOutlinePage page, IEditorInput input) {
-		if (page != null) {
-			IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
-			page.setInput(manager.getWorkingCopy(input));
-		}
-	}
-
-	/**
-     * Determines is folding enabled.
-	 * @return <code>true</code> if folding is enabled, <code>false</code> otherwise.
-	 */
-	boolean isFoldingEnabled() {
-		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
-	}
-
-
-	/**
-	 * The <code>AbstractTextEditor</code> implementation of this 
-	 * <code>IWorkbenchPart</code> method creates the vertical ruler and
-	 * source viewer. Subclasses may extend.
-	 * 
-	 * We attach our own mouseDown listener on the menu bar, 
-	 * and our own listener for cursor/key/selection events to update cursor position in
-	 * status bar.
-
-     * @param parent Parent composite of the control.
-	 */
-	public void createPartControl(Composite parent) {
-		super.createPartControl(parent);
-	
-		// Sticky hover support
-		IInformationControlCreator informationControlCreator = new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell shell) {
-				boolean cutDown = false;
-				int style = cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
-				return new DefaultInformationControl(shell, SWT.RESIZE
-						| SWT.TOOL, style, new HTMLTextPresenter(cutDown));
-			}
-		};
-
-		fInformationPresenter = new InformationPresenter(
-				informationControlCreator);
-		fInformationPresenter.setSizeConstraints(60, 10, true, true);
-		fInformationPresenter.install(getSourceViewer());
-		fInformationPresenter
-				.setDocumentPartitioning(ICPartitions.C_PARTITIONING);
-				
-		
-		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer();
-		
-		fProjectionSupport= new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
-		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
-		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
-		fProjectionSupport.install();
-		
-		fProjectionModelUpdater= CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();
-		if (fProjectionModelUpdater != null)
-			fProjectionModelUpdater.install(this, projectionViewer);
-
-		if (isFoldingEnabled())
-			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
-		
-
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICHelpContextIds.CEDITOR_VIEW);
-
-		fEditorSelectionChangedListener= new EditorSelectionChangedListener();
-		fEditorSelectionChangedListener.install(getSelectionProvider());
-		
-
-		if (isTabConversionEnabled())
-			startTabConversion();
-
-		if (isSemanticHighlightingEnabled())
-			installSemanticHighlighting();
-
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#initializeDragAndDrop(org.eclipse.jface.text.source.ISourceViewer)
-	 */
-	protected void initializeDragAndDrop(ISourceViewer viewer) {
-		Control control= viewer.getTextWidget();
-		int operations= DND.DROP_MOVE | DND.DROP_COPY;
-
-		DropTarget dropTarget= new DropTarget(control, operations);
-		ITextEditorDropTargetListener dropTargetListener= new TextEditorDropAdapter(viewer, this);
-		dropTarget.setTransfer(dropTargetListener.getTransfers());
-		dropTarget.addDropListener(dropTargetListener);
-
-		DragSource dragSource= new DragSource(control, operations);
-		Transfer[] dragTypes= new Transfer[] { TextTransfer.getInstance() };
-		dragSource.setTransfer(dragTypes);
-		DragSourceListener dragSourceListener= new TextViewerDragAdapter(viewer, this);
-		dragSource.addDragListener(dragSourceListener);
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#getSourceViewerDecorationSupport(ISourceViewer)
-	 */
-	protected SourceViewerDecorationSupport getSourceViewerDecorationSupport(
-			ISourceViewer viewer) {
-		if (fSourceViewerDecorationSupport == null) {
-			fSourceViewerDecorationSupport= new CSourceViewerDecorationSupport(this, viewer, getOverviewRuler(), getAnnotationAccess(), getSharedColors());
-			configureSourceViewerDecorationSupport(fSourceViewerDecorationSupport);
-		}
-		return fSourceViewerDecorationSupport;
-	}
-	
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#configureSourceViewerDecorationSupport(org.eclipse.ui.texteditor.SourceViewerDecorationSupport)
-	 */
-	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
-		super.configureSourceViewerDecorationSupport(support);
-		//Enhance the stock source viewer decorator with a bracket matcher
-		support.setCharacterPairMatcher(fBracketMatcher);
-		support.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR);
-		((CSourceViewerDecorationSupport)support).setInactiveCodePainterPreferenceKeys(INACTIVE_CODE_ENABLE, INACTIVE_CODE_COLOR);
-	}
-	
-	/**
-	 * Jumps to the matching bracket.
-	 */
-	public void gotoMatchingBracket() {
-		
-		ISourceViewer sourceViewer= getSourceViewer();
-		IDocument document= sourceViewer.getDocument();
-		if (document == null)
-			return;
-		
-		IRegion selection= getSignedSelection(sourceViewer);
-
-		int selectionLength= Math.abs(selection.getLength());
-		if (selectionLength > 1) {
-			setStatusLineErrorMessage(CEditorMessages.getString("GotoMatchingBracket.error.invalidSelection"));	//$NON-NLS-1$		
-			sourceViewer.getTextWidget().getDisplay().beep();
-			return;
-		}
-
-		// #26314
-		int sourceCaretOffset= selection.getOffset() + selection.getLength();
-		if (isSurroundedByBrackets(document, sourceCaretOffset))
-			sourceCaretOffset -= selection.getLength();
-
-		IRegion region= fBracketMatcher.match(document, sourceCaretOffset);
-		if (region == null) {
-			setStatusLineErrorMessage(CEditorMessages.getString("GotoMatchingBracket.error.noMatchingBracket"));	//$NON-NLS-1$		
-			sourceViewer.getTextWidget().getDisplay().beep();
-			return;		
-		}
-		
-		int offset= region.getOffset();
-		int length= region.getLength();
-		
-		if (length < 1)
-			return;
-			
-		int anchor= fBracketMatcher.getAnchor();
-		// http://dev.eclipse.org/bugs/show_bug.cgi?id=34195
-		int targetOffset= (ICharacterPairMatcher.RIGHT == anchor) ? offset + 1: offset + length;
-		
-		boolean visible= false;
-		if (sourceViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) sourceViewer;
-			visible= (extension.modelOffset2WidgetOffset(targetOffset) > -1);
-		} else {
-			IRegion visibleRegion= sourceViewer.getVisibleRegion();
-			// http://dev.eclipse.org/bugs/show_bug.cgi?id=34195
-			visible= (targetOffset >= visibleRegion.getOffset() && targetOffset <= visibleRegion.getOffset() + visibleRegion.getLength());
-		}
-		
-		if (!visible) {
-			setStatusLineErrorMessage(CEditorMessages.getString("GotoMatchingBracket.error.bracketOutsideSelectedElement"));	//$NON-NLS-1$		
-			sourceViewer.getTextWidget().getDisplay().beep();
-			return;
-		}
-		
-		if (selection.getLength() < 0)
-			targetOffset -= selection.getLength();
-			
-		sourceViewer.setSelectedRange(targetOffset, selection.getLength());
-		sourceViewer.revealRange(targetOffset, selection.getLength());
-	}
-
-	protected void updateStatusLine() {
-		ITextSelection selection= (ITextSelection) getSelectionProvider().getSelection();
-		Annotation annotation= getAnnotation(selection.getOffset(), selection.getLength());
-		setStatusLineErrorMessage(null);
-		setStatusLineMessage(null);
-		if (annotation != null) {
-			updateMarkerViews(annotation);
-			if (annotation instanceof ICAnnotation && ((ICAnnotation) annotation).isProblem())
-				setStatusLineMessage(annotation.getText());
-		}
-	}
-
-	/**
-	 * Returns the annotation overlapping with the given range or <code>null</code>.
-	 * 
-	 * @param offset the region offset
-	 * @param length the region length
-	 * @return the found annotation or <code>null</code>
-	 * @since 3.0
-	 */
-	private Annotation getAnnotation(int offset, int length) {
-		IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
-		Iterator e= new CAnnotationIterator(model, true, true);
-		while (e.hasNext()) {
-			Annotation a= (Annotation) e.next();
-			if (!isNavigationTarget(a))
-				continue;
-				
-			Position p= model.getPosition(a);
-			if (p != null && p.overlapsWith(offset, length))
-				return a;
-		}
-		
-		return null;
-	}
-
-	/*
-	 * Get the dektop's StatusLineManager
-	 */
-	protected IStatusLineManager getStatusLineManager() {
-		IEditorActionBarContributor contributor = getEditorSite().getActionBarContributor();
-		if (contributor instanceof EditorActionBarContributor) {
-			return ((EditorActionBarContributor) contributor).getActionBars().getStatusLineManager();
-		}
-		return null;
-	}
-	
-	/**
-	 * Configures the toggle comment action
-	 *
-	 * @since 4.0.0
-	 */
-	private void configureToggleCommentAction() {
-		IAction action= getAction("ToggleComment"); //$NON-NLS-1$
-		if (action instanceof ToggleCommentAction) {
-			ISourceViewer sourceViewer= getSourceViewer();
-			SourceViewerConfiguration configuration= getSourceViewerConfiguration();
-			((ToggleCommentAction)action).configure(sourceViewer, configuration);
-		}
-	}
-
-	private void configureTabConverter() {
-		if (fTabConverter != null) {
-			IDocumentProvider provider= getDocumentProvider();
-			if (provider instanceof CDocumentProvider) {
-				CDocumentProvider prov= (CDocumentProvider) provider;
-				fTabConverter.setLineTracker(prov.createLineTracker(getEditorInput()));
-			} else {
-				fTabConverter.setLineTracker(new DefaultLineTracker());
-			}
-		}
-	}
-
-	private void startTabConversion() {
-		if (fTabConverter == null) {
-			CSourceViewer asv = (CSourceViewer) getSourceViewer();
-			SourceViewerConfiguration configuration = getSourceViewerConfiguration();
-			fTabConverter = new TabConverter();
-			configureTabConverter();
-			fTabConverter.setNumberOfSpacesPerTab(configuration.getTabWidth(asv));
-			asv.addTextConverter(fTabConverter);
-		}
-	}
-
-	private void stopTabConversion() {
-		if (fTabConverter != null) {
-			CSourceViewer asv = (CSourceViewer) getSourceViewer();
-			asv.removeTextConverter(fTabConverter);
-			fTabConverter = null;
-		}
-	}
-
-	private boolean isTabConversionEnabled() {
-		IPreferenceStore store = getPreferenceStore();
-		return store.getBoolean(SPACES_FOR_TABS);
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createNavigationActions()
-	 */
-	protected void createNavigationActions() {
-		super.createNavigationActions();
-
-		final StyledText textWidget = getSourceViewer().getTextWidget();
-
-		IAction action = new NavigatePreviousSubWordAction();
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.WORD_PREVIOUS);
-		setAction(ITextEditorActionDefinitionIds.WORD_PREVIOUS, action);
-		textWidget.setKeyBinding(SWT.CTRL | SWT.ARROW_LEFT, SWT.NULL);
-
-		action = new NavigateNextSubWordAction();
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.WORD_NEXT);
-		setAction(ITextEditorActionDefinitionIds.WORD_NEXT, action);
-		textWidget.setKeyBinding(SWT.CTRL | SWT.ARROW_RIGHT, SWT.NULL);
-
-		action = new SelectPreviousSubWordAction();
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_WORD_PREVIOUS);
-		setAction(ITextEditorActionDefinitionIds.SELECT_WORD_PREVIOUS, action);
-		textWidget.setKeyBinding(SWT.CTRL | SWT.SHIFT | SWT.ARROW_LEFT, SWT.NULL);
-
-		action = new SelectNextSubWordAction();
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_WORD_NEXT);
-		setAction(ITextEditorActionDefinitionIds.SELECT_WORD_NEXT, action);
-		textWidget.setKeyBinding(SWT.CTRL | SWT.SHIFT | SWT.ARROW_RIGHT, SWT.NULL);
-		
-		action= new DeletePreviousSubWordAction();
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_PREVIOUS_WORD);
-		setAction(ITextEditorActionDefinitionIds.DELETE_PREVIOUS_WORD, action);
-		textWidget.setKeyBinding(SWT.CTRL | SWT.BS, SWT.NULL);
-		markAsStateDependentAction(ITextEditorActionDefinitionIds.DELETE_PREVIOUS_WORD, true);
-
-		action= new DeleteNextSubWordAction();
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_NEXT_WORD);
-		setAction(ITextEditorActionDefinitionIds.DELETE_NEXT_WORD, action);
-		textWidget.setKeyBinding(SWT.CTRL | SWT.DEL, SWT.NULL);
-		markAsStateDependentAction(ITextEditorActionDefinitionIds.DELETE_NEXT_WORD, true);
-	}
-
-	interface ITextConverter {
-		void customizeDocumentCommand(IDocument document, DocumentCommand command);
-	}
-
-	static class TabConverter implements ITextConverter {
-		private int fTabRatio;
-		private ILineTracker fLineTracker;
-		
-		public TabConverter() {
-		} 
-		
-		public void setNumberOfSpacesPerTab(int ratio) {
-			fTabRatio= ratio;
-		}
-		
-		public void setLineTracker(ILineTracker lineTracker) {
-			fLineTracker= lineTracker;
-		}
-		
-		private int insertTabString(StringBuffer buffer, int offsetInLine) {
-			
-			if (fTabRatio == 0)
-				return 0;
-				
-			int remainder= offsetInLine % fTabRatio;
-			remainder= fTabRatio - remainder;
-			for (int i= 0; i < remainder; i++)
-				buffer.append(' ');
-			return remainder;
-		}
-		
-		public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
-			String text = command.text;
-			if (text == null)
-				return;
-				
-			int index = text.indexOf('\t');
-			if (index > -1) {
-				StringBuffer buffer = new StringBuffer();
-				
-				fLineTracker.set(command.text);
-				int lines = fLineTracker.getNumberOfLines();
-				
-				try {
-					for (int i = 0; i < lines; i++) {
-						int offset = fLineTracker.getLineOffset(i);
-						int endOffset = offset + fLineTracker.getLineLength(i);
-						String line = text.substring(offset, endOffset);
-						
-						int position= 0;
-						if (i == 0) {
-							IRegion firstLine = document.getLineInformationOfOffset(command.offset);
-							position = command.offset - firstLine.getOffset();	
-						}
-						
-						int length = line.length();
-						for (int j = 0; j < length; j++) {
-							char c = line.charAt(j);
-							if (c == '\t') {
-								int oldPosition = position;
-								position += insertTabString(buffer, position);
-								if (command.caretOffset > command.offset + oldPosition) {
-									command.caretOffset += position - oldPosition - 1;
-								}
-							} else {
-								buffer.append(c);
-								++position;
-							}
-						}
-					}
-						
-					command.text = buffer.toString();
-				} catch (BadLocationException x) {
-				}
-			}
-		}
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
-	 */
-	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		ISourceViewer sourceViewer =
-			new CSourceViewer(
-				this, parent,
-				ruler,
-				styles,
-				getOverviewRuler(),
-				isOverviewRulerVisible());
-
-		CUIHelp.setHelp(this, sourceViewer.getTextWidget(), ICHelpContextIds.CEDITOR_VIEW);
-
-		getSourceViewerDecorationSupport(sourceViewer);
-		
-		return sourceViewer;
-	}
-
-	/** Outliner context menu Id */
-	protected String fOutlinerContextMenuId;
-
-	/**
-	 * Sets the outliner's context menu ID.
-	 */
-	protected void setOutlinerContextMenuId(String menuId) {
-		fOutlinerContextMenuId = menuId;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.editors.text.TextEditor#initializeKeyBindingScopes()
-	 */
-	protected void initializeKeyBindingScopes() {
-		setKeyBindingScopes(new String [] { "org.eclipse.cdt.ui.cEditorScope" } ); //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
-	 * @see AbstractTextEditor#affectsTextPresentation(PropertyChangeEvent)
-	 */
-	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		SourceViewerConfiguration configuration = getSourceViewerConfiguration();
-		if (configuration instanceof CSourceViewerConfiguration) {
-			return ((CSourceViewerConfiguration)configuration).affectsBehavior(event);
-		}
-		return false;
-	}
-
-	/**
-	 * Returns the folding action group, or <code>null</code> if there is none.
-	 * 
-	 * @return the folding action group, or <code>null</code> if there is none
-	 */
-	protected FoldingActionGroup getFoldingActionGroup() {
-		return fFoldingGroup;
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#performRevert()
-	 */
-	protected void performRevert() {
-		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer();
-		projectionViewer.setRedraw(false);
-		try {
-			
-			boolean projectionMode= projectionViewer.isProjectionMode();
-			if (projectionMode) {
-				projectionViewer.disableProjection();				
-				if (fProjectionModelUpdater != null)
-					fProjectionModelUpdater.uninstall();
-			}
-			
-			super.performRevert();
-			
-			if (projectionMode) {
-				if (fProjectionModelUpdater != null)
-					fProjectionModelUpdater.install(this, projectionViewer);	
-				projectionViewer.enableProjection();
-			}
-			
-		} finally {
-			projectionViewer.setRedraw(true);
-		}
-	}
-
-    /**
-     * Sets the given message as error message to this editor's status line.
-     * 
-     * @param msg message to be set
-     */
-    protected void setStatusLineErrorMessage(String msg) {
-    	IEditorStatusLine statusLine= (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
-    	if (statusLine != null)
-    		statusLine.setMessage(true, msg, null);	
-
-    }  
-
-	/**
-	 * Sets the given message as message to this editor's status line.
-	 * 
-	 * @param msg message to be set
-	 * @since 3.0
-	 */
-	protected void setStatusLineMessage(String msg) {
-		IEditorStatusLine statusLine= (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
-		if (statusLine != null)
-			statusLine.setMessage(false, msg, null);	
-	}
-
-	/**
-	 * Returns the signed current selection.
-	 * The length will be negative if the resulting selection
-	 * is right-to-left (RtoL).
-	 * <p>
-	 * The selection offset is model based.
-	 * </p>
-	 * 
-	 * @param sourceViewer the source viewer
-	 * @return a region denoting the current signed selection, for a resulting RtoL selections length is < 0 
-	 */
-	protected IRegion getSignedSelection(ISourceViewer sourceViewer) {
-		StyledText text= sourceViewer.getTextWidget();
-		Point selection= text.getSelectionRange();
-		
-		if (text.getCaretOffset() == selection.x) {
-			selection.x= selection.x + selection.y;
-			selection.y= -selection.y;
-		}
-		
-		selection.x= widgetOffset2ModelOffset(sourceViewer, selection.x);
-		
-		return new Region(selection.x, selection.y);
-	}
-	
-	private static boolean isBracket(char character) {
-		for (int i= 0; i != BRACKETS.length; ++i)
-			if (character == BRACKETS[i])
-				return true;
-		return false;
-	}
-
-	private static boolean isSurroundedByBrackets(IDocument document, int offset) {
-		if (offset == 0 || offset == document.getLength())
-			return false;
-
-		try {
-			return
-				isBracket(document.getChar(offset - 1)) &&
-				isBracket(document.getChar(offset));
-			
-		} catch (BadLocationException e) {
-			return false;	
-		}
-	}
-		
-
-	/*
-	 * @see org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant#reconciled()
-	 */
-	public void reconciled(boolean somethingHasChanged) {
-		if (getSourceViewer() == null) {
-			return;
-		}
-		// this method must be called in a background thread
-		assert getSourceViewer().getTextWidget().getDisplay().getThread() != Thread.currentThread();
-		
-		if (fReconcilingListeners.size() > 0) {
-			// create AST and notify ICReconcilingListeners
-			ICElement cElement= getInputCElement();
-			if (cElement == null) {
-				return;
-			}
-			
-			aboutToBeReconciled();
-
-			// track changes to the document while parsing
-			IDocument doc= getDocumentProvider().getDocument(getEditorInput());
-			SimplePositionTracker positionTracker= new SimplePositionTracker();
-			positionTracker.startTracking(doc);
-			
-			try {
-				IASTTranslationUnit ast= CUIPlugin.getDefault().getASTProvider().createAST(cElement, null);
-				reconciled(ast, positionTracker, null);
-			} finally {
-				positionTracker.stopTracking();
-			}
-		}
-	}
-	
-	public CSourceViewer getCSourceViewer()  {
-		ISourceViewer viewer = getSourceViewer();
-		CSourceViewer cViewer = null ;
-		if (viewer instanceof CSourceViewer) {
-			cViewer = (CSourceViewer) viewer;
-		}
-		return cViewer ;
-	}
-	
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#collectContextMenuPreferencePages()
-	 */
-	protected String[] collectContextMenuPreferencePages() {
-		// Add C/C++ Editor relevant pages
-		String[] parentPrefPageIds = super.collectContextMenuPreferencePages();
-		String[] prefPageIds = new String[parentPrefPageIds.length + 5];
-		int nIds = 0;
-		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CEditorPreferencePage"; //$NON-NLS-1$
-		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeAssistPreferencePage"; //$NON-NLS-1$
-		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeColoringPreferencePage"; //$NON-NLS-1$
-		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.TemplatePreferencePage"; //$NON-NLS-1$
-		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage"; //$NON-NLS-1$
-		System.arraycopy(parentPrefPageIds, 0, prefPageIds, nIds, parentPrefPageIds.length);
-		return prefPageIds;
-	}
-
 	/**
 	 * Text navigation action to navigate to the next sub-word.
 	 *
@@ -1920,7 +1173,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 				getTextWidget().showSelection();
 				fireSelectionChanged();
 			}
-
 		}
 
 		/**
@@ -2101,7 +1353,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 				getTextWidget().showSelection();
 				fireSelectionChanged();
 			}
-
 		}
 
 		/**
@@ -2237,6 +1488,1415 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 					text.setSelectionRange(selection.x, offset - selection.x);
 			}
 		}
+	}
+	
+
+	/**
+	 * The information provider used to present focusable information
+	 * shells.
+	 */
+	private InformationPresenter fInformationPresenter;
+	
+	/**
+	 * The editor selection changed listener.
+	 * 
+	 * @since 3.0
+	 */
+	private EditorSelectionChangedListener fEditorSelectionChangedListener;
+
+	/** The outline page */
+	protected CContentOutlinePage fOutlinePage;
+	
+	/** Search actions **/
+	private ActionGroup fSelectionSearchGroup;
+	private ActionGroup fTextSearchGroup;
+	private CRefactoringActionGroup fRefactoringActionGroup;
+	private ActionGroup fOpenInViewGroup;
+
+	/** Generate action group filling the "Source" submenu */
+	private GenerateActionGroup fGenerateActionGroup;
+
+    /** Action which shows selected element in CView. */
+	private ShowInCViewAction fShowInCViewAction;
+	
+	/** Activity Listeners **/
+	protected ISelectionChangedListener fStatusLineClearer;
+    protected ISelectionChangedListener fSelectionUpdateListener;
+	
+	/** Pairs of brackets, used to match. */
+    protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
+
+	/** Matches the brackets. */
+    protected CPairMatcher fBracketMatcher = new CPairMatcher(BRACKETS);
+
+	/** The bracket inserter. */
+	private BracketInserter fBracketInserter = new BracketInserter();
+
+	/** The editor's tab converter */
+	private TabConverter fTabConverter;
+
+	/** Listener to annotation model changes that updates the error tick in the tab image */
+	private CEditorErrorTickUpdater fCEditorErrorTickUpdater;
+
+	/** Preference key for sub-word navigation, aka smart caret positioning */
+	public final static String SUB_WORD_NAVIGATION = "subWordNavigation"; //$NON-NLS-1$
+	/** Preference key for matching brackets */
+	public final static String MATCHING_BRACKETS = "matchingBrackets"; //$NON-NLS-1$
+	/** Preference key for matching brackets color */
+	public final static String MATCHING_BRACKETS_COLOR = "matchingBracketsColor"; //$NON-NLS-1$
+	/** Preference key for inactive code painter enablement */
+	public static final String INACTIVE_CODE_ENABLE = "inactiveCodeEnable"; //$NON-NLS-1$
+	/** Preference key for inactive code painter color */
+	public static final String INACTIVE_CODE_COLOR = "inactiveCodeColor"; //$NON-NLS-1$
+	/** Preference key for code formatter tab size */
+	private final static String CODE_FORMATTER_TAB_SIZE = DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
+	/** Preference key for inserting spaces rather than tabs */
+	public final static String SPACES_FOR_TABS = DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR;
+	/** Preference key for automatically closing strings */
+	private final static String CLOSE_STRINGS = PreferenceConstants.EDITOR_CLOSE_STRINGS;
+	/** Preference key for automatically closing brackets and parenthesis */
+	private final static String CLOSE_BRACKETS = PreferenceConstants.EDITOR_CLOSE_BRACKETS;
+	/** Preference key for automatically closing angular brackets */
+	private final static String CLOSE_ANGULAR_BRACKETS = PreferenceConstants.EDITOR_CLOSE_ANGULAR_BRACKETS;
+
+    /** Preference key for compiler task tags */
+    private final static String TRANSLATION_TASK_TAGS = CCorePreferenceConstants.TRANSLATION_TASK_TAGS;
+
+	/** 
+	 * This editor's projection support 
+	 */
+	private ProjectionSupport fProjectionSupport;
+	/** 
+	 * This editor's projection model updater 
+	 */
+	private ICFoldingStructureProvider fProjectionModelUpdater;
+
+	/**
+	 * The action group for folding.
+	 */
+	private FoldingActionGroup fFoldingGroup;
+
+	/**
+	 * AST reconciling listeners.
+	 * @since 4.0
+	 */
+	private ListenerList fReconcilingListeners= new ListenerList(ListenerList.IDENTITY);
+
+	/**
+	 * Semantic highlighting manager
+	 * @since 4.0
+	 */
+	private SemanticHighlightingManager fSemanticManager;
+
+
+	/**
+	 * Default constructor.
+	 */
+	public CEditor() {
+		super();
+	}
+
+	/**
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
+	 */
+	protected void initializeEditor() {
+		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
+		setSourceViewerConfiguration(new CSourceViewerConfiguration(textTools, this));
+		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
+	
+		setEditorContextMenuId("#CEditorContext"); //$NON-NLS-1$
+		setRulerContextMenuId("#CEditorRulerContext"); //$NON-NLS-1$
+		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
+
+		setPreferenceStore(CUIPlugin.getDefault().getCombinedPreferenceStore());
+		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);          
+	}
+
+	/**
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSetInput(org.eclipse.ui.IEditorInput)
+	 */
+	protected void doSetInput(IEditorInput input) throws CoreException {
+		super.doSetInput(input);
+		setOutlinePageInput(fOutlinePage, input);
+
+		if (fProjectionModelUpdater != null) {
+			fProjectionModelUpdater.initialize();
+		}
+		if (fCEditorErrorTickUpdater != null) {
+			fCEditorErrorTickUpdater.updateEditorImage(getInputCElement());
+		}
+	}
+
+	/**
+	 * Update the title image.
+     * @param image Title image.
+	 */
+	public void updatedTitleImage(Image image) {
+		setTitleImage(image);
+	}
+
+	/**
+	 * Returns the C element wrapped by this editors input.
+	 *
+	 * @return the C element wrapped by this editors input.
+	 * @since 3.0
+	 */
+	public ICElement getInputCElement () {
+		return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(getEditorInput());
+	}
+
+	/**
+	 * Gets the current IFile input.
+	 * This method will be remove after cdt-3.0.
+	 * We can not guaranty that the input is an IFile, it may
+	 * an external file.  Clients should test for <code>null<code> or use getInputCElement()
+	 * @deprecated use <code>CEditor.getInputCElement()</code>.
+     * @return IFile Input file or null if input is not and IFileEditorInput.
+	 */
+	public IFile getInputFile() {		
+		IEditorInput editorInput = getEditorInput();
+		if (editorInput != null) {
+			if ((editorInput instanceof IFileEditorInput)) {
+				return ((IFileEditorInput) editorInput).getFile();
+			}
+		}
+		return null;
+	}
+
+	/**
+     * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
+	 */
+    public boolean isSaveAsAllowed() {
+		return true;
+	}
+	/**
+	 * Gets the outline page of the c-editor.
+     * @return Outline page.
+	 */
+	public CContentOutlinePage getOutlinePage() {
+		if (fOutlinePage == null) {
+			fOutlinePage = new CContentOutlinePage(this);
+			fOutlinePage.addSelectionChangedListener(this);
+		}
+		setOutlinePageInput(fOutlinePage, getEditorInput());
+		return fOutlinePage;
+	}
+
+	/**
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class required) {
+		if (IContentOutlinePage.class.equals(required)) {
+			return getOutlinePage();
+		}
+		if (required == IShowInTargetList.class) {
+			return new IShowInTargetList() {
+				public String[] getShowInTargetIds() {
+					return new String[] { CUIPlugin.CVIEW_ID, IPageLayout.ID_OUTLINE, IPageLayout.ID_RES_NAV };
+				}
+
+			};
+		}
+		if (required == IShowInSource.class) {
+			ICElement ce= null;
+			try {
+				ce= SelectionConverter.getElementAtOffset(this);
+			} catch (CModelException ex) {
+				ce= null;
+			}
+			if (ce != null) { 
+				final ISelection selection= new StructuredSelection(ce);
+				return new IShowInSource() {
+					public ShowInContext getShowInContext() {
+						return new ShowInContext(getEditorInput(), selection);
+					}
+				};
+			}
+		}
+		if (ProjectionAnnotationModel.class.equals(required)) {
+			if (fProjectionSupport != null) {
+				Object adapter = fProjectionSupport.getAdapter(getSourceViewer(), required);
+				if (adapter != null)
+					return adapter;
+			}
+		}
+		return super.getAdapter(required);
+	}
+	/**
+	 * Handles a property change event describing a change
+	 * of the editor's preference store and updates the preference
+	 * related editor properties.
+	 * 
+	 * @param event the property change event
+	 */
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		try {
+			AdaptedSourceViewer asv = (AdaptedSourceViewer) getSourceViewer();
+
+			if (asv != null) {
+				String property = event.getProperty();
+
+				if (CLOSE_BRACKETS.equals(property)) {
+					fBracketInserter.setCloseBracketsEnabled(getPreferenceStore().getBoolean(property));
+					return;
+				}
+
+				if (CLOSE_ANGULAR_BRACKETS.equals(property)) {
+					fBracketInserter.setCloseAngularBracketsEnabled(getPreferenceStore().getBoolean(property));
+					return;
+				}
+				
+				if (CLOSE_STRINGS.equals(property)) {
+					fBracketInserter.setCloseStringsEnabled(getPreferenceStore().getBoolean(property));
+					return;
+				}
+
+				if (SPACES_FOR_TABS.equals(property)) {
+					SourceViewerConfiguration configuration = getSourceViewerConfiguration();
+					String[] types = configuration.getConfiguredContentTypes(asv);
+					for (int i = 0; i < types.length; i++) {
+						asv.setIndentPrefixes(configuration.getIndentPrefixes(asv, types[i]), types[i]);
+					}
+					if (isTabConversionEnabled())
+						startTabConversion();
+					else
+						stopTabConversion();
+					return;
+				}
+				
+				if (PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS.equals(property))
+					updateHoverBehavior();
+
+
+				if (PreferenceConstants.EDITOR_SMART_TAB.equals(property)) {
+					if (getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SMART_TAB)) {
+						setActionActivationCode("IndentOnTab", '\t', -1, SWT.NONE); //$NON-NLS-1$
+					} else {
+						removeActionActivationCode("IndentOnTab"); //$NON-NLS-1$
+					}
+				}
+
+				if (CODE_FORMATTER_TAB_SIZE.equals(property)) {
+					asv.updateIndentationPrefixes();
+					if (fTabConverter != null)
+						fTabConverter.setNumberOfSpacesPerTab(getTabSize());
+				}
+
+				// Not implemented ... for the future.
+				if (TRANSLATION_TASK_TAGS.equals(event.getProperty())) {
+					ISourceViewer sourceViewer = getSourceViewer();
+					if (sourceViewer != null && affectsTextPresentation(event))
+						sourceViewer.invalidateTextPresentation();
+				}
+
+				if (PreferenceConstants.EDITOR_FOLDING_PROVIDER.equals(property)) {
+					if (fProjectionModelUpdater != null) {
+						fProjectionModelUpdater.uninstall();
+					}
+					// either freshly enabled or provider changed
+					fProjectionModelUpdater = CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();
+					if (fProjectionModelUpdater != null) {
+						fProjectionModelUpdater.install(this, asv);
+					}
+					return;
+				}
+
+				if (SemanticHighlightings.affectsEnablement(getPreferenceStore(), event)) {
+					if (isSemanticHighlightingEnabled()) {
+						installSemanticHighlighting();
+						fSemanticManager.refresh();
+					} else {
+						uninstallSemanticHighlighting();
+					}
+					return;
+				}
+
+				IContentAssistant c = asv.getContentAssistant();
+				if (c instanceof ContentAssistant) {
+					ContentAssistPreference.changeConfiguration((ContentAssistant) c, getPreferenceStore(), event);
+				}
+			}
+		} finally {
+			super.handlePreferenceStoreChanged(event);
+		}
+	}
+
+	/*
+	 * Update the hovering behavior depending on the preferences.
+	 */
+	private void updateHoverBehavior() {
+		SourceViewerConfiguration configuration= getSourceViewerConfiguration();
+		String[] types= configuration.getConfiguredContentTypes(getSourceViewer());
+
+		for (int i= 0; i < types.length; i++) {
+
+			String t= types[i];
+
+			ISourceViewer sourceViewer= getSourceViewer();
+			if (sourceViewer instanceof ITextViewerExtension2) {
+				// Remove existing hovers
+				((ITextViewerExtension2)sourceViewer).removeTextHovers(t);
+
+				int[] stateMasks= configuration.getConfiguredTextHoverStateMasks(getSourceViewer(), t);
+
+				if (stateMasks != null) {
+					for (int j= 0; j < stateMasks.length; j++)	{
+						int stateMask= stateMasks[j];
+						ITextHover textHover= configuration.getTextHover(sourceViewer, t, stateMask);
+						((ITextViewerExtension2)sourceViewer).setTextHover(textHover, t, stateMask);
+					}
+				} else {
+					ITextHover textHover= configuration.getTextHover(sourceViewer, t);
+					((ITextViewerExtension2)sourceViewer).setTextHover(textHover, t, ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK);
+				}
+			} else
+				sourceViewer.setTextHover(configuration.getTextHover(sourceViewer, t), t);
+		}
+	}
+
+	/**
+	 * React to changed selection.
+	 * 
+	 * @since 3.0
+	 */
+	protected void selectionChanged() {
+		if (getSelectionProvider() == null)
+			return;
+		updateStatusLine();
+	}
+
+	/**
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
+	public void selectionChanged(SelectionChangedEvent event) {
+		ISelection sel = event.getSelection();
+		if (sel instanceof IStructuredSelection) {
+			IStructuredSelection selection = (IStructuredSelection) sel;
+			Object obj = selection.getFirstElement();
+			if (obj instanceof ISourceReference) {
+				try {
+					ISourceRange range = ((ISourceReference) obj).getSourceRange();
+					if (range != null) {
+						setSelection(range, !isActivePart());
+					}
+				} catch (CModelException e) {
+                    // Selection change not applied.
+				}
+			}
+		}
+	}
+
+	/**
+     * Sets selection for C element. 
+     * @param element Element to select.
+	 */
+    public void setSelection(ICElement element) {
+
+		if (element == null || element instanceof ITranslationUnit) {
+			/*
+			 * If the element is an ITranslationUnit this unit is either the input
+			 * of this editor or not being displayed. In both cases, nothing should
+			 * happened.
+			 */
+			return;
+		}
+		if (element instanceof ISourceReference) {
+			ISourceReference reference = (ISourceReference) element;
+			// set hightlight range
+			setSelection(reference, true);
+		}
+	}
+
+    /**
+     * Sets selection for source reference.
+     * @param element Source reference to set.
+     * @param moveCursor Should cursor be moved.
+     */
+    public void setSelection(ISourceReference element, boolean moveCursor) {
+		if (element != null) {
+			StyledText  textWidget = null;
+			
+			ISourceViewer sourceViewer = getSourceViewer();
+			if (sourceViewer != null)
+				textWidget = sourceViewer.getTextWidget();
+			
+			if (textWidget == null)
+				return;
+
+			try {
+				setSelection(element.getSourceRange(), moveCursor);
+			} catch (CModelException e) {
+                // Selection not applied.
+			}
+		}
+	}
+
+	/**
+	 * Sets the current editor selection to the source range. Optionally
+	 * sets the current editor position.
+	 *
+	 * @param element the source range to be shown in the editor, can be null.
+	 * @param moveCursor if true the editor is scrolled to show the range.
+	 */
+	public void setSelection(ISourceRange element, boolean moveCursor) {
+
+		if (element == null) {
+			return;
+		}
+
+		try {
+			IRegion alternateRegion = null;
+			int start = element.getStartPos();
+			int length = element.getLength();
+
+			// Sanity check sometimes the parser may throw wrong numbers.
+			if (start < 0 || length < 0) {
+				start = 0;
+				length = 0;
+			}
+
+			// 0 length and start and non-zero start line says we know
+			// the line for some reason, but not the offset.
+			if (length == 0 && start == 0 && element.getStartLine() > 0) {
+				// We have the information in term of lines, we can work it out.
+				// Binary elements return the first executable statement so we have to substract -1
+				start = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(element.getStartLine() - 1);
+				if (element.getEndLine() > 0) {
+					length = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(element.getEndLine()) - start;
+				} else {
+					length = start;
+				}
+				// create an alternate region for the keyword highlight.
+				alternateRegion = getDocumentProvider().getDocument(getEditorInput()).getLineInformation(element.getStartLine() - 1);
+				if (start == length || length < 0) {
+					if (alternateRegion != null) {
+						start = alternateRegion.getOffset();
+						length = alternateRegion.getLength();
+					}
+				}
+			}
+			setHighlightRange(start, length, moveCursor);
+
+			if (moveCursor) {
+				start = element.getIdStartPos();
+				length = element.getIdLength();
+				if (start == 0 && length == 0 && alternateRegion != null) {
+					start = alternateRegion.getOffset();
+					length = alternateRegion.getLength();
+				}
+				if (start > -1 && getSourceViewer() != null) {
+					getSourceViewer().revealRange(start, length);
+					getSourceViewer().setSelectedRange(start, length);
+				}
+				updateStatusField(CTextEditorActionConstants.STATUS_CURSOR_POS);
+			}
+			return;
+		} catch (IllegalArgumentException x) {
+            // No information to the user
+		} catch (BadLocationException e) {
+            // No information to the user
+		}
+
+		if (moveCursor)
+			resetHighlightRange();
+	}
+
+	/**
+     * Checks is the editor active part. 
+     * @return <code>true</code> if editor is the active part of the workbench.
+	 */
+    private boolean isActivePart() {
+		IWorkbenchWindow window = getSite().getWorkbenchWindow();
+		IPartService service = window.getPartService();
+		return (this == service.getActivePart());
+	}
+
+    /**
+     * @see org.eclipse.ui.IWorkbenchPart#dispose()
+     */
+    public void dispose() {
+
+		ISourceViewer sourceViewer = getSourceViewer();
+		if (sourceViewer instanceof ITextViewerExtension)
+			((ITextViewerExtension) sourceViewer).removeVerifyKeyListener(fBracketInserter);
+
+		if (fProjectionModelUpdater != null) {
+			fProjectionModelUpdater.uninstall();
+			fProjectionModelUpdater = null;
+		}
+		
+		if (fProjectionSupport != null) {
+			fProjectionSupport.dispose();
+			fProjectionSupport = null;
+		}
+
+		if (fCEditorErrorTickUpdater != null) {
+			fCEditorErrorTickUpdater.dispose();
+			fCEditorErrorTickUpdater = null;
+		}
+		
+        if (fSelectionUpdateListener != null) {
+			getSelectionProvider().addSelectionChangedListener(fSelectionUpdateListener);
+			fSelectionUpdateListener = null;
+        }
+        
+       	if (fStatusLineClearer != null) {
+			ISelectionProvider provider = getSelectionProvider();
+       		provider.removeSelectionChangedListener(fStatusLineClearer);
+			fStatusLineClearer = null;
+		}
+        
+        if (fBracketMatcher != null) {
+			fBracketMatcher.dispose();
+			fBracketMatcher = null;
+		}
+		
+		if (fOutlinePage != null) {
+			fOutlinePage.dispose();
+			fOutlinePage = null;
+		}
+		
+		if (fShowInCViewAction != null) {
+			fShowInCViewAction.dispose();
+			fShowInCViewAction = null;
+		}
+		
+		if (fSelectionSearchGroup != null) {
+			fSelectionSearchGroup.dispose();
+			fSelectionSearchGroup = null;
+		}
+
+		if (fTextSearchGroup != null) {
+			fTextSearchGroup.dispose();
+			fTextSearchGroup = null;
+		}
+
+		if (fRefactoringActionGroup != null) {
+			fRefactoringActionGroup.dispose();
+			fRefactoringActionGroup = null;
+		}
+
+		if (fOpenInViewGroup != null) {
+			fOpenInViewGroup.dispose();
+			fOpenInViewGroup = null;
+		}
+
+		if (fGenerateActionGroup != null) {
+			fGenerateActionGroup.dispose();
+			fGenerateActionGroup= null;
+		}
+		
+		if (fEditorSelectionChangedListener != null)  {
+			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
+			fEditorSelectionChangedListener = null;
+		}
+
+		stopTabConversion();
+		
+		super.dispose();
+	}
+
+	/**
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#canHandleMove(org.eclipse.ui.IEditorInput, org.eclipse.ui.IEditorInput)
+	 */
+	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {
+		String oldLanguage = ""; //$NON-NLS-1$
+		if (originalElement instanceof IFileEditorInput) {
+			IFile file = ((IFileEditorInput) originalElement).getFile();
+			if (file != null) {
+				IContentType type = CCorePlugin.getContentType(file.getProject(), file.getName());
+				if (type != null) {
+					oldLanguage = type.getId();
+				}
+				if (oldLanguage == null) {
+					return false;
+				}
+			}
+		}
+
+		String newLanguage = ""; //$NON-NLS-1$
+		if (movedElement instanceof IFileEditorInput) {
+			IFile file = ((IFileEditorInput) movedElement).getFile();
+			if (file != null) {
+				IContentType type = CCorePlugin.getContentType(file.getProject(), file.getName());
+				if (type != null) {
+					newLanguage = type.getId();
+				}
+				if (newLanguage == null) {
+					return false;
+				}
+			}
+		}
+		return oldLanguage.equals(newLanguage);
+	}
+
+	/**
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
+	 */
+	protected void createActions() {
+		super.createActions();
+
+		fFoldingGroup = new FoldingActionGroup(this, getSourceViewer());
+
+		// Sticky hover support
+		ResourceAction resAction = new TextOperationAction(CEditorMessages.getResourceBundle(), "ShowToolTip.", this, ISourceViewer.INFORMATION, true); //$NON-NLS-1$
+		ResourceAction resAction2 = new InformationDispatchAction(CEditorMessages.getResourceBundle(), "ShowToolTip.", (TextOperationAction) resAction); //$NON-NLS-1$
+		resAction2.setActionDefinitionId(ICEditorActionDefinitionIds.SHOW_TOOLTIP);
+		setAction("ShowToolTip", resAction2); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(resAction2, ICHelpContextIds.SHOW_TOOLTIP_ACTION);
+		
+		// Default text editing menu items
+		IAction action= new GotoMatchingBracketAction(this);
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_MATCHING_BRACKET);				
+		setAction(GotoMatchingBracketAction.GOTO_MATCHING_BRACKET, action);
+		
+		action = new JoinLinesAction(CEditorMessages.getResourceBundle(), "JoinLines.", this); //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.JOIN_LINES);
+		setAction("Join Lines", action); //$NON-NLS-1$
+		
+		action = new ToggleCommentAction(CEditorMessages.getResourceBundle(), "ToggleComment.", this); //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_COMMENT);
+		setAction("ToggleComment", action); //$NON-NLS-1$
+		markAsStateDependentAction("ToggleComment", true); //$NON-NLS-1$
+		configureToggleCommentAction();
+		
+		action = new AddBlockCommentAction(CEditorMessages.getResourceBundle(), "AddBlockComment.", this);  //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_BLOCK_COMMENT);		
+		setAction("AddBlockComment", action); //$NON-NLS-1$
+		markAsStateDependentAction("AddBlockComment", true); //$NON-NLS-1$
+		markAsSelectionDependentAction("AddBlockComment", true); //$NON-NLS-1$		
+		//WorkbenchHelp.setHelp(action, ICHelpContextIds.ADD_BLOCK_COMMENT_ACTION);
+
+		action = new RemoveBlockCommentAction(CEditorMessages.getResourceBundle(), "RemoveBlockComment.", this);  //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.REMOVE_BLOCK_COMMENT);		
+		setAction("RemoveBlockComment", action); //$NON-NLS-1$
+		markAsStateDependentAction("RemoveBlockComment", true); //$NON-NLS-1$
+		markAsSelectionDependentAction("RemoveBlockComment", true); //$NON-NLS-1$		
+		//WorkbenchHelp.setHelp(action, ICHelpContextIds.REMOVE_BLOCK_COMMENT_ACTION);
+
+		action = new IndentAction(CEditorMessages.getResourceBundle(), "Indent.", this, false); //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.INDENT);
+		setAction("Indent", action); //$NON-NLS-1$
+		markAsStateDependentAction("Indent", true); //$NON-NLS-1$
+		markAsSelectionDependentAction("Indent", true); //$NON-NLS-1$
+//		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, ICHelpContextIds.INDENT_ACTION);
+
+		action = new IndentAction(CEditorMessages.getResourceBundle(), "Indent.", this, true); //$NON-NLS-1$
+		setAction("IndentOnTab", action); //$NON-NLS-1$
+		markAsStateDependentAction("IndentOnTab", true); //$NON-NLS-1$
+		markAsSelectionDependentAction("IndentOnTab", true); //$NON-NLS-1$
+		
+		if (getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SMART_TAB)) {
+			setActionActivationCode("IndentOnTab", '\t', -1, SWT.NONE); //$NON-NLS-1$
+		}
+		
+		action = new TextOperationAction(CEditorMessages.getResourceBundle(), "Format.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);
+		setAction("Format", action); //$NON-NLS-1$
+		markAsStateDependentAction("Format", true); //$NON-NLS-1$
+
+		action = new ContentAssistAction(CEditorMessages.getResourceBundle(), "ContentAssistProposal.", this); //$NON-NLS-1$
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		setAction("ContentAssistProposal", action); //$NON-NLS-1$
+		markAsStateDependentAction("ContentAssistProposal", true); //$NON-NLS-1$
+
+		action = new TextOperationAction(CEditorMessages.getResourceBundle(), "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION); //$NON-NLS-1$
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
+		setAction("ContentAssistTip", action); //$NON-NLS-1$
+
+		action = new OpenDeclarationsAction(this);
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
+		setAction("OpenDeclarations", action); //$NON-NLS-1$
+
+        action = new OpenDefinitionAction(this);
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DEF);
+        setAction("OpenDefinition", action); //$NON-NLS-1$
+        
+//		action = new OpenTypeHierarchyAction(this);
+//		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
+//		setAction("OpenTypeHierarchy", action); //$NON-NLS-1$
+
+		fShowInCViewAction = new ShowInCViewAction(this);
+		action = fShowInCViewAction;
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CVIEW);
+		setAction("ShowInCView", action); //$NON-NLS-1$
+        
+        action = new TextOperationAction(CEditorMessages.getResourceBundle(), "OpenOutline.", this, CSourceViewer.SHOW_OUTLINE, true); //$NON-NLS-1$
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_OUTLINE);
+        setAction("OpenOutline", action); //$NON-NLS-1$*/
+        
+        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoNextMember.", this, true); //$NON-NLS-1$
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_NEXT_MEMBER);
+        setAction(GoToNextPreviousMemberAction.PREVIOUS_MEMBER, action);
+
+        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoPreviousMember.", this, false); //$NON-NLS-1$
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_PREVIOUS_MEMBER);
+        setAction(GoToNextPreviousMemberAction.NEXT_MEMBER, action);
+
+        //Assorted action groupings
+		fSelectionSearchGroup = new SelectionSearchGroup(this);
+		fTextSearchGroup= new TextSearchGroup(this);
+		fRefactoringActionGroup= new CRefactoringActionGroup(this, ITextEditorActionConstants.GROUP_EDIT);
+		fOpenInViewGroup= new OpenViewActionGroup(this);
+		fGenerateActionGroup= new GenerateActionGroup(this, ITextEditorActionConstants.GROUP_EDIT);
+
+		action = getAction(ITextEditorActionConstants.SHIFT_RIGHT);
+		if (action != null) {
+			action.setId(ITextEditorActionConstants.SHIFT_RIGHT);
+			CPluginImages.setImageDescriptors(action, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_RIGHT);
+		}
+		action = getAction(ITextEditorActionConstants.SHIFT_LEFT);
+		if (action != null) {
+			action.setId(ITextEditorActionConstants.SHIFT_LEFT);
+			CPluginImages.setImageDescriptors(action, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_LEFT);
+		}
+	}
+
+	/**
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 */
+	public void editorContextMenuAboutToShow(IMenuManager menu) {
+		super.editorContextMenuAboutToShow(menu);
+		// remove shift actions added by base class
+		menu.remove(ITextEditorActionConstants.SHIFT_LEFT);
+		menu.remove(ITextEditorActionConstants.SHIFT_RIGHT);
+
+		menu.insertAfter(IContextMenuConstants.GROUP_OPEN, new GroupMarker(IContextMenuConstants.GROUP_SHOW));
+
+		addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenDeclarations"); //$NON-NLS-1$
+        addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenDefinition"); //$NON-NLS-1$
+		addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenTypeHierarchy"); //$NON-NLS-1$
+
+		addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenOutline"); //$NON-NLS-1$
+
+		ActionContext context= new ActionContext(getSelectionProvider().getSelection());
+		fGenerateActionGroup.setContext(context);
+		fGenerateActionGroup.fillContextMenu(menu);
+		fGenerateActionGroup.setContext(null);
+
+		fSelectionSearchGroup.fillContextMenu(menu);
+		fTextSearchGroup.fillContextMenu(menu);
+		fRefactoringActionGroup.fillContextMenu(menu);
+		fOpenInViewGroup.fillContextMenu(menu);
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 */
+	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
+		super.rulerContextMenuAboutToShow(menu);
+		IMenuManager foldingMenu= new MenuManager(CEditorMessages.getString("CEditor.menu.folding"), "projection"); //$NON-NLS-1$ //$NON-NLS-2$
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
+
+		IAction action= getAction("FoldingToggle"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action= getAction("FoldingExpandAll"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action= getAction("FoldingCollapseAll"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action= getAction("FoldingRestore"); //$NON-NLS-1$
+		foldingMenu.add(action);
+	}
+
+	/**
+     * Sets an input for the outline page.
+	 * @param page Page to set the input.
+	 * @param input Input to set.
+	 */
+	public static void setOutlinePageInput(CContentOutlinePage page, IEditorInput input) {
+		if (page != null) {
+			IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
+			page.setInput(manager.getWorkingCopy(input));
+		}
+	}
+
+	/**
+     * Determines is folding enabled.
+	 * @return <code>true</code> if folding is enabled, <code>false</code> otherwise.
+	 */
+	boolean isFoldingEnabled() {
+		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
+	}
+
+
+	/**
+	 * The <code>AbstractTextEditor</code> implementation of this 
+	 * <code>IWorkbenchPart</code> method creates the vertical ruler and
+	 * source viewer. Subclasses may extend.
+	 * 
+	 * We attach our own mouseDown listener on the menu bar, 
+	 * and our own listener for cursor/key/selection events to update cursor position in
+	 * status bar.
+
+     * @param parent Parent composite of the control.
+	 */
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+	
+		// Sticky hover support
+		IInformationControlCreator informationControlCreator = new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell shell) {
+				boolean cutDown = false;
+				int style = cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
+				return new DefaultInformationControl(shell, SWT.RESIZE
+						| SWT.TOOL, style, new HTMLTextPresenter(cutDown));
+			}
+		};
+
+		fInformationPresenter = new InformationPresenter(
+				informationControlCreator);
+		fInformationPresenter.setSizeConstraints(60, 10, true, true);
+		fInformationPresenter.install(getSourceViewer());
+		fInformationPresenter
+				.setDocumentPartitioning(ICPartitions.C_PARTITIONING);
+				
+		
+		ProjectionViewer projectionViewer = (ProjectionViewer) getSourceViewer();
+		
+		fProjectionSupport = new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
+		fProjectionSupport.install();
+		
+		fProjectionModelUpdater = CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();
+		if (fProjectionModelUpdater != null)
+			fProjectionModelUpdater.install(this, projectionViewer);
+
+		if (isFoldingEnabled())
+			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICHelpContextIds.CEDITOR_VIEW);
+
+		fEditorSelectionChangedListener = new EditorSelectionChangedListener();
+		fEditorSelectionChangedListener.install(getSelectionProvider());
+		
+		if (isTabConversionEnabled())
+			startTabConversion();
+
+		if (isSemanticHighlightingEnabled())
+			installSemanticHighlighting();
+			
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		boolean closeBrackets = preferenceStore.getBoolean(CLOSE_BRACKETS);
+		boolean closeAngularBrackets = preferenceStore.getBoolean(CLOSE_ANGULAR_BRACKETS);
+		boolean closeStrings = preferenceStore.getBoolean(CLOSE_STRINGS);
+
+		fBracketInserter.setCloseBracketsEnabled(closeBrackets);
+		fBracketInserter.setCloseStringsEnabled(closeStrings);
+		fBracketInserter.setCloseAngularBracketsEnabled(closeAngularBrackets);
+
+		ISourceViewer sourceViewer = getSourceViewer();
+		if (sourceViewer instanceof ITextViewerExtension)
+			((ITextViewerExtension) sourceViewer).prependVerifyKeyListener(fBracketInserter);
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#initializeDragAndDrop(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	protected void initializeDragAndDrop(ISourceViewer viewer) {
+		Control control = viewer.getTextWidget();
+		int operations = DND.DROP_MOVE | DND.DROP_COPY;
+
+		DropTarget dropTarget = new DropTarget(control, operations);
+		ITextEditorDropTargetListener dropTargetListener = new TextEditorDropAdapter(viewer, this);
+		dropTarget.setTransfer(dropTargetListener.getTransfers());
+		dropTarget.addDropListener(dropTargetListener);
+
+		DragSource dragSource = new DragSource(control, operations);
+		Transfer[] dragTypes = new Transfer[] { TextTransfer.getInstance() };
+		dragSource.setTransfer(dragTypes);
+		DragSourceListener dragSourceListener = new TextViewerDragAdapter(viewer, this);
+		dragSource.addDragListener(dragSourceListener);
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#getSourceViewerDecorationSupport(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	protected SourceViewerDecorationSupport getSourceViewerDecorationSupport(
+			ISourceViewer viewer) {
+		if (fSourceViewerDecorationSupport == null) {
+			fSourceViewerDecorationSupport= new CSourceViewerDecorationSupport(this, viewer, getOverviewRuler(), getAnnotationAccess(), getSharedColors());
+			configureSourceViewerDecorationSupport(fSourceViewerDecorationSupport);
+		}
+		return fSourceViewerDecorationSupport;
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#configureSourceViewerDecorationSupport(org.eclipse.ui.texteditor.SourceViewerDecorationSupport)
+	 */
+	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
+		super.configureSourceViewerDecorationSupport(support);
+		//Enhance the stock source viewer decorator with a bracket matcher
+		support.setCharacterPairMatcher(fBracketMatcher);
+		support.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR);
+		((CSourceViewerDecorationSupport)support).setInactiveCodePainterPreferenceKeys(INACTIVE_CODE_ENABLE, INACTIVE_CODE_COLOR);
+	}
+	
+	/**
+	 * Jumps to the matching bracket.
+	 */
+	public void gotoMatchingBracket() {
+		
+		ISourceViewer sourceViewer = getSourceViewer();
+		IDocument document = sourceViewer.getDocument();
+		if (document == null)
+			return;
+		
+		IRegion selection = getSignedSelection(sourceViewer);
+
+		int selectionLength = Math.abs(selection.getLength());
+		if (selectionLength > 1) {
+			setStatusLineErrorMessage(CEditorMessages.getString("GotoMatchingBracket.error.invalidSelection"));	//$NON-NLS-1$		
+			sourceViewer.getTextWidget().getDisplay().beep();
+			return;
+		}
+
+		// #26314
+		int sourceCaretOffset = selection.getOffset() + selection.getLength();
+		if (isSurroundedByBrackets(document, sourceCaretOffset))
+			sourceCaretOffset -= selection.getLength();
+
+		IRegion region = fBracketMatcher.match(document, sourceCaretOffset);
+		if (region == null) {
+			setStatusLineErrorMessage(CEditorMessages.getString("GotoMatchingBracket.error.noMatchingBracket"));	//$NON-NLS-1$		
+			sourceViewer.getTextWidget().getDisplay().beep();
+			return;		
+		}
+		
+		int offset = region.getOffset();
+		int length = region.getLength();
+		
+		if (length < 1)
+			return;
+			
+		int anchor = fBracketMatcher.getAnchor();
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=34195
+		int targetOffset = (ICharacterPairMatcher.RIGHT == anchor) ? offset + 1: offset + length;
+		
+		boolean visible = false;
+		if (sourceViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension = (ITextViewerExtension5) sourceViewer;
+			visible = (extension.modelOffset2WidgetOffset(targetOffset) > -1);
+		} else {
+			IRegion visibleRegion = sourceViewer.getVisibleRegion();
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=34195
+			visible = (targetOffset >= visibleRegion.getOffset() && targetOffset <= visibleRegion.getOffset() + visibleRegion.getLength());
+		}
+		
+		if (!visible) {
+			setStatusLineErrorMessage(CEditorMessages.getString("GotoMatchingBracket.error.bracketOutsideSelectedElement"));	//$NON-NLS-1$		
+			sourceViewer.getTextWidget().getDisplay().beep();
+			return;
+		}
+		
+		if (selection.getLength() < 0)
+			targetOffset -= selection.getLength();
+			
+		sourceViewer.setSelectedRange(targetOffset, selection.getLength());
+		sourceViewer.revealRange(targetOffset, selection.getLength());
+	}
+
+	protected void updateStatusLine() {
+		ITextSelection selection = (ITextSelection) getSelectionProvider().getSelection();
+		Annotation annotation = getAnnotation(selection.getOffset(), selection.getLength());
+		setStatusLineErrorMessage(null);
+		setStatusLineMessage(null);
+		if (annotation != null) {
+			updateMarkerViews(annotation);
+			if (annotation instanceof ICAnnotation && ((ICAnnotation) annotation).isProblem())
+				setStatusLineMessage(annotation.getText());
+		}
+	}
+
+	/**
+	 * Returns the annotation overlapping with the given range or <code>null</code>.
+	 * 
+	 * @param offset the region offset
+	 * @param length the region length
+	 * @return the found annotation or <code>null</code>
+	 * @since 3.0
+	 */
+	private Annotation getAnnotation(int offset, int length) {
+		IAnnotationModel model = getDocumentProvider().getAnnotationModel(getEditorInput());
+		Iterator e = new CAnnotationIterator(model, true, true);
+		while (e.hasNext()) {
+			Annotation a = (Annotation) e.next();
+			if (!isNavigationTarget(a))
+				continue;
+				
+			Position p = model.getPosition(a);
+			if (p != null && p.overlapsWith(offset, length))
+				return a;
+		}
+		
+		return null;
+	}
+
+	/*
+	 * Get the dektop's StatusLineManager
+	 */
+	protected IStatusLineManager getStatusLineManager() {
+		IEditorActionBarContributor contributor = getEditorSite().getActionBarContributor();
+		if (contributor instanceof EditorActionBarContributor) {
+			return ((EditorActionBarContributor) contributor).getActionBars().getStatusLineManager();
+		}
+		return null;
+	}
+	
+	/**
+	 * Configures the toggle comment action
+	 *
+	 * @since 4.0.0
+	 */
+	private void configureToggleCommentAction() {
+		IAction action = getAction("ToggleComment"); //$NON-NLS-1$
+		if (action instanceof ToggleCommentAction) {
+			ISourceViewer sourceViewer = getSourceViewer();
+			SourceViewerConfiguration configuration = getSourceViewerConfiguration();
+			((ToggleCommentAction)action).configure(sourceViewer, configuration);
+		}
+	}
+
+	private void configureTabConverter() {
+		if (fTabConverter != null) {
+			IDocumentProvider provider = getDocumentProvider();
+			if (provider instanceof CDocumentProvider) {
+				CDocumentProvider prov = (CDocumentProvider) provider;
+				fTabConverter.setLineTracker(prov.createLineTracker(getEditorInput()));
+			} else {
+				fTabConverter.setLineTracker(new DefaultLineTracker());
+			}
+		}
+	}
+
+	private int getTabSize() {
+		ICElement element = getInputCElement();
+		ICProject project = element == null ? null : element.getCProject();
+		return CodeFormatterUtil.getTabWidth(project);
+	}
+
+	private void startTabConversion() {
+		if (fTabConverter == null) {
+			fTabConverter= new TabConverter();
+			configureTabConverter();
+			fTabConverter.setNumberOfSpacesPerTab(getTabSize());
+			AdaptedSourceViewer asv= (AdaptedSourceViewer) getSourceViewer();
+			asv.addTextConverter(fTabConverter);
+			asv.updateIndentationPrefixes();
+		}
+	}
+
+	private void stopTabConversion() {
+		if (fTabConverter != null) {
+			AdaptedSourceViewer asv= (AdaptedSourceViewer) getSourceViewer();
+			asv.removeTextConverter(fTabConverter);
+			asv.updateIndentationPrefixes();
+			fTabConverter= null;
+		}
+	}
+
+	private boolean isTabConversionEnabled() {
+		ICElement element= getInputCElement();
+		ICProject project= element == null ? null : element.getCProject();
+		String option;
+		if (project == null)
+			option= CCorePlugin.getOption(SPACES_FOR_TABS);
+		else
+			option= project.getOption(SPACES_FOR_TABS, true);
+		return CCorePlugin.SPACE.equals(option);
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createNavigationActions()
+	 */
+	protected void createNavigationActions() {
+		super.createNavigationActions();
+
+		final StyledText textWidget = getSourceViewer().getTextWidget();
+
+		IAction action = new NavigatePreviousSubWordAction();
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.WORD_PREVIOUS);
+		setAction(ITextEditorActionDefinitionIds.WORD_PREVIOUS, action);
+		textWidget.setKeyBinding(SWT.CTRL | SWT.ARROW_LEFT, SWT.NULL);
+
+		action = new NavigateNextSubWordAction();
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.WORD_NEXT);
+		setAction(ITextEditorActionDefinitionIds.WORD_NEXT, action);
+		textWidget.setKeyBinding(SWT.CTRL | SWT.ARROW_RIGHT, SWT.NULL);
+
+		action = new SelectPreviousSubWordAction();
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_WORD_PREVIOUS);
+		setAction(ITextEditorActionDefinitionIds.SELECT_WORD_PREVIOUS, action);
+		textWidget.setKeyBinding(SWT.CTRL | SWT.SHIFT | SWT.ARROW_LEFT, SWT.NULL);
+
+		action = new SelectNextSubWordAction();
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_WORD_NEXT);
+		setAction(ITextEditorActionDefinitionIds.SELECT_WORD_NEXT, action);
+		textWidget.setKeyBinding(SWT.CTRL | SWT.SHIFT | SWT.ARROW_RIGHT, SWT.NULL);
+		
+		action = new DeletePreviousSubWordAction();
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_PREVIOUS_WORD);
+		setAction(ITextEditorActionDefinitionIds.DELETE_PREVIOUS_WORD, action);
+		textWidget.setKeyBinding(SWT.CTRL | SWT.BS, SWT.NULL);
+		markAsStateDependentAction(ITextEditorActionDefinitionIds.DELETE_PREVIOUS_WORD, true);
+
+		action = new DeleteNextSubWordAction();
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_NEXT_WORD);
+		setAction(ITextEditorActionDefinitionIds.DELETE_NEXT_WORD, action);
+		textWidget.setKeyBinding(SWT.CTRL | SWT.DEL, SWT.NULL);
+		markAsStateDependentAction(ITextEditorActionDefinitionIds.DELETE_NEXT_WORD, true);
+	}
+
+	public final ISourceViewer getViewer() {
+		return getSourceViewer();
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
+	 */
+	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+		ISourceViewer sourceViewer =
+				new AdaptedSourceViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
+
+		CUIHelp.setHelp(this, sourceViewer.getTextWidget(), ICHelpContextIds.CEDITOR_VIEW);
+
+		getSourceViewerDecorationSupport(sourceViewer);
+		
+		return sourceViewer;
+	}
+
+	/** Outliner context menu Id */
+	protected String fOutlinerContextMenuId;
+
+	/**
+	 * Sets the outliner's context menu ID.
+	 */
+	protected void setOutlinerContextMenuId(String menuId) {
+		fOutlinerContextMenuId = menuId;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.editors.text.TextEditor#initializeKeyBindingScopes()
+	 */
+	protected void initializeKeyBindingScopes() {
+		setKeyBindingScopes(new String [] { "org.eclipse.cdt.ui.cEditorScope" } ); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see AbstractTextEditor#affectsTextPresentation(PropertyChangeEvent)
+	 */
+	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
+		SourceViewerConfiguration configuration = getSourceViewerConfiguration();
+		if (configuration instanceof CSourceViewerConfiguration) {
+			return ((CSourceViewerConfiguration)configuration).affectsBehavior(event);
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the folding action group, or <code>null</code> if there is none.
+	 * 
+	 * @return the folding action group, or <code>null</code> if there is none
+	 */
+	protected FoldingActionGroup getFoldingActionGroup() {
+		return fFoldingGroup;
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#performRevert()
+	 */
+	protected void performRevert() {
+		ProjectionViewer projectionViewer = (ProjectionViewer) getSourceViewer();
+		projectionViewer.setRedraw(false);
+		try {
+			
+			boolean projectionMode = projectionViewer.isProjectionMode();
+			if (projectionMode) {
+				projectionViewer.disableProjection();				
+				if (fProjectionModelUpdater != null)
+					fProjectionModelUpdater.uninstall();
+			}
+			
+			super.performRevert();
+			
+			if (projectionMode) {
+				if (fProjectionModelUpdater != null)
+					fProjectionModelUpdater.install(this, projectionViewer);	
+				projectionViewer.enableProjection();
+			}
+			
+		} finally {
+			projectionViewer.setRedraw(true);
+		}
+	}
+
+    /**
+     * Sets the given message as error message to this editor's status line.
+     * 
+     * @param msg message to be set
+     */
+    protected void setStatusLineErrorMessage(String msg) {
+    	IEditorStatusLine statusLine = (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
+    	if (statusLine != null)
+    		statusLine.setMessage(true, msg, null);	
+    }  
+
+	/**
+	 * Sets the given message as message to this editor's status line.
+	 * 
+	 * @param msg message to be set
+	 * @since 3.0
+	 */
+	protected void setStatusLineMessage(String msg) {
+		IEditorStatusLine statusLine = (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
+		if (statusLine != null)
+			statusLine.setMessage(false, msg, null);	
+	}
+
+	/**
+	 * Returns the signed current selection.
+	 * The length will be negative if the resulting selection
+	 * is right-to-left (RtoL).
+	 * <p>
+	 * The selection offset is model based.
+	 * </p>
+	 * 
+	 * @param sourceViewer the source viewer
+	 * @return a region denoting the current signed selection, for a resulting RtoL selections length is < 0 
+	 */
+	protected IRegion getSignedSelection(ISourceViewer sourceViewer) {
+		StyledText text = sourceViewer.getTextWidget();
+		Point selection = text.getSelectionRange();
+		
+		if (text.getCaretOffset() == selection.x) {
+			selection.x = selection.x + selection.y;
+			selection.y = -selection.y;
+		}
+		
+		selection.x = widgetOffset2ModelOffset(sourceViewer, selection.x);
+		
+		return new Region(selection.x, selection.y);
+	}
+	
+	private static boolean isBracket(char character) {
+		for (int i = 0; i != BRACKETS.length; ++i) {
+			if (character == BRACKETS[i])
+				return true;
+		}
+		return false;
+	}
+
+	private static boolean isSurroundedByBrackets(IDocument document, int offset) {
+		if (offset == 0 || offset == document.getLength())
+			return false;
+
+		try {
+			return isBracket(document.getChar(offset - 1)) &&
+					isBracket(document.getChar(offset));
+		} catch (BadLocationException e) {
+			return false;	
+		}
+	}
+		
+	private static char getEscapeCharacter(char character) {
+		switch (character) {
+			case '"':
+			case '\'':
+				return '\\';
+			default:
+				return 0;
+		}
+	}
+
+	private static char getPeerCharacter(char character) {
+		switch (character) {
+			case '(':
+				return ')';
+
+			case ')':
+				return '(';
+
+			case '<':
+				return '>';
+
+			case '>':
+				return '<';
+
+			case '[':
+				return ']';
+
+			case ']':
+				return '[';
+
+			case '"':
+				return character;
+
+			case '\'':
+				return character;
+
+			default:
+				throw new IllegalArgumentException();
+		}
+	}
+
+	/*
+	 * @see org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant#reconciled()
+	 */
+	public void reconciled(boolean somethingHasChanged) {
+		if (getSourceViewer() == null) {
+			return;
+		}
+		// this method must be called in a background thread
+		assert getSourceViewer().getTextWidget().getDisplay().getThread() != Thread.currentThread();
+		
+		if (fReconcilingListeners.size() > 0) {
+			// create AST and notify ICReconcilingListeners
+			ICElement cElement= getInputCElement();
+			if (cElement == null) {
+				return;
+			}
+			
+			aboutToBeReconciled();
+
+			// track changes to the document while parsing
+			IDocument doc= getDocumentProvider().getDocument(getEditorInput());
+			SimplePositionTracker positionTracker= new SimplePositionTracker();
+			positionTracker.startTracking(doc);
+			
+			try {
+				IASTTranslationUnit ast= CUIPlugin.getDefault().getASTProvider().createAST(cElement, null);
+				reconciled(ast, positionTracker, null);
+			} finally {
+				positionTracker.stopTracking();
+			}
+		}
+	}
+	
+	public CSourceViewer getCSourceViewer()  {
+		ISourceViewer viewer = getSourceViewer();
+		CSourceViewer cViewer = null ;
+		if (viewer instanceof CSourceViewer) {
+			cViewer = (CSourceViewer) viewer;
+		}
+		return cViewer ;
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#collectContextMenuPreferencePages()
+	 */
+	protected String[] collectContextMenuPreferencePages() {
+		// Add C/C++ Editor relevant pages
+		String[] parentPrefPageIds = super.collectContextMenuPreferencePages();
+		String[] prefPageIds = new String[parentPrefPageIds.length + 6];
+		int nIds = 0;
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CEditorPreferencePage"; //$NON-NLS-1$
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeAssistPreferencePage"; //$NON-NLS-1$
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeColoringPreferencePage"; //$NON-NLS-1$
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.TemplatePreferencePage"; //$NON-NLS-1$
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.SmartTypingPreferencePage"; //$NON-NLS-1$
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage"; //$NON-NLS-1$
+		System.arraycopy(parentPrefPageIds, 0, prefPageIds, nIds, parentPrefPageIds.length);
+		return prefPageIds;
 	}
 
 	/*

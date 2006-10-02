@@ -57,8 +57,6 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -69,7 +67,6 @@ import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedRange;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
@@ -335,7 +332,6 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	 * The font metrics.
 	 */
 	private FontMetrics fFontMetrics;
-	private CTextTools fTextTools;
 
 	public CEditorColoringConfigurationBlock(OverlayPreferenceStore store) {
 		super(store);
@@ -469,11 +465,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	public void dispose() {
 		uninstallSemanticHighlighting();
 		fColorManager.dispose();
-		if (fTextTools != null) {
-			fTextTools.dispose();
-			fTextTools= null;
-		}
-		
+
 		super.dispose();
 	}
 
@@ -748,14 +740,9 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		
 		IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore();
 		IPreferenceStore store= new ChainedPreferenceStore(new IPreferenceStore[] { getPreferenceStore(), generalTextStore });
-		fTextTools= new CTextTools(store, null, false);
-		fPreviewViewer = new CSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, store) {
-			public ILanguage getLanguage() {
-				return GPPLanguage.getDefault();
-			}
-		};
+		fPreviewViewer = new CSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, store);
 		fPreviewViewer.setPreferenceStore(store);
-		CSourceViewerConfiguration configuration = new CSourceViewerConfiguration(fTextTools, null);
+		CSourceViewerConfiguration configuration = new CSourceViewerConfiguration(fColorManager, store, null, ICPartitions.C_PARTITIONING);
 		fPreviewViewer.configure(configuration);
 		Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
 		fPreviewViewer.getTextWidget().setFont(font);
@@ -764,7 +751,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		
 		String content= loadPreviewContentFromFile("ColorSettingPreviewCode.txt"); //$NON-NLS-1$
 		IDocument document= new Document(content);
-		fTextTools.setupCDocumentPartitioner(document, ICPartitions.C_PARTITIONING);
+		CUIPlugin.getDefault().getTextTools().setupCDocumentPartitioner(document, ICPartitions.C_PARTITIONING);
 		fPreviewViewer.setDocument(document);
 	
 		installSemanticHighlighting();

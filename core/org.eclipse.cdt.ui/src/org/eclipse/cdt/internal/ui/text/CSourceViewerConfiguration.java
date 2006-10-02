@@ -9,11 +9,16 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin, Google
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
 import java.util.Vector;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -41,29 +46,37 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ILanguageUI;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
-import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
@@ -71,13 +84,72 @@ import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 
 /**
- * Configuration for an <code>SourceViewer</code> which shows C code.
+ * Configuration for an <code>SourceViewer</code> which shows C/C++ code.
  */
 public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	
     private CTextTools fTextTools;
-	private CEditor fEditor;
+	private ITextEditor fTextEditor;
+	/**
+	 * The document partitioning.
+	 */
+	private String fDocumentPartitioning;
+	/**
+	 * The C++ source code scanner.
+	 */
+	private AbstractCScanner fCppCodeScanner;
+	/**
+	 * The C source code scanner.
+	 */
+	private AbstractCScanner fCCodeScanner;
+	/**
+	 * The C multi-line comment scanner.
+	 */
+	private AbstractCScanner fMultilineCommentScanner;
+	/**
+	 * The C single-line comment scanner.
+	 */
+	private AbstractCScanner fSinglelineCommentScanner;
+	/**
+	 * The C string scanner.
+	 */
+	private AbstractCScanner fStringScanner;
+	/**
+	 * The color manager.
+	 */
+	private IColorManager fColorManager;
+	/**
+	 * The C preprocessor scanner.
+	 */
+	private AbstractCScanner fCPreprocessorScanner;
+	/**
+	 * The C++ preprocessor scanner.
+	 */
+	private AbstractCScanner fCppPreprocessorScanner;
 	
+	/**
+	 * Creates a new C source viewer configuration for viewers in the given editor
+	 * using the given preference store, the color manager and the specified document partitioning.
+	 * <p>
+	 * Creates a C source viewer configuration in the new setup without text tools. Clients are
+	 * allowed to call {@link CSourceViewerConfiguration#handlePropertyChangeEvent(PropertyChangeEvent)}
+	 * and disallowed to call {@link CSourceViewerConfiguration#getPreferenceStore()} on the resulting
+	 * C source viewer configuration.
+	 * </p>
+	 *
+	 * @param colorManager the color manager
+	 * @param preferenceStore the preference store, can be read-only
+	 * @param editor the editor in which the configured viewer(s) will reside, or <code>null</code> if none
+	 * @param partitioning the document partitioning for this configuration, or <code>null</code> for the default partitioning
+	 */
+	public CSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore preferenceStore, ITextEditor editor, String partitioning) {
+		super(preferenceStore);
+		fColorManager= colorManager;
+		fTextEditor= editor;
+		fDocumentPartitioning= partitioning;
+		initializeScanners();
+	}
+
 	/**
 	 * Creates a new C source viewer configuration for viewers in the given editor using
 	 * the given C tools collection.
@@ -85,46 +157,55 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @param tools the C text tools collection to be used
 	 * @param editor the editor in which the configured viewer will reside
 	 */
-	public CSourceViewerConfiguration(CTextTools tools, CEditor editor) {
+	public CSourceViewerConfiguration(CTextTools tools, ITextEditor editor) {
 		super(CUIPlugin.getDefault().getCombinedPreferenceStore());
 		fTextTools= tools;
-		fEditor= editor;
+		fColorManager= tools.getColorManager();
+		fTextEditor= editor;
+		fDocumentPartitioning= fTextTools.getDocumentPartitioning();
+		fCppCodeScanner= (AbstractCScanner) fTextTools.getCppCodeScanner();
+		fCCodeScanner= (AbstractCScanner) fTextTools.getCCodeScanner();
+		fMultilineCommentScanner= (AbstractCScanner) fTextTools.getMultilineCommentScanner();
+		fSinglelineCommentScanner= (AbstractCScanner) fTextTools.getSinglelineCommentScanner();
+		fStringScanner= (AbstractCScanner) fTextTools.getStringScanner();
+		fCPreprocessorScanner= (AbstractCScanner) fTextTools.getCPreprocessorScanner();
+		fCppPreprocessorScanner= (AbstractCScanner) fTextTools.getCppPreprocessorScanner();
 	}
 
 	/**
-	 * Returns the C multiline comment scanner for this configuration.
+	 * Returns the C multi-line comment scanner for this configuration.
 	 *
-	 * @return the C multiline comment scanner
+	 * @return the C multi-line comment scanner
 	 */
 	protected RuleBasedScanner getMultilineCommentScanner() {
-		return fTextTools.getMultilineCommentScanner();
+		return fMultilineCommentScanner;
 	}
-	
+
 	/**
-	 * Returns the C singleline comment scanner for this configuration.
+	 * Returns the C single-line comment scanner for this configuration.
 	 *
-	 * @return the C singleline comment scanner
+	 * @return the C single-line comment scanner
 	 */
 	protected RuleBasedScanner getSinglelineCommentScanner() {
-		return fTextTools.getSinglelineCommentScanner();
+		return fSinglelineCommentScanner;
 	}
-	
+
 	/**
 	 * Returns the C string scanner for this configuration.
 	 *
 	 * @return the C string scanner
 	 */
 	protected RuleBasedScanner getStringScanner() {
-		return fTextTools.getStringScanner();
-	}	
-	
+		return fStringScanner;
+	}
+
 	/**
 	 * Returns the C preprocessor scanner for this configuration.
 	 *
 	 * @return the C preprocessor scanner
 	 */
 	protected RuleBasedScanner getCPreprocessorScanner() {
-		return fTextTools.getCPreprocessorScanner();
+		return fCPreprocessorScanner;
 	}	
 	
 	/**
@@ -133,7 +214,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @return the C++ preprocessor scanner
 	 */
 	protected RuleBasedScanner getCppPreprocessorScanner() {
-		return fTextTools.getCppPreprocessorScanner();
+		return fCppPreprocessorScanner;
 	}	
 	
 	/**
@@ -142,29 +223,26 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @return the color manager
 	 */
 	protected IColorManager getColorManager() {
-		return fTextTools.getColorManager();
+		return fColorManager;
 	}
-	
+
 	/**
 	 * Returns the editor in which the configured viewer(s) will reside.
 	 *
 	 * @return the enclosing editor
 	 */
-	protected ITextEditor getEditor() {
-		return fEditor;
+	public ITextEditor getEditor() {
+		return fTextEditor;
 	}
 
-	
     /**
      * Creates outline presenter. 
-     * @param editor Editor.
      * @return Presenter with outline view.
      */
-    public IInformationPresenter getOutlinePresenter(CEditor editor)
-    {
-        final IInformationControlCreator outlineControlCreator = getOutlineContolCreator(editor);
+    public IInformationPresenter getOutlinePresenter(ISourceViewer sourceViewer) {
+        final IInformationControlCreator outlineControlCreator = getOutlineContolCreator();
         final InformationPresenter presenter = new InformationPresenter(outlineControlCreator);
-        presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(null));
+        presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
         final IInformationProvider provider = new CElementContentProvider(getEditor());
         presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
         presenter.setInformationProvider(provider, ICPartitions.C_MULTI_LINE_COMMENT);
@@ -177,30 +255,40 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         return presenter;
     }
 
+	/**
+	 * Initializes the scanners.
+	 */
+	private void initializeScanners() {
+		Assert.isTrue(isNewSetup());
+		fCppCodeScanner= new CppCodeScanner(getColorManager(), fPreferenceStore);
+		fCCodeScanner= new CppCodeScanner(getColorManager(), fPreferenceStore);
+		fMultilineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_MULTI_LINE_COMMENT);
+		fSinglelineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
+		fStringScanner= new SingleTokenCScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_STRING);
+		fCppPreprocessorScanner= new CPreprocessorScanner(fColorManager, fPreferenceStore, true);
+		fCPreprocessorScanner= new CPreprocessorScanner(fColorManager, fPreferenceStore, false);
+	}
+
     /**
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
     public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-
 		CPresentationReconciler reconciler= new CPresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 
 		RuleBasedScanner scanner = null;
-		ILanguage language= null;
-		if(sourceViewer instanceof CSourceViewer) {
-			language = ((CSourceViewer)sourceViewer).getLanguage();
-			if (language instanceof GPPLanguage) {
-				scanner = fTextTools.getCppCodeScanner();
-			} else if (language instanceof GCCLanguage) {
-				scanner = fTextTools.getCCodeScanner();
-			} else if (language != null) {
-				ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
-				if (languageUI != null)
-					scanner = languageUI.getCodeScanner();
-			}
+		ILanguage language = getLanguage();
+		if (language instanceof GPPLanguage) {
+			scanner = fCppCodeScanner;
+		} else if (language instanceof GCCLanguage) {
+			scanner = fCCodeScanner;
+		} else if (language != null) {
+			ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
+			if (languageUI != null)
+				scanner = languageUI.getCodeScanner();
 		}
 		if (scanner == null) {
-			scanner= fTextTools.getCCodeScanner();
+			scanner= fCppCodeScanner;
 		}
 
 		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(scanner);
@@ -231,7 +319,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		} else if (language instanceof GCCLanguage) {
 			dr= new DefaultDamagerRepairer(getCPreprocessorScanner());
 		} else {
-			dr= null;
+			dr= new DefaultDamagerRepairer(getCppPreprocessorScanner());
 		}
 		if (dr != null) {
 			reconciler.setDamager(new PartitionDamager(), ICPartitions.C_PREPROCESSOR);
@@ -270,10 +358,10 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @see SourceViewerConfiguration#getReconciler(ISourceViewer)
 	 */
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
-		if (fEditor != null && fEditor.isEditable()) {
+		if (fTextEditor != null && fTextEditor.isEditable()) {
 			//Delay changed and non-incremental reconciler used due to 
 			//PR 130089
-			MonoReconciler reconciler= new MonoReconciler(new CReconcilingStrategy(fEditor), false);
+			MonoReconciler reconciler= new MonoReconciler(new CReconcilingStrategy(fTextEditor), false);
 			reconciler.setDelay(500);
 			return reconciler;
 		}
@@ -287,8 +375,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		String partitioning= getConfiguredDocumentPartitioning(sourceViewer);
 		if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType))
 			return new IAutoEditStrategy[] { new CCommentAutoIndentStrategy() };
-//		else if (ICPartitions.C_STRING.equals(contentType))
-//			return new IAutoEditStrategy[] { new SmartSemicolonAutoEditStrategy(partitioning), new JavaStringAutoIndentStrategy(partitioning) };
+		else if (ICPartitions.C_STRING.equals(contentType))
+			return new IAutoEditStrategy[] { /*new SmartSemicolonAutoEditStrategy(partitioning),*/ new CStringAutoIndentStrategy(partitioning, getProject()) };
 		else
 			return new IAutoEditStrategy[] { new CAutoIndentStrategy(partitioning, getProject()) };
 	}
@@ -315,31 +403,39 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		Vector vector= new Vector();
 
 		// prefix[0] is either '\t' or ' ' x tabWidth, depending on useSpaces
-		int tabWidth= getTabWidth(sourceViewer);
-		boolean useSpaces= getPreferenceStore().getBoolean(CEditor.SPACES_FOR_TABS); 
 
-		for (int i= 0; i <= tabWidth; i++) {
+		ICProject project= getProject();
+		final int tabWidth= CodeFormatterUtil.getTabWidth(project);
+		final int indentWidth= CodeFormatterUtil.getIndentWidth(project);
+		int spaceEquivalents= Math.min(tabWidth, indentWidth);
+		boolean useSpaces;
+		if (project == null)
+			useSpaces= CCorePlugin.SPACE.equals(CCorePlugin.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR)) || tabWidth > indentWidth;
+		else
+			useSpaces= CCorePlugin.SPACE.equals(project.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, true)) || tabWidth > indentWidth;
+
+		for (int i= 0; i <= spaceEquivalents; i++) {
 		    StringBuffer prefix= new StringBuffer();
 
 			if (useSpaces) {
-			    for (int j= 0; j + i < tabWidth; j++)
+			    for (int j= 0; j + i < spaceEquivalents; j++)
 			    	prefix.append(' ');
-		    	
+
 				if (i != 0)
-		    		prefix.append('\t');				
-			} else {    
+		    		prefix.append('\t');
+			} else {
 			    for (int j= 0; j < i; j++)
 			    	prefix.append(' ');
-		    	
-				if (i != tabWidth)
+
+				if (i != spaceEquivalents)
 		    		prefix.append('\t');
 			}
-			
+
 			vector.add(prefix.toString());
 		}
 
 		vector.add(""); //$NON-NLS-1$
-		
+
 		return (String[]) vector.toArray(new String[vector.size()]);
 	}
 
@@ -362,6 +458,13 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return element.getCProject();
 	}
 
+	/*
+	 * @see SourceViewerConfiguration#getTabWidth(ISourceViewer)
+	 */
+	public int getTabWidth(ISourceViewer sourceViewer) {
+		return CodeFormatterUtil.getTabWidth(getProject());
+	}
+
 	/**
 	 * @see SourceViewerConfiguration#getAnnotationHover(ISourceViewer)
 	 */
@@ -369,8 +472,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return new CAnnotationHover();
 	}
 
-
-	
 	/*
 	 * @see SourceViewerConfiguration#getConfiguredTextHoverStateMasks(ISourceViewer, String)
 	 * @since 2.1
@@ -447,12 +548,14 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		
 		formatter.setMasterStrategy(new CFormattingStrategy());
 		return formatter;
-		
-		
 	}
 	
 	public boolean affectsBehavior(PropertyChangeEvent event) {
-		return fTextTools.affectsBehavior(event);
+		return  fCppCodeScanner.affectsBehavior(event)
+			|| fMultilineCommentScanner.affectsBehavior(event)
+			|| fSinglelineCommentScanner.affectsBehavior(event)
+			|| fStringScanner.affectsBehavior(event)
+			|| fCppPreprocessorScanner.affectsBehavior(event);
 	}
 
 	/**
@@ -469,6 +572,13 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
 	
+	/**
+	 * @return <code>true</code> iff the new setup without text tools is in use.
+	 */
+	private boolean isNewSetup() {
+		return fTextTools == null;
+	}
+
 	/*
 	 * @see SourceViewerConfiguration#getHoverControlCreator(ISourceViewer)
 	 * @since 2.0
@@ -477,7 +587,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return getInformationControlCreator(sourceViewer, true);
 	}
 	
-
 	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer, final boolean cutDown) {
 			return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
@@ -496,6 +605,51 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return super.getInformationPresenter(sourceViewer);
 	}
     
+	/**
+	 * Determines whether the preference change encoded by the given event
+	 * changes the behavior of one of its contained components.
+	 *
+	 * @param event the event to be investigated
+	 * @return <code>true</code> if event causes a behavioral change
+	 */
+	public boolean affectsTextPresentation(PropertyChangeEvent event) {
+		return fCppCodeScanner.affectsBehavior(event)
+		    || fCCodeScanner.affectsBehavior(event)
+			|| fMultilineCommentScanner.affectsBehavior(event)
+			|| fSinglelineCommentScanner.affectsBehavior(event)
+			|| fStringScanner.affectsBehavior(event)
+		    || fCppPreprocessorScanner.affectsBehavior(event);
+	}
+
+	/**
+	 * Adapts the behavior of the contained components to the change
+	 * encoded in the given event.
+	 * <p>
+	 * Clients are not allowed to call this method if the old setup with
+	 * text tools is in use.
+	 * </p>
+	 *
+	 * @param event the event to which to adapt
+	 * @see CSourceViewerConfiguration#CSourceViewerConfiguration(IColorManager, IPreferenceStore, ITextEditor, String)
+	 */
+	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
+		Assert.isTrue(isNewSetup());
+		if (fCppCodeScanner.affectsBehavior(event))
+			fCppCodeScanner.adaptToPreferenceChange(event);
+		if (fCCodeScanner.affectsBehavior(event))
+			fCCodeScanner.adaptToPreferenceChange(event);
+		if (fMultilineCommentScanner.affectsBehavior(event))
+			fMultilineCommentScanner.adaptToPreferenceChange(event);
+		if (fSinglelineCommentScanner.affectsBehavior(event))
+			fSinglelineCommentScanner.adaptToPreferenceChange(event);
+		if (fStringScanner.affectsBehavior(event))
+			fStringScanner.adaptToPreferenceChange(event);
+		if (fCppPreprocessorScanner.affectsBehavior(event))
+			fCppPreprocessorScanner.adaptToPreferenceChange(event);
+		if (fCPreprocessorScanner.affectsBehavior(event))
+			fCPreprocessorScanner.adaptToPreferenceChange(event);
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkDetectors(org.eclipse.jface.text.source.ISourceViewer)
 	 * @since 3.1
@@ -506,12 +660,12 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		
 		IHyperlinkDetector[] inheritedDetectors= super.getHyperlinkDetectors(sourceViewer);
 		
-		if (fEditor == null)
+		if (fTextEditor == null)
 			return inheritedDetectors;
 		
 		int inheritedDetectorsLength= inheritedDetectors != null ? inheritedDetectors.length : 0;
 		IHyperlinkDetector[] detectors= new IHyperlinkDetector[inheritedDetectorsLength + 1];
-		detectors[0]= new CElementHyperlinkDetector(fEditor); 
+		detectors[0]= new CElementHyperlinkDetector(fTextEditor); 
 		for (int i= 0; i < inheritedDetectorsLength; i++) {
 			detectors[i+1]= inheritedDetectors[i];
 		}
@@ -522,27 +676,25 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
 	 */
-    public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
-		return fTextTools.getDocumentPartitioning();
+	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+		if (fDocumentPartitioning != null)
+			return fDocumentPartitioning;
+		return super.getConfiguredDocumentPartitioning(sourceViewer);
 	}
 
 	/**
      * Creates control for outline presentation in editor.
-     * @param editor Editor.
      * @return Control.
      */
-    private IInformationControlCreator getOutlineContolCreator(final CEditor editor)
-    {
-        final IInformationControlCreator conrolCreator = new IInformationControlCreator()
-        {
+    private IInformationControlCreator getOutlineContolCreator() {
+        final IInformationControlCreator conrolCreator = new IInformationControlCreator() {
             /**
              * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
              */
-            public IInformationControl createInformationControl(Shell parent)
-            {
+            public IInformationControl createInformationControl(Shell parent) {
                 int shellStyle= SWT.RESIZE;
                 int treeStyle= SWT.V_SCROLL | SWT.H_SCROLL;
-                return new COutlineInformationControl(editor, parent, shellStyle, treeStyle);   
+                return new COutlineInformationControl(parent, shellStyle, treeStyle);   
             }
         };
         return conrolCreator;
@@ -562,14 +714,43 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         
         return settings;
     }
-
-	/**
-	 * Adapt to the given preference change event.
-	 * 
-	 * @param event
-	 */
-	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
-		fTextTools.adaptToPreferenceChange(event);
-	}
     
+	protected ILanguage getLanguage() {
+		if (fTextEditor == null) {
+			return null;
+		}
+		ICElement element = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fTextEditor.getEditorInput());
+		if (element instanceof ITranslationUnit) {
+			try {
+				return ((ITranslationUnit)element).getLanguage();
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+		} else {
+			// compute the language from the plain editor input
+			IContentType contentType = null;
+			IEditorInput input = fTextEditor.getEditorInput();
+			IFile file = ResourceUtil.getFile(input);
+			if (file != null) {
+				contentType = CCorePlugin.getContentType(file.getProject(), file.getName());
+			} else if (input instanceof IPathEditorInput) {
+				IPath path = ((IPathEditorInput)input).getPath();
+				contentType = CCorePlugin.getContentType(path.lastSegment());
+			} else {
+				ILocationProvider locationProvider = (ILocationProvider)input.getAdapter(ILocationProvider.class);
+				if (locationProvider != null) {
+					IPath path = locationProvider.getPath(input);
+					contentType = CCorePlugin.getContentType(path.lastSegment());
+				}
+			}
+			if (contentType != null) {
+				try {
+					return LanguageManager.getInstance().getLanguage(contentType);
+				} catch (CoreException exc) {
+					CUIPlugin.getDefault().log(exc.getStatus());
+				}
+			}
+		}
+		return null;
+	}
 }

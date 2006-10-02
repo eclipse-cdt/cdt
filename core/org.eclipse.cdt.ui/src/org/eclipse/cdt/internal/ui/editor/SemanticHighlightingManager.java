@@ -28,7 +28,7 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
-import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
@@ -294,8 +294,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 		fColorManager= colorManager;
 		fPreferenceStore= preferenceStore;
 		if (fEditor != null) {
-			fConfiguration= new CSourceViewerConfiguration(CUIPlugin.getDefault().getTextTools(), fEditor);
-//			fConfiguration= new CSourceViewerConfiguration(colorManager, preferenceStore, editor, ICPartitions.C_PARTITIONING);
+			fConfiguration= new CSourceViewerConfiguration(colorManager, preferenceStore, editor, ICPartitions.C_PARTITIONING);
 			fPresentationReconciler= (CPresentationReconciler) fConfiguration.getPresentationReconciler(sourceViewer);
 		} else {
 			fConfiguration= null;

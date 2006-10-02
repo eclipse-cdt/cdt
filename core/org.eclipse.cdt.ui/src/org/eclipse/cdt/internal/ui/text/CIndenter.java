@@ -7,11 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin, Google
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.CodeFormatterConstants;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
@@ -45,8 +46,8 @@ public final class CIndenter {
 		final boolean prefTernaryDeepAlign;
 		final int prefTernaryIndent;
 		final int prefCaseIndent;
-		final int prefAssignmentIndent;
 		final int prefCaseBlockIndent;
+		final int prefAssignmentIndent;
 		final int prefSimpleIndent;
 		final int prefBracketIndent;
 		final boolean prefMethodDeclDeepIndent;
@@ -58,6 +59,7 @@ public final class CIndenter {
 		final int prefBlockIndent;
 		final int prefMethodBodyIndent;
 		final int prefTypeIndent;
+		final int prefAccessSpecifierIndent;
 		final boolean prefIndentBracesForBlocks;
 		final boolean prefIndentBracesForArrays;
 		final boolean prefIndentBracesForMethods;
@@ -93,8 +95,8 @@ public final class CIndenter {
 			prefTernaryDeepAlign= prefTernaryDeepAlign();
 			prefTernaryIndent= prefTernaryIndent();
 			prefCaseIndent= prefCaseIndent();
-			prefAssignmentIndent= prefAssignmentIndent();
 			prefCaseBlockIndent= prefCaseBlockIndent();
+			prefAssignmentIndent= prefAssignmentIndent();
 			prefIndentBracesForBlocks= prefIndentBracesForBlocks();
 			prefSimpleIndent= prefSimpleIndent();
 			prefBracketIndent= prefBracketIndent();
@@ -106,15 +108,16 @@ public final class CIndenter {
 			prefParenthesisIndent= prefParenthesisIndent();
 			prefMethodBodyIndent= prefMethodBodyIndent();
 			prefTypeIndent= prefTypeIndent();
+			prefAccessSpecifierIndent= prefAccessSpecifierIndent();
 			prefIndentBracesForArrays= prefIndentBracesForArrays();
 			prefIndentBracesForMethods= prefIndentBracesForMethods();
 			prefIndentBracesForTypes= prefIndentBracesForTypes();
 			prefHasGenerics= hasGenerics();
-			prefTabChar= getCoreFormatterOption(CodeFormatterConstants.FORMATTER_TAB_CHAR);
+			prefTabChar= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
 		}
 		
 		private boolean prefUseTabs() {
-			return !CCorePlugin.SPACE.equals(getCoreFormatterOption(CodeFormatterConstants.FORMATTER_TAB_CHAR));
+			return !CCorePlugin.SPACE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR));
 		}
 
 		private int prefTabSize() {
@@ -130,9 +133,9 @@ public final class CIndenter {
 		}
 
 		private int prefArrayIndent() {
-			String option= getCoreFormatterOption(CodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_ARRAY_INITIALIZER);
+			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_ARRAY_INITIALIZER);
 			try {
-				if (CodeFormatterConstants.getIndentStyle(option) == CodeFormatterConstants.INDENT_BY_ONE)
+				if (DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_BY_ONE)
 					return 1;
 			} catch (IllegalArgumentException e) {
 				// ignore and return default
@@ -142,9 +145,9 @@ public final class CIndenter {
 		}
 
 		private boolean prefArrayDeepIndent() {
-			String option= getCoreFormatterOption(CodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_ARRAY_INITIALIZER);
+			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_ARRAY_INITIALIZER);
 			try {
-				return CodeFormatterConstants.getIndentStyle(option) == CodeFormatterConstants.INDENT_ON_COLUMN;
+				return DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
 			} catch (IllegalArgumentException e) {
 				// ignore and return default
 			}
@@ -153,9 +156,9 @@ public final class CIndenter {
 		}
 
 		private boolean prefTernaryDeepAlign() {
-			String option= getCoreFormatterOption(CodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION);
+			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION);
 			try {
-				return CodeFormatterConstants.getIndentStyle(option) == CodeFormatterConstants.INDENT_ON_COLUMN;
+				return DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
 			} catch (IllegalArgumentException e) {
 				// ignore and return default
 			}
@@ -163,9 +166,9 @@ public final class CIndenter {
 		}
 
 		private int prefTernaryIndent() {
-			String option= getCoreFormatterOption(CodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION);
+			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION);
 			try {
-				if (CodeFormatterConstants.getIndentStyle(option) == CodeFormatterConstants.INDENT_BY_ONE)
+				if (DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_BY_ONE)
 					return 1;
 				else
 					return prefContinuationIndent();
@@ -177,7 +180,17 @@ public final class CIndenter {
 		}
 
 		private int prefCaseIndent() {
-			if (CodeFormatterConstants.TRUE.equals(getCoreFormatterOption(CodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH)))
+			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH)))
+				return prefBlockIndent();
+			else
+				return 0;
+		}
+
+		private int prefCaseBlockIndent() {
+			if (true)
+				return prefBlockIndent();
+
+			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES)))
 				return prefBlockIndent();
 			else
 				return 0;
@@ -185,16 +198,6 @@ public final class CIndenter {
 
 		private int prefAssignmentIndent() {
 			return prefBlockIndent();
-		}
-
-		private int prefCaseBlockIndent() {
-			if (true)
-				return prefBlockIndent();
-
-			if (CodeFormatterConstants.TRUE.equals(getCoreFormatterOption(CodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES)))
-				return prefBlockIndent();
-			else
-				return 0;
 		}
 
 		private int prefSimpleIndent() {
@@ -208,9 +211,9 @@ public final class CIndenter {
 		}
 
 		private boolean prefMethodDeclDeepIndent() {
-			String option= getCoreFormatterOption(CodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION);
+			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION);
 			try {
-				return CodeFormatterConstants.getIndentStyle(option) == CodeFormatterConstants.INDENT_ON_COLUMN;
+				return DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
 			} catch (IllegalArgumentException e) {
 				// ignore and return default
 			}
@@ -219,9 +222,9 @@ public final class CIndenter {
 		}
 
 		private int prefMethodDeclIndent() {
-			String option= getCoreFormatterOption(CodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION);
+			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION);
 			try {
-				if (CodeFormatterConstants.getIndentStyle(option) == CodeFormatterConstants.INDENT_BY_ONE)
+				if (DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_BY_ONE)
 					return 1;
 				else
 					return prefContinuationIndent();
@@ -232,9 +235,9 @@ public final class CIndenter {
 		}
 
 		private boolean prefMethodCallDeepIndent() {
-			String option= getCoreFormatterOption(CodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION);
+			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION);
 			try {
-				return CodeFormatterConstants.getIndentStyle(option) == CodeFormatterConstants.INDENT_ON_COLUMN;
+				return DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
 			} catch (IllegalArgumentException e) {
 				// ignore and return default
 			}
@@ -242,9 +245,9 @@ public final class CIndenter {
 		}
 
 		private int prefMethodCallIndent() {
-			String option= getCoreFormatterOption(CodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION);
+			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION);
 			try {
-				if (CodeFormatterConstants.getIndentStyle(option) == CodeFormatterConstants.INDENT_BY_ONE)
+				if (DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_BY_ONE)
 					return 1;
 				else
 					return prefContinuationIndent();
@@ -259,9 +262,9 @@ public final class CIndenter {
 			if (true) // don't do parenthesis deep indentation
 				return false;
 
-			String option= getCoreFormatterOption(CodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION);
+			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION);
 			try {
-				return CodeFormatterConstants.getIndentStyle(option) == CodeFormatterConstants.INDENT_ON_COLUMN;
+				return DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
 			} catch (IllegalArgumentException e) {
 				// ignore and return default
 			}
@@ -274,53 +277,61 @@ public final class CIndenter {
 		}
 
 		private int prefBlockIndent() {
-			String option= getCoreFormatterOption(CodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BLOCK);
-			if (CodeFormatterConstants.FALSE.equals(option))
+			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BLOCK);
+			if (DefaultCodeFormatterConstants.FALSE.equals(option))
 				return 0;
 
 			return 1; // sensible default
 		}
 
 		private int prefMethodBodyIndent() {
-			if (CodeFormatterConstants.FALSE.equals(getCoreFormatterOption(CodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BODY)))
+			if (DefaultCodeFormatterConstants.FALSE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BODY)))
 				return 0;
 
 			return 1; // sensible default
 		}
 
 		private int prefTypeIndent() {
-			String option= getCoreFormatterOption(CodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_TYPE_HEADER);
-			if (CodeFormatterConstants.FALSE.equals(option))
+			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER);
+			if (DefaultCodeFormatterConstants.FALSE.equals(option))
 				return 0;
 
 			return 1; // sensible default
 		}
+		
+		private int prefAccessSpecifierIndent() {
+			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER)))
+				return prefBlockIndent();
+			else
+				return 0;
+		}
 
 		private boolean prefIndentBracesForBlocks() {
-			return CodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(CodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK));
+			return DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK));
 		}
 
 		private boolean prefIndentBracesForArrays() {
-			return CodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(CodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ARRAY_INITIALIZER));
+			return DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ARRAY_INITIALIZER));
 		}
 
 		private boolean prefIndentBracesForMethods() {
-			return CodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(CodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION));
+			return DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION));
 		}
 
 		private boolean prefIndentBracesForTypes() {
-			return CodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(CodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION));
+			return DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION));
 		}
 
 		private int prefContinuationIndent() {
 			try {
-				return Integer.parseInt(getCoreFormatterOption(CodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION));
+				return Integer.parseInt(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION));
 			} catch (NumberFormatException e) {
 				// ignore and return default
 			}
 
 			return 2; // sensible default
 		}
+		
 		private boolean hasGenerics() {
 			return true;
 		}
@@ -335,7 +346,7 @@ public final class CIndenter {
 	 * (method defs, array initializers)
 	 */
 	private int fAlign;
-	/** The stateful scanposition for the indentation methods. */
+	/** The stateful scan position for the indentation methods. */
 	private int fPosition;
 	/** The previous position. */
 	private int fPreviousPos;
@@ -404,7 +415,6 @@ public final class CIndenter {
 	 *         if it cannot be determined
 	 */
 	private StringBuffer getReferenceIndentation(int offset, boolean assumeOpeningBrace) {
-
 		int unit;
 		if (assumeOpeningBrace)
 			unit= findReferencePosition(offset, Symbols.TokenLBRACE);
@@ -416,7 +426,6 @@ public final class CIndenter {
 			return null;
 
 		return getLeadingWhitespace(unit);
-
 	}
 
 	/**
@@ -441,7 +450,6 @@ public final class CIndenter {
 	 *         determined
 	 */
 	public StringBuffer computeIndentation(int offset, boolean assumeOpeningBrace) {
-
 		StringBuffer reference= getReferenceIndentation(offset, assumeOpeningBrace);
 
 		// handle special alignment
@@ -459,10 +467,29 @@ public final class CIndenter {
 		if (reference == null)
 			return null;
 
-		// add additional indent
+		// Add additional indent
 		return createReusingIndent(reference, fIndent);
 	}
 
+	/**
+	 * Computes the indentation for a continuation line at <code>offset</code>.
+	 *
+	 * @param offset the offset in the document
+	 * @return a StringBuffer which reflects the correct indentation for
+	 *         the line in  which offset resides, or <code>null</code> if it cannot be
+	 *         determined.
+	 * @throws BadLocationException
+	 */
+	public StringBuffer computeContinuationLineIndentation(int offset) throws BadLocationException {
+		StringBuffer reference= getLeadingWhitespace(offset);
+		IRegion line= fDocument.getLineInformationOfOffset(offset);
+		String string= fDocument.get(line.getOffset(), offset - line.getOffset());
+		if (string.trim().length() == 0)
+			return reference;
+		// Add additional indent
+		return createReusingIndent(reference, fPrefs.prefContinuationIndent);
+	}
+	
 	/**
 	 * Computes the length of a <code>CharacterSequence</code>, counting
 	 * a tab character as the size until the next tab stop and every other
@@ -572,7 +599,6 @@ public final class CIndenter {
 		try {
 			int spaces= 0;
 			while (start < indent) {
-
 				char ch= fDocument.getChar(start);
 				if (ch == '\t') {
 					ret.append('\t');
@@ -609,11 +635,10 @@ public final class CIndenter {
 	 * @return the modified <code>buffer</code> reflecting the indentation
 	 *         adapted to <code>additional</code>
 	 */
-	private StringBuffer createReusingIndent(StringBuffer buffer, int additional) {
+	public StringBuffer createReusingIndent(StringBuffer buffer, int additional) {
 		int refLength= computeVisualLength(buffer);
 		int addLength= fPrefs.prefIndentationSize * additional; // may be < 0
 		int totalLength= Math.max(0, refLength + addLength);
-
 
 		// copy the reference indentation for the indent up to the last tab
 		// stop within the maxCopy area
@@ -621,7 +646,6 @@ public final class CIndenter {
 		int tabSize= fPrefs.prefTabSize;
 		int maxCopyLength= tabSize > 0 ? minLength - minLength % tabSize : minLength; // maximum indent to copy
 		stripExceedingChars(buffer, maxCopyLength);
-
 
 		// add additional indent
 		int missing= totalLength - maxCopyLength;
@@ -632,16 +656,16 @@ public final class CIndenter {
 		} else if (CCorePlugin.TAB.equals(fPrefs.prefTabChar)) {
 			tabs= tabSize > 0 ? missing / tabSize : 0;
 			spaces= tabSize > 0 ? missing % tabSize : missing;
-		} else if (CodeFormatterConstants.MIXED.equals(fPrefs.prefTabChar)) {
+		} else if (DefaultCodeFormatterConstants.MIXED.equals(fPrefs.prefTabChar)) {
 			tabs= tabSize > 0 ? missing / tabSize : 0;
 			spaces= tabSize > 0 ? missing % tabSize : missing;
 		} else {
 			Assert.isTrue(false);
 			return null;
 		}
-		for(int i= 0; i < tabs; i++)
+		for (int i= 0; i < tabs; i++)
 			buffer.append('\t');
-		for(int i= 0; i < spaces; i++)
+		for (int i= 0; i < spaces; i++)
 			buffer.append(' ');
 		return buffer;
 	}
@@ -713,6 +737,7 @@ public final class CIndenter {
 		boolean matchBrace= false;
 		boolean matchParen= false;
 		boolean matchCase= false;
+		boolean matchAccessSpecifier= false;
 
 		// account for un-indentation characters already typed in, but after position
 		// if they are on a line by themselves, the indentation gets adjusted
@@ -732,11 +757,20 @@ public final class CIndenter {
 					case Symbols.TokenELSE:
 						danglingElse= true;
 						break;
+						
 					case Symbols.TokenCASE:
 					case Symbols.TokenDEFAULT:
 						if (isFirstTokenOnLine)
 							matchCase= true;
 						break;
+						
+					case Symbols.TokenPUBLIC:
+					case Symbols.TokenPROTECTED:
+					case Symbols.TokenPRIVATE:
+						if (isFirstTokenOnLine)
+							matchAccessSpecifier= true;
+						break;
+						
 					case Symbols.TokenLBRACE: // for opening-brace-on-new-line style
 						if (bracelessBlockStart && !fPrefs.prefIndentBracesForBlocks)
 							unindent= true;
@@ -745,10 +779,12 @@ public final class CIndenter {
 						else if (!bracelessBlockStart && fPrefs.prefIndentBracesForMethods)
 							indent= true;
 						break;
+						
 					case Symbols.TokenRBRACE: // closing braces get unindented
 						if (isFirstTokenOnLine)
 							matchBrace= true;
 						break;
+						
 					case Symbols.TokenRPAREN:
 						if (isFirstTokenOnLine)
 							matchParen= true;
@@ -761,7 +797,7 @@ public final class CIndenter {
 			danglingElse= false;
 		}
 
-		int ref= findReferencePosition(offset, danglingElse, matchBrace, matchParen, matchCase);
+		int ref= findReferencePosition(offset, danglingElse, matchBrace, matchParen, matchCase, matchAccessSpecifier);
 		if (unindent)
 			fIndent--;
 		if (indent)
@@ -787,10 +823,14 @@ public final class CIndenter {
 	 * @param matchCase whether the position of a switch statement reference
 	 *            should be returned (either an earlier case statement or the
 	 *            switch block brace)
+	 * @param matchAccessSpecifier whether the position of a class body reference
+	 *            should be returned (either an earlier public/protected/private
+	 *            or the class body brace)
 	 * @return the reference statement relative to which <code>position</code>
 	 *         should be indented, or {@link CHeuristicScanner#NOT_FOUND}
 	 */
-	public int findReferencePosition(int offset, boolean danglingElse, boolean matchBrace, boolean matchParen, boolean matchCase) {
+	public int findReferencePosition(int offset, boolean danglingElse, boolean matchBrace, boolean matchParen,
+			                         boolean matchCase, boolean matchAccessSpecifier) {
 		fIndent= 0; // the indentation modification
 		fAlign= CHeuristicScanner.NOT_FOUND;
 		fPosition= offset;
@@ -816,7 +856,7 @@ public final class CIndenter {
 			} else {
 				// if we can't find the matching brace, the heuristic is to unindent
 				// by one against the normal position
-				int pos= findReferencePosition(offset, danglingElse, false, matchParen, matchCase);
+				int pos= findReferencePosition(offset, danglingElse, false, matchParen, matchCase, matchAccessSpecifier);
 				fIndent--;
 				return pos;
 			}
@@ -829,7 +869,7 @@ public final class CIndenter {
 			else {
 				// if we can't find the matching paren, the heuristic is to unindent
 				// by one against the normal position
-				int pos= findReferencePosition(offset, danglingElse, matchBrace, false, matchCase);
+				int pos= findReferencePosition(offset, danglingElse, matchBrace, false, matchCase, matchAccessSpecifier);
 				fIndent--;
 				return pos;
 			}
@@ -841,6 +881,12 @@ public final class CIndenter {
 			return matchCaseAlignment();
 		}
 
+		// the only reliable way to get case labels aligned (due to many different styles of using braces in a block)
+		// is to go for another case statement, or the scope opening brace
+		if (matchAccessSpecifier) {
+			return matchAccessSpecifierAlignment();
+		}
+		
 		nextToken();
 		switch (fToken) {
 			case Symbols.TokenGREATERTHAN:
@@ -930,7 +976,6 @@ public final class CIndenter {
 				// if we are inside a continued expression, then either align with a previous line that has indentation
 				// or indent from the expression start line (either a scope introducer or the start of the expr).
 				return skipToPreviousListItemOrListStart();
-
 		}
 	}
 
@@ -1060,9 +1105,7 @@ public final class CIndenter {
 
 				default:
 					// keep searching
-
 			}
-
 		}
 	}
 
@@ -1085,12 +1128,16 @@ public final class CIndenter {
 		while (true) {
 			nextToken();
 			switch (fToken) {
-
 				// search for case labels, which consist of (possibly qualified) identifiers or numbers
 				case Symbols.TokenIDENT:
 				case Symbols.TokenOTHER: // dots for qualified constants
 					continue;
+
 				case Symbols.TokenCASE:
+				case Symbols.TokenDEFAULT:
+				case Symbols.TokenPUBLIC:
+				case Symbols.TokenPROTECTED:
+				case Symbols.TokenPRIVATE:
 					return false;
 
 				default:
@@ -1117,10 +1164,12 @@ public final class CIndenter {
 				case Symbols.TokenLBRACKET:
 				case Symbols.TokenEOF:
 					return fPosition;
+					
 				case Symbols.TokenLBRACE:
 					// opening brace of switch statement
 					fIndent= fPrefs.prefCaseIndent;
 					return fPosition;
+					
 				case Symbols.TokenCASE:
 				case Symbols.TokenDEFAULT:
 					// align with previous label
@@ -1138,7 +1187,52 @@ public final class CIndenter {
 				default:
 					// keep searching
 					continue;
+			}
+		}
+	}
 
+	/**
+	 * Returns as a reference any previous <code>switch</code> labels (<code>case</code>
+	 * or <code>default</code>) or the offset of the brace that scopes the class body.
+	 * Sets <code>fIndent</code> to <code>prefAccessSpecifierIndent</code> upon
+	 * a match.
+	 *
+	 * @return the reference offset for an access specifier (public/protected/private)
+	 */
+	private int matchAccessSpecifierAlignment() {
+		while (true) {
+			nextToken();
+			switch (fToken) {
+				// invalid cases: another case label or an LBRACE must come before a case
+				// -> bail out with the current position
+				case Symbols.TokenLPAREN:
+				case Symbols.TokenLBRACKET:
+				case Symbols.TokenEOF:
+					return fPosition;
+					
+				case Symbols.TokenLBRACE:
+					// opening brace of switch statement
+					fIndent= fPrefs.prefAccessSpecifierIndent;
+					return fPosition;
+					
+				case Symbols.TokenPUBLIC:
+				case Symbols.TokenPROTECTED:
+				case Symbols.TokenPRIVATE:
+					// align with previous label
+					fIndent= 0;
+					return fPosition;
+
+				// scopes: skip them
+				case Symbols.TokenRPAREN:
+				case Symbols.TokenRBRACKET:
+				case Symbols.TokenRBRACE:
+				case Symbols.TokenGREATERTHAN:
+					skipScope();
+					break;
+
+				default:
+					// keep searching
+					continue;
 			}
 		}
 	}

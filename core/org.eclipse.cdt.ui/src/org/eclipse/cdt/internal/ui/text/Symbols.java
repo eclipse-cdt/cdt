@@ -41,13 +41,15 @@ public interface Symbols {
 	int TokenRETURN= 1018;
 	int TokenSTATIC= 1019;
 	int TokenSWITCH= 1020;
-//	int TokenFINALLY= 1021;
-//	int TokenSYNCHRONIZED= 1022;
-	int TokenGOTO= 1023;
-	int TokenDEFAULT= 1024;
-	int TokenNEW= 1025;
-	int TokenCLASS= 1026;
-//	int TokenINTERFACE= 1027;
-	int TokenENUM= 1028;
+	int TokenGOTO= 1021;
+	int TokenDEFAULT= 1022;
+  int TokenPRIVATE= 1023;
+  int TokenPROTECTED= 1024;
+  int TokenPUBLIC= 1025;
+	int TokenNEW= 1026;
+  int TokenDELETE= 1027; 
+	int TokenCLASS= 1028;
+	int TokenSTRUCT= 1029;
+	int TokenENUM= 1030;
 	int TokenIDENT= 2000;
 }

@@ -14,6 +14,7 @@ package org.eclipse.cdt.core;
 import java.util.Map;
 
 import org.eclipse.cdt.core.formatter.CodeFormatter;
+import org.eclipse.cdt.internal.formatter.CCodeFormatter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -67,5 +68,8 @@ public class ToolFactory {
 		return null;
 	}
 
-	
+  public static CodeFormatter createDefaultCodeFormatter(Map options){
+    if (options == null) options = CCorePlugin.getOptions();
+    return new CCodeFormatter(options);
+  }
 }

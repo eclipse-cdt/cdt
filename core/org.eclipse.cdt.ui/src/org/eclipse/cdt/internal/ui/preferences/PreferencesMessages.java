@@ -164,9 +164,6 @@ public final class PreferencesMessages extends NLS {
 	public static String FoldingConfigurationBlock_combo_caption;
 	public static String FoldingConfigurationBlock_info_no_preferences;
 	public static String FoldingConfigurationBlock_error_not_exist;
-	public static String CodeFormatterPreferencePage_title;
-	public static String CodeFormatterPreferencePage_selectionName;
-	public static String CodeFormatterPreferencePage_emptyName;
 	public static String PathEntryVariablePreference_explanation;
 	public static String PathEntryVariableDialog_shellTitle_newVariable;
 	public static String PathEntryVariableDialog_shellTitle_existingVariable;
@@ -193,6 +190,32 @@ public final class PreferencesMessages extends NLS {
 	public static String PathEntryVariablesBlock_removeVariableButton;
 	public static String IndexerPrefs_description;
 	public static String ProposalFilterPreferencesUtil_defaultFilterName;
+
+	public static String CEditorPreferencePage_typing_tabTitle;
+	public static String CEditorPreferencePage_typing_description;
+	public static String CEditorPreferencePage_closeStrings;
+	public static String CEditorPreferencePage_closeBrackets;
+	public static String CEditorPreferencePage_closeAngularBrackets;
+	public static String CEditorPreferencePage_closeBraces;
+	public static String CEditorPreferencePage_wrapStrings;
+	public static String CEditorPreferencePage_escapeStrings;
+	public static String CEditorPreferencePage_smartPaste;
+
+	public static String CEditorPreferencePage_typing_smartTab;
+
+	public static String SmartTypingConfigurationBlock_autoclose_title;
+	public static String SmartTypingConfigurationBlock_tabs_title;
+	public static String SmartTypingConfigurationBlock_tabs_message_tab_text;
+	public static String SmartTypingConfigurationBlock_tabs_message_others_text;
+	public static String SmartTypingConfigurationBlock_tabs_message_tooltip;
+	public static String SmartTypingConfigurationBlock_tabs_message_spaces;
+	public static String SmartTypingConfigurationBlock_tabs_message_tabs;
+	public static String SmartTypingConfigurationBlock_tabs_message_tabsAndSpaces;
+	public static String SmartTypingConfigurationBlock_pasting_title;
+	public static String SmartTypingConfigurationBlock_strings_title;
+
+	public static String CodeFormatterPreferencePage_title;
+	public static String CodeFormatterPreferencePage_description; 
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, PreferencesMessages.class);

@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
- *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -597,6 +596,15 @@ public class PreferenceConstants {
 	public final static String EDITOR_CLOSE_BRACKETS= "closeBrackets"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls whether the 'close angular brackets' feature is
+	 * enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 */
+	public final static String EDITOR_CLOSE_ANGULAR_BRACKETS= "closeAngularBrackets"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that controls whether the 'close braces' feature is
 	 * enabled.
 	 * <p>
@@ -604,6 +612,22 @@ public class PreferenceConstants {
 	 * </p>
 	 */
 	public final static String EDITOR_CLOSE_BRACES= "closeBraces"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether the 'smart paste' feature is
+	 * enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 */
+	public final static String EDITOR_SMART_PASTE= "smartPaste"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the smart tab behavior.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 */
+	public static final String EDITOR_SMART_TAB= "smart_tab"; //$NON-NLS-1$
 
 	/**
 	 * The id of the best match hover contributed for extension point
@@ -858,6 +882,15 @@ public class PreferenceConstants {
 	 */	
 	public static final String TEMPLATES_USE_CODEFORMATTER= "org.eclipse.cdt.ui.text.templates.format"; //$NON-NLS-1$
 
+	/**
+	 * A named preference that controls which profile is used by the code formatter.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * </p>
+	 *
+	 * @since 4.0
+	 */	
+	public static final String FORMATTER_PROFILE = "formatter_profile"; //$NON-NLS-1$
 
 	/** 
 	 * Preference key for whether to ensure a newline at the end of files when saving.
@@ -1049,7 +1082,10 @@ public class PreferenceConstants {
 
 		store.setDefault(PreferenceConstants.EDITOR_CLOSE_STRINGS, true);
 		store.setDefault(PreferenceConstants.EDITOR_CLOSE_BRACKETS, true);
+		store.setDefault(PreferenceConstants.EDITOR_CLOSE_ANGULAR_BRACKETS, true);
 		store.setDefault(PreferenceConstants.EDITOR_CLOSE_BRACES, true);
+		store.setDefault(PreferenceConstants.EDITOR_SMART_PASTE, true);
+		store.setDefault(PreferenceConstants.EDITOR_SMART_TAB, true);
 		store.setDefault(PreferenceConstants.EDITOR_WRAP_STRINGS, true);
 		store.setDefault(PreferenceConstants.EDITOR_ESCAPE_STRINGS, false);
 		

@@ -83,7 +83,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.MATCHING_BRACKETS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.INACTIVE_CODE_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.INACTIVE_CODE_ENABLE));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.SPACES_FOR_TABS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.ENSURE_NEWLINE_AT_EOF));
       
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
@@ -110,8 +109,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 		store.setDefault(CEditor.INACTIVE_CODE_ENABLE, true);
 		PreferenceConverter.setDefault(store, CEditor.INACTIVE_CODE_COLOR, new RGB(224, 224, 224));
-
-		store.setDefault(CEditor.SPACES_FOR_TABS, false);
 
 	}
 
@@ -149,9 +146,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_inactiveCode; 
 		addCheckBox(behaviorComposite, label, CEditor.INACTIVE_CODE_ENABLE, 0);
-
-		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_tabSpace; 
-		addCheckBox(behaviorComposite, label, CEditor.SPACES_FOR_TABS, 0);
 
 		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_ensureNewline; 
 		addCheckBox(behaviorComposite, label, PreferenceConstants.ENSURE_NEWLINE_AT_EOF, 0);

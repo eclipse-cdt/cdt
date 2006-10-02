@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin, Google
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
@@ -23,7 +24,7 @@ import org.eclipse.swt.widgets.Control;
  * Clients may implement this interface.
  * </p>
  * 
- * @since 4.0
+ * @since 3.0
  */
 public interface IPreferenceConfigurationBlock {
 	

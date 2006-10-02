@@ -7,16 +7,18 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Sergey Prigogin, Google
  *******************************************************************************/
 /*
  * COutlineInformationControl.java 2004-12-14 / 08:17:41
 
- * $Revision: 1.5 $ $Date: 2005/06/23 16:01:24 $
+ * $Revision: 1.6 $ $Date: 2006/09/12 06:50:49 $
  *
  * @author P.Tomaszewski
  */
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
@@ -25,9 +27,12 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
+import org.eclipse.jface.text.IInformationControlExtension2;
 import org.eclipse.jface.text.IInformationControlExtension3;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -75,16 +80,17 @@ import org.eclipse.swt.widgets.Tracker;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
 
 import org.eclipse.cdt.internal.core.model.CElement;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.editor.CContentOutlinerProvider;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
@@ -100,7 +106,8 @@ import org.eclipse.cdt.internal.ui.viewsupport.StandardCElementLabelProvider;
  * @author P.Tomaszewski
  */
 public class COutlineInformationControl implements IInformationControl,
-        IInformationControlExtension, IInformationControlExtension3 {
+        IInformationControlExtension, IInformationControlExtension2,
+        IInformationControlExtension3 {
 
     /** If this option is set, location is not restored. */
     private static final String STORE_RESTORE_SIZE= "ENABLE_RESTORE_SIZE"; //$NON-NLS-1$
@@ -118,8 +125,8 @@ public class COutlineInformationControl implements IInformationControl,
 	private static final int TEXT_FLAGS = AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS | CElementLabels.F_APP_TYPE_SIGNATURE | CElementLabels.M_APP_RETURNTYPE;
 	private static final int IMAGE_FLAGS = AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS;
 
-    /** Source viewer which shows this control. */
-    CEditor fEditor;
+	private ICElement fInput = null;
+	
     /** Shell for this control. */
     Shell fShell;
     /** Control's composite. */
@@ -162,8 +169,6 @@ public class COutlineInformationControl implements IInformationControl,
     /**
      * Creates new outline control.
      * 
-     * @param editor
-     *            CEditor editor which uses this control.
      * @param parent
      *            Shell parent.
      * @param shellStyle
@@ -171,10 +176,8 @@ public class COutlineInformationControl implements IInformationControl,
      * @param treeStyle
      *            Style of the tree viewer.
      */
-    public COutlineInformationControl(CEditor editor, Shell parent,
-            int shellStyle, int treeStyle) {
+    public COutlineInformationControl(Shell parent, int shellStyle, int treeStyle) {
         super();
-        this.fEditor = editor;
         createShell(parent, shellStyle);
         createComposite();
         createToolbar();
@@ -182,7 +185,53 @@ public class COutlineInformationControl implements IInformationControl,
         createTreeeViewer(treeStyle);
     }
 
-    /**
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setInput(Object information) {
+		if (information == null || information instanceof String) {
+			inputChanged(null, null);
+			return;
+		}
+		ICElement ce = (ICElement)information;
+		ITranslationUnit tu = (ITranslationUnit)ce.getAncestor(ICElement.C_UNIT);
+		if (tu != null)
+			fInput = tu;
+
+		inputChanged(fInput, information);
+	}
+
+	protected void inputChanged(Object newInput, Object newSelection) {
+		fFilterText.setText(""); //$NON-NLS-1$
+		fTreeViewer.setInput(newInput);
+		if (newSelection != null) {
+			fTreeViewer.setSelection(new StructuredSelection(newSelection));
+		}
+	}
+
+	/**
+	 * @return the selected element
+	 */
+	protected Object getSelectedElement() {
+		if (fTreeViewer == null)
+			return null;
+
+		return ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
+	}
+
+	private void gotoSelectedElement() {
+		Object selectedElement= getSelectedElement();
+		if (selectedElement != null) {
+			try {
+				dispose();
+				OpenActionUtil.open(selectedElement, true);
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+		}
+	}
+
+	/**
      * @see org.eclipse.jface.text.IInformationControl#setInformation(java.lang.String)
      */
     public void setInformation(String information) {
@@ -422,8 +471,6 @@ public class COutlineInformationControl implements IInformationControl,
      * @param treeStyle Tree style.
      */
     private void createTreeeViewer(int treeStyle) {
-        final IWorkingCopyManager manager = CUIPlugin.getDefault()
-                .getWorkingCopyManager();
         fTreeViewer = new ProblemTreeViewer(fComposite, treeStyle);
         final Tree tree = fTreeViewer.getTree();
         tree.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -436,11 +483,10 @@ public class COutlineInformationControl implements IInformationControl,
         fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(
                 new StandardCElementLabelProvider(TEXT_FLAGS, IMAGE_FLAGS), true));
         fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
-        fTreeViewer.setInput(manager.getWorkingCopy(fEditor.getEditorInput()));
         tree.addKeyListener(createKeyListenerForTreeViewer());
         tree.addSelectionListener(createSelectionListenerForTreeViewer());
         tree.addMouseMoveListener(createMouseMoveListenerForTreeViewer());
-        tree.addMouseListener(createMouseListenerForTreeViewer());
+        tree.addMouseListener(createMouseListenerForTreeViewer(tree));
     }
 
     /**
@@ -529,32 +575,23 @@ public class COutlineInformationControl implements IInformationControl,
      * 
      * @return Created mouse listener.
      */
-    private MouseListener createMouseListenerForTreeViewer() {
+    private MouseListener createMouseListenerForTreeViewer(final Tree tree) {
         final MouseListener mouseListener = new MouseAdapter() {
-            public void mouseUp(MouseEvent e) {
-                final Tree tree = fTreeViewer.getTree();
-                if (tree.getSelectionCount() < 1) {
-                    return;
-                }
-                if (e.button != 1) {
-                    return;
-                }
+			public void mouseUp(MouseEvent e) {
 
-                if (tree.equals(e.getSource())) {
-                    Object o = tree.getItem(new Point(e.x, e.y));
-                    final TreeItem selection = tree.getSelection()[0];
-                    if (selection.equals(o)) {
-                        CElement selectedElement = (CElement) selection
-                                .getData();
-                        fEditor.setSelection(selectedElement);
-                        dispose();
-                    }
-                    if (fComposite != null && !fComposite.isDisposed())
-                    {
-                        fBounds = fComposite.getBounds();
-                    }
-                }
-            }
+				if (tree.getSelectionCount() < 1)
+					return;
+
+				if (e.button != 1)
+					return;
+
+				if (tree.equals(e.getSource())) {
+					Object o= tree.getItem(new Point(e.x, e.y));
+					TreeItem selection= tree.getSelection()[0];
+					if (selection.equals(o))
+						gotoSelectedElement();
+				}
+			}
         };
         return mouseListener;
     }
@@ -619,16 +656,9 @@ public class COutlineInformationControl implements IInformationControl,
             /**
              * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
              */
-            public void widgetDefaultSelected(SelectionEvent e) {
-                final TreeItem[] selection = ((Tree) fTreeViewer.getControl())
-                        .getSelection();
-                if (selection.length > 0) {
-                    CElement selectedElement = (CElement) selection[0]
-                            .getData();
-                    fEditor.setSelection(selectedElement);
-                    dispose();
-                }
-            }
+			public void widgetDefaultSelected(SelectionEvent e) {
+				gotoSelectedElement();
+			}
         };
         return selectionListener;
     }
@@ -1024,5 +1054,4 @@ public class COutlineInformationControl implements IInformationControl,
             fIsDeactivationActive = true;
         }
     }
-    
 }

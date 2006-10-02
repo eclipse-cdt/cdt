@@ -55,6 +55,12 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String JOIN_LINES= "org.eclipse.cdt.ui.edit.text.c.join.lines"; //$NON-NLS-1$
 	
 	/**
+	 * Action definition ID of the source -> indent action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.indent"</code>).
+	 */
+	public static final String INDENT = "org.eclipse.cdt.ui.edit.text.c.indent"; //$NON-NLS-1$
+	
+	/**
 	 * Action definition ID of the source -> format action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.format"</code>).
 	 */

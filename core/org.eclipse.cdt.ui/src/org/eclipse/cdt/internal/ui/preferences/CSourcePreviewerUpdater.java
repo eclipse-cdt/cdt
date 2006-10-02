@@ -58,8 +58,8 @@ public class CSourcePreviewerUpdater {
 			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
-				if (configuration.affectsBehavior(event)) {
-					configuration.adaptToPreferenceChange(event);
+				if (configuration.affectsTextPresentation(event)) {
+					configuration.handlePropertyChangeEvent(event);
 					viewer.invalidateTextPresentation();
 				}
 			}

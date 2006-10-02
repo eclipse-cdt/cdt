@@ -11,21 +11,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
 
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 import org.eclipse.cdt.internal.ui.util.Strings;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateBuffer;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.TemplateTranslator;
-
 
 
 /**
@@ -148,27 +150,25 @@ public class CContext extends TranslationUnitContext {
 		IPreferenceStore prefs= CUIPlugin.getDefault().getPreferenceStore();
 		boolean useCodeFormatter= prefs.getBoolean(PreferenceConstants.TEMPLATES_USE_CODEFORMATTER);			
 
-		CFormatter formatter= new CFormatter(lineDelimiter, getIndentation(), useCodeFormatter);
-		formatter.edit(buffer, this, getIndentation());					
+		ICProject project= getTranslationUnit() != null ? getTranslationUnit().getCProject() : null;
+		CFormatter formatter= new CFormatter(TextUtilities.getDefaultLineDelimiter(getDocument()), getIndentationLevel(project), useCodeFormatter, project);
+		formatter.format(buffer, this);
+		
 		return buffer;
 	}
 
 	/**
 	 * Returns the indentation level at the position of code completion.
 	 */
-	private int getIndentation() {
+	private int getIndentationLevel(ICProject project) {
 		int start= getStart();
 		IDocument document= getDocument();
 		try {
 			IRegion region= document.getLineInformationOfOffset(start);
 			String lineContent= document.get(region.getOffset(), region.getLength());
-			return Strings.computeIndent(lineContent, CodeFormatterUtil.getTabWidth());
+			return Strings.computeIndent(lineContent, CodeFormatterUtil.getTabWidth(project), CodeFormatterUtil.getIndentWidth(project));
 		} catch (BadLocationException e) {
 			return 0;
 		}
 	}	
-
 }
-
-
-

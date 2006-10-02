@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
@@ -29,18 +26,17 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class PDOMIndexerJob extends Job {
 
-	private final PDOMManager manager;
+	private final PDOMManager pdomManager;
 	
-	private LinkedList queue = new LinkedList();
 	private IPDOMIndexerTask currentTask;
-	private boolean isCancelling = false;
+	private boolean cancelledByManager= false;
 	private Object taskMutex = new Object();
 	
 	private IProgressMonitor monitor;
 
 	public PDOMIndexerJob(PDOMManager manager) {
 		super(CCorePlugin.getResourceString("pdom.indexer.name")); //$NON-NLS-1$
-		this.manager = manager;
+		this.pdomManager = manager;
 		setPriority(Job.LONG);
 	}
 
@@ -52,30 +48,30 @@ public class PDOMIndexerJob extends Job {
 		String taskName = CCorePlugin.getResourceString("pdom.indexer.task"); //$NON-NLS-1$
 		monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
 		
-		fillQueue();
-		while (true) {
-			while (!queue.isEmpty()) {
-				synchronized (taskMutex) {
-					currentTask = (IPDOMIndexerTask)queue.removeFirst();
+		while (!pdomManager.finishIndexerJob()) {
+			IPDOMIndexerTask nextTask= pdomManager.getNextTask();
+			synchronized (taskMutex) {
+				if (!cancelledByManager) {	
+					currentTask= nextTask;	// write to currentTask needs protection
 				}
+			}
+			if (currentTask != null) {		// read on currentTask is ok (no write in other thread)
 				currentTask.run(monitor);
 				synchronized (taskMutex) {
-					// mschorn: currentTask must be set to null, otherwise cancelJobs() waits forever.
-					currentTask= null;
-					if (isCancelling) {
+					currentTask= null;		// write to currentTask needs protection
+					if (cancelledByManager) {	
 						// TODO chance for confusion here is user cancels
 						// while project is getting deletes.
 						monitor.setCanceled(false);
-						isCancelling = false;
+						cancelledByManager = false;
 						taskMutex.notify();
-					} else if (monitor.isCanceled())
-						return Status.CANCEL_STATUS;
+					} 
 				}
 			}
-			if (manager.finishIndexerJob())
-				break;
-			else
-				fillQueue();
+			if (monitor.isCanceled()) {
+				pdomManager.cancelledByUser();
+				return Status.CANCEL_STATUS;
+			}
 		}
 		
 		String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
@@ -85,27 +81,12 @@ public class PDOMIndexerJob extends Job {
 
 		return Status.OK_STATUS;
 	}
-	
-	private void fillQueue() {
-		synchronized (taskMutex) {
-			IPDOMIndexerTask task = manager.getNextTask();
-			while (task != null) {
-				queue.addLast(task);
-				task = manager.getNextTask();
-			}
-		}
-	}
-	
+		
 	public void cancelJobs(IPDOMIndexer indexer) {
 		synchronized (taskMutex) {
-			for (Iterator i = queue.iterator(); i.hasNext();) {
-				IPDOMIndexerTask task = (IPDOMIndexerTask)i.next();
-				if (task.getIndexer().equals(indexer))
-					i.remove();
-			}
 			if (currentTask != null && currentTask.getIndexer().equals(indexer)) {
 				monitor.setCanceled(true);
-				isCancelling = true;
+				cancelledByManager = true;
 				try {
 					taskMutex.wait();
 				} catch (InterruptedException e) {

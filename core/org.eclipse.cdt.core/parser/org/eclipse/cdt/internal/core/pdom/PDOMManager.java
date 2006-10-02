@@ -66,8 +66,8 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 		if (pdom == null) {
 			String dbName = rproject.getPersistentProperty(dbNameProperty);
 			if (dbName == null) {
-				dbName = project.getElementName() + "."
-					+ System.currentTimeMillis() + ".pdom";
+				dbName = project.getElementName() + "." //$NON-NLS-1$
+					+ System.currentTimeMillis() + ".pdom"; //$NON-NLS-1$
 				rproject.setPersistentProperty(dbNameProperty, dbName);
 			}
 			IPath dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
@@ -289,6 +289,12 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     		return indexerJobQueue.isEmpty()
     			? null
     			: (IPDOMIndexerTask)indexerJobQueue.removeFirst();
+		}
+    }
+    
+    void cancelledByUser() {
+    	synchronized (indexerJobMutex) {
+    		indexerJobQueue.clear();
 		}
     }
     

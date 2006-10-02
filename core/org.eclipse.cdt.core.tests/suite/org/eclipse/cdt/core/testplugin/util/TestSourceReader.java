@@ -19,7 +19,6 @@ import java.io.LineNumberReader;
 
 import junit.framework.Assert;
 
-import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -30,6 +29,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.osgi.framework.Bundle;
 
 public class TestSourceReader {
 
@@ -62,10 +62,10 @@ public class TestSourceReader {
 	 * is started with '// {tag}' and ends with the first line not started by '//' 
 	 * @since 4.0
 	 */
-	public static String readTaggedComment(Class clazz, final String tag) throws IOException {
+	public static String readTaggedComment(Bundle bundle, Class clazz, final String tag) throws IOException {
 	    IPath filePath= new Path("ui/" + clazz.getName().replace('.', '/') + ".java");
 	    
-	    InputStream in= FileLocator.openStream(CTestPlugin.getDefault().getBundle(), filePath, false);
+	    InputStream in= FileLocator.openStream(bundle, filePath, false);
 	    LineNumberReader reader= new LineNumberReader(new InputStreamReader(in));
 	    boolean found= false;
 	    final StringBuffer content= new StringBuffer();

@@ -201,6 +201,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 					case SINGLE_LINE_COMMENT:
 					case CHARACTER:
 					case STRING:
+					case PREPROCESSOR:
 
 						int last;
 						int newState;
@@ -235,6 +236,11 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 							newState= CCODE;
 							break;
 
+						case '#':
+							last= NONE;
+							newState= PREPROCESSOR;
+							break;
+
 						default:
 							last= NONE;
 							newState= CCODE;
@@ -260,10 +266,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 						}
 						break;
 
-					case PREPROCESSOR:
-						fLast= NONE; // ignore fLast
-						return preFix(fState, CCODE, NONE, 1);
-						
 					default:
 						break;
 					}
@@ -405,8 +407,8 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 				case '/':
 					if (fLast == STAR) {
 						fState= PREPROCESSOR;
-						consume();
 					}
+					consume();
 					break;
 	
 				default:

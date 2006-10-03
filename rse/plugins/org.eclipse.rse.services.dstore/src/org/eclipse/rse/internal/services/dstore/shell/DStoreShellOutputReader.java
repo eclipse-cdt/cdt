@@ -72,12 +72,24 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 		
 			try
 			{
-				waitForResponse();		
+				waitForResponse();	
 				return internalReadLine();
 			}
 			catch (Exception e)
 			{					
 				e.printStackTrace();
+			}
+		}
+		if (_status.getValue().equals("done"))
+		{
+			if (!_isErrorReader)
+			{
+				DataElement dummyLine = _status.getDataStore().createObject(_status, "stdout", "");
+				return dummyLine;
+			}
+			else
+			{
+				return null;
 			}
 		}
 		return "";

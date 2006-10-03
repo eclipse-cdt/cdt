@@ -90,7 +90,7 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 	}
 	
 	protected void addLine(Object line)
-	{
+	{	
 		_linesOfOutput.add(line);
 		int sizenow = _linesOfOutput.size();
 		int deltaSize = sizenow - _sizeAtLastEvent;
@@ -146,6 +146,8 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 			IHostShellOutputListener listener = (IHostShellOutputListener)_listeners.get(i);
 			listener.shellOutputChanged(event);
 		}
+		if (!_keepRunning)
+			dispose();
 	}
 	
 	public void dispose()
@@ -165,7 +167,7 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 
 			_waitIncrement = 0;
 			_keepRunning = false;
-			dispose();
+			//dispose();
 		}
 	}
 	

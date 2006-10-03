@@ -344,7 +344,7 @@ public class SystemCommandsViewPart
 
 	public void updateActionStates()
 	{
-		if (_shellActions == null)
+		if (_shellActions == null || (_shellActions.size() == 0 && _folder != null && _folder.getInput() != null))
 			fillLocalToolBar();
 
 		if (_folder != null && _folder.getInput() != null)
@@ -417,7 +417,7 @@ public class SystemCommandsViewPart
 		boolean firstCall = false;
 		if (_folder != null )
 		{
-			firstCall = (_shellActions == null);
+			firstCall = (_shellActions == null || _shellActions.size() == 0);
 
 			if (firstCall) {															
 				updateShellActions();
@@ -447,7 +447,7 @@ public class SystemCommandsViewPart
 		{
 			toolBarManager.add(_clearAction);
 		}
-		if (_shellActions != null)
+		if (_shellActions != null && _shellActions.size() > 0)
 		{
 			for (int i =0; i < _shellActions.size(); i++)
 			{
@@ -463,7 +463,6 @@ public class SystemCommandsViewPart
 			}
 		}
 		toolBarManager.update(true);
-		
 	}
 
 	private void addMenuItems(IMenuManager menuManager)
@@ -548,9 +547,11 @@ public class SystemCommandsViewPart
 					{				  
 						if (menuManager instanceof CommandMenuManager)
 						{
+							/*
 							ISystemViewElementAdapter va =
 								(ISystemViewElementAdapter) ((IAdaptable) connection).getAdapter(
 									ISystemViewElementAdapter.class);
+							*/
 							
 							IMenuManager sublaunchMenu = new CommandSubmenuManager(connection, cmdSubSystems);
 							sublaunchMenu.add(new SystemBaseDummyAction());

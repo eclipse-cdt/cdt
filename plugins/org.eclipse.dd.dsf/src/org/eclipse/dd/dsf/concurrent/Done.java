@@ -63,4 +63,8 @@ abstract public class Done extends DsfRunnable {
         } 
         return false;
     }
+    
+    public String toString() {
+        return getStatus().toString();
+    }
 }

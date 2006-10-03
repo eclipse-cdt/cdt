@@ -30,4 +30,12 @@ public abstract class GetDataDone<V> extends Done {
      * Returns the data value, null if not set.
      */
     public V getData() { return fData; }
+    
+    public String toString() { 
+        if (getData() != null) {
+            return getData().toString();
+        } else {
+            return super.toString();
+        }
+    }
 }

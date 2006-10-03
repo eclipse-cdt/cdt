@@ -45,7 +45,7 @@ public class DsfPlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
         fgBundleContext = context;
 		super.start(context);
-        DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.debug.ui/debug"));  //$NON-NLS-1$//$NON-NLS-2$
+        DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.dd.dsf/debug"));  //$NON-NLS-1$//$NON-NLS-2$
     }
 
 	/*

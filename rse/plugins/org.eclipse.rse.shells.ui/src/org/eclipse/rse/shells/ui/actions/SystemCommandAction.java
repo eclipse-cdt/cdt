@@ -489,10 +489,13 @@ public class SystemCommandAction extends SystemBaseAction
 				else
 				{
 					cmdSubSystem.connect();
-					SystemCommandsUI commandsUI = SystemCommandsUI.getInstance();
-					SystemCommandsViewPart cmdsPart = commandsUI.activateCommandsView();
-					IRemoteCommandShell cmd = cmdSubSystem.runShell( _selected);
-					cmdsPart.updateOutput(cmd);
+					if (cmdSubSystem.isConnected())
+					{
+						SystemCommandsUI commandsUI = SystemCommandsUI.getInstance();
+						SystemCommandsViewPart cmdsPart = commandsUI.activateCommandsView();
+						IRemoteCommandShell cmd = cmdSubSystem.runShell( _selected);
+						cmdsPart.updateOutput(cmd);
+					}
 					//showInView(cmd);
 				}
 			}

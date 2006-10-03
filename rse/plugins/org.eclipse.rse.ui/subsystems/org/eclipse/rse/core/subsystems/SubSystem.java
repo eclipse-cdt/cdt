@@ -196,8 +196,14 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	    		{
 	    			connect(false);
 	    		}
+	    		catch (InterruptedException e)
+	    		{
+	    			return Status.CANCEL_STATUS;
+
+	    		}
 	    		catch (Exception e)
 	    		{
+	    			e.printStackTrace();
 	         	  	String excMsg = e.getMessage();
 	          	  	if ((excMsg == null) || (excMsg.length()==0))
 	          	  		excMsg = "Exception " + e.getClass().getName();

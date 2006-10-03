@@ -93,14 +93,12 @@ public class SystemComboBoxCellEditor extends CellEditor
 		selection = 0;
 		//this.readOnly = readOnly;
 	    setValueValid(true);		
-	    System.out.println("Exiting ctor");
 	}	
 	/**
 	 * Change the input items
 	 */
 	public void setItems(String[] items)
 	{
-		System.out.println("inside setItems");
 		this.items = items;
 		populateComboBoxItems();
 	    setValueValid(true);				
@@ -110,7 +108,6 @@ public class SystemComboBoxCellEditor extends CellEditor
 	 */
 	protected Control createControl(Composite parent) 
 	{
-        System.out.println("inside createControl");	
         if (!readOnly)
 		  comboBox = new CCombo(parent, SWT.NONE);
 		else
@@ -133,12 +130,10 @@ public class SystemComboBoxCellEditor extends CellEditor
 				
 				// must set the selection before getting value
 				selection = comboBox.getSelectionIndex();	
-				System.out.println("Inside widgetSelected. selection = " + selection);											
 				Object newValue = doGetValue();
 				
 				
 				boolean newValidState = isCorrect(newValue);
-				System.out.println("Inside widgetSelected. selection = " + selection + ", " + newValidState);							
 				if (newValidState) {
 					doSetValue(newValue);
 				} else {
@@ -170,8 +165,7 @@ public class SystemComboBoxCellEditor extends CellEditor
 	 */
 	protected Object doGetValue() 
 	{
-		System.out.println("Inside doGetValue");
-		return new Integer(selection);
+			return new Integer(selection);
 	}
 	/* (non-Javadoc)
 	 * Method declared on CellEditor.
@@ -190,7 +184,6 @@ public class SystemComboBoxCellEditor extends CellEditor
  	 */
 	protected void doSetValue(Object value) 
 	{
-		System.out.println("in doSetValue: " + comboBox + ", " + value);
 		if (!(value instanceof Integer))
 		{
 			String[] items = comboBox.getItems();

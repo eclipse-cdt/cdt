@@ -19,6 +19,8 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
@@ -200,6 +202,39 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 		return new CMemoryBlockExtension( getDebugTarget(), expression, address );
 	}
 
+	/**
+	 * Variant of getExtendedMemoryBlock that takes a memory space ID. Note that unlike that one, 
+	 * this method is not part of IMemoryBlockRetrievalExtension; it is not exercised by the 
+	 * platform. We invoke it internally in CDT from our hook into the platform's "add memory 
+	 * monitor" action.
+	 *   
+	 * @param address - a numric address value, hex or decimal. An expression 
+	 * (even something simple like 10000 +1) is not allowed.
+	 * @param memorySpaceID - identifies the memory space; cannot be null.
+	 * @param selected - the object selected in the Debug view
+	 * @return
+	 * @throws DebugException
+	 */
+	public IMemoryBlockExtension getMemoryBlockWithMemorySpaceID( String address, String memorySpaceID, Object selected ) throws DebugException {
+		String msg = null;
+		try {
+			if (selected instanceof IDebugElement) {
+				IDebugElement debugElement = (IDebugElement)selected;
+				IDebugTarget target = debugElement.getDebugTarget();
+				if ( target instanceof CDebugTarget ) {
+					if ( address != null ) {
+						BigInteger addr = ( address.startsWith( "0x" ) ) ? new BigInteger( address.substring( 2 ), 16 ) : new BigInteger( address ); //$NON-NLS-1$
+						return new CMemoryBlockExtension( (CDebugTarget)target, addr, memorySpaceID );
+					}
+				}
+			}
+		}
+		catch( NumberFormatException e ) {
+			msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.4" ), new String[] { address } ); //$NON-NLS-1$
+		}
+		throw new DebugException( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, msg, null ) );
+	}
+	
 	private CStackFrame getStackFrame( IDebugElement selected ) throws DebugException {
 		if ( selected instanceof CStackFrame ) {
 			return (CStackFrame)selected;
@@ -233,5 +268,27 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	}
 
 	public void dispose() {
+	}
+
+	/**
+	 * Checks the CDI backend to see is memory spaces are supported
+	 * 
+	 * @return true if the backend supports memory spaces
+	 */
+	public boolean supportsMemorySpaces() {
+		return fDebugTarget.getCDITarget() instanceof ICDIMemorySpaceManagement;
+	}
+
+	/**
+	 * Get the list of available memory spaces from the CDI backend
+	 * 
+	 * @return an array of memory space identifiers
+	 */
+	public String [] getMemorySpaces() {
+		ICDITarget cdiTarget = fDebugTarget.getCDITarget(); 
+		if (cdiTarget instanceof ICDIMemorySpaceManagement)
+			return ((ICDIMemorySpaceManagement)cdiTarget).getMemorySpaces(); 
+		
+		return new String[0];
 	}
 }

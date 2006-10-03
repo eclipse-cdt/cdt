@@ -24,6 +24,7 @@ import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory;
+import org.eclipse.cdt.debug.internal.ui.elements.adapters.CMemoryAdapterFactory;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
 import org.eclipse.cdt.debug.ui.sourcelookup.OldDefaultSourceLocator;
 import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
@@ -36,6 +37,8 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -274,6 +277,10 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		manager.registerAdapters( elementAdapterFactory, IModuleRetrieval.class );
 		manager.registerAdapters( elementAdapterFactory, ICModule.class );
 		manager.registerAdapters( elementAdapterFactory, ICElement.class );
+		
+		CMemoryAdapterFactory memoryAdapterFactory = new CMemoryAdapterFactory();
+		manager.registerAdapters( memoryAdapterFactory, IMemoryBlockRetrievalExtension.class );
+		manager.registerAdapters( memoryAdapterFactory, IMemoryBlockExtension.class );
 	}
 
 	/*

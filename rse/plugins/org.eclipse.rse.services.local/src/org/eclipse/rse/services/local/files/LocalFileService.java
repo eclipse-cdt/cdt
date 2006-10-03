@@ -50,30 +50,30 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 {
 	private static final String[] ALLDRIVES =
 	{
-		"c:\\",
-		"d:\\",
-		"e:\\",
-		"f:\\",
-		"g:\\",
-		"h:\\",
-		"i:\\",
-		"j:\\",
-		"k:\\",
-		"l:\\",
-		"m:\\",
-		"n:\\",
-		"o:\\",
-		"p:\\",
-		"q:\\",
-		"r:\\",
-		"s:\\",
-		"t:\\",
-		"u:\\",
-		"v:\\",
-		"w:\\",
-		"x:\\",
-		"y:\\",
-		"z:\\" };
+		"C:\\",
+		"D:\\",
+		"E:\\",
+		"F:\\",
+		"G:\\",
+		"H:\\",
+		"I:\\",
+		"J:\\",
+		"K:\\",
+		"L:\\",
+		"M:\\",
+		"N:\\",
+		"O:\\",
+		"P:\\",
+		"Q:\\",
+		"R:\\",
+		"S:\\",
+		"T:\\",
+		"U:\\",
+		"V:\\",
+		"W:\\",
+		"X:\\",
+		"Y:\\",
+		"Z:\\" };
 	
 	private boolean _checkedOS = false;
 	private boolean _isWindows = false;
@@ -576,9 +576,22 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	
 	protected IHostFile[] internalFetch(IProgressMonitor monitor, String remoteParent, String fileFilter, int type)
 	{
+		
 		LocalFileNameFilter fFilter = new LocalFileNameFilter(fileFilter);
-	
+		
 		File localParent = new File(remoteParent);
+		
+		// if the system type is Windows, we get the canonical path so that we have the correct case in the path
+		// this is needed because Windows paths are case insensitive
+		if (isWindows()) {
+		
+			try {
+				localParent = localParent.getCanonicalFile();
+			}
+			catch (IOException e) {
+				System.out.println("Can not get canonical path: " + localParent.getAbsolutePath());
+			}
+		}
 
 		if (remoteParent.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR))
 		{
@@ -697,7 +710,6 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					try 
 					{
 						v.add(drive.getAbsoluteFile());
-						//v.addElement(drive.getCanonicalFile());
 					}
 					catch (Exception e) 
 					{

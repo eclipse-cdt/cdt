@@ -830,7 +830,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			{ createHighlightedRange( 6, 18,  4, SemanticHighlightings.TYPEDEF) },
 			{ createHighlightedRange( 3, 16,  3, SemanticHighlightings.NAMESPACE) },
 			{ createHighlightedRange( 7, 25,  4, SemanticHighlightings.GLOBAL_VARIABLE) },
-			{ createHighlightedRange( 7, 40,  4, SemanticHighlightings.GLOBAL_VARIABLE) },
+			{ createHighlightedRange( 7, 40,  4, SemanticHighlightings.FUNCTION) },
 			{ createHighlightedRange(18,  0,  5, SemanticHighlightings.LABEL) },
 			{ createHighlightedRange(12, 16,  4, SemanticHighlightings.ENUMERATOR) },
 			{ createHighlightedRange(12, 22,  3, SemanticHighlightings.ENUMERATOR) },

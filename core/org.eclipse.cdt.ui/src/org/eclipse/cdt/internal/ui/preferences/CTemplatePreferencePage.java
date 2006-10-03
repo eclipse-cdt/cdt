@@ -77,14 +77,14 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
 		CSourceViewer viewer= new CSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL, store);
 		CTextTools tools= CUIPlugin.getDefault().getTextTools();
-		CSourceViewerConfiguration configuration = new CSourceViewerConfiguration(tools, null);
+		CSourceViewerConfiguration configuration = new CSourceViewerConfiguration(tools.getColorManager(), store, null, tools.getDocumentPartitioning());
 		IDocument document = new Document();
 		tools.setupCDocument(document);
 		viewer.configure(configuration);
 		viewer.setEditable(false);
 		viewer.setDocument(document);
 	
-		Font font= JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT);
+		Font font= JFaceResources.getFontRegistry().get(PreferenceConstants.EDITOR_TEXT_FONT);
 		viewer.getTextWidget().setFont(font);
 		
 		Control control= viewer.getControl();

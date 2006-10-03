@@ -306,7 +306,16 @@ public class DStoreHostFile implements IHostFile
 
 	public void renameTo(String newAbsolutePath) 
 	{
-		_element.setAttribute(DE.A_NAME, newAbsolutePath);
+		String current = getName();
+		if (newAbsolutePath.endsWith(current))
+		{
+			// data element already updated
+		}
+		else
+		{				
+			_element.setAttribute(DE.A_NAME, newAbsolutePath);
+		}
+		
 		_isArchive = internalIsArchive();
 	}
 	

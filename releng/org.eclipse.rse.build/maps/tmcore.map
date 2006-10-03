@@ -1,0 +1,4 @@
+feature@org.apache.commons_net=v20060928,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.commons_net-feature
+feature@org.apache.oro=v20060928,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.oro-feature
+plugin@org.apache.commons_net=v20060928,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.commons_net
+plugin@org.apache.oro=v20060928,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.oro

@@ -809,7 +809,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		return new SemanticHighlightingManager.HighlightedRange[][] {
 			{ createHighlightedRange(13, 14, 11, SemanticHighlightings.STATIC_FIELD), createHighlightedRange(13, 14, 11, SemanticHighlightings.FIELD) },
 			{ createHighlightedRange(14,  6,  5, SemanticHighlightings.FIELD) },
-			{ createHighlightedRange(15, 10,  7, SemanticHighlightings.METHOD_DECLARATION), createHighlightedRange(15,  7,  7, SemanticHighlightings.METHOD) },
+			{ createHighlightedRange(15, 17,  7, SemanticHighlightings.METHOD_DECLARATION), createHighlightedRange(15, 17,  7, SemanticHighlightings.METHOD) },
 			{ createHighlightedRange(16,  7,  6, SemanticHighlightings.METHOD_DECLARATION), createHighlightedRange(16,  7,  6, SemanticHighlightings.METHOD) },
 			{ createHighlightedRange(19,  4,  7, SemanticHighlightings.METHOD) },
 			{ createHighlightedRange(17,  8,  5, SemanticHighlightings.LOCAL_VARIABLE_DECLARATION) },
@@ -829,7 +829,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			{ createHighlightedRange( 5, 21,  4, SemanticHighlightings.TYPEDEF) },
 			{ createHighlightedRange( 6, 18,  4, SemanticHighlightings.TYPEDEF) },
 			{ createHighlightedRange( 3, 16,  3, SemanticHighlightings.NAMESPACE) },
-			{ createHighlightedRange( 7, 25,  4, SemanticHighlightings.GLOBAL_VARIABLE) },
+			{ createHighlightedRange( 7, 22,  4, SemanticHighlightings.GLOBAL_VARIABLE) },
 			{ createHighlightedRange( 7, 40,  4, SemanticHighlightings.FUNCTION) },
 			{ createHighlightedRange(18,  0,  5, SemanticHighlightings.LABEL) },
 			{ createHighlightedRange(12, 16,  4, SemanticHighlightings.ENUMERATOR) },

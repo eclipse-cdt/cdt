@@ -2731,9 +2731,16 @@ public class SystemViewRemoteFileAdapter
 				try
 				{
 					if (editable.checkOpenInEditor() != ISystemEditableRemoteObject.OPEN_IN_SAME_PERSPECTIVE)
-					{
-						DownloadJob oJob = new DownloadJob(editable);
-						oJob.schedule();
+					{						
+						if (isFileCached(editable, remoteFile))
+						{
+							editable.openEditor();
+						}
+						else
+						{
+							DownloadJob oJob = new DownloadJob(editable);
+							oJob.schedule();
+						}
 					}
 					else
 					{
@@ -2760,6 +2767,46 @@ public class SystemViewRemoteFileAdapter
 		{ // if object is a folder, do not handle it
 			return false;
 		}
+	}
+	
+	private boolean isFileCached(ISystemEditableRemoteObject editable, IRemoteFile remoteFile)
+	{
+		// DY:  check if the file exists and is read-only (because it was previously opened
+		// in the system editor)
+		IFile file = editable.getLocalResource();
+		SystemIFileProperties properties = new SystemIFileProperties(file);
+		boolean newFile = !file.exists();
+	
+		// detect whether there exists a temp copy already
+		if (!newFile && file.exists())
+		{
+			// we have a local copy of this file, so we need to compare timestamps
+	
+			// get stored modification stamp
+			long storedModifiedStamp = properties.getRemoteFileTimeStamp();
+	
+			// get updated remoteFile so we get the current remote timestamp
+			//remoteFile.markStale(true);
+			IRemoteFileSubSystem subsystem = remoteFile.getParentRemoteFileSubSystem();
+			try
+			{
+				remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath());
+			}
+			catch (Exception e)
+			{
+				
+			}
+	
+			// get the remote modified stamp
+			long remoteModifiedStamp = remoteFile.getLastModified();
+	
+			// get dirty flag
+			boolean dirty = properties.getDirty();
+	
+			boolean remoteNewer = (storedModifiedStamp != remoteModifiedStamp);
+			return (!dirty && !remoteNewer);
+		}
+		return false;
 	}
 	
 	public boolean canEdit(Object element)

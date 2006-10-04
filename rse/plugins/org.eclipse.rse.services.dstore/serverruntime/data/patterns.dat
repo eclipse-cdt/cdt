@@ -63,11 +63,13 @@ command: gmake.*
 	 error         file line         pattern =([\w,.,/,\\,\-,\+,(,)]*):(\d*):.*
 
 command: gcc\s.*
-	 error         file line         pattern=\"([\w,.,/,\\,\-,\+,(,)]*)\", line (\d*)\.\d*: \d*-\d* \(S\).*
+     error         file line         pattern=\"([\w,.,/,\\,\-,\+,(,)]*)\", line (\d*)\.\d*: \d*-\d* \(S\).*
 	 warning       file line         pattern=\"([\w,.,/,\\,\-,\+,(,)]*)\", line (\d*)\.\d*: \d*-\d* \(W\).*
 	 informational file line         pattern=\"([\w,.,/,\\,\-,\+,(,)]*)\", line (\d*)\.\d*: \d*-\d* \(I\).*
 	 warning       file line         pattern =([\w,.,/,\\,\-,\+,(,)]*):(\d*): warning: .*
 	 warning       file line         pattern =([\w,.,/,\\,\-,\+,(,)]*):(\d*):\d*: warning: .*
+	 error         file line         pattern =([\w,\.,/,\\,\-,\+,(,)]*):(\d*): error: .* 
+	 error         file line         pattern =([\w,.,/,\\,\-,\+,(,)]*):(\d*):\d*: [\w,.,/,\\,\-,\+,(,)]*: .*
 	 error         file line         pattern =([\w,.,/,\\,\-,\+,(,)]*):(\d*):.*
 	 informational file              pattern =([\w,.,/,\\,\-,\+,(,)]*):.*
 	 informational file line         pattern =In file included from ([\w,.,/,\\,\-,\+,(,)]*):(\d*):

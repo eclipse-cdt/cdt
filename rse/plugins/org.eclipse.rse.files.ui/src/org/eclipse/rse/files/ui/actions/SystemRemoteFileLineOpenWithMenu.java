@@ -209,7 +209,7 @@ public class SystemRemoteFileLineOpenWithMenu extends SystemRemoteFileOpenWithMe
 		
 	public static void handleGotoLine(IRemoteFile remoteFile, int line, int charStart, int charEnd)
 	{
-		if (line > 0)
+		//if (line > 0)
 		{
 			IWorkbench desktop = PlatformUI.getWorkbench();
 			IWorkbenchPage persp = desktop.getActiveWorkbenchWindow().getActivePage();

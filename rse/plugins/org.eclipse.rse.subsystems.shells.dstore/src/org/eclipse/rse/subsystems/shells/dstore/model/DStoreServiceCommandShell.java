@@ -76,7 +76,21 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 					output = new RemoteOutput(this, type);
 				}
 				output.setText(line.getName());
-				output.setAbsolutePath(line.getSource());	
+				
+				String src = line.getSource();
+				int colonSep = src.indexOf(':');
+				// line numbers
+				if (colonSep > 0)
+				{
+					String lineNo = src.substring(colonSep + 1);
+					String file = src.substring(0, colonSep);
+					output.setAbsolutePath(file);
+					output.setLine(Integer.parseInt(lineNo));
+				}
+				else
+				{
+					output.setAbsolutePath(src);	
+				}
 	
 				addOutput(output);
 				outputs[i] = output;

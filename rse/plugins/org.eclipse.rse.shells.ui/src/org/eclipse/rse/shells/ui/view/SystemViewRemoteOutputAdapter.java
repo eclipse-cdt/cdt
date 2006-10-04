@@ -39,6 +39,7 @@ import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.files.ui.actions.SystemRemoteFileLineOpenWithMenu;
 import org.eclipse.rse.files.ui.resources.RemoteSourceLookupDirector;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
+import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.shells.ui.ShellResources;
 import org.eclipse.rse.shells.ui.actions.SystemShowInShellViewAction;
 import org.eclipse.rse.shells.ui.actions.SystemTerminateRemoveShellAction;
@@ -65,11 +66,16 @@ import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemView;
 import org.eclipse.rse.ui.view.SystemViewResources;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -556,10 +562,14 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 	
 					if (result)
 					{
-						if (line > 0)
+						DelayedGotoLine dgoto = new DelayedGotoLine(file, line, output.getCharStart(), output.getCharEnd());
+						Display.getDefault().asyncExec(dgoto);
+						/*
+						//if (line > 0)
 						{
 							SystemRemoteFileLineOpenWithMenu.handleGotoLine(file, line, output.getCharStart(), output.getCharEnd());
 						}
+						*/
 						return true;
 					}
 				}
@@ -578,6 +588,67 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 		return result;
 	}
 
+	public class DelayedGotoLine implements Runnable
+	{
+		private IRemoteFile _file;
+		private int _line;
+		private int _charStart;
+		private int _charEnd;
+		
+		public DelayedGotoLine(IRemoteFile file, int line, int charStart, int charEnd)
+		{
+			_file = file;
+			_line = line;
+			_charStart = charStart;
+			_charEnd = charEnd;
+		}
+		
+		public void run()
+		{
+			if (checkEditorOpen())
+			{
+				SystemRemoteFileLineOpenWithMenu.handleGotoLine(_file, _line, _charStart, _charEnd);
+			}
+			else
+			{
+				Display.getDefault().asyncExec(this);
+			}
+		}
+		
+		private boolean checkEditorOpen()
+		{
+			IWorkbench desktop = PlatformUI.getWorkbench();
+			IWorkbenchPage persp = desktop.getActiveWorkbenchWindow().getActivePage();
+			IEditorPart editor = null;
+			String fileName = _file.getAbsolutePath();
+			IEditorReference[] editors = persp.getEditorReferences();
+			for (int i = 0; i < editors.length; i++)
+			{
+				IEditorReference ref = editors[i];
+				IEditorPart editorp = ref.getEditor(false);
+				if (editorp != null)
+				{
+					IEditorInput einput = editorp.getEditorInput();
+					if (einput instanceof IFileEditorInput)
+					{
+						IFileEditorInput input = (IFileEditorInput) einput;
+						IFile efile = input.getFile();
+
+						SystemIFileProperties properties = new SystemIFileProperties(efile);
+						String comparePath = properties.getRemoteFilePath();
+
+						if (comparePath != null && (comparePath.replace('\\','/').equals(fileName.replace('\\','/'))))
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+	}
+	
+	
 	/**
 	 * Returns the associated subsystem for this line of remote output or remote command
 	 */

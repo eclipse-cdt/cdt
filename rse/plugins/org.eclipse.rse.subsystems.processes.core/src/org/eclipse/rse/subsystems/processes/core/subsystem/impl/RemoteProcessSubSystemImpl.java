@@ -123,6 +123,10 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 	throws InvocationTargetException,
        InterruptedException
       {
+		if (!isConnected()) {
+			return null;
+		}
+		
 		HostProcessFilterImpl rpf = new HostProcessFilterImpl(filterString);
 		IRemoteProcessContext context = new RemoteProcessContext(this, null, rpf);
 		IRemoteProcess[] ps = null;

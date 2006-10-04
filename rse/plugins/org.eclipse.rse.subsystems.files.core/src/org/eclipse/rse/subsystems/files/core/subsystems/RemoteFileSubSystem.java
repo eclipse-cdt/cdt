@@ -392,6 +392,11 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		 throws java.lang.reflect.InvocationTargetException,
 				java.lang.InterruptedException
 	{
+		
+		if (!isConnected()) {
+			return null;
+		}
+		
 		Object[] children = null;
 		Vector vChildren = new Vector();
 		Vector vMessages = new Vector();

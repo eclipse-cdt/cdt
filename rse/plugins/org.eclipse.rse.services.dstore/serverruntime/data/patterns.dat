@@ -133,9 +133,6 @@ command: find .*
 	 file          file              pattern=([\w,.,/,\\,(,),\-]+)
 
 command: env
-	 pathenvvar    file              pattern=PATH\=(.*)
-	 libpathenvvar file              pattern=LIBPATH\=(.*)
-	 libpathenvvar file              pattern=LIB\=(.*)
 	 envvar                          pattern=[\w\d]+\=.*
 
 command: ps

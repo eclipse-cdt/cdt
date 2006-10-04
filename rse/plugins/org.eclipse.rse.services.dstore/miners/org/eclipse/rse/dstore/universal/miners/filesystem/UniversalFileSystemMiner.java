@@ -1606,8 +1606,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 
 			// DKM - do basic property stuff here
 			subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
-			System.out.println("got file:");
-			System.out.println(subject);
+
 
 			/*
 			// classify the file too 

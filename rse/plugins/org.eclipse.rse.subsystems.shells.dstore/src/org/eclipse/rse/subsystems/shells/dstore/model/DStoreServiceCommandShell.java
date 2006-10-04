@@ -67,30 +67,49 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 			{
 				DataElement line = (DataElement)lineObj;
 				String type = line.getType();
+				String src = line.getSource();
 				if (event.isError())
 				{
-					output = new RemoteError(this, type);									
+					output = new RemoteError(this, type);		
+				
 				}
 				else
 				{
 					output = new RemoteOutput(this, type);
 				}
-				output.setText(line.getName());
+				output.setText(line.getName());								
 				
-				String src = line.getSource();
 				int colonSep = src.indexOf(':');
 				// line numbers
 				if (colonSep > 0)
 				{
+					
 					String lineNo = src.substring(colonSep + 1);
 					String file = src.substring(0, colonSep);
-					output.setAbsolutePath(file);
-					output.setLine(Integer.parseInt(lineNo));
+					int linen = 0;
+					try
+					{
+						linen = Integer.parseInt(lineNo);
+					}
+					catch (Exception e)
+					{
+						
+					}
+					if (linen != 0)
+					{
+						output.setAbsolutePath(file);
+						output.setLine(linen);
+					}
+					else
+					{
+						output.setAbsolutePath(src);
+					}				
 				}
 				else
 				{
 					output.setAbsolutePath(src);	
 				}
+			
 	
 				addOutput(output);
 				outputs[i] = output;

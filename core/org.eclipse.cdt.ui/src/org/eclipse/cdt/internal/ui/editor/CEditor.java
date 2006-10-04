@@ -2357,6 +2357,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		fProjectionSupport = new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.search.results"); //$NON-NLS-1$
 		fProjectionSupport.install();
 		
 		fProjectionModelUpdater = CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();

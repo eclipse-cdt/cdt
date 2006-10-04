@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin, Google
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -43,11 +44,11 @@ public interface Symbols {
 	int TokenSWITCH= 1020;
 	int TokenGOTO= 1021;
 	int TokenDEFAULT= 1022;
-  int TokenPRIVATE= 1023;
-  int TokenPROTECTED= 1024;
-  int TokenPUBLIC= 1025;
+	int TokenPRIVATE= 1023;
+	int TokenPROTECTED= 1024;
+	int TokenPUBLIC= 1025;
 	int TokenNEW= 1026;
-  int TokenDELETE= 1027; 
+	int TokenDELETE= 1027; 
 	int TokenCLASS= 1028;
 	int TokenSTRUCT= 1029;
 	int TokenENUM= 1030;

@@ -21,12 +21,16 @@ public class TextTestSuite extends TestSuite {
     
     public TextTestSuite() {
         super("Tests in package org.eclipse.cdt.ui.tests.text");
-        
+
+        // partitioning tests
 		addTest(PartitionTokenScannerTest.suite());
-		addTest(NumberRuleTest.suite());
-		addTest(CAutoIndentTest.suite());
 		addTest(CPartitionerTest.suite());
-		addTest(PairMatcherTest.suite());
+
+        // smart edit tests
+		addTest(CAutoIndentTest.suite());
+		addTest(CHeuristicScannerTest.suite());
+		addTest(BracketInserterTest.suite());
+		addTest(IndentActionTest.suite());
 
 		// Break iterator tests.
 		addTest(CBreakIteratorTest.suite());
@@ -36,6 +40,8 @@ public class TextTestSuite extends TestSuite {
 		addTest(SemanticHighlightingTest.suite());
 		addTest(InactiveCodeHighlightingTest.suite());
 		addTest(CHeaderRuleTest.suite());
+		addTest(NumberRuleTest.suite());
+		addTest(PairMatcherTest.suite());
 
 		// folding tests
 		addTest(FoldingTest.suite());

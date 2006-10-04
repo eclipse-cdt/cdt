@@ -692,7 +692,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 				}
 
 				ITypedRegion partition = TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, true);
-				if (!IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType()))
+				if (!IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType()) 
+						&& !ICPartitions.C_PREPROCESSOR.equals(partition.getType()))
 					return;
 
 				if (!validateEditorInputState())

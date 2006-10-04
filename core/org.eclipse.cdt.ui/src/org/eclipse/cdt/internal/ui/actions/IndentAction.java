@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
@@ -188,13 +189,13 @@ public class IndentAction extends TextEditorAction {
 	}
 
 	/**
-	 * Indents a single line using the java heuristic scanner. Cdoc and multiline comments are 
+	 * Indents a single line using the heuristic scanner. Cdoc and multiline comments are 
 	 * indented as specified by the <code>CDocAutoIndentStrategy</code>.
 	 * 
 	 * @param document the document
 	 * @param line the line to be indented
 	 * @param caret the caret position
-	 * @param indenter the java indenter
+	 * @param indenter the indenter
 	 * @param scanner the heuristic scanner
 	 * @param multiLine <code>true</code> if more than one line is being indented 
 	 * @return <code>true</code> if <code>document</code> was modified, <code>false</code> otherwise
@@ -211,7 +212,9 @@ public class IndentAction extends TextEditorAction {
 			ITypedRegion startingPartition= TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, false);
 			String type= partition.getType();
 			if (type.equals(ICPartitions.C_MULTI_LINE_COMMENT)) {
-				indent= computeDocIndent(document, line, scanner, startingPartition);
+				indent= computeCommentIndent(document, line, scanner, startingPartition);
+			} else if (startingPartition.getType().equals(ICPartitions.C_PREPROCESSOR)) {
+				indent= computePreprocessorIndent(document, line, scanner, startingPartition);
 			} else if (!fIsTabAction && startingPartition.getOffset() == offset && startingPartition.getType().equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
 				// line comment starting at position 0 -> indent inside
 				int max= document.getLength() - offset;
@@ -245,7 +248,7 @@ public class IndentAction extends TextEditorAction {
 			}
 		} 
 		
-		// standard java indentation
+		// standard C indentation
 		if (indent == null) {
 			StringBuffer computed= indenter.computeIndentation(offset);
 			if (computed != null)
@@ -292,18 +295,17 @@ public class IndentAction extends TextEditorAction {
 	}
 
 	/**
-	 * Computes and returns the indentation for a javadoc line. The line
-	 * must be inside a javadoc comment.
+	 * Computes and returns the indentation for a comment line.
 	 * 
 	 * @param document the document
 	 * @param line the line in document
 	 * @param scanner the scanner
-	 * @param partition the javadoc partition
+	 * @param partition the comment partition
 	 * @return the indent, or <code>null</code> if not computable
 	 * @throws BadLocationException
 	 */
-	private String computeDocIndent(IDocument document, int line, CHeuristicScanner scanner, ITypedRegion partition) throws BadLocationException {
-		if (line == 0) // impossible - the first line is never inside a javadoc comment
+	private String computeCommentIndent(IDocument document, int line, CHeuristicScanner scanner, ITypedRegion partition) throws BadLocationException {
+		if (line == 0) // impossible - the first line is never inside a comment comment
 			return null;
 		
 		// don't make any assumptions if the line does not start with \s*\* - it might be
@@ -345,6 +347,20 @@ public class IndentAction extends TextEditorAction {
 		String indentation= document.get(previousLineStart, previousLineNonWS - previousLineStart);
 		buf.insert(0, indentation);
 		return buf.toString();
+	}
+	
+	/**
+	 * Computes and returns the indentation for a preprocessor line.
+	 * 
+	 * @param document the document
+	 * @param line the line in document
+	 * @param scanner the scanner
+	 * @param partition the comment partition
+	 * @return the indent, or <code>null</code> if not computable
+	 * @throws BadLocationException
+	 */
+	private String computePreprocessorIndent(IDocument document, int line, CHeuristicScanner scanner, ITypedRegion partition) throws BadLocationException {
+		return ""; //$NON-NLS-1$
 	}
 	
 	/**
@@ -390,7 +406,7 @@ public class IndentAction extends TextEditorAction {
 	}
 	
 	/**
-	 * Returns the tab size used by the java editor, which is deduced from the
+	 * Returns the tab size used by the editor, which is deduced from the
 	 * formatter preferences.
 	 * 
 	 * @return the tab size as defined in the current formatter preferences

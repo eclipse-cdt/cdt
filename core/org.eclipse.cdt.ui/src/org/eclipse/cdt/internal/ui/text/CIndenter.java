@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -1583,6 +1584,25 @@ public final class CIndenter {
 	}
 
 	/**
+	 * Skips scope qualifiers of identifiers.
+	 * 
+	 * @return <code>true</code> if a qualifier was encountered, the last token
+	 *         will be an IDENT.
+	 */
+	private boolean skipQualifiers() {
+		if (fToken == Symbols.TokenCOLON) {
+			nextToken();
+			if (fToken == Symbols.TokenCOLON) {
+				nextToken();
+				if (fToken == Symbols.TokenIDENT) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Reads the next token in backward direction from the heuristic scanner
 	 * and sets the fields <code>fToken, fPreviousPosition</code> and <code>fPosition</code>
 	 * accordingly.
@@ -1621,17 +1641,10 @@ public final class CIndenter {
 	 *         declaration header.
 	 */
 	private boolean looksLikeMethodDecl() {
-		/*
-		 * TODO This heuristic does not recognize package private constructors
-		 * since those do have neither type nor visibility keywords.
-		 * One option would be to go over the parameter list, but that might
-		 * be empty as well, or not typed in yet - hard to do without an AST...
-		 */
-
 		nextToken();
 		if (fToken == Symbols.TokenIDENT) { // method name
 			do nextToken();
-			while (skipBrackets()); // optional brackets for array valued return types
+			while (skipBrackets() || skipQualifiers()); // optional brackets for array valued return types
 
 			return fToken == Symbols.TokenIDENT; // return type name
 
@@ -1674,7 +1687,7 @@ public final class CIndenter {
 	 *         header.
 	 */
 	private boolean looksLikeMethodCall() {
-		// TODO add awareness for constructor calls with generic types: new ArrayList<String>()
+		// TODO add awareness for constructor calls with templates: new complex<float>()
 		nextToken();
 		return fToken == Symbols.TokenIDENT; // method name
 	}

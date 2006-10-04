@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -88,7 +90,7 @@ public final class CHeuristicScanner implements Symbols {
 	 */
 	private static class NonWhitespace extends StopCondition {
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.JavaHeuristicScanner.StopCondition#stop(char)
+		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#stop(char)
 		 */
 		public boolean stop(char ch, int position, boolean forward) {
 			return !Character.isWhitespace(ch);
@@ -102,14 +104,14 @@ public final class CHeuristicScanner implements Symbols {
 	 */
 	private final class NonWhitespaceDefaultPartition extends NonWhitespace {
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.JavaHeuristicScanner.StopCondition#stop(char)
+		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#stop(char)
 		 */
 		public boolean stop(char ch, int position, boolean forward) {
 			return super.stop(ch, position, true) && isDefaultPartition(position);
 		}
 
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.JavaHeuristicScanner.StopCondition#nextPosition(int, boolean)
+		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#nextPosition(int, boolean)
 		 */
 		public int nextPosition(int position, boolean forward) {
 			ITypedRegion partition= getPartition(position);
@@ -134,7 +136,7 @@ public final class CHeuristicScanner implements Symbols {
 	 */
 	private static class NonJavaIdentifierPart extends StopCondition {
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.JavaHeuristicScanner.StopCondition#stop(char)
+		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#stop(char)
 		 */
 		public boolean stop(char ch, int position, boolean forward) {
 			return !Character.isJavaIdentifierPart(ch);
@@ -148,14 +150,14 @@ public final class CHeuristicScanner implements Symbols {
 	 */
 	private final class NonJavaIdentifierPartDefaultPartition extends NonJavaIdentifierPart {
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.JavaHeuristicScanner.StopCondition#stop(char)
+		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#stop(char)
 		 */
 		public boolean stop(char ch, int position, boolean forward) {
 			return super.stop(ch, position, true) || !isDefaultPartition(position);
 		}
 
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.JavaHeuristicScanner.StopCondition#nextPosition(int, boolean)
+		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#nextPosition(int, boolean)
 		 */
 		public int nextPosition(int position, boolean forward) {
 			ITypedRegion partition= getPartition(position);
@@ -201,14 +203,14 @@ public final class CHeuristicScanner implements Symbols {
 		}
 
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.JavaHeuristicScanner.StopCondition#stop(char, int)
+		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#stop(char, int)
 		 */
 		public boolean stop(char ch, int position, boolean forward) {
 			return Arrays.binarySearch(fChars, ch) >= 0 && isDefaultPartition(position);
 		}
 
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.JavaHeuristicScanner.StopCondition#nextPosition(int, boolean)
+		 * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner.StopCondition#nextPosition(int, boolean)
 		 */
 		public int nextPosition(int position, boolean forward) {
 			ITypedRegion partition= getPartition(position);
@@ -268,7 +270,7 @@ public final class CHeuristicScanner implements Symbols {
 	}
 
 	/**
-	 * Calls <code>this(document, ICPartitions.JAVA_PARTITIONING, IDocument.DEFAULT_CONTENT_TYPE)</code>.
+	 * Calls <code>this(document, ICPartitions.C_PARTITIONING, IDocument.DEFAULT_CONTENT_TYPE)</code>.
 	 *
 	 * @param document the document to scan.
 	 */
@@ -841,18 +843,18 @@ public final class CHeuristicScanner implements Symbols {
 	 * <code>true</code> if <code>start</code> is at the following positions (|):
 	 * 
 	 * <pre>
-	 *  new java.util. ArrayList|&lt;String&gt;(10)
-	 *  new ArrayList |(10)
-	 *  new  / * comment  * / ArrayList |(10)
+	 *  new new std::vector&lt;std::string&gt;|(10)
+	 *  new new str_vector |(10)
+	 *  new new / * comment * / str_vector |(10)
 	 * </pre>
 	 * 
 	 * but not the following:
 	 * 
 	 * <pre>
-	 *  new java.util. ArrayList&lt;String&gt;(10)|
-	 *  new java.util. ArrayList&lt;String&gt;|(10)
-	 *  new ArrayList (10)|
-	 *  ArrayList |(10)
+	 *  new new std::vector&lt;std::string&gt;(10)|
+	 *  new new std::vector&lt;std::string&gt;|(10)
+	 *  new new vector (10)|
+	 *  vector |(10)
 	 * </pre>
 	 * 
 	 * @param start the position where the type name of the class instance creation supposedly ends
@@ -865,7 +867,10 @@ public final class CHeuristicScanner implements Symbols {
 		int token= previousToken(start - 1, bound);
 		if (token == Symbols.TokenIDENT) { // type name
 			token= previousToken(getPosition(), bound);
-			while (token == Symbols.TokenOTHER) { // dot of qualification
+			while (token == Symbols.TokenCOLON) { // colon of qualification
+				token= previousToken(getPosition(), bound);
+				if (token != Symbols.TokenCOLON) // second colon of qualification
+					return false;
 				token= previousToken(getPosition(), bound);
 				if (token != Symbols.TokenIDENT) // qualification name
 					return false;

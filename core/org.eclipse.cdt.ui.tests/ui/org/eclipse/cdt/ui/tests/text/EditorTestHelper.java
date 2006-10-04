@@ -12,8 +12,10 @@
 package org.eclipse.cdt.ui.tests.text;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -446,6 +448,18 @@ public class EditorTestHelper {
 		return cProject;
 	}
 	
+    public static IFile createFile(IContainer container, String fileName, String contents, IProgressMonitor monitor) throws CoreException {
+        //Obtain file handle
+        IFile file = container.getFile(new Path(fileName));
+        InputStream stream = new ByteArrayInputStream(contents.getBytes()); 
+        //Create file input stream
+        if(file.exists())
+            file.setContents(stream, false, false, monitor);
+        else
+            file.create(stream, false, monitor);
+        return file;
+    }
+    
 	public static IFile[] findFiles(IResource resource) throws CoreException {
 		List files= new ArrayList();
 		findFiles(resource, files);

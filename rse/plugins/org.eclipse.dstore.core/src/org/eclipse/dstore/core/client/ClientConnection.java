@@ -656,6 +656,7 @@ public class ClientConnection implements IDataStoreConstants
 
 				reader = new BufferedReader(new InputStreamReader(_launchSocket.getInputStream(), DE.ENCODING_UTF_8));
 				String status = null;
+		
 				try
 				{
 					status = reader.readLine();
@@ -664,11 +665,16 @@ public class ClientConnection implements IDataStoreConstants
 				{
 					result = new ConnectionStatus(false, e);
 				}
-
+		
 
 				if (status != null && !status.equals(CONNECTED))
 				{
 					result = new ConnectionStatus(false, status);
+				}
+				else if (status == null)
+				{
+					Exception e = new Exception("no status returned");
+					result = new ConnectionStatus(false, e);
 				}
 				else
 				{

@@ -17,6 +17,7 @@
 package org.eclipse.rse.subsystems.files.dstore.subsystem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,6 +38,7 @@ import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.dstore.model.DStoreFile;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;
@@ -60,6 +62,8 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
     protected IConnectorService system;
 
     protected boolean _networkDown = false;
+    
+    protected HashMap _decorateJobs;
 
     protected static class FindShell implements Runnable
     {
@@ -94,15 +98,22 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
     {
     	private DStoreFile[] _files;
     	private DStoreFile   _parentFile;
+    	private boolean      _isDone = false;
     	public DecorateJob(DStoreFile[] files, DStoreFile parentFile)
     	{
     		super(SystemFileResources.RESID_JOB_DECORATEFILES_NAME);
     		_files= files;
     		_parentFile = parentFile;
     	}
+    	
+    	public boolean isDone()
+    	{
+    		return _isDone;
+    	}
 
 		public IStatus runInUIThread(IProgressMonitor monitor)
 		{
+			_isDone = false;
 			for (int i = 0; i < _files.length; i++)
 			{			
 			  _registry.fireEvent(new
@@ -117,6 +128,8 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
                       ISystemResourceChangeEvent.EVENT_REPLACE_CHILDREN,
                         _parentFile));
                         */
+			_isDone = true;
+			_decorateJobs.remove(_parentFile);
 			  return Status.OK_STATUS;
 		}
     	
@@ -132,6 +145,7 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
         this._registry = RSEUIPlugin.getTheSystemRegistry();
         system.addCommunicationsListener(this);
         dataStore.getDomainNotifier().addDomainListener(this);
+        _decorateJobs = new HashMap();
     }
 
     public DataStore getDataStore()
@@ -230,14 +244,31 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
 	        
 	        if (refreshParent)
 	        {
-	
-	        	DecorateJob job = new DecorateJob((DStoreFile[])toUpdate.toArray(new DStoreFile[toUpdate.size()]), parentFile);
-	        	job.schedule();
+	        	DecorateJob job = getDecorateJob(parentFile);
+	        	if (job == null)
+	        	{
+	        		job = new DecorateJob((DStoreFile[])toUpdate.toArray(new DStoreFile[toUpdate.size()]), parentFile);
+	        		job.setRule(parentFile);
+	        		putDecorateJob(parentFile, job);
+	        		job.schedule(5000);
+	        	}
+        		        	
 	        }
         }
 
     }
 
+    protected DecorateJob getDecorateJob(IRemoteFile file)
+    {
+    	return (DecorateJob)_decorateJobs.get(file);
+    }
+    
+    protected void putDecorateJob(IRemoteFile file, DecorateJob job)
+    {
+    	_decorateJobs.put(file, job);
+    }
+    
+    
     public Shell getShell()
     {
         // dy: DomainNotifier (which calls this method) requires the shell not

@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -74,14 +75,17 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 						ITranslationUnit tu = (ITranslationUnit)element;
 						if (tu.isHeaderUnit()) {
 							IFile rfile = (IFile)tu.getUnderlyingResource();
-							String filename = rfile.getLocation().toOSString();
-							if (pdom.getFile(filename) == null) {
-								try {
-									addTU(tu);
-								} catch (InterruptedException e) {
-									CCorePlugin.log(e);
-									if (++errorCount > MAX_ERRORS)
-										throw new CoreException(Status.CANCEL_STATUS);
+							IPath fileLocation = rfile.getLocation();
+							if ( fileLocation != null ) {
+								String filename = fileLocation.toOSString();
+								if (pdom.getFile(filename) == null) {
+									try {
+										addTU(tu);
+									} catch (InterruptedException e) {
+										CCorePlugin.log(e);
+										if (++errorCount > MAX_ERRORS)
+											throw new CoreException(Status.CANCEL_STATUS);
+									}
 								}
 							}
 						}

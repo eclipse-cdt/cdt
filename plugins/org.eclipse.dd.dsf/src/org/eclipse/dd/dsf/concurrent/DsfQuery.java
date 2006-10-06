@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.DsfPlugin;
+import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
  * A convenience class that allows a client to retrieve data from services 
@@ -83,7 +84,7 @@ abstract public class DsfQuery<V> {
                     wait();
                 }
             } catch (InterruptedException e) {
-                fStatus = new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1,
+                fStatus = new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR,
                                      "Interrupted exception while waiting for result.", e);
                 fValid = true;
             }
@@ -153,7 +154,7 @@ abstract public class DsfQuery<V> {
     
     public synchronized void doneException(Throwable t) {
         if (fValid) return;
-        doneError(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1,
+        doneError(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR,
                              "Exception while computing result.", t));
     }        
 }

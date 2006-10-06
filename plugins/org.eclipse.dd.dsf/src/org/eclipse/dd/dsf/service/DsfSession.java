@@ -261,9 +261,10 @@ public class DsfSession
      * @param serviceProperties properties of the service requesting the event to be dispatched
      */
     public void dispatchEvent(final Object event, final Dictionary serviceProperties) {
-        getExecutor().submit(new DsfRunnable() { public void run() {
-            doDispatchEvent(event, serviceProperties);
-        }});
+        getExecutor().submit(new DsfRunnable() { 
+            public void run() { doDispatchEvent(event, serviceProperties);}
+            public String toString() { return "Event: " + event + ", from service " + serviceProperties; } 
+            });
     }
     
     /**

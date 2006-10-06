@@ -48,16 +48,16 @@ abstract public class Done extends DsfRunnable {
 
     /**
      * Convenience method which checks for error in done, and propagates it
-     * to caller's client done.  
+     * to caller's client done.   
      * @return Returns true if there was an error that was propagated and 
      * the caller can stop processing result.
      */
-    protected boolean propagateErrorToClient(DsfExecutor executor, Done clientDone, int code, String message) {
+    protected boolean propagateErrorToClient(DsfExecutor executor, Done clientDone, String message) {
         if (clientDone.getStatus().getSeverity() == IStatus.CANCEL) {
             return true;
         }
         if (!getStatus().isOK()) {
-            clientDone.setErrorStatus(DsfPlugin.PLUGIN_ID, code, message, getStatus());
+            clientDone.setErrorStatus(DsfPlugin.PLUGIN_ID, getStatus().getCode(), message, getStatus());
             executor.execute(clientDone);
             return true;
         } 

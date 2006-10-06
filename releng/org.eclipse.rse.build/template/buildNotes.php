@@ -23,6 +23,11 @@
 </table>
 <table><tbody><tr><td>
 <ul>
+<li>The <b>CDT Launch Integration Example</b> is now available as a
+  download.</li>
+<li>Jakarta Commons Net is now available for <b>FTP</b>.
+  Telnet support (from Commons Net) has not yet been integrated.</li>
+<li>A clean-room Telnet implementation available.</li>
 <li>The <b>systemTypes</b> extension point now allows specifying the "icon", "iconLive" 
   and "enableOffline" properties either as a Property, or as an attribute. This change
   allows for better integration with PDE. It is backward compatible with the format used
@@ -37,13 +42,12 @@
 <li>Windows dstore daemon can now be started by simply double clicking on daemon.bat
   (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142952">Bug 142952</a>)</li>
 <li>Numerous bugs have been fixed, and we consider RSE safe now for 
-  all kinds of data transfer, even if it's done in multiple background sessions
-  (except <b>FTP</b>, which will be enhanced as soon as the Jakarta Commons Net library
-  passes EMO legal review).</li>
-<li>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-08-18&chfieldto=2006-09-27&chfield=resolution">
+  all kinds of data transfer, even if it's done in multiple background sessions.</li>
+<li>FTP using the Jakarta Commons Net library has been integrated.</li>
+<li>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-09-27&chfieldto=2006-10-06&chfield=resolution">
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0M4-200608182355/index.php">
-  RSE 1.0M4</a>.</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0M5-200609221723/index.php">
+  RSE 1.0M5</a>.</li>
 <li>Look <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   here</a> for the CVS changelog.</li>
 </ul>
@@ -52,7 +56,7 @@
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">API Changes since RSE 1.0 M4</font></b></td>
+		<font face="Arial,Helvetica" color="#FFFFFF">API Changes since RSE 1.0 M5</font></b></td>
 	</tr>
 </table>
 <table><tbody><tr><td>
@@ -162,14 +166,6 @@ deliverables did not make it into this build:
   <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=149080">bug 149080</a>
   instead. Due to the missing Unit Test Framework, automated tests could also
   not yet be added to this build.</li>
-<li>The <b>CDT Launch Integration Example</b> is not yet available as a
-  download. It is available from the 
-  <a href="http://www.eclipse.org/dsdp/tm/development/index.php">
-  RSE CVS Repository</a> instead.</li>
-<li>Jakarta Commons Net is not yet available for <b>FTP and Telnet</b> due to pending legal
-  review. We are confident to get these completed in August though.<ul>
-  <li>As a consequence, FTP connections are still not quite reliable.</li>
-  </ul></li>
 </ul>
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.

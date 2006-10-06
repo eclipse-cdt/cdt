@@ -12,53 +12,63 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - Fixing 140408 - FTP upload does not work
+ * Javier Montalvo Orús (Symbian) - Migrate to jakarta commons net FTP client
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
 
+
 import java.io.File;
 
+import org.apache.commons.net.ftp.FTPFile;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.files.IHostFile;
 
 public class FTPHostFile implements IHostFile
 {
+	
 	private String _name;
 	private String _parentPath;
-	private boolean _isDirectory = false;
-	private boolean _isRoot = false;
-	private boolean _isArchive = false;
-	private long _lastModified = 0;
-	private long _size = 0;
-	private boolean _exists = false;
+	private boolean _isDirectory;
+	private boolean _isArchive;
+	private long _lastModified;
+	private long _size;
+	private boolean _canRead;
+	private boolean _canWrite;
+	private boolean _isRoot;
+	private boolean _exists;
 	
 	public FTPHostFile(String parentPath, String name, boolean isDirectory, boolean isRoot, long lastModified, long size, boolean exists)
 	{
 		_parentPath = parentPath;
 		_name = name;
 		_isDirectory = isDirectory;
-		_isRoot = isRoot;
 		_lastModified = lastModified;
 		_size = size;
 		_isArchive = internalIsArchive();
+		_canRead = true;
+		_canWrite = false;
+		_isRoot = isRoot;
 		_exists = exists;
 	}
-
-	public String getName()
+	
+	public FTPHostFile(String parentPath, FTPFile ftpFile)
 	{
-		return _name;			
+		_parentPath = parentPath;
+		_name = ftpFile.getName();
+		_isDirectory = ftpFile.isDirectory();
+		_lastModified = ftpFile.getTimestamp().getTimeInMillis();
+		_size = ftpFile.getSize();
+		_isArchive = internalIsArchive();
+		_canRead = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION);
+		_canWrite = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION);
+		_isRoot = false;
+		_exists = true;
 	}
 	
-	public boolean isHidden()
+	public long getSize()
 	{
-		String name = getName();
-		return name.charAt(0) == '.';
-				
-	}
-	
-	public String getParentPath()
-	{
-		return _parentPath;
+		return _size;
 	}
 	
 	public boolean isDirectory()
@@ -71,13 +81,20 @@ public class FTPHostFile implements IHostFile
 		return !(_isDirectory || _isRoot);
 	}
 	
-	public boolean isRoot()
+	public String getName()
 	{
-		return _isRoot;
+		return _name;
 	}
 	
-	public boolean exists()
-	{
+	public boolean canRead() {
+		return _canRead;
+	}
+
+	public boolean canWrite() {
+		return _canWrite;
+	}
+
+	public boolean exists() {
 		return _exists;
 	}
 
@@ -96,14 +113,30 @@ public class FTPHostFile implements IHostFile
 		}
 	}
 
-	public long getSize()
-	{
-		return _size;
-	}
-
 	public long getModifiedDate()
 	{
 		return _lastModified;
+	}
+
+	public String geParentPath() {
+		return _parentPath;
+	}
+
+	public boolean isArchive() {
+		return _isArchive;
+	}
+
+	public boolean isHidden() {
+		return false;
+	}
+
+	public boolean isRoot() {
+		return _parentPath==null;
+		
+	}
+
+	public String getParentPath() {
+		return _parentPath;
 	}
 
 	public void renameTo(String newAbsolutePath) 
@@ -120,29 +153,12 @@ public class FTPHostFile implements IHostFile
 		}
 		
 		_isArchive = internalIsArchive();
-
-		
 	}
-
+	
 	protected boolean internalIsArchive()
 	{
 		return ArchiveHandlerManager.getInstance().isArchive(new File(getAbsolutePath())) 
 		&& !ArchiveHandlerManager.isVirtual(getAbsolutePath());
-	}
-	
-	public boolean isArchive() 
-	{
-		return _isArchive;
-	}
-
-	//TODO implement this
-	public boolean canRead() {
-		return true;
-	}
-
-	//TODO implement this
-	public boolean canWrite() {
-		return true;
 	}
 	
 }

@@ -16,62 +16,57 @@
  *    delete, move and rename.
  * Javier Montalvo Orus (Symbian) - Bug 140348 - FTP did not use port number
  * Michael Berger (IBM) - Fixing 140404 - FTP new file creation does not work
+ * Javier Montalvo Orús (Symbian) - Migrate to jakarta commons net FTP client
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.rse.services.Mutex;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 
-import sun.net.TelnetInputStream;
-import sun.net.ftp.FtpClient;
 
 
 
 public class FTPService extends AbstractFileService implements IFileService, IFTPService
 {
-	private FTPClientService _ftpClient;
-	private Mutex _mutex = new Mutex();
-	private long _mutexTimeout = 5000; //max.5 seconds to obtain dir channel 
-
+	private FTPClient _ftpClient;
+	
 	private String    _userHome;
-	private IFTPDirectoryListingParser _ftpPropertiesUtil;
 	
 	private transient String _hostname;
 	private transient String _userId;
 	private transient String _password;
 	private transient int _portNumber;
-	private URLConnection _urlConnection;
 	
-	public FTPService()
-	{		
-	}
-	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.IService#getName()
+	 */
 	public String getName()
 	{
 		return FTPServiceResources.FTP_File_Service_Name;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.IService#getDescription()
+	 */
 	public String getDescription()
 	{
 		return FTPServiceResources.FTP_File_Service_Description;
@@ -95,19 +90,18 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		_password = password;
 	}
-	
 
 	public void connect() throws Exception
 	{
-		FtpClient ftp = getFTPClient(); 
+		FTPClient ftp = getFTPClient(); 
 		if (_portNumber == 0) {
-			ftp.openServer(_hostname);
+			ftp.connect(_hostname);
 		} else {
-			ftp.openServer(_hostname, _portNumber);
+			ftp.connect(_hostname, _portNumber);
 		}
 		ftp.login(_userId, _password);
 		
-		_userHome = ftp.pwd();
+		_userHome = ftp.printWorkingDirectory();
 	}
 	
 	protected void reconnect()
@@ -125,114 +119,107 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		try
 		{
-			getFTPClient().closeServer();
+			getFTPClient().logout();
 			_ftpClient = null;
 		}
 		catch (Exception e)
 		{
-		//	e.printStackTrace();
 			_ftpClient = null;
 		}
 	}
 	
-	public IFTPDirectoryListingParser getDirListingParser()
-	{
-		if (_ftpPropertiesUtil == null)
-		{
-			_ftpPropertiesUtil = new FTPLinuxDirectoryListingParser();
-		}
-		return _ftpPropertiesUtil;
-	}
-	
-	public FTPClientService getFTPClient()
+	public FTPClient getFTPClient()
 	{
 		if (_ftpClient == null)
 		{
-			_ftpClient = new FTPClientService();
+			_ftpClient = new FTPClient();
 		}
-		return _ftpClient;
+		return _ftpClient; 
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.IFileService#getFile(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String)
+	 */
 	public IHostFile getFile(IProgressMonitor monitor, String remoteParent, String fileName)
 	{
-		//No Mutex lock needed here because internalFetch() does the lock
 		IHostFile[] matches = internalFetch(monitor, remoteParent, fileName, FILE_TYPE_FILES_AND_FOLDERS);
+		
 		if (matches != null && matches.length > 0)
 		{
 			return matches[0];
 		}
 		else
 		{
-			return new FTPHostFile(remoteParent, fileName, false, false, 0, 0, false);
+			return null;
 		}
 	}
+	
 	public boolean isConnected()
 	{
-		return getFTPClient().serverIsOpen();
+		return getFTPClient().isConnected();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.AbstractFileService#internalFetch(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, int)
+	 */
 	protected IHostFile[] internalFetch(IProgressMonitor monitor, String parentPath, String fileFilter, int fileType)
 	{
+		
 		if (fileFilter == null)
 		{
 			fileFilter = "*";
 		}
+		
 		NamePatternMatcher filematcher = new NamePatternMatcher(fileFilter, true, true);
 		List results = new ArrayList();
-		if (_mutex.waitForLock(monitor, _mutexTimeout))
+		
+		try
 		{
+			FTPClient ftp = getFTPClient();
 			try
 			{
-				FtpClient ftp = getFTPClient();
-				try
-				{
-					ftp.noop();
-				}
-				catch (Exception e)
-				{
-					//e.printStackTrace();
-					disconnect();
-					
-					// probably timed out
-					reconnect();
-					ftp = getFTPClient();
-				}
-				
-				ftp.cd(parentPath);
-				TelnetInputStream stream = ftp.list();		
-				BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-				String line = reader.readLine();
-				while (line != null)
-				{
-					FTPHostFile node = getDirListingParser().getFTPHostFile(line, parentPath);
-					if (node != null && filematcher.matches(node.getName()))
-					{
-						if (isRightType(fileType, node))
-						{
-							results.add(node);
-						}
-					}
-					line = reader.readLine();
-				}
+				ftp.noop();
 			}
 			catch (Exception e)
-			{			
-				e.printStackTrace();
-			}
-			finally
 			{
-				_mutex.release();
+				disconnect();
+				
+				reconnect();
+				ftp = getFTPClient();
+			}
+			
+			ftp.changeWorkingDirectory(parentPath);
+			
+			FTPFile[] ftpFiles = ftp.listFiles();
+			
+			for(int i=0; i<ftpFiles.length; i++)
+			{
+				if(filematcher.matches(ftpFiles[i].getName()))
+				{
+					results.add(new FTPHostFile(parentPath,ftpFiles[i]));
+				}
 			}
 		}
+		catch (Exception e)
+		{			
+			e.printStackTrace();
+		}
+		
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
 	}
+	
 	
 	public String getSeparator()
 	{
 		return "/";
 	}
 	
-	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.IFileService#upload(org.eclipse.core.runtime.IProgressMonitor, java.io.File, java.lang.String, java.lang.String, boolean, java.lang.String, java.lang.String)
+	 */
 	public boolean upload(IProgressMonitor monitor, File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding)
 	{
 		try
@@ -247,95 +234,84 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		}
 	}
 	
-    private OutputStream getUploadStream(String remotePath, boolean isBinary) throws Exception 
-    {
-    	String typecode = isBinary ? "i" : "a";
-    	remotePath = "%2F" + remotePath;
-    	remotePath = remotePath.replaceAll(" ", "%20");
-    	URL url = new URL("ftp://" + _userId + ":" + _password + "@" + _hostname + "/" + remotePath + ";type=" + typecode);
-    	_urlConnection = url.openConnection();
-    	return _urlConnection.getOutputStream();
-    }
-    
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.IFileService#upload(org.eclipse.core.runtime.IProgressMonitor, java.io.InputStream, java.lang.String, java.lang.String, boolean, java.lang.String)
+	 */
 	public boolean upload(IProgressMonitor monitor, InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding)
 	{
+		boolean retValue = false;
+
 		try
 		{
-			BufferedInputStream bis = new BufferedInputStream(stream);
-			String remotePath = remoteParent + getSeparator() + remoteFile;
-			OutputStream os = getUploadStream(remotePath, isBinary);
-			byte[] buffer = new byte[1024];
-			int readCount;
-			while( (readCount = bis.read(buffer)) > 0) 
-			{
-			     os.write(buffer, 0, readCount);
-			}
-			os.close();
-			bis.close();
-			_urlConnection = null;
+			FTPClient ftp = getFTPClient();
+			ftp.changeWorkingDirectory(remoteParent);
+			
+			if (isBinary)
+				ftp.setFileTransferMode(FTP.BINARY_FILE_TYPE);			
+			else
+				ftp.setFileTransferMode(FTP.ASCII_FILE_TYPE);
+			
+			retValue = ftp.storeFile(remoteFile, stream);
+			
+			stream.close();
+
 		}
 		catch (Exception e)
-		{
+		{			
 			e.printStackTrace();
 		}
-		return true;
+
+		return retValue;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.IFileService#download(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.io.File, boolean, java.lang.String)
+	 */
 	public boolean download(IProgressMonitor monitor, String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding)
 	{
-		if (_mutex.waitForLock(monitor, _mutexTimeout))
+		boolean retValue = false;
+
+		try
 		{
-			try
+			FTPClient ftp = getFTPClient();
+			ftp.changeWorkingDirectory(remoteParent);
+			
+			if (isBinary)
+				ftp.setFileTransferMode(FTP.BINARY_FILE_TYPE);			
+			else
+				ftp.setFileTransferMode(FTP.ASCII_FILE_TYPE);
+			
+			if (!localFile.exists())
 			{
-				FtpClient ftp = getFTPClient();
-				ftp.cd(remoteParent);
-				/*
-				if (isBinary)
-					ftp.binary();			
-				else
-					ftp.ascii();
-					*/
-				// for now only binary seems to work
-				ftp.binary();
-				
-				InputStream is = ftp.get(remoteFile);
-				BufferedInputStream bis = new BufferedInputStream(is);
-				
-				if (!localFile.exists())
+				File localParentFile = localFile.getParentFile();
+				if (!localParentFile.exists())
 				{
-					File localParentFile = localFile.getParentFile();
-					if (!localParentFile.exists())
-					{
-						localParentFile.mkdirs();
-					}
-					localFile.createNewFile();
+					localParentFile.mkdirs();
 				}
-				OutputStream os = new FileOutputStream(localFile);
-				BufferedOutputStream bos = new BufferedOutputStream(os);
-		
-				 byte[] buffer = new byte[1024];
-				 int totalWrote = 0;
-				 int readCount;
-				 while( (readCount = bis.read(buffer)) > 0) 
-				 {
-				      bos.write(buffer, 0, readCount);
-				      totalWrote += readCount;
-				 }
-				 bos.close();
-				 return true;
+				localFile.createNewFile();
 			}
-			catch (Exception e)
-			{			
-				e.printStackTrace();
-			}
-			finally
-			{
-				_mutex.release();
-			}
+			
+			OutputStream output = new FileOutputStream(localFile);
+			
+			retValue = ftp.retrieveFile(remoteFile, output);
+			
+			output.flush();
+			output.close();
 		}
-		return false;
+		catch (Exception e)
+		{			
+			e.printStackTrace();
+		}
+
+		return retValue;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.IFileService#getUserHome()
+	 */
 	public IHostFile getUserHome()
 	{
 		int lastSlash = _userHome.lastIndexOf('/');
@@ -344,10 +320,13 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		return getFile(null, parent, name);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.IFileService#getRoots(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public IHostFile[] getRoots(IProgressMonitor monitor) 
-	{
-		IHostFile root = new FTPHostFile("/", "/", true, true, 0, 0, true);
-		return new IHostFile[] { root };
+	{	
+		return new IHostFile[]{new FTPHostFile(null, "/", true, true, 0, 0, true)};
 	}
 
 	/* (non-Javadoc)
@@ -355,20 +334,17 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public boolean delete(IProgressMonitor monitor, String remoteParent, String fileName) {
 		boolean hasSucceeded = false;
-		if (_mutex.waitForLock(monitor, _mutexTimeout)) {
-			try {
-				getFTPClient().cd(remoteParent);
-				int returnedValue = getFTPClient().sendCommand("DELE " + fileName);
-				hasSucceeded = (returnedValue > 0);
-			}
-			catch (IOException e) {			
-				// Changing folder raised an exception
-				hasSucceeded = false;
-			}
-			finally {
-				_mutex.release();
-			}
+
+		try {
+			getFTPClient().cwd(remoteParent);
+			int returnedValue = getFTPClient().dele(fileName);
+			hasSucceeded = (returnedValue > 0);
 		}
+		catch (IOException e) {			
+			// Changing folder raised an exception
+			hasSucceeded = false;
+		}
+
 		return hasSucceeded;
 	}
 
@@ -376,20 +352,16 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 * @see org.eclipse.rse.services.files.IFileService#rename(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName) {
-		boolean hasSucceeded = false;
-		if (_mutex.waitForLock(monitor, _mutexTimeout)) {
-			try {
-				int returnedValue = getFTPClient().sendCommand("RNFR " + remoteParent + getSeparator() + oldName);
-				if (returnedValue > 0) {
-					returnedValue = getFTPClient().sendCommand("RNTO " + remoteParent + getSeparator() + newName);
-					hasSucceeded = (returnedValue > 0);
-				}
-			}
-			finally {
-				_mutex.release();
-			}
+
+		try {
+			
+			getFTPClient().rename(remoteParent + getSeparator() + oldName, remoteParent + getSeparator() + newName);
+		
+		} catch (IOException e) {
+			return false;
 		}
-		return hasSucceeded;
+
+		return true;
 	}
 	
 	/* (non-Javadoc)
@@ -397,18 +369,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName, IHostFile oldFile) {
 		boolean hasSucceeded = false;
-		if (_mutex.waitForLock(monitor, _mutexTimeout)) {
-			try {
-				int returnedValue = getFTPClient().sendCommand("RNFR " + remoteParent + getSeparator() + oldName);
-				if (returnedValue > 0) {
-					returnedValue = getFTPClient().sendCommand("RNTO " + remoteParent + getSeparator() + newName);
-					hasSucceeded = (returnedValue > 0);
-				}
-			}
-			finally {
-				_mutex.release();
-			}
-		}
+				
+		oldFile.renameTo(newName);
+
 		return hasSucceeded;
 	}
 
@@ -417,18 +380,19 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public boolean move(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) {
 		boolean hasSucceeded = false;
-		if (_mutex.waitForLock(monitor, _mutexTimeout)) {
-			try {
-				int returnedValue = getFTPClient().sendCommand("RNFR " + srcParent + getSeparator() + srcName);
-				if (returnedValue > 0) {
-					returnedValue = getFTPClient().sendCommand("RNTO " + tgtParent + getSeparator() + tgtName);
-					hasSucceeded = (returnedValue > 0);
-				}
+
+		try {
+				
+			int returnedValue;
+			returnedValue = getFTPClient().sendCommand("RNFR " + srcParent + getSeparator() + srcName);
+			
+			if (returnedValue > 0) {
+				returnedValue = getFTPClient().sendCommand("RNTO " + tgtParent + getSeparator() + tgtName);
+				hasSucceeded = (returnedValue > 0);
 			}
-			finally {
-				_mutex.release();
-			}
-		}
+			
+		}catch (IOException e) {}
+
 		return hasSucceeded;
 	}
 
@@ -437,27 +401,13 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public IHostFile createFolder(IProgressMonitor monitor, String remoteParent, String folderName) 
 	{
-		if (_mutex.waitForLock(monitor, _mutexTimeout))
+		try
 		{
-			try
-			{
-				FTPClientService ftp = getFTPClient();
-				ftp.cd(remoteParent);
-				ftp.sendCommand("MKD " + folderName);
-			}
-			catch (Exception e)
-			{			
-				e.printStackTrace();
-			}
-			finally
-			{
-				_mutex.release();
-			}
+			FTPClient ftp = getFTPClient();
+			ftp.makeDirectory(folderName);
 		}
-		//TODO getFile() will acquire the lock again after having released it
-		//For optimization, Mutex should notice when the _same_ thread tries 
-		//to acquire a lock that it already holds again. To do so, the current
-		//locking thread would need to be remembered.
+		catch (Exception e)	{}
+
 		return getFile(monitor, remoteParent, folderName);
 	}
 
@@ -465,19 +415,16 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
      * @see org.eclipse.rse.services.files.IFileService#createFile(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String)
      */
     public IHostFile createFile(IProgressMonitor monitor, String remoteParent, String fileName) {
-		if (_mutex.waitForLock(monitor, _mutexTimeout)) {
-			try {
-				File tempFile = File.createTempFile("ftp", "temp");
-				tempFile.deleteOnExit();
-				upload(monitor, tempFile, remoteParent, fileName, true, null, null);
-			}
-			catch (Exception e) {			
-				e.printStackTrace();
-			}
-			finally {
-				_mutex.release();
-			}
+
+		try {
+			File tempFile = File.createTempFile("ftp", "temp");
+			tempFile.deleteOnExit();
+			upload(monitor, tempFile, remoteParent, fileName, true, null, null);
 		}
+		catch (Exception e) {			
+			e.printStackTrace();
+		}
+
 		return getFile(monitor, remoteParent, fileName);
 	}
     
@@ -490,7 +437,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
     public boolean copy(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) 
 	{
-		return false;
+		return move(monitor, srcParent, srcName, tgtParent, tgtName);
 	}
 	
 	public boolean copyBatch(IProgressMonitor monitor, String[] srcParents, String[] srcNames, String tgtParent) throws SystemMessageException 

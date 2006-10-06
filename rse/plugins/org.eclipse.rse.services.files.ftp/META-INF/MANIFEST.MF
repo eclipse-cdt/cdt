@@ -7,6 +7,7 @@ Bundle-Activator: org.eclipse.rse.services.files.ftp.Activator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.rse.services
+ org.eclipse.rse.services,
+ org.apache.commons_net
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.services.files.ftp

@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * IBM Corporation - initial API and implementation
  ********************************************************************************/
 
 package org.eclipse.rse.eclipse.filesystem;

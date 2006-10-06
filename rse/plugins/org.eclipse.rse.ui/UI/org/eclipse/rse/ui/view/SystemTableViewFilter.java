@@ -17,7 +17,9 @@
 package org.eclipse.rse.ui.view;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.TableTreeViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.rse.services.clientserver.StringCompare;
@@ -57,6 +59,28 @@ public class SystemTableViewFilter extends ViewerFilter
 			if (_filters != null)
 			{
 				TableViewer tviewer = (TableViewer) viewer;
+				ITableLabelProvider labelProvider = (ITableLabelProvider) tviewer.getLabelProvider();
+
+				for (int i = 0; i < _filters.length && result; i++)
+				{
+					String filter = _filters[i];
+
+					if (filter != null && filter.length() > 0)
+					{
+						String text = labelProvider.getColumnText(element, i);
+						if (!StringCompare.compare(filter, text, true))
+						{
+							result = false;
+						}
+					}
+				}
+			}
+		}
+		else if (viewer instanceof TreeViewer)
+		{
+			if (_filters != null)
+			{
+				TreeViewer tviewer = (TreeViewer) viewer;
 				ITableLabelProvider labelProvider = (ITableLabelProvider) tviewer.getLabelProvider();
 
 				for (int i = 0; i < _filters.length && result; i++)

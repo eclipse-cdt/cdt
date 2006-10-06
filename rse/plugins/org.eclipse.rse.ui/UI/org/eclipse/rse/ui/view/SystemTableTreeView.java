@@ -56,6 +56,7 @@ import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemRegistry;
+import org.eclipse.rse.services.clientserver.StringCompare;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
@@ -94,6 +95,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -1828,11 +1830,46 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 
 	}
 
+
 	public void positionTo(String name)
 	{
 		ArrayList selectedItems = new ArrayList();
-		Composite tree = getTableTree();
+		Tree tree = getTree();
+		TreeItem topItem = null;
+		for (int i = 0; i < tree.getItemCount(); i++)
+		{
+			TreeItem item = tree.getItem(i);
+			Object data = item.getData();
+			if (data instanceof IAdaptable)
+			{
+				ISystemViewElementAdapter adapter = getAdapter(data);
+				String itemName = adapter.getName(data);
+
+				if (StringCompare.compare(name, itemName, false))
+				{
+					if (topItem == null)
+					{
+						topItem = item;
+					}
+					selectedItems.add(item);
+				}
+			}
+		}
+
+		if (selectedItems.size() > 0)
+		{
+			TreeItem[] tItems = new TreeItem[selectedItems.size()];
+			for (int i = 0; i < selectedItems.size(); i++)
+			{
+				tItems[i] = (TreeItem) selectedItems.get(i);
+			}
+
+			tree.setSelection(tItems);
+			tree.setTopItem(topItem);
+			setSelection(getSelection(), true);
+		}
 	}
+
 
 	protected void handleKeyPressed(KeyEvent event)
 	{

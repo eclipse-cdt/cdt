@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *   Javier Montalvo Orús (Symbian) - initial API and implementation
+ *   Javier Montalvo OrÃºs (Symbian) - initial API and implementation
  ********************************************************************************/
 
 package org.eclipse.tm.discovery.model.provider;

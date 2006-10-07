@@ -12,11 +12,11 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - Fixing 140408 - FTP upload does not work
- * Javier Montalvo Orus (Symbian) - Fixing 140323 - provided implementation for 
+ * Javier Montalvo Orús (Symbian) - Fixing 140323 - provided implementation for 
  *    delete, move and rename.
- * Javier Montalvo Orus (Symbian) - Bug 140348 - FTP did not use port number
+ * Javier Montalvo Orús (Symbian) - Bug 140348 - FTP did not use port number
  * Michael Berger (IBM) - Fixing 140404 - FTP new file creation does not work
- * Javier Montalvo Orus (Symbian) - Migrate to jakarta commons net FTP client
+ * Javier Montalvo Orús (Symbian) - Migrate to jakarta commons net FTP client
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;

@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Javier Montalvo Orus (Symbian) - Bug 158555 - newConnectionWizardDelegates can only be used once
+ * Javier Montalvo Orús (Symbian) - Bug 158555 - newConnectionWizardDelegates can only be used once
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;

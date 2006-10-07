@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Javier Montalvo Orus (Symbian) - Bug 140348 - FTP did not use port number
+ * Javier Montalvo Orús (Symbian) - Bug 140348 - FTP did not use port number
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.ftp.connectorservice;

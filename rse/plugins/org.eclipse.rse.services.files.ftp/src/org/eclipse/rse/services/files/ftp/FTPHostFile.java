@@ -12,7 +12,7 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - Fixing 140408 - FTP upload does not work
- * Javier Montalvo Orus (Symbian) - Migrate to jakarta commons net FTP client
+ * Javier Montalvo Orús (Symbian) - Migrate to jakarta commons net FTP client
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;

@@ -12,7 +12,7 @@ Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
 Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
-Javier Montalvo Orus (Symbian) - add Windows to list of valid FTP systems
+Javier Montalvo Orús (Symbian) - add Windows to list of valid FTP systems
 -->
 <?eclipse version="3.1"?>
 <plugin>

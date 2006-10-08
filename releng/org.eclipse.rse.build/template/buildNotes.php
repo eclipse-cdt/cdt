@@ -23,40 +23,37 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>The <b>CDT Launch Integration Example</b> is now available as a
-  download.</li>
-<li>Jakarta Commons Net is now available for <b>FTP</b>.
-  Telnet support (from Commons Net) has not yet been integrated.</li>
-<li>A clean-room Telnet implementation available.</li>
-<li>The <b>systemTypes</b> extension point now allows specifying the "icon", "iconLive" 
-  and "enableOffline" properties either as a Property, or as an attribute. This change
-  allows for better integration with PDE. It is backward compatible with the format used
-  in RSE 1.0M4.</li>
-<li>RSE now provides an <b>update site</b> at
-  <a href="http://download.eclipse.org/dsdp/tm/updates/">http://download.eclipse.org/dsdp/tm/updates/</a>.
-  We encourage users to update frequently, since we expect
-  RSE quality to improve more and more as we are approaching our 1.0 release.</li>
-<li>Persistent storage of connection and filter data has been streamlined to
-  use <b>fewer files and directories</b>, resulting in simplification of team support
-  and improved perfomance.</li>
-<li>Windows dstore daemon can now be started by simply double clicking on daemon.bat
+<li>The <b>CDT Remote Launch Integration</b> is now available as a
+  download, or from the <a href="http://download.eclipse.org/dsdp/tm/updates/">Update Site</a>.</li>
+<li>An <b>Experimental RSE EFS Provider</b> is now available as a
+  download, or from the <a href="http://download.eclipse.org/dsdp/tm/updates/">Update Site</a>.</li>
+<li><b>Jakarta Commons Net</b> is now available for <b>FTP</b>.
+  A Telnet implementation is available (from Commons Net) but has not yet been integrated 
+  as an RSE subsystem.</li>
+<li>RSE now has an <b>FTP Only</b> system type (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160168">Bug 160168</a>)</li>
+<li>Both Windows dstore daemon and server can now be started by simply double clicking on daemon.bat.
+  Documentation has been updated
   (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142952">Bug 142952</a>)</li>
 <li>Numerous bugs have been fixed, and we consider RSE safe now for 
   all kinds of data transfer, even if it's done in multiple background sessions.</li>
-<li>FTP using the Jakarta Commons Net library has been integrated.</li>
-<li>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-09-27&chfieldto=2006-10-06&chfield=resolution">
+<li>Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-09-27&chfieldto=2006-10-08&chfield=resolution"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=1.0+RC1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0M5-200609221723/index.php">
   RSE 1.0M5</a>.</li>
-<li>Look <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
-  here</a> for the CVS changelog.</li>
+<li>For details on checkins, see the
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
+  RSE CVS changelog</a>, and the
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/core/index.html">
+  TM Core CVS changelog</a>.</li>
 </ul>
 </td></tr></tbody></table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">API Changes since RSE 1.0 M5</font></b></td>
+		<font face="Arial,Helvetica" color="#FFFFFF">API Changes since RSE 1.0 M4 (official API freeze)</font></b></td>
 	</tr>
 </table>
 <table><tbody><tr><td>
@@ -170,15 +167,30 @@ deliverables did not make it into this build:
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143462">bug 143462</a> - maj - [updating] Dirty remote editors do not get notified</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158358">bug 158358</a> - cri - Can not open RSE perspective when running with IBM JRE 1.5
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158673">bug 158673</a> - cri - Eclipse crashed when clicking on .ppt file on a remote system
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160084">bug 160084</a> - cri - RSE is hanging eclipse and slowing down my system dramatically
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143462">bug 143462</a> - maj - [updating] Dirty remote editors do not get notified
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158534">bug 158534</a> - maj - [ssh] Save conflict when modifying remote file
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158765">bug 158765</a> - maj - Command is not sent on ENTER in dstore-windows shell
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158766">bug 158766</a> - maj - Content Assist does not work on Windows-local, Linux-local and Windows-dstore shells
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158786">bug 158786</a> - maj - Remote shell remains open from C/C++ remote application launch
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160111">bug 160111</a> - maj - A blocking RSE job "hangs" the entire RSE system
 </ul>
-Click 
+<p>The 
+<a href="http://wiki.eclipse.org/index.php/RSE_1.0RC1_Known_Issues_and_Workarounds">
+RSE 1.0RC1 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
+of the most frequent and obvious problems, and describes workarounds for them.
+</p>
+
+<p>Click 
 <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=RSE&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">here</a>
 for an up-to-date list of major or critical bugs, or
 <a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=Target+Management&component=RSE&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&format=table&action=wrap">here</a>
 for a complete up-to-date bugzilla status report, or
 <a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=Target+Management&component=RSE&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&format=table&action=wrap">here</a>
 for a report on bugs fixed so far.
+</p>
 </td></tr></tbody></table>
 
 </body>

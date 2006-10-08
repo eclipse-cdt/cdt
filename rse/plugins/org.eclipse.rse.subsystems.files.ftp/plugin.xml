@@ -13,16 +13,21 @@ Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
 Javier Montalvo Orús (Symbian) - add Windows to list of valid FTP systems
+Martin Oberhuber (WindRiver) - add FTP Only system type
 -->
 <?eclipse version="3.1"?>
 <plugin>
-
-
-
-   <extension
-         point="org.eclipse.rse.ui.subsystemConfigurations">
+	<extension point="org.eclipse.rse.core.systemTypes">
+		<systemType
+        	description="%FtpSystemDescription"
+            icon="icons/full/obj16/systemfiles_obj.gif"
+            iconLive="icons/full/obj16/systemfileslive_obj.gif"
+        	id="org.eclipse.rse.systemtype.ftp"
+	        name="FTP Only"/>
+	</extension>
+    <extension point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
-            systemTypes="Linux;Unix;Windows"
+            systemTypes="Linux;Unix;Windows;FTP Only"
             name="%Files"
             description="%FilesDescription"
             iconlive="icons/full/obj16/systemfileslive_obj.gif"

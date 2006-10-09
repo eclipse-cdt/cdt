@@ -2,12 +2,16 @@
 
 	<!-- ===================================================================== -->
 	<!-- Run a given ${target} on all elements being built -->
-	<!-- Add on <ant> task for each top level element being built. -->
+	<!-- Add one <ant> task for each top level element being built. -->
 	<!-- ===================================================================== -->
 	<target name="allElements">
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.sdk" />
+			<property name="id" value="org.apache.oro" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
+			<property name="id" value="org.apache.commons_net" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
@@ -15,7 +19,7 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.local" />
+			<property name="id" value="org.eclipse.rse.dstore" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
@@ -23,11 +27,15 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.local" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.ssh" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.dstore" />
+			<property name="id" value="org.eclipse.rse.sdk" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
@@ -54,10 +62,19 @@
 	<!-- Add one target for each root element and each configuration           -->
 	<!-- ===================================================================== -->
 
-	<target name="assemble.org.eclipse.rse.sdk">
-		<property name="archiveName" value="RSE-SDK-${buildId}.zip"/>
+	<target name="assemble.org.apache.oro">
+		<!-- No separate assembly, included in FTP ::
+		<property name="archiveName" value="jakarta-oro-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
+		-->
+	</target>
+	<target name="assemble.org.apache.commons_net">
+		<!-- No separate assembly, included in FTP ::
+		<property name="archiveName" value="commons-net-${buildId}.zip"/>
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
+		-->
 	</target>
 
 	<target name="assemble.org.eclipse.rse.core">
@@ -66,8 +83,8 @@
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.local">
-		<property name="archiveName" value="RSE-runtime-local-${buildId}.zip"/>
+	<target name="assemble.org.eclipse.rse.dstore">
+		<property name="archiveName" value="RSE-runtime-dstore-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
@@ -78,14 +95,20 @@
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
+	<target name="assemble.org.eclipse.rse.local">
+		<property name="archiveName" value="RSE-runtime-local-${buildId}.zip"/>
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
+	</target>
+
 	<target name="assemble.org.eclipse.rse.ssh">
 		<property name="archiveName" value="RSE-runtime-ssh-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.dstore">
-		<property name="archiveName" value="RSE-runtime-dstore-${buildId}.zip"/>
+	<target name="assemble.org.eclipse.rse.sdk">
+		<property name="archiveName" value="RSE-SDK-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>

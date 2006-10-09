@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.IActionFilter;
+import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.views.properties.FilePropertySource;
@@ -34,6 +35,7 @@ public class CElementAdapterFactory implements IAdapterFactory {
 		IPropertySource.class,
 		IResource.class,
 		IWorkbenchAdapter.class,
+		IPersistableElement.class,
 		IDeferredWorkbenchAdapter.class,
 		IActionFilter.class 
 	};
@@ -61,6 +63,8 @@ public class CElementAdapterFactory implements IAdapterFactory {
 				return resource;
 			}
 			return null;
+		} if (IPersistableElement.class.equals(key)) {
+			return new PersistableCElementFactory(celem);
 		} else if (IDeferredWorkbenchAdapter.class.equals(key)) {
 			return getDeferredWorkbenchAdapter(celem);
 		} else if (IWorkbenchAdapter.class.equals(key)) {

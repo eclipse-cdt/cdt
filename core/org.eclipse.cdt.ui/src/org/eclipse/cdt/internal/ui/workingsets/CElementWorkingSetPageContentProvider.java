@@ -7,21 +7,24 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.workingsets;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.ui.model.WorkbenchContentProvider;
 
-class CElementWorkingSetPageContentProvider extends WorkbenchContentProvider {
+import org.eclipse.cdt.core.model.CoreModel;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
+
+class CElementWorkingSetPageContentProvider extends BaseCElementContentProvider {
+
+	/*
+	 * @see org.eclipse.cdt.internal.ui.BaseCElementContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object element) {
 		if (element instanceof IWorkspaceRoot) {
@@ -30,7 +33,7 @@ class CElementWorkingSetPageContentProvider extends WorkbenchContentProvider {
 			List list = new ArrayList(projects.length);
 			for (int i = 0; i < projects.length; i++) {
 				if (CoreModel.hasCNature(projects[i])) {
-					list.add(projects[i]);
+					list.add(CoreModel.getDefault().create(projects[i]));
 				}
 			}
 			return list.toArray();

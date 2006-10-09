@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Anton Leherbauer (Wind River Systems) - Fixed bug 131267
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -159,34 +159,33 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 
 		//System.out.println("Processing " + element);
 
-		// handle open and closing of a solution or project
+		// handle open and closing of a project
 		if (((flags & ICElementDelta.F_CLOSED) != 0) || ((flags & ICElementDelta.F_OPENED) != 0)) {
 			postRefresh(element);
 		}
 
 		// We do not care about changes in Working copies
 		// well, we do see bugzilla 147694
-//		if (element instanceof ITranslationUnit) {
-//			ITranslationUnit unit = (ITranslationUnit) element;
-//			if (unit.isWorkingCopy()) {
-//				return;
-//			}
-//		}
+		if (element instanceof ITranslationUnit) {
+			ITranslationUnit unit = (ITranslationUnit) element;
+			if (!getProvideWorkingCopy() && unit.isWorkingCopy()) {
+				return;
+			}
+			if (!getProvideMembers() && kind == ICElementDelta.CHANGED) {
+				return;
+			}
+		}
 
 		if (kind == ICElementDelta.REMOVED) {
-			Object parent = internalGetParent(element);
 			postRemove(element);
-			if (updateContainer(element)) {
-				postRefresh(parent);
-			}
+			updateContainer(element);
+			return;
 		}
 
 		if (kind == ICElementDelta.ADDED) {
 			Object parent= internalGetParent(element);
 			postAdd(parent, element);
-			if (updateContainer(element)) {
-				postRefresh(parent);
-			}
+			updateContainer(element);
 		}
 
 		if (kind == ICElementDelta.CHANGED) {
@@ -196,8 +195,10 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			if (updateContainer(element)) {
 				Object parent = getParent(element);
 				postRefresh(parent);
+				return;
 			} else if (element instanceof ITranslationUnit) {
 				postRefresh(element);
+				return;
 			} else if (element instanceof ArchiveContainer || element instanceof BinaryContainer) {
 				postContainerRefresh((IParent) element, element.getCProject());
 			}
@@ -210,28 +211,49 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			return;// bailout
 		}
 		
-		if (delta.getResourceDeltas() != null) {
-			IResourceDelta[] rd= delta.getResourceDeltas();
-			for (int i= 0; i < rd.length; i++) {
-				processResourceDelta(rd[i], element);
-			}
-		}
-
+		if (processResourceDeltas(delta.getResourceDeltas(), element))
+			return;
+	
 		ICElementDelta[] affectedChildren= delta.getAffectedChildren();
 		for (int i= 0; i < affectedChildren.length; i++) {
 			processDelta(affectedChildren[i]);
 		}
 	}
 
-	/*
-	 * Process resource deltas
+	/**
+	 * Process resource deltas.
+	 *
+	 * @return true if the parent got refreshed
 	 */
-	private void processResourceDelta(IResourceDelta delta, Object parent) {
+	private boolean processResourceDeltas(IResourceDelta[] deltas, Object parent) {
+		if (deltas == null)
+			return false;
+		
+		if (deltas.length > 1) {
+			// more than one child changed, refresh from here downwards
+			postRefresh(parent);
+			return true;
+		}
+
+		for (int i= 0; i < deltas.length; i++) {
+			if (processResourceDelta(deltas[i], parent))
+				return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Process a resource delta.
+	 * 
+	 * @return true if the parent got refreshed
+	 */
+	private boolean processResourceDelta(IResourceDelta delta, Object parent) {
 		int status= delta.getKind();
 		IResource resource= delta.getResource();
 		// filter out changes affecting the output folder
 		if (resource == null) {
-			return;
+			return false;
 		}
                         
 		// this could be optimized by handling all the added children in the parent
@@ -241,17 +263,16 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		if ((status & IResourceDelta.ADDED) != 0) {
 			postAdd(parent, resource);
 		}
-		IResourceDelta[] affectedChildren= delta.getAffectedChildren();
 
-		if (affectedChildren.length > 1) {
-			// more than one child changed, refresh from here downwards
-			postRefresh(resource);
-			return;
+		int flags= delta.getFlags();
+		// open/close state change of a project
+		if ((flags & IResourceDelta.OPEN) != 0) {
+			postRefresh(parent);
+			return true;
 		}
 
-		for (int i= 0; i < affectedChildren.length; i++) {
-			processResourceDelta(affectedChildren[i], resource);
-		}
+		processResourceDeltas(delta.getAffectedChildren(), resource);
+		return false;
 	}
 
 	private boolean updateContainer(ICElement cfile) throws CModelException {
@@ -339,25 +360,52 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	    	return element.hashCode()*7 + 490487;
 	    }
 	}
-	
-	private void postContainerRefresh(final IParent container, final ICProject cproject) {
+
+	final class RefreshProjectState implements IRefreshable {
+		private Object element;
+		public RefreshProjectState(Object element) {
+			this.element = element;
+		}
+		public void refresh() {
+			fViewer.refresh(element, true);
+			// trigger a syntetic selection change so that action refresh their
+			// enable state.
+			fViewer.setSelection(fViewer.getSelection());
+		}
+	    public boolean equals(Object o) {
+	    	if (o instanceof RefreshElement) {
+	    		RefreshElement c = (RefreshElement)o;
+	    		return c.element.equals(element);
+	    	}
+	        return false;
+	    }
+	    public int hashCode() {
+	    	return element.hashCode()*11 + 490487;
+	    }
+	}
+
+	protected void postContainerRefresh(final IParent container, final ICProject cproject) {
 		//System.out.println("UI Container:" + cproject + " " + container);
 		postRefreshable(new RefreshContainer(container, cproject));
 	}
 
-	private void postRefresh(final Object element) {
+	protected void postRefresh(final Object element) {
 		//System.out.println("UI refresh:" + root);
 		postRefreshable(new RefreshElement(element));
 	}
 
-	private void postAdd(final Object parent, final Object element) {
+	protected void postAdd(final Object parent, final Object element) {
 		//System.out.println("UI add:" + parent + " " + element);
 		postRefreshable(new RefreshElement(parent));
 	}
 
-	private void postRemove(final Object element) {
+	protected void postRemove(final Object element) {
 		//System.out.println("UI remove:" + element);
 		postRefreshable(new RefreshElement(internalGetParent(element)));
+	}
+
+	protected void postProjectStateChanged(final Object root) {
+		postRefreshable(new RefreshProjectState(root));
 	}
 
 	private void postRefreshable(final IRefreshable r) {

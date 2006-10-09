@@ -16,12 +16,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.internal.ui.cview.CViewContentProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -35,6 +29,14 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
 import org.eclipse.ui.navigator.PipelinedShapeModification;
 import org.eclipse.ui.navigator.PipelinedViewerUpdate;
+
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
+import org.eclipse.cdt.internal.ui.cview.CViewContentProvider;
 
 /**
  * A content provider populating a Common Navigator view with CDT model content.
@@ -286,7 +288,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		Object parent= modification.getParent();
 		if (parent instanceof IContainer) {
 			ICElement element= CoreModel.getDefault().create((IContainer) parent);
-			if (element != null && element.exists()) {
+			if (element != null) {
 				// don't convert the root
 				if( !(element instanceof ICModel)) {
 					modification.setParent(element);
@@ -312,8 +314,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		for (Iterator iter= currentChildren.iterator(); iter.hasNext();) {
 			Object child= iter.next();
 			if (child instanceof IResource) {
-				if ((newChild= CoreModel.getDefault().create((IResource) child)) != null
-						&& newChild.exists()) {
+				if ((newChild= CoreModel.getDefault().create((IResource) child)) != null) {
 					iter.remove();
 					convertedChildren.add(newChild);
 				}
@@ -324,7 +325,26 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 			return true;
 		}
 		return false;
+	}
 
+	protected void postRefresh(final Object element) {
+		if (element instanceof ICModel) {
+			super.postRefresh(fRealInput);
+			return;
+		}
+		super.postRefresh(element);
+	}
+
+	protected void postAdd(final Object parent, final Object element) {
+		if (parent instanceof ICModel) {
+			super.postAdd(fRealInput, element);
+			return;
+		}
+		super.postAdd(parent, element);
+	}
+
+	protected void postRemove(final Object element) {
+		postRefresh(internalGetParent(element));
 	}
 
 }

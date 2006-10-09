@@ -34,12 +34,20 @@
          </adapter>
          <adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
          <adapter type="org.eclipse.ui.IActionFilter"/>
+         <adapter type="org.eclipse.ui.IPersistableElement"/>
       </factory>
       <factory
             adaptableType="org.eclipse.cdt.internal.ui.editor.CEditor"
             class="org.eclipse.cdt.internal.ui.dnd.TextEditorDropAdapter$Factory">
          <adapter type="org.eclipse.ui.texteditor.ITextEditorDropTargetListener"/>
       </factory>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.cdt.internal.ui.PersistableCElementFactory"
+            id="org.eclipse.cdt.ui.PersistableCElementFactory"/>
    </extension>
 
 <!-- Implement our filters.  -->
@@ -1229,10 +1237,11 @@
    <extension
          point="org.eclipse.ui.workingSets">
       <workingSet
+            icon="icons/view16/cview.gif"
+            id="org.eclipse.cdt.ui.CElementWorkingSetPage"
             name="%CElementWorkingSetPage.name"
             pageClass="org.eclipse.cdt.internal.ui.workingsets.CElementWorkingSetPage"
-            icon="icons/view16/cview.gif"
-            id="org.eclipse.cdt.ui.CElementWorkingSetPage">
+            updaterClass="org.eclipse.cdt.internal.ui.workingsets.CElementWorkingSetUpdater">
       </workingSet>
    </extension>
    <extension
@@ -1483,10 +1492,6 @@
           <enablement>
              <instanceof value="org.eclipse.cdt.core.model.ICElement"/>
           </enablement>
-       </actionProvider>
-       <actionProvider
-             class="org.eclipse.cdt.internal.ui.navigator.CNavigatorWorkingSetActionProvider"
-             id="org.eclipse.cdt.ui.navigator.actions.workingSet">
        </actionProvider>
        <actionProvider
              class="org.eclipse.cdt.internal.ui.navigator.CNavigatorSearchActionProvider"

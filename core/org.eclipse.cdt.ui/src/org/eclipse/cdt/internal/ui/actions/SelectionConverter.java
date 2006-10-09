@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.actions;
@@ -15,30 +16,57 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.texteditor.ITextEditor;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 public class SelectionConverter {
 
 	protected static final ICElement[] EMPTY_RESULT= new ICElement[0];
-    
+ 
+	/**
+	 * Converts the selection provided by the given part into a structured selection.
+	 * The following conversion rules are used:
+	 * <ul>
+	 *	<li><code>part instanceof CEditor</code>: returns a structured selection
+	 * 	using code resolve to convert the editor's text selection.</li>
+	 * <li><code>part instanceof IWorkbenchPart</code>: returns the part's selection
+	 * 	if it is a structured selection.</li>
+	 * <li><code>default</code>: returns an empty structured selection.</li>
+	 * </ul>
+	 */
+	public static IStructuredSelection getStructuredSelection(IWorkbenchPart part) throws CModelException {
+		if (part instanceof CEditor)
+			return new StructuredSelection(codeResolve((CEditor)part));
+		ISelectionProvider provider= part.getSite().getSelectionProvider();
+		if (provider != null) {
+			ISelection selection= provider.getSelection();
+			if (selection instanceof IStructuredSelection)
+				return (IStructuredSelection)selection;
+		}
+		return StructuredSelection.EMPTY;
+	}
+
 	public static IStructuredSelection convertSelectionToCElements(ISelection s) {
 		List converted = new ArrayList();
 		if (s instanceof StructuredSelection) {

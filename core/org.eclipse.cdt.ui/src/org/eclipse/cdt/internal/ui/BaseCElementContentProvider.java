@@ -278,7 +278,13 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 		Object parent = null;
 		if (element instanceof ICElement) {
-			parent = ((ICElement)element).getParent();			
+			parent = ((ICElement)element).getParent();
+			// translate working copy parent to original TU,
+			// because working copies are never returned by getChildren
+			// this is necessary for proper show-in-target support
+			if (parent instanceof IWorkingCopy) {
+				parent= ((IWorkingCopy)parent).getOriginalElement();
+			}
 		} else if (element instanceof IWorkbenchAdapter) {
 			parent = ((IWorkbenchAdapter)element).getParent(element);
 		}

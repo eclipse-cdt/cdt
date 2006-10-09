@@ -24,6 +24,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -70,18 +71,21 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
             } catch (CancellationException e) { // Ignore also
             } catch (ExecutionException e) {
                 if (e.getCause() != null) {
-                    DsfPlugin.getDefault().getLog().log(new Status(
-                        IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Uncaught exception in DSF executor thread", e.getCause()));
-                    
-                    // Print out the stack trace to console if assertions are enabled. 
-                    if(ASSERTIONS_ENABLED) {
-                        ByteArrayOutputStream outStream = new ByteArrayOutputStream(512);
-                        PrintStream printStream = new PrintStream(outStream);
-                        try {
-                            printStream.write("Uncaught exception in session executor thread: ".getBytes());
-                        } catch (IOException e2) {}
-                        e.getCause().printStackTrace(new PrintStream(outStream));
-                        System.err.println(outStream.toString());
+                    ILog log = DsfPlugin.getDefault().getLog();
+                    if (log != null) {
+                        log.log(new Status(
+                            IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Uncaught exception in DSF executor thread", e.getCause()));
+                        
+                        // Print out the stack trace to console if assertions are enabled. 
+                        if(ASSERTIONS_ENABLED) {
+                            ByteArrayOutputStream outStream = new ByteArrayOutputStream(512);
+                            PrintStream printStream = new PrintStream(outStream);
+                            try {
+                                printStream.write("Uncaught exception in session executor thread: ".getBytes());
+                            } catch (IOException e2) {}
+                            e.getCause().printStackTrace(new PrintStream(outStream));
+                            System.err.println(outStream.toString());
+                        }
                     }
                 }
             }

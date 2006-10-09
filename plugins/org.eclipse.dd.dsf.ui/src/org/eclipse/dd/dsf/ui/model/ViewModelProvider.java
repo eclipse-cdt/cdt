@@ -15,9 +15,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.Done;
 import org.eclipse.dd.dsf.concurrent.DoneTracker;
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.model.IDataModelEvent;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
@@ -44,10 +46,11 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
  * @see IModelProxy
  * @see IViewModelSchemaNode
  */
+@ConfinedToDsfExecutor("fSession#getExecutor")
 @SuppressWarnings("restriction")
 public class ViewModelProvider extends AbstractModelProxy 
 {
-    private DsfSession fSession;
+    private final DsfSession fSession;
     
     /**
      * Counter for whether the model proxy is currently installed in the viewer.
@@ -66,7 +69,7 @@ public class ViewModelProvider extends AbstractModelProxy
      * Root VMC node for the model.  The devault value may be overriden with
      * an object from a tree, by the data model adapter.
      */
-    IViewModelContext fRootVMC = new IViewModelContext() {
+    IViewModelContext fRootVMC = new IViewModelContext(){
         public IViewModelContext getParent() { return null; }
         public IViewModelSchemaNode getSchemaNode() { return null; }
         public Object getAdapter(Class adapter) { 
@@ -209,10 +212,12 @@ public class ViewModelProvider extends AbstractModelProxy
         public boolean isConflicting(ISchedulingRule rule) { return rule == this; }
     };
 
+    @ThreadSafe
     public void installed() {
         fProxyActive++;
     }
     
+    @ThreadSafe
     public void dispose() {
         fProxyActive--;
         super.dispose();

@@ -14,6 +14,7 @@ import org.eclipse.dd.dsf.concurrent.Done;
 import org.eclipse.dd.dsf.concurrent.DoneTracker;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.model.DMCs;
 import org.eclipse.dd.dsf.model.IDataModelContext;
 import org.eclipse.dd.dsf.model.IDataModelEvent;
@@ -35,9 +36,10 @@ abstract public class DataViewModelSchemaNode implements IViewModelSchemaNode {
     /**
      * IViewModelContext implementation used for this schema node.
      */
+    @Immutable
     public class DataVMC implements IViewModelContext {
-        IViewModelContext fParent;
-        IDataModelContext fDmc;
+        private final IViewModelContext fParent;
+        private final IDataModelContext fDmc;
         
         public DataVMC(IViewModelContext parent, IDataModelContext dataModelContext) {
             fParent = parent;

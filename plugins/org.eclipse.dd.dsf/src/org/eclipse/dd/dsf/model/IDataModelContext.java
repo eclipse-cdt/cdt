@@ -11,6 +11,7 @@
 package org.eclipse.dd.dsf.model;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.dd.dsf.concurrent.Immutable;
 
 /**
  * The base class for data model objects.  
@@ -42,6 +43,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * 
  * @see IDataModelData 
  */
+@Immutable
 public interface IDataModelContext<V extends IDataModelData> extends IAdaptable 
 {
     /** 

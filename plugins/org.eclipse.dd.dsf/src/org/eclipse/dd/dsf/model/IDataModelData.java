@@ -18,7 +18,6 @@ package org.eclipse.dd.dsf.model;
  * <p>
  * This interface is intended primarily to allow for future development of
  * a generic API to parametrize data model data.
- * 
  */
 public interface IDataModelData {
     

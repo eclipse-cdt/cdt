@@ -23,6 +23,7 @@ import org.eclipse.dd.dsf.DsfPlugin;
  * clients have to make sure that access to this object is thread safe if 
  * it's used outside of the caller's dispatch thread.   
  */
+@ConfinedToDsfExecutor("")
 abstract public class Done extends DsfRunnable {
     private IStatus fStatus = Status.OK_STATUS;
  

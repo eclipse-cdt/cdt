@@ -11,10 +11,12 @@
 package org.eclipse.dd.dsf.ui.model;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.dd.dsf.concurrent.Immutable;
 
 /**
  * View model element which is stored as the data object of nodes in the viewer.
  */
+@Immutable
 public interface IViewModelContext extends IAdaptable {
     
     /**

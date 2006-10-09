@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.model;
 
+import org.eclipse.dd.dsf.concurrent.ThreadSafe;
+
 
 /**
  * Holder for utility static methods for manipulating IDataModelContext 
@@ -24,6 +26,7 @@ public class DMCs {
      * @param ancestorType Class type of the desired DMC ancestor.
      * @return Returns the ancestor if found, null otherwise.
      */
+    @ThreadSafe
     @SuppressWarnings("unchecked")
     public static <V extends IDataModelContext> V getAncestorOfType(IDataModelContext ctx, Class<V> ancestorType) {
         if (ancestorType.isAssignableFrom(ctx.getClass())) {
@@ -50,6 +53,7 @@ public class DMCs {
      * @param potentialAncestor Ancestor DMC to look for.
      * @return true if a match is found.
      */
+    @ThreadSafe
     public static boolean isAncestorOf(IDataModelContext dmc, IDataModelContext potentialAncestor) {
         // Check the direct parents for a match.
         for (IDataModelContext parentDmc : dmc.getParents()) {

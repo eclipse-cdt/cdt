@@ -27,8 +27,10 @@ import java.util.TreeMap;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.DsfPlugin;
+import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
+import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.osgi.framework.Filter;
 
 /**
@@ -47,13 +49,12 @@ import org.osgi.framework.Filter;
  * 
  * @see org.eclipse.dd.dsf.concurrent.DsfExecutor
  */
+@ConfinedToDsfExecutor("getExecutor")
 public class DsfSession 
-{
-    
+{    
     /** 
      * Listener for session started events.  This listener is always going to be
      * called in the dispatch thread of the session's executor.  
-     * 
      */
     public static interface SessionStartedListener {
         /** 
@@ -86,12 +87,15 @@ public class DsfSession
     }
     
     /** Returns a session instance for given session identifier */
+    @ThreadSafe
     public static DsfSession getSession(String sessionId) {
-        for (DsfSession session : fgActiveSessions) {
-            if (session.getId().equals(sessionId)) {
-                return session;
-            }
-        } 
+        synchronized(fgActiveSessions) {
+            for (DsfSession session : fgActiveSessions) {
+                if (session.getId().equals(sessionId)) {
+                    return session;
+                }
+            } 
+        }
         return null;
     }
     
@@ -99,6 +103,7 @@ public class DsfSession
      * Registers a listener for session started events.
      * Can be called on any thread. 
      */
+    @ThreadSafe
     public static void addSessionStartedListener(SessionStartedListener listener) {
         assert !fSessionStartedListeners.contains(listener);
         fSessionStartedListeners.add(listener);
@@ -108,6 +113,7 @@ public class DsfSession
      * Un-registers a listener for session started events. 
      * Can be called on any thread. 
      */ 
+    @ThreadSafe
     public static void removeSessionStartedListener(SessionStartedListener listener) {
         assert fSessionStartedListeners.contains(listener);
         fSessionStartedListeners.remove(listener);
@@ -117,6 +123,7 @@ public class DsfSession
      * Registers a listener for session ended events. 
      * Can be called on any thread. 
      */ 
+    @ThreadSafe
     public static void addSessionEndedListener(SessionEndedListener listener) {
         assert !fSessionEndedListeners.contains(listener);
         fSessionEndedListeners.add(listener);
@@ -126,6 +133,7 @@ public class DsfSession
      * Un-registers a listener for session ended events. 
      * Can be called on any thread. 
      */ 
+    @ThreadSafe
     public static void removeSessionEndedListener(SessionEndedListener listener) {
         assert fSessionEndedListeners.contains(listener);
         fSessionEndedListeners.remove(listener);
@@ -139,6 +147,7 @@ public class DsfSession
      * @param ownerId ID (plugin ID preferably) of the owner of this session
      * @return instance object of the new session
      */
+    @ThreadSafe
     public static DsfSession startSession(DsfExecutor executor, String ownerId) {
         synchronized(fgActiveSessions) {
             final DsfSession newSession = new DsfSession(executor, ownerId, Integer.toString(fgSessionIdCounter++));
@@ -160,6 +169,7 @@ public class DsfSession
      * executor.
      * @param session session to terminate
      */
+    @ThreadSafe
     public static void endSession(final DsfSession session) {
         synchronized(fgActiveSessions) {
             if (!fgActiveSessions.contains(session)) {
@@ -260,6 +270,7 @@ public class DsfSession
      * @param event to be sent out
      * @param serviceProperties properties of the service requesting the event to be dispatched
      */
+    @ThreadSafe
     public void dispatchEvent(final Object event, final Dictionary serviceProperties) {
         getExecutor().submit(new DsfRunnable() { 
             public void run() { doDispatchEvent(event, serviceProperties);}
@@ -273,6 +284,7 @@ public class DsfSession
      * @param adapter adapter instance to register
      * @see org.eclipse.dsdp.model.AbstractDMC#getAdapter
      */
+    @ThreadSafe
     public void registerModelAdapter(Class adapterType, Object adapter) {
         fAdapters.put(adapterType, adapter);
     }
@@ -282,6 +294,7 @@ public class DsfSession
      * @param adapterType adapter type to unregister
      * @see org.eclipse.dsdp.model.AbstractDMC#getAdapter
      */
+    @ThreadSafe
     public void unregisterModelAdapter(Class adapterType) {
         fAdapters.remove(adapterType);
     }
@@ -292,14 +305,17 @@ public class DsfSession
      * @return adapter object for given type, null if none is registered with the session
      * @see org.eclipse.dsdp.model.AbstractDMC#getAdapter
      */
+    @ThreadSafe
     public Object getModelAdapter(Class adapterType) {
         return fAdapters.get(adapterType);
     }
     
+    @ThreadSafe
     public boolean equals(Object other) {
         return other instanceof DsfSession && fId.equals(((DsfSession)other).fId);
     }
     
+    @ThreadSafe
     public int hashCode() { return fId.hashCode(); }
 
     private void doDispatchEvent(Object event, Dictionary serviceProperties) {
@@ -391,6 +407,7 @@ public class DsfSession
     /**
      * Class to be instanciated only using startSession()
      */
+    @ThreadSafe
     private DsfSession(DsfExecutor executor, String ownerId, String id) {
         fId = id;
         fOwnerId = ownerId;

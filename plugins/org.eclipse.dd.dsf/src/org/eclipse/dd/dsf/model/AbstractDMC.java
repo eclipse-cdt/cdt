@@ -11,6 +11,7 @@
 package org.eclipse.dd.dsf.model;
 
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfSession;
 
@@ -20,6 +21,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
  * correctly.
  * @param <V> Data model data that this context is for.
  */
+@Immutable
 public class AbstractDMC<V extends IDataModelData> extends PlatformObject 
     implements IDataModelContext<V>     
 {

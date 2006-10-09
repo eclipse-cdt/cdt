@@ -20,6 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
  * to be exclusive to the executor, it could be shared with 
  * another event dispatch service, such as the SWT display dispatch thread.
  */
+@ThreadSafe
 public interface DsfExecutor extends ScheduledExecutorService
 {
     /**

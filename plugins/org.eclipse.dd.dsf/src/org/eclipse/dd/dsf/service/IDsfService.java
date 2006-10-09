@@ -12,6 +12,7 @@ package org.eclipse.dd.dsf.service;
 
 import java.util.Dictionary;
 
+import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.Done;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 
@@ -34,6 +35,7 @@ import org.eclipse.dd.dsf.concurrent.DsfExecutor;
  *  
  * @see org.osgi.framework.BundleContext#registerService(String[], Object, Dictionary)
  */
+@ConfinedToDsfExecutor("getExecutor")
 public interface IDsfService {
     
     /**

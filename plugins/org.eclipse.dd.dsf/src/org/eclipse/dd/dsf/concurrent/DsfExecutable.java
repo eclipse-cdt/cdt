@@ -21,6 +21,7 @@ import java.util.Set;
  * contains fields and methods that used for debugging and tracing when 
  * tracing is enabled.
  */
+@Immutable
 public class DsfExecutable {
     final StackTraceElement[]  fCreatedAt;
     final DefaultDsfExecutor.TracingWrapper fCreatedBy;

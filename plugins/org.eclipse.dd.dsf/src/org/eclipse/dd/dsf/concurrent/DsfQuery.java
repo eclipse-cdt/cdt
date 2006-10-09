@@ -27,6 +27,7 @@ import org.eclipse.dd.dsf.service.IDsfService;
  * 
  * @see java.util.concurrent.Callable
  */
+@ThreadSafe
 abstract public class DsfQuery<V> {
     
     private V fResult;

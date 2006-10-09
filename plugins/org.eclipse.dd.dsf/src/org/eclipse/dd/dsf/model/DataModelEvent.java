@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.model;
 
+import org.eclipse.dd.dsf.concurrent.Immutable;
+
 /**
  * Base implementation of the IDataModelContext interface.
  */
+@Immutable
 public class DataModelEvent<V extends IDataModelContext> implements IDataModelEvent<V> {
 
-    private V fModelContext;
+    private final V fModelContext;
     public DataModelEvent(V context) {
         fModelContext = context;
     }

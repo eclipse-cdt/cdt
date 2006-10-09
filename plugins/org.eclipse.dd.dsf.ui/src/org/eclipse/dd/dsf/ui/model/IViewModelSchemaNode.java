@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.ui.model;
 
+import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.Done;
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
 import org.eclipse.dd.dsf.model.IDataModelEvent;
@@ -27,6 +28,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
  * of other data in the view tree.   
  * @see ViewModelProvider
  */
+@ConfinedToDsfExecutor("")
 @SuppressWarnings("restriction")
 public interface IViewModelSchemaNode {
     

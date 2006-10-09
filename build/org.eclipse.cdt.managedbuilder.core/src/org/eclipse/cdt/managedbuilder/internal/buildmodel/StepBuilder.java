@@ -155,6 +155,9 @@ public class StepBuilder implements IBuildModelBuilder {
 		
 		IBuildResource bRcs[] = fStep.getOutputResources();
 		for(int i = 0; i < bRcs.length; i++){
+			if(!bRcs[i].isProjectResource())
+				continue;
+
 			IResource rc = BuildDescriptionManager.findResourceForBuildResource(bRcs[i]);
 			if(rc != null){
 				try {

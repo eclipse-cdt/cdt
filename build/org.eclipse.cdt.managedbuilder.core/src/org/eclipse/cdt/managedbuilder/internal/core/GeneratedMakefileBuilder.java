@@ -451,7 +451,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				//use a build desacription model to calculate the resources to be cleaned 
 				//only in case there are some changes to the project sources or build information
 				try{
-					int flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.DEPS_DEPFILE_INFO;
+					int flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.DEPFILES | BuildDescriptionManager.DEPS;
 					if(delta != null)
 						flags |= BuildDescriptionManager.REMOVED;
 
@@ -1207,7 +1207,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			IResourceDelta delta = null;
 			
 			if(buildIncrementaly){
-				flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED;
+				flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS;
 				delta = getDelta(currentProject);
 			}
 			
@@ -1370,7 +1370,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			IResourceDelta delta = null;
 			
 			if(buildIncrementaly){
-				flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED;
+				flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS;
 				delta = getDelta(currentProject);
 			}
 			

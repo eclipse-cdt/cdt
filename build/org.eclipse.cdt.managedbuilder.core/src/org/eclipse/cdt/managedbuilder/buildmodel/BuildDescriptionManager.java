@@ -24,6 +24,9 @@ import org.eclipse.cdt.managedbuilder.internal.buildmodel.DefaultBuildDescriptio
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -36,12 +39,26 @@ import org.eclipse.core.runtime.Path;
  *
  */
 public class BuildDescriptionManager {
-	public static final int REMOVED = 0x01;
-	public static final int REBUILD = 0x02;
-	public static final int DEPS = 0x04;
-	public static final int DEPS_CMODEL = DEPS | 0x08;
-	public static final int DEPS_DEPGEN = DEPS | 0x10;
-	public static final int DEPS_DEPFILE_INFO = DEPS | 0x20;
+	/**
+	 * include information on removed resources into the build model
+	 */
+	public static final int REMOVED = 1;
+	
+	/**
+	 * include the rebuild state information into the build model
+	 */
+	public static final int REBUILD = 1 << 1;
+	
+	/**
+	 * include dependencies information into the build model.
+	 * the method to be used for calculation is determined by the manager
+	 */
+	public static final int DEPS = 1 << 2;
+
+	/**
+	 * include the dependency file (.d) information in the build model.
+	 */
+	public static final int DEPFILES = 1 << 3;
 	
 	private Set fVisitedSteps = new HashSet();
 	private boolean fUp;
@@ -63,15 +80,12 @@ public class BuildDescriptionManager {
 	 * BuildDescriptionManager.REBUILD, 
 	 * BuildDescriptionManager.REMOVED,
 	 * BuildDescriptionManager.DEPS,
-	 * BuildDescriptionManager.DEPS_CMODEL,
-	 * BuildDescriptionManager.DEPS_DEPGEN, 
-	 * 
+	 * BuildDescriptionManager.DEPFILES 
 	 * 
 	 * @see BuildDescriptionManager#REBUILD 
 	 * @see BuildDescriptionManager#REMOVED
 	 * @see BuildDescriptionManager#DEPS
-	 * @see BuildDescriptionManager#DEPS_CMODEL
-	 * @see BuildDescriptionManager#DEPS_DEPGEN	
+	 * @see BuildDescriptionManager#DEPFILES
 	 * @return IBuildDescription
 	 * @throws CoreException if the build description creation fails
 	 */
@@ -217,11 +231,11 @@ public class BuildDescriptionManager {
 	 * @return IResource
 	 */
 	public static IResource findResourceForBuildResource(IBuildResource bRc){
-		IProject project = bRc.getBuildDescription().getConfiguration().getOwner().getProject();
-		
 		IPath path = bRc.getFullPath();
-		if(path != null)
-			return project.findMember(path.removeFirstSegments(1));
+		if(path != null){
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			return root.findMember(path);
+		}
 		
 		return null;
 	}
@@ -237,6 +251,9 @@ public class BuildDescriptionManager {
 		List failList = new ArrayList();
 		
 		for(int i = 0; i < bRcs.length; i++){
+			if(!bRcs[i].isProjectResource())
+				continue;
+			
 			IResource rc = findResourceForBuildResource(bRcs[i]);
 			if(rc != null){
 				try {

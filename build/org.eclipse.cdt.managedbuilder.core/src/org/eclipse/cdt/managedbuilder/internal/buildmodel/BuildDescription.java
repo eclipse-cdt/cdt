@@ -49,11 +49,14 @@ import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCalculator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
+import org.eclipse.cdt.managedbuilder.pdomdepgen.PDOMDependencyGenerator;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -105,6 +108,8 @@ public class BuildDescription implements IBuildDescription {
 	private Map fExtToToolAndTypeListMap = new HashMap();
 	
 	private Map fEnvironment;
+	
+	private PDOMDependencyGenerator fPdomDepGen;
 	
 	class ToolAndType{
 		ITool fTool;
@@ -1202,7 +1207,7 @@ public class BuildDescription implements IBuildDescription {
 				buildArg.addResource(outRc);
 		}
 		
-		if(checkFlags(BuildDescriptionManager.DEPS_DEPFILE_INFO)){
+		if(checkFlags(BuildDescriptionManager.DEPFILES)){
 			if(tool != null && buildRc != null){
 				IInputType type = action.getInputType();
 				String ext = null;
@@ -1475,7 +1480,132 @@ public class BuildDescription implements IBuildDescription {
 				
 			}
 		} else {
-		}		
+		}
+		
+		calculateDeps(step);
+	}
+	
+	private void calculateDeps(BuildStep step){
+		BuildResource rcs[] = (BuildResource[])step.getInputResources();
+		Set depSet = new HashSet();
+		
+		for(int i = 0; i < rcs.length; i++){
+			IManagedDependencyCalculator depCalc = getDependencyCalculator(step, rcs[i]);
+			if(depCalc != null){
+				IPath paths[] = depCalc.getDependencies();
+				for(int j = 0; j < paths.length; j++){
+					depSet.add(paths[j]);
+				}
+			}
+		}
+		
+		if(depSet.size() > 0){
+			BuildIOType ioType = step.createIOType(true, false, null);
+
+			for(Iterator iter = depSet.iterator(); iter.hasNext();){
+				addInput((IPath)iter.next(), ioType);
+			}
+		}
+	}
+	
+	protected IManagedDependencyCalculator getDependencyCalculator(BuildStep step, BuildResource bRc){
+		if(!checkFlags(BuildDescriptionManager.DEPS))
+			return null;
+
+		final ITool tool = step.getTool();
+		if(tool == null)
+			return null;
+		
+		IManagedDependencyCalculator depCalc = null;
+		IManagedDependencyGeneratorType depGenType = tool.getDependencyGeneratorForExtension(bRc.getLocation().getFileExtension());
+		IManagedDependencyGeneratorType depGen = null;
+		
+		if(depGenType != null){
+			switch(depGenType.getCalculatorType()){
+			case IManagedDependencyGeneratorType.TYPE_NODEPS:
+			case IManagedDependencyGeneratorType.TYPE_NODEPENDENCIES:
+				//no dependencies
+				break;
+			case IManagedDependencyGeneratorType.TYPE_INDEXER:
+			case IManagedDependencyGeneratorType.TYPE_EXTERNAL:
+			case IManagedDependencyGeneratorType.TYPE_CUSTOM:
+				depGen = depGenType;
+				break;
+			case IManagedDependencyGeneratorType.TYPE_COMMAND:
+			case IManagedDependencyGeneratorType.TYPE_BUILD_COMMANDS:
+			case IManagedDependencyGeneratorType.TYPE_PREBUILD_COMMANDS:
+				//TODO: may implement the .d file parsing for deps calculation here
+				//break;
+			default:
+				depGen = getPDOMDependencyGenerator();
+				break;
+			}
+		} else {
+			depGen = getPDOMDependencyGenerator();
+		}
+		
+		if(depGen != null){
+			final IResource rc = BuildDescriptionManager.findResourceForBuildResource(bRc);
+			IBuildObject bo = tool.getParent();
+			if(bo instanceof IToolChain)
+				bo = ((IToolChain)bo).getParent();
+
+			if(rc != null){
+				if(depGen instanceof IManagedDependencyGenerator2){
+					IManagedDependencyInfo srcInfo = ((IManagedDependencyGenerator2)depGen).getDependencySourceInfo(
+							rc.getLocation(),
+							rc,
+							bo, 
+							tool, 
+							getTopBuildDirLocation());
+					if(srcInfo instanceof IManagedDependencyCalculator)
+						depCalc = (IManagedDependencyCalculator)srcInfo;
+
+				} else if (depGen instanceof IManagedDependencyGenerator){
+					IResource rcs[] = ((IManagedDependencyGenerator)depGen).findDependencies(rc, fProject);
+					if(rcs != null && rcs.length > 0){
+						final IPath paths[] = new IPath[rcs.length];
+						final IBuildObject bof = bo;
+						for(int i = 0; i < paths.length; i++){
+							paths[i] = rcs[i].getLocation();
+						}
+						depCalc = new IManagedDependencyCalculator(){
+
+							public IPath[] getAdditionalTargets() {
+								return null;
+							}
+
+							public IPath[] getDependencies() {
+								return paths;
+							}
+
+							public IBuildObject getBuildContext() {
+								return bof;
+							}
+
+							public IPath getSource() {
+								return rc.getLocation();
+							}
+
+							public ITool getTool() {
+								return tool;
+							}
+
+							public IPath getTopBuildDirectory() {
+								return getTopBuildDirectory();
+							}
+						};
+					}
+				}
+			}
+		}
+		return depCalc;
+	}
+	
+	protected PDOMDependencyGenerator getPDOMDependencyGenerator(){
+		if(fPdomDepGen == null)
+			fPdomDepGen = new PDOMDependencyGenerator();
+		return fPdomDepGen;
 	}
 	
 	public String[] getLibs(BuildStep step) {
@@ -1585,8 +1715,20 @@ public class BuildDescription implements IBuildDescription {
 			
 			if(inFullPath.isAbsolute()){
 				inLocation = inFullPath;
-				if(!fProject.getLocation().isPrefixOf(inLocation))
-					inFullPath = null;
+				inFullPath = null;
+				IFile files[] = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(inLocation);
+				for(int i = 0; i < files.length; i++){
+					IPath fl = files[i].getFullPath();
+					if(fl.segment(0).equals(fProject.getName())){
+						inFullPath = fl;
+						break;
+					}
+				}
+				if(inFullPath == null && files.length > 0)
+					inFullPath = files[0].getFullPath();
+				if(inFullPath == null && fProject.getLocation().isPrefixOf(inLocation)){
+					inFullPath = fProject.getFullPath().append(inLocation.removeFirstSegments(fProject.getLocation().segmentCount())); 
+				}
 			} else {
 				IPath projPath = inFullPath;
 				inFullPath = fProject.getFullPath().append(inFullPath);

@@ -32,15 +32,13 @@ public interface IBuildDescriptionFactory {
 	 * BuildDescriptionManager.REBUILD, 
 	 * BuildDescriptionManager.REMOVED,
 	 * BuildDescriptionManager.DEPS,
-	 * BuildDescriptionManager.DEPS_CMODEL,
-	 * BuildDescriptionManager.DEPS_DEPGEN, 
+	 * BuildDescriptionManager.DEPFILES,
 	 * 
 	 * 
 	 * @see BuildDescriptionManager#REBUILD 
 	 * @see BuildDescriptionManager#REMOVED
 	 * @see BuildDescriptionManager#DEPS
-	 * @see BuildDescriptionManager#DEPS_CMODEL
-	 * @see BuildDescriptionManager#DEPS_DEPGEN	
+	 * @see BuildDescriptionManager#DEPFILES
 	 * @return IBuildDescription
 	 * @throws CoreException if the build description creation fails
 	 */
@@ -55,8 +53,7 @@ public interface IBuildDescriptionFactory {
 	 * @see BuildDescriptionManager#REBUILD 
 	 * @see BuildDescriptionManager#REMOVED
 	 * @see BuildDescriptionManager#DEPS
-	 * @see BuildDescriptionManager#DEPS_CMODEL
-	 * @see BuildDescriptionManager#DEPS_DEPGEN	 * 
+	 * @see BuildDescriptionManager#DEPFILES
 	 * 
 	 * @return int
 	 */

@@ -42,7 +42,10 @@ public class DefaultBuildDescriptionFactory implements IBuildDescriptionFactory 
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescriptionFactory#getSupportedMethods()
 	 */
 	public int getSupportedMethods() {
-		return BuildDescriptionManager.REMOVED | BuildDescriptionManager.REBUILD | BuildDescriptionManager.DEPS_DEPFILE_INFO;
+		return BuildDescriptionManager.REMOVED 
+			| BuildDescriptionManager.REBUILD 
+			| BuildDescriptionManager.DEPFILES 
+			| BuildDescriptionManager.DEPS;
 	}
 
 }

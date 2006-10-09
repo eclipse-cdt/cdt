@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +137,14 @@ public class ManagedBuildTestHelper {
 	}
 	
 	static public IFile createFile(IProject project, String name){
+		return createFile(project, name, new ByteArrayInputStream(new byte[0]));
+	}
+
+	static public IFile createFile(IProject project, String name, String contents){
+		return createFile(project, name, new ByteArrayInputStream(contents.getBytes()));
+	}
+
+	static public IFile createFile(IProject project, String name, InputStream contents){
 		IFile file = project.getFile(name);
 		if( !file.exists() ){
 			try {
@@ -148,7 +157,7 @@ public class ManagedBuildTestHelper {
 				}
 					
 //				file.create( new ByteArrayInputStream( "#include <stdio.h>\n extern void bar(); \n int main() { \nprintf(\"Hello, World!!\"); \n bar();\n return 0; }".getBytes() ), false, null );
-				file.create( new ByteArrayInputStream( new byte[0] ), false, null );
+				file.create(contents, false, null );
 			} catch (CoreException e) {
 				TestCase.fail(e.getLocalizedMessage());
 			}

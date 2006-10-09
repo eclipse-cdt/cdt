@@ -23,6 +23,10 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
@@ -239,7 +243,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		
 		IBuildDescription des = null;
 		try {
-			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
@@ -262,7 +266,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		BuildDescription tDes = new BuildDescription(cfg);
 		IBuildDescription des = null;
 		try {
-			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
@@ -331,7 +335,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		IBuildDescription des = null;
 		try {
-			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
@@ -451,7 +455,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		IBuildDescription des = null;
 		try {
-			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
@@ -529,7 +533,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		IBuildDescription des = null;
 		try {
-			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
@@ -964,7 +968,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		IBuildDescription des = null;
 		try {
-			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
@@ -972,6 +976,144 @@ public class BuildDescriptionModelTests extends TestCase {
 		doTestBuildDescription(des, tDes);
 	}
 	
+	public void testDes_gnu30_exe_deps(){
+		IProject project = createProject(PREFIX + "gnu30_exe_deps", "cdt.managedbuild.target.gnu30.exe");
+		try {
+			CCProjectNature.addCCNature(project, null);
+		} catch (CoreException e1) {
+			fail("fail to add CC nature");
+		}
+		
+		ManagedBuildTestHelper.createFile(project, "a.c", "\n#include \"a.h\"\n#include \"d.h\"\n");
+		ManagedBuildTestHelper.createFile(project, "b.c");
+		ManagedBuildTestHelper.createFile(project, "c.cpp", "\n#include \"b.h\"\n#include \"e.h\"\n");
+		ManagedBuildTestHelper.createFile(project, "d.cpp");
+		ManagedBuildTestHelper.createFile(project, "a.h", "\n#include \"b.h\"\n");
+		ManagedBuildTestHelper.createFile(project, "b.h", "\n#include \"c.h\"\n");
+		ManagedBuildTestHelper.createFile(project, "c.h", "\n");
+		ManagedBuildTestHelper.createFile(project, "d.h", "\n");
+		ManagedBuildTestHelper.createFile(project, "e.h", "\n");
+		ManagedBuildTestHelper.createFile(project, "f.h", "\n");
+	
+		ICProject cProject = CoreModel.getDefault().create(project);
+		try {
+			CCorePlugin.getPDOMManager().setIndexerId(cProject, PDOMFastIndexer.ID);
+		} catch (CoreException e2) {
+			doFail("testDes_gnu30_exe_deps: failed to associate the fast indexer with the project");
+		}
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		IManagedProject mProj = info.getManagedProject();
+		IConfiguration cfg = mProj.getConfigurations()[0];
+		String art = cfg.getArtifactName();
+		String ext = cfg.getArtifactExtension();
+		if(ext != null && ext.length() > 0)
+			art = art + "." + ext;
+		
+		String cName = cfg.getName();
+
+		BuildDescription tDes = new BuildDescription(cfg);
+		BuildStep step;
+		BuildIOType type;
+		
+		//
+		step = (BuildStep)tDes.getInputStep();
+
+			type = step.createIOType(false, false, null);
+			type.addResource(tDes.createResource("c.cpp"));
+			type.addResource(tDes.createResource("d.cpp"));
+			
+			type = step.createIOType(false, false, null);
+			type.addResource(tDes.createResource("a.c"));
+			type.addResource(tDes.createResource("b.c"));
+
+			type = step.createIOType(false, false, null);
+			type.addResource(tDes.createResource("a.h"));
+			type.addResource(tDes.createResource("b.h"));
+			type.addResource(tDes.createResource("c.h"));
+			type.addResource(tDes.createResource("d.h"));
+			type.addResource(tDes.createResource("e.h"));
+		//
+		//
+		step = tDes.createStep(null, null);
+		
+			type = step.createIOType(true, false, null);
+			type.addResource(tDes.createResource("a.c"));
+
+			type = step.createIOType(true, false, null);
+			type.addResource(tDes.createResource("a.h"));
+			type.addResource(tDes.createResource("b.h"));
+			type.addResource(tDes.createResource("c.h"));
+			type.addResource(tDes.createResource("d.h"));
+
+			type = step.createIOType(false, true, null);
+			type.addResource(tDes.createResource(cName + "/a.o"));
+		//
+		//
+		step = tDes.createStep(null, null);
+			
+			type = step.createIOType(true, false, null);
+			type.addResource(tDes.createResource("b.c"));
+		
+			type = step.createIOType(false, true, null);
+			type.addResource(tDes.createResource(cName + "/b.o"));
+		//
+		//
+		step = tDes.createStep(null, null);
+			
+			type = step.createIOType(true, false, null);
+			type.addResource(tDes.createResource("c.cpp"));
+
+			type = step.createIOType(true, false, null);
+			type.addResource(tDes.createResource("b.h"));
+			type.addResource(tDes.createResource("c.h"));
+			type.addResource(tDes.createResource("e.h"));
+
+			type = step.createIOType(false, true, null);
+			type.addResource(tDes.createResource(cName + "/c.o"));
+		//
+		//
+		step = tDes.createStep(null, null);
+			
+			type = step.createIOType(true, false, null);
+			type.addResource(tDes.createResource("d.cpp"));
+		
+			type = step.createIOType(false, true, null);
+			type.addResource(tDes.createResource(cName + "/d.o"));
+		//
+		//
+		step = tDes.createStep(null, null);
+			
+			type = step.createIOType(true, true, null);
+			type.addResource(tDes.createResource(cName + "/a.o"));
+			type.addResource(tDes.createResource(cName + "/b.o"));
+			type.addResource(tDes.createResource(cName + "/c.o"));
+			type.addResource(tDes.createResource(cName + "/d.o"));
+			
+			type = step.createIOType(false, false, null);
+			type.addResource(tDes.createResource(cName + "/" + art));
+		//
+		//
+		step = (BuildStep)tDes.getOutputStep();
+			
+			type = step.createIOType(true, true, null);
+			type.addResource(tDes.createResource(cName + "/" + art));
+		//
+
+		//FIXME: this is very bad, need to wait until the indexing is completed here
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e1) {
+		}
+
+		IBuildDescription des = null;
+		try {
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
+		} catch (CoreException e) {
+			fail("build description creation failed: " + e.getLocalizedMessage());
+		}
+
+		doTestBuildDescription(des, tDes);
+	}
 	
 	public void testDesTestgnu21_exe(){
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.testgnu21.exe");
@@ -1069,7 +1211,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		IBuildDescription des = null;
 		try {
-			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
@@ -1177,7 +1319,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		IBuildDescription des = null;
 		try {
-			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
@@ -1355,7 +1497,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		IBuildDescription des = null;
 		try {
-			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
@@ -1548,7 +1690,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		IBuildDescription des = null;
 		try {
-			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
@@ -1711,7 +1853,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		IBuildDescription des = null;
 		try {
-			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
@@ -1817,7 +1959,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		IBuildDescription des = null;
 		try {
-			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
@@ -2377,7 +2519,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		
 		IBuildDescription des = null;
 		try {
-			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
+			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}

@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-
-     <extension
-         id="runTests"
-         point="org.eclipse.core.runtime.applications">
-      <application>
-         <run
-               class="org.eclipse.cdt.core.suite.RunTests">
-         </run>
-      </application>
-   </extension>
    <extension
          id="TestProject"
          name="C/C++ Test Project"

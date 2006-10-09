@@ -5,6 +5,7 @@
 	<!-- Add one <ant> task for each top level element being built. -->
 	<!-- ===================================================================== -->
 	<target name="allElements">
+		<!--
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
 			<property name="id" value="org.apache.oro" />
@@ -13,6 +14,7 @@
 			<property name="type" value="feature" />
 			<property name="id" value="org.apache.commons_net" />
 		</ant>
+		-->
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.core" />
@@ -62,20 +64,18 @@
 	<!-- Add one target for each root element and each configuration           -->
 	<!-- ===================================================================== -->
 
+	<!-- No separate assembly, included in FTP ::
 	<target name="assemble.org.apache.oro">
-		<!-- No separate assembly, included in FTP ::
 		<property name="archiveName" value="jakarta-oro-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
-		-->
 	</target>
 	<target name="assemble.org.apache.commons_net">
-		<!-- No separate assembly, included in FTP ::
 		<property name="archiveName" value="commons-net-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
-		-->
 	</target>
+	-->
 
 	<target name="assemble.org.eclipse.rse.core">
 		<property name="archiveName" value="RSE-runtime-core-${buildId}.zip"/>
@@ -482,8 +482,16 @@
 	<target name="hideServerStuff">
 		<mkdir dir="${buildDirectory}/hidden"/>
 		<move todir="${buildDirectory}/hidden">
-			<fileset dir="${buildDirectory}/plugins" includes="**/*.jar" />
-			<fileset dir="${buildDirectory}/plugins" includes="**/*src.zip" excludes="**/src.zip"/>
+			<fileset dir="${buildDirectory}/plugins">
+				<include name="**/clientserver.jar"/>
+				<include name="**/dstore_core.jar"/>
+				<include name="**/dstore_extra_server.jar"/>
+				<include name="**/dstore_miners.jar"/>
+				<include name="**/clientserversrc.zip"/>
+				<include name="**/dstore_coresrc.zip"/>
+				<include name="**/dstore_extra_serversrc.zip"/>
+				<include name="**/dstore_minerssrc.zip"/>
+			</fileset>
 		</move>
 	</target>
 

@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Michael Scharf (WindRiver) - patch for an NPE in getSubSystemConfigurations()
  ********************************************************************************/
 
 package org.eclipse.rse.model;
@@ -1474,24 +1474,27 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 
 
 	/**
-	 * Return all subsystem factories. Be careful when you call this, as it activates all 
-	 *   subsystem factories.
+	 * @return all subsystem configurations. Be careful when you call this, as it activates all 
+	 * subsystem factories.
 	 */
-	public ISubSystemConfiguration[] getSubSystemConfigurations()
-	{
+	// fixed Bugzilla Bug 160115 - added non-null guard for config
+	public ISubSystemConfiguration[] getSubSystemConfigurations() {
 		Vector v = new Vector();
 		ISubSystemConfigurationProxy[] proxies = getSubSystemConfigurationProxies();
-
-		if (proxies != null)
-		{
-	
-			for (int idx = 0; idx < proxies.length; idx++)
-			{
-				v.add(proxies[idx].getSubSystemConfiguration());
+		if (proxies != null) {
+			for (int idx = 0; idx < proxies.length; idx++) {
+				ISubSystemConfigurationProxy proxy = proxies[idx];
+				ISubSystemConfiguration config = proxy.getSubSystemConfiguration();
+				if (config != null) {
+					v.add(proxies[idx].getSubSystemConfiguration());
+				}
 			}
 		}
-		return (ISubSystemConfiguration[])v.toArray(new ISubSystemConfiguration[v.size()]);
+		ISubSystemConfiguration[] result = new ISubSystemConfiguration[v.size()];
+		v.toArray(result);
+		return result;
 	}
+	
 	/**
 	 * Return Vector of subsystem factories that apply to a given system connection
 	 */

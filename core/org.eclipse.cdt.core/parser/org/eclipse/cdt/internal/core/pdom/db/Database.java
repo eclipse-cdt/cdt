@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Symbian - Add some non-javadoc implementation notes
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -19,8 +20,36 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * @author Doug Schaefer
+ * Database encapsulates access to a flat binary format file with a memory-manager-like API for
+ * obtaining and releasing areas of storage (memory).
  *
+ * @author Doug Schaefer
+ */
+/* 
+ * The file encapsulated is divided into Chunks of size CHUNK_SIZE, and a table of contents
+ * mapping chunk index to chunk address is maintained. Chunk structure exists only conceptually -
+ * its not a structure that appears in the file.
+ * 
+ * ===== The first chunk is used by Database itself for house-keeping purposes and has structure
+ * 
+ * offset            content
+ * 	                 _____________________________
+ * 0                | version number
+ * INT_SIZE         | pointer to head of linked list of blocks of size MIN_SIZE
+ * ..               | ...
+ * INT_SIZE * m (1) | pointer to head of linked list of blocks of size MIN_SIZE * m
+ * DATA_AREA        | undefined (PDOM stores its own house-keeping data in this area) 
+ * 
+ * (1) where m <= (CHUNK_SIZE / MIN_SIZE)
+ * 
+ * ===== block structure
+ * 
+ * offset            content
+ * 	                 _____________________________
+ * 0                | size of block (negative indicates in use, positive unused)
+ * PREV_OFFSET      | pointer to prev block (of same size)
+ * NEXT_OFFSET      | pointer to next block (of same size)
+ * 
  */
 public class Database {
 
@@ -214,7 +243,7 @@ public class Database {
 		int blocksize = - chunk.getInt(block);
 		if (blocksize < 0)
 			// already freed
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "Already Freed", new Exception()));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "Already Freed", new Exception())); //$NON-NLS-1$
 		addBlock(chunk, blocksize, block);
 		freed += blocksize;
 	}
@@ -276,11 +305,11 @@ public class Database {
 	}
 
 	public void reportFreeBlocks() throws CoreException {
-		System.out.println("Allocated size: " + toc.length * CHUNK_SIZE);
-		System.out.println("malloc'ed: " + malloced);
-		System.out.println("free'd: " + freed);
-		System.out.println("wasted: " + (toc.length * CHUNK_SIZE - (malloced - freed)));
-		System.out.println("Free blocks");
+		System.out.println("Allocated size: " + toc.length * CHUNK_SIZE); //$NON-NLS-1$
+		System.out.println("malloc'ed: " + malloced); //$NON-NLS-1$
+		System.out.println("free'd: " + freed); //$NON-NLS-1$
+		System.out.println("wasted: " + (toc.length * CHUNK_SIZE - (malloced - freed))); //$NON-NLS-1$
+		System.out.println("Free blocks"); //$NON-NLS-1$
 		for (int bs = MIN_SIZE; bs <= CHUNK_SIZE; bs += MIN_SIZE) {
 			int count = 0;
 			int block = getFirstBlock(bs);
@@ -289,7 +318,17 @@ public class Database {
 				block = getInt(block + NEXT_OFFSET);
 			}
 			if (count != 0)
-				System.out.println("Block size: " + bs + "=" + count);
+				System.out.println("Block size: " + bs + "=" + count); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+	}
+	
+	/**
+	 * Closes the database, releasing the file lock. This is public for testing purposes only. 
+	 * <p>
+	 * The behaviour of any further calls to the Database is undefined
+	 * @throws IOException
+	 */
+	public void close() throws IOException {
+		file.close();
 	}
 }

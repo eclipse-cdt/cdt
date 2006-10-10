@@ -16,6 +16,8 @@
 
 package org.eclipse.rse.internal.model;
 
+import java.util.Locale;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.IRSESystemType;
@@ -301,13 +303,19 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
     	}
     	this.setSystemTypeGen(systemType);
     }
+
 	/**
-     * Intercept of setHostName so we can force it to uppercase
+     * Intercept of setHostName so we can force it to uppercase.
+	 * IPv4 host names are case insensitive. Much data is stored using the host
+	 * name as part of the key. Therefore, the host name is capitalized here so that
+	 * these comparisons work naturally.
+	 * However, this must be done using the US locale since IPv4 host names
+	 * use can be compared using this locale. See RFC1035.
      */
-	public void setHostName(String name)
-    {
-    	if (name != null)
-    	  name = name.toUpperCase();
+	public void setHostName(String name) {
+    	if (name != null) {
+    		name = name.toUpperCase(Locale.US);
+    	}
     	this.setHostNameGen(name);
     }
     /**

@@ -31,9 +31,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.model.ISystemRegistryUI;
+import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
+import org.eclipse.rse.model.SystemRemoteChangeEvent;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -186,7 +189,7 @@ FocusListener
 							public void run() 
 							{
 								SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
-								registry.fireEvent(new SystemResourceChangeEvent(_inputObject, ISystemResourceChangeEvents.EVENT_REFRESH, _inputObject));
+								registry.fireEvent(new SystemResourceChangeEvent(_inputObject, ISystemResourceChangeEvents.EVENT_CHANGE_CHILDREN, _inputObject));
 								//getViewer().refresh();
 							}
 						});

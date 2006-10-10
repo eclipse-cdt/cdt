@@ -108,6 +108,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.PluginTransfer;
+import org.eclipse.ui.progress.PendingUpdateAdapter;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 
@@ -571,7 +572,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		Object[] children = provider.getChildren(_objectInput);
 
 		// if no children, don't update
-		if (children == null || children.length == 0)
+		if (children == null || children.length == 0 || (children.length == 1 && children[0] instanceof PendingUpdateAdapter))
 		{
 			return;
 		}
@@ -1102,11 +1103,14 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	public ISystemViewElementAdapter getAdapterForContents()
 	{
 		SystemTableTreeViewProvider provider = (SystemTableTreeViewProvider) getContentProvider();
+		if (provider != null)
+		{
 		Object[] children = provider.getChildren(getInput());
 		if (children != null && children.length > 0)
 		{
 			IAdaptable child = (IAdaptable) children[0];
 			return getAdapter(child);
+		}
 		}
 		return null;
 	}

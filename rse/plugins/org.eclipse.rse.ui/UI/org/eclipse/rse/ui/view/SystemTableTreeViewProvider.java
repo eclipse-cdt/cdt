@@ -24,8 +24,10 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -33,7 +35,12 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.progress.DeferredTreeContentManager;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 
@@ -54,6 +61,7 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 	protected SimpleDateFormat _dateFormat = new SimpleDateFormat();
 	protected Viewer _viewer = null;
 	protected int _maxCharsInColumnZero = 0;
+	private SystemDeferredTableTreeContentManager manager;
 
 	/**
 	 * The cache of images that have been dispensed by this provider.
@@ -76,7 +84,11 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 
 	public void inputChanged(Viewer visualPart, Object oldInput, Object newInput)
 	{
-	_viewer = visualPart;
+		_viewer = visualPart;
+		if (_viewer instanceof AbstractTreeViewer) 
+		{
+			manager = new SystemDeferredTableTreeContentManager(this,  (SystemTableTreeView)_viewer);
+		}
 	}
 
 	public void setCache(Object[] newCache)
@@ -111,18 +123,35 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 
 	public Object[] getChildren(Object object)
 	{
+		
 		return getElements(object);
 	}
 
 	public Object getParent(Object object)
 	{
-		return getAdapterFor(object).getParent(object);
+		ISystemViewElementAdapter adapter = getAdapterFor(object);
+    	if (adapter != null) 
+    	{
+    		return adapter.getParent(object);
+    	}
+    	else
+    	{
+    		return null;
+    	}
 	}
 
 	public boolean hasChildren(Object object)
 	{
-		return getAdapterFor(object).hasChildren(object);
-		
+		ISystemViewElementAdapter adapter = getAdapterFor(object);
+    	if (adapter != null) 
+    	{
+    		return adapter.hasChildren(object);
+    	}
+		if (manager != null) {
+			if (manager.isDeferredAdapter(object))
+				return manager.mayHaveChildren(object);
+		}
+		return false;
 	}
 
 	public Object getElementAt(Object object, int i)
@@ -144,6 +173,10 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 	    {
 	        result = SystemAdapterHelpers.getAdapter(object);
 	    }
+	    if (result == null)
+	    {
+	    	return null;
+	    }
         result.setPropertySourceInput(object);
         return result;
 	}
@@ -160,9 +193,30 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 			{
 				ISystemViewElementAdapter adapter = getAdapterFor(object);
 				adapter.setViewer(_viewer);
+				
+		
+				
 				if (adapter != null && adapter.hasChildren(object))
 				{
-					results = adapter.getChildren(object);
+					if (supportsDeferredQueries())
+			    	{
+				        if (manager != null && adapter.supportsDeferredQueries()) 
+				        {
+				            ISubSystem ss = adapter.getSubSystem(object);
+				            if (ss != null)
+				            {
+				               // if (ss.isConnected())
+				                {
+						            
+									results = manager.getChildren(object);
+				                }
+				            }
+						}
+			    	}
+					else
+					{
+						results = adapter.getChildren(object);
+					}
 					if (adapter instanceof SystemViewRootInputAdapter)
 					{
 						ArrayList filterredResults = new ArrayList();
@@ -192,8 +246,23 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 
 	
 	public String getText(Object object)
-	{		
-		String result = getAdapterFor(object).getText(object);
+	{	
+		String result = null;
+		ISystemViewElementAdapter adapter = getAdapterFor(object);
+		if (adapter != null)
+		{
+			result = adapter.getText(object);
+		}
+		else
+		{
+		    IWorkbenchAdapter wadapter = (IWorkbenchAdapter)((IAdaptable) object).getAdapter(IWorkbenchAdapter.class);
+		   
+			if (wadapter == null) 
+			{
+				  return object.toString();
+			}
+			return wadapter.getLabel(object);
+		}
 		int len = result.length();
 		if (len > _maxCharsInColumnZero)
 		{
@@ -209,8 +278,24 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 
 	public Image getImage(Object object)
 	{
-
-		ImageDescriptor descriptor = getAdapterFor(object).getImageDescriptor(object);
+		ImageDescriptor descriptor = null;
+		ISystemViewElementAdapter adapter = getAdapterFor(object);
+		if (adapter != null)
+		{
+			descriptor = adapter.getImageDescriptor(object);
+		}
+		else
+		{
+		    IWorkbenchAdapter wadapter = (IWorkbenchAdapter)((IAdaptable) object).getAdapter(IWorkbenchAdapter.class);
+		    if (wadapter == null)
+		    {
+		    	return null;
+		    }
+		    else
+		    {
+		    	descriptor = wadapter.getImageDescriptor(object);
+		    }
+		}
 
 		Image image = null;
 		if (descriptor != null)
@@ -243,6 +328,11 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 
 			index = index - 1;
 			ISystemViewElementAdapter adapter = getAdapterFor(obj);
+		    if (adapter == null)
+		    {
+		    	return null;
+		    }
+			
 
 			IPropertyDescriptor[] descriptors = null;
 			if (_columnManager != null)
@@ -323,6 +413,8 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 	 */
 	public void setCachedObjects(Object parent, Object[] children) {
 		cache.put(parent, children);
+		_lastObject = parent;
+		_lastResults = children;
 	}
 	
 	/**
@@ -340,4 +432,11 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
      */
     public void dispose() {
     }
+    
+
+	protected boolean supportsDeferredQueries()
+	{
+	    IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+	    return store.getBoolean(ISystemPreferencesConstants.USE_DEFERRED_QUERIES);
+	}
 }

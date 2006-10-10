@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -53,7 +54,7 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoEditStrategies(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
+	 * @see SourceViewerConfiguration#getAutoEditStrategies(ISourceViewer, String)
 	 */
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		return null;
@@ -119,23 +120,16 @@ public class SimpleCSourceViewerConfiguration extends CSourceViewerConfiguration
 	}
 
 	/*
-	 * @see org.eclipse.cdt.ui.text.CSourceViewerConfiguration#getOutlinePresenter(org.eclipse.jface.text.source.ISourceViewer, boolean)
-	 */
-	public IInformationPresenter getOutlinePresenter(ISourceViewer sourceViewer, boolean doCodeResolve) {
-		return null;
-	}
-
-	/*
-	 * @see org.eclipse.cdt.ui.text.CSourceViewerConfiguration#getHierarchyPresenter(org.eclipse.jface.text.source.ISourceViewer, boolean)
-	 */
-	public IInformationPresenter getHierarchyPresenter(ISourceViewer sourceViewer, boolean doCodeResolve) {
-		return null;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkDetectors(org.eclipse.jface.text.source.ISourceViewer)
+	 * @see SourceViewerConfiguration#getHyperlinkDetectors(ISourceViewer)
 	 */
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
+		return null;
+	}
+	
+	/*
+	 * @see CSourceViewerConfiguration#getOutlinePresenter(ISourceViewer)
+	 */
+	public IInformationPresenter getOutlinePresenter(ISourceViewer sourceViewer) {
 		return null;
 	}
 }

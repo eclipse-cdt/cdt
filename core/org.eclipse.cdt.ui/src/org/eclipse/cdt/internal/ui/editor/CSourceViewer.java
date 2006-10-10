@@ -19,6 +19,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.DocumentCommand;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextPresentationListener;
 import org.eclipse.jface.text.Region;
@@ -90,6 +91,16 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	 * @since 4.0
 	 */
 	private boolean fIsConfigured;
+
+	/**
+	 * Whether to delay setting the visual document until the projection has been computed.
+	 * <p>
+	 * Added for performance optimization.
+	 * </p>
+	 * @see #prepareDelayedProjection()
+	 * @since 4.0
+	 */
+	private boolean fIsSetVisibleDocumentDelayed;
 
 	/**
      * Creates new source viewer. 
@@ -382,7 +393,46 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 		fTextPresentationListeners.remove(listener);
 		fTextPresentationListeners.add(0, listener);
 	}
+
+	/**
+	 * Delays setting the visual document until after the projection has been computed.
+	 * This method must only be called before the document is set on the viewer.
+	 * <p>
+	 * This is a performance optimization to reduce the computation of
+	 * the text presentation triggered by <code>setVisibleDocument(IDocument)</code>.
+	 * </p>
+	 * 
+	 * @see #setVisibleDocument(IDocument)
+	 * @since 4.0
+	 */
+	void prepareDelayedProjection() {
+		Assert.isTrue(!fIsSetVisibleDocumentDelayed);
+		fIsSetVisibleDocumentDelayed= true;
+	}
 	
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * This is a performance optimization to reduce the computation of
+	 * the text presentation triggered by {@link #setVisibleDocument(IDocument)}
+	 * </p>
+	 * @see #prepareDelayedProjection()
+	 * @since 4.0
+	 */
+	protected void setVisibleDocument(IDocument document) {
+		if (fIsSetVisibleDocumentDelayed) {
+			fIsSetVisibleDocumentDelayed= false;
+			IDocument previous= getVisibleDocument();
+			enableProjection(); // will set the visible document if anything is folded
+			IDocument current= getVisibleDocument();
+			// if the visible document was not replaced, continue as usual
+			if (current != null && current != previous)
+				return;
+		}
+		
+		super.setVisibleDocument(document);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * <p>

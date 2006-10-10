@@ -8,17 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.compare;
 
-import org.eclipse.cdt.internal.ui.text.*;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -26,6 +25,12 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 
 public class CMergeViewer extends TextMergeViewer {
 	
@@ -38,26 +43,32 @@ public class CMergeViewer extends TextMergeViewer {
 		
 	public CMergeViewer(Composite parent, int styles, CompareConfiguration mp) {
 		super(parent, styles, mp);
-		fPreferenceStore= CUIPlugin.getDefault().getCombinedPreferenceStore();
-		if (fPreferenceStore != null) {
-			 fPreferenceChangeListener= new IPropertyChangeListener() {
+
+		IPreferenceStore store = getPreferenceStore();
+
+		fUseSystemColors= store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
+		if (! fUseSystemColors) {
+			RGB bg= createColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
+			setBackgroundColor(bg);
+			RGB fg= createColor(store, ICColorConstants.C_DEFAULT);
+			setForegroundColor(fg);
+		}
+
+	}
+
+	private IPreferenceStore getPreferenceStore() {
+		if (fPreferenceStore == null) {
+			fPreferenceStore= CUIPlugin.getDefault().getCombinedPreferenceStore();
+			fPreferenceChangeListener= new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
 					handlePropertyChange(event);
 				}
 			};
 			fPreferenceStore.addPropertyChangeListener(fPreferenceChangeListener);
 		}
-		
-		fUseSystemColors= fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
-		if (! fUseSystemColors) {
-			RGB bg= createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
-			setBackgroundColor(bg);
-			RGB fg= createColor(fPreferenceStore, ICColorConstants.C_DEFAULT);
-			setForegroundColor(fg);
-		}
-
+		return fPreferenceStore;
 	}
-
+	
 	protected void handleDispose(DisposeEvent event) {
 		if (fPreferenceChangeListener != null) {
 			fPreferenceStore.removePropertyChangeListener(fPreferenceChangeListener);
@@ -97,8 +108,8 @@ public class CMergeViewer extends TextMergeViewer {
 			}
 		}
 		
-		if (getSourceViewerConfiguration().affectsBehavior(event)) {
-			getSourceViewerConfiguration().adaptToPreferenceChange(event);
+		if (fSourceViewerConfiguration != null && fSourceViewerConfiguration.affectsTextPresentation(event)) {
+			getSourceViewerConfiguration().handlePropertyChangeEvent(event);
 			invalidateTextPresentation();
 		}
 	}
@@ -118,12 +129,8 @@ public class CMergeViewer extends TextMergeViewer {
 	private CSourceViewerConfiguration getSourceViewerConfiguration() {
 		if (fSourceViewerConfiguration == null) {
 			CTextTools tools= CUIPlugin.getDefault().getTextTools();
-			fSourceViewerConfiguration = new CSourceViewerConfiguration(tools, null) {
-				public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
-					return IDocumentExtension3.DEFAULT_PARTITIONING;
-				}
-				
-			};
+			IPreferenceStore store = getPreferenceStore();
+			fSourceViewerConfiguration = new CSourceViewerConfiguration(tools.getColorManager(), store, null, null);
 		}
 		return fSourceViewerConfiguration;
 	}

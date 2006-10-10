@@ -7,12 +7,13 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
@@ -37,6 +38,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
 
 /**
  * SourceViewerInformationControl
@@ -72,6 +80,16 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @since 3.0
 	 */
 	private Font fStatusTextFont;
+	/**
+	 * The width size constraint.
+	 * @since 4.0
+	 */
+	private int fMaxWidth= SWT.DEFAULT;
+	/**
+	 * The height size constraint.
+	 * @since 4.0
+	 */
+	private int fMaxHeight= SWT.DEFAULT;
 	
 	/**
 	 * Creates a default information control with the given shell as parent. The given
@@ -128,9 +146,10 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 		}		
 
 		// Source viewer
-		//IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
-		fViewer= new SourceViewer(composite, null, null, false, style);
-		fViewer.configure(new CSourceViewerConfiguration(CUIPlugin.getDefault().getTextTools(), null));
+		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
+		fViewer= new CSourceViewer(composite, null, null, false, style, store);
+		CTextTools tools= CUIPlugin.getDefault().getTextTools();
+		fViewer.configure(new SimpleCSourceViewerConfiguration(tools.getColorManager(), store, null, tools.getDocumentPartitioning(), false));
 		fViewer.setEditable(false);
 		
 		fText= fViewer.getTextWidget();
@@ -138,7 +157,9 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 		fText.setLayoutData(gd);
 		fText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-			
+
+		initializeFont();
+
 		fText.addKeyListener(new KeyListener() {
 				
 			public void keyPressed(KeyEvent e)  {
@@ -229,6 +250,17 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 		this(parent, SWT.NONE, statusFieldText);
 	}
 	
+	/**
+	 * Initialize the font to the editor font.
+	 * 
+	 * @since 4.0
+	 */
+	private void initializeFont() {
+		Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
+		StyledText styledText= getViewer().getTextWidget();
+		styledText.setFont(font);
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension2#setInput(java.lang.Object)
 	 */
@@ -315,14 +347,28 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @see IInformationControl#setSizeConstraints(int, int)
 	 */
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
-		maxWidth= maxHeight;
+		fMaxWidth= maxWidth;
+		fMaxHeight= maxHeight;
 	}
 	
 	/*
 	 * @see IInformationControl#computeSizeHint()
 	 */
 	public Point computeSizeHint() {
-		return fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		// compute the preferred size
+		int x= SWT.DEFAULT;
+		int y= SWT.DEFAULT;
+		Point size= fShell.computeSize(x, y);
+		if (size.x > fMaxWidth)
+			x= fMaxWidth;
+		if (size.y > fMaxHeight)
+			y= fMaxHeight;
+
+		// recompute using the constraints if the preferred size is larger than the constraints
+		if (x != SWT.DEFAULT || y != SWT.DEFAULT)
+			size= fShell.computeSize(x, y, false);
+
+		return size;
 	}
 	
 	/*

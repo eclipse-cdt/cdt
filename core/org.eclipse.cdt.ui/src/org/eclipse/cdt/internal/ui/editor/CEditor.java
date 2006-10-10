@@ -131,6 +131,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
@@ -217,7 +218,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		private boolean fIgnoreTextConverters= false;
 
 		public AdaptedSourceViewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler,
-				                   boolean showAnnotationsOverview, int styles) {
+				                   boolean showAnnotationsOverview, int styles, IPreferenceStore store) {
 			super(parent, verticalRuler, overviewRuler, showAnnotationsOverview, styles);
 		}
 
@@ -305,11 +306,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 				if (prefixes != null && prefixes.length > 0)
 					setIndentPrefixes(prefixes, types[i]);
 			}
-
-			StyledText textWidget= getTextWidget();
-			int tabWidth= configuration.getTabWidth(this);
-			if (textWidget.getTabs() != tabWidth)
-				textWidget.setTabs(tabWidth);
 		}
 
 		/*
@@ -1601,15 +1597,16 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
 	 */
 	protected void initializeEditor() {
+		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
+		setPreferenceStore(store);
 		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
-		setSourceViewerConfiguration(new CSourceViewerConfiguration(textTools, this));
+		setSourceViewerConfiguration(new CSourceViewerConfiguration(textTools.getColorManager(), store, this, textTools.getDocumentPartitioning()));
 		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
 	
 		setEditorContextMenuId("#CEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#CEditorRulerContext"); //$NON-NLS-1$
 		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
 
-		setPreferenceStore(CUIPlugin.getDefault().getCombinedPreferenceStore());
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);          
 	}
 
@@ -1731,11 +1728,21 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	 * @param event the property change event
 	 */
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		String property = event.getProperty();
+
+		if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
+			/*
+			 * Ignore tab setting since we rely on the formatter preferences.
+			 * We do this outside the try-finally block to avoid that EDITOR_TAB_WIDTH
+			 * is handled by the sub-class (AbstractDecoratedTextEditor).
+			 */
+			return;
+		}
+
 		try {
 			AdaptedSourceViewer asv = (AdaptedSourceViewer) getSourceViewer();
 
 			if (asv != null) {
-				String property = event.getProperty();
 
 				if (CLOSE_BRACKETS.equals(property)) {
 					fBracketInserter.setCloseBracketsEnabled(getPreferenceStore().getBoolean(property));
@@ -1753,11 +1760,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 				}
 
 				if (SPACES_FOR_TABS.equals(property)) {
-					SourceViewerConfiguration configuration = getSourceViewerConfiguration();
-					String[] types = configuration.getConfiguredContentTypes(asv);
-					for (int i = 0; i < types.length; i++) {
-						asv.setIndentPrefixes(configuration.getIndentPrefixes(asv, types[i]), types[i]);
-					}
 					if (isTabConversionEnabled())
 						startTabConversion();
 					else
@@ -1768,9 +1770,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 				if (PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS.equals(property))
 					updateHoverBehavior();
 
+				((CSourceViewerConfiguration)getSourceViewerConfiguration()).handlePropertyChangeEvent(event);
 
 				if (PreferenceConstants.EDITOR_SMART_TAB.equals(property)) {
-					if (getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SMART_TAB)) {
+					if (getPreferenceStore().getBoolean(property)) {
 						setActionActivationCode("IndentOnTab", '\t', -1, SWT.NONE); //$NON-NLS-1$
 					} else {
 						removeActionActivationCode("IndentOnTab"); //$NON-NLS-1$
@@ -1799,6 +1802,16 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 					if (fProjectionModelUpdater != null) {
 						fProjectionModelUpdater.install(this, asv);
 					}
+					return;
+				}
+
+				if (DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE.equals(property)
+						|| DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE.equals(property)
+						|| DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR.equals(property)) {
+					StyledText textWidget= asv.getTextWidget();
+					int tabWidth= getSourceViewerConfiguration().getTabWidth(asv);
+					if (textWidget.getTabs() != tabWidth)
+						textWidget.setTabs(tabWidth);
 					return;
 				}
 
@@ -2344,29 +2357,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 			}
 		};
 
-		fInformationPresenter = new InformationPresenter(
-				informationControlCreator);
+		fInformationPresenter = new InformationPresenter(informationControlCreator);
 		fInformationPresenter.setSizeConstraints(60, 10, true, true);
 		fInformationPresenter.install(getSourceViewer());
-		fInformationPresenter
-				.setDocumentPartitioning(ICPartitions.C_PARTITIONING);
+		fInformationPresenter.setDocumentPartitioning(ICPartitions.C_PARTITIONING);
 				
-		
-		ProjectionViewer projectionViewer = (ProjectionViewer) getSourceViewer();
-		
-		fProjectionSupport = new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
-		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
-		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
-		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.search.results"); //$NON-NLS-1$
-		fProjectionSupport.install();
-		
-		fProjectionModelUpdater = CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();
-		if (fProjectionModelUpdater != null)
-			fProjectionModelUpdater.install(this, projectionViewer);
-
-		if (isFoldingEnabled())
-			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
-		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICHelpContextIds.CEDITOR_VIEW);
 
 		fEditorSelectionChangedListener = new EditorSelectionChangedListener();
@@ -2657,11 +2652,44 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+		IPreferenceStore store= getPreferenceStore();
 		ISourceViewer sourceViewer =
-				new AdaptedSourceViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
+				new AdaptedSourceViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles, store);
 
 		CUIHelp.setHelp(this, sourceViewer.getTextWidget(), ICHelpContextIds.CEDITOR_VIEW);
 
+		CSourceViewer cSourceViewer= null;
+		if (sourceViewer instanceof CSourceViewer) {
+			cSourceViewer= (CSourceViewer) sourceViewer;
+		}
+		
+		/*
+		 * This is a performance optimization to reduce the computation of
+		 * the text presentation triggered by {@link #setVisibleDocument(IDocument)}
+		 */
+		if (cSourceViewer != null && isFoldingEnabled() && (store == null || !store.getBoolean(PreferenceConstants.EDITOR_SHOW_SEGMENTS)))
+			cSourceViewer.prepareDelayedProjection();
+		
+		ProjectionViewer projectionViewer = (ProjectionViewer) sourceViewer;
+		
+		fProjectionSupport = new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.search.results"); //$NON-NLS-1$
+		fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell shell) {
+				return new SourceViewerInformationControl(shell, SWT.TOOL | SWT.NO_TRIM | getOrientation(), SWT.NONE);
+			}
+		});
+		fProjectionSupport.install();
+		
+		fProjectionModelUpdater = CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();
+		if (fProjectionModelUpdater != null)
+			fProjectionModelUpdater.install(this, projectionViewer);
+
+		if (isFoldingEnabled())
+			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
+		
 		getSourceViewerDecorationSupport(sourceViewer);
 		
 		return sourceViewer;
@@ -2677,20 +2705,20 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		fOutlinerContextMenuId = menuId;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.ui.editors.text.TextEditor#initializeKeyBindingScopes()
 	 */
 	protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String [] { "org.eclipse.cdt.ui.cEditorScope" } ); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see AbstractTextEditor#affectsTextPresentation(PropertyChangeEvent)
 	 */
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		SourceViewerConfiguration configuration = getSourceViewerConfiguration();
 		if (configuration instanceof CSourceViewerConfiguration) {
-			return ((CSourceViewerConfiguration)configuration).affectsBehavior(event);
+			return ((CSourceViewerConfiguration)configuration).affectsTextPresentation(event);
 		}
 		return false;
 	}

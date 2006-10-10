@@ -44,7 +44,7 @@ public class SystemSubSystemsPropertiesWizardPage
 	extends AbstractSystemNewConnectionWizardPage
 	implements ISystemVerifyListener, ISubSystemPropertiesWizardPage
 {
-
+	private ISystemConnectionWizardPropertyPage _thePage; // only if there's one page
 	private CTabFolder _folder;
 	private List _propertyPages;
 	private String _lastHostName;
@@ -112,7 +112,7 @@ public class SystemSubSystemsPropertiesWizardPage
 			    ISystemConnectionWizardPropertyPage cpage = (ISystemConnectionWizardPropertyPage)page;
 				cpage.setSubSystemConfiguration(parentFactory);
 				page.createControl(composite_prompts);
-
+				_thePage = cpage;
 				
 				//set the hostname for the page in case it's required
 				cpage.setHostname(getMainPage().getHostName());
@@ -133,6 +133,7 @@ public class SystemSubSystemsPropertiesWizardPage
 				{
 				    ISystemConnectionWizardPropertyPage cpage = (ISystemConnectionWizardPropertyPage)page;
 					cpage.setSubSystemConfiguration(parentFactory);
+					
 					
 					CTabItem titem = new CTabItem(_folder, SWT.NULL, numAdded);
 					titem.setData(page);
@@ -185,6 +186,10 @@ public class SystemSubSystemsPropertiesWizardPage
 				result = page.applyValues(ss.getConnectorService());
 			}
 		}
+		else if (_thePage != null)
+		{
+			_thePage.applyValues(ss.getConnectorService());
+		}
 		return result;
 	}
 
@@ -213,6 +218,13 @@ public class SystemSubSystemsPropertiesWizardPage
 				}
 			}
 		}
+		else if (_thePage != null)
+		{
+			if (_thePage instanceof ISystemConnectionWizardErrorUpdater)
+			{
+				result = ((ISystemConnectionWizardErrorUpdater)_thePage).isPageComplete();
+			}
+		}
 		return result;
 
 	}
@@ -229,6 +241,13 @@ public class SystemSubSystemsPropertiesWizardPage
 						(ISystemConnectionWizardErrorUpdater) _folder.getItem(i).getData();
 					page.addVerifyListener(this);
 				}
+			}
+		}
+		else if (_thePage != null)
+		{
+			if (_thePage instanceof ISystemConnectionWizardErrorUpdater)
+			{
+				((ISystemConnectionWizardErrorUpdater)_thePage).addVerifyListener(this);
 			}
 		}
 	}
@@ -255,6 +274,13 @@ public class SystemSubSystemsPropertiesWizardPage
 							setErrorMessage(_folder.getItem(i).getText() + ": " + page.getTheErrorMessage());
 						}
 					}
+				}
+			}
+			else if (_thePage != null)
+			{
+				if (_thePage instanceof ISystemConnectionWizardErrorUpdater)
+				{
+					((ISystemConnectionWizardErrorUpdater)_thePage).getTheErrorMessage();
 				}
 			}
 		}

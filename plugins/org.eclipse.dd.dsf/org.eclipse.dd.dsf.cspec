@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cs:cspec xmlns:cs="http://www.eclipse.org/buckminster/CSpec-1.0" name="org.demo.worlds">
+<cs:cspec xmlns:cs="http://www.eclipse.org/buckminster/CSpec-1.0" name="org.eclipse.dd.dsf">
     <cs:artifacts>
     	<cs:public name="source" path="src/"/>
     </cs:artifacts>

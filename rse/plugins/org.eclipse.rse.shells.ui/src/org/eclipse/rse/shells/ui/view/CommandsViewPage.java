@@ -475,7 +475,9 @@ FocusListener
 
 	public Object getInput()
 	{
-		return _viewer.getInput();
+		if (_viewer != null)
+			return _viewer.getInput();
+		return null;
 	}
 
 	public void setInput(IAdaptable object)

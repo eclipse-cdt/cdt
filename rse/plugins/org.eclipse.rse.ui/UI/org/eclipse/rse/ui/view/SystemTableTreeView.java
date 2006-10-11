@@ -569,6 +569,8 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			return;
 			
 		SystemTableTreeViewProvider provider = (SystemTableTreeViewProvider) getContentProvider();
+		if (provider == null)
+			return;
 		Object[] children = provider.getChildren(_objectInput);
 
 		// if no children, don't update

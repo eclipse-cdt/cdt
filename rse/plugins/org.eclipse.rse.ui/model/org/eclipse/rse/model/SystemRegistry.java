@@ -254,7 +254,14 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			if (sysType != null) { // sysType can be null if workspace contains a host that is no longer defined by the workbench
 				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
 				if (adapter.isEnabled(sysType)) {
-					result.add(con);
+					
+					// Bug 154524 Local node is shown in RSE even though the Local subsystem is not installed
+					// so we check for subsystems
+					ISubSystem[] subsystems = con.getSubSystems();
+					
+					if (subsystems != null && subsystems.length != 0) {
+						result.add(con);
+					}
 				}
 			}
 		}

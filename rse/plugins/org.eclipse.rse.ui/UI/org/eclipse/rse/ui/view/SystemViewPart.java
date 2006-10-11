@@ -446,10 +446,13 @@ public class SystemViewPart
 		{
 			// assume this is the primary RSE view
 
-			// WE GET ALL THE WAY HERE, BUT THESE LINES OF CODE ARE INEFFECTIVE FOR SOME REASON!!           
-			TreeItem firstItem = systemView.getTree().getItems()[0];
-			systemView.setSelection(new StructuredSelection(firstItem.getData()));
-			systemView.setExpandedState(firstItem.getData(), true);
+			// WE GET ALL THE WAY HERE, BUT THESE LINES OF CODE ARE INEFFECTIVE FOR SOME REASON!!
+			
+			if (systemView.getTree().getItemCount() > 0) {
+				TreeItem firstItem = systemView.getTree().getItems()[0];
+				systemView.setSelection(new StructuredSelection(firstItem.getData()));
+				systemView.setExpandedState(firstItem.getData(), true);
+			}
 		}
 	}
 

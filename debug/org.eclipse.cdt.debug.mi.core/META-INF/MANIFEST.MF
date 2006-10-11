@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.mi.core; singleton:=true
-Bundle-Version: 3.1.0.qualifier
+Bundle-Version: 4.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.mi.core.MIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -18,9 +18,9 @@ Export-Package: org.eclipse.cdt.debug.mi.core,
  org.eclipse.cdt.debug.mi.core.command.factories.win32,
  org.eclipse.cdt.debug.mi.core.event,
  org.eclipse.cdt.debug.mi.core.output
-Require-Bundle: org.eclipse.cdt.debug.core,
- org.eclipse.core.resources,
- org.eclipse.debug.core,
- org.eclipse.cdt.core,
- org.eclipse.core.runtime
+Require-Bundle: org.eclipse.cdt.debug.core;bundle-version="[4.0.0,5.0.0)",
+ org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.debug.core;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.cdt.core;bundle-version="[4.0.0,5.0.0)",
+ org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)"
 Eclipse-LazyStart: true

@@ -341,8 +341,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	public boolean isOffline();
 
 	/**
-	 * Connect to the remote system.
-	 * This uses Display.syncExec to get an active Shell and then calls connect(Shell)
+	 * Connect to the remote system. Does not force a prompt for a password.
 	 */
 	public void connect() throws Exception;	
 			

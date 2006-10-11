@@ -163,59 +163,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		}
 	}
 
-	/**
-	 * Inner class which extends UIJob to connect this connection
-	 * on the UI Thread when no Shell is available from
-	 * the caller
-	 */
-	public class ConnectJobNoShell extends UIJob {
-		
-		public ConnectJobNoShell()
-		{
-			super(GenericMessages.RSESubSystemOperation_Connect_message);
-		}
-
-		public IStatus runInUIThread(IProgressMonitor monitor)
-		{
-			
-				// Cannot call Display.getCurrent().getActiveShell() because this call may come
-				// via the ProgramVerifiers and there might not be an active shell.  Instead loop
-				// through all the shells until a valid one is found.
-				Shell[] shells = Display.getCurrent().getShells();
-				Shell shell = null;
-				for (int i = 0; i < shells.length && shell == null; i++)
-				{
-					if (!shells[i].isDisposed() && shells[i].isEnabled() && shells[i].isVisible())
-					{
-						shell = shells[i];
-					}
-				}	
-				if (shell == null)
-					shell = SystemBasePlugin.getActiveWorkbenchShell();
-	    		try
-	    		{
-	    			connect(false);
-	    		}
-	    		catch (InterruptedException e)
-	    		{
-	    			return Status.CANCEL_STATUS;
-
-	    		}
-	    		catch (Exception e)
-	    		{
-	    			e.printStackTrace();
-	         	  	String excMsg = e.getMessage();
-	          	  	if ((excMsg == null) || (excMsg.length()==0))
-	          	  		excMsg = "Exception " + e.getClass().getName();
-	          	  	SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED);
-	          	  	sysMsg.makeSubstitution(getHostName(), excMsg);
-	          	  	return new Status(IStatus.ERROR, RSEUIPlugin.PLUGIN_ID, IStatus.OK, sysMsg.getLevelOneText(), e);
-	    		}
-	    		return Status.OK_STATUS;
-
-		}
-	}
-	
 	protected SubSystem(IHost host, IConnectorService connectorService) 
 	{
 		super();
@@ -1590,6 +1537,32 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	}
     }
 
+	/**
+	 * Use this job to connect from a non-UI thread. Since this extends UIJob it will
+	 * run on the UI thread when scheduled.
+	 */
+	private class ConnectFromBackgroundJob extends UIJob {
+		public ConnectFromBackgroundJob() {
+			super(GenericMessages.RSESubSystemOperation_Connect_message);
+		}
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			IStatus result = Status.OK_STATUS;
+			try {
+				connect(false);
+			} catch (InterruptedException e) {
+				result = Status.CANCEL_STATUS;
+			} catch (Exception e) {
+				e.printStackTrace();
+				String excMsg = e.getMessage();
+				if ((excMsg == null) || (excMsg.length() == 0)) excMsg = "Exception " + e.getClass().getName();
+				SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED);
+				sysMsg.makeSubstitution(getHostName(), excMsg);
+				result = new Status(IStatus.ERROR, RSEUIPlugin.PLUGIN_ID, IStatus.OK, sysMsg.getLevelOneText(), e);
+			}
+			return result;
+		}
+	}
+	
     /**
      * Represents the subsystem operation of connecting the subsystem to the remote machine.
      */
@@ -2469,30 +2442,31 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 
 
     /**
-     * Attempt to connect to the remote system when a Shell is not available.
-     * You do not need to override this, as it does the progress monitor and error message
-     *  displaying for you.
-     * <p>
-     * Override internalConnect if you want, but by default it calls getSystem().connect(IProgressMonitor).
-     */
-    public void connect() throws Exception
-    {    	
-    	if (isConnected()) return;
-    	
-    	ConnectJobNoShell job = new ConnectJobNoShell();
-       	job.setPriority(Job.INTERACTIVE);
-	    //job.setUser(true);
-	    job.schedule();
-
-	    Display display = Display.getCurrent();
-    	while (job.getResult() == null)
-    	{
-			while (display!=null && display.readAndDispatch()) {
-				//Process everything on event queue
+	 * Attempt to connect to the remote system when a Shell is not available.
+	 * You do not need to override this, as it does the progress monitor and error message
+	 * displaying for you.
+	 * <p>
+	 * Override internalConnect if you want, but by default it calls getSystem().connect(IProgressMonitor).
+	 */
+	public void connect() throws Exception {
+		if (!isConnected()) {
+			if (Display.getCurrent() == null) {
+				ConnectFromBackgroundJob job = new ConnectFromBackgroundJob();
+				job.setPriority(Job.INTERACTIVE);
+				job.schedule();
+				job.join();
+			} else {
+				connect(false);
 			}
-            if (job.getResult() == null) Thread.sleep(200);
-    	}
-    }
+//			Display display = Display.getCurrent();
+//			while (job.getResult() == null) {
+//				while (display != null && display.readAndDispatch()) {
+//					//Process everything on event queue
+//				}
+//				if (job.getResult() == null) Thread.sleep(200);
+//			}
+		}
+	}
 
 	/**
 	 * Connect to the remote system, optionally forcing a signon prompt even if the password
@@ -2527,7 +2501,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		}
 		//DY operation = OPERATION_CONNECT;
 		if (!isConnected() && supportsConnecting) {
-			getRunnableContext(/*shell*/); // dwd needed only for side effect of setting shell to the shell for the active workbench window
+			getRunnableContext(/*shell*/); // needed only for side effect of setting shell to the shell for the active workbench window
 //dwd			IRunnableContext runnableContext = getRunnableContext(shell);
 //dwd			if (runnableContext instanceof ProgressMonitorDialog) {
 //dwd				((ProgressMonitorDialog) runnableContext).setCancelable(true);

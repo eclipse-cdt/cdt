@@ -3,6 +3,7 @@ package org.eclipse.rse.ui.view;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class SystemDeferredTableTreeContentManager extends
 		DeferredTreeContentManager {
@@ -20,7 +21,11 @@ public class SystemDeferredTableTreeContentManager extends
 		super.addChildren(parent, children, monitor);
 		
 		_provider.setCachedObjects(parent, children);
-		Display.getDefault().asyncExec(new RelayoutView(parent));
+		IPropertyDescriptor[] descriptors = _view.getUniqueDescriptors();
+		if (descriptors == null)
+		{
+			Display.getDefault().asyncExec(new RelayoutView(parent));
+		}
 	}
 	
 	

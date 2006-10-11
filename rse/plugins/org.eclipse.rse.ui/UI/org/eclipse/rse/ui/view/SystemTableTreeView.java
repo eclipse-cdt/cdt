@@ -436,6 +436,12 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	{
 	    return _columnManager.getVisibleDescriptors(adapter);
 	}
+	
+	public IPropertyDescriptor[] getUniqueDescriptors()
+	{
+		return _uniqueDescriptors;
+	}
+	
 	/**
 	 * Used to determine what the columns should be on the table.
 	 */
@@ -855,7 +861,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			{
 				if (!madeChange)
 				{
-					provider.flushCache();
+					//provider.flushCache();
 					madeChange = true;
 				}
 

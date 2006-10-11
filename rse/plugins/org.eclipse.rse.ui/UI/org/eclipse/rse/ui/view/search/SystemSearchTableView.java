@@ -48,6 +48,7 @@ public class SystemSearchTableView extends SystemTableTreeView
 		super(tabletree, msgLine);
 		this.resultSet = resultSet;
 				
+		_provider.disableDeferredQueries(true);
 		setLabelProvider(new SystemDecoratingLabelProvider(_provider, RSEUIPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));	
 	}
 	
@@ -155,7 +156,7 @@ public class SystemSearchTableView extends SystemTableTreeView
 			case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED :
 				{
 					Object resource = event.getResource();
-					String resourceOldPath = event.getOldName();
+				//	String resourceOldPath = event.getOldName();
 					
 					/** FIXME - IREmoteFile is systems.core independent now
 					// we only care about remote file renames
@@ -307,6 +308,7 @@ public class SystemSearchTableView extends SystemTableTreeView
 							if ((previousResults == null || previousResults.length == 0) && newResults.length != 0) {
 								provider.flushCache();
 								refresh(getInput());
+
 							}
 							else if (previousResults != null) {
 								

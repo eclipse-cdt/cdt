@@ -62,6 +62,7 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 	protected Viewer _viewer = null;
 	protected int _maxCharsInColumnZero = 0;
 	private SystemDeferredTableTreeContentManager manager;
+	private boolean _disableDeferredQueries = false;
 
 	/**
 	 * The cache of images that have been dispensed by this provider.
@@ -433,9 +434,15 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
     public void dispose() {
     }
     
+    public void disableDeferredQueries(boolean disable)
+    {
+    	_disableDeferredQueries = disable;
+    }
 
 	protected boolean supportsDeferredQueries()
 	{
+		if (_disableDeferredQueries)
+			return false;
 	    IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 	    return store.getBoolean(ISystemPreferencesConstants.USE_DEFERRED_QUERIES);
 	}

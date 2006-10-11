@@ -1501,6 +1501,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		job.setPriority(Job.INTERACTIVE);
 		//job.setUser(true);
 		job.schedule();
+		/*
 		Display display = Display.getCurrent();
 		try {
 			while (job.getResult() == null) {
@@ -1511,6 +1512,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 			}
 		} catch (InterruptedException e) {
 		}
+		*/
 	}
 
 	/**

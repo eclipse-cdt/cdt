@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -910,6 +911,13 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			ok = promptForPassword();
 		if (ok)
 		{
+			Display display = Display.getCurrent();
+			if (display != null)
+			{
+				internalSendCommandToShell(new NullProgressMonitor(), input, commandObject);
+			}
+			else
+			{
 			try
 			{
 //dwd				this.shell = shell; // FIXME remove this
@@ -927,6 +935,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 					throw exc;
 				else
 					showOperationCancelledMessage(shell);
+			}
 			}
 		}
 		else

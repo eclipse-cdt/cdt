@@ -1591,9 +1591,25 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     protected class DisconnectJob extends SubSystemOperationJob
     {
-    	public DisconnectJob()
+    	public class PostDisconnect implements Runnable
+    	{
+    		
+    		public void run()
+    		{
+    	    	getConnectorService().reset();
+    	        ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();	
+    	        sr.connectedStatusChange(_subsystem, false, true, _collapseTree);
+    		}	
+    		
+    	}
+    	
+    	private boolean _collapseTree;
+    	private SubSystem _subsystem;
+    	public DisconnectJob(boolean collapseTree, SubSystem subsystem)
     	{
     		super(GenericMessages.RSESubSystemOperation_Disconnect_message);
+    		_collapseTree = collapseTree;
+    		_subsystem = subsystem;
     	}
     	
     	public void performOperation(IProgressMonitor mon) throws InterruptedException, Exception
@@ -1605,7 +1621,11 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 
     	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());   		
     	    internalDisconnect(mon);
+    	    _disconnecting = false;
+    	    _connectionError = false;
+    	    Display.getDefault().asyncExec(new PostDisconnect());
     	}
+    	
     }
 
     /**
@@ -1969,6 +1989,13 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	  ok = promptForPassword();
         if (ok)
         {
+          	Display display = Display.getCurrent();
+        	if (display != null)
+        	{
+        		return internalResolveFilterString(new NullProgressMonitor(), filterString);
+        	}
+        	else
+        	{
     	  try
     	  {
 //dwd   	    this.shell = shell; //FIXME remove this   	    	  	
@@ -1988,7 +2015,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     		  if (shell == null) throw exc;
     		  else showOperationCancelledMessage(shell);
     	  }
-    	
+        	}
         }
         else
           System.out.println("in SubSystemImpl.resolveFilterString: isConnected() returning false!");
@@ -2029,6 +2056,13 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         
         if (ok)
         {
+        	Display display = Display.getCurrent();
+        	if (display != null)
+        	{
+        		return internalResolveFilterStrings(new NullProgressMonitor(), filterStrings);
+        	}
+        	else
+        	{
     	  try
     	  {
 //dwd    	    this.shell = shell; //FIXME remove this	
@@ -2048,6 +2082,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     		  if (shell == null) throw exc;
     		  else showOperationCancelledMessage(shell);
     	  }    	
+        	}
         }
         else
           System.out.println("in SubSystemImpl.resolveFilterString: isConnected() returning false!");
@@ -2276,7 +2311,13 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	  ok = promptForPassword();
         if (ok)
         {
-
+        	Display display = Display.getCurrent();
+        	if (display != null)
+        	{
+        		return internalResolveFilterString(new NullProgressMonitor(), parent, filterString);
+        	}
+        	else
+        	{
     	  try
     	  {    	    	  	
  //dwd   	    this.shell = shell; //FIXME remove this
@@ -2296,6 +2337,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     		  if (shell == null) throw exc;
     		  else showOperationCancelledMessage(shell);
     	  }
+        	}
         }
         else
           SystemBasePlugin.logDebugMessage(this.getClass().getName(), "in SubSystemImpl.resolveFilterString: isConnected() returning false!");
@@ -2602,17 +2644,14 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
             sr.connectedStatusChange(this, false, true, collapseTree);
     	  return;      	 	
     	}
+    	/*
     	try
     	{
-    		DisconnectJob job = new DisconnectJob();
-    		IStatus status = scheduleJob(job, this, true);
-    		if (status.isOK())
-    		{
-    	    	getConnectorService().reset();
-    	        ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();	
-    	        sr.connectedStatusChange(this, false, true, collapseTree);
-    			return;
-    		}
+    		*/
+    	
+    		DisconnectJob job = new DisconnectJob(collapseTree, this);
+    		job.schedule();
+    		/*
     	}
     	catch (InterruptedException exc)
     	{
@@ -2625,6 +2664,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     		_disconnecting = false;
     		_connectionError = false;
     	}
+    	*/
     }
 
     /**

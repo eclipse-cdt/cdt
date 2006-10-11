@@ -307,9 +307,9 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
 			// Current thread is UI thread
 			while (_workingStatuses.contains(status)) 
 			{
-				while (display.readAndDispatch()) {
+			//	while (display.readAndDispatch()) {
 					//Process everything on event queue
-				}
+			//	}
 				
 				if ((monitor != null) && (monitor.isCanceled())) 
 				{

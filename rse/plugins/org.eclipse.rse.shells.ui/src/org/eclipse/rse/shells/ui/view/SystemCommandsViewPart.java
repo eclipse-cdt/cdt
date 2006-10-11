@@ -779,7 +779,10 @@ public class SystemCommandsViewPart
 
 		if (source == _folder.getFolder())
 		{
-			updateActionStates();
+			if (_folder.getInput() != null)
+			{
+				updateActionStates();
+			}
 		}
 	}
 	

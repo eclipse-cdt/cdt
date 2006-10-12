@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
+import org.eclipse.cdt.core.index.IIndexInclude;
 
 /**
  * Represents an include relation found in the index. 
@@ -25,9 +25,9 @@ public class CIndexIncludeRelation {
 	private IPath fIncludedBy;
 	private IPath fIncludes;
 	
-	CIndexIncludeRelation(PDOMInclude include) throws CoreException {
-		fIncludedBy= Path.fromOSString(include.getIncludedBy().getFileName().getString());
-		fIncludes= Path.fromOSString(include.getIncludes().getFileName().getString());
+	CIndexIncludeRelation(IIndexInclude include) throws CoreException {
+		fIncludedBy= Path.fromOSString(include.getIncludedByLocation());
+		fIncludes= Path.fromOSString(include.getIncludesLocation());
 	}
 	public boolean isSystemInclude() {
 		return false;

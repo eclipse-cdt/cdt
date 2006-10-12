@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.folding;
@@ -24,7 +25,9 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -71,6 +74,7 @@ import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider.ASTRunnable;
 import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 
@@ -1060,7 +1064,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	}
 	
 
-	private void computeFoldingStructure(FoldingStructureComputationContext ctx) {
+	private void computeFoldingStructure(final FoldingStructureComputationContext ctx) {
 		if (fCommentFoldingEnabled) {
 			// compute comment positions from partitioning
 			try {
@@ -1079,12 +1083,19 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		if (fPreprocessorBranchFoldingEnabled) {
 			IASTTranslationUnit ast= ctx.getAST();
 			if (ast == null) {
-				ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
-				ast= astProvider.getAST(getInputElement(), ASTProvider.WAIT_ACTIVE_ONLY, null);
-				if (ast != null) {
-					ctx.fAST= ast;
-					ctx.fASTPositionConverter= astProvider.getActivePositionConverter(getInputElement());
-					fInitialASTReconcile= false;
+				final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
+				IStatus status= astProvider.runOnAST(getInputElement(), ASTProvider.WAIT_ACTIVE_ONLY, null, new ASTRunnable() {
+					public IStatus runOnAST(IASTTranslationUnit ast) {
+						if (ast != null) {
+							ctx.fAST= ast;
+							ctx.fASTPositionConverter= astProvider.getActivePositionConverter(getInputElement());
+							fInitialASTReconcile= false;
+						}
+						return Status.OK_STATUS;
+					}
+				});
+				if (!status.isOK()) {
+					CUIPlugin.getDefault().log(status);
 				}
 			}
 			computeFoldingStructure(ast, ctx);

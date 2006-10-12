@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
@@ -14,10 +15,6 @@ package org.eclipse.cdt.internal.ui.search;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -32,6 +29,11 @@ import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.FileEditorInput;
+
+import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 /**
  * @author Doug Schaefer
@@ -117,10 +119,9 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 	}
 
 	public IFile getFile(Object element) {
-		if (element instanceof PDOMName) {
-			PDOMName name = (PDOMName)element;
-			IASTFileLocation loc = name.getFileLocation();
-			IPath path = new Path(loc.getFileName());
+		if (element instanceof IIndexName) {
+			IIndexName name = (IIndexName)element;
+			IPath path = new Path(name.getFileName());
 			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
 			if (files.length > 0)
 				return files[0];

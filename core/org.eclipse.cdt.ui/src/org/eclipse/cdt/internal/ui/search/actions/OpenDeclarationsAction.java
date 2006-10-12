@@ -29,8 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 
@@ -65,8 +63,8 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 				int style = 0;
 //				IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
 //				if (!pdom.isEmpty())
-//					style |= ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX;
-				IASTTranslationUnit ast = workingCopy.getLanguage().getASTTranslationUnit(workingCopy, style);
+//					style |= ITranslationUnit.AST_SKIP_ALL_HEADERS;
+				IASTTranslationUnit ast = workingCopy.getAST(null, style);
 				IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
 					
 				if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
@@ -85,24 +83,32 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 									}
 								}
 							});
-						} else if (binding instanceof PDOMBinding) {
-							PDOMBinding pdomBinding = (PDOMBinding)binding;
-							IName name = pdomBinding.getFirstDefinition();
-							if (name == null)
-								name = pdomBinding.getFirstDeclaration();
-							if (name != null) {
-								final IName dname = name;
-								Display.getDefault().asyncExec(new Runnable() {
-									public void run() {
-										try {
-											open(dname);
-										} catch (CoreException e) {
-											CUIPlugin.getDefault().log(e);
-										}
-									}
-								});
-							}
-						}
+						} 
+						// mstodo revisit
+//						else if (binding instanceof IIndexBinding) {
+//							IIndexBinding pdomBinding = (IIndexBinding)binding;
+//							IName name = pdomBinding.getFirstDefinition();
+//							if (name == null)
+//								name = pdomBinding.getFirstDeclaration();
+//				    		// no source location - TODO spit out an error in the status bar
+//							if (name != null) {
+//						    	IASTFileLocation fileloc = name.getFileLocation();
+//						    	if (fileloc != null) {
+//						    		final IPath path = new Path(fileloc.getFileName());
+//						    		final int offset = fileloc.getNodeOffset();
+//						    		final int length = fileloc.getNodeLength();
+//						    		Display.getDefault().asyncExec(new Runnable() {
+//						    			public void run() {
+//						    				try {
+//						    					open(path, offset, length);
+//						    				} catch (CoreException e) {
+//						    					CUIPlugin.getDefault().log(e);
+//						    				}
+//						    			}
+//						    		});
+//						    	}
+//							}
+//						}
 					}
 				}
 					

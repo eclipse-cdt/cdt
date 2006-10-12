@@ -7,13 +7,16 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.search.ui.text.Match;
+
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexName;
 
 /**
  * @author Doug Schaefer
@@ -21,8 +24,8 @@ import org.eclipse.search.ui.text.Match;
  */
 public class PDOMSearchMatch extends Match {
 
-	public PDOMSearchMatch(PDOMName name, int offset, int length) throws CoreException {
-		super(new PDOMSearchElement(name), offset, length);
+	public PDOMSearchMatch(IIndexBinding binding, IIndexName name, int offset, int length) throws CoreException {
+		super(new PDOMSearchElement(name, binding), offset, length);
 	}
 
 	public String getFileName() throws CoreException {

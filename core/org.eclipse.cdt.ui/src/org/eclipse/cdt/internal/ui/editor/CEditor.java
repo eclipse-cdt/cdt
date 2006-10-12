@@ -154,6 +154,7 @@ import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -2893,10 +2894,22 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 			SimplePositionTracker positionTracker= new SimplePositionTracker();
 			positionTracker.startTracking(doc);
 			
+			ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
+			IIndex index;
 			try {
-				IASTTranslationUnit ast= CUIPlugin.getDefault().getASTProvider().createAST(cElement, null);
+				index = CCorePlugin.getIndexManager().getIndex(cElement.getCProject());
+				index.acquireReadLock();
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+				return;
+			} catch (InterruptedException e) {
+				return;
+			}
+			try {
+				IASTTranslationUnit ast= astProvider.createAST(cElement, index, null);
 				reconciled(ast, positionTracker, null);
 			} finally {
+				index.releaseReadLock();
 				positionTracker.stopTracking();
 			}
 		}

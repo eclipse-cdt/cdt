@@ -183,18 +183,11 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 			try {
 				if (parentElement instanceof ICProject) {
 					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM((ICProject)parentElement);
-					int n = 0;
-					PDOMLinkage firstLinkage = pdom.getFirstLinkage();
-					for (PDOMLinkage linkage = firstLinkage; linkage != null; linkage = linkage.getNextLinkage())
-						++n;
-					if (n == 1) {
+					PDOMLinkage[] linkages= pdom.getLinkages();
+					if (linkages.length == 1) {
 						// Skip linkages in hierarchy if there is only one
-						return getChildren(firstLinkage);
+						return getChildren(linkages[0]);
 					}
-					PDOMLinkage[] linkages = new PDOMLinkage[n];
-					int i = 0;
-					for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
-						linkages[i++] = linkage;
 					return linkages;
 				} else if (parentElement instanceof IPDOMNode) {
 					IPDOMNode node = (IPDOMNode)parentElement;

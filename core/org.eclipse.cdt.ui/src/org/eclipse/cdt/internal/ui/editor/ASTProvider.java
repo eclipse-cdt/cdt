@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
@@ -28,11 +29,12 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -47,6 +49,10 @@ import org.eclipse.cdt.ui.CUIPlugin;
  */
 public final class ASTProvider {
 
+	public static interface ASTRunnable {
+		IStatus runOnAST(IASTTranslationUnit tu);
+	}
+	
 	/**
 	 * Wait flag.
 	 */
@@ -97,7 +103,7 @@ public final class ASTProvider {
 	/** Full parse mode (no PDOM) */
 	public static int PARSE_MODE_FULL= 0;
 	/** Fast parse mode (use PDOM) */
-	public static int PARSE_MODE_FAST= ILanguage.AST_SKIP_INDEXED_HEADERS | ILanguage.AST_USE_INDEX;
+	public static int PARSE_MODE_FAST= ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 	
 	/**
 	 * Tells whether this class is in debug mode.
@@ -240,6 +246,8 @@ public final class ASTProvider {
 	private IWorkbenchPart fActiveEditor;
 
 	protected int fParseMode= PARSE_MODE_FAST;
+
+	private long fLastWriteOnIndex= -1;
 
 	/**
 	 * Returns the C plug-in's AST provider.
@@ -409,6 +417,7 @@ public final class ASTProvider {
 			disposeAST();
 
 		fAST= ast;
+		fLastWriteOnIndex= fAST == null ? 0 : fAST.getIndex().getLastWriteAccess();
 		fActivePositionConverter= converter;
 
 		// Signal AST change
@@ -426,11 +435,12 @@ public final class ASTProvider {
 	 * </p>
 	 *
 	 * @param cElement				the C element
+	 * @param index				the index used to create the AST, needs to be read-locked.
 	 * @param waitFlag			{@link #WAIT_YES}, {@link #WAIT_NO} or {@link #WAIT_ACTIVE_ONLY}
 	 * @param progressMonitor	the progress monitor or <code>null</code>
 	 * @return					the AST or <code>null</code> if the AST is not available
 	 */
-	public IASTTranslationUnit getAST(ICElement cElement, WAIT_FLAG waitFlag, IProgressMonitor progressMonitor) {
+	public IASTTranslationUnit getAST(ICElement cElement, IIndex index, WAIT_FLAG waitFlag, IProgressMonitor progressMonitor) {
 		if (cElement == null)
 			return null;
 		
@@ -444,10 +454,15 @@ public final class ASTProvider {
 			isActiveElement= cElement.equals(fActiveCElement);
 			if (isActiveElement) {
 				if (fAST != null) {
-					if (DEBUG)
-						System.out.println(getThreadName() + " - " + DEBUG_PREFIX + "returning cached AST:" + toString(fAST) + " for: " + cElement.getElementName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					if (fLastWriteOnIndex < index.getLastWriteAccess()) {
+						disposeAST();
+					}
+					else {
+						if (DEBUG)
+							System.out.println(getThreadName() + " - " + DEBUG_PREFIX + "returning cached AST:" + toString(fAST) + " for: " + cElement.getElementName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-					return fAST;
+						return fAST;
+					}
 				}
 				if (waitFlag == WAIT_NO) {
 					if (DEBUG)
@@ -479,7 +494,7 @@ public final class ASTProvider {
 						return fAST;
 					}
 				}
-				return getAST(cElement, waitFlag, progressMonitor);
+				return getAST(cElement, index, waitFlag, progressMonitor);
 			} catch (InterruptedException e) {
 				return null; // thread has been interrupted don't compute AST
 			}
@@ -494,7 +509,7 @@ public final class ASTProvider {
 
 		IASTTranslationUnit ast= null;
 		try {
-			ast= createAST(cElement, progressMonitor);
+			ast= createAST(cElement, index, progressMonitor);
 			if (progressMonitor != null && progressMonitor.isCanceled())
 				ast= null;
 			else if (DEBUG && ast != null)
@@ -509,7 +524,6 @@ public final class ASTProvider {
 					reconciled(ast, null, cElement, null);
 			}
 		}
-
 		return ast;
 	}
 
@@ -530,10 +544,11 @@ public final class ASTProvider {
 	 * Creates a new translation unit AST.
 	 *
 	 * @param cElement the C element for which to create the AST
+	 * @param index for AST generation, needs to be read-locked.
 	 * @param progressMonitor the progress monitor
 	 * @return AST
 	 */
-	IASTTranslationUnit createAST(ICElement cElement, final IProgressMonitor progressMonitor) {
+	IASTTranslationUnit createAST(ICElement cElement, final IIndex index, final IProgressMonitor progressMonitor) {
 		if (!hasSource(cElement))
 			return null;
 		
@@ -552,7 +567,7 @@ public final class ASTProvider {
 					if (progressMonitor != null && progressMonitor.isCanceled()) {
 						root[0]= null;
 					} else {
-						root[0]= tu.getLanguage().getASTTranslationUnit(tu, fParseMode);
+						root[0]= tu.getAST(index, fParseMode);
 					}
 				} catch (OperationCanceledException ex) {
 					root[0]= null;
@@ -648,6 +663,26 @@ public final class ASTProvider {
 		}
 		return null;
 	}
-	
+
+	public IStatus runOnAST(ICElement cElement, WAIT_FLAG waitFlag, IProgressMonitor monitor,
+			ASTRunnable astRunnable) {
+		IIndex index;
+		try {
+			index = CCorePlugin.getIndexManager().getIndex(cElement.getCProject());
+			index.acquireReadLock();
+		} catch (CoreException e) {
+			return e.getStatus();
+		} catch (InterruptedException e) {
+			return Status.CANCEL_STATUS;
+		}
+		
+		try {
+			IASTTranslationUnit ast= getAST(cElement, index, waitFlag, monitor);
+			return astRunnable.runOnAST(ast);
+		}
+		finally {
+			index.releaseReadLock();
+		}
+	}
 }
 

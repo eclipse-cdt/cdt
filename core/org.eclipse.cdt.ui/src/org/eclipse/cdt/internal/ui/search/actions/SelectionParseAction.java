@@ -32,6 +32,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -459,10 +460,15 @@ public class SelectionParseAction extends Action {
     	if (fileloc == null)
     		// no source location - TODO spit out an error in the status bar
     		return;
+    	
+		IPath path = new Path(fileloc.getFileName());
     	int currentOffset = fileloc.getNodeOffset();
     	int currentLength = fileloc.getNodeLength();
     	
-		IPath path = new Path(fileloc.getFileName());
+		open(path, currentOffset, currentLength);
+    }
+
+	protected void open(IPath path, int currentOffset, int currentLength) throws PartInitException {
 		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
 		if (files.length > 0) {
 			IEditorPart editor = IDE.openEditor(CUIPlugin.getActivePage(), files[0]);
@@ -484,8 +490,7 @@ public class SelectionParseAction extends Action {
 				textEditor.selectAndReveal(currentOffset, currentLength);
 			}
 		}
-
-    }
+	}
     
     public void update() {
 		setEnabled(getSelectedStringFromEditor() != null);

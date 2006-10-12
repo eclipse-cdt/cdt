@@ -744,11 +744,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 				}
 			}
 			if (contentType != null) {
-				try {
-					return LanguageManager.getInstance().getLanguage(contentType);
-				} catch (CoreException exc) {
-					CUIPlugin.getDefault().log(exc.getStatus());
-				}
+				return LanguageManager.getInstance().getLanguage(contentType);
 			}
 		}
 		return null;

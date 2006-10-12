@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     IBM Corporation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
@@ -23,6 +24,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -37,13 +39,15 @@ import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
-import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -56,12 +60,10 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
 import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class NewClassWizardUtil {
 
@@ -381,59 +383,76 @@ public class NewClassWizardUtil {
 	 * {@link #SEARCH_MATCH_NOTFOUND}.	 
 	 */
 	public static int searchForCppType(IQualifiedTypeName typeName, ICProject project, Class queryType) {
-		if(project == null) {
-			return SEARCH_MATCH_ERROR;
-		}
-		
-		String fullyQualifiedTypeName = typeName.getFullyQualifiedName();
-		
-		IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
+		IIndex index= null;
 		try {
-			PDOM pdom = (PDOM)pdomManager.getPDOM(project);	
-			IBinding[] bindings = pdom.findBindings(Pattern.compile(typeName.getName()), new NullProgressMonitor());
-			boolean sameTypeNameExists = false;
-			boolean sameNameDifferentTypeExists = false;
-			
-			for (int i = 0; i < bindings.length; ++i) {
-				ICPPBinding binding = (ICPPBinding)bindings[i];
-				
-				//get the fully qualified name of this binding
-				String bindingFullName = CPPVisitor.renderQualifiedName(binding.getQualifiedName());
-				
-				Class currentNodeType = binding.getClass();
-				// full binding				
-				if (queryType.isAssignableFrom(currentNodeType)) {						
-					if (bindingFullName.equals(fullyQualifiedTypeName)) {
-						return SEARCH_MATCH_FOUND_EXACT;
-					} else {
-						// same type , same name , but different name space
-						// see if there is an exact match;
-						sameTypeNameExists = true;
-					}
-				} else if(ICPPClassType.class.isAssignableFrom(currentNodeType) || 
-						IEnumeration.class.isAssignableFrom(currentNodeType) || // TODO - this should maybe be ICPPEnumeration
-						ICPPNamespace.class.isAssignableFrom(currentNodeType) ||
-						ITypeDef.class.isAssignableFrom(currentNodeType) ||
-						ICPPBasicType.class.isAssignableFrom(currentNodeType))
-				{						
-					if (bindingFullName.equals(fullyQualifiedTypeName))	{
-			        	return SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE;
-			        } else {
-						// different type , same name , but different name space
-						sameNameDifferentTypeExists = true;
-			        }
-				}
-			}
-			if(sameTypeNameExists){
-				return SEARCH_MATCH_FOUND_ANOTHER_NAMESPACE;
-			}
-			
-			if(sameNameDifferentTypeExists){
-				return SEARCH_MATCH_FOUND_ANOTHER_TYPE;
+			if (project != null) {
+				index = CCorePlugin.getIndexManager().getIndex(project);
+				index.acquireReadLock();
 			}
 		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+			return SEARCH_MATCH_ERROR;
+		} catch (InterruptedException e) {
+		}
+		if (index == null) {
 			return SEARCH_MATCH_ERROR;
 		}
-		return SEARCH_MATCH_NOTFOUND;
+		try {
+			String fullyQualifiedTypeName = typeName.getFullyQualifiedName();
+			try {
+				IndexFilter filter= new IndexFilter() {
+					public boolean acceptLinkage(ILinkage linkage) {
+						return linkage.getID() == ILinkage.CPP_LINKAGE_ID;
+					}
+				};
+				// mstodo revisit, the pattern must be split
+				IBinding[] bindings = index.findBindings(Pattern.compile(typeName.getName()), true, filter, new NullProgressMonitor());
+				boolean sameTypeNameExists = false;
+				boolean sameNameDifferentTypeExists = false;
+
+				for (int i = 0; i < bindings.length; ++i) {
+					ICPPBinding binding = (ICPPBinding)bindings[i];
+
+					//get the fully qualified name of this binding
+					String bindingFullName = CPPVisitor.renderQualifiedName(binding.getQualifiedName());
+					Class currentNodeType = binding.getClass();
+					// full binding				
+					if (queryType.isAssignableFrom(currentNodeType)) {						
+						if (bindingFullName.equals(fullyQualifiedTypeName)) {
+							return SEARCH_MATCH_FOUND_EXACT;
+						} else {
+							// same type , same name , but different name space
+							// see if there is an exact match;
+							sameTypeNameExists = true;
+						}
+					} else if(ICPPClassType.class.isAssignableFrom(currentNodeType) || 
+							IEnumeration.class.isAssignableFrom(currentNodeType) || // TODO - this should maybe be ICPPEnumeration
+							ICPPNamespace.class.isAssignableFrom(currentNodeType) ||
+							ITypeDef.class.isAssignableFrom(currentNodeType) ||
+							ICPPBasicType.class.isAssignableFrom(currentNodeType))
+					{						
+						if (bindingFullName.equals(fullyQualifiedTypeName))	{
+							return SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE;
+						} else {
+							// different type , same name , but different name space
+							sameNameDifferentTypeExists = true;
+						}
+					}
+				}
+				if(sameTypeNameExists){
+					return SEARCH_MATCH_FOUND_ANOTHER_NAMESPACE;
+				}
+
+				if(sameNameDifferentTypeExists){
+					return SEARCH_MATCH_FOUND_ANOTHER_TYPE;
+				}
+			} catch (CoreException e) {
+				return SEARCH_MATCH_ERROR;
+			}
+			return SEARCH_MATCH_NOTFOUND;
+		}
+		finally {
+			index.releaseReadLock();
+		}
 	}
 }

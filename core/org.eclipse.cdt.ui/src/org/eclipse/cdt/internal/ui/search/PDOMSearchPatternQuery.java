@@ -24,9 +24,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -38,10 +35,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
 
@@ -122,35 +119,18 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
     	pattern = (Pattern[])patternList.toArray(new Pattern[patternList.size()]); 
 	}
 	
-	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
+	public IStatus runWithIndex(IIndex index, IProgressMonitor monitor) throws OperationCanceledException {
 		try {
-			for (int i = 0; i < projects.length; ++i)
-				searchProject(projects[i], monitor);
-			return Status.OK_STATUS;
-		} catch (CoreException e) {
-			return e.getStatus();
-		}
-	}
-	
-	private void searchProject(ICProject project, IProgressMonitor monitor) throws CoreException {
-		IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
-
-		try {
-			pdom.acquireReadLock();
-		} catch (InterruptedException e) {
-			return;
-		}
-
-		try {
-			IBinding[] bindings = pdom.findBindings(pattern, monitor);
+			IndexFilter filter= new IndexFilter();
+			IIndexBinding[] bindings = index.findBindings(pattern, false, filter, monitor);
 			for (int i = 0; i < bindings.length; ++i) {
-				PDOMBinding pdomBinding = (PDOMBinding)bindings[i];
-				
+				IIndexBinding pdomBinding = bindings[i];
+
 				//check for the element type of this binding and create matches if 
 				//the element type checkbox is checked in the C/C++ Search Page
-				
+
 				//TODO search for macro
-				
+
 				boolean matches= false;
 				if ((flags & FIND_ALL_TYPES) == FIND_ALL_TYPES) {
 					matches= true;
@@ -192,14 +172,15 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 					matches= (flags & FIND_TYPEDEF) != 0;
 				}
 				if (matches) {
-					createMatches(pdomBinding.getLinkage().getLanguage(), pdomBinding);
+					createMatches(index, pdomBinding);
 				}
 			}
-		} finally {
-			pdom.releaseReadLock();
+		} catch (CoreException e) {
+			return e.getStatus();
 		}
+		return Status.OK_STATUS;
 	}
-	
+
 	public String getLabel() {
 		return Messages.format(CSearchMessages.getString("PDOMSearchPatternQuery.PatternQuery_labelPatternInScope"), super.getLabel(), patternStr, scopeDesc); //$NON-NLS-1$
 	}

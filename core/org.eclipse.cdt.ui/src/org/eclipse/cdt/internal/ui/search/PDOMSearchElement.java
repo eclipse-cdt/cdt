@@ -7,13 +7,15 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexName;
 
 /**
  * Element class used to group matches.
@@ -22,14 +24,14 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMSearchElement {
 
-	private final PDOMBinding binding;
+	private final IIndexBinding binding;
 	private final String name;
 	private final String filename;
 	
-	public PDOMSearchElement(PDOMName name) throws CoreException {
-		binding = name.getPDOMBinding();
+	public PDOMSearchElement(IIndexName name, IIndexBinding binding) throws CoreException {
+		this.binding= binding;
 		this.name = binding.getName();
-		filename = name.getFile().getFileName().getString();
+		filename = name.getFileName();
 	}
 	
 	public int hashCode() {
@@ -50,7 +52,7 @@ public class PDOMSearchElement {
 		return filename;
 	}
 
-	public PDOMBinding getBinding() {
+	public IIndexBinding getBinding() {
 		return binding;
 	}
 	

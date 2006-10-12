@@ -7,23 +7,26 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * @author Doug Schaefer
@@ -38,17 +41,17 @@ public class PDOMSearchElementQuery extends PDOMSearchQuery {
 		this.element = element;
 	}
 
-	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
+	public IStatus runWithIndex(IIndex index, IProgressMonitor monitor) throws OperationCanceledException {
 		try {
 			ISourceRange range = element.getSourceRange();
 			ITranslationUnit tu = element.getTranslationUnit();
+			IASTTranslationUnit ast= tu.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
 			ILanguage language = tu.getLanguage();
-			IASTTranslationUnit ast = language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
 			IASTName[] names = language.getSelectedNames(ast, range.getIdStartPos(), range.getIdLength());
-			
+
 			for (int i = 0; i < names.length; ++i) {
 				IBinding binding = names[i].resolveBinding();
-				createMatches(language, binding);
+				createMatches(index, binding);
 			}
 			return Status.OK_STATUS;
 		} catch (CoreException e) {

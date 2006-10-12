@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.LineBackgroundPainter;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider.ASTRunnable;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 
 /**
@@ -95,11 +97,16 @@ public class InactiveCodeHighlighting implements ICReconcilingListener {
 		synchronized (fJobLock) {
 			if (fUpdateJob == null) {
 				fUpdateJob = new Job(CEditorMessages.getString("InactiveCodeHighlighting_job")) { //$NON-NLS-1$
-					protected IStatus run(IProgressMonitor monitor) {
+					protected IStatus run(final IProgressMonitor monitor) {
 						IStatus result = Status.OK_STATUS;
 						if (fTranslationUnit != null) {
-							IASTTranslationUnit ast= CUIPlugin.getDefault().getASTProvider().getAST(fTranslationUnit, ASTProvider.WAIT_YES, monitor);
-							reconciled(ast, null, monitor);
+							final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
+							result= astProvider.runOnAST(fTranslationUnit, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
+								public IStatus runOnAST(IASTTranslationUnit ast) {
+									reconciled(ast, null, monitor);
+									return Status.OK_STATUS;
+								}
+							});
 						}
 						if (monitor.isCanceled()) {
 							result = Status.CANCEL_STATUS;

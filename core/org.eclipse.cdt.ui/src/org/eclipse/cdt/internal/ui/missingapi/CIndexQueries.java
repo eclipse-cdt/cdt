@@ -12,12 +12,9 @@
 package org.eclipse.cdt.internal.ui.missingapi;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,7 +25,6 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -37,6 +33,10 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -48,10 +48,6 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 /**
@@ -59,7 +55,7 @@ import org.eclipse.cdt.internal.corext.util.CModelUtil;
  * @since 4.0
  */
 public class CIndexQueries {
-    private static final int ASTTU_OPTIONS = ILanguage.AST_SKIP_INDEXED_HEADERS | ILanguage.AST_USE_INDEX;
+    private static final int ASTTU_OPTIONS = ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 	private static final ICElement[] EMPTY_ELEMENTS = new ICElement[0];
     private static final CIndexIncludeRelation[] EMPTY_INCLUDES = new CIndexIncludeRelation[0];
     private static final CIndexQueries sInstance= new CIndexQueries();
@@ -113,74 +109,35 @@ public class CIndexQueries {
 	 */
 	public CIndexIncludeRelation[] findIncludedBy(ICProject[] scope, ITranslationUnit tu, IProgressMonitor pm) {
 		HashMap result= new HashMap();
-		ICProject projectOfTU= tu.getCProject();
-
-		// mstodo progress monitor
-		for (int i = scope.length-1; i >= 0; i--) {
-			ICProject cproject = scope[i];
-			// prefer the project of the translation unit.
-			if (i != 0) {
-				if (cproject.equals(projectOfTU)) {
-					System.arraycopy(scope, 0, scope, 1, i);
-					scope[0]= projectOfTU;
-					cproject= scope[i];
+		try {
+			IIndex index= CCorePlugin.getIndexManager().getIndex(scope);
+			index.acquireReadLock();
+			
+			try {
+				IPath location= tu.getLocation();
+				if (location != null) {
+					IIndexFile file= index.getFile(location);
+					if (file != null) {
+						IIndexInclude[] includes= index.findIncludedBy(file);
+						for (int i = 0; i < includes.length; i++) {
+							IIndexInclude include = includes[i];
+							CIndexIncludeRelation rel= new CIndexIncludeRelation(include);
+							result.put(rel.getIncludedBy(), rel);
+						}
+					}
 				}
 			}
-			CIndexIncludeRelation[] includes= findIncludedBy(cproject, tu);	
-			for (int j = 0; j < includes.length; j++) {
-				CIndexIncludeRelation include = includes[j];
-				result.put(include.getIncludedBy(), include);
+			finally {
+				index.releaseReadLock();
 			}
+		}
+		catch (InterruptedException e) {
+		} 
+		catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
 		}
 		Collection includes= result.values();
 		return (CIndexIncludeRelation[]) includes.toArray(new CIndexIncludeRelation[includes.size()]);
-	}
-
-	/**
-	 * Searches for all include-relations in a project that include the given translation unit.
-	 * @param project the project to be searched.
-	 * @param tu a translation unit
-	 * @return an array of include relations.
-	 * @since 4.0
-	 */
-	public CIndexIncludeRelation[] findIncludedBy(ICProject project, ITranslationUnit tu) {
-		try {
-			PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
-			if (pdom != null) {
-				pdom.acquireReadLock();
-				try {
-					PDOMFile fileTarget= pdom.getFile(locationForTU(tu));
-					if (fileTarget != null) {
-						ArrayList result= new ArrayList();
-						PDOMInclude include= fileTarget.getFirstIncludedBy();
-						while (include != null) {
-							try {
-								result.add(new CIndexIncludeRelation(include));
-							} catch (CoreException e) {
-								CUIPlugin.getDefault().log(e);
-							}
-							include= include.getNextInIncludedBy();
-						}
-						return (CIndexIncludeRelation[]) result.toArray(new CIndexIncludeRelation[result.size()]);
-					}
-				}
-				finally {
-					pdom.releaseReadLock();
-				}
-			}
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		} catch (InterruptedException e) {
-		} 
-		return EMPTY_INCLUDES;
-	}
-
-	private IPath locationForTU(ITranslationUnit tu) {
-		IResource r= tu.getResource();
-		if (r != null) {
-			return r.getLocation();
-		}
-		return tu.getPath();
 	}
 	
 	/**
@@ -191,37 +148,36 @@ public class CIndexQueries {
 	 * @since 4.0
 	 */
 	public CIndexIncludeRelation[] findIncludesTo(ITranslationUnit tu, IProgressMonitor pm) {
-		ICProject cproject= tu.getCProject();
-		if (cproject != null) {
-			try {
-				PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(cproject);
-				if (pdom != null) {
-					pdom.acquireReadLock();
-					try {
-						PDOMFile fileTarget= pdom.getFile(locationForTU(tu));
-						if (fileTarget != null) {
+		try {
+			ICProject cproject= tu.getCProject();
+			if (cproject != null) {
+				IIndex index= CCorePlugin.getIndexManager().getIndex(cproject, IIndexManager.ADD_DEPENDENCIES);
+				index.acquireReadLock();
+				try {
+					IPath location= tu.getLocation();
+					if (location != null) {
+						IIndexFile file= index.getFile(location);
+						if (file != null) {
+							IIndexInclude includes[]= index.findIncludes(file);
 							ArrayList result= new ArrayList();
-							PDOMInclude include= fileTarget.getFirstInclude();
-							while (include != null) {
-								try {
-									result.add(new CIndexIncludeRelation(include));
-								} catch (CoreException e) {
-									CUIPlugin.getDefault().log(e);
-								}
-								include= include.getNextInIncludes();
+							for (int i = 0; i < includes.length; i++) {
+								IIndexInclude include = includes[i];
+								result.add(new CIndexIncludeRelation(include));
 							}
 							return (CIndexIncludeRelation[]) result.toArray(new CIndexIncludeRelation[result.size()]);
 						}
 					}
-					finally {
-						pdom.releaseReadLock();
-					}
 				}
-			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
-			} catch (InterruptedException e) {
-			}	
-		}		
+				finally {
+					index.releaseReadLock();
+				}
+			}
+		}
+		catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} 
+		catch (InterruptedException e) {
+		}	
 		return EMPTY_INCLUDES;
 	}
 
@@ -255,13 +211,11 @@ public class CIndexQueries {
 		ISourceRange range;
 		range = sf.getSourceRange();
 		ITranslationUnit tu= sf.getTranslationUnit();
-		IPDOM pdom= CCorePlugin.getPDOMManager().getPDOM(tu.getCProject());
-		if (pdom != null) {
-			pdom.acquireReadLock();
-		} 
+		IIndex index= CCorePlugin.getIndexManager().getIndex(scope);
+		index.acquireReadLock();
 		try {
 			ILanguage language = tu.getLanguage();
-			IASTTranslationUnit ast= language.getASTTranslationUnit(tu, ASTTU_OPTIONS);
+			IASTTranslationUnit ast= tu.getAST(index, ASTTU_OPTIONS);
 			if (ast == null) {
 				return;
 			}
@@ -272,60 +226,30 @@ public class CIndexQueries {
 			IASTName name= names[names.length-1];
 			for (int i = 0; i < scope.length; i++) {
 				ICProject project = scope[i];
-				findCalledBy(name, project, result);					
+				findCalledBy(index, name, project, result);					
 			}
 		}
 		finally {
-			if (pdom != null) {
-				pdom.releaseReadLock();
-			}
+			index.releaseReadLock();
 		}
 	}
 
-	private void findCalledBy(IASTName name, ICProject project, CalledByResult result) {
-		try {
-			PDOM pdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
-			if (pdom != null) {
-				pdom.acquireReadLock();
-				try {
-					IBinding binding= getPDOMBinding(pdom, name);
-					if (binding != null) {
-						IName[] names= pdom.getReferences(binding);
-						for (int i = 0; i < names.length; i++) {
-							IName rname = names[i];
-							ITranslationUnit tu= getTranslationUnit(project, rname);
-							CIndexReference ref= new CIndexReference(tu, rname);
-							ICElement elem = findCalledBy(ref);
-							if (elem != null) {
-								result.add(elem, ref);
-							} 
-						}
-					}
-				}
-				finally {
-					pdom.releaseReadLock();
-				}
+	private void findCalledBy(IIndex index, IASTName name, ICProject project, CalledByResult result) throws CoreException {
+		IBinding binding= name.resolveBinding();
+		if (binding != null) {
+			IName[] names= index.findReferences(binding);
+			for (int i = 0; i < names.length; i++) {
+				IName rname = names[i];
+				ITranslationUnit tu= getTranslationUnit(project, rname);
+				CIndexReference ref= new CIndexReference(tu, rname);
+				ICElement elem = findCalledBy(ref);
+				if (elem != null) {
+					result.add(elem, ref);
+				} 
 			}
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		} catch (InterruptedException e) {
 		}
 	}
 	
-	private IBinding getPDOMBinding(PDOM pdom, IASTName name) {
-		IBinding binding= name.resolveBinding();		
-		IASTTranslationUnit tu= name.getTranslationUnit();
-		ILanguage lang= tu.getLanguage();
-		PDOMLinkage linkage;
-		try {
-			linkage = pdom.getLinkage(lang);
-			return linkage.adaptBinding(binding);
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		}
-		return null;
-	}
-
 	private ICElement findCalledBy(CIndexReference reference) {
 		ITranslationUnit tu= reference.getTranslationUnit();
 		long timestamp= reference.getTimestamp();
@@ -399,13 +323,10 @@ public class CIndexQueries {
 	
 	private void findCallsInRange(ICProject[] scope, ITranslationUnit tu, IRegion range, IProgressMonitor pm, CallsToResult result) 
 			throws CoreException, InterruptedException {
-		IPDOM pdom= CCorePlugin.getPDOMManager().getPDOM(tu.getCProject());
-		if (pdom != null) {
-			pdom.acquireReadLock();
-		} 
+		IIndex index= CCorePlugin.getIndexManager().getIndex(scope);
+		index.acquireReadLock();
 		try {
-			ILanguage language = tu.getLanguage();
-			IASTTranslationUnit astTU= language.getASTTranslationUnit(tu, ASTTU_OPTIONS);
+			IASTTranslationUnit astTU= tu.getAST(index, ASTTU_OPTIONS);
 			if (astTU != null) {
 				ReferenceVisitor refVisitor= new ReferenceVisitor(astTU.getFilePath(), range.getOffset(), range.getLength());
 				astTU.accept(refVisitor);
@@ -415,9 +336,9 @@ public class CIndexQueries {
 					IASTName name = refs[i];
 					IBinding binding= name.resolveBinding();
 					if (isRelevantForCallHierarchy(binding)) {
-						ICElement[] defs = findAllDefinitions(scope, name);
+						ICElement[] defs = findAllDefinitions(index, name);
 						if (defs.length == 0) {
-							ICElement elem = findAnyDeclaration(scope, name);
+							ICElement elem = findAnyDeclaration(index, null, name);
 							if (elem != null) {
 								defs = new ICElement[] { elem };
 							}
@@ -431,67 +352,32 @@ public class CIndexQueries {
 			}
 		}
 		finally {
-			if (pdom != null) {
-				pdom.releaseReadLock();
-			}
+			index.releaseReadLock();
 		}
 	}
 	
-	public ICElement[] findAllDefinitions(ICProject[] projectsToSearch, IASTName name) {
-		ArrayList result= new ArrayList();
-		for (int i = 0; i < projectsToSearch.length; i++) {
-			ICProject project = projectsToSearch[i];
-			ICElement[] definitions= findAllDefinitions(project, name);
-			if (definitions != null && definitions.length > 0) {
-				result.addAll(Arrays.asList(definitions));
-			}
-		}
-		return (ICElement[]) result.toArray(new ICElement[result.size()]);
-	}
-			
-	public ICElement[] findAllDefinitions(ICProject project, IASTName name) {
-		PDOM pdom;
-		try {
-			pdom = (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
-			if (pdom != null) {
-				pdom.acquireReadLock();
-				try {
-					IBinding binding= getPDOMBinding(pdom, name);
-					if (binding != null) {
-						return getCElementsForNames(project, pdom.getDefinitions(binding));
-					}
-				}
-				finally {
-					pdom.releaseReadLock();
-				}
-			}
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		} catch (InterruptedException e) {
-		}
+	public ICElement[] findAllDefinitions(IIndex index, IASTName name) throws CoreException {
+		IBinding binding= name.resolveBinding();
+		if (binding != null) {
+			IIndexName[] defs= index.findDefinitions(binding);
 
-		return EMPTY_ELEMENTS;
-	}
-
-	private ICElement[] getCElementsForNames(ICProject project, IName[] defs) {
-		if (defs != null && defs.length > 0) {
-			HashSet result= new HashSet(defs.length);
+			ArrayList result= new ArrayList();
 			for (int i = 0; i < defs.length; i++) {
-				IName defName = defs[i];
-				assert !defName.isReference();
-				ICElement elem= getCElementForName(project, defName);
-				if (elem != null) {
-					result.add(elem);
+				IIndexName in = defs[i];
+				ICElement definition= getCElementForName(null, in);
+				if (definition != null) {
+					result.add(definition);
 				}
+				
 			}
 			return (ICElement[]) result.toArray(new ICElement[result.size()]);
 		}
 		return EMPTY_ELEMENTS;
 	}
-
-	private ICElement getCElementForName(ICProject project, IName declName) {
+			
+	public ICElement getCElementForName(ICProject preferProject, IName declName) {
 		assert !declName.isReference();
-		ITranslationUnit tu= getTranslationUnit(project, declName);
+		ITranslationUnit tu= getTranslationUnit(preferProject, declName);
 		if (tu != null) {
 			IRegion region= null;
 			if (declName instanceof IIndexName) {
@@ -553,104 +439,17 @@ public class CIndexQueries {
 		return deltaOffset >= 0 && deltaEndoffset <= 0;
 	}
 
-	public ICElement findDefinition(ICProject[] projectsToSearch, IASTName name) {
-		name.resolveBinding();
-		
-		for (int i = 0; i < projectsToSearch.length; i++) {
-			ICProject project = projectsToSearch[i];
-			ICElement definition= findDefinition(project, name);
-			if (definition != null) {
-				return definition;
-			}
-		}
-		return null;
-	}
-			
-	public ICElement findDefinition(ICProject project, IASTName name) {
-		if (name.isDefinition()) {
-			return getCElementForName(project, name);
-		}
-		
-		PDOM pdom;
-		try {
-			pdom = (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
-			if (pdom != null) {
-				pdom.acquireReadLock();
-				try {
-					IBinding binding= getPDOMBinding(pdom, name);
-					if (binding != null) {
-						ICElement elem= getFirstCElementForNames(project, pdom.getDefinitions(binding));
-						if (elem != null) {
-							return elem;
-						}
-					}
-				}
-				finally {
-					pdom.releaseReadLock();
-				}
-			}
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		} catch (InterruptedException e) {
-		}
-
-		return null;
-	}
-
-	private ICElement getFirstCElementForNames(ICProject project, IName[] defs) {
-		if (defs != null) {
-			for (int i = 0; i < defs.length; i++) {
-				IName defName = defs[i];
-				ICElement elem= getCElementForName(project, defName);
+	public ICElement findAnyDeclaration(IIndex index, ICProject preferProject, IASTName name) throws CoreException {
+		IBinding binding= name.resolveBinding();
+		if (binding != null) {
+			IIndexName[] names= index.findNames(binding, IIndex.FIND_DECLARATIONS);
+			for (int i = 0; i < names.length; i++) {
+				ICElement elem= getCElementForName(preferProject, names[i]);
 				if (elem != null) {
 					return elem;
 				}
 			}
 		}
-		return null;
-	}
-
-	public ICElement findAnyDeclaration(ICProject[] projectsToSearch, IASTName name) {
-		name.resolveBinding();
-		
-		for (int i = 0; i < projectsToSearch.length; i++) {
-			ICProject project = projectsToSearch[i];
-			ICElement declaration= findAnyDeclaration(project, name);
-			if (declaration != null) {
-				return declaration;
-			}
-		}
-		return null;
-	}
-			
-	public ICElement findAnyDeclaration(ICProject project, IASTName name) {
-		PDOM pdom;
-		try {
-			pdom = (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
-			if (pdom != null) {
-				pdom.acquireReadLock();
-				try {
-					IBinding binding= getPDOMBinding(pdom, name);
-					if (binding != null) {
-						ICElement elem= getFirstCElementForNames(project, pdom.getDefinitions(binding));
-						if (elem != null) {
-							return elem;
-						}
-						elem= getFirstCElementForNames(project, pdom.getDeclarations(binding));
-						if (elem != null) {
-							return elem;
-						}
-					}
-				}
-				finally {
-					pdom.releaseReadLock();
-				}
-			}
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		} catch (InterruptedException e) {
-		}
-
 		return null;
 	}
 }

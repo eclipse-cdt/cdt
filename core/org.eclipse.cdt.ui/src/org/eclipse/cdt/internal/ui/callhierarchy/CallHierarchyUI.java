@@ -23,14 +23,14 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -132,55 +132,53 @@ public class CallHierarchyUI {
     }
     
 	private static ICElement[] findDefinitions(ICProject project, IEditorInput editorInput, ITextSelection sel) throws CoreException {
-		CIndexQueries index= CIndexQueries.getInstance();
-		IPDOM pdom= CCorePlugin.getPDOMManager().getPDOM(project);
-		if (pdom != null) {
-			try {
-				pdom.acquireReadLock();
-			} catch (InterruptedException e) {
-				return null;
-			}
-		}
 		try {
-			IASTName name= getSelectedName(editorInput, sel);
-			if (name != null) {
-				IBinding binding= name.resolveBinding();
-				if (CIndexQueries.isRelevantForCallHierarchy(binding)) {
-					if (name.isDefinition()) {
-						ICElement elem= index.findDefinition(project, name);
-						if (elem != null) {
-							return new ICElement[]{elem};
-						}
-					}
-					else {
-						ICElement[] elems= index.findAllDefinitions(project, name);
-						if (elems.length == 0) {
-							ICProject[] allProjects= CoreModel.getDefault().getCModel().getCProjects();
-							elems= index.findAllDefinitions(allProjects, name);
-							if (elems.length == 0) {
-								ICElement elem= index.findAnyDeclaration(project, name);
-								if (elem == null) {
-									elem= index.findAnyDeclaration(allProjects, name);
-								}
-								if (elem != null) {
-									elems= new ICElement[] {elem};
-								}
+			CIndexQueries indexq= CIndexQueries.getInstance();
+			IIndex index= CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
+
+			index.acquireReadLock();
+			try {
+				IASTName name= getSelectedName(index, editorInput, sel);
+				if (name != null) {
+					IBinding binding= name.resolveBinding();
+					if (CIndexQueries.isRelevantForCallHierarchy(binding)) {
+						if (name.isDefinition()) {
+							ICElement elem= indexq.getCElementForName(project, name);
+							if (elem != null) {
+								return new ICElement[]{elem};
 							}
 						}
-						return elems;
+						else {
+							ICElement[] elems= indexq.findAllDefinitions(index, name);
+							if (elems.length == 0) {
+								elems= indexq.findAllDefinitions(index, name);
+								if (elems.length == 0) {
+									ICElement elem= indexq.findAnyDeclaration(index, project, name);
+									if (elems != null) {
+										elems= new ICElement[]{elem};
+									}
+								}
+							}
+							return elems;
+						}
 					}
 				}
 			}
-		}
-		finally {
-			if (pdom != null) {
-				pdom.releaseReadLock();
+			finally {
+				if (index != null) {
+					index.releaseReadLock();
+				}
 			}
+		}
+		catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} 
+		catch (InterruptedException e) {
 		}
 		return null;
 	}
 
-	private static IASTName getSelectedName(IEditorInput editorInput, ITextSelection selection) throws CoreException {
+	private static IASTName getSelectedName(IIndex index, IEditorInput editorInput, ITextSelection selection) throws CoreException {
 		int selectionStart = selection.getOffset();
 		int selectionLength = selection.getLength();
 
@@ -188,8 +186,8 @@ public class CallHierarchyUI {
 		if (workingCopy == null)
 			return null;
 		
-		int options= ILanguage.AST_SKIP_INDEXED_HEADERS | ILanguage.AST_USE_INDEX;
-		IASTTranslationUnit ast = workingCopy.getLanguage().getASTTranslationUnit(workingCopy, options);
+		int options= ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
+		IASTTranslationUnit ast = workingCopy.getAST(index, options);
 		FindNameForSelectionVisitor finder= new FindNameForSelectionVisitor(ast.getFilePath(), selectionStart, selectionLength);
 		ast.accept(finder);
 		return finder.getSelectedName();

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
@@ -14,21 +15,24 @@ package org.eclipse.cdt.internal.ui.search;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResult;
 
 /**
  * @author Doug Schaefer
@@ -101,37 +105,46 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	 * @param name
 	 * @return true to filter name out of the match list
 	 */
-	protected boolean filterName(PDOMName name) {
+	protected boolean filterName(IIndexName name) {
 		return false; // i.e. keep it
 	}
 	
-	private void collectNames(PDOMName name) throws CoreException {
-		while (name != null) {
+	private void collectNames(IIndex index, IIndexName[] names) throws CoreException {
+		for (int i = 0; i < names.length; i++) {
+			IIndexName name = names[i];
 			if (!filterName(name)) {
 				IASTFileLocation loc = name.getFileLocation();
-				result.addMatch(new PDOMSearchMatch(name, loc.getNodeOffset(), loc.getNodeLength()));
-				name = name.getNextInBinding();
+				IIndexBinding binding= index.findBinding(name);
+				result.addMatch(new PDOMSearchMatch(binding, name, loc.getNodeOffset(), loc.getNodeLength()));
 			}
 		}
 	}
 
-	protected void createMatches(ILanguage language, IBinding binding) throws CoreException {
-		IPDOMManager manager = CCorePlugin.getPDOMManager();
-		for (int i = 0; i < projects.length; ++i) {
-			PDOM pdom = (PDOM)manager.getPDOM(projects[i]);
-			PDOMBinding pdomBinding = pdom.getLinkage(language).adaptBinding(binding);
-			if (pdomBinding != null) {
-				if ((flags & FIND_DECLARATIONS) != 0) {
-					collectNames(pdomBinding.getFirstDeclaration());
-				}
-				if ((flags & FIND_DEFINITIONS) != 0) {
-					collectNames(pdomBinding.getFirstDefinition());
-				}
-				if ((flags & FIND_REFERENCES) != 0) {
-					collectNames(pdomBinding.getFirstReference());
-				}
-			}
-		}		
+	protected void createMatches(IIndex index, IBinding binding) throws CoreException {
+		if (binding != null) {
+			IIndexName[] names= index.findNames(binding, flags);
+			collectNames(index, names);
+		}
 	}
 
+	public final IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
+		try {
+			IIndex index= CCorePlugin.getIndexManager().getIndex(projects, 0);
+			try {
+				index.acquireReadLock();
+			} catch (InterruptedException e) {
+				return Status.CANCEL_STATUS;
+			}
+			try {
+				return runWithIndex(index, monitor);
+			}
+			finally {
+				index.releaseReadLock();
+			}
+		} catch (CoreException e) {
+			return e.getStatus();
+		}
+	}
+
+	abstract protected IStatus runWithIndex(IIndex index, IProgressMonitor monitor);
 }

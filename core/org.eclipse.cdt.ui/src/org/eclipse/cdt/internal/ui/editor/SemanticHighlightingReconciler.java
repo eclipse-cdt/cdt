@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.editor.ASTProvider.ASTRunnable;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
@@ -420,7 +422,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			
 			if (element != null) {
 				fJob= new Job(CEditorMessages.getString("SemanticHighlighting_job")) { //$NON-NLS-1$
-					protected IStatus run(IProgressMonitor monitor) {
+					protected IStatus run(final IProgressMonitor monitor) {
 						if (oldJob != null) {
 							try {
 								oldJob.join();
@@ -431,14 +433,21 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 						}
 						if (monitor.isCanceled())
 							return Status.CANCEL_STATUS;
-						IASTTranslationUnit ast= CUIPlugin.getDefault().getASTProvider().getAST(element, ASTProvider.WAIT_YES, monitor);
-						reconciled(ast, null, monitor);
-						synchronized (fJobLock) {
-							// allow the job to be gc'ed
-							if (fJob == this)
-								fJob= null;
-						}
-						return Status.OK_STATUS;
+						
+						final Job me= this;
+						ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
+						IStatus status= astProvider.runOnAST(element, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
+							public IStatus runOnAST(IASTTranslationUnit ast) {
+								reconciled(ast, null, monitor);
+								synchronized (fJobLock) {
+									// allow the job to be gc'ed
+									if (fJob == me)
+										fJob= null;
+								}
+								return Status.OK_STATUS;
+							}
+						});
+						return status;
 					}
 				};
 //				fJob.setSystem(true);

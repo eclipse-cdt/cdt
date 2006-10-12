@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.pdom.indexer.nulli;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
@@ -29,7 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class PDOMNullIndexer implements IPDOMIndexer {
 
-	public static final String ID = "org.eclipse.cdt.core.nullindexer"; //$NON-NLS-1$
+	public static final String ID = IPDOMManager.ID_NO_INDEXER;
 	
 	private ICProject project;
 	

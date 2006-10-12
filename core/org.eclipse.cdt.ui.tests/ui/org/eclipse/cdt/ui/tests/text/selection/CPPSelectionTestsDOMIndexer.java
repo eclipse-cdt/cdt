@@ -19,16 +19,6 @@ import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.make.core.MakeProjectNature;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -36,6 +26,19 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.make.core.MakeProjectNature;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
+
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * Test Ctrl_F3/F3 with the DOM Indexer for a C++ project.
@@ -47,7 +50,7 @@ public class CPPSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer {
 	IFile 					file;
 	NullProgressMonitor		monitor;
 
-	static final String sourceIndexerID = "org.eclipse.cdt.core.domsourceindexer"; //$NON-NLS-1$
+	static final String sourceIndexerID = IPDOMManager.ID_FULL_INDEXER; //$NON-NLS-1$
 	
 	public CPPSelectionTestsDOMIndexer(String name) {
 		super(name);

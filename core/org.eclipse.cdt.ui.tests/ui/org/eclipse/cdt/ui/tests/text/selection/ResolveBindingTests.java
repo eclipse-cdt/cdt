@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -49,7 +50,7 @@ public class ResolveBindingTests extends BaseTestCase  {
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCProject("ResolveBindingTests", "bin");
-		CCorePlugin.getPDOMManager().setIndexerId(fCProject, "org.eclipse.cdt.core.fastIndexer");
+		CCorePlugin.getPDOMManager().setIndexerId(fCProject, IPDOMManager.ID_FAST_INDEXER);
 		IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getIndexer(fCProject);
 		try {
 			indexer.reindex();

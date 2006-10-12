@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
@@ -14,6 +15,7 @@ package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
@@ -25,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMFastIndexer implements IPDOMIndexer {
 
 	// Must match extension id
-	public static final String ID = "org.eclipse.cdt.core.fastIndexer";
+	public static final String ID = IPDOMManager.ID_FAST_INDEXER;
 	
 	protected ICProject project;
 	

@@ -7,20 +7,18 @@
  *
  * Contributors:
  *     QNX software Systems - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/**
- * 
- */
 package org.eclipse.cdt.internal.ui.indexview;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.TreeViewer;
 
 /**
  * Sets all selected actions to use the Fast indexer.
@@ -39,7 +37,7 @@ public class SetFastIndexerAction extends IndexAction {
 			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
 			for (int i = 0; i < projects.length; ++i) {
 				try {
-					manager.setIndexerId(projects[i], PDOMFastIndexer.ID);
+					manager.setIndexerId(projects[i], IPDOMManager.ID_FAST_INDEXER);
 				} catch (CoreException e) {
 					CUIPlugin.getDefault().log(e);
 				}

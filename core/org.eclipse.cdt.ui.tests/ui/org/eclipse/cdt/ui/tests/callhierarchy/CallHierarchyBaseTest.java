@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPage;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -41,7 +42,7 @@ public class CallHierarchyBaseTest extends BaseTestCase {
 
 	protected void setUp() throws CoreException {
 		fCProject= CProjectHelper.createCProject("__chTest__", "bin");
-		CCorePlugin.getPDOMManager().setIndexerId(fCProject, "org.eclipse.cdt.core.fastIndexer");
+		CCorePlugin.getPDOMManager().setIndexerId(fCProject, IPDOMManager.ID_FAST_INDEXER);
 		IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getIndexer(fCProject);
 		try {
 			indexer.reindex();

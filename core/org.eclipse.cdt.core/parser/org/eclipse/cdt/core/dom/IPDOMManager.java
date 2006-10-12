@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.dom;
@@ -19,7 +20,10 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public interface IPDOMManager {
-
+	public static final String ID_NO_INDEXER= "org.eclipse.cdt.core.nullindexer"; //$NON-NLS-1$
+	public static final String ID_FAST_INDEXER= "org.eclipse.cdt.core.fastIndexer"; //$NON-NLS-1$
+	public static final String ID_FULL_INDEXER= "org.eclipse.cdt.core.domsourceindexer"; //$NON-NLS-1$
+	
 	// Getting the PDOM
 	public IPDOM getPDOM(ICProject project) throws CoreException;
 	

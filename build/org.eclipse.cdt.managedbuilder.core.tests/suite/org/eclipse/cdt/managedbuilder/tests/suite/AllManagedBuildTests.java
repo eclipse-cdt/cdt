@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.tests.suite;
 
@@ -14,7 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.managedbuilder.core.tests.BuildDescriptionModelTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests20;
@@ -41,9 +42,9 @@ public class AllManagedBuildTests {
 	}
 	public static Test suite() {
 		//  May/2005 Turning off all indexing for now because the "original" indexer causes hangs... 
-		CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, PDOMNullIndexer.ID);
+		CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, IPDOMManager.ID_NO_INDEXER);
 		//  We could enable this later...
-		//CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, "org.eclipse.cdt.core.domsourceindexer");
+		//CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, IPDOMManager.ID_FULL_INDEXER);
 
 		TestSuite suite = new TestSuite(
 				"Test for org.eclipse.cdt.managedbuild.core.tests");

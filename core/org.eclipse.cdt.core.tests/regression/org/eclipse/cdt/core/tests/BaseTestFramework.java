@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 /*
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
@@ -72,7 +74,7 @@ abstract public class BaseTestFramework extends TestCase {
 	}
         
     public void disableIndexing() throws CoreException {
-    	CCorePlugin.getPDOMManager().setIndexerId(cproject, "org.eclipse.cdt.core.nullindexer");
+    	CCorePlugin.getPDOMManager().setIndexerId(cproject, IPDOMManager.ID_NO_INDEXER);
     }
     
     public BaseTestFramework()

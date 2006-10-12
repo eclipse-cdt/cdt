@@ -1134,7 +1134,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	private void handleSuspendedBySignal( ICDISignalReceived signal ) {
-		fireSuspendEvent( DebugEvent.UNSPECIFIED );
+		fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
 	}
 
 	private void handleErrorInfo( ICDIErrorInfo info ) {

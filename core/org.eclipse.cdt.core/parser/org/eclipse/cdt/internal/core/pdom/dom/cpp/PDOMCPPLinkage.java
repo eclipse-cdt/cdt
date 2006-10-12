@@ -67,7 +67,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 
 	public PDOMCPPLinkage(PDOM pdom)
 			throws CoreException {
-		super(pdom, GPPLanguage.ID, CPP_LINKAGE_ID.toCharArray());
+		super(pdom, CPP_LINKAGE_ID, CPP_LINKAGE_ID.toCharArray());
 	}
 
 	public String getID() {

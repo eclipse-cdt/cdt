@@ -729,7 +729,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	}
 
 	private void handleSuspendedBySignal( ICDISignalReceived signal ) {
-		fireSuspendEvent( DebugEvent.UNSPECIFIED );
+		fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
 	}
 
 	private void handleTerminatedEvent( ICDIDestroyedEvent event ) {

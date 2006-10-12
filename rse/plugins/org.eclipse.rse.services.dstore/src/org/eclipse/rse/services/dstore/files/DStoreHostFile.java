@@ -97,6 +97,8 @@ public class DStoreHostFile implements IHostFile
 			{
 				String path = _element.getValue();
 				int lastSep = path.lastIndexOf('/');
+				if (lastSep == -1)
+					lastSep = path.lastIndexOf('\\');
 				name = path.substring(lastSep + 1);
 				return name;
 			}

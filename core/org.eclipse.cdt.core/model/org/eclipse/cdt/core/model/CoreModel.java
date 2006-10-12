@@ -326,14 +326,8 @@ public class CoreModel {
 	 */
 	public static String getRegistedContentTypeId(IProject project, String name) {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
-		if (contentType != null) {
-			String id = contentType.getId();
-			String[] ids = getRegistedContentTypeIds();
-			for (int i = 0; i < ids.length; i++) {
-				if (ids[i].equals(id)) {
-					return id;
-				}
-			}
+		if (contentType != null && LanguageManager.getInstance().getLanguage(contentType) != null) {
+			return contentType.getId();
 		}
 		return null;
 	}

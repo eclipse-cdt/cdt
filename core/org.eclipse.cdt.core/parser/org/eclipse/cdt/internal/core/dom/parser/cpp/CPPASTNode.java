@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
@@ -17,6 +19,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  */
 public abstract class CPPASTNode extends ASTNode {
 
-	// A little empty isn't it...
-	
+    public ILinkage getLinkage() {
+		return Linkage.CPP_LINKAGE;
+	}
 }

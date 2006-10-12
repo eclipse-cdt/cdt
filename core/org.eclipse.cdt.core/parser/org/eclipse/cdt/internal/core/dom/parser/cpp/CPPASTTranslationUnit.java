@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -56,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
@@ -67,7 +66,6 @@ import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner2.InvalidPreprocessorNodeException;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -83,7 +81,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
 
     private ILocationResolver resolver;
 
-    private IPDOM pdom;
+    private IIndex index;
 
     private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
 
@@ -189,11 +187,9 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
 
     public IName[] getDeclarations(IBinding b) {
         IName[] names = getDeclarationsInAST(b);
-        if (names.length == 0 && pdom != null) {
+        if (names.length == 0 && index != null) {
         	try {
-        		b = ((PDOM)pdom).getLinkage(getLanguage()).adaptBinding(b);
-        		if (binding != null)
-        			names = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).getDeclarations(b);
+        		names = index.findDeclarations(b);
         	} catch (CoreException e) {
         		CCorePlugin.log(e);
         		return names;
@@ -220,11 +216,9 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
 
     public IName[] getDefinitions(IBinding binding) {
     	IName[] names = getDefinitionsInAST(binding);
-        if (names.length == 0 && pdom != null) {
+        if (names.length == 0 && index != null) {
         	try {
-        		binding = ((PDOM)pdom).getLinkage(getLanguage()).adaptBinding(binding);
-        		if (binding != null)
-        			names = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).getDefinitions(binding);
+        		names = index.findDefinitions(binding);
         	} catch (CoreException e) {
         		CCorePlugin.log(e);
         		return names;
@@ -609,12 +603,12 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     	return new GPPLanguage();
     }
     
-    public IPDOM getIndex() {
-    	return pdom;
+    public IIndex getIndex() {
+    	return index;
     }
     
-    public void setIndex(IPDOM pdom) {
-    	this.pdom = pdom;
+    public void setIndex(IIndex pdom) {
+    	this.index = pdom;
     }
     
 }

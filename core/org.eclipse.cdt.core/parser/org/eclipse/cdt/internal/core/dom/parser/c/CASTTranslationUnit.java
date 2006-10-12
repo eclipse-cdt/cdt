@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -42,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
@@ -51,7 +50,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
 import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
 import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner2.InvalidPreprocessorNodeException;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -68,7 +66,7 @@ public class CASTTranslationUnit extends CASTNode implements
 
 	private ILocationResolver resolver;
 	
-	private IPDOM pdom;
+	private IIndex index;
 
 	private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
 
@@ -125,11 +123,9 @@ public class CASTTranslationUnit extends CASTNode implements
 	 */
 	public IName[] getDeclarations(IBinding binding) {
     	IName[] names= getDeclarationsInAST(binding);
-        if (names.length == 0 && pdom != null) {
+        if (names.length == 0 && index != null) {
         	try {
-        		binding = ((PDOM)pdom).getLinkage(getLanguage()).adaptBinding(binding);
-        		if (binding != null)
-        			names = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).getDeclarations(binding);
+        		names = index.findDeclarations(binding);
         	} catch (CoreException e) {
         		CCorePlugin.log(e);
         		return names;
@@ -156,11 +152,9 @@ public class CASTTranslationUnit extends CASTNode implements
      */
     public IName[] getDefinitions(IBinding binding) {
     	IName[] names= getDefinitionsInAST(binding);
-        if (names.length == 0 && pdom != null) {
+        if (names.length == 0 && index != null) {
         	try {
-        		binding = ((PDOM)pdom).getLinkage(getLanguage()).adaptBinding(binding);
-        		if (binding != null)
-        			names = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).getDefinitions(binding);
+        		names= index.findDefinitions(binding);
         	} catch (CoreException e) {
         		CCorePlugin.log(e);
         		return names;
@@ -566,12 +560,12 @@ public class CASTTranslationUnit extends CASTNode implements
     	return new GCCLanguage();
     }
     
-    public IPDOM getIndex() {
-    	return pdom;
+    public IIndex getIndex() {
+    	return index;
     }
     
-    public void setIndex(IPDOM pdom) {
-    	this.pdom = pdom;
+    public void setIndex(IIndex index) {
+    	this.index = index;
     }
     
 }

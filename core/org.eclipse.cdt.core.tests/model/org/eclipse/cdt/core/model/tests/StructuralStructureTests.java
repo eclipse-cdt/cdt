@@ -54,21 +54,21 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testAnonymousStructObject()
 	 */
-	public void testAnonymousStructObject() {
+	public void testAnonymousStructObject() throws CModelException {
 		setStructuralParse(true);
 		super.testAnonymousStructObject();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testGetAccessControl()
 	 */
-	public void testGetAccessControl() {
+	public void testGetAccessControl() throws CModelException {
 		setStructuralParse(true);
 		super.testGetAccessControl();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testGetBaseTypes()
 	 */
-	public void testGetBaseTypes() {
+	public void testGetBaseTypes() throws CModelException {
 		setStructuralParse(true);
 		super.testGetBaseTypes();
 	}

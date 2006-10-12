@@ -7,12 +7,15 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
@@ -86,13 +89,17 @@ public abstract class PDOMNode implements IPDOMNode{
 	
 	public PDOMNode getParentNode() throws CoreException {
 		int parentrec = pdom.getDB().getInt(record + PARENT);
-		return parentrec != 0 ? getLinkage().getNode(parentrec) : null;
+		return parentrec != 0 ? getLinkageImpl().getNode(parentrec) : null;
 	}
 	
-	public PDOMLinkage getLinkage() throws CoreException {
+	public ILinkage getLinkage() throws CoreException {
 		return getLinkage(pdom, record);
 	}
-	
+
+	public PDOMLinkage getLinkageImpl() throws CoreException {
+		return getLinkage(pdom, record);
+	}
+
 	public static PDOMLinkage getLinkage(PDOM pdom, int record) throws CoreException {
 		Database db = pdom.getDB();
 		int linkagerec = record;

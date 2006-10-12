@@ -22,6 +22,8 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -48,7 +50,7 @@ public class TypesTests extends PDOMTestBase {
 	
 	public void testC() throws Exception {
 		// Get the binding for A::f
-		IBinding [] CAs = pdom.findBindings(Pattern.compile("CA"), new NullProgressMonitor());
+		IBinding [] CAs = pdom.findBindings(Pattern.compile("CA"), false, new IndexFilter(), new NullProgressMonitor());
 		assertEquals(1, CAs.length);
 		ICompositeType CA = (ICompositeType)CAs[0];
 		IField [] CAfields = CA.getFields();
@@ -57,7 +59,7 @@ public class TypesTests extends PDOMTestBase {
 		assertEquals("x", x.getName());
 		
 		// Make sure that there is a reference in g();
-		IName[] xRefs = pdom.getReferences(x);
+		IName[] xRefs = pdom.findNames(x, IIndex.FIND_REFERENCES);
 		assertEquals(1, xRefs.length);
 		IASTFileLocation loc = xRefs[0].getFileLocation();
 		assertEquals(offset("typedef.c", "x->x") + 3, loc.getNodeOffset());
@@ -65,7 +67,7 @@ public class TypesTests extends PDOMTestBase {
 
 	public void testCPP() throws Exception {
 		// Get the binding for A::f
-		IBinding [] As = pdom.findBindings(Pattern.compile("A"), new NullProgressMonitor());
+		IBinding [] As = pdom.findBindings(Pattern.compile("A"), false, new IndexFilter(), new NullProgressMonitor());
 		assertEquals(1, As.length);
 		ICPPClassType A = (ICPPClassType)As[0];
 		ICPPMethod[] Amethods = A.getMethods();
@@ -74,17 +76,17 @@ public class TypesTests extends PDOMTestBase {
 		assertEquals("f", f.getName());
 		
 		// Make sure that there is a reference in g();
-		IName[] fRefs = pdom.getReferences(f);
+		IName[] fRefs = pdom.findNames(f, IIndex.FIND_REFERENCES);
 		assertEquals(1, fRefs.length);
 		IASTFileLocation loc = fRefs[0].getFileLocation();
 		assertEquals(offset("typedef.cpp", "x->f") + 3, loc.getNodeOffset());
 	}
 	
 	public void test145351() throws Exception {
-		IBinding [] bindings = pdom.findBindings(Pattern.compile("spinlock_t"), new NullProgressMonitor());
+		IBinding [] bindings = pdom.findBindings(Pattern.compile("spinlock_t"), false, new IndexFilter(), new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		ITypedef spinlock_t = (ITypedef)bindings[0];
-		IName [] refs = pdom.getReferences(spinlock_t);
+		IName [] refs = pdom.findNames(spinlock_t, IIndex.FIND_REFERENCES);
 		assertEquals(1, refs.length);
 		IASTFileLocation loc = refs[0].getFileLocation();
 		assertEquals(offset("bug145351.c", "spinlock_t global_bh_lock"), loc.getNodeOffset());

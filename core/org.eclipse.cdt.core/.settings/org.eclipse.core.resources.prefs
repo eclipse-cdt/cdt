@@ -1,3 +1,5 @@
-#Mon Oct 09 11:18:42 BST 2006
+#Tue Oct 10 16:32:29 CEST 2006
 eclipse.preferences.version=1
+encoding//parser/org/eclipse/cdt/internal/core/index/messages.properties=8859_1
 encoding//parser/org/eclipse/cdt/internal/core/pdom/db/messages.properties=8859_1
+encoding//parser/org/eclipse/cdt/internal/core/pdom/messages.properties=8859_1

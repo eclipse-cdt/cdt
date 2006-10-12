@@ -35,7 +35,9 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -57,13 +59,13 @@ class PDOMCLinkage extends PDOMLinkage {
 	}
 
 	public PDOMCLinkage(PDOM pdom) throws CoreException {
-		super(pdom, GCCLanguage.ID, "C".toCharArray()); //$NON-NLS-1$
+		super(pdom, GCCLanguage.ID, C_LINKAGE_ID.toCharArray()); 
 	}
 	
-	public int getNodeType() {
-		return LINKAGE;
+	public String getID() {
+		return C_LINKAGE_ID;
 	}
-
+	
 	public static final int CVARIABLE = PDOMLinkage.LAST_NODE_TYPE + 1;
 	public static final int CFUNCTION = PDOMLinkage.LAST_NODE_TYPE + 2;
 	public static final int CSTRUCTURE = PDOMLinkage.LAST_NODE_TYPE + 3;
@@ -75,30 +77,7 @@ class PDOMCLinkage extends PDOMLinkage {
 	public ILanguage getLanguage() {
 		return new GCCLanguage();
 	}
-	
-	public PDOMNode getParent(IBinding binding) throws CoreException {
-		IScope scope = binding.getScope();
-		if (scope == null)
-			return null;
 		
-		IASTNode scopeNode = scope.getPhysicalNode();
-		if (scopeNode instanceof IASTCompoundStatement)
-			return null;
-		else if (scopeNode instanceof IASTTranslationUnit)
-			return this;
-		else {
-			IName scopeName = scope.getScopeName();
-			if (scopeName != null) {
-				IBinding scopeBinding = scopeName.resolveBinding();
-				PDOMBinding scopePDOMBinding = adaptBinding(scopeBinding);
-				if (scopePDOMBinding != null)
-					return scopePDOMBinding;
-			}
-		}
-			
-		return null;
-	}
-	
 	public PDOMBinding addName(IASTName name, PDOMFile file) throws CoreException {
 		if (name == null)
 			return null;
@@ -118,7 +97,7 @@ class PDOMCLinkage extends PDOMLinkage {
 	
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		if (pdomBinding == null) {
-			PDOMNode parent = getParent(binding);
+			PDOMNode parent = getAdaptedParent(binding);
 			if (parent == null)
 				return null;
 			
@@ -236,7 +215,7 @@ class PDOMCLinkage extends PDOMLinkage {
 			// so if the binding is from another pdom it has to be adapted. 
 		}
 		
-		PDOMNode parent = getParent(binding);
+		PDOMNode parent = getAdaptedParent(binding);
 		if (parent == this) {
 			FindBinding visitor = new FindBinding(pdom, binding.getNameCharArray(), getBindingType(binding));
 			getIndex().accept(visitor);
@@ -280,7 +259,7 @@ class PDOMCLinkage extends PDOMLinkage {
 		return super.getNode(record);
 	}
 
-	public IBinding resolveBinding(IASTName name) throws CoreException {
+	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
 		IASTNode parent = name.getParent();
 		if (parent instanceof IASTIdExpression) {
 			// reference

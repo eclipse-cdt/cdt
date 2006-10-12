@@ -7,13 +7,19 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Represents an entire C translation unit (<code>.c</code> source file).
@@ -25,6 +31,23 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * the case.
  */
 public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISourceReference, ISourceManipulation {
+	
+	/**
+	 * Style for {@link #getAST(IIndex, int)}. Don't parse header files. 
+	 */
+	public static final int AST_SKIP_ALL_HEADERS = 2;
+
+	/**
+	 * Style for {@link #getAST(IIndex, int)}. Skips over headers that are found in the index.
+	 */
+	public static final int AST_SKIP_INDEXED_HEADERS = 4;
+
+	/**
+	 * Style for {@link #getAST(IIndex, int)}. Don't parse the file if there is no build
+	 * information for it.
+	 */
+	public static final int AST_SKIP_IF_NO_BUILD_INFO = 8;
+
 	/**
 	 * Creates and returns an include declaration in this translation unit
 	 * with the given name.
@@ -386,4 +409,51 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * 
 	 */
 	public void setIsStructureKnown(boolean wasSuccessful);
+	
+	/**
+	 * Returns the absolute path of the location of the translation unit. May be <code>null</code>, in 
+	 * case the location does not exist.
+	 * @return an absolute path to the location, or <code>null</code>
+	 * @since 4.0
+	 */
+	public IPath getLocation();
+
+	/**
+	 * Returns the code reader that can be used to parse the translation unit. If the translation unit is a 
+	 * working copy the reader will read from the buffer.
+	 * @return a code reader for parsing the translation unit
+	 * @since 4.0
+	 */
+	public CodeReader getCodeReader();
+
+	/**
+	 * Returns the scanner info associated with this translation unit. May return <code>null</code> if no 
+	 * configuration is available.
+	 * @param force if <code>true</code> a default info is returned, even if nothing is configured for this
+	 * translation unit
+	 * @return a scanner info for parsing the translation unit or <code>null</code> if none is configured
+	 * @since 4.0
+	 */
+	public IScannerInfo getScannerInfo(boolean force);
+
+	/**
+	 * Creates the full AST for this translation unit. May return <code>null</code> if the language of this
+	 * translation unit does not support ASTs.
+	 * @return the AST for the translation unit or <code>null</code>
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	public IASTTranslationUnit getAST() throws CoreException;
+
+	/**
+	 * Creates an AST based on the requested style. May return <code>null</code> if the language of this
+	 * translation unit does not support ASTs.
+	 * @param index	index to back up the parsing of the AST, may be <code>null</code>
+	 * @param style <code>0</code> or a combination of {@link #AST_SKIP_ALL_HEADERS}, 
+	 * {@link #AST_SKIP_IF_NO_BUILD_INFO} and {@link #AST_SKIP_INDEXED_HEADERS}
+	 * @return the AST requested or <code>null</code>
+	 * @throws CoreException
+	 * @since 4.0
+	 */
+	public IASTTranslationUnit getAST(IIndex index, int style) throws CoreException;
 }

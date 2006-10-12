@@ -23,11 +23,12 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 
 /**
  * @author aniefer
  */
-public class CPPUnknownScope implements ICPPScope {
+public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
     private IBinding binding = null;
     private IASTName scopeName = null;
     private CharArrayObjectMap map = null;

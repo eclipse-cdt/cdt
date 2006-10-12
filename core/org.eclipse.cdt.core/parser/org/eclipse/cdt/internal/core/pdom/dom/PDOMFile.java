@@ -7,15 +7,18 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexMacro;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -29,7 +32,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMFile {
+public class PDOMFile implements IIndexFragmentFile {
 
 	private final PDOM pdom;
 	private final int record;
@@ -167,11 +170,12 @@ public class PDOMFile {
 	public void addMacro(IASTPreprocessorMacroDefinition macro) throws CoreException {
 		PDOMMacro firstMacro = getFirstMacro();
 		
+		// mstodo revisit: this can probably be done more efficiently
 		// Make sure we don't already have one
 		char[] name = macro.getName().toCharArray();
 		PDOMMacro pdomMacro = firstMacro;
 		while (pdomMacro != null) {
-			if (pdomMacro.getName().equals(name))
+			if (pdomMacro.getNameInDB().equals(name))
 				return;
 			pdomMacro = pdomMacro.getNextMacro();
 		}
@@ -235,64 +239,33 @@ public class PDOMFile {
 		setFirstIncludedBy(include);
 	}
 	
-	public PDOMFile[] getAllIncludedBy() throws CoreException {
-		Map files = new HashMap();
-		LinkedList todo = new LinkedList();
-		
-		// Add me in to make sure we don't get caught in a circular include
-		IString myFileName = getFileName();
-		files.put(myFileName, this);
-		
-		todo.addLast(this);
-		while (todo.size() > 0) {
-			PDOMFile file = (PDOMFile)todo.removeFirst();
-			PDOMInclude includedBy = file.getFirstIncludedBy();
-			while (includedBy != null) {
-				PDOMFile incFile = includedBy.getIncludedBy();
-				IString incFileName = incFile.getFileName();
-				if (files.get(incFileName) == null) {
-					files.put(incFileName, incFile);
-					todo.addLast(incFile);
-				}
-				includedBy = includedBy.getNextInIncludedBy();
-			}
+	
+	
+	public IIndexInclude[] getIncludes() throws CoreException {
+		List result= new ArrayList();
+		PDOMInclude include = getFirstInclude();
+		while (include != null) {
+			result.add(include);
+			include = include.getNextInIncludes();
 		}
-		
-		// Now remove me
-		files.remove(myFileName);
-		
-		Collection values = files.values(); 
-		return (PDOMFile[])values.toArray(new PDOMFile[values.size()]);
+		return (IIndexInclude[]) result.toArray(new IIndexInclude[result.size()]);
+	}
+
+	public String getLocation() throws CoreException {
+		return getFileName().getString();
+	}
+
+	public IIndexMacro[] getMacros() throws CoreException {
+		List result= new ArrayList();
+		PDOMMacro macro = getFirstMacro();
+		while (macro != null) {
+			result.add(macro);
+			macro = macro.getNextMacro();
+		}
+		return (IIndexMacro[]) result.toArray(new IIndexMacro[result.size()]);
 	}
 	
-	public PDOMFile[] getAllIncludes() throws CoreException {
-		Map files = new HashMap();
-		LinkedList todo = new LinkedList();
-		
-		// Add me in to make sure we don't get caught in a circular include
-		IString myFileName = getFileName();
-		files.put(myFileName, this);
-		
-		todo.addLast(this);
-		while (todo.size() > 0) {
-			PDOMFile file = (PDOMFile)todo.removeFirst();
-			PDOMInclude include = file.getFirstInclude();
-			while (include != null) {
-				PDOMFile incFile = include.getIncludes();
-				IString incFileName = incFile.getFileName();
-				if (files.get(incFileName) == null) {
-					files.put(incFileName, incFile);
-					todo.addLast(incFile);
-				}
-				include = include.getNextInIncludes();
-			}
-		}
-		
-		// Now remove me
-		files.remove(myFileName);
-		
-		Collection values = files.values(); 
-		return (PDOMFile[])values.toArray(new PDOMFile[values.size()]);
+	public IIndexFragment getIndexFragment() {
+		return pdom;
 	}
-	
 }

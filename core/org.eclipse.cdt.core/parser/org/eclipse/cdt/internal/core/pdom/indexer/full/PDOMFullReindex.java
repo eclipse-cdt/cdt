@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
@@ -15,7 +16,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,7 +37,7 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 			long start = System.currentTimeMillis();
 			
 			// First clear out the PDOM
-			pdom.clear();
+			index.clear();
 			
 			// First index all the source files (i.e. not headers)
 			indexer.getProject().accept(new ICElementVisitor() {
@@ -74,11 +74,9 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 					case ICElement.C_UNIT:
 						ITranslationUnit tu = (ITranslationUnit)element;
 						if (tu.isHeaderUnit()) {
-							IFile rfile = (IFile)tu.getUnderlyingResource();
-							IPath fileLocation = rfile.getLocation();
+							IPath fileLocation = tu.getLocation();
 							if ( fileLocation != null ) {
-								String filename = fileLocation.toOSString();
-								if (pdom.getFile(filename) == null) {
+								if (index.getFile(fileLocation) == null) {
 									try {
 										addTU(tu);
 									} catch (InterruptedException e) {

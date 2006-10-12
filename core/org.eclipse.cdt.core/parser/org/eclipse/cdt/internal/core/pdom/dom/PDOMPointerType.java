@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -47,7 +48,7 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 		IType targetType = ((ITypeContainer)type).getType();
 		int typeRec = 0;
 		if (type != null) {
-			PDOMNode targetTypeNode = getLinkage().addType(this, targetType);
+			PDOMNode targetTypeNode = getLinkageImpl().addType(this, targetType);
 			if (targetTypeNode != null)
 				typeRec = targetTypeNode.getRecord();
 		}
@@ -76,7 +77,7 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 	
 	public IType getType() throws DOMException {
 		try {
-			PDOMNode node = getLinkage().getNode(pdom.getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

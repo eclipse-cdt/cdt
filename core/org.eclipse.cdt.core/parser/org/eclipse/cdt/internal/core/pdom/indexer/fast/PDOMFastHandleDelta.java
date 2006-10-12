@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
@@ -16,13 +17,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.PDOMCodeReaderFactory;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -121,47 +120,15 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 		}
 	}
 	
-	protected void changeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
-		ILanguage language = tu.getLanguage();
-		if (language == null)
-			return;
-	
-		PDOMCodeReaderFactory codeReaderFactory = new PDOMCodeReaderFactory(pdom);
-		
-		// get the AST in a "Fast" way
-		IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
-				codeReaderFactory,
-				ILanguage.AST_USE_INDEX	| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
-		if (ast == null)
-			return;
-
-		// Clear the macros
-		codeReaderFactory.clearMacros();
-
-		pdom.acquireWriteLock();
-		try {
-			// Remove the old symbols in the tu
-			IPath path = ((IFile)tu.getResource()).getLocation();
-			PDOMFile file = pdom.getFile(path);
-			if (file != null)
-				file.clear();
-
-			// Add the new symbols
-			addSymbols(tu.getLanguage(), ast);
-		} finally {
-			pdom.releaseWriteLock();
-		}
-	}
-
 	protected void removeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
-		pdom.acquireWriteLock();
+		index.acquireWriteLock(0);
 		try {
 			IPath path = ((IFile)tu.getResource()).getLocation();
-			PDOMFile file = pdom.getFile(path);
+			IIndexFragmentFile file = (IIndexFragmentFile) index.getFile(path);
 			if (file != null)
-				file.clear();
+				index.clearFile(file);
 		} finally {
-			pdom.releaseWriteLock();
+			index.releaseWriteLock(0);
 		}
 	}
 

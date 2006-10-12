@@ -7,20 +7,20 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.indexer.nulli;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
+import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.index.IWritableIndex;
+import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @author Doug Schaefer
@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class PDOMNullIndexer implements IPDOMIndexer {
 
-	public static final String ID = "org.eclipse.cdt.core.nullindexer";
+	public static final String ID = "org.eclipse.cdt.core.nullindexer"; //$NON-NLS-1$
 	
 	private ICProject project;
 	
@@ -43,33 +43,32 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 	
 	public void handleDelta(ICElementDelta delta) {
 	}
-	
-	private class Reindex extends Job {
-		public Reindex() {
-			super("Null Reindex"); //$NON-NLS-1$
-			setSystem(true);
+		
+	private class PDOMNullReindex implements IPDOMIndexerTask {
+		public IPDOMIndexer getIndexer() {
+			return PDOMNullIndexer.this;
 		}
-		protected IStatus run(IProgressMonitor monitor) {
+
+		public void run(IProgressMonitor monitor) {
 			try {
-				PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+				IWritableIndex index= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(project);
+				index.acquireWriteLock(0);
 				try {
-					pdom.acquireWriteLock();
-					pdom.clear();
-					return Status.OK_STATUS;
-				} catch (CoreException e) {
-					return e.getStatus();
-				} catch (InterruptedException e) {
-					return Status.CANCEL_STATUS;
-				} finally {
-					pdom.releaseWriteLock();
+					index.clear();
 				}
-			} catch (CoreException e) {
-				return e.getStatus();
+				finally {
+					index.releaseWriteLock(0);
+				}
+			}
+			catch (InterruptedException e) {
+			} 
+			catch (CoreException e) {
+				CCorePlugin.log(e);
 			}
 		}
 	}
 	public void reindex() throws CoreException {
-		new Reindex().schedule();
+		CCorePlugin.getPDOMManager().enqueue(new PDOMNullReindex());
 	}
 
 }

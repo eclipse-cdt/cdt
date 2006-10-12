@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Mar 31, 2005
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 
 /**
  * @author aniefer
@@ -64,7 +66,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 		if( scope instanceof ICPPTemplateScope )
 		    scope = scope.getParent();
 		ICPPClassScope clsScope = (ICPPClassScope) scope;
-		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) clsScope.getPhysicalNode();
+		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(clsScope);
 		IASTDeclaration [] members = compSpec.getMembers();
 		for( int i = 0; i < members.length; i++ ){
 		    if( members[i] instanceof ICPPASTTemplateDeclaration ){

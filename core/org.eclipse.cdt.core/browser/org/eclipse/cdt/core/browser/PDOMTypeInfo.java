@@ -15,13 +15,14 @@ package org.eclipse.cdt.core.browser;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
@@ -120,9 +121,8 @@ public class PDOMTypeInfo implements ITypeInfo {
 
 	public ITypeReference getResolvedReference() {
 		try {
-			IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
-			IPDOMResolver resolver = (IPDOMResolver) pdom.getAdapter(IPDOMResolver.class);
-			IName[] names= resolver.getDefinitions(binding);
+			PDOM pdom = (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
+			IName[] names= pdom.findNames(binding, IIndex.FIND_DEFINITIONS);
 			return names != null && names.length > 0 ? new PDOMTypeReference(names[0], project) : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

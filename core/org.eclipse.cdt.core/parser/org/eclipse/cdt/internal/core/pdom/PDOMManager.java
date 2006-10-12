@@ -7,10 +7,19 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
@@ -19,12 +28,21 @@ import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.internal.core.index.CIndex;
+import org.eclipse.cdt.internal.core.index.EmptyCIndex;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.index.IWritableIndex;
+import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
+import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
+import org.eclipse.cdt.internal.core.index.WritableCIndex;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -51,7 +69,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * 
  * @author Doug Schaefer
  */
-public class PDOMManager implements IPDOMManager, IElementChangedListener {
+public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElementChangedListener {
 
 	private static final QualifiedName indexerProperty
 		= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomIndexer"); //$NON-NLS-1$
@@ -62,7 +80,7 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 
 	public synchronized IPDOM getPDOM(ICProject project) throws CoreException {
 		IProject rproject = project.getProject();
-		PDOM pdom = (PDOM)rproject.getSessionProperty(pdomProperty);
+		WritablePDOM pdom = (WritablePDOM)rproject.getSessionProperty(pdomProperty);
 		if (pdom == null) {
 			String dbName = rproject.getPersistentProperty(dbNameProperty);
 			if (dbName == null) {
@@ -71,7 +89,7 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 				rproject.setPersistentProperty(dbNameProperty, dbName);
 			}
 			IPath dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
-			pdom = new PDOM(dbPath);
+			pdom = new WritablePDOM(dbPath);
 			rproject.setSessionProperty(pdomProperty, pdom);
 			if (pdom.versionMismatch())
 				getIndexer(project).reindex();
@@ -95,6 +113,139 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 		}
 	}
 	
+	public IIndex getIndex(ICProject project) throws CoreException {
+		return getIndex(new ICProject[] {project}, 0);
+	}
+
+	public IIndex getIndex(ICProject project, int options) throws CoreException {
+		return getIndex(new ICProject[] {project}, options);
+	}
+	
+	public IIndex getIndex(ICProject[] projects) throws CoreException {
+		return getIndex(projects, 0);
+	}
+	
+	public IIndex getIndex(ICProject[] projects, int options) throws CoreException {
+		boolean addDependencies= (options & ADD_DEPENDENCIES) != 0;
+		boolean addDependent=    (options & ADD_DEPENDENT) != 0;
+		
+		HashMap map= new HashMap();
+		Collection selectedProjects= getProjects(projects, addDependencies, addDependent, map, new Integer(1));
+		
+		ArrayList pdoms= new ArrayList();
+		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
+			ICProject project = (ICProject) iter.next();
+			IWritableIndexFragment pdom= (IWritableIndexFragment) getPDOM(project);
+			if (pdom != null) {
+				pdoms.add(pdom);
+			}
+		}
+		if (pdoms.isEmpty()) {
+			return EmptyCIndex.INSTANCE;
+		}
+		
+		// todo add the SDKs
+		int primaryFragmentCount= pdoms.size();
+		
+		if (!addDependencies) {
+			projects= (ICProject[]) selectedProjects.toArray(new ICProject[selectedProjects.size()]);
+			selectedProjects.clear();
+			// don't clear the map, so projects are not selected again
+			selectedProjects= getProjects(projects, true, false, map, new Integer(2));
+			for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
+				ICProject project = (ICProject) iter.next();
+				IWritableIndexFragment pdom= (IWritableIndexFragment) getPDOM(project);
+				if (pdom != null) {
+					pdoms.add(pdom);
+				}
+			}
+			// todo add further SDKs
+		}
+		
+		return new CIndex((IIndexFragment[]) pdoms.toArray(new IIndexFragment[pdoms.size()]), primaryFragmentCount); 
+	}
+
+	private Collection getProjects(ICProject[] projects, boolean addDependencies, boolean addDependent, HashMap map, Integer markWith) {
+		List projectsToSearch= new ArrayList();
+		
+		for (int i = 0; i < projects.length; i++) {
+			ICProject cproject = projects[i];
+			IProject project= cproject.getProject();
+			checkAddProject(project, map, projectsToSearch, markWith);
+		}
+		
+		if (addDependencies || addDependent) {
+			for (int i=0; i<projectsToSearch.size(); i++) {
+				IProject project= (IProject) projectsToSearch.get(i);
+				IProject[] nextLevel;
+				try {
+					if (addDependencies) {
+						nextLevel = project.getReferencedProjects();
+						for (int j = 0; j < nextLevel.length; j++) {
+							checkAddProject(nextLevel[j], map, projectsToSearch, markWith);
+						}
+					}
+					if (addDependent) {
+						nextLevel= project.getReferencingProjects();
+						for (int j = 0; j < nextLevel.length; j++) {
+							checkAddProject(nextLevel[j], map, projectsToSearch, markWith);
+						}
+					}
+				} catch (CoreException e) {
+					// silently ignore
+					map.put(project, new Integer(0));
+				}
+			}
+		}
+		
+		CoreModel cm= CoreModel.getDefault();
+		Collection result= new ArrayList();
+		for (Iterator iter= map.entrySet().iterator(); iter.hasNext(); ) {
+			Map.Entry entry= (Map.Entry) iter.next();
+			if (entry.getValue() == markWith) {
+				ICProject cproject= cm.create((IProject) entry.getKey());
+				if (cproject != null) {
+					result.add(cproject);
+				}
+			}
+		}
+		return result;
+	}
+
+	private void checkAddProject(IProject project, HashMap map, List projectsToSearch, Integer markWith) {
+		if (map.get(project) == null) {
+			if (project.isOpen()) {
+				map.put(project, markWith);
+				projectsToSearch.add(project);
+			}
+			else {
+				map.put(project, new Integer(0));
+			}
+		}
+	}
+
+	public IWritableIndex getWritableIndex(ICProject project) throws CoreException {
+// mstodo to support dependent projects: Collection selectedProjects= getSelectedProjects(new ICProject[]{project}, false);
+		
+		Collection selectedProjects= Collections.singleton(project);
+		
+		ArrayList pdoms= new ArrayList();
+		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
+			ICProject p = (ICProject) iter.next();
+			IWritableIndexFragment pdom= (IWritableIndexFragment) getPDOM(p);
+			if (pdom != null) {
+				pdoms.add(pdom);
+			}
+		}
+		
+		if (pdoms.isEmpty()) {
+			throw new CoreException(CCorePlugin.createStatus(
+					MessageFormat.format("Cannot obtain index for project ''{0}''", new Object[]{project.getElementName()})));
+		}
+		
+		return new WritableCIndex((IWritableIndexFragment[]) pdoms.toArray(new IWritableIndexFragment[pdoms.size()]), new IIndexFragment[0]);
+	}
+
 	public synchronized void elementChanged(ElementChangedEvent event) {
 		// Only respond to post change events
 		if (event.getType() != ElementChangedEvent.POST_CHANGE)

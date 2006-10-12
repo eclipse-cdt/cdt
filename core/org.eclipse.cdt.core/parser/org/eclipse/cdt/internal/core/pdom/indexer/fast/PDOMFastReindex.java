@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
@@ -57,7 +58,13 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 			long start = System.currentTimeMillis();
 			
 			// First clear the pdom
-			pdom.clear();
+			index.acquireWriteLock(0);
+			try {
+				index.clear();
+			}
+			finally {
+				index.releaseWriteLock(0);
+			}
 			
 			ISourceRoot[] roots = indexer.getProject().getAllSourceRoots();
 			for (int i = 0; i < roots.length; ++i)
@@ -66,11 +73,12 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 					+ "/debug/pdomtimings"); //$NON-NLS-1$
 			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
-				System.out.println("PDOM Fast Reindex Time: " + (System.currentTimeMillis() - start)
+				System.out.println("PDOM Fast Reindex Time: " + (System.currentTimeMillis() - start) //$NON-NLS-1$
 						+ " " + indexer.getProject().getElementName()); //$NON-NLS-1$
 
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
+		} catch (InterruptedException e) {
 		}
 	}
 

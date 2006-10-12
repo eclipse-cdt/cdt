@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Dec 1, 2004
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -37,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.PlatformObject;
@@ -240,7 +243,7 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return tu != null ? null : namespaceDefinitions[0].toString(); //$NON-NLS-1$
+		return tu != null ? null : namespaceDefinitions[0].toString(); 
 	}
 
 	/* (non-Javadoc)
@@ -363,4 +366,7 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
+	public ILinkage getLinkage() {
+		return Linkage.CPP_LINKAGE;
+	}
 }

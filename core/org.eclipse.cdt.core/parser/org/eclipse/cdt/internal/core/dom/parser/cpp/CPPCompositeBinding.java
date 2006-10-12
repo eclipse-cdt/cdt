@@ -13,11 +13,14 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -64,6 +67,10 @@ public class CPPCompositeBinding extends PlatformObject implements IBinding {
 	 */
 	public IBinding[] getBindings() {
 		return bindings;
+	}
+
+	public ILinkage getLinkage() throws CoreException {
+		return Linkage.CPP_LINKAGE;
 	}
 
 }

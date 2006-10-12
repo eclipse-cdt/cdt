@@ -7,12 +7,16 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
+ * Represents the semantics of a name found in the AST or the index.
  * @author Doug Schaefer
  */
 public interface IBinding extends IAdaptable {
@@ -37,5 +41,10 @@ public interface IBinding extends IAdaptable {
 	 * @return the scope of this name
 	 */
 	public IScope getScope() throws DOMException;
+	
+	/**
+	 * Every binding has a linkage.
+	 */
+	public ILinkage getLinkage() throws CoreException;
 
 }

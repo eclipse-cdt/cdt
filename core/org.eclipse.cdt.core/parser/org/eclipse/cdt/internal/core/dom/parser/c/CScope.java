@@ -35,11 +35,12 @@ import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 
 /**
  * @author aniefer
  */
-public class CScope implements ICScope {
+public class CScope implements ICScope, IASTInternalScope {
 	/**
 	 * ISO C:99 6.2.3 there are seperate namespaces for various categories of
 	 * identifiers: - label names ( labels have ICFunctionScope ) - tags of

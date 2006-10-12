@@ -14,8 +14,9 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
+import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
@@ -24,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMName implements IIndexName, IASTFileLocation {
+public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	private final PDOM pdom;
 	private final int record;
@@ -162,7 +163,7 @@ public class PDOMName implements IIndexName, IASTFileLocation {
 		setNameField(FILE_PREV_OFFSET, name);
 	}
 	
-	public IBinding resolveBinding() {
+	public PDOMBinding resolveBinding() {
 		try {
 			int bindingRecord = pdom.getDB().getInt(record + BINDING_REC_OFFSET);
 			return pdom.getBinding(bindingRecord);
@@ -288,5 +289,12 @@ public class PDOMName implements IIndexName, IASTFileLocation {
 		// Delete our record
 		pdom.getDB().free(record);
 	}
+
+	public IIndexFragment getIndexFragment() {
+		return pdom;
+	}
 	
+	public IIndexProxyBinding getBinding() throws CoreException {
+		return getPDOMBinding();
+	}
 }

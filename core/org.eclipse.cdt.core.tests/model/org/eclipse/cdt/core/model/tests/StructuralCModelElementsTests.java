@@ -96,12 +96,9 @@ public class StructuralCModelElementsTests extends TestCase {
 			
 	public void testCModelElements() throws CModelException{
 		ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(headerFile);
-		//ITranslationUnit included = (ITranslationUnit)CoreModel.getDefault().create(includedFile);
 		// turn on the structural parse mode
+		tu.close();
 		CCorePlugin.getDefault().setStructuralParseMode(true);
-		
-		// parse the translation unit to get the elements tree		
-		tu.parse(); 
 		
 		// tu ---> include
 		checkInclude(tu);

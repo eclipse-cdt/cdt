@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 QNX Software Systems and others.
+ * Copyright (c) 2002, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -89,13 +91,7 @@ public class ContentTypeProcessor extends CModelOperation {
 		if (id == null || id.length() == 0) {
 			return false;
 		}
-		String[] ids = CoreModel.getRegistedContentTypeIds();
-		for (int i = 0; i < ids.length; i++) {
-			if (ids[i].equals(id)) {
-				return true;
-			}
-		}
-		return false;
+		return LanguageManager.getInstance().isContributedContentType(id);
 	}
 
 	protected void processContentType(ICElement celement, IContentType contentType, IScopeContext context) {

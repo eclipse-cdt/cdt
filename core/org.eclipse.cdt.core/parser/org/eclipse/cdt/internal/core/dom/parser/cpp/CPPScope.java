@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Nov 29, 2004
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -23,16 +24,18 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author aniefer
  */
-abstract public class CPPScope implements ICPPScope{
+abstract public class CPPScope implements ICPPScope, IASTInternalScope {
     public static class CPPScopeProblem extends ProblemBinding implements ICPPScope {
         public CPPScopeProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
@@ -125,13 +128,18 @@ abstract public class CPPScope implements ICPPScope{
 	        }
 	        return (IBinding) obj;
 	    } else {
-	    	IPDOM pdom = name.getTranslationUnit().getIndex();
-	    	if (pdom != null) {
+	    	IIndex index = name.getTranslationUnit().getIndex();
+	    	if (index != null) {
 	    		// Try looking this up in the PDOM
 	    		if (physicalNode instanceof ICPPASTNamespaceDefinition) {
 	    			ICPPASTNamespaceDefinition nsdef = (ICPPASTNamespaceDefinition)physicalNode;
 	    			IASTName nsname = nsdef.getName();
-	    			IBinding nsbinding = ((PDOM)pdom).resolveBinding(nsname);
+	    			IBinding nsbinding= null;
+					try {
+						nsbinding = index.findBinding(nsname);
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					}
 		    		if (nsbinding instanceof ICPPScope)
 		    			return ((ICPPScope)nsbinding).getBinding(name, forceResolve);
 	    		}

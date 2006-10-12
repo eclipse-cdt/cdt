@@ -7,12 +7,12 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation 
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.IPDOMResolver;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -89,10 +89,12 @@ import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -851,7 +853,7 @@ public class CVisitor {
 			    binding = new CParameter( name );
 		    }
 		    try {
-				if( scope != null && scope.getPhysicalNode() instanceof IASTTranslationUnit ){
+				if( scope != null && ASTInternal.getPhysicalNodeOfScope(scope) instanceof IASTTranslationUnit ){
 					return binding;
 				}
 			} catch (DOMException e) {
@@ -1205,7 +1207,7 @@ public class CVisitor {
 			if( prefix )
 			    scope = null;
 			
-			if( scope != null && scope.isFullyCached() ){
+			if( scope != null && ASTInternal.isFullyCached(scope) ){
 			    try {
                     binding = scope.getBinding( name, true );
                 } catch ( DOMException e ) {
@@ -1278,7 +1280,7 @@ public class CVisitor {
 				}
 				if( scope != null ) {
 	                try {
-	                    scope.setFullyCached( true );
+	                	ASTInternal.setFullyCached(scope, true);
 	                } catch ( DOMException e ) {
 	                }
 				}
@@ -1305,9 +1307,13 @@ public class CVisitor {
 		if( blockItem != null) {
 			// We're at the end of our rope, check the PDOM if we can
 			IASTTranslationUnit tu = (IASTTranslationUnit)blockItem;
-			IPDOM pdom = tu.getIndex();
-			if (pdom != null) {
-				binding = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).resolveBinding(name);
+			IIndex index = tu.getIndex();
+			if (index != null) {
+				try {
+					binding = index.findBinding(name);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
 			}
 			
 			if (binding == null)
@@ -1915,7 +1921,7 @@ public class CVisitor {
     }
     
     public static IBinding[] findBindings( IScope scope, String name ) throws DOMException{
-        IASTNode node = scope.getPhysicalNode();
+        IASTNode node = ASTInternal.getPhysicalNodeOfScope(scope);
         if( node instanceof IASTFunctionDefinition )
             node = ((IASTFunctionDefinition)node).getBody();
         

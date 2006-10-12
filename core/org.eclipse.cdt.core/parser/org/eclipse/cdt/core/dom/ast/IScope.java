@@ -45,16 +45,11 @@ public interface IScope {
 	 * @return List of IBinding
 	 */
 	public IBinding[] find(String name) throws DOMException;
-    
-    /**
-     * Return the physical IASTNode that this scope was created for
-     * @return
-     */
-    public IASTNode getPhysicalNode() throws DOMException;
-    
+        
     /**
      * The IScope serves as a mechanism for caching IASTNames and bindings to
      * speed up resolution.
+     * mstodo more work: remove the ast-specific methods.
      */
     
     /**
@@ -97,24 +92,4 @@ public interface IScope {
 	 * @throws DOMException
 	 */
 	public void addBinding(IBinding binding) throws DOMException;
-
-	/**
-	 * Set whether or not all the names in this scope have been cached
-	 * 
-	 * @param b
-	 */
-	public void setFullyCached(boolean b) throws DOMException;
-
-	/**
-	 * whether or not this scope's cache contains all the names
-	 * 
-	 * @return
-	 */
-	public boolean isFullyCached() throws DOMException;
-	
-	/** 
-	 * clear the name cache in this scope
-	 * @throws DOMException
-	 */
-	public void flushCache() throws DOMException;
 }

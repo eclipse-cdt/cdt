@@ -11,9 +11,10 @@
 package org.eclipse.cdt.internal.pdom.tests;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -23,12 +24,12 @@ import org.eclipse.core.runtime.IPath;
 public class IncludesTests extends PDOMTestBase {
 
 	protected ICProject project;
-	protected PDOM pdom;
+	protected IIndex pdom;
 
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			project = createProject("includesTests");
-			pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+			pdom = CCorePlugin.getIndexManager().getIndex(project);
 		}
 		pdom.acquireReadLock();
 	}
@@ -39,9 +40,9 @@ public class IncludesTests extends PDOMTestBase {
 	
 	public void test1() throws Exception {
 		IPath loc = project.getProject().getLocation().append("I2.h");
-		PDOMFile file = pdom.getFile(loc.toOSString());
+		IIndexFile file = pdom.getFile(loc);
 		assertNotNull(file);
-		PDOMFile[] allIncludedBy = file.getAllIncludedBy();
+		IIndexInclude[] allIncludedBy = pdom.findIncludedBy(file, -1);
 		assertEquals(9, allIncludedBy.length); // i.e. all of them
 	}
 

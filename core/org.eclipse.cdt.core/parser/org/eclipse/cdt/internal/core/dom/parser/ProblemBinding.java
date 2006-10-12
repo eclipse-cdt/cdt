@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 
 import java.text.MessageFormat;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 import org.eclipse.core.runtime.PlatformObject;
@@ -33,7 +35,7 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * @author aniefer
  */
-public class ProblemBinding extends PlatformObject implements IProblemBinding, IType, IScope {
+public class ProblemBinding extends PlatformObject implements IProblemBinding, IType, IScope, IASTInternalScope {
     protected final int id;
     protected final char [] arg;
     protected IASTNode node;
@@ -207,5 +209,9 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 
 	public void addBinding(IBinding binding) throws DOMException {
 		throw new DOMException( this );
+	}
+
+	public ILinkage getLinkage() {
+		return Linkage.NO_LINKAGE;
 	}
 }

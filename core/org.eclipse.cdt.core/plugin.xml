@@ -567,6 +567,12 @@
             name="GNU C++">
          <contentType id="org.eclipse.cdt.core.cxxSource"/>
       </language>
+      <pdomLinkageFactory
+            class="org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory"
+            id="C"/>
+      <pdomLinkageFactory
+            class="org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory"
+            id="C++"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

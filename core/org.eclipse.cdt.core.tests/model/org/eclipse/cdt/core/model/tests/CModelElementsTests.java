@@ -98,7 +98,7 @@ public class CModelElementsTests extends TestCase {
 		//ITranslationUnit included = (ITranslationUnit)CoreModel.getDefault().create(includedFile);
 
 		// parse the translation unit to get the elements tree		
-		tu.parse(); 
+//		tu.parse(); 
 		
 		// tu ---> include
 		checkInclude(tu);

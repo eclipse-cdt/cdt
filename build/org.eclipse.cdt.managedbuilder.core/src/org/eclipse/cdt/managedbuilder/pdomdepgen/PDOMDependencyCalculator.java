@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -56,20 +60,28 @@ public class PDOMDependencyCalculator implements IManagedDependencyCalculator {
 			if (resource != null) {
 				ICProject project = CoreModel.getDefault().create(resource.getProject());
 				try {
-					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
-					PDOMFile file = pdom.getFile(resource.getLocation());
-					if (file != null) {
-						PDOMFile[] includes = file.getAllIncludes();
-						
-						List/*<IPath>*/ list = new ArrayList/*<IPath>*/();
-						for (int i = 0; i < includes.length; ++i)
-							list.add(new Path(includes[i].getFileName().getString()));
-						
-						dependencies = (IPath[])list.toArray(new IPath[list.size()]);
-					} else
-						dependencies = new IPath[0];
+					IIndex index= CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES);
+					index.acquireReadLock();
+					try {
+						IIndexFile file = index.getFile(resource.getLocation());
+						if (file != null) {
+							IIndexInclude[] includes = index.findIncludes(file, IIndex.DEPTH_INFINITE);
+
+							List/*<IPath>*/ list = new ArrayList/*<IPath>*/();
+							for (int i = 0; i < includes.length; ++i)
+								list.add(new Path(includes[i].getIncludesLocation()));
+
+							dependencies = (IPath[])list.toArray(new IPath[list.size()]);
+						} else
+							dependencies = new IPath[0];
+					}
+					finally {
+						index.releaseReadLock();
+					}
 				} catch (CoreException e) {
 //					Activator.getDefault().getLog().log(e.getStatus());
+					dependencies = new IPath[0];
+				} catch (InterruptedException e) {
 					dependencies = new IPath[0];
 				}
 			} else

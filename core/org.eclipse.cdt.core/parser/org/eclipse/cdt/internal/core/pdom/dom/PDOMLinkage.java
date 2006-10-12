@@ -7,17 +7,27 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -31,7 +41,7 @@ import org.eclipse.core.runtime.CoreException;
  * This class represents a collection of symbols that can be linked together at
  * link time. These are generally global symbols specific to a given language.
  */
-public abstract class PDOMLinkage extends PDOMNamedNode {
+public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage {
 
 	// record offsets
 	private static final int ID_OFFSET   = PDOMNamedNode.RECORD_SIZE + 0;
@@ -65,22 +75,20 @@ public abstract class PDOMLinkage extends PDOMNamedNode {
 		return RECORD_SIZE;
 	}
 
+	public int getNodeType() {
+		return LINKAGE;
+	}
+
 	public static IString getId(PDOM pdom, int record) throws CoreException {
 		Database db = pdom.getDB();
 		int namerec = db.getInt(record + ID_OFFSET);
 		return db.getString(namerec);
 	}
 	
-	public abstract ILanguage getLanguage();
-
 	public static int getNextLinkageRecord(PDOM pdom, int record) throws CoreException {
 		return pdom.getDB().getInt(record + NEXT_OFFSET);
 	}
-	
-	public PDOMLinkage getNextLinkage() throws CoreException {
-		return pdom.getLinkage(pdom.getDB().getInt(record + NEXT_OFFSET));
-	}
-	
+		
 	public void setNext(int nextrec) throws CoreException {
 		pdom.getDB().putInt(record + NEXT_OFFSET, nextrec);
 	}
@@ -107,7 +115,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode {
 		});
 	}
 	
-	public PDOMLinkage getLinkage() throws CoreException {
+	public ILinkage getLinkage() throws CoreException {
 		return this;
 	}
 
@@ -138,6 +146,37 @@ public abstract class PDOMLinkage extends PDOMNamedNode {
 	
 	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
 	
-	public abstract IBinding resolveBinding(IASTName name) throws CoreException;
-
+	public abstract PDOMBinding resolveBinding(IASTName name) throws CoreException;
+	
+	public PDOMNode getAdaptedParent(IBinding binding) throws CoreException {
+		IScope scope = binding.getScope();
+		if (scope == null)
+			return null;
+		
+		if (scope instanceof IIndexBinding) {
+			IIndexBinding parent= ((IIndexBinding) scope).getParentBinding();
+			if (parent == null) {
+				return this;
+			}
+			return adaptBinding(parent);
+		}
+			
+		// the scope is from the ast
+		IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
+		if (scopeNode instanceof IASTCompoundStatement)
+			return null;
+		else if (scopeNode instanceof IASTTranslationUnit)
+			return this;
+		else {
+			IName scopeName = scope.getScopeName();
+			if (scopeName instanceof IASTName) {
+				IBinding scopeBinding = ((IASTName) scopeName).resolveBinding();
+				PDOMBinding scopePDOMBinding = adaptBinding(scopeBinding);
+				if (scopePDOMBinding != null)
+					return scopePDOMBinding;
+			}
+		}
+			
+		return null;
+	}
 }

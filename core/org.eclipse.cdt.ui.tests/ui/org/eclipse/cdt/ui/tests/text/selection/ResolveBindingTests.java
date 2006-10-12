@@ -15,26 +15,28 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseTestCase;
-
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 
 public class ResolveBindingTests extends BaseTestCase  {
 
 	private static final int WAIT_FOR_INDEXER = 5000;
 	private ICProject fCProject;
-	private PDOM fPdom;
+	private IIndex fIndex;
 
 	public ResolveBindingTests(String name) {
 		super(name);
@@ -48,8 +50,13 @@ public class ResolveBindingTests extends BaseTestCase  {
 		super.setUp();
 		fCProject= CProjectHelper.createCProject("ResolveBindingTests", "bin");
 		CCorePlugin.getPDOMManager().setIndexerId(fCProject, "org.eclipse.cdt.core.fastIndexer");
-		fPdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(fCProject);
-		fPdom.clear();
+		IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getIndexer(fCProject);
+		try {
+			indexer.reindex();
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 		
 	protected void tearDown() throws Exception {
@@ -90,33 +97,47 @@ public class ResolveBindingTests extends BaseTestCase  {
 	public void testNamespaceVarBinding() throws Exception {
 		String content = readTaggedComment("namespace-var-test");
 		IFile file= createFile(fCProject.getProject(), "nsvar.cpp", content);
-		waitForIndexer(fPdom, file, WAIT_FOR_INDEXER);
+		waitForIndexer(fIndex, file, WAIT_FOR_INDEXER);
 		
-		IASTTranslationUnit astTU= createPDOMBasedAST(fCProject, file);
-		IASTName name= getSelectedName(astTU, content.indexOf("var"), 3);
-		IBinding binding= name.resolveBinding();
-		assertTrue(binding instanceof IVariable);
+		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IASTTranslationUnit astTU= createIndexBasedAST(index, fCProject, file);
+			IASTName name= getSelectedName(astTU, content.indexOf("var"), 3);
+			IBinding binding= name.resolveBinding();
+			assertTrue(binding instanceof IVariable);
 
-		name= getSelectedName(astTU, content.indexOf("var; // r1"), 3);
-		checkBinding(name, IVariable.class);
+			name= getSelectedName(astTU, content.indexOf("var; // r1"), 3);
+			checkBinding(name, IVariable.class);
 
-		name= getSelectedName(astTU, content.indexOf("var; // r2"), 3);
-		checkBinding(name, IVariable.class);
+			name= getSelectedName(astTU, content.indexOf("var; // r2"), 3);
+			checkBinding(name, IVariable.class);
+		}
+		finally {
+			index.releaseReadLock();
+		}			
 	}
 
 	public void _testNamespaceVarBinding_156519() throws Exception {
 		String content = readTaggedComment("namespace-var-test");
 		IFile file= createFile(fCProject.getProject(), "nsvar.cpp", content);
-		waitForIndexer(fPdom, file, WAIT_FOR_INDEXER);
+		waitForIndexer(fIndex, file, WAIT_FOR_INDEXER);
 		
-		IASTTranslationUnit astTU= createPDOMBasedAST(fCProject, file);
+		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IASTTranslationUnit astTU= createIndexBasedAST(index, fCProject, file);
 
-		IASTName name= getSelectedName(astTU, content.indexOf("var; // r1"), 3);
-		IBinding binding= name.resolveBinding();
-		checkBinding(name, IVariable.class);
+			IASTName name= getSelectedName(astTU, content.indexOf("var; // r1"), 3);
+			IBinding binding= name.resolveBinding();
+			checkBinding(name, IVariable.class);
 
-		name= getSelectedName(astTU, content.indexOf("var; // r2"), 3);
-		checkBinding(name, IVariable.class);
+			name= getSelectedName(astTU, content.indexOf("var; // r2"), 3);
+			checkBinding(name, IVariable.class);
+		}
+		finally {
+			index.releaseReadLock();
+		}
 	}
 	
 	// {testMethods.h}
@@ -141,22 +162,29 @@ public class ResolveBindingTests extends BaseTestCase  {
 		IFile hfile= createFile(fCProject.getProject(), "testMethods.h", content);
 		content = readTaggedComment("testMethods.cpp");
 		IFile cppfile= createFile(fCProject.getProject(), "testMethods.cpp", content);
-		waitForIndexer(fPdom, hfile, WAIT_FOR_INDEXER);
+		waitForIndexer(fIndex, hfile, WAIT_FOR_INDEXER);
 		
-		IASTTranslationUnit astTU= createPDOMBasedAST(fCProject, cppfile);
+		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IASTTranslationUnit astTU= createIndexBasedAST(index, fCProject, cppfile);
 
-		IASTName name= getSelectedName(astTU, content.indexOf("method"), 6);
-		IBinding binding= name.resolveBinding();
-		checkBinding(name, ICPPMethod.class);
+			IASTName name= getSelectedName(astTU, content.indexOf("method"), 6);
+			IBinding binding= name.resolveBinding();
+			checkBinding(name, ICPPMethod.class);
 
-		name= getSelectedName(astTU, content.indexOf("method(); // r1"), 6);
-		checkBinding(name, ICPPMethod.class);
+			name= getSelectedName(astTU, content.indexOf("method(); // r1"), 6);
+			checkBinding(name, ICPPMethod.class);
 
-		name= getSelectedName(astTU, content.indexOf("method(); // r2"), 6);
-		checkBinding(name, ICPPMethod.class);
+			name= getSelectedName(astTU, content.indexOf("method(); // r2"), 6);
+			checkBinding(name, ICPPMethod.class);
 
-		name= getSelectedName(astTU, content.indexOf("method(); // r3"), 6);
-		checkBinding(name, ICPPMethod.class);
+			name= getSelectedName(astTU, content.indexOf("method(); // r3"), 6);
+			checkBinding(name, ICPPMethod.class);
+		}
+		finally {
+			index.releaseReadLock();
+		}
 	}
 
 }

@@ -19,12 +19,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 
@@ -33,9 +37,18 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
  *
  */
 public class LanguageManager {
-
+	private static final String NAMESPACE_SEPARATOR = "."; //$NON-NLS-1$
+	private static final String LANGUAGE_EXTENSION_POINT_ID = "org.eclipse.cdt.core.language"; //$NON-NLS-1$
+	private static final String ELEMENT_LANGUAGE = "language"; //$NON-NLS-1$
+	private static final String ELEMENT_CONTENT_TYPE = "contentType"; //$NON-NLS-1$
+	private static final String ELEMENT_PDOM_LINKAGE_FACTORY = "pdomLinkageFactory"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+	
 	private static LanguageManager instance;
-	private Map cache = new HashMap();
+	private Map fLanguageCache = new HashMap();
+	private Map fPDOMLinkageFactoryCache= new HashMap();
+	private Map fContentTypeToLanguageCache= new HashMap();
 	
 	public static LanguageManager getInstance() {
 		if (instance == null)
@@ -43,46 +56,67 @@ public class LanguageManager {
 		return instance;
 	}
 	
-	public ILanguage getLanguage(String id) throws CoreException {
-		ILanguage language = (ILanguage)cache.get(id);
+	public ILanguage getLanguage(String id) {
+		ILanguage language = (ILanguage)fLanguageCache.get(id);
 		if (language != null)
 			return language;
 
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ILanguage.KEY);
-		IExtension[] extensions = point.getExtensions();
-		for (int i = 0; i < extensions.length; ++i) {
-			IExtension extension = extensions[i];
-			IConfigurationElement[] languages = extension.getConfigurationElements();
-			for (int j = 0; j < languages.length; ++j) {
-				IConfigurationElement languageElem = languages[j];
-				String langId = extension.getNamespaceIdentifier() + "." + languageElem.getAttribute("id"); //$NON-NLS-1$ //$NON-NLS-2$ $NON-NLS-2$
+		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		for (int j = 0; j < configs.length; ++j) {
+			final IConfigurationElement languageElem = configs[j];
+			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
+				String langId = getLanguageID(languageElem);  
 				if (langId.equals(id)) {
-					language = (ILanguage)languageElem.createExecutableExtension("class"); //$NON-NLS-1$
-					cache.put(id, language);
-					return language;
-				}
-			}
-		}
-		
-		return null;
-	}
-	
-	public ILanguage getLanguage(IContentType contentType) throws CoreException {
-		String contentTypeId= contentType.getId();
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ILanguage.KEY);
-		IExtension[] extensions = point.getExtensions();
-		for (int i = 0; i < extensions.length; ++i) {
-			IConfigurationElement[] languages = extensions[i].getConfigurationElements();
-			for (int j = 0; j < languages.length; ++j) {
-				IConfigurationElement language = languages[j];
-				IConfigurationElement[] assocContentTypes = language.getChildren("contentType"); //$NON-NLS-1$
-				for (int k = 0; k < assocContentTypes.length; ++k) {
-					if (contentTypeId.equals(assocContentTypes[k].getAttribute("id"))) { //$NON-NLS-1$
-						return (ILanguage)language.createExecutableExtension("class"); //$NON-NLS-1$
+					final ILanguage[] result= new ILanguage[]{null};
+					SafeRunner.run(new ISafeRunnable(){
+						public void handleException(Throwable exception) {
+							CCorePlugin.log(exception);
+						}
+
+						public void run() throws Exception {
+							result[0]= (ILanguage)languageElem.createExecutableExtension(ATTRIBUTE_CLASS);
+						}
+					});
+					if (result[0] != null) {
+						fLanguageCache.put(id, result[0]);
+						return result[0];
 					}
 				}
 			}
 		}
+		return null;
+	}
+
+	private String getLanguageID(final IConfigurationElement languageElem) {
+		return languageElem.getNamespaceIdentifier() + NAMESPACE_SEPARATOR + languageElem.getAttribute(ATTRIBUTE_ID);
+	}
+	
+	public ILanguage getLanguage(IContentType contentType) {
+		String contentTypeID= contentType.getId();
+		return getLanguageForContentTypeID(contentTypeID);
+	}
+	
+	private ILanguage getLanguageForContentTypeID(String contentTypeID) {
+		ILanguage language = (ILanguage)fContentTypeToLanguageCache.get(contentTypeID);
+		if (language != null || fContentTypeToLanguageCache.containsKey(contentTypeID))
+			return language;
+
+		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		for (int j = 0; j < configs.length; ++j) {
+			final IConfigurationElement languageElem = configs[j];
+			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
+				IConfigurationElement[] assocContentTypes = languageElem.getChildren(ELEMENT_CONTENT_TYPE); 
+				for (int k = 0; k < assocContentTypes.length; ++k) {
+					if (contentTypeID.equals(assocContentTypes[k].getAttribute(ATTRIBUTE_ID))) {
+						String id= getLanguageID(languageElem);
+						ILanguage lang= getLanguage(id);
+						fContentTypeToLanguageCache.put(contentTypeID, lang);
+						return lang;
+					}
+				}
+			}
+		}
+		fContentTypeToLanguageCache.put(contentTypeID, null);
 		return null;
 	}
 	
@@ -98,15 +132,13 @@ public class LanguageManager {
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 
 		IContentTypeManager manager = Platform.getContentTypeManager(); 
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ILanguage.KEY);
-		IExtension[] extensions = point.getExtensions();
-		for (int i = 0; i < extensions.length; ++i) {
-			IConfigurationElement[] languages = extensions[i].getConfigurationElements();
-			for (int j = 0; j < languages.length; ++j) {
-				IConfigurationElement language = languages[j];
-				IConfigurationElement[] contentTypes = language.getChildren("contentType"); //$NON-NLS-1$
+		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		for (int j = 0; j < configs.length; ++j) {
+			final IConfigurationElement languageElem = configs[j];
+			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
+				IConfigurationElement[] contentTypes = languageElem.getChildren(ELEMENT_CONTENT_TYPE); 
 				for (int k = 0; k < contentTypes.length; ++k) {
-					IContentType langContType = manager.getContentType(contentTypes[k].getAttribute("id")); //$NON-NLS-1$
+					IContentType langContType = manager.getContentType(contentTypes[k].getAttribute(ATTRIBUTE_ID)); 
 					allTypes.add(langContType.getId());
 				}
 			}
@@ -133,15 +165,15 @@ public class LanguageManager {
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 
 		IContentTypeManager manager = Platform.getContentTypeManager(); 
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ILanguage.KEY);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, LANGUAGE_EXTENSION_POINT_ID);
 		IExtension[] extensions = point.getExtensions();
 		for (int i = 0; i < extensions.length; ++i) {
 			IConfigurationElement[] languages = extensions[i].getConfigurationElements();
 			for (int j = 0; j < languages.length; ++j) {
 				IConfigurationElement language = languages[j];
-				IConfigurationElement[] contentTypes = language.getChildren("contentType"); //$NON-NLS-1$
+				IConfigurationElement[] contentTypes = language.getChildren(ELEMENT_CONTENT_TYPE); 
 				for (int k = 0; k < contentTypes.length; ++k) {
-					IContentType langContType = manager.getContentType(contentTypes[k].getAttribute("id")); //$NON-NLS-1$
+					IContentType langContType = manager.getContentType(contentTypes[k].getAttribute(ATTRIBUTE_ID)); 
 					allTypes.add(langContType.getId());
 				}
 			}
@@ -151,7 +183,7 @@ public class LanguageManager {
 	}
 
 	public boolean isContributedContentType(String contentTypeId) {
-		return collectContentTypeIds().contains(contentTypeId);
+		return contentTypeId != null && getLanguageForContentTypeID(contentTypeId) != null;
 	}
 	
 	public IContributedModelBuilder getContributedModelBuilderFor(TranslationUnit tu) {
@@ -161,5 +193,39 @@ public class LanguageManager {
 		} catch (CoreException e) {
 			return null;
 		}
+	}
+	
+	/**
+	 * Returns a factory for the given linkage ID. The IDs are defined in {@link ILinkage}. 
+	 * @param linkageID an ID for a linkage.
+	 * @return a factory or <code>null</code>.
+	 * @since 4.0
+	 */
+	public IPDOMLinkageFactory getPDOMLinkageFactory(String linkageID) {
+		final IPDOMLinkageFactory[] result= new IPDOMLinkageFactory[] {null}; 
+		result[0]= (IPDOMLinkageFactory) fPDOMLinkageFactoryCache.get(linkageID);
+
+		if (result[0] == null) {
+			// read configuration
+			IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+			for (int i = 0; result[0] == null && i < configs.length; i++) {
+				final IConfigurationElement element = configs[i];
+				if (ELEMENT_PDOM_LINKAGE_FACTORY.equals(element.getName())) {
+					if (linkageID.equals(element.getAttribute(ATTRIBUTE_ID))) {
+						SafeRunner.run(new ISafeRunnable(){
+							public void handleException(Throwable exception) {
+								CCorePlugin.log(exception);
+							}
+
+							public void run() throws Exception {
+								result[0]= (IPDOMLinkageFactory) element.createExecutableExtension(ATTRIBUTE_CLASS);
+							}}
+						);
+					}
+				}			
+			}
+			fPDOMLinkageFactoryCache.put(linkageID, result[0]);
+		}
+		return result[0];
 	}
 }

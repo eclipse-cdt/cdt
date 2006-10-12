@@ -181,5 +181,4 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 	public ICPPClassType[] getNestedClasses() throws DOMException {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
-
 }

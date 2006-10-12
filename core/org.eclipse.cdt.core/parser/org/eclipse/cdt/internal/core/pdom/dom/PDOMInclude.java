@@ -7,10 +7,15 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 
@@ -18,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMInclude {
+public class PDOMInclude implements IIndexFragmentInclude {
 
 	private final PDOM pdom;
 	private final int record;
@@ -52,7 +57,7 @@ public class PDOMInclude {
 		if (prevInclude != null)
 			prevInclude.setNextInIncludedBy(nextInclude);
 		else
-			getIncludes().setFirstIncludedBy(null);
+			((PDOMFile) getIncludes()).setFirstIncludedBy(null);
 		
 		if (nextInclude != null)
 			nextInclude.setPrevInIncludedBy(prevInclude);
@@ -61,7 +66,7 @@ public class PDOMInclude {
 		pdom.getDB().free(record);
 	}
 	
-	public PDOMFile getIncludes() throws CoreException {
+	public IIndexFragmentFile getIncludes() throws CoreException {
 		int rec = pdom.getDB().getInt(record + INCLUDES);
 		return rec != 0 ? new PDOMFile(pdom, rec) : null;
 	}
@@ -71,7 +76,7 @@ public class PDOMInclude {
 		pdom.getDB().putInt(record + INCLUDES, rec);
 	}
 	
-	public PDOMFile getIncludedBy() throws CoreException {
+	public IIndexFile getIncludedBy() throws CoreException {
 		int rec = pdom.getDB().getInt(record + INCLUDED_BY);
 		return rec != 0 ? new PDOMFile(pdom, rec) : null;
 	}
@@ -109,6 +114,18 @@ public class PDOMInclude {
 	public void setPrevInIncludedBy(PDOMInclude include) throws CoreException {
 		int rec = include != null ? include.getRecord() : 0;
 		pdom.getDB().putInt(record + INCLUDED_BY_PREV, rec);
+	}
+
+	public String getIncludedByLocation() throws CoreException {
+		return getIncludedBy().getLocation();
+	}
+
+	public String getIncludesLocation() throws CoreException {
+		return getIncludes().getLocation();
+	}
+
+	public IIndexFragment getFragment() {
+		return pdom;
 	}
 	
 }

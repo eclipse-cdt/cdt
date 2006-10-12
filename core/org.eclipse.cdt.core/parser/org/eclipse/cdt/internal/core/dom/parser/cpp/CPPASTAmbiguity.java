@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 public abstract class CPPASTAmbiguity extends CPPASTNode {
@@ -76,7 +77,7 @@ public abstract class CPPASTAmbiguity extends CPPASTNode {
                 if( scope != null )
                 {
                     try {
-                        scope.flushCache();
+                        ASTInternal.flushCache(scope);
                     } catch (DOMException de) {}
                 }
             }

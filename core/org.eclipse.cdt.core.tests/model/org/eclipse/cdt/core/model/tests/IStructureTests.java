@@ -318,7 +318,7 @@ public class IStructureTests extends IntegratedCModelTest {
 	}
 
 	// IInheritance
-	public void testGetBaseTypes() {
+	public void testGetBaseTypes() throws CModelException {
 		ITranslationUnit tu = getTU();
 		ICElement myElementDerived = null;
 		String[] myBaseTypes = null;
@@ -345,7 +345,7 @@ public class IStructureTests extends IntegratedCModelTest {
 	}
 
 	// IInheritance
-	public void testGetAccessControl() {
+	public void testGetAccessControl() throws CModelException {
 		ITranslationUnit tu = getTU();
 		ICElement myElementDerived = null;
 		String[] myBaseTypes = null;
@@ -390,7 +390,7 @@ public class IStructureTests extends IntegratedCModelTest {
 	// Language Specification Tests
 	//
 	
-	public void testAnonymousStructObject() {
+	public void testAnonymousStructObject() throws CModelException {
 		ITranslationUnit tu = getTU();
 		ICElement myElement = null;
 		try {

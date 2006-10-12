@@ -14,17 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
-import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -120,12 +120,12 @@ public class AllTypesCache {
 					return;
 				case ICElement.C_STRUCT:
 					if (node instanceof ICPPClassType
-							&& ((ICPPClassType)node).getKey() == ICPPClassType.k_struct)
+							&& ((ICPPClassType)node).getKey() == ICompositeType.k_struct)
 						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
 					return;
 				case ICElement.C_UNION:
 					if (node instanceof ICPPClassType
-							&& ((ICPPClassType)node).getKey() == ICPPClassType.k_union)
+							&& ((ICPPClassType)node).getKey() == ICompositeType.k_union)
 						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
 					return;
 				case ICElement.C_ENUMERATION:
@@ -152,10 +152,15 @@ public class AllTypesCache {
 			CPPTypesCollector cppCollector = new CPPTypesCollector(kinds, types, project);
 				
 			PDOM pdom = (PDOM)pdomManager.getPDOM(project);
-			PDOMLinkage cLinkage = pdom.getLinkage(GCCLanguage.getDefault());
-			cLinkage.accept(cCollector);
-			PDOMLinkage cppLinkage = pdom.getLinkage(GPPLanguage.getDefault());
-			cppLinkage.accept(cppCollector);
+			PDOMLinkage linkage= pdom.getLinkage(ILinkage.C_LINKAGE_ID);
+			if (linkage != null) {
+				linkage.accept(cCollector);
+			}
+			
+			linkage= pdom.getLinkage(ILinkage.CPP_LINKAGE_ID);
+			if (linkage != null) {
+				linkage.accept(cppCollector);
+			}
 		}
 			
 		return (ITypeInfo[])types.toArray(new ITypeInfo[types.size()]);

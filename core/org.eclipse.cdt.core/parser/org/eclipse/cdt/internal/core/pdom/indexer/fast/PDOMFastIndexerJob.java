@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
@@ -22,11 +23,13 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.PDOMCodeReaderFactory;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
+import org.eclipse.cdt.internal.core.index.IWritableIndex;
+import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
+import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * @author Doug Schaefer
@@ -35,8 +38,8 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 
 	protected final PDOMFastIndexer indexer;
-	protected final PDOM pdom;
-	protected final PDOMCodeReaderFactory codeReaderFactory;
+	protected final IWritableIndex index;
+	protected final IndexBasedCodeReaderFactory codeReaderFactory;
 	
 	// Error counter. If we too many errors we bail
 	protected int errorCount;
@@ -44,8 +47,8 @@ public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 
 	public PDOMFastIndexerJob(PDOMFastIndexer indexer) throws CoreException {
 		this.indexer = indexer;
-		this.pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(indexer.getProject());
-		this.codeReaderFactory = new PDOMCodeReaderFactory(pdom);
+		this.index= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(indexer.getProject());
+		this.codeReaderFactory = new IndexBasedCodeReaderFactory(index);
 	}
 
 	public IPDOMIndexer getIndexer() {
@@ -53,33 +56,53 @@ public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 	}
 	
 	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
+		// we can do the same as for changing a tu
+		changeTU(tu);
+	}
+
+	protected void changeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
 		ILanguage language = tu.getLanguage();
 		if (language == null)
 			return;
 	
-		// get the AST in a "Fast" way
-		IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
-				codeReaderFactory,
-				ILanguage.AST_USE_INDEX	| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
-		if (ast == null)
+		// skip if no scanner info
+		IScannerInfo scanner= tu.getScannerInfo(false);
+		if (scanner == null) {
 			return;
-		
-		// Clear the macros
-		codeReaderFactory.clearMacros();
+		}
 
-		pdom.acquireWriteLock();
+		IPath path = tu.getLocation();
+		if (path == null) {
+			return;
+		}
+
+		index.acquireReadLock();
 		try {
-			addSymbols(language, ast);
-		} finally {
-			pdom.releaseWriteLock();
+			// get the AST in a "Fast" way
+			IASTTranslationUnit ast= language.getASTTranslationUnit(tu.getCodeReader(), scanner, codeReaderFactory, index);
+
+			index.acquireWriteLock(1);
+			try {
+				// Clear the macros
+				codeReaderFactory.clearMacros();
+				
+				// Remove the old symbols in the tu
+				IIndexFragmentFile file= (IIndexFragmentFile) index.getFile(path);
+				if (file != null)
+					index.clearFile(file);
+
+				// Add the new symbols
+				addSymbols(ast);
+			} finally {
+				index.releaseWriteLock(1);
+			}
+		}
+		finally {
+			index.releaseReadLock();
 		}
 	}
 
-	protected void addSymbols(ILanguage language, IASTTranslationUnit ast) throws InterruptedException, CoreException {
-		final PDOMLinkage linkage = pdom.getLinkage(language);
-		if (linkage == null)
-			return;
-			
+	protected void addSymbols(IASTTranslationUnit ast) throws InterruptedException, CoreException {
 		// Add in the includes
 		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
 		for (int i = 0; i < includes.length; ++i) {
@@ -91,10 +114,10 @@ public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 				? sourceLoc.getFileName()
 				: ast.getFilePath(); // command-line includes
 				
-			PDOMFile sourceFile = codeReaderFactory.getCachedFile(sourcePath);
+			IIndexFragmentFile sourceFile = codeReaderFactory.createCachedFile(index, sourcePath);
 			String destPath = include.getPath();
-			PDOMFile destFile = codeReaderFactory.getCachedFile(destPath);
-			sourceFile.addIncludeTo(destFile);
+			IIndexFragmentFile destFile = codeReaderFactory.createCachedFile(index, destPath);
+			index.addInclude(sourceFile, destFile);
 		}
 	
 		// Add in the macros
@@ -107,8 +130,8 @@ public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 				continue; // skip built-ins and command line macros
 				
 			String filename = sourceLoc.getFileName();
-			PDOMFile sourceFile = codeReaderFactory.getCachedFile(filename);
-			sourceFile.addMacro(macro);
+			IIndexFragmentFile sourceFile = codeReaderFactory.createCachedFile(index, filename);
+			index.addMacro(sourceFile, macro);
 		}
 			
 		// Add in the names
@@ -121,7 +144,7 @@ public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 				try {
 					IASTFileLocation nameLoc = name.getFileLocation();
 					if (nameLoc != null)
-						linkage.addName(name, codeReaderFactory.getCachedFile(nameLoc.getFileName()));
+						index.addName(codeReaderFactory.createCachedFile(index, nameLoc.getFileName()), name);
 					return PROCESS_CONTINUE;
 				} catch (Throwable e) {
 					CCorePlugin.log(e);

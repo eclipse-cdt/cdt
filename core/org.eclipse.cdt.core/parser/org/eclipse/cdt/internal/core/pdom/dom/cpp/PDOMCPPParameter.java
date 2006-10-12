@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -51,7 +52,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 		
 		IType type = param.getType();
 		if (type != null) {
-			PDOMNode typeNode = getLinkage().addType(this, type);
+			PDOMNode typeNode = getLinkageImpl().addType(this, type);
 			db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
 		}
 	}
@@ -97,7 +98,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 
 	public IType getType() throws DOMException {
 		try {
-			PDOMNode node = getLinkage().getNode(pdom.getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

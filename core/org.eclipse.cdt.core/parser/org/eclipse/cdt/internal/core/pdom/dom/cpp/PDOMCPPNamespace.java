@@ -125,10 +125,6 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		}
 	}
 
-	public void flushCache() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		try {
 			if (name instanceof ICPPASTQualifiedName) {
@@ -147,7 +143,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 							nsname = names[i];
 					}
 					// make sure we're the namespace they're talking about
-					if (nsname != null && !equals(pdom.resolveBinding(nsname)))
+					if (nsname != null && !equals(pdom.findBinding(nsname)))
 						return null;
 					
 					// Look up the name
@@ -198,24 +194,11 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return null;
 	}
 
-	public IASTNode getPhysicalNode() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
 	public IName getScopeName() throws DOMException {
 		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isFullyCached() throws DOMException {
-		return true;
 	}
 
 	public void removeBinding(IBinding binding) throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
-
-	public void setFullyCached(boolean b) throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-	
 }

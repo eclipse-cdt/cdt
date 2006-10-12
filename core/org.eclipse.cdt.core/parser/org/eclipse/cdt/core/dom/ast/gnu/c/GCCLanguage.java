@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.dom.ast.gnu.c;
@@ -22,9 +23,10 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -36,28 +38,23 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.GCCParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.PDOMCodeReaderFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author Doug Schaefer
  *
  */
-public class GCCLanguage extends PlatformObject implements ILanguage {
+public class GCCLanguage extends AbstractLanguage {
 
 	protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = new GCCScannerExtensionConfiguration();
 	// Must match the id in the extension
@@ -80,53 +77,9 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 			return super.getAdapter(adapter);
 	}
 	
-	public IASTTranslationUnit getASTTranslationUnit(ITranslationUnit file, int style) throws CoreException {
-		ICodeReaderFactory fileCreator;
-		if ((style & (ILanguage.AST_SKIP_INDEXED_HEADERS | ILanguage.AST_SKIP_ALL_HEADERS)) != 0) {
-			PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(file.getCProject()).getAdapter(PDOM.class);
-			fileCreator = new PDOMCodeReaderFactory(pdom);
-		} else
-			fileCreator = SavedCodeReaderFactory.getInstance();
-
-		return getASTTranslationUnit(file, fileCreator, style);
-	}
-	
-	public IASTTranslationUnit getASTTranslationUnit(
-			ITranslationUnit file,
-			ICodeReaderFactory codeReaderFactory,
-			int style) throws CoreException {
-		IResource resource = file.getResource();
-		ICProject project = file.getCProject();
-		IProject rproject = project.getProject();
-		
-		IScannerInfo scanInfo = null;
-		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(rproject);
-		if (provider != null){
-			IResource infoResource = resource != null ? resource : rproject; 
-			IScannerInfo buildScanInfo = provider.getScannerInformation(infoResource);
-			if (buildScanInfo != null)
-				scanInfo = buildScanInfo;
-			else if ((style & ILanguage.AST_SKIP_IF_NO_BUILD_INFO) != 0)
-				return null;
-			else
-				scanInfo = new ScannerInfo();
-		}
-		
-		CodeReader reader;
-		IFile rfile = (IFile)file.getResource();
-		String path	= rfile != null	? rfile.getLocation().toOSString() : file.getPath().toOSString();
-		if (file instanceof IWorkingCopy) {
-			// get the working copy contents
-			reader = new CodeReader(path, file.getContents());
-		} else {
-			reader = codeReaderFactory.createCodeReaderForTranslationUnit(path);
-			if (reader == null)
-				return null;
-		}
-		
-	    IScannerExtensionConfiguration scannerExtensionConfiguration
-	    	= C_GNU_SCANNER_EXTENSION;
-	    
+	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, 
+			IScannerInfo scanInfo, ICodeReaderFactory codeReaderFactory, IIndex index) throws CoreException {
+	    IScannerExtensionConfiguration scannerExtensionConfiguration= C_GNU_SCANNER_EXTENSION;
 		IScanner scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
                 ParserLanguage.C, ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, codeReaderFactory);
 	    //assume GCC
@@ -135,8 +88,8 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 
 	    // Parse
 		IASTTranslationUnit ast = parser.parse();
-		if ((style & AST_USE_INDEX) != 0) 
-			ast.setIndex(CCorePlugin.getPDOMManager().getPDOM(file.getCProject()));
+		// mstodo isn't that too late to set the index?
+		ast.setIndex(index);
 		return ast;
 	}
 	

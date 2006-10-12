@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
@@ -27,6 +28,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -51,11 +53,11 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, IPDOM
 
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
-		new PDOMNodeLinkedList(pdom, record+MEMBERLIST, getLinkage()).accept(visitor);
+		new PDOMNodeLinkedList(pdom, record+MEMBERLIST, getLinkageImpl()).accept(visitor);
 	}
 	
 	public void addMember(PDOMNode member) throws CoreException {
-		new PDOMNodeLinkedList(pdom, record+MEMBERLIST, getLinkage()).addMember(member);
+		new PDOMNodeLinkedList(pdom, record+MEMBERLIST, getLinkageImpl()).addMember(member);
 	}
 	
 	public int getNodeType() {

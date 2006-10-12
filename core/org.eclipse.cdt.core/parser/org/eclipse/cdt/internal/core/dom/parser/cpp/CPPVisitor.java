@@ -141,6 +141,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
@@ -618,7 +619,7 @@ public class CPPVisitor {
 	    
 	    ICPPASTCompositeTypeSpecifier clsTypeSpec;
         try {
-        	IASTNode node = ((ICPPClassScope)containingScope).getPhysicalNode();
+        	IASTNode node = ASTInternal.getPhysicalNodeOfScope(containingScope);
         	if (node instanceof ICPPASTCompositeTypeSpecifier)
         		clsTypeSpec = (ICPPASTCompositeTypeSpecifier)node;
         	else
@@ -1639,7 +1640,7 @@ public class CPPVisitor {
 			IASTNode node = null;
 			while( scope != null ){
 				if( scope instanceof ICPPBlockScope ){
-					node = ((ICPPBlockScope)scope).getPhysicalNode();
+					node = ASTInternal.getPhysicalNodeOfScope(scope);
 					if( node.getParent() instanceof IASTFunctionDefinition )
 						break;
 				}

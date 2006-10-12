@@ -13,16 +13,19 @@ package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
- * Common interface for names in the index and the AST
+ * Common interface for names in the index and the AST.
+ * <p> This interface is not intended to be implemented by clients. </p>
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same. Please do not use this API without
+ * consulting with the CDT team.
+ * </p>
  * @since 4.0
  */
 public interface IName {
-
-	public static final IName[] EMPTY_NAME_ARRAY = new IName[0];
-
 	/**
 	 * Return a char array representation of the name.
 	 * 
@@ -30,13 +33,6 @@ public interface IName {
 	 */
 	public char[] toCharArray();
 	
-	/**
-	 * Resolve the semantic object this name is referring to.
-	 * 
-	 * @return <code>IBinding</code> binding
-	 */
-	public IBinding resolveBinding();
-
 	/**
 	 * Is this name being used in the AST as the introduction of a declaration?
 	 * @return boolean

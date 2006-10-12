@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType.CPPClassTypeProblem;
 
 /**
@@ -389,7 +390,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
         }
         
         ICPPClassScope scope = (ICPPClassScope) getCompositeScope();
-        if( scope.isFullyCached() )
+        if( ASTInternal.isFullyCached(scope))
         	return ((CPPClassScope)scope).getConstructors( true );
         	
         IASTDeclaration [] members = getCompositeTypeSpecifier().getMembers();

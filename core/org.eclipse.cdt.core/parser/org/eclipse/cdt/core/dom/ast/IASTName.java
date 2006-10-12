@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 
 /**
@@ -43,10 +44,22 @@ public interface IASTName extends IASTNode, IName {
 	public void setBinding( IBinding binding );
 	
 	/**
+	 * Resolve the semantic object this name is referring to.
+	 * 
+	 * @return <code>IBinding</code> binding
+	 */
+	public IBinding resolveBinding();
+
+	/**
 	 * Return a list of bindings in the scope of the name that have the name as
 	 * a prefix.
 	 * 
 	 * @return <code>IBinding []</code> bindings that start with this name
 	 */
 	public IBinding[] resolvePrefix();
+	
+	/**
+	 * Determines the current linkage in which the name has to be resolved.
+	 */
+	public ILinkage getLinkage();
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -47,7 +48,7 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType,
 		// type
 		IType targetType = ((ITypeContainer)type).getType();
 		if (type != null) {
-			PDOMNode targetTypeNode = getLinkage().addType(this, targetType);
+			PDOMNode targetTypeNode = getLinkageImpl().addType(this, targetType);
 			if (targetTypeNode != null) {
 				db.putInt(record + TYPE, targetTypeNode.getRecord());
 			}
@@ -72,7 +73,7 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType,
 
 	public IType getType() throws DOMException {
 		try {
-			PDOMNode node = getLinkage().getNode(pdom.getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

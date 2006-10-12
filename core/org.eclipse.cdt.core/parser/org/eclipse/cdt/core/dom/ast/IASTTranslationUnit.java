@@ -12,7 +12,7 @@
 package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
@@ -219,14 +219,14 @@ public interface IASTTranslationUnit extends IASTNode {
      * 
      * @return the Index for this translation unit
      */
-    public IPDOM getIndex();
+    public IIndex getIndex();
     
     /**
      * Set the Index to be used for this translation unit.
      * 
      * @param index
      */
-    public void setIndex(IPDOM index);
+    public void setIndex(IIndex index);
 
     /**
      * Returns the language for this translation unit.

@@ -1,16 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
+ * IBM Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems) 
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -31,6 +33,8 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -107,7 +111,7 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 		IField[] fields = new IField[ size ];
 		if( size > 0 ){
 		    ICCompositeTypeScope scope = (ICCompositeTypeScope) getCompositeScope();
-		    if( scope.isFullyCached() )
+		    if( ASTInternal.isFullyCached(scope) )
 		        scope = null;
 			for( int i = 0; i < size; i++ ){
 				IASTNode node = members[i];
@@ -125,7 +129,7 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 				}
 			}
 			if( scope != null )
-			    scope.setFullyCached( true );
+				ASTInternal.setFullyCached(scope, true);
 		}
 		return (IField[]) ArrayUtil.trim( IField.class, fields );
 	}
@@ -142,7 +146,7 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 	    }
 	    
 	    ICCompositeTypeScope scope = (ICCompositeTypeScope) getCompositeScope();
-	    if( scope != null && scope.isFullyCached() ){
+	    if( scope != null && ASTInternal.isFullyCached(scope) ){
 	        IBinding binding = scope.getBinding( name.toCharArray() );
 	        if( binding instanceof IField )
 	            return (IField) binding;
@@ -186,7 +190,7 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 		    	}
 	    	}
     		if( scope != null )
-    		    scope.setFullyCached( true );
+    		    ASTInternal.setFullyCached(scope, true);
     		if( found != null )
     		    return found;
 	    }
@@ -237,4 +241,8 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
             return type.isSameType( this );
         return false;
     }
+    
+	public ILinkage getLinkage() {
+		return Linkage.C_LINKAGE;
+	}
 }

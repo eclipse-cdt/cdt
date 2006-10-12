@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -39,7 +40,7 @@ public class DOMSelectionParseBaseTest extends DOMFileBasePluginTest {
 	
 	protected IASTNode parse(IFile file, int offset1, int offset2, boolean expectedToPass) throws Exception {
 		ITranslationUnit tu = (ITranslationUnit)CCorePlugin.getDefault().getCoreModel().create(file);
-		IASTTranslationUnit ast = tu.getLanguage().getASTTranslationUnit(tu, 0);
+		IASTTranslationUnit ast = tu.getAST();
 		IASTName[] names = tu.getLanguage().getSelectedNames(ast, offset1, offset2 - offset1);
 		
 		if (!expectedToPass) return null;

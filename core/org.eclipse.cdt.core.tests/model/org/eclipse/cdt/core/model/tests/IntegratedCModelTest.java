@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -87,7 +88,7 @@ public abstract class IntegratedCModelTest extends TestCase {
 		CProjectHelper.delete(fCProject);
 	}	
 
-	protected ITranslationUnit getTU() {
+	protected ITranslationUnit getTU() throws CModelException {
 		ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(sourceFile);
 		if(isStructuralParse()) {
 			CCorePlugin.getDefault().setStructuralParseMode(true);
@@ -96,7 +97,8 @@ public abstract class IntegratedCModelTest extends TestCase {
 		}
 		// parse the translation unit to get the elements tree		
 		// Force the parsing now to do this in the right ParseMode.
-		tu.parse();
+		tu.close();
+		tu.open(new NullProgressMonitor());
 		CCorePlugin.getDefault().setStructuralParseMode(false);
 		return tu;
 	}

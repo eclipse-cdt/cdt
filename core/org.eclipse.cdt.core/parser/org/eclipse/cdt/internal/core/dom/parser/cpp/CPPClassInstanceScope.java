@@ -33,11 +33,13 @@ import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 
 /**
  * @author aniefer
  */
-public class CPPClassInstanceScope implements ICPPClassScope {
+public class CPPClassInstanceScope implements ICPPClassScope, IASTInternalScope {
 	private static final char[] CONSTRUCTOR_KEY = "!!!CTOR!!!".toCharArray();  //$NON-NLS-1$
 
 	private CharArrayObjectMap bindings;
@@ -251,14 +253,17 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	public IASTNode getPhysicalNode() throws DOMException {
 		ICPPClassType cls = getOriginalClass();
 		ICPPClassScope scope = (ICPPClassScope)cls.getCompositeScope();
-		if( scope != null )
-			return scope.getPhysicalNode();
 		
-		if( cls instanceof ICPPInternalBinding ){
-			IASTNode [] nds = ((ICPPInternalBinding)cls).getDeclarations();
-			if( nds != null && nds.length > 0 )
-				return nds[0];
+		IASTNode node= ASTInternal.getPhysicalNodeOfScope(scope);
+		if (node != null) {
+			return node;
 		}
+		
+		IASTNode[] nds= ASTInternal.getDeclarationsOfBinding(cls);
+
+		if( nds != null && nds.length > 0 )
+			return nds[0];
+
 		return null;
 	}
 

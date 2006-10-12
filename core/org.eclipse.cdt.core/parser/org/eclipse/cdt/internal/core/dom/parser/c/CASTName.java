@@ -7,14 +7,17 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.internal.core.dom.Linkage;
 
 /**
  * @author jcamelon
@@ -141,4 +144,7 @@ public class CASTName extends CASTNode implements IASTName {
         return false;
     }
 
+	public ILinkage getLinkage() {
+		return Linkage.C_LINKAGE;
+	}
 }

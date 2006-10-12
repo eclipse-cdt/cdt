@@ -214,7 +214,7 @@ public class BaseSelectionTestsIndexer extends TestCase {
             if (sel instanceof ITextSelection) {
             	ITextSelection textSel = (ITextSelection)sel;
             	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
-            	IASTTranslationUnit ast = tu.getLanguage().getASTTranslationUnit(tu, 0);
+            	IASTTranslationUnit ast = tu.getAST();
                 IASTName[] names = tu.getLanguage().getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
 	                
                 if (names == null || names.length == 0)
@@ -302,7 +302,7 @@ public class BaseSelectionTestsIndexer extends TestCase {
             if (sel instanceof TextSelection) {
             	ITextSelection textSel = (ITextSelection)sel;
             	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
-            	IASTTranslationUnit ast = tu.getLanguage().getASTTranslationUnit(tu, 0);
+            	IASTTranslationUnit ast = tu.getAST();
                 IASTName[] names = tu.getLanguage().getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
                 
                 if (names == null || names.length == 0)

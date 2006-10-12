@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -18,6 +19,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
@@ -31,10 +33,11 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Doug Schaefer
  */
-public class PDOMMacro {
+public class PDOMMacro implements IIndexMacro {
 
 	private final PDOM pdom;
 	private final int record;
+	private IMacro macro;
 
 	private static final int NAME = 0;
 	private static final int FIRST_PARAMETER = 4;
@@ -77,21 +80,21 @@ public class PDOMMacro {
 	}
 	
 	public void delete() throws CoreException {
-		getName().delete();
-		getExpansion().delete();
+		getNameInDB().delete();
+		getExpansionInDB().delete();
 		PDOMMacroParameter param = getFirstParameter();
 		if (param != null)
 			param.delete();
 		pdom.getDB().free(record);
 	}
 	
-	public IString getName() throws CoreException {
+	public IString getNameInDB() throws CoreException {
 		Database db = pdom.getDB();
 		int rec = db.getInt(record + NAME);
 		return db.getString(rec);
 	}
 	
-	public IString getExpansion() throws CoreException {
+	public IString getExpansionInDB() throws CoreException {
 		Database db = pdom.getDB();
 		int rec = db.getInt(record + EXPANSION);
 		return db.getString(rec);
@@ -135,7 +138,7 @@ public class PDOMMacro {
 	
 	private char[] getMacroExpansion() {
 		try {
-			return PDOMMacro.this.getExpansion().getChars();
+			return PDOMMacro.this.getExpansionInDB().getChars();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return new char[] { ' ' };
@@ -143,7 +146,12 @@ public class PDOMMacro {
 	}
 
 	public IMacro getMacro() throws CoreException {
-		char[] name = getName().getChars();
+		rebuildMacro();
+		return macro;
+	}
+	
+	private void rebuildMacro() throws CoreException {
+		char[] name = getNameInDB().getChars();
 		PDOMMacroParameter param = getFirstParameter();
 		if (param != null) {
 			List paramList = new ArrayList();
@@ -152,8 +160,38 @@ public class PDOMMacro {
 				param = param.getNextParameter();
 			}
 			char[][] params = (char[][])paramList.toArray(new char[paramList.size()][]);
-			return new FunctionStylePDOMMacro(name, params);
+			macro= new FunctionStylePDOMMacro(name, params);
 		} else
-			return new ObjectStylePDOMMacro(name);
+			macro= new ObjectStylePDOMMacro(name);
+	}
+
+	public char[] getSignature() {
+		try {
+			rebuildMacro();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new char[] { ' ' };
+		}
+		return macro.getSignature();
+	}
+
+	public char[] getExpansion() {
+		try {
+			rebuildMacro();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new char[] { ' ' };
+		}
+		return macro.getExpansion();
+	}
+
+	public char[] getName() {
+		try {
+			rebuildMacro();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new char[] { ' ' };
+		}
+		return macro.getName();
 	}
 }

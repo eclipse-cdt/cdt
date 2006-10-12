@@ -57,7 +57,7 @@ public class IIncludeTests extends IntegratedCModelTest {
 		return suite;
 	}		
 
-	public void testGetIncludeName()
+	public void testGetIncludeName() throws CModelException
 	{
 		ITranslationUnit tu = getTU();
 		IInclude[] theIncludes = null;
@@ -100,7 +100,7 @@ public class IIncludeTests extends IntegratedCModelTest {
 		
 	}
 	
-	public void testIsStandard()
+	public void testIsStandard() throws CModelException
 	{
 		ITranslationUnit tu = getTU();
 		IInclude[] theIncludes = null;

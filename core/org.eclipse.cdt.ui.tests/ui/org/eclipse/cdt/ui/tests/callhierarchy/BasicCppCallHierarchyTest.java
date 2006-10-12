@@ -57,7 +57,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testMethods() throws Exception {
 		String content = readTaggedComment("testMethods");
 		IFile file= createFile(getProject(), "testMethods.cpp", content);
-		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -141,7 +141,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testStaticMethods() throws Exception {
 		String content = readTaggedComment("testStaticMethods");
 		IFile file= createFile(getProject(), "testStaticMethods.cpp", content);
-		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -230,7 +230,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testFields() throws Exception {
 		String content = readTaggedComment("testFields");
 		IFile file= createFile(getProject(), "testFields.cpp", content);
-		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -305,7 +305,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void _testAutomaticConstructor_156668() throws Exception {
 		String content = readTaggedComment("testAutomaticConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
-		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -335,7 +335,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testConstructor() throws Exception {
 		String content = readTaggedComment("testConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
-		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -349,7 +349,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void _testDestructor_156669() throws Exception {
 		String content = readTaggedComment("testConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
-		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -385,7 +385,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testNamespace() throws Exception {
 		String content = readTaggedComment("testNamespace");
 		IFile file= createFile(getProject(), "testNamespace.cpp", content);
-		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -443,7 +443,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void _testNamespacePart2_156519() throws Exception {
 		String content = readTaggedComment("testNamespace");
 		IFile file= createFile(getProject(), "testNamespace.cpp", content);
-		waitForIndexer(fPdom, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 

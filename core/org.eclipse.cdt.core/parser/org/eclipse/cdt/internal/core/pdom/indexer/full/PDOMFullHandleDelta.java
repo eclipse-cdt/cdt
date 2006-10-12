@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
@@ -18,13 +19,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -142,16 +144,16 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 	
 	protected void processTranslationUnit(ITranslationUnit tu) throws CoreException {
 		IPath path = tu.getUnderlyingResource().getLocation();
-		PDOMFile pdomFile = pdom.getFile(path);
+		IIndexFile pdomFile= index.getFile(path);
 		boolean found = false;
 		if (pdomFile != null) {
 			// Look for all source units in the included list,
 			// If none, then add the header
-			PDOMFile[] includedBy = pdomFile.getAllIncludedBy();
+			IIndexInclude[] includedBy = index.findIncludedBy(pdomFile, IIndex.DEPTH_INFINITE); 
 			if (includedBy.length > 0) {
 				IProject project = tu.getCProject().getProject();
 				for (int i = 0; i < includedBy.length; ++i) {
-					String incfilename = includedBy[i].getFileName().getString();
+					String incfilename = includedBy[i].getIncludedByLocation();
 					if (CoreModel.isValidSourceUnitName(project, incfilename)) {
 						if (changed.get(incfilename) == null) {
 							IFile[] rfiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(incfilename));
@@ -170,44 +172,16 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 		if (!found)
 			changed.put(path.toOSString(), tu);
 	}
-	
-	protected void changeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
-		IASTTranslationUnit ast = parse(tu);
-		if (ast == null)
-			return;
-
-		// Remove the old symbols in the tu and all the headers
-		pdom.acquireWriteLock();
-		try {
-			IPath path = ((IFile)tu.getResource()).getLocation();
-			PDOMFile file = pdom.getFile(path);
-			if (file != null)
-				file.clear();
-	
-			IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
-			for (int i = 0; i < includes.length; ++i) {
-				String incname = includes[i].getPath();
-				PDOMFile incfile = pdom.getFile(incname);
-				if (incfile != null)
-					incfile.clear();
-			}
-			
-			// Add the new symbols
-			addSymbols(tu.getLanguage(), ast);
-		} finally {
-			pdom.releaseWriteLock();
-		}
-	}
 
 	protected void removeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
-		pdom.acquireWriteLock();
+		index.acquireWriteLock(0);
 		try {
 			IPath path = ((IFile)tu.getResource()).getLocation();
-			PDOMFile file = pdom.getFile(path);
+			IIndexFragmentFile file = (IIndexFragmentFile) index.getFile(path);
 			if (file != null)
-				file.clear();
+				index.clearFile(file);
 		} finally {
-			pdom.releaseWriteLock();
+			index.releaseWriteLock(0);
 		}
 	}
 

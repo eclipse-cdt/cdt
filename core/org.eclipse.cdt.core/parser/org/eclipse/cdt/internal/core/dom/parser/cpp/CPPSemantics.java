@@ -7,14 +7,14 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Dec 8, 2004
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.IPDOMResolver;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -117,16 +117,19 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil.ArrayWrapper;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author aniefer
@@ -136,7 +139,7 @@ public class CPPSemantics {
     protected static final ASTNodeProperty STRING_LOOKUP_PROPERTY = new ASTNodeProperty("CPPSemantics.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
 	public static final char[] EMPTY_NAME_ARRAY = new char[0];
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
-	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};  //$NON-NLS-1$
+	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};  
 	public static final IType VOID_TYPE = new CPPBasicType( IBasicType.t_void, 0 );
 	
 	static protected class LookupData
@@ -749,9 +752,13 @@ public class CPPSemantics {
 		}
 		if( binding == null || binding instanceof IProblemBinding ){
 			// Let's try the pdom
-			IPDOM pdom = name.getTranslationUnit().getIndex();
-			if (pdom != null) {
-				binding = ((IPDOMResolver)pdom.getAdapter(IPDOMResolver.class)).resolveBinding(name);
+			IIndex index = name.getTranslationUnit().getIndex();
+			if (index != null) {
+				try {
+					binding = index.findBinding(name);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
 			}
 			
 			// If we're still null...
@@ -1015,7 +1022,7 @@ public class CPPSemantics {
 			
 			ArrayWrapper directives = null;
 			if( !data.usingDirectivesOnly ){
-				if( scope.isFullyCached() && !data.prefixLookup && data.astName != null ){
+				if( ASTInternal.isFullyCached(scope) && !data.prefixLookup && data.astName != null ){
 					IBinding binding = data.prefixLookup ? null : scope.getBinding( data.astName, true );
 					if( binding != null && 
 						( CPPSemantics.declaredBefore( binding, data.astName ) || 
@@ -1156,7 +1163,7 @@ public class CPPSemantics {
 				//is circular inheritance
 				if( ! data.inheritanceChain.containsKey( parent ) ){
 					//is this name define in this scope?
-					if( data.astName != null && !data.prefixLookup && parent.isFullyCached() )
+					if( data.astName != null && !data.prefixLookup && ASTInternal.isFullyCached(parent) )
 						inherited = parent.getBinding( data.astName, true );
 					else 
 						inherited = lookupInScope( data, parent, null );
@@ -1363,7 +1370,7 @@ public class CPPSemantics {
 	static protected IASTName[] lookupInScope( CPPSemantics.LookupData data, ICPPScope scope, IASTNode blockItem ) throws DOMException {
 		Object possible = null;
 		IASTNode [] nodes = null;
-		IASTNode parent = scope.getPhysicalNode();
+		IASTNode parent = ASTInternal.getPhysicalNodeOfScope(scope);
 		
 		IASTName [] namespaceDefs = null;
 		int namespaceIdx = -1;
@@ -1521,7 +1528,7 @@ public class CPPSemantics {
 		}
 		
 
-		scope.setFullyCached( true );
+		ASTInternal.setFullyCached(scope, true);
 		
 		return found;
 	}
@@ -1546,7 +1553,7 @@ public class CPPSemantics {
 				ArrayWrapper usings = new ArrayWrapper();
 				
 				boolean found = false;
-				if( temp.isFullyCached() && !data.prefixLookup ){
+				if( ASTInternal.isFullyCached(temp) && !data.prefixLookup ){
 					IBinding binding = temp.getBinding( data.astName, true );
 					if( binding != null && 
 						( CPPSemantics.declaredBefore( binding, data.astName ) || 
@@ -2155,7 +2162,7 @@ public class CPPSemantics {
 				if( scope instanceof ICPPClassScope ){
 					cls = ((ICPPClassScope)scope).getClassType();
 				} else {
-					cls = new CPPClassType.CPPClassTypeProblem( scope.getPhysicalNode(), IProblemBinding.SEMANTIC_BAD_SCOPE, fn.getNameCharArray() );
+					cls = new CPPClassType.CPPClassTypeProblem(ASTInternal.getPhysicalNodeOfScope(scope), IProblemBinding.SEMANTIC_BAD_SCOPE, fn.getNameCharArray() );
 				}
 				if( cls instanceof ICPPClassTemplate ){
 					IBinding within = CPPTemplates.instantiateWithinClassTemplate( (ICPPClassTemplate) cls );
@@ -3211,7 +3218,7 @@ public class CPPSemantics {
 	public static IBinding[] findBindings( IScope scope, char []name, boolean qualified ) throws DOMException{
 	    CPPASTName astName = new CPPASTName();
 	    astName.setName( name );
-	    astName.setParent( scope.getPhysicalNode() );
+	    astName.setParent( ASTInternal.getPhysicalNodeOfScope(scope));
 	    astName.setPropertyInParent( STRING_LOOKUP_PROPERTY );
 	    
 	    LookupData data = new LookupData( astName );

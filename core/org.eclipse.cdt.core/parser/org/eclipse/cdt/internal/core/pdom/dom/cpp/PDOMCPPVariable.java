@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -43,7 +44,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		if (nameParent instanceof IASTDeclarator) {
 			IASTDeclarator declarator = (IASTDeclarator)nameParent;
 			IType type = CPPVisitor.createType(declarator);
-			PDOMNode typeNode = parent.getLinkage().addType(this, type);
+			PDOMNode typeNode = parent.getLinkageImpl().addType(this, type);
 			if (typeNode != null)
 				pdom.getDB().putInt(record + TYPE_OFFSET, typeNode.getRecord());
 		}
@@ -68,7 +69,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	public IType getType() throws DOMException {
 		try {
 			int typeRec = pdom.getDB().getInt(record + TYPE_OFFSET);
-			return (IType)getLinkage().getNode(typeRec);
+			return (IType)getLinkageImpl().getNode(typeRec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

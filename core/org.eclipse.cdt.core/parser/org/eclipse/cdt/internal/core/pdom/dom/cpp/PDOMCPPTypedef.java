@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -34,7 +35,7 @@ class PDOMCPPTypedef extends PDOMBinding implements ITypedef {
 			throws CoreException {
 		super(pdom, parent, name);
 		IType type = typedef.getType();
-		PDOMNode typeNode = parent.getLinkage().addType(this, type);
+		PDOMNode typeNode = parent.getLinkageImpl().addType(this, type);
 		if (typeNode != null)
 			pdom.getDB().putInt(record + TYPE, typeNode.getRecord());
 	}
@@ -53,7 +54,7 @@ class PDOMCPPTypedef extends PDOMBinding implements ITypedef {
 
 	public IType getType() throws DOMException {
 		try {
-			PDOMNode node = getLinkage().getNode(pdom.getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

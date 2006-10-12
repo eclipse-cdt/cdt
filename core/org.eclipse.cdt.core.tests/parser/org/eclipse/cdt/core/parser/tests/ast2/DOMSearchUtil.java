@@ -27,9 +27,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -162,7 +162,7 @@ public class DOMSearchUtil {
 		}
 		
 		IBinding binding = searchName.resolveBinding();
-		if (binding instanceof PDOMBinding) {
+		if (binding instanceof IIndexBinding) {
 			Assert.fail("Not implemented");
 //			try { 
 //				ArrayList pdomNames = new ArrayList();

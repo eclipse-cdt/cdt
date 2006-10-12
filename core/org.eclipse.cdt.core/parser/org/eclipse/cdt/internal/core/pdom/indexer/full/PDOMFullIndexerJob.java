@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
@@ -20,12 +21,13 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
+import org.eclipse.cdt.internal.core.index.IWritableIndex;
+import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author Doug Schaefer
@@ -34,7 +36,7 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class PDOMFullIndexerJob implements IPDOMIndexerTask {
 
 	protected final PDOMFullIndexer indexer;
-	protected final PDOM pdom;
+	protected final IWritableIndex index;
 	
 	// Error count, bail when it gets too high
 	protected int errorCount;
@@ -42,49 +44,51 @@ public abstract class PDOMFullIndexerJob implements IPDOMIndexerTask {
 	
 	public PDOMFullIndexerJob(PDOMFullIndexer indexer) throws CoreException {
 		this.indexer = indexer;
-		this.pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(indexer.getProject());
+		this.index = ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(indexer.getProject());
 	}
 
 	public IPDOMIndexer getIndexer() {
 		return indexer;
 	}
 	
-	protected IASTTranslationUnit parse(ITranslationUnit tu) throws CoreException {
-		ILanguage language = tu.getLanguage();
-		if (language == null)
-			return null;
-		
-		// get the AST in the "Full" way, i.e. don't skip anything.
-		return language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
-	}
-
 	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
-		IASTTranslationUnit ast = parse(tu);
+		changeTU(tu);
+	}
+	
+	protected void changeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
+		IPath path = tu.getLocation();
+		if (path == null) {
+			return;
+		}
+		IASTTranslationUnit ast= tu.getAST(null, ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO);
 		if (ast == null)
 			return;
 		
-		pdom.acquireWriteLock();
+		index.acquireWriteLock(0);
+		
 		try {
-			// First clear out the symbols in the includes
+			// Remove the old symbols in the tu
+			IIndexFragmentFile file = (IIndexFragmentFile) index.getFile(path);
+			if (file != null)
+				index.clearFile(file);
+
+			// Clear out the symbols in the includes
 			IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
 			for (int i = 0; i < includes.length; ++i) {
 				String incname = includes[i].getPath();
-				PDOMFile incfile = pdom.getFile(incname);
-				if (incfile != null)
-					incfile.clear();
+				IIndexFragmentFile incfile = (IIndexFragmentFile) index.getFile(new Path(incname));
+				if (incfile != null) {
+					index.clearFile(incfile);
+				}
 			}
 			
-			addSymbols(tu.getLanguage(), ast);
+			addSymbols(ast);
 		} finally {
-			pdom.releaseWriteLock();
+			index.releaseWriteLock(0);
 		}
 	}
 	
-	public void addSymbols(ILanguage language, IASTTranslationUnit ast) throws CoreException {
-		final PDOMLinkage linkage = pdom.getLinkage(language);
-		if (linkage == null)
-			return;
-		
+	protected void addSymbols(IASTTranslationUnit ast) throws CoreException {
 		// Add in the includes
 		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
 		for (int i = 0; i < includes.length; ++i) {
@@ -96,12 +100,12 @@ public abstract class PDOMFullIndexerJob implements IPDOMIndexerTask {
 				? sourceLoc.getFileName()
 				: ast.getFilePath(); // command-line includes
 				
-			PDOMFile sourceFile = pdom.addFile(sourcePath);
+			IIndexFragmentFile sourceFile = index.addFile(sourcePath);
 			String destPath = include.getPath();
-			PDOMFile destFile = pdom.addFile(destPath);
-			sourceFile.addIncludeTo(destFile);
+			IIndexFragmentFile destFile = index.addFile(destPath);
+			index.addInclude(sourceFile, destFile);
 		}
-	
+					
 		// Add in the macros
 		IASTPreprocessorMacroDefinition[] macros = ast.getMacroDefinitions();
 		for (int i = 0; i < macros.length; ++i) {
@@ -110,33 +114,29 @@ public abstract class PDOMFullIndexerJob implements IPDOMIndexerTask {
 			IASTFileLocation sourceLoc = macro.getFileLocation();
 			if (sourceLoc == null)
 				continue; // skip built-ins and command line macros
-			
-			PDOMFile sourceFile = pdom.getFile(sourceLoc.getFileName());
-			if (sourceFile != null) // not sure why this would be null
-				sourceFile.addMacro(macro);
+				
+			String filename = sourceLoc.getFileName();
+			IIndexFragmentFile sourceFile = index.addFile(filename);
+			index.addMacro(sourceFile, macro);
 		}
-		
+					
 		// Add in the names
 		ast.accept(new ASTVisitor() {
 			{
 				shouldVisitNames = true;
 				shouldVisitDeclarations = true;
 			}
-
 			public int visit(IASTName name) {
 				try {
-					IASTFileLocation fileloc = name.getFileLocation();
-					if (fileloc != null) {
-						PDOMFile file = pdom.addFile(fileloc.getFileName());
-						linkage.addName(name, file);
-					}
+					IASTFileLocation nameLoc = name.getFileLocation();
+					if (nameLoc != null)
+						index.addName(index.addFile(nameLoc.getFileName()), name);
 					return PROCESS_CONTINUE;
 				} catch (Throwable e) {
 					CCorePlugin.log(e);
 					return ++errorCount > MAX_ERRORS ? PROCESS_ABORT : PROCESS_CONTINUE;
 				}
-			};
-		});;
+			}
+		});
 	}
-
 }

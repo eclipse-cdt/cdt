@@ -7,14 +7,17 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
@@ -23,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public abstract class PDOMBinding extends PDOMNamedNode implements IBinding {
+public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmentBinding {
 
 	private static final int FIRST_DECL_OFFSET   = PDOMNamedNode.RECORD_SIZE +  0; // size 4
 	private static final int FIRST_DEF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 4; // size 4
@@ -152,4 +155,15 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IBinding {
 		return null;
 	}
 
+	public IIndexBinding getParentBinding() throws CoreException {
+		PDOMNode parent= getParentNode();
+		if (parent instanceof IIndexBinding) {
+			return (IIndexBinding) parent;
+		}
+		return null;
+	}
+	
+	public IIndexFragment getFragment() {
+		return pdom;
+	}
 }

@@ -71,7 +71,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	}
 	
 	public void addMember(PDOMNode member) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkage());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.addMember(member);
 	}
 	
@@ -135,7 +135,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkage());
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.accept(visitor);
 	}
 	
@@ -308,20 +308,12 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		throw new PDOMNotImplementedError();
 	}
 
-	public void flushCache() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		return null;
 	}
 
 	public IScope getParent() throws DOMException {
 		return null;
-	}
-
-	public IASTNode getPhysicalNode() throws DOMException {
-		throw new PDOMNotImplementedError();
 	}
 
 	public IName getScopeName() throws DOMException {
@@ -336,16 +328,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		}
 	}
 
-	public boolean isFullyCached() throws DOMException {
-		return true;
-	}
-
 	public void removeBinding(IBinding binding) throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
-
-	public void setFullyCached(boolean b) throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
 }

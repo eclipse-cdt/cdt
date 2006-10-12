@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 /*
@@ -14,6 +15,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -24,6 +26,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -146,7 +150,7 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
             if( t instanceof ICPPClassType ){
                 IScope s = ((ICPPClassType)t).getCompositeScope();
                 
-                if( s != null && s.isFullyCached() )
+                if( s != null && ASTInternal.isFullyCached(s) )
                 	result = s.getBinding( name, true );
 //                CPPSemantics.LookupData data = CPPSemantics.createLookupData( name, false );
 //                CPPSemantics.lookup( data, s );
@@ -156,4 +160,8 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
         }
         return result;
     }
+    
+	public ILinkage getLinkage() {
+		return Linkage.CPP_LINKAGE;
+	}
 }

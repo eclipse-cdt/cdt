@@ -19,12 +19,12 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMIndexer;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseTestCase;
-
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 
 import org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart;
 import org.eclipse.cdt.internal.ui.callhierarchy.CallHierarchyUI;
@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 public class CallHierarchyBaseTest extends BaseTestCase {
 	
 	private ICProject fCProject;
-	public PDOM fPdom;
+	protected IIndex fIndex;
 
 	public CallHierarchyBaseTest(String name) {
 		super(name);
@@ -42,8 +42,14 @@ public class CallHierarchyBaseTest extends BaseTestCase {
 	protected void setUp() throws CoreException {
 		fCProject= CProjectHelper.createCProject("__chTest__", "bin");
 		CCorePlugin.getPDOMManager().setIndexerId(fCProject, "org.eclipse.cdt.core.fastIndexer");
-		fPdom= (PDOM) CCorePlugin.getPDOMManager().getPDOM(fCProject);
-		fPdom.clear();
+		IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getIndexer(fCProject);
+		try {
+			indexer.reindex();
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+
+		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 	
 	protected void tearDown() throws CoreException {

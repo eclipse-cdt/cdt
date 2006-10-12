@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,24 +21,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMNode;
-import org.eclipse.cdt.core.dom.IPDOMResolver;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.IPDOMWriter;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
+import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -54,7 +62,7 @@ import org.eclipse.core.runtime.Status;
  * 
  * @author Doug Schaefer
  */
-public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMWriter {
+public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	private Database db;
 	
@@ -78,19 +86,14 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 	
 	// Local caches
 	private BTree fileIndex;
-	private Map linkageCache = new HashMap();
+	private Map fLinkageIDCache = new HashMap();
 	
 	public PDOM(IPath dbPath) throws CoreException {
 		// Load up the database
 		db = new Database(dbPath.toOSString());
 		
 		if (db.getVersion() == VERSION) {
-			// populate the linkage cache
-			PDOMLinkage linkage = getFirstLinkage();
-			while (linkage != null) {
-				linkageCache.put(linkage.getLanguage().getId(), linkage);
-				linkage = linkage.getNextLinkage();
-			}
+			readLinkages();
 		}
 	}
 	
@@ -101,24 +104,12 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 		} else
 			return false;
 	}
-
-	public Object getAdapter(Class adapter) {
-		if (adapter == IPDOM.class)
-			return this;
-		else if (adapter == IPDOMResolver.class)
-			return this;
-		else if (adapter == IPDOMWriter.class)
-			return this;
-		else if (adapter == PDOM.class)
-			// TODO this use is deprecated (or bad at least)
-			return this;
-		else
-			return super.getAdapter(adapter);
-	}
 	
 	public void accept(IPDOMVisitor visitor) throws CoreException {
-		for (PDOMLinkage linkage = getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
+		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
+			PDOMLinkage linkage = (PDOMLinkage) iter.next();
 			linkage.accept(visitor);
+		}
 	}
 	
 	public static interface IListener {
@@ -164,11 +155,11 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 		return record != 0 ? new PDOMFile(this, record) : null;
 	}
 	
-	public PDOMFile getFile(IPath path) throws CoreException {
+	public IIndexFragmentFile getFile(IPath path) throws CoreException {
 		return getFile(path.toOSString());
 	}
 	
-	public PDOMFile addFile(String filename) throws CoreException {
+	protected IIndexFragmentFile addFile(String filename) throws CoreException {
 		PDOMFile file = getFile(filename);
 		if (file == null) {
 			file = new PDOMFile(this, filename);
@@ -177,7 +168,7 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 		return file;		
 	}
 	
-	public void clear() throws CoreException {
+	protected void clear() throws CoreException {
 		Database db = getDB();
 		// Clear out the database
 		db.clear();
@@ -187,38 +178,23 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 		fileIndex = null;
 		
 		db.putInt(LINKAGES, 0);
-		linkageCache.clear();
+		fLinkageIDCache.clear();
 	}
 
 	public boolean isEmpty() throws CoreException {
-		return getFirstLinkage() == null;
+		return getFirstLinkageRecord() == 0;
 	}
 
-	public ICodeReaderFactory getCodeReaderFactory() {
-		return new PDOMCodeReaderFactory(this);
-	}
-
-	public ICodeReaderFactory getCodeReaderFactory(IWorkingCopy root) {
-		return new PDOMCodeReaderFactory(this, root);
-	}
-
+	/**
+	 * @deprecated use findDeclarations() instead.
+	 */
 	public IName[] getDeclarations(IBinding binding) throws CoreException {
-		if (binding instanceof PDOMBinding) {
-			List names = new ArrayList();
-			for (PDOMName name = ((PDOMBinding)binding).getFirstDeclaration();
-					name != null;
-					name = name.getNextInBinding())
-				names.add(name);
-			// Add in definitions, too
-			for (PDOMName name = ((PDOMBinding)binding).getFirstDefinition();
-					name != null;
-					name = name.getNextInBinding())
-				names.add(name);
-			return (IName[])names.toArray(new IName[names.size()]);
-		}
-		return IName.EMPTY_NAME_ARRAY;
+		return findNames(binding, IIndex.FIND_DECLARATIONS_DEFINITIONS);
 	}
 
+	/**
+	 * @deprecated use findDefinitions() instead
+	 */
 	public IName[] getDefinitions(IBinding binding) throws CoreException {
 		if (binding instanceof PDOMBinding) {
 			List names = new ArrayList();
@@ -226,11 +202,14 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 					name != null;
 					name = name.getNextInBinding())
 				names.add(name);
-			return (IName[])names.toArray(new IName[names.size()]);
+			return (IName[]) names.toArray(new IIndexName[names.size()]);
 		}
-		return IName.EMPTY_NAME_ARRAY;
+		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
-	
+
+	/**
+	 * @deprecated use findReferences() instead
+	 */
 	public IName[] getReferences(IBinding binding) throws CoreException {
 		if (binding instanceof PDOMBinding) {
 			List names = new ArrayList();
@@ -238,19 +217,16 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 					name != null;
 					name = name.getNextInBinding())
 				names.add(name);
-			return (IName[])names.toArray(new IName[names.size()]);
+			return (IName[]) names.toArray(new IIndexName[names.size()]);
 		}
-		return IName.EMPTY_NAME_ARRAY;
+		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
-	
-	public IBinding resolveBinding(IASTName name) {
-		try {
-			ILanguage language = name.getTranslationUnit().getLanguage();
-			return getLinkage(language).resolveBinding(name);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
 		
+	public IIndexProxyBinding findBinding(IASTName name) throws CoreException {
+		PDOMLinkage linkage= adaptLinkage(name.getLinkage());
+		if (linkage != null) {
+			return linkage.resolveBinding(name);
+		}
 		return null;
 	}
 
@@ -258,14 +234,19 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 		private final Pattern[] pattern;
 		private final IProgressMonitor monitor;
 		
-		private final IBinding[] match;
-		private int level = 0;
+		private final ArrayList currentPath= new ArrayList();
+		private final ArrayList matchStack= new ArrayList();
 		private List bindings = new ArrayList();
+		private boolean isFullyQualified;
+		private BitSet matchesUpToLevel;
 		
-		public BindingFinder(Pattern[] pattern, IProgressMonitor monitor) {
+		public BindingFinder(Pattern[] pattern, boolean isFullyQualified, IProgressMonitor monitor) {
 			this.pattern = pattern;
 			this.monitor = monitor;
-			match = new IBinding[pattern.length];
+			this.isFullyQualified= isFullyQualified;
+			matchesUpToLevel= new BitSet();
+			matchesUpToLevel.set(0);
+			matchStack.add(matchesUpToLevel);
 		}
 		
 		public boolean visit(IPDOMNode node) throws CoreException {
@@ -274,71 +255,117 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 			
 			if (node instanceof IBinding) {
 				IBinding binding = (IBinding)node;
-				if (pattern[level].matcher(binding.getName()).matches()) {
-					if (level < pattern.length - 1) {
-						match[level++] = binding;
-					} else {
-						bindings.add(binding);
-						// Only visit children if using simple name
-						return pattern.length == 1;
+				String name = binding.getName();
+
+				// check if we have a complete match.
+				final int lastIdx = pattern.length-1;
+				if (matchesUpToLevel.get(lastIdx) && pattern[lastIdx].matcher(name).matches()) {
+					bindings.add(binding);
+				}
+						
+				// check if we have a partial match
+				if (binding instanceof IPDOMMemberOwner) {
+					boolean visitNextLevel= false;
+					BitSet updatedMatchesUpToLevel= new BitSet();
+					if (!isFullyQualified) {
+						updatedMatchesUpToLevel.set(0);
+						visitNextLevel= true;
+					}
+					for (int i=0; i < lastIdx; i++) {
+						if (matchesUpToLevel.get(i) && pattern[i].matcher(name).matches()) {
+							updatedMatchesUpToLevel.set(i+1);
+							visitNextLevel= true;
+						}
+					}
+					if (visitNextLevel) {
+						matchStack.add(matchesUpToLevel);
+						matchesUpToLevel= updatedMatchesUpToLevel;
+						currentPath.add(binding);
+						return true;
 					}
 				}
+				return false;
 			}
+			return false;
+		}
 
-			return true;
-		}
-		
 		public void leave(IPDOMNode node) throws CoreException {
-			if (node instanceof IBinding) {
-				if (level > 0 && match[level - 1] == (IBinding)node)
-					// pop the stack
-					--level;
+			final int idx= currentPath.size()-1;
+			if (idx >= 0 && currentPath.get(idx) == node) {
+				currentPath.remove(idx);
+				matchesUpToLevel= (BitSet) matchStack.remove(matchStack.size()-1);
 			}
 		}
 		
-		public IBinding[] getBindings() {
-			return (IBinding[])bindings.toArray(new IBinding[bindings.size()]);
+		public IIndexFragmentBinding[] getBindings() {
+			return (IIndexFragmentBinding[])bindings.toArray(new IIndexFragmentBinding[bindings.size()]);
 		}
 	}
 	
+	/** 
+	 * @deprecated
+	 */
 	public IBinding[] findBindings(Pattern pattern, IProgressMonitor monitor) throws CoreException {
-		return findBindings(new Pattern[] { pattern }, monitor);
+		return findBindings(new Pattern[] { pattern }, false, new IndexFilter(), monitor);
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public IBinding[] findBindings(Pattern[] pattern, IProgressMonitor monitor) throws CoreException {
+		return findBindings(pattern, true, new IndexFilter(), monitor);
 	}
 	
-	public IBinding[] findBindings(Pattern[] pattern, IProgressMonitor monitor) throws CoreException {
-		BindingFinder finder = new BindingFinder(pattern, monitor);
-		PDOMLinkage linkage = getFirstLinkage();
-		while (linkage != null) {
-			try {
-				linkage.accept(finder);
-			} catch (CoreException e) {
-				if (e.getStatus() != Status.OK_STATUS)
-					throw e;
-				else
-					return new IBinding[0];
+	public IIndexBinding[] findBindings(Pattern pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		return findBindings(new Pattern[] { pattern }, isFullyQualified, filter, monitor);
+	}
+
+	public IIndexFragmentBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		BindingFinder finder = new BindingFinder(pattern, isFullyQualified, monitor);
+		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
+			PDOMLinkage linkage = (PDOMLinkage) iter.next();
+			if (filter.acceptLinkage(linkage)) {
+				try {
+					linkage.accept(finder);
+				} catch (CoreException e) {
+					if (e.getStatus() != Status.OK_STATUS)
+						throw e;
+					else
+						return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+				}
 			}
-			linkage = linkage.getNextLinkage();
 		}
 		return finder.getBindings();
 	}
-	
-	public PDOMLinkage getLinkage(ILanguage language) throws CoreException {
-		PDOMLinkage linkage = (PDOMLinkage)linkageCache.get(language.getId());
-		if (linkage != null)
-			return linkage;
-		
-		// Need to create it
-		IPDOMLinkageFactory factory = (IPDOMLinkageFactory)language.getAdapter(IPDOMLinkageFactory.class);
-		String id = language.getId();
-		int linkrec = db.getInt(LINKAGES);
-		while (linkrec != 0) {
-			if (PDOMLinkage.getId(this, linkrec).equals(id))
-				return factory.getLinkage(this, linkrec);
-			else
-				linkrec = PDOMLinkage.getNextLinkageRecord(this, linkrec);
+
+	private void readLinkages() throws CoreException {
+		// populate the linkage cache
+		int record= getFirstLinkageRecord();
+		while (record != 0) {
+			String linkageID= PDOMLinkage.getId(this, record).getString();
+			IPDOMLinkageFactory factory= LanguageManager.getInstance().getPDOMLinkageFactory(linkageID);
+			if (factory != null) {
+				PDOMLinkage linkage= factory.getLinkage(this, record);
+				fLinkageIDCache.put(linkageID, linkage);
+			}
+			record= PDOMLinkage.getNextLinkageRecord(this, record);
 		}
-		
-		return factory.createLinkage(this);
+	}
+
+	public PDOMLinkage getLinkage(String linkageID) throws CoreException {
+		return (PDOMLinkage) fLinkageIDCache.get(linkageID);
+	}
+
+	public PDOMLinkage createLinkage(String linkageID) throws CoreException {
+		PDOMLinkage pdomLinkage= (PDOMLinkage) fLinkageIDCache.get(linkageID);
+		if (pdomLinkage == null) {
+			// Need to create it
+			IPDOMLinkageFactory factory= LanguageManager.getInstance().getPDOMLinkageFactory(linkageID);
+			if (factory != null) {
+				return factory.createLinkage(this);
+			}
+		}
+		return pdomLinkage;
 	}
 
 	public PDOMLinkage getLinkage(int record) throws CoreException {
@@ -347,7 +374,7 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 		
 		// First check the cache. We do a linear search since there will be very few linkages
 		// in a given database.
-		Iterator i = linkageCache.values().iterator();
+		Iterator i = fLinkageIDCache.values().iterator();
 		while (i.hasNext()) {
 			PDOMLinkage linkage = (PDOMLinkage)i.next();
 			if (linkage.getRecord() == record)
@@ -355,23 +382,22 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 		}
 		
 		String id = PDOMLinkage.getId(this, record).getString();
-		ILanguage language = LanguageManager.getInstance().getLanguage(id);
-		return getLinkage(language);
+		return createLinkage(id);
 	}
 	
-	public PDOMLinkage getFirstLinkage() throws CoreException {
-		return getLinkage(db.getInt(LINKAGES));
+	private int getFirstLinkageRecord() throws CoreException {
+		return db.getInt(LINKAGES);
 	}
 	
 	public PDOMLinkage[] getLinkages() {
-		Collection values = linkageCache.values();
-		return (PDOMLinkage[])values.toArray(new PDOMLinkage[values.size()]);
+		Collection values = fLinkageIDCache.values();
+		return (PDOMLinkage[]) values.toArray(new PDOMLinkage[values.size()]);
 	}
 	
 	public void insertLinkage(PDOMLinkage linkage) throws CoreException {
 		linkage.setNext(db.getInt(LINKAGES));
 		db.putInt(LINKAGES, linkage.getRecord());
-		linkageCache.put(linkage.getLanguage().getId(), linkage);
+		fLinkageIDCache.put(linkage.getID(), linkage);
 	}
 	
 	public PDOMBinding getBinding(int record) throws CoreException {
@@ -388,6 +414,7 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 	private Object mutex = new Object();
 	private int lockCount;
 	private int waitingReaders;
+	private long lastWriteAccess= 0;
 	
 	public void acquireReadLock() throws InterruptedException {
 		synchronized (mutex) {
@@ -401,6 +428,7 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 	
 	public void releaseReadLock() {
 		synchronized (mutex) {
+			assert lockCount > 0: "No lock to release"; //$NON-NLS-1$
 			if (lockCount > 0)
 				--lockCount;
 			mutex.notifyAll();
@@ -408,7 +436,22 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 	}
 	
 	public void acquireWriteLock() throws InterruptedException {
+		acquireWriteLock(0);
+	}
+	
+	public void acquireWriteLock(int giveupReadLocks) throws InterruptedException {
 		synchronized (mutex) {
+			if (giveupReadLocks > 0) {
+				// giveup on read locks
+				assert lockCount >= giveupReadLocks: "Not enough locks to release"; //$NON-NLS-1$
+				if (lockCount >= giveupReadLocks) {
+					lockCount-= giveupReadLocks;
+				}
+				else if (lockCount >= 0) {
+					lockCount= 0;
+				}
+			}
+			
 			// Let the readers go first
 			while (lockCount != 0 || waitingReaders > 0)
 				mutex.wait();
@@ -417,12 +460,131 @@ public class PDOM extends PlatformObject implements IPDOM, IPDOMResolver, IPDOMW
 	}
 	
 	public void releaseWriteLock() {
+		releaseWriteLock(0);
+	}
+	
+	public void releaseWriteLock(int establishReadLocks) {
+		assert lockCount == -1;
+		lastWriteAccess= System.currentTimeMillis();
 		synchronized (mutex) {
 			if (lockCount < 0)
-				++lockCount;
+				lockCount= establishReadLocks;
 			mutex.notifyAll();
 		}
 		fireChange();
 	}
+		
 	
+	public long getLastWriteAccess() {
+		return lastWriteAccess;
+	}
+
+	protected PDOMLinkage adaptLinkage(ILinkage linkage) throws CoreException {
+		return (PDOMLinkage) fLinkageIDCache.get(linkage.getID());
+	}
+
+	public IIndexProxyBinding adaptBinding(IBinding binding) throws CoreException {
+		if (binding instanceof PDOMBinding) {
+			PDOMBinding pdomBinding= (PDOMBinding) binding;
+			if (pdomBinding.getPDOM() == this) {
+				return pdomBinding;
+			}
+		}
+		
+		PDOMLinkage linkage= adaptLinkage(binding.getLinkage());
+		if (linkage != null) {
+			return linkage.adaptBinding(binding);
+		}
+		return null;
+	}
+
+	public IIndexProxyBinding adaptBinding(IIndexProxyBinding binding) throws CoreException {
+		if (binding instanceof IBinding) {
+			return adaptBinding((IBinding) binding);
+		}
+		return null;
+	}
+
+	public IIndexFragmentBinding findBinding(IIndexFragmentName indexName) throws CoreException {
+		if (indexName instanceof PDOMName) {
+			PDOMName pdomName= (PDOMName) indexName;
+			return pdomName.getPDOMBinding();
+		}
+		return null;
+	}
+
+	public IIndexFragmentName[] findNames(IBinding binding, int options) throws CoreException {
+		IIndexProxyBinding proxyBinding= adaptBinding(binding);
+		if (proxyBinding != null) {
+			return findNames(proxyBinding, options);
+		}
+		return IIndexFragmentName.EMPTY_NAME_ARRAY;
+	}
+
+	public IIndexFragmentName[] findNames(IIndexProxyBinding binding, int options) throws CoreException {
+		PDOMBinding pdomBinding = (PDOMBinding) adaptBinding(binding);
+		
+		if (pdomBinding != null) {
+			PDOMName name;
+			List names = new ArrayList();
+			if ((options & FIND_DECLARATIONS) != 0) {
+				for (name= pdomBinding.getFirstDeclaration(); name != null; name= name.getNextInBinding()) {
+					names.add(name);
+				}
+			}
+			if ((options & FIND_DEFINITIONS) != 0) {
+				for (name = pdomBinding.getFirstDefinition(); name != null; name= name.getNextInBinding()) {
+					names.add(name);
+				}
+			}
+			if ((options & FIND_REFERENCES) != 0) {
+				for (name = pdomBinding.getFirstReference(); name != null; name= name.getNextInBinding()) {
+					names.add(name);
+				}
+			}
+			return (IIndexFragmentName[]) names.toArray(new IIndexFragmentName[names.size()]);
+		}
+		return IIndexFragmentName.EMPTY_NAME_ARRAY;
+	}
+
+	public IIndexFragmentInclude[] findIncludedBy(IIndexFragmentFile file) throws CoreException {
+		PDOMFile pdomFile= adaptFile(file);
+		if (pdomFile != null) {
+			List result = new ArrayList();
+			for (PDOMInclude i= pdomFile.getFirstIncludedBy(); i != null; i= i.getNextInIncludedBy()) {
+				result.add(i);
+			}
+			return (IIndexFragmentInclude[]) result.toArray(new PDOMInclude[result.size()]);
+		}
+		return new PDOMInclude[0];
+	}
+
+	private PDOMFile adaptFile(IIndexFragmentFile file) throws CoreException {
+		if (file.getIndexFragment() == this && file instanceof PDOMFile) {
+			return (PDOMFile) file;
+		}
+		
+		return getFile(file.getLocation());
+	}
+
+	public IIndexFragmentInclude[] findIncludes(IIndexFragmentFile file) throws CoreException {
+		PDOMFile pdomFile= adaptFile(file);
+		if (file != null) {
+			List result = new ArrayList();
+			for (PDOMInclude i= pdomFile.getFirstInclude(); i != null; i= i.getNextInIncludes()) {
+				result.add(i);
+			}
+			return (IIndexFragmentInclude[]) result.toArray(new PDOMInclude[result.size()]);
+		}
+		return new PDOMInclude[0];
+	}
+	
+	public IIndexFragmentFile resolveInclude(IIndexFragmentInclude include) throws CoreException {
+		if (include.getFragment() == this && include instanceof PDOMInclude) {
+			PDOMInclude pdomInclude= (PDOMInclude) include;
+			return pdomInclude.getIncludes();
+		}
+		return getFile(include.getIncludesLocation());
+	}
+
 }

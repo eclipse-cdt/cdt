@@ -54,7 +54,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestFunctions(String filename) throws IOException, Exception, PartInitException {
 		String content = readTaggedComment("testFunctions");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fIndex, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -100,7 +100,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestVariables(String filename) throws Exception {
 		String content = readTaggedComment("testVariables");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fIndex, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -158,7 +158,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestEnumerator(String filename, String contentTag) throws Exception {
 		String content = readTaggedComment(contentTag);
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fIndex, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -223,7 +223,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestStructMembers(String filename) throws Exception {
 		String content = readTaggedComment("testStructMembers");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fIndex, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -281,7 +281,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestAnonymousStructMembers(String filename) throws Exception {
 		String content = readTaggedComment("testStructMembers");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fIndex, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -355,7 +355,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestUnionMembers(String filename) throws Exception {
 		String content = readTaggedComment("testUnionMembers");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fIndex, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -413,7 +413,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestAnonymousUnionMembers(String filename) throws Exception {
 		String content = readTaggedComment("testUnionMembers");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(fPdom, file, 1000);
+		waitForIndexer(fIndex, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 

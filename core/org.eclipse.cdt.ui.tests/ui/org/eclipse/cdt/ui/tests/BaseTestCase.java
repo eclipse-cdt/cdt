@@ -30,16 +30,14 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
-
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 
 public class BaseTestCase extends TestCase {
 	private boolean fExpectFailure= false;
@@ -144,31 +142,31 @@ public class BaseTestCase extends TestCase {
     	return TestSourceReader.createFile(container, new Path(fileName), contents);
     }
     
-    protected IASTTranslationUnit createPDOMBasedAST(ICProject project, IFile file) throws CModelException, CoreException {
+    protected IASTTranslationUnit createIndexBasedAST(IIndex index, ICProject project, IFile file) throws CModelException, CoreException {
     	ICElement elem= project.findElement(file.getFullPath());
     	if (elem instanceof ITranslationUnit) {
     		ITranslationUnit tu= (ITranslationUnit) elem;
     		if (tu != null) {
-    			return tu.getLanguage().getASTTranslationUnit(tu, ILanguage.AST_SKIP_INDEXED_HEADERS |ILanguage.AST_USE_INDEX);
+    			return tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
     		}
     	}
     	fail("Could not create ast for " + file.getFullPath());
     	return null;
     }
 
-	protected void waitForIndexer(PDOM pdom, IFile file, int maxmillis) throws Exception {
+	protected void waitForIndexer(IIndex index, IFile file, int maxmillis) throws Exception {
 		long endTime= System.currentTimeMillis() + maxmillis;
 		do {
-			pdom.acquireReadLock();
+			index.acquireReadLock();
 			try {
-				PDOMFile pfile= pdom.getFile(file.getLocation());
+				IIndexFile pfile= index.getFile(file.getLocation());
 				// mstodo check timestamp
 				if (pfile != null) {
 					return;
 				}
 			}
 			finally {
-				pdom.releaseReadLock();
+				index.releaseReadLock();
 			}
 			
 			Thread.sleep(50);

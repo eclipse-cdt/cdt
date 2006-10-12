@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -244,6 +245,10 @@ public class CCorePlugin extends Plugin {
 		return fgCPlugin;
 	}
 
+	public static void log(String e) {
+		log(createStatus(e));
+	}
+	
 	public static void log(Throwable e) {
 		if ( e instanceof CoreException ) {
 			log(((CoreException)e).getStatus());
@@ -252,6 +257,14 @@ public class CCorePlugin extends Plugin {
 		}
 	}
 
+	public static IStatus createStatus(String msg) {
+		return createStatus(msg, null);
+	}
+
+	public static IStatus createStatus(String msg, Throwable e) {
+		return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, msg, e);
+	}
+	
 	public static void log(IStatus status) {
 		((Plugin) getDefault()).getLog().log(status);
 	}
@@ -638,7 +651,14 @@ public class CCorePlugin extends Plugin {
 		return fCoreModel;
 	}
 
+	/** 
+	 * deprecated, use getIndexManager()
+	 */
 	public static IPDOMManager getPDOMManager() {
+		return getDefault().pdomManager;
+	}
+
+	public static IIndexManager getIndexManager() {
 		return getDefault().pdomManager;
 	}
 	

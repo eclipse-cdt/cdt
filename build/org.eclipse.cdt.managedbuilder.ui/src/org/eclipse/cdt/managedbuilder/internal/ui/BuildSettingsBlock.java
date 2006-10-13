@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildProcessManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
@@ -37,9 +38,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 public class BuildSettingsBlock extends AbstractCOptionPage {
@@ -60,6 +63,11 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	private static final String INTERNAL_BUILDER_GROUP = LABEL + ".internal.builder.group";	//$NON-NLS-1$
 	private static final String INTERNAL_BUILDER_ENABLE_BTN = LABEL + ".internal.builder.enable";	//$NON-NLS-1$
 	private static final String INTERNAL_BUILDER_IGNORE_ERR_BTN = LABEL + ".internal.builder.ignore.err";	//$NON-NLS-1$
+	private static final String INTERNAL_BUILDER_PARALLEL = LABEL + ".internal.builder.parallel.head";	//$NON-NLS-1$
+	private static final String INTERNAL_BUILDER_PARALLEL_BTN = LABEL + ".internal.builder.parallel.use";	//$NON-NLS-1$
+	private static final String INTERNAL_BUILDER_PARALLEL_DEF = LABEL + ".internal.builder.parallel.default";	//$NON-NLS-1$
+	private static final String INTERNAL_BUILDER_PARALLEL_NUM = LABEL + ".internal.builder.parallel.number";	//$NON-NLS-1$
+	private static final String INTERNAL_BUILDER_PARALLEL_TOOLTIP = LABEL + ".internal.builder.parallel.tooltip";   //$NON-NLS-1$
 	private static final String INTERNAL_BUILDER_EXPERIMENTAL_NOTE = LABEL + ".internal.builder.experimental.note";	//$NON-NLS-1$
 	
 	private static final String EMPTY_STRING = new String();
@@ -77,6 +85,11 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	protected Group internalBuilderGroup;
 	protected Button internalBuilderEnable;
 	protected Button internalBuilderIgnoreErr;
+	protected Button internalBuilderParallel;
+	protected Button internalBuilderParallelDef1;
+	protected Button internalBuilderParallelDef2;
+	protected Spinner parallelProcesses;
+	protected final int cpuNumber = BuildProcessManager.checkCPUNumber(); 
 
 	/*
 	 * Bookeeping variables
@@ -296,18 +309,17 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		internalBuilderGroup = new Group(parent, SWT.NONE);
 		internalBuilderGroup.setFont(parent.getFont());
 		internalBuilderGroup.setText(ManagedBuilderUIMessages.getResourceString(INTERNAL_BUILDER_GROUP));
-		internalBuilderGroup.setLayout(new GridLayout(1, true));
+		internalBuilderGroup.setLayout(new GridLayout(2, false));
 		internalBuilderGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
+		
 		Label dotLabel = new Label(internalBuilderGroup, SWT.CENTER);
 		dotLabel.setFont(internalBuilderGroup.getFont());
 		dotLabel.setText(ManagedBuilderUIMessages.getResourceString(INTERNAL_BUILDER_EXPERIMENTAL_NOTE));
-
-		internalBuilderEnable = new Button(internalBuilderGroup, SWT.CHECK | SWT.LEFT);
-		internalBuilderEnable.setFont(internalBuilderGroup.getFont());
-		internalBuilderEnable.setText(ManagedBuilderUIMessages.getResourceString(INTERNAL_BUILDER_ENABLE_BTN));
-		internalBuilderEnable.setBackground(internalBuilderGroup.getBackground());
-		internalBuilderEnable.setForeground(internalBuilderGroup.getForeground());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		dotLabel.setLayoutData(gd);
+		
+		internalBuilderEnable = createInternalBuilderButton(ManagedBuilderUIMessages.getResourceString(INTERNAL_BUILDER_ENABLE_BTN), 2); 
 		internalBuilderEnable.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
 				Configuration config = (Configuration)BuildSettingsBlock.this.parent.getSelectedConfigurationClone();
@@ -322,11 +334,7 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 			}
 		});
 
-		internalBuilderIgnoreErr = new Button(internalBuilderGroup, SWT.CHECK | SWT.LEFT);
-		internalBuilderIgnoreErr.setFont(internalBuilderGroup.getFont());
-		internalBuilderIgnoreErr.setText(ManagedBuilderUIMessages.getResourceString(INTERNAL_BUILDER_IGNORE_ERR_BTN));
-		internalBuilderIgnoreErr.setBackground(internalBuilderGroup.getBackground());
-		internalBuilderIgnoreErr.setForeground(internalBuilderGroup.getForeground());
+		internalBuilderIgnoreErr = createInternalBuilderButton(ManagedBuilderUIMessages.getResourceString(INTERNAL_BUILDER_IGNORE_ERR_BTN), 2); 
 		internalBuilderIgnoreErr.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
 				Configuration config = (Configuration)BuildSettingsBlock.this.parent.getSelectedConfigurationClone();
@@ -341,8 +349,108 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 			}
 		});
 
+		Label parallelLabel = new Label(internalBuilderGroup, SWT.CENTER);
+		parallelLabel.setFont(internalBuilderGroup.getFont());
+		parallelLabel.setBackground(internalBuilderGroup.getBackground());
+		parallelLabel.setForeground(internalBuilderGroup.getForeground());
+		parallelLabel.setText(ManagedBuilderUIMessages.getResourceString(INTERNAL_BUILDER_PARALLEL));
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		parallelLabel.setLayoutData(gd);
+
+		internalBuilderParallel = createInternalBuilderButton(ManagedBuilderUIMessages.getResourceString(INTERNAL_BUILDER_PARALLEL_BTN), 2);
+		internalBuilderParallel.addSelectionListener(new SelectionAdapter () {
+			public void widgetSelected(SelectionEvent e) {
+				Configuration config = (Configuration)BuildSettingsBlock.this.parent.getSelectedConfigurationClone();
+				config.setInternalBuilderParallel(internalBuilderParallel.getSelection());
+				setValues();
+				setDirty(true);
+			}
+		});
+		internalBuilderParallel.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) { internalBuilderParallel = null; }
+		});
+
+		internalBuilderParallelDef1 = new Button(internalBuilderGroup, SWT.RADIO);
+		internalBuilderParallelDef1.setFont(internalBuilderGroup.getFont());
+		internalBuilderParallelDef1.setBackground(internalBuilderGroup.getBackground());
+		internalBuilderParallelDef1.setForeground(internalBuilderGroup.getForeground());
+		internalBuilderParallelDef1.setText("Use optimal jobs number");
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		gd.horizontalIndent = 15;
+		internalBuilderParallelDef1.setLayoutData(gd);
+		internalBuilderParallelDef1.setSelection(true);
+		
+		internalBuilderParallelDef1.addSelectionListener(new SelectionAdapter () {
+			public void widgetSelected(SelectionEvent e) {
+				Configuration config = (Configuration)BuildSettingsBlock.this.parent.getSelectedConfigurationClone();
+				config.setParallelDef(internalBuilderParallelDef1.getSelection());
+				setValues();
+				setDirty(true);
+			}
+		});
+		
+		internalBuilderParallelDef1.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) { internalBuilderParallelDef1 = null; }
+		});
+
+		internalBuilderParallelDef2 = new Button(internalBuilderGroup, SWT.RADIO);
+		internalBuilderParallelDef2.setFont(internalBuilderGroup.getFont());
+		internalBuilderParallelDef2.setBackground(internalBuilderGroup.getBackground());
+		internalBuilderParallelDef2.setForeground(internalBuilderGroup.getForeground());
+		internalBuilderParallelDef2.setText("Use parallel jobs :");
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalIndent = 15;
+		internalBuilderParallelDef2.setLayoutData(gd);
+		
+		internalBuilderParallelDef2.addSelectionListener(new SelectionAdapter () {
+			public void widgetSelected(SelectionEvent e) {
+				Configuration config = (Configuration)BuildSettingsBlock.this.parent.getSelectedConfigurationClone();
+				config.setParallelDef(!internalBuilderParallelDef2.getSelection());
+				setValues();
+				setDirty(true);
+			}
+		});
+		
+		internalBuilderParallelDef2.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) { internalBuilderParallelDef2 = null; }
+		});
+		
+		parallelProcesses = new Spinner(internalBuilderGroup, SWT.BORDER);
+		parallelProcesses.setFont(internalBuilderGroup.getFont());
+		parallelProcesses.setBackground(internalBuilderGroup.getBackground());
+		parallelProcesses.setForeground(internalBuilderGroup.getForeground());
+		parallelProcesses.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		parallelProcesses.setValues(cpuNumber, 1, 10000, 0, 1, 10);
+		parallelProcesses.setToolTipText(ManagedBuilderUIMessages.getResourceString(INTERNAL_BUILDER_PARALLEL_TOOLTIP));
+		
+		parallelProcesses.addSelectionListener(new SelectionAdapter () {
+			public void widgetSelected(SelectionEvent e) {
+				Configuration config = (Configuration)BuildSettingsBlock.this.parent.getSelectedConfigurationClone();
+				config.setParallelNumber(parallelProcesses.getSelection());
+				setValues();
+				setDirty(true);
+			}
+		});
+		
+		parallelProcesses.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) { parallelProcesses = null; }
+		});
 	}
 
+	private Button createInternalBuilderButton(String s, int hSpan) {
+		Button b = new Button(internalBuilderGroup, SWT.CHECK | SWT.LEFT);
+		b.setFont(internalBuilderGroup.getFont());
+		b.setText(s);
+		b.setBackground(internalBuilderGroup.getBackground());
+		b.setForeground(internalBuilderGroup.getForeground());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = hSpan;
+		b.setLayoutData(gd);
+		return b;
+	}
+	
 	protected void initializeValues() {
 		setValues();
 		setDirty(false);
@@ -380,6 +488,10 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		boolean internalBuilderOn = config.isInternalBuilderEnabled();
 		internalBuilderEnable.setSelection(internalBuilderOn);
 		internalBuilderIgnoreErr.setSelection(config.getInternalBuilderIgnoreErr());
+		internalBuilderParallel.setSelection(config.getInternalBuilderParallel());
+		internalBuilderParallelDef1.setSelection(config.getParallelDef());
+		internalBuilderParallelDef2.setSelection(!config.getParallelDef());
+		parallelProcesses.setSelection(config.getParallelNumber());
 		
 		makeCommandDefault.setEnabled(!internalBuilderOn);
 		makeCommandEntry.setEnabled(!internalBuilderOn);
@@ -387,6 +499,10 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		buildMacrosExpand.setEnabled(!internalBuilderOn);
 		buildMacrosExpandGroup.setEnabled(!internalBuilderOn);
 		internalBuilderIgnoreErr.setEnabled(internalBuilderOn);
+		internalBuilderParallel.setEnabled(internalBuilderOn);
+		internalBuilderParallelDef1.setEnabled(internalBuilderOn && config.getInternalBuilderParallel());
+		internalBuilderParallelDef2.setEnabled(internalBuilderOn && config.getInternalBuilderParallel());
+		parallelProcesses.setEnabled(internalBuilderOn && config.getInternalBuilderParallel() && !config.getParallelDef());
 
 //		setDirty(false);
 	}
@@ -456,6 +572,9 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		
 		selectedConfiguration.enableInternalBuilder(cloneConfig.isInternalBuilderEnabled());
 		selectedConfiguration.setInternalBuilderIgnoreErr(cloneConfig.getInternalBuilderIgnoreErr());
+		selectedConfiguration.setInternalBuilderParallel(cloneConfig.getInternalBuilderParallel());
+		selectedConfiguration.setParallelDef(cloneConfig.getParallelDef());
+		selectedConfiguration.setParallelNumber(cloneConfig.getParallelNumber());
 		
 		setDirty(false);
 	}

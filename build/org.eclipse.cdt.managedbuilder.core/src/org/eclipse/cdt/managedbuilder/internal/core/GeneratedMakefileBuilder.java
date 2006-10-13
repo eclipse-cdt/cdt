@@ -40,6 +40,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DescriptionBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IBuildModelBuilder;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.ParallelBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.StepBuilder;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
@@ -1186,6 +1187,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			boolean buildIncrementaly,
 			boolean resumeOnErr,
 			IProgressMonitor monitor) {
+		
+		boolean isParallel = ((Configuration)cfg).getInternalBuilderParallel();
+		
 		// Get the project and make sure there's a monitor to cancel the build
 		IProject currentProject = cfg.getOwner().getProject();
 		if (monitor == null) {
@@ -1195,9 +1199,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		String[] msgs = new String[2];
 		msgs[0] = ManagedMakeMessages.getResourceString(INTERNAL_BUILDER);
 		msgs[1] = currentProject.getName();
-
-		monitor.beginTask("", 1000);	//$NON-NLS-1$
-		monitor.subTask(ManagedMakeMessages.getFormattedString(MAKE, msgs));
 
 		ConsoleOutputStream consoleOutStream = null;
 		IConsole console = null;
@@ -1212,8 +1213,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			}
 			
 			IBuildDescription des = BuildDescriptionManager.createBuildDescription(cfg, delta, flags);
-			
-			DescriptionBuilder builder = new DescriptionBuilder(des, buildIncrementaly, resumeOnErr);
+	
+			DescriptionBuilder builder = null;
+			if (!isParallel)
+				builder = new DescriptionBuilder(des, buildIncrementaly, resumeOnErr);
 
 			// Get a build console for the project
 			StringBuffer buf = new StringBuffer();
@@ -1244,7 +1247,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
 			
-			if(builder.getNumCommands() > 0) {
+			if(isParallel || builder.getNumCommands() > 0) {
 				// Remove all markers for this project
 				removeAllMarkers(currentProject);
 				
@@ -1256,8 +1259,15 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				// until we explicitly close it. See bug#123302.
 				epmOutputStream = epm.getOutputStream();
 				
-				int status = builder.build(epmOutputStream, epmOutputStream, new SubProgressMonitor(monitor, 1000));
-	
+				int status = 0;
+				
+				long t1 = System.currentTimeMillis();
+				if (isParallel)
+					status = ParallelBuilder.build(des, null, null, epmOutputStream, epmOutputStream, monitor, resumeOnErr, buildIncrementaly);
+				else
+				    status = builder.build(epmOutputStream, epmOutputStream, monitor);
+				long t2 = System.currentTimeMillis();
+				
 				// Report either the success or failure of our mission 
 				buf = new StringBuffer();
 				
@@ -1284,7 +1294,16 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					break;
 				}
 				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-	
+				
+				// Report time and number of threads used
+				buf.append("Time consumed: ");
+				buf.append(t2 - t1);
+				buf.append(" ms.  ");
+				if (isParallel) {
+					buf.append("Parallel threads used: ");
+					buf.append(ParallelBuilder.lastThreadsUsed);
+				}
+				buf.append("\n");
 				// Write message on the console 
 				consoleOutStream.write(buf.toString().getBytes());
 				consoleOutStream.flush();

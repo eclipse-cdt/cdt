@@ -37,6 +37,7 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildProcessManager;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.envvar.UserDefinedEnvironmentSupplier;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
@@ -113,15 +114,27 @@ public class Configuration extends BuildObject implements IConfiguration {
 	//as a special Builder object of the tool-chain and implement the internal
 	//builder enabling/disabling as the Builder substitution functionality
 	//
-	private static final String INTERNAL_BUILDER = "internalBuilder";
+	private static final String INTERNAL_BUILDER = "internalBuilder"; //$NON-NLS-1$
 	//preference key that holds the Internal Builder enable state 
 	private static final String INTERNAL_BUILDER_ENABLED = "enabled";  //$NON-NLS-1$
 	//preference key that holds the internal builder mode
 	private static final String INTERNAL_BUILDER_IGNORE_ERR = "ignoreErr";  //$NON-NLS-1$
+	//preference key that holds the internal builder mode
+	private static final String INTERNAL_BUILDER_PARALLEL = "parallel";  //$NON-NLS-1$
+	//preference key that holds the internal builder mode
+	private static final String INTERNAL_BUILDER_PARALLEL_DEF = "paralleldef";  //$NON-NLS-1$
+	//preference key that holds the internal builder mode
+	private static final String INTERNAL_BUILDER_PARALLELNUMBER = "parallelnumber";  //$NON-NLS-1$
 	//Internal Builder enable state
 	private boolean internalBuilderEnabled;
 	//Internal Builder mode
 	private boolean internalBuilderIgnoreErr = true;
+	//Internal Builder parallel mode
+	private boolean internalBuilderParallel = true;
+	//Internal Builder parallel mode - default jobs #
+	private boolean internalBuilderParallelDef = true;
+	//Number of parallel threads
+	private int internalBuilderParallelNumber = 1; // default value
 	
 	
 	/*
@@ -335,6 +348,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 		
 		enableInternalBuilder(cloneConfig.isInternalBuilderEnabled());
 		setInternalBuilderIgnoreErr(cloneConfig.getInternalBuilderIgnoreErr());
+		setInternalBuilderParallel(cloneConfig.getInternalBuilderParallel());
+		setParallelDef(cloneConfig.getParallelDef());
+		setParallelNumber(cloneConfig.getParallelNumber());
 //		internalBuilderEnabled = cloneConfig.internalBuilderEnabled;
 //		internalBuilderIgnoreErr = cloneConfig.internalBuilderIgnoreErr;
 		
@@ -1741,6 +1757,22 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * 
 	 */
 	
+	public void setInternalBuilderBoolean(boolean value, String pref) {
+		Preferences prefs = getPreferences(INTERNAL_BUILDER);
+		if(prefs != null){
+			prefs.putBoolean(pref, value);
+			try {
+				prefs.flush();
+			} catch (BackingStoreException e) {}
+		}
+	}
+	
+	public boolean getInternalBuilderBoolean(String pref, boolean defaultValue) {
+		Preferences prefs = getPreferences(INTERNAL_BUILDER);
+		return prefs != null ?
+				prefs.getBoolean(pref, false) : defaultValue;
+	}
+	
 	/*
 	 * this method is used for enabling/disabling the internal builder
 	 * for the given configuration
@@ -1750,28 +1782,16 @@ public class Configuration extends BuildObject implements IConfiguration {
 	public void enableInternalBuilder(boolean enable){
 //		if(internalBuilderEnabled != enable){
 			internalBuilderEnabled = enable;
-			Preferences prefs = getPreferences(INTERNAL_BUILDER);
-			if(prefs != null){
-				prefs.putBoolean(INTERNAL_BUILDER_ENABLED, enable);
-				try {
-					prefs.flush();
-				} catch (BackingStoreException e) {
-				}
-			}
+			setInternalBuilderBoolean(enable, INTERNAL_BUILDER_ENABLED);
 //		}
 	}
 	
 	/*
 	 * returns whether the internal builder is enabled
-	 *  
 	 * @return boolean
 	 */
 	public boolean isInternalBuilderEnabled(){
-		Preferences prefs = getPreferences(INTERNAL_BUILDER);
-		
-		return prefs != null ?
-				prefs.getBoolean(INTERNAL_BUILDER_ENABLED, false) : 
-					internalBuilderEnabled;
+		return getInternalBuilderBoolean(INTERNAL_BUILDER_ENABLED, internalBuilderEnabled); 
 	}
 	
 	/*
@@ -1785,14 +1805,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	public void setInternalBuilderIgnoreErr(boolean ignore){
 //		if(internalBuilderIgnoreErr != ignore){
 			internalBuilderIgnoreErr = ignore;
-			Preferences prefs = getPreferences(INTERNAL_BUILDER);
-			if(prefs != null){
-				prefs.putBoolean(INTERNAL_BUILDER_IGNORE_ERR, ignore);
-				try {
-					prefs.flush();
-				} catch (BackingStoreException e) {
-				}
-			}
+		    setInternalBuilderBoolean(ignore, INTERNAL_BUILDER_IGNORE_ERR);
 //		}
 	}
 
@@ -1804,11 +1817,74 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @return boolean
 	 */
 	public boolean getInternalBuilderIgnoreErr(){
+		return getInternalBuilderBoolean(INTERNAL_BUILDER_IGNORE_ERR, internalBuilderIgnoreErr);
+	}
+	
+	/**
+	 * 
+	 * sets the Internal Builder Parallel mode
+	 * 
+	 * @param parallel if true, internal builder will use parallel mode 
+	 */
+	public void setInternalBuilderParallel(boolean parallel){
+		internalBuilderParallel = parallel;
+		setInternalBuilderBoolean(parallel, INTERNAL_BUILDER_PARALLEL);
+	}
+	
+	/**
+	 * returns the Internal Builder parallel mode
+	 * if true, internal builder will work in parallel mode 
+	 * otherwise it will use only one thread
+	 * 
+	 * @return boolean
+	 */
+	public boolean getInternalBuilderParallel(){
+		return getInternalBuilderBoolean(INTERNAL_BUILDER_PARALLEL, internalBuilderParallel);
+	}
+	
+	/**
+	 * @param parallel if true, internal builder will use parallel mode 
+	 */
+	public void setParallelDef(boolean parallel_def){
+		internalBuilderParallelDef = parallel_def;
+		setInternalBuilderBoolean(parallel_def, INTERNAL_BUILDER_PARALLEL_DEF);
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public boolean getParallelDef(){
+		return getInternalBuilderBoolean(INTERNAL_BUILDER_PARALLEL_DEF, internalBuilderParallelDef);
+	}
+	
+	/**
+	 * 
+	 * sets number of Parallel threads
+	 * 
+	 * @param int 
+	 */
+	public void setParallelNumber(int n){
+		internalBuilderParallelNumber = n;
 		Preferences prefs = getPreferences(INTERNAL_BUILDER);
-		
-		return prefs != null ?
-				prefs.getBoolean(INTERNAL_BUILDER_IGNORE_ERR, true) : 
-					internalBuilderIgnoreErr;
+		if(prefs != null){
+			prefs.putInt(INTERNAL_BUILDER_PARALLELNUMBER, n);
+			try { prefs.flush(); } 
+			catch (BackingStoreException e) {}
+		}
+	}
+	
+	/**
+	 * returns number of Parallel threads
+	 * 
+	 * @return int
+	 */
+	public int getParallelNumber(){
+		Preferences prefs = getPreferences(INTERNAL_BUILDER);
+		int cpus = BuildProcessManager.checkCPUNumber();
+		int x = prefs != null ?
+				prefs.getInt(INTERNAL_BUILDER_PARALLELNUMBER, cpus) : 
+				internalBuilderParallelNumber;
+		return (x > 0) ? x : 1;
 	}
 	
 	private Preferences getPreferences(String name){

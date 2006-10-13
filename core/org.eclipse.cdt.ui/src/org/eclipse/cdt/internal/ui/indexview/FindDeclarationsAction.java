@@ -11,15 +11,16 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchBindingQuery;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.search.ui.NewSearchUI;
+
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.search.PDOMSearchBindingQuery;
+import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
 
 /**
  * @author Doug Schaefer
@@ -31,17 +32,17 @@ public class FindDeclarationsAction extends IndexAction {
 		super(viewer, CUIPlugin.getResourceString("IndexView.findDeclarations.name")); //$NON-NLS-1$
 	}
 	
-	private PDOMBinding getBinding() {
+	private IIndexBinding getBinding() {
 		ISelection selection = viewer.getSelection();
 		if (!(selection instanceof IStructuredSelection))
 			return null;
 		Object[] objs = ((IStructuredSelection)selection).toArray();
-		return (objs.length == 1 && objs[0] instanceof PDOMBinding)
-			? (PDOMBinding)objs[0] : null;
+		return (objs.length == 1 && objs[0] instanceof IIndexBinding)
+			? (IIndexBinding)objs[0] : null;
 	}
 	
 	public void run() {
-		PDOMBinding binding = getBinding();
+		IIndexBinding binding = getBinding();
 		PDOMSearchBindingQuery query = new PDOMSearchBindingQuery(
 				null,
 				binding,

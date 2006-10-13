@@ -11,10 +11,10 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.ui.search.PDOMSearchBindingQuery;
 import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
 
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -31,13 +31,13 @@ public class FindReferencesAction extends IndexAction {
 		super(viewer, CUIPlugin.getResourceString("IndexView.findReferences.name")); //$NON-NLS-1$
 	}
 
-	private PDOMBinding getBinding() {
+	private IIndexBinding getBinding() {
 		ISelection selection = viewer.getSelection();
 		if (!(selection instanceof IStructuredSelection))
 			return null;
 		Object[] objs = ((IStructuredSelection)selection).toArray();
-		return (objs.length == 1 && objs[0] instanceof PDOMBinding)
-			? (PDOMBinding)objs[0] : null;
+		return (objs.length == 1 && objs[0] instanceof IIndexBinding)
+			? (IIndexBinding)objs[0] : null;
 	}
 	
 	public void run() {

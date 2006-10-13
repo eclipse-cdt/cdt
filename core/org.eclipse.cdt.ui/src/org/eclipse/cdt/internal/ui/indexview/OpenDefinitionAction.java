@@ -11,12 +11,6 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -27,7 +21,19 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * @author Doug Schaefer
@@ -44,50 +50,53 @@ public class OpenDefinitionAction extends IndexAction {
 		if (!(selection instanceof IStructuredSelection))
 			return;
 		
-		Object[] objs = ((IStructuredSelection)selection).toArray();
-		for (int i = 0; i < objs.length; ++i) {
-			if (!(objs[i] instanceof PDOMBinding))
-				continue;
-			
-			try {
-				PDOMBinding binding = (PDOMBinding)objs[i];
-				PDOMName name = binding.getFirstDefinition();
-				if (name == null)
-					name = binding.getFirstDeclaration();
-				if (name == null)
+		try {
+			IIndex index= CCorePlugin.getIndexManager().getIndex(CoreModel.getDefault().getCModel().getCProjects());
+			Object[] objs = ((IStructuredSelection)selection).toArray();
+			for (int i = 0; i < objs.length; ++i) {
+				if (!(objs[i] instanceof IIndexBinding))
 					continue;
-				
-				IASTFileLocation location = name.getFileLocation();
-				IPath path = new Path(location.getFileName());
-				Object input = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-				if (input == null)
-					input = new FileStorage(path);
-
-				IEditorPart editor = EditorUtility.openInEditor(input);
-				if (editor != null && editor instanceof ITextEditor) {
-					ITextEditor textEditor = (ITextEditor)editor;
-					int nodeOffset = location.getNodeOffset();
-					int nodeLength = location.getNodeLength();
-					int offset;
-					int length;
-					if (nodeLength == -1) {
-						// This means the offset is actually a line number
-						try {
-							IDocument document = textEditor.getDocumentProvider().getDocument(editor.getEditorInput());
-							offset = document.getLineOffset(nodeOffset);
-							length = document.getLineLength(nodeOffset);
-						} catch (BadLocationException e) {
-							CUIPlugin.getDefault().log(e);
-							return;
-						}
-					} else {
-						offset = nodeOffset;
-						length = nodeLength;
+			
+				index.acquireReadLock();
+				try {
+					IIndexBinding binding = (IIndexBinding)objs[i];
+					IIndexName[] defs= index.findDefinitions(binding);
+					for (int j = 0; j < defs.length; j++) {
+						IIndexName name = defs[j];
+						showInEditor(name);
 					}
-					
-					textEditor.selectAndReveal(offset, length);
+				} finally {
+					index.releaseReadLock();
 				}
-			} catch (CoreException e) {
+			}
+		}
+		catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} 
+		catch (InterruptedException e) {
+		}
+	}
+
+	private void showInEditor(IIndexName name) throws CModelException, PartInitException {
+		IPath path = new Path(name.getFileName());
+		Object input = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+		if (input == null)
+			input = new FileStorage(path);
+
+		IEditorPart editor = EditorUtility.openInEditor(input);
+		if (editor != null && editor instanceof ITextEditor) {
+			ITextEditor textEditor = (ITextEditor)editor;
+			int nodeOffset = name.getNodeOffset();
+			int nodeLength = name.getNodeLength();
+			try {
+				if (nodeLength == -1) {
+					// This means the offset is actually a line number
+					IDocument document = textEditor.getDocumentProvider().getDocument(editor.getEditorInput());
+					nodeOffset = document.getLineOffset(nodeOffset);
+					nodeLength = document.getLineLength(nodeOffset);
+				} 
+				textEditor.selectAndReveal(nodeOffset, nodeLength);
+			} catch (BadLocationException e) {
 				CUIPlugin.getDefault().log(e);
 			}
 		}
@@ -99,7 +108,7 @@ public class OpenDefinitionAction extends IndexAction {
 			return false;
 		Object[] objs = ((IStructuredSelection)selection).toArray();
 		for (int i = 0; i < objs.length; ++i)
-			if (objs[i] instanceof PDOMBinding)
+			if (objs[i] instanceof IIndexBinding)
 				return true;
 		return false;
 	}

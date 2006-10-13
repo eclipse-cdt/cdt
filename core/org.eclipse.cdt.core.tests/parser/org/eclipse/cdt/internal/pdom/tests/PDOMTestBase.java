@@ -9,6 +9,7 @@
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * IBM Corporation
+ * Symbian - Fix a race condition (157992)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -17,25 +18,21 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.IPDOMIndexer;
+import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer;
-import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastReindex;
-import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -69,31 +66,14 @@ public class PDOMTestBase extends BaseTestCase {
 		final ICProject cprojects[] = new ICProject[1];
 		workspace.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IPDOMManager manager = CCorePlugin.getPDOMManager(); 
-				// Make sure the default is no indexer
-				String oldDefault = manager.getDefaultIndexerId();
-				if (!PDOMNullIndexer.ID.equals(oldDefault))
-					manager.setDefaultIndexerId(PDOMNullIndexer.ID);
-				else
-					oldDefault = null;
-				
 				// Create the project
-				IProject project = workspace.getRoot().getProject(projectName);
-				project.create(monitor);
-				project.open(monitor);
-				
-				// Set up as C++ project
-				IProjectDescription description = project.getDescription();
-				String[] prevNatures = description.getNatureIds();
-				String[] newNatures = new String[prevNatures.length + 2];
-				System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-				newNatures[prevNatures.length] = CProjectNature.C_NATURE_ID;
-				newNatures[prevNatures.length + 1] = CCProjectNature.CC_NATURE_ID;
-				description.setNatureIds(newNatures);
-				project.setDescription(description, monitor);
+				ICProject cproject= CProjectHelper.createCProject(projectName, null);
 
+				// Set the indexer to the null indexer and invoke it later on.
+				CCorePlugin.getPDOMManager().setIndexerId(cproject, IPDOMManager.ID_NO_INDEXER);
+				
 				// Import the files at the root
-				ImportOperation importOp = new ImportOperation(project.getFullPath(),
+				ImportOperation importOp = new ImportOperation(cproject.getProject().getFullPath(),
 						rootDir, FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
 					public String queryOverwrite(String pathString) {
 						return IOverwriteQuery.ALL;
@@ -103,26 +83,40 @@ public class PDOMTestBase extends BaseTestCase {
 				try {
 					importOp.run(monitor);
 				} catch (Exception e) {
-					throw new CoreException(new Status(IStatus.ERROR,
-							CTestPlugin.PLUGIN_ID, 0, "Import Interrupted", e));
+					throw new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, 0, "Import Interrupted", e));
 				}
 				
-				ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
-
 				// Index the project
-				PDOMFastIndexer indexer = new PDOMFastIndexer();
-				indexer.setProject(cproject);
-				PDOMFastReindex reindex = new PDOMFastReindex(indexer);
-				reindex.run(monitor);
+				CCorePlugin.getPDOMManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 				
-				// Set the default indexer back
-				if (oldDefault != null)
-					manager.setDefaultIndexerId(oldDefault);
+				// wait until the indexer is done
+				final boolean[] indexerDone = new boolean[1];
+				CCorePlugin.getPDOMManager().enqueue(new IPDOMIndexerTask() {
+					public IPDOMIndexer getIndexer() {
+						return null;
+					}
+					public void run(IProgressMonitor monitor) {
+						synchronized(indexerDone) {
+							indexerDone[0] = true;
+							indexerDone.notify();
+						}
+					}
+				});
+
+				try {
+					// Join indexer job
+					synchronized(indexerDone) {
+						while(!indexerDone[0])
+							indexerDone.wait();
+					}
+				} catch(InterruptedException ie) {
+					throw new RuntimeException(ie);
+				}
 
 				cprojects[0] = cproject;
 			}
 		}, null);
-		
+
 		return cprojects[0];
 	}
 

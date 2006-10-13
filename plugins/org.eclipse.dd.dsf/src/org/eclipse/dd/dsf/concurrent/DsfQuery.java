@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.concurrent;
 
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.dd.dsf.DsfPlugin;
-import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
  * A convenience class that allows a client to retrieve data from services 
@@ -28,135 +28,124 @@ import org.eclipse.dd.dsf.service.IDsfService;
  * @see java.util.concurrent.Callable
  */
 @ThreadSafe
-abstract public class DsfQuery<V> {
-    
-    private V fResult;
-    private boolean fValid;
-    private DsfExecutor fExecutor;
-    private Future fFuture;
-    private boolean fWaiting;
-    private IStatus fStatus = Status.OK_STATUS;
-    
-    public DsfQuery(DsfExecutor executor) {
-        fExecutor = executor;
+abstract public class DsfQuery<V> extends DsfRunnable 
+    implements Future<V> 
+{
+    /** The synchronization object for this query */
+    final Sync fSync = new Sync();
+
+    public V get() throws InterruptedException, ExecutionException { return fSync.doGet(); }
+
+    public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        return fSync.doGet();
     }
-    
+
     /**
-     * Start data retrieval.
-     * Client must implement this method to do whatever is needed to retrieve data.
-     * Retrieval can be (but does not have to be) asynchronious - it meas this method can return
-     * before data is retrieved. When data is ready Proxy must be notified by calling done() method.
-     */ 
-    protected abstract void execute();
-    
-    /**
-     * Allows deriving classes to implement their own snipped additional 
-     * cancellation code. 
+     * Don't try to interrupt the DSF executor thread, just ignore the request 
+     * if set.
      */
-    protected void revokeChildren(V result) {};
-        
-    /**
-     * Get data associated with this proxy. This method is thread safe and 
-     * it will block until data is ready.  Because it's a blocking call and it waits
-     * for commands to be processed on the dispatch thread, this methods itself 
-     * CANNOT be called on the dispatch thread.
-     */
-    public synchronized V get() {
-        assert !fExecutor.isInExecutorThread();
-        if(!fValid) {
-            if (!fWaiting) {
-                fFuture = fExecutor.submit(new DsfRunnable() {
-                    public void run() {
-                        // Note: not sure if this try-catch is desirable.  It might encourage
-                        // implementors to not catch its own exceptions.  If the query code takes
-                        // more than one dispatch, then this code will not be helpful anyway.
-                        try {
-                            DsfQuery.this.execute();
-                        } catch (Throwable t) {
-                            doneException(t);
-                        }
-                    }
-                });
-            } 
-
-            fWaiting = true;
-            try {
-                while(fWaiting) {
-                    wait();
-                }
-            } catch (InterruptedException e) {
-                fStatus = new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR,
-                                     "Interrupted exception while waiting for result.", e);
-                fValid = true;
-            }
-            assert fValid;
-        }
-        return fResult;
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        return fSync.doCancel(); 
     }
 
-    /**
-     * Same as get(), but with code to automatically re-threw the exception if one
-     * was reported by the run() method.
-     */
-    public V getWithThrows() throws CoreException {
-    	V retVal = get();
-        if (!getStatus().isOK()) {
-            throw new CoreException(getStatus());
-        }
-        return retVal;
-    }
+    public boolean isCancelled() { return fSync.doIsCancelled(); }
 
-    public IStatus getStatus() { return fStatus; }
+    public boolean isDone() { return fSync.doIsDone(); }
     
-    /** Abort current operation and keep old proxy data */
-    public synchronized void cancel() {
-        assert fExecutor.isInExecutorThread();
-        assert !fWaiting || !fValid;
-        if (fWaiting) {
-            fFuture.cancel(false);
-            fWaiting = false;
-            notifyAll();
-        } else if (fValid) {
-            revokeChildren(fResult);
-        }
-        fValid = true;
+    
+    protected void done(V result) {
+        fSync.doSet(result);
     }
     
-    /** Abort current operation and set proxy data to 'result' */
-    public synchronized void cancel(V newResult) {
-        fResult = newResult;
-        cancel();
-    }
-
-    public Object getCachedResult() {
-        return fResult;
-    }
-    
-    public boolean isValid() { return fValid; }
-    
-    public synchronized void done(V result) {
-        // Valid could be true if request was cancelled while data was 
-        // being retrieved, and then done() was called.
-        if (fValid) return;
-
-        fResult = result;
-        fValid = true;
-        if (fWaiting) {
-            fWaiting = false;
-            notifyAll();
-        }
-    }
-    
-    public synchronized void doneError(IStatus errorStatus) {
-        if (fValid) return;
-        fStatus = errorStatus;
-        done(null);
-    }
-    
-    public synchronized void doneException(Throwable t) {
-        if (fValid) return;
-        doneError(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR,
-                             "Exception while computing result.", t));
+    protected void doneException(Throwable t) {
+        fSync.doSetException(t);
     }        
+    
+    abstract protected void execute();
+    
+    public void run() {
+        if (fSync.doRun()) {
+            execute();
+        }
+    }
+    
+    @SuppressWarnings("serial")
+    final class Sync extends AbstractQueuedSynchronizer {
+        private static final int STATE_RUNNING = 1;
+        private static final int STATE_DONE = 2;
+        private static final int STATE_CANCELLED = 4;
+
+        private V fResult;
+        private Throwable fException;
+
+        private boolean ranOrCancelled(int state) {
+            return (state & (STATE_DONE | STATE_CANCELLED)) != 0;
+        }
+
+        protected int tryAcquireShared(int ignore) {
+            return doIsDone()? 1 : -1;
+        }
+
+        protected boolean tryReleaseShared(int ignore) {
+            return true; 
+        }
+
+        boolean doIsCancelled() {
+            return getState() == STATE_CANCELLED;
+        }
+        
+        boolean doIsDone() {
+            return ranOrCancelled(getState());
+        }
+
+        V doGet() throws InterruptedException, ExecutionException {
+            acquireSharedInterruptibly(0);
+            if (getState() == STATE_CANCELLED) throw new CancellationException();
+            if (fException != null) throw new ExecutionException(fException);
+            return fResult;
+        }
+
+        V doGet(long nanosTimeout) throws InterruptedException, ExecutionException, TimeoutException {
+            if (!tryAcquireSharedNanos(0, nanosTimeout)) throw new TimeoutException();                
+            if (getState() == STATE_CANCELLED) throw new CancellationException();
+            if (fException != null) throw new ExecutionException(fException);
+            return fResult;
+        }
+
+        void doSet(V v) {
+            while(true) {
+                int s = getState();
+                if (ranOrCancelled(s)) return;
+                if (compareAndSetState(s, STATE_DONE)) break;
+            }
+            fResult = v;
+            releaseShared(0);
+        }
+
+        void doSetException(Throwable t) {
+            while(true) {
+                int s = getState();
+                if (ranOrCancelled(s)) return;
+                if (compareAndSetState(s, STATE_DONE)) break;
+            }
+            fException = t;
+            fResult = null;
+            releaseShared(0);
+        }
+
+        boolean doCancel() {
+            while(true) {
+                int s = getState();
+                if (ranOrCancelled(s)) return false;
+                if (compareAndSetState(s, STATE_CANCELLED)) break;
+            }
+            releaseShared(0);
+            return true;
+        }
+
+        boolean doRun() {
+            return compareAndSetState(0, STATE_RUNNING); 
+        }
+    }
 }
 

@@ -76,6 +76,24 @@ public class DsfPlugin extends Plugin {
             System.out.println(message);
         }
     }
+    
+    public static String getDebugTime() {
+        StringBuilder traceBuilder = new StringBuilder();
+        
+        // Record the time
+        long time = System.currentTimeMillis();
+        long seconds = (time / 1000) % 1000;
+        if (seconds < 100) traceBuilder.append('0');
+        if (seconds < 10) traceBuilder.append('0');
+        traceBuilder.append(seconds);
+        traceBuilder.append(',');
+        long millis = time % 1000;
+        if (millis < 100) traceBuilder.append('0');
+        if (millis < 10) traceBuilder.append('0');
+        traceBuilder.append(millis);
+        return traceBuilder.toString();
+    }
+
 
 
 }

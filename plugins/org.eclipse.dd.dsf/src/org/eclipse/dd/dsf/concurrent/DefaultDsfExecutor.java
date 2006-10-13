@@ -91,7 +91,6 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
             }
         }
     }
-
     
     //
     // Utilities used for tracing.
@@ -132,7 +131,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         int fSequenceNumber = -1; 
         
         /** Trace of where the runnable/callable was submitted to the executor */
-        StackTraceElement[] fSubmittedAt = null; 
+        StackTraceWrapper fSubmittedAt = null; 
         
         /** Reference to the runnable/callable that submitted this runnable/callable to the executor */
         TracingWrapper fSubmittedBy = null;
@@ -142,8 +141,8 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
          */
         TracingWrapper(int offset) {
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            fSubmittedAt = new StackTraceElement[stackTrace.length - offset]; 
-            System.arraycopy(stackTrace, offset - 1, fSubmittedAt, 0, fSubmittedAt.length);
+            fSubmittedAt = new StackTraceWrapper(new StackTraceElement[stackTrace.length - offset]); 
+            System.arraycopy(stackTrace, offset - 1, fSubmittedAt.fStackTraceElements, 0, fSubmittedAt.fStackTraceElements.length);
             if (isInExecutorThread() &&  fCurrentlyExecuting != null) {
                 fSubmittedBy = fCurrentlyExecuting;
             }
@@ -158,16 +157,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 StringBuilder traceBuilder = new StringBuilder();
     
                 // Record the time
-                long time = System.currentTimeMillis();
-                long seconds = (time / 1000) % 1000;
-                if (seconds < 100) traceBuilder.append('0');
-                if (seconds < 10) traceBuilder.append('0');
-                traceBuilder.append(seconds);
-                traceBuilder.append(',');
-                long millis = time % 1000;
-                if (millis < 100) traceBuilder.append('0');
-                if (millis < 10) traceBuilder.append('0');
-                traceBuilder.append(millis);
+                traceBuilder.append(DsfPlugin.getDebugTime());
                 traceBuilder.append(' ');
     
                 // Record the executor #
@@ -187,7 +177,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                         }
                         if (dsfExecutable.fCreatedAt != null) {
                             traceBuilder.append(" at ");
-                            traceBuilder.append(dsfExecutable.fCreatedAt[0].toString());
+                            traceBuilder.append(dsfExecutable.fCreatedAt.fStackTraceElements[0].toString());
                         }   
                     }
                 }
@@ -200,7 +190,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                     traceBuilder.append(fSubmittedBy.fSequenceNumber);
                 }
                 traceBuilder.append(" at ");
-                traceBuilder.append(fSubmittedAt[0].toString());
+                traceBuilder.append(fSubmittedAt.fStackTraceElements[0].toString());
                 
                 // Finally, the executable's toString().
                 traceBuilder.append("\n        ");
@@ -214,6 +204,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         abstract protected Object getExecutable();
     }
     
+    
     class TracingWrapperRunnable extends TracingWrapper implements Runnable {
         final Runnable fRunnable;
         public TracingWrapperRunnable(Runnable runnable, int offset) {
@@ -225,6 +216,13 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         
         public void run() {
             traceExecution();
+
+            // If debugging a DSF exeutable, mark that it was executed.
+            if (DEBUG_EXECUTOR && fRunnable instanceof DsfExecutable) {
+                ((DsfExecutable)fRunnable).setExecuted();
+            }
+            
+            // Finally invoke the runnable code.
             fRunnable.run(); 
         }
     }
@@ -240,6 +238,13 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
 
         public T call() throws Exception {
             traceExecution();
+            
+            // If debugging a DSF exeutable, mark that it was executed.
+            if (DEBUG_EXECUTOR && fCallable instanceof DsfExecutable) {
+                ((DsfExecutable)fCallable).setExecuted();
+            }
+
+            // Finally invoke the runnable code.
             return fCallable.call();
         }
     }

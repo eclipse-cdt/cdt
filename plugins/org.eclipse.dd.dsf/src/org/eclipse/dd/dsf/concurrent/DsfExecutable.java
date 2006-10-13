@@ -13,6 +13,9 @@ package org.eclipse.dd.dsf.concurrent;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.dd.dsf.DsfPlugin;
+
 /**
  * Base class for DSF-instrumented alternative to the Runnable/Callable interfaces.
  * <p>
@@ -23,15 +26,48 @@ import java.util.Set;
  */
 @Immutable
 public class DsfExecutable {
-    final StackTraceElement[]  fCreatedAt;
+    /** 
+     * Flag indicating that tracing of the DSF executor is enabled.  It enables
+     * storing of the "creator" information as well as tracing of disposed
+     * runnables that have not been submitted to the executor.  
+     */
+    static boolean DEBUG_EXECUTOR = false;
+    
+    /** 
+     * Flag indicating that assertions are enabled.  It enables storing of the
+     * "creator" executable for debugging purposes.
+     */
+    static boolean ASSERTIONS_ENABLED = false;
+
+    static {
+        assert ASSERTIONS_ENABLED = true;
+        DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+                Platform.getDebugOption("org.eclipse.dd.dsf/debug/executor")); //$NON-NLS-1$
+        assert ASSERTIONS_ENABLED = true;
+    }  
+    
+    /** 
+     * Field that holds the stack trace of where this executable was created.
+     * Used for tracing and debugging only.
+     */
+    final StackTraceWrapper fCreatedAt;
+    
+    /**
+     * Field holding the reference of the executable that created this 
+     * executable.  Used for tracing only.
+     */
     final DefaultDsfExecutor.TracingWrapper fCreatedBy;
 
+    /**
+     * Flag indicating whether this executable was ever executed by an 
+     * executor.  Used for tracing only.
+     */
+    private boolean fExecuted = false;
+    
     @SuppressWarnings("unchecked")
     public DsfExecutable() {
         // Use assertion flag (-ea) to jre to avoid affecting performance when not debugging.
-        boolean assertsEnabled = false;
-        assert assertsEnabled = true;
-        if (assertsEnabled || DefaultDsfExecutor.DEBUG_EXECUTOR) {
+        if (ASSERTIONS_ENABLED || DEBUG_EXECUTOR) {
             // Find the runnable/callable that is currently running.
             DefaultDsfExecutor executor = DefaultDsfExecutor.fThreadToExecutorMap.get(Thread.currentThread()); 
             if (executor != null) {
@@ -53,11 +89,38 @@ public class DsfExecutable {
             for (i = 3; i < stackTrace.length; i++) {
                 if ( !classNamesSet.contains(stackTrace[i].getClassName()) ) break;
             }
-            fCreatedAt = new StackTraceElement[stackTrace.length - i]; 
-            System.arraycopy(stackTrace, i, fCreatedAt, 0, fCreatedAt.length);
+            fCreatedAt = new StackTraceWrapper(new StackTraceElement[stackTrace.length - i]); 
+            System.arraycopy(stackTrace, i, fCreatedAt.fStackTraceElements, 0, fCreatedAt.fStackTraceElements.length);
         } else {
             fCreatedAt = null;
             fCreatedBy = null;
         }
     }        
+    
+    /**
+     * Marks this executable to indicate that it has been executed by the 
+     * executor.  To be invoked only by DsfExecutor.
+     */
+    void setExecuted() {
+        fExecuted = true;
+    }
+    
+    @Override
+    protected void finalize() {
+        if (DEBUG_EXECUTOR && !fExecuted) {
+            StringBuilder traceBuilder = new StringBuilder();
+
+            // Record the time
+            traceBuilder.append(DsfPlugin.getDebugTime());
+            traceBuilder.append(' ');
+            
+            // Record the event
+            traceBuilder.append("DsfExecutable was never executed:\n        ");
+            traceBuilder.append(this);
+            traceBuilder.append("\nCreated at:");
+            traceBuilder.append(fCreatedAt);
+            
+            DsfPlugin.debug(traceBuilder.toString());
+        }
+    }
 }

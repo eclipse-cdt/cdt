@@ -1,0 +1,31 @@
+/*******************************************************************************
+ * Copyright (c) 2006 Wind River Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Wind River Systems - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.dd.dsf.concurrent;
+
+/**
+ * Untility class for easy pretty-printing stack traces.  Local to the 
+ * concurrent package.
+ */
+@Immutable
+class StackTraceWrapper {
+    final StackTraceElement[] fStackTraceElements;
+    
+    StackTraceWrapper(StackTraceElement[] elements) { fStackTraceElements = elements; }
+    
+    public String toString() {
+        StringBuilder builder = new StringBuilder(fStackTraceElements.length * 30);
+        for (int i = 0; i < fStackTraceElements.length && i < 10; i++) {
+            builder.append(fStackTraceElements[i]);
+            if (i < fStackTraceElements.length && i < 10) builder.append("\n       at ");
+        }
+        return builder.toString();
+    }
+}

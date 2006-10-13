@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * It should be null if it cannot be determined from the given object. 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.PACKAGE, ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.PACKAGE, ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR})
 @Inherited
 @Documented
 public @interface ConfinedToDsfExecutor {

@@ -98,7 +98,8 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		private Exception e;
 		private boolean completed = false;
-
+		private boolean failed = false;
+		
 		/**
 		 * Constructor for InternalDownloadFileRunnable
 		 */
@@ -117,7 +118,8 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 			try
 			{
-				completed = SystemEditableRemoteFile.this.download(monitor);
+				failed = !SystemEditableRemoteFile.this.download(monitor);
+				completed = true;
 				monitor.done();
 			}
 			catch (CoreException e)
@@ -144,6 +146,11 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		public boolean didComplete()
 		{
 			return completed;
+		}
+		
+		public boolean didFail()
+		{
+			return failed;
 		}
 
 		/**
@@ -467,7 +474,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			
 			listener.removeIgnoreFile(localFile);
 			downloadFileRunnable.throwException();
-			return downloadFileRunnable.didComplete();
+			return !downloadFileRunnable.didFail();
 		}
 		else
 		{
@@ -591,6 +598,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		}
 		
 		subsystem.downloadUTF8(remoteFile, localPath, monitor);
+		if (monitor.isCanceled())
+		{
+			return false;
+		}
 
 		// get fresh remote file object
 		remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath());
@@ -1493,7 +1504,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	/**
 	 * Open the system editor
 	 */
-	private void openSystemEditor() throws PartInitException
+	public void openSystemEditor() throws PartInitException
 	{
 		IWorkbenchPage activePage = this.page;
 		if (activePage == null)

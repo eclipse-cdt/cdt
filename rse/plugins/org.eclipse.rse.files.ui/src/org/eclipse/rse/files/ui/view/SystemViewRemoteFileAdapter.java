@@ -2738,7 +2738,7 @@ public class SystemViewRemoteFileAdapter
 						}
 						else
 						{
-							DownloadJob oJob = new DownloadJob(editable);
+							DownloadJob oJob = new DownloadJob(editable, false);
 							oJob.schedule();
 						}
 					}

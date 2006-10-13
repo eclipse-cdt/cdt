@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemUniversalTempFileListener;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Display;
@@ -30,9 +31,11 @@ public class DownloadJob extends Job
 	public static class OpenEditorRunnable implements Runnable
 	{
 		private ISystemEditableRemoteObject _editable;
-		public OpenEditorRunnable(ISystemEditableRemoteObject editable)
+		private boolean _systemEditor;
+		public OpenEditorRunnable(ISystemEditableRemoteObject editable, boolean systemEditor)
 		{
 			_editable = editable;
+			_systemEditor = systemEditor;
 		}
 		
 		public void run()
@@ -41,7 +44,14 @@ public class DownloadJob extends Job
 			{
 				_editable.addAsListener();
 				_editable.setLocalResourceProperties();
-				_editable.openEditor();
+				if (_systemEditor)
+				{
+					((SystemEditableRemoteFile)_editable).openSystemEditor();
+				}
+				else
+				{
+					_editable.openEditor();
+				}
 			}
 			catch (Exception e)
 			{
@@ -52,10 +62,12 @@ public class DownloadJob extends Job
 	}
 
 	private ISystemEditableRemoteObject _editable;
-	public DownloadJob(ISystemEditableRemoteObject editable)
+	private boolean _systemEditor;
+	public DownloadJob(ISystemEditableRemoteObject editable, boolean systemEditor)
 	{
 		super("Download");
 		_editable = editable;
+		_systemEditor = systemEditor;
 	}
 
 	public IStatus run(IProgressMonitor monitor) 
@@ -71,8 +83,11 @@ public class DownloadJob extends Job
 		catch (Exception e)
 		{				
 		}
-		OpenEditorRunnable oe = new OpenEditorRunnable(_editable);
-		Display.getDefault().asyncExec(oe);
+		if (!monitor.isCanceled())
+		{
+			OpenEditorRunnable oe = new OpenEditorRunnable(_editable, _systemEditor);
+			Display.getDefault().asyncExec(oe);
+		}
 
 		return Status.OK_STATUS;
 	}

@@ -454,6 +454,11 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
 			dlg.open();
 		}
+		
+		if (monitor.isCanceled())
+		{
+			localFile.delete();
+		}
 	}
 	
 	protected boolean isBinary(String localEncoding, String hostEncoding, String remotePath)

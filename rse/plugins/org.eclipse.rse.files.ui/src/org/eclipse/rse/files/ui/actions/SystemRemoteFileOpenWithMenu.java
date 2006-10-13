@@ -29,9 +29,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
+import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
+import org.eclipse.rse.files.ui.view.DownloadJob;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Event;
@@ -173,19 +177,93 @@ protected void createMenuItem(Menu menu, final IEditorDescriptor descriptor, fin
 }
 
 
-protected void openEditor(IRemoteFile file, IEditorDescriptor descriptor)
+protected void openEditor(IRemoteFile remoteFile, IEditorDescriptor descriptor)
 {
-	SystemEditableRemoteFile editableFile = new SystemEditableRemoteFile(file, descriptor.getId());
-	if (descriptor.getId().equals(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID))
+	
+	SystemEditableRemoteFile editable = null;
+	if (descriptor == null)
 	{
-		editableFile.openInSystemEditor(SystemBasePlugin.getActiveWorkbenchShell());
+		editable = new SystemEditableRemoteFile(remoteFile);
 	}
+	else
+	{
+		editable = new SystemEditableRemoteFile(remoteFile, descriptor.getId());
+	}
+	boolean systemEditor = descriptor != null && descriptor.getId().equals(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+
+
+		if (isFileCached(editable, remoteFile))
+		{
+			try
+			{
+				if (systemEditor)
+				{
+					editable.openSystemEditor();
+				}
+				else
+				{
+					editable.openEditor();
+				}
+			}
+			catch (Exception e)
+			{
+				
+			}
+		}
+		else
+		{
+			DownloadJob oJob = new DownloadJob(editable, systemEditor);
+			oJob.schedule();
+		}
+
+/*
 	else
 	{
 		editableFile.open(SystemBasePlugin.getActiveWorkbenchShell());
 	}
+	*/
+		
 }
 
+private boolean isFileCached(ISystemEditableRemoteObject editable, IRemoteFile remoteFile)
+{
+	// DY:  check if the file exists and is read-only (because it was previously opened
+	// in the system editor)
+	IFile file = editable.getLocalResource();
+	SystemIFileProperties properties = new SystemIFileProperties(file);
+	boolean newFile = !file.exists();
+
+	// detect whether there exists a temp copy already
+	if (!newFile && file.exists())
+	{
+		// we have a local copy of this file, so we need to compare timestamps
+
+		// get stored modification stamp
+		long storedModifiedStamp = properties.getRemoteFileTimeStamp();
+
+		// get updated remoteFile so we get the current remote timestamp
+		//remoteFile.markStale(true);
+		IRemoteFileSubSystem subsystem = remoteFile.getParentRemoteFileSubSystem();
+		try
+		{
+			remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath());
+		}
+		catch (Exception e)
+		{
+			
+		}
+
+		// get the remote modified stamp
+		long remoteModifiedStamp = remoteFile.getLastModified();
+
+		// get dirty flag
+		boolean dirty = properties.getDirty();
+
+		boolean remoteNewer = (storedModifiedStamp != remoteModifiedStamp);
+		return (!dirty && !remoteNewer);
+	}
+	return false;
+}
 
 /**
  * Get the local cache of the remote file, or <code>null</code> if none.
@@ -224,8 +302,14 @@ protected IEditorDescriptor getDefaultEditor(IRemoteFile remoteFile)
 	if (localFile == null) {
 		return registry.getDefaultEditor(remoteFile.getName());
 	}
-	else {
-		return IDE.getDefaultEditor(localFile);
+	else 
+	{
+		IEditorDescriptor descriptor = IDE.getDefaultEditor(localFile);
+		if (descriptor == null)
+		{
+			descriptor = getDefaultTextEditor();
+		}
+		return descriptor;
 	}
 }
 

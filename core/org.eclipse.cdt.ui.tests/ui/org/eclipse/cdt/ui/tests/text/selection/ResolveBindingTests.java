@@ -31,9 +31,9 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.tests.BaseTestCase;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
-public class ResolveBindingTests extends BaseTestCase  {
+public class ResolveBindingTests extends BaseUITestCase  {
 
 	private static final int WAIT_FOR_INDEXER = 5000;
 	private ICProject fCProject;

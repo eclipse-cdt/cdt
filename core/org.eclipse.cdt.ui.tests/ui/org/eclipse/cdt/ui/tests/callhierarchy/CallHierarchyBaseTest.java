@@ -25,13 +25,13 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.tests.BaseTestCase;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart;
 import org.eclipse.cdt.internal.ui.callhierarchy.CallHierarchyUI;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
-public class CallHierarchyBaseTest extends BaseTestCase {
+public class CallHierarchyBaseTest extends BaseUITestCase {
 	
 	private ICProject fCProject;
 	protected IIndex fIndex;

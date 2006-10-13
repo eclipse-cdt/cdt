@@ -23,13 +23,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.ui.tests.BaseTestCase;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeContentProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeWorkInProgressNode;
 import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
 
-public class AsyncViewerTest extends BaseTestCase {
+public class AsyncViewerTest extends BaseUITestCase {
     private class Node {
         private String fLabel;
         private Node[] fChildren;

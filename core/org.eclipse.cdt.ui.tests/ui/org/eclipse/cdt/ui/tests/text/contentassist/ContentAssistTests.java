@@ -39,7 +39,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.tests.BaseTestCase;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
@@ -50,7 +50,7 @@ import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
 /**
  * @author aniefer
  */
-public class ContentAssistTests extends BaseTestCase {
+public class ContentAssistTests extends BaseUITestCase {
     private NullProgressMonitor		monitor= new NullProgressMonitor();
     static IProject 				project;
     static boolean 					disabledHelpContributions = false;

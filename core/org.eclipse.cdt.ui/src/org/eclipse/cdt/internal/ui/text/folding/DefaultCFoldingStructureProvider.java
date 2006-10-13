@@ -1090,6 +1090,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 							ctx.fAST= ast;
 							ctx.fASTPositionConverter= astProvider.getActivePositionConverter(getInputElement());
 							fInitialASTReconcile= false;
+							computeFoldingStructure(ast, ctx);
 						}
 						return Status.OK_STATUS;
 					}
@@ -1097,8 +1098,9 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				if (!status.isOK()) {
 					CUIPlugin.getDefault().log(status);
 				}
+			} else {
+				computeFoldingStructure(ast, ctx);
 			}
-			computeFoldingStructure(ast, ctx);
 		}
 	}
 

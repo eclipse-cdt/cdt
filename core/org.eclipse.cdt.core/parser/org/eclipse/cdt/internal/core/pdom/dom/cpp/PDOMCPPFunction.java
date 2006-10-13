@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -27,9 +28,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -38,18 +41,37 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFunctionType {
 
-	public static final int NUM_PARAMS = PDOMBinding.RECORD_SIZE + 0;
-	public static final int FIRST_PARAM = PDOMBinding.RECORD_SIZE + 4;
+	/**
+	 * Offset of total number of function parameters (relative to the
+	 * beginning of the record).
+	 */
+	private static final int NUM_PARAMS = PDOMBinding.RECORD_SIZE + 0;
+
+	/**
+	 * Offset of pointer to the first parameter of this function (relative to
+	 * the beginning of the record).
+	 */
+	private static final int FIRST_PARAM = PDOMBinding.RECORD_SIZE + 4;
+
+	/**
+	 * Offset of annotation information (relative to the beginning of the
+	 * record).
+	 */
+	private static final int ANNOTATION = PDOMBinding.RECORD_SIZE + 8; // byte
 	
-	public static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
+	/**
+	 * The size in bytes of a PDOMCPPFunction record in the database.
+	 */
+	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 9;
 	
 	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name);
 		IASTNode parentNode = name.getParent();
+		Database db = pdom.getDB();
 		if (parentNode instanceof ICPPASTFunctionDeclarator) {
 			ICPPASTFunctionDeclarator funcDecl = (ICPPASTFunctionDeclarator)parentNode;
 			IASTParameterDeclaration[] params = funcDecl.getParameters();
-			pdom.getDB().putInt(record + NUM_PARAMS, params.length);
+			db.putInt(record + NUM_PARAMS, params.length);
 			for (int i = 0; i < params.length; ++i) {
 				ICPPASTParameterDeclaration param = (ICPPASTParameterDeclaration)params[i];
 				IASTName paramName = param.getDeclarator().getName();
@@ -60,6 +82,8 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 				setFirstParameter(new PDOMCPPParameter(pdom, this, paramName, paramBinding));
 			}
 		}
+		IBinding binding = name.resolveBinding();
+		db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(binding));
 	}
 
 	public PDOMCPPFunction(PDOM pdom, int bindingRecord) {
@@ -87,7 +111,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 	}
 	
 	public boolean isInline() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.INLINE_OFFSET);
 	}
 
 	public boolean isMutable() throws DOMException {
@@ -119,24 +143,25 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 	}
 
 	public boolean isAuto() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 14882:2003 7.1.1.2
+		return false; 
 	}
 
 	public boolean isExtern() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
 	public boolean isRegister() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 14882:2003 7.1.1.2
+		return false; 
 	}
 
 	public boolean isStatic() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
 	public boolean takesVarArgs() throws DOMException {
-		// TODO
-		return false;
+		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 
 	public IType[] getParameterTypes() throws DOMException {
@@ -161,11 +186,15 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 	}
 
 	public boolean isConst() {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 14882:2003 9.3.1.3
+		// Only applicable to member functions
+		return false; 
 	}
 
 	public boolean isVolatile() {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 14882:2003 9.3.1.3
+		// Only applicable to member functions
+		return false; 
 	}
 
 	public boolean isSameType(IType type) {

@@ -7,10 +7,12 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -23,9 +25,14 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public abstract class PDOMNamedNode extends PDOMNode {
-
+	/**
+	 * Offset of pointer to node name (relative to the beginning of the record).
+	 */
 	private static final int NAME = PDOMNode.RECORD_SIZE + 0;
 
+	/**
+	 * The size in bytes of a PDOMNamedNode record in the database.
+	 */
 	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
 	
 	public PDOMNamedNode(PDOM pdom, int record) {
@@ -72,6 +79,32 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		};
 	}
 	
+	/**
+	 * Convenience method for fetching a byte from the database.
+	 * @param offset Location of the byte.
+	 * @return a byte from the database.
+	 */
+	protected byte getByte(int offset) {
+		try {
+			return pdom.getDB().getByte(offset);
+		}
+		catch (CoreException e) {
+			CCorePlugin.log(e);
+			return 0;
+		}
+	}
+
+	/**
+	 * Returns the bit at the specified offset in a bit vector.
+	 * @param bitVector Bits.
+	 * @param offset The position of the desired bit.
+	 * @return the bit at the specified offset.
+	 */
+	protected boolean getBit(int bitVector, int offset) {
+		int mask = 1 << offset;
+		return (bitVector & mask) == mask;
+	}
+
 	public abstract static class NodeFinder implements IBTreeVisitor {
 		protected final PDOM pdom;
 		protected final char[] name;

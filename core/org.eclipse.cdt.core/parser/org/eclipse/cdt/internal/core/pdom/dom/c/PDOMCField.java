@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
@@ -19,7 +20,6 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -51,19 +51,23 @@ class PDOMCField extends PDOMBinding implements IField {
 	}
 
 	public boolean isStatic() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 9899:TC1 6.7.2.1
+		return false;
 	}
 
 	public boolean isExtern() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 9899:TC1 6.7.2.1
+		return false;
 	}
 
 	public boolean isAuto() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 9899:TC1 6.7.2.1
+		return false;
 	}
 
 	public boolean isRegister() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 9899:TC1 6.7.2.1
+		return false;
 	}
 
 }

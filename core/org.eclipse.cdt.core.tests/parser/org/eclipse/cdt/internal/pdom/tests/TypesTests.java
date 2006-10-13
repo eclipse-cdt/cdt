@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.pdom.tests;
 
 import java.util.regex.Pattern;
 
+import junit.framework.Test;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -35,6 +37,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 public class TypesTests extends PDOMTestBase {
 
 	protected PDOM pdom;
+
+	public static Test suite() {
+		return suite(TypesTests.class);
+	}
 
 	protected void setUp() throws Exception {
 		if (pdom == null) {

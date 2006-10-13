@@ -18,8 +18,9 @@ import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
+import junit.framework.Test;
 
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -32,7 +33,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author aferguso
  *
  */
-public class BTreeTests extends TestCase {
+public class BTreeTests extends BaseTestCase {
 	protected File dbFile;
 	protected Database db;
 	protected BTree btree;
@@ -40,6 +41,10 @@ public class BTreeTests extends TestCase {
 	protected IBTreeComparator comparator;
 
 	protected boolean debugMode = false;
+
+	public static Test suite() {
+		return suite(BTreeTests.class);
+	}
 
 	// setUp is not used since we need to parameterize this method,
 	// and invoke it multiple times per Junit test

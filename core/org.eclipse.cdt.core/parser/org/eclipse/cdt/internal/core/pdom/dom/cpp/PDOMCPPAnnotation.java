@@ -1,0 +1,84 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.cdt.internal.core.pdom.dom.cpp;
+
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
+
+public class PDOMCPPAnnotation {
+
+	// "Mutable" shares the same offset as "inline" because
+	// only fields can be mutable and only functions can be inline.
+	public static final int MUTABLE_OFFSET = 2;
+	
+	public static final int VISIBILITY_OFFSET = 6;
+	private static final int VISIBILITY_MASK = 0x03;
+
+	// Extra C++-specific annotations that don't fit on the first
+	// byte of annotations.
+	public static final int VIRTUAL_OFFSET = 0;
+	public static final int DESTRUCTOR_OFFSET = 1;
+	
+	/**
+	 * Encodes storage class specifiers and other annotation, including
+	 * C++-specific annotation, from an IBinding as a bit vector.
+	 * 
+	 * @param binding the IBinding whose annotation will be encoded.
+	 * @return a bit vector of the annotation.
+	 * @throws DOMException
+	 */	
+	public static byte encodeAnnotation(IBinding binding) throws DOMException {
+		byte modifiers = PDOMCAnnotation.encodeAnnotation(binding);
+		if (binding instanceof ICPPField) {
+			ICPPField variable = (ICPPField) binding;
+			modifiers |= (variable.isMutable() ? 1 : 0) << MUTABLE_OFFSET;
+		}
+		if (binding instanceof ICPPMember) {
+			ICPPMember member = (ICPPMember) binding;
+			int mask = ~(VISIBILITY_MASK << VISIBILITY_OFFSET);
+			modifiers &= mask;
+			modifiers |= (member.getVisibility() & VISIBILITY_MASK) << VISIBILITY_OFFSET;
+		}
+		return modifiers;
+	}
+
+	/**
+	 * Encodes C++-specific annotation not already handled by
+	 * encodeAnnotation() as a bit vector.
+	 * 
+	 * @param binding the IBinding whose annotation will be encoded.
+	 * @return a bit vector of the annotation.
+	 * @throws DOMException
+	 */	
+	public static byte encodeExtraAnnotation(IBinding binding) throws DOMException {
+		byte modifiers = 0;
+		if (binding instanceof ICPPMethod) {
+			ICPPMethod method = (ICPPMethod) binding;
+			modifiers |= (method.isVirtual() ? 1 : 0) << VIRTUAL_OFFSET;
+			modifiers |= (method.isDestructor() ? 1 : 0) << DESTRUCTOR_OFFSET;
+		}
+		return modifiers;
+	}
+	
+	/**
+	 * Unpacks visibility information from a bit vector of annotation.
+	 * @param annotation Annotation containing visibility information.
+	 * @return The visibility component of the annotation.
+	 */
+	public static int getVisibility(byte annotation) {
+		return (annotation >> VISIBILITY_OFFSET) & VISIBILITY_MASK;
+	}
+}

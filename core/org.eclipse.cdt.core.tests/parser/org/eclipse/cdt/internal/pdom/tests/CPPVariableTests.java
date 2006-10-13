@@ -1,0 +1,72 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.cdt.internal.pdom.tests;
+
+import junit.framework.Test;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+
+/**
+ * Tests for verifying whether the PDOM correctly stores information about
+ * C++ variable declarations.
+ */
+public class CPPVariableTests extends PDOMTestBase {
+
+	protected ICProject project;
+	protected PDOM pdom;
+
+	public static Test suite() {
+		return suite(CPPVariableTests.class);
+	}
+
+	protected void setUp() throws Exception {
+		project = createProject("variableTests");
+		pdom = (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
+		pdom.acquireReadLock();
+	}
+
+	protected void tearDown() throws Exception {
+		pdom.releaseReadLock();
+	}
+	
+	public void testCPPAutoVariable() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "autoCPPVariable");
+		assertEquals(1, bindings.length);
+		ICPPVariable variable = (ICPPVariable) bindings[0];
+		assertTrue(variable.isAuto());
+	}
+
+	public void testCPPExternVariable() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "externCPPVariable");
+		assertEquals(1, bindings.length);
+		ICPPVariable variable = (ICPPVariable) bindings[0];
+		assertTrue(variable.isExtern());
+	}
+
+	public void testCPPRegisterVariable() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "registerCPPVariable");
+		assertEquals(1, bindings.length);
+		ICPPVariable variable = (ICPPVariable) bindings[0];
+		assertTrue(variable.isRegister());
+	}
+
+	public void testCPPStaticVariable() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "staticCPPVariable");
+		assertEquals(1, bindings.length);
+		ICPPVariable variable = (ICPPVariable) bindings[0];
+		assertTrue(variable.isStatic());
+	}
+}

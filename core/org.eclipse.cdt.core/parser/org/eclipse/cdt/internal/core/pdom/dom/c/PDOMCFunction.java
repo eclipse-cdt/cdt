@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
@@ -28,9 +29,20 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 class PDOMCFunction extends PDOMBinding implements IFunction {
+	/**
+	 * Offset of annotation information (relative to the beginning of the
+	 * record).
+	 */
+	private static final int ANNOTATIONS = PDOMBinding.RECORD_SIZE + 0; // byte
+	
+	/**
+	 * The size in bytes of a PDOMCFunction record in the database.
+	 */
+	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 1;
 
 	public PDOMCFunction(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name);
+		pdom.getDB().putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(name.resolveBinding()));
 	}
 
 	public PDOMCFunction(PDOM pdom, int record) {
@@ -58,27 +70,29 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	}
 
 	public boolean isStatic() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
 	public boolean isExtern() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
 	public boolean isAuto() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 9899:TC1 6.9.1.4
+		return false;
 	}
 
 	public boolean isRegister() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 9899:TC1 6.9.1.4
+		return false;
 	}
 
 	public boolean isInline() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.INLINE_OFFSET);
 	}
 
 	public boolean takesVarArgs() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 
 }

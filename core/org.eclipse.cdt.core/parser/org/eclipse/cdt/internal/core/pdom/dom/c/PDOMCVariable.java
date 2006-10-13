@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
@@ -18,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -27,12 +27,24 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCVariable extends PDOMBinding implements IVariable {
 
+	/**
+	 * Offset of annotation information (relative to the beginning of the
+	 * record).
+	 */
+	private static final int ANNOTATIONS = PDOMBinding.RECORD_SIZE + 0;
+	
+	/**
+	 * The size in bytes of a PDOMCVariable record in the database.
+	 */
+	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 1;
+	
 	public PDOMCVariable(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name);
 		IVariable binding = (IVariable)name.getBinding();
 		if (binding != null) {
 			IType type = binding.getType();
 		}
+		pdom.getDB().putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(binding));
 	}
 
 	public PDOMCVariable(PDOM pdom, int record) {
@@ -54,19 +66,19 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	}
 
 	public boolean isStatic() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
 	public boolean isExtern() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
 	public boolean isAuto() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.AUTO_OFFSET);
 	}
 
 	public boolean isRegister() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.REGISTER_OFFSET);
 	}
 
 }

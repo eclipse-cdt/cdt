@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -33,10 +34,22 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 
+	/**
+	 * Offset of pointer to the next parameter (relative to the
+	 * beginning of the record).
+	 */
 	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE + 0;
+	
+	/**
+	 * Offset of pointer to type information for this parameter
+	 * (relative to the beginning of the record).
+	 */
 	private static final int TYPE = PDOMNamedNode.RECORD_SIZE + 4;
 	
-	public static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 8;
+	/**
+	 * The size in bytes of a PDOMCPPParameter record in the database.
+	 */
+	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 8;
 
 	public PDOMCPPParameter(PDOM pdom, int record) {
 		super(pdom, record);
@@ -93,7 +106,8 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 	}
 
 	public boolean isMutable() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 14882:2003 7.1.1.8
+		return false; 
 	}
 
 	public IType getType() throws DOMException {
@@ -111,7 +125,8 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 	}
 
 	public boolean isExtern() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 14882:2003 7.1.1.5
+		return false; 
 	}
 
 	public boolean isRegister() throws DOMException {
@@ -119,7 +134,8 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 	}
 
 	public boolean isStatic() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// ISO/IEC 14882:2003 7.1.1.4
+		return false; 
 	}
 
 	public String getName() {

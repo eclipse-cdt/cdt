@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import junit.framework.Test;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -25,6 +27,10 @@ public class IncludesTests extends PDOMTestBase {
 
 	protected ICProject project;
 	protected IIndex pdom;
+
+	public static Test suite() {
+		return suite(IncludesTests.class);
+	}
 
 	protected void setUp() throws Exception {
 		if (pdom == null) {

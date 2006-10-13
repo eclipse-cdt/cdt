@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;

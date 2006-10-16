@@ -196,6 +196,22 @@ public class ProcessClosure {
 	}
 
 	/**
+	 * The same functionality as "isAlive()"
+	 * but does not affect out streams,
+	 * because they can be shared among processes
+	 * 
+	 * @return
+	 */
+	public boolean isRunning() {
+		if (fProcess != null) {
+			if (fOutputReader.isAlive() || fErrorReader.isAlive()) {
+				return true;
+			}
+			fProcess = null;
+		}
+		return false;
+	}
+	/**
 	 * Forces the termination the launched process
 	 */
 	public void terminate() {

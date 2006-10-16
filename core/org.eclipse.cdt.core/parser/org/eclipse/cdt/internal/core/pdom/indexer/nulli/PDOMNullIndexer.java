@@ -67,6 +67,10 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 				CCorePlugin.log(e);
 			}
 		}
+
+		public int getFilesToIndexCount() {
+			return 1;
+		}
 	}
 	public void reindex() throws CoreException {
 		CCorePlugin.getPDOMManager().enqueue(new PDOMNullReindex());

@@ -12,9 +12,10 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -26,10 +27,16 @@ import org.eclipse.core.runtime.Status;
  * @author Doug Schaefer
  *
  */
-public class PDOMFullReindex extends PDOMFullIndexerJob {
+class PDOMFullReindex extends PDOMFullIndexerJob {
+
+	private volatile int fFilesToIndex= 0;
+	private ArrayList fTUs= new ArrayList();
+	private ArrayList fHeaders= new ArrayList();
 
 	public PDOMFullReindex(PDOMFullIndexer indexer) throws CoreException {
 		super(indexer);
+		collectSources(indexer.getProject(), fTUs, fHeaders);
+		fFilesToIndex= fTUs.size()+fHeaders.size() + 1;
 	}
 
 	public void run(final IProgressMonitor monitor) {
@@ -37,65 +44,32 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 			long start = System.currentTimeMillis();
 			
 			// First clear out the PDOM
-			index.clear();
+			clearIndex(index);
+			fFilesToIndex--;
 			
-			// First index all the source files (i.e. not headers)
-			indexer.getProject().accept(new ICElementVisitor() {
-				public boolean visit(ICElement element) throws CoreException {
-					if (monitor.isCanceled())
-						throw new CoreException(Status.CANCEL_STATUS);
-					switch (element.getElementType()) {
-					case ICElement.C_UNIT:
-						ITranslationUnit tu = (ITranslationUnit)element;
-						if (tu.isSourceUnit()) {
-							try {
-								addTU(tu);
-							} catch (Throwable e) {
-								CCorePlugin.log(e);
-								if (++errorCount > MAX_ERRORS)
-									throw new CoreException(Status.CANCEL_STATUS);
-							}
-						}
-						return false;
-					case ICElement.C_CCONTAINER:
-					case ICElement.C_PROJECT:
-						return true;
-					}
-					return false;
-				}
-			});
+			for (Iterator iter = fTUs.iterator(); iter.hasNext();) {
+				ITranslationUnit tu = (ITranslationUnit) iter.next();
+				if (monitor.isCanceled())
+					return;
+				changeTU(tu);
+				fFilesToIndex--;
+			}
 			
-			// Now add in the header files but only if they aren't already indexed
-			indexer.getProject().accept(new ICElementVisitor() {
-				public boolean visit(ICElement element) throws CoreException {
-					if (monitor.isCanceled())
-						throw new CoreException(Status.CANCEL_STATUS);
-					switch (element.getElementType()) {
-					case ICElement.C_UNIT:
-						ITranslationUnit tu = (ITranslationUnit)element;
-						if (tu.isHeaderUnit()) {
-							IPath fileLocation = tu.getLocation();
-							if ( fileLocation != null ) {
-								if (index.getFile(fileLocation) == null) {
-									try {
-										addTU(tu);
-									} catch (InterruptedException e) {
-										CCorePlugin.log(e);
-										if (++errorCount > MAX_ERRORS)
-											throw new CoreException(Status.CANCEL_STATUS);
-									}
-								}
-							}
-						}
-						return false;
-					case ICElement.C_CCONTAINER:
-					case ICElement.C_PROJECT:
-						return true;
+			for (Iterator iter = fHeaders.iterator(); iter.hasNext();) {
+				ITranslationUnit tu = (ITranslationUnit) iter.next();
+				if (monitor.isCanceled())
+					return;
+			
+				IPath fileLocation = tu.getLocation();
+				if ( fileLocation != null ) {
+					if (index.getFile(fileLocation) == null) {
+						changeTU(tu);
 					}
-					return false;
+					fFilesToIndex--;
 				}
-			});
+			}
 
+			assert fFilesToIndex==0;
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 					+ "/debug/pdomtimings"); //$NON-NLS-1$
 			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
@@ -104,7 +78,12 @@ public class PDOMFullReindex extends PDOMFullIndexerJob {
 		} catch (CoreException e) {
 			if (e.getStatus() != Status.CANCEL_STATUS)
 				CCorePlugin.log(e);
+		} catch (InterruptedException e) {
 		}
+	}
+
+	public int getFilesToIndexCount() {
+		return fFilesToIndex;
 	}
 
 }

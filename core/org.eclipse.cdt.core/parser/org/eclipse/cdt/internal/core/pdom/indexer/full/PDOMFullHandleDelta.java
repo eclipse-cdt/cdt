@@ -23,10 +23,8 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -40,41 +38,41 @@ import org.eclipse.core.runtime.Platform;
  * @author Doug Schaefer
  *
  */
-public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
+class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 
-	private final ICElementDelta delta;
-	
 	// Map of filename, TU of files that need to be parsed.
-	private Map changed = new HashMap();
+	private Map changedMap = new HashMap();
+	private List changed = new ArrayList();
 	private List added = new ArrayList();
 	private List removed = new ArrayList();
+	private volatile int fFilesToIndex= 0;
 	
 	public PDOMFullHandleDelta(PDOMFullIndexer indexer, ICElementDelta delta) throws CoreException {
 		super(indexer);
-		this.delta = delta;
+		processDelta(delta, added, changed, removed);
 	}
 
 	public void run(IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
-		
-			processDelta(delta);
-			
+					
 			int count = changed.size() + added.size() + removed.size();
 
+			for (Iterator iter = changed.iterator(); iter.hasNext();) {
+				ITranslationUnit tu = (ITranslationUnit) iter.next();
+				processTranslationUnit(tu);
+				fFilesToIndex--;
+			}
+			changed.clear();
+			
 			if (count > 0) {
-				Iterator i = changed.values().iterator();
+				Iterator i = changedMap.values().iterator();
 				while (i.hasNext()) {
 					if (monitor.isCanceled())
 						return;
 					ITranslationUnit tu = (ITranslationUnit)i.next();
-					try {
-						changeTU(tu);
-					} catch (Throwable e) {
-						CCorePlugin.log(e);
-						if (++errorCount > MAX_ERRORS)
-							return;
-					}
+					changeTU(tu);
+					fFilesToIndex--;
 				}
 				
 				i = added.iterator();
@@ -82,13 +80,8 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 					if (monitor.isCanceled())
 						return;
 					ITranslationUnit tu = (ITranslationUnit)i.next();
-					try {
-						addTU(tu);
-					} catch (Throwable e) {
-						CCorePlugin.log(e);
-						if (++errorCount > MAX_ERRORS)
-							return;
-					}
+					changeTU(tu);
+					fFilesToIndex--;
 				}
 				
 				i = removed.iterator();
@@ -96,7 +89,8 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 					if (monitor.isCanceled())
 						return;
 					ITranslationUnit tu = (ITranslationUnit)i.next();
-					removeTU(tu);
+					removeTU(index, tu);
+					fFilesToIndex--;
 				}
 				
 				String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
@@ -110,37 +104,6 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 		}
 	}
 
-	protected void processDelta(ICElementDelta delta) throws CoreException {
-		int flags = delta.getFlags();
-		
-		if ((flags & ICElementDelta.F_CHILDREN) != 0) {
-			ICElementDelta[] children = delta.getAffectedChildren();
-			for (int i = 0; i < children.length; ++i) {
-				processDelta(children[i]);
-			}
-		}
-		
-		ICElement element = delta.getElement();
-		switch (element.getElementType()) {
-		case ICElement.C_UNIT:
-			ITranslationUnit tu = (ITranslationUnit)element;
-			switch (delta.getKind()) {
-			case ICElementDelta.CHANGED:
-				if ((flags & ICElementDelta.F_CONTENT) != 0)
-					processTranslationUnit(tu);
-				break;
-			case ICElementDelta.ADDED:
-				if (!tu.isWorkingCopy())
-					added.add(tu);
-				break;
-			case ICElementDelta.REMOVED:
-				if (!tu.isWorkingCopy())
-					removed.add(tu);
-				break;
-			}
-			break;
-		}
-	}
 	
 	protected void processTranslationUnit(ITranslationUnit tu) throws CoreException {
 		IPath path = tu.getUnderlyingResource().getLocation();
@@ -155,13 +118,14 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 				for (int i = 0; i < includedBy.length; ++i) {
 					String incfilename = includedBy[i].getIncludedByLocation();
 					if (CoreModel.isValidSourceUnitName(project, incfilename)) {
-						if (changed.get(incfilename) == null) {
+						if (changedMap.get(incfilename) == null) {
 							IFile[] rfiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(incfilename));
 							for (int j = 0; j < rfiles.length; ++j) {
 								if (rfiles[j].getProject().equals(project)) {
 									ITranslationUnit inctu = (ITranslationUnit)CoreModel.getDefault().create(rfiles[j]);
-									changed.put(incfilename, inctu);
+									changedMap.put(incfilename, inctu);
 									found = true;
+									fFilesToIndex++;
 								}
 							}
 						}
@@ -169,20 +133,13 @@ public class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 				}
 			}
 		}
-		if (!found)
-			changed.put(path.toOSString(), tu);
-	}
-
-	protected void removeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
-		index.acquireWriteLock(0);
-		try {
-			IPath path = ((IFile)tu.getResource()).getLocation();
-			IIndexFragmentFile file = (IIndexFragmentFile) index.getFile(path);
-			if (file != null)
-				index.clearFile(file);
-		} finally {
-			index.releaseWriteLock(0);
+		if (!found) {
+			changedMap.put(path.toOSString(), tu);
+			fFilesToIndex++;
 		}
 	}
 
+	public int getFilesToIndexCount() {
+		return fFilesToIndex;
+	}
 }

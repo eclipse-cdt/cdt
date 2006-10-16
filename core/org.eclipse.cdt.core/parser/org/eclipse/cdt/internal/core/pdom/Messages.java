@@ -15,6 +15,11 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.pdom.messages"; //$NON-NLS-1$
+	public static String PDOMManager_errorNoSuchIndex;
+	public static String PDOMManager_FilesToIndexSubtask;
+	public static String PDOMManager_JoinIndexerTask;
+	public static String PDOMManager_notifyJob_label;
+	public static String PDOMManager_notifyTask_message;
 	public static String WritablePDOM_error_unknownLinkage;
 	static {
 		// initialize resource bundle

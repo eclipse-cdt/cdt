@@ -25,6 +25,9 @@ public interface IPDOMManager {
 	public static final String ID_FULL_INDEXER= "org.eclipse.cdt.core.domsourceindexer"; //$NON-NLS-1$
 	
 	// Getting the PDOM
+	/**
+	 * mstodo deprecate: use CCorePlugin.getIndexManager().getIndex(...).
+	 */
 	public IPDOM getPDOM(ICProject project) throws CoreException;
 	
 	// Get the indexer for a given project

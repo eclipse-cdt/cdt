@@ -20,8 +20,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.IPDOMIndexer;
-import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
@@ -90,28 +88,7 @@ public class PDOMTestBase extends BaseTestCase {
 				CCorePlugin.getPDOMManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 				
 				// wait until the indexer is done
-				final boolean[] indexerDone = new boolean[1];
-				CCorePlugin.getPDOMManager().enqueue(new IPDOMIndexerTask() {
-					public IPDOMIndexer getIndexer() {
-						return null;
-					}
-					public void run(IProgressMonitor monitor) {
-						synchronized(indexerDone) {
-							indexerDone[0] = true;
-							indexerDone.notify();
-						}
-					}
-				});
-
-				try {
-					// Join indexer job
-					synchronized(indexerDone) {
-						while(!indexerDone[0])
-							indexerDone.wait();
-					}
-				} catch(InterruptedException ie) {
-					throw new RuntimeException(ie);
-				}
+				assertTrue(CCorePlugin.getIndexManager().joinIndexer(5000, new NullProgressMonitor()));
 
 				cprojects[0] = cproject;
 			}

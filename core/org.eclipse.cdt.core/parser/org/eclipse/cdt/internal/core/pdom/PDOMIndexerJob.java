@@ -51,24 +51,30 @@ public class PDOMIndexerJob extends Job {
 		while (!pdomManager.finishIndexerJob()) {
 			IPDOMIndexerTask nextTask= pdomManager.getNextTask();
 			synchronized (taskMutex) {
-				if (!cancelledByManager) {	
-					currentTask= nextTask;	// write to currentTask needs protection
-				}
+				currentTask= nextTask;	// write to currentTask needs protection
 			}
-			if (currentTask != null) {		// read on currentTask is ok (no write in other thread)
+
+			try {
 				currentTask.run(monitor);
-				synchronized (taskMutex) {
-					currentTask= null;		// write to currentTask needs protection
-					if (cancelledByManager) {	
-						// TODO chance for confusion here is user cancels
-						// while project is getting deletes.
-						monitor.setCanceled(false);
-						cancelledByManager = false;
-						taskMutex.notify();
-					} 
+			}
+			catch (Exception e) {
+				CCorePlugin.log(e);
+			}
+			boolean cancelledByUser= false;
+			synchronized (taskMutex) {
+				currentTask= null;		// write to currentTask needs protection
+				if (cancelledByManager) {	
+					// TODO chance for confusion here is user cancels
+					// while project is getting deletes.
+					monitor.setCanceled(false);
+					cancelledByManager = false;
+					taskMutex.notify();
+				} 
+				else {
+					cancelledByUser= monitor.isCanceled();
 				}
 			}
-			if (monitor.isCanceled()) {
+			if (cancelledByUser) {
 				pdomManager.cancelledByUser();
 				return Status.CANCEL_STATUS;
 			}

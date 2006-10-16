@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.index;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Starting point for working with the index. The manager can be obtained via
@@ -34,6 +35,7 @@ public interface IIndexManager {
 	public final static int ADD_DEPENDENCIES = 0x1;
 	public final static int ADD_DEPENDENT    = 0x2;
 	
+	public final static int FOREVER= -1;
 	/**
 	 * Returns the index for the given project.
 	 * @param project the project to get the index for
@@ -67,4 +69,37 @@ public interface IIndexManager {
 	 * @throws CoreException
 	 */
 	IIndex getIndex(ICProject[] projects, int options) throws CoreException;
+
+	/**
+	 * Registers a listener that will be notified whenever the indexer go idle.
+	 * @param listener the listener to register.
+	 */
+	void addIndexChangeListener(IIndexChangeListener listener);
+
+	/**
+	 * Removes a previously registered index change listener.
+	 * @param listener the listener to unregister.
+	 */
+	void removeIndexChangeListener(IIndexChangeListener listener);
+	
+	/**
+	 * Registers a listener that will be notified whenever the indexer changes its state.
+	 * @param listener the listener to register.
+	 */
+	void addIndexerStateListener(IIndexerStateListener listener);
+
+	/**
+	 * Removes a previously registered indexer state listener.
+	 * @param listener the listener to unregister.
+	 */
+	void removeIndexerStateListener(IIndexerStateListener listener);
+	
+	/**
+	 * Joins the indexer and reports progress.
+	 * @param waitMaxMillis time limit in millis after which the method returns with <code>false</code>,
+	 * or {@link #FOREVER}.
+	 * @param monitor a monitor to report progress.
+	 * @return <code>true</code>, if the indexer went idle in the given time.
+	 */
+	boolean joinIndexer(int waitMaxMillis, IProgressMonitor monitor);
 }

@@ -109,10 +109,11 @@ public class TestSourceReader {
 	 * @param filePath the path relative to the container to create the file at
 	 * @param contents the content for the file
 	 * @return a file object.
+	 * @throws CoreException 
 	 * @throws Exception
 	 * @since 4.0
 	 */    
-	public static IFile createFile(IContainer container, IPath filePath, String contents) throws Exception {
+	public static IFile createFile(IContainer container, IPath filePath, String contents) throws CoreException {
 		//Obtain file handle
 		IFile file = container.getFile(filePath);
 	
@@ -125,5 +126,21 @@ public class TestSourceReader {
 			file.create(stream, false, new NullProgressMonitor());
 		}
 		return file;
+	}
+
+	/**
+	 * Creates a file with content at the given path inside the given container. 
+	 * If the file exists its content is replaced.
+	 * @param container a container to create the file in
+	 * @param filePath the path relative to the container to create the file at
+	 * @param contents the content for the file
+	 * @return 
+	 * @return a file object.
+	 * @throws Exception 
+	 * @throws Exception
+	 * @since 4.0
+	 */    
+	public static IFile createFile(IContainer container, String filePath, String contents) throws CoreException {
+		return createFile(container, new Path(filePath), contents);
 	}
 }

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
+import org.eclipse.cdt.internal.core.pdom.indexer.PDOMIndexerTask;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -33,15 +34,11 @@ import org.eclipse.core.runtime.Path;
  * @author Doug Schaefer
  *
  */
-public abstract class PDOMFullIndexerJob implements IPDOMIndexerTask {
+abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexerTask {
 
 	protected final PDOMFullIndexer indexer;
 	protected final IWritableIndex index;
-	
-	// Error count, bail when it gets too high
-	protected int errorCount;
-	protected final int MAX_ERRORS = 10;
-	
+		
 	public PDOMFullIndexerJob(PDOMFullIndexer indexer) throws CoreException {
 		this.indexer = indexer;
 		this.index = ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(indexer.getProject());
@@ -51,11 +48,8 @@ public abstract class PDOMFullIndexerJob implements IPDOMIndexerTask {
 		return indexer;
 	}
 	
-	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
-		changeTU(tu);
-	}
 	
-	protected void changeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
+	protected void doChangeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
 		IPath path = tu.getLocation();
 		if (path == null) {
 			return;
@@ -134,7 +128,7 @@ public abstract class PDOMFullIndexerJob implements IPDOMIndexerTask {
 					return PROCESS_CONTINUE;
 				} catch (Throwable e) {
 					CCorePlugin.log(e);
-					return ++errorCount > MAX_ERRORS ? PROCESS_ABORT : PROCESS_CONTINUE;
+					return ++fErrorCount > MAX_ERRORS ? PROCESS_ABORT : PROCESS_CONTINUE;
 				}
 			}
 		});

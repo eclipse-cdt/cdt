@@ -29,7 +29,8 @@ import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.index.IIndexChangeListener;
+import org.eclipse.cdt.core.index.IIndexerStateListener;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
@@ -42,7 +43,10 @@ import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
+import org.eclipse.cdt.internal.core.index.IndexChangeEvent;
+import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
 import org.eclipse.cdt.internal.core.index.WritableCIndex;
+import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -51,10 +55,14 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -69,32 +77,75 @@ import org.osgi.service.prefs.BackingStoreException;
  * 
  * @author Doug Schaefer
  */
-public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElementChangedListener {
+public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElementChangedListener, IListener {
 
-	private static final QualifiedName indexerProperty
-		= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomIndexer"); //$NON-NLS-1$
-	private static final QualifiedName dbNameProperty
-	= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName"); //$NON-NLS-1$
-	private static final QualifiedName pdomProperty
-	= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdom"); //$NON-NLS-1$
+	private static final QualifiedName indexerProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomIndexer"); //$NON-NLS-1$
+	private static final QualifiedName dbNameProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName"); //$NON-NLS-1$
+	private static final QualifiedName pdomProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdom"); //$NON-NLS-1$
+
+	private static final String INDEXER_ID_KEY = "indexerId"; //$NON-NLS-1$
+	private static final ISchedulingRule NOTIFICATION_SCHEDULING_RULE = new ISchedulingRule(){
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
+		}
+	};
+
+    private PDOMIndexerJob indexerJob;
+	private IPDOMIndexerTask currentTask;
+	private LinkedList taskQueue = new LinkedList();
+    private Object taskQueueMutex = new Object();
+	private Object fWakeupOnIdle= new Object();
+    
+    private Map fPDOMs= new HashMap();
+	private ListenerList fChangeListeners= new ListenerList();
+	private ListenerList fStateListeners= new ListenerList();
+	
+	private IndexChangeEvent fIndexChangeEvent= new IndexChangeEvent();
+	private IndexerStateEvent fIndexerStateEvent= new IndexerStateEvent();
+    
 
 	public synchronized IPDOM getPDOM(ICProject project) throws CoreException {
 		IProject rproject = project.getProject();
 		WritablePDOM pdom = (WritablePDOM)rproject.getSessionProperty(pdomProperty);
-		if (pdom == null) {
-			String dbName = rproject.getPersistentProperty(dbNameProperty);
-			if (dbName == null) {
-				dbName = project.getElementName() + "." //$NON-NLS-1$
-					+ System.currentTimeMillis() + ".pdom"; //$NON-NLS-1$
+		if (pdom != null) {
+			ICProject oldProject= (ICProject) fPDOMs.get(pdom);
+			if (project.equals(oldProject)) {
+				return pdom;
+			}
+			
+			if (oldProject != null && oldProject.getProject().exists()) {
+				// project was copied
+				String dbName= getDefaultName(project);
 				rproject.setPersistentProperty(dbNameProperty, dbName);
 			}
-			IPath dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
-			pdom = new WritablePDOM(dbPath);
-			rproject.setSessionProperty(pdomProperty, pdom);
-			if (pdom.versionMismatch())
-				getIndexer(project).reindex();
+			else {
+				// project was renamed
+				fPDOMs.put(pdom, project);
+				return pdom;
+			}
+		}		
+				
+		String dbName= rproject.getPersistentProperty(dbNameProperty);
+		if (dbName == null) {
+			dbName = getDefaultName(project); 
+			rproject.setPersistentProperty(dbNameProperty, dbName);
+		}
+		IPath dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
+		pdom = new WritablePDOM(dbPath);
+		pdom.addListener(this);
+		rproject.setSessionProperty(pdomProperty, pdom);
+		fPDOMs.put(pdom, project);
+		if (pdom.versionMismatch()) {
+			getIndexer(project).reindex();
 		}
 		return pdom;
+	}
+
+	private String getDefaultName(ICProject project) {
+		return project.getElementName() + "." + System.currentTimeMillis() + ".pdom";  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public IPDOMIndexer getIndexer(ICProject project) {
@@ -240,7 +291,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElemen
 		
 		if (pdoms.isEmpty()) {
 			throw new CoreException(CCorePlugin.createStatus(
-					MessageFormat.format("Cannot obtain index for project ''{0}''", new Object[]{project.getElementName()})));
+					MessageFormat.format(Messages.PDOMManager_errorNoSuchIndex, new Object[]{project.getElementName()})));
 		}
 		
 		return new WritableCIndex((IWritableIndexFragment[]) pdoms.toArray(new IWritableIndexFragment[pdoms.size()]), new IIndexFragment[0]);
@@ -299,8 +350,6 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElemen
 	public IElementChangedListener getElementChangedListener() {
 		return this;
 	}
-
-    private static final String INDEXER_ID_KEY = "indexerId"; //$NON-NLS-1$
 
     public String getDefaultIndexerId() {
     	IPreferencesService prefService = Platform.getPreferencesService();
@@ -420,55 +469,82 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElemen
     	return indexer;
     }
 
-    // Indexer manager
-    private PDOMIndexerJob indexerJob;
-	private LinkedList indexerJobQueue = new LinkedList();
-    private Object indexerJobMutex = new Object();
-    
     public void enqueue(IPDOMIndexerTask subjob) {
-    	synchronized (indexerJobMutex) {
-    		indexerJobQueue.addLast(subjob);
+    	boolean notifyBusy= false;
+    	synchronized (taskQueueMutex) {
+    		taskQueue.addLast(subjob);
 			if (indexerJob == null) {
 				indexerJob = new PDOMIndexerJob(this);
 				indexerJob.schedule();
+				notifyBusy= true;
 			}
 		}
+    	if (notifyBusy) {
+    		notifyState(IndexerStateEvent.STATE_BUSY);
+    	}
     }
     
-    IPDOMIndexerTask getNextTask() {
-    	synchronized (indexerJobMutex) {
-    		return indexerJobQueue.isEmpty()
-    			? null
-    			: (IPDOMIndexerTask)indexerJobQueue.removeFirst();
+	IPDOMIndexerTask getNextTask() {
+    	synchronized (taskQueueMutex) {
+    		currentTask= taskQueue.isEmpty() ? null : (IPDOMIndexerTask)taskQueue.removeFirst();
+    		return currentTask;
 		}
     }
     
     void cancelledByUser() {
-    	synchronized (indexerJobMutex) {
-    		indexerJobQueue.clear();
+    	synchronized (taskQueueMutex) {
+    		taskQueue.clear();
+    		currentTask= null;
+    		indexerJob= null;
 		}
+		notifyState(IndexerStateEvent.STATE_IDLE);
     }
     
     boolean finishIndexerJob() {
-    	synchronized (indexerJobMutex) {
-			if (indexerJobQueue.isEmpty()) {
+    	boolean idle= false;
+    	synchronized (taskQueueMutex) {
+    		currentTask= null;
+			if (taskQueue.isEmpty()) {
 				indexerJob = null;
-				return true;
-			} else
-				// No way, there's more work to do
-				return false;
-		}
+				idle= true;
+			} 
+    	}
+    	if (idle) {
+    		notifyState(IndexerStateEvent.STATE_IDLE);
+    	}
+    	return idle;
     }
     
     public void deleting(ICProject project) {
     	// Project is about to be deleted. Stop all indexing tasks for it
     	IPDOMIndexer indexer = getIndexer(project);
-    	synchronized (indexerJobMutex) {
+    	synchronized (taskQueueMutex) {
 			if (indexerJob != null) {
 				indexerJob.cancelJobs(indexer);
 			}
 		}
     }
+    
+    private boolean isIndexerIdle() {
+    	synchronized (taskQueueMutex) {
+    		return currentTask == null && taskQueue.isEmpty();
+    	}
+    }
+    
+	private int getFilesToIndexCount() {
+		int count= 0;
+		synchronized (taskQueueMutex) {
+			if (currentTask != null) {
+				count= currentTask.getFilesToIndexCount();
+			}
+			for (Iterator iter = taskQueue.iterator(); iter.hasNext();) {
+				IPDOMIndexerTask task= (IPDOMIndexerTask) iter.next();
+				count+= task.getFilesToIndexCount();
+			}
+		}
+		return count;
+	}
+
     
 	/**
 	 * Startup the PDOM. This mainly sets us up to handle model
@@ -478,4 +554,137 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElemen
 		CoreModel.getDefault().addElementChangedListener(this);
 	}
 
+	public void addIndexChangeListener(IIndexChangeListener listener) {
+		fChangeListeners.add(listener);
+	}
+
+	public void removeIndexChangeListener(IIndexChangeListener listener) {
+		fChangeListeners.remove(listener);
+	}
+	
+	public void addIndexerStateListener(IIndexerStateListener listener) {
+		fStateListeners.add(listener);
+	}
+
+	public void removeIndexerStateListener(IIndexerStateListener listener) {
+		fStateListeners.remove(listener);
+	}
+
+    private void notifyState(final int state) {
+    	if (state == IndexerStateEvent.STATE_IDLE) {
+    		assert !Thread.holdsLock(taskQueueMutex);
+    		synchronized(fWakeupOnIdle) {
+    			fWakeupOnIdle.notifyAll();
+    		}
+    	}
+    	
+    	if (fStateListeners.isEmpty()) {
+    		return;
+    	}
+    	Job notify= new Job(Messages.PDOMManager_notifyJob_label) {
+    		protected IStatus run(IProgressMonitor monitor) {
+    			fIndexerStateEvent.setState(state);
+    			Object[] listeners= fStateListeners.getListeners();
+    			monitor.beginTask(Messages.PDOMManager_notifyTask_message, listeners.length);
+    			for (int i = 0; i < listeners.length; i++) {
+    				final IIndexerStateListener listener = (IIndexerStateListener) listeners[i];
+    				SafeRunner.run(new ISafeRunnable(){
+    					public void handleException(Throwable exception) {
+    						CCorePlugin.log(exception);
+    					}
+    					public void run() throws Exception {
+    						listener.indexChanged(fIndexerStateEvent);
+    					}
+    				});
+    				monitor.worked(1);
+    			}
+    			return Status.OK_STATUS;
+    		}
+    	};
+		notify.setRule(NOTIFICATION_SCHEDULING_RULE);
+    	notify.setSystem(true);
+    	notify.schedule();
+	}
+
+	public void handleChange(PDOM pdom) {
+		if (fChangeListeners.isEmpty()) {
+			return;
+		}
+		
+		ICProject project;
+		synchronized (this) {
+			project = (ICProject) fPDOMs.get(pdom);
+		}		
+		
+		if (project != null) {
+			final ICProject finalProject= project;
+			Job notify= new Job(Messages.PDOMManager_notifyJob_label) {
+				protected IStatus run(IProgressMonitor monitor) {
+					fIndexChangeEvent.setAffectedProject(finalProject);
+					Object[] listeners= fChangeListeners.getListeners();
+					monitor.beginTask(Messages.PDOMManager_notifyTask_message, listeners.length);
+					for (int i = 0; i < listeners.length; i++) {
+						final IIndexChangeListener listener = (IIndexChangeListener) listeners[i];
+						SafeRunner.run(new ISafeRunnable(){
+							public void handleException(Throwable exception) {
+								CCorePlugin.log(exception);
+							}
+							public void run() throws Exception {
+								listener.indexChanged(fIndexChangeEvent);
+							}
+						});
+						monitor.worked(1);
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			notify.setRule(NOTIFICATION_SCHEDULING_RULE);
+			notify.setSystem(true);
+			notify.schedule();
+		}
+	}
+
+	public boolean joinIndexer(int waitMaxMillis, IProgressMonitor monitor) {
+		monitor.beginTask(Messages.PDOMManager_JoinIndexerTask, IProgressMonitor.UNKNOWN);
+		long limit= System.currentTimeMillis()+waitMaxMillis;
+		try {
+			while (true) {
+				if (monitor.isCanceled()) {
+					return false;
+				}
+				boolean wouldFail= false;
+				int wait= 1000;
+				if (waitMaxMillis >= 0) {
+					int rest= (int) (limit - System.currentTimeMillis());
+					if (rest < wait) {
+						if (rest <= 0) {
+							wouldFail= true;
+						}
+
+						wait= rest;
+					}
+				}
+				
+	    		assert !Thread.holdsLock(taskQueueMutex);
+				synchronized(fWakeupOnIdle) {
+					if (isIndexerIdle()) {
+						return true;
+					}
+					if (wouldFail) {
+						return false;
+					}
+
+					monitor.subTask(MessageFormat.format(Messages.PDOMManager_FilesToIndexSubtask, new Object[] {new Integer(getFilesToIndexCount())}));
+					try {
+						fWakeupOnIdle.wait(wait);
+					} catch (InterruptedException e) {
+						return false;
+					}
+				}
+			}
+		}
+		finally {
+			monitor.done();
+		}
+	}
 }

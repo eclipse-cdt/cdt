@@ -50,6 +50,12 @@ public class CIndex implements IIndex {
 		this(fragments, fragments.length);
 	}
 
+	public IIndexFragment[] getPrimaryFragments() {
+		IIndexFragment[] result= new IIndexFragment[fPrimaryFragmentCount];
+		System.arraycopy(fFragments, 0, result, 0, fPrimaryFragmentCount);
+		return result;
+	}
+	
 	public IIndexBinding findBinding(ICElement element) throws CoreException {
 		// mstodo ICElement to IBinding
 		return null;

@@ -47,7 +47,7 @@ public interface IIndexFragment {
 	 * @see IIndex#FIND_ALL_OCCURENCES
 	 */
 	final int FIND_ALL_OCCURENCES = 		  IIndex.FIND_ALL_OCCURENCES;
-
+	
 	/**
 	 * Returns the file for the given location. May return <code>null</code>, if no such file exists.
 	 * This method may only return files that are actually managed by this fragement.

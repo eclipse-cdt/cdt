@@ -43,8 +43,10 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 	}
 	
 	public void handleDelta(ICElementDelta delta) throws CoreException {
-		CCorePlugin.getPDOMManager().enqueue(
-				new PDOMFastHandleDelta(this, delta));
+		PDOMFastHandleDelta fhd= new PDOMFastHandleDelta(this, delta);
+		if (fhd.getFilesToIndexCount() > 0) {
+			CCorePlugin.getPDOMManager().enqueue(fhd);
+		}
 	}
 	
 	public void reindex() throws CoreException {

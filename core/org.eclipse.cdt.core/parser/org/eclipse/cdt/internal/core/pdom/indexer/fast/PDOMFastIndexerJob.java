@@ -23,11 +23,13 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
+import org.eclipse.cdt.internal.core.pdom.indexer.PDOMIndexerTask;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
@@ -35,16 +37,12 @@ import org.eclipse.core.runtime.IPath;
  * @author Doug Schaefer
  *
  */
-public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
+abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexerTask {
 
 	protected final PDOMFastIndexer indexer;
 	protected final IWritableIndex index;
 	protected final IndexBasedCodeReaderFactory codeReaderFactory;
 	
-	// Error counter. If we too many errors we bail
-	protected int errorCount;
-	protected final int MAX_ERRORS = 10;
-
 	public PDOMFastIndexerJob(PDOMFastIndexer indexer) throws CoreException {
 		this.indexer = indexer;
 		this.index= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(indexer.getProject());
@@ -55,31 +53,26 @@ public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 		return indexer;
 	}
 	
-	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
-		// we can do the same as for changing a tu
-		changeTU(tu);
-	}
-
-	protected void changeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
+	protected void doChangeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
+		IPath path = tu.getLocation();
+		if (path == null) {
+			return;
+		}
 		ILanguage language = tu.getLanguage();
 		if (language == null)
 			return;
 	
 		// skip if no scanner info
 		IScannerInfo scanner= tu.getScannerInfo(false);
-		if (scanner == null) {
-			return;
-		}
-
-		IPath path = tu.getLocation();
-		if (path == null) {
+		CodeReader codeReader = tu.getCodeReader();
+		if (scanner == null || codeReader == null) {
 			return;
 		}
 
 		index.acquireReadLock();
 		try {
 			// get the AST in a "Fast" way
-			IASTTranslationUnit ast= language.getASTTranslationUnit(tu.getCodeReader(), scanner, codeReaderFactory, index);
+			IASTTranslationUnit ast= language.getASTTranslationUnit(codeReader, scanner, codeReaderFactory, index);
 
 			index.acquireWriteLock(1);
 			try {
@@ -148,7 +141,7 @@ public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 					return PROCESS_CONTINUE;
 				} catch (Throwable e) {
 					CCorePlugin.log(e);
-					return ++errorCount > MAX_ERRORS ? PROCESS_ABORT : PROCESS_CONTINUE;
+					return ++fErrorCount > MAX_ERRORS ? PROCESS_ABORT : PROCESS_CONTINUE;
 				}
 			}
 		});

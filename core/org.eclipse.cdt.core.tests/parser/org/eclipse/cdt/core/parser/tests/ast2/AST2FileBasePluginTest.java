@@ -20,6 +20,7 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
@@ -61,6 +62,7 @@ public class AST2FileBasePluginTest extends TestCase {
 	            	className = aClassName;
 	            	numProjects++;
 	            }
+	            CCorePlugin.getPDOMManager().setIndexerId(cPrj, IPDOMManager.ID_NO_INDEXER);
 	        } catch ( CoreException e ) {
 	            /*boo*/
 	        }

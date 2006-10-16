@@ -20,6 +20,7 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
@@ -44,7 +45,7 @@ public class DOMFileBasePluginTest extends TestCase {
     static Class					className;
 	static ICProject cPrj; 
 
-    private void initialize(Class aClassName){
+    private void initialize(Class aClassName) {
         if( CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null){
 			//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 			monitor = new NullProgressMonitor();
@@ -61,12 +62,15 @@ public class DOMFileBasePluginTest extends TestCase {
 	            	className = aClassName;
 	            	numProjects++;
 	            }
+				// disable indexer
+				CCorePlugin.getPDOMManager().setIndexerId(cPrj, IPDOMManager.ID_NO_INDEXER);
 	        } catch ( CoreException e ) {
 	            /*boo*/
 	        }
 			if (project == null)
 				throw new NullPointerException("Unable to create project"); //$NON-NLS-1$
 	
+			
 			//Create file manager
 			fileManager = new FileManager();
         }

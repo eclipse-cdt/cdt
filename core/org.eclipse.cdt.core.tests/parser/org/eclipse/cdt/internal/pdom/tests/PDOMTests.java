@@ -20,7 +20,7 @@ import junit.framework.TestSuite;
 public class PDOMTests extends TestSuite {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new PDOMTests();
 		
 		suite.addTest(EnumerationTests.suite());
 		suite.addTest(ClassTests.suite());

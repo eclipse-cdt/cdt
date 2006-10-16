@@ -17,6 +17,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
+import org.eclipse.core.runtime.CoreException;
+
 
 /**
  * A convenience class that allows a client to retrieve data from services 
@@ -53,19 +55,36 @@ abstract public class DsfQuery<V> extends DsfRunnable
     public boolean isDone() { return fSync.doIsDone(); }
     
     
-    protected void done(V result) {
-        fSync.doSet(result);
-    }
-    
     protected void doneException(Throwable t) {
         fSync.doSetException(t);
     }        
     
-    abstract protected void execute();
+    abstract protected void execute(GetDataDone<V> done);
     
     public void run() {
         if (fSync.doRun()) {
-            execute();
+            try {
+                execute(new GetDataDone<V>() {
+                    public void run() {
+                        if (getStatus().isOK()) fSync.doSet(getData());
+                        else fSync.doSetException(new CoreException(getStatus()));
+                    }
+                });
+            } catch(Throwable t) {
+                /*
+                 * Catching the exception here will only work if the exception 
+                 * happens within the execute.  It will not work in cases when 
+                 * the execute submits other runnables, and the other runnables
+                 * encounter the exception.
+                 */ 
+                fSync.doSetException(t);
+                
+                /*
+                 * Since we caught the exception, it will not be logged by 
+                 * DefaultDsfExecutable.afterExecution().  So log it here.
+                 */
+                DefaultDsfExecutor.logException(t);
+            }
         }
     }
     

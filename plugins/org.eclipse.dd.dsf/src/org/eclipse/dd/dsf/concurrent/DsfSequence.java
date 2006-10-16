@@ -160,6 +160,11 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
      * Returns the steps to be executed.  It is up to the deriving class to
      * supply the steps and to ensure that the list of steps will not be
      * modified after the sequence is constructed.
+     * <p>
+     * Steps are purposely not accepted as part of the DsfConstructor, in 
+     * order to allow deriving classes to create the steps as a field.  And a 
+     * setSteps() method is not provided, to guarantee that the steps will not
+     * be modified once set (perhaps this is a bit paranoid, but oh well).  
      */
     abstract public Step[] getSteps();
 
@@ -264,24 +269,43 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
         
         // Proceed with executing next step.
         fCurrentStepIdx = nextStepIndex;
-        getSteps()[fCurrentStepIdx].execute(new Done() {
-            final private int fStepIdx = fCurrentStepIdx;
-            public void run() {
-                // Check if we're still the correct step.
-                assert fStepIdx == fCurrentStepIdx;
-                
-                // Proceed to the next step.
-                if (getStatus().isOK()) {
-                    fProgressMonitor.worked(getSteps()[fStepIdx].getTicks());
-                    executeStep(fStepIdx + 1);
-                } else {
-                    abortExecution(getStatus());
+        try {
+            getSteps()[fCurrentStepIdx].execute(new Done() {
+                final private int fStepIdx = fCurrentStepIdx;
+                public void run() {
+                    // Check if we're still the correct step.
+                    assert fStepIdx == fCurrentStepIdx;
+                    
+                    // Proceed to the next step.
+                    if (getStatus().isOK()) {
+                        fProgressMonitor.worked(getSteps()[fStepIdx].getTicks());
+                        executeStep(fStepIdx + 1);
+                    } else {
+                        abortExecution(getStatus());
+                    }
                 }
-            }
-            public String toString() {
-                return "DsfSequence \"" + fTaskName + "\", result for executing step #" + fStepIdx + " = " + getStatus();
-            }
-        });
+                public String toString() {
+                    return "DsfSequence \"" + fTaskName + "\", result for executing step #" + fStepIdx + " = " + getStatus();
+                }
+            });
+        } catch(Throwable t) {
+            /*
+             * Catching the exception here will only work if the exception 
+             * happens within the execute method.  It will not work in cases 
+             * when the execute submits other runnables, and the other runnables
+             * encounter the exception.
+             */ 
+            abortExecution(new Status(
+                IStatus.ERROR, DsfPlugin.PLUGIN_ID, 0, 
+                "Unhandled exception when executing DsfSequence " + this + ", step #" + fCurrentStepIdx, 
+                t));
+            
+            /*
+             * Since we caught the exception, it will not be logged by 
+             * DefaultDsfExecutable.afterExecution().  So log it here.
+             */
+            DefaultDsfExecutor.logException(t);
+        }
     }
      
     /**
@@ -297,25 +321,44 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
         
         // Proceed with rolling back given step.
         fCurrentStepIdx = stepIdx;
-        getSteps()[fCurrentStepIdx].rollBack(new Done() {
-            final private int fStepIdx = fCurrentStepIdx;
-            public void run() {
-                // Check if we're still the correct step.
-                assert fStepIdx == fCurrentStepIdx;
-         
-                // Proceed to the next step.
-                if (getStatus().isOK()) {
-                    fProgressMonitor.worked(getSteps()[fStepIdx].getTicks());
-                    rollBackStep(fStepIdx - 1);
-                } else {
-                    abortRollBack(getStatus());
-                }
-            };
-            @Override
-            public String toString() {
-                return "DsfSequence \"" + fTaskName + "\", result for rolling back step #" + fStepIdx + " = " + getStatus();
-            }                
-        });
+        try {
+            getSteps()[fCurrentStepIdx].rollBack(new Done() {
+                final private int fStepIdx = fCurrentStepIdx;
+                public void run() {
+                    // Check if we're still the correct step.
+                    assert fStepIdx == fCurrentStepIdx;
+             
+                    // Proceed to the next step.
+                    if (getStatus().isOK()) {
+                        fProgressMonitor.worked(getSteps()[fStepIdx].getTicks());
+                        rollBackStep(fStepIdx - 1);
+                    } else {
+                        abortRollBack(getStatus());
+                    }
+                };
+                @Override
+                public String toString() {
+                    return "DsfSequence \"" + fTaskName + "\", result for rolling back step #" + fStepIdx + " = " + getStatus();
+                }                
+            });
+        } catch(Throwable t) {
+            /*
+             * Catching the exception here will only work if the exception 
+             * happens within the execute method.  It will not work in cases 
+             * when the execute submits other runnables, and the other runnables
+             * encounter the exception.
+             */ 
+            abortRollBack(new Status(
+                IStatus.ERROR, DsfPlugin.PLUGIN_ID, 0, 
+                "Unhandled exception when rolling back DsfSequence " + this + ", step #" + fCurrentStepIdx, 
+                t));
+            
+            /*
+             * Since we caught the exception, it will not be logged by 
+             * DefaultDsfExecutable.afterExecution().  So log it here.
+             */
+            DefaultDsfExecutor.logException(t);
+        }
     }
 
     /**

@@ -71,24 +71,27 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
             } catch (CancellationException e) { // Ignore also
             } catch (ExecutionException e) {
                 if (e.getCause() != null) {
-                    ILog log = DsfPlugin.getDefault().getLog();
-                    if (log != null) {
-                        log.log(new Status(
-                            IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Uncaught exception in DSF executor thread", e.getCause()));
-                        
-                        // Print out the stack trace to console if assertions are enabled. 
-                        if(ASSERTIONS_ENABLED) {
-                            ByteArrayOutputStream outStream = new ByteArrayOutputStream(512);
-                            PrintStream printStream = new PrintStream(outStream);
-                            try {
-                                printStream.write("Uncaught exception in session executor thread: ".getBytes());
-                            } catch (IOException e2) {}
-                            e.getCause().printStackTrace(new PrintStream(outStream));
-                            System.err.println(outStream.toString());
-                        }
-                    }
+                    logException(t);
                 }
             }
+        }
+    }
+    
+    static void logException(Throwable t) {
+        ILog log = DsfPlugin.getDefault().getLog();
+        if (log != null) {
+            log.log(new Status(
+                IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Uncaught exception in DSF executor thread", t));
+        }                   
+        // Print out the stack trace to console if assertions are enabled. 
+        if(ASSERTIONS_ENABLED) {
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream(512);
+            PrintStream printStream = new PrintStream(outStream);
+            try {
+                printStream.write("Uncaught exception in session executor thread: ".getBytes());
+            } catch (IOException e2) {}
+            t.printStackTrace(new PrintStream(outStream));
+            System.err.println(outStream.toString());
         }
     }
     

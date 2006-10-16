@@ -233,33 +233,55 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
      * submit the next step. 
      */
     private void executeStep(int nextStepIndex) {
+        /*
+         * At end of each step check progress monitor to see if it's cancelled.
+         * If progress monitor is cancelled, mark the whole sequence as 
+         * cancelled.
+         */
+        if (fProgressMonitor.isCanceled()) {
+            cancel(false);
+        }
+
+        /*
+         * If sequence was cencelled during last step (or before the sequence 
+         * was ever executed), start rolling back the execution. 
+         */
         if (isCancelled()) {
             cancelExecution();
-        } else {
-            if (nextStepIndex < getSteps().length) {
-                fCurrentStepIdx = nextStepIndex;
-                getSteps()[fCurrentStepIdx].execute(new Done() {
-                    final private int fStepIdx = fCurrentStepIdx;
-                    public void run() {
-                        // Check if we're still the correct step.
-                        assert fStepIdx == fCurrentStepIdx;
-                        
-                        // Proceed to the next step.
-                        if (getStatus().isOK()) {
-                            fProgressMonitor.worked(getSteps()[fStepIdx].getTicks());
-                            executeStep(fStepIdx + 1);
-                        } else {
-                            abortExecution(getStatus());
-                        }
-                    }
-                    public String toString() {
-                        return "DsfSequence \"" + fTaskName + "\", result for executing step #" + fStepIdx + " = " + getStatus();
-                    }
-                });
-            } else {
-                finish();
-            }
+            return;
+        } 
+         
+        /*
+         *  Check if we've reached the last step.  Note that if execution was
+         *  cancelled during the last step (and thus the sequence is 
+         *  technically finished, since it was cancelled it will be rolled 
+         *  back. 
+         */
+        if (nextStepIndex >= getSteps().length) {
+            finish();
+            return;
         }
+        
+        // Proceed with executing next step.
+        fCurrentStepIdx = nextStepIndex;
+        getSteps()[fCurrentStepIdx].execute(new Done() {
+            final private int fStepIdx = fCurrentStepIdx;
+            public void run() {
+                // Check if we're still the correct step.
+                assert fStepIdx == fCurrentStepIdx;
+                
+                // Proceed to the next step.
+                if (getStatus().isOK()) {
+                    fProgressMonitor.worked(getSteps()[fStepIdx].getTicks());
+                    executeStep(fStepIdx + 1);
+                } else {
+                    abortExecution(getStatus());
+                }
+            }
+            public String toString() {
+                return "DsfSequence \"" + fTaskName + "\", result for executing step #" + fStepIdx + " = " + getStatus();
+            }
+        });
     }
      
     /**
@@ -267,30 +289,33 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
      * roll back next step. 
      */
     private void rollBackStep(int stepIdx) {
-        if (stepIdx >= 0) {
-            fCurrentStepIdx = stepIdx;
-            getSteps()[fCurrentStepIdx].rollBack(new Done() {
-                final private int fStepIdx = fCurrentStepIdx;
-                public void run() {
-                    // Check if we're still the correct step.
-                    assert fStepIdx == fCurrentStepIdx;
-             
-                    // Proceed to the next step.
-                    if (getStatus().isOK()) {
-                        fProgressMonitor.worked(getSteps()[fStepIdx].getTicks());
-                        rollBackStep(fStepIdx - 1);
-                    } else {
-                        abortRollBack(getStatus());
-                    }
-                };
-                @Override
-                public String toString() {
-                    return "DsfSequence \"" + fTaskName + "\", result for rolling back step #" + fStepIdx + " = " + getStatus();
-                }                
-            });
-        } else {
+        // If we reach before step 0, finish roll back. 
+        if (stepIdx < 0) {
             finish();
+            return;
         }
+        
+        // Proceed with rolling back given step.
+        fCurrentStepIdx = stepIdx;
+        getSteps()[fCurrentStepIdx].rollBack(new Done() {
+            final private int fStepIdx = fCurrentStepIdx;
+            public void run() {
+                // Check if we're still the correct step.
+                assert fStepIdx == fCurrentStepIdx;
+         
+                // Proceed to the next step.
+                if (getStatus().isOK()) {
+                    fProgressMonitor.worked(getSteps()[fStepIdx].getTicks());
+                    rollBackStep(fStepIdx - 1);
+                } else {
+                    abortRollBack(getStatus());
+                }
+            };
+            @Override
+            public String toString() {
+                return "DsfSequence \"" + fTaskName + "\", result for rolling back step #" + fStepIdx + " = " + getStatus();
+            }                
+        });
     }
 
     /**

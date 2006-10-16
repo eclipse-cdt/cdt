@@ -4,12 +4,12 @@
 <extension point="org.eclipse.debug.ui.memoryRenderings">
     <renderingType 
         name="Traditional"
-        id="org.eclipse.dsdp.debug.memory.renderings.MemoryRenderingTraditional"
+        id="org.eclipse.dd.debug.memory.renderings.MemoryRenderingTraditional"
         class="org.eclipse.dd.debug.memory.renderings.MemoryRenderingTypeDelegate">
     </renderingType>
     <renderingBindings
-        renderingIds="org.eclipse.dsdp.debug.memory.renderings.MemoryRenderingTraditional"
-        defaultIds="org.eclipse.dsdp.debug.memory.renderings.MemoryRenderingTraditional">
+        renderingIds="org.eclipse.dd.debug.memory.renderings.MemoryRenderingTraditional"
+        defaultIds="org.eclipse.dd.debug.memory.renderings.MemoryRenderingTraditional">
         <enablement>
             <instanceof value="org.eclipse.debug.core.model.IMemoryBlockExtension"/>
         </enablement>    

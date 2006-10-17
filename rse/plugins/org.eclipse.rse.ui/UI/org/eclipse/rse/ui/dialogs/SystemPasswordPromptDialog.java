@@ -155,28 +155,26 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(composite, 2);
 
 		// yantzi: artemis 6.0, at request of zOS team I am changing the system type and hostname 
-		// to labels so they are clearer to read than non-editable entry fields    
+		// to labels so they are clearer to read than non-editable entry fields   
+		
+		// dwd: cannot set height hints on labels since that causes cut off text for large fonts used by those with impaired vision
 
 		// System type
 		String text = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_SYSTEMTYPE_READONLY_LABEL);
 		Label label = SystemWidgetHelpers.createLabel(composite_prompts, text);
 		GridData gd = new GridData();
-//		gd.heightHint = LABEL_HEIGHT;
 		label.setLayoutData(gd);
 		label = SystemWidgetHelpers.createLabel(composite_prompts, connectorService.getHostType());
 		gd = new GridData();
-//		gd.heightHint = LABEL_HEIGHT;
 		label.setLayoutData(gd);
 
 		// Host name
 		text = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_HOSTNAME_READONLY_LABEL);
 		label = SystemWidgetHelpers.createLabel(composite_prompts, text);
 		gd = new GridData();
-//		gd.heightHint = LABEL_HEIGHT;
 		label.setLayoutData(gd);
 		label = SystemWidgetHelpers.createLabel(composite_prompts, connectorService.getHostName());
 		gd = new GridData();
-//		gd.heightHint = LABEL_HEIGHT;
 		label.setLayoutData(gd);
 
 		// UserId

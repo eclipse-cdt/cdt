@@ -24,9 +24,9 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -102,7 +102,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		getIndex().accept(new IBTreeVisitor() {
 			public int compare(int record) throws CoreException {
 				return 1;
-			};
+			}
 			public boolean visit(int record) throws CoreException {
 				PDOMBinding binding = pdom.getBinding(record);
 				if (binding != null) {
@@ -111,7 +111,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 					visitor.leave(binding);
 				}
 				return true;
-			};
+			}
 		});
 	}
 	
@@ -162,6 +162,22 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 			
 		// the scope is from the ast
+		
+		// mstodo revisit unnamed namespaces
+		IScope testScope= scope;
+		while (testScope instanceof ICPPNamespaceScope) {
+			IName name= testScope.getScopeName();
+			if (name != null && name.toCharArray().length == 0) {
+				testScope= scope.getParent();
+				if (testScope != null) {
+					scope= testScope;
+				}
+			}
+			else {
+				testScope= null;
+			}
+		}
+		
 		IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
 		if (scopeNode instanceof IASTCompoundStatement)
 			return null;

@@ -144,8 +144,14 @@ public class IndexSearchTest extends BaseTestCase {
 		bindings= fIndex.findBindings(new Pattern[]{pns, pns, pcl}, false, INDEX_FILTER, NPM);
 		assertEquals(1, bindings.length);
 		checkIsClass(bindings[0]);
+	}
+	
+	public void testFindNamespaceInNamespace() throws CoreException {
+		Pattern pcl= Pattern.compile("C160913");
+		Pattern pns= Pattern.compile("ns160913");
+		
+		IIndexBinding[] bindings;
 
-		// same with namespace
 		bindings= fIndex.findBindings(pns, true, INDEX_FILTER, NPM);
 		assertEquals(1, bindings.length);
 		checkIsNamespace(bindings[0]);
@@ -162,6 +168,26 @@ public class IndexSearchTest extends BaseTestCase {
 		bindings= fIndex.findBindings(new Pattern[]{pns, pns}, false, INDEX_FILTER, NPM);
 		assertEquals(1, bindings.length);
 		checkIsNamespace(bindings[0]);
+	}
+
+	public void testClassInUnnamedNamespace1() throws CoreException {
+		Pattern pcl= Pattern.compile("CInUnnamed160913");
+		
+		IIndexBinding[] bindings;
+
+		bindings= fIndex.findBindings(pcl, false, INDEX_FILTER, NPM);
+		assertEquals(1, bindings.length);
+		checkIsClass(bindings[0]);
+	}
+
+	public void _testClassInUnnamedNamespace2() throws CoreException {
+		Pattern pcl= Pattern.compile("CInUnnamed160913");
+		
+		IIndexBinding[] bindings;
+
+		// the binding in the unnamed namespace is not visible in global scope.
+		bindings= fIndex.findBindings(pcl, true, INDEX_FILTER, NPM);
+		assertEquals(0, bindings.length);
 	}
 
 	public void testFindEnumerator() throws CoreException {

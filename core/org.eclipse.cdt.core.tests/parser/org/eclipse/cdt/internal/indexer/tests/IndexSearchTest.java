@@ -22,7 +22,11 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -110,6 +114,16 @@ public class IndexSearchTest extends BaseTestCase {
 
 	private void checkIsEnumeration(IIndexBinding binding) {
 		assertTrue(binding instanceof IEnumeration);
+	}
+
+	private void checkIsFunction(IIndexBinding binding) {
+		assertTrue(binding instanceof IFunction);
+		assertTrue(!(binding instanceof ICPPMethod));
+	}
+
+	private void checkIsVariable(IIndexBinding binding) {
+		assertTrue(binding instanceof IVariable);
+		assertTrue(!(binding instanceof ICPPField));
 	}
 
 	public void testFindClassInNamespace() throws CoreException {
@@ -218,6 +232,23 @@ public class IndexSearchTest extends BaseTestCase {
 		bindings= fIndex.findBindings(pEnumeration, false, INDEX_FILTER, NPM);
 		assertEquals(1, bindings.length);
 		checkIsEnumeration(bindings[0]);
+	}
+	
+	public void _testFindStatic_161216() throws CoreException {
+		Pattern pFunc= Pattern.compile("staticFunc20061017");
+		Pattern pVar= Pattern.compile("staticVar20061017");
+		
+		IIndexBinding[] bindings;
+		
+		bindings= fIndex.findBindings(pFunc, true, INDEX_FILTER, NPM);
+		assertEquals(2, bindings.length);
+		checkIsFunction(bindings[0]);
+		checkIsFunction(bindings[1]);
+
+		bindings= fIndex.findBindings(pVar, true, INDEX_FILTER, NPM);
+		assertEquals(2, bindings.length);
+		checkIsVariable(bindings[0]);
+		checkIsVariable(bindings[1]);
 	}
 	
 	public void testSanityOfMayHaveChildren() throws CoreException {

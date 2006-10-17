@@ -19,9 +19,10 @@ Michael Berger (IBM Canada) - 148434 Better user assistance for logging preferen
 <contexts>
 <!-- RSE logging -->
 <context id="rsel0000">
-<description>This is the RSE Logging preference page.
-You can specify what severity of messages you wish to log - from informational messages, to warnings, to errors.
-The debug setting provides the most detail.
+<description>This page allows you to specify the Remote System Explorer logging preferences.
+
+You can specify what severity of messages you wish to log - from informational messages, to warnings, to errors. If it is available, the debug setting provides the most detail.
+
 Messages are logged to the .log file in the .metadata folder of the workspace.
 </description>
 </context>

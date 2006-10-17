@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.parser.failedTests.ASTFailedTests;
 import org.eclipse.cdt.core.parser.failedTests.FailedCompleteParseASTTest;
 import org.eclipse.cdt.core.parser.failedTests.STLFailedTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
+import org.eclipse.cdt.internal.indexer.tests.IndexerTests;
 import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
 
 /**
@@ -79,6 +80,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		
 		// Add in PDOM tests
 		suite.addTest(PDOMTests.suite());
+		suite.addTest(IndexerTests.suite());
 		
 		// Add all failed tests
 		suite.addTestSuite(ASTFailedTests.class);

@@ -9,7 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.internal.pdom.tests;
+package org.eclipse.cdt.internal.indexer.tests;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +71,7 @@ public class IndexListenerTest extends BaseTestCase {
 		
 		TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
 		Thread.sleep(200);
-		assertTrue(im.joinIndexer(2000, new NullProgressMonitor()));
+		assertTrue(im.joinIndexer(4000, new NullProgressMonitor()));
 		Thread.sleep(200);
 		assertEquals(1, state[0]);
 		assertEquals(1, state[1]);
@@ -102,6 +102,5 @@ public class IndexListenerTest extends BaseTestCase {
 		assertTrue(projects.contains(fProject1));
 		assertTrue(projects.contains(fProject2));
 		projects.clear();
-
 	}
 }

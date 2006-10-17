@@ -331,4 +331,8 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	public void removeBinding(IBinding binding) throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
+	
+	public boolean mayHaveChildren() {
+		return true;
+	}
 }

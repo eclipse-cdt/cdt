@@ -148,4 +148,8 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, IPDOM
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
+	
+	public boolean mayHaveChildren() {
+		return true;
+	}
 }

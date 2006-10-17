@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBindingsInBTree;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -200,5 +201,8 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 
 	public void removeBinding(IBinding binding) throws DOMException {
 		throw new PDOMNotImplementedError();
+	}
+	public boolean mayHaveChildren() {
+		return true;
 	}
 }

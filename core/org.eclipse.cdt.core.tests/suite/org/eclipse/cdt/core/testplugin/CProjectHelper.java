@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.zip.ZipFile;
 
@@ -37,16 +38,28 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
+import org.osgi.framework.Bundle;
 /**
  * Helper methods to set up a ICProject.
  */
 public class CProjectHelper {
+
+	private final static IOverwriteQuery OVERWRITE_QUERY= new IOverwriteQuery() {
+		public String queryOverwrite(String file) {
+			return ALL;
+		}
+	};
 
 	/**
 	 * Creates a ICProject.
@@ -279,17 +292,25 @@ public class CProjectHelper {
 		ZipFileStructureProvider structureProvider = new ZipFileStructureProvider(srcZipFile);
 		try {
 			ImportOperation op = new ImportOperation(destPath, structureProvider.getRoot(), structureProvider,
-					new ImportOverwriteQuery());
+					OVERWRITE_QUERY);
 			op.run(monitor);
 		} catch (InterruptedException e) {
 			// should not happen
 		}
 	}
 
-	private static class ImportOverwriteQuery implements IOverwriteQuery {
-
-		public String queryOverwrite(String file) {
-			return ALL;
+	
+	public static void importSourcesFromPlugin(ICProject project, Bundle bundle, String sources) throws CoreException {
+		try {
+			String baseDir= FileLocator.toFileURL(FileLocator.find(bundle, new Path(sources), null)).getFile();
+			ImportOperation importOp = new ImportOperation(project.getProject().getFullPath(),
+					new File(baseDir), FileSystemStructureProvider.INSTANCE, OVERWRITE_QUERY);
+			importOp.setCreateContainerStructure(false);
+			importOp.run(new NullProgressMonitor());
+		}
+		catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, 0, "Import Interrupted", e));
 		}
 	}
+
 }

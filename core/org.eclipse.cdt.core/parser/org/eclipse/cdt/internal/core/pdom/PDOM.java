@@ -42,7 +42,6 @@ import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
-import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
@@ -254,8 +253,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			if (monitor.isCanceled())
 				throw new CoreException(Status.OK_STATUS);
 			
-			if (node instanceof IBinding) {
-				IBinding binding = (IBinding)node;
+			if (node instanceof PDOMBinding) {
+				PDOMBinding binding = (PDOMBinding)node;
 				String name = binding.getName();
 
 				// check if we have a complete match.
@@ -265,7 +264,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				}
 						
 				// check if we have a partial match
-				if (binding instanceof IPDOMMemberOwner) {
+				if (binding.mayHaveChildren()) {
 					boolean visitNextLevel= false;
 					BitSet updatedMatchesUpToLevel= new BitSet();
 					if (!isFullyQualified) {

@@ -138,7 +138,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public char[] getNameCharArray() {
@@ -165,5 +165,9 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	
 	public IIndexFragment getFragment() {
 		return pdom;
+	}
+
+	public boolean mayHaveChildren() {
+		return false;
 	}
 }

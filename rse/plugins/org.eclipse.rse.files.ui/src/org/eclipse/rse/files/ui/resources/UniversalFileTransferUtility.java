@@ -16,7 +16,16 @@
 
 package org.eclipse.rse.files.ui.resources;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -230,6 +239,39 @@ public class UniversalFileTransferUtility
 		}
 	}
 	
+	protected static void setIFileProperties(IFile tempFile, File remoteFile, String hostname)
+	{
+		// set it's properties for use later
+		SystemIFileProperties properties = new SystemIFileProperties(tempFile);
+
+		// set remote properties
+		properties.setRemoteFileTimeStamp(remoteFile.lastModified());
+		properties.setDirty(false);
+
+		String remotePath = remoteFile.getAbsolutePath();
+
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		// String subSystemId = registry.getAbsoluteNameForSubSystem(subSystem);
+		// properties.setRemoteFileSubSystem(subSystemId);
+		properties.setRemoteFilePath(remotePath);
+		
+	    // get the modified timestamp from the File, not the IFile
+		// for some reason, the modified timestamp from the IFile does not always return
+		// the right value. There is a Javadoc comment saying the value from IFile might be a
+		// cached value and that might be the cause of the problem.
+		properties.setDownloadFileTimeStamp(tempFile.getLocation().toFile().lastModified());
+		
+		boolean isMounted = isRemoteFileMounted(hostname, remotePath);
+		properties.setRemoteFileMounted(isMounted);
+		if (isMounted)
+		{
+			String actualRemoteHost = getActualHostFor(hostname, remotePath);
+			String actualRemotePath = getWorkspaceRemotePath(hostname, remotePath);
+			properties.setResolvedMountedRemoteFileHost(actualRemoteHost);
+			properties.setResolvedMountedRemoteFilePath(actualRemotePath);
+		}
+	}
+	
 	
 	/**
 	 * Replicates a set of remote files or folders to the workspace
@@ -372,7 +414,263 @@ public class UniversalFileTransferUtility
 
 		return resultSet;
 	}
+	
+	public static Object copyRemoteResourceToWorkspace(File srcFileOrFolder, IProgressMonitor monitor) {
+		
+		if (!srcFileOrFolder.exists()) {
+			SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
+			errorMessage.makeSubstitution(srcFileOrFolder.getAbsolutePath(), "LOCALHOST");
+			return errorMessage;
+		}
+		
+		if (srcFileOrFolder.isFile()) {
+			IFile tempFile = copyRemoteFileToWorkspace(srcFileOrFolder, monitor);
+			
+			if (!tempFile.exists())
+			{
+				// refresh temp file in project
+				try
+				{
+					if (PlatformUI.isWorkbenchRunning())
+					{
+						if (!tempFile.isSynchronized(IResource.DEPTH_ZERO))
+							tempFile.refreshLocal(IResource.DEPTH_ZERO, monitor);
+					}
+				}
+				catch (CoreException e)
+				{
+					e.printStackTrace();
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
 
+			tempFile = (IFile) getTempFileFor(srcFileOrFolder);
+			if (tempFile.exists())
+			{
+				try
+				{
+					setIFileProperties(tempFile, srcFileOrFolder, "LOCALHOST");		
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+
+			return tempFile;
+		}
+		else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Replicates a local file to the temp files project in the workspace. 
+	 * @param srcFileOrFolder the file to copy.
+	 * @param monitor the progress monitor.
+	 * @return the resulting local replica.
+	 */
+	protected static IFile copyRemoteFileToWorkspace(File srcFileOrFolder, IProgressMonitor monitor)
+	{
+		IResource tempResource = getTempFileFor(srcFileOrFolder);
+
+		IFile tempFile = (IFile) tempResource;
+		
+		// before we make the transfer to the temp file check whether a temp file already exists
+		if (tempFile.exists())
+		{
+			SystemIFileProperties properties = new SystemIFileProperties(tempFile);
+
+			long storedModifiedStamp = properties.getRemoteFileTimeStamp();
+
+			// compare timestamps
+			if (storedModifiedStamp > 0)
+			{
+				// if they're the same, just use temp file							
+				long remoteModifiedStamp = srcFileOrFolder.lastModified();
+
+				boolean usedBin = properties.getUsedBinaryTransfer();
+				boolean shouldUseBin = SystemFileTransferModeRegistry.getDefault().isBinary(srcFileOrFolder);
+				if (storedModifiedStamp == remoteModifiedStamp && (usedBin == shouldUseBin))
+				{
+					return tempFile;
+				}
+			}
+		}
+		
+		try
+		{	
+		    // copy remote file to workspace
+			SystemUniversalTempFileListener listener = SystemUniversalTempFileListener.getListener();
+			listener.addIgnoreFile(tempFile);
+		    download(srcFileOrFolder, tempFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
+		    listener.removeIgnoreFile(tempFile);
+		    if (!tempFile.exists() && !tempFile.isSynchronized(IResource.DEPTH_ZERO))
+		    {
+		    	// eclipse doesn't like this if the resource appears to be from another project
+		    	try
+		    	{
+		    		tempFile.refreshLocal(IResource.DEPTH_ZERO, null);
+		    	}
+		    	catch (Exception e)
+		    	{
+		    		
+		    	}
+		    }
+		    if (tempFile.exists())
+		    {
+				if (SystemFileTransferModeRegistry.getDefault().isText(srcFileOrFolder))
+				{
+					try
+					{
+						String cset = tempFile.getCharset();
+						if (!cset.equals(SystemEncodingUtil.ENCODING_UTF_8))
+						{
+							tempFile.setCharset(SystemEncodingUtil.ENCODING_UTF_8, monitor);
+						}
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
+		    }
+		}
+		catch (Exception e)
+		{
+			RSEUIPlugin.logError("An exception occured " + e.getMessage(), e);
+			return null;
+		}
+
+		return (IFile)tempResource;
+	}
+	
+	protected static boolean download(File file, IFile tempFile, String hostEncoding, IProgressMonitor monitor) {
+
+		FileInputStream inputStream = null;
+		BufferedInputStream bufInputStream = null;
+		FileOutputStream outputStream = null;
+		BufferedOutputStream bufOutputStream = null;
+		OutputStreamWriter outputWriter = null;
+		BufferedWriter bufWriter = null;
+		boolean isCancelled = false;
+		
+		File destinationFile = tempFile.getLocation().toFile();
+		
+		try
+		{
+			
+			if (!destinationFile.exists())
+			{
+				File parentDir = destinationFile.getParentFile();
+				parentDir.mkdirs();
+			}
+
+			// encoding conversion required if it a text file but not an xml file
+			boolean isBinary = SystemFileTransferModeRegistry.getDefault().isBinary(file) || SystemEncodingUtil.getInstance().isXML(file.getAbsolutePath());
+			boolean isEncodingConversionRequired = !isBinary;
+			
+			inputStream = new FileInputStream(file);
+			bufInputStream = new BufferedInputStream(inputStream);
+			outputStream = new FileOutputStream(destinationFile);
+			
+			if (isEncodingConversionRequired) 
+			{
+				outputWriter = new OutputStreamWriter(outputStream, hostEncoding);
+				bufWriter = new BufferedWriter(outputWriter);				
+			}
+			else 
+			{
+				bufOutputStream = new BufferedOutputStream(outputStream);
+			}
+
+
+			byte[] buffer = new byte[512000];
+			long totalSize = file.length();
+			int totalRead = 0;
+
+			while (totalRead < totalSize && !isCancelled) 
+			{
+				
+				int available = bufInputStream.available();
+				available = (available < 512000) ? available : 512000;
+
+				int bytesRead = bufInputStream.read(buffer, 0, available);
+
+				if (bytesRead == -1) {
+					break;
+				}
+				
+				// need to convert encoding, i.e. text file, but not xml
+				// ensure we read in file using the encoding for the file system
+				// which can be specified by user as text file encoding in preferences
+				if (isEncodingConversionRequired) 
+				{
+					String s = new String(buffer, 0, bytesRead, hostEncoding);
+					bufWriter.write(s);
+				}
+				else 
+				{
+					bufOutputStream.write(buffer, 0, bytesRead);					
+				}
+
+				totalRead += bytesRead;
+					
+				if (monitor != null) 
+				{
+					monitor.worked(bytesRead);
+					isCancelled = monitor.isCanceled();
+				}
+			}
+		}
+		catch (FileNotFoundException e)
+		{
+			return false;
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			return false;
+		}
+		catch (IOException e)
+		{
+			return false;
+		}
+		finally
+		{
+
+			try
+			{
+				if (bufWriter != null)
+					bufWriter.close();
+
+				if (bufInputStream != null)
+					bufInputStream.close();
+
+				if (bufOutputStream != null)
+					bufOutputStream.close();
+
+				if (isCancelled)
+				{
+					return false;
+				}
+				else if (destinationFile != null && file.exists()) {
+					destinationFile.setLastModified(file.lastModified());
+					
+					if (destinationFile.length() != file.length()) {
+						return false;
+					}
+				}
+			}
+			catch (IOException e)
+			{
+			}
+		}
+		
+		return true;
+	}
 
 	/**
 	 * Replicates a remote file or folder to the workspace
@@ -1386,6 +1684,62 @@ public class UniversalFileTransferUtility
 		return result;
 	}
 	
+	/**
+	 * Returns the corresponding temp file location for a local file or folder.
+	 * @param srcFileOrFolder the local file or folder.
+	 * @return the local replica location.
+	 */
+	public static IResource getTempFileFor(File srcFileOrFolder)
+	{	
+		SystemRemoteEditManager editMgr = SystemRemoteEditManager.getDefault();
+		if (!editMgr.doesRemoteEditProjectExist())
+		{
+			editMgr.getRemoteEditProject();
+		}
+		
+		//char separator = IFileConstants.PATH_SEPARATOR_CHAR_WINDOWS;
+		char separator = '/';
+		StringBuffer path = new StringBuffer(editMgr.getRemoteEditProjectLocation().makeAbsolute().toOSString());
+	
+		String actualHost = "LOCALHOST";	
+		path = path.append(separator + actualHost + separator);
+
+		String absolutePath = editMgr.getWorkspacePathFor(actualHost, srcFileOrFolder.getAbsolutePath());
+
+		int colonIndex = absolutePath.indexOf(IPath.DEVICE_SEPARATOR);
+
+		if (colonIndex != -1)
+		{
+			if (colonIndex == 0)
+			{
+				absolutePath = absolutePath.substring(1);
+			}
+			else if (colonIndex == (absolutePath.length() - 1))
+			{
+				absolutePath = absolutePath.substring(0, colonIndex);
+			}
+			else
+			{
+				absolutePath = absolutePath.substring(0, colonIndex).toLowerCase() + absolutePath.substring(colonIndex + 1);
+			}
+		}
+		
+		path = path.append(absolutePath);
+		IPath workspacePath = getLocalPathObject(path.toString());
+		
+		IResource result = null;
+		if (srcFileOrFolder.isDirectory())
+		{
+			result = SystemBasePlugin.getWorkspaceRoot().getContainerForLocation(workspacePath);
+		}
+		else
+		{
+			result = SystemBasePlugin.getWorkspaceRoot().getFileForLocation(workspacePath);
+		}
+
+		return result;
+	}
+	
 	
 	private static IPath getLocalPathObject(String localPath)
 	{
@@ -1457,7 +1811,7 @@ public class UniversalFileTransferUtility
 
 
 	public static String getActualHostFor(ISubSystem subsystem, String remotePath)
-		{
+	{
 			String hostname = subsystem.getHost().getHostName();
 			if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
 			{
@@ -1465,7 +1819,12 @@ public class UniversalFileTransferUtility
 				return result;
 			}
 			return hostname;	
-		}
+	}
+	
+	public static String getActualHostFor(String hostname, String remotePath)
+	{
+		return SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
+	}
 
 	private static void refreshResourceInWorkspace(IResource parent)
 	{
@@ -1499,14 +1858,29 @@ public class UniversalFileTransferUtility
 		return false;	
 	}
 	
-	protected static String getWorkspaceRemotePath(ISubSystem subsystem, String remotePath)
-		{
-			if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
-			{
-				return SystemRemoteEditManager.getDefault().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
-			}
-			return remotePath;
+	protected static boolean isRemoteFileMounted(String hostname, String remotePath)
+	{
+		String result = SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
+		
+		if (!result.equals(hostname)) {
+			return true;
 		}
+		
+		return false;	
+	}
+	
+	protected static String getWorkspaceRemotePath(ISubSystem subsystem, String remotePath) {
+		
+		if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) {
+			return SystemRemoteEditManager.getDefault().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
+		}
+		
+		return remotePath;
+	}
+	
+	protected static String getWorkspaceRemotePath(String hostname, String remotePath) {
+		return SystemRemoteEditManager.getDefault().getWorkspacePathFor(hostname, remotePath);
+	}
 
 	protected static String checkForCollision(SystemRemoteResourceSet existingFiles, IRemoteFile targetFolder, String oldName, String oldPath)
 	{

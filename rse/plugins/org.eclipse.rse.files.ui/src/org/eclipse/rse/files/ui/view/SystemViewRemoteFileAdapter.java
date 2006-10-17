@@ -1355,6 +1355,9 @@ public class SystemViewRemoteFileAdapter
 			IRemoteFile srcFileOrFolder = (IRemoteFile) element;
 			return UniversalFileTransferUtility.copyRemoteResourceToWorkspace(srcFileOrFolder, monitor);
 		}
+		else if (element instanceof File) {
+			return UniversalFileTransferUtility.copyRemoteResourceToWorkspace((File)element, monitor);
+		}
 		else if (element instanceof IResource)
 		{
 			// if the src is an IResource, then this is our temp object
@@ -1434,7 +1437,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			IHost connection = connections[i];
 			IRemoteFileSubSystem anFS = RemoteFileUtility.getFileSubSystem(connection);
-			if (anFS.getHost().getSystemType().equals("Local"))
+			if ((anFS != null) && (anFS.getHost().getSystemType().equals("Local")))
 			{
 				return anFS;
 			}
@@ -1936,17 +1939,22 @@ public class SystemViewRemoteFileAdapter
 				if (src instanceof String)
 				{
 					IRemoteFileSubSystem localFS = getLocalFileSubSystem();
-					IRemoteFile srcFileOrFolder = null;
+					
 					try
 					{
-						srcFileOrFolder = localFS.getRemoteFileObject((String) src);
+						if (localFS != null) {
+							IRemoteFile srcFileOrFolder = localFS.getRemoteFileObject((String)src);
+							return doDrop(srcFileOrFolder, target, true, sameSystem, SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE, monitor);
+						}
+						else {
+							File srcFileOrFolder = new File((String)src);
+							return doDrop(srcFileOrFolder, target, true, sameSystem, SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE, monitor);
+						}
 					}
 					catch (SystemMessageException e)
 					{
 						return e.getSystemMessage();
 					}
-
-					return doDrop(srcFileOrFolder, target, true, sameSystem, SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE, monitor);
 				}
 			}
 			if (sourceType == SystemDNDTransferRunnable.SRC_TYPE_TEXT)

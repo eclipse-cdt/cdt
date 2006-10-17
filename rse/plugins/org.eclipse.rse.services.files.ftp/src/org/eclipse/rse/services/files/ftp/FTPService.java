@@ -12,11 +12,13 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - Fixing 140408 - FTP upload does not work
- * Javier Montalvo Orús (Symbian) - Fixing 140323 - provided implementation for 
+ * Javier Montalvo Orus (Symbian) - Fixing 140323 - provided implementation for 
  *    delete, move and rename.
- * Javier Montalvo Orús (Symbian) - Bug 140348 - FTP did not use port number
+ * Javier Montalvo Orus (Symbian) - Bug 140348 - FTP did not use port number
  * Michael Berger (IBM) - Fixing 140404 - FTP new file creation does not work
- * Javier Montalvo Orús (Symbian) - Migrate to jakarta commons net FTP client
+ * Javier Montalvo Orus (Symbian) - Migrate to jakarta commons net FTP client
+ * Javier Montalvo Orus (Symbian) - Fixing 161211 - Cannot expand /pub folder as 
+ *    anonymous on ftp.wacom.com
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -190,7 +192,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				ftp = getFTPClient();
 			}
 			
-			ftp.changeWorkingDirectory(parentPath);
+			if(!ftp.changeWorkingDirectory(parentPath))
+			{
+				return null;
+			}
+			
+			String systemName = ftp.getSystemName();
 			
 			FTPFile[] ftpFiles = ftp.listFiles();
 			
@@ -198,7 +205,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			{
 				if(filematcher.matches(ftpFiles[i].getName()))
 				{
-					results.add(new FTPHostFile(parentPath,ftpFiles[i]));
+					results.add(new FTPHostFile(parentPath,ftpFiles[i],systemName));
 				}
 			}
 		}
@@ -337,8 +344,15 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 
 		try {
 			getFTPClient().cwd(remoteParent);
-			int returnedValue = getFTPClient().dele(fileName);
-			hasSucceeded = (returnedValue > 0);
+
+			//attempt to remove an empty folder folder
+			hasSucceeded = getFTPClient().removeDirectory(fileName);
+			
+			if(!hasSucceeded)
+			{
+				//attempt to remove a file
+				hasSucceeded = getFTPClient().deleteFile(fileName);
+			}
 		}
 		catch (IOException e) {			
 			// Changing folder raised an exception
@@ -355,7 +369,15 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 
 		try {
 			
-			getFTPClient().rename(remoteParent + getSeparator() + oldName, remoteParent + getSeparator() + newName);
+			if(newName.startsWith("/"))
+			{
+				getFTPClient().rename(remoteParent + getSeparator() + oldName, newName);
+			}
+			else
+			{
+				getFTPClient().rename(remoteParent + getSeparator() + oldName, remoteParent + getSeparator() + newName);
+			}
+			
 		
 		} catch (IOException e) {
 			return false;

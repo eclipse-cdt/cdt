@@ -13,6 +13,8 @@
  * Contributors:
  * Michael Berger (IBM) - Fixing 140408 - FTP upload does not work
  * Javier Montalvo Orús (Symbian) - Migrate to jakarta commons net FTP client
+ * Javier Montalvo Orus (Symbian) - Fixing 161211 - Cannot expand /pub folder as 
+ *    anonymous on ftp.wacom.com
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -33,8 +35,8 @@ public class FTPHostFile implements IHostFile
 	private boolean _isArchive;
 	private long _lastModified;
 	private long _size;
-	private boolean _canRead;
-	private boolean _canWrite;
+	private boolean _canRead = true;
+	private boolean _canWrite = true;
 	private boolean _isRoot;
 	private boolean _exists;
 	
@@ -52,7 +54,7 @@ public class FTPHostFile implements IHostFile
 		_exists = exists;
 	}
 	
-	public FTPHostFile(String parentPath, FTPFile ftpFile)
+	public FTPHostFile(String parentPath, FTPFile ftpFile, String systemName)
 	{
 		_parentPath = parentPath;
 		_name = ftpFile.getName();
@@ -60,8 +62,13 @@ public class FTPHostFile implements IHostFile
 		_lastModified = ftpFile.getTimestamp().getTimeInMillis();
 		_size = ftpFile.getSize();
 		_isArchive = internalIsArchive();
-		_canRead = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION);
-		_canWrite = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION);
+		
+		if(!systemName.toUpperCase().startsWith("WINDOWS"))
+		{
+			_canRead = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION);
+			_canWrite = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION);
+		}
+		
 		_isRoot = false;
 		_exists = true;
 	}

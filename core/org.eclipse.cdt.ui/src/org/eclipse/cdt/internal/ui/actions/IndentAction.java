@@ -16,13 +16,6 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -34,7 +27,10 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.ISourceViewer;
-
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -45,11 +41,11 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.IndentUtil;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.CIndenter;
 
@@ -189,8 +185,8 @@ public class IndentAction extends TextEditorAction {
 	}
 
 	/**
-	 * Indents a single line using the heuristic scanner. Cdoc and multiline comments are 
-	 * indented as specified by the <code>CDocAutoIndentStrategy</code>.
+	 * Indents a single line using the heuristic scanner. Multiline comments are 
+	 * indented as specified by the <code>CCommentAutoIndentStrategy</code>.
 	 * 
 	 * @param document the document
 	 * @param line the line to be indented
@@ -214,7 +210,7 @@ public class IndentAction extends TextEditorAction {
 			if (type.equals(ICPartitions.C_MULTI_LINE_COMMENT)) {
 				indent= computeCommentIndent(document, line, scanner, startingPartition);
 			} else if (startingPartition.getType().equals(ICPartitions.C_PREPROCESSOR)) {
-				indent= computePreprocessorIndent(document, line, scanner, startingPartition);
+				indent= computePreprocessorIndent(document, line, startingPartition);
 			} else if (!fIsTabAction && startingPartition.getOffset() == offset && startingPartition.getType().equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
 				// line comment starting at position 0 -> indent inside
 				int max= document.getLength() - offset;
@@ -248,7 +244,7 @@ public class IndentAction extends TextEditorAction {
 			}
 		} 
 		
-		// standard C indentation
+		// standard C code indentation
 		if (indent == null) {
 			StringBuffer computed= indenter.computeIndentation(offset);
 			if (computed != null)
@@ -305,48 +301,7 @@ public class IndentAction extends TextEditorAction {
 	 * @throws BadLocationException
 	 */
 	private String computeCommentIndent(IDocument document, int line, CHeuristicScanner scanner, ITypedRegion partition) throws BadLocationException {
-		if (line == 0) // impossible - the first line is never inside a comment comment
-			return null;
-		
-		// don't make any assumptions if the line does not start with \s*\* - it might be
-		// commented out code, for which we don't want to change the indent
-		final IRegion lineInfo= document.getLineInformation(line);
-		final int lineStart= lineInfo.getOffset();
-		final int lineLength= lineInfo.getLength();
-		final int lineEnd= lineStart + lineLength;
-		int nonWS= scanner.findNonWhitespaceForwardInAnyPartition(lineStart, lineEnd);
-		if (nonWS == CHeuristicScanner.NOT_FOUND || document.getChar(nonWS) != '*') {
-			if (nonWS == CHeuristicScanner.NOT_FOUND)
-				return document.get(lineStart, lineLength);
-			return document.get(lineStart, nonWS - lineStart);
-		}
-		
-		// take the indent from the previous line and reuse
-		IRegion previousLine= document.getLineInformation(line - 1);
-		int previousLineStart= previousLine.getOffset();
-		int previousLineLength= previousLine.getLength();
-		int previousLineEnd= previousLineStart + previousLineLength;
-		
-		StringBuffer buf= new StringBuffer();
-		int previousLineNonWS= scanner.findNonWhitespaceForwardInAnyPartition(previousLineStart, previousLineEnd);
-		if (previousLineNonWS == CHeuristicScanner.NOT_FOUND || document.getChar(previousLineNonWS) != '*') {
-			// align with the comment start if the previous line is not an asterisked line
-			previousLine= document.getLineInformationOfOffset(partition.getOffset());
-			previousLineStart= previousLine.getOffset();
-			previousLineLength= previousLine.getLength();
-			previousLineEnd= previousLineStart + previousLineLength;
-			previousLineNonWS= scanner.findNonWhitespaceForwardInAnyPartition(previousLineStart, previousLineEnd);
-			if (previousLineNonWS == CHeuristicScanner.NOT_FOUND)
-				previousLineNonWS= previousLineEnd;
-			
-			// add the initial space 
-			// TODO this may be controlled by a formatter preference in the future
-			buf.append(' ');
-		}
-		
-		String indentation= document.get(previousLineStart, previousLineNonWS - previousLineStart);
-		buf.insert(0, indentation);
-		return buf.toString();
+		return IndentUtil.computeCommentIndent(document, line, scanner, partition);
 	}
 	
 	/**
@@ -354,13 +309,12 @@ public class IndentAction extends TextEditorAction {
 	 * 
 	 * @param document the document
 	 * @param line the line in document
-	 * @param scanner the scanner
 	 * @param partition the comment partition
 	 * @return the indent, or <code>null</code> if not computable
 	 * @throws BadLocationException
 	 */
-	private String computePreprocessorIndent(IDocument document, int line, CHeuristicScanner scanner, ITypedRegion partition) throws BadLocationException {
-		return ""; //$NON-NLS-1$
+	private String computePreprocessorIndent(IDocument document, int line, ITypedRegion partition) throws BadLocationException {
+		return IndentUtil.computePreprocessorIndent(document, line, partition);
 	}
 	
 	/**

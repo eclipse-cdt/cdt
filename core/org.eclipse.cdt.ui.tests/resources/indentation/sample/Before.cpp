@@ -9,12 +9,19 @@ const SimpleStruct simpleStruct =
 
 #define SIZEOF( A, B ) sizeof( A.B )
 
+              #define FOREVER \
+            for(;;)\
+{\
+        \
+                }
+    }
+
 const OtherStruct array[] =
 {
 	{
 #if FOO
-		"foo"
-   #else
+				"foo"
+   #  else
 		"bar"
 #endif
 	  ,	SIZEOF( simpleStruct, num )

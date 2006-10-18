@@ -134,7 +134,7 @@ public final class IndentUtil {
 		CIndenter indenter= new CIndenter(document, scanner, project);
 		
 		String current= getCurrentIndent(document, lines.getStartLine());
-		StringBuffer correct= indenter.computeIndentation(document.getLineOffset(lines.getStartLine()));
+		StringBuffer correct= new StringBuffer(computeIndent(document, lines.getStartLine(), indenter, scanner));
 		if (correct == null)
 			return result; // bail out
 		
@@ -289,7 +289,7 @@ public final class IndentUtil {
 	/**
 	 * Returns the indentation of the line <code>line</code> in <code>document</code>.
 	 * The returned string may contain pairs of leading slashes that are considered
-	 * part of the indentation. The space before the asterix in a javadoc-like
+	 * part of the indentation. The space before the asterix in a block
 	 * comment is not considered part of the indentation.
 	 *
 	 * @param document the document
@@ -314,7 +314,7 @@ public final class IndentUtil {
 			to++;
 		}
 
-		// don't count the space before javadoc like, asterix-style comment lines
+		// don't count the space before javadoc like, asterisk-style comment lines
 		if (to > from && to < endOffset - 1 && document.get(to - 1, 2).equals(" *")) { //$NON-NLS-1$
 			String type= TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, to, true);
 			if (type.equals(ICPartitions.C_MULTI_LINE_COMMENT))
@@ -353,12 +353,12 @@ public final class IndentUtil {
 	}
 	
 	/**
-	 * Indents a single line using the java heuristic scanner. Multi line comments
-	 * are indented as specified by the <code>CDocAutoIndentStrategy</code>.
+	 * Indents a single line using the heuristic scanner. Multiline comments are 
+	 * indented as specified by the <code>CCommentAutoIndentStrategy</code>.
 	 * 
 	 * @param document the document
 	 * @param line the line to be indented
-	 * @param indenter the java indenter
+	 * @param indenter the C indenter
 	 * @param scanner the heuristic scanner
 	 * @param commentLines the indent token comment booleans
 	 * @param lineIndex the zero-based line index
@@ -377,13 +377,15 @@ public final class IndentUtil {
 			ITypedRegion startingPartition= TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, false);
 			String type= partition.getType();
 			if (type.equals(ICPartitions.C_MULTI_LINE_COMMENT)) {
-				indent= computeCdocIndent(document, line, scanner, startingPartition);
+				indent= computeCommentIndent(document, line, scanner, startingPartition);
+			} else if (startingPartition.getType().equals(ICPartitions.C_PREPROCESSOR)) {
+				indent= computePreprocessorIndent(document, line, startingPartition);
 			} else if (!commentLines[lineIndex] && startingPartition.getOffset() == offset && startingPartition.getType().equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
 				return false;				
 			}
 		} 
 		
-		// standard java indentation
+		// standard C code indentation
 		if (indent == null) {
 			StringBuffer computed= indenter.computeIndentation(offset);
 			if (computed != null)
@@ -418,10 +420,48 @@ public final class IndentUtil {
 		
 		return false;
 	}
+
+	/**
+	 * Computes and returns the indentation for a source line.
+	 * 
+	 * @param document the document
+	 * @param line the line in document
+	 * @param indenter the C indenter
+	 * @param scanner the scanner
+	 * @return the indent, never <code>null</code>
+	 * @throws BadLocationException
+	 */
+	public static String computeIndent(IDocument document, int line, CIndenter indenter, CHeuristicScanner scanner) throws BadLocationException {
+		IRegion currentLine= document.getLineInformation(line);
+		final int offset= currentLine.getOffset();
+		
+		String indent= null;
+		if (offset < document.getLength()) {
+			ITypedRegion partition= TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, true);
+			ITypedRegion startingPartition= TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, false);
+			String type= partition.getType();
+			if (type.equals(ICPartitions.C_MULTI_LINE_COMMENT)) {
+				indent= computeCommentIndent(document, line, scanner, startingPartition);
+			} else if (startingPartition.getType().equals(ICPartitions.C_PREPROCESSOR)) {
+				indent= computePreprocessorIndent(document, line, startingPartition);
+			} else if (startingPartition.getOffset() == offset && startingPartition.getType().equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
+				indent= new String();
+			}
+		}
+		
+		// standard C code indentation
+		if (indent == null) {
+			StringBuffer computed= indenter.computeIndentation(offset);
+			if (computed != null)
+				indent= computed.toString();
+			else
+				indent= new String();
+		}
+		return indent;
+	}
 	
 	/**
-	 * Computes and returns the indentation for a javadoc line. The line
-	 * must be inside a javadoc comment.
+	 * Computes and returns the indentation for a comment line.
 	 * 
 	 * @param document the document
 	 * @param line the line in document
@@ -430,8 +470,8 @@ public final class IndentUtil {
 	 * @return the indent, or <code>null</code> if not computable
 	 * @throws BadLocationException
 	 */
-	private static String computeCdocIndent(IDocument document, int line, CHeuristicScanner scanner, ITypedRegion partition) throws BadLocationException {
-		if (line == 0) // impossible - the first line is never inside a javadoc comment
+	public static String computeCommentIndent(IDocument document, int line, CHeuristicScanner scanner, ITypedRegion partition) throws BadLocationException {
+		if (line == 0) // impossible - the first line is never inside a comment
 			return null;
 		
 		// don't make any assumptions if the line does not start with \s*\* - it might be
@@ -474,4 +514,40 @@ public final class IndentUtil {
 		buf.insert(0, indentation);
 		return buf.toString();
 	}
+
+	/**
+	 * Computes and returns the indentation for a preprocessor line.
+	 * 
+	 * @param document the document
+	 * @param line the line in document
+	 * @param partition the comment partition
+	 * @return the indent, or <code>null</code> if not computable
+	 * @throws BadLocationException
+	 */
+	public static String computePreprocessorIndent(IDocument document, int line, ITypedRegion partition) throws BadLocationException {
+		int ppFirstLine= document.getLineOfOffset(partition.getOffset());
+		if (line == ppFirstLine) {
+			return ""; //$NON-NLS-1$
+		}
+		CHeuristicScanner ppScanner= new CHeuristicScanner(document, ICPartitions.C_PARTITIONING, partition.getType());
+		CIndenter ppIndenter= new CIndenter(document, ppScanner);
+		if (line == ppFirstLine + 1) {
+			return ppIndenter.createReusingIndent(new StringBuffer(), 1).toString();
+		}
+		StringBuffer computed= ppIndenter.computeIndentation(document.getLineOffset(line), false);
+		if (computed != null) {
+			return computed.toString();
+		}
+		// take the indent from the previous line and reuse
+		IRegion previousLine= document.getLineInformation(line - 1);
+		int previousLineStart= previousLine.getOffset();
+		int previousLineLength= previousLine.getLength();
+		int previousLineEnd= previousLineStart + previousLineLength;
+		
+		int previousLineNonWS= ppScanner.findNonWhitespaceForwardInAnyPartition(previousLineStart, previousLineEnd);
+		String previousIndent= document.get(previousLineStart, previousLineNonWS - previousLineStart);
+		computed= new StringBuffer(previousIndent);
+		return computed.toString();
+	}
+	
 }

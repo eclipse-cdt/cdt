@@ -12,7 +12,6 @@
 
 package org.eclipse.cdt.ui.tests.text;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +19,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentCommand;
@@ -245,10 +243,12 @@ public class CAutoIndentTest extends TestCase {
 		tester.setAutoEditStrategy(IDocument.DEFAULT_CONTENT_TYPE,
 				                   new CAutoIndentStrategy(textTools.getDocumentPartitioning(), null));
 		tester.setAutoEditStrategy(ICPartitions.C_MULTI_LINE_COMMENT, new CCommentAutoIndentStrategy());
+		tester.setAutoEditStrategy(ICPartitions.C_PREPROCESSOR,
+                new CAutoIndentStrategy(textTools.getDocumentPartitioning(), null));
 		return tester;
 	}
 
-	public void testCAutoIndent() throws IOException, CoreException, BadLocationException {
+	public void testCAutoIndent() throws BadLocationException {
 		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
 		tester.type("void main() {\n"); //$NON-NLS-1$
 		assertEquals(1, tester.getCaretLine());
@@ -286,7 +286,7 @@ public class CAutoIndentTest extends TestCase {
 		assertEquals("\t\tint x = 5;", tester.getLine(1)); //$NON-NLS-1$
 	}
 
-	public void testPasteAutoIndent() throws IOException, CoreException, BadLocationException {
+	public void testPasteAutoIndent() throws BadLocationException {
 		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
 		tester.type("class A {\n"); //$NON-NLS-1$
 		tester.goTo(1, 0);
@@ -313,7 +313,7 @@ public class CAutoIndentTest extends TestCase {
 		assertEquals("\t};", tester.getLine(9)); //$NON-NLS-1$
 	}
 
-	public void testDefaultAutoIndent() throws IOException, CoreException, BadLocationException {
+	public void testDefaultAutoIndent() throws BadLocationException {
 		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
 		tester.type("   initial indent=3\n"); //$NON-NLS-1$
 		assertEquals(1, tester.getCaretLine());
@@ -335,7 +335,7 @@ public class CAutoIndentTest extends TestCase {
 		assertEquals(0, tester.getCaretColumn());
 	}
 
-	public void testCCommentAutoIndent() throws IOException, CoreException, BadLocationException {
+	public void testCCommentAutoIndent() throws BadLocationException {
 		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
 		tester.type("/*\n"); //$NON-NLS-1$
 		assertEquals(ICPartitions.C_MULTI_LINE_COMMENT, tester.getContentType(-1));
@@ -350,6 +350,28 @@ public class CAutoIndentTest extends TestCase {
 		assertEquals(3, tester.getCaretLine());
 		assertEquals("", tester.getLine()); //$NON-NLS-1$
 		assertEquals(0, tester.getCaretColumn());
+	}
+
+	public void testPreprocessorAutoIndent() throws BadLocationException {
+		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		tester.type("void main() {\n"); //$NON-NLS-1$
+		assertEquals(1, tester.getCaretLine());
+		// Nested statement is indented by one.
+		assertEquals(1, tester.getCaretColumn());
+		// The brace was closed automatically.
+		assertEquals("}", tester.getLine(1)); //$NON-NLS-1$
+		tester.type("#define"); //$NON-NLS-1$
+		assertEquals("#define", tester.getLine()); //$NON-NLS-1$
+		tester.type(" FOREVER \\\n");
+		assertEquals(1, tester.getCaretColumn());
+		tester.type("for(;;) \\\n");
+		assertEquals(1, tester.getCaretColumn());
+		tester.type("\t{");
+		assertEquals(2, tester.getCaretColumn());
+		assertEquals("\t{", tester.getLine());
+		tester.type("\\\n");
+		assertEquals(2, tester.getCaretColumn());
+		assertEquals("\t}", tester.getLine(1));
 	}
 
 }

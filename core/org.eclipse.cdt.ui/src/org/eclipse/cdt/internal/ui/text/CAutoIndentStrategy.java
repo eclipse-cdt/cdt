@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
- *     Anton Leherbauer (Wind River Systems) - Fixed bug 48339
+ *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin, Google
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
@@ -23,6 +23,7 @@ import org.eclipse.jface.text.DocumentRewriteSession;
 import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.ui.IEditorPart;
@@ -35,6 +36,8 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+
+import org.eclipse.cdt.internal.ui.editor.IndentUtil;
 
 /**
  * Auto indent strategy sensitive to brackets.
@@ -71,25 +74,6 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		fPartitioning = partitioning;
 		fProject = project;
  	}
-
-	// evaluate the line with the opening bracket that matches the closing bracket on the given line
-	protected int findMatchingOpenBracket(IDocument d, int line, int end, int closingBracketIncrease) throws BadLocationException {
-		int start = d.getLineOffset(line);
-		int brackcount = getBracketCount(d, start, end, false) - closingBracketIncrease;
-
-		// sum up the brackets counts of each line (closing brackets count negative, 
-		// opening positive) until we find a line the brings the count to zero
-		while (brackcount < 0) {
-			line--;
-			if (line < 0) {
-				return -1;
-			}
-			start = d.getLineOffset(line);
-			end = start + d.getLineLength(line) - 1;
-			brackcount += getBracketCount(d, start, end, false);
-		}
-		return line;
-	}
 
 	private int getBracketCount(IDocument d, int start, int end, boolean ignoreCloseBrackets) throws BadLocationException {
 		int bracketcount = 0;
@@ -153,7 +137,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		return end;
 	}
 
-	protected String getIndentOfLine(IDocument d, int line) throws BadLocationException {
+	private String getIndentOfLine(IDocument d, int line) throws BadLocationException {
 		if (line > -1) {
 			int start = d.getLineOffset(line);
 			int end = start + d.getLineLength(line) - 1;
@@ -177,37 +161,6 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		return end;
 	}
 
-	protected void smartInsertAfterBracket(IDocument d, DocumentCommand c) {
-		if (c.offset == -1 || d.getLength() == 0)
-			return;
-
-		try {
-			int p = (c.offset == d.getLength() ? c.offset - 1 : c.offset);
-			int line = d.getLineOfOffset(p);
-			int start = d.getLineOffset(line);
-			int whiteend = findEndOfWhiteSpace(d, start, c.offset);
-
-			// shift only when line does not contain any text up to the closing bracket
-			if (whiteend == c.offset) {
-				// evaluate the line with the opening bracket that matches out closing bracket
-				int indLine = findMatchingOpenBracket(d, line, c.offset, 1);
-				if (indLine != -1 && indLine != line) {
-					// take the indent of the found line
-					StringBuffer replaceText = new StringBuffer(getIndentOfLine(d, indLine));
-					// add the rest of the current line including the just added close bracket
-					replaceText.append(d.get(whiteend, c.offset - whiteend));
-					replaceText.append(c.text);
-					// modify document command
-					c.length = c.offset - start;
-					c.offset = start;
-					c.text = replaceText.toString();
-				}
-			}
-		} catch (BadLocationException excp) {
-			CUIPlugin.getDefault().log(excp);
-		}
-	}
-
 	private void smartIndentAfterClosingBracket(IDocument d, DocumentCommand c) {
 		if (c.offset == -1 || d.getLength() == 0)
 			return;
@@ -218,7 +171,11 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			int start = d.getLineOffset(line);
 			int whiteend = findEndOfWhiteSpace(d, start, c.offset);
 
-			CHeuristicScanner scanner = new CHeuristicScanner(d);
+			CHeuristicScanner scanner= new CHeuristicScanner(d);
+			ITypedRegion partition= TextUtilities.getPartition(d, fPartitioning, p, false);
+			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
+				scanner = new CHeuristicScanner(d, fPartitioning, ICPartitions.C_PREPROCESSOR);
+			}
 			CIndenter indenter = new CIndenter(d, scanner, fProject);
 
 			// shift only when line does not contain any text up to the closing bracket
@@ -247,11 +204,14 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		if (c.offset < 1 || d.getLength() == 0)
 			return;
 
-		CHeuristicScanner scanner = new CHeuristicScanner(d);
-
 		int p = (c.offset == d.getLength() ? c.offset - 1 : c.offset);
 
 		try {
+			CHeuristicScanner scanner= new CHeuristicScanner(d);
+			ITypedRegion partition= TextUtilities.getPartition(d, fPartitioning, p, false);
+			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
+				scanner = new CHeuristicScanner(d, fPartitioning, ICPartitions.C_PREPROCESSOR);
+			}
 			// current line
 			int line = d.getLineOfOffset(p);
 			int lineOffset = d.getLineOffset(line);
@@ -284,12 +244,23 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	}
 
 	private void smartIndentAfterNewLine(IDocument d, DocumentCommand c) {
-		CHeuristicScanner scanner = new CHeuristicScanner(d);
+		int addIndent= 0;
+		CHeuristicScanner scanner= new CHeuristicScanner(d);
+		try {
+			ITypedRegion partition= TextUtilities.getPartition(d, fPartitioning, c.offset, false);
+			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType()) && d.get(c.offset-1, 1).charAt(0) == '\\') {
+				scanner = new CHeuristicScanner(d, fPartitioning, ICPartitions.C_PREPROCESSOR);
+				addIndent= 1;
+			}
+		} catch (BadLocationException exc) {
+		}
 		CIndenter indenter = new CIndenter(d, scanner, fProject);
 		StringBuffer indent = indenter.computeIndentation(c.offset);
 		if (indent == null)
 			indent = new StringBuffer(); 
-
+		if (addIndent > 0 && indent.length() == 0) {
+			indent= indenter.createReusingIndent(indent, addIndent);
+		}
 		int docLength = d.getLength();
 		if (c.offset == -1 || docLength == 0)
 			return;
@@ -533,6 +504,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			ICPartitions.C_SINGLE_LINE_COMMENT,
 			ICPartitions.C_STRING,
 			ICPartitions.C_CHARACTER,
+			ICPartitions.C_PREPROCESSOR,
 			IDocument.DEFAULT_CONTENT_TYPE
 		};
 		FastPartitioner partitioner= new FastPartitioner(new FastCPartitionScanner(), types);
@@ -610,7 +582,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				if (!isIndentDetected) {
 					// indent the first pasted line
 					String current= getCurrentIndent(temp, l);
-					StringBuffer correct= indenter.computeIndentation(lineOffset);
+					StringBuffer correct= new StringBuffer(IndentUtil.computeIndent(temp, l, indenter, scanner));
 					if (correct == null)
 						return; // bail out
 
@@ -978,6 +950,9 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			case ':':
 				smartIndentAfterColumn(document, command);
 				break;
+			case '#':
+				smartIndentAfterHash(document, command);
+				break;
 		}
 	}
 
@@ -1136,6 +1111,22 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		}
 	}
 
+	private void smartIndentAfterHash(IDocument doc, DocumentCommand c) {
+		try {
+			ITypedRegion partition= TextUtilities.getPartition(doc, fPartitioning, c.offset, false);
+			if (IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType())) {
+				IRegion startLine= doc.getLineInformationOfOffset(c.offset);
+				String indent= (doc.get(startLine.getOffset(), c.offset - startLine.getOffset()));
+				if (indent.trim().length() == 0) {
+					c.offset -= indent.length();
+					c.length += indent.length();
+				}
+			}
+		} catch (BadLocationException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(IDocument, DocumentCommand)
 	 */
@@ -1175,7 +1166,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	private boolean isAppendToOpenMultilineComment(IDocument d, DocumentCommand c) {
 		if (d.getLength() >= 2 && c.offset == d.getLength()) {
 			try {
-				String contentType = org.eclipse.jface.text.TextUtilities.getContentType(d, fPartitioning, c.offset - 1, false);
+				String contentType = TextUtilities.getContentType(d, fPartitioning, c.offset - 1, false);
 				if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType)) {
 					return !d.get(c.offset - 2, 2).equals(MULTILINE_COMMENT_CLOSE);
 				}

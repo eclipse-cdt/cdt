@@ -24,8 +24,6 @@ import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
@@ -165,13 +163,11 @@ public class LanguageManager {
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 
 		IContentTypeManager manager = Platform.getContentTypeManager(); 
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, LANGUAGE_EXTENSION_POINT_ID);
-		IExtension[] extensions = point.getExtensions();
-		for (int i = 0; i < extensions.length; ++i) {
-			IConfigurationElement[] languages = extensions[i].getConfigurationElements();
-			for (int j = 0; j < languages.length; ++j) {
-				IConfigurationElement language = languages[j];
-				IConfigurationElement[] contentTypes = language.getChildren(ELEMENT_CONTENT_TYPE); 
+		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		for (int j = 0; j < configs.length; ++j) {
+			final IConfigurationElement languageElem = configs[j];
+			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
+				IConfigurationElement[] contentTypes = languageElem.getChildren(ELEMENT_CONTENT_TYPE); 
 				for (int k = 0; k < contentTypes.length; ++k) {
 					IContentType langContType = manager.getContentType(contentTypes[k].getAttribute(ATTRIBUTE_ID)); 
 					allTypes.add(langContType.getId());

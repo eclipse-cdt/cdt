@@ -694,16 +694,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public ILanguage getLanguage() throws CoreException {
 		if (language == null) {
 			language = computeLanguage(contentTypeId);
-
-			// Special magic for C/C++ header files
-			if (language == null && isHeaderUnit()) {
-				if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(contentTypeId)) {
-					language = computeLanguage(CCorePlugin.CONTENT_TYPE_CSOURCE);
-				}
-				else if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(contentTypeId)) {
-					language = computeLanguage(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
-				}
-			}
 		}
 
 		return language;

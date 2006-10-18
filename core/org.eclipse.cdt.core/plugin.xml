@@ -560,12 +560,14 @@
             id="gcc"
             name="GNU C">
          <contentType id="org.eclipse.cdt.core.cSource"/>
+         <contentType id="org.eclipse.cdt.core.cHeader"/>
       </language>
       <language
             class="org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage"
             id="g++"
             name="GNU C++">
          <contentType id="org.eclipse.cdt.core.cxxSource"/>
+         <contentType id="org.eclipse.cdt.core.cxxHeader"/>
       </language>
       <pdomLinkageFactory
             class="org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory"

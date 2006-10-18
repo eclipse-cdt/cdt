@@ -357,13 +357,21 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	{
 		RemoteFileFilterString rffs = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration(), filterString.getString());
 		String container = rffs.getPath();
+		
 		if (container == null)
 			return false;
 		boolean affected = false;
+		
+		String remoteObjectContainer = remoteObjectAbsoluteName;
+		int lastSep = remoteObjectAbsoluteName.lastIndexOf(getSeparator());
+		if (lastSep != -1)
+		{
+			remoteObjectContainer = remoteObjectAbsoluteName.substring(0, lastSep);
+		}
 		if (filterString.getParentSystemFilter().isStringsCaseSensitive())
-			affected = container.equals(remoteObjectAbsoluteName);
+			affected = container.equals(remoteObjectContainer);
 		else
-			affected = container.equalsIgnoreCase(remoteObjectAbsoluteName);
+			affected = container.equalsIgnoreCase(remoteObjectContainer);
 
 		//UniversalSystemPlugin.logDebugMessage(
 		//    "UniversalFileSubSystemImpl::doesFilterStringListContentsOf",

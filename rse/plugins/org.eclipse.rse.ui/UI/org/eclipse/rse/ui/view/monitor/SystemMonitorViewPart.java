@@ -49,6 +49,7 @@ import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableTreeView;
+import org.eclipse.rse.ui.view.SystemTableTreeViewProvider;
 import org.eclipse.rse.ui.view.SystemTableViewColumnManager;
 import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.swt.SWT;
@@ -290,7 +291,7 @@ class SubSetAction extends BrowseAction
 			{
 				((ISystemContainer)inputObject).markStale(true);
 			}
-			((SystemTableViewProvider) getViewer().getContentProvider()).flushCache();
+			((SystemTableTreeViewProvider) getViewer().getContentProvider()).flushCache();
 			getViewer().refresh();
 
 			// refresh layout too

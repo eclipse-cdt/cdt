@@ -16,10 +16,8 @@ package org.eclipse.cdt.internal.ui.editor;
 
 
 import java.text.CharacterIterator;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Stack;
@@ -215,12 +213,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 
 	class AdaptedSourceViewer extends CSourceViewer  {
 
-		private List fTextConverters;
-		private boolean fIgnoreTextConverters= false;
-
 		public AdaptedSourceViewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler,
 				                   boolean showAnnotationsOverview, int styles, IPreferenceStore store) {
-			super(parent, verticalRuler, overviewRuler, showAnnotationsOverview, styles);
+			super(parent, verticalRuler, overviewRuler, showAnnotationsOverview, styles, store);
 		}
 
 		public IContentAssistant getContentAssistant() {
@@ -253,50 +248,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 					msg= fQuickAssistAssistant.showPossibleQuickAssists();
 					setStatusLineErrorMessage(msg);
 					return;
-				case UNDO:
-					fIgnoreTextConverters= true;
-					super.doOperation(operation);
-					fIgnoreTextConverters= false;
-					return;
-				case REDO:
-					fIgnoreTextConverters= true;
-					super.doOperation(operation);
-					fIgnoreTextConverters= false;
-					return;
 			}
 
 			super.doOperation(operation);
-		}
-
-		public void insertTextConverter(ITextConverter textConverter, int index) {
-			throw new UnsupportedOperationException();
-		}
-
-		public void addTextConverter(ITextConverter textConverter) {
-			if (fTextConverters == null) {
-				fTextConverters= new ArrayList(1);
-				fTextConverters.add(textConverter);
-			} else if (!fTextConverters.contains(textConverter))
-				fTextConverters.add(textConverter);
-		}
-
-		public void removeTextConverter(ITextConverter textConverter) {
-			if (fTextConverters != null) {
-				fTextConverters.remove(textConverter);
-				if (fTextConverters.size() == 0)
-					fTextConverters= null;
-			}
-		}
-
-		/*
-		 * @see TextViewer#customizeDocumentCommand(DocumentCommand)
-		 */
-		protected void customizeDocumentCommand(DocumentCommand command) {
-			super.customizeDocumentCommand(command);
-			if (!fIgnoreTextConverters && fTextConverters != null) {
-				for (Iterator e = fTextConverters.iterator(); e.hasNext();)
-					((ITextConverter) e.next()).customizeDocumentCommand(getDocument(), command);
-			}
 		}
 
 		public void updateIndentationPrefixes() {
@@ -1837,6 +1791,13 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	}
 
 	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#initializeViewerColors(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	protected void initializeViewerColors(ISourceViewer viewer) {
+		// is handled by CSourceViewer
+	}
+
+	/*
 	 * Update the hovering behavior depending on the preferences.
 	 */
 	private void updateHoverBehavior() {
@@ -2874,7 +2835,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	 * @see org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant#reconciled()
 	 */
 	public void reconciled(boolean somethingHasChanged) {
-		if (getSourceViewer() == null) {
+		if (getSourceViewer() == null || getSourceViewer().getTextWidget() == null) {
 			return;
 		}
 		// this method must be called in a background thread

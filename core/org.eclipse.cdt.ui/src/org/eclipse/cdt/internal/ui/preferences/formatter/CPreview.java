@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
@@ -114,7 +115,7 @@ public abstract class CPreview {
 		
 		IPreferenceStore[] chain= { prioritizedSettings, CUIPlugin.getDefault().getCombinedPreferenceStore() };
 		fPreferenceStore= new ChainedPreferenceStore(chain);
-		fSourceViewer= new CSourceViewer(parent, null, null, false, SWT.READ_ONLY | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+		fSourceViewer= new CSourceViewer(parent, null, null, false, SWT.READ_ONLY | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, fPreferenceStore);
 		fViewerConfiguration= new SimpleCSourceViewerConfiguration(tools.getColorManager(), fPreferenceStore, null, ICPartitions.C_PARTITIONING, true);
 		fSourceViewer.configure(fViewerConfiguration);
 		fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT));

@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -15,9 +16,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -52,12 +53,11 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
     /** Show outline operation id. */
     public static final int SHOW_OUTLINE = 101;
     
-	/** Editor. */
-    private CEditor editor;
     /** Presents outline. */
     private IInformationPresenter fOutlinePresenter;
 
     private List fTextConverters;
+	private boolean fIgnoreTextConverters= false;
 
 	/**
 	 * This viewer's foreground color.
@@ -106,19 +106,6 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
      * Creates new source viewer. 
      * @param parent
 	 * @param ruler
-	 * @param fOverviewRuler
-	 * @param isOverviewRulerShowing
-	 * @param styles
-	 */
-    public CSourceViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler fOverviewRuler, boolean isOverviewRulerShowing,
-    					 int styles) {
-		super(parent, ruler, fOverviewRuler, isOverviewRulerShowing, styles);
-	}
-    
-	/**
-     * Creates new source viewer. 
-     * @param parent
-	 * @param ruler
 	 * @param overviewRuler
 	 * @param isOverviewRulerShowing
 	 * @param styles
@@ -132,7 +119,6 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
     		int styles,
     		IPreferenceStore store) {
 		super(parent, ruler, overviewRuler, isOverviewRulerShowing, styles);
-		this.editor= null;
         setPreferenceStore(store);
 	}
     
@@ -161,7 +147,6 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 			fOutlinePresenter= cConfiguration.getOutlinePresenter(this);
 			if (fOutlinePresenter != null)
 				fOutlinePresenter.install(this);
-			editor = (CEditor) cConfiguration.getEditor();
 		}
 		if (fPreferenceStore != null) {
 			fPreferenceStore.addPropertyChangeListener(this);
@@ -178,8 +163,8 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 
 			// ----------- foreground color --------------------
 			Color color= fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT)
-			? null
-			: createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, styledText.getDisplay());
+				? null
+				: createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, styledText.getDisplay());
 			styledText.setForeground(color);
 
 			if (fForegroundColor != null)
@@ -189,8 +174,8 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 
 			// ---------- background color ----------------------
 			color= fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)
-			? null
-			: createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
+				? null
+				: createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
 			styledText.setBackground(color);
 
 			if (fBackgroundColor != null)
@@ -249,7 +234,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
         return null;
     }
 
-    /**
+    /*
      * @see org.eclipse.jface.text.source.SourceViewer#unconfigure()
      */
     public void unconfigure() {
@@ -311,7 +296,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 		}
 	}
 	
-	/**
+	/*
      * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
 	 */
     public void doOperation(int operation) {
@@ -320,22 +305,24 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 			return;
 		}
 		switch (operation) {
-			case CONTENTASSIST_PROPOSALS:
-            {
-				String msg= fContentAssistant.showPossibleCompletions();
-				editor.setStatusLineErrorMessage(msg);
-				return;
-            }
             case SHOW_OUTLINE:
-            {
                 fOutlinePresenter.showInformation();
                 return;
-            }
+			case UNDO:
+				fIgnoreTextConverters= true;
+				super.doOperation(operation);
+				fIgnoreTextConverters= false;
+				return;
+			case REDO:
+				fIgnoreTextConverters= true;
+				super.doOperation(operation);
+				fIgnoreTextConverters= false;
+				return;
 		}
 		super.doOperation(operation);
 	}
 
-    /**
+    /*
      * @see org.eclipse.jface.text.source.projection.ProjectionViewer#canDoOperation(int)
      */
     public boolean canDoOperation(int operation) {
@@ -344,10 +331,6 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
         }
         return super.canDoOperation(operation);
     }
-
-	public void insertTextConverter(ITextConverter textConverter, int index) {
-		throw new UnsupportedOperationException();
-	}
 
 	public void addTextConverter(ITextConverter textConverter) {
 		if (fTextConverters == null) {
@@ -370,9 +353,9 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	 */
 	protected void customizeDocumentCommand(DocumentCommand command) {
 		super.customizeDocumentCommand(command);
-		if (fTextConverters != null) {
+		if (!fIgnoreTextConverters && fTextConverters != null) {
 			for (Iterator e = fTextConverters.iterator(); e.hasNext();)
-				 ((ITextConverter) e.next()).customizeDocumentCommand(getDocument(), command);
+				((ITextConverter) e.next()).customizeDocumentCommand(getDocument(), command);
 		}
 	}
 

@@ -35,6 +35,9 @@ public class PDOMTests extends TestSuite {
 
 		suite.addTest(CFunctionTests.suite());
 		suite.addTest(CVariableTests.suite());
+    
+		suite.addTest(DefDeclTests.suite());
+		
 		return suite;
 	}
 	

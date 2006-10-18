@@ -22,6 +22,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -49,7 +50,11 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -89,7 +94,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	private Menu fMenu;
 	
 	protected OpenIncludeAction fOpenIncludeAction;
-	private IncludeGroupingAction fIncludeGroupingAction;
+	private IncludeGroupingAction fIncludeGroupingAction; 
+	private ToggleLinkingAction fToggleLinkingAction;
 	
 	private MemberFilterActionGroup fMemberFilterActionGroup;
 
@@ -110,7 +116,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			super(ActionMessages.getString("IncludesGroupingAction.label")); //$NON-NLS-1$
 			setDescription(ActionMessages.getString("IncludesGroupingAction.description")); //$NON-NLS-1$
 			setToolTipText(ActionMessages.getString("IncludeGroupingAction.tooltip")); //$NON-NLS-1$
-			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "synced.gif"); //$NON-NLS-1$		
+			//CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "synced.gif"); //$NON-NLS-1$
+			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "open_incl.gif"); //$NON-NLS-1$
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.LINK_EDITOR_ACTION);
 
 			boolean enabled= isIncludesGroupingEnabled();
@@ -151,23 +158,26 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		 * @param outlinePage the Java outline page
 		 */
 		public ToggleLinkingAction(CContentOutlinePage outlinePage) {
-			//boolean isLinkingEnabled= PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SYNC_OUTLINE_ON_CURSOR_MOVE);
-			boolean isLinkingEnabled= true;
-			setChecked(isLinkingEnabled);
-			fOutlinePage= outlinePage;
+			setChecked(isLinkingEnabled());
+			fOutlinePage = outlinePage;
 		}
 
 		/**
 		 * Runs the action.
 		 */
 		public void run() {
-			//TODO synchronize selection with editor
-			//PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.EDITOR_SYNC_OUTLINE_ON_CURSOR_MOVE, isChecked());
-			//if (isChecked() && fEditor != null)
-			//	fEditor.synchronizeOutlinePage(fEditor.computeHighlightRangeSourceReference(), false);
+			boolean checked = isChecked();
+			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_LINK_TO_EDITOR, checked);
+			if (checked && fEditor != null)
+				synchronizeSelectionWithEditor();
 		}
-
 	}
+	
+	
+	public boolean isLinkingEnabled() {
+		return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_LINK_TO_EDITOR);
+	}
+	
 	
 	public CContentOutlinePage(CEditor editor) {
 		this("#TranslationUnitOutlinerContext", editor); //$NON-NLS-1$
@@ -231,6 +241,60 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		}
 		return new StructuredSelection(newSelection);
 	}
+	
+	
+	/**
+	 * Sets the selected element to the one at the current line in the editor.
+	 */
+	public void synchronizeSelectionWithEditor() {
+		if(fInput == null || fEditor == null || fTreeViewer == null)
+			return;
+
+		ITextSelection editorSelection = (ITextSelection) fEditor.getSelectionProvider().getSelection();
+		if(editorSelection == null)
+			return;
+		
+		int offset = editorSelection.getOffset();
+		
+		ICElement editorElement;
+		try {
+			editorElement = getElementAtOffset(fInput, offset);
+		} catch (CModelException e) {
+			return;
+		}
+
+		IStructuredSelection selection = (editorElement == null) 
+		                                 ? StructuredSelection.EMPTY 
+		                                 : new StructuredSelection(editorElement);
+		
+		fTreeViewer.setSelection(selection, true);		
+	}
+	
+	
+	/**
+	 * Returns the smallest element at the given offset.
+	 */
+	private static ICElement getElementAtOffset(ICElement element, int offset) throws CModelException {
+		ISourceRange range = ((ISourceReference)element).getSourceRange();
+		int start = range.getStartPos();
+		int end   = start + range.getLength();
+		
+		ICElement closest = null;
+		
+		if((offset >= start && offset <= end) || element instanceof ITranslationUnit) {
+			closest = element;
+			if(element instanceof IParent) {
+				ICElement[] children = ((IParent)element).getChildren();
+				for(int i = 0; i < children.length; i++) {
+					ICElement found = getElementAtOffset(children[i], offset);
+					if(found != null)
+						closest = found;
+				}
+			}
+		}
+		return closest;
+	}   
+	
 	
 	/**
 	 * called to create the context menu of the outline
@@ -387,8 +451,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		IMenuManager menu= actionBars.getMenuManager();
 		menu.add(new Separator("EndFilterGroup")); //$NON-NLS-1$
 		
-		//fToggleLinkingAction= new ToggleLinkingAction(this);
-		//menu.add(fToggleLinkingAction);
+		fToggleLinkingAction= new ToggleLinkingAction(this);
+		menu.add(fToggleLinkingAction);
 		fIncludeGroupingAction= new IncludeGroupingAction(this);
 		menu.add(fIncludeGroupingAction);
 	}

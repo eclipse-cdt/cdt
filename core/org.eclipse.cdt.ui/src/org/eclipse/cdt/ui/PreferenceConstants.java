@@ -756,6 +756,16 @@ public class PreferenceConstants {
 	 */
 	public static final String OUTLINE_GROUP_NAMESPACES= "org.eclipse.cdt.ui.outline.groupnamespaces"; //$NON-NLS-1$
 
+	
+	/**
+	 * A named preference that controls whether the outline view 
+	 * selection should stay in sync with with the element at the current cursor position.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 */
+	public static final String OUTLINE_LINK_TO_EDITOR = "org.eclipse.cdt.ui.outline.linktoeditor"; //$NON-NLS-1$
+	
 	/**
 	 * A named preference that controls if the CView.
 	 * <p>

@@ -1831,7 +1831,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	}
 
 	/**
-	 * React to changed selection.
+	 * React to changed selection in the editor.
 	 * 
 	 * @since 3.0
 	 */
@@ -1839,9 +1839,27 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		if (getSelectionProvider() == null)
 			return;
 		updateStatusLine();
+		synchronizeOutlinePage();
 	}
+	
+	
+	/**
+	 * Synchronizes the outline view selection with the given element
+	 * position in the editor.
+	 * 
+	 * @since 4.0
+	 */
+	protected void synchronizeOutlinePage() {
+		if(fOutlinePage != null && fOutlinePage.isLinkingEnabled()) {
+			fOutlinePage.removeSelectionChangedListener(this);
+			fOutlinePage.synchronizeSelectionWithEditor();
+			fOutlinePage.addSelectionChangedListener(this);
+		}
+	}	
+	
 
 	/**
+	 * React to changed selection in the outline view.
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
@@ -1867,15 +1885,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
      * @param element Element to select.
 	 */
     public void setSelection(ICElement element) {
-
-		if (element == null || element instanceof ITranslationUnit) {
-			/*
-			 * If the element is an ITranslationUnit this unit is either the input
-			 * of this editor or not being displayed. In both cases, nothing should
-			 * happened.
-			 */
-			return;
-		}
 		if (element instanceof ISourceReference) {
 			ISourceReference reference = (ISourceReference) element;
 			// set hightlight range

@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.pdom.tests;
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -120,7 +121,7 @@ public class CPPFieldTests extends PDOMTestBase {
 		assertFieldType(pdom, "Class2::c2b", IBasicType.t_float);
 	}
 
-	private void assertFieldType(PDOM pdom, String name, int type) throws CoreException {
+	private void assertFieldType(PDOM pdom, String name, int type) throws CoreException, DOMException {
 		IBinding[] bindings = findQualifiedName(pdom, name);
 		assertEquals(1, bindings.length);
 		IField field = (IField) bindings[0];

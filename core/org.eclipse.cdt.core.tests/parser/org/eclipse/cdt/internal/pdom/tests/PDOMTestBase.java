@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -167,7 +168,7 @@ public class PDOMTestBase extends BaseTestCase {
 		assertTrue(c.isAssignableFrom(bindings[0].getClass()));
 	}
 
-	protected void assertVisibility(PDOM pdom, String name, int visibility) throws CoreException {
+	protected void assertVisibility(PDOM pdom, String name, int visibility) throws CoreException, DOMException {
 		IBinding[] bindings = findQualifiedName(pdom, name);
 		assertEquals(1, bindings.length);
 		ICPPMember member = (ICPPMember) bindings[0];

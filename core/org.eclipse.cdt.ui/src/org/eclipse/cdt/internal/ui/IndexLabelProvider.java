@@ -8,10 +8,12 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -71,7 +73,7 @@ public class IndexLabelProvider extends LabelProvider {
 					desc = CElementImageProvider.getUnionImageDescriptor();
 					break;
 				}
-			} catch (CoreException e) {
+			} catch (DOMException e) {
 				CUIPlugin.getDefault().log(e);
 			}
 		}

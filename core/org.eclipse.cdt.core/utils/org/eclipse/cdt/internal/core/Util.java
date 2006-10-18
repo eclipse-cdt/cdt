@@ -21,9 +21,12 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 public class Util {
 	
@@ -365,7 +368,16 @@ public class Util {
 				return true;
 		return false;
 	}
-		
+	
+	/**
+	 * Returns an IStatus object with severity IStatus.ERROR based on the
+	 * given Throwable.
+	 * @param t the Throwable that caused the error.
+	 * @return an IStatus object based on the given Throwable.
+	 */
+	public static IStatus createStatus(Throwable t) {
+		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, t.getMessage(), t);
+	}
 }
 
 

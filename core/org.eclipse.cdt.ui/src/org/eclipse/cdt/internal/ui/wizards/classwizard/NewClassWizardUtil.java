@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -447,6 +448,8 @@ public class NewClassWizardUtil {
 					return SEARCH_MATCH_FOUND_ANOTHER_TYPE;
 				}
 			} catch (CoreException e) {
+				return SEARCH_MATCH_ERROR;
+			} catch (DOMException e) {
 				return SEARCH_MATCH_ERROR;
 			}
 			return SEARCH_MATCH_NOTFOUND;

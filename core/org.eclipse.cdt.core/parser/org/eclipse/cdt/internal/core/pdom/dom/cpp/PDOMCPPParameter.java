@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
@@ -63,10 +64,14 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 
 		db.putInt(record + NEXT_PARAM, 0);
 		
-		IType type = param.getType();
-		if (type != null) {
-			PDOMNode typeNode = getLinkageImpl().addType(this, type);
-			db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
+		try {
+			IType type = param.getType();
+			if (type != null) {
+				PDOMNode typeNode = getLinkageImpl().addType(this, type);
+				db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
+			}
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
 		}
 	}
 

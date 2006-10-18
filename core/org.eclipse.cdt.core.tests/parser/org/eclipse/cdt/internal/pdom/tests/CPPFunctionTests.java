@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.pdom.tests;
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -177,7 +178,7 @@ public class CPPFunctionTests extends PDOMTestBase {
 		}
 	}
 
-	private void assertReturnType(PDOM pdom, String name, int type) throws CoreException {
+	private void assertReturnType(PDOM pdom, String name, int type) throws CoreException, DOMException {
 		IBinding[] bindings = findQualifiedName(pdom, name);
 		assertEquals(1, bindings.length);
 		IFunction function = (IFunction) bindings[0];

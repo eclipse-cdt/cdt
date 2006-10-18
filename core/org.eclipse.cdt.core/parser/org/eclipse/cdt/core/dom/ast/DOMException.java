@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,6 @@
  */
 package org.eclipse.cdt.core.dom.ast;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 /**
  * This is the general purpose exception that is thrown for resolving semantic
@@ -25,7 +21,7 @@ import org.eclipse.core.runtime.Status;
  * 
  * @author aniefer
  */
-public class DOMException extends CoreException {
+public class DOMException extends Exception {
 	
 	private static final long serialVersionUID = 0;
 	
@@ -37,8 +33,6 @@ public class DOMException extends CoreException {
 	 * 
 	 */
 	public DOMException(IProblemBinding problem) {
-		super(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
-				0, "DOMException", new Exception()));
 		problemBinding = problem;
 	}
 

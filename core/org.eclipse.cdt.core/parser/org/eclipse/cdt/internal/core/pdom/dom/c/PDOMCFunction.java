@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -42,7 +43,11 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 
 	public PDOMCFunction(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name);
-		pdom.getDB().putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(name.resolveBinding()));
+		try {
+			pdom.getDB().putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(name.resolveBinding()));
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
 	}
 
 	public PDOMCFunction(PDOM pdom, int record) {

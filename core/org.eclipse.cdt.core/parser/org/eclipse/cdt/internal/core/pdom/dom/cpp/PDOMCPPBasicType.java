@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -46,19 +47,23 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType {
 		
 		Database db = pdom.getDB();
 		
-		db.putChar(record + TYPE_ID, (char)type.getType());
-		
-		char flags = 0;
-		if (type.isLong())
-			flags |= IS_LONG;
-		if (type.isShort())
-			flags |= IS_SHORT;
-		if (type.isSigned())
-			flags |= IS_SIGNED;
-		if (type.isUnsigned())
-			flags |= IS_UNSIGNED;
-		
-		db.putChar(record + FLAGS, flags);
+		try {
+			db.putChar(record + TYPE_ID, (char)type.getType());
+			
+			char flags = 0;
+			if (type.isLong())
+				flags |= IS_LONG;
+			if (type.isShort())
+				flags |= IS_SHORT;
+			if (type.isSigned())
+				flags |= IS_SIGNED;
+			if (type.isUnsigned())
+				flags |= IS_UNSIGNED;
+			
+			db.putChar(record + FLAGS, flags);
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
 	}
 	
 	protected int getRecordSize() {

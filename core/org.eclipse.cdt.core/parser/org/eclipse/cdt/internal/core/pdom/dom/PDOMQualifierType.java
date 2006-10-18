@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -16,6 +17,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -46,21 +48,26 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType,
 		Database db = pdom.getDB();
 		
 		// type
-		IType targetType = ((ITypeContainer)type).getType();
-		if (type != null) {
-			PDOMNode targetTypeNode = getLinkageImpl().addType(this, targetType);
-			if (targetTypeNode != null) {
-				db.putInt(record + TYPE, targetTypeNode.getRecord());
+		try {
+			IType targetType = ((ITypeContainer)type).getType();
+			if (type != null) {
+				PDOMNode targetTypeNode = getLinkageImpl().addType(this, targetType);
+				if (targetTypeNode != null) {
+					db.putInt(record + TYPE, targetTypeNode.getRecord());
+				}
 			}
+			
+			// flags
+			byte flags = 0;
+			if (type.isConst())
+				flags |= CONST;
+			if (type.isVolatile())
+				flags |= VOLATILE;
+			db.putByte(record + FLAGS, flags);
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
 		}
 		
-		// flags
-		byte flags = 0;
-		if (type.isConst())
-			flags |= CONST;
-		if (type.isVolatile())
-			flags |= VOLATILE;
-		db.putByte(record + FLAGS, flags);
 	}
 
 	protected int getRecordSize() {

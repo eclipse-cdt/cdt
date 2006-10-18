@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
@@ -16,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -35,10 +37,14 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef {
 			throws CoreException {
 		super(pdom, parent, name);
 		
-		IType type = typedef.getType();
-		PDOMNode typeNode = parent.getLinkageImpl().addType(this, type);
-		if (typeNode != null)
-			pdom.getDB().putInt(record + TYPE, typeNode.getRecord());
+		try {
+			IType type = typedef.getType();
+			PDOMNode typeNode = parent.getLinkageImpl().addType(this, type);
+			if (typeNode != null)
+				pdom.getDB().putInt(record + TYPE, typeNode.getRecord());
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
 	}
 
 	public PDOMCTypedef(PDOM pdom, int record) {

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -41,10 +42,12 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	public PDOMCVariable(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name);
 		IVariable binding = (IVariable)name.getBinding();
-		if (binding != null) {
-			IType type = binding.getType();
+
+		try {
+			pdom.getDB().putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(binding));
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
 		}
-		pdom.getDB().putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(binding));
 	}
 
 	public PDOMCVariable(PDOM pdom, int record) {

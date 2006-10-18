@@ -12,7 +12,9 @@
 
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -312,7 +314,7 @@ public class SemanticHighlightings {
 				try {
 					return ((IField)binding).isStatic();
 				} catch (DOMException exc) {
-					CUIPlugin.getDefault().log(exc.getStatus());
+					CUIPlugin.getDefault().log(exc);
 				} catch (Error e) /* PDOMNotImplementedError */ {
 					// ignore
 				}
@@ -945,7 +947,7 @@ public class SemanticHighlightings {
 								return true;
 							}
 						} catch (DOMException exc) {
-							CUIPlugin.getDefault().log(exc.getStatus());
+							CUIPlugin.getDefault().log(exc);
 						} catch (Error e) /* PDOMNotImplementedError */ {
 							// ignore
 						}
@@ -1023,7 +1025,7 @@ public class SemanticHighlightings {
 								return true;
 							}
 						} catch (DOMException exc) {
-							CUIPlugin.getDefault().log(exc.getStatus());
+							CUIPlugin.getDefault().log(exc);
 						} catch (Error e) /* PDOMNotImplementedError */ {
 							// ignore
 						}
@@ -1112,7 +1114,7 @@ public class SemanticHighlightings {
 						return true;
 					}
 				} catch (DOMException exc) {
-					CUIPlugin.getDefault().log(exc.getStatus());
+					CUIPlugin.getDefault().log(exc);
 				} catch (Error e) /* PDOMNotImplementedError */ {
 					// ignore
 				}

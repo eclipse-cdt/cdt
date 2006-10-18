@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -94,10 +95,14 @@ class PDOMCPPMethod extends PDOMCPPBinding implements ICPPMethod, ICPPFunctionTy
 			}
 			annotation |= PDOMCAnnotation.encodeCVQualifiers(funcDecl) << CV_OFFSET;
 		}
-		IBinding binding = name.resolveBinding();
-		annotation |= PDOMCPPAnnotation.encodeExtraAnnotation(binding);
-		db.putByte(record + ANNOTATION0, PDOMCPPAnnotation.encodeAnnotation(binding));
-		db.putByte(record + ANNOTATION1, annotation);
+		try {
+			IBinding binding = name.resolveBinding();
+			annotation |= PDOMCPPAnnotation.encodeExtraAnnotation(binding);
+			db.putByte(record + ANNOTATION0, PDOMCPPAnnotation.encodeAnnotation(binding));
+			db.putByte(record + ANNOTATION1, annotation);
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
 	}
 
 	public PDOMCPPMethod(PDOM pdom, int record) {

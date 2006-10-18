@@ -8,12 +8,14 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -32,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -109,11 +112,15 @@ class PDOMCLinkage extends PDOMLinkage {
 			else if (binding instanceof IEnumeration)
 				pdomBinding = new PDOMCEnumeration(pdom, parent, name);
 			else if (binding instanceof IEnumerator) {
-				IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
-				PDOMBinding pdomEnumeration = adaptBinding(enumeration);
-				if (pdomEnumeration instanceof PDOMCEnumeration)
-				pdomBinding = new PDOMCEnumerator(pdom, parent, name,
-						(PDOMCEnumeration)pdomEnumeration);
+				try {
+					IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
+					PDOMBinding pdomEnumeration = adaptBinding(enumeration);
+					if (pdomEnumeration instanceof PDOMCEnumeration)
+					pdomBinding = new PDOMCEnumerator(pdom, parent, name,
+							(PDOMCEnumeration)pdomEnumeration);
+				} catch (DOMException e) {
+					throw new CoreException(Util.createStatus(e));
+				}
 			} else if (binding instanceof ITypedef)
 				pdomBinding = new PDOMCTypedef(pdom, parent, name, (ITypedef)binding);
 		}

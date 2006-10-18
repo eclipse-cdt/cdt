@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -15,6 +16,7 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -27,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -149,50 +152,53 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public abstract PDOMBinding resolveBinding(IASTName name) throws CoreException;
 	
 	public PDOMNode getAdaptedParent(IBinding binding) throws CoreException {
-		IScope scope = binding.getScope();
-		if (scope == null)
-			return null;
-		
-		if (scope instanceof IIndexBinding) {
-			IIndexBinding parent= ((IIndexBinding) scope).getParentBinding();
-			if (parent == null) {
-				return this;
-			}
-			return adaptBinding(parent);
-		}
+		try {
+			IScope scope = binding.getScope();
+			if (scope == null)
+				return null;
 			
-		// the scope is from the ast
-		
-		// mstodo revisit unnamed namespaces
-		IScope testScope= scope;
-		while (testScope instanceof ICPPNamespaceScope) {
-			IName name= testScope.getScopeName();
-			if (name != null && name.toCharArray().length == 0) {
-				testScope= scope.getParent();
-				if (testScope != null) {
-					scope= testScope;
+			if (scope instanceof IIndexBinding) {
+				IIndexBinding parent= ((IIndexBinding) scope).getParentBinding();
+				if (parent == null) {
+					return this;
+				}
+				return adaptBinding(parent);
+			}
+				
+			// the scope is from the ast
+			
+			// mstodo revisit unnamed namespaces
+			IScope testScope= scope;
+			while (testScope instanceof ICPPNamespaceScope) {
+				IName name= testScope.getScopeName();
+				if (name != null && name.toCharArray().length == 0) {
+					testScope= scope.getParent();
+					if (testScope != null) {
+						scope= testScope;
+					}
+				}
+				else {
+					testScope= null;
 				}
 			}
-			else {
-				testScope= null;
-			}
-		}
-		
-		IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
-		if (scopeNode instanceof IASTCompoundStatement)
-			return null;
-		else if (scopeNode instanceof IASTTranslationUnit)
-			return this;
-		else {
-			IName scopeName = scope.getScopeName();
-			if (scopeName instanceof IASTName) {
-				IBinding scopeBinding = ((IASTName) scopeName).resolveBinding();
-				PDOMBinding scopePDOMBinding = adaptBinding(scopeBinding);
-				if (scopePDOMBinding != null)
-					return scopePDOMBinding;
-			}
-		}
 			
+			IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
+			if (scopeNode instanceof IASTCompoundStatement)
+				return null;
+			else if (scopeNode instanceof IASTTranslationUnit)
+				return this;
+			else {
+				IName scopeName = scope.getScopeName();
+				if (scopeName instanceof IASTName) {
+					IBinding scopeBinding = ((IASTName) scopeName).resolveBinding();
+					PDOMBinding scopePDOMBinding = adaptBinding(scopeBinding);
+					if (scopePDOMBinding != null)
+						return scopePDOMBinding;
+				}
+			}
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
 		return null;
 	}
 }

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -34,10 +35,14 @@ class PDOMCPPTypedef extends PDOMBinding implements ITypedef {
 	public PDOMCPPTypedef(PDOM pdom, PDOMNode parent, IASTName name, ITypedef typedef)
 			throws CoreException {
 		super(pdom, parent, name);
-		IType type = typedef.getType();
-		PDOMNode typeNode = parent.getLinkageImpl().addType(this, type);
-		if (typeNode != null)
-			pdom.getDB().putInt(record + TYPE, typeNode.getRecord());
+		try {
+			IType type = typedef.getType();
+			PDOMNode typeNode = parent.getLinkageImpl().addType(this, type);
+			if (typeNode != null)
+				pdom.getDB().putInt(record + TYPE, typeNode.getRecord());
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
 	}
 
 	public PDOMCPPTypedef(PDOM pdom, int record) {

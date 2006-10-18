@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -83,7 +84,11 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 			}
 		}
 		IBinding binding = name.resolveBinding();
-		db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(binding));
+		try {
+			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(binding));
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
 	}
 
 	public PDOMCPPFunction(PDOM pdom, int bindingRecord) {

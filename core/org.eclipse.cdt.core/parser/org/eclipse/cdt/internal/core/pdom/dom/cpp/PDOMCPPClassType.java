@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -35,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
@@ -63,10 +63,14 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		super(pdom, parent, name);
 
 		IBinding binding = name.resolveBinding();
-		int key = 0;
-		if (binding instanceof ICPPClassType) // not sure why it wouldn't
-			key = ((ICPPClassType) binding).getKey();
-		pdom.getDB().putByte(record + KEY, (byte) key);
+		try {
+			int key = 0;
+			if (binding instanceof ICPPClassType) // not sure why it wouldn't
+				key = ((ICPPClassType) binding).getKey();
+			pdom.getDB().putByte(record + KEY, (byte) key);
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
 		// linked list is initialized by storage being zero'd by malloc
 	}
 	
@@ -189,9 +193,13 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		
 		// Visit my base classes
 		for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase()) {
-			IBinding baseClass = base.getBaseClass();
-			if (baseClass != null && baseClass instanceof PDOMCPPClassType)
-				((PDOMCPPClassType)baseClass).visitAllDeclaredMethods(visited, methods);
+			try {
+				IBinding baseClass = base.getBaseClass();
+				if (baseClass != null && baseClass instanceof PDOMCPPClassType)
+					((PDOMCPPClassType)baseClass).visitAllDeclaredMethods(visited, methods);
+			} catch (DOMException e) {
+				throw new CoreException(Util.createStatus(e));
+			}
 		}
 	}
 	

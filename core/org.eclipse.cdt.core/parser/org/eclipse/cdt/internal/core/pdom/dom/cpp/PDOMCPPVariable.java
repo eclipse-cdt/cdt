@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -64,7 +65,11 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 			if (typeNode != null)
 				db.putInt(record + TYPE_OFFSET, typeNode.getRecord());
 		}
-		db.putByte(record + ANNOTATIONS, PDOMCPPAnnotation.encodeAnnotation(name.resolveBinding()));
+		try {
+			db.putByte(record + ANNOTATIONS, PDOMCPPAnnotation.encodeAnnotation(name.resolveBinding()));
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
 	}
 
 	public PDOMCPPVariable(PDOM pdom, int record) {

@@ -37,6 +37,7 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 
 	public void run(IProgressMonitor monitor) {
 		try {
+			setupIndexAndReaderFactory();
 			long start = System.currentTimeMillis();
 			Iterator i = changed.iterator();
 			while (i.hasNext()) {

@@ -39,7 +39,7 @@ class PDOMFastReindex extends PDOMFastIndexerJob {
 	public void run(final IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
-			
+			setupIndexAndReaderFactory();
 			clearIndex(index);
 			fFilesToIndex--;
 

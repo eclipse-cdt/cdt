@@ -40,14 +40,17 @@ import org.eclipse.core.runtime.IPath;
 abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexerTask {
 
 	protected final PDOMFastIndexer indexer;
-	protected final IWritableIndex index;
-	protected final IndexBasedCodeReaderFactory codeReaderFactory;
+	protected IWritableIndex index;
+	protected IndexBasedCodeReaderFactory codeReaderFactory;
 	
 	public PDOMFastIndexerJob(PDOMFastIndexer indexer) throws CoreException {
 		this.indexer = indexer;
+	}
+	
+	protected void setupIndexAndReaderFactory() throws CoreException {
 		this.index= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(indexer.getProject());
 		this.codeReaderFactory = new IndexBasedCodeReaderFactory(index);
-	}
+	}		
 
 	public IPDOMIndexer getIndexer() {
 		return indexer;

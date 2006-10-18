@@ -85,6 +85,14 @@ public class LocalProcessSubSystemConfiguration extends ProcessServiceSubSystemC
 		return true;
 	}
 	
+	/**
+	 * Returns <code>false</code>.
+	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.impl.RemoteProcessSubSystemConfiguration#supportsSubSystemConnect()
+	 */
+	public boolean supportsSubSystemConnect() {
+		return false;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfiguration#getConnectorService(org.eclipse.rse.model.IHost)
 	 */

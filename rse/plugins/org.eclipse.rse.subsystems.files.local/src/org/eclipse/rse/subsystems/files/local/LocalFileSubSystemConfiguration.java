@@ -185,6 +185,14 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	public boolean supportsFilters() {
 		return true;
 	}
+	
+	/**
+	 * Returns <code>false</code>.
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystemConfiguration#supportsSubSystemConnect()
+	 */
+	public boolean supportsSubSystemConnect() {
+		return false;
+	}
 
 	public IConnectorService getConnectorService(IHost host)
 	{

@@ -87,6 +87,14 @@ public class LocalShellSubSystemConfiguration extends ShellServiceSubSystemConfi
 	public boolean supportsFilters() {
 		return false;
 	}
+	
+	/**
+	 * Returns <code>false</code>
+	 * @see org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCmdSubSystemConfiguration#supportsSubSystemConnect()
+	 */
+	public boolean supportsSubSystemConnect() {
+		return false;
+	}
 
 	public IConnectorService getConnectorService(IHost host)
 	{

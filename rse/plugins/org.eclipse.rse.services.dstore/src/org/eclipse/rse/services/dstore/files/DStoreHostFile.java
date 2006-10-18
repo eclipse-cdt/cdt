@@ -315,7 +315,13 @@ public class DStoreHostFile implements IHostFile
 		}
 		else
 		{				
-			_element.setAttribute(DE.A_NAME, newAbsolutePath);
+			int lastSep = newAbsolutePath.lastIndexOf('/');
+			if (lastSep == -1)
+				lastSep = newAbsolutePath.lastIndexOf('\\');
+			
+			String newName = newAbsolutePath.substring(lastSep + 1);
+			
+			_element.setAttribute(DE.A_NAME, newName);
 		}
 		
 		_isArchive = internalIsArchive();

@@ -297,7 +297,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElemen
 		return new WritableCIndex((IWritableIndexFragment[]) pdoms.toArray(new IWritableIndexFragment[pdoms.size()]), new IIndexFragment[0]);
 	}
 
-	public synchronized void elementChanged(ElementChangedEvent event) {
+	public void elementChanged(ElementChangedEvent event) {
 		// Only respond to post change events
 		if (event.getType() != ElementChangedEvent.POST_CHANGE)
 			return;

@@ -75,10 +75,12 @@ public class OutputRefreshJob extends UIJob
 			try
 			{
 			SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
-			if ((_outputs != null) && (_outputs[0] != null))
+			if (_outputs != null)
 			{
-				registry.fireEvent(
-					new SystemResourceChangeEvent(_outputs, ISystemResourceChangeEvents.EVENT_REFRESH, _command));
+				if ((_outputs.length > 0) && (_outputs[0] != null)) {
+					registry.fireEvent(
+							new SystemResourceChangeEvent(_outputs, ISystemResourceChangeEvents.EVENT_REFRESH, _command));
+				}
 				
 				if (_cwdChanged)
 				{

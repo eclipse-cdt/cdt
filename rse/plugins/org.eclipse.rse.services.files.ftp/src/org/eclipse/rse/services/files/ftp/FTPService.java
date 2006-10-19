@@ -21,7 +21,7 @@
  *    anonymous on ftp.wacom.com
  * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] expand "My Home" node on 
  *    ftp.ibiblio.org as anonymous fails
- * 
+ * Javier Montalvo Orus (Symbian) - Fixing 160922 - create folder/file fails for FTP service
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -156,7 +156,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		}
 		else
 		{
-			return null;
+			return new FTPHostFile(remoteParent,fileName, false, false, 0, 0, false);
 		}
 	}
 	

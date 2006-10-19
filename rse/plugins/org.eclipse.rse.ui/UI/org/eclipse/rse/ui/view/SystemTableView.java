@@ -1058,6 +1058,11 @@ public class SystemTableView
 											{
 												if (!madeChange)
 												{
+													if (_objectInput instanceof ISystemContainer)
+													{
+														((ISystemContainer)_objectInput).markStale(true);
+													}
+													
 													provider.flushCache();
 													madeChange = true;
 

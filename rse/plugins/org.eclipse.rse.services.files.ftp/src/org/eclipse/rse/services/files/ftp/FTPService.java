@@ -19,6 +19,9 @@
  * Javier Montalvo Orus (Symbian) - Migrate to jakarta commons net FTP client
  * Javier Montalvo Orus (Symbian) - Fixing 161211 - Cannot expand /pub folder as 
  *    anonymous on ftp.wacom.com
+ * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] expand "My Home" node on 
+ *    ftp.ibiblio.org as anonymous fails
+ * 
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -321,10 +324,19 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public IHostFile getUserHome()
 	{
+		
 		int lastSlash = _userHome.lastIndexOf('/');
 		String name = _userHome.substring(lastSlash + 1);	
 		String parent = _userHome.substring(0, lastSlash);
-		return getFile(null, parent, name);
+		
+		// if home is root
+		if(parent.equals(""))
+		{
+			parent = "/";
+		}
+		
+		return new FTPHostFile(parent,name,true,true,0,0,true);
+		
 	}
 
 	/*

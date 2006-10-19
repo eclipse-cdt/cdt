@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.MenuManager;
@@ -29,6 +30,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.actions.SystemRemoteFileSearchOpenWithMenu;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
+import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.services.search.IHostSearchResult;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.model.ISystemOutputRemoteTypes;
@@ -45,7 +47,15 @@ import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemViewResources;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
@@ -55,6 +65,59 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  */
 public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapter implements ISystemRemoteElementAdapter, ISystemOutputRemoteTypes
 {
+	
+	public class DelayedGotoSearchResult implements Runnable {
+		private IRemoteFile _file;
+		private IHostSearchResult _searchResult;
+		
+		public DelayedGotoSearchResult(IRemoteFile file, IHostSearchResult searchResult) {
+			_file = file;
+			_searchResult = searchResult;
+		}
+		
+		public void run() {
+			
+			if (checkEditorOpen()) {
+				SystemRemoteFileSearchOpenWithMenu.handleGotoLine(_file, _searchResult);
+			}
+			else {
+				Display.getDefault().asyncExec(this);
+			}
+		}
+		
+		private boolean checkEditorOpen()
+		{
+			IWorkbench desktop = PlatformUI.getWorkbench();
+			IWorkbenchPage persp = desktop.getActiveWorkbenchWindow().getActivePage();
+			IEditorPart editor = null;
+			String fileName = _file.getAbsolutePath();
+			IEditorReference[] editors = persp.getEditorReferences();
+			for (int i = 0; i < editors.length; i++)
+			{
+				IEditorReference ref = editors[i];
+				IEditorPart editorp = ref.getEditor(false);
+				if (editorp != null)
+				{
+					IEditorInput einput = editorp.getEditorInput();
+					if (einput instanceof IFileEditorInput)
+					{
+						IFileEditorInput input = (IFileEditorInput) einput;
+						IFile efile = input.getFile();
+
+						SystemIFileProperties properties = new SystemIFileProperties(efile);
+						String comparePath = properties.getRemoteFilePath();
+
+						if (comparePath != null && (comparePath.replace('\\','/').equals(fileName.replace('\\','/'))))
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+	}
+	
 
 	protected IPropertyDescriptor[] _propertyDescriptors;
 
@@ -216,7 +279,8 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 				{
 					if (line > 0) 
 					{
-						SystemRemoteFileSearchOpenWithMenu.handleGotoLine(file, searchResult);
+						DelayedGotoSearchResult dgoto = new DelayedGotoSearchResult(file, searchResult);
+						Display.getDefault().asyncExec(dgoto);
 					}
 					return true;
 				}

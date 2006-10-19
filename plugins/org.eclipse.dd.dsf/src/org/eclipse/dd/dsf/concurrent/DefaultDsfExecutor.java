@@ -66,12 +66,20 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         if (r instanceof Future) {
             Future future = (Future)r;
             try {
-                future.get();
+                /*
+                 * Try to retrieve the value, which should throw exception in 
+                 * case when exception was thrown within the Runnable/Callable.
+                 * Must call isDone(), because scheduled futures would block 
+                 * on get.
+                 */
+                if (future.isDone()) {
+                    future.get();
+                }
             } catch (InterruptedException e) { // Ignore
             } catch (CancellationException e) { // Ignore also
             } catch (ExecutionException e) {
                 if (e.getCause() != null) {
-                    logException(t);
+                    logException(e.getCause());
                 }
             }
         }

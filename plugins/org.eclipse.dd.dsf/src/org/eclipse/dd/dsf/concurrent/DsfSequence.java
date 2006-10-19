@@ -369,7 +369,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
         if (fRollbackTaskName != null) {
             fProgressMonitor.subTask(fRollbackTaskName);
         }
-        fStatus = new Status(IStatus.CANCEL, DsfPlugin.PLUGIN_ID, "Sequence \"" + fTaskName + "\" cancelled.");
+        fStatus = new Status(IStatus.CANCEL, DsfPlugin.PLUGIN_ID, -1, "Sequence \"" + fTaskName + "\" cancelled.", null);
         if (fDone != null) {
             fDone.setStatus(fStatus);
         }

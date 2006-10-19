@@ -2844,58 +2844,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("// f(int) conflicts with C::f(int) and B::f(int)\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, false, 0);
-	}
-	
-	/**
-	 [--Start Example(CPP 7.3.3-12):
-	struct B {
-	virtual void f(int);
-	virtual void f(char);
-	void g(int);
-	void h(int);
-	};
-	struct D : B {
-	using B::f;
-	void f(int); // OK: D::f(int) overrides B::f(int);
-	using B::g;
-	void g(char); // OK
-	using B::h;
-	void h(int); // OK: D::h(int) hides B::h(int)
-	};
-	void k(D* p)
-	{
-	p->f(1); //calls D::f(int)
-	p->f('a'); //calls B::f(char)
-	p->g(1); //calls B::g(int)
-	p->g('a'); //calls D::g(char)
-	}
-	 --End Example]
-	 */
-	public void test7_3_3s12() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("struct B {\n"); //$NON-NLS-1$
-		buffer.append("virtual void f(int);\n"); //$NON-NLS-1$
-		buffer.append("virtual void f(char);\n"); //$NON-NLS-1$
-		buffer.append("void g(int);\n"); //$NON-NLS-1$
-		buffer.append("void h(int);\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("struct D : B {\n"); //$NON-NLS-1$
-		buffer.append("using B::f;\n"); //$NON-NLS-1$
-		buffer.append("void f(int); // OK: D::f(int) overrides B::f(int);\n"); //$NON-NLS-1$
-		buffer.append("using B::g;\n"); //$NON-NLS-1$
-		buffer.append("void g(char); // OK\n"); //$NON-NLS-1$
-		buffer.append("using B::h;\n"); //$NON-NLS-1$
-		buffer.append("void h(int); // OK: D::h(int) hides B::h(int)\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("void k(D* p)\n"); //$NON-NLS-1$
-		buffer.append("{\n"); //$NON-NLS-1$
-		buffer.append("p->f(1); //calls D::f(int)\n"); //$NON-NLS-1$
-		buffer.append("p->f('a'); //calls B::f(char)\n"); //$NON-NLS-1$
-		buffer.append("p->g(1); //calls B::g(int)\n"); //$NON-NLS-1$
-		buffer.append("p->g('a'); //calls D::g(char)\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-	}
+	}	
 	
 	/**
 	 [--Start Example(CPP 7.3.3-14):

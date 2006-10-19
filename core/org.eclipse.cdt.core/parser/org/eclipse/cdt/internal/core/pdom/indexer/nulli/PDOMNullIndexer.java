@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.core.runtime.CoreException;
@@ -73,7 +74,7 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 		}
 	}
 	public void reindex() throws CoreException {
-		CCorePlugin.getPDOMManager().enqueue(new PDOMNullReindex());
+		CCoreInternals.getPDOMManager().enqueue(new PDOMNullReindex());
 	}
 
 }

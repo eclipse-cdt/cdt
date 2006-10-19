@@ -9,7 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.internal.indexer.tests;
+package org.eclipse.cdt.internal.index.tests;
 
 import java.util.ArrayList;
 import java.util.List;

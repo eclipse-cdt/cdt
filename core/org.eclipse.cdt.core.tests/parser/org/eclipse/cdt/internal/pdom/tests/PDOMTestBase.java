@@ -85,15 +85,14 @@ public class PDOMTestBase extends BaseTestCase {
 					throw new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, 0, "Import Interrupted", e));
 				}
 				
-				// Index the project
-				CCorePlugin.getPDOMManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
-				
-				// wait until the indexer is done
-				assertTrue(CCorePlugin.getIndexManager().joinIndexer(5000, new NullProgressMonitor()));
-
 				cprojects[0] = cproject;
 			}
 		}, null);
+
+		// Index the project
+		CCorePlugin.getPDOMManager().setIndexerId(cprojects[0], IPDOMManager.ID_FAST_INDEXER);
+		// wait until the indexer is done
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(5000, new NullProgressMonitor()));
 
 		return cprojects[0];
 	}

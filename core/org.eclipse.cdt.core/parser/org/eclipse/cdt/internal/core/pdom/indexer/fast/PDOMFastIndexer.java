@@ -13,11 +13,11 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -45,13 +45,12 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 	public void handleDelta(ICElementDelta delta) throws CoreException {
 		PDOMFastHandleDelta fhd= new PDOMFastHandleDelta(this, delta);
 		if (fhd.getFilesToIndexCount() > 0) {
-			CCorePlugin.getPDOMManager().enqueue(fhd);
+			CCoreInternals.getPDOMManager().enqueue(fhd);
 		}
 	}
 	
 	public void reindex() throws CoreException {
-		CCorePlugin.getPDOMManager().enqueue(
-				new PDOMFastReindex(this));
+		CCoreInternals.getPDOMManager().enqueue(new PDOMFastReindex(this));
 	}
 	
 }

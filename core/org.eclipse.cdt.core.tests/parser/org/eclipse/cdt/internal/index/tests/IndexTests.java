@@ -8,7 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-package org.eclipse.cdt.internal.indexer.tests;
+package org.eclipse.cdt.internal.index.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -16,11 +16,12 @@ import junit.framework.TestSuite;
 /**
  * Test suite for the indexer tests
  */
-public class IndexerTests extends TestSuite {
+public class IndexTests extends TestSuite {
 
 	public static Test suite() {
-		TestSuite suite = new IndexerTests();
+		TestSuite suite = new IndexTests();
 		suite.addTest(IndexListenerTest.suite());
+		suite.addTest(IndexSearchTest.suite());
 		return suite;
 	}
 	

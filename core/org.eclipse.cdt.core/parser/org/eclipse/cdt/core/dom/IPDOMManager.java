@@ -39,11 +39,4 @@ public interface IPDOMManager {
 	
 	public String getIndexerId(ICProject project) throws CoreException;
 	public void setIndexerId(ICProject project, String indexerId) throws CoreException;
-
-	// Enqueue and indexer sub job
-	public void enqueue(IPDOMIndexerTask subjob);
-
-	// Project being deleted
-	public void deleting(ICProject project);
-	
 }

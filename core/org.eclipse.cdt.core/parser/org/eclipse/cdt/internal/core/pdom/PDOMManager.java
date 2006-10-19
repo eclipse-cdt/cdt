@@ -12,13 +12,9 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -32,24 +28,20 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexerStateListener;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.internal.core.index.CIndex;
-import org.eclipse.cdt.internal.core.index.EmptyCIndex;
-import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
-import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.index.IndexChangeEvent;
+import org.eclipse.cdt.internal.core.index.IndexFactory;
 import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
-import org.eclipse.cdt.internal.core.index.WritableCIndex;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -67,8 +59,10 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * The PDOM Provider. This is likely temporary since I hope
@@ -77,7 +71,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * 
  * @author Doug Schaefer
  */
-public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElementChangedListener, IListener {
+public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListener {
 
 	private static final QualifiedName indexerProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomIndexer"); //$NON-NLS-1$
 	private static final QualifiedName dbNameProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName"); //$NON-NLS-1$
@@ -105,250 +99,88 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElemen
 	
 	private IndexChangeEvent fIndexChangeEvent= new IndexChangeEvent();
 	private IndexerStateEvent fIndexerStateEvent= new IndexerStateEvent();
-    
 
-	public synchronized IPDOM getPDOM(ICProject project) throws CoreException {
-		IProject rproject = project.getProject();
-		WritablePDOM pdom = (WritablePDOM)rproject.getSessionProperty(pdomProperty);
-		if (pdom != null) {
-			ICProject oldProject= (ICProject) fPDOMs.get(pdom);
-			if (project.equals(oldProject)) {
-				return pdom;
+	// classes that help out to make this one simpler
+	private IElementChangedListener fCModelListener= new CModelListener(this);
+	private IndexFactory fIndexFactory= new IndexFactory(this);
+    
+	private Object fIndexerMutex= new Object();
+	private IPreferenceChangeListener fPreferenceChangeListener= new IPreferenceChangeListener(){
+		public void preferenceChange(PreferenceChangeEvent event) {
+			onPreferenceChange(event);
+		}
+	};
+    
+	/**
+	 * Startup the PDOM. This mainly sets us up to handle model
+	 * change events.
+	 */
+	public void startup() {
+		CoreModel model = CoreModel.getDefault();
+		model.addElementChangedListener(fCModelListener);
+		ICProject[] projects;
+		try {
+			projects = model.getCModel().getCProjects();
+			for (int i = 0; i < projects.length; i++) {
+				ICProject project = projects[i];
+				if (project.getProject().isOpen()) {
+					addProject(project, null);
+				}
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		} 
+	}
+
+	public IPDOM getPDOM(ICProject project) throws CoreException {
+		synchronized (fPDOMs) {
+			IProject rproject = project.getProject();
+			WritablePDOM pdom = (WritablePDOM)rproject.getSessionProperty(pdomProperty);
+			if (pdom != null) {
+				ICProject oldProject= (ICProject) fPDOMs.get(pdom);
+				if (project.equals(oldProject)) {
+					return pdom;
+				}
+
+				if (oldProject != null && oldProject.getProject().exists()) {
+					// old project exists, don't use pdom
+					String dbName= getDefaultName(project);
+					rproject.setPersistentProperty(dbNameProperty, dbName);
+				}
+				else {
+					// pdom can be reused, as the other project has gone
+					fPDOMs.put(pdom, project);
+					return pdom;
+				}
+			}		
+
+			// make sure we get a unique name.
+			String dbName= rproject.getPersistentProperty(dbNameProperty);
+			if (dbName != null) {
+				IPath dbPath= CCorePlugin.getDefault().getStateLocation().append(dbName);
+				for (Iterator iter = fPDOMs.keySet().iterator(); dbName != null && iter.hasNext();) {
+					PDOM existingPDOM = (PDOM) iter.next();
+					if (existingPDOM.getPath().equals(dbPath)) {
+						dbName= null;
+					}
+				}
 			}
 			
-			if (oldProject != null && oldProject.getProject().exists()) {
-				// project was copied
-				String dbName= getDefaultName(project);
+			if (dbName == null) {
+				dbName = getDefaultName(project); 
 				rproject.setPersistentProperty(dbNameProperty, dbName);
 			}
-			else {
-				// project was renamed
-				fPDOMs.put(pdom, project);
-				return pdom;
-			}
-		}		
-				
-		String dbName= rproject.getPersistentProperty(dbNameProperty);
-		if (dbName == null) {
-			dbName = getDefaultName(project); 
-			rproject.setPersistentProperty(dbNameProperty, dbName);
+			IPath dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
+			pdom = new WritablePDOM(dbPath);
+			pdom.addListener(this);
+			rproject.setSessionProperty(pdomProperty, pdom);
+			fPDOMs.put(pdom, project);
+			return pdom;
 		}
-		IPath dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
-		pdom = new WritablePDOM(dbPath);
-		pdom.addListener(this);
-		rproject.setSessionProperty(pdomProperty, pdom);
-		fPDOMs.put(pdom, project);
-		if (pdom.versionMismatch()) {
-			getIndexer(project).reindex();
-		}
-		return pdom;
 	}
 
 	private String getDefaultName(ICProject project) {
 		return project.getElementName() + "." + System.currentTimeMillis() + ".pdom";  //$NON-NLS-1$//$NON-NLS-2$
-	}
-
-	public IPDOMIndexer getIndexer(ICProject project) {
-		try {
-			IProject rproject = project.getProject();
-			IPDOMIndexer indexer = (IPDOMIndexer)rproject.getSessionProperty(indexerProperty);
-			
-			if (indexer == null) {
-				indexer = createIndexer(project, getIndexerId(project));
-			}
-			
-			return indexer;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
-	}
-	
-	public IIndex getIndex(ICProject project) throws CoreException {
-		return getIndex(new ICProject[] {project}, 0);
-	}
-
-	public IIndex getIndex(ICProject project, int options) throws CoreException {
-		return getIndex(new ICProject[] {project}, options);
-	}
-	
-	public IIndex getIndex(ICProject[] projects) throws CoreException {
-		return getIndex(projects, 0);
-	}
-	
-	public IIndex getIndex(ICProject[] projects, int options) throws CoreException {
-		boolean addDependencies= (options & ADD_DEPENDENCIES) != 0;
-		boolean addDependent=    (options & ADD_DEPENDENT) != 0;
-		
-		HashMap map= new HashMap();
-		Collection selectedProjects= getProjects(projects, addDependencies, addDependent, map, new Integer(1));
-		
-		ArrayList pdoms= new ArrayList();
-		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
-			ICProject project = (ICProject) iter.next();
-			IWritableIndexFragment pdom= (IWritableIndexFragment) getPDOM(project);
-			if (pdom != null) {
-				pdoms.add(pdom);
-			}
-		}
-		if (pdoms.isEmpty()) {
-			return EmptyCIndex.INSTANCE;
-		}
-		
-		// todo add the SDKs
-		int primaryFragmentCount= pdoms.size();
-		
-		if (!addDependencies) {
-			projects= (ICProject[]) selectedProjects.toArray(new ICProject[selectedProjects.size()]);
-			selectedProjects.clear();
-			// don't clear the map, so projects are not selected again
-			selectedProjects= getProjects(projects, true, false, map, new Integer(2));
-			for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
-				ICProject project = (ICProject) iter.next();
-				IWritableIndexFragment pdom= (IWritableIndexFragment) getPDOM(project);
-				if (pdom != null) {
-					pdoms.add(pdom);
-				}
-			}
-			// todo add further SDKs
-		}
-		
-		return new CIndex((IIndexFragment[]) pdoms.toArray(new IIndexFragment[pdoms.size()]), primaryFragmentCount); 
-	}
-
-	private Collection getProjects(ICProject[] projects, boolean addDependencies, boolean addDependent, HashMap map, Integer markWith) {
-		List projectsToSearch= new ArrayList();
-		
-		for (int i = 0; i < projects.length; i++) {
-			ICProject cproject = projects[i];
-			IProject project= cproject.getProject();
-			checkAddProject(project, map, projectsToSearch, markWith);
-		}
-		
-		if (addDependencies || addDependent) {
-			for (int i=0; i<projectsToSearch.size(); i++) {
-				IProject project= (IProject) projectsToSearch.get(i);
-				IProject[] nextLevel;
-				try {
-					if (addDependencies) {
-						nextLevel = project.getReferencedProjects();
-						for (int j = 0; j < nextLevel.length; j++) {
-							checkAddProject(nextLevel[j], map, projectsToSearch, markWith);
-						}
-					}
-					if (addDependent) {
-						nextLevel= project.getReferencingProjects();
-						for (int j = 0; j < nextLevel.length; j++) {
-							checkAddProject(nextLevel[j], map, projectsToSearch, markWith);
-						}
-					}
-				} catch (CoreException e) {
-					// silently ignore
-					map.put(project, new Integer(0));
-				}
-			}
-		}
-		
-		CoreModel cm= CoreModel.getDefault();
-		Collection result= new ArrayList();
-		for (Iterator iter= map.entrySet().iterator(); iter.hasNext(); ) {
-			Map.Entry entry= (Map.Entry) iter.next();
-			if (entry.getValue() == markWith) {
-				ICProject cproject= cm.create((IProject) entry.getKey());
-				if (cproject != null) {
-					result.add(cproject);
-				}
-			}
-		}
-		return result;
-	}
-
-	private void checkAddProject(IProject project, HashMap map, List projectsToSearch, Integer markWith) {
-		if (map.get(project) == null) {
-			if (project.isOpen()) {
-				map.put(project, markWith);
-				projectsToSearch.add(project);
-			}
-			else {
-				map.put(project, new Integer(0));
-			}
-		}
-	}
-
-	public IWritableIndex getWritableIndex(ICProject project) throws CoreException {
-// mstodo to support dependent projects: Collection selectedProjects= getSelectedProjects(new ICProject[]{project}, false);
-		
-		Collection selectedProjects= Collections.singleton(project);
-		
-		ArrayList pdoms= new ArrayList();
-		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
-			ICProject p = (ICProject) iter.next();
-			IWritableIndexFragment pdom= (IWritableIndexFragment) getPDOM(p);
-			if (pdom != null) {
-				pdoms.add(pdom);
-			}
-		}
-		
-		if (pdoms.isEmpty()) {
-			throw new CoreException(CCorePlugin.createStatus(
-					MessageFormat.format(Messages.PDOMManager_errorNoSuchIndex, new Object[]{project.getElementName()})));
-		}
-		
-		return new WritableCIndex((IWritableIndexFragment[]) pdoms.toArray(new IWritableIndexFragment[pdoms.size()]), new IIndexFragment[0]);
-	}
-
-	public void elementChanged(ElementChangedEvent event) {
-		// Only respond to post change events
-		if (event.getType() != ElementChangedEvent.POST_CHANGE)
-			return;
-		
-		// Walk the delta sending the subtrees to the appropriate indexers
-		try { 
-			processDelta(event.getDelta());
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-	}
-	
-	private void processDelta(ICElementDelta delta) throws CoreException {
-		int type = delta.getElement().getElementType();
-		switch (type) {
-		case ICElement.C_MODEL:
-			// Loop through the children
-			ICElementDelta[] children = delta.getAffectedChildren();
-			for (int i = 0; i < children.length; ++i)
-				processDelta(children[i]);
-			break;
-		case ICElement.C_PROJECT:
-			// Find the appropriate indexer and pass the delta on
-			final ICProject project = (ICProject)delta.getElement();
-			switch (delta.getKind()) {
-			case ICElementDelta.ADDED:
-		    	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
-		    	prefs.addNodeChangeListener(new IEclipsePreferences.INodeChangeListener() {
-		    		public void added(NodeChangeEvent event) {
-		    			String indexerId = event.getParent().get(INDEXER_ID_KEY, null);
-		    			try {
-		    				createIndexer(project, indexerId);
-		    			} catch (CoreException e) {
-		    				CCorePlugin.log(e);
-		    			}
-		    		}
-		    		public void removed(NodeChangeEvent event) {
-		    		}
-		    	});
-		    	break;
-			case ICElementDelta.CHANGED:
-				IPDOMIndexer indexer = getIndexer(project);
-				if (indexer != null)
-					indexer.handleDelta(delta);
-			}
-			// TODO handle delete too.
-		}
-	}
-	
-	public IElementChangedListener getElementChangedListener() {
-		return this;
 	}
 
     public String getDefaultIndexerId() {
@@ -359,13 +191,12 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElemen
     
     public void setDefaultIndexerId(String indexerId) {
     	IEclipsePreferences prefs = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
-    	if (prefs == null)
-    		return; // TODO why would this be null?
-    	
-    	prefs.put(INDEXER_ID_KEY, indexerId);
-    	try {
-    		prefs.flush();
-    	} catch (BackingStoreException e) {
+    	if (prefs != null) {
+    		prefs.put(INDEXER_ID_KEY, indexerId);
+    		try {
+    			prefs.flush();
+    		} catch (BackingStoreException e) {
+    		}
     	}
     }
     
@@ -409,64 +240,123 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElemen
   	    return indexerId;
     }
 
-    // This job is only used when setting during a get. Sometimes the get is being
-    // done in an unfriendly environment, e.g. startup.
-    private class SavePrefs extends Job {
-    	private final ICProject project;
-    	public SavePrefs(ICProject project) {
-    		super("Save Project Preferences"); //$NON-NLS-1$
-    		this.project = project;
-    		setSystem(true);
-    		setRule(project.getProject());
-    	}
-    	protected IStatus run(IProgressMonitor monitor) {
-   	    	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
-   	    	if (prefs != null) {
-   	    		try {
-   	    			prefs.flush();
-   	    		} catch (BackingStoreException e) {
-   	    		}
-   	    	}
-   	    	return Status.OK_STATUS;
-    	}
-    }
-    
-    public void setIndexerId(ICProject project, String indexerId) throws CoreException {
+    public void setIndexerId(final ICProject project, String indexerId) throws CoreException {
     	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
     	if (prefs == null)
     		return; // TODO why would this be null?
 
-    	String oldId = prefs.get(INDEXER_ID_KEY, null);
-    	if (!indexerId.equals(oldId)) {
-	    	prefs.put(INDEXER_ID_KEY, indexerId);
-	    	createIndexer(project, indexerId).reindex();
-	    	new SavePrefs(project).schedule(2000);
-    	}
+    	prefs.put(INDEXER_ID_KEY, indexerId);
+    	Job job= new Job(Messages.PDOMManager_savePrefsJob) {
+        	protected IStatus run(IProgressMonitor monitor) {
+       	    	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
+       	    	if (prefs != null) {
+       	    		try {
+       	    			prefs.flush();
+       	    		} catch (BackingStoreException e) {
+       	    		}
+       	    	}
+       	    	return Status.OK_STATUS;
+        	}
+    	};
+    	job.setSystem(true);
+    	job.setRule(project.getProject());
+    	job.schedule(2000);
     }
     
-    private IPDOMIndexer createIndexer(ICProject project, String indexerId) throws CoreException {
-    	IPDOMIndexer indexer = null;
-    	// Look up in extension point
-    	IExtension indexerExt = Platform.getExtensionRegistry()
-    		.getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);
-    	if (indexerExt != null) {
-	    	IConfigurationElement[] elements = indexerExt.getConfigurationElements();
-	    	for (int i = 0; i < elements.length; ++i) {
-	    		IConfigurationElement element = elements[i];
-	    		if ("run".equals(element.getName())) { //$NON-NLS-1$
-	    			indexer = (IPDOMIndexer)element.createExecutableExtension("class"); //$NON-NLS-1$
-	    			break;
-	    		}
-	    	}
-    	}
-    	if (indexer == null) 
-    		// Unknown index, default to the null one
-    		indexer = new PDOMNullIndexer();
-    
-    	indexer.setProject(project);
-		project.getProject().setSessionProperty(indexerProperty, indexer);
+	public IPDOMIndexer getIndexer(ICProject project) {
+		return getIndexer(project, true);
+	}
+	
+	public void onPreferenceChange(PreferenceChangeEvent event) {
+		if (event.getKey().equals(INDEXER_ID_KEY)) {
+			Preferences node = event.getNode();
+			if (CCorePlugin.PLUGIN_ID.equals(node.name())) {
+				node= node.parent();
+				IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(node.name());
+				if (project.exists() && project.isOpen()) {
+					ICProject cproject= CoreModel.getDefault().create(project);
+					if (cproject != null) {
+						try {
+							String oldId= (String) event.getOldValue();
+							String newId= (String) event.getNewValue();
+							if (newId != null && !newId.equals(oldId)) {
+								changeIndexer(cproject, newId);
+							}
+						}
+						catch (Exception e) {
+							CCorePlugin.log(e);
+						}
+					}
+				}
+			}
+		}
+	}
 
-    	return indexer;
+	private void changeIndexer(ICProject cproject, String newid) throws CoreException {
+		IPDOMIndexer indexer= getIndexer(cproject, false);
+		if (indexer != null) {
+			stopIndexer(indexer);
+		}
+		indexer= createIndexer(cproject, newid, true);
+	}
+
+	public IPDOMIndexer getIndexer(ICProject project, boolean create) {
+		try {
+			synchronized (fIndexerMutex) {
+				IProject rproject = project.getProject();
+				if (!rproject.isOpen()) {
+					return null;
+				}
+				IPDOMIndexer indexer = (IPDOMIndexer)rproject.getSessionProperty(indexerProperty);
+				
+				if (indexer != null) {
+					ICProject indexerProject= indexer.getProject();
+					if (!project.equals(indexerProject)) {
+						indexer= null;
+					}
+				}
+				if (indexer == null && create) {
+					indexer = createIndexer(project, getIndexerId(project), false);
+				}
+
+				return indexer;
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
+	}
+		
+    private IPDOMIndexer createIndexer(ICProject project, String indexerId, boolean forceReindex) throws CoreException {
+		PDOM pdom= (PDOM) getPDOM(project);
+		boolean reindex= forceReindex || pdom.versionMismatch() || pdom.isEmpty();
+    	synchronized (fIndexerMutex) {
+    		IPDOMIndexer indexer = null;
+    		// Look up in extension point
+    		IExtension indexerExt = Platform.getExtensionRegistry().getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);
+    		if (indexerExt != null) {
+    			IConfigurationElement[] elements = indexerExt.getConfigurationElements();
+    			for (int i = 0; i < elements.length; ++i) {
+    				IConfigurationElement element = elements[i];
+    				if ("run".equals(element.getName())) { //$NON-NLS-1$
+    					indexer = (IPDOMIndexer)element.createExecutableExtension("class"); //$NON-NLS-1$
+    					break;
+    				}
+    			}
+    		}
+    		if (indexer == null) 
+    			// Unknown index, default to the null one
+    			indexer = new PDOMNullIndexer();
+
+    		indexer.setProject(project);
+    		project.getProject().setSessionProperty(indexerProperty, indexer);
+    		registerPreferenceListener(project);
+
+    		if (reindex) {
+    			indexer.reindex();
+    		}
+    		return indexer;
+    	}
     }
 
     public void enqueue(IPDOMIndexerTask subjob) {
@@ -515,16 +405,6 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElemen
     	return idle;
     }
     
-    public void deleting(ICProject project) {
-    	// Project is about to be deleted. Stop all indexing tasks for it
-    	IPDOMIndexer indexer = getIndexer(project);
-    	synchronized (taskQueueMutex) {
-			if (indexerJob != null) {
-				indexerJob.cancelJobs(indexer);
-			}
-		}
-    }
-    
     private boolean isIndexerIdle() {
     	synchronized (taskQueueMutex) {
     		return currentTask == null && taskQueue.isEmpty();
@@ -545,14 +425,55 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElemen
 		return count;
 	}
 
-    
-	/**
-	 * Startup the PDOM. This mainly sets us up to handle model
-	 * change events.
-	 */
-	public void startup() {
-		CoreModel.getDefault().addElementChangedListener(this);
+	public void addProject(ICProject project, ICElementDelta delta) {
+		getIndexer(project, true); // if the indexer is new this triggers a rebuild
 	}
+
+	private void registerPreferenceListener(ICProject project) {
+    	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
+    	if (prefs != null) {
+    		prefs.addPreferenceChangeListener(fPreferenceChangeListener);
+    	}
+	}
+
+	private void unregisterPreferenceListener(ICProject project) {
+    	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
+    	if (prefs != null) {
+    		prefs.removePreferenceChangeListener(fPreferenceChangeListener);
+    	}
+	}
+
+	public void changeProject(ICProject project, ICElementDelta delta) throws CoreException {
+		IPDOMIndexer indexer = getIndexer(project, true);
+		if (indexer != null)
+			indexer.handleDelta(delta);
+
+	}
+
+	public void removeProject(ICProject project) throws CoreException {
+		IPDOMIndexer indexer= getIndexer(project, false);
+		if (indexer != null) {
+			stopIndexer(indexer);
+		}
+	}
+
+    public void deleteProject(ICProject project, IResourceDelta delta) {
+    	// Project is about to be deleted. Stop all indexing tasks for it
+    	IPDOMIndexer indexer = getIndexer(project, false);
+    	if (indexer != null) {
+    		stopIndexer(indexer);
+    	}
+    }
+
+	private void stopIndexer(IPDOMIndexer indexer) {
+		ICProject project= indexer.getProject();
+		unregisterPreferenceListener(project);
+		synchronized (taskQueueMutex) {
+			if (indexerJob != null) {
+				indexerJob.cancelJobs(indexer);
+			}
+		}
+	}    
 
 	public void addIndexChangeListener(IIndexChangeListener listener) {
 		fChangeListeners.add(listener);
@@ -612,7 +533,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElemen
 		}
 		
 		ICProject project;
-		synchronized (this) {
+		synchronized (fPDOMs) {
 			project = (ICProject) fPDOMs.get(pdom);
 		}		
 		
@@ -686,5 +607,25 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IElemen
 		finally {
 			monitor.done();
 		}
+	}
+
+	public IWritableIndex getWritableIndex(ICProject project) throws CoreException {
+		return fIndexFactory.getWritableIndex(project);
+	}
+
+	public IIndex getIndex(ICProject project) throws CoreException {
+		return fIndexFactory.getIndex(new ICProject[] {project}, 0);
+	}
+
+	public IIndex getIndex(ICProject[] projects) throws CoreException {
+		return fIndexFactory.getIndex(projects, 0);
+	}
+
+	public IIndex getIndex(ICProject project, int options) throws CoreException {
+		return fIndexFactory.getIndex(new ICProject[] {project}, options);
+	}
+
+	public IIndex getIndex(ICProject[] projects, int options) throws CoreException {
+		return fIndexFactory.getIndex(projects, options);
 	}
 }

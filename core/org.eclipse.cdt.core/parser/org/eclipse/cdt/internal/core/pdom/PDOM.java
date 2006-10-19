@@ -87,9 +87,11 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// Local caches
 	private BTree fileIndex;
 	private Map fLinkageIDCache = new HashMap();
+	private IPath fPath;
 	
 	public PDOM(IPath dbPath) throws CoreException {
 		// Load up the database
+		fPath= dbPath;
 		db = new Database(dbPath.toOSString());
 		
 		if (db.getVersion() == VERSION) {
@@ -585,6 +587,10 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			return pdomInclude.getIncludes();
 		}
 		return getFile(include.getIncludesLocation());
+	}
+
+	public IPath getPath() {
+		return fPath;
 	}
 
 }

@@ -9,7 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.internal.indexer.tests;
+package org.eclipse.cdt.internal.index.tests;
 
 import java.util.LinkedList;
 import java.util.regex.Pattern;
@@ -86,12 +86,11 @@ public class IndexSearchTest extends BaseTestCase {
 				
 				CCorePlugin.getPDOMManager().setIndexerId(fProject, IPDOMManager.ID_NO_INDEXER);
 				CProjectHelper.importSourcesFromPlugin(fProject, CTestPlugin.getDefault().getBundle(), "resources/indexTests/search");
-				CCorePlugin.getPDOMManager().setIndexerId(fProject, IPDOMManager.ID_FAST_INDEXER);
-				
-				// wait until the indexer is done
-				assertTrue(CCorePlugin.getIndexManager().joinIndexer(5000, new NullProgressMonitor()));
 			}
 		}, null);
+		CCorePlugin.getPDOMManager().setIndexerId(fProject, IPDOMManager.ID_FAST_INDEXER);		
+		// wait until the indexer is done
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(5000, new NullProgressMonitor()));
 	}
 
 	public void deleteProject() {

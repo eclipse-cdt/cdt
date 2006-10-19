@@ -19,6 +19,7 @@ package org.eclipse.rse.ui.propertypages;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -38,6 +39,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 
 /**
@@ -73,7 +76,7 @@ public class RemoteSystemsPreferencePage
 		super(GRID);
 		setTitle(SystemResources.RESID_PREF_ROOT_PAGE);		
 		setPreferenceStore(RSEUIPlugin.getDefault().getPreferenceStore());
-		setDescription(SystemResources.RESID_PREF_ROOT_TITLE);
+//		setDescription(SystemResources.RESID_PREF_ROOT_TITLE); // removed since this is not read by screen reader
 	}
 	/**
 	 * We intercept to set the help
@@ -81,6 +84,7 @@ public class RemoteSystemsPreferencePage
 	public void createControl(Composite parent) 
 	{
 		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), RSEUIPlugin.HELPPREFIX+"rsep0000");		
 	}
 	
 	/**
@@ -187,9 +191,7 @@ public class RemoteSystemsPreferencePage
 		**/	
 		// set mnemonics
         (new Mnemonics()).setOnPreferencePage(true).setMnemonics(getFieldEditorParent());
-        
-        // set help
-		SystemWidgetHelpers.setCompositeHelp(getFieldEditorParent(), RSEUIPlugin.HELPPREFIX+"rsep0000"); //$NON-NLS-1$
+
 	}
 	
 	// ---------------------------------------------------------

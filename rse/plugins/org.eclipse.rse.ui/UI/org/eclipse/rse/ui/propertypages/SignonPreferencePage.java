@@ -184,7 +184,7 @@ public final class SignonPreferencePage extends PreferencePage implements IWorkb
 		gd.grabExcessHorizontalSpace = true;
 		gd.grabExcessVerticalSpace = true;
 		
-		SystemWidgetHelpers.createLabel(page, SystemResources.RESID_PREF_SIGNON_DESCRIPTION, 2);
+//		SystemWidgetHelpers.createLabel(page, SystemResources.RESID_PREF_SIGNON_DESCRIPTION, 2);
 		
 		// Password table
 		pwdTable = new Table(page, SWT.FULL_SELECTION |SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);

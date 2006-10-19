@@ -73,6 +73,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -95,7 +96,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 	{
 		super();
 		setPreferenceStore(RSEUIPlugin.getDefault().getPreferenceStore());
-		setDescription(FileResources.RESID_PREF_CACHE_DESCRIPTION);
+//		setDescription(FileResources.RESID_PREF_CACHE_DESCRIPTION); dwd descriptions are not readable by screen reader
 	}
 
 	/**
@@ -104,6 +105,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 	public void createControl(Composite parent)
 	{
 		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), RSEUIPlugin.HELPPREFIX + "fchp0000");
 	}
 
 	/**
@@ -146,46 +148,42 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 			}
 		});
 
-		Composite clearComp = SystemWidgetHelpers.createComposite(parent, 2);
-		layout = new GridLayout();
-		layout.numColumns = 2;
-		clearComp.setLayout(layout);
-		clearComp.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+//		Composite clearComp = SystemWidgetHelpers.createComposite(parent, 2);
+//		layout = new GridLayout();
+//		layout.numColumns = 2;
+//		clearComp.setLayout(layout);
+//		clearComp.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
-		SystemWidgetHelpers.createLabel(
-			clearComp,
-			FileResources.RESID_PREF_CACHE_CLEAR_LABEL);
-		_clearButton =
-			SystemWidgetHelpers.createPushButton(
-				clearComp,
-				FileResources.RESID_PREF_CACHE_CLEAR,
-				this);
+//		SystemWidgetHelpers.createLabel(
+//			clearComp,
+//			FileResources.RESID_PREF_CACHE_CLEAR_LABEL);
+		_clearButton = SystemWidgetHelpers.createPushButton(parent, FileResources.RESID_PREF_CACHE_CLEAR, this);
+		_clearButton.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 		_clearButton.setToolTipText(FileResources.RESID_PREF_CACHE_CLEAR_TOOLTIP);
-		gd = new GridData();
-		gd.widthHint = 75;
-		_clearButton.setLayoutData(gd);
+//		gd = new GridData();
+//		gd.widthHint = 75;
+//		_clearButton.setLayoutData(gd);
 
-		Composite warningComp = SystemWidgetHelpers.createComposite(clearComp, 2);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		warningComp.setLayoutData(gd);
+//		Composite warningComp = SystemWidgetHelpers.createComposite(clearComp, 2);
+//		gd = new GridData();
+//		gd.horizontalSpan = 2;
+//		warningComp.setLayoutData(gd);
 
-		Display display = getControl().getDisplay();
-		Label warningLabel =
-			SystemWidgetHelpers.createLabel(
-				warningComp,
-				FileResources.RESID_PREF_CACHE_CLEAR_WARNING_LABEL);
-		FontData oldData = warningLabel.getFont().getFontData()[0];
-		FontData data = new FontData(oldData.getName(), oldData.getHeight(), SWT.BOLD);
-		Font fFont = new Font(display, data);
+//		Display display = getControl().getDisplay();
+//		Label warningLabel =
+//			SystemWidgetHelpers.createLabel(
+//				warningComp,
+//				FileResources.RESID_PREF_CACHE_CLEAR_WARNING_LABEL);
+//		FontData oldData = warningLabel.getFont().getFontData()[0];
+//		FontData data = new FontData(oldData.getName(), oldData.getHeight(), SWT.BOLD);
+//		Font fFont = new Font(display, data);
+//		warningLabel.setFont(fFont);
 
-		warningLabel.setFont(fFont);
-		SystemWidgetHelpers.createLabel(
-			warningComp,
-			FileResources.RESID_PREF_CACHE_CLEAR_WARNING_DESCRIPTION);
+		Text warning = new Text(parent, SWT.READ_ONLY);
+//		SystemWidgetHelpers.createReadonlyTextField(parent);
+		warning.setText(FileResources.RESID_PREF_CACHE_CLEAR_WARNING_DESCRIPTION);
 
 		(new Mnemonics()).setOnPreferencePage(true).setMnemonics(parent);
-		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "fchp0000");
 
 		initControls();
 		return parent;

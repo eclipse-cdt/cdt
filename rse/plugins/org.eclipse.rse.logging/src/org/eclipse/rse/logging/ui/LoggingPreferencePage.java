@@ -131,10 +131,10 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 	 */
 	protected Control createContents(Composite parent) {
 		Composite composite_tab = createComposite(parent, 1, 1);
-		String bundleName = (String)(getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME));
-		String topLabel1 = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_TOPLABEL1;
-		topLabel1 = MessageFormat.format(topLabel1, new Object[] {bundleName});
-		createLabel(composite_tab, 1, topLabel1);
+//		String bundleName = (String)(getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME));
+//		String topLabel1 = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_TOPLABEL1;
+//		topLabel1 = MessageFormat.format(topLabel1, new Object[] {bundleName});
+//		createLabel(composite_tab, 1, topLabel1);
 		String topLabel2 = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_TOPLABEL2;
 		Group group1 = createGroup(composite_tab, 1, 1, topLabel2);
 		Set used = LabelUtil.usedFromString("ad"); // the mnemonics already used on preference page (in English)

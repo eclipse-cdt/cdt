@@ -931,11 +931,11 @@ Use the port preference to change which local TCP/IP port the daemon uses to lis
 
 <!-- file cache preference page -->
 <context id="fchp0000">
-<description>This is the RSE file cache preference page.  
+<description>This is the RSE file cache preference page.
 
-Use this page to limit the amount of disk space used to store locally replicated remote files.
+Remote files are cached locally when RSE is used for editing. Use the <b>Maximum cache size</b> settings to specify a limit to the amount of disk space used for this cache.
 
-Use the clear button to remove all cached files.
+Click the <b>Clear Cached Files</b> button to remove all cached files. Clearing the cache will close any editors open for these files.
 </description>
 </context>
 

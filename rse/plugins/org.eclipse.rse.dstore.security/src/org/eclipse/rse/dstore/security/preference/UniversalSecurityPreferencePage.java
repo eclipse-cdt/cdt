@@ -61,6 +61,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -100,7 +101,7 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		composite.setLayout(layout);
 		composite.setLayoutData(GridUtil.createFill());
 
-		Label label = new Label(composite, SWT.NULL);
+		Text label = new Text(composite, SWT.READ_ONLY);
 		label.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_PREF_SEC_DESCRIPTION));
 		GridData data = new GridData();
 		data.horizontalSpan = 2;

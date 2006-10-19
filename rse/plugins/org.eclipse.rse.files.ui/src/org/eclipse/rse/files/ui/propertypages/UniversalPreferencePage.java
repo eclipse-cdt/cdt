@@ -115,16 +115,15 @@ public class UniversalPreferencePage
 	public UniversalPreferencePage() {
 		super(GRID);
 		setPreferenceStore(RSEUIPlugin.getDefault().getPreferenceStore());
-		setDescription(FileResources.RESID_PREF_UNIVERSAL_FILES_TITLE);
+//		setDescription(FileResources.RESID_PREF_UNIVERSAL_FILES_TITLE);
 	}
 
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		// added for 1GEUGE6: ITPJUI:WIN2000 - Help is the same on all preference pages
 		super.createControl(parent);
-		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, RSEUIPlugin.HELPPREFIX+"ufpf0000");
 	}
 	
 	
@@ -382,7 +381,6 @@ public class UniversalPreferencePage
 		updateEnabledState();
 		
         (new Mnemonics()).setOnPreferencePage(true).setMnemonics(parent);	
-		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX+"ufpf0000");
 		
 	}
 

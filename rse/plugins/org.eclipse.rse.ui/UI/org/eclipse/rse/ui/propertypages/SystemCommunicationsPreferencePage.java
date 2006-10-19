@@ -29,6 +29,7 @@ import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -47,7 +48,7 @@ public class SystemCommunicationsPreferencePage extends FieldEditorPreferencePag
 	{
 		super(GRID);
 		setPreferenceStore(RSEUIPlugin.getDefault().getPreferenceStore());
-		setDescription(SystemResources.RESID_PREF_COMMUNICATIONS_TITLE);
+//		setDescription(SystemResources.RESID_PREF_COMMUNICATIONS_TITLE); dwd description is not readable by screen reader
 	}
 
 	/**
@@ -56,6 +57,7 @@ public class SystemCommunicationsPreferencePage extends FieldEditorPreferencePag
 	public void createControl(Composite parent) 
 	{
 		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), RSEUIPlugin.HELPPREFIX + "cmmp0000");
 	}
 	
 	
@@ -91,8 +93,6 @@ public class SystemCommunicationsPreferencePage extends FieldEditorPreferencePag
 
 		
         (new Mnemonics()).setOnPreferencePage(true).setMnemonics(parent);	
-		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "cmmp0000");
-
 	}
 
 	/**

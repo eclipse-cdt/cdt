@@ -57,7 +57,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		if (prevInclude != null)
 			prevInclude.setNextInIncludedBy(nextInclude);
 		else
-			((PDOMFile) getIncludes()).setFirstIncludedBy(null);
+			((PDOMFile) getIncludes()).setFirstIncludedBy(nextInclude);
 		
 		if (nextInclude != null)
 			nextInclude.setPrevInIncludedBy(prevInclude);
@@ -127,5 +127,4 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	public IIndexFragment getFragment() {
 		return pdom;
 	}
-	
 }

@@ -96,38 +96,25 @@ public class CallHierarchyUI {
 			final IEditorInput editorInput = editor.getEditorInput();
 			final Display display= Display.getCurrent();
 			
-			if (!sIsJUnitTest) {
-				Job job= new Job(CHMessages.CallHierarchyUI_label) {
-					protected IStatus run(IProgressMonitor monitor) {
-						try {
-							final ICElement[] elems= findDefinitions(project, editorInput, sel);
-							if (elems != null && elems.length > 0) {
-								display.asyncExec(new Runnable() {
-									public void run() {
-										openInViewPart(editor.getSite().getWorkbenchWindow(), elems);
-									}});
-							}
-							return Status.OK_STATUS;
-						} 
-						catch (CoreException e) {
-							return e.getStatus();
+			Job job= new Job(CHMessages.CallHierarchyUI_label) {
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						final ICElement[] elems= findDefinitions(project, editorInput, sel);
+						if (elems != null && elems.length > 0) {
+							display.asyncExec(new Runnable() {
+								public void run() {
+									openInViewPart(editor.getSite().getWorkbenchWindow(), elems);
+								}});
 						}
+						return Status.OK_STATUS;
+					} 
+					catch (CoreException e) {
+						return e.getStatus();
 					}
-				};
-				job.setUser(true);
-				job.schedule();
-			}
-			else {
-				ICElement[] elems;
-				try {
-					elems = findDefinitions(project, editorInput, sel);
-					if (elems != null && elems.length > 0) {
-						openInViewPart(editor.getSite().getWorkbenchWindow(), elems);
-					}
-				} catch (CoreException e) {
-					CUIPlugin.getDefault().log(e);
 				}
-			}
+			};
+			job.setUser(true);
+			job.schedule();
 		}
     }
     

@@ -66,7 +66,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected void openCallHierarchy(CEditor editor) {
 		CallHierarchyUI.setIsJUnitTest(true);
 		CallHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
-		runEventQueue(0);
+		runEventQueue(200);
 	}
 
 	protected Tree getCHTree(IWorkbenchPage page) {

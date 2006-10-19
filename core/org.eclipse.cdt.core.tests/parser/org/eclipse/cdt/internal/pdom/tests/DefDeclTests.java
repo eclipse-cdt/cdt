@@ -13,9 +13,11 @@ package org.eclipse.cdt.internal.pdom.tests;
 
 import java.io.File;
 import java.util.regex.Pattern;
+
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -29,7 +31,6 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
@@ -42,8 +43,6 @@ import org.eclipse.jface.text.BadLocationException;
  * 
  */
 public class DefDeclTests extends PDOMTestBase {
-	static IPath rootPath = new Path("resources/pdomtests");
-
 	private String projectName = null;
 
 	protected PDOM pdom;
@@ -120,27 +119,6 @@ public class DefDeclTests extends PDOMTestBase {
 			if (found == false)
 				fail(fail);
 		}
-	}
-
-	private IName getReference(IBinding binding, int k) throws CoreException {
-		return getFirstUsage(binding, k, IIndex.FIND_REFERENCES);
-	}
-
-	private IName getDefinition(IBinding binding, int k) throws CoreException {
-		return getFirstUsage(binding, k, IIndex.FIND_DEFINITIONS);
-	}
-
-	/**
-	 * Get declaration. If k>0 check that there are k of them.
-	 * 
-	 * @param binding
-	 * @param k -
-	 *            number of declarations, if k==-1 no check
-	 * @return first declaration or null of non
-	 * @throws CoreException
-	 */
-	private IName getDeclaration(IBinding binding, int k) throws CoreException {
-		return getFirstUsage(binding, k, IIndex.FIND_DECLARATIONS);
 	}
 
 	/**

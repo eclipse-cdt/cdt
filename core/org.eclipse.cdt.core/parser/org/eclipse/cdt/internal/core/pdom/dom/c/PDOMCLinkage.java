@@ -135,7 +135,9 @@ class PDOMCLinkage extends PDOMLinkage {
 			} else if (binding instanceof ITypedef)
 				pdomBinding = new PDOMCTypedef(pdom, parent, name, (ITypedef)binding);
 			
-			parent.addChild(pdomBinding);
+			if(pdomBinding!=null) {
+				parent.addChild(pdomBinding);
+			}
 		}
 
 		if (pdomBinding != null)

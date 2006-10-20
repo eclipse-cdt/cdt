@@ -14,17 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 public final class FindBindingsInBTree implements IBTreeVisitor {
-	protected final PDOM pdom;
+	protected final PDOMLinkage linkage;
 	protected final char[] name;
 	
 	
 	public int compare(int record) throws CoreException {
-		PDOMNamedNode node = ((PDOMNamedNode)pdom.getLinkage(record).getNode(record)); 
+		PDOMNamedNode node = ((PDOMNamedNode)linkage.getNode(record)); 
 		return node.getDBName().compare(name);
 	}
 	
@@ -37,8 +36,8 @@ public final class FindBindingsInBTree implements IBTreeVisitor {
 	 * @param pdom
 	 * @param name
 	 */
-	public FindBindingsInBTree(PDOM pdom, char[] name) {
-		this(pdom, name, null);
+	public FindBindingsInBTree(PDOMLinkage linkage, char[] name) {
+		this(linkage, name, null);
 	}
 	
 	/**
@@ -48,8 +47,8 @@ public final class FindBindingsInBTree implements IBTreeVisitor {
 	 * @param name
 	 * @param desiredType
 	 */
-	public FindBindingsInBTree(PDOM pdom, char[] name, int desiredType) {
-		this(pdom, name, new int[] { desiredType });
+	public FindBindingsInBTree(PDOMLinkage linkage, char[] name, int desiredType) {
+		this(linkage, name, new int[] { desiredType });
 	}
 	
 	/**
@@ -59,17 +58,17 @@ public final class FindBindingsInBTree implements IBTreeVisitor {
 	 * @param name
 	 * @param desiredType
 	 */
-	public FindBindingsInBTree(PDOM pdom, char[] name, int[] desiredType) {
-		this.pdom = pdom;
+	public FindBindingsInBTree(PDOMLinkage linkage, char[] name, int[] desiredType) {
 		this.name = name;
 		this.desiredType = desiredType;
+		this.linkage= linkage;
 	}
 	
 	public boolean visit(int record) throws CoreException {
 		if (record == 0)
 			return true;
 		
-		PDOMBinding tBinding = pdom.getBinding(record);
+		PDOMBinding tBinding = linkage.getPDOM().getBinding(record);
 		if (!tBinding.hasName(name))
 			// no more bindings with our desired name
 			return false;

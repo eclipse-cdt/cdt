@@ -112,12 +112,11 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	public PDOMBinding addName(IASTName name, PDOMFile file) throws CoreException {
 		if (name == null || name instanceof ICPPASTQualifiedName)
 			return null;
-		
+
 		// Check for null name
 		char[] namechars = name.toCharArray();
 		if (namechars == null || namechars.length == 0)
 			return null;
-
 
 		IBinding binding = name.resolveBinding();
 
@@ -144,32 +143,8 @@ class PDOMCPPLinkage extends PDOMLinkage {
 					} else if (binding instanceof CPPImplicitMethod && parent instanceof PDOMCPPClassType) {
 						if(!name.isReference()) {
 							//because we got the implicit method off of an IASTName that is not a reference,
-							//it is no longer completly implicit and it should be treated as a normal method.
+							//it is no longer completly implicit and it should be treated as a normal method.						
 							pdomBinding = new PDOMCPPMethod(pdom, parent, name);
-						} else if (binding instanceof CPPImplicitMethod && parent instanceof PDOMCPPClassType) {
-							if(!name.isReference()) {
-								//because we got the implicit method off of an IASTName that is not a reference,
-								//it is no longer completly implicit and it should be treated as a normal method.
-								pdomBinding = new PDOMCPPMethod(pdom, parent, name);
-							}
-						} else if (binding instanceof ICPPFunction) {
-							pdomBinding = new PDOMCPPFunction(pdom, parent, name);
-						} else if (binding instanceof ICPPClassType) {
-							pdomBinding = new PDOMCPPClassType(pdom, parent, name);
-						} else if (binding instanceof ICPPNamespaceAlias) {
-							pdomBinding = new PDOMCPPNamespaceAlias(pdom, parent, name);
-						} else if (binding instanceof ICPPNamespace) {
-							pdomBinding = new PDOMCPPNamespace(pdom, parent, name);
-						} else if (binding instanceof IEnumeration) {
-							pdomBinding = new PDOMCPPEnumeration(pdom, parent, name);
-						} else if (binding instanceof IEnumerator) {
-							IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
-							PDOMBinding pdomEnumeration = adaptBinding(enumeration);
-							if (pdomEnumeration instanceof PDOMCPPEnumeration)
-								pdomBinding = new PDOMCPPEnumerator(pdom, parent, name,
-										(PDOMCPPEnumeration)pdomEnumeration);
-						} else if (binding instanceof ITypedef) {
-							pdomBinding = new PDOMCPPTypedef(pdom, parent, name, (ITypedef)binding);
 						}
 					} else if (binding instanceof ICPPFunction) {
 						pdomBinding = new PDOMCPPFunction(pdom, parent, name);
@@ -190,7 +165,10 @@ class PDOMCPPLinkage extends PDOMLinkage {
 					} else if (binding instanceof ITypedef) {
 						pdomBinding = new PDOMCPPTypedef(pdom, parent, name, (ITypedef)binding);
 					}
-					parent.addChild(pdomBinding);
+					
+					if(pdomBinding!=null) {
+						parent.addChild(pdomBinding);
+					}
 				}
 			}
 		} catch(DOMException e) {
@@ -296,7 +274,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 			throw new CoreException(Util.createStatus(e));
 		}
 	}
-	
+
 	private PDOMBinding _resolveBinding(IASTName name) throws CoreException, DOMException {
 		// mstodo revisit
 		IBinding origBinding = name.getBinding();	

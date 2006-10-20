@@ -102,7 +102,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 
 	public IBinding[] find(String name) throws DOMException {
 		try {
-			FindBindingsInBTree visitor = new FindBindingsInBTree(pdom, name.toCharArray());
+			FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray());
 			getIndex().accept(visitor);
 			return visitor.getBinding();
 		} catch (CoreException e) {
@@ -133,7 +133,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 						return null;
 					
 					// Look up the name
-					FindBindingsInBTree visitor = new FindBindingsInBTree(pdom, name.toCharArray(),
+					FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray(),
 							new int[] {
 								PDOMCPPLinkage.CPPCLASSTYPE,
 								PDOMCPPLinkage.CPPNAMESPACE,
@@ -160,7 +160,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 					getIndex().accept(feb);
 					return feb.getResult();
 				} else {
-					FindBindingsInBTree visitor = new FindBindingsInBTree(pdom, name.toCharArray(), 
+					FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray(), 
 							(name.getParent() instanceof ICPPASTQualifiedName
 									&& ((ICPPASTQualifiedName)name.getParent()).getLastName() != name)
 								? PDOMCPPLinkage.CPPNAMESPACE : PDOMCPPLinkage.CPPVARIABLE);
@@ -171,7 +171,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 					           : null;
 				}
 			} else if (parent instanceof IASTNamedTypeSpecifier) {
-				FindBindingsInBTree visitor = new FindBindingsInBTree(pdom, name.toCharArray(), PDOMCPPLinkage.CPPCLASSTYPE);
+				FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray(), PDOMCPPLinkage.CPPCLASSTYPE);
 				getIndex().accept(visitor);
 				IBinding[] bindings = visitor.getBinding();
 				return bindings.length > 0

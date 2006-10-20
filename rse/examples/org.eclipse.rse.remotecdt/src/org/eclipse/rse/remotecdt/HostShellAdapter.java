@@ -48,6 +48,8 @@ IHostShellOutputListener {
 		hostShell.exit();
 		notifyAll();
 		try {
+			hostShellInput.close();
+			hostShellError.close();
 			inputStream.close();
 			errorStream.close();
 			outputStream.close();
@@ -56,7 +58,7 @@ IHostShellOutputListener {
 		}	
 	}
 
-	public int exitValue() {
+	public synchronized int exitValue() {
 		if(hostShell.isActive())
 			throw new IllegalThreadStateException();
 		// No way to tell what the exit value was.
@@ -76,8 +78,30 @@ IHostShellOutputListener {
 	}
 
 	public synchronized int waitFor() throws InterruptedException {
-		while(hostShell.isActive())
-			wait();
+		
+		while(hostShell.isActive()) {
+			try {
+				wait(1000);
+			} catch (InterruptedException e) {
+				// ignore because we're polling to see if shell is still active.
+			}
+		}
+		
+		try {
+			// Wait a second to try to get some more output from the target shell before closing.
+			wait(1000);
+			// Allow for the data from the stream to be read if it's available
+			if (inputStream.available() != 0 || errorStream.available() != 0)
+				throw new InterruptedException();
+	
+			hostShellInput.close();
+			hostShellError.close();
+			inputStream.close();
+			errorStream.close();
+			outputStream.close();
+		} catch (IOException e) {
+			// Ignore
+		}
 		return 0;
 	}
 	

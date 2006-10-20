@@ -55,6 +55,8 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	
 	private final static String SHELL_SERVICE = "shell.service";  //$NON-NLS-1$
 	private final static String FILE_SERVICE = "file.service";  //$NON-NLS-1$
+	private final static String EXIT_CMD = "exit"; //$NON-NLS-1$
+	private final static String CMD_DELIMITER = ";"; //$NON-NLS-1$
 	
 	/*
 	 *  (non-Javadoc)
@@ -259,8 +261,13 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	
 	protected Process remoteShellExec(ILaunchConfiguration config, String remoteCommandPath,
 			String arguments) throws CoreException {
-		String remote_command = arguments == null ? spaceEscapify(remoteCommandPath) :
+		// The exit command is called to force the remote shell to close after our command 
+		// is executed. This is to prevent a running process at the end of the debug session.
+		// See Bug 158786.
+		String real_remote_command = arguments == null ? spaceEscapify(remoteCommandPath) :
 												    spaceEscapify(remoteCommandPath) + " " + arguments; //$NON-NLS-1$
+		String remote_command = real_remote_command + CMD_DELIMITER + EXIT_CMD;
+		
 		IShellService shellService = (IShellService) getConnectedRemoteService(config, SHELL_SERVICE);
 		
 		// This is necessary because runCommand does not actually run the command right now.

@@ -102,6 +102,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
@@ -583,7 +584,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				
 				IBinding[] bindings = new GCCBuiltinSymbolProvider(translationUnit.getScope(), ParserLanguage.C).getBuiltinBindings();
 				for(int i=0; i<bindings.length; i++) {
-					tuScope.addBinding(bindings[i]);
+					ASTInternal.addBinding(tuScope, bindings[i]);
 				}
 			}
         } catch (Exception e2) {
@@ -1295,7 +1296,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 //            backup(mark);
 //            throwBacktrack(bt);
         }
-        if (declarator == null || declarator.getName().toCharArray().length > 0) //$NON-NLS-1$
+        if (declarator == null || declarator.getName().toCharArray().length > 0) 
         {
         	return null;
 //            backup(mark);

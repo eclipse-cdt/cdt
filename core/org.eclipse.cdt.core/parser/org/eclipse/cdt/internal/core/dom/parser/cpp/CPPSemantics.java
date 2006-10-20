@@ -1626,14 +1626,14 @@ public class CPPSemantics {
     		    while( dtor.getNestedDeclarator() != null )
     		    	dtor = dtor.getNestedDeclarator();
     			IASTName declName = dtor.getName();
-    			scope.addName( declName );
+    			ASTInternal.addName( scope,  declName );
     			if( !data.typesOnly && nameMatches( data, declName ) ) {
     			    return declName;
     		    }
             }
 		} else if( node instanceof ICPPASTTemplateParameter ){
 			IASTName name = CPPTemplates.getTemplateParameterName( (ICPPASTTemplateParameter) node );
-			scope.addName( name );
+			ASTInternal.addName( scope,  name );
 			if( nameMatches( data, name ) ) {
 		        return name;
 		    }
@@ -1651,7 +1651,7 @@ public class CPPSemantics {
 					while( declarator.getNestedDeclarator() != null )
 						declarator = declarator.getNestedDeclarator();
 					IASTName declaratorName = declarator.getName();
-					scope.addName( declaratorName );
+					ASTInternal.addName( scope,  declaratorName );
 					if( !data.typesOnly || simpleDeclaration.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ) {
 						if( nameMatches( data, declaratorName ) ) {
 							if( resultName == null )
@@ -1715,7 +1715,7 @@ public class CPPSemantics {
 			        IASTEnumerator enumerator = list[i];
 			        if( enumerator == null ) break;
 			        tempName = enumerator.getName();
-			        scope.addName( tempName );
+			        ASTInternal.addName( scope,  tempName );
 			        if( !data.typesOnly && nameMatches( data, tempName ) ) {
 			            if( resultName == null )
 						    resultName = tempName;
@@ -1727,7 +1727,7 @@ public class CPPSemantics {
 			    }
 			}
 			if( specName != null ) {
-			    scope.addName( specName );
+			    ASTInternal.addName( scope,  specName );
 			    if( nameMatches( data, specName ) ) {
 				    if( resultName == null )
 					    resultName = specName;
@@ -1744,18 +1744,18 @@ public class CPPSemantics {
 				IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
 				name = ns[ ns.length - 1 ];
 			}
-			scope.addName( name );
+			ASTInternal.addName( scope,  name );
 			if( nameMatches( data, name ) ) {
 				return name;
 			}
 		} else if( declaration instanceof ICPPASTNamespaceDefinition ){
 			IASTName namespaceName = ((ICPPASTNamespaceDefinition) declaration).getName();
-			scope.addName( namespaceName );
+			ASTInternal.addName( scope,  namespaceName );
 			if( nameMatches( data, namespaceName ) )
 				return namespaceName;
 		} else if( declaration instanceof ICPPASTNamespaceAlias ){
 			IASTName alias = ((ICPPASTNamespaceAlias) declaration).getAlias();
-			scope.addName( alias );
+			ASTInternal.addName( scope,  alias );
 			if( nameMatches( data, alias ) )
 				return alias;
 		} else if( declaration instanceof IASTFunctionDefinition ){
@@ -1765,7 +1765,7 @@ public class CPPSemantics {
 				
 				//check the function itself
 				IASTName declName = declarator.getName();
-				scope.addName( declName );
+				ASTInternal.addName( scope,  declName );
 	
 			    if( !data.typesOnly && nameMatches( data, declName ) ) {
 					return declName;

@@ -402,11 +402,11 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 			    IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
 			    for( int j = 0; j < dtors.length; j++ ){
 			        if( dtors[j] == null ) break;
-		            scope.addName( dtors[j].getName() );
+		            ASTInternal.addName(scope,  dtors[j].getName() );
 			    }
 			} else if( decl instanceof IASTFunctionDefinition ){
 			    IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
-			    scope.addName( dtor.getName() );
+			    ASTInternal.addName(scope,  dtor.getName() );
 			}
         }
         

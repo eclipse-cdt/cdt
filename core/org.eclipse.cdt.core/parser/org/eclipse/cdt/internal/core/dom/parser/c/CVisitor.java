@@ -113,8 +113,8 @@ public class CVisitor {
 				 ICScope scope;
                 try {
                     scope = (ICScope)name.resolveBinding().getScope();
-                    if ( scope != null )
-    				 	scope.removeBinding(name.resolveBinding());
+                    if ( scope != null ) 
+                    	ASTInternal.removeBinding(scope, name.resolveBinding());
                 } catch ( DOMException e ) {
                 }
 				name.setBinding( null );
@@ -498,7 +498,7 @@ public class CVisitor {
 	    } else {
 	        binding = new CEnumeration( name );
 	        try {
-                scope.addName( name );
+	        	ASTInternal.addName(scope, name);
             } catch ( DOMException e1 ) {
             }
 	    } 
@@ -507,7 +507,7 @@ public class CVisitor {
 	private static IBinding createBinding( IASTEnumerator enumerator ){
 	    IEnumerator binding = new CEnumerator( enumerator ); 
 	    try {
-            ((ICScope)binding.getScope()).addName( enumerator.getName() );
+	    	ASTInternal.addName(binding.getScope(), enumerator.getName() );
         } catch ( DOMException e ) {
         }
 	    return binding;
@@ -534,7 +534,7 @@ public class CVisitor {
 	        try {
 	        	IScope scope = binding.getScope();
 	        	if (scope instanceof ICFunctionScope)
-	        		((ICFunctionScope) binding.getScope()).addName( name );
+	        		ASTInternal.addName(binding.getScope(), name );
             } catch ( DOMException e ) {
             }
 	        return binding;
@@ -562,7 +562,7 @@ public class CVisitor {
 			    }
 				
 				try {
-                    ((ICScope) binding.getScope()).addName( name );
+					ASTInternal.addName(binding.getScope(), name );
                 } catch ( DOMException e ) {
                 }
 			}
@@ -803,7 +803,7 @@ public class CVisitor {
 					ICScope scope = (ICScope) ((IASTCompoundStatement)((IASTFunctionDefinition)declarator.getParent()).getBody()).getScope();
 					if ( scope != null && binding != null )
                         try {
-                            scope.addName(name);
+                            ASTInternal.addName( scope, name);
                         } catch ( DOMException e ) {
                         }
 				}
@@ -903,7 +903,7 @@ public class CVisitor {
 
 		if( scope != null && binding != null )
             try {
-                scope.addName( name );
+                ASTInternal.addName( scope,  name );
             } catch ( DOMException e ) {
             }
 		return binding;
@@ -932,7 +932,7 @@ public class CVisitor {
 	    
         try {
             scope = (ICScope) binding.getScope();
-            scope.addName( name );
+            ASTInternal.addName( scope,  name );
         } catch ( DOMException e ) {
         }
         
@@ -1350,7 +1350,7 @@ public class CVisitor {
 		if( declSpec instanceof ICASTElaboratedTypeSpecifier ){
 			tempName = ((ICASTElaboratedTypeSpecifier)declSpec).getName();
 			if( scope != null )
-			    scope.addName( tempName );
+			    ASTInternal.addName( scope,  tempName );
 			if( typesOnly ){
 			    if( prefixMap != null ) 
 	                prefixMap = (CharArrayObjectMap) collectResult( tempName, n, prefixMap );
@@ -1360,7 +1360,7 @@ public class CVisitor {
 		} else if( declSpec instanceof ICASTCompositeTypeSpecifier ){
 			tempName = ((ICASTCompositeTypeSpecifier)declSpec).getName();
 			if( scope != null )
-			    scope.addName( tempName );
+			    ASTInternal.addName( scope,  tempName );
 			
 			if( typesOnly ){
 			    if( prefixMap != null ) 
@@ -1385,7 +1385,7 @@ public class CVisitor {
 		    ICASTEnumerationSpecifier enumeration = (ICASTEnumerationSpecifier) declSpec;
 		    tempName = enumeration.getName();
 		    if( scope != null )
-		        scope.addName( tempName );
+		        ASTInternal.addName( scope,  tempName );
 		    if( typesOnly ){
 	            if( prefixMap != null ) 
 	                prefixMap = (CharArrayObjectMap) collectResult( tempName, n, prefixMap );
@@ -1399,7 +1399,7 @@ public class CVisitor {
 		        if( enumerator == null ) break;
 		        tempName = enumerator.getName();
 		        if( scope != null )
-		            scope.addName( tempName );
+		            ASTInternal.addName( scope,  tempName );
 		        if( !typesOnly ){
 		            if( prefixMap != null ) 
 		                prefixMap = (CharArrayObjectMap) collectResult( tempName, n, prefixMap );
@@ -1430,7 +1430,7 @@ public class CVisitor {
 		}
 		IASTName tempName = dtor.getName();
 		if( scope != null )
-		    scope.addName( tempName );
+		    ASTInternal.addName( scope,  tempName );
 		
 		if( !typesOnly ) {
 		    char [] c = tempName.toCharArray();
@@ -1478,7 +1478,7 @@ public class CVisitor {
 				}
 				tempName = declarator.getName();
 				if( scope != null )
-				    scope.addName( tempName );
+				    ASTInternal.addName( scope,  tempName );
 				
 				if( !typesOnly ){
 		            if( prefixMap != null ) 
@@ -1498,7 +1498,7 @@ public class CVisitor {
 			IASTDeclarator dtor = functionDef.getDeclarator();
 			tempName = dtor.getName();
 			if( scope != null )
-			    scope.addName( tempName );
+			    ASTInternal.addName( scope,  tempName );
 
 			if( !typesOnly ){
 	            if( prefixMap != null ) 

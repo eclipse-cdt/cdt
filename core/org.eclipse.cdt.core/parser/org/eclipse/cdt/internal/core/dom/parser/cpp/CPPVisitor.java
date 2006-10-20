@@ -219,7 +219,7 @@ public class CPPVisitor {
             binding = functionScope.getBinding( name, false );
             if( binding == null || !(binding instanceof ILabel) ){
     	        binding = new CPPLabel( name );
-    	        functionScope.addName( name );
+    	        ASTInternal.addName( functionScope,  name );
     	    }
         } catch ( DOMException e ) {
             binding = e.getProblem();
@@ -236,7 +236,7 @@ public class CPPVisitor {
             binding = functionScope.getBinding( name, false );
             if( binding == null || !(binding instanceof ILabel) ){
     	        binding = new CPPLabel( name );
-    	        functionScope.addName( name );
+    	        ASTInternal.addName( functionScope,  name );
     	    } else {
     	        ((CPPLabel)binding).setLabelStatement( name );
     	    }
@@ -254,7 +254,7 @@ public class CPPVisitor {
             enumtor = scope.getBinding( enumerator.getName(), false );
             if( enumtor == null || !( enumtor instanceof IEnumerator ) ){
                 enumtor = new CPPEnumerator( enumerator.getName() );
-                scope.addName( enumerator.getName() );
+                ASTInternal.addName( scope,  enumerator.getName() );
             }
         } catch ( DOMException e ) {
             enumtor = e.getProblem();
@@ -271,7 +271,7 @@ public class CPPVisitor {
             enumeration = scope.getBinding( specifier.getName(), false );
             if( enumeration == null || !(enumeration instanceof IEnumeration) ){
                 enumeration = new CPPEnumeration( specifier.getName() );
-                scope.addName( specifier.getName() );
+                ASTInternal.addName( scope,  specifier.getName() );
             }
         } catch ( DOMException e ) {
             enumeration = e.getProblem();
@@ -357,7 +357,7 @@ public class CPPVisitor {
 	            		binding = new CPPClassTemplate( name );
 	            	else
 						binding = new CPPClassType( name );
-    				scope.addName( elabType.getName() );
+    				ASTInternal.addName( scope,  elabType.getName() );
     			}
     		} else if( binding instanceof ICPPInternalBinding ){
     			((ICPPInternalBinding)binding).addDeclaration( elabType );
@@ -398,7 +398,7 @@ public class CPPVisitor {
             	else
             		binding = new CPPClassType( name );
 				if( scope != null )
-					scope.addName( compType.getName() );
+					ASTInternal.addName( scope,  compType.getName() );
     		} else {
     			if( binding instanceof ICPPInternalBinding ){
 					ICPPInternalBinding internal = (ICPPInternalBinding) binding;
@@ -423,7 +423,7 @@ public class CPPVisitor {
                 binding = scope.getBinding( namespaceDef.getName(), false );
                 if( binding == null || binding instanceof IProblemBinding ){
     				binding = new CPPNamespace( namespaceDef );
-    				scope.addName( namespaceDef.getName() );
+    				ASTInternal.addName( scope,  namespaceDef.getName() );
     			}
             } catch ( DOMException e ) {
                 binding = e.getProblem();
@@ -445,7 +445,7 @@ public class CPPVisitor {
 		            }
 		            if( namespace instanceof ICPPNamespace ) { 
 		                binding = new CPPNamespaceAlias( alias.getAlias(), (ICPPNamespace) namespace );
-		                scope.addName( alias.getAlias() );
+		                ASTInternal.addName( scope,  alias.getAlias() );
 		            } else {
 		                binding = new ProblemBinding( alias.getAlias(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND, alias.getAlias().toCharArray() );
 		            }
@@ -605,7 +605,7 @@ public class CPPVisitor {
 
 		if( scope != null && binding != null ){
             try {
-                scope.addName( name );
+                ASTInternal.addName( scope,  name );
             } catch ( DOMException e1 ) {
             }
 		}

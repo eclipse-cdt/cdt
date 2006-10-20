@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -145,14 +146,14 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         newTheParms[0] = new CPPBuiltinParameter(newParms[0]);
         temp = new CPPImplicitFunction(ICPPASTOperatorName.OPERATOR_NEW, theScope, newFunctionType, newTheParms, false);
         try {
-			theScope.addBinding(temp);
+        	ASTInternal.addBinding(theScope, temp);
         } catch (DOMException de) {}
 		
 		// void * operator new[] (std::size_t);
 		temp = null;
         temp = new CPPImplicitFunction(ICPPASTOperatorName.OPERATOR_NEW_ARRAY, theScope, newFunctionType, newTheParms, false);
         try {
-			theScope.addBinding(temp);
+        	ASTInternal.addBinding(theScope, temp);
         } catch (DOMException de) {}
 		
 		// void operator delete(void*);
@@ -164,14 +165,14 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         deleteTheParms[0] = new CPPBuiltinParameter(deleteParms[0]);
         temp = new CPPImplicitFunction(ICPPASTOperatorName.OPERATOR_DELETE, theScope, deleteFunctionType, deleteTheParms, false);
         try {
-			theScope.addBinding(temp);
+        	ASTInternal.addBinding(theScope, temp);
         } catch (DOMException de) {}
 		
 		// void operator delete[](void*);
 		temp = null;
         temp = new CPPImplicitFunction(ICPPASTOperatorName.OPERATOR_DELETE_ARRAY, theScope, deleteFunctionType, deleteTheParms, false);
         try {
-			theScope.addBinding(temp);
+        	ASTInternal.addBinding(theScope, temp);
         } catch (DOMException de) {}
 	}
 	

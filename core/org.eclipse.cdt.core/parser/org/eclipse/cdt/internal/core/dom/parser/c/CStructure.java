@@ -122,7 +122,7 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 						IASTName name = declarator.getName();
 						IBinding binding = name.resolveBinding();
 						if( scope != null )
-						    scope.addName( name );
+						    ASTInternal.addName(scope, name );
 						if( binding != null )
 							fields = (IField[]) ArrayUtil.append( IField.class, fields, binding );
 					}
@@ -166,7 +166,7 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 	    					IASTDeclarator declarator = declarators[j];
 	    					IASTName dtorName = declarator.getName();
 	    					if( scope != null )
-	    					    scope.addName( dtorName );
+	    					    ASTInternal.addName( scope,  dtorName );
 	    					if( name.equals( dtorName.toString() ) ){
 	    						IBinding binding = dtorName.resolveBinding();
 	    						if( binding instanceof IField )

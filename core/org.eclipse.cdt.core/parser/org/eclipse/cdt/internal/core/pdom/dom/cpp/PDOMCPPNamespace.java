@@ -100,6 +100,9 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return new IASTNode[0];
 	}
 
+	// mstodo this method currently does not get called, we could try to remove it.
+	// an alternative an appropriate method in  CPPSemantics. This implementation is not
+	// correct for sure.
 	public IBinding[] find(String name) throws DOMException {
 		try {
 			FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray());
@@ -199,12 +202,6 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	}
 
 	public IBinding[] getMemberBindings() throws DOMException {fail(); return null;}
-	public IASTNode getPhysicalNode() throws DOMException {fail(); return null;}
 	public IName getScopeName() throws DOMException {fail(); return null;}
-	public void removeBinding(IBinding binding) throws DOMException {fail();}
-	public void setFullyCached(boolean b) throws DOMException {fail();}
-	public void flushCache() throws DOMException {fail();}
 	public void addUsingDirective(IASTNode directive) throws DOMException {fail();}
-	public void addBinding(IBinding binding) throws DOMException {fail();}
-	public void addName(IASTName name) throws DOMException {fail();}
 }

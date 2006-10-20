@@ -283,11 +283,6 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		return this;
 	}
 
-	public void addName(IASTName name) throws DOMException {
-		// TODO - this might be a better way of adding names to scopes
-		// but for now do nothing.
-	}
-
 	public IName getScopeName() throws DOMException {
 		try {
 			PDOMName name = getFirstDefinition();
@@ -323,13 +318,8 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	public IField findField(String name) throws DOMException {fail();return null;}
 	public IBinding[] getFriends() throws DOMException {fail();return null;}
 	public ICPPMethod[] getImplicitMethods() {fail(); return null;}
-	public void addBinding(IBinding binding) throws DOMException {fail();}
 	public IBinding[] find(String name) throws DOMException {fail();return null;}
-	public void flushCache() throws DOMException {fail();}	
 	public ICPPField[] getDeclaredFields() throws DOMException {fail();return null;}
-	public void removeBinding(IBinding binding) throws DOMException {fail();}
-	public void setFullyCached(boolean b) throws DOMException {fail();}
-	public IASTNode getPhysicalNode() throws DOMException {fail();return null;}
 	
 	public IScope getScope() throws DOMException {
 		try {

@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -57,4 +58,22 @@ public class ASTInternal {
 			((IASTInternalScope) scope).setFullyCached(val);
 		}
 	}
+
+	public static void addBinding(IScope scope, IBinding binding) throws DOMException {
+		if (scope instanceof IASTInternalScope) {
+			((IASTInternalScope) scope).addBinding(binding);
+		}		
+	}
+
+	public static void removeBinding(IScope scope, IBinding binding) throws DOMException {
+		if (scope instanceof IASTInternalScope) {
+			((IASTInternalScope) scope).removeBinding(binding);
+		}		
+	}
+	
+	public static void addName(IScope scope, IASTName name) throws DOMException {
+		if (scope instanceof IASTInternalScope) {
+			((IASTInternalScope) scope).addName(name);
+		}		
+	}		
 }

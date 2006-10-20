@@ -45,29 +45,7 @@ public interface IScope {
 	 * @return List of IBinding
 	 */
 	public IBinding[] find(String name) throws DOMException;
-        
-    /**
-     * The IScope serves as a mechanism for caching IASTNames and bindings to
-     * speed up resolution.
-     * mstodo more work: remove the ast-specific methods.
-     */
-    
-    /**
-	 * Add an IASTName to be cached in this scope
-	 * 
-	 * @param name
-	 * @throws DOMException
-	 */
-	public void addName(IASTName name) throws DOMException;
-
-	/**
-	 * remove the given binding from this scope
-	 * 
-	 * @param binding
-	 * @throws DOMException
-	 */
-	void removeBinding(IBinding binding) throws DOMException;
-	
+        	
 	/**
 	 * Get the binding in this scope that the given name would resolve to. Could
 	 * return null if there is no matching binding in this scope, if the binding has not
@@ -81,15 +59,5 @@ public interface IScope {
 	 * @return : the binding in this scope that matches the name, or null
 	 * @throws DOMException
 	 */
-	public IBinding getBinding(IASTName name, boolean resolve)
-			throws DOMException;
-	
-	/**
-	 * This adds an IBinding to the scope.  It is primarily used by the parser to add
-	 * implicit IBindings to the scope (such as GCC built-in functions).
-	 * 
-	 * @param binding
-	 * @throws DOMException
-	 */
-	public void addBinding(IBinding binding) throws DOMException;
+	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException;
 }

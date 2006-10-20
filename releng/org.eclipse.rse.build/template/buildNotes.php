@@ -37,11 +37,11 @@
 <li>Numerous bugs have been fixed, and we consider RSE safe now for 
   all kinds of data transfer, even if it's done in multiple background sessions.</li>
 <li>Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target%20Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&bugidtype=include&chfieldfrom=2006-09-27&chfieldto=2006-10-08&chfield=resolution"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=1.0+RC1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-10-09&chfieldto=2006-10-20&chfield=resolution&cmdtype=doit"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=1.0+RC2&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0M5-200609221723/index.php">
-  RSE 1.0M5</a>.</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0RC1-200610082121/index.php">
+  RSE 1.0RC1</a>.</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -153,7 +153,7 @@ about your endeavours and keep yourself up-to-date.
 	</tr>
 </table>
 <table><tbody><tr><td>
-The following M5 <a href="http://www.eclipse.org/dsdp/tm/development/plan.php#M5">plan</a>
+The following RC2 <a href="http://www.eclipse.org/dsdp/tm/development/plan.php#M5">plan</a>
 deliverables did not make it into this build:
 <ul>
 <li>User Actions, and Import/Export were deferred with M3 already. 
@@ -167,19 +167,20 @@ deliverables did not make it into this build:
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158358">bug 158358</a> - cri - Can not open RSE perspective when running with IBM JRE 1.5
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158673">bug 158673</a> - cri - Eclipse crashed when clicking on .ppt file on a remote system
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160084">bug 160084</a> - cri - RSE is hanging eclipse and slowing down my system dramatically
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143462">bug 143462</a> - maj - [updating] Dirty remote editors do not get notified
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158534">bug 158534</a> - maj - [ssh] Save conflict when modifying remote file
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158765">bug 158765</a> - maj - Command is not sent on ENTER in dstore-windows shell
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158766">bug 158766</a> - maj - Content Assist does not work on Windows-local, Linux-local and Windows-dstore shells
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158786">bug 158786</a> - maj - Remote shell remains open from C/C++ remote application launch
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160111">bug 160111</a> - maj - A blocking RSE job "hangs" the entire RSE system
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160786">bug 160786</a> - cri - remote shell - ctrl-m maximizes and sends command buffer</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158673">bug 158673</a> - cri - Eclipse crashed when clicking on .ppt file on a remote system</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143462">bug 143462</a> - maj - [updating] Dirty remote editors do not get notified</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158534">bug 158534</a> - maj - [ssh] Save conflict when modifying remote file</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158765">bug 158765</a> - maj - content assist miss causes enter to not send command</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158766">bug 158766</a> - maj - Content Assist does not work on Windows-local, Linux-local and Windows-dstore shells</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158786">bug 158786</a> - maj - Remote shell remains open from C/C++ remote application launch</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160202">bug 160202</a> - maj -	Remote shell dies.</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160818">bug 160818</a> - maj - Remote Shell view doesn't auto scroll to bottom of text after connect</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161146">bug 161146</a> - maj - downloading a file using FTP inserts spaces between each line</li>
 </ul>
 <p>The 
-<a href="http://wiki.eclipse.org/index.php/RSE_1.0RC1_Known_Issues_and_Workarounds">
-RSE 1.0RC1 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
+<a href="http://wiki.eclipse.org/index.php/RSE_1.0RC2_Known_Issues_and_Workarounds">
+RSE 1.0RC2 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
 of the most frequent and obvious problems, and describes workarounds for them.
 </p>
 

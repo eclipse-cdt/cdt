@@ -168,12 +168,10 @@ The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160786">bug 160786</a> - cri - remote shell - ctrl-m maximizes and sends command buffer</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158673">bug 158673</a> - cri - Eclipse crashed when clicking on .ppt file on a remote system</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143462">bug 143462</a> - maj - [updating] Dirty remote editors do not get notified</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158534">bug 158534</a> - maj - [ssh] Save conflict when modifying remote file</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158765">bug 158765</a> - maj - content assist miss causes enter to not send command</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158766">bug 158766</a> - maj - Content Assist does not work on Windows-local, Linux-local and Windows-dstore shells</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158786">bug 158786</a> - maj - Remote shell remains open from C/C++ remote application launch</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160202">bug 160202</a> - maj -	Remote shell dies.</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160818">bug 160818</a> - maj - Remote Shell view doesn't auto scroll to bottom of text after connect</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161146">bug 161146</a> - maj - downloading a file using FTP inserts spaces between each line</li>
